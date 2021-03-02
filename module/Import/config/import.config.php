@@ -5,9 +5,9 @@ use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Import\Controller\ImportController;
 use Import\Service\CallService;
-use Zend\Mvc\Router\Console\Simple;
-use Zend\Mvc\Router\Http\Literal;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Mvc\Console\Router\Simple;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -40,11 +40,13 @@ return [
             ],
         ],
     ],
+
     'doctrine'     => [
         'driver'     => [
             'orm_default'        => [
                 'class'   => MappingDriverChain::class,
                 'drivers' => [
+                    'UnicaenDbImport\Entity\Db' => 'orm_default_xml_driver', // remplacement du mapping
                     'Import\Model' => 'orm_default_xml_driver',
                 ],
             ],
@@ -62,6 +64,7 @@ return [
             ],
         ],
     ],
+
     'console' => [
         'router' => [
             'routes' => [
@@ -111,6 +114,7 @@ return [
             'display_exceptions'       => true,
         ]
     ],
+
     'router' => [
         'routes' => [
             'ws-import' => [
@@ -220,6 +224,7 @@ return [
             ],
         ],
     ],
+
     'navigation' => [
         'default' => [
             'home' => [
@@ -246,6 +251,7 @@ return [
             ],
         ],
     ],
+
     'service_manager' => [
         'invokables' => [
             CallService::class => CallService::class,
@@ -265,11 +271,13 @@ return [
         ]
 
     ],
+
     'controllers' => [
         'factories' => [
             Import\Controller\ImportController::class => Import\Controller\Factory\ImportControllerFactory::class,
         ],
     ],
+
     'view_manager' => [
         'template_path_stack' => [
             __DIR__ . '/../view',

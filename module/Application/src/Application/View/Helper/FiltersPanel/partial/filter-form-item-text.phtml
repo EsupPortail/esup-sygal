@@ -1,0 +1,36 @@
+<?php
+
+use Application\Search\Filter\TextSearchFilter;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var TextSearchFilter $filter
+ * @var array $queryParams
+ */
+
+$paramAttributes = $filter->getAttributes();
+$title = $paramAttributes['title'] ?: null;
+$width = isset($paramAttributes['width']) ? $paramAttributes['width'] : 'fit';
+$liveSearch = isset($paramAttributes['liveSearch']) ? (bool)$paramAttributes['liveSearch'] : false;
+?>
+
+<div class="form-group">
+    <label class="sr-only" for="search-input"></label>
+    <div class="input-group">
+        <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+        <input type="search"
+               value="<?php echo $filter->getValue(); ?>"
+               name="<?php echo $filter->getName(); ?>"
+               title="<?php echo $title ?>"
+               class="form-control filter"
+               id="search-input"
+               placeholder="<?php echo $this->translate("Entrez 2 caractères au moins..."); ?>">
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#search-input").tooltip({html: true, trigger: "hover", placement: "bottom"});
+    });
+</script>

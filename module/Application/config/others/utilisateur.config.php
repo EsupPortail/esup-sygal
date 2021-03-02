@@ -1,7 +1,8 @@
 <?php
 
+namespace Application;
+
 use Application\Controller\Factory\UtilisateurControllerFactory;
-use Application\Controller\UtilisateurController;
 use Application\Form\CreationUtilisateurForm;
 use Application\Form\CreationUtilisateurFromIndividuForm;
 use Application\Form\Factory\CreationUtilisateurFormFactory;
@@ -15,11 +16,15 @@ use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\PasswordValidator;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\Service\Individu\IndividuServiceFactory;
+use Application\Service\Utilisateur\UtilisateurSearchService;
+use Application\Service\Utilisateur\UtilisateurSearchServiceFactory;
+use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Utilisateur\UtilisateurServiceFactory;
 use Application\View\Helper\IndividuUsurpationHelperFactory;
+use Application\View\Helper\RoleHelper;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Mvc\Router\Http\Literal;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -34,6 +39,7 @@ return [
                     'controller' => 'Application\Controller\Utilisateur',
                     'action'     => [
                         'index',
+                        'voir',
                         'rechercher-people',
                         'rechercher-individu',
                     ],
@@ -65,6 +71,13 @@ return [
                     ],
                     'roles' => [],
                 ],
+                [
+                    'controller' => 'Application\Controller\Utilisateur',
+                    'action'     => [
+                        'appariemment',
+                    ],
+                    'roles' => ['user'],
+                ],
             ],
         ],
     ],
@@ -84,6 +97,15 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'voir' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/voir/:utilisateur',
+                            'defaults'    => [
+                                'action' => 'voir',
+                            ],
+                        ],
+                    ],
                     'ajouter' => [
                         'type'          => Literal::class,
                         'options'       => [
@@ -126,6 +148,15 @@ return [
                             'route'       => '/init-compte/:token',
                             'defaults'    => [
                                 'action' => 'init-compte',
+                            ],
+                        ],
+                    ],
+                    'appariemment' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/appariemment/:these/:individu',
+                            'defaults'    => [
+                                'action' => 'appariemment',
                             ],
                         ],
                     ],
@@ -180,15 +211,20 @@ return [
                                 'label'    => 'Utilisateurs',
                                 'route'    => 'utilisateur',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'index'),
-
+                                'icon'     => 'fa fa-users',
                                 'order'    => 60,
-                            ],
-                            'creation' => [
-                                'label'    => "Création d'utilisateur",
-                                'route'    => 'utilisateur/ajouter',
-                                'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'ajouter'),
-
-                                'order'    => 50,
+                                'pages' => [
+                                    'voir' => [
+                                        'label'    => "Détails",
+                                        'route'    => 'utilisateur/voir',
+                                        'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'index'),
+                                    ],
+                                    'creation' => [
+                                        'label'    => "Création",
+                                        'route'    => 'utilisateur/ajouter',
+                                        'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'ajouter'),
+                                    ],
+                                ],
                             ],
                         ],
                     ],
@@ -202,7 +238,11 @@ return [
         'factories' => [
             'IndividuService' => IndividuServiceFactory::class,
             'UtilisateurService' => UtilisateurServiceFactory::class,
+            UtilisateurSearchService::class => UtilisateurSearchServiceFactory::class,
         ],
+        'aliases' => [
+            UtilisateurService::class => 'UtilisateurService'
+        ]
     ],
     'controllers'     => [
         'invokables' => [
@@ -232,6 +272,9 @@ return [
         ],
     ],
     'view_helpers'  => [
+        'invokables' => [
+            'role' => RoleHelper::class,
+        ],
         'factories'  => [
             'individuUsurpation' => IndividuUsurpationHelperFactory::class,
         ],

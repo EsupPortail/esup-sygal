@@ -2,8 +2,10 @@
 
 namespace Application\Entity\Db\Repository;
 
+use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\ORM\Query\Functions\Year;
 use Application\QueryBuilder\TheseQueryBuilder;
@@ -148,5 +150,91 @@ class TheseRepository extends DefaultEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+    /**
+     * @param Doctorant $doctorant
+     * @return These[]
+     */
+    public function fetchThesesByDoctorant($doctorant)
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->andWhere('t.doctorant = :doctorant')
+            ->setParameter('doctorant', $doctorant)
+            ->andWhere('t.etatThese = :encours')
+            ->setParameter('encours', These::ETAT_EN_COURS)
+            ->andWhere('1 = pasHistorise(t)')
+            ->orderBy('t.datePremiereInscription', 'ASC')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
+     * @param Individu $individu
+     * @return These[]
+     */
+    public function fetchThesesByDoctorantAsIndividu($individu)
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->join('t.doctorant', 'doctorant')
+            ->join('doctorant.individu', 'individu')
+            ->andWhere('individu = :individu')
+            ->setParameter('individu', $individu)
+            ->andWhere('t.etatThese = :encours')
+            ->setParameter('encours', These::ETAT_EN_COURS)
+            ->andWhere('1 = pasHistorise(t)')
+            ->orderBy('t.datePremiereInscription', 'ASC')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
+     * @param Individu $individu
+     * @return These[]
+     */
+    public function fetchThesesByEncadrant($individu)
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->join('t.acteurs', 'a')
+            ->join('a.role', 'r')
+            ->andWhere('r.code = :directeur OR r.code = :codirecteur')
+            ->setParameter('directeur', Role::CODE_DIRECTEUR_THESE)
+            ->setParameter('codirecteur', Role::CODE_CODIRECTEUR_THESE)
+            ->andWhere('t.etatThese = :encours')
+            ->setParameter('encours', These::ETAT_EN_COURS)
+            ->andWhere('a.individu = :individu')
+            ->setParameter('individu', $individu)
+            ->andWhere('1 = pasHistorise(t)')
+            ->orderBy('t.datePremiereInscription', 'ASC')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
+     * @param Individu $individu
+     * @return These[]
+     */
+    public function fetchThesesByCoEncadrant($individu)
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->join('t.acteurs', 'a')
+            ->join('a.role', 'r')
+            ->andWhere('r.code = :coencadrant')
+            ->setParameter('coencadrant', Role::CODE_CO_ENCADRANT)
+            ->andWhere('a.individu = :individu')
+            ->setParameter('individu', $individu)
+            ->andWhere('1 = pasHistorise(t)')
+            ->orderBy('t.datePremiereInscription', 'ASC')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+
 
 }

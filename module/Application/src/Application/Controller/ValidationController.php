@@ -99,7 +99,7 @@ class ValidationController extends AbstractController
             $notification->setThese($these);
 
             if ($action === 'valider') {
-                $this->validationService->validateRdvBu($these);
+                $this->validationService->validateRdvBu($these, $this->userContextService->getIdentityIndividu());
                 $successMessage = "Validation enregistrée avec succès.";
 
                 // notification (doctorant: à la 1ere validation seulement)
@@ -130,7 +130,7 @@ class ValidationController extends AbstractController
         $viewModel = $this->confirm()->getViewModel();
 
         $viewModel->setVariables([
-            'title'  => "Validation à l'issue du rendez-vous BU",
+            'title'  => "Validation à l'issue du rendez-vous avec la bibliothèque universitaire",
             'these'  => $these,
             'action' => $action,
         ]);
@@ -194,7 +194,7 @@ class ValidationController extends AbstractController
                 $successMessage = "Validation enregistrée avec succès.";
 
                 // notification des directeurs de thèse
-                $this->notifierService->triggerValidationDepotTheseCorrigee($these);
+                $this->theseService->notifierCorrectionsApportees($these);
             }
             elseif ($action === 'devalider') {
                 $validation = $this->validationService->unvalidateDepotTheseCorrigee($these);

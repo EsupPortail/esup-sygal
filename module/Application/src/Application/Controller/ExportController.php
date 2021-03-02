@@ -23,112 +23,136 @@ class ExportController extends AbstractController
 
     public function csvAction()
     {
-
-
         $headers = [
             // Doctorant
-            'Civilité'                              => function (These $these) { return $these->getDoctorant()->getIndividu()->getCivilite(); },
-            'Nom usuel'                             => function (These $these) { return $these->getDoctorant()->getIndividu()->getNomUsuel(); },
-            'Prenom'                                => function (These $these) { return $these->getDoctorant()->getIndividu()->getPrenom(); },
-            'Nom patronymique'                      => function (These $these) { return $these->getDoctorant()->getIndividu()->getNomPatronymique(); },
-            'Date de naissance'                     => function (These $these) { return $these->getDoctorant()->getIndividu()->getDateNaissance(); },
-            'Nationalité'                           => function (These $these) { return $these->getDoctorant()->getIndividu()->getNationalite(); },
-            'Adresse électronique'                  => function (These $these) { return $these->getDoctorant()->getIndividu()->getEmail(); },
-            'Adresse électronique personnelle'      => function (These $these) { return $these->getDoctorant()->getIndividu()->getMailContact(); },
-            'Numéro étudiant'                       => function (These $these) { return $this->sourceCodeStringHelper->removePrefixFrom($these->getDoctorant()->getSourceCode()); },
-            'I.N.E.'                                => function (These $these) { return $these->getDoctorant()->getIne(); },
+            'Civilité'                              => function ($variables) { return $variables['doctorant']->getIndividu()->getCivilite(); },
+            'Nom usuel'                             => function ($variables) { return $variables['doctorant']->getIndividu()->getNomUsuel(); },
+            'Prenom'                                => function ($variables) { return $variables['doctorant']->getIndividu()->getPrenom(); },
+            'Nom patronymique'                      => function ($variables) { return $variables['doctorant']->getIndividu()->getNomPatronymique(); },
+            'Date de naissance'                     => function ($variables) { return $variables['doctorant']->getIndividu()->getDateNaissance(); },
+            'Nationalité'                           => function ($variables) { return $variables['doctorant']->getIndividu()->getNationalite(); },
+            'Adresse électronique'                  => function ($variables) { return $variables['doctorant']->getIndividu()->getEmail(); },
+            'Adresse électronique personnelle'      => function ($variables) { return $variables['doctorant']->getIndividu()->getMailContact(); },
+            'Numéro étudiant'                       => function ($variables) { return $this->sourceCodeStringHelper->removePrefixFrom($variables['doctorant']->getSourceCode()); },
+            'I.N.E.'                                => function ($variables) { return $variables['doctorant']->getIne(); },
             //These
-            'Identifiant de la thèse'               => function (These $these) { return $these->getSourceCode(); },
-            'Titre'                                 => function (These $these) { return $these->getTitre(); },
-            'Discipline'                            => function (These $these) { return $these->getLibelleDiscipline(); },
+            'Identifiant de la thèse'               => function ($variables) { return $variables['these']->getSourceCode(); },
+            'Titre'                                 => function ($variables) { return $variables['these']->getTitre(); },
+            'Discipline'                            => function ($variables) { return $variables['these']->getLibelleDiscipline(); },
             //Encadrements
-            'Directeurs'                            => function (These $these) {
-                $directeurs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
+            'Directeurs'                            => function ($variables) {
+                $directeurs = $variables['directeurs'];
                 $noms = [];
                 /** @var Acteur $directeur */
                 foreach ($directeurs as $directeur) $noms[] = $directeur->getIndividu()->getNomComplet();
                 return implode(",", $noms);
             },
-            'Co-directeurs'                            => function (These $these) {
-                $directeurs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+            'Co-directeurs'                            => function ($variables) {
+                $directeurs = $variables['co-directeurs'];
                 $noms = [];
                 /** @var Acteur $directeur */
                 foreach ($directeurs as $directeur) $noms[] = $directeur->getIndividu()->getNomComplet();
+                return implode(",", $noms);
+            },
+            'Co-encadrants'                            => function ($variables) {
+                $acteurs = $variables['co-encadrants'];
+                $noms = [];
+                /** @var Acteur $acteurs */
+                foreach ($acteurs as $directeur) $noms[] = $directeur->getIndividu()->getNomComplet();
                 return implode(",", $noms);
             },
             //Structures
-            'Etablissement'                         => function (These $these) { return $these->getEtablissement()->getLibelle(); },
-            'Ecole Doctorale Code'                  => function (These $these) { if($these->getEcoleDoctorale() !== null) return $these->getEcoleDoctorale()->getStructure()->getCode(); else return null; },
-            'Ecole Doctorale'                       => function (These $these) { if($these->getEcoleDoctorale() !== null)return $these->getEcoleDoctorale()->getLibelle(); else return null; },
-            'Unité de Recherche Code'               => function (These $these) { if($these->getUniteRecherche() !== null) return $these->getUniteRecherche()->getStructure()->getCode(); else return null; },
-            'Unité de Recherche'                    => function (These $these) { if($these->getUniteRecherche() !== null) return $these->getUniteRecherche()->getLibelle(); else return null; },
-            'Etablissement Co-Tutelle'              => function (These $these) { return $these->getLibelleEtabCotutelle(); },
-            'Pays Co-Tutelle'                       => function (These $these) { return $these->getLibellePaysCotutelle(); },
+            'Etablissement'                         => function ($variables) { return $variables['etablissement']->getLibelle(); },
+            'Ecole Doctorale Code'                  => function ($variables) { return ($variables['ecole doctorale'])?$variables['ecole doctorale']->getStructure()->getCode():null; },
+            'Ecole Doctorale'                       => function ($variables) { return ($variables['ecole doctorale'])?$variables['ecole doctorale']->getLibelle():null; },
+            'Unité de Recherche Code'               => function ($variables) { return ($variables['unite de recherche'])?$variables['unite de recherche']->getStructure()->getCode():null; },
+            'Unité de Recherche'                    => function ($variables) { return ($variables['unite de recherche'])?$variables['unite de recherche']->getLibelle():null; },
+            'Etablissement Co-Tutelle'              => function ($variables) { return $variables['these']->getLibelleEtabCotutelle(); },
+            'Pays Co-Tutelle'                       => function ($variables) { return $variables['these']->getLibellePaysCotutelle(); },
             //accession
-            'Diplôme d\'accession à la thèse'       => function (These $these) { if($these->getTitreAcces() !== null) return $these->getTitreAcces()->getLibelleTitreAcces(); },
-            'Établissement d\'accession à la thèse' => function (These $these) { if($these->getTitreAcces() !== null) return $these->getTitreAcces()->getLibelleEtabTitreAcces(); },
+            'Diplôme d\'accession à la thèse'       => function ($variables) { return ($variables['these']->getTitreAcces())?$variables['these']->getTitreAcces()->getLibelleTitreAcces():null; },
+            'Établissement d\'accession à la thèse' => function ($variables) { return ($variables['these']->getTitreAcces())?$variables['these']->getTitreAcces()->getLibelleEtabTitreAcces():null; },
             //Financements
-            'Origines du financement'                            => function (These $these) {
+            'Origines du financement'                            => function ($variables) {
+                $these = $variables['these'];
                 $financements = $these->getFinancements();
                 $origines = [];
                 /** @var Financement $financement */
                 foreach ($financements as $financement) $origines[] = $financement->getOrigineFinancement()->getLibelleLong();
                 return implode(",", $origines);
             },
-            'Complément sur les financements'                            => function (These $these) {
+            'Complément sur les financements'                            => function ($variables) {
+                $these = $variables['these'];
                 $financements = $these->getFinancements();
                 $origines = [];
                 /** @var Financement $financement */
                 foreach ($financements as $financement) $origines[] = ($financement->getComplementFinancement())?:" - ";
                 return implode(",", $origines);
             },
+            'Type du financement'                            => function ($variables) {
+                $these = $variables['these'];
+                $financements = $these->getFinancements();
+                $types = [];
+                /** @var Financement $financement */
+                foreach ($financements as $financement) $types[] = $financement->getLibelleTypeFinancement();
+                return implode(",", array_filter($types));
+            },
             //Domaine
-            'Domaines scientifiques'                            => function (These $these) {
-                $domaines = ($these->getUniteRecherche())?($these->getUniteRecherche())->getDomaines():[];
+            'Domaines scientifiques'                            => function ($variables) {
+                $unite = $variables['unite de recherche'];
+                $domaines = ($unite)?$unite->getDomaines():[];
                 $liste = [];
                 /** @var Financement $financement */
                 foreach ($domaines as $domaine) $liste[] = $domaine->getLibelle();
                 return implode(",", $liste);
             },
-
             //Dates
-            'Date de première inscription'          => function (These $these) { return $these->getDatePremiereInscription(); },
-            "Date d'abandon"                        => function (These $these) { return $these->getDateAbandon(); },
-            'Date de transfert'                     => function (These $these) { return $these->getDateTransfert(); },
-            'Date de prévisionnel de soutenance'    => function (These $these) { return $these->getDatePrevisionSoutenance(); },
-            'Date de soutenance'                    => function (These $these) { return $these->getDateSoutenance(); },
-            'Date de fin de confientialité'         => function (These $these) { return $these->getDateFinConfidentialite(); },
-            'Date de dépôt version initiale'        => function (These $these) { $file = $these->hasVersionInitiale(); if ($file) return $file->getFichier()->getHistoCreation()->format('d/m/Y'); return "";},
-            'Date de dépôt version corigée'         => function (These $these) { $file = $these->hasVersionCorrigee(); if ($file) return $file->getFichier()->getHistoCreation()->format('d/m/Y'); return "";},
-            'Durée en mois de la thèse'             => function (These $these) { try { return number_format($these->getDureeThese(), 2, ',', ''); } catch (LogicException $e) { return ""; } },
-
+            'Date de première inscription'          => function ($variables) { return $variables['these']->getDatePremiereInscription(); },
+            "Date d'abandon"                        => function ($variables) { return $variables['these']->getDateAbandon(); },
+            'Date de transfert'                     => function ($variables) { return $variables['these']->getDateTransfert(); },
+            'Date de prévisionnel de soutenance'    => function ($variables) { return $variables['these']->getDatePrevisionSoutenance(); },
+            'Date de soutenance'                    => function ($variables) { return $variables['these']->getDateSoutenance(); },
+            'Date de fin de confientialité'         => function ($variables) { return $variables['these']->getDateFinConfidentialite(); },
+            'Date de dépôt version initiale'        => function ($variables) { return ($variables['version_initiale'])?$variables['version_initiale']->getFichier()->getHistoCreation()->format('d/m/Y'):"";},
+            'Date de dépôt version corigée'         => function ($variables) { return ($variables['version_corrigee'])?$variables['version_corrigee']->getFichier()->getHistoCreation()->format('d/m/Y'):"";},
+            'Durée en mois de la thèse'             => function ($variables) { try { return number_format($variables['these']->getDureeThese(), 2, ',', ''); } catch (LogicException $e) { return ""; } },
             //Flags
-            'Etat de la thèse'                      => function (These $these) { return $these->getEtatTheseToString();},
-            'Autorisation à soutenir'               => function (These $these) { return $these->getSoutenanceAutorisee();},
-            'Est confidentielle'                    => function (These $these) { $now = new \DateTime(); $end= $these->getDateFinConfidentialite(); if ($now > $end) return "N"; else return "O"; },
-            'Résultat'                              => function (These $these) { return $these->getResultat();},
-            'Corrections'                           => function (These $these) { return $these->getCorrectionAutorisee();},
-            'Thèse format PDF'                      => function (These $these) { if ($these->hasMemoire())  return 'O'; else return 'N'; },
-            'Annexe non PDF'                        => function (These $these) { if ($these->hasAnnexe())   return 'O'; else return 'N'; },
-
+            'Etat de la thèse'                      => function ($variables) { return $variables['these']->getEtatTheseToString();},
+            'Autorisation à soutenir'               => function ($variables) { return $variables['these']->getSoutenanceAutorisee();},
+            'Est confidentielle'                    => function ($variables) { $now = new \DateTime(); $end= $variables['these']->getDateFinConfidentialite(); if ($now > $end) return "N"; else return "O"; },
+            'Résultat'                              => function ($variables) { return $variables['these']->getResultat();},
+            'Corrections'                           => function ($variables) { return $variables['these']->getCorrectionAutorisee();},
+            'Thèse format PDF'                      => function ($variables) { return $variables['version_initiale']?'O':'N'; },
+            'Annexe non PDF'                        => function ($variables) { return $variables['annexe']?'O':'N'; },
+//
             //Embargo et refus de diffusion
-            'Embargo'                               => function (These $these) {
-                $versionCorrigee = $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG_CORR);
-                $diffusionCorrigee = $these->getDiffusionForVersion($versionCorrigee);
-                if ($diffusionCorrigee !== null) return $diffusionCorrigee->getAutorisEmbargoDuree();
-
-                $versionInitiale = $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-                $diffusionInitiale = $these->getDiffusionForVersion($versionInitiale);
-                if ($diffusionInitiale !== null) return $diffusionInitiale->getAutorisEmbargoDuree();
+            'Embargo'                               => function ($variables) {
+                $these = $variables['these'];
+                $versionInitiale = $variables['version_initiale'];
+                $versionCorrigee = $variables['version_corrigee'];
+                if ($versionCorrigee !== null) {
+                    $diffusionCorrigee = $these->getDiffusionForVersion($versionCorrigee->getFichier()->getVersion());
+                    if ($diffusionCorrigee !== null) return $diffusionCorrigee->getAutorisEmbargoDuree();
+                }
+                if ($versionInitiale !== null) {
+                    $diffusionInitiale = $these->getDiffusionForVersion($versionInitiale->getFichier()->getVersion());
+                    if ($diffusionInitiale !== null) return $diffusionInitiale->getAutorisEmbargoDuree();
+                }
+                return null;
             },
-            'Refus de diffusion' => function (These $these) {
-                $versionCorrigee = $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG_CORR);
-                $diffusionCorrigee = $these->getDiffusionForVersion($versionCorrigee);
-                if ($diffusionCorrigee !== null) return $diffusionCorrigee->getAutorisMotif();
-
-                $versionInitiale = $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-                $diffusionInitiale = $these->getDiffusionForVersion($versionInitiale);
-                if ($diffusionInitiale !== null) return $diffusionInitiale->getAutorisMotif();
+            'Refus de diffusion' => function ($variables) {
+                $these = $variables['these'];
+                $versionInitiale = $variables['version_initiale'];
+                $versionCorrigee = $variables['version_corrigee']->getVersion;
+                if ($versionCorrigee !== null) {
+                    $diffusionCorrigee = $these->getDiffusionForVersion($versionCorrigee->getFichier()->getVersion());
+                    if ($diffusionCorrigee !== null) return $diffusionCorrigee->getAutorisMotif();
+                }
+                if ($versionInitiale !== null) {
+                    $diffusionInitiale = $these->getDiffusionForVersion($versionInitiale->getFichier()->getVersion());
+                    if ($diffusionInitiale !== null) return $diffusionInitiale->getAutorisMotif();
+                }
+                return null;
             },
         ];
 
@@ -144,10 +168,24 @@ class ExportController extends AbstractController
 
         $records = [];
         for ($i = 0 ; $i < count($theses) ; $i++) {
+            /** @var These $these */
             $these = $theses[$i];
             $record = [];
             foreach($headers as $key => $fct) {
-                $record[] = $fct($these);
+                $variables = [
+                    'these' => $these,
+                    'doctorant' => $these->getDoctorant(),
+                    'directeurs' => $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE),
+                    'co-directeurs' => $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE),
+                    'co-encadrants' => $these->getActeursByRoleCode(Role::CODE_CO_ENCADRANT),
+                    'etablissement' => $these->getEtablissement(),
+                    'ecole doctorale' => $these->getEcoleDoctorale(),
+                    'unite de recherche' => $these->getUniteRecherche(),
+                    'version_initiale' => $these->hasVersionInitiale(),
+                    'version_corrigée' => $these->hasVersionCorrigee(),
+                    'annexe' => $these->hasAnnexe(),
+                ];
+                $record[] = $fct($variables);
             }
             $records[] = $record;
         }

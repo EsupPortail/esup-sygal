@@ -1,0 +1,56 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Script à utiliser pour inscrire dans le fichier de config locale le numéro et la date de version de l'application
+ * spécifiés en argument.
+ *
+ * Le chemin du fichier de config créé est par défaut 'config/autoload/auto.version.local.php'.
+ *
+ * Usage:  ./create-version-config-file --number <version> --date <date> [--file <path>]
+ * Ex:     ./create-version-config-file --number 2.0.0 --date "03/11/2020" --file "config/autoload/auto.version.local.php"
+ */
+
+require 'vendor/autoload.php';
+
+use Zend\Config\Writer\PhpArray;
+
+const DEFAULT_FILE_PATH = 'config/autoload/auto.version.local.php';
+const ARG_VERSION_NUMBER = '--number';
+const ARG_VERSION_DATE = '--date';
+const ARG_FILE_PATH = '--file';
+
+$versionNumber = ($pos = array_search(ARG_VERSION_NUMBER, $argv)) !== false ? ($argv[$pos+1] ?? null) : null;
+$versionDate = ($pos = array_search(ARG_VERSION_DATE, $argv)) !== false ? ($argv[$pos+1] ?? null) : null;
+$configFilepath = ($pos = array_search(ARG_FILE_PATH, $argv)) !== false ? ($argv[$pos+1] ?? null) : null;
+
+if ($versionNumber === null) {
+    echo ":-( Vous devez spécifier le numéro de version via " . ARG_VERSION_NUMBER . PHP_EOL;
+    exit(1);
+}
+if ($versionDate === null) {
+    echo ":-( Vous devez spécifier la date de version via " . ARG_VERSION_DATE . PHP_EOL;
+    exit(1);
+}
+if ($configFilepath === null) {
+    $configFilepath = DEFAULT_FILE_PATH;
+}
+
+$config = [
+    'unicaen-app' => [
+        'app_infos' => [
+            'version' => $versionNumber,
+            'date' => $versionDate,
+        ],
+    ],
+    'comment' => sprintf("Fichier généré le %s avec le script '%s'.", date('d/m/Y à H:i:s'), basename(__FILE__))
+];
+
+$phpArray = new PhpArray();
+$phpArray
+    ->setUseBracketArraySyntax(true)
+    ->toFile($configFilepath, $config);
+
+echo "Fichier de config créé : $configFilepath" . PHP_EOL;
+echo "  Version inscrite : $versionNumber" . PHP_EOL;
+echo "  Date inscrite :    $versionDate" . PHP_EOL;

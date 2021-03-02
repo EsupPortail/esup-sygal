@@ -1,19 +1,22 @@
 #!/bin/bash
 
-##########################################################################################
+##################################################################################################
+#
 #       Script d'appel du web service proposé par le site facile.cines.fr du CINES.
-##########################################################################################
+#
+##################################################################################################
+#
 # Arguments :
-#   1/ le chemin vers le fichier à valider, OBLIGATOIRE.
-#   2/ l'URL du web service, FACULTATIF ("https://facile.cines.fr/xml", par défaut).
-##########################################################################################
-
-#export http_proxy=proxy.unicaen.fr:3128
-#export https_proxy=proxy.unicaen.fr:3128
+#   -f|--file    : chemin vers le fichier à valider, OBLIGATOIRE.
+#   -u|--url     : URL du web service, FACULTATIF, "https://facile.cines.fr/xml", par défaut.
+#   -m|--maxtime : temps max d'exécution.
+#   -t|--timeout : temps max de connexion.
+#
+##################################################################################################
 
 DEFAULT_URL="https://facile.cines.fr/xml"
 
-ARGS=`getopt -o "f:u:m:" -l "file:,url:,maxtime:" -n "getopt.sh" -- "$@"`
+ARGS=`getopt -o "f:u:m:t:" -l "file:,url:,maxtime:,timeout:" -n "getopt.sh" -- "$@"`
 if [ $? -ne 0 ];
 then
   exit 1
@@ -43,6 +46,13 @@ do
       fi
       shift 2;;
 
+    -t|--timeout)
+    #---------------
+      if [ -n "$2" ]; then
+        timeout=$2
+      fi
+      shift 2;;
+
     --)
       shift
       break;;
@@ -57,14 +67,19 @@ fi
 if [ ! "$url" ]; then
     url="$DEFAULT_URL"
 fi
-maxtime=""
 if [ -n "$maxtime" ]; then
     maxtime="--max-time $maxtime"
 fi
+if [ -n "$timeout" ]; then
+    timeout="--connect-timeout $timeout"
+fi
 
-# "-k"             : désactive la vérification du certificat SSL
-# "--max-time 600" : spécifie un temps maximum d'exécution de 5 minutes
+# Options de curl :
+#   --insecure           : pas de vérification du certificat SSL, https://curl.se/docs/manpage.html#-k
+#   --max-time 60        : temps max d'exécution d'1 minute, https://curl.se/docs/manpage.html#-m
+#   --connect-timeout 10 : temps max de connexion de 10 secondes, https://curl.se/docs/manpage.html#--connect-timeout
+#   --silent             : https://curl.se/docs/manpage.html#-s
 
 #curl --silent --connect-timeout 10 --form file="@$file" $host
 #curl --max-time 360 --form file="@$1" $host
-curl $maxtime --form file="@$file" $url
+curl $maxtime $timeout --form file="@$file" $url

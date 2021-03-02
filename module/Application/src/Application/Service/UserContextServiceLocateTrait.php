@@ -2,18 +2,18 @@
 
 namespace Application\Service;
 
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 trait UserContextServiceLocateTrait
 {
     /**
-     * @param ServiceLocatorInterface $sl
+     * @param ContainerInterface $container
      * @return UserContextService
      */
-    public function locateUserContextService(ServiceLocatorInterface $sl)
+    public function locateUserContextService(ContainerInterface $container)
     {
         /** @var UserContextService $service */
-        $service = $sl->get('UserContextService');
+        $service = $container->get('UserContextService');
 
         return $service;
     }

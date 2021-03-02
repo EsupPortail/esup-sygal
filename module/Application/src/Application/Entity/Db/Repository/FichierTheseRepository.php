@@ -5,6 +5,7 @@ namespace Application\Entity\Db\Repository;
 use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
+use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\VersionFichier;
 use Application\QueryBuilder\FichierTheseQueryBuilder;
@@ -27,9 +28,10 @@ class FichierTheseRepository extends DefaultEntityRepository
      * @param NatureFichier|string $nature
      * @param VersionFichier|string $version
      * @param int|bool|string $retraitement '0', '1', booléen ou code du retraitementOTH
+     * @param Utilisateur $auteur
      * @return FichierThese[]
      */
-    public function fetchFichierTheses(These $these, $nature = null, $version = null, $retraitement = null)
+    public function fetchFichierTheses(These $these, $nature = null, $version = null, $retraitement = null, $auteur = null)
     {
         $qb = $this->createQueryBuilder("ft");
 
@@ -66,6 +68,11 @@ class FichierTheseRepository extends DefaultEntityRepository
                 $qb->andWhere("ft.retraitement = :estRetraite");
                 $qb->setParameter("estRetraite", $retraitement);
             }
+        }
+
+        if ($auteur !== null) {
+            $qb->andWhere('f.histoModificateur = :auteur')
+                ->setParameter('auteur', $auteur);
         }
 
         $qb->andWhere("ft.these = :these");

@@ -6,8 +6,8 @@ use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\LogicException;
-use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
@@ -30,6 +30,22 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     protected   $libelle;
     protected   $cheminLogo;
     protected   $ferme;
+
+    /**
+     * @var string $adresse
+     * @var string $telephone
+     * @var string $fax
+     * @var string $email
+     * @var string $siteWeb
+     * @var string $idRef
+     */
+
+    protected $adresse;
+    protected $telephone;
+    protected $fax;
+    protected $email;
+    protected $siteWeb;
+    protected $idRef;
 
     /**
      * @var string
@@ -217,10 +233,13 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
 
     /**
      * @param string $libelle
+     * @return Structure
      */
     public function setLibelle($libelle)
     {
         $this->libelle = $libelle;
+
+        return $this;
     }
 
     /**
@@ -359,4 +378,111 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     {
         if (!$ferme) $this->ferme = 0; else $this->ferme = 1;
     }
+
+    /**
+     * @return string
+     */
+    public function getAdresse()
+    {
+        return $this->adresse;
+    }
+
+    /**
+     * @param string $adresse
+     * @return Structure
+     */
+    public function setAdresse($adresse)
+    {
+        $this->adresse = $adresse;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTelephone()
+    {
+        return $this->telephone;
+    }
+
+    /**
+     * @param string $telephone
+     * @return Structure
+     */
+    public function setTelephone($telephone)
+    {
+        $this->telephone = $telephone;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFax()
+    {
+        return $this->fax;
+    }
+
+    /**
+     * @param string $fax
+     * @return Structure
+     */
+    public function setFax($fax)
+    {
+        $this->fax = $fax;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     * @return Structure
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSiteWeb()
+    {
+        return $this->siteWeb;
+    }
+
+    /**
+     * @param string $siteWeb
+     * @return Structure
+     */
+    public function setSiteWeb($siteWeb)
+    {
+        $this->siteWeb = $siteWeb;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIdRef()
+    {
+        return $this->idRef;
+    }
+
+    /**
+     * @param mixed $idRef
+     */
+    public function setIdRef($idRef)
+    {
+        $this->idRef = $idRef;
+    }
+
 }

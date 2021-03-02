@@ -7,6 +7,7 @@ use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactory;
+use Application\Service\Acteur\ActeurService;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Doctorant\DoctorantServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -16,20 +17,18 @@ use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use BjyAuthorize\Provider\Identity\ProviderInterface;
+use UnicaenAuth\Acl\NamedRole;
 use UnicaenAuth\Provider\Identity\ChainableProvider;
 use UnicaenAuth\Provider\Identity\ChainEvent;
 use Zend\Authentication\AuthenticationService;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
 /**
  * Service chargé de fournir tous les rôles que possède l'identité authentifiée.
  *
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
  */
-class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceLocatorAwareInterface
+class IdentityProvider implements ProviderInterface, ChainableProvider
 {
-    use ServiceLocatorAwareTrait;
     use ActeurServiceAwareTrait;
     use DoctorantServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
@@ -94,10 +93,14 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
             return [];
         }
 
-        $this->roles = array_merge([],
+        $roleAuthentifie = $this->roleService->getRepository()->findByCode('user')/*->setLibelle("coucou")*/;
+
+        $this->roles = array_merge(
+            [$roleAuthentifie],
             $this->getRolesFromActeur(),
             $this->getRolesFromIndividuRole(),
-            $this->getRolesFromDoctorant());
+            $this->getRolesFromDoctorant()
+        );
 
 // Lignes mises en commentaire car revient à considérer le rôle "BdD UCN" identique au rôle "BdD URN" !
 // La question est: pourquoi avoir fait ça ?
@@ -112,28 +115,17 @@ class IdentityProvider implements ProviderInterface, ChainableProvider, ServiceL
      *
      * @return Role[]
      */
-    private function getRolesFromActeur()
+    private function getRolesFromActeur(): array
     {
-        // peut-être disposons-nous de l'Individu (cas d'une authentification locale)
-        $individu = $this->userWrapper->getIndividu();
+        $acteurs = $this->acteurService->findAllActeursByUser($this->userWrapper);
 
-        if ($individu !== null) {
-            $sourceCode = $individu->getSourceCode();
-            $acteurs = $this->acteurService->getRepository()->findBySourceCodeIndividu($sourceCode);
-        } else {
-            $id = $this->userWrapper->getSupannId();
-            $pattern = $this->sourceCodeStringHelper->generateSearchPatternForAnyPrefix($id);
-            $acteurs = $this->acteurService->getRepository()->findBySourceCodeIndividuPattern($pattern);
-        }
+        $acteursDirecteurThese = $this->acteurService->filterActeursDirecteurThese($acteurs);
+        $acteursPresidentJury = $this->acteurService->filterActeursPresidentJury($acteurs);
 
-        // pour l'instant on ne considère pas tous les types d'acteur
-        $acteurs = array_filter($acteurs, function(Acteur $a) {
-            return $a->getRole()->getCode() === Role::CODE_DIRECTEUR_THESE;
-        });
-
-        return array_map(function(Acteur $a) {
-            return $a->getRole();
-        }, $acteurs);
+        return array_map(
+            function(Acteur $a) { return $a->getRole(); },
+            array_merge($acteursDirecteurThese, $acteursPresidentJury)
+        );
     }
 
     /**

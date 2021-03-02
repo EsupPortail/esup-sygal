@@ -45,6 +45,36 @@ class EtablissementForm extends Form
             ->setLabel("Code :")
         );
 
+        $this->add((
+        new Text('id_ref'))
+            ->setLabel("IdREF :")
+        );
+
+        $this->add((
+        new Text('adresse'))
+            ->setLabel("Adresse (sur une ligne) :")
+        );
+
+        $this->add((
+        new Text('telephone'))
+            ->setLabel("Téléphone :")
+        );
+
+        $this->add((
+        new Text('fax'))
+            ->setLabel("Fax :")
+        );
+
+        $this->add((
+        new Text('email'))
+            ->setLabel("Adresse électronique :")
+        );
+
+        $this->add((
+        new Text('siteWeb'))
+            ->setLabel("Site internet :")
+        );
+
         $this->add(
             (new Checkbox('estMembre'))
                 ->setLabel("Établissement membre")
@@ -53,6 +83,10 @@ class EtablissementForm extends Form
         $this->add(
             (new Checkbox('estAssocie'))
                 ->setLabel("Établissement associé")
+        );
+        $this->add(
+            (new Checkbox('estInscription'))
+                ->setLabel("Établissement d'inscription")
         );
         $this->add(
             (new Checkbox('estFerme'))
@@ -82,6 +116,10 @@ class EtablissementForm extends Form
         $this->setInputFilter((new Factory())->createInputFilter([
             'sigle' => [
                 'name' => 'Sigle',
+                'required' => false,
+            ],
+            'id_ref' => [
+                'name' => 'id_ref',
                 'required' => false,
             ],
             'code' => [

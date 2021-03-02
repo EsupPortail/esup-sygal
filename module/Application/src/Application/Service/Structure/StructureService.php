@@ -3,6 +3,7 @@
 namespace Application\Service\Structure;
 
 use Application\Command\ConvertCommand;
+use Application\Command\Exception\TimedOutCommandException;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Structure;
@@ -22,9 +23,9 @@ use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\QueryBuilder;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
 use Import\Service\Traits\SynchroServiceAwareTrait;
-use Application\Command\Exception\TimedOutCommandException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 use Webmozart\Assert\Assert;
@@ -618,13 +619,36 @@ class StructureService extends BaseService
     }
 
     /**
-     * Les structures non substituées
+     * Les structures non substituées.
      *
-     * @param string $type
-     * @param string $order
+     * @param string $type Ex: {@see TypeStructure::CODE_ECOLE_DOCTORALE}
+     * @param string|null $order Ex: 'libelle'
+     * @param bool $includeFermees
+     * @param bool $cacheable
      * @return StructureConcreteInterface[]
      */
-    public function getAllStructuresAffichablesByType($type, $order = null)
+    public function getAllStructuresAffichablesByType(string $type, $order = null, $includeFermees = true, $cacheable = false)
+    {
+        $qb = $this->getAllStructuresAffichablesByTypeQb($type, $order, $includeFermees);
+
+        $cacheable = $cacheable && getenv('APPLICATION_ENV') === 'production';
+        $qb->getQuery()->setCacheable($cacheable);
+        if ($cacheable) {
+            $qb->getQuery()->setCacheRegion(__METHOD__ . '_' . $type . '_' . $order);
+        }
+
+        return $qb->getQuery()->useQueryCache($cacheable)->enableResultCache($cacheable)->getResult();
+    }
+
+    /**
+     * Query builder pour Les structures non substituées.
+     *
+     * @param string $type Ex: {@see TypeStructure::CODE_ECOLE_DOCTORALE}
+     * @param string|null $order Ex: 'libelle'
+     * @param bool $includeFermees
+     * @return QueryBuilder
+     */
+    public function getAllStructuresAffichablesByTypeQb(string $type, $order = null, $includeFermees = true)
     {
         $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
             ->addSelect('structure')
@@ -634,33 +658,19 @@ class StructureService extends BaseService
             ->leftJoin('structure.structureSubstituante', 'substitutionTo')
             ->leftJoin('structure.structuresSubstituees', 'substitutionFrom')
             ->andWhere('substitutionTo.id IS NULL OR pasHistorise(substitutionTo) != 1');
-        if ($order) $qb->orderBy(' structure.' . $order);
+        if ($order) {
+            $qb->orderBy(' structure.' . $order);
+        }
         else {
-            if ($type === TypeStructure::CODE_ECOLE_DOCTORALE || $type === TypeStructure::CODE_UNITE_RECHERCHE) $qb->orderBy('structure.ferme, structureConcrete.sourceCode');
+            if ($type === TypeStructure::CODE_ECOLE_DOCTORALE || $type === TypeStructure::CODE_UNITE_RECHERCHE) {
+                $qb->orderBy('structure.ferme, structureConcrete.sourceCode');
+            }
+        }
+        if (! $includeFermees) {
+            $qb->andWhere('structure.ferme = 0');
         }
 
-        $result = $qb->getQuery()->getResult();
-
-        return $result;
-    }
-
-    /** Les structures non substituées
-     * @param string $type
-     * @return StructureConcreteInterface[]
-     */
-    public function getStructuresSubstitueesUtilisablesByType($type) {
-        $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
-            ->addSelect('structure')
-            ->addSelect('substitutionTo')
-            ->addSelect('substitutionFrom')
-            ->join('structureConcrete.structure', 'structure')
-            ->leftJoin('structure.structuresSubstituees', 'substitutionFrom')
-            ->leftJoin('structure.structureSubstituante', 'substitutionTo')
-            ->andWhere('substitutionFrom.id IS NULL')
-        ;
-
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb;
     }
 
     /**

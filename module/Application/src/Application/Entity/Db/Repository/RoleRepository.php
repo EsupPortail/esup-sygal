@@ -12,16 +12,16 @@ use UnicaenApp\Exception\RuntimeException;
 class RoleRepository extends DefaultEntityRepository
 {
 
-    /**
-     * @param int $id
-     * @return Role
-     */
-    public function find($id) {
-
-        /** @var Role $role */
-        $role = $this->findOneBy(["id" => $id]);
-        return $role;
-    }
+//    /**
+//     * @param int $id
+//     * @return Role
+//     */
+//    public function find($id) {
+//
+//        /** @var Role $role */
+//        $role = $this->findOneBy(["id" => $id]);
+//        return $role;
+//    }
 
     /**
      * @param string $roleCode
@@ -32,6 +32,22 @@ class RoleRepository extends DefaultEntityRepository
         /** @var Role $role */
         $role = $this->findOneBy(["code" => $roleCode]);
         return $role;
+    }
+
+    /**
+     * @param string[] $rolesCodes
+     * @return Role[]
+     */
+    public function findByCodes(array $rolesCodes)
+    {
+        /** @var Role $role */
+        $qb = $this->createQueryBuilder('r');
+        $qb
+            ->andWhere($qb->expr()->in('r.code', $rolesCodes))
+            ->leftJoin('r.structure', 's')
+            ->orderBy('r.libelle, s.libelle');
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -62,6 +78,10 @@ class RoleRepository extends DefaultEntityRepository
         return $role;
     }
 
+    /**
+     * @param $individu
+     * @return Role[]
+     */
     public function findAllByIndividu($individu)
     {
         $qb = $this->getEntityManager()->getRepository(IndividuRole::class)->createQueryBuilder("ir")
@@ -92,5 +112,27 @@ class RoleRepository extends DefaultEntityRepository
         ;
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param string $code
+     * @param Etablissement $etablissement
+     * @return Role
+     */
+    public function findByCodeAndEtablissement(string $code, Etablissement $etablissement)
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->andWhere('r.structure = :structure')
+            ->setParameter('structure', $etablissement->getStructure())
+            ->andWhere('r.code = :code')
+            ->setParameter('code', $code)
+            ->andWhere('1 = pasHistorise(r)')
+        ;
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException('Plusieurs Role partagent le même code ['.$code.'] et le même établissement ['.$etablissement->getCode().']');
+        }
+        return $result;
     }
 }

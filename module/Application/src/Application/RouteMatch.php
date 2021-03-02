@@ -6,6 +6,7 @@ use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
+use Application\Entity\Db\RapportAnnuel;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Structure;
@@ -14,7 +15,7 @@ use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
 use Doctrine\ORM\EntityRepository;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Mvc\Router\RouteMatch as BaseRouteMatch;
+use Zend\Router\RouteMatch as BaseRouteMatch;
 
 /**
  * Ce RouteMatch fournit des accesseurs métiers traduisant en entités ses paramètres éventuels
@@ -249,5 +250,20 @@ class RouteMatch extends BaseRouteMatch
         }
 
         return $this->structure;
+    }
+
+    /** @var RapportAnnuel */
+    private $rapportAnnuel;
+
+    /**
+     * @return RapportAnnuel
+     */
+    public function getRapportAnnuel()
+    {
+        if (null === $this->rapportAnnuel) {
+            $this->rapportAnnuel = $this->fetchEntityParam('rapportAnnuel');
+        }
+
+        return $this->rapportAnnuel;
     }
 }

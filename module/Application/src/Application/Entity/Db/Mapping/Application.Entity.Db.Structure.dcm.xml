@@ -13,6 +13,13 @@
         <field name="ferme"      type="integer" column="EST_FERME"   nullable="false"/>
         <field name="cheminLogo" type="string" column="CHEMIN_LOGO" length="200" nullable="true"/>
 
+        <field name="adresse"    type="string" column="ADRESSE"     length="1024" nullable="true"/>
+        <field name="telephone"  type="string" column="TELEPHONE"   length="256"  nullable="true"/>
+        <field name="fax"        type="string" column="FAX"         length="256"  nullable="true"/>
+        <field name="email"      type="string" column="EMAIL"       length="256"  nullable="true"/>
+        <field name="siteWeb"    type="string" column="SITE_WEB"    length="256"  nullable="true"/>
+        <field name="idRef"      type="string" column="ID_REF"      length="1024" nullable="true"/>
+
         <many-to-one field="typeStructure" target-entity="Application\Entity\Db\TypeStructure">
             <join-columns>
                 <join-column name="TYPE_STRUCTURE_ID" referenced-column-name="ID"/>

@@ -2,18 +2,18 @@
 
 namespace Application\Service\FichierThese;
 
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 trait FichierTheseServiceLocateTrait
 {
     /**
-     * @param ServiceLocatorInterface $sl
+     * @param ContainerInterface $container
      * @return FichierTheseService
      */
-    public function locateFichierTheseService(ServiceLocatorInterface $sl)
+    public function locateFichierTheseService(ContainerInterface $container)
     {
         /** @var FichierTheseService $service */
-        $service = $sl->get('FichierTheseService');
+        $service = $container->get('FichierTheseService');
 
         return $service;
     }

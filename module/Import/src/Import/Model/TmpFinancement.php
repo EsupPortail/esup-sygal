@@ -18,6 +18,8 @@ class TmpFinancement
     protected $quotiteFinancement;
     protected $dateDebutFinancement;
     protected $dateFinFinancement;
+    protected $codeTypeFinancement;
+    protected $libelleTypeFinancement;
 
     /**
      * @var \DateTime

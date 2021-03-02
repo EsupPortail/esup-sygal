@@ -3,10 +3,9 @@
 namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\CreationUtilisateurInfos;
-use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
 class CreationUtilisateurHydrator implements HydratorInterface, EntityManagerAwareInterface
 {
@@ -16,7 +15,6 @@ class CreationUtilisateurHydrator implements HydratorInterface, EntityManagerAwa
      * @param array $data
      * @param CreationUtilisateurInfos $infos
      * @return CreationUtilisateurInfos
-     * @throws OptimisticLockException
      */
     public function hydrate(array $data, $infos) {
 

@@ -1,13 +1,17 @@
 <?php
 
+use Zend\Session\Storage\SessionArrayStorage;
+use Zend\Session\Validator\HttpUserAgent;
+use Zend\Session\Validator\RemoteAddr;
+
 return [
     'unicaen-app' => [
         // Informations concernant l'application.
         'app_infos' => [
             'nom'     => "SyGAL",
             'desc'    => "SYstème de Gestion et d'Accompagnement doctoraL",
-            //'version' => cf. 'version.global.php'
-            //'date'    => cf. 'version.global.php'
+            'version' => '?', // surchargée dans un autre fichier de config (ex: 'config/autoload/auto.version.local.php')
+            'date'    => '?', // idem
             'contact' => [
                 'mail' => "assistance-sygal@unicaen.fr",
                 //'tel' => "01 02 03 04 05",
@@ -48,5 +52,54 @@ return [
                 'FILTER_STRUCTURE_CODE_ENTITE_PARENT'   => '(supannCodeEntiteParent=%s)',
             ],
         ],
-    ]
+    ],
+
+    'navigation'   => [
+        // The DefaultNavigationFactory we configured uses 'default' as the sitemap key
+        'default' => [
+            // And finally, here is where we define our page hierarchy
+            'home' => [
+                'pages' => [
+                    'contact'                  => [
+                        'label'    => _("Assistance"),
+                        'title'    => _("Assistance concernant l'application"),
+                        'route'    => 'contact',
+                        'class'    => 'contact',
+                        'visible'  => false,
+                        'footer'   => true, // propriété maison pour inclure cette page dans le menu de pied de page
+                        'sitemap'  => true, // propriété maison pour inclure cette page dans le plan
+                        'resource' => 'controller/UnicaenApp\Controller\Application:contact',
+                        'order'    => 1002,
+                    ],
+                ],
+            ],
+        ],
+    ],
+
+    //
+    // Session configuration.
+    //
+    'session_config' => [
+        // Durée de vie du cookie de session : 24h.
+        'cookie_lifetime' => 60*60*24,
+        // Session data will be stored on server maximum for 30 days.
+        'gc_maxlifetime'     => 60*60*24*30,
+    ],
+    //
+    // Session manager configuration.
+    //
+    'session_manager' => [
+        // Session validators (used for security).
+        'validators' => [
+            RemoteAddr::class,
+            HttpUserAgent::class,
+        ]
+    ],
+    //
+    // Session storage configuration.
+    //
+    'session_storage' => [
+        'type' => SessionArrayStorage::class
+    ],
+
 ];

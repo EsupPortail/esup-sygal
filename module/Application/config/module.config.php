@@ -1,14 +1,18 @@
 <?php
 
+namespace Application;
+
 use Application\Assertion\AssertionAbstractFactory;
 use Application\Cache\MemcachedFactory;
 use Application\Controller\Factory\IndexControllerFactory;
+use Application\Controller\Plugin\Uploader\UploaderPluginFactory;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Event\UserAuthenticatedEventListenerFactory;
 use Application\Event\UserRoleSelectedEventListener;
 use Application\Form\Factory\EcoleDoctoraleFormFactory;
 use Application\Navigation\NavigationFactoryFactory;
-use Application\RouteMatchInjector;
+use Application\Search\Filter\Provider\SearchFilterProviderService;
+use Application\Search\Filter\Provider\SearchFilterProviderServiceFactory;
 use Application\Service\AuthorizeServiceAwareInitializer;
 use Application\Service\Role\RoleService;
 use Application\Service\Role\RoleServiceFactory;
@@ -16,13 +20,18 @@ use Application\Service\ServiceAwareInitializer;
 use Application\Service\Url\UrlServiceFactory;
 use Application\Service\UserContextServiceAwareInitializer;
 use Application\Service\UserContextServiceFactory;
-use Application\SourceCodeStringHelper;
-use Application\SourceCodeStringHelperFactory;
 use Application\View\Helper\EscapeTextHelper;
+use Application\View\Helper\FiltersPanel\FiltersPanelHelper;
+use Application\View\Helper\Sortable;
+use Application\View\Helper\SortableHelperFactory;
+use Application\View\Helper\Uploader\UploaderHelper;
+use Application\View\Helper\Uploader\UploaderHelperFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use UnicaenApp\Controller\ConsoleController;
 use UnicaenApp\Service\EntityManagerAwareInitializer;
+use Zend\Navigation\Navigation;
 
 return array(
     'bjyauthorize' => [
@@ -31,6 +40,20 @@ return array(
                 // la page Contact requiert une authentification car l'adresse d'assistance dépend de l'utilisateur
                 ['controller' => 'UnicaenApp\Controller\Application', 'action' => 'contact', 'roles' => ['user']],
                 ['controller' => 'Application\Controller\Index', 'action' => 'contact', 'roles' => ['user']],
+                ['controller' => ConsoleController::class, 'action' => 'runSQLScript', 'roles' => []],
+                ['controller' => ConsoleController::class, 'action' => 'runSQLQuery', 'roles' => []],
+            ],
+            \UnicaenAuth\Guard\PrivilegeController::class => [
+                [
+                    'controller' => \UnicaenOracle\Controller\IndexController::class,
+                    'action'     => [
+                        'generateScriptForSchemaClearingConsole',
+                        'generateScriptForSchemaCreationConsole',
+                        'generateScriptForRefConstraintsCreationConsole',
+                        'generateScriptsForDataInsertsConsole',
+                    ],
+                    'roles' => [], // pas d'authentification requise
+                ],
             ],
         ],
     ],
@@ -96,7 +119,7 @@ return array(
                 ],
             ],
             'contact'          => [
-//                'type'     => 'Zend\Mvc\Router\Http\Literal',
+//                'type'     => 'Zend\Router\Http\Literal',
                 'options'  => [
 //                    'route'    => '/contact',
                     'defaults' => [
@@ -191,12 +214,13 @@ return array(
             'UserRoleSelectedEventListener' => UserRoleSelectedEventListener::class,
         ),
         'factories' => array(
-            'navigation'                     => NavigationFactoryFactory::class,
+            Navigation::class => NavigationFactoryFactory::class,
             'UnicaenAuth\Service\UserContext' => UserContextServiceFactory::class,
             'UserAuthenticatedEventListener' => UserAuthenticatedEventListenerFactory::class,
             'Sygal\Memcached'                => MemcachedFactory::class,
             'RoleService' => RoleServiceFactory::class,
             SourceCodeStringHelper::class => SourceCodeStringHelperFactory::class,
+            SearchFilterProviderService::class => SearchFilterProviderServiceFactory::class,
         ),
         'abstract_factories' => [
             AssertionAbstractFactory::class,
@@ -227,10 +251,13 @@ return array(
     ],
     'controller_plugins' => [
         'invokables' => [
-            'uploader'              => 'Application\Controller\Plugin\Uploader\UploaderPlugin',
         ],
         'factories' => [
             'forward'  => 'Application\Controller\Plugin\ForwardFactory',
+            'uploader' => UploaderPluginFactory::class,
+        ],
+        'aliases' => [
+            'Uploader' => 'uploader',
         ],
         'initializers' => [
             EntityManagerAwareInitializer::class,
@@ -246,18 +273,23 @@ return array(
     ),
     'view_helpers' => array(
         'invokables' => array(
-            'sortable'    => 'Application\View\Helper\Sortable',
-            'Uploader'    => 'Application\View\Helper\Uploader\UploaderHelper',
             'filterPanel' => 'Application\View\Helper\FilterPanel\FilterPanelHelper',
-            'selectsFilterPanel' => \Application\View\Helper\SelectsFilterPanel\SelectsFilterPanelHelper::class,
+            'selectsFilterPanel' => FiltersPanelHelper::class,
+            'filtersPanel' => FiltersPanelHelper::class,
             'escapeText'  => EscapeTextHelper::class,
         ),
         'factories' => array(
             'languageSelector'          => 'Application\View\Helper\LanguageSelectorHelperFactory',
+            Sortable::class => SortableHelperFactory::class,
+            UploaderHelper::class => UploaderHelperFactory::class,
         ),
+        'aliases' => [
+            'sortable' => Sortable::class,
+            'uploader' => UploaderHelper::class,
+        ],
         'initializers' => [
             ServiceAwareInitializer::class,
-        ]
+        ],
     ),
     'form_elements'   => [
         'invokables'   => [
@@ -277,10 +309,16 @@ return array(
             '062_uploader' => "/js/jquery.fileupload.js",
             '063_uploader' => "/js/unicaen.uploader.widget.js",
         ],
+        'inline_scripts' => [
+            '070_bootstrap-select' => '/vendor/bootstrap-select-1.13.18/js/bootstrap-select.min.js',
+            '070_bootstrap-select-fr' => '/vendor/bootstrap-select-1.13.18/js/i18n/defaults-fr_FR.js',
+            '081_bootstrap-confirmation' => '/vendor/bootstrap-confirmation.min.js',
+        ],
         'stylesheets'           => [
             '050_bootstrap-theme' => false,
             '100_charte' => '/css/charte.css',
             '200_fa' => '/fontawesome-free-5.12.0-web/css/all.min.css',
+            '300_bs' => '/vendor/bootstrap-select-1.13.18/css/bootstrap-select.min.css',
         ],
         'printable_stylesheets' => [
         ],

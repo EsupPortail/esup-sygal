@@ -5,6 +5,7 @@ namespace Application;
 use UnicaenApp\Exception\LogicException;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
+use Zend\EventManager\ListenerAggregateTrait;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Http\Request as HttpRequest;
 use Zend\Http\Response as HttpResponse;
@@ -16,6 +17,8 @@ use Zend\Mvc\MvcEvent;
  */
 class RouteDeflector implements ListenerAggregateInterface
 {
+    use ListenerAggregateTrait;
+
     /**
      * @var string
      */
@@ -151,41 +154,11 @@ class RouteDeflector implements ListenerAggregateInterface
         return $this->event->getRouter()->assemble($this->redirect['params'], $options);
     }
 
-
-
     /**
-     * @var \Zend\Stdlib\CallbackHandler[]
+     * @inheritDoc
      */
-    private $listeners = [];
-
-    /**
-     * Attach one or more listeners
-     *
-     * Implementors may add an optional $priority argument; the EventManager
-     * implementation will pass this to the aggregate.
-     *
-     * @param EventManagerInterface $events
-     *
-     * @return void
-     */
-    public function attach(EventManagerInterface $events)
+    public function attach(EventManagerInterface $events, $priority = 1)
     {
         $events->attach(MvcEvent::EVENT_ROUTE, [$this, 'intercept'], -100);
-    }
-
-    /**
-     * Detach all previously attached listeners
-     *
-     * @param EventManagerInterface $events
-     *
-     * @return void
-     */
-    public function detach(EventManagerInterface $events)
-    {
-        foreach ($this->listeners as $index => $listener) {
-            if ($events->detach($listener)) {
-                unset($this->listeners[$index]);
-            }
-        }
     }
 }

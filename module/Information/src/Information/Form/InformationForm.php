@@ -5,6 +5,7 @@ namespace Information\Form;
 use Zend\Filter\StripTags;
 use Zend\Form\Element\Button;
 use Zend\Form\Element\Radio;
+use Zend\Form\Element\Select;
 use Zend\Form\Element\Text;
 use Zend\Form\Form;
 use Zend\InputFilter\InputFilterProviderInterface;
@@ -35,6 +36,17 @@ class InformationForm extends Form implements InputFilterProviderInterface {
                 ],
                 'attributes' => [
                     'class' => 'radio-inline',
+                ],
+            ],
+        ]);
+        $this->add([
+            'type' => Select::class,
+            'name' => 'langue',
+            'options' => [
+                'label' => 'Langue de la page :',
+                'value_options' => [
+                    'FR' => 'Français',
+                    'EN' => 'English',
                 ],
             ],
         ]);
@@ -91,6 +103,7 @@ class InformationForm extends Form implements InputFilterProviderInterface {
     public function getInputFilterSpecification()
     {
         return [
+            'langue' => ['required' => true],
             'titre' => [
                 'required' => true,
                 'filters' => [

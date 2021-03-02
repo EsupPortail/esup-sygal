@@ -1,0 +1,237 @@
+<?php
+
+/**
+ * @see \Soutenance\Controller\IndexController::indexRapporteurAction()
+ *
+ * @var Proposition $proposition
+ * @var These[] $theses
+ * @var Membre $membre
+ * @var boolean $depot
+ * @var These $these
+ * @var Validation $engagement
+ * @var Avis $avis
+ * @var string $telecharger
+
+ */
+
+use Application\Constants;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\These;
+use Application\Entity\Db\Validation;
+use Soutenance\Entity\Avis;
+use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
+
+$canEngagement = true;
+$canTelecharger = true;
+$canAvis = true;
+?>
+
+<?php /** Plusieurs thèses ont été trouvées, le rapporteurs doit alors sélectionner celle sur laquelle il veut travailler */ ?>
+<?php if (isset($theses)) : ?>
+    <h1 class="page-header">
+        Index des soutenances / Index of the PhD defense
+    </h1>
+
+    <p class="lead">
+        Vous êtes actuellement rapporteur de plusieurs thèses en cours.
+        Veuillez sélectionner la thèse sur laquelle vous souhaitez intervenir.
+    </p>
+
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th class="these-titre">    Titre </th>
+                <th class="">               Doctorant </th>
+                <th class="">               Encadrement </th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($theses as $these) : ?>
+                <tr>
+                    <td>
+                        <a  <?php /** @see \Soutenance\Controller\IndexController::indexRapporteurAction()*/ ?>
+                            href="<?php echo $this->url('soutenance/index-rapporteur', ['these' => $these->getId()], [], true); ?>">
+                            <?php echo $these->getTitre(); ?>
+                        </a>
+                    </td>
+                    <td> <?php echo $these->getDoctorant()->getIndividu(); ?> </td>
+                    <td>
+                        <?php foreach ($these->getEncadrements() as $encadrement) : ?>
+                            <?php if ($encadrement->getRole()->getCode() !== Role::CODE_DIRECTEUR_THESE) echo "<i>"; ?>
+                            <?php echo $encadrement->getIndividu() ; ?>
+                            <?php if ($encadrement->getRole()->getCode() !== Role::CODE_DIRECTEUR_THESE) echo "</i>"; ?>
+                            <br/>
+                        <?php endforeach; ?>
+                    </td>
+
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+
+<?php else : ?>
+
+
+<h1 class="page-header">
+    Index de la soutenance / Index of the PhD defense
+    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+</h1>
+
+<div class="box panel panel-info">
+    <div class="panel-heading">
+        <h2> Proposition de jury / Jury Proposal </h2>
+    </div>
+    <div class="panel-body">
+        <?php if ($proposition !== null) : ?>
+            <h3> Date et lieu </h3>
+            La soutenance est prévue pour le <strong><?php echo $proposition->getDate()->format(Constants::DATETIME_FORMAT); ?></strong>
+            dans <strong><?php echo $proposition->getLieu(); ?></strong>.
+
+            <h3> Jury </h3>
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th> Dénomination </th>
+                        <th> Qualité </th>
+                        <th> Établissement </th>
+                        <th> Rôle </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php /** @var Membre $jury  */ ?>
+                    <?php foreach ($proposition->getMembres() as $jury) : ?>
+                        <tr>
+                            <td> <?php echo $jury->getDenomination(); ?> </td>
+                            <td> <?php echo ($jury->getQualite())?$jury->getQualite()->getLibelle():"Non définie"; ?> </td>
+                            <td> <?php echo $jury->getEtablissement(); ?> </td>
+                            <td> <?php echo $jury->getRole(); ?> </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else : ?>
+            Aucune proposition de soutenance de trouvée.
+        <?php endif; ?>
+    </div>
+</div>
+
+<div class="box panel panel-info">
+    <div class="panel-heading">
+        <h2> Engagement d'impartialité / Impartiality Commitement </h2>
+    </div>
+    <div class="panel-body">
+        <?php if ($engagement !== null) : ?>
+            Vous avez signez l'engagement pour la thèse de <?php echo $these->getDoctorant(); ?>.
+            <div class="panel panel-default pull-right">
+                <div class="panel-heading">
+                    Signature de l'engagment d'impartialité
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li><?php echo $engagement->getIndividu(); ?></li>
+                        <li><?php echo $engagement->getHistoCreation()->format(Constants::DATETIME_FORMAT); ?></li>
+                    </ul>
+                </div>
+            </div>
+        <?php else : ?>
+            Pour être enregistré comme rapporteur de thèse, vous devez signer l'engagement d'impartialité. <br/>
+            To be registered as external referee you must sign the impartiality commitment
+
+            <a
+                    <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::engagementImpartialiteAction() */?>
+                    href="<?php echo $this->url('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
+               class="btn btn-primary pull-right"
+            >
+                <span class="glyphicon glyphicon-pencil"></span>
+<!--                Signer / Sign-->
+                Accès à l'engagement d'impartialité / Access to the impartiality commitment
+            </a>
+        <?php endif; ?>
+    </div>
+</div>
+
+<div class="box panel <?php echo ($depot !== null)?"panel-info":"panel-warning"; ?>">
+    <div class="panel-heading">
+        <h2> Téléchargement de la thèse / Downloading the manuscrit </h2>
+    </div>
+    <div class="panel-body">
+        <?php if ($engagement === null) : ?>
+            <span class="glyphicon glyphicon-warning-sign"></span> Vous ne pourrez télécharger la version électronique de la thèse qu'après avoir signé l'engagement d'impartialité.
+        <?php else : ?>
+            <?php if ($depot !== null) : ?>
+                Vous pouvez télécharger la version électronique de la thèse via <?php echo $this->appInfos()->nom; ?>.
+
+                <a
+                    <?php /** @see \Application\Controller\TheseController::fusionAction() */ ?>
+                    href="<?php echo $this->url("these/fusion", ["these" => $these->getId()], [], true); ?>"
+                   class="btn btn-primary pull-right"
+                >
+                    <span class="glyphicon glyphicon-download"></span>
+                    Télécharger la thèse / Downloading manuscrit
+                </a>
+            <?php else : ?>
+                <span class="glyphicon glyphicon-warning-sign"></span>
+                La thèse de <?php echo $these->getDoctorant()->getIndividu(); ?> n'a pas encore été déposée dans <?php echo $this->appInfos()->nom; ?>.
+                Une fois le dépôt réalisé vous pourrez télécharger celle-ci via cette page.
+            <?php endif; ?>
+        <?php endif; ?>
+    </div>
+</div>
+
+<div class="box panel <?php echo ($engagement !== null)?"panel-info":"panel-warning"; ?>">
+    <div class="panel-heading">
+        <h2> Avis de soutenance / Notification on the PhD defense </h2>
+    </div>
+    <div class="panel-body">
+    <?php if ($engagement !== null) : ?>
+            <?php if ($avis !== null) : ?>
+                Vous avez rendu votre avis de soutenance pour la thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>.
+
+                <div class="col-md-5 pull-right">
+                    <div class="panel <?php echo ($avis->getAvis() === 'Favorable')?"panel-success":"panel-danger"; ?> ">
+                        <div class="panel-heading">
+                            Avis de soutenance : <strong><?php echo $avis->getAvis(); ?></strong>
+                        </div>
+                        <div class="panel-body">
+                            <ul>
+                                <li>Rendu le <?php echo $avis->getValidation()->getHistoModification()->format(Constants::DATETIME_FORMAT); ?> par <?php echo $avis->getValidation()->getIndividu(); ?></li>
+                            </ul>
+
+                            <dl>
+                                <?php if ($avis->getAvis() !== 'Favorable') : ?>
+                                    <dt> Motif de refus </dt>
+                                    <dd> <?php echo $avis->getMotif(); ?> </dd>
+                                <?php endif; ?>
+                            </dl>
+
+<!--                            <a href=" --><?php //echo $this->urlFichierThese->telechargerFichierThese($these, $avis->getFichier()); ?><!--" >-->
+                            <a
+                                <?php /** @see TELECHARGEMENT FICHIER */ ?>
+                                href=" <?php echo $telecharger; ?>" >
+                                Prérapport de soutenance
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            <?php else : ?>
+                Afin de valider la soutenance de thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>, vous devez rendre votre
+                avis de soutenance et votre prérapport de soutenance.
+
+                <a
+                    <?php /** @see \Soutenance\Controller\AvisController::indexAction() */ ?>
+                    href="<?php echo $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true); ?>"
+                   class="btn btn-primary pull-right"
+                >
+                    <span class="glyphicon glyphicon-pencil"></span>
+                    Rendre l'avis de soutenance / Give our report
+                </a>
+
+            <?php endif; ?>
+        <?php else : ?>
+        <span class="glyphicon glyphicon-warning-sign"></span> Pour pouvoir rendre votre avis de soutenance vous devez avoir signez l'engagement d'impartialité.
+        <?php endif; ?>
+    </div>
+</div>
+
+<?php endif; ?>

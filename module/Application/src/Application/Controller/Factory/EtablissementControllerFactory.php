@@ -9,22 +9,20 @@ use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
 use Application\SourceCodeStringHelper;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class EtablissementControllerFactory
 {
     /**
      * Create service
      *
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return EtablissementController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $controllerManager->getServiceLocator();
-
         /** @var EtablissementForm $form */
-        $form = $sl->get('FormElementManager')->get('EtablissementForm');
+        $form = $container->get('FormElementManager')->get('EtablissementForm');
 
         /**
          * @var EtablissementService $etablissmentService
@@ -32,9 +30,9 @@ class EtablissementControllerFactory
          * @var RoleService $roleService
          * @var StructureService $structureService
          */
-        $etablissmentService = $sl->get('EtablissementService');
-        $roleService = $sl->get('RoleService');
-        $structureService = $sl->get(StructureService::class);
+        $etablissmentService = $container->get('EtablissementService');
+        $roleService = $container->get('RoleService');
+        $structureService = $container->get(StructureService::class);
 
         $controller = new EtablissementController();
         $controller->setEtablissementService($etablissmentService);
@@ -45,7 +43,7 @@ class EtablissementControllerFactory
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
          */
-        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
         $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;

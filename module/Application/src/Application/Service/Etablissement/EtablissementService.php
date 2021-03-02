@@ -4,6 +4,7 @@ namespace Application\Service\Etablissement;
 
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Repository\EtablissementRepository;
+use Application\Entity\Db\Structure;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
@@ -131,6 +132,35 @@ class EtablissementService extends BaseService
         $this->flush($etablissement);
 
         return $etablissement;
+    }
+
+    /**
+     * Instancie un pseudo-établissement "Tout établissement confondu" utile dans les vues.
+     *
+     * @return Etablissement
+     */
+    public function createToutEtablissementConfondu()
+    {
+        $structure = new Structure();
+        $structure
+            ->setCode(ETABLISSEMENT::CODE_TOUT_ETABLISSEMENT_CONFONDU)
+            ->setLibelle("Tout établissement confondu");
+        $etablissement = new Etablissement();
+        $etablissement->setStructure($structure);
+
+        return $etablissement;
+    }
+
+    public function getEtablissementAsOptions()
+    {
+        $qb = $this->getEntityManager()->getRepository(Etablissement::class)->createQueryBuilder('etablissement')
+            ->addSelect('structure')->join('etablissement.structure', 'structure')
+            ->orderBy('structure.libelle', 'ASC');
+        $etablissements = $qb->getQuery()->getResult();
+        $result = [];
+        /** @var Etablissement $etablissement */
+        foreach ($etablissements as $etablissement) $result[$etablissement->getId()] = $etablissement->getLibelle();
+        return $result;
     }
 
     private function persist(Etablissement $etablissement)

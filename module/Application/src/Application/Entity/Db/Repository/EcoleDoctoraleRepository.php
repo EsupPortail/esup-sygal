@@ -3,15 +3,17 @@
 namespace Application\Entity\Db\Repository;
 
 use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\Etablissement;
 use Doctrine\ORM\NonUniqueResultException;
 use UnicaenApp\Exception\RuntimeException;
 
 class EcoleDoctoraleRepository extends DefaultEntityRepository
 {
     /**
+     * @param bool $ouverte
      * @return EcoleDoctorale[]
      */
-    public function findAll()
+    public function findAll(bool $ouverte = false)
     {
         $qb = $this->createQueryBuilder("ed");
         $qb
@@ -21,6 +23,13 @@ class EcoleDoctoraleRepository extends DefaultEntityRepository
             ->addSelect("str, sub, typ")
             ->orderBy("str.libelle");
 
+        if ($ouverte) {
+            $qb = $qb->andWhere('str.ferme = 0')
+                ->leftJoin('str.structureSubstituante', 'substitutionTo')
+                ->andWhere('substitutionTo IS NULL')
+                ->orderBy('str.sigle')
+            ;
+        }
         $ecoles = $qb->getQuery()->getResult();
 
         return $ecoles;
@@ -41,5 +50,26 @@ class EcoleDoctoraleRepository extends DefaultEntityRepository
         }
 
         return $ecole;
+    }
+
+    /**
+     * @param string $code Code national unique de l'ED, ex: '591'
+     * @return EcoleDoctorale|null
+     */
+    public function findOneByCodeStructure($code)
+    {
+        $qb = $this->getEntityManager()->getRepository(EcoleDoctorale::class)->createQueryBuilder("e")
+            ->join("e.structure","structure")
+            ->andWhere("structure.code = :code")
+            ->setParameter("code", $code);
+
+        /** @var EcoleDoctorale $entity */
+        try {
+            $entity = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie: plusieures ED ont le même code structure.");
+        }
+
+        return $entity;
     }
 }

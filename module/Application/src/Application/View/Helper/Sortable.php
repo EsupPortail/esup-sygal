@@ -3,8 +3,6 @@
 namespace Application\View\Helper;
 
 use Zend\Http\Request;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
 use Zend\Uri\Http;
 use Zend\View\Helper\AbstractHelper;
 
@@ -14,10 +12,8 @@ use Zend\View\Helper\AbstractHelper;
  *
  * @see $this->url();
  */
-class Sortable extends AbstractHelper implements ServiceLocatorAwareInterface
+class Sortable extends AbstractHelper
 {
-    use ServiceLocatorAwareTrait;
-
     const ASC  = 'asc';
     const DESC = 'desc';
 
@@ -42,21 +38,29 @@ class Sortable extends AbstractHelper implements ServiceLocatorAwareInterface
     private $params;
 
     /**
+     * @var Request
+     */
+    private $request;
+
+    /**
+     * @param Request $request
+     * @return Sortable
+     */
+    public function setRequest(Request $request)
+    {
+        $this->request = $request;
+        return $this;
+    }
+
+    /**
      * Méthode d'invocation directe de l'aide de vue.
      *
      * @param string $sort Nom du critère de tri. Ex: "libelle", "nomUsuel".
      * @return self
      */
-    public function __invoke($sort)
+    public function __invoke(string $sort)
     {
-        /** @var \Zend\View\HelperPluginManager $pluginManager */
-        $pluginManager = $this->getServiceLocator();
-        $serviceManager = $pluginManager->getServiceLocator();
-
-        /** @var Request $request */
-        $request = $serviceManager->get('request');
-
-        $this->targetUrl = clone $request->getUri();
+        $this->targetUrl = clone $this->request->getUri();
 
         $params = $this->targetUrl->getQueryAsArray();
 
@@ -66,16 +70,19 @@ class Sortable extends AbstractHelper implements ServiceLocatorAwareInterface
         $params['sort'] = trim($sort);
 
         if ($sort !== $currentSort) {
-            $direction = self::ASC;
+            $direction = self::ASC; // direction par défaut
         }
         else {
             $currentDirection = isset($params['direction']) ? $params['direction'] : '';
             switch (mb_strtolower($currentDirection)) {
                 case '':
-                    $direction = self::ASC;
+                    $direction = self::ASC; // direction par défaut
                     break;
                 case self::ASC:
-                    $direction = self::DESC;
+                    $direction = self::DESC; // direction contraire
+                    break;
+                case self::DESC:
+                    $direction = self::ASC; // direction contraire
                     break;
                 default:
                     $direction = null;
@@ -114,12 +121,12 @@ class Sortable extends AbstractHelper implements ServiceLocatorAwareInterface
      *
      * Exemples avec $sort = 'libelle' :
      *
-     *      URL de la requête courante                  ==> URL générée
-     *      -----------------------------------------------------------------------------------------------------------
-     *      /these                                      ==> /these?sort=libelle&direction=asc
-     *      /these?sort=autre&direction={asc|desc}      ==> /these?sort=libelle&direction=asc
-     *      /these?sort=libelle&direction=asc           ==> /these?sort=libelle&direction=desc
-     *      /these?sort=libelle&direction=desc          ==> /these
+     *      URL de la requête courante             ==> URL générée                        | NB
+     *      ------------------------------------------------------------------------------|----------------------------
+     *      /these                                 ==> /these?sort=libelle&direction=asc  | Direction par défaut.
+     *      /these?sort=autre&direction={asc|desc} ==> /these?sort=libelle&direction=asc  | Direction par défaut.
+     *      /these?sort=libelle&direction=asc      ==> /these?sort=libelle&direction=desc | Direction contraire.
+     *      /these?sort=libelle&direction=desc     ==> /these                             | Pas de tri.
      *
      * @return string
      */

@@ -51,6 +51,16 @@ class ValiditeFichier implements HistoriqueAwareInterface
     }
 
     /**
+     * Get histoModification
+     *
+     * @return \DateTime
+     */
+    public function getHistoModification()
+    {
+        return $this->histoModification ?: $this->getHistoCreation();
+    }
+
+    /**
      * Set estValide
      *
      * @param bool|null $estValide

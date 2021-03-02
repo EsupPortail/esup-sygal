@@ -1,0 +1,156 @@
+<?php
+
+/**
+ * @see \Soutenance\Controller\IndexController::indexStructureAction()
+ * @var Proposition[] $propositions
+ * @var Role $role
+ * @var Etablissement[] $etablissements
+ * @var EcoleDoctorale[] $ecoles
+ * @var UniteRecherche[] $unites
+ * @var integer $etablissementId
+ * @var integer $ecoleDoctoraleId
+ * @var integer $uniteRechercheId
+ */
+
+use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\UniteRecherche;
+use Application\Provider\Privilege\ThesePrivileges;
+use Soutenance\Entity\Proposition;
+
+$canVoirThese = $this->isAllowed(ThesePrivileges::getResourceId(ThesePrivileges::THESE_CONSULTATION_FICHE));
+$canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
+?>
+
+<h1 class="page-header">
+    Index des propositions en cours
+    <span class="badge">
+        <?php echo count($propositions); ?>
+    </span>
+</h1>
+
+<?php echo $this->partial('partial/filtre-proposition',
+    ['etablissements' => $etablissements, 'ecoles' => $ecoles, 'unites' => $unites,
+     'etablissementId' => $etablissementId, 'ecoleDoctoraleId' => $ecoleDoctoraleId, 'uniteRechercheId' => $uniteRechercheId ]); ?>
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th class="title-column">
+                These
+            </th>
+            <th>
+                Doctorant
+            </th>
+            <th>
+                Direction
+            </th>
+            <th>
+                Structures
+            </th>
+            <th>
+                État
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($propositions as $proposition) : ?>
+            <tr>
+                <td>
+                    <?php if ($canVoirThese) : ?>
+                        <a  <?php /** @see \Application\Controller\TheseController::detailIdentiteAction() */ ?>
+                            href="<?php echo $this->url('these/identite', ['these' => $proposition->getThese()->getId()], [] ,true); ?>">
+                    <?php endif; ?>
+                        <?php echo $proposition->getThese()->getTitre(); ?>
+                    <?php if ($canVoirThese) : ?>
+                        </a>
+                    <?php endif; ?>
+                </td>
+                <td> <?php echo $proposition->getThese()->getDoctorant()->getIndividu(); ?> </td>
+                <td>
+                    <?php foreach ($proposition->getThese()->getEncadrements() as $encadrement) : ?>
+                        <?php if ($encadrement->getRole()->getCode() !== Role::CODE_DIRECTEUR_THESE) echo "<i>"; ?>
+                        <?php echo $encadrement->getIndividu() ; ?>
+                        <?php if ($encadrement->getRole()->getCode() !== Role::CODE_DIRECTEUR_THESE) echo "</i>"; ?>
+                        <br/>
+                    <?php endforeach; ?>
+                </td>
+                <td>
+                    <span class="structure etablissement"
+                          title="Établissement : <?php echo $proposition->getThese()->getEtablissement()->getLibelle(); ?> (<?php echo $proposition->getThese()->getEtablissement()->getCode(); ?>)"
+                    >
+                        <?php echo $proposition->getThese()->getEtablissement()->getLibelle(); ?>
+                    </span> <br/>
+                    <span class="structure ecole-doctorale"
+                          title="École doctorale : <?php echo $proposition->getThese()->getEcoleDoctorale()->getLibelle(); ?> (<?php echo $proposition->getThese()->getEcoleDoctorale()->getSigle(); ?>)"
+                    >
+                        <?php echo $proposition->getThese()->getEcoleDoctorale()->getLibelle(); ?>
+                    </span> <br/>
+                    <span class="structure unite-recherche"
+                          title="Unité de recherche : <?php echo $proposition->getThese()->getUniteRecherche()->getLibelle(); ?> (<?php echo $proposition->getThese()->getUniteRecherche()->getSigle(); ?>)"
+                    >
+                        <?php echo $proposition->getThese()->getUniteRecherche()->getLibelle(); ?>
+                    </span>
+                </td>
+                <td>
+                    <span class="badge <?php echo $proposition->getEtat()->getCode(); ?>">
+                        <?php echo $proposition->getEtat()->getLibelle(); ?>
+                    </span>
+                </td>
+                <td>
+                    <a
+                        <?php /** @see \Soutenance\Controller\PropositionController::propositionAction() */ ?>
+                        href="<?php echo $this->url('soutenance/proposition', ['these' => $proposition->getThese()->getId()], [], true); ?>"
+                       title="Visualiser la proposition de soutenance"
+                    >
+                        Proposition
+                    </a>
+                    <br/>
+                    <a
+                        <?php /** @see \Soutenance\Controller\PresoutenanceController::presoutenanceAction() */ ?>
+                        href="<?php echo $this->url('soutenance/presoutenance', ['these' => $proposition->getThese()->getId()], [], true); ?>"
+                       title="Visualiser la préparation de la soutenance"
+                    >
+                        Présoutenance
+                    </a>
+                    <br/>
+                    <?php if ($canSuppression) : ?>
+                    <a
+                        <?php /** @see \Soutenance\Controller\PropositionController::suppressionAction() */ ?>
+                        href="<?php echo $this->url('soutenance/proposition/suppression', ['these' => $proposition->getThese()->getId()], [], true); ?>"
+                       title="">
+                        Suppression
+                    </a>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
+<style>
+    th.title-column {
+        width:70rem;
+    }
+
+    span.structure {
+        display: inline-block;
+        margin-bottom: 0.5rem;
+        /*font-weight: 500;*/
+    }
+    span.etablissement {
+        /*color:darkred;*/
+    }
+
+    span.ecole-doctorale {
+        /*color:darkblue;*/
+    }
+
+    span.unite-recherche {
+        /*color:darkgreen;*/
+    }
+</style>

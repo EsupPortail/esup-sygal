@@ -82,6 +82,9 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
                     <?php if ($etablissement->estAssocie()): ?>
                         <span class="label label-info">Associé</span>
                     <?php endif ?>
+                    <?php if ($etablissement->estInscription()): ?>
+                        <span class="label label-warning">Inscription</span>
+                    <?php endif ?>
                 </td>
                 <td>
                     <?php echo $etablissement->getSource(); ?>

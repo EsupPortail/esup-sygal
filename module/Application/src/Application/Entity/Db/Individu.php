@@ -7,8 +7,8 @@ use Application\Filter\NomCompletFormatter;
 use Doctrine\Common\Collections\ArrayCollection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
 /**
  * Individu
@@ -20,6 +20,9 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
 
     const CIVILITE_M = 'M.';
     const CIVILITE_MME = 'Mme';
+
+    const TYPE_ACTEUR = 'acteur';
+    const TYPE_DOCTORANT = 'doctorant';
 
     /**
      * Identifiant qui correspond en fait au :
@@ -94,13 +97,45 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     private $id;
 
     /**
+     * @var ArrayCollection
+     */
+    private $roles;
+
+    /**
      * @var ArrayCollection (mailContact)
      */
     private $mailsConfirmations;
 
-    public function __construct() {
+    /**
+     * @var ArrayCollection
+     */
+    private $utilisateurs;
+
+    /**
+     * @var string
+     */
+    private $type;
+
+    /**
+     * Individu constructor.
+     */
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
         $this->mailsConfirmations = new ArrayCollection();
+        $this->utilisateurs = new ArrayCollection();
     }
+
+    /**
+     * Get histoModification
+     *
+     * @return \DateTime
+     */
+    public function getHistoModification()
+    {
+        return $this->histoModification ?: $this->getHistoCreation();
+    }
+
     /**
      * @return string
      * @see supannId
@@ -186,6 +221,22 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     public function getEmail()
     {
         return $this->email;
+    }
+
+    /**
+     * Retourne l'adresse mail de l'éventuel (permier) utilisateur correspondant à cet individu.
+     *
+     * @return string
+     */
+    public function getEmailUtilisateur()
+    {
+        foreach ($this->getUtilisateurs() as $utilisateur) {
+            if ($email = $utilisateur->getEmail()) {
+                return $email;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -455,6 +506,36 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
         return $this->id;
     }
 
+    /**
+     * @return Role[]
+     */
+    public function getRoles()
+    {
+        return $this->roles->toArray();
+    }
+
+    /**
+     * @param Role $role
+     * @return self
+     */
+    public function addRole(Role $role)
+    {
+        $this->roles->add($role);
+
+        return $this;
+    }
+
+    /**
+     * @param Role $role
+     * @return self
+     */
+    public function removeRole(Role $role)
+    {
+        $this->roles->removeElement($role);
+
+        return $this;
+    }
+
     /** @return string */
     public function getMailContact()
     {
@@ -469,4 +550,32 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
         }
         return null;
     }
+
+    /**
+     * @return Utilisateur[]
+     */
+    public function getUtilisateurs()
+    {
+        return $this->utilisateurs->toArray();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     * @return Individu
+     */
+    public function setType(string $type): Individu
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+
 }

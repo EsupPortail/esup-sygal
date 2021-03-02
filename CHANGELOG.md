@@ -1,6 +1,146 @@
 Journal des modifications
 =========================
 
+2.1.5
+-----
+- Validation des corrections de thèses desormais réalisée par le président du jury (anc. directeurs de thèses).
+- Recherche textuelle de thèses : rétablissement du cochage par défaut de tous les critères.
+- Résolution du problème de plantage lorsque le flux des actualités est erroné.
+- Interface de gestion des comptes locaux pour les présidents de jury.
+- Test d'archivabilité : possibilité de configurer le passage par un proxy.
+- Correction de l'import forcé de thèse : utilisation du unicaen/db-import pour synchroniser après l'import des données.
+- Ajout d'un filtre pour l'index des propositions de soutenance (index-structure)
+- Page Assistance : affichage d'infos techniques utiles ; infos incluses automatiquement dans le corps du mail lorsqu'on clique sur l'adresse mail d'assistance.
+- Refonte de la page des utilisateurs (liste filtrable, détails utilisateurs, individus liés)
+  
+2.1.4
+-----
+- Rétablissement du rafraîchissement de MV_RECHERCHE_THESE après chaque import.
+
+2.1.3
+-----
+- Réparation de l'usurpation d'un individu.
+- Validation RDV BU : l'individu n'était pas injecté dans la Validation.
+- Correction bug dans le message 'aucune validation trouvée' : affichage de l'id de la thèse.
+- Correction bug de rémanence du rôle précédemment sélectionné dans UserContextService.
+
+2.1.2
+-----
+- Gestion des co-encadrants (ajout et retrait)
+- Listing (et export) des co-encadrants sur les EDs et URs
+- Ajout à l'export de l'annuaire des co-encadrants
+- Onglets dans les pages d'information des structures
+- Page de connexion scindée par type d'authentification activée.
+- Import du témoin "corrections effectuées" de chaque thèse.
+- Pages de dépôt de la version corrigée : visibles dès lors que le témoin "corrections effectuées" est à Oui.
+- Amélioration du temps de réponse de la recherche textuelle de thèses.
+- Retour du bouton d'import forcé de thèse qui avait disparu à cause d'une erreur de config.
+- Mise en retrait des items de menus concernant le dépôt de la version initiale en cas de corrections attendues ou effectuées.
+- Correction de l'affichage du message en cas d'erreur d'authentification locale. 
+- Correction d'un dysfonctionnement dans la recherche textuelle de thèses.
+- Correction d'un dysfonctionnement dans le tri des thèses par date de 1ère inscription.
+- Correction d'un dysfonctionnement dans l'affichage des établissements de rattachement lorsque la thèse n'est liée à aucune UR.
+
+2.1.1
+-----
+- Liste des thèses : tri par date de 1ere inscription décroissante
+- Page Utilisateur : accélération du chargement et ajout d'un bouton pour usurper
+- Accueil de la partie dépôt : le rôle sélectionné est null quand l'utilisateur n'a aucun rôle
+- Correction mineure sur les traductions dans le module de soutenance
+- Suppression d'un terme 'SoDoct' oublié
+
+2.1.0
+-----
+- Listes de diffusion Sympa : page d'activation/désactivation des listes pour lesquelles SyGAL peut fournir
+  les abonnés et les propriétaires via une URL. 
+- Correction des ACL d'accès aux lignes de commandes du module unicaen/oracle.  
+
+2.0.1
+-----
+- Changement de stratégie pour générer le fichier de config contenant les numéro et date de version
+- Correction plantage lorsque les données d'identité sont de type Utilisateur
+- Retour du fichier config/autoload/version.global.php abandonné (la version ne peut pas être déduite par git pour l'instant)
+
+2.0.0
+-----
+
+- Passage à Zend Framework 3 et PHP 7.3 (gain de performances).
+- Utilisation d'un nouveau package unicaen/db-import pour la synchro.
+- Listes de diffusion Sympa : page d'activation/désactivation des listes pour lesquelles SyGAL peut fournir
+  les abonnés et les proopriétaires via une URL. 
+- Nouveau rôle 'Authentifié(e)' permettant d'ajuster les privilèges d'un simple utilisateur authentifié. 
+- Ajout des champs Thèmes et Lien pour les offres de thèses des ED
+- Ajout du menu secondaire offre de thèse
+- Refonte de la gestion du menu secondaire principal pour tenir compte correctement de l'affichage
+- Ajout de la gestion multilingue du menu secondaire principal
+
+1.4.9 (08/09/2020)
+------------------
+
+- Changement de catégorie pour les privilèges associés aux pages d'information.
+- Ajout d'une configuration pour le fil d'actualité.
+- Ajout du champ IdREF pour toutes les structures et modification de l'affichage/saisie des informations.
+- Changement de l'affichage des structures fermées dans le filtre des thèses.
+- Nouveau message "Dépôt terminé" au doctorant sur la page Rendez-vous BU.
+
+1.4.8 (01/09/2020)
+------------------
+
+- Correction du nom de colonne ID_PERMANENT erroné dans le mapping de l'entité Fichier.
+- Correction du path manquant pour l'upload.
+
+1.4.7 (04/06/2020)
+------------------
+
+- Lors du dépôt d'une version corrigée, l'autorisation de mise en ligne est reprise texto (dupliquée) du 1er dépôt,
+sauf si l'utilisateur possède le privilège "Saisie du formulaire d'autorisation de diffusion de la version corrigée", 
+auquel cas elle est redemandée à l'utilisateur.
+Idem pour les attestations et le privilège "Modification des attestations concernant la version corrigée".
+- Masquage du complément de financement dans la fiche d'identité de la thèse
+- Optimisation de l'export CSV des thèses
+- Pages de téléversement et de recherche des rapports annuels.
+- Correction d'un bug dans la recherche de thèses par nom du doctorant.
+- Correction d'un bug dans le package Oracle APP_IMPORT qui ne filtrait pas les thèses selon l'établissement spécifié.
+- Possibilité d'attribuer un "identifiant permanent" à un fichier (ex: 'RAPPORT_ANNUEL_MODELE') facilitant l'intégration
+  de lien de téléchargement de ce fichier dans une page.
+- Listes de diffusion dynamique Sympa alimentées par SyGAL : pages de consultation des listes de diffusion déclarées
+  dans la config ; une URL pour fournir les abonnés, une autre pour fournir les propriétaires.
+
+1.4.6 (29/05/2020)
+------------------
+
+- Ajout du drapeau "établissement d'inscription" et ajout des visualisations et interfaces pour gérer ce nouveau drapeau.
+- Restriction du filtre des établissements sur la partie annuaire aux établissements d'inscription.
+- Ajout dans structures des champs adresse, tel, fax, site web, email qui sont utilisables pour l'édition de document.
+- Utilisation des nouveaux champs dans la génération de la convention de MEL (requiert unicaen/app v1.3.19).
+- Amélioration de la recherche textuelle de thèses : ajout d'une liste déroulante permettant de sélectionner 
+  précisément sur quels critères porte la recherche : "Titre de la thèse", "Numéro étudiant de l'auteur", 
+  "Nom de l'auteur", "Prénom de l'auteur", "Nom du directeur ou co-directeur de thèse", 
+  "Code national de l'école doctorale concernée (ex: 181)", "Unité de recherche concernée (ex: umr6211)".
+- Correction d'un dysfonctionnement de la recherche textuelle sur les critères "numéro étudiant", "unité de recherche"
+  et "école doctorale".
+
+
+1.4.5 (08/04/2020)
+------------------
+
+- Correction du dysfonctionnement des notifications envoyées lors de certains événements sur les données importées 
+  (résultat d'une thèse passant à admis, corrections facultatives ou obligatoires attendues).
+
+
+1.4.4 (03/04/2020)
+------------------
+
+- Correction des 2 délais à respecter pour le second dépôt qui étaient intervertis par erreur 
+  (nouvelles valeurs : 2 mois en cas de corrections facultatives attendues, 3 mois en cas de corrections obligatoires).
+
+
+1.4.3 (11/03/2020)
+------------------
+
+- Import des types de financement de thèse.
+
+
 1.4.2 (14/02/2020)
 ------------------
 

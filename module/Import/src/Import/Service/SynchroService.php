@@ -4,12 +4,12 @@ namespace Import\Service;
 
 use DateTime;
 use Doctrine\DBAL\ConnectionException;
-use Doctrine\DBAL\DBALException;
+use Exception;
 use Import\Model\SynchroLog;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Filter\Word\DashToUnderscore;
+use UnicaenDbImport\Service\Traits\SynchroServiceAwareTrait as DbImportSynchroServiceAwareTrait;
 
 /**
  * Service chargé de réaliser la synchro UnicaenImport en base de données.
@@ -19,27 +19,18 @@ use Zend\Filter\Word\DashToUnderscore;
 class SynchroService
 {
     use EntityManagerAwareTrait;
+    use DbImportSynchroServiceAwareTrait;
 
     private $services = [];
 
     /**
      * @param string $service Nom du service
-     * @param array  $params Ex: ['sql_filter' => "SOURCE_CODE = ''UCN::21311123''"]
+     * @param array $params Ex: ['sql_filter' => "SOURCE_CODE = ''UCN::21311123''"]
      * @return self
      */
-    public function addService($service, array $params = [])
+    public function addService(string $service, array $params = []): self
     {
         $this->services[$service] = $params;
-
-        return $this;
-    }
-
-    /**
-     * @return self
-     */
-    public function removeAllServices()
-    {
-        $this->services = [];
 
         return $this;
     }
@@ -53,18 +44,19 @@ class SynchroService
             throw new LogicException("Aucun service à synchroniser");
         }
 
-        // ajout en premier des appels de procédures permettant d'enregistrer certains changements durant la synchro
-        $calls = $this->getProcedureCallsForStoringObservImportResults();
-
-        // détermination des appels de procédures de synchro à faire
-        foreach ($this->services as $service => $params) {
-            $sqlFilter = isset($params['sql_filter']) ? $params['sql_filter'] : [];
-            $calls = array_merge($calls, $this->getProcedureCallsForImportingService($service, $sqlFilter));
+        foreach ($this->services as $name => $params) {
+            $synchro = $this->synchroService->getSynchroByName($name);
+            $result = $this->synchroService->runSynchro($synchro);
+            if ($exception = $result->getFailure()) {
+                throw new RuntimeException(
+                    sprintf("Erreur rencontrée pendant la synchro '%s'", $synchro->getName()),
+                    null,
+                    $result->getFailure());
+            }
         }
-        // suppression des appels en double EN CONSERVANT LE DERNIER appel et non le premier
-        $calls = array_reverse(array_unique(array_reverse($calls)));
-
-        $this->executeProcedureCalls($calls);
+        $this->executeProcedureCalls([
+            $this->backgroundify("DBMS_MVIEW.REFRESH('MV_RECHERCHE_THESE', 'C');"),
+        ]);
     }
 
     /**
@@ -83,7 +75,7 @@ class SynchroService
             $connection->commit();
             $success = true;
             $message = null;
-        } catch (DBALException $e) {
+        } catch (Exception $e) {
             $success = false;
             $message = "Erreur rencontrée lors de l'exécution des procédures de synchro (import) : " . PHP_EOL . $e->getMessage();
             try {
@@ -103,78 +95,13 @@ class SynchroService
     }
 
     /**
-     * Retourne les appels de procédures permettant d'enregistrer certains changements durant la synchro.
-     *
-     * @return string[]
-     */
-    private function getProcedureCallsForStoringObservImportResults()
-    {
-        return [
-            'APP_IMPORT.STORE_OBSERV_RESULTS();',
-        ];
-    }
-
-    /**
-     * Retourne, pour un service donné, les appels ORDONNÉS de procédures de synchronisation à lancer.
-     *
-     * @param string $serviceName
-     * @param string $sqlFilter
-     * @return string[]
-     */
-    private function getProcedureCallsForImportingService($serviceName, $sqlFilter = null)
-    {
-        $sqlFilterSnippet = $sqlFilter ? "'WHERE " . str_replace("'", "''", $sqlFilter) . "'" : '';
-
-        // config de base pour les services où :
-        // - il n'y a qu'une procédure à appeler, et
-        // - le nom de cette procédure peut être déduite du nom du service.
-        $defaultConfig = [];
-        $f = new DashToUnderscore();
-        foreach (ImportService::SERVICES as $service) {
-            $procName = 'MAJ_' . strtoupper($f->filter($service)); // ex: 'titre-acces' => 'MAJ_TITRE_ACCES'
-            $defaultConfig[$service] = [
-                "UNICAEN_IMPORT.$procName($sqlFilterSnippet);",
-            ];
-        }
-
-        // modif de la config de base pour certains services
-        $config = array_merge($defaultConfig, [
-            'ecole-doctorale' => [
-                "UNICAEN_IMPORT.MAJ_ECOLE_DOCT($sqlFilterSnippet);",
-                $this->backgroundify("APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');"),
-            ],
-            'unite-recherche' => [
-                "UNICAEN_IMPORT.MAJ_UNITE_RECH($sqlFilterSnippet);",
-            ],
-            'doctorant'       => [
-                "UNICAEN_IMPORT.MAJ_DOCTORANT($sqlFilterSnippet);",
-                $this->backgroundify("APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');"),
-            ],
-            'these'           => [
-                "UNICAEN_IMPORT.MAJ_THESE($sqlFilterSnippet);",
-                $this->backgroundify("APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');"),
-            ],
-            'acteur'          => [
-                "UNICAEN_IMPORT.MAJ_ACTEUR($sqlFilterSnippet);",
-                $this->backgroundify("APP_IMPORT.REFRESH_MV('MV_RECHERCHE_THESE');"),
-            ],
-        ]);
-
-        if (!array_key_exists($serviceName, $config)) {
-            throw new LogicException("Service spécifié inattendu : '$serviceName'.'");
-        }
-
-        return $config[$serviceName];
-    }
-
-    /**
      * Génère le code PL/SQL permettant de lancer du PL/SQL en tâche de fond.
      *
      * @param string $plsql
-     * @param int    $secondsToWait
+     * @param int $secondsToWait
      * @return string
      */
-    private function backgroundify($plsql, $secondsToWait = 0)
+    private function backgroundify(string $plsql, $secondsToWait = 0): string
     {
         $nextDateSql = 'SYSDATE';
         if ($secondsToWait > 0) {
@@ -196,11 +123,11 @@ EOS;
     /**
      * @param DateTime $startDate
      * @param DateTime $finishDate
-     * @param string    $sql
-     * @param string    $status
-     * @param string    $message
+     * @param string $sql
+     * @param string $status
+     * @param null $message
      */
-    private function log(DateTime $startDate, DateTime $finishDate, $sql, $status, $message = null)
+    private function log(DateTime $startDate, DateTime $finishDate, string $sql, string $status, $message = null)
     {
         $log = (new SynchroLog())
             ->setLogDate(date_create())
@@ -210,10 +137,10 @@ EOS;
             ->setStatus($status)
             ->setMessage($message);
 
-        $this->entityManager->persist($log);
         try {
+            $this->entityManager->persist($log);
             $this->entityManager->flush($log);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement du SynchroLog.", null, $e);
         }
     }

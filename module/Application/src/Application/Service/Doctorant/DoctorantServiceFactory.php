@@ -4,21 +4,20 @@ namespace Application\Service\Doctorant;
 
 use Application\Service\Etablissement\EtablissementService;
 use Application\SourceCodeStringHelper;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
-class DoctorantServiceFactory implements FactoryInterface
+class DoctorantServiceFactory
 {
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @param ContainerInterface $container
+     * @return DoctorantService
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
         /** @var EtablissementService $etablissementService */
-        $etablissementService = $serviceLocator->get('EtablissementService');
+        $etablissementService = $container->get('EtablissementService');
 
         $service = new DoctorantService();
 
@@ -27,7 +26,7 @@ class DoctorantServiceFactory implements FactoryInterface
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
          */
-        $sourceCodeHelper = $serviceLocator->get(SourceCodeStringHelper::class);
+        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
         $service->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $service;

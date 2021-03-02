@@ -2,9 +2,11 @@
 
 namespace Application\Entity\Db;
 
+use Application\Entity\Db\Interfaces\IndividuAwareInterface;
+use Soutenance\Entity\Membre;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
@@ -20,7 +22,7 @@ use Zend\Permissions\Acl\Resource\ResourceInterface;
  * @var string   $etalissement          l'étabilissement d'attachement de l'acteur (p.e. Université de Caen Normandie,
  *      ...)
  */
-class Acteur implements HistoriqueAwareInterface, ResourceInterface
+class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
@@ -49,6 +51,11 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
      * @var Individu
      */
     private $individu;
+
+    /**
+     * @var Membre
+     */
+    private $membre;
 
     /**
      * @var Role
@@ -99,6 +106,13 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
             ]
         );
     }
+    public function estCoEncadrant()
+    {
+        return in_array($this->getRole()->getCode(), [
+                Role::CODE_CO_ENCADRANT,
+            ]
+        );
+    }
 
     /**
      * Prédicat testant cet un acteur est un rapporteur de thèse.
@@ -110,6 +124,15 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
         return $this->getRole()->getCode() === Role::CODE_RAPPORTEUR_JURY;
     }
 
+    /**
+     * Prédicat testant cet un acteur est un rapporteur absent de thèse.
+     *
+     * @return bool
+     */
+    public function estRapporteurAbsent()
+    {
+        return $this->getRole()->getCode() === Role::CODE_RAPPORTEUR_ABSENT;
+    }
 
     /**
      * Prédicat testant cet un acteur est un rapporteur de thèse.
@@ -118,7 +141,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
      */
     public function estPresidentJury()
     {
-        return ($this->getRole()->getCode() === Role::CODE_PRESIDENT_JURY || $this->getLibelleRoleComplement() === Role::LIBELLE_PRESIDENT);
+        return ($this->getRole()->getCode() === Role::CODE_PRESIDENT_JURY);
     }
 
     /**
@@ -223,7 +246,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
      * @param Individu $individu
      * @return self
      */
-    public function setIndividu($individu)
+    public function setIndividu(Individu $individu = null)
     {
         $this->individu = $individu;
 
@@ -306,5 +329,11 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface
         return 'Acteur';
     }
 
-
+    /**
+     * @return Membre|null
+     */
+    public function getMembre(): ?Membre
+    {
+        return $this->membre;
+    }
 }

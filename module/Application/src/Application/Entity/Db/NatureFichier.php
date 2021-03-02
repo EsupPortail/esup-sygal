@@ -12,6 +12,7 @@ class NatureFichier
 
     const CODE_PV_SOUTENANCE = 'PV_SOUTENANCE';
     const CODE_RAPPORT_SOUTENANCE = 'RAPPORT_SOUTENANCE';
+    const CODE_RAPPORT_ANNUEL = 'RAPPORT_ANNUEL';
     const CODE_PRE_RAPPORT_SOUTENANCE = 'PRE_RAPPORT_SOUTENANCE';
     const CODE_DEMANDE_CONFIDENT = 'DEMANDE_CONFIDENT';
     const CODE_PROLONG_CONFIDENT = 'PROLONG_CONFIDENT';
@@ -19,6 +20,23 @@ class NatureFichier
     const CODE_AVENANT_CONV_MISE_EN_LIGNE = 'AVENANT_CONV_MISE_EN_LIGNE';
     const CODE_COMMUNS = 'COMMUNS';
     const CODE_DIVERS = 'DIVERS';
+
+    const CODE_JUSTIFICATIF_HDR = 'JUSTIFICATIF_HDR';
+    const CODE_JUSTIFICATIF_EMERITAT = 'JUSTIFICATIF_EMERITAT';
+    const CODE_DELOCALISATION_SOUTENANCE = 'DELOCALISATION_SOUTENANCE';
+    const CODE_DELEGUATION_SIGNATURE = 'DELEGUATION_SIGNATURE';
+    const CODE_DEMANDE_LABEL = 'DEMANDE_LABEL_EUROPEEN';
+    const CODE_LANGUE_ANGLAISE = 'DEMANDE_LANGUE_ANGLAISE';
+    const CODE_AUTRES_JUSTIFICATIFS = 'AUTRES_JUSTIFICATIFS';
+
+    const LABEL_JUSTIFICATIF_HDR = "Justificatif d'habilitation à diriger des recherches";
+    const LABEL_JUSTIFICATIF_EMERITAT = "Justificatif d'émeritat";
+    const LABEL_DELOCALISATION_SOUTENANCE = "Formulaire de délocalisation de soutenance";
+    const LABEL_DELEGUATION_SIGNATURE = "Formulaire de délégation de signature du rapport de soutenance (visioconférence)";
+    const LABEL_LANGUE_ANGLAISE = "Formulaire d'utilisation de la langue anglaise";
+    const LABEL_DEMANDE_LABEL = "Formulaire de demande de label européen";
+    const LABEL_DEMANDE_CONFIDENT = "Formulaire de demande de confidentialité";
+    const LABEL_AUTRES_JUSTIFICATIFS = "Autres justificatifs concernant la soutenance";
 
     /**
      * @var string

@@ -1,0 +1,250 @@
+<?php
+
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Validation;
+use Application\Provider\Privilege\PresidentJuryPrivileges;
+
+/**
+ * @see \Application\Controller\PresidentJuryController::indexAction()
+ * @var Acteur[] $presidents
+ */
+
+$this->headTitle("Gestion des comptes associés aux présidents du jury");
+
+
+function afficherActeur(Acteur $a) {
+
+    $mailIndividu = $a->getIndividu()->getEmail();
+
+    $title  = "<table>";
+    $title .= "<tr><th>ActeurId</th><td>".$a->getId() . "</td></tr>";
+    $title .= "<tr><th>IndividuId</th><td>".$a->getIndividu()->getId()."</td></tr>";
+    if ($a->getIndividu()->getEmail()) {
+        $title .= "<tr><th>Email</th><td>" . $mailIndividu . "</td></tr>";
+    }
+    $title .= "</table>";
+
+    $texte  = "<span title='".$title."' data-toggle='tooltip' data-html='true'>";
+    $texte .= $a->getIndividu()->getNomComplet();
+    $texte .= "</span>";
+    return $texte;
+
+}
+
+function afficherUtilisateur(Acteur $a) {
+    $utilisateurs = $a->getIndividu()->getUtilisateurs();
+
+    if (empty($utilisateurs)) {
+        return "<span style='color:darkred;' class='glyphicon glyphicon-remove'></span>";
+    }
+
+    $title = "";
+    foreach ($utilisateurs as $utilisateur) {
+        if ($title !== "") $title .= "<hr/><br/>";
+        $title .= $utilisateur->getUsername() . " - " . $utilisateur->getEmail();
+    }
+    return "<span style='color:darkgreen;' class='glyphicon glyphicon-ok' title='".$title."' data-toggle='tooltip' data-html='true'></span>";
+}
+
+function afficherMailIndividu(Acteur $a) {
+    if ($a->getIndividu() !== null AND $a->getIndividu()->getEmail() !== null) {
+        return "<span class='glyphicon glyphicon-ok' style='color:darkgreen;' 
+                    title='IndividuId:". $a->getIndividu()->getId(). "<br/>".
+                    $a->getIndividu()->getEmail() ."'
+                    data-toggle='tooltip' data-html='true'></span>";
+    }
+    return "<span class='glyphicon glyphicon-remove' style='color:darkred;' title='Pas d email lié à l individu'></span>";
+}
+
+function afficherMailMembre(Acteur $a) {
+    if ($a->getMembre() !== null AND $a->getMembre()->getEmail() !== null) {
+        return '<span class="glyphicon glyphicon-ok" style = "color:darkgreen;"
+                title = "PropositionId: '. $a->getMembre()->getProposition()->getId() . '<br/>' .
+                $a->getMembre()->getEmail().'" 
+                data-toggle="tooltip" data-html="true"></span>';
+    }
+    return '<span class="glyphicon glyphicon-remove" style="color:darkred;" title="Pas d email lié à un membre de soutenance"></span>';
+}
+
+function afficherThese(Acteur $a, $renderer) {
+    $these = $a->getThese();
+    $titre = htmlentities($these->getTitre(), ENT_QUOTES);
+
+    $titreCourt = (substr(html_entity_decode($titre),0,40)) . " ...";
+
+    $texte  = "<a href='".$renderer->url('these/identite', ['these' => $these->getId()], [], true)."' ";
+    $texte .= "title='".htmlentities($titre)."' data-toggle='tooltip' data-html='true' ";
+    $texte .= " >" . $titreCourt . "</a>";
+    return $texte;
+}
+
+function afficherCorrection(Acteur $a) {
+    $these = $a->getThese();
+    $correction = $these->getCorrectionAutorisee();
+    $forcee = $these->getCorrectionAutoriseeForcee();
+
+    $texte  = "<span class='badge' style='background:". (($correction === 'facultative')?"#CB8113":"#B80E18").";'"
+                ." title='". (($forcee !== null)?"Forcé":"Non forcée") ."'>";
+    if ($forcee !== null) {
+        $texte .= "<em>".$correction."</em>";
+    } else {
+        $texte .= $correction;
+    }
+    $texte .= "</span>";
+    return $texte;
+}
+
+function afficherCorrectionEffectuees(Acteur $a) {
+    $these = $a->getThese();
+    $correction = $these->getValidations('DEPOT_THESE_CORRIGEE')->toArray();
+
+    if (empty($correction)) {
+        return "<span class='glyphicon glyphicon-remove' style='color:darkred;'></span>";
+    }
+
+    return "<span class='glyphicon glyphicon-ok' style='color:darkgreen;'></span>";
+}
+
+function afficherValidations(Acteur $a) {
+    /** @var Validation[] $validations */
+    $validations = $a->getThese()->getValidations('CORRECTION_THESE')->toArray();
+    if (empty($validations)) {
+        return "Aucune validation";
+    }
+
+    $texte  = "";
+    $texte .= "<ul>";
+    foreach ($validations as $validation) {
+        $texte .= "<li>".$validation->getIndividu()->getNomComplet()."</li>";
+    }
+    $texte .= "</ul>";
+    return $texte;
+}
+
+$canModifierMailPresident = $this->isAllowed(PresidentJuryPrivileges::getResourceId(PresidentJuryPrivileges::PRESIDENT_MODIFIER_MAIL));
+$canNotifierPresident     = $this->isAllowed(PresidentJuryPrivileges::getResourceId(PresidentJuryPrivileges::PRESIDENT_NOTIFIER));
+
+?>
+
+<h1 class="page-header">
+    Gestion des comptes associés aux présidents du jury
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+
+     <p>
+         Dans le tableau ci-dessous vous retrouvez la liste des président de jury remonté dans SyGAL pour les thèses en attente de correction.
+     </p>
+
+    <p>
+        Pour chaque président, on retourve les indications suivantes :
+        <ul>
+        <li> <strong>Dénomination du président</strong> : le nom usuel + premier prénom du président </li>
+        <li> <strong>Utilisateur</strong> : le fait qu'un président a un compte connu dans SYGAL (au survol on a le username et le mail associé) </li>
+        <li> <strong>Individu Mail</strong> : le fait qu'un mail est connu pour l'individu associé (au survol on a l'id et le mail associé)</li>
+        <li> <strong>Membre Mail</strong> : le fait qu'un mail est connu pour un membre de soutenance associé (au survol on a l'id et le mail associé)</li>
+        <li> <strong>Thèse</strong> : un lien vers la thèse concernée</li>
+        <li> <strong>Correction</strong> : le type de correction</li>
+        <li> <strong>Version corrigée</strong> : le fait que la version corrigée a été déposée (et est archivable)</li>
+        <li> <strong>Validation</strong> : le fait qu'une validation de la version corrigée a été faite</li>
+        </ul>
+    </p>
+
+    <p>
+        Les actions associées sont :
+        <ul>
+            <li> <span class="glyphicon glyphicon-plus"></span> ajouter manuellement un mail pour pouvoir créer un compte</li>
+            <li> <span class="glyphicon glyphicon-trash"></span> supprimer le mail renseigné manuellement</li>
+            <li> <span class="glyphicon glyphicon-send"></span> création d'un compte (si nécessaire) puis notification du président</li>
+        </ul>
+    </p>
+
+
+<div class="main">
+    <table id="president-jury" class="table table-condensed" >
+        <thead>
+            <tr>
+                <th> Dénomination du président </th>
+                <th> Utilisateur </th>
+                <th> Individu<br/>Mail</th>
+                <th> Membre<br/>Mail</th>
+                <th> These </th>
+                <th> Correction </th>
+                <th> Version<br/>corrigée </th>
+                <th> Validation </th>
+                <th> Action </th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($presidents as $president) : ?>
+                <?php
+                    $utilisateurs = $president->getIndividu()->getUtilisateurs();
+                ?>
+                <tr>
+                    <td> <?php echo afficherActeur($president); ?> </td>
+                    <td> <center><?php echo afficherUtilisateur($president); ?> </center></td>
+                    <td> <center><?php echo afficherMailIndividu($president); ?> </center></td>
+                    <td> <center><?php echo afficherMailMembre($president) ; ?> </center></td>
+                    <td> <?php echo afficherThese($president, $this); ?> </td>
+                    <td> <?php echo afficherCorrection($president); ?> </td>
+                    <td> <center><?php echo afficherCorrectionEffectuees($president); ?> </center></td>
+                    <td> <?php echo afficherValidations($president); ?> </td>
+                    <td>
+                        <?php $validations = $president->getThese()->getValidations('CORRECTION_THESE')->toArray(); ?>
+                        <?php if (empty($validations)) : ?>
+                            <?php if ($canModifierMailPresident) : ?>
+                                <?php if (empty($utilisateurs)) : ?>
+
+                                    <!--  // Si aucun membre de  soutenance on peut ajouter un membre factisse pour porter l'information ne remontant pas du SI -->
+                                    <?php if ($president->getMembre() === null) : ?>
+                                        <a href="<?php echo $this->url('president-jury/ajouter-mail', ['president' => $president->getId()], [], true); ?>"
+                                           class="ajax-modal" data-event="modification"
+                                           title="Ajout d'un email pour le président du jury"
+                                        >
+                                            <span class="glyphicon glyphicon-plus"></span> </a>
+                                    <?php else :?>
+
+                                        <!-- // Si membre factisse alors on peut le supprimer pour eventuellement le modifier -->
+                                        <?php if ($president->getMembre()->getProposition()->getId() === 0) : ?>
+                                            <a href="<?php echo $this->url('president-jury/supprimer-mail', ['president' => $president->getId()], [], true); ?>"
+                                               title="Suppression de l'email ajouté manuellement pour le président du jury"
+                                            >
+                                                <span class="glyphicon glyphicon-trash"></span> </a>
+                                        <?php else : ?>
+                                            <span class="glyphicon glyphicon-plus" style="color:white;"></span>
+                                        <?php endif;?>
+
+                                    <?php endif;?>
+                                <?php else:?>
+                                    <span class="glyphicon glyphicon-plus" style="color:white;"></span>
+                                <?php endif;?>
+                            <?php endif; ?>
+
+                            <?php if ($canNotifierPresident) : ?>
+                                <?php if (($president->getIndividu() AND $president->getIndividu()->getEmail()) OR ($president->getMembre() AND $president->getMembre()->getEmail())) : ?>
+                                    <a href="<?php echo $this->url('president-jury/notifier-correction', ['president' => $president->getId()], [], true); ?>"
+                                       title="Création du compte & notification du président du jury"
+                                    >
+                                        <span class="glyphicon glyphicon-send"></span>
+                                    </a>
+                                <?php else : ?>
+                                    <span class="glyphicon glyphicon-send" style="color:white;"></span>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+        <caption>Liste des présidents du jury de thèses avec des corrections <strong>soutenues dans les 4 derniers mois</strong>.</caption>
+    </table>
+</div>
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

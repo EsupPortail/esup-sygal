@@ -11,7 +11,6 @@ use Application\Entity\Db\TheseAnneeUniv;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\UserWrapperFactory;
-use Application\Provider\Privilege\StructurePrivileges;
 use Application\QueryBuilder\TheseQueryBuilder;
 use Application\Service\AuthorizeServiceAwareTrait;
 use Application\Service\DomaineScientifiqueServiceAwareTrait;
@@ -29,8 +28,10 @@ use Application\SourceCodeStringHelperAwareTrait;
 use Application\View\Helper\Sortable;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\Query\Expr\Join;
+use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
+use Webmozart\Assert\Assert;
 
 class TheseRechercheService
 {
@@ -46,6 +47,14 @@ class TheseRechercheService
     use AuthorizeServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
     use TheseAnneeUnivServiceAwareTrait;
+
+    const CRITERIA_titre = TheseTextFilter::CRITERIA_titre;
+    const CRITERIA_numero_doctorant = TheseTextFilter::CRITERIA_numero_doctorant;
+    const CRITERIA_nom_doctorant = TheseTextFilter::CRITERIA_nom_doctorant;
+    const CRITERIA_prenom_doctorant = TheseTextFilter::CRITERIA_prenom_doctorant;
+    const CRITERIA_nom_directeur = TheseTextFilter::CRITERIA_nom_directeur;
+    const CRITERIA_code_ed = TheseTextFilter::CRITERIA_code_ed;
+    const CRITERIA_code_ur = TheseTextFilter::CRITERIA_code_ur;
 
     /**
      * @var bool
@@ -136,13 +145,13 @@ class TheseRechercheService
                 $optionsArray[TheseSelectFilter::NAME_etablissement]
             ),
             TheseSelectFilter::NAME_ecoleDoctorale           => new TheseSelectFilter(
-                "ED",
+                "École<br>doctorale",
                 TheseSelectFilter::NAME_ecoleDoctorale,
                 $optionsArray[TheseSelectFilter::NAME_ecoleDoctorale],
                 ['liveSearch' => true]
             ),
             TheseSelectFilter::NAME_uniteRecherche           => new TheseSelectFilter(
-                "UR",
+                "Unité de<br>recherche",
                 TheseSelectFilter::NAME_uniteRecherche,
                 $optionsArray[TheseSelectFilter::NAME_uniteRecherche],
                 ['liveSearch' => true]
@@ -286,6 +295,14 @@ class TheseRechercheService
             $updated = true;
         }
 
+        // Si aucun critère n'est sélectionné pour le champ de recherche texte, cela revient à les sélectionner tous
+//        $name = TheseTextFilter::NAME_criteria;
+//        $criteria = $this->paramFromQueryParams($name, $queryParams); // NB: null <=> filtre absent
+//        if ($criteria === null) {
+//            $queryParams = array_merge($queryParams, [$name => array_keys(TheseTextFilter::CRITERIA)]);
+//            $updated = true;
+//        }
+
         return $updated;
     }
 
@@ -303,7 +320,7 @@ class TheseRechercheService
         if ($sort === null || $sort === '') {
             $queryParams = array_merge($queryParams, [
                 'sort' => TheseSorter::NAME_datePremiereInscription,
-                'direction' => Sortable::ASC
+                'direction' => Sortable::DESC
             ]);
             $updated = true;
         }
@@ -345,9 +362,11 @@ class TheseRechercheService
         /**
          * Prise en compte du texte recherché éventuel.
          */
-        $text = $this->getFilterValueByName(TheseTextFilter::NAME_text);
-        if ($text !== null && strlen($text) > 1) {
-            $results = $this->rechercherThese($text);
+        $value = $this->getFilterValueByName(TheseTextFilter::NAME_text);
+        $text = $value['text'];
+        $criteria = $value['criteria']; // NB: aucun critère spécifié => texte pas pris en compte.
+        if ($text !== null && strlen($text) > 1 && !empty($criteria)) {
+            $results = $this->rechercherThese($text, $criteria);
             $sourceCodes = array_unique(array_keys($results));
             if ($sourceCodes) {
                 $qb
@@ -438,43 +457,87 @@ class TheseRechercheService
     }
 
     /**
-     * Recherche de thèses à l'aide de la vue matérialisée MV_RECHERCHE_THESE.
+     * Recherche textuelle de thèses dans la vue matérialisée MV_RECHERCHE_THESE.
      *
-     * @param string  $text
+     * Le contenu de la colonne MV_RECHERCHE_THESE.HAYSTACK suit le format suivant :
+     * <pre>
+     * code-ed{...} code-ur{...} titre{...} doctorant-numero{...} doctorant-nom{...} doctorant-prenom{...} directeur-nom{...}
+     * </pre>
+     * Exemple :
+     * <pre>
+     * code-ed{591} code-ur{umr6614} titre{bivalve dreissena polymorpha} doctorant-numero{85982906} doctorant-nom{hochon hochon} doctorant-prenom{paule} directeur-nom{terieur}
+     * </pre>
+     *
+     * L'expression régulière utilisée est donc de la forme suivante :
+     * <pre>
+     * (<critere>|<critere>)\{[^{]*<terme>[^}]*\}
+     * </pre>
+     * Exemple :
+     * <pre>
+     * (doctorant-nom|directeur-nom)\{[^{]*hochon[^}]*\}
+     * </pre>
+     *
+     * Lorsque le texte recherché est "hochon" par exemple, la requête SQL générée est la suivante :
+     * <pre>
+     *      SELECT * FROM MV_RECHERCHE_THESE MV WHERE rownum <= 100 AND (
+     *          REGEXP_LIKE(haystack, q'[(doctorant-nom|directeur-nom)\{[^{]*hochon[^}]*\}]', 'i')
+     *      )
+     * </pre>
+     *
+     * Lorsque le texte recherché contient plusieurs mots séparés par des espaces, "hochon bivalve" par exemple,
+     * la requête SQL générée est la suivante :
+     * <pre>
+     *      SELECT * FROM MV_RECHERCHE_THESE MV WHERE rownum <= 100 AND (
+     *          REGEXP_LIKE(haystack, q'[(doctorant-nom|directeur-nom)\{[^{]*hochon[^}]*\}]', 'i') OR
+     *          REGEXP_LIKE(haystack, q'[(doctorant-nom|directeur-nom)\{[^{]*bivalve[^}]*\}]', 'i')
+     *      )
+     * </pre>
+     *
+     * @param string  $text Texte recherché. Ex: "hochon", "hochon bivalve"
+     * @param string[] $criteria Critères sur lesquels porte la recherche. EX: ['doctorant-nom', 'directeur-nom']
      * @param integer $limit
      *
-     * @return array
+     * @return array [<CODE_THESE> => ['code' => <CODE_THESE>, 'code-doctorant' => <CODE_DOCTORANT>]]
      */
-    public function rechercherThese($text, $limit = 100)
+    public function rechercherThese($text, array $criteria, $limit = 1000)
     {
+        Assert::notEmpty($criteria, "Un tableau de critère vide n'est pas acceptée");
+
+        $text = trim($text);
+
         if (strlen($text) < 2) return [];
 
-        $text = Util::reduce($text);
-        $criteres = explode(' ', $text);
-
-        $sql     = sprintf('SELECT * FROM MV_RECHERCHE_THESE MV WHERE rownum <= %s ', (int)$limit);
-        $sqlCri  = '';
-        $criCode = 0;
-
-        foreach ($criteres as $c) {
-            if (! is_numeric($c)) {
-                if ($sqlCri != '') {
-                    $sqlCri .= ' AND ';
-                }
-                $sqlCri .= "haystack LIKE LOWER(q'[%" . $c . "%]')"; // q'[] : double les quotes
-            } else {
-                $criCode = (int) $c;
-            }
+        if ($unknown = array_diff($criteria, array_keys(TheseTextFilter::CRITERIA))) {
+            throw new LogicException("Les critères de recherche suivants ne sont pas supportés : " . implode(', ', $unknown));
         }
+
+        $words = explode(' ', $text);
+        $words = array_map('trim', $words);
+        $words = array_map([Util::class, 'reduce'], $words);
+
         $orc = [];
-        if ($sqlCri != '') {
-            $orc[] = '(' . $sqlCri . ')';
+        foreach ($words as $word) {
+            // le caractère '*' est autorisé pour signifier "n'importe quel caractère répété 0 ou N fois"
+            $word = str_replace('*', '.*', $word);
+            if (count($criteria) === count(TheseTextFilter::CRITERIA)) {
+                // si tous les critères possibles sont spécifiés, on peut simplifier la regexp :
+                // regexp : \{[^}]*<terme>.*\}
+                $regexp = "\{[^}]*" . $word . ".*\}";
+            } else {
+                // regexp : (<critere>|<critere>)\{[^}]*<terme>.*\}
+                $regexp = '(' . implode('|', $criteria) . ')' . "\{[^}]*" . $word . ".*\}";
+            }
+            $orc[] = "    REGEXP_LIKE(haystack, q'[" . $regexp . "]', 'i')"; // la syntaxe q'[]' dispense de doubler les '
         }
-        if ($criCode) {
-            $orc[] = "(code_doctorant like '%" . $criCode . "%' OR code_ecole_doct = '" . $criCode . "')";
-        }
-        $orc = implode(' OR ', $orc);
-        $sql .= ' AND (' . $orc . ') ';
+        $orc = implode(' OR ' . PHP_EOL, $orc);
+
+        $sql = <<<EOS
+SELECT distinct CODE_THESE, CODE_DOCTORANT, CODE_ECOLE_DOCT, to_char(HAYSTACK) HAYSTACK 
+FROM MV_RECHERCHE_THESE MV 
+WHERE rownum <= $limit AND (
+$orc
+)
+EOS;
 
         try {
             $stmt = $this->theseService->getEntityManager()->getConnection()->executeQuery($sql);
@@ -508,17 +571,17 @@ class TheseRechercheService
 
     private function fetchEtablissementsOptions()
     {
-        $role = $this->getSelectedIdentityRole();
+//        $role = $this->getSelectedIdentityRole();
+//
+//        $privilege = StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES;
+//        $toutesStructuresAllowed = $this->authorizeService->isAllowed(StructurePrivileges::getResourceId($privilege));
+//        if ($role && !$toutesStructuresAllowed) {
+//            return [
+//                $this->optionify($role->getStructure()->getEtablissement())
+//            ];
+//        }
 
-        $privilege = StructurePrivileges::STRUCTURE_CONSULTATION_TOUTES_STRUCTURES;
-        $toutesStructuresAllowed = $this->authorizeService->isAllowed(StructurePrivileges::getResourceId($privilege));
-        if ($role && !$toutesStructuresAllowed) {
-            return [
-                $this->optionify($role->getStructure()->getEtablissement())
-            ];
-        }
-
-        $etablissements = $this->getEtablissementService()->getRepository()->findAllEtablissementsMembres();
+        $etablissements = $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions();
 
         $options = [];
         foreach ($etablissements as $etablissement) {
@@ -776,15 +839,15 @@ class TheseRechercheService
     {
         if ($value instanceof Etablissement) {
             $subtext = $value->getLibelle();
-            if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; <span class='label' style='color:darkred;'>FERME</span>";
+            if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; FERME";
             return ['value' => $value->getStructure()->getCode(), 'label' => $subtext];
         } elseif ($value instanceof EcoleDoctorale) {
             $subtext = $value->getLibelle();
-            if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; <span class='label' style='color:darkred;'>FERMEE</span>";
+            if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; FERMEE";
             return ['value' => $value->getSourceCode(), 'label' => $value->getSigle(), 'subtext' => $subtext];
         } elseif ($value instanceof UniteRecherche) {
             $subtext = $value->getLibelle();
-            if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; <span class='label' style='color:darkred;'>FERMEE</span>";
+            if ($value->getStructure()->isFerme()) $subtext.= "&nbsp; FERMEE";
             return ['value' => $value->getSourceCode(), 'label' => $value->getSigle(), 'subtext' => $subtext];
         } elseif ($value instanceof DomaineScientifique) {
             return ['value' => (string) $value->getId(), 'label' => $value->getLibelle()];

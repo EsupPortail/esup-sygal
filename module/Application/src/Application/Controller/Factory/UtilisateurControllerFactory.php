@@ -3,6 +3,7 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\UtilisateurController;
+use Application\Form\CreationUtilisateurForm;
 use Application\Form\InitCompteForm;
 use Application\Service\Acteur\ActeurService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
@@ -13,21 +14,23 @@ use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\UserContextService;
+use Application\Service\Utilisateur\UtilisateurSearchService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\SourceCodeStringHelper;
 use Doctrine\ORM\EntityManager;
-use UnicaenAuth\Service\UserContext;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
+use UnicaenAuth\Options\ModuleOptions;
+use UnicaenAuth\Service\ShibService;
 use UnicaenAuth\Service\User as UserService;
+use UnicaenAuth\Service\UserContext;
+use Zend\Authentication\AuthenticationService;
 
 class UtilisateurControllerFactory
 {
     use IndividuServiceLocateTrait;
 
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $controllerManager->getServiceLocator();
-
         /**
          * @var ActeurService $acteurService
          * @var RoleService $roleService
@@ -40,29 +43,43 @@ class UtilisateurControllerFactory
          * @var NotifierService $notifierService
          * @var UserContextService $userContextService
          * @var UserService $userService
+         * @var UtilisateurSearchService $utilisateurSearchService
          */
-        $acteurService = $sl->get(ActeurService::class);
-        $roleService = $sl->get('RoleService');
-        $utilisateurService = $sl->get('UtilisateurService');
-        $etablissementService = $sl->get('EtablissementService');
-        $ecoleService = $sl->get('EcoleDoctoraleService');
-        $uniteService = $sl->get('UniteRechercheService');
-        $structureService = $sl->get(StructureService::class);
-        $notifierService = $controllerManager->getServiceLocator()->get(NotifierService::class);
-        $entityManager = $sl->get('doctrine.entitymanager.orm_default');
-        $userContextService = $sl->get(UserContext::class);
-        $userService = $sl->get('unicaen-auth_user_service');
+        $acteurService = $container->get(ActeurService::class);
+        $roleService = $container->get('RoleService');
+        $utilisateurService = $container->get('UtilisateurService');
+        $etablissementService = $container->get('EtablissementService');
+        $ecoleService = $container->get('EcoleDoctoraleService');
+        $uniteService = $container->get('UniteRechercheService');
+        $structureService = $container->get(StructureService::class);
+        $notifierService = $container->get(NotifierService::class);
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $userContextService = $container->get(UserContext::class);
+        $userService = $container->get('unicaen-auth_user_service');
+        $utilisateurSearchService = $container->get(UtilisateurSearchService::class);
 
         /**
          * @var InitCompteForm $initCompteForm
          */
-        $initCompteForm = $sl->get('FormElementManager')->get(InitCompteForm::class);
+        $initCompteForm = $container->get('FormElementManager')->get(InitCompteForm::class);
+
+        /** @var CreationUtilisateurForm $creationUtilisateurForm */
+        $creationUtilisateurForm = $container->get('FormElementManager')->get(CreationUtilisateurForm::class);
+
+        /** @var AuthenticationService $authenticationService */
+        $authenticationService = $container->get(AuthenticationService::class);
+
+        /** @var ShibService $shibService */
+        $shibService = $container->get(ShibService::class);
+
+        /** @var ModuleOptions $authModuleOptions */
+        $authModuleOptions = $container->get('unicaen-auth_module_options');
 
         $controller = new UtilisateurController();
         $controller->setActeurService($acteurService);
         $controller->setRoleService($roleService);
         $controller->setUtilisateurService($utilisateurService);
-        $controller->setIndividuService($this->locateIndividuService($sl));
+        $controller->setIndividuService($this->locateIndividuService($container));
         $controller->setUniteRechercheService($uniteService);
         $controller->setEcoleDoctoraleService($ecoleService);
         $controller->setEtablissementService($etablissementService);
@@ -70,13 +87,20 @@ class UtilisateurControllerFactory
         $controller->setNotifierService($notifierService);
         $controller->setEntityManager($entityManager);
         $controller->setUserContextService($userContextService);
+        $controller->setServiceUserContext($userContextService);
         $controller->setUserService($userService);
+        $controller->setShibService($shibService);
+        $controller->setAuthenticationService($authenticationService);
         $controller->setInitCompteForm($initCompteForm);
+        $controller->setCreationUtilisateurForm($creationUtilisateurForm);
+        $controller->setOptions($authModuleOptions); // requis
+        $controller->setAuthModuleOptions($authModuleOptions);
+        $controller->setSearchService($utilisateurSearchService);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
          */
-        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
         $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;

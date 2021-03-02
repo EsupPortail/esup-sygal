@@ -1,0 +1,47 @@
+<?php
+
+use Application\Entity\Db\ListeDiffusion;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var ListeDiffusion $liste
+ * @var string[] $individusAvecAdresse
+ * @var string[] $individusSansAdresse
+ */
+
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $app = $this->appInfos()->nom ?>.
+</p>
+<p>
+    Vous êtes informé-e que des personnes sensées être abonnées à la liste de diffusion <?php echo $liste ?>
+    n'ont pas d'adresse mail connue de l'application.
+</p>
+<p>
+    Ces personnes ne peuvent donc pas recevoir les messages envoyés sur cette liste de diffusion.
+</p>
+<p>
+    Voici les personnes en question :
+</p>
+<ul>
+    <?php foreach ($individusSansAdresse as $individu): ?>
+    <li><?php echo $individu ?></li>
+    <?php endforeach ?>
+</ul>
+<p>
+    Pour info, voici les personnes pour lesquelles <?php echo $app ?> dispose d'une adresse mail :
+</p>
+<ul>
+    <?php foreach ($individusAvecAdresse as $individu): ?>
+        <li><?php echo $individu ?></li>
+    <?php endforeach ?>
+</ul>
+<p>
+    Pour visualiser ces informations dans <?php echo $app ?>, cliquez sur
+    <a href="<?php echo $url = $this->url('liste-diffusion/liste', ['adresse' => $liste->getAdresse()], ['force_canonical' => true]) ?>">ce lien</a>.
+</p>

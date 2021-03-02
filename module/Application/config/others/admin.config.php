@@ -1,24 +1,20 @@
 <?php
 
 use Application\Controller\AdminController;
+use Application\Controller\Factory\MailConfirmationControllerFactory;
 use Application\Controller\Factory\RoleControllerFactory;
 use Application\Controller\MailConfirmationController;
 use Application\Controller\RoleController;
-use Application\Form\Factory\ProfilFormFactory;
-use Application\Form\Factory\ProfilHydratorFactory;
-use Application\Form\Hydrator\ProfilHydrator;
-use Application\Form\ProfilForm;
-use Application\Provider\Privilege\StructurePrivileges;
-use Application\Provider\Privilege\UtilisateurPrivileges;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Privilege\Privileges;
-use Zend\Mvc\Router\Http\Literal;
-use Zend\Mvc\Router\Http\Segment;
 use Application\Form\Factory\MailConfirmationFormFactory;
 use Application\Form\Factory\MailConfirmationHydratorFactory;
-use Application\Service\MailConfirmationServiceFactory;
-use Application\Controller\Factory\MailConfirmationControllerFactory;
+use Application\Provider\Privilege\StructurePrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
+use Application\Provider\Privilege\UtilisateurPrivileges;
+use Application\Service\MailConfirmationServiceFactory;
+use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenAuth\Provider\Privilege\Privileges;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [

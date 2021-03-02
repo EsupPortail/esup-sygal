@@ -8,19 +8,23 @@ use Application\Service\File\FileService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
+use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use UnicaenAuth\Service\AuthorizeService;
+use UnicaenAuth\Service\User as UserService;
+use Webmozart\Assert\Assert;
 
 class TheseServiceFactory
 {
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviveManager
+     * @param ContainerInterface $container
      * @return TheseService
      */
-    public function __invoke(ServiceLocatorInterface $serviveManager)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var ValidationService   $validationService
@@ -28,18 +32,24 @@ class TheseServiceFactory
          * @var FichierTheseService $fichierTheseService
          * @var VariableService     $variableService
          * @var UserContextService  $userContextService
+         * @var UserService         $userService
+         * @var UtilisateurService  $utilisateurService
+         * @var AuthorizeService    $authorizeService
          */
-        $validationService = $serviveManager->get('ValidationService');
-        $notifierService = $serviveManager->get(NotifierService::class);
-        $fichierTheseService = $serviveManager->get('FichierTheseService');
-        $variableService = $serviveManager->get('VariableService');
-        $userContextService = $serviveManager->get('UserContextService');
+        $validationService = $container->get('ValidationService');
+        $notifierService = $container->get(NotifierService::class);
+        $fichierTheseService = $container->get('FichierTheseService');
+        $variableService = $container->get('VariableService');
+        $userContextService = $container->get('UserContextService');
+        $userService = $container->get('unicaen-auth_user_service');
+        $utilisateurService = $container->get(UtilisateurService::class);
+        $authorizeService = $container->get('BjyAuthorize\Service\Authorize');
 
         /** @var EtablissementService $etablissementService */
-        $etablissementService = $serviveManager->get(EtablissementService::class);
+        $etablissementService = $container->get(EtablissementService::class);
 
         /** @var FileService $fileService */
-        $fileService = $serviveManager->get(FileService::class);
+        $fileService = $container->get(FileService::class);
 
         $service = new TheseService();
         $service->setValidationService($validationService);
@@ -47,9 +57,28 @@ class TheseServiceFactory
         $service->setFichierTheseService($fichierTheseService);
         $service->setVariableService($variableService);
         $service->setUserContextService($userContextService);
+        $service->setUserService($userService);
+        $service->setUtilisateurService($utilisateurService);
         $service->setEtablissementService($etablissementService);
         $service->setFileService($fileService);
+        $service->setAuthorizeService($authorizeService);
+
+        $this->injectConfig($service, $container);
 
         return $service;
+    }
+
+    private function injectConfig(TheseService $service, ContainerInterface $container)
+    {
+        $config = $container->get('Config');
+        Assert::keyExists($config, 'sygal');
+        Assert::keyExists($config['sygal'], 'depot_version_corrigee');
+
+        $configDepotVersionCorrigee = $config['sygal']['depot_version_corrigee'];
+        Assert::keyExists($configDepotVersionCorrigee, 'resaisir_autorisation_diffusion');
+        Assert::keyExists($configDepotVersionCorrigee, 'resaisir_attestations');
+
+        $service->setResaisirAutorisationDiffusionVersionCorrigee($configDepotVersionCorrigee['resaisir_autorisation_diffusion']);
+        $service->setResaisirAttestationsVersionCorrigee($configDepotVersionCorrigee['resaisir_attestations']);
     }
 }

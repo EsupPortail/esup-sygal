@@ -19,12 +19,12 @@ class ValidationDepotTheseCorrigeeNotification extends Notification
     {
         /** @var Individu[] $unknownMails */
         $unknownMails = [];
-        $to = $this->these->getDirecteursTheseEmails($unknownMails);
+        $to = $this->these->getPresidentJuryEmail($unknownMails);
         $cc = $this->emailBdd;
 
         $infoMessage = sprintf(
             "Un mail de notification vient d'être envoyé au(x) directeur(s) de thèse (%s) avec copie à la Maison du doctorat (%s)",
-            implode(',', $to),
+            $to,
             $cc
         );
 

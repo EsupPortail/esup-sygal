@@ -1,0 +1,35 @@
+<?php
+
+use Application\Search\Filter\CheckboxSearchFilter;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var CheckboxSearchFilter $filter
+ * @var array $queryParams
+ */
+
+$paramAttributes = $filter->getAttributes();
+$width = isset($paramAttributes['width']) ? $paramAttributes['width'] : 'fit';
+$liveSearch = isset($paramAttributes['liveSearch']) ? (bool)$paramAttributes['liveSearch'] : false;
+$isActive = $filter->isChecked($queryParams);
+?>
+
+<div class="form-group">
+    <label class="sr-only" for="search-input"></label>
+    <div class="input-group">
+        <input type="checkbox"
+               <?php echo $isActive ? 'checked' : '' ?>
+               value="1"
+               name="<?php echo $filter->getName() ?>"
+               class="form-control filter"
+               id="<?php echo $id = uniqid('checkbox-input-') ?>">
+        <label for="<?php echo $filter->getName() ?>"></label>
+    </div>
+</div>
+
+<script>
+    $(function() {
+        $("#<?php echo $id ?>").popover({html: true, trigger: "hover", placement: "bottom"});
+    });
+</script>

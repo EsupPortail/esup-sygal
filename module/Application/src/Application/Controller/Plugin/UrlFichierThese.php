@@ -2,11 +2,12 @@
 
 namespace Application\Controller\Plugin;
 
+use Application\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
+use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\VersionFichier;
-use Application\Filter\IdifyFilter;
 use Application\Filter\IdifyFilterAwareTrait;
 use Zend\Mvc\Controller\Plugin\Url as UrlPlugin;
 
@@ -23,12 +24,21 @@ class UrlFichierThese extends UrlPlugin
         );
     }
 
-    public function telechargerFichierThese(These $these, FichierThese $fichier)
+    /**
+     * @param These $these
+     * @param FichierThese|Fichier $fichier
+     * @return string
+     */
+    public function telechargerFichierThese(These $these, $fichier)
     {
+        if ($fichier instanceof FichierThese) {
+            $fichier = $fichier->getFichier();
+        }
+
         return $this->fromRoute('fichier/these/telecharger', [
             'these'      => $this->idify($these),
             'fichier'    => $this->idify($fichier),
-            'fichierNom' => $fichier->getFichier()->getNom(),
+            'fichierNom' => $fichier->getNom(),
         ], [], true);
     }
 
@@ -75,4 +85,15 @@ class UrlFichierThese extends UrlPlugin
         true
         );
     }
+
+    /**
+     * @param These $these
+     * @param Utilisateur $utilisateur
+     * @return string
+     */
+    public function listerFichiersPreRapportByUtilisateur(These $these, Utilisateur $utilisateur)
+    {
+        return $this->fromRoute('soutenance/lister-rapport-presoutenance-by-utilisateur', ['these' => $these->getId(), 'utilisateur' => $utilisateur->getId()], [], true);
+    }
+
 }

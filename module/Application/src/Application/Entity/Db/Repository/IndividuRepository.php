@@ -5,9 +5,11 @@ namespace Application\Entity\Db\Repository;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
+use Application\Entity\Db\Role;
 use Application\Entity\UserWrapper;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\Query\Expr\Join;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 
@@ -70,7 +72,7 @@ class IndividuRepository extends DefaultEntityRepository
             "WHERE i.HISTO_DESTRUCTION IS NULL AND rownum <= %d";
         if ($type !== null) {
             $sqlTemplate .= " AND i.type = '%s'";
-            $sql = sprintf($sqlTemplate, $type, (int)$limit);
+            $sql = sprintf($sqlTemplate, (int)$limit, $type);
             $tmp = null;
         } else {
             $sql = sprintf($sqlTemplate, (int)$limit);
@@ -99,17 +101,35 @@ class IndividuRepository extends DefaultEntityRepository
         return $stmt->fetchAll();
     }
 
+    /**
+     * @param Role|string $role Rôle ou code du rôle
+     * @return Individu[]
+     */
     public function findByRole($role)
     {
         $repo = $this->getEntityManager()->getRepository(IndividuRole::class);
         $qb = $repo->createQueryBuilder("ir")
-            ->join(Individu::class, "in")
-            ->andWhere("ir.role = :role")
-            ->setParameter("role", $role);
-        $query = $qb->getQuery();
-        /** @var IndividuRole[] $res */
-        $res = $query->execute();
+            ->addSelect('r, i')
+            ->join('ir.individu', 'i')
+            ->addOrderBy('i.nomUsuel')
+            ->addOrderBy('i.prenom1');
 
-        return $res;
+        if ($role instanceof Role) {
+            $qb
+                ->join('ir.role', 'r', Join::WITH, 'r = :role')
+                ->setParameter('role', $role);
+        } else {
+            $qb
+                ->join('ir.role', 'r', Join::WITH, 'r.code = :code')
+                ->setParameter('code', $role);
+        }
+
+
+        /** @var IndividuRole[] $res */
+        $res = $qb->getQuery()->execute();
+
+        return array_map(function(IndividuRole $ir) {
+            return $ir->getIndividu();
+        }, $res);
     }
 }

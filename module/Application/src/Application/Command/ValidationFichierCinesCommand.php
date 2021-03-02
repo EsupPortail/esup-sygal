@@ -6,6 +6,7 @@ use Application\Command\Exception\CommandExecutionException;
 use Application\Validator\Exception\CinesErrorException;
 use DOMDocument;
 use UnicaenApp\Exception\RuntimeException;
+use Webmozart\Assert\Assert;
 
 class ValidationFichierCinesCommand
 {
@@ -27,6 +28,11 @@ class ValidationFichierCinesCommand
     protected $xml;
 
     /**
+     * @var array
+     */
+    protected $options = [];
+
+    /**
      * @var bool
      */
     protected $simulateError = false;
@@ -34,11 +40,13 @@ class ValidationFichierCinesCommand
     /**
      * ValidationFichierCinesCommand constructor.
      *
-     * @param string $scriptPath Chemin absolu du script à exécuter.
+     * @param null $scriptPath Chemin absolu du script à exécuter.
+     * @param array $options
      */
-    public function __construct($scriptPath = null)
+    public function __construct($scriptPath = null, array $options = [])
     {
         $this->scriptPath = $scriptPath;
+        $this->options = $options;
     }
 
     /**
@@ -165,15 +173,16 @@ class ValidationFichierCinesCommand
     /**
      * Utilise le script spécifié pour valider le fichier.
      *
-     * @param string $filePath         Chemin du fichier à tester
-     * @param string $url              URL du web service, si différente de celle par défaut
-     * @param int    $maxExecutionTime En secondes
+     * @param string $filePath Chemin du fichier à tester
+     * @param null $url URL du web service, si différente de celle par défaut
+     * @param null $maxExecutionTime En secondes
      */
-    private function execValidationRequest($filePath, $url = null, $maxExecutionTime = null)
+    private function execValidationRequest(string $filePath, $url = null, $maxExecutionTime = null)
     {
         $scriptPath = $this->scriptPath;
 
-        $command = sprintf('%s --file "%s" %s %s',
+        $command = sprintf('%s %s --file "%s" %s %s',
+            $this->generateEnvVarsString(),
             realpath($scriptPath),
             $filePath,
             $url ? sprintf('--url "%s"', $url) : '',
@@ -199,6 +208,28 @@ class ValidationFichierCinesCommand
             throw new CinesErrorException(
                 "Impossible de valider le fichier car le service de validation a semble-t-il rencontré un problème.");
         }
+    }
+
+    private function generateEnvVarsString(): string
+    {
+        $envVars = [];
+
+        if ($proxyParams = $this->options['proxy'] ?? []) {
+            Assert::keyExists($proxyParams, 'enabled');
+            $proxyEnabled = (bool) $proxyParams['enabled'];
+            if ($proxyEnabled) {
+                Assert::keyExists($proxyParams, 'proxy_host');
+                Assert::keyExists($proxyParams, 'proxy_port');
+                $envVars['http_proxy'] = $proxyParams['proxy_host'] . ':' . $proxyParams['proxy_port'];
+                $envVars['https_proxy'] = '$http_proxy';
+            }
+        }
+
+        array_walk($envVars, function(&$v, $k) {
+            $v = $k . '=' . $v;
+        });
+
+        return implode(' ', $envVars);
     }
 
     /**

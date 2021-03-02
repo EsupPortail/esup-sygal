@@ -4,13 +4,14 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\EcoleDoctoraleController;
 use Application\Form\EcoleDoctoraleForm;
+use Application\Service\CoEncadrant\CoEncadrantService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
 use Application\SourceCodeStringHelper;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class EcoleDoctoraleControllerFactory
 {
@@ -19,27 +20,28 @@ class EcoleDoctoraleControllerFactory
     /**
      * Create service
      *
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return EcoleDoctoraleController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $controllerManager->getServiceLocator();
-
         /** @var EcoleDoctoraleForm $form */
-        $form = $sl->get('FormElementManager')->get('EcoleDoctoraleForm');
+        $form = $container->get('FormElementManager')->get('EcoleDoctoraleForm');
 
         /**
+         * @var CoEncadrantService $coEncadrantService
          * @var EcoleDoctoraleService $ecoleDoctoralService
          * @var IndividuService $individuService
          * @var RoleService $roleService
          * @var StructureService $structureService
          */
-        $ecoleDoctoralService = $sl->get('EcoleDoctoraleService');
-        $structureService = $sl->get(StructureService::class);
-        $roleService = $sl->get('RoleService');
+        $coEncadrantService = $container->get(CoEncadrantService::class);
+        $ecoleDoctoralService = $container->get('EcoleDoctoraleService');
+        $structureService = $container->get(StructureService::class);
+        $roleService = $container->get('RoleService');
 
         $controller = new EcoleDoctoraleController();
+        $controller->setCoEncadrantService($coEncadrantService);
         $controller->setEcoleDoctoraleService($ecoleDoctoralService);
         $controller->setRoleService($roleService);
         $controller->setStructureForm($form);
@@ -48,7 +50,7 @@ class EcoleDoctoraleControllerFactory
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
          */
-        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
         $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;

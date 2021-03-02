@@ -2,18 +2,16 @@
 
 namespace Application\Form\Factory;
 
-use Application\Form\MailConfirmationForm;
 use Application\Form\Hydrator\MailConfirmationHydrator;
-use Zend\Form\FormElementManager;
+use Application\Form\MailConfirmationForm;
+use Interop\Container\ContainerInterface;
 
 class MailConfirmationFormFactory
 {
-    public function __invoke(FormElementManager $formElementManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $formElementManager->getServiceLocator();
-
         /** @var MailConfirmationHydrator $hydrator */
-        $hydrator = $sl->get('HydratorManager')->get('MailConfirmationHydrator');
+        $hydrator = $container->get('HydratorManager')->get('MailConfirmationHydrator');
 
         $form = new MailConfirmationForm();
         $form->setHydrator($hydrator);

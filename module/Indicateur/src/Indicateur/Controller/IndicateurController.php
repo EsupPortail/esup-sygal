@@ -32,6 +32,19 @@ class IndicateurController extends AbstractActionController {
     use StructureServiceAwareTrait;
 
     /**
+     * @var IndicateurForm
+     */
+    private $indicateurForm;
+
+    /**
+     * @param IndicateurForm $indicateurForm
+     */
+    public function setIndicateurForm(IndicateurForm $indicateurForm)
+    {
+        $this->indicateurForm = $indicateurForm;
+    }
+
+    /**
      * @return array|ViewModel
      * @throws \Exception
      */
@@ -76,7 +89,7 @@ class IndicateurController extends AbstractActionController {
         }
 
         /** @var  IndicateurForm $form */
-        $form = $this->getServiceLocator()->get('FormElementManager')->get(IndicateurForm::class);
+        $form = $this->indicateurForm;
         $form->bind($indicateur);
 
         /** @var Request $request */

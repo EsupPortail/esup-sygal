@@ -3,8 +3,17 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\TheseController;
+use Application\Form\AttestationTheseForm;
+use Application\Form\DiffusionTheseForm;
+use Application\Form\MetadonneeTheseForm;
+use Application\Form\PointsDeVigilanceForm;
+use Application\Form\RdvBuTheseDoctorantForm;
+use Application\Form\RdvBuTheseForm;
+use Application\Service\Acteur\ActeurService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\FichierThese\FichierTheseService;
+use Application\Service\File\FileService;
+use Application\Service\Individu\IndividuService;
 use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
@@ -19,22 +28,20 @@ use Application\Service\Workflow\WorkflowService;
 use Application\SourceCodeStringHelper;
 use Doctrine\ORM\EntityManager;
 use Import\Service\ImportService;
-use Zend\Mvc\Controller\ControllerManager;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
+use Zend\View\Renderer\PhpRenderer;
 
 class TheseControllerFactory
 {
     /**
      * Create service
      *
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return TheseController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        $sl = $controllerManager->getServiceLocator();
-
-        $options = $this->getOptions($sl);
+        $options = $this->getOptions($container);
 
         /**
          * @var VariableService         $variableService
@@ -44,6 +51,7 @@ class TheseControllerFactory
          * @var TheseRechercheService   $theseRechercheService
          * @var RoleService             $roleService
          * @var FichierTheseService     $fichierTheseService
+         * @var FileService             $fileService
          * @var WorkflowService         $workflowService
          * @var NotifierService         $notifierService
          * @var EtablissementService    $etablissementService
@@ -52,22 +60,46 @@ class TheseControllerFactory
          * @var EntityManager           $entityManager
          * @var ImportService           $importService
          * @var UtilisateurService      $utilisateurService
+         * @var ActeurService           $acteurService
+         * @var IndividuService         $indivdiService
          */
-        $variableService = $sl->get('VariableService');
-        $validationService = $sl->get('ValidationService');
-        $versionFichierService = $sl->get('VersionFichierService');
-        $theseService = $sl->get('TheseService');
-        $theseRechercheService = $sl->get('TheseRechercheService');
-        $roleService = $sl->get('RoleService');
-        $uniteService = $sl->get('UniteRechercheService');
-        $fichierTheseService = $sl->get('FichierTheseService');
-        $workflowService = $sl->get('WorkflowService');
-        $etablissementService = $sl->get('EtablissementService');
-        $mailConfirmationService = $sl->get('MailConfirmationService');
-        $entityManager = $sl->get('doctrine.entitymanager.orm_default');
-        $notifierService = $sl->get(NotifierService::class);
-        $importService = $sl->get('ImportService');
-        $utilisateurService = $sl->get('UtilisateurService');
+        $variableService = $container->get('VariableService');
+        $validationService = $container->get('ValidationService');
+        $versionFichierService = $container->get('VersionFichierService');
+        $theseService = $container->get('TheseService');
+        $theseRechercheService = $container->get('TheseRechercheService');
+        $roleService = $container->get('RoleService');
+        $uniteService = $container->get('UniteRechercheService');
+        $fichierTheseService = $container->get('FichierTheseService');
+        $fileService = $container->get(FileService::class);
+        $workflowService = $container->get('WorkflowService');
+        $etablissementService = $container->get('EtablissementService');
+        $mailConfirmationService = $container->get('MailConfirmationService');
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $notifierService = $container->get(NotifierService::class);
+        $importService = $container->get('ImportService');
+        $utilisateurService = $container->get('UtilisateurService');
+
+        /**
+         * @var RdvBuTheseDoctorantForm $rdvBuTheseDoctorantForm
+         * @var RdvBuTheseForm $rdvBuTheseForm
+         */
+        $rdvBuTheseDoctorantForm = $container->get('FormElementManager')->get('RdvBuTheseDoctorantForm');
+        $rdvBuTheseForm = $container->get('FormElementManager')->get('RdvBuTheseForm');
+
+        /**
+         * @var AttestationTheseForm $attestationTheseForm
+         * @var DiffusionTheseForm $diffusionTheseForm
+         * @var MetadonneeTheseForm $metadonneeTheseForm
+         * @var PointsDeVigilanceForm $pointsDeVigilanceForm
+         */
+        $attestationTheseForm = $container->get('FormElementManager')->get('AttestationTheseForm');
+        $diffusionTheseForm = $container->get('FormElementManager')->get('DiffusionTheseForm');
+        $metadonneeTheseForm = $container->get('FormElementManager')->get('MetadonneeTheseForm');
+        $pointsDeVigilanceForm = $container->get('FormElementManager')->get('PointsDeVigilanceForm');
+
+        /* @var $renderer PhpRenderer */
+        $renderer = $container->get('ViewRenderer');
 
         $controller = new TheseController();
         $controller->setTimeoutRetraitement($this->getTimeoutRetraitementFromOptions($options));
@@ -78,6 +110,7 @@ class TheseControllerFactory
         $controller->setTheseRechercheService($theseRechercheService);
         $controller->setRoleService($roleService);
         $controller->setFichierTheseService($fichierTheseService);
+        $controller->setFileService($fileService);
         $controller->setWorkflowService($workflowService);
         $controller->setEtablissementService($etablissementService);
         $controller->setUniteRechercheService($uniteService);
@@ -86,11 +119,17 @@ class TheseControllerFactory
         $controller->setNotifierService($notifierService);
         $controller->setImportService($importService);
         $controller->setUtilisateurService($utilisateurService);
-
+        $controller->setRdvBuTheseDoctorantForm($rdvBuTheseDoctorantForm);
+        $controller->setRdvBuTheseForm($rdvBuTheseForm);
+        $controller->setAttestationTheseForm($attestationTheseForm);
+        $controller->setDiffusionTheseForm($diffusionTheseForm);
+        $controller->setMetadonneeTheseForm($metadonneeTheseForm);
+        $controller->setPointsDeVigilanceForm($pointsDeVigilanceForm);
+        $controller->setRenderer($renderer);
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
          */
-        $sourceCodeHelper = $sl->get(SourceCodeStringHelper::class);
+        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
         $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;
@@ -101,9 +140,9 @@ class TheseControllerFactory
         return isset($options['retraitement']['timeout']) ? $options['retraitement']['timeout'] : null;
     }
 
-    private function getOptions(ServiceLocatorInterface $serviceLocator)
+    private function getOptions(ContainerInterface $container)
     {
-        $options = $serviceLocator->get('config');
+        $options = $container->get('config');
 
         return isset($options['sygal']) ? $options['sygal'] : [];
     }

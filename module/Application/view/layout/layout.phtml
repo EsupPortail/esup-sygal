@@ -60,14 +60,14 @@
 
         <div class="container ">
             <?php
-            echo $this->navigation('navigation')->filAriane('navigation')->render() ?:
-                 $this->navigation()->filAriane('Zend\Navigation\Information')->render() ?>
+            echo $this->navigation('navigation')->filAriane('navigation')->setRenderInvisible(false)->render() ?:
+                 $this->navigation()->filAriane('Zend\Navigation\Information')->setRenderInvisible(false)->render() ?>
         </div>
         
         <div id="contenu-principal" class="container">
             <?php if (($menuSecondaire = $this->navigation()->menuSecondaire('navigation')->setMaxDepth(1)->render())): ?>
                 <div class="row">
-                    <div id="sidebar" class="col-xs-6 col-md-2" role="navigation">
+                    <div id="sidebar" class="col-xs-12 col-md-2" role="navigation">
                         <?php echo $menuSecondaire; ?>
                     </div>
                     <div id="content" class="col-xs-12 col-md-10">

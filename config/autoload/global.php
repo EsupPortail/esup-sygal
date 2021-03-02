@@ -16,6 +16,11 @@ return [
         'archivabilite' => [
             'check_ws_script_path' => __DIR__ . '/../../bin/from_cines/check_webservice_response.sh',
             'script_path'          => __DIR__ . '/../../bin/validation_cines.sh',
+            'proxy' => [
+                'enable' => false,
+                //'proxy_host' => 'http://proxy.unicaen.fr',
+                //'proxy_port' => 3128,
+            ],
         ],
         // Options pour le retraitement des fichiers PDF
         'retraitement' => [
@@ -31,6 +36,13 @@ return [
             // Durée au bout de laquelle le retraitement est interrompu pour le relancer en tâche de fond.
             // Valeurs possibles: '30s', '1m', etc. (cf. "man timeout").
             'timeout' => '20s',
+        ],
+        // Options concernant le dépôt de la version corrigée
+        'depot_version_corrigee' => [
+            // Resaisir l'autorisation de diffusion ? Sinon celle saisie au 1er dépôt est reprise/dupliquée.
+            'resaisir_autorisation_diffusion' => true,
+            // Resaisir les attestations ? Sinon celles saisies au 1er dépôt sont reprises/dupliquées.
+            'resaisir_attestations' => true,
         ],
     ],
     // Options pour le service de notification par mail

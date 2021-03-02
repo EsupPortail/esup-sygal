@@ -3,13 +3,12 @@
 namespace Application\Service;
 
 use Application\Authentication\Storage\AppStorage;
-use Application\Entity\Db\These;
-use Application\Entity\UserWrapper;
 use Application\Entity\Db\Doctorant;
-use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
+use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
+use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactory;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
@@ -24,27 +23,6 @@ class UserContextService extends BaseUserContextService
     use IndividuServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
-
-    /**
-     * @return Role|RoleInterface|null
-     */
-    public function getSelectedIdentityRole()
-    {
-        $role = parent::getSelectedIdentityRole();
-
-        /**
-         * Si aucun rôle n'est sélectionné, on tente de sélectionner le 1er trouvé.
-         */
-        if (! $role) {
-            $role = current($this->getSelectableIdentityRoles());
-            if (!$this->isRoleValid($role)) {
-                return null;
-            }
-            $this->setNextSelectedIdentityRole($role);
-        }
-
-        return $this->roleAsEntity($role);
-    }
 
     private $roleAsEntityCache = [];
 
@@ -67,6 +45,7 @@ class UserContextService extends BaseUserContextService
             return $this->roleAsEntityCache[$role];
         }
 
+        // todo: ce cache me semble bien inutile, $role est toujours le même au sein d'une même requête.
         $this->roleAsEntityCache[$role] =
             $this->getEntityManager()->getRepository(Role::class)->findOneBy(['roleId' => $role]);
 

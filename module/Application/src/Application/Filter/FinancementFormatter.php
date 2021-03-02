@@ -15,6 +15,18 @@ class FinancementFormatter {
     private $displayAs;
     /** @var string */
     private $sortBy;
+    /** @var boolean */
+    private $displayComplement;
+
+    /**
+     * @param bool $displayComplement
+     * @return FinancementFormatter
+     */
+    public function setDisplayComplement(bool $displayComplement)
+    {
+        $this->displayComplement = $displayComplement;
+        return $this;
+    }
 
     /**
      * @return string
@@ -79,15 +91,29 @@ class FinancementFormatter {
                     $infos = [];
                     if ($financement->getAnnee())                   $infos[] = $financement->getAnnee();
                     if ($financement->getOrigineFinancement())      $infos[] = $financement->getOrigineFinancement()->getLibelleLong();
-                    if ($financement->getComplementFinancement())   $infos[] = $financement->getComplementFinancement();
+                    if ($this->displayComplement === true AND $financement->getComplementFinancement())   $infos[] = $financement->getComplementFinancement();
                     if ($financement->getQuotiteFinancement())      $infos[] = $financement->getQuotiteFinancement();
                     if ($financement->getDateDebut())               $infos[] = $financement->getDateDebut()->format('d/m/Y');
                     if ($financement->getDateFin())                 $infos[] = $financement->getDateFin()->format('d/m/Y');
-                    $line = implode(", ", $infos);
+                    $infos[] = $this->formatTypeFinancement($financement);
+                    $line = implode(", ", array_filter($infos));
                     $output .= $line . "<br/>";
                     break;
             }
         }
         return $output;
+    }
+
+    /**
+     * @param Financement $financement
+     * @return string|null
+     */
+    public function formatTypeFinancement(Financement $financement)
+    {
+        if (! $financement->getLibelleTypeFinancement()) {
+            return null;
+        }
+
+        return sprintf("%s (%s)", $financement->getLibelleTypeFinancement(), $financement->getCodeTypeFinancement());
     }
 }

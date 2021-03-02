@@ -6,7 +6,7 @@ use Application\Entity\Db\EtablissementRattachement;
 use Application\Entity\Db\UniteRecherche;
 use Application\Form\UniteRechercheForm;
 use Application\View\Helper\SelectHelper;
-use Application\View\Helper\SelectsFilterPanel\SelectsFilterPanelHelper;
+use Application\View\Helper\FiltersPanel\FiltersPanelHelper;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -58,6 +58,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
         <?php echo $fcg($form->get('libelle')) ?>
         <?php echo $fcg($form->get('sigle')) ?>
         <?php echo $fcg($form->get('code')) ?>
+        <?php echo $fcg($form->get('id_ref')) ?>
         <?php echo $fcg($form->get('RNSR')) ?>
         <?php echo $fcg($form->get('estFerme')) ?>
     </div>
@@ -178,7 +179,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
                 $value = $data['value'];
                 $label = $data['label'];
                 $subtext = isset($data['subtext']) ? $data['subtext'] : '';
-                $isActive = SelectsFilterPanelHelper::isSelectOptionActive($paramName, $value, $queryParams);
+                $isActive = FiltersPanelHelper::isSelectOptionActive($paramName, $value, $queryParams);
                 ?>
                 <option value="<?php echo $value ?>" <?php echo $isActive ? 'selected' : '' ?> data-subtext="<?php echo $subtext ?>">
                     <?php echo $label ?>
@@ -261,7 +262,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
                 $value = $data['value'];
                 $label = $data['label'];
                 $subtext = isset($data['subtext']) ? $data['subtext'] : '';
-                $isActive = SelectsFilterPanelHelper::isSelectOptionActive($paramName, $value, $queryParams);
+                $isActive = FiltersPanelHelper::isSelectOptionActive($paramName, $value, $queryParams);
                 ?>
                 <option value="<?php echo $value ?>" <?php echo $isActive ? 'selected' : '' ?> data-subtext="<?php echo $subtext ?>">
                     <?php echo $label ?>
@@ -315,12 +316,6 @@ $form->get('code')->setAttribute('readonly', !$editable);
         });
     });
 </script>
-
-<?php
-$this->headLink()->appendStylesheet("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css");
-$this->inlineScript()->appendFile("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js");
-$this->inlineScript()->appendFile("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/i18n/defaults-fr_FR.min.js");
-?>
 
 <script>
     $(function() {

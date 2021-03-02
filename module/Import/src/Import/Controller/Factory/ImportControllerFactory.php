@@ -10,40 +10,37 @@ use Assert\AssertionFailedException;
 use Doctrine\ORM\EntityManager;
 use Import\Controller\ImportController;
 use Import\Service\ImportService;
+use Interop\Container\ContainerInterface;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Mvc\Controller\ControllerManager;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 class ImportControllerFactory
 {
     /**
-     * @param ControllerManager $controllerManager
+     * @param ContainerInterface $container
      * @return ImportController
      */
-    public function __invoke(ControllerManager $controllerManager)
+    public function __invoke(ContainerInterface $container)
     {
-        /** @var ServiceLocatorInterface $parentLocator */
-        $parentLocator = $controllerManager->getServiceLocator();
-
         /** @var EntityManager $entityManager */
-        $entityManager = $parentLocator->get('doctrine.entitymanager.orm_default');
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
 
         /** @var ImportService $importService */
-        $importService = $parentLocator->get(ImportService::class);
+        $importService = $container->get(ImportService::class);
 
         /** @var TheseService $theseService */
-        $theseService = $parentLocator->get('TheseService');
+        $theseService = $container->get('TheseService');
 
         /** @var EtablissementService $etablissementService */
-        $etablissementService = $parentLocator->get('EtablissementService');
+        $etablissementService = $container->get('EtablissementService');
 
         try {
-            $config = $this->getConfig($controllerManager->getServiceLocator());
+            $config = $this->getConfig($container);
         } catch (AssertionFailedException $e) {
             throw new RuntimeException("Configuration invalide", null, $e);
         }
 
         $controller = new ImportController();
+        $controller->setContainer($container);
         $controller->setEntityManager($entityManager);
         $controller->setImportService($importService);
         $controller->setTheseService($theseService);
@@ -53,20 +50,20 @@ class ImportControllerFactory
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper
          */
-        $sourceCodeHelper = $parentLocator->get(SourceCodeStringHelper::class);
+        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
         $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;
     }
 
     /**
-     * @param ServiceLocatorInterface $sl
+     * @param ContainerInterface $container
      * @return array
-     * @throws \Assert\AssertionFailedException
+     * @throws AssertionFailedException
      */
-    private function getConfig(ServiceLocatorInterface $sl)
+    private function getConfig(ContainerInterface $container)
     {
-        $config = $sl->get('config');
+        $config = $container->get('config');
 
         Assertion::keyIsset($config, 'import-api');
 

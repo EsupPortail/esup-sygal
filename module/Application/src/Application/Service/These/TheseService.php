@@ -2,6 +2,7 @@
 
 namespace Application\Service\These;
 
+use Application\Controller\FichierTheseController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
@@ -15,6 +16,7 @@ use Application\Entity\Db\VersionFichier;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Rule\AutorisationDiffusionRule;
 use Application\Rule\SuppressionAttestationsRequiseRule;
+use Application\Service\AuthorizeServiceAwareTrait;
 use Application\Service\BaseService;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
@@ -23,6 +25,7 @@ use Application\Service\FichierThese\PdcData;
 use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Assert\Assertion;
@@ -31,17 +34,83 @@ use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
-use UnicaenAuth\Entity\Db\UserInterface;
+use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
+use Zend\EventManager\Event;
+use Zend\EventManager\EventManagerInterface;
+use Zend\EventManager\ListenerAggregateInterface;
+use Zend\EventManager\ListenerAggregateTrait;
+use Zend\Mvc\Controller\AbstractActionController;
 
-class TheseService extends BaseService
+class TheseService extends BaseService implements ListenerAggregateInterface
 {
+    use ListenerAggregateTrait;
     use ValidationServiceAwareTrait;
     use NotifierServiceAwareTrait;
     use FichierTheseServiceAwareTrait;
     use VariableServiceAwareTrait;
     use UserContextServiceAwareTrait;
+    use UserServiceAwareTrait;
+    use UtilisateurServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use FileServiceAwareTrait;
+    use AuthorizeServiceAwareTrait;
+
+    /**
+     * Resaisir l'autorisation de diffusion ? Sinon celle saisie au 1er dépôt est reprise/dupliquée.
+     * @var bool
+     */
+    private $resaisirAutorisationDiffusionVersionCorrigee = false;
+
+    /**
+     * Resaisir les attestations ? Sinon celles saisies au 1er dépôt sont reprises/dupliquées.
+     * @var bool
+     */
+    private $resaisirAttestationsVersionCorrigee = false;
+
+    /**
+     * @param bool $resaisirAutorisationDiffusionVersionCorrigee
+     * @return TheseService
+     */
+    public function setResaisirAutorisationDiffusionVersionCorrigee(bool $resaisirAutorisationDiffusionVersionCorrigee): TheseService
+    {
+        $this->resaisirAutorisationDiffusionVersionCorrigee = $resaisirAutorisationDiffusionVersionCorrigee;
+        return $this;
+    }
+
+    /**
+     * @param bool $resaisirAttestationsVersionCorrigee
+     * @return TheseService
+     */
+    public function setResaisirAttestationsVersionCorrigee(bool $resaisirAttestationsVersionCorrigee): TheseService
+    {
+        $this->resaisirAttestationsVersionCorrigee = $resaisirAttestationsVersionCorrigee;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getResaisirAutorisationDiffusionVersionCorrigee(): bool
+    {
+        return $this->resaisirAutorisationDiffusionVersionCorrigee;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getResaisirAttestationsVersionCorrigee(): bool
+    {
+        return $this->resaisirAttestationsVersionCorrigee;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function attach(EventManagerInterface $events, $priority = 1)
+    {
+        // réaction à l'événement de dépôt d'un fichier de thèse
+        $events->attach(FichierTheseController::FICHIER_THESE_TELEVERSE, [$this, 'onFichierTheseTeleverse']);
+    }
 
     /**
      * @return TheseRepository
@@ -100,6 +169,65 @@ class TheseService extends BaseService
     }
 
     /**
+     * @param Event $event
+     */
+    public function onFichierTheseTeleverse(Event $event)
+    {
+        /** @var These $these */
+        /** @var VersionFichier $version */
+        /** @var NatureFichier $nature */
+        $these = $event->getTarget();
+        $version = $event->getParam('version');
+
+        if ($version->estVersionOriginale() && $version->estVersionCorrigee()) {
+            $this->onFichierTheseTeleverseVersionCorrigee($these);
+        }
+    }
+
+    /**
+     * Lors du dépôt d'une version originale corrigée, selon la config de l'appli, il peut être nécessaire de créer
+     * automatiquement Diffusion et Attestation.
+     *
+     * @param These $these
+     */
+    private function onFichierTheseTeleverseVersionCorrigee(These $these)
+    {
+        // Création automatique d'une Diffusion pour la version corrigée si l'utilisateur n'a pas le privilège d'en saisir une.
+        if (! $this->resaisirAutorisationDiffusionVersionCorrigee) {
+            $this->createDiffusionVersionCorrigee($these);
+        }
+        // Création automatique d'une Attestation pour la version corrigée si l'utilisateur n'a pas le privilège d'en saisir une.
+        if (! $this->resaisirAttestationsVersionCorrigee) {
+            $this->createAttestationVersionCorrigee($these);
+        }
+    }
+
+    /**
+     * Création automatique d'une Attestation pour la version corrigée, identique à celle du 1er dépôt.
+     *
+     * @param These $these
+     */
+    public function createAttestationVersionCorrigee(These $these)
+    {
+        $versionOrig = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+        $attestationOrig = $these->getAttestationForVersion($versionOrig);
+        if ($attestationOrig === null) {
+            throw new LogicException("Aucune Attestation trouvée pour le 1er dépôt");
+        }
+
+        $versionCorr = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG_CORR);
+        $attestationCorr = $these->getAttestationForVersion($versionCorr);
+        if ($attestationCorr !== null) {
+            return; // Attestation existante
+        }
+
+        $attestationCorr = clone $attestationOrig;
+        $attestationCorr->setVersionCorrigee(true);
+        $attestationCorr->setCreationAuto(true);
+        $this->updateAttestation($these, $attestationCorr);
+    }
+
+    /**
      * @param These       $these
      * @param Attestation $attestation
      */
@@ -140,6 +268,31 @@ class TheseService extends BaseService
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Erreur rencontrée lors de la suppression", null, $e);
         }
+    }
+
+    /**
+     * Création automatique d'une Diffusion pour la version corrigée, identique à celle du 1er dépôt.
+     *
+     * @param These $these
+     */
+    public function createDiffusionVersionCorrigee(These $these)
+    {
+        $versionOrig = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+        $diffusionOrig = $these->getDiffusionForVersion($versionOrig);
+        if ($diffusionOrig === null) {
+            throw new LogicException("Aucune Diffusion trouvée pour le 1er dépôt");
+        }
+
+        $versionCorr = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG_CORR);
+        $diffusionCorr = $these->getDiffusionForVersion($versionCorr);
+        if ($diffusionCorr !== null) {
+            return; // Diffusion existante
+        }
+
+        $diffusionCorr = clone $diffusionOrig;
+        $diffusionCorr->setVersionCorrigee(true);
+        $diffusionCorr->setCreationAuto(true);
+        $this->updateDiffusion($these, $diffusionCorr, $versionOrig);
     }
 
     /**
@@ -272,7 +425,7 @@ class TheseService extends BaseService
 
         // si tout est renseigné, on valide automatiquement
         if ($this->isInfosBuSaisies($these)) {
-            $this->validationService->validateRdvBu($these);
+            $this->validationService->validateRdvBu($these, $this->userContextService->getIdentityIndividu());
             $successMessage = "Validation enregistrée avec succès.";
 
             // notification BDD et BU + doctorant (à la 1ere validation seulement)
@@ -299,10 +452,22 @@ class TheseService extends BaseService
     {
         $pdcData = new PdcData();
 
+
+        if ($these->getDateSoutenance() !== null) {
+            $mois = (int) $these->getDateSoutenance()->format('m');
+            $annee = (int) $these->getDateSoutenance()->format('Y');
+
+            $anneeUniversitaire = null;
+            if ($mois > 9)  $anneeUniversitaire = $annee . "/" . ($annee + 1);
+            else            $anneeUniversitaire = ($annee - 1) . "/" . $annee;
+            $pdcData->setAnneeUniversitaire($anneeUniversitaire);
+        }
+
         /** informations générales */
         $pdcData->setTitre($these->getTitre());
         $pdcData->setSpecialite($these->getLibelleDiscipline());
         if ($these->getEtablissement()) $pdcData->setEtablissement($these->getEtablissement()->getLibelle());
+        if ($these->getEcoleDoctorale()) $pdcData->setEtablissement($these->getEtablissement()->getLibelle());
         if ($these->getDoctorant()) {
             $pdcData->setDoctorant($these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true, true, true));
         }
@@ -315,8 +480,6 @@ class TheseService extends BaseService
             $pdcData->setCotutuelleLibelle($these->getLibelleEtabCotutelle());
             if ($these->getLibellePaysCotutelle()) $pdcData->setCotutuellePays($these->getLibellePaysCotutelle());
         }
-
-
 
         /** Jury de thèses */
         $acteurs = $these->getActeurs()->toArray();
@@ -341,6 +504,7 @@ class TheseService extends BaseService
             return $a->estPresidentJury();
         });
 
+        $rapporteurs = array_diff($rapporteurs, $president);
         $membres = array_diff($acteurs, $rapporteurs, $directeurs, $codirecteurs, $president);
         $pdcData->setMembres($membres);
 
@@ -395,6 +559,7 @@ class TheseService extends BaseService
         }
         $pdcData->setListing(implode(" et ", $nomination) . ", ");
         if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());
+        if ($these->getEcoleDoctorale()) $pdcData->setEcoleDoctorale($these->getEcoleDoctorale()->getStructure()->getLibelle());
 
         // chemins vers les logos
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {
@@ -458,5 +623,62 @@ EOS;
             VersionFichier::CODE_ORIG_CORR);
 
         return !empty($fichierTheses);
+    }
+
+    /**
+     * @param AbstractActionController $controller
+     * @param string $param
+     * @return These
+     */
+    public function getRequestedThese(AbstractActionController $controller, string $param='these')
+    {
+        $id = $controller->params()->fromRoute($param);
+
+        /** @var These $these */
+        $these = $this->getRepository()->find($id);
+        return $these;
+    }
+
+    /**
+     * @param These $these
+     * @return array
+     */
+    public function notifierCorrectionsApportees(These $these)
+    {
+        $president = $these->getPresidentJury();
+        if ($president === null) {
+            throw new RuntimeException("Aucun président du jury pour la thèse [".$these->getId()."]");
+        }
+
+        //Recherche de l'utilisateur  associé à l'individu
+        $individu = $president->getIndividu();
+        $utilisateurs = $this->getUtilisateurService()->getRepository()->findByIndividu($individu);
+
+        // Notification direct de l'utilisateur déjà existant
+        if (!empty($utilisateurs)) {
+            $this->getNotifierService()->triggerValidationDepotTheseCorrigee($these);
+            return ['success', "Notification des corrections faite à <strong>".current($utilisateurs)->getEmail()."</strong>"];
+        }
+        else {
+            // Recupération du "meilleur" email
+            $email = null;
+            if ($email === null and $president->getIndividu() !== null and $president->getIndividu()->getEmail()) $email = $president->getIndividu()->getEmail();
+            if ($email === null and $president->getMembre() !== null and $president->getMembre()->getEmail()) $email = $president->getMembre()->getEmail();
+
+            if ($email) {
+                // Creation du compte local puis notification (si mail)
+                $individu->setEmail($email);
+                $username = ($individu->getNomUsuel() ?: $individu->getNomPatronymique()) . "_" . $president->getId();
+                $user = $this->utilisateurService->createFromIndividu($individu, $username, 'none');
+                $token = $this->userService->updateUserPasswordResetToken($user);
+                $this->getNotifierService()->triggerInitialisationCompte($user, $token);
+                $this->getNotifierService()->triggerValidationDepotTheseCorrigee($these);
+                return ['success', "Création de compte initialisée et notification des corrections faite à <strong>" . $email . "</strong>"];
+            } else {
+                // Echec (si aucun mail, faudra le renseigner dans un membre fictif par exemple)
+                $this->getNotifierService()->triggerPasDeMailPresidentJury($these, $president);
+                return ['error', "Aucune action de réalisée car aucun email de trouvé."];
+            }
+        }
     }
 }

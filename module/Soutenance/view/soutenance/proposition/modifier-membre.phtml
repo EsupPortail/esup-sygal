@@ -1,0 +1,44 @@
+<?php
+
+use Application\Entity\Db\These;
+use Soutenance\Form\Membre\MembreForm;
+use Zend\Form\Element;
+
+/**
+ * @see \Soutenance\Controller\PropositionController::modifierMembreAction()
+ * @var MembreForm $form
+ * @var These $these
+ */
+?>
+
+
+<?php
+echo $this->form()->openTag($form);
+echo $this->formControlGroup($form->get('sexe'));
+echo $this->formControlGroup($form->get('prenom'));
+echo $this->formControlGroup($form->get('nom'));
+echo $this->formControlGroup($form->get('email'));
+echo $this->formControlGroup($form->get('qualite'));
+echo $this->formControlGroup($form->get('etablissement'));
+
+if ($these->getEtablissement()->estComue()) {
+    /** @var Element $element */
+    $element = $form->get('exterieur');
+    $element->setLabel('Le membre est extérieur (n\'appartient pas à l\'établissement qui délivre le dîplome)');
+}
+echo $this->formControlGroup($form->get('exterieur'));
+echo $this->formControlGroup($form->get('visio'));
+echo $this->formControlGroup($form->get('role'));
+
+echo $this->formControlGroup($form->get('submit'));
+echo $this->form()->closeTag();
+?>
+
+
+<?php
+//echo $this->form($form);
+?>
+
+<script>
+    $('select').selectpicker();
+</script>

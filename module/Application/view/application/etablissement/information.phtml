@@ -24,71 +24,93 @@ $canAddRole = true;
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
-<a href="<?php echo $this->url('etablissement', [], [], true); ?>"
-   class="btn btn-primary action"
-   >
-    <span class="glyphicon glyphicon-th-list"></span> Index des établissements
-</a>
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+        <a href="#informations"
+           role="tab"
+           aria-controls="informations"
+           data-toggle="tab"
 
-<?php if($canEdit): ?>
-    <a href="<?php echo $this->url('etablissement/modifier', ['structure'=> $etablissement->getStructure()->getId()], [], true); ?>"
-       class="btn btn-primary action"
-    >
-        <span class="glyphicon glyphicon-pencil"></span> Modifier l'établissement
-    </a>
-<?php endif; ?>
+        >
+            Informations générales
+        </a>
+    </li>
+    <li role="presentation">
+        <a href="#membres"
+           role="tab"
+           aria-controls="membres"
+           data-toggle="tab"
+        >
+            Rôles et membres
+        </a>
+    </li>
+</ul>
 
-<?php if ($canAddRole && empty($roleListing)): ?>
-    <a
-            href="<?php echo $this->url('structure/generer-roles-defauts',
-                ['id' => $etablissement->getStructure()->getId(), 'type' => TypeStructure::CODE_ETABLISSEMENT], [], true);?>"
-            class="btn btn-warning"
-    >
-        <span class="glyphicon glyphicon-refresh"></span>
-        Générer rôles par défaut
-    </a>
-<?php endif; ?>
-
-<div>
-    <h2>
-        Informations générales
-    </h2>
-    <div class="row">
-        <div class="col-md-6">
-            <dl>
-                <dt> Libelle : </dt>    <dd>    <?php echo $etablissement->getLibelle(); ?>     </dd>
-                <dt> Sigle : </dt>      <dd>    <?php echo $etablissement->getSigle() ?: "(Non renseigné)"; ?></dd>
-                <dt> Code : </dt>       <dd>    <?php echo $etablissement->getStructure()->getCode(); ?>        </dd>
-                <dt> Domaine : </dt>    <dd>    <?php echo $etablissement->getDomaine() ?: "(Non renseigné)"; ?></dd>
-                <dt> Statut : </dt>     <dd>
-                    <?php if ($etablissement->estMembre()): ?>
-                        <span class="label label-primary">Membre</span>
-                    <?php endif ?>
-                    <?php if ($etablissement->estAssocie()): ?>
-                        <span class="label label-info">Associé</span>
-                    <?php endif ?>
-                    <?php if ($etablissement->getStructure()->isFerme()) : ?>
-                        <span class="label" style="background-color:darkred">Structure fermée</span>
-                    <?php else : ?>
-                        <span class="label" style="background-color:darkgreen">Structure ouverte</span>
-                    <?php endif; ?>
-                </dd>
-            </dl>
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane in active" id="informations">
+        <h2>
+            Informations générales
+        </h2>
+        <div class="row">
+            <div class="col-md-6">
+                <dl>
+                    <dt> Libelle : </dt>                <dd>    <?php echo $etablissement->getLibelle(); ?>     </dd>
+                    <dt> Sigle : </dt>                  <dd>    <?php echo $etablissement->getSigle() ?: "(Non renseigné)"; ?></dd>
+                    <dt> Adresse : </dt>                <dd>    <?php echo $etablissement->getStructure()->getAdresse() ?: "(Non renseignée)"; ?></dd>
+                    <dt> Téléphone : </dt>              <dd>    <?php echo $etablissement->getStructure()->getTelephone() ?: "(Non renseigné)"; ?></dd>
+                    <dt> Fax : </dt>                    <dd>    <?php echo $etablissement->getStructure()->getFax() ?: "(Non renseigné)"; ?></dd>
+                    <dt> Adresse électronique : </dt>   <dd>    <?php echo $etablissement->getStructure()->getEmail() ?: "(Non renseignée)"; ?></dd>
+                    <dt> Site internet : </dt>          <dd>    <?php echo $etablissement->getStructure()->getSiteWeb() ?: "(Non renseigné)"; ?></dd>
+                    <dt> Code : </dt>                   <dd>    <?php echo $etablissement->getStructure()->getCode(); ?>        </dd>
+                    <dt> Id REF: </dt>
+                    <dd>
+                        <?php if ($etablissement->getStructure()->getIdRef() !== null AND trim($etablissement->getStructure()->getIdRef()) !== "") : ?>
+                            <?php echo $etablissement->getStructure()->getIdRef(); ?>
+                        <?php else : ?>
+                            (Non renseigné)
+                        <?php endif; ?>
+                    </dd>
+                    <dt> Domaine : </dt>                <dd>    <?php echo $etablissement->getDomaine() ?: "(Non renseigné)"; ?></dd>
+                </dl>
+            </div>
+            <div class="col-md-4">
+                <dl>
+                    <dt> Statut : </dt>     <dd>
+                        <?php if ($etablissement->estMembre()): ?>
+                            <span class="label label-primary">Membre</span>
+                        <?php endif ?>
+                        <?php if ($etablissement->estAssocie()): ?>
+                            <span class="label label-info">Associé</span>
+                        <?php endif ?>
+                        <?php if ($etablissement->estInscription()): ?>
+                            <span class="label label-warning">Inscription</span>
+                        <?php endif ?>
+                        <?php if ($etablissement->getStructure()->isFerme()) : ?>
+                            <span class="label" style="background-color:darkred">Structure fermée</span>
+                        <?php else : ?>
+                            <span class="label" style="background-color:darkgreen">Structure ouverte</span>
+                        <?php endif; ?>
+                    </dd>
+                    <dt>Logo :</dt>
+                    <dd>
+                        <img id="logo" style="max-width: 200px; max-height: 200px; background-color: white;"
+                             src="data:image/png;base64,<?php echo base64_encode($logoContent); ?>"/>
+                    </dd>
+                </dl>
+            </div>
         </div>
-        <div class="col-md-4">
-            <dl>
-                <dt>Logo :</dt>
-                <dd>
-                    <img id="logo" style="max-width: 200px; max-height: 200px; background-color: white;"
-                         src="data:image/png;base64,<?php echo base64_encode($logoContent); ?>"/>
-                </dd>
-            </dl>
-        </div>
+
+        <?php if($canEdit): ?>
+            <a href="<?php echo $this->url('etablissement/modifier', ['structure'=> $etablissement->getStructure()->getId()], [], true); ?>"
+               class="btn btn-primary action"
+            >
+                <span class="glyphicon glyphicon-pencil"></span> Modifier l'établissement
+            </a>
+        <?php endif; ?>
     </div>
-</div>
 
+    <div role="tabpanel" class="tab-pane" id="membres">
 
-<div>
     <h2>
         Rôles et membres
     </h2>
@@ -112,6 +134,18 @@ $canAddRole = true;
             </div>
             <?php endforeach; ?>
         </div>
+
+        <?php if ($canAddRole && empty($roleListing)): ?>
+            <a
+                    href="<?php echo $this->url('structure/generer-roles-defauts',
+                        ['id' => $etablissement->getStructure()->getId(), 'type' => TypeStructure::CODE_ETABLISSEMENT], [], true);?>"
+                    class="btn btn-warning"
+            >
+                <span class="glyphicon glyphicon-refresh"></span>
+                Générer rôles par défaut
+            </a>
+        <?php endif; ?>
+    </div>
 </div>
 
 <style>

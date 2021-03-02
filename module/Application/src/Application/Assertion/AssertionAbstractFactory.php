@@ -6,11 +6,12 @@ use Application\Assertion\Interfaces\ControllerAssertionInterface;
 use Application\Assertion\Interfaces\EntityAssertionInterface;
 use Application\Assertion\Interfaces\PageAssertionInterface;
 use Application\Service\UserContextService;
+use Interop\Container\ContainerInterface;
+use UnicaenApp\Service\MessageCollector;
 use UnicaenAuth\Service\AuthorizeService;
-use Zend\Log\Logger;
-use Zend\ServiceManager\AbstractFactoryInterface;
-use Zend\ServiceManager\Exception\InvalidServiceNameException;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Mvc\MvcEvent;
+use Zend\ServiceManager\Exception\InvalidArgumentException;
+use Zend\ServiceManager\Factory\AbstractFactoryInterface;
 
 /**
  * Instancie l'Assertion de base correspondant au nom de service suivant :
@@ -27,15 +28,7 @@ class AssertionAbstractFactory implements AbstractFactoryInterface
 {
     const START = 'Assertion';
 
-    /**
-     * Determine if we can create a service with name
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param                         $name
-     * @param                         $requestedName
-     * @return bool
-     */
-    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    public function canCreate(ContainerInterface $container, $requestedName)
     {
         $parts = explode('\\', $requestedName);
         if (!$parts || $parts[0] !== self::START) {
@@ -47,15 +40,7 @@ class AssertionAbstractFactory implements AbstractFactoryInterface
             $this->isSpecializedAssertionRequested($requestedName);
     }
 
-    /**
-     * Create service with name
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param                         $name
-     * @param                         $requestedName
-     * @return BaseAssertion|EntityAssertionInterface|ControllerAssertionInterface|PageAssertionInterface
-     */
-    public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $parts = explode('\\', $requestedName);
         $parts = array_slice($parts, 1);
@@ -67,7 +52,7 @@ class AssertionAbstractFactory implements AbstractFactoryInterface
 
             /** @var BaseAssertion $baseAssertion */
             $baseAssertion = new $className;
-            $this->initBaseAssertion($baseAssertion, $serviceLocator, $prefix);
+            $this->initBaseAssertion($baseAssertion, $container, $prefix);
 
             return $baseAssertion;
 
@@ -77,32 +62,40 @@ class AssertionAbstractFactory implements AbstractFactoryInterface
             return new $className;
 
         } else {
-            throw new InvalidServiceNameException("Assertion demandée inattendue : $requestedName");
+            throw new InvalidArgumentException("Assertion demandée inattendue : $requestedName");
         }
     }
 
-
-    private function initBaseAssertion(BaseAssertion $baseAssertion, ServiceLocatorInterface $serviceLocator, $prefix)
+    private function initBaseAssertion(BaseAssertion $baseAssertion, ContainerInterface $container, $prefix)
     {
         /* @var AuthorizeService $authorizeService */
-        $authorizeService = $serviceLocator->get('BjyAuthorize\Service\Authorize');
+        $authorizeService = $container->get('BjyAuthorize\Service\Authorize');
         /** @var UserContextService $userContextService */
-        $userContextService = $serviceLocator->get('UnicaenAuth\Service\UserContext');
+        $userContextService = $container->get('UnicaenAuth\Service\UserContext');
 
         // les Assertions spécialisées sont injectées dans l'Assertion de base
         /** @var EntityAssertionInterface $entityAssertion */
-        $entityAssertion = $serviceLocator->get($prefix . 'Entity');
+        $entityAssertion = $container->get($prefix . 'Entity');
         $entityAssertion->setUserContextService($userContextService);
         /** @var ControllerAssertionInterface $controllerAssertion */
-        $controllerAssertion = $serviceLocator->get($prefix . 'Controller');
+        $controllerAssertion = $container->get($prefix . 'Controller');
         $controllerAssertion->setUserContextService($userContextService);
         /** @var PageAssertionInterface $pageAssertion */
-        $pageAssertion = $serviceLocator->get($prefix . 'Page');
+        $pageAssertion = $container->get($prefix . 'Page');
         $pageAssertion->setAuthorizeService($authorizeService);
+
+        /** @var MvcEvent $mvcEvent */
+        $mvcEvent = $container->get('Application')->getMvcEvent();
+
+        /** @var MessageCollector $messageCollector */
+        $messageCollector = $container->get('MessageCollector');
 
         $baseAssertion->setEntityAssertion($entityAssertion);
         $baseAssertion->setControllerAssertion($controllerAssertion);
         $baseAssertion->setPageAssertion($pageAssertion);
+        $baseAssertion->setMvcEvent($mvcEvent);
+        $baseAssertion->setServiceMessageCollector($messageCollector);
+        $baseAssertion->setServiceAuthorize($authorizeService);
 
 //        $logger = new Logger();
 //        $logger->addWriter(new \Zend\Log\Writer\Stream('/tmp/TheseEntityAssertion.log'));
@@ -111,20 +104,17 @@ class AssertionAbstractFactory implements AbstractFactoryInterface
         return $baseAssertion;
     }
 
-
     private function isBaseAssertionRequested($requestedName)
     {
         $parts = explode('\\', $requestedName);
-        $isBaseAssertion = count($parts) === 2;
 
-        return $isBaseAssertion;
+        return count($parts) === 2;
     }
 
     private function isSpecializedAssertionRequested($requestedName)
     {
         $parts = explode('\\', $requestedName);
-        $isSpecializedAssertion = count($parts) === 3;
 
-        return $isSpecializedAssertion;
+        return count($parts) === 3;
     }
 }

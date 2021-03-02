@@ -53,15 +53,15 @@ class EtablissementRepository extends DefaultEntityRepository
         return $entity;
     }
 
-    /**
-     * @param int $id
-     * @return null|Etablissement
-     */
-    public function find($id) {
-        /** @var Etablissement $etablissement */
-        $etablissement = $this->findOneBy(["id" => $id]);
-        return $etablissement;
-    }
+//    /**
+//     * @param int $id
+//     * @return null|Etablissement
+//     */
+//    public function find($id) {
+//        /** @var Etablissement $etablissement */
+//        $etablissement = $this->findOneBy(["id" => $id]);
+//        return $etablissement;
+//    }
 
     /**
      * @return Etablissement[]
@@ -214,6 +214,24 @@ class EtablissementRepository extends DefaultEntityRepository
             ->andWhere("e.estMembre = 1")
             ->orderBy('s.libelle')
         ;
+
+        return  $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param bool $cacheable
+     * @return Etablissement[]
+     */
+    public function findAllEtablissementsInscriptions($cacheable = false)
+    {
+        $qb = $this->createQueryBuilder("e")
+            ->addSelect("s")
+            ->join("e.structure", "s")
+            ->andWhere("e.estInscription = 1")
+            ->orderBy('s.libelle')
+        ;
+
+        $qb->setCacheable($cacheable);
 
         return  $qb->getQuery()->getResult();
     }

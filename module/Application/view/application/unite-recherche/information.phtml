@@ -7,11 +7,13 @@
  * @var array                       $individuListing (string => string[])
  * @var EtablissementRattachement[] $etablissementsRattachements
  * @var string                      $logoContent
+ * @var array                       $coencadrants
  */
 
 use Application\Entity\Db\EtablissementRattachement;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
+use Application\Provider\Privilege\CoEncadrantPrivileges;
 use Application\Provider\Privilege\StructurePrivileges;
 
 $this->headTitle("Unité de recherche '{$unite->getStructure()->getCode()}'");
@@ -19,6 +21,10 @@ $this->headTitle("Unité de recherche '{$unite->getStructure()->getCode()}'");
 $canEdit = ($this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES))) ||
     ($this->isAllowed($unite->getStructure(), StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES));
 $canAddRole = $canEdit;
+
+$canCoencadrantAfficher = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_AFFICHER));
+$canCoencadrantExport = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_AFFICHER));
+
 ?>
 
 <h1 class="page-header">
@@ -27,115 +33,199 @@ $canAddRole = $canEdit;
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
-<h2>
-    Informations générales
-</h2>
-<div class="row">
-    <div class="col-md-8">
-        <dl>
-            <dt> Libelle :</dt>
-            <dd>    <?php echo $unite->getLibelle(); ?>     </dd>
-            <dt> Sigle :</dt>
-            <dd>    <?php echo $unite->getSigle(); ?>       </dd>
-            <dt> Code :</dt>
-            <dd>    <?php echo $unite->getStructure()->getCode(); ?>        </dd>
-            <dt> Identifiant RNSR :</dt>
-            <dd>    <?php echo $unite->getRNSR(); ?>        </dd>
-            <dt> Établissement(s) de rattachement :</dt>
-            <dd>
-                <ul>
-                    <?php foreach ($etablissementsRattachements as $etablissementRattachement) : ?>
-                        <li> <?php echo $etablissementRattachement->getEtablissement()->getLibelle(); ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </dd>
-            <dt> Domaine(s) scientifique(s) :</dt>
-            <dd>
-                <ul>
-                    <?php foreach ($unite->getDomaines() as $domaineScientifique) : ?>
-                        <li> <?php echo $domaineScientifique->getLibelle(); ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </dd>
-            <dt> Statut :</dt>
-            <dd>
-                <?php if ($unite->getStructure()->isFerme()) : ?>
-                    <span class="label" style="background-color:darkred">Structure fermée</span>
-                <?php else : ?>
-                    <span class="label" style="background-color:darkgreen">Structure ouverte</span>
-                <?php endif; ?>
-            </dd>
-        </dl>
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+        <a href="#informations"
+           role="tab"
+           aria-controls="informations"
+           data-toggle="tab"
+           
+        >
+            Informations générales
+        </a>
+    </li>
+    <li role="presentation">
+        <a href="#membres"
+           role="tab"
+           aria-controls="membres"
+           data-toggle="tab"
+        >
+            Rôles et membres
+        </a>
+    </li>
+    <li role="presentation">
+        <a href="#coencadrants"
+           role="tab"
+           aria-controls="coencadrants"
+           data-toggle="tab"
+        >
+            Co-encadrants
+        </a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane in active" id="informations">
+        <h2>
+            Informations générales
+        </h2>
+        <div class="row">
+            <div class="col-md-8">
+                <dl>
+                    <dt> Libelle :</dt>
+                    <dd>    <?php echo $unite->getLibelle(); ?>     </dd>
+                    <dt> Sigle :</dt>
+                    <dd>    <?php echo $unite->getSigle(); ?>       </dd>
+                    <dt> Code :</dt>
+                    <dd>    <?php echo $unite->getStructure()->getCode(); ?>        </dd>
+                    <dt> Id REF: </dt>
+                    <dd>
+                        <?php if ($unite->getStructure()->getIdRef() !== null AND trim($unite->getStructure()->getIdRef()) !== "") : ?>
+                            <?php echo $unite->getStructure()->getIdRef(); ?>
+                        <?php else : ?>
+                            (Non renseigné)
+                        <?php endif; ?>
+                    </dd>
+                    <dt> Identifiant RNSR :</dt>
+                    <dd>    <?php echo $unite->getRNSR(); ?>        </dd>
+                    <dt> Établissement(s) de rattachement :</dt>
+                    <dd>
+                        <ul>
+                            <?php foreach ($etablissementsRattachements as $etablissementRattachement) : ?>
+                                <li> <?php echo $etablissementRattachement->getEtablissement()->getLibelle(); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </dd>
+                    <dt> Domaine(s) scientifique(s) :</dt>
+                    <dd>
+                        <ul>
+                            <?php foreach ($unite->getDomaines() as $domaineScientifique) : ?>
+                                <li> <?php echo $domaineScientifique->getLibelle(); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </dd>
+                    <dt> Statut :</dt>
+                    <dd>
+                        <?php if ($unite->getStructure()->isFerme()) : ?>
+                            <span class="label" style="background-color:darkred">Structure fermée</span>
+                        <?php else : ?>
+                            <span class="label" style="background-color:darkgreen">Structure ouverte</span>
+                        <?php endif; ?>
+                    </dd>
+                </dl>
+            </div>
+            <div class="col-md-4">
+                <dl>
+                    <dt>Logo :</dt>
+                    <dd>
+                        <img id="logo" style="max-width: 200px; max-height: 200px; background-color: white;"
+                             src="data:image/png;base64,<?php echo base64_encode($logoContent); ?>"/>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        <?php if ($canEdit): ?>
+            <a href="<?php echo $this->url('unite-recherche/modifier', ['structure' => $unite->getStructure()->getId()], [], true); ?>"
+               class="btn btn-primary action"><span class="glyphicon glyphicon-pencil"></span> Modifier l'unité de recherche</a>
+        <?php endif; ?>
+
     </div>
-    <div class="col-md-4">
-        <dl>
-            <dt>Logo :</dt>
-            <dd>
-                <img id="logo" style="max-width: 200px; max-height: 200px; background-color: white;"
-                     src="data:image/png;base64,<?php echo base64_encode($logoContent); ?>"/>
-            </dd>
-        </dl>
-    </div>
-</div>
 
-
-<h2>
-    Rôles et membres
-</h2>
-<div class="row">
-    <div class="col-md-6">
-        <table class="table table-condensed">
-            <thead>
-            <tr>
-                <th> Libellé du rôle</th>
-                <th> Effectif</th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php foreach ($roleListing as $libelle => $count): ?>
-                <tr>
-                    <td> <?php echo $libelle; ?> </td>
-                    <td> <?php echo $count; ?> </td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-
-        </table>
-    </div>
-
-
-    <div class="col-md-6">
-        <table class="table table-condensed">
-            <thead>
-            <tr>
-                <th> Dénomination</th>
-                <th> Rôle</th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php foreach ($individuListing as $denomination => $roles): ?>
-                <?php foreach ($roles as $role): ?>
+    <div role="tabpanel" class="tab-pane" id="membres">
+        <h2>
+            Rôles et membres
+        </h2>
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table table-condensed">
+                    <thead>
                     <tr>
-                        <td> <?php echo $denomination; ?> </td>
-                        <td> <?php echo $role; ?> </td>
+                        <th> Libellé du rôle</th>
+                        <th> Effectif</th>
                     </tr>
-                <?php endforeach; ?>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($roleListing as $libelle => $count): ?>
+                        <tr>
+                            <td> <?php echo $libelle; ?> </td>
+                            <td> <?php echo $count; ?> </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+
+                </table>
+            </div>
+
+
+            <div class="col-md-6">
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th> Dénomination</th>
+                        <th> Rôle</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($individuListing as $denomination => $roles): ?>
+                        <?php foreach ($roles as $role): ?>
+                            <tr>
+                                <td> <?php echo $denomination; ?> </td>
+                                <td> <?php echo $role; ?> </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <?php if ($canAddRole && empty($roleListing)): ?>
+            <a href="<?php echo $this->url('structure/generer-roles-defauts', [
+                'id'   => $unite->getStructure()->getId(),
+                'type' => TypeStructure::CODE_UNITE_RECHERCHE], [], true); ?>"
+               class="btn btn-warning"><span class="glyphicon glyphicon-cog"></span>Générer rôles par défaut</a>
+        <?php endif; ?>
+
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="coencadrants">
+
+        <h2>
+            Co-encadrants
+            <span class="badge"> <?php echo count($coencadrants); ?> </span>
+        </h2>
+
+        <?php if($canCoencadrantExport) : ?>
+            <?php /** @see \Application\Controller\CoEncadrantController::genererExportCsvAction() */ ?>
+            <a href="<?php echo $this->url('co-encadrant/generer-export-csv', ['structure-type' => 'unite-recherche', 'structure-id' => $unite->getId()], [], true); ?>"
+               class="btn btn-primary"
+            >
+                <span class="glyphicon glyphicon-export"></span>
+                Générer l'export CSV des co-encadrants
+            </a>
+        <?php endif; ?>
+
+        <br/>
+        <br/>
+
+        <ul>
+            <?php foreach ($coencadrants as $coencadrant) : ?>
+                <?php
+                $acteur = $coencadrant['co-encadrant'];
+                $count = count($coencadrant['theses']);
+                ?>
+                <li>
+                    <?php echo $acteur->getIndividu()->getPrenom1(); ?>
+                    <?php echo $acteur->getIndividu()->getNomUsuel(); ?>
+                    (<?php echo $count; ?> co-encadrement<?php if ($count > 1) echo "s"; ?>.)
+                    <?php if ($canCoencadrantAfficher) : ?>
+                        <a href="<?php echo $this->url('co-encadrant/historique', ['co-encadrant' => $acteur->getId()],[], true); ?>">
+                            <span class="glyphicon glyphicon-eye-open" title="Accéder à l'historique de co-encadrement"></span></a>
+                    <?php endif; ?>
+                </li>
             <?php endforeach; ?>
-            </tbody>
-        </table>
+        </ul>
+
     </div>
 </div>
-
-<hr>
-
-<?php if ($canAddRole && empty($roleListing)): ?>
-    <a href="<?php echo $this->url('structure/generer-roles-defauts', [
-        'id'   => $unite->getStructure()->getId(),
-        'type' => TypeStructure::CODE_UNITE_RECHERCHE], [], true); ?>"
-       class="btn btn-warning"><span class="glyphicon glyphicon-cog"></span>Générer rôles par défaut</a>
-<?php endif; ?>
-
-<?php if ($canEdit): ?>
-    <a href="<?php echo $this->url('unite-recherche/modifier', ['structure' => $unite->getStructure()->getId()], [], true); ?>"
-       class="btn btn-primary action"><span class="glyphicon glyphicon-pencil"></span> Modifier l'unité de recherche</a>
-<?php endif; ?>

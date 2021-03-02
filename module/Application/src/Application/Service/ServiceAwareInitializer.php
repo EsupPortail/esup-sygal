@@ -13,26 +13,17 @@ use Application\Service\Validation\ValidationService;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
 use Application\Service\VersionFichier\VersionFichierService;
 use Application\Service\Workflow\WorkflowService;
+use Interop\Container\ContainerInterface;
 use Retraitement\Service\RetraitementService;
-use Zend\ServiceManager\AbstractPluginManager;
-use Zend\ServiceManager\InitializerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Initializer\InitializerInterface;
 
 class ServiceAwareInitializer implements InitializerInterface
 {
     /**
-     * Initialize
-     *
-     * @param                         $instance
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @inheritDoc
      */
-    public function initialize($instance, ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $instance)
     {
-        if ($serviceLocator instanceof AbstractPluginManager) {
-            $serviceLocator = $serviceLocator->getServiceLocator();
-        }
-
         $services = [
             //'UtilisateurService'     => UtilisateurService::class,
             'RoleService'            => RoleService::class,
@@ -56,7 +47,7 @@ class ServiceAwareInitializer implements InitializerInterface
         foreach ($services as $name => $class) {
             $interface = $class . 'AwareInterface';
             if ($instance instanceof $interface) {
-                $service = $serviceLocator->get($name);
+                $service = $container->get($name);
                 $method = 'set' . $name;
                 $instance->{$method}($service);
             }

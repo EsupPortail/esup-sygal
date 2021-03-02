@@ -3,7 +3,7 @@
 namespace Information\Service;
 
 use Doctrine\ORM\EntityManager;
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
+use Interop\Container\ContainerInterface;
 
 class InformationFichierServiceFactory {
     /**

@@ -21,6 +21,9 @@ class EcoleDoctoraleHydrator extends DoctrineObject
         $data['sigle'] = $ed->getSigle();
         $data['cheminLogo'] = $ed->getCheminLogo();
         $data['estFerme'] = $ed->getStructure()->isFerme();
+        $data['id_ref'] = $ed->getStructure()->getIdRef();
+        $data['theme'] = $ed->getTheme();
+        $data['offre-these'] = $ed->getOffreThese();
 
         return $data;
     }
@@ -34,6 +37,9 @@ class EcoleDoctoraleHydrator extends DoctrineObject
      */
     public function hydrate(array $data, $ed)
     {
+        $theme = (isset($data['theme']) AND trim($data['theme']) !== '')?trim($data['theme']):null;
+        $offreThese = (isset($data['offre-these']) AND trim($data['offre-these']) !== '')?trim($data['offre-these']):null;
+
         /** @var EcoleDoctorale $object */
         $object = parent::hydrate($data, $ed);
 
@@ -41,6 +47,9 @@ class EcoleDoctoraleHydrator extends DoctrineObject
         $object->getStructure()->setCode($data['code']);
         $object->setSigle($data['sigle']);
         $object->setCheminLogo($data['cheminLogo']);
+        $object->getStructure()->setIdRef($data['id_ref']);
+        $object->setTheme($theme);
+        $object->setOffreThese($offreThese);
         if (isset($data['estFerme']) AND $data['estFerme'] === "1") $object->getStructure()->setFerme(true); else $object->getStructure()->setFerme(false);
 
         return $object;

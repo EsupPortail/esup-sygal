@@ -12,7 +12,7 @@ use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 /**
@@ -61,8 +61,8 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         self::CORRECTION_AUTORISEE_FACULTATIVE => "Facultatives",
     ];
 
-    const CORRECTION_OBLIGATOIRE_INTERVAL = 'P2M';
-    const CORRECTION_FACULTATIVE_INTERVAL = 'P3M';
+    const CORRECTION_OBLIGATOIRE_INTERVAL = 'P3M';
+    const CORRECTION_FACULTATIVE_INTERVAL = 'P2M';
 
     const CORRECTION_AUTORISEE_FORCAGE_NON = null; // pas de forçage
     const CORRECTION_AUTORISEE_FORCAGE_AUCUNE = 'aucune'; // aucune correction autorisée
@@ -155,6 +155,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @var string
      */
     private $correctionAutoriseeForcee;
+
+    /**
+     * @var string
+     */
+    private $correctionEffectuee;
 
     /**
      * @var string
@@ -252,6 +257,16 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     private $anneesUniv1ereInscription;
 
     /**
+     * @var ArrayCollection
+     */
+    private $rapportsAnnuels;
+
+    /**
+     * @var ArrayCollection
+     */
+    private $propositions;
+
+    /**
      * @return TitreApogeeFilter
      */
     public function getTitreFilter()
@@ -275,6 +290,18 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         $this->rdvBus = new ArrayCollection();
         $this->anneesUnivInscription = new ArrayCollection();
         $this->anneesUniv1ereInscription = new ArrayCollection();
+        $this->rapportsAnnuels = new ArrayCollection();
+        $this->propositions = new ArrayCollection();
+    }
+
+    /**
+     * Get histoModification
+     *
+     * @return \DateTime
+     */
+    public function getHistoModification()
+    {
+        return $this->histoModification ?: $this->getHistoCreation();
     }
 
     /**
@@ -688,6 +715,24 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * @return string
      */
+    public function getCorrectionEffectuee()
+    {
+        return $this->correctionEffectuee;
+    }
+
+    /**
+     * @param string $correctionEffectuee
+     * @return These
+     */
+    public function setCorrectionEffectuee(string $correctionEffectuee)
+    {
+        $this->correctionEffectuee = $correctionEffectuee;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
     public function getSoutenanceAutorisee()
     {
         return $this->soutenanceAutorisee;
@@ -868,6 +913,9 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         /** @var Attestation $attestation */
         foreach ($this->attestations as $attestation) {
+            if ($attestation->estHistorise()) {
+                continue;
+            }
             if ($version->estVersionCorrigee() === $attestation->getVersionCorrigee()) {
                 return $attestation;
             }
@@ -906,6 +954,9 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         /** @var Diffusion $diffusion */
         foreach ($this->miseEnLignes as $diffusion) {
+            if ($diffusion->estHistorise()) {
+                continue;
+            }
             if ($version->estVersionCorrigee() === $diffusion->getVersionCorrigee()) {
                 return $diffusion;
             }
@@ -1317,6 +1368,36 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
+     * @return Collection
+     */
+    public function getRapportsAnnuels()
+    {
+        return $this->rapportsAnnuels;
+    }
+
+    /**
+     * @param RapportAnnuel $rapportAnnuel
+     * @return self
+     */
+    public function addRapportAnnuel(RapportAnnuel $rapportAnnuel)
+    {
+        $this->rapportsAnnuels->add($rapportAnnuel);
+
+        return $this;
+    }
+
+    /**
+     * @param RapportAnnuel $rapportAnnuel
+     * @return self
+     */
+    public function removeRapportAnnuel(RapportAnnuel $rapportAnnuel)
+    {
+        $this->rapportsAnnuels->removeElement($rapportAnnuel);
+
+        return $this;
+    }
+
+    /**
      * @return ArrayCollection
      */
     public function getFinancements()
@@ -1341,16 +1422,52 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getDirecteursTheseEmails(array &$individusSansMail = [])
     {
         $emails = [];
-        $directeurs = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
+        /** @var Acteur[] $directeurs */
+        $directeurs = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE)->toArray();
+        /** @var Acteur[] $codirecteurs */
+        $codirecteurs = $this->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE)->toArray();
+        $encadrements = array_merge($directeurs, $codirecteurs);
 
         /** @var Acteur $acteur */
-        foreach ($directeurs as $acteur) {
+        foreach ($encadrements as $acteur) {
             $email = $acteur->getIndividu()->getEmail();
             $name = (string) $acteur->getIndividu();
             if (! $email) {
                 $individusSansMail[$name] = $acteur->getIndividu();
             } else {
                 $emails[$email] = $name;
+            }
+        }
+
+        return $emails;
+    }
+
+    /**
+     * Retourne les mails des directeurs de thèse.
+     *
+     * @param Individu[] $individusSansMail Liste des individus sans mail, format: "Paul Hochon" => Individu
+     * @return array
+     */
+    public function getPresidentJuryEmail(array &$individusSansMail = [])
+    {
+        $emails = [];
+        /** @var Acteur[] $membres */
+        $membres = $this->getActeursByRoleCode(Role::CODE_MEMBRE_JURY)->toArray();
+        /** @var Acteur[] $rapporteurs */
+        $rapporteurs = $this->getActeursByRoleCode(Role::CODE_RAPPORTEUR_JURY)->toArray();
+        $acteurs = array_merge($membres, $rapporteurs);
+
+        /** @var Acteur $acteur */
+        foreach ($acteurs as $acteur) {
+            if ($acteur->getRole()->getCode() === Role::CODE_PRESIDENT_JURY) {
+                $email = $acteur->getIndividu()->getEmail();
+
+                $name = (string)$acteur->getIndividu();
+                if (!$email) {
+                    $individusSansMail[$name] = $acteur->getIndividu();
+                } else {
+                    $emails[$email] = $name;
+                }
             }
         }
 
@@ -1547,4 +1664,59 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         }
         return null;
     }
+
+    /**
+     * @param boolean $asIndividu
+     * @return Acteur[]|Individu[]
+     */
+    public function getEncadrements($asIndividu = false)
+    {
+        /** @var Acteur[] $acteurs */
+        $acteurs = [];
+
+        $directeurs     = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
+        foreach ($directeurs as $directeur) $acteurs[] = $directeur;
+        $codirecteurs   = $this->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
+        foreach ($codirecteurs as $codirecteur) $acteurs[] = $codirecteur;
+
+        if ($asIndividu === true) {
+            $individus = [];
+            foreach ($acteurs as $acteur) {
+                $individus[] = $acteur->getIndividu();
+            }
+            return $individus;
+        }
+
+        return $acteurs;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPropositions()
+    {
+        return $this->propositions;
+    }
+
+    /**
+     * @param mixed $propositions
+     * @return These
+     */
+    public function setPropositions($propositions)
+    {
+        $this->propositions = $propositions;
+        return $this;
+    }
+
+    public function getPresidentJury()
+    {
+        /** @var Acteur $acteur */
+        foreach ($this->getActeurs() as $acteur) {
+            if ($acteur->estNonHistorise() AND $acteur->getRole()->getCode() === Role::CODE_PRESIDENT_JURY) {
+                return $acteur;
+            }
+        }
+        return null;
+    }
+
 }

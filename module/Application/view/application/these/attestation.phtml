@@ -15,18 +15,23 @@ use Application\View\Renderer\PhpRenderer;
  * @var Attestation          $attestation
  * @var AttestationTheseForm $form
  * @var string               $modifierAttestationUrl
+ * @var bool                 $resaisirAttestationsVersionCorrigee
  *
  * @see TheseController::attestationAction()
  */
 
 $privilege = ThesePrivileges::THESE_SAISIE_ATTESTATIONS_($version);
 $canEdit = $this->isAllowed($these, $privilege);
+if ($version->estVersionCorrigee() && ! $resaisirAttestationsVersionCorrigee) {
+    $canEdit = false;
+}
 ?>
 
 <div class="box panel panel-info">
 
     <div class="panel-heading">
-        <h2>Attestation</h2>
+        <h2>Attestation
+            <?php if ($attestation && $attestation->estCreationAuto()): ?><span>(Rappel)</span><?php endif ?></h2>
     </div>
 
     <div class="panel-body">

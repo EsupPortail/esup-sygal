@@ -2,18 +2,15 @@
 
 namespace Application\Service\Notification;
 
-use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\ImportObservResult;
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
-use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
-use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\Variable;
 use Application\Notification\CorrectionAttendueUpdatedNotification;
+use Application\Notification\PasDeMailPresidentJury;
 use Application\Notification\ResultatTheseAdmisNotification;
 use Application\Notification\ResultatTheseModifieNotification;
 use Application\Notification\ValidationDepotTheseCorrigeeNotification;
@@ -24,9 +21,10 @@ use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
+use Import\Model\ImportObservResult;
 use Notification\Notification;
 use UnicaenApp\Exception\LogicException;
-use Zend\Mvc\Controller\Plugin\FlashMessenger;
+use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Zend\View\Helper\Url as UrlHelper;
 
 /**
@@ -116,10 +114,11 @@ class NotifierService extends \Notification\Service\NotifierService
 
     /**
      * @param ImportObservResult $record
-     * @param These              $these
+     * @param These $these
+     * @param string $message
      * @return CorrectionAttendueUpdatedNotification|null
      */
-    public function triggerCorrectionAttendue(ImportObservResult $record, These $these)
+    public function triggerCorrectionAttendue(ImportObservResult $record, These $these, &$message = null)
     {
         // interrogation de la règle métier pour savoir comment agir...
         $rule = new NotificationDepotVersionCorrigeeAttenduRule();
@@ -127,6 +126,7 @@ class NotifierService extends \Notification\Service\NotifierService
             ->setThese($these)
             ->setDateDerniereNotif($record->getDateNotif())
             ->execute();
+        $message = $rule->getMessage(' ');
         $estPremiereNotif = $rule->estPremiereNotif();
         $dateProchaineNotif = $rule->getDateProchaineNotif();
 
@@ -204,6 +204,38 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
+     * Notification par mail des directeurs de thèse pour les inviter à valider les corrections.
+     *
+     * @param These $these
+     * @param Acteur|null $president
+     */
+    public function triggerPasDeMailPresidentJury(These $these, ?Acteur $president)
+    {
+        // envoi de mail aux directeurs de thèse
+        $notif = new PasDeMailPresidentJury();
+        $notif
+            ->setThese($these)
+            ->setEmailBdd($this->fetchEmailBdd($these))
+            ->setPresident($president)
+            ->setTemplateVariables([
+                'these' => $these,
+                'president' => $president,
+            ]);
+
+        $this->trigger($notif);
+
+        $infoMessages = $notif->getInfoMessages();
+        $this->messageContainer->setMessages([
+            'info' => $infoMessages[0],
+        ]);
+        if ($errorMessages = $notif->getWarningMessages()) {
+            $this->messageContainer->addMessages([
+                'danger' => $errorMessages[0],
+            ]);
+        }
+    }
+
+    /**
      * @param Notification $notif
      * @param These        $these
      */
@@ -238,118 +270,13 @@ class NotifierService extends \Notification\Service\NotifierService
 
         $this->trigger($notif);
 
-        $infoMessage = sprintf("Un mail de notification vient d'être envoyé à votre doctorant (%s)", $to);
+        $infoMessage = sprintf("Un mail de notification vient d'être envoyé au doctorant (%s)", $to);
         if ($this->messageContainer->getMessage()) {
             $new_message = "<ul><li>" . $this->messageContainer->getMessage() . "</li><li>" . $infoMessage . "</li></ul>";
             $this->messageContainer->setMessage($new_message, 'info');
         } else {
             $this->messageContainer->setMessage($infoMessage, 'info');
         }
-    }
-
-    /**
-     * Notification générique de la BU.
-     *
-     * @param Notification $notif
-     * @param These        $these
-     */
-    public function triggerRdvBuSaisiParDoctorant(Notification $notif, These $these)
-    {
-        $to = $this->fetchEmailBu($these);
-        $notif->setTo($to);
-
-        $this->trigger($notif);
-
-        $infoMessage = sprintf("Un mail de notification vient d'être envoyé à la BU (%s).", $to);
-        $this->messageContainer->setMessage($infoMessage, 'info');
-    }
-
-    public function triggerInformationManquante(These $these, $manques)
-    {
-        $mails = $this->fetchEmailBdd($these);
-
-        $notif = new Notification();
-        $notif
-            ->setSubject("Informations manquantes pour la thèse [" . $these->getTitre() . "]")
-            ->setTo($mails)
-            ->setTemplatePath('application/these/mail/notif-informations-manquantes')
-            ->setTemplateVariables([
-                'manques'      => $manques,
-                'these'        => $these,
-            ]);
-        $this->trigger($notif);
-    }
-
-
-
-    public function triggerEcoleDoctoraleAbsente(These $these) {
-        $mails = $this->fetchEmailBdd($these);
-        $notif = $this->createNotificationForStructureAbsente("l'école doctorale", $these, $mails);
-        $this->trigger($notif);
-    }
-
-    /**
-     * @param EcoleDoctorale $ecole
-     */
-    public function triggerLogoAbsentEcoleDoctorale(EcoleDoctorale $ecole)
-    {
-        $mails = [];
-        foreach ($this->getEcoleDoctoraleService()->getIndividuByEcoleDoctoraleId($ecole->getId()) as $individu) {
-            /** @var Individu $individu */
-            $email = $individu->getEmail();
-            if ($email !== null) $mails[] = $email;
-        }
-
-        $libelle = $ecole->getLibelle();
-        $notif = $this->createNotificationForLogoStructureAbsent("l'école doctorale", $libelle, $mails);
-        $this->trigger($notif);
-    }
-
-
-    public function triggerUniteRechercheAbsente(These $these) {
-        $mails = $this->fetchEmailBdd($these);
-        $notif = $this->createNotificationForStructureAbsente("l'unité de recherche", $these, $mails);
-        $this->trigger($notif);
-    }
-
-    /**
-     * @param UniteRecherche $unite
-     */
-    public function triggerLogoAbsentUniteRecherche(UniteRecherche $unite)
-    {
-        $mails = [];
-        foreach ($this->getUniteRechercheService()->getIndividuByUniteRechercheId($unite->getId()) as $individu) {
-            /** @var Individu $individu */
-            $email = $individu->getEmail();
-            if ($email !== null) $mails[] = $email;
-        }
-
-        $libelle = $unite->getLibelle();
-
-        $notif = $this->createNotificationForLogoStructureAbsent("l'unité de recherche", $libelle, $mails);
-
-        $this->trigger($notif);
-    }
-
-    /**
-     * @param Etablissement $etablissement
-     */
-    public function triggerLogoAbsentEtablissement(Etablissement $etablissement)
-    {
-
-        //Récupération des mails des personnes ayant le rôle d'administrateur technique
-        $mails = [];
-        $role = $this->getRoleService()->getRepository()->findByCode(Role::CODE_ADMIN_TECH);
-        $irs = $this->getIndividuService()->getRepository()->findByRole($role);
-        foreach($irs as $ir) {
-            $mails[] = $ir->getIndividu()->getEmail();
-        }
-
-        $libelle = $etablissement->getLibelle();
-
-        $notif = $this->createNotificationForLogoStructureAbsent("l'établissement", $libelle, $mails);
-
-        $this->trigger($notif);
     }
 
     /**
@@ -373,54 +300,10 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
-     * @param string   $type
-     * @param string   $libelle
-     * @param string[] $to
-     * @return Notification
-     */
-    private function createNotificationForLogoStructureAbsent($type, $libelle, $to)
-    {
-        $notif = new Notification();
-        $notif
-            ->setSubject("Logo manquant pour $type [" . $libelle . "]")
-            ->setTo($to)
-            ->setTemplatePath('application/these/mail/notif-logo-absent')
-            ->setTemplateVariables([
-                'type'    => $type,
-                'libelle' => $libelle,
-            ]);
-
-        return $notif;
-    }
-
-    /**
-     * @param string   $type
-     * @param These   $these
-     * @param string[] $to
-     * @return Notification
-     */
-    private function createNotificationForStructureAbsente($type, $these, $to)
-    {
-        $notif = new Notification();
-        $notif
-            ->setSubject("$type manquante pour la thèse [" . $these->getTitre() . "]")
-            ->setTo($to)
-            ->setTemplatePath('application/these/mail/notif-structure-absente')
-            ->setTemplateVariables([
-                'type'      => $type,
-                'these'     => $these,
-            ]);
-
-        return $notif;
-    }
-
-
-
-    /**
      * @param These $these
      * @return string
      */
-    private function fetchEmailBdd(These $these)
+    protected function fetchEmailBdd(These $these)
     {
         $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
 
@@ -431,7 +314,7 @@ class NotifierService extends \Notification\Service\NotifierService
      * @param These $these
      * @return string
      */
-    private function fetchEmailBu(These $these)
+    protected function fetchEmailBu(These $these)
     {
         $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BU, $these);
 
@@ -486,9 +369,9 @@ class NotifierService extends \Notification\Service\NotifierService
 
     /**
      * @param Utilisateur $utilisateur
-     * @param string $url
+     * @param string $token
      */
-    public function triggerInitialisationCompte($utilisateur, $url) {
+    public function triggerInitialisationCompte(Utilisateur $utilisateur, string $token) {
 
         $email = $utilisateur->getEmail();
         if ($email === null) throw new LogicException("Aucun email de fourni !");
@@ -504,7 +387,7 @@ class NotifierService extends \Notification\Service\NotifierService
                 ->setTemplatePath('application/utilisateur/mail/init-compte')
                 ->setTemplateVariables([
                     'username' => $utilisateur->getUsername(),
-                    'url' => $url,
+                    'url' => $this->urlHelper->__invoke('utilisateur/init-compte', ['token' => $token], ['force_canonical' => true], true),
                 ]);
             $this->trigger($notif);
         }
@@ -536,6 +419,52 @@ class NotifierService extends \Notification\Service\NotifierService
         }
     }
 
+    /**
+     * @param string[] $to
+     * @param string $liste
+     * @param string[] $individusAvecAdresse
+     * @param string[] $individusSansAdresse
+     */
+    public function triggerAbonnesListeDiffusionSansAdresse(
+        array $to,
+        $liste,
+        array $individusAvecAdresse,
+        array $individusSansAdresse)
+    {
+        $to = array_unique(array_filter($to));
 
+        $notif = $this->createNotificationForAbonnesListeDiffusionSansAdresse(
+            $to,
+            $liste,
+            $individusAvecAdresse,
+            $individusSansAdresse);
+        $this->trigger($notif);
+    }
 
+    /**
+     * @param string[] $to
+     * @param string $liste
+     * @param string[] $individusAvecAdresse
+     * @param string[] $individusSansAdresse
+     * @return Notification
+     */
+    private function createNotificationForAbonnesListeDiffusionSansAdresse(
+        array $to,
+        $liste,
+        array $individusAvecAdresse,
+        array $individusSansAdresse)
+    {
+        $notif = new Notification();
+        $notif
+            ->setSubject("Abonnés de liste de diffusion sans adresse mail")
+            ->setTo($to)
+            ->setTemplatePath('application/liste-diffusion/mail/notif-abonnes-sans-adresse')
+            ->setTemplateVariables([
+                'liste' => $liste,
+                'individusAvecAdresse' => $individusAvecAdresse,
+                'individusSansAdresse' => $individusSansAdresse,
+            ]);
+
+        return $notif;
+    }
 }

@@ -48,8 +48,8 @@ class ValidationRdvBuNotification extends Notification
         $this->setCc($cc);
 
         $this->setSubject($this->estDevalidation ?
-            "Annulation de la validation effectuée à l'issue du rendez-vous avec la BU" :
-            "Validation à l'issue du rendez-vous avec la BU"
+            "Annulation de la validation effectuée à l'issue du rendez-vous avec la bibliothèque universitaire" :
+            "Validation à l'issue du rendez-vous avec la bibliothèque universitaire"
         );
 
         $this->setTemplateVariables([
@@ -71,7 +71,7 @@ class ValidationRdvBuNotification extends Notification
     {
         if ($this->estDevalidation) {
             $this->infoMessages[] = sprintf(
-                "Un mail de notification vient d'être envoyé à la BU (%s) avec copie à la Maison du doctorat (%s).",
+                "Un mail de notification vient d'être envoyé à la bibliothèque universitaire (%s) avec copie à la Maison du doctorat (%s).",
                 $this->getTo(),
                 $this->getCc()
             );

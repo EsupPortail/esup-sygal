@@ -1,0 +1,64 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerInitialisationCompte()
+ *
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var string $username
+ * @var string $url
+ */
+
+$doctorant = $these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true, false, true);
+$titre = $these->getTitre();
+
+$justification = true;
+?>
+
+<p><em>-- Version française----------------------------------------------------</em></p>
+<p>
+    Bonjour,
+</p>
+<p>
+    Vous venez d'être désigné comme rapporteur pour la thèse de <strong><?php echo $doctorant; ?></strong> intitulée
+    <strong><?php echo $titre; ?></strong>. Afin de pouvoir vous connecter à l'application <strong> <?php echo $this->appInfos()->nom; ?> </strong>
+    et ainsi pouvoir rendre votre avis de pré-soutenance, vous devez initialiser votre compte dans l'application.
+</p>
+<p>
+    Votre nom d'utilisateur est <strong><?php echo $username; ?></strong>. Celui-ci vous sera demandé dans le formulaire
+    d'initialisation que vous trouverez à l'adresse suivante : <br/>
+    <a href="<?php echo $url; ?>"><?php echo $url;?> </a>
+</p>
+<p>
+    Cordialement,
+</p>
+
+<p><em>-- English version -----------------------------------------------------</em></p>
+<p>
+    Dear Mrs/Mr,
+</p>
+<p>
+    You have been appointed as an external referee for the PhD thesis presented by <strong><?php echo $doctorant; ?></strong> entitled
+    <strong><?php echo $titre; ?></strong>. In order to have access to the <strong> <?php echo $this->appInfos()->nom; ?> </strong>
+    web-based application for submitting your report, you first have to register as an external referee.
+</p>
+<p>
+    Your username is  <strong><?php echo $username; ?></strong>. You will have to use it for your identification at : <br/>
+    <a href="<?php echo $url; ?>"><?php echo $url;?> </a>. After having chosen and confirmed your password, then you will
+    be identified by the application.
+</p>
+<p>
+    Best regards,
+</p>
+
+
+<?php if ($justification) : ?>
+    <p>
+        Vous recevez ce mail, car votre rôle dans la soutenance de thèse de <?php echo $doctorant; ?> nécessite un compte SyGAL.
+    </p>
+<?php endif; ?>
+
+

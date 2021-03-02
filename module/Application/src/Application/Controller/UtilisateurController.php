@@ -6,9 +6,12 @@ use Application\Entity\Db\Individu;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\Utilisateur;
 use Application\Form\CreationUtilisateurForm;
-use Application\Form\CreationUtilisateurFromIndividuForm;
 use Application\Form\InitCompteForm;
 use Application\Form\InitCompteFormAwareTrait;
+use Application\Search\Controller\SearchControllerInterface;
+use Application\Search\Controller\SearchControllerPlugin;
+use Application\Search\Controller\SearchControllerTrait;
+use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -21,6 +24,7 @@ use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
+use Doctrine\ORM\Query\Expr;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -32,10 +36,11 @@ use UnicaenLdap\Entity\People;
 use Zend\Authentication\AuthenticationService;
 use Zend\Http\Request;
 use Zend\Http\Response;
+use Zend\Paginator\Paginator as ZendPaginator;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
-class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurController
+class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurController implements SearchControllerInterface
 {
     use ActeurServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
@@ -52,45 +57,114 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use UserServiceAwareTrait;
 
     use InitCompteFormAwareTrait;
+    use SearchControllerTrait;
 
     /**
-     * NOTA BENE : il s'agit des individus et non des utilisateurs car ils sont ceux qui portent les rôles
+     * @var ModuleOptions
+     */
+    private $authModuleOptions;
+
+    /**
+     * @var AuthenticationService
+     */
+    protected $authenticationService;
+
+    /**
+     * @var ShibService
+     */
+    protected $shibService;
+
+    /**
+     * @var CreationUtilisateurForm
+     */
+    private $creationUtilisateurForm;
+
+    /**
+     * @param ModuleOptions $authModuleOptions
+     */
+    public function setAuthModuleOptions(ModuleOptions $authModuleOptions)
+    {
+        $this->authModuleOptions = $authModuleOptions;
+    }
+
+    /**
+     * @param AuthenticationService $authenticationService
+     */
+    public function setAuthenticationService(AuthenticationService $authenticationService)
+    {
+        $this->authenticationService = $authenticationService;
+    }
+
+    /**
+     * @param ShibService $shibService
+     */
+    public function setShibService(ShibService $shibService)
+    {
+        $this->shibService = $shibService;
+    }
+
+    /**
+     * @param CreationUtilisateurForm $creationUtilisateurForm
+     */
+    public function setCreationUtilisateurForm(CreationUtilisateurForm $creationUtilisateurForm)
+    {
+        $this->creationUtilisateurForm = $creationUtilisateurForm;
+    }
+
+    /**
+     * NOTA BENE : ce sont les individus et non les utilisateurs qui portent les rôles.
+     *
+     * @return ViewModel|Response
      */
     public function indexAction()
     {
-        $individu = null;
-        $roles = null;
-
-        /** @var Request $request */
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $data = $request->getPost()['individu'];
-            $individu = $this->individuService->getRepository()->find($data['id']);
-            $params = [];
-            if ($individu !== null) $params = ["query" => ["id" => $data['id']]];
-            $this->redirect()->toRoute(null, [], $params, true);
+        $result = $this->search();
+        if ($result instanceof Response) {
+            return $result;
         }
-
-        $individuId = $this->params()->fromQuery("id");
-        $rolesAffectes = [];
-        if ($individuId !== null) {
-            $individu = $this->individuService->getRepository()->find($individuId);
-            $rolesAffectes = $this->roleService->getRepository()->findAllByIndividu($individu);
-        }
-
-        $roles = $this->roleService->getRoles();
-        $etablissements = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_ETABLISSEMENT, 'libelle');
-        $unites = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle');
-        $ecoles = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle');
+        /** @var ZendPaginator $paginator */
+        $paginator = $result;
 
         return new ViewModel([
-            'individu' => $individu,
+            'paginator' => $paginator,
+            'filters' => $this->filters(),
+        ]);
+    }
+
+    /**
+     * @return ViewModel
+     */
+    public function voirAction(): ViewModel
+    {
+        $id = $this->params()->fromRoute('utilisateur');
+
+        /** @var Utilisateur $utilisateur */
+        $utilisateur = $this->utilisateurService->getRepository()->find($id);
+
+        $rolesAffectes = [];
+        if ($individu = $utilisateur->getIndividu()) {
+            $rolesAffectes = $individu->getRoles();
+        }
+
+        $roles = $this->roleService->findAllRoles();
+
+        // établissements : pour l'instant les rôles ne concernent que des établissements d'inscription donc on flitre
+        $etablissementsQb = $this->structureService->getAllStructuresAffichablesByTypeQb(TypeStructure::CODE_ETABLISSEMENT, 'libelle', true);
+        $etablissementsQb->join('structure.etablissement', 'etab', Expr\Join::WITH, 'etab.estInscription = 1');
+        $etablissements = $etablissementsQb->getQuery()->execute();
+
+        $unites = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle', true, true);
+        $ecoles = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', true, true);
+
+        return new ViewModel([
+            'utilisateur' => $utilisateur,
             'roles' => $roles,
             'rolesAffectes' => $rolesAffectes,
             'etablissements' => $etablissements,
             'ecoles' => $ecoles,
             'unites' => $unites,
         ]);
+
     }
 
     /**
@@ -103,6 +177,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
      */
     public function rechercherIndividuAction($type = null)
     {
+        $type = $this->params()->fromQuery('type');
         if (($term = $this->params()->fromQuery('term'))) {
             $rows = $this->individuService->getRepository()->findByText($term, $type);
             $result = [];
@@ -112,12 +187,12 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
                 $label = $row['NOM_USUEL'] . ' ' . $prenoms;
                 $extra = $row['EMAIL'] ?: $row['SOURCE_CODE'];
                 $result[] = array(
-                    'id'    => $row['ID'], // identifiant unique de l'item
+                    'id' => $row['ID'], // identifiant unique de l'item
                     'label' => $label,     // libellé de l'item
                     'extra' => $extra,     // infos complémentaires (facultatives) sur l'item
                 );
             }
-            usort($result, function($a, $b) {
+            usort($result, function ($a, $b) {
                 return strcmp($a['label'], $b['label']);
             });
 
@@ -132,7 +207,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     public function ajouterAction()
     {
         /** @var CreationUtilisateurForm $form */
-        $form = $this->getServiceLocator()->get('FormElementManager')->get(CreationUtilisateurForm::class);
+        $form = $this->creationUtilisateurForm;
 //        $infos = new CreationUtilisateurInfos();
 //        $form->bind($infos);
 
@@ -156,62 +231,61 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         ]);
     }
 
-    /**
-     * Usurpe l'identité d'un autre utilisateur.
-     *
-     * @return Response
-     */
-    public function usurperIdentiteAction()
-    {
-        $request = $this->getRequest();
-        if (! $request instanceof Request) {
-            exit(1);
-        }
-
-        $newIdentity = $request->getQuery('identity', $request->getPost('identity'));
-        if (! $newIdentity) {
-            return $this->redirect()->toRoute('home');
-        }
-
-        /** @var AuthenticationService $authenticationService */
-        $authenticationService = $this->getServiceLocator()->get(AuthenticationService::class);
-
-        $currentIdentity = $authenticationService->getIdentity();
-        if (! $currentIdentity || ! is_array($currentIdentity)) {
-            return $this->redirect()->toRoute('home');
-        }
-
-        if (isset($currentIdentity['shib'])) {
-            /** @var ShibUser $currentIdentity */
-            $currentIdentity = $currentIdentity['shib'];
-        }
-        elseif (isset($currentIdentity['ldap'])) {
-            /** @var People $currentIdentity */
-            $currentIdentity = $currentIdentity['ldap'];
-        } else {
-            return $this->redirect()->toRoute('home');
-        }
-
-        // seuls les logins spécifiés dans la config sont habilités à usurper des identités
-        /** @var ModuleOptions $options */
-        $options = $this->getServiceLocator()->get('unicaen-auth_module_options');
-        if (! in_array($currentIdentity->getUsername(), $options->getUsurpationAllowedUsernames())) {
-            throw new LogicException("Usurpation non autorisée");
-        }
-
-        // cuisine spéciale pour Shibboleth
-        if ($currentIdentity instanceof ShibUser) {
-            $fromShibUser = $currentIdentity;
-            $toShibUser = $this->createShibUserFromUtilisateurUsername($newIdentity);
-            /** @var ShibService $shibService */
-            $shibService = $this->getServiceLocator()->get(ShibService::class);
-            $shibService->activateUsurpation($fromShibUser, $toShibUser);
-        }
-
-        $authenticationService->getStorage()->write($newIdentity);
-
-        return $this->redirect()->toRoute('home');
-    }
+//    /**
+//     * Usurpe l'identité d'un autre utilisateur.
+//     *
+//     * @return Response
+//     */
+//    public function usurperIdentiteAction()
+//    {
+//        $request = $this->getRequest();
+//        if (!$request instanceof Request) {
+//            exit(1);
+//        }
+//
+//        $newIdentity = $request->getQuery('identity', $request->getPost('identity'));
+//        if (!$newIdentity) {
+//            return $this->redirect()->toRoute('home');
+//        }
+//
+//        /** @var AuthenticationService $authenticationService */
+//        $authenticationService = $this->authenticationService;
+//
+//        $currentIdentity = $authenticationService->getIdentity();
+//        if (!$currentIdentity || !is_array($currentIdentity)) {
+//            return $this->redirect()->toRoute('home');
+//        }
+//
+//        if (isset($currentIdentity['shib'])) {
+//            /** @var ShibUser $currentIdentity */
+//            $currentIdentity = $currentIdentity['shib'];
+//        } elseif (isset($currentIdentity['ldap'])) {
+//            /** @var People $currentIdentity */
+//            $currentIdentity = $currentIdentity['ldap'];
+//        } else {
+//            return $this->redirect()->toRoute('home');
+//        }
+//
+//        // seuls les logins spécifiés dans la config sont habilités à usurper des identités
+//        /** @var ModuleOptions $options */
+//        $options = $this->authModuleOptions;
+//        if (!in_array($currentIdentity->getUsername(), $options->getUsurpationAllowedUsernames())) {
+//            throw new LogicException("Usurpation non autorisée");
+//        }
+//
+//        // cuisine spéciale pour Shibboleth
+//        if ($currentIdentity instanceof ShibUser) {
+//            $fromShibUser = $currentIdentity;
+//            $toShibUser = $this->createShibUserFromUtilisateurUsername($newIdentity);
+//            /** @var ShibService $shibService */
+//            $shibService = $this->shibService;
+//            $shibService->activateUsurpation($fromShibUser, $toShibUser);
+//        }
+//
+//        $authenticationService->getStorage()->write($newIdentity);
+//
+//        return $this->redirect()->toRoute('home');
+//    }
 
     /**
      * Usurpe l'identité d'un individu.
@@ -221,27 +295,26 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     public function usurperIndividuAction()
     {
         $request = $this->getRequest();
-        if (! $request instanceof Request) {
+        if (!$request instanceof Request) {
             exit(1);
         }
 
         $individuId = $request->getPost('individu');
-        if (! $individuId) {
+        if (!$individuId) {
             return $this->redirect()->toRoute('home');
         }
 
         /** @var AuthenticationService $authenticationService */
-        $authenticationService = $this->getServiceLocator()->get(AuthenticationService::class);
+        $authenticationService = $this->authenticationService;
         $currentIdentity = $authenticationService->getIdentity();
-        if (! $currentIdentity || ! is_array($currentIdentity)) {
+        if (!$currentIdentity || !is_array($currentIdentity)) {
             return $this->redirect()->toRoute('home');
         }
 
         if (isset($currentIdentity['shib'])) {
             /** @var ShibUser $currentIdentity */
             $currentIdentity = $currentIdentity['shib'];
-        }
-        elseif (isset($currentIdentity['ldap'])) {
+        } elseif (isset($currentIdentity['ldap'])) {
             /** @var People $currentIdentity */
             $currentIdentity = $currentIdentity['ldap'];
         } else {
@@ -250,8 +323,8 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
         // seuls les logins spécifiés dans la config sont habilités à usurper des identités
         /** @var ModuleOptions $options */
-        $options = $this->getServiceLocator()->get('unicaen-auth_module_options');
-        if (! in_array($currentIdentity->getUsername(), $options->getUsurpationAllowedUsernames())) {
+        $options = $this->authModuleOptions;
+        if (!in_array($currentIdentity->getUsername(), $options->getUsurpationAllowedUsernames())) {
             throw new LogicException("Usurpation non autorisée");
         }
 
@@ -272,11 +345,11 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $fromShibUser = $currentIdentity;
             $toShibUser = $this->createShibUserFromUtilisateur($utilisateur);
             /** @var ShibService $shibService */
-            $shibService = $this->getServiceLocator()->get(ShibService::class);
+            $shibService = $this->shibService;
             $shibService->activateUsurpation($fromShibUser, $toShibUser);
         }
 
-        $authenticationService->getStorage()->write($individuId);
+        $authenticationService->getStorage()->write($utilisateur->getId());
 
         return $this->redirect()->toRoute('home');
     }
@@ -317,7 +390,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     public function createShibUserFromUtilisateurUsername($username)
     {
         /** @var UtilisateurService $utilisateurService */
-        $utilisateurService = $this->getServiceLocator()->get('UtilisateurService');
+        $utilisateurService = $this->utilisateurService;
 
         /** @var Utilisateur $utilisateur */
         $utilisateur = $utilisateurService->getRepository()->findOneBy(['username' => $username]);
@@ -374,7 +447,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu, $isLocal = true); // done
         // NB: findByIndividu() avec $isLocal = true renverra 1 utilisateur au maximum
         $utilisateur = $utilisateurs ? current($utilisateurs) : null;
-        if ($utilisateur === null AND $individu->getEmail() !== null) {
+        if ($utilisateur === null and $individu->getEmail() !== null) {
             $utilisateur = $this->utilisateurService->getRepository()->findByUsername($individu->getEmail());
         }
 
@@ -420,14 +493,19 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         return $this->redirect()->toRoute('utilisateur/gerer-utilisateur', ['individu' => $individu->getId()], [], true);
     }
 
-    public function initCompteAction() {
+    public function initCompteAction()
+    {
         $token = $this->params()->fromRoute('token');
         $utilisateur = $this->utilisateurService->getRepository()->findByToken($token);
+        if ($utilisateur === null) {
+            return new ViewModel([
+            ]);
+        }
 
         /** @var InitCompteForm $form */
         $form = $this->getInitCompteForm();
         $form->setUsername($utilisateur->getUsername());
-        $form->setAttribute('action', $this->url()->fromRoute('utilisateur/init-compte', [ 'token' => $token ], [] , true));
+        $form->setAttribute('action', $this->url()->fromRoute('utilisateur/init-compte', ['token' => $token], [], true));
         $form->bind(new Utilisateur());
 
         /** @var Request $request */
@@ -444,6 +522,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
         return new ViewModel([
             'form' => $form,
+            'utilisateur' => $utilisateur,
         ]);
     }
 

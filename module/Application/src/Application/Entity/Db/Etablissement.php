@@ -4,8 +4,8 @@ namespace Application\Entity\Db;
 
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenImport\Entity\Db\Interfaces\SourceAwareInterface;
-use UnicaenImport\Entity\Db\Traits\SourceAwareTrait;
+use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
 /**
  * Etablissement
@@ -16,6 +16,8 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     use SourceAwareTrait;
 
     const SOURCE_CODE_ETABLISSEMENT_INCONNU = 'ETAB_INCONNU';
+
+    const CODE_TOUT_ETABLISSEMENT_CONFONDU = 'Tous';
 
     protected $id;
     protected $domaine;
@@ -42,6 +44,11 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
      * @var bool
      */
     protected $estAssocie = false;
+
+    /**
+     * @var bool
+     */
+    protected $estInscription = false;
 
     /**
      * @var bool
@@ -202,6 +209,24 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     /**
      * @return bool
      */
+    public function estInscription()
+    {
+        return $this->estInscription;
+    }
+
+    /**
+     * @param bool $estInscription
+     * @return Etablissement
+     */
+    public function setEstInscription($estInscription)
+    {
+        $this->estInscription = $estInscription;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
     public function estComue()
     {
         return $this->estComue;
@@ -275,5 +300,15 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     public function getRoles()
     {
         return $this->roles;
+    }
+
+    /**
+     * Teste si cet établissement est le pseudo-établissement "Tout établissement confondu".
+     *
+     * @return bool
+     */
+    public function estToutEtablissementConfondu()
+    {
+        return $this->getCode() === self::CODE_TOUT_ETABLISSEMENT_CONFONDU;
     }
 }

@@ -2,18 +2,18 @@
 
 namespace Application\Service\Etablissement;
 
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 trait EtablissementServiceLocateTrait
 {
     /**
-     * @param ServiceLocatorInterface $sl
+     * @param ContainerInterface $container
      * @return EtablissementService
      */
-    public function locateEtablissementService(ServiceLocatorInterface $sl)
+    public function locateEtablissementService(ContainerInterface $container)
     {
         /** @var EtablissementService $service */
-        $service = $sl->get('EtablissementService');
+        $service = $container->get('EtablissementService');
 
         return $service;
     }

@@ -9,7 +9,7 @@ use Import\Service\ImportService;
 use Import\Service\SynchroService;
 use Zend\Log\Logger;
 use Zend\Log\Writer\Noop;
-use Zend\ServiceManager\ServiceLocatorInterface as ContainerInterface;
+use Interop\Container\ContainerInterface;
 
 class ImportServiceFactory
 {

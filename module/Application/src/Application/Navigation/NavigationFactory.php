@@ -2,12 +2,9 @@
 
 namespace Application\Navigation;
 
-use Zend\Http\Request;
-use Zend\Mvc\Router\RouteStackInterface as Router;
-use Zend\Mvc\Router\RouteMatch;
+use Interop\Container\ContainerInterface;
 use Zend\Navigation\Service\DefaultNavigationFactory;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
+use Zend\Router\RouteMatch;
 
 /**
  * Factory de navigation prenant en charge :
@@ -21,27 +18,25 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
  */
 class NavigationFactory extends DefaultNavigationFactory
 {
-    use ServiceLocatorAwareTrait;
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
 
     /**
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return \Zend\Navigation\Navigation
+     * @inheritDoc
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $this->setServiceLocator($serviceLocator);
-        
-        return parent::createService($serviceLocator);
+        $this->container = $container;
+
+        return parent::__invoke($container, $requestedName, $options);
     }
     
     /**
-     * @param array $pages
-     * @param RouteMatch $routeMatch
-     * @param Router $router
-     * @param null|Request $request
-     * @return mixed
+     * @inheritDoc
      */
-    protected function injectComponents(array $pages, RouteMatch $routeMatch = null, Router $router = null, $request = null)
+    protected function injectComponents(array $pages, $routeMatch = null, $router = null, $request = null)
     {
         //
         foreach ($pages as &$page) {
@@ -66,7 +61,7 @@ class NavigationFactory extends DefaultNavigationFactory
             
             // l'attribut 'visible' d'une page peut être le nom d'un service
             $this->handleVisibility($page, $routeMatch);
-//            
+//
             // injections éventuelles de paramètres de page à partir du RouteMatch
             $this->handleParamsInjection($page, $routeMatch);
 
@@ -111,7 +106,7 @@ class NavigationFactory extends DefaultNavigationFactory
             throw new \LogicException("Format d'attribut 'pagesProvider' incorrect!");
         }
         
-        $pagesProvider = $this->getServiceLocator()->get($pagesProviderAttr);
+        $pagesProvider = $this->container->get($pagesProviderAttr);
         if (!is_callable($pagesProvider)) {
             throw new \LogicException(
                     "Service spécifié pour l'attribut de page 'pagesProvider' non valide : $pagesProviderAttr.");
@@ -138,7 +133,7 @@ class NavigationFactory extends DefaultNavigationFactory
     {
         // l'attribut 'visible' d'une page peut être le nom d'un service
         if (isset($page['visible']) && is_string($page['visible'])) {
-            $visible = $this->getServiceLocator()->get($page['visible']);
+            $visible = $this->container->get($page['visible']);
             if (!is_callable($visible)) {
                 throw new \LogicException(
                         "Service spécifié pour l'attribut de page 'visible' non valide : {$page['visible']}.");

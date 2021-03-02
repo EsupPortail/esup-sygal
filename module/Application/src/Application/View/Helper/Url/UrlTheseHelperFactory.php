@@ -3,16 +3,14 @@
 namespace Application\View\Helper\Url;
 
 use Application\Service\Url\UrlTheseService;
-use Zend\View\HelperPluginManager;
+use Interop\Container\ContainerInterface;
 
 class UrlTheseHelperFactory
 {
-    public function __invoke(HelperPluginManager $helperPluginManager)
+    public function __invoke(ContainerInterface $container)
     {
         /** @var UrlTheseService $urlService */
-        $urlService = $helperPluginManager->getServiceLocator()->get(UrlTheseService::class);
-
-//        var_dump($urlService);die;
+        $urlService = $container->get(UrlTheseService::class);
 
         $service = new UrlTheseHelper();
         $service->setUrlTheseService($urlService);
