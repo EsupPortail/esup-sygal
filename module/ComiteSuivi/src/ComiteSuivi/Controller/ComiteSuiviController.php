@@ -72,7 +72,6 @@ class ComiteSuiviController extends AbstractActionController {
         $theseId = $this->params()->fromRoute('these');
         $these = $this->getTheseService()->getRepository()->find($theseId);
 
-        /** @var ComiteSuivi[] $comites */
         $comites = $this->getComiteSuiviService()->getComitesSuivisByThese($these);
         $max = 1;
         foreach ($comites as $comite) {
@@ -142,7 +141,6 @@ class ComiteSuiviController extends AbstractActionController {
 
     public function modifierInfosAction()
     {
-        /** @var ComiteSuivi $comite */
         $comite = $this->getComiteSuiviService()->getRequestedComiteSuivi($this);
 
         $form = $this->getComiteSuiviForm();
@@ -235,7 +233,6 @@ class ComiteSuiviController extends AbstractActionController {
     public function refuserAction() {
         $comite = $this->getComiteSuiviService()->getRequestedComiteSuivi($this);
 
-        /** @var RefusForm $form */
         $form = $this->getRefusForm();
         $form->setAttribute('action', $this->url()->fromRoute('comite-suivi/refuser', ['these' => $comite->getThese()->getId(), 'comite' => $comite->getId()], [], true));
 

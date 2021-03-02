@@ -26,7 +26,7 @@ class CompteRenduService
      * @param CompteRendu $compteRendu
      * @return CompteRendu
      */
-    public function create(CompteRendu $compteRendu)
+    public function create(CompteRendu $compteRendu) : CompteRendu
     {
         $date = $this->getDateTime();
         $user = $this->userContextService->getIdentityDb();
@@ -49,7 +49,7 @@ class CompteRenduService
      * @param CompteRendu $compteRendu
      * @return CompteRendu
      */
-    public function update(CompteRendu $compteRendu)
+    public function update(CompteRendu $compteRendu) : CompteRendu
     {
         $date = $this->getDateTime();
         $user = $this->userContextService->getIdentityDb();
@@ -69,7 +69,7 @@ class CompteRenduService
      * @param CompteRendu $compteRendu
      * @return CompteRendu
      */
-    public function historise(CompteRendu $compteRendu)
+    public function historise(CompteRendu $compteRendu) : CompteRendu
     {
         $date = $this->getDateTime();
         $user = $this->userContextService->getIdentityDb();
@@ -89,7 +89,7 @@ class CompteRenduService
      * @param CompteRendu $compteRendu
      * @return CompteRendu
      */
-    public function restore(CompteRendu $compteRendu)
+    public function restore(CompteRendu $compteRendu) : CompteRendu
     {
         $compteRendu->setHistoDestructeur(null);
         $compteRendu->setHistoDestruction(null);
@@ -108,7 +108,7 @@ class CompteRenduService
      * @param CompteRendu $compteRendu
      * @return CompteRendu
      */
-    public function delete(CompteRendu $compteRendu)
+    public function delete(CompteRendu $compteRendu) : CompteRendu
     {
         try {
             $this->getEntityManager()->remove($compteRendu);
@@ -125,7 +125,7 @@ class CompteRenduService
     /**
      * @return QueryBuilder
      */
-    public function createQueryBuilder()
+    public function createQueryBuilder() : QueryBuilder
     {
         $qb = $this->getEntityManager()->getRepository(CompteRendu::class)->createQueryBuilder('compterendu')
             ->addSelect('comite')->join('compterendu.comite', 'comite')
@@ -137,9 +137,9 @@ class CompteRenduService
 
     /**
      * @param $id
-     * @return CompteRendu
+     * @return CompteRendu|null
      */
-    public function getCompteRendu($id)
+    public function getCompteRendu(int $id) : ?CompteRendu
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('compterendu.id = :id')
@@ -148,7 +148,7 @@ class CompteRenduService
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs CompteRendu partagent le même comite [".$comite->getId()."]et le examinateur [".$examinateur->getId()."]", 0, $e);
+            throw new RuntimeException("Plusieurs CompteRendu partagent le même id [".$id."].", 0, $e);
         }
         return $result;
     }
@@ -156,9 +156,9 @@ class CompteRenduService
     /**
      * @param AbstractActionController $controller
      * @param string $param
-     * @return CompteRendu
+     * @return CompteRendu|null
      */
-    public function getRequestedCompteRendu($controller, $param='compte-rendu')
+    public function getRequestedCompteRendu(AbstractActionController $controller, string $param='compte-rendu') : ?CompteRendu
     {
         $id = $controller->params()->fromRoute($param);
         $result = $this->getCompteRendu($id);
@@ -168,9 +168,9 @@ class CompteRenduService
     /**
      * @param ComiteSuivi $comite
      * @param Membre $examinateur
-     * @return CompteRendu
+     * @return CompteRendu|null
      */
-    public function getCompteRenduByComiteAndExaminateur(ComiteSuivi $comite, Membre $examinateur)
+    public function getCompteRenduByComiteAndExaminateur(ComiteSuivi $comite, Membre $examinateur) : ?CompteRendu
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('compterendu.comite = :comite')

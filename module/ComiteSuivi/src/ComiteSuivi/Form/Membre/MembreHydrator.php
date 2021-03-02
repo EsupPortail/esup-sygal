@@ -6,7 +6,7 @@ use Application\Entity\Db\Role;
 use Application\Service\Role\RoleServiceAwareTrait;
 use ComiteSuivi\Entity\Db\Membre;
 use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviServiceAwareTrait;
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
 class MembreHydrator implements HydratorInterface {
     use ComiteSuiviServiceAwareTrait;

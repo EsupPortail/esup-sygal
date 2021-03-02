@@ -10,7 +10,7 @@ trait MembreServiceAwareTrait {
     /**
      * @return MembreService
      */
-    public function getMembreService()
+    public function getMembreService() : MembreService
     {
         return $this->membreService;
     }
@@ -19,7 +19,7 @@ trait MembreServiceAwareTrait {
      * @param MembreService $membreService
      * @return MembreService
      */
-    public function setMembreService($membreService)
+    public function setMembreService(MembreService $membreService) : MembreService
     {
         $this->membreService = $membreService;
         return $this->membreService;

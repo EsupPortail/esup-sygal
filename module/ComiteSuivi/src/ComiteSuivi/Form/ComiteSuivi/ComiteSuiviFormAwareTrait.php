@@ -10,7 +10,7 @@ trait ComiteSuiviFormAwareTrait {
     /**
      * @return ComiteSuiviForm
      */
-    public function getComiteSuiviForm()
+    public function getComiteSuiviForm() : ComiteSuiviForm
     {
         return $this->comiteSuiviForm;
     }
@@ -19,7 +19,7 @@ trait ComiteSuiviFormAwareTrait {
      * @param ComiteSuiviForm $comiteSuiviForm
      * @return ComiteSuiviForm
      */
-    public function setComiteSuiviForm($comiteSuiviForm)
+    public function setComiteSuiviForm(ComiteSuiviForm $comiteSuiviForm) : ComiteSuiviForm
     {
         $this->comiteSuiviForm = $comiteSuiviForm;
         return $this->comiteSuiviForm;

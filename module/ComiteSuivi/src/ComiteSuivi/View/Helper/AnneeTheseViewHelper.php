@@ -14,7 +14,7 @@ class AnneeTheseViewHelper extends AbstractHtmlElement {
      * @param array $options
      * @return Partial
      */
-    public function __invoke($annee, $options = [])
+    public function __invoke(int $annee, $options = [])
     {
         $anneeTexte = self::render($annee);
 
@@ -28,7 +28,7 @@ class AnneeTheseViewHelper extends AbstractHtmlElement {
      * @param integer $annee
      * @return string
      */
-    static public function render($annee)
+    static public function render(int $annee)
     {
         $anneeTexte = "<span style='color:darkred;'>Année non définie</span>";
         switch ($annee) {

@@ -10,7 +10,7 @@ trait CompteRenduServiceAwareTrait {
     /**
      * @return CompteRenduService
      */
-    public function getCompteRenduService()
+    public function getCompteRenduService() : CompteRenduService
     {
         return $this->compteRenduService;
     }
@@ -19,7 +19,7 @@ trait CompteRenduServiceAwareTrait {
      * @param CompteRenduService $compteRenduService
      * @return CompteRenduService
      */
-    public function setCompteRenduService($compteRenduService)
+    public function setCompteRenduService(CompteRenduService $compteRenduService) : CompteRenduService
     {
         $this->compteRenduService = $compteRenduService;
         return $this->compteRenduService;

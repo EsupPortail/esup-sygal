@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @see \ComiteSuivi\Controller\CompteRenduController::ajouterAction()
  * @var ComiteSuivi $comite
  * @var Membre[] $examinateurs
  */
@@ -10,7 +11,9 @@ use ComiteSuivi\Entity\Db\Membre;
 
 ?>
 
-<form action="<?php echo $this->url('compte-rendu/ajouter', ['comite-suivi' => $comite->getId()], [], true);?> " method="post">
+<form   <?php /** @see \ComiteSuivi\Controller\CompteRenduController::ajouterAction() */?>
+        action="<?php echo $this->url('compte-rendu/ajouter', ['comite-suivi' => $comite->getId()], [], true);?> "
+        method="post">
     <label for="examinateur">Examinateur rédigeant le compte-rendu </label>
     <select class="selectpicker" name="examinateur" id="examinateur">
         <option value="">Choisissez un examinateur ... </option>

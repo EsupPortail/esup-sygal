@@ -4,24 +4,22 @@ namespace ComiteSuivi\Form\CompteRendu;
 
 use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviService;
 use ComiteSuivi\Service\Membre\MembreService;
-use Zend\Stdlib\Hydrator\HydratorPluginManager;
+use Interop\Container\ContainerInterface;
 
 class CompteRenduHydratorFactory {
 
     /**
-     * @param HydratorPluginManager $manager
+     * @param ContainerInterface $container
      * @return CompteRenduHydrator
      */
-    public function __invoke(HydratorPluginManager $manager)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var ComiteSuiviService $comiteSuiviService
          * @var MembreService $membreService
          */
-        $comiteSuiviService = $manager->getServiceLocator()->get(ComiteSuiviService::class);
-        $membreService = $manager->getServiceLocator()->get(MembreService::class);
-
-        /** @var CompteRenduHydrator $hydrator */
+        $comiteSuiviService = $container->get(ComiteSuiviService::class);
+        $membreService = $container->get(MembreService::class);
         $hydrator = new CompteRenduHydrator();
         $hydrator->setComiteSuiviService($comiteSuiviService);
         $hydrator->setMembreService($membreService);

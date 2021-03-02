@@ -4,20 +4,23 @@ namespace ComiteSuivi\Service\CompteRendu;
 
 use Application\Service\UserContextService;
 use Doctrine\ORM\EntityManager;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 class CompteRenduServiceFactory {
 
-    public function __invoke(ServiceLocatorInterface $serviceLocator)
+    /**
+     * @param ContainerInterface $container
+     * @return CompteRenduService
+     */
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var EntityManager $entityManager
          * @var UserContextService $userContextService
          */
-        $entityManager = $serviceLocator->get('doctrine.entitymanager.orm_default');
-        $userContextService = $serviceLocator->get('authUserContext');
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $userContextService = $container->get('authUserContext');
 
-        /** @var CompteRenduService $service */
         $service = new CompteRenduService();
         $service->setEntityManager($entityManager);
         $service->setUserContextService($userContextService);

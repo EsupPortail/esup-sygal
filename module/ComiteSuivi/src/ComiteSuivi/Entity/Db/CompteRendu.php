@@ -22,7 +22,7 @@ class CompteRendu {
     /**
      * @return int
      */
-    public function getId()
+    public function getId() : int
     {
         return $this->id;
     }
@@ -31,79 +31,79 @@ class CompteRendu {
      * @param int $id
      * @return CompteRendu
      */
-    public function setId($id)
+    public function setId(int $id) : CompteRendu
     {
         $this->id = $id;
         return $this;
     }
 
     /**
-     * @return ComiteSuivi
+     * @return ComiteSuivi|null
      */
-    public function getComite()
+    public function getComite() : ?ComiteSuivi
     {
         return $this->comite;
     }
 
     /**
-     * @param ComiteSuivi $comite
+     * @param ComiteSuivi|null $comite
      * @return CompteRendu
      */
-    public function setComite($comite)
+    public function setComite(?ComiteSuivi $comite) : CompteRendu
     {
         $this->comite = $comite;
         return $this;
     }
 
     /**
-     * @return Membre
+     * @return Membre|null
      */
-    public function getMembre()
+    public function getMembre() : ?Membre
     {
         return $this->membre;
     }
 
     /**
-     * @param Membre $membre
+     * @param Membre|null $membre
      * @return CompteRendu
      */
-    public function setMembre($membre)
+    public function setMembre(?Membre $membre) : CompteRendu
     {
         $this->membre = $membre;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getReponse()
+    public function getReponse() : ?string
     {
         return $this->reponse;
     }
 
     /**
-     * @param string $reponse
+     * @param string|null $reponse
      * @return CompteRendu
      */
-    public function setReponse($reponse)
+    public function setReponse(?string $reponse) : CompteRendu
     {
         $this->reponse = $reponse;
         return $this;
     }
 
     /**
-     * @return DateTime
+     * @return DateTime|null
      */
-    public function getFinaliser()
+    public function getFinaliser() : ?DateTime
     {
         return $this->finaliser;
     }
 
     /**
-     * @param DateTime $finaliser
+     * @param DateTime|null $finaliser
      * @return CompteRendu
      */
-    public function setFinaliser($finaliser)
+    public function setFinaliser(?DateTime $finaliser) : CompteRendu
     {
         $this->finaliser = $finaliser;
         return $this;

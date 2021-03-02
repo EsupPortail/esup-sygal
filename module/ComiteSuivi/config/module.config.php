@@ -3,11 +3,12 @@
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use UnicaenAuth\Guard\PrivilegeController;
 
 return array(
     'bjyauthorize'    => [
         'guards' => [
-            \UnicaenAuth\Guard\PrivilegeController::class => [
+            PrivilegeController::class => [
             ],
         ],
     ],

@@ -1,7 +1,6 @@
 <?php
 
 use Application\Provider\Privilege\StructurePrivileges;
-use Application\Provider\Privilege\SubstitutionPrivileges;
 use ComiteSuivi\Controller\ComiteSuiviController;
 use ComiteSuivi\Controller\ComiteSuiviControllerFactory;
 use ComiteSuivi\Form\ComiteSuivi\ComiteSuiviForm;
@@ -16,8 +15,8 @@ use ComiteSuivi\Service\Notifier\NotifierService;
 use ComiteSuivi\Service\Notifier\NotifierServiceFactory;
 use ComiteSuivi\View\Helper\AnneeTheseViewHelper;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Mvc\Router\Http\Literal;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [

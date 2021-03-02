@@ -10,7 +10,7 @@ trait MembreFormAwareTrait {
     /**
      * @return MembreForm
      */
-    public function getMembreForm()
+    public function getMembreForm() : MembreForm
     {
         return $this->membreForm;
     }
@@ -19,7 +19,7 @@ trait MembreFormAwareTrait {
      * @param MembreForm $membreForm
      * @return MembreForm
      */
-    public function setMembreForm($membreForm)
+    public function setMembreForm(MembreForm $membreForm) : MembreForm
     {
         $this->membreForm = $membreForm;
         return $this->membreForm;

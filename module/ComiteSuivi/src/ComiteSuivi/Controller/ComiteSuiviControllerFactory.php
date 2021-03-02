@@ -14,15 +14,15 @@ use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviService;
 use ComiteSuivi\Service\CompteRendu\CompteRenduService;
 use ComiteSuivi\Service\Membre\MembreService;
 use ComiteSuivi\Service\Notifier\NotifierService;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class ComiteSuiviControllerFactory {
 
     /**
-     * @param ControllerManager $manager
+     * @param ContainerInterface $container
      * @return ComiteSuiviController
      */
-    public function __invoke(ControllerManager $manager)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var ComiteSuiviService $comiteSuiviService
@@ -34,14 +34,14 @@ class ComiteSuiviControllerFactory {
          * @var TheseService $theseService
          * @var ValidationService $validationService
          */
-        $comiteSuiviService = $manager->getServiceLocator()->get(ComiteSuiviService::class);
-        $compteRenduService = $manager->getServiceLocator()->get(CompteRenduService::class);
-        $individuService = $manager->getServiceLocator()->get('IndividuService');
-        $membreService = $manager->getServiceLocator()->get(MembreService::class);
-        $notifierService = $manager->getServiceLocator()->get(NotifierService::class);
-        $roleService = $manager->getServiceLocator()->get('RoleService');
-        $theseService = $manager->getServiceLocator()->get('TheseService');
-        $validationService = $manager->getServiceLocator()->get('ValidationService');
+        $comiteSuiviService = $container->get(ComiteSuiviService::class);
+        $compteRenduService = $container->get(CompteRenduService::class);
+        $individuService = $container->get('IndividuService');
+        $membreService = $container->get(MembreService::class);
+        $notifierService = $container->get(NotifierService::class);
+        $roleService = $container->get('RoleService');
+        $theseService = $container->get('TheseService');
+        $validationService = $container->get('ValidationService');
 
         /**
          * @var ComiteSuiviForm $comiteSuiviForm
@@ -49,12 +49,11 @@ class ComiteSuiviControllerFactory {
          * @var MembreForm $membreForm
          * @var RefusForm $refusForm
          */
-        $comiteSuiviForm = $manager->getServiceLocator()->get('FormElementManager')->get(ComiteSuiviForm::class);
-        $compteRenduForm = $manager->getServiceLocator()->get('FormElementManager')->get(CompteRenduForm::class);
-        $membreForm = $manager->getServiceLocator()->get('FormElementManager')->get(MembreForm::class);
-        $refusForm = $manager->getServiceLocator()->get('FormElementManager')->get(RefusForm::class);
+        $comiteSuiviForm = $container->get('FormElementManager')->get(ComiteSuiviForm::class);
+        $compteRenduForm = $container->get('FormElementManager')->get(CompteRenduForm::class);
+        $membreForm = $container->get('FormElementManager')->get(MembreForm::class);
+        $refusForm = $container->get('FormElementManager')->get(RefusForm::class);
 
-        /** @var ComiteSuiviController $controller */
         $controller = new ComiteSuiviController();
 
         $controller->setComiteSuiviService($comiteSuiviService);

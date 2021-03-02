@@ -3,22 +3,21 @@
 namespace ComiteSuivi\Form\ComiteSuivi;
 
 use Application\Service\These\TheseService;
-use Zend\Stdlib\Hydrator\HydratorPluginManager;
+use Interop\Container\ContainerInterface;
 
 class ComiteSuiviHydratorFactory {
 
     /**
-     * @param HydratorPluginManager $manager
+     * @param ContainerInterface $container
      * @return ComiteSuiviHydrator
      */
-    public function __invoke(HydratorPluginManager $manager)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var TheseService $theseService
          */
-        $theseService = $manager->getServiceLocator()->get('TheseService');
+        $theseService = $container->get('TheseService');
 
-        /** @var ComiteSuiviHydrator $hydrator */
         $hydrator = new ComiteSuiviHydrator();
         $hydrator->setTheseService($theseService);
         return $hydrator;

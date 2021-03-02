@@ -5,26 +5,25 @@ namespace ComiteSuivi\Controller;
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
 use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviService;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class IndexControllerFactory {
 
     /**
-     * @param ControllerManager $manager
+     * @param ContainerInterface $container
      * @return IndexController
      */
-    public function __invoke(ControllerManager $manager)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var ComiteSuiviService $comiteService
          * @var TheseService $theseService
          * @var UserContextService $contextService
          */
-        $comiteService = $manager->getServiceLocator()->get(ComiteSuiviService::class);
-        $theseService = $manager->getServiceLocator()->get('TheseService');
-        $contextService = $manager->getServiceLocator()->get('authUserContext');
+        $comiteService = $container->get(ComiteSuiviService::class);
+        $theseService = $container->get('TheseService');
+        $contextService = $container->get('authUserContext');
 
-        /** @var IndexController $controller */
         $controller = new IndexController();
         $controller->setComiteSuiviService($comiteService);
         $controller->setTheseService($theseService);

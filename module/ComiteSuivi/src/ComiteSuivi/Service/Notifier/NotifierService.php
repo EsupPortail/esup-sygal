@@ -19,7 +19,7 @@ class NotifierService extends \Notification\Service\NotifierService {
      * @param These $these
      * @return string
      */
-    protected function fetchEmailDoctorant(These $these)
+    protected function fetchEmailDoctorant(These $these) : string
     {
         $doctorant = $these->getDoctorant();
         $email = $doctorant->getIndividu()->getEmail();
@@ -30,7 +30,7 @@ class NotifierService extends \Notification\Service\NotifierService {
      * @param These $these
      * @return array
      */
-    protected function fetchEmailEcoleDoctorale(These $these)
+    protected function fetchEmailEcoleDoctorale(These $these) : array
     {
         /** @var IndividuRole[] $individuRoles */
         $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
@@ -46,7 +46,7 @@ class NotifierService extends \Notification\Service\NotifierService {
     /**
      * @param ComiteSuivi $comite
      */
-    public function triggerFinalisation($comite)
+    public function triggerFinalisation(ComiteSuivi $comite)
     {
         $these = $comite->getThese();
         $doctorant = $these->getDoctorant();
@@ -68,7 +68,7 @@ class NotifierService extends \Notification\Service\NotifierService {
     /**
      * @param ComiteSuivi $comite
      */
-    public function triggerValidation($comite)
+    public function triggerValidation(ComiteSuivi $comite)
     {
         $these = $comite->getThese();
         $ecole = $these->getEcoleDoctorale();
@@ -92,7 +92,7 @@ class NotifierService extends \Notification\Service\NotifierService {
      * @param ComiteSuivi $comite
      * @param string $motif
      */
-    public function triggerRefus(ComiteSuivi $comite, $motif)
+    public function triggerRefus(ComiteSuivi $comite, string $motif)
     {
         $these = $comite->getThese();
         $ecole = $these->getEcoleDoctorale();
@@ -118,7 +118,7 @@ class NotifierService extends \Notification\Service\NotifierService {
      * @param Utilisateur $utilisateur
      * @param string $url
      */
-    public function triggerInitialisationCompte($comite, $utilisateur, $url) {
+    public function triggerInitialisationCompte(ComiteSuivi $comite, Utilisateur $utilisateur, string $url) {
 
         $email = $utilisateur->getEmail();
         if ($email === null) throw new LogicException("Aucun email de fourni !");

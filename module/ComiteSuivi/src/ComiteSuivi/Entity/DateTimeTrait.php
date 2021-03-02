@@ -8,7 +8,7 @@ use UnicaenApp\Exception\RuntimeException;
 
 trait DateTimeTrait {
 
-    private function getDateTime()
+    private function getDateTime() : DateTime
     {
         try {
             $date = new DateTime();
@@ -18,7 +18,7 @@ trait DateTimeTrait {
         return $date;
     }
 
-    public function getAnneeScolaire()
+    public function getAnneeScolaire() : string
     {
         $date = $this->getDateTime();
         /** @var integer $annee */

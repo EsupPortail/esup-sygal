@@ -2,22 +2,22 @@
 
 namespace ComiteSuivi\Form\Membre;
 
-use Zend\Form\FormElementManager;
+
+use Interop\Container\ContainerInterface;
 
 class MembreFormFactory {
 
     /**
-     * @param FormElementManager $manager
+     * @param ContainerInterface $container
      * @return MembreForm
      */
-    public function __invoke(FormElementManager $manager)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var MembreHydrator $hydrator
          */
-        $hydrator = $manager->getServiceLocator()->get('HydratorManager')->get(MembreHydrator::class);
+        $hydrator = $container->get('HydratorManager')->get(MembreHydrator::class);
 
-        /** @var MembreForm $form */
         $form = new MembreForm();
         $form->setHydrator($hydrator);
         return $form;

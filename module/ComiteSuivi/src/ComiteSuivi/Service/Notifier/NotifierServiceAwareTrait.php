@@ -10,7 +10,7 @@ trait NotifierServiceAwareTrait {
     /**
      * @return NotifierService
      */
-    public function getNotifierService()
+    public function getNotifierService() : NotifierService
     {
         return $this->notifierService;
     }
@@ -19,7 +19,7 @@ trait NotifierServiceAwareTrait {
      * @param NotifierService $notifierService
      * @return NotifierService
      */
-    public function setNotifierService($notifierService)
+    public function setNotifierService(NotifierService $notifierService) : NotifierService
     {
         $this->notifierService = $notifierService;
         return $this->notifierService;

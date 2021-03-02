@@ -6,31 +6,30 @@ use ComiteSuivi\Form\CompteRendu\CompteRenduForm;
 use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviService;
 use ComiteSuivi\Service\CompteRendu\CompteRenduService;
 use ComiteSuivi\Service\Membre\MembreService;
-use Zend\Mvc\Controller\ControllerManager;
+use Interop\Container\ContainerInterface;
 
 class CompteRenduControllerFactory {
 
     /**
-     * @param ControllerManager $manager
+     * @param ContainerInterface $container
      * @return CompteRenduController
      */
-    public function __invoke(ControllerManager $manager)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var ComiteSuiviService $comiteSuiviService
          * @var CompteRenduService $compteRenduService
          * @var MembreService $membreService
          */
-        $comiteSuiviService = $manager->getServiceLocator()->get(ComiteSuiviService::class);
-        $compteRenduService = $manager->getServiceLocator()->get(CompteRenduService::class);
-        $membreService = $manager->getServiceLocator()->get(MembreService::class);
+        $comiteSuiviService = $container->get(ComiteSuiviService::class);
+        $compteRenduService = $container->get(CompteRenduService::class);
+        $membreService = $container->get(MembreService::class);
 
         /**
          * @var CompteRenduForm $compteRenduForm
          */
-        $compteRenduForm = $manager->getServiceLocator()->get('FormElementManager')->get(CompteRenduForm::class);
+        $compteRenduForm = $container->get('FormElementManager')->get(CompteRenduForm::class);
 
-        /** @var CompteRenduController $controller */
         $controller = new CompteRenduController();
         $controller->setComiteSuiviService($comiteSuiviService);
         $controller->setCompteRenduService($compteRenduService);

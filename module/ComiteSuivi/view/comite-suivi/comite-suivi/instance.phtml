@@ -7,6 +7,8 @@ use ComiteSuivi\Provider\Privilege\CompteRenduPrivileges;
 use ComiteSuivi\Provider\Privilege\MembrePrivileges;
 
 /**
+ * @see \ComiteSuivi\Controller\ComiteSuiviController::afficherAction()
+ * @see \ComiteSuivi\Controller\ComiteSuiviController::modifierAction()
  * @var These $these
  * @var ComiteSuivi $comite
  * @var string $action
@@ -285,9 +287,10 @@ $canValider                 = $this->isAllowed(ComiteSuiviPrivileges::getResourc
                     <span class="glyphicon glyphicon-ok" style="color:darkgreen;"></span>
                 <?php endif ;?>
                 <?php if ($canAfficherCompteRendu): ?>
-                    <a href="<?php echo $this->url('compte-rendu/afficher', ['compte-rendu' => $compterendu->getId()], [], true); ?>"
-                       target="_blank"
-                       title="Afficher le compte rendu de <?php echo $compterendu->getMembre()->getDenomination(); ?>"
+                    <a  <?php /** @see \ComiteSuivi\Controller\CompteRenduController::afficherAction() */?>
+                            href="<?php echo $this->url('compte-rendu/afficher', ['compte-rendu' => $compterendu->getId()], [], true); ?>"
+                            target="_blank"
+                            title="Afficher le compte rendu de <?php echo $compterendu->getMembre()->getDenomination(); ?>"
                     >
                 <?php endif; ?>
                     Compte-rendu de <?php echo $compterendu->getMembre()->getDenomination(); ?>

@@ -33,7 +33,7 @@ class ComiteSuivi {
     /**
      * @return int
      */
-    public function getId()
+    public function getId() : int
     {
         return $this->id;
     }
@@ -42,79 +42,79 @@ class ComiteSuivi {
      * @param int $id
      * @return ComiteSuivi
      */
-    public function setId($id)
+    public function setId(int $id) : ComiteSuivi
     {
         $this->id = $id;
         return $this;
     }
 
     /**
-     * @return These
+     * @return These|null
      */
-    public function getThese()
+    public function getThese() : ?These
     {
         return $this->these;
     }
 
     /**
-     * @param These $these
+     * @param These|null $these
      * @return ComiteSuivi
      */
-    public function setThese($these)
+    public function setThese(?These $these) : ComiteSuivi
     {
         $this->these = $these;
         return $this;
     }
 
     /**
-     * @return DateTime
+     * @return DateTime|null
      */
-    public function getDateComite()
+    public function getDateComite() : ?DateTime
     {
         return $this->dateComite;
     }
 
     /**
-     * @param DateTime $dateComite
+     * @param ?DateTime $dateComite
      * @return ComiteSuivi
      */
-    public function setDateComite($dateComite)
+    public function setDateComite(?DateTime $dateComite) : ComiteSuivi
     {
         $this->dateComite = $dateComite;
         return $this;
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getAnneeThese()
+    public function getAnneeThese() : ?string
     {
         return $this->anneeThese;
     }
 
     /**
-     * @param string $anneeThese
+     * @param string|null $anneeThese
      * @return ComiteSuivi
      */
-    public function setAnneeThese($anneeThese)
+    public function setAnneeThese(?string $anneeThese) : ComiteSuivi
     {
         $this->anneeThese = $anneeThese;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getAnneeScolaire()
+    public function getAnneeScolaire() : ?string
     {
         return $this->anneeScolaire;
     }
 
     /**
-     * @param string $anneeScolaire
+     * @param string|null $anneeScolaire
      * @return ComiteSuivi
      */
-    public function setAnneeScolaire($anneeScolaire)
+    public function setAnneeScolaire(?string $anneeScolaire) : ComiteSuivi
     {
         $this->anneeScolaire = $anneeScolaire;
         return $this;
@@ -123,7 +123,7 @@ class ComiteSuivi {
     /**
      * @return Membre[]
      */
-    public function getMembres()
+    public function getMembres() : array
     {
         return $this->membres->toArray();
     }
@@ -131,42 +131,42 @@ class ComiteSuivi {
     /**
      * @return CompteRendu[]
      */
-    public function getComptesRendus()
+    public function getComptesRendus() : array
     {
         return $this->comptesrendus->toArray();
     }
 
     /**
-     * @return Validation
+     * @return Validation|null
      */
-    public function getFinalisation()
+    public function getFinalisation() :?Validation
     {
         return $this->finalisation;
     }
 
     /**
-     * @param Validation $finalisation
+     * @param Validation|null $finalisation
      * @return ComiteSuivi
      */
-    public function setFinalisation($finalisation)
+    public function setFinalisation(?Validation $finalisation) : ComiteSuivi
     {
         $this->finalisation = $finalisation;
         return $this;
     }
 
     /**
-     * @return Validation
+     * @return Validation|null
      */
-    public function getValidation()
+    public function getValidation() : ?Validation
     {
         return $this->validation;
     }
 
     /**
-     * @param Validation $validation
+     * @param Validation|null $validation
      * @return ComiteSuivi
      */
-    public function setValidation($validation)
+    public function setValidation(?Validation $validation) : ComiteSuivi
     {
         $this->validation = $validation;
         return $this;

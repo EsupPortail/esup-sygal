@@ -4,24 +4,23 @@ namespace ComiteSuivi\Form\Membre;
 
 use Application\Service\Role\RoleService;
 use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviService;
-use Zend\Stdlib\Hydrator\HydratorPluginManager;
+use Interop\Container\ContainerInterface;
 
 class MembreHydratorFactory {
 
     /**
-     * @param HydratorPluginManager $manager
+     * @param ContainerInterface $manager
      * @return MembreHydrator
      */
-    public function __invoke(HydratorPluginManager $manager)
+    public function __invoke(ContainerInterface $manager)
     {
         /**
          * @var ComiteSuiviService $comiteSuiviService
          * @var RoleService $roleService
          */
-        $comiteSuiviService = $manager->getServiceLocator()->get(ComiteSuiviService::class);
-        $roleService = $manager->getServiceLocator()->get(RoleService::class);
+        $comiteSuiviService = $manager->get(ComiteSuiviService::class);
+        $roleService = $manager->get(RoleService::class);
 
-        /** @var MembreHydrator $hydrator */
         $hydrator = new MembreHydrator();
         $hydrator->setComiteSuiviService($comiteSuiviService);
         $hydrator->setRoleService($roleService);

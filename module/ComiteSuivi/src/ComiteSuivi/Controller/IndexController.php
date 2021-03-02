@@ -2,7 +2,6 @@
 
 namespace ComiteSuivi\Controller;
 
-use Application\Controller\AdminController;
 use Application\Entity\Db\Role;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
@@ -20,6 +19,7 @@ class IndexController extends AbstractActionController {
 
     public function indexAction()
     {
+        /** @var Role $role */
         $role = $this->userContextService->getSelectedIdentityRole();
         $individu = $this->userContextService->getIdentityDb()->getIndividu();
 
@@ -34,7 +34,7 @@ class IndexController extends AbstractActionController {
                 break;
             case Role::CODE_ED :
                 $ecole = $role->getStructure()->getEcoleDoctorale();
-                $comites = $this->getComiteSuiviService()->getComitesSuivisByEcodeAndAnneeScolaire($ecole, $this->getAnneeScolaire());
+                $comites = $this->getComiteSuiviService()->getComitesSuivisByEcoleAndAnneeScolaire($ecole, $this->getAnneeScolaire());
                 $vm->setTemplate('comite-suivi/index/index-comites');
                 break;
             case Role::CODE_DOCTORANT :

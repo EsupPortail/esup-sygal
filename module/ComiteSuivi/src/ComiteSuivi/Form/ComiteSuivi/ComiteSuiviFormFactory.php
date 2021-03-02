@@ -2,20 +2,20 @@
 
 namespace ComiteSuivi\Form\ComiteSuivi;
 
-use Zend\Form\FormElementManager;
+
+use Interop\Container\ContainerInterface;
 
 class ComiteSuiviFormFactory {
 
     /**
-     * @param FormElementManager $manager
+     * @param ContainerInterface $container
      * @return ComiteSuiviForm
      */
-    public function __invoke(FormElementManager $manager)
+    public function __invoke(ContainerInterface $container)
     {
         /** @var ComiteSuiviHydrator $hydrator */
-        $hydrator = $manager->getServiceLocator()->get('HydratorManager')->get(ComiteSuiviHydrator::class);
+        $hydrator = $container->get('HydratorManager')->get(ComiteSuiviHydrator::class);
 
-        /** @var ComiteSuiviForm $form */
         $form = new ComiteSuiviForm();
         $form->setHydrator($hydrator);
         return $form;

@@ -5,7 +5,7 @@ namespace ComiteSuivi\Form\CompteRendu;
 use ComiteSuivi\Entity\Db\CompteRendu;
 use ComiteSuivi\Service\ComiteSuivi\ComiteSuiviServiceAwareTrait;
 use ComiteSuivi\Service\Membre\MembreServiceAwareTrait;
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
 class CompteRenduHydrator implements HydratorInterface {
     use ComiteSuiviServiceAwareTrait;

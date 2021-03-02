@@ -4,24 +4,23 @@ namespace ComiteSuivi\Service\ComiteSuivi;
 
 use Application\Service\UserContextService;
 use Doctrine\ORM\EntityManager;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 class ComiteSuiviServiceFactory {
 
     /**
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface $container
      * @return ComiteSuiviService
      */
-    public function __invoke(ServiceLocatorInterface $serviceLocator)
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var EntityManager $entityManager
          * @var UserContextService $userContextService
          */
-        $entityManager = $serviceLocator->get('doctrine.entitymanager.orm_default');
-        $userContextService = $serviceLocator->get('authUserContext');
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $userContextService = $container->get('authUserContext');
 
-        /** @var ComiteSuiviService $service */
         $service = new ComiteSuiviService();
         $service->setEntityManager($entityManager);
         $service->setUserContextService($userContextService);

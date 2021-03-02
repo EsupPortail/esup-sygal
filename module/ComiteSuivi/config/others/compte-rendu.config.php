@@ -9,8 +9,8 @@ use ComiteSuivi\Form\CompteRendu\CompteRenduHydratorFactory;
 use ComiteSuivi\Service\CompteRendu\CompteRenduService;
 use ComiteSuivi\Service\CompteRendu\CompteRenduServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Mvc\Router\Http\Literal;
-use Zend\Mvc\Router\Http\Segment;
+use Zend\Router\Http\Literal;
+use Zend\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [

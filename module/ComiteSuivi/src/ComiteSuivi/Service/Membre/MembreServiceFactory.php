@@ -5,22 +5,25 @@ namespace ComiteSuivi\Service\Membre;
 use Application\Service\Source\SourceService;
 use Application\Service\UserContextService;
 use Doctrine\ORM\EntityManager;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Interop\Container\ContainerInterface;
 
 class MembreServiceFactory {
 
-    public function __invoke(ServiceLocatorInterface $serviceLocator)
+    /**
+     * @param ContainerInterface $container
+     * @return MembreService
+     */
+    public function __invoke(ContainerInterface $container)
     {
         /**
          * @var EntityManager $entityManager
          * @var UserContextService $userContextService
          * @var SourceService $sourceService
          */
-        $entityManager = $serviceLocator->get('doctrine.entitymanager.orm_default');
-        $sourceService = $serviceLocator->get('SourceService');
-        $userContextService = $serviceLocator->get('authUserContext');
+        $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $sourceService = $container->get('SourceService');
+        $userContextService = $container->get('authUserContext');
 
-        /** @var MembreService $service */
         $service = new MembreService();
         $service->setEntityManager($entityManager);
         $service->setSourceService($sourceService);

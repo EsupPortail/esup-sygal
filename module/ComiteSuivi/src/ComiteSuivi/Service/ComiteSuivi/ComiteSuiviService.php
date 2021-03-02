@@ -27,7 +27,7 @@ class ComiteSuiviService {
      * @param ComiteSuivi $comiteSuivi
      * @return ComiteSuivi
      */
-    public function create(ComiteSuivi $comiteSuivi)
+    public function create(ComiteSuivi $comiteSuivi) : ComiteSuivi
     {
         $date = $this->getDateTime();
         $user = $this->userContextService->getIdentityDb();
@@ -50,7 +50,7 @@ class ComiteSuiviService {
      * @param ComiteSuivi $comiteSuivi
      * @return ComiteSuivi
      */
-    public function update(ComiteSuivi $comiteSuivi)
+    public function update(ComiteSuivi $comiteSuivi) : ComiteSuivi
     {
         $date = $this->getDateTime();
         $user = $this->userContextService->getIdentityDb();
@@ -70,7 +70,7 @@ class ComiteSuiviService {
      * @param ComiteSuivi $comiteSuivi
      * @return ComiteSuivi
      */
-    public function historise(ComiteSuivi $comiteSuivi)
+    public function historise(ComiteSuivi $comiteSuivi) : ComiteSuivi
     {
         $date = $this->getDateTime();
         $user = $this->userContextService->getIdentityDb();
@@ -90,7 +90,7 @@ class ComiteSuiviService {
      * @param ComiteSuivi $comiteSuivi
      * @return ComiteSuivi
      */
-    public function restore(ComiteSuivi $comiteSuivi)
+    public function restore(ComiteSuivi $comiteSuivi) : ComiteSuivi
     {
         $comiteSuivi->setHistoDestructeur(null);
         $comiteSuivi->setHistoDestruction(null);
@@ -109,7 +109,7 @@ class ComiteSuiviService {
      * @param ComiteSuivi $comiteSuivi
      * @return ComiteSuivi
      */
-    public function delete(ComiteSuivi $comiteSuivi)
+    public function delete(ComiteSuivi $comiteSuivi) : ComiteSuivi
     {
         try {
             $this->getEntityManager()->remove($comiteSuivi);
@@ -126,7 +126,7 @@ class ComiteSuiviService {
     /**
      * @return QueryBuilder
      */
-    public function createQueryBuilder()
+    public function createQueryBuilder() : QueryBuilder
     {
         $qb = $this->getEntityManager()->getRepository(ComiteSuivi::class)->createQueryBuilder('comite')
             ->addSelect('these')->join('comite.these', 'these')
@@ -140,7 +140,7 @@ class ComiteSuiviService {
      * @param string $ordre
      * @return ComiteSuivi[]
      */
-    public function getComitesSuivis($champ = 'these', $ordre = 'ASC')
+    public function getComitesSuivis($champ = 'these', $ordre = 'ASC') : array
     {
         $qb = $this->createQueryBuilder()
             ->orderBy('comite.'.$champ, $ordre)
@@ -152,9 +152,9 @@ class ComiteSuiviService {
 
     /**
      * @param $id
-     * @return ComiteSuivi
+     * @return ComiteSuivi|null
      */
-    public function getComiteSuivi($id)
+    public function getComiteSuivi($id) : ?ComiteSuivi
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('comite.id = :id')
@@ -172,9 +172,9 @@ class ComiteSuiviService {
     /**
      * @param AbstractActionController $controller
      * @param string $param
-     * @return ComiteSuivi
+     * @return ComiteSuivi|null
      */
-    public function getRequestedComiteSuivi($controller, $param='comite-suivi')
+    public function getRequestedComiteSuivi(AbstractActionController $controller, string $param='comite-suivi') : ?ComiteSuivi
     {
         $id = $controller->params()->fromRoute($param);
         $result = $this->getComiteSuivi($id);
@@ -186,7 +186,7 @@ class ComiteSuiviService {
      * @param bool $historise
      * @return ComiteSuivi[]
      */
-    public function getComitesSuivisByThese(These $these, $historise = false)
+    public function getComitesSuivisByThese(These $these, bool $historise = false) : array
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('comite.these = :these')
@@ -205,7 +205,7 @@ class ComiteSuiviService {
      * @param string $annee
      * @return ComiteSuivi[]
      */
-    public function getComitesSuivisByAnneeScolaire($annee)
+    public function getComitesSuivisByAnneeScolaire(string $annee) : array
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('comite.anneeScolaire = :annee')
@@ -222,7 +222,7 @@ class ComiteSuiviService {
      * @param string $annee
      * @return ComiteSuivi[]
      */
-    public function getComitesSuivisByEcodeAndAnneeScolaire(EcoleDoctorale $ecole, $annee)
+    public function getComitesSuivisByEcoleAndAnneeScolaire(EcoleDoctorale $ecole, string $annee) : array
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('comite.anneeScolaire = :annee')
@@ -239,7 +239,7 @@ class ComiteSuiviService {
      * @param Individu $individu
      * @return ComiteSuivi[]
      */
-    public function getComitesSuivisByExaminateur(Individu $individu)
+    public function getComitesSuivisByExaminateur(Individu $individu) : array
     {
         $qb = $this->createQueryBuilder()
             ->addSelect('role')->andWhere('membre.role', 'role')

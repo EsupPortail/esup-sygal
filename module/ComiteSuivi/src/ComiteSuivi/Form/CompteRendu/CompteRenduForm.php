@@ -83,18 +83,4 @@ class CompteRenduForm extends Form {
         ]));
     }
 
-    /**
-     * @param int $delta
-     * @return array
-     */
-    private function generateAnneesScolaires($delta = 3) {
-        /** @var integer $anneeCourante */
-        $anneeCourante = $this->getDateTime()->format('Y');
-        $array = [];
-        for($annee = ($anneeCourante - $delta); $annee <= ($anneeCourante + $delta) ; $annee++) {
-            $text = $annee . "/" . ($annee+1);
-            $array[$text] = $text;
-        }
-        return $array;
-    }
 }

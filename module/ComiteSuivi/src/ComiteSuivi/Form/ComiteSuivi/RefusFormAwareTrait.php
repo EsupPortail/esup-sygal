@@ -10,7 +10,7 @@ trait RefusFormAwareTrait {
     /**
      * @return RefusForm
      */
-    public function getRefusForm()
+    public function getRefusForm() : RefusForm
     {
         return $this->refusForm;
     }
@@ -19,11 +19,10 @@ trait RefusFormAwareTrait {
      * @param RefusForm $refusForm
      * @return RefusForm
      */
-    public function setRefusForm($refusForm)
+    public function setRefusForm(RefusForm $refusForm) : RefusForm
     {
         $this->refusForm = $refusForm;
         return $this->refusForm;
     }
-
 
 }

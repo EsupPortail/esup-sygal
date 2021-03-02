@@ -36,7 +36,7 @@ class Membre {
     /**
      * @return int
      */
-    public function getId()
+    public function getId() : int
     {
         return $this->id;
     }
@@ -45,61 +45,61 @@ class Membre {
      * @param int $id
      * @return Membre
      */
-    public function setId($id)
+    public function setId(int $id) : Membre
     {
         $this->id = $id;
         return $this;
     }
 
     /**
-     * @return ComiteSuivi
+     * @return ComiteSuivi|null
      */
-    public function getComite()
+    public function getComite() : ?ComiteSuivi
     {
         return $this->comite;
     }
 
     /**
-     * @param ComiteSuivi $comite
+     * @param ComiteSuivi|null $comite
      * @return Membre
      */
-    public function setComite($comite)
+    public function setComite(?ComiteSuivi $comite)  : Membre
     {
         $this->comite = $comite;
         return $this;
     }
 
     /**
-     * @return Individu
+     * @return Individu|null
      */
-    public function getIndividu()
+    public function getIndividu() : ?Individu
     {
         return $this->individu;
     }
 
     /**
-     * @param Individu $individu
+     * @param Individu|null $individu
      * @return Membre
      */
-    public function setIndividu($individu)
+    public function setIndividu(?Individu $individu) : Membre
     {
         $this->individu = $individu;
         return $this;
     }
 
     /**
-     * @return Role
+     * @return Role|null
      */
-    public function getRole()
+    public function getRole() : ?Role
     {
         return $this->role;
     }
 
     /**
-     * @param Role $role
+     * @param Role|null $role
      * @return Membre
      */
-    public function setRole($role)
+    public function setRole(?Role $role) : Membre
     {
         $this->role = $role;
         return $this;
@@ -108,76 +108,79 @@ class Membre {
     /**
      * @return string
      */
-    public function getPrenom()
+    public function getPrenom() : string
     {
         return $this->prenom;
     }
 
     /**
-     * @param string $prenom
+     * @param string|null $prenom
      * @return Membre
      */
-    public function setPrenom($prenom)
+    public function setPrenom(?string $prenom) : Membre
     {
         $this->prenom = $prenom;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getNom()
+    public function getNom() : ?string
     {
         return $this->nom;
     }
 
     /**
-     * @param string $nom
+     * @param string|null $nom
      * @return Membre
      */
-    public function setNom($nom)
+    public function setNom(?string $nom) : Membre
     {
         $this->nom = $nom;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getEtablissement()
+    public function getEtablissement() : ?string
     {
         return $this->etablissement;
     }
 
     /**
-     * @param string $etablissement
+     * @param string|null $etablissement
      * @return Membre
      */
-    public function setEtablissement($etablissement)
+    public function setEtablissement(?string $etablissement) : Membre
     {
         $this->etablissement = $etablissement;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getEmail()
+    public function getEmail() : ?string
     {
         return $this->email;
     }
 
     /**
-     * @param string $email
+     * @param string|null $email
      * @return Membre
      */
-    public function setEmail($email)
+    public function setEmail(?string $email) : Membre
     {
         $this->email = $email;
         return $this;
     }
 
-    public function getDenomination()
+    /**
+     * @return string
+     */
+    public function getDenomination() : string
     {
         return $this->prenom." ".$this->nom;
     }

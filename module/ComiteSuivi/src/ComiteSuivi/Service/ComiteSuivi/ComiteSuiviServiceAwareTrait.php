@@ -10,7 +10,7 @@ trait ComiteSuiviServiceAwareTrait {
     /**
      * @return ComiteSuiviService
      */
-    public function getComiteSuiviService()
+    public function getComiteSuiviService() : ComiteSuiviService
     {
         return $this->comiteSuiviService;
     }
@@ -19,7 +19,7 @@ trait ComiteSuiviServiceAwareTrait {
      * @param ComiteSuiviService $comiteSuiviService
      * @return ComiteSuiviServiceAwareTrait
      */
-    public function setComiteSuiviService($comiteSuiviService)
+    public function setComiteSuiviService(ComiteSuiviService $comiteSuiviService) : ComiteSuiviService
     {
         $this->comiteSuiviService = $comiteSuiviService;
         return $this;

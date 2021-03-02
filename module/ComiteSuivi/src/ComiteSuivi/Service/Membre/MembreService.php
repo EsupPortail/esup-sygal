@@ -28,7 +28,7 @@ class MembreService {
      * @param Membre $membre
      * @return Membre
      */
-    public function create(Membre $membre)
+    public function create(Membre $membre) : Membre
     {
         $date = $this->getDateTime();
         $user = $this->userContextService->getIdentityDb();
@@ -51,7 +51,7 @@ class MembreService {
      * @param Membre $membre
      * @return Membre
      */
-    public function update(Membre $membre)
+    public function update(Membre $membre) : Membre
     {
         $date = $this->getDateTime();
         $user = $this->userContextService->getIdentityDb();
@@ -71,7 +71,7 @@ class MembreService {
      * @param Membre $membre
      * @return Membre
      */
-    public function historise(Membre $membre)
+    public function historise(Membre $membre) : Membre
     {
         $date = $this->getDateTime();
         $user = $this->userContextService->getIdentityDb();
@@ -91,7 +91,7 @@ class MembreService {
      * @param Membre $membre
      * @return Membre
      */
-    public function restore(Membre $membre)
+    public function restore(Membre $membre) : Membre
     {
         $membre->setHistoDestructeur(null);
         $membre->setHistoDestruction(null);
@@ -110,7 +110,7 @@ class MembreService {
      * @param Membre $membre
      * @return Membre
      */
-    public function delete(Membre $membre)
+    public function delete(Membre $membre) : Membre
     {
         try {
             $this->getEntityManager()->remove($membre);
@@ -127,7 +127,8 @@ class MembreService {
     /**
      * @return QueryBuilder
      */
-    public function createQueryBuilder() {
+    public function createQueryBuilder() : QueryBuilder
+    {
         $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder('membre')
             ->addSelect('comite')->join('membre.comite', 'comite')
             ->addSelect('role')->join('membre.role', 'role')
@@ -141,7 +142,7 @@ class MembreService {
      * @param string $ordre
      * @return Membre[]
      */
-    public function getMembres($champ = 'id', $ordre = 'ASC')
+    public function getMembres(string $champ = 'id', string $ordre = 'ASC') : array
     {
         $qb = $this->createQueryBuilder()
             ->orderBy('membre.' . $champ, $ordre)
@@ -153,9 +154,10 @@ class MembreService {
 
     /**
      * @param $id
-     * @return Membre
+     * @return Membre|null
      */
-    public function getMembre($id) {
+    public function getMembre(int $id) : ?Membre
+    {
         $qb = $this->createQueryBuilder()
             ->andWhere('membre.id = :id')
             ->setParameter('id', $id)
@@ -172,9 +174,9 @@ class MembreService {
     /**
      * @param AbstractActionController $controller
      * @param string $param
-     * @return Membre
+     * @return Membre|null
      */
-    public function getRequestedMembre($controller, $param = 'membre')
+    public function getRequestedMembre(AbstractActionController $controller, string $param = 'membre') : ?Membre
     {
         $id = $controller->params()->fromRoute($param);
         $result = $this->getMembre($id);
@@ -185,7 +187,7 @@ class MembreService {
      * @param ComiteSuivi $comite
      * @return Membre[]
      */
-    public function getExaminateurs(ComiteSuivi $comite)
+    public function getExaminateurs(ComiteSuivi $comite) : array
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('membre.comite = :comite')
@@ -204,7 +206,7 @@ class MembreService {
      * @param Membre $membre
      * @return Individu $individu
      */
-    public function createIndividuFromMembre(Membre $membre)
+    public function createIndividuFromMembre(Membre $membre) : Individu
     {
         $individu = new Individu();
         $individu->setPrenom($membre->getPrenom());

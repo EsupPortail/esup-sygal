@@ -5,10 +5,12 @@ use ComiteSuivi\Entity\Db\Membre;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
 /**
+ * @see \ComiteSuivi\Controller\ComiteSuiviController::lierMembreAction()
  * @var ComiteSuivi $comite
  * @var Membre $membre
  */
 
+/** @see \ComiteSuivi\Controller\ComiteSuiviController::lierMembreAction() */
 $url = $this->url('comite-suivi/lier-membre', ['these' => $comite->getThese()->getId(), 'comite' => $comite->getId(), 'membre' => $membre->getId()], [], true);
 ?>
 

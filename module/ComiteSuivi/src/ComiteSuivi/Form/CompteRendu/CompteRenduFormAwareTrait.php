@@ -10,7 +10,7 @@ trait CompteRenduFormAwareTrait {
     /**
      * @return CompteRenduForm
      */
-    public function getCompteRenduForm()
+    public function getCompteRenduForm() : CompteRenduForm
     {
         return $this->compteRenduForm;
     }
@@ -19,7 +19,7 @@ trait CompteRenduFormAwareTrait {
      * @param CompteRenduForm $compteRenduForm
      * @return CompteRenduForm
      */
-    public function setCompteRenduForm($compteRenduForm)
+    public function setCompteRenduForm(CompteRenduForm $compteRenduForm) : CompteRenduForm
     {
         $this->compteRenduForm = $compteRenduForm;
         return $this->compteRenduForm;

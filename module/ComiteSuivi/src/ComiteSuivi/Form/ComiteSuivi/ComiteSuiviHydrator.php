@@ -5,7 +5,7 @@ namespace ComiteSuivi\Form\ComiteSuivi;
 use Application\Entity\Db\These;
 use Application\Service\These\TheseServiceAwareTrait;
 use ComiteSuivi\Entity\Db\ComiteSuivi;
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
 class ComiteSuiviHydrator implements HydratorInterface {
     use TheseServiceAwareTrait;
