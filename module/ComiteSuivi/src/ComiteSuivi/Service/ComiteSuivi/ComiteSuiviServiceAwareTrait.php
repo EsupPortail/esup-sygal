@@ -17,12 +17,12 @@ trait ComiteSuiviServiceAwareTrait {
 
     /**
      * @param ComiteSuiviService $comiteSuiviService
-     * @return ComiteSuiviServiceAwareTrait
+     * @return ComiteSuiviService
      */
     public function setComiteSuiviService(ComiteSuiviService $comiteSuiviService) : ComiteSuiviService
     {
         $this->comiteSuiviService = $comiteSuiviService;
-        return $this;
+        return $this->comiteSuiviService;
     }
 
 

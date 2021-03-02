@@ -6,10 +6,18 @@ create table COMITE_SUIVI
     THESE_ID NUMBER not null
         constraint COMITESUIVI_THESE_ID_FK
             references THESE
-            on delete cascade,
+                on delete cascade,
     DATE_COMITE DATE not null,
     ANNEE_THESE VARCHAR2(64) not null,
     ANNEE_SCOLAIRE VARCHAR2(64) not null,
+    VALIDATION_ID NUMBER
+        constraint CS_VALIDATION_ID_FK_2
+            references VALIDATION
+                on delete set null,
+    FINALISATION_ID NUMBER
+        constraint COMITE_SUIVI_VALIDATION_ID_FK
+            references VALIDATION
+                on delete set null,
     HISTO_CREATION DATE not null,
     HISTO_CREATEUR_ID NUMBER not null
         constraint COMITESUIVI_CREATEUR_FK
@@ -23,6 +31,9 @@ create table COMITE_SUIVI
         constraint COMITESUIVI_DESTRUCTEUR_FK
             references UTILISATEUR
 )
+/
+
+
 ;
 
 create table COMITE_MEMBRE
@@ -32,7 +43,7 @@ create table COMITE_MEMBRE
             primary key,
     COMITE_ID NUMBER not null
         constraint COMITEMEMBRE_INSTANCE_FK
-            references COMITE_INSTANCE
+            references COMITE_SUIVI
             on delete cascade,
     INDIVIDU_ID NUMBER
         constraint COMITEMEMBRE_INDIVIDU_FK
@@ -68,7 +79,7 @@ create table COMITE_RAPPORT
             primary key,
     COMITE_ID NUMBER not null
         constraint COMITERAPPORT_COMITE_FK
-            references COMITE_INSTANCE
+            references COMITE_SUIVI
             on delete cascade,
     MEMBRE_ID NUMBER not null
         constraint COMITERAPPORT_MEMBRE_FK
@@ -90,7 +101,7 @@ create table COMITE_RAPPORT
 )
 ;
 
-create sequence COMITE_INSTANCE_ID_seq;
+create sequence COMITE_SUIVI_ID_seq;
 create sequence COMITE_MEMBRE_ID_seq;
 create sequence COMITE_RAPPORT_ID_seq;
 

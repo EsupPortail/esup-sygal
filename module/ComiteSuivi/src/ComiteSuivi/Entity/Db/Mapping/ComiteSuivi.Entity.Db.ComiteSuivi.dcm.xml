@@ -2,7 +2,7 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="ComiteSuivi\Entity\Db\ComiteSuivi" table="COMITE_INSTANCE">
+    <entity name="ComiteSuivi\Entity\Db\ComiteSuivi" table="COMITE_SUIVI">
         <id name="id" type="integer" column="ID">
             <generator strategy="SEQUENCE"/>
         </id>
