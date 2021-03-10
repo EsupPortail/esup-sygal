@@ -6,6 +6,7 @@ use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Individu\IndividuService;
 use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
+use UnicaenAuth\Options\ModuleOptions;
 use Zend\Authentication\AuthenticationService;
 
 class UserContextServiceFactory
@@ -26,10 +27,14 @@ class UserContextServiceFactory
 
         $etablissementService = $this->locateEtablissementService($container);
 
+        /** @var ModuleOptions $moduleOptions */
+        $moduleOptions = $container->get('unicaen-auth_module_options');
+
         $service = new UserContextService();
         $service->setIndividuService($individuService);
         $service->setEtablissementService($etablissementService);
         $service->setAuthenticationService($authenticationService);
+        $service->setModuleOptions($moduleOptions);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper

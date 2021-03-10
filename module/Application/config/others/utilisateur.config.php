@@ -32,6 +32,7 @@ return [
             'BjyAuthorize\Guard\Controller' => [
                 ['controller' => 'Application\Controller\Utilisateur', 'action' => 'selectionner-profil', 'roles' => []],
                 ['controller' => 'Application\Controller\Utilisateur', 'action' => 'usurper-identite', 'roles' => []],
+                ['controller' => 'Application\Controller\Utilisateur', 'action' => 'stopper-usurpation', 'roles' => []],
                 ['controller' => 'Application\Controller\Utilisateur', 'action' => 'usurper-individu', 'roles' => []],
             ],
             PrivilegeController::class => [

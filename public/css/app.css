@@ -622,12 +622,24 @@ span.sas-highlight {
   .individu-usurpation-form input[type="submit"] {
     margin: 0 0 0 8px; }
 
-.user-usurpation-form .form-group {
-  float: left;
-  margin-right: 5px; }
-.user-usurpation-form .user-usurpation-submit {
-  margin-top: 0; }
+/********** à déplacer... ************/
+.user-usurpation-form {
+  padding-top: 1em; }
+  .user-usurpation-form .form-group {
+    float: left;
+    margin-right: 5px; }
+  .user-usurpation-form .user-usurpation-submit {
+    margin-top: 0; }
 
+.user-usurpation-stop-btn {
+  padding-top: 1em; }
+
+#user-status.usurpation {
+  border-radius: 5px;
+  padding: 1px 3px;
+  background-color: #C9302C; }
+
+/******* ...dans unicaen/app *********/
 .bs-searchbox input {
   padding: 2px 3px;
   height: auto; }
