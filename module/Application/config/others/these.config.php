@@ -21,10 +21,10 @@ use Application\Form\Factory\PointsDeVigilanceHydratorFactory;
 use Application\Form\Factory\RdvBuHydratorFactory;
 use Application\Form\Factory\RdvBuTheseDoctorantFormFactory;
 use Application\Form\Factory\RdvBuTheseFormFactory;
-use Application\Provider\Privilege\DoctorantPrivileges;
 use Application\Provider\Privilege\RapportAnnuelPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Service\Acteur\ActeurService;
+use Application\Service\Acteur\ActeurServiceFactory;
 use Application\Service\Financement\FinancementService;
 use Application\Service\Financement\FinancementServiceFactory;
 use Application\Service\Message\DiffusionMessages;
@@ -33,11 +33,13 @@ use Application\Service\These\Factory\TheseObserverServiceFactory;
 use Application\Service\These\Factory\TheseRechercheServiceFactory;
 use Application\Service\These\Factory\TheseServiceFactory;
 use Application\Service\These\TheseRechercheService;
+use Application\Service\These\TheseService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceFactory;
 use Application\View\Helper\Url\UrlTheseHelperFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use Zend\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -49,16 +51,16 @@ return [
         'rule_providers'     => [
             PrivilegeRuleProvider::class => [
                 'allow' => [
+                    //
+                    // Privilèges concernant la ressource These *NON* SOUMIS À ASSERTION.
+                    //
                     [
-                        //
-                        // Privilèges concernant la ressource These *NON* SOUMIS À ASSERTION.
-                        //
-                        [
-                            'privileges' => [
-                                ThesePrivileges::THESE_REFRESH,
-                            ],
-                            'resources'  => ['These'],
+                        'privileges' => [
+                            ThesePrivileges::THESE_REFRESH,
                         ],
+                        'resources'  => ['These'],
+                    ],
+                    [
                         //
                         // Privilèges concernant la ressource These SOUMIS À ASSERTION.
                         //
@@ -941,7 +943,7 @@ return [
                                 'paramsInject' => [
                                     'these',
                                 ],
-                                'class' => 'version-initiale correction-attendue-{correctionAutorisee}',
+                                'class' => 'version-initiale correction-attendue-{correctionAutorisee} correction-effectuee-{correctionEffectuee}',
                                 'icon' => 'glyphicon glyphicon-file',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-fichiers'),
                                 'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
@@ -954,7 +956,7 @@ return [
                                 'paramsInject' => [
                                     'these',
                                 ],
-                                'class' => 'version-initiale correction-attendue-{correctionAutorisee}',
+                                'class' => 'version-initiale correction-attendue-{correctionAutorisee} correction-effectuee-{correctionEffectuee}',
                                 'icon' => 'glyphicon glyphicon-list-alt',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-description'),
                                 'etape' => WfEtape::CODE_SIGNALEMENT_THESE,
@@ -967,7 +969,7 @@ return [
                                 'paramsInject' => [
                                     'these',
                                 ],
-                                'class' => 'version-initiale correction-attendue-{correctionAutorisee}',
+                                'class' => 'version-initiale correction-attendue-{correctionAutorisee} correction-effectuee-{correctionEffectuee}',
                                 'icon' => 'glyphicon glyphicon-folder-open',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-archivage'),
                                 'etape' => WfEtape::CODE_ARCHIVABILITE_VERSION_ORIGINALE,
@@ -980,7 +982,7 @@ return [
                                 'paramsInject' => [
                                     'these',
                                 ],
-                                'class' => 'version-initiale correction-attendue-{correctionAutorisee}',
+                                'class' => 'version-initiale correction-attendue-{correctionAutorisee} correction-effectuee-{correctionEffectuee}',
                                 'icon' => 'glyphicon glyphicon-calendar',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-rdv-bu'),
                                 'etape' => WfEtape::CODE_RDV_BU_SAISIE_DOCTORANT,
@@ -994,7 +996,7 @@ return [
                                 'paramsInject' => [
                                     'these',
                                 ],
-                                'class' => 'divider version-initiale correction-attendue-{correctionAutorisee}',
+                                'class' => 'divider version-initiale correction-attendue-{correctionAutorisee} correction-effectuee-{correctionEffectuee}',
                             ],
 
                             'depot-corrigee' => [
@@ -1097,10 +1099,8 @@ return [
         )
     ),
     'service_manager' => [
-        'invokables' => array(
-            ActeurService::class => ActeurService::class,
-        ),
         'factories' => [
+            ActeurService::class           => ActeurServiceFactory::class,
             'TheseService'                 => TheseServiceFactory::class,
             'TheseRechercheService'        => TheseRechercheServiceFactory::class,
             'TheseObserverService'         => TheseObserverServiceFactory::class,
@@ -1109,6 +1109,7 @@ return [
         ],
         'aliases' => [
             TheseRechercheService::class => 'TheseRechercheService',
+            TheseService::class => 'TheseService',
         ]
     ],
     'controllers'     => [

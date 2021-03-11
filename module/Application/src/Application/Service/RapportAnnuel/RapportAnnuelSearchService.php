@@ -5,6 +5,7 @@ namespace Application\Service\RapportAnnuel;
 use Application\Search\Filter\Provider\SearchFilterProviderServiceAwareTrait;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Search\SearchService;
+use Doctrine\ORM\QueryBuilder;
 
 class RapportAnnuelSearchService extends SearchService
 {
@@ -34,7 +35,7 @@ class RapportAnnuelSearchService extends SearchService
     /**
      * @inheritDoc
      */
-    public function fetchValueOptionsForSelectFilter(SelectSearchFilter $filter)
+    public function fetchValueOptionsForSelectFilter(SelectSearchFilter $filter): array
     {
         return $this->searchFilterProviderService->fetchValueOptionsForSelectFilter($filter);
     }
@@ -42,7 +43,7 @@ class RapportAnnuelSearchService extends SearchService
     /**
      * @inheritDoc
      */
-    public function createQueryBuilder()
+    public function createQueryBuilder(): QueryBuilder
     {
         $qb = $this->rapportAnnuelService->getRepository()->createQueryBuilder('ra');
         $qb

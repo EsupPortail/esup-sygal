@@ -25,10 +25,13 @@ use Application\Form\MetadonneeTheseForm;
 use Application\Form\PointsDeVigilanceForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
+use Application\Form\RechercherCoEncadrantFormAwareTrait;
+use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
+use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\MailConfirmationServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -44,7 +47,6 @@ use Application\Service\Variable\VariableServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
-use Zend\View\Renderer\PhpRenderer;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
@@ -63,6 +65,7 @@ use Zend\Log\Logger;
 use Zend\Log\Writer\Noop;
 use Zend\Stdlib\ParametersInterface;
 use Zend\View\Model\ViewModel;
+use Zend\View\Renderer\PhpRenderer;
 
 class TheseController extends AbstractController
 {
@@ -277,8 +280,9 @@ class TheseController extends AbstractController
         $role = $this->userContextService->getSelectedIdentityRole();
         $user = $this->userContextService->getIdentityDb();
 
+        $codeRole = $role ? $role->getCode() : null;
         $theses = [];
-        switch ($role->getCode()) {
+        switch ($codeRole) {
             case Role::CODE_DOCTORANT :
                 $theses = $this->getTheseService()->getRepository()->findTheseByDoctorant($user->getIndividu());
                 break;
@@ -342,8 +346,10 @@ class TheseController extends AbstractController
         }
 
         $unite = $these->getUniteRecherche();
-        $rattachements = null;
-        if ($unite !== null) $rattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
+        $rattachements = [];
+        if ($unite !== null) {
+            $rattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
+        }
 
         $utilisateurs = [];
         foreach ($these->getActeurs() as $acteur) {
@@ -1107,6 +1113,7 @@ class TheseController extends AbstractController
                     // création automatique d'une validation du dépôt de la version corrigée (par le doctorant)
                     if ($validite->getEstValide() && $version->estVersionCorrigee()) {
                         $this->validationService->validateDepotTheseCorrigee($these);
+                        $this->theseService->notifierCorrectionsApportees($these);
 
                         // envoi de mail aux directeurs de thèse
                         $this->notifierService->triggerValidationDepotTheseCorrigee($these);
@@ -1529,6 +1536,7 @@ class TheseController extends AbstractController
                 $this->fichierTheseService->updateConformiteFichierTheseRetraitee($these, $conforme);
                 if ($conforme && $versionArchivage->estVersionCorrigee()) {
                     $this->validationService->validateDepotTheseCorrigee($these);
+                    $this->theseService->notifierCorrectionsApportees($these);
 
                     // notification des directeurs de thèse
                     $this->notifierService->triggerValidationDepotTheseCorrigee($these);

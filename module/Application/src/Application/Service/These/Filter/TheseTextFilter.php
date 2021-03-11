@@ -48,7 +48,7 @@ class TheseTextFilter extends TheseFilter
         if (array_key_exists(self::NAME_criteria, $queryParams) && !empty($queryParams[self::NAME_criteria])) {
             $criteria = $queryParams[self::NAME_criteria];
         } else {
-            $criteria = array_keys(self::CRITERIA);
+            $criteria = array_keys(self::CRITERIA); // par défaut, cochage de tous les critères
         }
 
         $filterValue = [

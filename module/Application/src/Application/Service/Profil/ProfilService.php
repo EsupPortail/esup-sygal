@@ -21,7 +21,7 @@ class ProfilService {
     public function getProfils()
     {
         $qb = $this->getEntityManager()->getRepository(Profil::class)->createQueryBuilder('profil')
-            ->orderBy('profil.structureType, profil.libelle')
+            ->orderBy('profil.ordre, profil.structureType, profil.libelle')
         ;
         $result = $qb->getQuery()->getResult();
         return $result;

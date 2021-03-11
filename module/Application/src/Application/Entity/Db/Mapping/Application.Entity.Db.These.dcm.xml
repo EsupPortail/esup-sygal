@@ -22,9 +22,10 @@
         <field name="libelleUniteRecherche" type="string" column="LIB_UNIT_RECH" length="200" nullable="true"/>
         <field name="correctionAutorisee" type="string" column="CORREC_AUTORISEE" nullable="true"/>
         <field name="correctionAutoriseeForcee" type="string" column="CORREC_AUTORISEE_FORCEE" nullable="true"/>
+        <field name="correctionEffectuee" type="string" column="CORREC_EFFECTUEE" nullable="true"/>
         <field name="libelleEtabCotutelle" type="string" column="LIB_ETAB_COTUT" nullable="true"/>
         <field name="libellePaysCotutelle" type="string" column="LIB_PAYS_COTUT" nullable="true"/>
-        <field name="soutenanceAutorisee" type="string" column="SOUTENANCE_AUTORIS" nullable="true"/>
+        <field name="soutenanceAutorisee" type="string" column="SOUTENANCE_AUTORIS" nullable="false"/>
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
         <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
@@ -97,6 +98,7 @@
         </many-to-one>
 
         <one-to-many target-entity="Application\Entity\Db\Financement" field="financements" mapped-by="these"/>
+        <one-to-many target-entity="Soutenance\Entity\Proposition" field="propositions" mapped-by="these"/>
 
     </entity>
 </doctrine-mapping>

@@ -100,6 +100,11 @@ class TmpThese
     /**
      * @var string
      */
+    private $correctionEffectuee;
+
+    /**
+     * @var string
+     */
     private $resultat;
 
     /**

@@ -1,18 +1,16 @@
 # Installation de SyGAL
 
 
-
 ## Création de la base de données
 
 Reportez-vous au [README consacré à la création de la base de données](database/README.md).
 
 
-
 ## Installation 
 
 Pour ce qui est de l'installation du serveur d'application, n'ayant pas à Caen les compétences 
-en déploiement Docker autres que pour le développement (d'où la présence d'un `Dockerfile` et d'un `docker-compose.yml`
-dans les sources), nous documenterons une installation à l'ancienne sur un serveur *entièrement dédié à l'application*.
+en déploiement Docker autres que pour le développement, nous documenterons une installation à l'ancienne sur 
+un serveur *entièrement dédié à l'application*.
 Si vous voulez déployer l'application avec Docker, faites-le à partir du `Dockerfile` présent et n'hésitez pas à 
 proposer votre contribution pour améliorer cette doc d'install !
 
@@ -37,7 +35,13 @@ nécessaires.*
 
 ### Configuration du serveur
 
-Sur le serveur, placez-vous dans le répertoire des sources de SyGAL et jetez un oeil au script `Dockerfile.sh`.
+Sur le serveur, récupérez le dépôt git de l'image Docker de SyGAL puis placez-vous dans le répertoire créé :
+```bash
+git clone https://git.unicaen.fr:open-source/docker/sygal-image.git /tmp/sygal-image
+cd /tmp/sygal-image
+```
+
+Jetez un oeil sur le script `Dockerfile.sh`.
 Ce script est en quelque sorte l'équivalent du `Dockerfile` traduit en bash. 
 (Vous y verrez que le dépôt git d'une image Docker Unicaen est cloné pour lancer 
 son script `Dockerfile.sh` qui est lui aussi l'équivalent du `Dockerfile` de l'image 
@@ -45,24 +49,24 @@ traduit en bash.)
 
 Lancez le script `Dockerfile.sh` ainsi :
 ```bash
-cd /app
-bash Dockerfile.sh 7.0
+bash Dockerfile.sh 7.3
 ```
 
 Ensuite, vérifiez et ajustez si besoin sur votre serveur les fichiers de configs suivants,
-créés par le script `Dockerfile.sh` :
+créés ou modifiés par le script `Dockerfile.sh` :
 - ${APACHE_CONF_DIR}/ports.conf
 - ${APACHE_CONF_DIR}/sites-available/app.conf
-- ${APACHE_CONF_DIR}/sites-available/app-ssl.conf  
-- ${PHP_CONF_DIR}/fpm/pool.d/app.conf
-- ${PHP_CONF_DIR}/fpm/conf.d/90-app.ini
+- ${APACHE_CONF_DIR}/sites-available/app-ssl.conf
+- ${PHP_CONF_DIR}/fpm/pool.d/www.conf
+- ${PHP_CONF_DIR}/fpm/conf.d/99-app.ini
+- ${PHP_CONF_DIR}/cli/conf.d/99-app.ini
 
 NB: Vérifiez dans le script `Dockerfile.sh` que vous venez de lancer mais normalement 
-`APACHE_CONF_DIR=/etc/apache2` et `PHP_CONF_DIR=/etc/php/7.0`.
+`APACHE_CONF_DIR=/etc/apache2` et `PHP_CONF_DIR=/etc/php/7.3`.
 
 ### Installation d'une version précise de l'application
 
-Normalement, vous ne devez installer que les versions officielles, c'est à dire les versions taguées, du genre `1.4.2`
+Normalement, vous ne devez installer que les versions officielles, c'est à dire les versions taguées, du genre `2.1.5`
 par exemple.
 
 Placez-vous dans le répertoire des sources de l'application puis lancez les commandes suivantes pour obtenir la liste des
@@ -71,16 +75,16 @@ versions officielles (taguées) :
 git fetch && git fetch --tags && git tag
 ```
 
-Si la version la plus récente est par exemple la `1.4.2`, utilisez les commandes suivantes pour "installer" cette version 
+Si la version la plus récente est par exemple la `2.1.5`, utilisez les commandes suivantes pour "installer" cette version 
 sur votre serveur :
 ```bash
-git checkout --force 1.4.2 && bash install.sh
+git checkout --force 2.1.5 && bash install.sh
 ```
 
 ### Configuration du moteur PHP pour SyGAL
 
 Si vous êtes sur un serveur de PROD, corrigez les lignes suivantes du fichier de config PHP 
-`/etc/php/7.0/fpm/conf.d/90-app.ini` :
+`/etc/php/7.3/fpm/conf.d/90-app.ini` :
 
     display_errors = Off
     ...
@@ -94,8 +98,9 @@ Placez-vous dans le répertoire de l'application puis descendez dans le réperto
 
 Supprimez l'extension `.dist` des fichiers `local.php.dist` et `secret.local.php.dist`, ex :
 ```bash
-cp -n local.php.dist        local.php 
-cp -n secret.local.php.dist secret.local.php
+APPLICATION_ENV="production"
+cp -n local.php.dist        ${APPLICATION_ENV}.local.php 
+cp -n secret.local.php.dist ${APPLICATION_ENV}.secret.local.php
 ```
 
 Dans la suite, vous adapterez le contenu de ces fichiers à votre situation.
@@ -112,7 +117,7 @@ Dans la suite, vous adapterez le contenu de ces fichiers à votre situation.
             'informatiqueEtLibertes' => "http://www.unicaen.fr/acces-direct/informatique-et-libertes/",
 ```
 
-#### `local.php`
+#### `${APPLICATION_ENV}.local.php`
 
 - Adaptez le `'label'`, `'title'` et `'uri'` du lien mentionnant votre établissement dans le pied de page de 
   l'application :
@@ -141,7 +146,7 @@ Dans la suite, vous adapterez le contenu de ces fichiers à votre situation.
 ```
 *NB: ce répertoire doit être autorisé en écriture à l'utilisateur `www-data` (ou équivalent).*
 
-#### `secret.local.php`
+#### `${APPLICATION_ENV}.secret.local.php`
 
 - Dans la config de connexion au WS suivante, `UCN` doit être remplacé par le code établissement choisi lors
 de la création de votre établissement dans la base de données (dans le script `05-init.sql`) :
@@ -149,9 +154,8 @@ de la création de votre établissement dans la base de données (dans le script
 ```php
     'import-api' => [
         'etablissements' => [
-            // code établissement => [config]
-            'UCN' => [
-                'url'      => 'https://sygal-import-ws:443',
+            'UCN' /* <-- code établissement */ => [
+                'url'      => 'https://sygal-import-ws:443', // cf. plus bas
                 'proxy'    => false,
                 'verify'   => false, // si true et faux certif : cURL error 60: SSL certificate problem: self signed certificate
                 'user'     => 'xxx',
@@ -180,7 +184,7 @@ Cela permet d'accéder aux pages de gestion des droits d'accès.
 
 ```php
     'unicaen-auth' => [
-        'shibboleth' => [
+        'shib' => [
             'simulate' => [
                 'HTTP_EPPN'           => $eppn = 'premierf@univ.fr',
                 'HTTP_SUPANNEMPID'    => '00012345',
@@ -220,27 +224,17 @@ Par exemple, pour appliquer le profil `ADMIN_TECH` au rôle *Administrateur tech
 NB: "UCN" n'est qu'un exemple et pour vous ce sera le code établissement choisi lors
 de la création de votre établissement dans la base de données (dans le script `05-init.sql`) 
 
-### Import
 
-Allez dans menu "Import" pour contrôler que l'application parvient à contacter votre web service. 
-La version de l'API devrait s'afficher, ex: 1.2.4.
+## Import de données
 
-Ne tenez pas compte du menu "Lancement" car il n'est pas possible de lancer l'import des données
-depuis l'interface graphique.
+### Installation du web service
 
+Vous devez à présent installer le web service d'import de données est, 
+reportez-vous au projet `sygal-import-ws`sur 
+[sur github.com/EsupPortail](https://github.com/EsupPortail/sygal-import-ws) ou sur 
+[sur git.unicaen.fr](https://git.unicaen.fr/open-source/sygal-import-ws).
 
-
-## En ligne de commande 
-
-### Import de données
-
-Placez-vous dans le répertoire de SyGAL sur le serveur.
-
-Ce qui suit n'est possible que si le web service d'import de données est installé, si ce n'est pas le cas, 
-reportez-vous au projet `sygal-import-ws` [sur github.com/EsupPortail](https://github.com/EsupPortail/sygal-import-ws)
-ou [sur git.unicaen.fr](https://git.unicaen.fr/open-source/sygal-import-ws).
-
-#### Lancement de l'import
+### Lancement de l'import seul
 
 Il s'agit de l'interrogation du web service pour remplir les tables temporaires TMP_*.
 
@@ -249,12 +243,12 @@ Il s'agit de l'interrogation du web service pour remplir les tables temporaires 
 *NB: `UCN` doit être remplacé par le code établissement choisi lors
 de la création de votre établissement dans la base de données (dans le script `05-init.sql`).*
 
-#### Lancement de la synchro 
+#### Lancement de la synchro seule
 
 Il s'agit de la synchronisation des tables définitives de travail de l'application avec les tables TMP_* 
 contenant les données déjà importées.
 
-    php public/index.php synchronize-all
+    php public/index.php run synchro --all
 
 Pour plus de détails, vous pouvez vous reporter à la documentation sur les [lignes de commandes](cli.md).
 
@@ -265,11 +259,10 @@ l'application.
 
 Pour lancer l'interrogation du web service *puis* la synchronisation des tables définitives de travail, faites :
 
-    php public/index.php import-all --etablissement=UCN --synchronize=1 --breakOnServiceNotFound=0
+    ETAB=UCN bin/run-import.sh
     
 *NB: `UCN` doit être remplacé par le code établissement choisi lors
 de la création de votre établissement dans la base de données (dans le script `05-init.sql`).*
-
 
 ### Programmation des tâches périodiques
 
@@ -277,25 +270,20 @@ Un certains nombres de tâches périodiques doivent être programmées sur le se
 Pour cela, créez le fichier `/etc/cron.d/sygal` et adaptez le contenu suivant à votre contexte :
 
 ```cron
-MAILTO=nom.prenom@domaine.fr
-
 #
 # Application SyGAL.
 #
 
 APP_DIR=/app
 
-##### Traitements en fonction des résultats de l'import #####
-0 5-17 * * 1-5 root /usr/bin/php $APP_DIR/public/index.php process-observed-import-results --etablissement=UCN 1> /tmp/sygal-process-observed-import-results.log 2>&1
-# (du lundi au vendredi, chaque heure de 5h à 17h)
-
 ##### Import des données des établissements #####
-*/20 * * * * root /usr/bin/php $APP_DIR/public/index.php import-all --etablissement=UCN --synchronize=1 --breakOnServiceNotFound=0 1> /tmp/cron-sygal-import.log  2>&1
-## (toutes les 20 minutes)
+0,30 7-19 * * 1-5 root ETAB=UCN $APP_DIR/bin/run-import.sh >>/tmp/cron-sygal-import-ws.log  2>&1
+
+##### Traitements en fonction des résultats de l'import #####
+25,55 7-19 * * 1-5 root /usr/bin/php $APP_DIR/public/index.php process-observed-import-results --etablissement=UCN >>/tmp/sygal-process-observed-import-results.log 2>&1
 
 ##### Ménage dans /tmp #####
 0 4 * * * root bash $APP_DIR/bin/purge_temp_files.sh 1> /tmp/sygal_purge_temp_files.sh.log 2>&1
-## (tous les jours à 4h du mat')
 ```
 
 *NB: `UCN` doit être remplacé par le code établissement choisi lors

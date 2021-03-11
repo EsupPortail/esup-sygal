@@ -4,6 +4,7 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\UniteRechercheController;
 use Application\Form\UniteRechercheForm;
+use Application\Service\CoEncadrant\CoEncadrantService;
 use Application\Service\DomaineScientifiqueService;
 use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Individu\IndividuService;
@@ -29,18 +30,21 @@ class UniteRechercheControllerFactory
         $form = $container->get('FormElementManager')->get('UniteRechercheForm');
 
         /**
+         * @var CoEncadrantService $coEncadrantService
          * @var UniteRechercheService $uniteRechercheService
          * @var IndividuService $individuService
          * @var RoleService $roleService
          * @var StructureService $structureService
          * @var DomaineScientifiqueService $domaineService
          */
+        $coEncadrantService = $container->get(CoEncadrantService::class);
         $uniteRechercheService = $container->get('UniteRechercheService');
         $roleService = $container->get('RoleService');
         $structureService = $container->get(StructureService::class);
         $domaineService = $container->get(DomaineScientifiqueService::class);
 
         $controller = new UniteRechercheController();
+        $controller->setCoEncadrantService($coEncadrantService);
         $controller->setUniteRechercheService($uniteRechercheService);
         $controller->setRoleService($roleService);
         $controller->setEtablissementService($this->locateEtablissementService($container));

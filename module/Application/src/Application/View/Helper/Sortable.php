@@ -58,7 +58,7 @@ class Sortable extends AbstractHelper
      * @param string $sort Nom du critère de tri. Ex: "libelle", "nomUsuel".
      * @return self
      */
-    public function __invoke($sort)
+    public function __invoke(string $sort)
     {
         $this->targetUrl = clone $this->request->getUri();
 
@@ -70,16 +70,19 @@ class Sortable extends AbstractHelper
         $params['sort'] = trim($sort);
 
         if ($sort !== $currentSort) {
-            $direction = self::ASC;
+            $direction = self::ASC; // direction par défaut
         }
         else {
             $currentDirection = isset($params['direction']) ? $params['direction'] : '';
             switch (mb_strtolower($currentDirection)) {
                 case '':
-                    $direction = self::ASC;
+                    $direction = self::ASC; // direction par défaut
                     break;
                 case self::ASC:
-                    $direction = self::DESC;
+                    $direction = self::DESC; // direction contraire
+                    break;
+                case self::DESC:
+                    $direction = self::ASC; // direction contraire
                     break;
                 default:
                     $direction = null;
@@ -118,12 +121,12 @@ class Sortable extends AbstractHelper
      *
      * Exemples avec $sort = 'libelle' :
      *
-     *      URL de la requête courante                  ==> URL générée
-     *      -----------------------------------------------------------------------------------------------------------
-     *      /these                                      ==> /these?sort=libelle&direction=asc
-     *      /these?sort=autre&direction={asc|desc}      ==> /these?sort=libelle&direction=asc
-     *      /these?sort=libelle&direction=asc           ==> /these?sort=libelle&direction=desc
-     *      /these?sort=libelle&direction=desc          ==> /these
+     *      URL de la requête courante             ==> URL générée                        | NB
+     *      ------------------------------------------------------------------------------|----------------------------
+     *      /these                                 ==> /these?sort=libelle&direction=asc  | Direction par défaut.
+     *      /these?sort=autre&direction={asc|desc} ==> /these?sort=libelle&direction=asc  | Direction par défaut.
+     *      /these?sort=libelle&direction=asc      ==> /these?sort=libelle&direction=desc | Direction contraire.
+     *      /these?sort=libelle&direction=desc     ==> /these                             | Pas de tri.
      *
      * @return string
      */

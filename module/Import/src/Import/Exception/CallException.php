@@ -54,6 +54,9 @@ class CallException extends RuntimeException
     static public function networkError(RequestException $error)
     {
         $message = "Erreur réseau rencontrée lors de l'envoi de la requête au WS";
+        if ($uri = $error->getRequest()->getUri()) {
+            $message .= " (" . $uri->getHost() . ")";
+        }
         if ($error->hasResponse()) {
             $message .= " : " . Psr7\str($error->getResponse());
         }

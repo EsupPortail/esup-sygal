@@ -24,40 +24,6 @@ class UserContextService extends BaseUserContextService
     use EtablissementServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
 
-    /**
-     * @inheritDoc
-     */
-    public function getSelectableIdentityRoles()
-    {
-        return array_filter($this->getIdentityRoles(), function($r) {
-            if ($r instanceof RoleInterface && $r->getRoleId() === Role::ROLE_ID_USER) {
-                return false;
-            }
-            return true;
-        });
-    }
-
-    /**
-     * @return Role|RoleInterface|null
-     */
-    public function getSelectedIdentityRole()
-    {
-        $role = parent::getSelectedIdentityRole();
-
-        /**
-         * Si aucun rôle n'est sélectionné, on tente de sélectionner le 1er trouvé.
-         */
-        if (! $role) {
-            $role = current($this->getSelectableIdentityRoles());
-            if (!$this->isRoleValid($role)) {
-                return null;
-            }
-            $this->setNextSelectedIdentityRole($role);
-        }
-
-        return $this->roleAsEntity($role);
-    }
-
     private $roleAsEntityCache = [];
 
     /**
@@ -79,6 +45,7 @@ class UserContextService extends BaseUserContextService
             return $this->roleAsEntityCache[$role];
         }
 
+        // todo: ce cache me semble bien inutile, $role est toujours le même au sein d'une même requête.
         $this->roleAsEntityCache[$role] =
             $this->getEntityManager()->getRepository(Role::class)->findOneBy(['roleId' => $role]);
 

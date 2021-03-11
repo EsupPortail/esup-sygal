@@ -1,8 +1,68 @@
 Journal des modifications
 =========================
 
+2.1.5
+-----
+- Validation des corrections de thèses desormais réalisée par le président du jury (anc. directeurs de thèses).
+- Recherche textuelle de thèses : rétablissement du cochage par défaut de tous les critères.
+- Résolution du problème de plantage lorsque le flux des actualités est erroné.
+- Interface de gestion des comptes locaux pour les présidents de jury.
+- Test d'archivabilité : possibilité de configurer le passage par un proxy.
+- Correction de l'import forcé de thèse : utilisation du unicaen/db-import pour synchroniser après l'import des données.
+- Ajout d'un filtre pour l'index des propositions de soutenance (index-structure)
+- Page Assistance : affichage d'infos techniques utiles ; infos incluses automatiquement dans le corps du mail lorsqu'on clique sur l'adresse mail d'assistance.
+- Refonte de la page des utilisateurs (liste filtrable, détails utilisateurs, individus liés)
+  
+2.1.4
+-----
+- Rétablissement du rafraîchissement de MV_RECHERCHE_THESE après chaque import.
+
+2.1.3
+-----
+- Réparation de l'usurpation d'un individu.
+- Validation RDV BU : l'individu n'était pas injecté dans la Validation.
+- Correction bug dans le message 'aucune validation trouvée' : affichage de l'id de la thèse.
+- Correction bug de rémanence du rôle précédemment sélectionné dans UserContextService.
+
+2.1.2
+-----
+- Gestion des co-encadrants (ajout et retrait)
+- Listing (et export) des co-encadrants sur les EDs et URs
+- Ajout à l'export de l'annuaire des co-encadrants
+- Onglets dans les pages d'information des structures
+- Page de connexion scindée par type d'authentification activée.
+- Import du témoin "corrections effectuées" de chaque thèse.
+- Pages de dépôt de la version corrigée : visibles dès lors que le témoin "corrections effectuées" est à Oui.
+- Amélioration du temps de réponse de la recherche textuelle de thèses.
+- Retour du bouton d'import forcé de thèse qui avait disparu à cause d'une erreur de config.
+- Mise en retrait des items de menus concernant le dépôt de la version initiale en cas de corrections attendues ou effectuées.
+- Correction de l'affichage du message en cas d'erreur d'authentification locale. 
+- Correction d'un dysfonctionnement dans la recherche textuelle de thèses.
+- Correction d'un dysfonctionnement dans le tri des thèses par date de 1ère inscription.
+- Correction d'un dysfonctionnement dans l'affichage des établissements de rattachement lorsque la thèse n'est liée à aucune UR.
+
+2.1.1
+-----
+- Liste des thèses : tri par date de 1ere inscription décroissante
+- Page Utilisateur : accélération du chargement et ajout d'un bouton pour usurper
+- Accueil de la partie dépôt : le rôle sélectionné est null quand l'utilisateur n'a aucun rôle
+- Correction mineure sur les traductions dans le module de soutenance
+- Suppression d'un terme 'SoDoct' oublié
+
+2.1.0
+-----
+- Listes de diffusion Sympa : page d'activation/désactivation des listes pour lesquelles SyGAL peut fournir
+  les abonnés et les propriétaires via une URL. 
+- Correction des ACL d'accès aux lignes de commandes du module unicaen/oracle.  
+
+2.0.1
+-----
+- Changement de stratégie pour générer le fichier de config contenant les numéro et date de version
+- Correction plantage lorsque les données d'identité sont de type Utilisateur
+- Retour du fichier config/autoload/version.global.php abandonné (la version ne peut pas être déduite par git pour l'instant)
+
 2.0.0
-------------------
+-----
 
 - Passage à Zend Framework 3 et PHP 7.3 (gain de performances).
 - Utilisation d'un nouveau package unicaen/db-import pour la synchro.

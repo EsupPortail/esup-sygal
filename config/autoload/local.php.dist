@@ -63,7 +63,7 @@ return [
         'ldap' => [
             'enabled' => false,
         ],
-        'shibboleth' => [
+        'shib' => [
             'enable' => true,
             'simulate' => [
                 // cf. secret.local.php

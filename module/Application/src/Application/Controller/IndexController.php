@@ -3,6 +3,7 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Variable;
+use Application\Exception\DomainException;
 use Application\Service\Actualite\ActualiteServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -193,7 +194,12 @@ EOS
             return $this->redirect()->toRoute('home');
         }
 
-        $etablissement = $this->etablissementService->getRepository()->findOneForUserWrapper($userWrapper);
+        $individu = $this->userContextService->getIdentityDoctorant();
+        if ($individu !== null) {
+            $etablissement = $individu->getEtablissement();
+        } else {
+            $etablissement = $this->etablissementService->getRepository()->findOneForUserWrapper($userWrapper);
+        }
         if ($etablissement === null) {
             throw new RuntimeException(
                 "Anomalie: établissement introuvable pour l'utilisateur '{$userWrapper->getUsername()}'.");
@@ -217,6 +223,10 @@ EOS
         return [
             'etablissement' => $etablissement,
             'contact' => $contact,
+            'individu' => $this->userContextService->getIdentityIndividu(),
+            'utilisateur' => $this->userContextService->getIdentityDb(),
+            'role' => $this->userContextService->getSelectedIdentityRole(),
+            'roles' => $this->userContextService->getSelectableIdentityRoles(),
         ];
     }
 }

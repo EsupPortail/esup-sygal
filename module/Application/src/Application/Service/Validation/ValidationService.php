@@ -7,7 +7,7 @@ use Application\Entity\Db\Repository\ValidationRepository;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
-use Application\Entity\Db\VSitu\DepotVersionCorrigeeValidationDirecteur;
+use Application\Entity\Db\VSitu\DepotVersionCorrigeeValidationPresident;
 use Application\Service\BaseService;
 use Application\Service\Individu\IndividuServiceAwareInterface;
 use Application\Service\Individu\IndividuServiceAwareTrait;
@@ -57,11 +57,12 @@ class ValidationService extends BaseService
 
     /**
      * @param These $these
+     * @param Individu $createur
      * @return Validation
      */
-    public function validateRdvBu(These $these)
+    public function validateRdvBu(These $these, Individu $createur)
     {
-        $v = new Validation($this->getTypeValidation(TypeValidation::CODE_RDV_BU), $these);
+        $v = new Validation($this->getTypeValidation(TypeValidation::CODE_RDV_BU), $these, $createur);
 
         $this->entityManager->persist($v);
         $this->entityManager->flush($v);
@@ -85,7 +86,7 @@ class ValidationService extends BaseService
 
         if (!$v) {
             throw new RuntimeException(
-                sprintf("Aucune validation de type '%s' trouvée pour la thèse %s", TypeValidation::CODE_RDV_BU, $these));
+                sprintf("Aucune validation de type '%s' trouvée pour la thèse %s", TypeValidation::CODE_RDV_BU, $these->getId()));
         }
 
         $v->historiser();
@@ -214,11 +215,11 @@ class ValidationService extends BaseService
 
     /**
      * @param These $these
-     * @return DepotVersionCorrigeeValidationDirecteur[]
+     * @return DepotVersionCorrigeeValidationPresident[]
      */
     public function getValidationsAttenduesPourCorrectionThese(These $these)
     {
-        $qb = $this->getEntityManager()->getRepository(DepotVersionCorrigeeValidationDirecteur::class)->createQueryBuilder('va')
+        $qb = $this->getEntityManager()->getRepository(DepotVersionCorrigeeValidationPresident::class)->createQueryBuilder('va')
             ->addSelect('t, i')
             ->join('va.these', 't', Join::WITH, 't = :these')
             ->join('va.individu', 'i')

@@ -14,14 +14,14 @@ use Application\View\Renderer\PhpRenderer;
 <?php $url = $this->url('these/depot', ['these' => $these->getId()], ['force_canonical' => true]) ?>
 
 <p>Bonjour,</p>
-<p>Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.</p>
+<p>Ceci est un mail envoyé automatiquement par l'application <?php echo $appName = $this->appInfos()->nom ?>.</p>
 
 <?php if ($these->getCorrectionAutoriseeEstFacultative()): ?>
 
     <p>
         A l’issue de la soutenance, le jury vous a demandé d’apporter des corrections mineures (corrections de forme) à votre thèse. Ces corrections sont facultatives.
         <br>
-        Vous disposez d'un mois après la soutenance pour déposer votre thèse corrigée dans <?php echo $this->appInfos()->nom ?>. Une fois les modifications certifiées conformes aux préconisations du jury par votre(vos) directeurs(s) de thèse dans SoDoct, elle sera la version de référence de votre thèse, ce second dépôt se substituant au premier.
+        Vous disposez d'un mois après la soutenance pour déposer votre thèse corrigée dans <?php echo $appName ?>. Une fois les modifications certifiées conformes aux préconisations du jury par votre(vos) directeurs(s) de thèse dans <?php echo $appName ?>, elle sera la version de référence de votre thèse, ce second dépôt se substituant au premier.
     </p>
     <p>
         Passé le délai d’un mois, vous n’aurez plus la possibilité d'effectuer un second dépôt.
@@ -36,7 +36,7 @@ use Application\View\Renderer\PhpRenderer;
         <p>
             A l’issue de la soutenance, le jury vous a demandé d’apporter des corrections majeures (corrections de fond) à votre thèse. Ces corrections sont obligatoires et la version déposée avant la soutenance, invalidée par le jury, a été détruite dès réception du PV de soutenance.
             <br>
-            Vous disposez de 3 mois après la soutenance pour déposer votre thèse corrigée dans <?php echo $this->appInfos()->nom ?>. Une fois les modifications certifiées conformes aux préconisations du jury dans SoDoct par votre(vos) directeurs(s) de thèse, elle sera la version de référence de votre thèse, ce second dépôt se substituant au premier.
+            Vous disposez de 3 mois après la soutenance pour déposer votre thèse corrigée dans <?php echo $appName ?>. Une fois les modifications certifiées conformes aux préconisations du jury dans <?php echo $appName ?> par votre(vos) directeurs(s) de thèse, elle sera la version de référence de votre thèse, ce second dépôt se substituant au premier.
         </p>
         <p>
             Passé le délai de 3 mois, vous n’aurez plus la possibilité d'effectuer un second dépôt.

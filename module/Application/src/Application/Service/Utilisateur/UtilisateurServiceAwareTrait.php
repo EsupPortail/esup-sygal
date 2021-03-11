@@ -16,4 +16,14 @@ trait UtilisateurServiceAwareTrait
     {
         $this->utilisateurService = $utilisateurService;
     }
+
+    /**
+     * @return UtilisateurService
+     */
+    public function getUtilisateurService(): UtilisateurService
+    {
+        return $this->utilisateurService;
+    }
+
+
 }

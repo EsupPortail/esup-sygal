@@ -21,6 +21,7 @@ use Application\Service\Url\UrlServiceFactory;
 use Application\Service\UserContextServiceAwareInitializer;
 use Application\Service\UserContextServiceFactory;
 use Application\View\Helper\EscapeTextHelper;
+use Application\View\Helper\FiltersPanel\FiltersPanelHelper;
 use Application\View\Helper\Sortable;
 use Application\View\Helper\SortableHelperFactory;
 use Application\View\Helper\Uploader\UploaderHelper;
@@ -28,6 +29,7 @@ use Application\View\Helper\Uploader\UploaderHelperFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use UnicaenApp\Controller\ConsoleController;
 use UnicaenApp\Service\EntityManagerAwareInitializer;
 use Zend\Navigation\Navigation;
 
@@ -38,6 +40,20 @@ return array(
                 // la page Contact requiert une authentification car l'adresse d'assistance dépend de l'utilisateur
                 ['controller' => 'UnicaenApp\Controller\Application', 'action' => 'contact', 'roles' => ['user']],
                 ['controller' => 'Application\Controller\Index', 'action' => 'contact', 'roles' => ['user']],
+                ['controller' => ConsoleController::class, 'action' => 'runSQLScript', 'roles' => []],
+                ['controller' => ConsoleController::class, 'action' => 'runSQLQuery', 'roles' => []],
+            ],
+            \UnicaenAuth\Guard\PrivilegeController::class => [
+                [
+                    'controller' => \UnicaenOracle\Controller\IndexController::class,
+                    'action'     => [
+                        'generateScriptForSchemaClearingConsole',
+                        'generateScriptForSchemaCreationConsole',
+                        'generateScriptForRefConstraintsCreationConsole',
+                        'generateScriptsForDataInsertsConsole',
+                    ],
+                    'roles' => [], // pas d'authentification requise
+                ],
             ],
         ],
     ],
@@ -258,7 +274,8 @@ return array(
     'view_helpers' => array(
         'invokables' => array(
             'filterPanel' => 'Application\View\Helper\FilterPanel\FilterPanelHelper',
-            'selectsFilterPanel' => \Application\View\Helper\SelectsFilterPanel\SelectsFilterPanelHelper::class,
+            'selectsFilterPanel' => FiltersPanelHelper::class,
+            'filtersPanel' => FiltersPanelHelper::class,
             'escapeText'  => EscapeTextHelper::class,
         ),
         'factories' => array(

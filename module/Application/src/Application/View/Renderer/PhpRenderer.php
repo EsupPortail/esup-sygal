@@ -137,6 +137,7 @@ use UnicaenApp\View\Helper\AppInfos;
  * @method \Application\View\Helper\Sortable                  sortable($sort)
  * @method string                                             filterPanel($config)
  * @method string                                             selectsFilterPanel($config)
+ * @method string                                             filtersPanel($config)
  * @method EscapeTextHelper                                   escapeText($value = null)
  *
  * @method WorkflowHelper        wf(These $these = null)

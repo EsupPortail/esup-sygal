@@ -321,7 +321,7 @@ class NotifierSoutenanceService extends NotifierService
      */
     public function triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre)
     {
-        $email = $membre->getIndividu()->getEmail();
+        $email = $membre->getEmail();
 
         if ($email !== null) {
             $notif = new Notification();
@@ -399,7 +399,7 @@ class NotifierSoutenanceService extends NotifierService
      */
     public function triggerAnnulationEngagementImpartialite($these, $proposition, $membre)
     {
-        $email = $membre->getIndividu()->getEmail();
+        $email = $membre->getEmail();
 
         if ($email) {
             $notif = new Notification();
@@ -423,7 +423,7 @@ class NotifierSoutenanceService extends NotifierService
      */
     public function triggerDemandeAvisSoutenance($these, $proposition, $rapporteur)
     {
-        $email = $rapporteur->getIndividu()->getEmail();
+        $email = $rapporteur->getEmail();
 
         if ($email !== null) {
             $notif = new Notification();
@@ -544,7 +544,7 @@ class NotifierSoutenanceService extends NotifierService
         if (!empty($emails)) {
             $notif = new Notification();
             $notif
-                ->setSubject("La soutenance de " . $these->getDoctorant()->getIndividu() . " a été accepté par la maison du doctorat de votre établissement.")
+                ->setSubject("La soutenance de " . $these->getDoctorant()->getIndividu() . " a été accepté par votre établissement.")
                 ->setTo($emails)
                 ->setTemplatePath('soutenance/notification/feu-vert-soutenance')
                 ->setTemplateVariables([

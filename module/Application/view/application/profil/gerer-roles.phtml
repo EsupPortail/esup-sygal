@@ -46,7 +46,7 @@
             <?php foreach ($profil->getRoles() as $role) : ?>
                 <tr>
                     <td>
-                        <?php echo $role->getRoleId(); ?>
+                        <?php echo $this->role()->render($role); ?>
                     </td>
                     <td>
                         <a href="<?php echo $this->url('profil/gerer-roles/retirer', ['profil' => $profil->getId(), 'role' => $role->getId()], [], true); ?>">
@@ -61,7 +61,9 @@
         <form method="POST" action="<?php echo $this->url('profil/gerer-roles/ajouter', ['profil' => $profil->getId()], [], true); ?>">
             <select name="role">
                 <?php foreach ($rolesDisponibles as $role) : ?>
-                    <option value="<?php echo $role->getId(); ?>"> <?php echo $role->getRoleId(); ?></option>
+                    <option value="<?php echo $role->getId(); ?>">
+                        <?php echo $this->role()->render($role); ?>
+                    </option>
                 <?php endforeach; ?>
             </select>
             <br/>
