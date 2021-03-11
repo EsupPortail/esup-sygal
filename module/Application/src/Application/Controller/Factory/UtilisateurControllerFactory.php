@@ -24,6 +24,7 @@ use UnicaenAuth\Service\ShibService;
 use UnicaenAuth\Service\User as UserService;
 use UnicaenAuth\Service\UserContext;
 use Zend\Authentication\AuthenticationService;
+use ZfcUser\Mapper\UserInterface;
 
 class UtilisateurControllerFactory
 {
@@ -44,6 +45,7 @@ class UtilisateurControllerFactory
          * @var UserContextService $userContextService
          * @var UserService $userService
          * @var UtilisateurSearchService $utilisateurSearchService
+         * @var UserInterface $mapper
          */
         $acteurService = $container->get(ActeurService::class);
         $roleService = $container->get('RoleService');
@@ -57,6 +59,7 @@ class UtilisateurControllerFactory
         $userContextService = $container->get(UserContext::class);
         $userService = $container->get('unicaen-auth_user_service');
         $utilisateurSearchService = $container->get(UtilisateurSearchService::class);
+        $userMapper = $container->get('zfcuser_user_mapper');
 
         /**
          * @var InitCompteForm $initCompteForm
@@ -96,6 +99,7 @@ class UtilisateurControllerFactory
         $controller->setOptions($authModuleOptions); // requis
         $controller->setAuthModuleOptions($authModuleOptions);
         $controller->setSearchService($utilisateurSearchService);
+        $controller->setUserMapper($userMapper);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper

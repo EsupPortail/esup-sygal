@@ -4,6 +4,7 @@ namespace Soutenance\Entity;
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
+use Application\Entity\Db\Role;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 
@@ -299,5 +300,21 @@ class Membre {
                 return true;
         }
         return false;
+    }
+
+    public function estDirecteur()
+    {
+        if (!$this->getActeur()) return false;
+        return (
+            $this->getActeur()->getRole()->getCode() === Role::CODE_DIRECTEUR_THESE
+        );
+    }
+
+    public function estCoDirecteur()
+    {
+        if (!$this->getActeur()) return false;
+        return (
+            $this->getActeur()->getRole()->getCode() === Role::CODE_CODIRECTEUR_THESE
+        );
     }
 }
