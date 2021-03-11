@@ -2,8 +2,7 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="Application\Entity\Db\OrigineFinancement" table="ORIGINE_FINANCEMENT"
-            repository-class="">
+    <entity name="Application\Entity\Db\OrigineFinancement" table="ORIGINE_FINANCEMENT">
         <id name="id" type="integer" column="ID">
             <generator strategy="SEQUENCE"/>
         </id>
@@ -12,6 +11,7 @@
         <field name="code" column="CODE" type="string" length="64" nullable="false"/>
         <field name="libelleLong" column="LIBELLE_LONG" type="string" length="256" nullable="false"/>
         <field name="libelleCourt" column="LIBELLE_COURT" type="string" length="64" nullable="false"/>
+        <field name="visible" column="VISIBLE" type="boolean"/>
 
         <many-to-one field="source" target-entity="Application\Entity\Db\Source">
             <join-columns>

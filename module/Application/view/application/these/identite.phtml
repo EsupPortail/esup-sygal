@@ -44,7 +44,7 @@ $canCoEncadrantGerer    = $this->isAllowed(CoEncadrantPrivileges::getResourceId(
 
 $canEditForcageCorrectionAutorisee = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
 
-$financementFormatter = new FinancementFormatter();
+$financementFormatter = $this->financementFormatter();
 $financementFormatter->setSortBy(FinancementFormatter::SORT_BY_DATE);
 $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 ?>
@@ -306,7 +306,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 <?php if ($these->getFinancements()->isEmpty()): ?>
                     (Non renseigné)
                 <?php else: ?>
-                    <?php echo $financementFormatter->doFormat($these->getFinancements()->toArray()); ?>
+                    <?php echo $financementFormatter->format($these->getFinancements()->toArray()); ?>
                 <?php endif ?>
             </dd>
 
