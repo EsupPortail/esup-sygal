@@ -121,11 +121,15 @@ use Soutenance\Entity\Proposition;
 <table class="recapitulatif">
     <tr>
         <td class="head"> Titre de la thèse : </td>
-        <td><?php echo $proposition->getThese()->getTitre(); ?> </td>
+        <td><?php echo ($proposition->getNouveauTitre())?$proposition->getNouveauTitre():$proposition->getThese()->getTitre(); ?> </td>
     </tr>
     <tr>
         <td class="head"> Doctorant : </td>
         <td> <?php echo $proposition->getThese()->getDoctorant()->getIndividu()->getNomComplet(); ?> </td>
+    </tr>
+    <tr>
+        <td class="head"> Numéro étudiant : </td>
+        <td> <?php echo $proposition->getThese()->getDoctorant()->getNumeroEtudiant(); ?> </td>
     </tr>
     <tr>
         <td class="head"> Date de la soutenance : </td>
