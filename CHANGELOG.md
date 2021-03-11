@@ -1,6 +1,11 @@
 Journal des modifications
 =========================
 
+2.1.6
+-----
+- [FIX] Usurpation d'un compte local en BDD
+- [FIX] Plantage de la page Assistance en cas d'authentification locale BDD
+
 2.1.5
 -----
 - Validation des corrections de thèses desormais réalisée par le président du jury (anc. directeurs de thèses).

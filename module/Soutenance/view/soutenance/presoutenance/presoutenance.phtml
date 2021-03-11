@@ -34,9 +34,16 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
 
 <?php if ($validationBDD) : ?>
     <?php if ($proposition->getNouveauTitre() !== null) : ?>
-    <div class="box panel panel-warning">
+    <?php $modificationFaite = ($proposition->getNouveauTitre() === $these->getTitre()); ?>
+    <div class="box panel <?php echo (!$modificationFaite)?"panel-danger":"panel-success"; ?>">
         <div class="panel-heading">
-            <h2>Changement de titre</h2>
+            <h2>
+                <?php if ($modificationFaite) : ?>
+                    Le titre a été modifiée et la saisie dans la source a été faite
+                <?php else : ?>
+                    Le titre a été modifiée et la saisie dans la source n'a pas été faite
+                <?php endif; ?>
+            </h2>
         </div>
         <div class="panel-body">
             <?php echo $proposition->getNouveauTitre(); ?>
