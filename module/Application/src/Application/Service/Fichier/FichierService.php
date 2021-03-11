@@ -110,7 +110,7 @@ class FichierService extends BaseService
         }
         if (!$nature instanceof NatureFichier) {
             $nature = $this->natureFichierService->getRepository()->findOneBy(
-                ['code' => $nature ?: NatureFichier::CODE_DIVERS]
+                ['code' => $nature ?: NatureFichier::CODE_COMMUNS]
             );
         }
 
