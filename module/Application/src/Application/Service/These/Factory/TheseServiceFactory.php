@@ -2,6 +2,7 @@
 
 namespace Application\Service\These\Factory;
 
+use Application\Service\Acteur\ActeurService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\File\FileService;
@@ -27,6 +28,7 @@ class TheseServiceFactory
     public function __invoke(ContainerInterface $container)
     {
         /**
+         * @var ActeurService       $acteurService
          * @var ValidationService   $validationService
          * @var NotifierService     $notifierService
          * @var FichierTheseService $fichierTheseService
@@ -36,6 +38,7 @@ class TheseServiceFactory
          * @var UtilisateurService  $utilisateurService
          * @var AuthorizeService    $authorizeService
          */
+        $acteurService = $container->get(ActeurService::class);
         $validationService = $container->get('ValidationService');
         $notifierService = $container->get(NotifierService::class);
         $fichierTheseService = $container->get('FichierTheseService');
@@ -52,6 +55,7 @@ class TheseServiceFactory
         $fileService = $container->get(FileService::class);
 
         $service = new TheseService();
+        $service->setActeurService($acteurService);
         $service->setValidationService($validationService);
         $service->setNotifierService($notifierService);
         $service->setFichierTheseService($fichierTheseService);

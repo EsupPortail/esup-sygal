@@ -5,9 +5,9 @@
 use Application\Entity\Db\Fichier;
 use Application\Provider\Privilege\FichierPrivileges;
 
-$this->headTitle("Fichiers associés aux pages d'information");
+$this->headTitle("Fichiers pour les pages d'information");
 
-$canFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivileges::FICHIER_DIVERS_TELEVERSER));
+$canFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivileges::FICHIER_COMMUN_TELEVERSER));
 ?>
 
 <style>
@@ -17,7 +17,7 @@ $canFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivilege
 </style>
 
 <h1 class="page-header">
-    Fichiers associés aux pages d'information
+    Fichiers pour les pages d'information
 </h1>
 
 
@@ -27,7 +27,7 @@ $canFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivilege
     <?php echo $this->form($form); ?>
 <?php endif; ?>
 
-<h2> Listing des fichiers téléversés pour le module informations </h2>
+<h2>Fichiers téléversés disponibles</h2>
 
 <?php if ($fichiers) : ?>
     <?php echo count($fichiers); ?> fichiers déposés.

@@ -8,17 +8,19 @@ use Application\Entity\Db\Source;
 use Application\Entity\Db\Utilisateur;
 use Application\Filter\NomCompletFormatter;
 use Application\Service\BaseService;
+use Application\Service\Source\SourceServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenAuth\Entity\Db\User;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use UnicaenLdap\Entity\People;
 use Zend\Crypt\Password\Bcrypt;
 
 class UtilisateurService extends BaseService
 {
+    use SourceServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
     use UserServiceAwareTrait;
 
@@ -166,6 +168,8 @@ class UtilisateurService extends BaseService
      */
     public function createFromFormData(array $formData)
     {
+        $source = $this->sourceService->fetchApplicationSource();
+
         /** @var Individu $individu */
         $individu = new Individu();
         $individu->setCivilite($formData['civilite']);
@@ -173,12 +177,14 @@ class UtilisateurService extends BaseService
         $individu->setNomPatronymique($formData['nomPatronymique']);
         $individu->setPrenom1($formData['prenom']);
         $individu->setEmail($formData['email']);
+        $individu->setEmail($formData['email']);
+        $individu->setSource($source);
         $individu->setSourceCode(uniqid()); // NB: sera remplacé par "COMUE::{INDIVIDU.ID}"
 
-        $this->getEntityManager()->persist($individu);
         try {
+            $this->getEntityManager()->persist($individu);
             $this->getEntityManager()->flush($individu);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Erreur lors de l'enregistrement du nouvel individu", null, $e);
         }
 

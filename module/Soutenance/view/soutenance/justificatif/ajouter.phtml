@@ -1,0 +1,14 @@
+<?php
+
+use Soutenance\Form\Justificatif\JustificatifForm;
+
+/**
+ * @var JustificatifForm $form;
+ */
+
+?>
+
+<?php echo $this->form()->openTag($form); ?>
+<?php echo $this->formControlGroup($form->get('fichier')); ?>
+<?php echo $this->formControlGroup($form->get('enregistrer')); ?>
+<?php echo $this->form()->closeTag(); ?>

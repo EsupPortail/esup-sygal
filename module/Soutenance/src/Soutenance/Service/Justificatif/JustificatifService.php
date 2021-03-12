@@ -26,7 +26,7 @@ class JustificatifService {
      * @param Justificatif $justificatif
      * @return Justificatif
      */
-    public function create($justificatif)
+    public function create(Justificatif $justificatif) : Justificatif
     {
         try {
             $date = new DateTime();
@@ -53,7 +53,7 @@ class JustificatifService {
      * @param Justificatif $justificatif
      * @return Justificatif
      */
-    public function update($justificatif)
+    public function update(Justificatif $justificatif) : Justificatif
     {
         try {
             $date = new DateTime();
@@ -77,7 +77,7 @@ class JustificatifService {
      * @param Justificatif $justificatif
      * @return Justificatif
      */
-    public function historise($justificatif)
+    public function historise(Justificatif $justificatif) : Justificatif
     {
         try {
             $date = new DateTime();
@@ -103,7 +103,7 @@ class JustificatifService {
      * @param Justificatif $justificatif
      * @return Justificatif
      */
-    public function restore($justificatif)
+    public function restore(Justificatif $justificatif) : Justificatif
     {
         try {
             $date = new DateTime();
@@ -129,7 +129,7 @@ class JustificatifService {
      * @param Justificatif $justificatif
      * @return Justificatif
      */
-    public function delete($justificatif)
+    public function delete(Justificatif $justificatif) : Justificatif
     {
         try {
             $this->getEntityManager()->remove($justificatif->getFichier());
@@ -146,7 +146,7 @@ class JustificatifService {
     /**
      * @return QueryBuilder
      */
-    public function createQueryBuilder()
+    public function createQueryBuilder() : QueryBuilder
     {
         $qb = $this->getEntityManager()->getRepository(Justificatif::class)->createQueryBuilder('justificatif')
             ->addSelect('proposition')->join('justificatif.proposition', 'proposition')
@@ -184,12 +184,12 @@ class JustificatifService {
     }
 
 
-
     /**
      * @param Proposition $proposition
+     * @param bool $all
      * @return array
      */
-    public function generateListeJustificatif($proposition)
+    public function generateListeJustificatif($proposition, bool $all = false)
     {
         $justificatifs = [];
         if ($proposition === null) return $justificatifs;
@@ -234,7 +234,7 @@ class JustificatifService {
          * @var Membre $membre
          */
         foreach ($proposition->getMembres() as $membre) {
-            if ($membre->isVisio()) {
+            if ($membre->isVisio() OR $all === true) {
                 $justificatifs[] = [
                     'type' => NatureFichier::CODE_DELEGUATION_SIGNATURE,
                     'membre' => $membre,

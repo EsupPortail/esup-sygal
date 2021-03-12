@@ -234,6 +234,24 @@ return [
                 ],
             ],
             [
+                'name' => 'origine-financement',
+                'source' => [
+                    'name'               => 'app',
+                    'table'              => 'SRC_ORIGINE_FINANCEMENT',
+                    'connection'         => 'default',
+                    'source_code_column' => 'SOURCE_CODE',
+                ],
+                'destination' => [
+                    'name'               => 'app',
+                    'table'              => 'ORIGINE_FINANCEMENT',
+                    'connection'         => 'default',
+                    'source_code_column' => 'SOURCE_CODE',
+                    //'log_table' => 'import_log',
+                    //'intermediate_table' => 'TMP_ORIGINE_FINANCEMENT',
+                    'intermediate_table_auto_drop' => false,
+                ],
+            ],
+            [
                 'name' => 'financement',
                 'source' => [
                     'name'               => 'app',

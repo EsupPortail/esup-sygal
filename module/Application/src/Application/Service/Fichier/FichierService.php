@@ -110,7 +110,7 @@ class FichierService extends BaseService
         }
         if (!$nature instanceof NatureFichier) {
             $nature = $this->natureFichierService->getRepository()->findOneBy(
-                ['code' => $nature ?: NatureFichier::CODE_DIVERS]
+                ['code' => $nature ?: NatureFichier::CODE_COMMUNS]
             );
         }
 
@@ -183,6 +183,12 @@ class FichierService extends BaseService
         $this->entityManager->beginTransaction();
         try {
             foreach ($fichiers as $fichier) {
+                if ($fichier->getIdPermanent() !== null) {
+                    throw new Exception(sprintf(
+                        "Interdit de supprimer un fichier possédant un id permanent (en l'occurence : '%s')",
+                        $fichier->getIdPermanent()
+                    ));
+                }
                 $filePaths[] = $this->computeDestinationFilePathForFichier($fichier);
                 $this->entityManager->remove($fichier);
                 $this->entityManager->flush($fichier);
