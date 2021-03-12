@@ -53,7 +53,7 @@ class FichierController extends AbstractActionController
 
                 $fichiers = $this->fichierService->createFichiersFromUpload(
                     $uploadData = ['files' => $file['chemin']],
-                    NatureFichier::CODE_DIVERS,
+                    NatureFichier::CODE_COMMUNS,
                     VersionFichier::CODE_ORIG
                 );
                 $this->fichierService->saveFichiers($fichiers);

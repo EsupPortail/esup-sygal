@@ -6,6 +6,7 @@ use Application\Controller\FichierTheseController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
@@ -16,6 +17,7 @@ use Application\Entity\Db\VersionFichier;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Rule\AutorisationDiffusionRule;
 use Application\Rule\SuppressionAttestationsRequiseRule;
+use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\AuthorizeServiceAwareTrait;
 use Application\Service\BaseService;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -54,6 +56,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
     use EtablissementServiceAwareTrait;
     use FileServiceAwareTrait;
     use AuthorizeServiceAwareTrait;
+    use ActeurServiceAwareTrait;
 
     /**
      * Resaisir l'autorisation de diffusion ? Sinon celle saisie au 1er dépôt est reprise/dupliquée.
@@ -680,5 +683,45 @@ EOS;
                 return ['error', "Aucune action de réalisée car aucun email de trouvé."];
             }
         }
+    }
+
+    /** PREDICATS *****************************************************************************************************/
+
+    /**
+     * @param These $these
+     * @param Individu $individu
+     * @return bool
+     */
+    public function isDoctorant(These $these, Individu $individu) : bool
+    {
+        return ($these->getDoctorant()->getIndividu() === $individu);
+    }
+
+    /**
+     * @param These $these
+     * @param Individu $individu
+     * @return bool
+     */
+    public function isDirecteur(These $these, Individu $individu) : bool
+    {
+        $directeurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, 'D');
+        foreach ($directeurs as $directeur) {
+            if ($directeur->getIndividu() === $individu) return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param These $these
+     * @param Individu $individu
+     * @return bool
+     */
+    public function isCoDirecteur(These $these, Individu $individu) : bool
+    {
+        $directeurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, 'K');
+        foreach ($directeurs as $directeur) {
+            if ($directeur->getIndividu() === $individu) return true;
+        }
+        return false;
     }
 }

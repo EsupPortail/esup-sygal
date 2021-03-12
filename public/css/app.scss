@@ -964,8 +964,9 @@ span.sas-highlight {
   }
 }
 
-
+/********** à déplacer... ************/
 .user-usurpation-form {
+  padding-top: 1em;
   .form-group {
     float: left;
     margin-right: 5px;
@@ -974,7 +975,16 @@ span.sas-highlight {
     margin-top: 0;
   }
 }
+.user-usurpation-stop-btn {
+  padding-top: 1em;
+}
 
+#user-status.usurpation {
+    border-radius: 5px;
+    padding: 1px 3px;
+    background-color: #C9302C;
+}
+/******* ...dans unicaen/app *********/
 
 
 .bs-searchbox {

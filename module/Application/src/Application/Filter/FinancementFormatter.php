@@ -3,8 +3,16 @@
 namespace Application\Filter;
 
 use Application\Entity\Db\Financement;
+use Application\Entity\Db\OrigineFinancement;
+use Application\Provider\Privilege\FinancementPrivileges;
+use Application\Service\AuthorizeServiceAwareTrait;
+use Application\View\Helper\FinancementFormatterHelper;
+use UnicaenApp\Exception\LogicException;
+use UnicaenAuth\Service\AuthorizeService;
 
-class FinancementFormatter {
+class FinancementFormatter
+{
+    use AuthorizeServiceAwareTrait;
 
     const DISPLAY_AS_LINE = 'DISPLAY_LINE';
 
@@ -19,46 +27,20 @@ class FinancementFormatter {
     private $displayComplement;
 
     /**
-     * @param bool $displayComplement
-     * @return FinancementFormatter
-     */
-    public function setDisplayComplement(bool $displayComplement)
-    {
-        $this->displayComplement = $displayComplement;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDisplayAs()
-    {
-        return $this->displayAs;
-    }
-
-    /**
      * @param string $displayAs
-     * @return FinancementFormatter
+     * @return self
      */
-    public function setDisplayAs($displayAs)
+    public function setDisplayAs(string $displayAs): self
     {
         $this->displayAs = $displayAs;
         return $this;
     }
 
     /**
-     * @return string
-     */
-    public function getSortBy()
-    {
-        return $this->sortBy;
-    }
-
-    /**
      * @param string $sortBy
-     * @return FinancementFormatter
+     * @return self
      */
-    public function setSortBy($sortBy)
+    public function setSortBy(string $sortBy): self
     {
         $this->sortBy = $sortBy;
         return $this;
@@ -68,10 +50,10 @@ class FinancementFormatter {
      * @param Financement[] $financements
      * @return string
      */
-    public function doFormat(array $financements) {
-
+    public function doFormat(array $financements): string
+    {
         //sorting
-        switch($this->getSortBy()) {
+        switch($this->sortBy) {
             case FinancementFormatter::SORT_BY_DATE :
                 usort($financements, function (Financement $a, Financement $b) {
                     return $a->getAnnee() - $b->getAnnee();
@@ -86,11 +68,15 @@ class FinancementFormatter {
 
         $output = "";
         foreach ($financements as $financement) {
-            switch($this->getDisplayAs()) {
+            switch($this->displayAs) {
                 case FinancementFormatter::DISPLAY_AS_LINE :
                     $infos = [];
                     if ($financement->getAnnee())                   $infos[] = $financement->getAnnee();
-                    if ($financement->getOrigineFinancement())      $infos[] = $financement->getOrigineFinancement()->getLibelleLong();
+                    if ($origine = $financement->getOrigineFinancement()) {
+                        if ($this->isOrigineVisible($origine)) {
+                            $infos[] = $origine->getLibelleLong();
+                        }
+                    }
                     if ($this->displayComplement === true AND $financement->getComplementFinancement())   $infos[] = $financement->getComplementFinancement();
                     if ($financement->getQuotiteFinancement())      $infos[] = $financement->getQuotiteFinancement();
                     if ($financement->getDateDebut())               $infos[] = $financement->getDateDebut()->format('d/m/Y');
@@ -104,11 +90,24 @@ class FinancementFormatter {
         return $output;
     }
 
+    private function isOrigineVisible(OrigineFinancement $origine): bool
+    {
+        if ($this->authorizeService === null) {
+            throw new LogicException(
+                'Vous devez injecter dans ce formatter une instance du service ' . AuthorizeService::class . '. ' .
+                'NB : si vous êtes dans une vue, utilisez $this->financementFormatter().'
+            );
+        }
+
+        return $origine->isVisible() ||
+            $this->authorizeService->isAllowed($origine, FinancementPrivileges::FINANCEMENT_VOIR_ORIGINE_NON_VISIBLE);
+    }
+
     /**
      * @param Financement $financement
      * @return string|null
      */
-    public function formatTypeFinancement(Financement $financement)
+    private function formatTypeFinancement(Financement $financement): ?string
     {
         if (! $financement->getLibelleTypeFinancement()) {
             return null;

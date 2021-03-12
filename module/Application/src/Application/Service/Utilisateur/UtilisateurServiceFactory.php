@@ -2,6 +2,7 @@
 
 namespace Application\Service\Utilisateur;
 
+use Application\Service\Source\SourceService;
 use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
 use UnicaenAuth\Service\User as UserService;
@@ -16,11 +17,10 @@ class UtilisateurServiceFactory
      */
     public function __invoke(ContainerInterface $container)
     {
-
         /**
-         * @var UserService $userService
+         * @var SourceService $sourceService
          */
-        $userService = $container->get('unicaen-auth_user_service');
+        $sourceService = $container->get(SourceService::class);
 
         /**
          * @var UserService $userService
@@ -35,6 +35,7 @@ class UtilisateurServiceFactory
         $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
         $service->setSourceCodeStringHelper($sourceCodeHelper);
         $service->setUserService($userService);
+        $service->setSourceService($sourceService);
 
         return $service;
     }

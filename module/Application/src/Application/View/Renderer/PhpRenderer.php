@@ -3,13 +3,12 @@
 namespace Application\View\Renderer;
 
 use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\VWorkflow;
 use Application\View\Helper\EcoleDoctoraleHelper;
 use Application\View\Helper\EscapeTextHelper;
-use Application\View\Helper\StructureArrayHelper;
+use Application\View\Helper\FinancementFormatterHelper;
 use Application\View\Helper\StructureSubstitHelper;
 use Application\View\Helper\Url\UrlTheseHelper;
 use Application\View\Helper\ValidationViewHelper;
@@ -148,7 +147,7 @@ use UnicaenApp\View\Helper\AppInfos;
  *
  * @method UrlTheseHelper urlThese()
  * @method StructureSubstitHelper structureSubstitHelper()
- * @method StructureArrayHelper structureArrayHelper()
+ * @method FinancementFormatterHelper financementFormatter()
  *
  * @author UnicaenCode
  */

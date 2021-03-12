@@ -3,10 +3,10 @@
 namespace Application\Entity\Db;
 
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use Application\Entity\Db\Source;
+use Zend\Permissions\Acl\Resource\ResourceInterface;
 
-class OrigineFinancement {
-
+class OrigineFinancement implements ResourceInterface
+{
     use HistoriqueAwareTrait;
 
     /** @var int */
@@ -21,6 +21,16 @@ class OrigineFinancement {
     private $source;
     /** @var string */
     private $sourceCode;
+    /** @var bool */
+    private $visible;
+
+    /**
+     * @inheritDoc
+     */
+    public function getResourceId(): string
+    {
+        return 'OrigineFinancement';
+    }
 
     /**
      * @return int
@@ -120,4 +130,21 @@ class OrigineFinancement {
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isVisible(): bool
+    {
+        return $this->visible;
+    }
+
+    /**
+     * @param bool $visible
+     * @return self
+     */
+    public function setVisible(bool $visible): self
+    {
+        $this->visible = $visible;
+        return $this;
+    }
 }

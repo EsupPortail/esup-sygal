@@ -13,7 +13,7 @@ $this->headTitle("Index des informations");
 $canView    = true;
 $canEdit    = $this->isAllowed(InformationPrivileges::getResourceId(InformationPrivileges::INFORMATION_MODIFIER));
 $canDelete  = $this->isAllowed(InformationPrivileges::getResourceId(InformationPrivileges::INFORMATION_MODIFIER));
-$canFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivileges::FICHIER_DIVERS_TELEVERSER));
+$canFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivileges::FICHIER_COMMUN_TELEVERSER));
 ?>
 
 <style>

@@ -22,6 +22,8 @@ class Parametre {
     const CODE_FORMULAIRE_THESE_ANGLAIS                 = 'FORMULAIRE_THESE_ANGLAIS';
     const CODE_FORMULAIRE_CONFIDENTIALITE               = 'FORMULAIRE_CONFIDENTIALITE';
 
+    const CODE_DIRECTEUR_INTERVENTION                   = 'PERIODE_INTERVENTION_DIRECTEUR';
+
     /** @var integer */
     private $id;
     /** @var string */

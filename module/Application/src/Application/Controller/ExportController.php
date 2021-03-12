@@ -6,7 +6,7 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Financement;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
-use Application\Entity\Db\VersionFichier;
+use Application\Provider\Privilege\FinancementPrivileges;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseRechercheServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
@@ -78,7 +78,12 @@ class ExportController extends AbstractController
                 $financements = $these->getFinancements();
                 $origines = [];
                 /** @var Financement $financement */
-                foreach ($financements as $financement) $origines[] = $financement->getOrigineFinancement()->getLibelleLong();
+                foreach ($financements as $financement) {
+                    $origine = $financement->getOrigineFinancement();
+                    if ($origine->isVisible() || $this->isAllowed($origine, FinancementPrivileges::FINANCEMENT_VOIR_ORIGINE_NON_VISIBLE)) {
+                        $origines[] = $origine->getLibelleLong();
+                    }
+                }
                 return implode(",", $origines);
             },
             'Complément sur les financements'                            => function ($variables) {
