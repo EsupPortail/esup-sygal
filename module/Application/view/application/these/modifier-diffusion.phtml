@@ -74,7 +74,8 @@ $protoDiffusion = new Diffusion();
 <!-------------------------------- Charte de diffusion -------------------------------->
 <h2>Charte de diffusion</h2>
 <?php echo $fcg($form->get('certifCharteDiff')) ?>
-Cliquez <a href="<?php echo $this->basePath('charte_depot_et_diffusion_des_theses.pdf') ?>" target="_blank" download>ici pour télécharger</a> la charte.
+Cliquez sur <a href="<?php echo $this->url('fichier/telecharger-permanent', ['idPermanent' => 'CHARTE_DEPOT_DIFFUSION_THESE']) ?>"
+               target="_blank" download>ce lien</a> pour télécharger la charte.
 
 <!-------------------------------- Autorisation de mise en ligne -------------------------------->
 <h2>Autorisation de mise en ligne</h2>

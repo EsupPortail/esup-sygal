@@ -15,12 +15,6 @@ use UnicaenAuth\Provider\Privilege\Privileges;
 class FichierPrivileges extends Privileges
 {
     /**
-     * Dépôt de fichiers dits "divers" (ex: fichiers pour les pages d'informations).
-     */
-    const FICHIER_DIVERS_TELEVERSER = 'fichier-divers-televerser';
-    const FICHIER_DIVERS_TELECHARGER = 'fichier-divers-telecharger';
-
-    /**
      * Dépôt de fichiers "communs" (ex: modèle d'avenant à la convention de MEL).
      */
     const FICHIER_COMMUN_TELEVERSER = 'fichier-commun-televerser';
@@ -53,10 +47,6 @@ class FichierPrivileges extends Privileges
                 return $versionFichier !== null && $versionFichier->estVersionCorrigee() ?
                     ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE :
                     ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;
-
-            case NatureFichier::CODE_DIVERS:
-                //
-                return self::FICHIER_DIVERS_TELEVERSER;
 
             case NatureFichier::CODE_COMMUNS:
                 //
@@ -92,9 +82,6 @@ class FichierPrivileges extends Privileges
             case NatureFichier::CODE_THESE_PDF:
             case NatureFichier::CODE_FICHIER_NON_PDF:
                 return ThesePrivileges::THESE_TELECHARGEMENT_FICHIER;
-            case NatureFichier::CODE_DIVERS:
-                //
-                return self::FICHIER_DIVERS_TELECHARGER;
 
             case NatureFichier::CODE_COMMUNS:
                 //

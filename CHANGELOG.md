@@ -3,8 +3,19 @@ Journal des modifications
 
 2.1.6
 -----
+- Utilisation de l'id permanent CHARTE_DEPOT_DIFFUSION_THESE pour télécharger la charte de dépôt et diffusion de thèse.
+- Abandon de la nature de fichier 'divers' au profit de 'commun'.
+- Rétablissement de l'import des origines de financement pour être en phase avec les releases du web service d'import.
+- Financement : masquage possible de certaines origines de financement (ex : handicap).
+- Financement : la visibilité des origines masquées peut être forcée grâce à un privilège.
+- Interdiction de supprimer un fichier possédant un id permanent.
+- Modification du document de soutenance pour signature du président pour faire figurer : numero étudiant, nouveau titre et les rôles
+- Possibilité de saisir une intervention permetant au directeur de déclarer le président du jury en distanciel 
+- Masquage possible de certaines origines de financement (ex : handicap).
 - [FIX] Usurpation d'un compte local en BDD
 - [FIX] Plantage de la page Assistance en cas d'authentification locale BDD
+- [FIX] Injection manquante de la source SYGAL dans la création manuelle d'un utilisateur local (identifiant = adresse mail)
+- [FIX] Date de soutenance et de fin de confidentialité : changement de l'élément de formulaire pour pouvoir sélectionner une année
 
 2.1.5
 -----

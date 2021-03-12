@@ -16,7 +16,7 @@ class ConfidentialiteHydrator implements HydratorInterface
     public function hydrate(array $data, $proposition) {
 
         if ($data['date']) {
-            $date = DateTime::createFromFormat("d/m/Y", $data['date']);
+            $date = DateTime::createFromFormat("Y-m-d", $data['date']);
             $proposition->setConfidentialite($date);
             $proposition->setHuitClos($data['huitclos']);
         } else {
@@ -34,7 +34,7 @@ class ConfidentialiteHydrator implements HydratorInterface
     public function extract($proposition) {
 
         $data = [];
-        $data['date']  = ($proposition->getConfidentialite())?$proposition->getConfidentialite()->format("d/m/Y"):"";
+        $data['date']  = ($proposition->getConfidentialite())?$proposition->getConfidentialite()->format("Y-m-d"):"";
         $data['huitclos'] = $proposition->isHuitClos();
 
         return $data;

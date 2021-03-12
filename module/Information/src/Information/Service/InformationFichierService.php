@@ -22,7 +22,7 @@ class InformationFichierService
             ->addSelect('createur')
             ->join('fichier.histoCreateur', 'createur')
             ->join('fichier.nature', 'nat', Expr\Join::WITH, 'nat.code = :code')
-            ->setParameter('code', NatureFichier::CODE_DIVERS)
+            ->setParameter('code', NatureFichier::CODE_COMMUNS)
             ->orderBy('fichier.id');
 
         return $qb->getQuery()->getResult();

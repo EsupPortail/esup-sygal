@@ -53,7 +53,7 @@ class ImportService
         'role',
         'acteur',
         'variable',
-        // NB: 'origine-financement' n'est plus importé.
+        'origine-financement',
         'financement',
         'titre-acces',
     ];
