@@ -9,6 +9,8 @@ Journal des modifications
 - Financement : masquage possible de certaines origines de financement (ex : handicap).
 - Financement : la visibilité des origines masquées peut être forcée grâce à un privilège.
 - Interdiction de supprimer un fichier possédant un id permanent.
+- Modification du document de soutenance pour signature du président pour faire figurer : numero étudiant, nouveau titre et les rôles
+- Possibilité de saisir une intervention permetant au directeur de déclarer le président du jury en distanciel 
 - Masquage possible de certaines origines de financement (ex : handicap).
 - [FIX] Usurpation d'un compte local en BDD
 - [FIX] Plantage de la page Assistance en cas d'authentification locale BDD
