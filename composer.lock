@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a726480d5d45b634617a92d3f08be01b",
+    "content-hash": "96f7e1a50a95226e8fcf609f1459d7cc",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -7952,14 +7952,7 @@
             "time": "2019-06-11T19:33:38+00:00"
         }
     ],
-    "aliases": [
-        {
-            "alias": "3.1.2",
-            "alias_normalized": "3.1.2.0",
-            "version": "dev-release-3.2.0",
-            "package": "unicaen/auth"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
         "unicaen/auth": 20
