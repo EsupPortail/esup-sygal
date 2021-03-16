@@ -10,6 +10,7 @@ use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
+use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\FichierThese\PdcData;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -57,6 +58,7 @@ class PresoutenanceController extends AbstractController
     use UserServiceAwareTrait;
     use ParametreServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;
+    use FichierServiceAwareTrait;
 
     use DateRenduRapportFormAwareTrait;
     use AdresseSoutenanceFormAwareTrait;
@@ -446,6 +448,7 @@ class PresoutenanceController extends AbstractController
             'informations' => $pdcData,
             'date' => $dateValidation,
             'ville' => $ville,
+            'signature' => ($these->getEtablissement()->getSignatureConvocation())?file_get_contents($this->fichierService->computeDestinationFilePathForFichier($these->getEtablissement()->getSignatureConvocation())):null,
         ]);
         $exporter->export($these->getId() . '_convocation.pdf');
         exit;
@@ -473,6 +476,7 @@ class PresoutenanceController extends AbstractController
             'informations' => $pdcData,
             'date' => $dateValidation,
             'ville' => $ville,
+            'signature' => ($these->getEtablissement()->getSignatureConvocation())?file_get_contents($this->fichierService->computeDestinationFilePathForFichier($these->getEtablissement()->getSignatureConvocation())):null,
         ]);
         $exporter->exportDoctorant($these->getId() . '_convocation.pdf');
         exit;

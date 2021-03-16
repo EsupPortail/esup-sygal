@@ -21,7 +21,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     /**
      * @var string $id
      * @var string $sigle
-     * @var string $libelle
+     * @var string $libelle
      * @var string $cheminLogo
      * @var integer $cheminLogo
      */
