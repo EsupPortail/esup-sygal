@@ -71,7 +71,7 @@ class RapportAnnuelRechercheController extends AbstractController implements Sea
             $fichiers[] = $rapportAnnuel->getFichier();
         }
 
-        $fichierZip = $this->fichierService->compresserFichiers($fichiers);
+        $fichierZip = $this->fichierService->compresserFichiers($fichiers, 'sygal_rapports_annuels.zip');
         $this->fichierService->telechargerFichier($fichierZip);
     }
 }

@@ -87,11 +87,11 @@ class FichierTheseRepository extends DefaultEntityRepository
 
     public function existeVersionArchivable(These $these)
     {
-        return (bool) $this->getVersionArchivable($these);
+        return (bool) $this->fetchFichierThesePdfArchivable($these);
     }
 
     /**
-     * Retourne la version archivable de la thèse, s'il elle existe.
+     * Retourne le fichier PDF de thèse archivable, s'il existe.
      *
      * C'est soit la version originale si elle est archivable.
      * Soit la version retraitée si elle est archivable et vérifiée conforme.
@@ -99,10 +99,9 @@ class FichierTheseRepository extends DefaultEntityRepository
      * @param These $these
      * @return FichierThese|null
      */
-    public function getVersionArchivable(These $these)
+    public function fetchFichierThesePdfArchivable(These $these): ?FichierThese
     {
         $theseFichiers = $this->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ORIG, false);
-        /** @var FichierThese $fichierThese */
         $fichierThese = current($theseFichiers);
         /** @var ValiditeFichier $validiteFichierThese */
         $validiteFichierThese = $fichierThese ? $fichierThese->getFichier()->getValidite() : null;
@@ -112,7 +111,6 @@ class FichierTheseRepository extends DefaultEntityRepository
         }
 
         $theseFichiersRetraites = $this->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF , VersionFichier::CODE_ARCHI, true);
-        /** @var FichierThese $fichierTheseRetraite */
         $fichierTheseRetraite = current($theseFichiersRetraites);
         /** @var ValiditeFichier $validiteFichierTheseRetraite */
         $validiteFichierTheseRetraite = $fichierTheseRetraite ? $fichierTheseRetraite->getFichier()->getValidite() : null;
@@ -123,6 +121,20 @@ class FichierTheseRepository extends DefaultEntityRepository
         }
 
         return null;
+    }
+
+    /**
+     * Retourne les fichiers non-PDF archivables de la thèse, s'ils existent.
+     *
+     * Pour l'instant, l'archivabilité des fichiers non-PDF n'est pas vérifiée, donc tous les fichiers non-PDF
+     * sont retournés.
+     *
+     * @param These $these
+     * @return FichierThese[]
+     */
+    public function fetchFichiersTheseNonPdfArchivables(These $these): array
+    {
+        return $this->fetchFichierTheses($these, NatureFichier::CODE_FICHIER_NON_PDF , VersionFichier::CODE_ORIG, false);
     }
 
     public function hasVersion(These $these, $version)

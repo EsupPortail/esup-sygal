@@ -15,6 +15,7 @@ use Application\Entity\Db\VersionFichier;
 use Application\Filter\NomFichierTheseFormatter;
 use Application\Service\BaseService;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Application\Service\Fichier\FichierService;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\FichierThese\Exception\DepotImpossibleException;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;
@@ -27,6 +28,7 @@ use Application\Validator\Exception\CinesErrorException;
 use Application\Validator\FichierCinesValidator;
 use Doctrine\ORM\OptimisticLockException;
 use Application\Command\Exception\TimedOutCommandException;
+use Exception;
 use Retraitement\Service\RetraitementServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
@@ -322,7 +324,7 @@ class FichierTheseService extends BaseService
             $this->entityManager->flush($fichierTheseRetraite->getFichier());
             $this->entityManager->flush($fichierTheseRetraite);
             $this->entityManager->commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->entityManager->rollback();
             throw new RuntimeException("Erreur survenue lors de l'enregistrement du fichier retraité", 0, $e);
         }
@@ -348,7 +350,7 @@ class FichierTheseService extends BaseService
             $this->entityManager->persist($newFichierThese);
             $this->entityManager->flush($newFichierThese->getFichier());
             $this->entityManager->flush($newFichierThese);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new RuntimeException("Erreur survenue lors de l'enregistrement du fichier retraité", 0, $e);
         }
 
@@ -415,7 +417,7 @@ class FichierTheseService extends BaseService
             }
             $this->fichierService->supprimerFichiers($normalizedFichiers);
             $this->entityManager->commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->entityManager->rollback();
             throw new RuntimeException("Erreur survenue lors de la suppression des Fichiers en bdd, rollback!", 0, $e);
         }
@@ -624,5 +626,23 @@ class FichierTheseService extends BaseService
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
         }
+    }
+
+    /**
+     * Compression des fichiers physiques pointés par des {@see FichierThese}.
+     * Cf. {@see FichierService::compresserFichiers()}.
+     *
+     * @param array $fichiersTheses Fichiers de thèse qu'on veut compresser en une archive Zip
+     * @param string $zipFileName Nom à donner au Fichier résultat
+     * @param bool $usePathsAsLocalNames
+     * @return Fichier Instance de {@see Fichier} représentant l'archive Zip créée
+     */
+    public function compresserFichiersTheses(array $fichiersTheses, string $zipFileName, bool $usePathsAsLocalNames = true): Fichier
+    {
+        $fichiers = array_map(function(FichierThese $fichierThese) {
+            return $fichierThese->getFichier();
+        }, $fichiersTheses);
+
+        return $this->fichierService->compresserFichiers($fichiers, $zipFileName, $usePathsAsLocalNames);
     }
 }

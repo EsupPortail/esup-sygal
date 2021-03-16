@@ -109,9 +109,9 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
      * Instancie un Fichier à partir d'un chemin de fichier physique.
      *
      * @param string $filepath
-     * @return static
+     * @return self
      */
-    static public function fromFilepath($filepath)
+    static public function fromFilepath(string $filepath): self
     {
         $content = file_get_contents($filepath);
 

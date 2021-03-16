@@ -61,6 +61,15 @@ class RdvBu implements HistoriqueAwareInterface
     private $these;
 
     /**
+     * @param string $motsClesRameau
+     * @return string[]
+     */
+    static public function explodeMotsClesRameau(string $motsClesRameau): array
+    {
+        return array_map('trim', explode(self::SEPARATEUR_MOTS_CLES_RAMEAU, $motsClesRameau));
+    }
+
+    /**
      * RdvBu constructor.
      *
      * @param These $these

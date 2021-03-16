@@ -3,7 +3,8 @@ Journal des modifications
 
 2.2.0
 -----
-- Nouvel attribut disponible dans Etablissement : code (ex : '60931E'). 
+- Nouvel attribut dans Etablissement : code (ex : '60931E').
+- Export vers STAR.
 
 2.1.6
 -----

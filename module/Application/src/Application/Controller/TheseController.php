@@ -598,7 +598,7 @@ class TheseController extends AbstractController
         $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
         $asynchronous = $this->params()->fromRoute('asynchronous');
 
-        $versionArchivable = $this->fichierTheseService->getRepository()->getVersionArchivable($these);
+        $versionArchivable = $this->fichierTheseService->getRepository()->fetchFichierThesePdfArchivable($these);
         $hasVA = $this->fichierTheseService->getRepository()->hasVersion($these, VersionFichier::CODE_ARCHI);
         $hasVD = $this->fichierTheseService->getRepository()->hasVersion($these, VersionFichier::CODE_DIFF);
 

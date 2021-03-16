@@ -802,6 +802,14 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
         return $this;
     }
+
+    /**
+     * @return Collection
+     */
+    public function getFichierTheses()
+    {
+        return $this->fichierTheses;
+    }
     
     /**
      * @param FichierThese $fichierThese

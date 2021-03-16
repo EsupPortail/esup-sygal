@@ -252,7 +252,7 @@ class FichierService extends BaseService
      *                         stocké sur disque
      * @return string
      */
-    public function computeDestinationFilePathForFichier(Fichier $fichier)
+    public function computeDestinationFilePathForFichier(Fichier $fichier): string
     {
         return $this->computeDestinationDirectoryPathForFichier($fichier) . '/' . $fichier->getNom();
     }
@@ -292,31 +292,40 @@ class FichierService extends BaseService
     }
 
     /**
-     * Compression des fichiers physiques de plusieurs Fichier en une archive .zip puis création d'un Fichier temporaire
-     * "pointant" vers cette archive.
+     * Compression des fichiers physiques de plusieurs {@see Fichier} en une archive Zip
+     * puis création d'une instance de {@see Fichier} temporaire "pointant" vers cette archive.
      *
-     * NB: c'est une entité Fichier qui est retournée pour une raison de praticité, elle n'a pas du tout vocation à
-     * être persistée.
+     * NB: c'est une instance de {@see Fichier} qui est retournée pour une raison de praticité,
+     * elle n'a pas du tout vocation à être persistée en base de données.
      *
-     * @param Fichier[] $fichiers
-     * @return Fichier
+     * @param Fichier[] $fichiers Fichiers à inclure dans l'archive
+     * @param string $zipFileName Nom à donner au {@see Fichier} représentant l'archive Zip créée
+     * @param bool $usePathsAsLocalNames
+     * @return Fichier Instance de {@see Fichier} représentant l'archive Zip créée
      */
-    public function compresserFichiers(array $fichiers)
+    public function compresserFichiers(array $fichiers, string $zipFileName, bool $usePathsAsLocalNames = true): Fichier
     {
-        $archiveFilepath = sys_get_temp_dir() . '/' . uniqid('sygal_rapports_') . '.zip';
+        if (empty($fichiers)) {
+            throw new RuntimeException("La liste de fichiers spécifiée est vide.");
+        }
+
+        // insertion dans le nom de l'archive d'un uniqid juste avant l'extension
+        $zipFileNameWithoutExtension = pathinfo($zipFileName, PATHINFO_FILENAME);
+        $zipFileNameExtension = pathinfo($zipFileName, PATHINFO_EXTENSION);
+        $archiveFilePath = sys_get_temp_dir() . '/' . uniqid($zipFileNameWithoutExtension . '_') . '.' . $zipFileNameExtension;
 
         $archive = new ZipArchive();
-        if ($archive->open($archiveFilepath, ZipArchive::CREATE) !== TRUE) {
-            throw new RuntimeException("Impossible de créer l'archive " . $archiveFilepath);
+        if ($archive->open($archiveFilePath, ZipArchive::CREATE) !== TRUE) {
+            throw new RuntimeException("Impossible de créer l'archive " . $archiveFilePath);
         }
         foreach ($fichiers as $fichier) {
             $filePath = $this->computeDestinationFilePathForFichier($fichier);
-            $archive->addFile($filePath, $fichier->getPath());
+            $archive->addFile($filePath, $usePathsAsLocalNames ? $fichier->getPath() : $fichier->getNom());
         }
         $archive->close();
 
-        $fichier = Fichier::fromFilepath($archiveFilepath);
-        $fichier->setNom("sygal_rapports_annuels.zip");
+        $fichier = Fichier::fromFilepath($archiveFilePath);
+        $fichier->setNom($zipFileName);
 
         return $fichier;
     }
