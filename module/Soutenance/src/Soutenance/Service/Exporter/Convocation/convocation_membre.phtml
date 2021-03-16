@@ -19,6 +19,7 @@ use Soutenance\Entity\Proposition;
  * @var DateTime $date
  * @var string $ville
  * @var Acteur $membre
+ * @var string $signature
  * @see
  */
 
@@ -156,15 +157,25 @@ $texte_directeur = implode(" et ", $encadrement);
 <br/>
 <br/>
 
-<table>
+<table style='margin-left:auto;'>
     <tr>
-        <td width="70%"></td>
+        <td></td>
         <td>
             À <?php echo $ville; ?>, le <?php echo $date->format('d/m/Y'); ?>
             <br/>
             <br/>
             Visa de l'établissement d'inscription du doctorant,<br/>
             <?php echo $these->getEtablissement()->getLibelle(); ?>
+        </td>
+    </tr>
+    <tr>
+        <td>
+        </td>
+        <td>
+            <?php if ($these->getEtablissement()->getSignatureConvocation()) : ?>
+                <img id="logo" style="background-color: white;"
+                     src="data:image/png;base64,<?php echo base64_encode($signature); ?>"/>
+            <?php endif; ?>
         </td>
     </tr>
 </table>

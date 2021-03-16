@@ -45,6 +45,8 @@ return [
                     'action'     => [
                         'modifier',
                         'supprimer-logo',
+                        'televerser-signature-convocation',
+                        'supprimer-signature-convocation',
                     ],
                     'privileges' => [
                         StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES,
@@ -121,6 +123,24 @@ return [
                             'route'       => '/supprimer-logo/:structure',
                             'defaults'    => [
                                 'action' => 'supprimer-logo',
+                            ],
+                        ],
+                    ],
+                    'televerser-signature-convocation' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/televerser-signature-convocation/:structure',
+                            'defaults'    => [
+                                'action' => 'televerser-signature-convocation',
+                            ],
+                        ],
+                    ],
+                    'supprimer-signature-convocation' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/supprimer-signature-convocation/:structure',
+                            'defaults'    => [
+                                'action' => 'supprimer-signature-convocation',
                             ],
                         ],
                     ],

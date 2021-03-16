@@ -29,6 +29,7 @@ use Import\Service\Traits\SynchroServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 use Webmozart\Assert\Assert;
+use Zend\Mvc\Controller\AbstractActionController;
 
 /**
  * @author Unicaen
@@ -948,5 +949,17 @@ class StructureService extends BaseService
         }
 
         return $result;
+    }
+
+    /**
+     * @param AbstractActionController $controller
+     * @param string $param
+     * @return Structure
+     */
+    public function getRequestedStructure(AbstractActionController $controller, string $param = 'structure')
+    {
+        $id = $controller->params()->fromRoute($param);
+        $structure = $this->getRepository()->find($id);
+        return $structure;
     }
 }
