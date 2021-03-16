@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svrl:schematron-output title="" schemaVersion="" phase="SERVEUR" xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                        xmlns:iso="http://purl.oclc.org/dsdl/schematron" xmlns:sch="http://www.ascc.net/xml/schematron"
+                        xmlns:mets="http://www.loc.gov/METS/" xmlns:tef="http://www.abes.fr/abes/documents/tef"
+                        xmlns:metsRights="http://cosimo.stanford.edu/sdr/metsrights/"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/"
+                        xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <svrl:ns uri="http://www.loc.gov/METS/" prefix="mets"/>
+    <svrl:ns uri="http://www.abes.fr/abes/documents/tef" prefix="tef"/>
+    <svrl:ns uri="http://cosimo.stanford.edu/sdr/metsrights/" prefix="metsRights"/>
+    <svrl:ns uri="http://www.w3.org/1999/xlink" prefix="xlink"/>
+    <svrl:ns uri="http://purl.org/dc/elements/1.1/" prefix="dc"/>
+    <svrl:ns uri="http://purl.org/dc/terms/" prefix="dcterms"/>
+    <svrl:ns uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi"/>
+    <svrl:active-pattern name="Retour du fichier de bilan du d�p�t ( fichier SVRL )" id="attributs_debat"/>
+    <svrl:fired-rule context="Retour du fichier de bilan du d�p�t ( fichier SVRL )" id="workflow"/>
+    <svrl:failed-assert test="TEF_2_0_Deposit" location="TEF_2_0_Deposit">
+        <svrl:text>.Une erreur s'est produite qui ne permet pas le d�p�t.</svrl:text>
+    </svrl:failed-assert>
+</svrl:schematron-output>
