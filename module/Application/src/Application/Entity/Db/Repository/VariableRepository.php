@@ -68,7 +68,7 @@ class VariableRepository extends DefaultEntityRepository
                 throw new RuntimeException(sprintf(
                     "La valeur de la variable '%s' est manquante pour l'établissement '%s' " .
                     "à la date d'observation %s.",
-                    $code, $etab->getCode(), $dateObservation->format(Constants::DATE_FORMAT)
+                    $code, $etab->getStructure()->getCode(), $dateObservation->format(Constants::DATE_FORMAT)
                 ));
             }
             return $variable;
@@ -83,7 +83,7 @@ class VariableRepository extends DefaultEntityRepository
                 throw new RuntimeException(sprintf(
                     "La valeur de la variable '%s' est manquante pour l'établissement '%s' " .
                     "à la date d'observation %s.",
-                    $c, $etab->getCode(), $dateObservation->format(Constants::DATE_FORMAT)
+                    $c, $etab->getStructure()->getCode(), $dateObservation->format(Constants::DATE_FORMAT)
                 ));
             }
         }

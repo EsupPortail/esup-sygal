@@ -81,7 +81,7 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
                 </td>
                 <td>
                     <span class="structure etablissement"
-                          title="Établissement : <?php echo $proposition->getThese()->getEtablissement()->getLibelle(); ?> (<?php echo $proposition->getThese()->getEtablissement()->getCode(); ?>)"
+                          title="Établissement : <?php echo $proposition->getThese()->getEtablissement()->getLibelle(); ?> (<?php echo $proposition->getThese()->getEtablissement()->getStructure()->getCode(); ?>)"
                     >
                         <?php echo $proposition->getThese()->getEtablissement()->getLibelle(); ?>
                     </span> <br/>

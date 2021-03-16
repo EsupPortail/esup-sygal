@@ -33,7 +33,7 @@ class DbServiceJSONHelper
      */
     public function extractPropertyValue($propertyName, stdClass $jsonObject)
     {
-        $codeEtablissement = $this->etablissement->getCode();
+        $codeEtablissement = $this->etablissement->getStructure()->getCode();
 
         $value = null;
 

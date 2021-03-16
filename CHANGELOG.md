@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+2.2.0
+-----
+- Nouvel attribut disponible dans Etablissement : code (ex : '60931E'). 
+
 2.1.6
 -----
 - Utilisation de l'id permanent CHARTE_DEPOT_DIFFUSION_THESE pour télécharger la charte de dépôt et diffusion de thèse.
