@@ -1,20 +1,25 @@
 <?php
 
 /**
- * @see \Application\Controller\Etablissement::informationAction()
+ * @see \Application\Controller\EtablissementController::informationAction()
  * @var Etablissement $etablissement
  * @var array $roleListing (string => int)
  * @var array $individuListing (string => string[])
  * @var string $logoContent
+ * @var string $signatureFilepath
  */
 
 use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Fichier;
 use Application\Entity\Db\TypeStructure;
+use Application\Provider\Privilege\EtablissementPrivileges;
+use Application\Provider\Privilege\StructurePrivileges;
 
+$content = ($signatureFilepath)?file_get_contents($signatureFilepath):null;
 $this->headTitle('Details de l\'établissement ['.$etablissement->getLibelle().']');
 
-$canEdit = true;
 $canAddRole = true;
+$canModifierEtablissement = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
 
 ?>
 
@@ -44,6 +49,17 @@ $canAddRole = true;
             Rôles et membres
         </a>
     </li>
+    <?php if ($etablissement->estInscription()) : ?>
+    <li role="documents">
+        <a href="#documents"
+           role="tab"
+           aria-controls="documents"
+           data-toggle="tab"
+        >
+            Autres documents
+        </a>
+    </li>
+    <?php endif; ?>
 </ul>
 
 <div class="tab-content">
@@ -100,7 +116,7 @@ $canAddRole = true;
             </div>
         </div>
 
-        <?php if($canEdit): ?>
+        <?php if($canModifierEtablissement): ?>
             <a href="<?php echo $this->url('etablissement/modifier', ['structure'=> $etablissement->getStructure()->getId()], [], true); ?>"
                class="btn btn-primary action"
             >
@@ -146,10 +162,52 @@ $canAddRole = true;
             </a>
         <?php endif; ?>
     </div>
+
+    <div role="tabpanel" class="tab-pane" id="documents">
+
+        <h2> Signature pour convocation à la soutenance </h2>
+
+        <div class="row">
+            <div class="col-md-8">
+            <?php if ($etablissement->getSignatureConvocation()) : ?>
+                <img id="logo" style="max-width: 200px; max-height: 200px; background-color: white;"
+                     src="data:image/png;base64,<?php echo base64_encode($content); ?>"/>
+            <?php else : ?>
+                Aucun signature de disponible pour les convocations
+            <?php endif; ?>
+            </div>
+            <div class="col-md-4">
+                <?php if ($canModifierEtablissement) : ?>
+                    <a      <?php /** @see EtablissementController::televerserSignatureConvocationAction() */?>
+                            href="<?php echo $this->url('etablissement/televerser-signature-convocation', ['structure' => $etablissement->getStructure()->getId()], [], true); ?>"
+                            class="btn btn-primary action ajax-modal" data-event="modification">
+                                <span class="glyphicon glyphicon-upload"></span>Téléverser une signature
+                    </a>
+                    <a
+                            <?php /** @see EtablissementController::supprimerSignatureConvocationAction() */?>
+                            href="<?php echo $this->url('etablissement/supprimer-signature-convocation', ['structure' => $etablissement->getStructure()->getId()], [], true); ?>"
+                            class="btn btn-danger action <?php echo ($etablissement->getSignatureConvocation() === null)?"disabled":""; ?>">
+                                <span class="glyphicon glyphicon-trash"></span> Supprimer la signature
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>
     .action {
         width: 20em;
+        padding: 0.25rem;
+        margin: 0.25rem;
     }
 </style>
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

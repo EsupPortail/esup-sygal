@@ -18,7 +18,7 @@ use Soutenance\Entity\Proposition;
  * @var These $these
  * @var DateTime $date
  * @var string $ville
- * @see
+ * @var string $signature
  */
 
 $date = new DateTime();
@@ -132,15 +132,26 @@ $civilite = ($these->getDoctorant()->getIndividu()->getCivilite() === 'M.')?"Mon
 <br/>
 <br/>
 
-<table>
+
+<table style='margin-left:auto;'>
     <tr>
-        <td width="70%"></td>
+        <td></td>
         <td>
             À <?php echo $ville; ?>, le <?php echo $date->format('d/m/Y'); ?>
             <br/>
             <br/>
             Visa de l'établissement d'inscription du doctorant,<br/>
             <?php echo $these->getEtablissement()->getLibelle(); ?>
+        </td>
+    </tr>
+    <tr>
+        <td>
+        </td>
+        <td>
+            <?php if ($these->getEtablissement()->getSignatureConvocation()) : ?>
+            <img id="logo" style="background-color: white;"
+                 src="data:image/png;base64,<?php echo base64_encode($signature); ?>"/>
+            <?php endif; ?>
         </td>
     </tr>
 </table>

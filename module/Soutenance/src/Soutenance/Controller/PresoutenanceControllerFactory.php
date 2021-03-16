@@ -3,6 +3,7 @@
 namespace Soutenance\Controller;
 
 use Application\Service\Acteur\ActeurService;
+use Application\Service\Fichier\FichierService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
@@ -42,6 +43,7 @@ class PresoutenanceControllerFactory
          * @var UserService $userService
          * @var ParametreService $parametreService
          * @var EngagementImpartialiteService $engagementImpartialiteService
+         * @var FichierService $fichierService
          */
         $propositionService = $container->get(PropositionService::class);
         $membreService = $container->get(MembreService::class);
@@ -56,6 +58,7 @@ class PresoutenanceControllerFactory
         $userService = $container->get('unicaen-auth_user_service');
         $parametreService = $container->get(ParametreService::class);
         $engagementImpartialiteService = $container->get(EngagementImpartialiteService::class);
+        $fichierService = $container->get(FichierService::class);
 
         /**
          * @var DateRenduRapportForm $dateRenduRapportForm
@@ -82,6 +85,7 @@ class PresoutenanceControllerFactory
         $controller->setUserService($userService);
         $controller->setParametreService($parametreService);
         $controller->setEngagementImpartialiteService($engagementImpartialiteService);
+        $controller->setFichierService($fichierService);
 
         $controller->setDateRenduRapportForm($dateRenduRapportForm);
         $controller->setAdresseSoutenanceForm($adresseSoutenanceForm);
