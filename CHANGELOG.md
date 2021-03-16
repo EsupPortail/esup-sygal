@@ -12,6 +12,7 @@ Journal des modifications
 - Modification du document de soutenance pour signature du président pour faire figurer : numero étudiant, nouveau titre et les rôles
 - Possibilité de saisir une intervention permetant au directeur de déclarer le président du jury en distanciel 
 - Masquage possible de certaines origines de financement (ex : handicap).
+- Signature pour convocation : ajout dans établissement d'inscription + usage dans les convocations de soutenance
 - [FIX] Usurpation d'un compte local en BDD
 - [FIX] Plantage de la page Assistance en cas d'authentification locale BDD
 - [FIX] Injection manquante de la source SYGAL dans la création manuelle d'un utilisateur local (identifiant = adresse mail)
