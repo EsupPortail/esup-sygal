@@ -157,7 +157,7 @@ class RapportAnnuel implements ResourceInterface, HistoriqueAwareInterface
     public function generateInternalPathForZipArchive()
     {
         return sprintf('%s/%s/%s/%s',
-            $this->getThese()->getEtablissement()->getCode(),
+            $this->getThese()->getEtablissement()->getStructure()->getCode(),
             ($ed = $this->getThese()->getEcoleDoctorale()) ? $ed->getStructure()->getCode() : "ED_inconnue",
             ($ur = $this->getThese()->getUniteRecherche()) ? $ur->getStructure()->getCode() : "UR_inconnue",
             $this->getFichier()->getNom()
