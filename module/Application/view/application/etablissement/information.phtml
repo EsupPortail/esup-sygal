@@ -6,7 +6,7 @@
  * @var array $roleListing (string => int)
  * @var array $individuListing (string => string[])
  * @var string $logoContent
- * @var string $signatureFilepath
+ * @var string $signatureConvocation
  */
 
 use Application\Entity\Db\Etablissement;
@@ -15,7 +15,7 @@ use Application\Entity\Db\TypeStructure;
 use Application\Provider\Privilege\EtablissementPrivileges;
 use Application\Provider\Privilege\StructurePrivileges;
 
-$content = ($signatureFilepath)?file_get_contents($signatureFilepath):null;
+$content = ($signatureConvocation)?file_get_contents($signatureConvocation):"";
 $this->headTitle('Details de l\'établissement ['.$etablissement->getLibelle().']');
 
 $canAddRole = true;
