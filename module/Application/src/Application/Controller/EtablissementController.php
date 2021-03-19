@@ -110,7 +110,7 @@ class EtablissementController extends StructureConcreteController
             'roleListing'     => $roleListings,
             'individuListing' => $individuListings,
             'logoContent'     => $this->structureService->getLogoStructureContent($etablissement),
-            'signatureConvocation' => $this->etablissementService->getSignatureConvocationContent($etablissement),
+            'signatureConvocation' => ($etablissement->getSignatureConvocation())?($this->fichierService->computeDestinationFilePathForFichier($etablissement->getSignatureConvocation())):null,
         ]);
     }
 
