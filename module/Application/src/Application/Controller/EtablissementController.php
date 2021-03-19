@@ -157,7 +157,7 @@ class EtablissementController extends StructureConcreteController
                 $files = $request->getFiles()->toArray();
                 $fichiers = $this->fichierService->createFichiersFromUpload(['files' => $files], $nature);
                 $this->fichierService->saveFichiers($fichiers);
-                $etablissement->setCheminSignatureConvocation($fichiers[0]);
+                $etablissement->setSignatureConvocation($fichiers[0]);
                 $this->getEtablissementService()->update($etablissement);
         }
 
