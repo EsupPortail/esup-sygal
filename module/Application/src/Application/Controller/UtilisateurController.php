@@ -28,6 +28,7 @@ use Doctrine\ORM\Query\Expr;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use UnicaenAuth\Entity\Db\AbstractUser;
 use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\ShibService;
@@ -231,68 +232,12 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         ]);
     }
 
-//    /**
-//     * Usurpe l'identité d'un autre utilisateur.
-//     *
-//     * @return Response
-//     */
-//    public function usurperIdentiteAction()
-//    {
-//        $request = $this->getRequest();
-//        if (!$request instanceof Request) {
-//            exit(1);
-//        }
-//
-//        $newIdentity = $request->getQuery('identity', $request->getPost('identity'));
-//        if (!$newIdentity) {
-//            return $this->redirect()->toRoute('home');
-//        }
-//
-//        /** @var AuthenticationService $authenticationService */
-//        $authenticationService = $this->authenticationService;
-//
-//        $currentIdentity = $authenticationService->getIdentity();
-//        if (!$currentIdentity || !is_array($currentIdentity)) {
-//            return $this->redirect()->toRoute('home');
-//        }
-//
-//        if (isset($currentIdentity['shib'])) {
-//            /** @var ShibUser $currentIdentity */
-//            $currentIdentity = $currentIdentity['shib'];
-//        } elseif (isset($currentIdentity['ldap'])) {
-//            /** @var People $currentIdentity */
-//            $currentIdentity = $currentIdentity['ldap'];
-//        } else {
-//            return $this->redirect()->toRoute('home');
-//        }
-//
-//        // seuls les logins spécifiés dans la config sont habilités à usurper des identités
-//        /** @var ModuleOptions $options */
-//        $options = $this->authModuleOptions;
-//        if (!in_array($currentIdentity->getUsername(), $options->getUsurpationAllowedUsernames())) {
-//            throw new LogicException("Usurpation non autorisée");
-//        }
-//
-//        // cuisine spéciale pour Shibboleth
-//        if ($currentIdentity instanceof ShibUser) {
-//            $fromShibUser = $currentIdentity;
-//            $toShibUser = $this->createShibUserFromUtilisateurUsername($newIdentity);
-//            /** @var ShibService $shibService */
-//            $shibService = $this->shibService;
-//            $shibService->activateUsurpation($fromShibUser, $toShibUser);
-//        }
-//
-//        $authenticationService->getStorage()->write($newIdentity);
-//
-//        return $this->redirect()->toRoute('home');
-//    }
-
     /**
      * Usurpe l'identité d'un individu.
      *
      * @return Response
      */
-    public function usurperIndividuAction()
+    public function usurperIndividuAction(): Response
     {
         $request = $this->getRequest();
         if (!$request instanceof Request) {
@@ -302,30 +247,6 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $individuId = $request->getPost('individu');
         if (!$individuId) {
             return $this->redirect()->toRoute('home');
-        }
-
-        /** @var AuthenticationService $authenticationService */
-        $authenticationService = $this->authenticationService;
-        $currentIdentity = $authenticationService->getIdentity();
-        if (!$currentIdentity || !is_array($currentIdentity)) {
-            return $this->redirect()->toRoute('home');
-        }
-
-        if (isset($currentIdentity['shib'])) {
-            /** @var ShibUser $currentIdentity */
-            $currentIdentity = $currentIdentity['shib'];
-        } elseif (isset($currentIdentity['ldap'])) {
-            /** @var People $currentIdentity */
-            $currentIdentity = $currentIdentity['ldap'];
-        } else {
-            return $this->redirect()->toRoute('home');
-        }
-
-        // seuls les logins spécifiés dans la config sont habilités à usurper des identités
-        /** @var ModuleOptions $options */
-        $options = $this->authModuleOptions;
-        if (!in_array($currentIdentity->getUsername(), $options->getUsurpationAllowedUsernames())) {
-            throw new LogicException("Usurpation non autorisée");
         }
 
         /** @var Utilisateur $utilisateur */
@@ -340,16 +261,12 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             }
         }
 
-        // cuisine spéciale pour Shibboleth
-        if ($currentIdentity instanceof ShibUser) {
-            $fromShibUser = $currentIdentity;
-            $toShibUser = $this->createShibUserFromUtilisateur($utilisateur);
-            /** @var ShibService $shibService */
-            $shibService = $this->shibService;
-            $shibService->activateUsurpation($fromShibUser, $toShibUser);
+        $usernameUsurpe = $utilisateur->getUsername();
+        $sessionIdentity = $this->serviceUserContext->usurperIdentite($usernameUsurpe);
+        if ($sessionIdentity !== null) {
+            // cuisine spéciale si l'utilisateur courant s'est authentifié via Shibboleth
+            $this->usurperIdentiteShib($usernameUsurpe);
         }
-
-        $authenticationService->getStorage()->write($utilisateur->getId());
 
         return $this->redirect()->toRoute('home');
     }
@@ -378,27 +295,6 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $toShibUser->setPrenom($individu->getPrenom());
 
         return $toShibUser;
-    }
-
-    /**
-     * Recherche l'utilisateur dont le login est spécifié puis instancie un ShibUser à partir
-     * des attibuts de cet utilisateur.
-     *
-     * @param string $username
-     * @return ShibUser
-     */
-    public function createShibUserFromUtilisateurUsername($username)
-    {
-        /** @var UtilisateurService $utilisateurService */
-        $utilisateurService = $this->utilisateurService;
-
-        /** @var Utilisateur $utilisateur */
-        $utilisateur = $utilisateurService->getRepository()->findOneBy(['username' => $username]);
-        if ($utilisateur === null) {
-            throw new RuntimeException("L'utilisateur '$username' introuvable");
-        }
-
-        return $this->createShibUserFromUtilisateur($utilisateur);
     }
 
     public function retirerRoleAction()
