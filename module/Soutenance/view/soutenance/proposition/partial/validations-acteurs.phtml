@@ -82,10 +82,12 @@ $these = $proposition->getThese();
                         </div>
                     <?php endif; ?>
                     <?php if (!$canValiderActeur) : ?>
-                        <div class="alert alert-warning">
-                            <span class="glyphicon glyphicon-warning-sign"></span>
-                           Il est possible de valider une proposition seulement si le délai de deux mois entre la date de validation et la date de soutenance est respecté.
-                        </div>
+                        <?php if (!$proposition->hasSursis()) : ?>
+                            <div class="alert alert-warning">
+                                <span class="glyphicon glyphicon-warning-sign"></span>
+                               Il est possible de valider une proposition seulement si le délai de deux mois entre la date de validation et la date de soutenance est respecté.
+                            </div>
+                        <?php endif; ?>
                     <?php else : ?>
                             <a
                                 <?php /** @see \Soutenance\Controller\PropositionController::validerActeurAction(); */ ?>
