@@ -678,3 +678,25 @@ span.sas-highlight {
   font-size: 90%; }
 
 /*# sourceMappingURL=app.css.map */
+
+span.badge-success {
+  background: darkgreen;
+}
+
+span.badge.VALIDEE {
+  background: darkgreen;
+}
+
+span.badge-danger {
+  background: darkred;
+}
+span.badge.REJETEE {
+  background: darkred;
+}
+
+span.badge-default {
+  background: darkslategray;
+}
+span.badge.EN_COURS {
+  background: darkslategray;
+}

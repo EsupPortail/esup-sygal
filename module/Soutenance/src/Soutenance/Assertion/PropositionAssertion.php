@@ -8,6 +8,9 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
+use DateInterval;
+use DateTime;
+use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Zend\Permissions\Acl\Acl;
 use Zend\Permissions\Acl\Assertion\AssertionInterface;
@@ -37,6 +40,18 @@ class PropositionAssertion implements  AssertionInterface {
     {
         /** @var These $these */
         $these = $resource;
+        $proposition = null;
+        /** @var Proposition $p */
+        foreach ($these->getPropositions() as $p) {
+            if ($p->estNonHistorise()) {
+                $proposition = $p;
+                break;
+            }
+        }
+        $sursis = ($proposition)?$proposition->hasSursis():false;
+        $dateValidationMax = DateTime::createFromFormat('d/m/Y',$proposition->getDate()->format('d/m/Y'))->sub(new DateInterval('P2M'));
+        $dateCurrent = new DateTime();
+
         $role = $this->userContextService->getSelectedIdentityRole()->getCode();
         $structure = $this->userContextService->getSelectedIdentityRole()->getStructure();
         $individu = $this->userContextService->getIdentityDb()->getIndividu();
@@ -98,13 +113,19 @@ class PropositionAssertion implements  AssertionInterface {
                         break;
                 }
             case PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR:
+
                 switch ($role) {
                     case Role::CODE_DOCTORANT :
-                        return $doctorant->getId() === $individu->getId();
+                        $isDoctorant = $doctorant->getId() === $individu->getId();
+                        $dateOk = ($sursis OR ($dateCurrent <= $dateValidationMax));
+                        return ($isDoctorant AND $dateOk);
+
                         break;
                     case Role::CODE_DIRECTEUR_THESE :
                     case Role::CODE_CODIRECTEUR_THESE :
-                        return (array_search($individu, $directeurs) !== false);
+                        $idDirecteur = (array_search($individu, $directeurs) !== false);
+                        $dateOk = ($sursis OR ($dateCurrent <= $dateValidationMax));
+                        return ($idDirecteur AND $dateOk);
                         break;
                     default:
                         return false;

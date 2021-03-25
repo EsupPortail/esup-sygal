@@ -407,7 +407,7 @@ class PropositionService {
      * @param array $indicateurs
      * @return boolean
      */
-    public function isOk($proposition, $indicateurs = [])
+    public function isOk(Proposition $proposition, $indicateurs = []) : bool
     {
         if ($indicateurs === []) $indicateurs = $this->computeIndicateur($proposition);
         if (!$indicateurs["valide"]) return false;
@@ -427,7 +427,7 @@ class PropositionService {
         $doctorants = [ $these->getDoctorant() ];
         $validations[Role::CODE_DOCTORANT] = [];
         foreach ($doctorants as $doctorant) {
-            $validation = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_PROPOSITION_SOUTENANCE, $doctorant->getIndividu());
+            $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these,TypeValidation::CODE_PROPOSITION_SOUTENANCE, $doctorant->getIndividu());
             if ($validation) $validations[Role::CODE_DOCTORANT][] = current($validation);
         }
 
@@ -436,7 +436,7 @@ class PropositionService {
         $directeurs = $these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE);
         $validations[Role::CODE_DIRECTEUR_THESE] = [];
         foreach ($directeurs as $directeur) {
-            $validation = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_PROPOSITION_SOUTENANCE, $directeur->getIndividu());
+            $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these,TypeValidation::CODE_PROPOSITION_SOUTENANCE, $directeur->getIndividu());
             if ($validation) $validations[Role::CODE_DIRECTEUR_THESE][] = current($validation);
         }
 
@@ -444,7 +444,7 @@ class PropositionService {
         $codirecteurs = $these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE);
         $validations[Role::CODE_CODIRECTEUR_THESE] = [];
         foreach ($codirecteurs as $codirecteur) {
-            $validation = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_PROPOSITION_SOUTENANCE, $codirecteur->getIndividu());
+            $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these,TypeValidation::CODE_PROPOSITION_SOUTENANCE, $codirecteur->getIndividu());
             if ($validation) $validations[Role::CODE_CODIRECTEUR_THESE][] = current($validation);
         }
 
