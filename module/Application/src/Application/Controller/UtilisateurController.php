@@ -9,9 +9,7 @@ use Application\Form\CreationUtilisateurForm;
 use Application\Form\InitCompteForm;
 use Application\Form\InitCompteFormAwareTrait;
 use Application\Search\Controller\SearchControllerInterface;
-use Application\Search\Controller\SearchControllerPlugin;
 use Application\Search\Controller\SearchControllerTrait;
-use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -21,19 +19,15 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
-use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\Query\Expr;
-use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use UnicaenAuth\Entity\Db\AbstractUser;
 use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\ShibService;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
-use UnicaenLdap\Entity\People;
 use Zend\Authentication\AuthenticationService;
 use Zend\Http\Request;
 use Zend\Http\Response;
@@ -420,6 +414,28 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             'form' => $form,
             'utilisateur' => $utilisateur,
         ]);
+    }
+
+    public function lierIndividuAction()
+    {
+        $utilisateur = $this->getUtilisateurService()->getRequestedUtilisateur($this);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $individuId = $data['individu']['id'];
+            /** @var Individu $individu */
+            $individu = $this->getIndividuService()->getRepository()->find($individuId);
+            $utilisateur->setIndividu($individu);
+            $this->getUtilisateurService()->getEntityManager()->flush($utilisateur);
+        }
+
+        $vm = new ViewModel([
+            'title' => "Création de lien entre un individu et l'utilisateur ".$utilisateur->getDisplayName() . " [".$utilisateur->getId()."]",
+            'utilisateur' => $utilisateur,
+        ]);
+        return $vm;
+
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace Application;
 
+use Application\Controller\UtilisateurController;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
@@ -133,6 +134,14 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
         <?php else: ?>
 
             <p>Cet utilisateur n'est associé à aucun individu.</p>
+            <a
+                <?php /** @see UtilisateurController::lierIndividuAction() */?>
+                href="<?php echo $this->url('utilisateur/lier-individu', ['utilisateur' => $utilisateur->getId()], [], true); ?>"
+                class="btn btn-primary action ajax-modal" data-event="modification"
+            >
+                <span class="glyphicon glyphicon-link"></span>
+                Associé à un individu SyGAL
+            </a>
 
         <?php endif ?>
 
@@ -387,6 +396,13 @@ function generateRoleUnite($individu, $roles, $rolesAffectes, $unites, $canModif
 ?>
 
 <script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+
     $(document).ready(function () {
         $('.selectpicker').selectpicker();
         $(".remove-role").click(function () {

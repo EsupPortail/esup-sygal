@@ -53,6 +53,7 @@ return [
                         'ajouter-role',
                         'ajouter',
                         'ajouterFromIndividu',
+                        'lier-individu',
                     ],
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_MODIFICATION,
                 ],
@@ -122,6 +123,15 @@ return [
                             'route'       => '/gerer-utilisateur/:individu',
                             'defaults'    => [
                                 'action' => 'gerer-utilisateur',
+                            ],
+                        ],
+                    ],
+                    'lier-individu' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/lier-individu/:utilisateur',
+                            'defaults'    => [
+                                'action' => 'lier-individu',
                             ],
                         ],
                     ],

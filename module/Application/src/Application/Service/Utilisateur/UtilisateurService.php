@@ -17,6 +17,7 @@ use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use UnicaenLdap\Entity\People;
 use Zend\Crypt\Password\Bcrypt;
+use Zend\Mvc\Controller\AbstractActionController;
 
 class UtilisateurService extends BaseService
 {
@@ -253,5 +254,18 @@ class UtilisateurService extends BaseService
         }
 
         return $utilisateur;
+    }
+
+    /**
+     * @param AbstractActionController $controller
+     * @param string $param
+     * @return Utilisateur|null
+     */
+    public function getRequestedUtilisateur(AbstractActionController $controller, string $param = "utilisateur") : ?Utilisateur
+    {
+        $id = $controller->params()->fromRoute($param);
+        /** @var Utilisateur $result */
+        $result = $this->getRepository()->find($id);
+        return $result;
     }
 }
