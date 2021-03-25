@@ -75,28 +75,24 @@ $these = $proposition->getThese();
 
             <div class="col-md-6 pull-right" >
                 <?php if (! $validationActeur) : ?>
-                    <?php if ($canValiderActeur) : ?>
-                        <?php if ($proposition->isDelaiOk() OR $proposition->hasSursis()) : ?>
+                    <?php if (!$isOk): ?>
+                        <div class="alert alert-warning">
+                            <span class="glyphicon glyphicon-warning-sign"></span>
+                            Pour pouvoir être valider la proposition de soutenance doit être recevable : date et lieu, composition du jury, ...
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!$canValiderActeur) : ?>
+                        <div class="alert alert-warning">
+                            <span class="glyphicon glyphicon-warning-sign"></span>
+                           Il est possible de valider une proposition seulement si le délai de deux mois entre la date de validation et la date de soutenance est respecté.
+                        </div>
+                    <?php else : ?>
                             <a
                                 <?php /** @see \Soutenance\Controller\PropositionController::validerActeurAction(); */ ?>
                                 href="<?php echo $this->url('soutenance/proposition/valider', ['these' => $these->getId()], [], true); ?>"
                                 class="btn btn-success action ">
                                 <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance
                             </a>
-                        <?php else : ?>
-                            <div class="alert alert-warning">
-                                <span class="glyphicon glyphicon-warning-sign"></span>
-                                Le délai de deux mois entre la validation de la proposition et la soutenance n'est plus
-                                respecté. Veuillez adpater la date de soutenance.
-                            </div>
-                        <?php endif; ?>
-                    <?php else : ?>
-                        <?php if (!$isOk): ?>
-                            <div class="alert alert-warning">
-                                <span class="glyphicon glyphicon-warning-sign"></span>
-                                Pour pouvoir être valider la proposition de soutenance doit être recevable : date et lieu, composition du jury, ...
-                            </div>
-                        <?php endif; ?>
                     <?php endif; ?>
                 <?php endif; ?>
             </div>

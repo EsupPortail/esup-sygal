@@ -397,25 +397,6 @@ class Proposition {
     }
 
     /**
-     * @return bool
-     */
-    public function isDelaiOk()
-    {
-        $soutenance = $this->getDate();
-        if ($soutenance === null) return false;
-
-        try {
-            $deux = new DateInterval('P2M');
-            $date = new DateTime();
-        } catch(Exception $e) {
-            throw new RuntimeException("Problème de récupération de la date", 0, $e);
-        }
-        $date_ = $date->add($deux);
-
-        return ($date_ < $soutenance);
-    }
-
-    /**
      * @var bool $sursis
      * @return Proposition
      */

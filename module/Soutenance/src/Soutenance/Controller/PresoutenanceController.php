@@ -250,7 +250,7 @@ class PresoutenanceController extends AbstractController
         $this->getRoleService()->removeIndividuRole($acteur->getIndividu(), $acteur->getRole());
 
 
-        $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndIndividu(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $acteur->getIndividu());
+        $validations = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these, TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $acteur->getIndividu());
         if (!empty($validations)) {
             $this->getValidationService()->unsignEngagementImpartialite(current($validations));
         }
