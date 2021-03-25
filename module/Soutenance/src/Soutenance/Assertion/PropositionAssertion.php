@@ -49,7 +49,7 @@ class PropositionAssertion implements  AssertionInterface {
             }
         }
         $sursis = ($proposition)?$proposition->hasSursis():false;
-        $dateValidationMax = DateTime::createFromFormat('d/m/Y',$proposition->getDate()->format('d/m/Y'))->sub(new DateInterval('P2M'));
+        $dateValidationMax = ($proposition->getDate())?DateTime::createFromFormat('d/m/Y',$proposition->getDate()->format('d/m/Y'))->sub(new DateInterval('P2M')):null;
         $dateCurrent = new DateTime();
 
         $role = $this->userContextService->getSelectedIdentityRole()->getCode();
