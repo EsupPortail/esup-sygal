@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+2.1.7
+-----
+- Changement du fonctionnement de sursis pour les soutenances : seul la validation acteur vérifie le délai de deux mois et le sursis annule cette vérification.
+
 2.1.6
 -----
 - Utilisation de l'id permanent CHARTE_DEPOT_DIFFUSION_THESE pour télécharger la charte de dépôt et diffusion de thèse.
