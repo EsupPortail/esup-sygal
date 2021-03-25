@@ -26,10 +26,12 @@ class DateLieuForm extends Form {
                 'label_attributes' => [
                     'class' => 'control-label',
                 ],
+                'format' => 'd/m/Y',
             ],
             'attributes' => [
                 'class' => 'form-control',
-                'min'  => $twomonth->format('Y-m-d'),
+
+                //'min'  => $twomonth->format('Y-m-d'),
             ]
         ]);
 
@@ -93,63 +95,10 @@ class DateLieuForm extends Form {
         ]);
 
         $this->setInputFilter((new Factory())->createInputFilter([
-            'date' => [
-                'name' => 'date',
-                'required' => true,
-                'validators' => [
-                    [
-                        'name' => DateGreaterThan::class,
-                        'options' => [
-                            'min' => (new DateTime("+2 months"))->format('Y-m-d'),
-                            'inclusive' => true,
-                            'messages' => [
-                                DateGreaterThan::NOT_GREATER => "La soutenance doit être déclarée deux mois avant qu'elle est lieu",
-                                DateGreaterThan::NOT_GREATER_INCLUSIVE => "La soutenance doit être déclarée deux mois avant qu'elle est lieu",
-                            ],
-                            //'break_chain_on_failure' => true,
-                        ],
-                    ],
-                ],
-                'heure' => [
-                    'required' => true,
-                ],
-            ],
+            'date' => [ 'required' => true, ],
+            'heure' => [ 'required' => true, ],
+            'lieu' => [ 'required' => true, ],
+            'exterieur' => [ 'required' => true, ],
         ]));
     }
-
-//    public function getInputFilterSpecification()
-//    {
-//        return [
-//            'date' => [
-//                'name' => 'date',
-//                'required' => true,
-//                'validators' => [
-//                    [
-//                        'name' => GreaterThan::class,
-//                        'options' => [
-//                            'min' => new DateTime("+2 months"),
-//                            'inclusive' => true,
-//                            'messages' => [
-//                                GreaterThan::NOT_GREATER => "La soutenance doit être déclarée deux mois avant qu'elle est lieu",
-//                                GreaterThan::NOT_GREATER_INCLUSIVE => "La soutenance doit être déclarée deux mois avant qu'elle est lieu",
-//                            ],
-//                            //'break_chain_on_failure' => true,
-//                        ],
-//                    ],
-//                ],
-//            ],
-//            'heure' => [
-//                'name' => 'heure',
-//                'required' => true,
-//            ],
-//            'lieu' => [
-//                'name' => 'lieu',
-//                'required' => false,
-//            ],
-//            'exterieur' => [
-//                'name' => 'exterieur',
-//                'required' => false,
-//            ],
-//        ];
-//    }
 }
