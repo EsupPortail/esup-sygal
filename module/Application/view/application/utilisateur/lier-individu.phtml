@@ -3,48 +3,163 @@
 /**
  * @see \Application\Controller\UtilisateurController::lierIndividuAction();
  * @var Utilisateur $utilisateur
+ * @var Individu $individu
+ * @var Acteur[] $acteurs
+ * @var Role[] $roles
  */
 
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\Role;
 use UnicaenApp\Util;
 use Application\Entity\Db\Utilisateur;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
 ?>
 
-<div class="box panel panel-info">
-    <div class="panel-heading">
-        <h2 class="first">
-            <?php echo $this->translate("Utilisateur") ?>
-        </h2>
+<?php if ($individu !== null AND $utilisateur !== null AND $utilisateur->getIndividu() === $individu) : ?>
+    <div class="alert alert-success">
+        L'utilisateur <?php echo $utilisateur->getDisplayName(); ?> est lié à l'individu <?php echo $individu->getNomComplet(); ?>
     </div>
-    <div class="panel-body">
-        <dl class="dl-horizontal">
-            <dt>Id</dt>
-            <dd><?php echo $utilisateur->getId() ?></dd>
-            <dt>Username</dt>
-            <dd><code><?php echo $utilisateur->getUsername() ?></code></dd>
-            <dt>Email</dt>
-            <dd><?php echo $utilisateur->getEmail() ?></dd>
-            <dt>Display name</dt>
-            <dd><?php echo $utilisateur->getDisplayName() ?></dd>
-            <dt>Password</dt>
-            <dd><?php echo Util::truncatedString($utilisateur->getPassword(), 10) ?></dd>
-            <?php if ($token = $utilisateur->getPasswordResetToken()): ?>
-                <dt>Password reset token</dt>
-                <dd><?php echo Util::truncatedString($token, 8) ?></dd>
-            <?php endif ?>
-        </dl>
+
+<script>
+
+</script>
+
+<?php else : ?>
+    <div class="box panel panel-info">
+        <div class="panel-heading">
+            <h2 class="first">
+                <?php echo $this->translate("Utilisateur") ?>
+            </h2>
+        </div>
+        <div class="panel-body">
+            <dl class="dl-horizontal">
+                <dt>Id</dt>
+                <dd><?php echo $utilisateur->getId() ?></dd>
+                <dt>Username</dt>
+                <dd><code><?php echo $utilisateur->getUsername() ?></code></dd>
+                <dt>Email</dt>
+                <dd><?php echo $utilisateur->getEmail() ?></dd>
+                <dt>Display name</dt>
+                <dd><?php echo $utilisateur->getDisplayName() ?></dd>
+                <dt>Password</dt>
+                <dd><?php echo Util::truncatedString($utilisateur->getPassword(), 10) ?></dd>
+                <?php if ($token = $utilisateur->getPasswordResetToken()): ?>
+                    <dt>Password reset token</dt>
+                    <dd><?php echo Util::truncatedString($token, 8) ?></dd>
+                <?php endif ?>
+            </dl>
+        </div>
     </div>
-</div>
 
-<form method="post" action="<?php echo $this->url('utilisateur/lier-individu', ['utilisateur' => $utilisateur->getId()], [], true); ?>">
-    <?php
-    $sas = new SearchAndSelect('individu');
-    $sas->setLabel($this->translate("Recherche d'un individu"));
-    $sas->setAttribute('class', 'individu-finder');
-    $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu', [], [], true));
-    echo $this->formControlGroup($sas, 'formSearchAndSelect');
-    ?>
+    <?php if ($individu)  : ?>
+        <div class="box panel panel-info">
+            <div class="panel-heading">
+                <h2 class="first">
+                    <?php echo $this->translate("Utilisateur") ?>
+                </h2>
+            </div>
+            <div class="panel-body">
+                <dl class="dl-horizontal">
+                    <dt>Id</dt>
+                    <dd><?php echo $individu->getId() ?></dd>
+                    <dt>Nom complet</dt>
+                    <dd><?php echo $individu->getNomComplet() ?></dd>
+                    <dt>Email</dt>
+                    <dd><?php echo $individu->getEmail() ?></dd>
+                </dl>
 
-    <input type="submit" class="btn btn-primary action" value="Lier l'individu à l'utilisateur">
-</form>
+                <h2> Rôles statiques associés à l'individu </h2>
+
+                <table class="table table-extra-condensed">
+                    <thead>
+                        <tr>
+                            <th> Role </th>
+                            <th> Structure </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($roles as $role) : ?>
+                        <tr>
+                            <td> <?php echo $role->getLibelle() ;?> </td>
+                            <td>
+                                <?php if ($role->getStructure()) : ?>
+                                    <?php echo $role->getStructure()->getLibelle(); ?>
+                                    (<?php echo $role->getStructure()->getSigle(); ?>)
+                                <?php else : ?>
+                                    Aucune
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+
+                <h2> Acteurs associés à l'individu </h2>
+
+                <table class="table table-extra-condensed">
+                    <thead>
+                        <tr>
+                            <th> These Id </th>
+                            <th> Doctorant </th>
+                            <th> Role </th>
+                            <th> Qualité </th>
+                            <th> Établissement </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($acteurs as $acteur) : ?>
+                        <tr>
+                            <td>
+                                <a href="<?php echo $this->url('these/identite', ['these' => $acteur->getThese()->getId()], [], true); ?>"
+                                   title="<?php echo $acteur->getThese()->getDoctorant()->getIndividu()->getNomComplet(); ?> - <?php echo $acteur->getThese()->getTitre(); ?>"
+                                >
+                                <?php echo $acteur->getThese()->getId(); ?>
+                                </a>
+                            </td>
+                            <td>
+                                <?php echo $acteur->getThese()->getDoctorant()->getIndividu()->getNomComplet(); ?>
+                            </td>
+                            <td>
+                                <?php echo $acteur->getRole()->getLibelle(); ?>
+                            </td>
+                            <td>
+                                <?php echo $acteur->getQualite(); ?>
+                            </td>
+                            <td>
+                                <?php if ($acteur->getEtablissement() !== null) : ?>
+                                    <?php echo $acteur->getEtablissement()->getLibelle(); ?>
+                                <?php else : ?>
+                                    Aucun établissement
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                <?php endforeach; ?>
+                </tbody>
+                </table>
+            </div>
+        </div>
+
+        <a
+                href="<?php echo $this->url('utilisateur/lier-individu', ['utilisateur' => $utilisateur->getId(), 'individu' => $individu->getId()], [], true); ?>"
+                class="btn btn-primary action"
+        >
+            Lier l'individu
+        </a>
+    <?php endif; ?>
+
+    <?php if ($individu === null) : ?>
+    <form method="post" action="<?php echo $this->url('utilisateur/lier-individu', ['utilisateur' => $utilisateur->getId()], [], true); ?>">
+        <?php
+        $sas = new SearchAndSelect('individu');
+        $sas->setLabel($this->translate("Recherche d'un individu"));
+        $sas->setAttribute('class', 'individu-finder');
+        $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu', [], [], true));
+        echo $this->formControlGroup($sas, 'formSearchAndSelect');
+        ?>
+
+        <input type="submit" class="btn btn-primary action" value="Examiner l'individu">
+    </form>
+    <?php endif; ?>
+<?php endif; ?>

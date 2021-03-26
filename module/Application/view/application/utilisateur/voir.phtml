@@ -100,6 +100,8 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
                             //$individuUsurpationHelper->setIndividu($individu);
                             //echo $individuUsurpationHelper();
                             ?>
+                            <br/>
+                            <a href="<?php echo $this->url('utilisateur/delier-individu', ['utilisateur' => $utilisateur->getId()], [], true);?>" class="btn btn-danger">Délier de l'utilisateur</a>
                         </div>
                     </h2>
                 </div>
@@ -137,7 +139,7 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
             <a
                 <?php /** @see UtilisateurController::lierIndividuAction() */?>
                 href="<?php echo $this->url('utilisateur/lier-individu', ['utilisateur' => $utilisateur->getId()], [], true); ?>"
-                class="btn btn-primary action ajax-modal" data-event="modification"
+                class="btn btn-primary action ajax-modal" data-event="zmodification"
             >
                 <span class="glyphicon glyphicon-link"></span>
                 Associé à un individu SyGAL
@@ -401,6 +403,13 @@ function generateRoleUnite($individu, $roles, $rolesAffectes, $unites, $canModif
             event.div.modal('hide');
             window.location.reload();
         });
+    });
+
+    $(function() {
+        $(document).on('hide.bs.modal','.modal', function () {
+            // alert('fermeture modal');
+            window.parent.location.reload();
+            });
     });
 
     $(document).ready(function () {

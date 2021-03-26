@@ -54,6 +54,7 @@ return [
                         'ajouter',
                         'ajouterFromIndividu',
                         'lier-individu',
+                        'delier-individu',
                     ],
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_MODIFICATION,
                 ],
@@ -129,9 +130,18 @@ return [
                     'lier-individu' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/lier-individu/:utilisateur',
+                            'route'       => '/lier-individu/:utilisateur[/:individu]',
                             'defaults'    => [
                                 'action' => 'lier-individu',
+                            ],
+                        ],
+                    ],
+                    'delier-individu' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/delier-individu/:utilisateur',
+                            'defaults'    => [
+                                'action' => 'delier-individu',
                             ],
                         ],
                     ],

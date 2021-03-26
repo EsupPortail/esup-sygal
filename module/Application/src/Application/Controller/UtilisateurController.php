@@ -21,6 +21,7 @@ use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -420,14 +421,48 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     {
         $utilisateur = $this->getUtilisateurService()->getRequestedUtilisateur($this);
 
+        /**
+         * Si on a un utilisateur et un individu alors on doit réaliser le lien
+         */
+        $individu = $this->getIndividuService()->getRequestedIndividu($this);
+        if ($individu !== null) {
+            $utilisateur->setIndividu($individu);
+            try {
+                $this->getUtilisateurService()->getEntityManager()->flush($utilisateur);
+            } catch(ORMException $e) {
+                throw new RuntimeException("Un problème est survenu lors de l'enregistrement en base de donnée", 0, $e);
+            }
+            $vm = new ViewModel([
+                'title' => "Création de lien entre un individu et l'utilisateur ".$utilisateur->getDisplayName() . " [".$utilisateur->getId()."]",
+                'utilisateur' => $utilisateur,
+                'individu' => $individu,
+            ]);
+            return $vm;
+        }
+
         $request = $this->getRequest();
         if ($request->isPost()) {
+
+            /**
+             * Si on revient du post un individu à été selectionné et on examine pour validation
+             */
             $data = $request->getPost();
             $individuId = $data['individu']['id'];
             /** @var Individu $individu */
             $individu = $this->getIndividuService()->getRepository()->find($individuId);
-            $utilisateur->setIndividu($individu);
-            $this->getUtilisateurService()->getEntityManager()->flush($utilisateur);
+            if ($individu !== null) {
+                $acteurs = $this->getActeurService()->getRepository()->findActeursByIndividu($individu);
+                $roles = $individu->getRoles();
+
+                $vm = new ViewModel([
+                    "title" => "Création de lien entre un individu et l'utilisateur " . $utilisateur->getDisplayName() . " [" . $utilisateur->getId() . "]",
+                    "utilisateur" => $utilisateur,
+                    "individu" => $individu,
+                    "acteurs" => $acteurs,
+                    "roles" => $roles,
+                ]);
+                return $vm;
+            }
         }
 
         $vm = new ViewModel([
@@ -435,7 +470,18 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             'utilisateur' => $utilisateur,
         ]);
         return $vm;
+    }
 
+    public function delierIndividuAction()
+    {
+        $utilisateur = $this->getUtilisateurService()->getRequestedUtilisateur($this);
+        $utilisateur->setIndividu(null);
+        try {
+            $this->getUtilisateurService()->getEntityManager()->flush($utilisateur);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenu lors de l'enregistrement en base de donnée", 0, $e);
+        }
+        return $this->redirect()->toRoute('utilisateur/voir', ['utilisateur' => $utilisateur->getId()], [], true);
     }
 
 }
