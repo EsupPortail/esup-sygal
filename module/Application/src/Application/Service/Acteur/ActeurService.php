@@ -80,6 +80,18 @@ class ActeurService extends BaseService
     }
 
     /**
+     * @param Acteur[] $acteurs
+     * @return Acteur[]
+     */
+    public function filterActeursCoDirecteurThese(array $acteurs): array
+    {
+        return array_filter($acteurs, function(Acteur $a) {
+            return $a->getRole()->getCode() === Role::CODE_CODIRECTEUR_THESE;
+        });
+    }
+
+
+    /**
      * @param Individu $individu
      * @return Acteur[]
      */
