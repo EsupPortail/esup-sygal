@@ -53,6 +53,8 @@ return [
                         'ajouter-role',
                         'ajouter',
                         'ajouterFromIndividu',
+                        'lier-individu',
+                        'delier-individu',
                     ],
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_MODIFICATION,
                 ],
@@ -122,6 +124,24 @@ return [
                             'route'       => '/gerer-utilisateur/:individu',
                             'defaults'    => [
                                 'action' => 'gerer-utilisateur',
+                            ],
+                        ],
+                    ],
+                    'lier-individu' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/lier-individu/:utilisateur[/:individu]',
+                            'defaults'    => [
+                                'action' => 'lier-individu',
+                            ],
+                        ],
+                    ],
+                    'delier-individu' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/delier-individu/:utilisateur',
+                            'defaults'    => [
+                                'action' => 'delier-individu',
                             ],
                         ],
                     ],
