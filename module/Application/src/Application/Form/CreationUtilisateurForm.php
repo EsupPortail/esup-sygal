@@ -5,6 +5,7 @@ namespace Application\Form;
 use Application\Entity\Db\Individu;
 use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\PasswordValidator;
+use Zend\Form\Element\Checkbox;
 use Zend\Form\Element\Hidden;
 use Zend\Form\Element\Password;
 use Zend\Form\Element\Radio;
@@ -47,15 +48,9 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
                 ->setLabel("Adresse électronique (identifiant de connexion) :")
         );
         $this->add(
-            (new Password('password'))
-                ->setLabel("Mot de passe :")
+            (new Checkbox('individu'))
+                ->setLabel("Création d'individu pour cet utilisateur <br/> <span class='text-danger'><span class='glyphicon glyphicon-warning-sign'></span> Ne pas cocher si pour lier à un individu existant</span>")
         );
-
-        $this->add(
-            (new Password('passwordbis'))
-                ->setLabel("Confirmation du mot de passe :")
-        );
-
         $this->add((new Submit('submit'))
             ->setValue("Enregistrer")
             ->setAttribute('class', 'btn btn-primary')
@@ -63,9 +58,6 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
     }
 
     /**
-     * Should return an array specification compatible with
-     * {@link Zend\InputFilter\Factory::createInputFilter()}.
-     *
      * @return array
      */
     public function getInputFilterSpecification()
@@ -96,21 +88,9 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
                     ],
                 ],
             ],
-            'password' => [
-                'name' =>'password',
-                'required' => true,
-                'validators' => [
-                    [
-                        'name' => PasswordValidator::class,
-                    ],
-                ],
-            ],
-            'passwordbis' => [
-                'name' =>'passwordbis',
-                'required' => true,
-                'validators' => [
-                    new Identical('password'),
-                ],
+            'individu' => [
+                'name' => 'individu',
+                'required' => false,
             ],
         ];
     }
