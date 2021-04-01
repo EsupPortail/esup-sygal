@@ -202,10 +202,8 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
      */
     public function ajouterAction()
     {
-        /** @var CreationUtilisateurForm $form */
         $form = $this->creationUtilisateurForm;
-//        $infos = new CreationUtilisateurInfos();
-//        $form->bind($infos);
+        $form->setData(['individu' => 1]);
 
         /** @var Request $request */
         $request = $this->getRequest();
@@ -216,7 +214,15 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
                 if (!trim($data['nomPatronymique'])) {
                     $data['nomPatronymique'] = $data['nomUsuel'];
                 }
-                $utilisateur = $this->utilisateurService->createFromFormData($data->toArray());
+                if ($data['individu'] == '1') {
+                    $individu = $this->utilisateurService->createIndividuFromFormData($data->toArray());
+                    $utilisateur = $this->utilisateurService->createFromIndividuAndFormData($individu, $data->toArray());
+
+                } else {
+                    $utilisateur = $this->utilisateurService->createFromFormData($data->toArray());
+                }
+                $this->userService->updateUserPasswordResetToken($utilisateur);
+                $this->notifierService->triggerInitialisationCompte($utilisateur, $utilisateur->getPasswordResetToken());
                 $this->flashMessenger()->addSuccessMessage("Utilisateur <strong>{$utilisateur->getUsername()}</strong> créé avec succès.");
                 $this->redirect()->toRoute('utilisateur');
             }
