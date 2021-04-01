@@ -9,9 +9,7 @@ use Application\Form\CreationUtilisateurForm;
 use Application\Form\InitCompteForm;
 use Application\Form\InitCompteFormAwareTrait;
 use Application\Search\Controller\SearchControllerInterface;
-use Application\Search\Controller\SearchControllerPlugin;
 use Application\Search\Controller\SearchControllerTrait;
-use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -21,19 +19,16 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
-use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr;
-use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use UnicaenAuth\Entity\Db\AbstractUser;
 use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\ShibService;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
-use UnicaenLdap\Entity\People;
 use Zend\Authentication\AuthenticationService;
 use Zend\Http\Request;
 use Zend\Http\Response;
@@ -420,6 +415,73 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             'form' => $form,
             'utilisateur' => $utilisateur,
         ]);
+    }
+
+    public function lierIndividuAction()
+    {
+        $utilisateur = $this->getUtilisateurService()->getRequestedUtilisateur($this);
+
+        /**
+         * Si on a un utilisateur et un individu alors on doit réaliser le lien
+         */
+        $individu = $this->getIndividuService()->getRequestedIndividu($this);
+        if ($individu !== null) {
+            $utilisateur->setIndividu($individu);
+            try {
+                $this->getUtilisateurService()->getEntityManager()->flush($utilisateur);
+            } catch(ORMException $e) {
+                throw new RuntimeException("Un problème est survenu lors de l'enregistrement en base de donnée", 0, $e);
+            }
+            $vm = new ViewModel([
+                'title' => "Création de lien entre un individu et l'utilisateur ".$utilisateur->getDisplayName() . " [".$utilisateur->getId()."]",
+                'utilisateur' => $utilisateur,
+                'individu' => $individu,
+            ]);
+            return $vm;
+        }
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+
+            /**
+             * Si on revient du post un individu à été selectionné et on examine pour validation
+             */
+            $data = $request->getPost();
+            $individuId = $data['individu']['id'];
+            /** @var Individu $individu */
+            $individu = $this->getIndividuService()->getRepository()->find($individuId);
+            if ($individu !== null) {
+                $acteurs = $this->getActeurService()->getRepository()->findActeursByIndividu($individu);
+                $roles = $individu->getRoles();
+
+                $vm = new ViewModel([
+                    "title" => "Création de lien entre un individu et l'utilisateur " . $utilisateur->getDisplayName() . " [" . $utilisateur->getId() . "]",
+                    "utilisateur" => $utilisateur,
+                    "individu" => $individu,
+                    "acteurs" => $acteurs,
+                    "roles" => $roles,
+                ]);
+                return $vm;
+            }
+        }
+
+        $vm = new ViewModel([
+            'title' => "Création de lien entre un individu et l'utilisateur ".$utilisateur->getDisplayName() . " [".$utilisateur->getId()."]",
+            'utilisateur' => $utilisateur,
+        ]);
+        return $vm;
+    }
+
+    public function delierIndividuAction()
+    {
+        $utilisateur = $this->getUtilisateurService()->getRequestedUtilisateur($this);
+        $utilisateur->setIndividu(null);
+        try {
+            $this->getUtilisateurService()->getEntityManager()->flush($utilisateur);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenu lors de l'enregistrement en base de donnée", 0, $e);
+        }
+        return $this->redirect()->toRoute('utilisateur/voir', ['utilisateur' => $utilisateur->getId()], [], true);
     }
 
 }

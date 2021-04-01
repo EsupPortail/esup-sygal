@@ -174,10 +174,10 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                     } else {
                         $ligne[] = sprintf('<span class="glyphicon glyphicon-info-sign text-warning" title="Compte local"></span>');
                     }
-                    if ($canCreate) {
-                        $ligne[] = sprintf('<a href="%s" class="btn btn-sm btn-warning">Gérer l\'utilisateur</a>',
-                            $this->url('utilisateur/gerer-utilisateur', ['individu' => $acteur->getIndividu()->getId()], [], true));
-                    }
+//                    if ($canCreate) {
+//                        $ligne[] = sprintf('<a href="%s" class="btn btn-sm btn-warning">Gérer l\'utilisateur</a>',
+//                            $this->url('utilisateur/gerer-utilisateur', ['individu' => $acteur->getIndividu()->getId()], [], true));
+//                    }
                 }
 
 

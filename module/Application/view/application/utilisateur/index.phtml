@@ -61,7 +61,15 @@ use Zend\Paginator\Paginator;
                 <td><?php echo Util::truncatedString($utilisateur->getPassword(), 10); ?></td>
                 <td>
                     <?php if ($individu = $utilisateur->getIndividu()): ?>
-
+                        <?php if ($individu->estHistorise()) : ?>
+                            <span class="historise">
+                            <?php echo $individu->getNomComplet(); ?>
+                            (<?php echo $individu->getId(); ?>)
+                            </span>
+                        <?php else: ?>
+                            <?php echo $individu->getNomComplet(); ?>
+                            (<?php echo $individu->getId(); ?>)
+                        <?php endif ?>
                     <?php endif ?>
                 </td>
             </tr>
