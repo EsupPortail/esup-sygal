@@ -15,7 +15,7 @@ use Zend\Feed\Reader\Reader;
             $channel = Reader::import($url);
             $items = array_reverse(iterator_to_array($channel));
             $error = null;
-        } catch (\Zend\Feed\Reader\Exception\RuntimeException $e) {
+        } catch (Exception $e) {
             $items = [];
             $error = "Erreur lors de l'interrogation du fil d'actualités : " . $e->getMessage();
             error_log($error);
