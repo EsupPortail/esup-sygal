@@ -27,15 +27,21 @@ ora2pg-image \
 ./export_schema.sh -c ./config/ora2pg.conf
 ```
 
-Remarque : il est possible de restriendre la liste des "objets" à prendre en compte en modifiant les variables 
+Les scripts sont générés dans `${PWD}/migration/ora2pg/schema/`.
+
+Remarques : 
+- il est possible de restriendre la liste des "objets" à prendre en compte en modifiant les variables 
 `EXPORT_TYPE` et `SOURCE_TYPE` dans le script `${PWD}/migration/ora2pg/export_schema.sh`.
 Exemple pour ne générer que les tables, indexes, constraints et foreign keys : 
 ```
 EXPORT_TYPE="TABLE"
 SOURCE_TYPE="TABLE"
 ```
-
-Les scripts sont générés dans `${PWD}/migration/ora2pg/schema/`.
+- il est aussi possible d'exclure certains objets selon leur nom en modifiant le variable `EXCLUDE` dans le fichier
+de config `${PWD}/migration/ora2pg/config/ora2pg.conf`. Exemple :
+```
+EXCLUDE	V_IMPORT_TAB_COLS STR_REDUCE MV_INDICATEUR_.*
+```
 
 
 2) Correction nécessaire des scripts SQL générés
@@ -67,6 +73,33 @@ ora2pg -t COPY -o data.sql -b ./data -c ./config/ora2pg.conf
 Les scripts sont générés dans `${PWD}/migration/ora2pg/data/`.
 
 
+Pour ne prendre en compte QUE les tables contenant les données obligatoires de fonctionnement de l'appli :
+```bash
+docker run \
+--rm \
+-v ${PWD}/migration:/migration \
+-w /migration/ora2pg \
+ora2pg-image \
+ora2pg -t COPY -o data.sql -b ./data -c ./config/ora2pg.conf --allow \
+CATEGORIE_PRIVILEGE,\
+DOMAINE_SCIENTIFIQUE,\
+IMPORT_OBSERV,\
+INFORMATION_LANGUE,\
+NATURE_FICHIER,\
+PRIVILEGE,\
+PROFIL,\
+PROFIL_PRIVILEGE,\
+SOUTENANCE_CONFIGURATION,\
+SOUTENANCE_ETAT,\
+SOUTENANCE_QUALITE,\
+TYPE_STRUCTURE,\
+TYPE_VALIDATION,\
+VERSION_FICHIER,\
+WF_ETAPE
+```
+
+
+
 Vidage éventuel de la base PostgreSQL
 -------------------------------------
 
@@ -79,11 +112,12 @@ Import dans la base PostgreSQL
 1) Exporter les variables d'environnement requises pour se connecter à la base de données PostgreSQL
 
 ```bash
-export PGDATABASE=xxxxxx ; \
-export PGUSER=xxxxxx ; \
-export PGHOST=host.unicaen.fr ; \
-export PGPORT=5432 ; \
-export PGPASSWORD=xxxxxx
+export \
+PGDATABASE=xxxxxx \
+PGUSER=xxxxxx \
+PGHOST=host.unicaen.fr \
+PGPORT=5432 \
+PGPASSWORD=xxxxxx
 ```
 
 2) Lancer l'import
@@ -120,6 +154,23 @@ docker run --rm \
 ora2pg-image \
 psql -d ${PGDATABASE} -h ${PGHOST} -U ${PGUSER} -f /tmp/pg_after_import.sql
 ```
+
+
+Collecte des scripts d'install
+------------------------------
+
+Lancer le script suivant :
+```
+bash ${PWD}/migration/bin/prepare_distrib_scripts.sh 
+```
+
+Les scripts sont générés dans `${PWD}/migration/distrib/`.
+
+Ils complètent les scripts situés dans `${PWD}/doc/database/`.
+```
+cp -rv ${PWD}/migration/distrib/* ${PWD}/doc/database/
+```
+
 
 The end
 -------

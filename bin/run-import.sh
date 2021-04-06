@@ -44,4 +44,4 @@ else
 fi
 
 # Refresh de la vue matérialisée utilisée pour la recherche des thèses
-/usr/bin/php ${APP_DIR}/public/index.php run-sql-query --sql="begin DBMS_MVIEW.REFRESH('MV_RECHERCHE_THESE'); end;"
+/usr/bin/php ${APP_DIR}/public/index.php run-sql-query --sql="refresh materialized view MV_RECHERCHE_THESE;"

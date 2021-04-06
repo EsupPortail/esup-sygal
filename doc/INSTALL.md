@@ -16,7 +16,7 @@ proposer votre contribution pour améliorer cette doc d'install !
 
 ### Première obtention des sources de l'application
 
-*NB: la procédure proposée ici part d'un serveur *Debian Stretch* tout nu et couvre l'installation de tous les packages 
+*NB : la procédure proposée ici part d'un serveur *Debian Stretch* tout nu et couvre l'installation de tous les packages 
 requis.* Si ce n'était pas le cas, merci de contribuer en le signalant.
 
 En `root` sur votre serveur, pour obtenir les sources de SyGAL, lancez l'une des commandes suivantes en fonction 
@@ -29,7 +29,7 @@ git clone https://git.unicaen.fr/open-source/sygal.git /app
 git clone https://github.com/EsupPortail/sygal.git /app
 ```
 
-*NB: merci de respecter dans un premier temps le choix de `/app` comme répertoire d'installation. 
+*NB : merci de respecter dans un premier temps le choix de `/app` comme répertoire d'installation. 
 Libre à vous une fois que tout fonctionne de changer d'emplacement et de modifier en conséquence les configs
 nécessaires.*
 
@@ -61,7 +61,7 @@ créés ou modifiés par le script `Dockerfile.sh` :
 - ${PHP_CONF_DIR}/fpm/conf.d/99-app.ini
 - ${PHP_CONF_DIR}/cli/conf.d/99-app.ini
 
-NB: Vérifiez dans le script `Dockerfile.sh` que vous venez de lancer mais normalement 
+NB : Vérifiez dans le script `Dockerfile.sh` que vous venez de lancer mais normalement 
 `APACHE_CONF_DIR=/etc/apache2` et `PHP_CONF_DIR=/etc/php/7.3`.
 
 ### Installation d'une version précise de l'application
@@ -132,10 +132,10 @@ Dans la suite, vous adapterez le contenu de ces fichiers à votre situation.
                         'title' => _("Page d'accueil du site de Normandie Université"),
                         'uri'   => 'http://www.normandie-univ.fr',
                         'class' => 'logo-etablissement',
-                        // NB: Spécifier la classe 'logo-etablissement' sur une page de navigation provoque le "remplacement"
+                        // NB : Spécifier la classe 'logo-etablissement' sur une page de navigation provoque le "remplacement"
                         //     du label du lien par l'image 'public/logo-etablissement.png' (à créer le cas échéant).
 ```
-*NB: ensuite créez le fichier `public/logo-etablissement.png` correspondant au logo de votre établissement.*
+*NB : ensuite créez le fichier `public/logo-etablissement.png` correspondant au logo de votre établissement.*
 
 - Adaptez le chemin du répertoire où seront stockés les fichiers uploadés par les utilisateurs de l'application :
 
@@ -144,12 +144,12 @@ Dans la suite, vous adapterez le contenu de ces fichiers à votre situation.
         'root_dir_path' => '/app/upload',
     ],
 ```
-*NB: ce répertoire doit être autorisé en écriture à l'utilisateur `www-data` (ou équivalent).*
+*NB : ce répertoire doit être autorisé en écriture à l'utilisateur `www-data` (ou équivalent).*
 
 #### `${APPLICATION_ENV}.secret.local.php`
 
 - Dans la config de connexion au WS suivante, `UCN` doit être remplacé par le code établissement choisi lors
-de la création de votre établissement dans la base de données (dans le script `05-init.sql`) :
+de la création de votre établissement dans la base de données (dans le script [`init.sql`](database/07-init/init.sql)) :
 
 ```php
     'import-api' => [
@@ -179,7 +179,7 @@ de la création de votre établissement dans la base de données (dans le script
 ```
 
 - La config fournie permet de simuler l'authentification Shibboleth de l'utilisateur 'premierf@univ.fr' 
-créé en base de données (dans le script `06-test.sql`) avec le rôle "Administrateur technique".
+créé en base de données (dans le script [`user.sql`](database/08-fixture/user.sql)) avec le rôle "Administrateur technique".
 Cela permet d'accéder aux pages de gestion des droits d'accès.
 
 ```php
@@ -202,7 +202,7 @@ Cela permet d'accéder aux pages de gestion des droits d'accès.
 
 Si vous n'avez rien changé à la config de l'application concernant Shibboleth et si vous cliquez en haut à droite de
 la page d'accueil de SyGAL sur "Connexion" puis sur "Fédération d'identité", vous devriez être dans la peau de 
-François Premier, administrateur technique de test créé en base de données (dans le script `05-init.sql`).
+François Premier, administrateur technique de test créé en base de données (dans le script [`init.sql`](database/07-init/init.sql)).
 
 ### Droits d'accès
 
@@ -221,8 +221,8 @@ Par exemple, pour appliquer le profil `ADMIN_TECH` au rôle *Administrateur tech
 - dans la page qui s'ouvre, sélectionner "Administrateur technique" dans la liste déroulante de droite ;
 - appuyer sur le bouton "Ajouter un rôle".
 
-NB: "UCN" n'est qu'un exemple et pour vous ce sera le code établissement choisi lors
-de la création de votre établissement dans la base de données (dans le script `05-init.sql`) 
+NB : "UCN" n'est qu'un exemple et pour vous ce sera le code établissement choisi lors
+de la création de votre établissement dans la base de données (dans le script [`init.sql`](database/07-init/init.sql)) 
 
 
 ## Import de données
@@ -240,8 +240,7 @@ Il s'agit de l'interrogation du web service pour remplir les tables temporaires 
 
     php public/index.php import-all --etablissement=UCN --synchronize=0 --breakOnServiceNotFound=0
 
-*NB: `UCN` doit être remplacé par le code établissement choisi lors
-de la création de votre établissement dans la base de données (dans le script `05-init.sql`).*
+*NB : `UCN` doit être remplacé par le code établissement choisi lors de la création de votre établissement.*
 
 #### Lancement de la synchro seule
 
@@ -261,8 +260,7 @@ Pour lancer l'interrogation du web service *puis* la synchronisation des tables 
 
     ETAB=UCN bin/run-import.sh
     
-*NB: `UCN` doit être remplacé par le code établissement choisi lors
-de la création de votre établissement dans la base de données (dans le script `05-init.sql`).*
+*NB : `UCN` doit être remplacé par le code établissement choisi lors de la création de votre établissement.*
 
 ### Programmation des tâches périodiques
 
@@ -286,5 +284,4 @@ APP_DIR=/app
 0 4 * * * root bash $APP_DIR/bin/purge_temp_files.sh 1> /tmp/sygal_purge_temp_files.sh.log 2>&1
 ```
 
-*NB: `UCN` doit être remplacé par le code établissement choisi lors
-de la création de votre établissement dans la base de données (dans le script `05-init.sql`).*
+*NB : `UCN` doit être remplacé par le code établissement choisi lors de la création de votre établissement.*

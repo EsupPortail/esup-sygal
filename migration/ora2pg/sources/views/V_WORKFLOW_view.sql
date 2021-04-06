@@ -6,8 +6,7 @@ SET client_encoding TO 'UTF8';
 
 \set ON_ERROR_STOP ON
 
-CREATE OR REPLACE VIEW v_workflow (id, these_id, etape_id, code, ordre, franchie, resultat, objectif, dense_rank, atteignable, courante) AS SELECT 
-    ROWNUM as id,
+CREATE OR REPLACE VIEW v_workflow (these_id, etape_id, code, ordre, franchie, resultat, objectif, dense_rank, atteignable, courante, id) AS SELECT 
     t.THESE_ID,
     t.ETAPE_ID,
     t.CODE,
@@ -18,7 +17,8 @@ CREATE OR REPLACE VIEW v_workflow (id, these_id, etape_id, code, ordre, franchie
     -- NB: dans les 3 lignes suivantes, c'est la même expression 'dense_rank() over(...)' qui est répétée :
     (dense_rank() over(partition by t.THESE_ID, t.FRANCHIE order by t.ORDRE)) dense_rank,
     case when t.FRANCHIE = 1 or (dense_rank() over(partition by t.THESE_ID, t.FRANCHIE order by t.ORDRE)) = 1 then 1 else 0 end atteignable,
-    case when (dense_rank() over(partition by t.THESE_ID, t.FRANCHIE order by t.ORDRE)) = 1 and t.FRANCHIE = 0 then 1 else 0 end courante
+    case when (dense_rank() over(partition by t.THESE_ID, t.FRANCHIE order by t.ORDRE)) = 1 and t.FRANCHIE = 0 then 1 else 0 end courante,
+    row_number() over (order by 1,2) as id
  FROM (
 
          --

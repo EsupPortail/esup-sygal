@@ -33,7 +33,7 @@ CREATE OR REPLACE VIEW v_diff_doctorant (source_code, source_id, operation, u_in
         JOIN source src ON src.id = d.source_id AND src.importable = 1
         FULL OUTER JOIN SRC_DOCTORANT s ON s.source_id = d.source_id AND s.SOURCE_CODE = d.SOURCE_CODE
     )
-    select SOURCE_CODE,SOURCE_ID,OPERATION,U_INE,U_INDIVIDU_ID,U_ETABLISSEMENT_ID,S_INE,S_INDIVIDU_ID,S_ETABLISSEMENT_ID,D_INE,D_INDIVIDU_ID,D_ETABLISSEMENT_ID from diff
+    select "SOURCE_CODE","SOURCE_ID","OPERATION","U_INE","U_INDIVIDU_ID","U_ETABLISSEMENT_ID","S_INE","S_INDIVIDU_ID","S_ETABLISSEMENT_ID","D_INE","D_INDIVIDU_ID","D_ETABLISSEMENT_ID" from diff
     where operation is not null
     and (operation = 'undelete' or 0 < U_INE+U_INDIVIDU_ID+U_ETABLISSEMENT_ID);
 

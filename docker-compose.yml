@@ -20,6 +20,22 @@ services:
     working_dir: /app
     networks:
       - sygalnet
+    depends_on:
+      - sygal-db
+
+  sygal-db:
+    image: sygal-db
+    container_name: sygal-db-container
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: admin
+    ports:
+      - 5432:5432
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+      - ./docker/db/sql/:/sql
+    networks:
+      - sygalnet
 
   sygal-import-ws:
     image: sygal-import-ws-image-php7.0

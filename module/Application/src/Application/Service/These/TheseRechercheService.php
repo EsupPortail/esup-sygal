@@ -479,18 +479,20 @@ class TheseRechercheService
      *
      * Lorsque le texte recherché est "hochon" par exemple, la requête SQL générée est la suivante :
      * <pre>
-     *      SELECT * FROM MV_RECHERCHE_THESE MV WHERE rownum <= 100 AND (
-     *          REGEXP_LIKE(haystack, q'[(doctorant-nom|directeur-nom)\{[^{]*hochon[^}]*\}]', 'i')
+     *      SELECT * FROM MV_RECHERCHE_THESE MV WHERE (
+     *          haystack ~ $$(doctorant-nom|directeur-nom)\{[^{]*hochon[^}]*\}$$
      *      )
+     *      LIMIT 100
      * </pre>
      *
      * Lorsque le texte recherché contient plusieurs mots séparés par des espaces, "hochon bivalve" par exemple,
      * la requête SQL générée est la suivante :
      * <pre>
-     *      SELECT * FROM MV_RECHERCHE_THESE MV WHERE rownum <= 100 AND (
-     *          REGEXP_LIKE(haystack, q'[(doctorant-nom|directeur-nom)\{[^{]*hochon[^}]*\}]', 'i') OR
-     *          REGEXP_LIKE(haystack, q'[(doctorant-nom|directeur-nom)\{[^{]*bivalve[^}]*\}]', 'i')
+     *      SELECT * FROM MV_RECHERCHE_THESE MV WHERE (
+     *          haystack ~ $$(doctorant-nom|directeur-nom)\{[^{]*hochon[^}]*\}$$ OR
+     *          haystack ~ $$(doctorant-nom|directeur-nom)\{[^{]*bivalve[^}]*\}$$
      *      )
+     *      LIMIT 100
      * </pre>
      *
      * @param string  $text Texte recherché. Ex: "hochon", "hochon bivalve"
@@ -527,16 +529,18 @@ class TheseRechercheService
                 // regexp : (<critere>|<critere>)\{[^}]*<terme>.*\}
                 $regexp = '(' . implode('|', $criteria) . ')' . "\{[^}]*" . $word . ".*\}";
             }
-            $orc[] = "    REGEXP_LIKE(haystack, q'[" . $regexp . "]', 'i')"; // la syntaxe q'[]' dispense de doubler les '
+            //$orc[] = "    REGEXP_LIKE(haystack, q'[" . $regexp . "]', 'i')"; // la syntaxe q'[]' dispense de doubler les '
+            $orc[] = "    haystack ~ $$" . $regexp . "$$"; // la syntaxe $$...$$ dispense de doubler les '
         }
         $orc = implode(' OR ' . PHP_EOL, $orc);
 
         $sql = <<<EOS
-SELECT distinct CODE_THESE, CODE_DOCTORANT, CODE_ECOLE_DOCT, to_char(HAYSTACK) HAYSTACK 
+SELECT distinct CODE_THESE, CODE_DOCTORANT, CODE_ECOLE_DOCT, HAYSTACK::varchar HAYSTACK
 FROM MV_RECHERCHE_THESE MV 
-WHERE rownum <= $limit AND (
+WHERE (
 $orc
 )
+LIMIT $limit
 EOS;
 
         try {
@@ -547,9 +551,9 @@ EOS;
 
         $theses = [];
         while ($r = $stmt->fetch()) {
-            $theses[$r['CODE_THESE']] = [
-                'code'           => $r['CODE_THESE'],
-                'code-doctorant' => $r['CODE_DOCTORANT'],
+            $theses[$r['code_these']] = [
+                'code'           => $r['code_these'],
+                'code-doctorant' => $r['code_doctorant'],
             ];
         }
 

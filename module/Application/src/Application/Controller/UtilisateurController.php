@@ -183,12 +183,12 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $rows = $this->individuService->getRepository()->findByText($term, $type);
             $result = [];
             foreach ($rows as $row) {
-                $prenoms = implode(' ', array_filter([$row['PRENOM1'], $row['PRENOM2'], $row['PRENOM3']]));
+                $prenoms = implode(' ', array_filter([$row['prenom1'], $row['prenom2'], $row['prenom3']]));
                 // mise en forme attendue par l'aide de vue FormSearchAndSelect
-                $label = $row['NOM_USUEL'] . ' ' . $prenoms;
-                $extra = $row['EMAIL'] ?: $row['SOURCE_CODE'];
+                $label = $row['nom_usuel'] . ' ' . $prenoms;
+                $extra = $row['email'] ?: $row['source_code'];
                 $result[] = array(
-                    'id' => $row['ID'], // identifiant unique de l'item
+                    'id' => $row['id'], // identifiant unique de l'item
                     'label' => $label,     // libellé de l'item
                     'extra' => $extra,     // infos complémentaires (facultatives) sur l'item
                 );

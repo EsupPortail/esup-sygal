@@ -27,7 +27,7 @@ CREATE OR REPLACE VIEW v_diff_ecole_doct (source_code, source_id, operation, u_s
         JOIN source src ON src.id = d.source_id AND src.importable = 1
         FULL OUTER JOIN SRC_ECOLE_DOCT s ON s.source_id = d.source_id AND s.SOURCE_CODE = d.SOURCE_CODE
     )
-    select SOURCE_CODE,SOURCE_ID,OPERATION,U_STRUCTURE_ID,S_STRUCTURE_ID,D_STRUCTURE_ID from diff
+    select "SOURCE_CODE","SOURCE_ID","OPERATION","U_STRUCTURE_ID","S_STRUCTURE_ID","D_STRUCTURE_ID" from diff
     where operation is not null
     and (operation = 'undelete' or 0 < U_STRUCTURE_ID);
 

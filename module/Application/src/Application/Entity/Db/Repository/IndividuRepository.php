@@ -66,21 +66,20 @@ class IndividuRepository extends DefaultEntityRepository
         $text = Util::reduce($text);
         $criteres = explode(' ', $text);
 
-        $sqlTemplate =
+        $sql =
             "SELECT * FROM INDIVIDU i " .
             "JOIN INDIVIDU_RECH ir on ir.id = i.id " .
-            "WHERE i.HISTO_DESTRUCTION IS NULL AND rownum <= %d";
+            "WHERE i.HISTO_DESTRUCTION IS NULL";
         if ($type !== null) {
-            $sqlTemplate .= " AND i.type = '%s'";
-            $sql = sprintf($sqlTemplate, (int)$limit, $type);
+            $sql .= sprintf(" AND i.type = '%s'", $type);
             $tmp = null;
-        } else {
-            $sql = sprintf($sqlTemplate, (int)$limit);
         }
+        $sql .= sprintf(" LIMIT %d", (int)$limit);
 
         $sqlCri = [];
         foreach ($criteres as $c) {
-            $sqlCri[] = "ir.haystack LIKE LOWER(q'[%" . $c . "%]')"; // q'[] : double les quotes
+            //$sqlCri[] = "ir.haystack LIKE LOWER(q'[%" . $c . "%]')"; // q'[] : double les quotes
+            $sqlCri[] = "ir.haystack LIKE str_reduce($$%" . $c . "%$$)";
         }
         $sqlCri = implode(' AND ', $sqlCri);
 

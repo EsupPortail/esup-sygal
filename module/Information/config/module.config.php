@@ -23,7 +23,6 @@ use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
 use Zend\Navigation\Service\NavigationAbstractServiceFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
-use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 
 return [
@@ -55,11 +54,6 @@ return [
                 'subscribers' => [
                     'UnicaenApp\HistoriqueListener',
                 ],
-            ],
-        ],
-        'connection'    => [
-            'orm_default' => [
-                'driver_class' => OCI8::class,
             ],
         ],
         'configuration' => [

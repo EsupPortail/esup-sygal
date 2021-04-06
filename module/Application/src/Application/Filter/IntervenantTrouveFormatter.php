@@ -62,17 +62,17 @@ class IntervenantTrouveFormatter extends AbstractFilter
             $affectat  = $value->affectation;
         }
         else if (is_array($value)) {
-            foreach (['CIVILITE', 'SOURCE_CODE', 'DATE_NAISSANCE', 'EST_UNE_FEMME', 'AFFECTATION'] as $prop) {
+            foreach (['civilite', 'source_code', 'date_naissance', 'est_une_femme', 'affectation'] as $prop) {
                 if (!array_key_exists($prop, $value)) {
                     throw new \LogicException("Le tableau à formatter doit posséder la clé '$prop'.");
                 }
             }
-            $id        = $value['SOURCE_CODE'];
+            $id        = $value['source_code'];
             $label     = $this->nomCompletFormatter->filter($value);
-            $civilite  = $value['CIVILITE'];
-            $dateNaiss = $value['DATE_NAISSANCE'];
-            $feminin   = $value['EST_UNE_FEMME'];
-            $affectat  = $value['AFFECTATION'];
+            $civilite  = $value['civilite'];
+            $dateNaiss = $value['date_naissance'];
+            $feminin   = $value['est_une_femme'];
+            $affectat  = $value['affectation'];
         }
         else {
             throw new \LogicException("L'objet à formatter n'est pas d'un type supporté.");

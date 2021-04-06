@@ -30,7 +30,7 @@ CREATE OR REPLACE VIEW v_diff_these_annee_univ (source_code, source_id, operatio
         JOIN source src ON src.id = d.source_id AND src.importable = 1
         FULL OUTER JOIN SRC_THESE_ANNEE_UNIV s ON s.source_id = d.source_id AND s.SOURCE_CODE = d.SOURCE_CODE
     )
-    select SOURCE_CODE,SOURCE_ID,OPERATION,U_THESE_ID,U_ANNEE_UNIV,S_THESE_ID,S_ANNEE_UNIV,D_THESE_ID,D_ANNEE_UNIV from diff
+    select "SOURCE_CODE","SOURCE_ID","OPERATION","U_THESE_ID","U_ANNEE_UNIV","S_THESE_ID","S_ANNEE_UNIV","D_THESE_ID","D_ANNEE_UNIV" from diff
     where operation is not null
     and (operation = 'undelete' or 0 < U_THESE_ID+U_ANNEE_UNIV);
 

@@ -12,16 +12,28 @@ CREATE OR REPLACE VIEW v_situ_depot_vc_valid_pres (id, these_id, individu_id, va
              JOIN ROLE r on a.ROLE_ID = r.ID and r.CODE = 'P' -- Président du jury
              JOIN TYPE_VALIDATION tv on tv.code = 'CORRECTION_THESE'
     where a.HISTO_DESTRUCTION is null
-)
-SELECT
-    ROWNUM as id,
-    va.these_id,
-    va.INDIVIDU_ID,
-    CASE WHEN v.id is not null THEN 1 ELSE 0 END valide
+),
+     validations_dt_existantes as (
+         -- À une époque, c'était le DT de thèse qui devait valider. Donc il ne faut pas
+         -- requérir une validation du PJ en plus de celle déjà effectuée par le DT.
+         select distinct v.THESE_ID, tv.ID as TYPE_VALIDATION_ID
+         from VALIDATION v
+                  join TYPE_VALIDATION tv on v.TYPE_VALIDATION_ID = tv.ID and tv.CODE = 'CORRECTION_THESE'
+                  join acteur a on v.THESE_ID = a.THESE_ID and v.INDIVIDU_ID = a.INDIVIDU_ID and a.HISTO_DESTRUCTEUR_ID is null
+                  JOIN ROLE r on a.ROLE_ID = r.ID and r.CODE = 'D' -- Directeur de thèse
+         where v.HISTO_DESTRUCTEUR_ID is null
+     )
+SELECT va.these_id || '_' || va.INDIVIDU_ID as id,
+       va.these_id,
+       va.INDIVIDU_ID,
+       CASE WHEN v.id is not null or vdte.THESE_ID is not null THEN 1 ELSE 0 END as valide
 FROM validations_attendues va
          LEFT JOIN VALIDATION v ON
             v.THESE_ID = va.THESE_ID and
             v.INDIVIDU_ID = va.INDIVIDU_ID and -- suppose que l'INDIVIDU_ID soit enregistré lors de la validation
             v.HISTO_DESTRUCTEUR_ID is null and
-            v.TYPE_VALIDATION_ID = va.TYPE_VALIDATION_ID;
+            v.TYPE_VALIDATION_ID = va.TYPE_VALIDATION_ID
+         left join validations_dt_existantes vdte on
+            vdte.THESE_ID = va.THESE_ID and
+            vdte.TYPE_VALIDATION_ID = va.TYPE_VALIDATION_ID;
 

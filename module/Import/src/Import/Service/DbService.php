@@ -256,10 +256,10 @@ class DbService
 
         $sql = "INSERT INTO API_LOG ";
         $sql .= "(ID, REQ_URI, REQ_START_DATE, REQ_END_DATE, REQ_STATUS, REQ_RESPONSE, REQ_ETABLISSEMENT, REQ_TABLE) values (";
-        $sql .= "API_LOG_ID_SEQ.nextval,";
+        $sql .= "nextval('API_LOG_ID_SEQ'),";
         $sql .= ":route, ";
-        $sql .= "to_date('" . $startDate->format('y-m-d H:i:s') . "','YY-MM-DD HH24:MI:SS'), ";
-        $sql .= "to_date('" . $end_date->format('y-m-d H:i:s') . "','YY-MM-DD HH24:MI:SS'), ";
+        $sql .= "to_timestamp('" . $startDate->format('y-m-d H:i:s') . "','YY-MM-DD HH24:MI:SS'), ";
+        $sql .= "to_timestamp('" . $end_date->format('y-m-d H:i:s') . "','YY-MM-DD HH24:MI:SS'), ";
         $sql .= ":status, ";
         $sql .= ":message, ";
         $sql .= ":etab,";

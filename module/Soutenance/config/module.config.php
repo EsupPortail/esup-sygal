@@ -4,7 +4,6 @@ namespace Soutenance;
 
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
-use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Soutenance\Controller\AvisController;
 use Soutenance\Controller\EngagementImpartialiteController;
@@ -49,11 +48,6 @@ return array(
                 'paths' => [
                     __DIR__ . '/../src/Soutenance/Entity/Mapping',
                 ],
-            ],
-        ],
-        'connection' => [
-            'orm_default' => [
-                'driver_class' => OCI8::class,
             ],
         ],
     ],

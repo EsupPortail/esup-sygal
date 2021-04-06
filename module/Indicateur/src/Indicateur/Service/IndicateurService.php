@@ -110,9 +110,11 @@ class IndicateurService {
         $requete = str_replace('/',' ', $requete);
 
         $SQL  = 'CREATE MATERIALIZED VIEW MV_INDICATEUR_'.$indicateur->getId(). ' ';
-        $SQL .= 'REFRESH ON DEMAND ';
-        $SQL .= 'START WITH SYSDATE NEXT SYSDATE + 1 as ';
+//        $SQL .= 'REFRESH ON DEMAND ';
+//        $SQL .= 'START WITH SYSDATE NEXT SYSDATE + 1 as ';
+        // NB: avec PostgreSQL, refresh auto impossible.
         $SQL .= $requete;
+        $SQL .= ' WITH DATA';
 
         try {
             $stmt = $this->entityManager->getConnection()->prepare($SQL);

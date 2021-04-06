@@ -73,7 +73,7 @@ class DbServiceSQLGenerator
 
         $sql = $indent . implode(';' . PHP_EOL . $indent, $queries) . ';';
 
-        return implode(PHP_EOL, ['BEGIN', $sql, 'END;']);
+        return implode(PHP_EOL, ['DO $$ BEGIN', $sql, 'END $$;']);
     }
 
     /**
@@ -117,7 +117,7 @@ class DbServiceSQLGenerator
 
         $yyymmdd = explode(' ', $value->date)[0];
 
-        return "TO_DATE('$yyymmdd', 'YYYY-MM-DD')";
+        return "to_date('$yyymmdd', 'YYYY-MM-DD')";
     }
 
     private function prepareDatetime($value)
@@ -128,6 +128,6 @@ class DbServiceSQLGenerator
 
         $yyymmddhhmiss = explode('.', $value->date)[0];
 
-        return "TO_DATE('$yyymmddhhmiss', 'YYYY-MM-DD HH24:MI:SS')";
+        return "to_timestamp('$yyymmddhhmiss', 'YYYY-MM-DD HH24:MI:SS')";
     }
 }

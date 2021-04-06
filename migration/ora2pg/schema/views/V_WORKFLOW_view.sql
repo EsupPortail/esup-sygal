@@ -444,7 +444,7 @@ UNION ALL
                                    these_id,
                                    sum(valide)   AS resultat,
                                    count(valide) AS objectif
-                               FROM V_SITU_DEPOT_VC_VALID_PRES
+                               FROM V_SITU_DEPOT_VC_VALID_DIR
                                GROUP BY these_id
                            )
                            SELECT
@@ -458,7 +458,7 @@ UNION ALL
                            FROM these t
                                     JOIN WF_ETAPE e ON e.code = 'DEPOT_VERSION_CORRIGEE_VALIDATION_DIRECTEUR'
                                     LEFT JOIN tmp v ON v.these_id = t.id
-                       ) alias20
+                       ) alias22
 
          
 UNION ALL
@@ -486,7 +486,7 @@ UNION ALL
                            FROM these t
                                     JOIN WF_ETAPE e ON e.code = 'REMISE_EXEMPLAIRE_PAPIER_THESE_CORRIGEE'
                                     LEFT JOIN tmp_last tl ON tl.these_id = t.id
-                       ) alias24
+                       ) alias26
 
      ) t
          JOIN V_WF_ETAPE_PERTIN v ON t.these_id = v.these_id AND t.etape_id = v.etape_id;

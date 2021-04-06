@@ -81,11 +81,11 @@ CREATE TABLE diffusion (
 	version_corrigee smallint NOT NULL DEFAULT 0,
 	creation_auto smallint NOT NULL DEFAULT 0
 ) ;
-COMMENT ON COLUMN diffusion.autoris_embargo_duree IS E'Durée de l''embargo éventuel';
-COMMENT ON COLUMN diffusion.droit_auteur_ok IS E'Je garantis que tous les documents de la version mise en ligne sont libres de droits ou que j''ai acquis les droits afférents pour la reproduction et la représentation sur tous supports';
-COMMENT ON COLUMN diffusion.autoris_mel IS E'J''autorise la mise en ligne de la version de diffusion de la thèse sur Internet';
 COMMENT ON COLUMN diffusion.certif_charte_diff IS E'En cochant cette case, je certifie avoir pris connaissance de la charte de diffusion des thèses en vigueur à la date de signature de la convention de mise en ligne';
 COMMENT ON COLUMN diffusion.confident IS E'La thèse est-elle confidentielle ?';
+COMMENT ON COLUMN diffusion.autoris_embargo_duree IS E'Durée de l''embargo éventuel';
+COMMENT ON COLUMN diffusion.autoris_mel IS E'J''autorise la mise en ligne de la version de diffusion de la thèse sur Internet';
+COMMENT ON COLUMN diffusion.droit_auteur_ok IS E'Je garantis que tous les documents de la version mise en ligne sont libres de droits ou que j''ai acquis les droits afférents pour la reproduction et la représentation sur tous supports';
 
 CREATE TABLE doctorant (
 	id bigint NOT NULL,
@@ -151,7 +151,9 @@ CREATE TABLE etablissement (
 	est_membre smallint NOT NULL DEFAULT 0,
 	est_associe smallint NOT NULL DEFAULT 0,
 	est_comue smallint NOT NULL DEFAULT 0,
-	est_etab_inscription bigint NOT NULL DEFAULT 0
+	est_etab_inscription bigint NOT NULL DEFAULT 0,
+	code varchar(64),
+	signature_convocation_id bigint
 ) ;
 COMMENT ON COLUMN etablissement.domaine IS E'Domaine DNS de l''établissement tel que présent dans l''EPPN Shibboleth, ex: unicaen.fr.';
 
@@ -414,10 +416,11 @@ CREATE TABLE origine_financement (
 	source_code varchar(64) NOT NULL,
 	histo_creation timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
 	histo_createur_id bigint NOT NULL,
-	histo_modification timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
-	histo_modificateur_id bigint NOT NULL,
+	histo_modification timestamp DEFAULT LOCALTIMESTAMP,
+	histo_modificateur_id bigint,
 	histo_destruction timestamp,
-	histo_destructeur_id bigint
+	histo_destructeur_id bigint,
+	visible bigint NOT NULL DEFAULT 1
 ) ;
 
 CREATE TABLE parametre (
@@ -556,6 +559,18 @@ CREATE TABLE soutenance_etat (
 	histo_createur_id bigint NOT NULL,
 	histo_modification timestamp NOT NULL,
 	histo_modificateur_id bigint NOT NULL,
+	histo_destruction timestamp,
+	histo_destructeur_id bigint
+) ;
+
+CREATE TABLE soutenance_intervention (
+	id bigint NOT NULL,
+	these_id bigint NOT NULL,
+	type_intervention bigint NOT NULL,
+	histo_creation timestamp NOT NULL,
+	histo_createur_id bigint NOT NULL,
+	histo_modification timestamp,
+	histo_modificateur_id bigint,
 	histo_destruction timestamp,
 	histo_destructeur_id bigint
 ) ;

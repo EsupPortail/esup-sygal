@@ -2,7 +2,6 @@
 
 use Indicateur\Provider\Privilege\IndicateurPrivileges;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
-use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Indicateur\Controller\Factory\IndicateurControllerFactory;
 use Indicateur\Controller\IndicateurController;
@@ -66,11 +65,6 @@ return array(
                 'paths' => [
                     __DIR__ . '/../src/Indicateur/Model/Mapping',
                 ],
-            ],
-        ],
-        'connection'    => [
-            'orm_default' => [
-                'driver_class' => OCI8::class,
             ],
         ],
     ],
