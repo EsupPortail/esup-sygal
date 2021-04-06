@@ -20,7 +20,7 @@ class DateLieuForm extends Form {
 
         $this->add([
             'name' => 'date',
-            'type' => Date::class,
+            'type' => DateTime::class,
             'options' => [
                 'label' => 'Date de la soutenance : ',
                 'label_attributes' => [
