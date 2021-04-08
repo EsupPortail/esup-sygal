@@ -149,7 +149,7 @@ Dans la suite, vous adapterez le contenu de ces fichiers à votre situation.
 #### `${APPLICATION_ENV}.secret.local.php`
 
 - Dans la config de connexion au WS suivante, `UCN` doit être remplacé par le code établissement choisi lors
-de la création de votre établissement dans la base de données (dans le script [`init.sql`](database/07-init/init.sql)) :
+de la création de votre établissement dans la base de données (dans le script [`07_init.sql`](database/sql/07_init.sql)) :
 
 ```php
     'import-api' => [
@@ -179,7 +179,7 @@ de la création de votre établissement dans la base de données (dans le script
 ```
 
 - La config fournie permet de simuler l'authentification Shibboleth de l'utilisateur 'premierf@univ.fr' 
-créé en base de données (dans le script [`user.sql`](database/08-fixture/user.sql)) avec le rôle "Administrateur technique".
+créé en base de données (dans le script [`08_create_fixture.sql`](database/sql/08_create_fixture.sql)) avec le rôle "Administrateur technique".
 Cela permet d'accéder aux pages de gestion des droits d'accès.
 
 ```php
@@ -202,7 +202,7 @@ Cela permet d'accéder aux pages de gestion des droits d'accès.
 
 Si vous n'avez rien changé à la config de l'application concernant Shibboleth et si vous cliquez en haut à droite de
 la page d'accueil de SyGAL sur "Connexion" puis sur "Fédération d'identité", vous devriez être dans la peau de 
-François Premier, administrateur technique de test créé en base de données (dans le script [`init.sql`](database/07-init/init.sql)).
+François Premier, administrateur technique de test créé en base de données (dans le script [`07_init.sql`](database/sql/07_init.sql)).
 
 ### Droits d'accès
 
@@ -222,14 +222,14 @@ Par exemple, pour appliquer le profil `ADMIN_TECH` au rôle *Administrateur tech
 - appuyer sur le bouton "Ajouter un rôle".
 
 NB : "UCN" n'est qu'un exemple et pour vous ce sera le code établissement choisi lors
-de la création de votre établissement dans la base de données (dans le script [`init.sql`](database/07-init/init.sql)) 
+de la création de votre établissement dans la base de données (dans le script [`07_init.sql`](database/sql/07_init.sql)) 
 
 
 ## Import de données
 
 ### Installation du web service
 
-Vous devez à présent installer le web service d'import de données est, 
+Vous devez à présent installer le web service d'import de données, 
 reportez-vous au projet `sygal-import-ws`sur 
 [sur github.com/EsupPortail](https://github.com/EsupPortail/sygal-import-ws) ou sur 
 [sur git.unicaen.fr](https://git.unicaen.fr/open-source/sygal-import-ws).
