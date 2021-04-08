@@ -1,5 +1,6 @@
 <?php
 
+use Application\Entity\Db\Source;
 use Import\Model\ImportObserv;
 use Import\Model\ImportObservResult;
 
@@ -12,6 +13,16 @@ return [
         'connections' => [
             // Cf. config locale
         ],
+
+        //
+        // Classe de l'entité Doctrine représentant une "Source".
+        //
+        'source_entity_class' => Source::class,
+
+        //
+        // Code de la Source par défaut (injectée dans les entités implémentant SoucreAwareInterface).
+        //
+        'default_source_code' => 'SYGAL::sygal',
 
         //
         // Alias éventuels des noms de colonnes d'historique.
