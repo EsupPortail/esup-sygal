@@ -61,7 +61,8 @@
             "vendor/bin/doctrine-module orm:clear-cache:query &",
             "vendor/bin/doctrine-module orm:clear-cache:metadata &",
             "vendor/bin/doctrine-module orm:clear-cache:result &",
-            "vendor/bin/doctrine-module orm:generate-proxies &"
+            "vendor/bin/doctrine-module orm:generate-proxies &",
+            "vendor/bin/zf-development-mode disable &"
         ]
     }
 }
