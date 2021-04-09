@@ -3,8 +3,6 @@
 use Application\Navigation\NavigationFactoryFactory;
 use Retraitement\Filter\Command\MinesCommand;
 
-$env = getenv('APPLICATION_ENV') ?: 'production';
-
 return [
     'translator' => [
         'locale' => 'fr_FR',
@@ -54,21 +52,18 @@ return [
         //'bcc' => [],
     ],
     'module_listener_options' => [
-        'config_cache_enabled'     => ($env === 'production'),
         'config_cache_key'         => 'app_config',
-        'module_map_cache_enabled' => ($env === 'production'),
         'module_map_cache_key'     => 'module_map',
         'cache_dir'                => 'data/config/',
-        'check_dependencies'       => ($env !== 'production'),
     ],
     'doctrine' => [
         'configuration' => [
             'orm_default' => [
-                'metadata_cache'   => ($env === 'production' ? 'memcached' : 'array'),
-                'query_cache'      => ($env === 'production' ? 'memcached' : 'array'),
-                'result_cache'     => ($env === 'production' ? 'memcached' : 'array'),
-                'hydration_cache'  => ($env === 'production' ? 'memcached' : 'array'),
-                'generate_proxies' => ($env !== 'production'),
+                'metadata_cache'   => 'memcached',
+                'query_cache'      => 'memcached',
+                'result_cache'     => 'memcached',
+                'hydration_cache'  => 'memcached',
+                'generate_proxies' => false,
             ],
         ],
     ],
@@ -81,7 +76,7 @@ return [
         ],
     ],
     'view_manager' => [
-        'display_not_found_reason' => ($env !== 'production'),
-        'display_exceptions'       => ($env !== 'production'),
+        'display_not_found_reason' => false,
+        'display_exceptions'       => false,
     ],
 ];

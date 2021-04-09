@@ -40,16 +40,6 @@ $modules = ['Zend\Cache',
     'Application',
 ];
 
-$devModules =  [
-    'ZendDeveloperTools',
-    'UnicaenCode',
-    'UnicaenTest',
-];
-
-if ('development' === $env) {
-    $modules = array_merge($modules, $devModules);
-}
-
 $moduleListenerOptions = [
     'config_glob_paths'    => [
         'config/autoload/{,*.}{global,local}.php',

@@ -1,0 +1,21 @@
+<?php
+
+return [
+    // Development time modules
+    'modules' => [
+        'ZendDeveloperTools',
+        'UnicaenCode',
+        'UnicaenTest',
+    ],
+
+    'module_listener_options' => [
+        'config_cache_enabled'     => false,
+        'module_map_cache_enabled' => false,
+        'check_dependencies'       => true,
+    ],
+
+    'view_manager' => [
+        'display_not_found_reason' => true,
+        'display_exceptions'       => true,
+    ],
+];
