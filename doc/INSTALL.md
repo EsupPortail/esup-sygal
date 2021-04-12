@@ -170,12 +170,11 @@ de la création de votre établissement dans la base de données (dans le script
             'orm_default' => [
                 'params' => [
                     'host'     => 'host.domain.fr',
-                    'dbname'   => 'DBNAME',
-                    'port'     => '1523',
-                    'user'     => $user = 'sygal',
+                    'dbname'   => 'sygal',
+                    'port'     => '5432',
+                    'user'     => $user = 'ad_sygal',
                     'password' => 'xxxxxxxxxxx',
-                    'charset'  => 'AL32UTF8',
-                    'CURRENT_SCHEMA' => $user,
+                ],
 ```
 
 - La config fournie permet de simuler l'authentification Shibboleth de l'utilisateur 'premierf@univ.fr' 
