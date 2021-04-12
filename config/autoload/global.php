@@ -1,6 +1,7 @@
 <?php
 
 use Application\Navigation\NavigationFactoryFactory;
+use Doctrine\Common\Cache\PhpFileCache;
 use Retraitement\Filter\Command\MinesCommand;
 
 return [
@@ -59,10 +60,10 @@ return [
     'doctrine' => [
         'configuration' => [
             'orm_default' => [
-                'metadata_cache'   => 'memcached',
-                'query_cache'      => 'memcached',
-                'result_cache'     => 'memcached',
-                'hydration_cache'  => 'memcached',
+                'metadata_cache'   => 'filesystem',
+                'query_cache'      => 'filesystem',
+                'result_cache'     => 'filesystem',
+                'hydration_cache'  => 'filesystem',
                 'generate_proxies' => false,
             ],
         ],
