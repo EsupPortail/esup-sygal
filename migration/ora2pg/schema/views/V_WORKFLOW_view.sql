@@ -444,7 +444,7 @@ UNION ALL
                                    these_id,
                                    sum(valide)   AS resultat,
                                    count(valide) AS objectif
-                               FROM V_SITU_DEPOT_VC_VALID_DIR
+                               FROM V_SITU_DEPOT_VC_VALID_PRES
                                GROUP BY these_id
                            )
                            SELECT

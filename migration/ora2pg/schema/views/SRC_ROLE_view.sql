@@ -15,7 +15,7 @@ CREATE OR REPLACE VIEW src_role (id, source_code, source_id, libelle, code, role
     tmp.LIB_ROJ||' '||s.CODE   AS role_id,
     1                          AS these_dep,
     s.ID                       AS STRUCTURE_ID,
-    NULL                       AS TYPE_STRUCTURE_DEPENDANT_ID
+    NULL::bigint AS TYPE_STRUCTURE_DEPENDANT_ID
  FROM TMP_ROLE tmp
          JOIN STRUCTURE s ON s.SOURCE_CODE = tmp.ETABLISSEMENT_ID
          JOIN ETABLISSEMENT e ON e.STRUCTURE_ID = s.ID

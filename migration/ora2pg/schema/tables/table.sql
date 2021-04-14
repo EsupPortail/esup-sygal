@@ -81,11 +81,11 @@ CREATE TABLE diffusion (
 	version_corrigee smallint NOT NULL DEFAULT 0,
 	creation_auto smallint NOT NULL DEFAULT 0
 ) ;
-COMMENT ON COLUMN diffusion.certif_charte_diff IS E'En cochant cette case, je certifie avoir pris connaissance de la charte de diffusion des thèses en vigueur à la date de signature de la convention de mise en ligne';
-COMMENT ON COLUMN diffusion.confident IS E'La thèse est-elle confidentielle ?';
+COMMENT ON COLUMN diffusion.droit_auteur_ok IS E'Je garantis que tous les documents de la version mise en ligne sont libres de droits ou que j''ai acquis les droits afférents pour la reproduction et la représentation sur tous supports';
 COMMENT ON COLUMN diffusion.autoris_embargo_duree IS E'Durée de l''embargo éventuel';
 COMMENT ON COLUMN diffusion.autoris_mel IS E'J''autorise la mise en ligne de la version de diffusion de la thèse sur Internet';
-COMMENT ON COLUMN diffusion.droit_auteur_ok IS E'Je garantis que tous les documents de la version mise en ligne sont libres de droits ou que j''ai acquis les droits afférents pour la reproduction et la représentation sur tous supports';
+COMMENT ON COLUMN diffusion.confident IS E'La thèse est-elle confidentielle ?';
+COMMENT ON COLUMN diffusion.certif_charte_diff IS E'En cochant cette case, je certifie avoir pris connaissance de la charte de diffusion des thèses en vigueur à la date de signature de la convention de mise en ligne';
 
 CREATE TABLE doctorant (
 	id bigint NOT NULL,
@@ -487,8 +487,8 @@ CREATE TABLE rdv_bu (
 	histo_destruction timestamp,
 	histo_destructeur_id bigint
 ) ;
-COMMENT ON COLUMN rdv_bu.exempl_papier_fourni IS E'Exemplaire papier remis ?';
 COMMENT ON COLUMN rdv_bu.version_archivable_fournie IS E'Témoin indiquant si une version archivable de la thèse existe';
+COMMENT ON COLUMN rdv_bu.exempl_papier_fourni IS E'Exemplaire papier remis ?';
 COMMENT ON COLUMN rdv_bu.convention_mel_signee IS E'Convention de mise en ligne signée ?';
 
 CREATE TABLE role (

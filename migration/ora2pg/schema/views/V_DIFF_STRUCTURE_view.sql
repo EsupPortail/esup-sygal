@@ -36,7 +36,7 @@ CREATE OR REPLACE VIEW v_diff_structure (source_code, source_id, operation, u_co
         JOIN source src ON src.id = d.source_id AND src.importable = 1
         FULL OUTER JOIN SRC_STRUCTURE s ON s.source_id = d.source_id AND s.SOURCE_CODE = d.SOURCE_CODE
     )
-    select "SOURCE_CODE","SOURCE_ID","OPERATION","U_CODE","U_TYPE_STRUCTURE_ID","U_SIGLE","U_LIBELLE","S_CODE","S_TYPE_STRUCTURE_ID","S_SIGLE","S_LIBELLE","D_CODE","D_TYPE_STRUCTURE_ID","D_SIGLE","D_LIBELLE" from diff
+    select SOURCE_CODE,SOURCE_ID,OPERATION,U_CODE,U_TYPE_STRUCTURE_ID,U_SIGLE,U_LIBELLE,S_CODE,S_TYPE_STRUCTURE_ID,S_SIGLE,S_LIBELLE,D_CODE,D_TYPE_STRUCTURE_ID,D_SIGLE,D_LIBELLE from diff
     where operation is not null
     and (operation = 'undelete' or 0 < U_CODE+U_TYPE_STRUCTURE_ID+U_SIGLE+U_LIBELLE);
 

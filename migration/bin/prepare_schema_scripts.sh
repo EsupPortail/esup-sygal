@@ -1,8 +1,5 @@
 #!/bin/bash
 
-echo "Deprecated."
-exit 1
-
 THIS_DIR=$(cd `dirname $0` && pwd)
 ROOT_DIR=$(cd ${THIS_DIR}/.. && pwd)
 

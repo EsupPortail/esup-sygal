@@ -28,6 +28,34 @@ ora2pg-image \
 ```
 
 Les scripts sont générés dans `${PWD}/migration/ora2pg/schema/`.
+Pour effacer les existants :
+```bash
+sudo rm -f \
+migration/ora2pg/reports/* \
+migration/ora2pg/schema/dblinks/* \
+migration/ora2pg/schema/directories/* \
+migration/ora2pg/schema/functions/* \
+migration/ora2pg/schema/grants/* \
+migration/ora2pg/schema/mviews/* \
+migration/ora2pg/schema/packages/* \
+migration/ora2pg/schema/partitions/* \
+migration/ora2pg/schema/procedures/* \
+migration/ora2pg/schema/sequences/* \
+migration/ora2pg/schema/synonyms/* \
+migration/ora2pg/schema/tables/* \
+migration/ora2pg/schema/tablespaces/* \
+migration/ora2pg/schema/triggers/* \
+migration/ora2pg/schema/types/* \
+migration/ora2pg/schema/views/* \
+migration/ora2pg/sources/functions/* \
+migration/ora2pg/sources/mviews/* \
+migration/ora2pg/sources/packages/* \
+migration/ora2pg/sources/partitions/* \
+migration/ora2pg/sources/procedures/* \
+migration/ora2pg/sources/triggers/* \
+migration/ora2pg/sources/types/* \
+migration/ora2pg/sources/views/*
+```
 
 Remarques : 
 - il est possible de restriendre la liste des "objets" à prendre en compte en modifiant les variables 
@@ -47,8 +75,7 @@ EXCLUDE	V_IMPORT_TAB_COLS STR_REDUCE MV_INDICATEUR_.*
 2) Correction nécessaire des scripts SQL générés
 
 ```bash
-docker run \
---rm \
+docker run --rm \
 -v ${PWD}/migration:/migration \
 -w /migration \
 ora2pg-image \
@@ -59,24 +86,30 @@ ora2pg-image \
 ### 2/ Données
 
 *ora2pg* génère des scripts d'insertion de données qu'il faudra importer avec la ligne de commande `psql`.
-*NB : ça mouline grave pour les tables volumineuses.*
+
+*NB : ça mouline grave pour les tables volumineuses et la barre de progression n'est pas forcément rafraîchie.*
 
 ```bash
-docker run \
---rm \
+docker run --rm \
+--network "host" \
 -v ${PWD}/migration:/migration \
 -w /migration/ora2pg \
 ora2pg-image \
-ora2pg -t COPY -o data.sql -b ./data -c ./config/ora2pg.conf
+ora2pg -t COPY -o data.sql -b ./data -c ./config/ora2pg.conf --exclude \
+API_LOG,\
+IMPORT_LOG,\
+INFORMATION_FICHIER_SAV,\
+SYNC_LOG,\
+SYNCHRO_LOG,\
+TMP_.*,\
+MV_.*,\
+Z_.*
 ```
 
-Les scripts sont générés dans `${PWD}/migration/ora2pg/data/`.
-
-
-Pour ne prendre en compte QUE les tables contenant les données obligatoires de fonctionnement de l'appli :
+Pour ne prendre en compte QUE les tables contenant les données minimales d'installation de l'appli :
 ```bash
-docker run \
---rm \
+docker run --rm \
+--network "host" \
 -v ${PWD}/migration:/migration \
 -w /migration/ora2pg \
 ora2pg-image \
@@ -98,6 +131,12 @@ VERSION_FICHIER,\
 WF_ETAPE
 ```
 
+Les scripts sont générés dans `${PWD}/migration/ora2pg/data/`.
+Pour les effacer :
+```bash
+sudo rm -rf migration/ora2pg/data/*
+```
+
 
 
 Vidage éventuel de la base PostgreSQL
@@ -106,24 +145,25 @@ Vidage éventuel de la base PostgreSQL
 **Si besoin**, le script `migration/pg_clean.sql` permet de vider entièrement la base de données PostgreSQL.
 
 
-Import dans la base PostgreSQL
-------------------------------
+Import des objets et données dans la base PostgreSQL
+----------------------------------------------------
 
 1) Exporter les variables d'environnement requises pour se connecter à la base de données PostgreSQL
 
 ```bash
 export \
-PGDATABASE=xxxxxx \
-PGUSER=xxxxxx \
-PGHOST=host.unicaen.fr \
+PGDATABASE=sygal \
+PGUSER=ad_sygal \
+PGHOST=localhost \
 PGPORT=5432 \
-PGPASSWORD=xxxxxx
+PGPASSWORD=MOT_DE_PASSE_PAR_DEFAUT
 ```
 
 2) Lancer l'import
 
 ```bash
 docker run -it --rm \
+--network "host" \
 -v ${PWD}/migration/ora2pg:/ora2pg \
 -v ${PWD}/migration/docker/pg_before_import.sql:/tmp/pg_before_import.sql \
 -w /ora2pg \
@@ -145,6 +185,7 @@ NB :
 
 ```bash
 docker run --rm \
+--network "host" \
 -v ${PWD}/migration/docker/pg_after_import.sql:/tmp/pg_after_import.sql \
 --env PGDATABASE \
 --env PGUSER \
@@ -176,47 +217,3 @@ The end
 -------
 
 :-)
-
-
-
-
-
-
-Suppression des scripts SQL générés par *ora2pg*
-------------------------------------------------
-
-1) Structure
-
-```bash
-sudo rm -f \
-migration/ora2pg/reports/* \
-migration/ora2pg/schema/dblinks/* \
-migration/ora2pg/schema/directories/* \
-migration/ora2pg/schema/functions/* \
-migration/ora2pg/schema/grants/* \
-migration/ora2pg/schema/mviews/* \
-migration/ora2pg/schema/packages/* \
-migration/ora2pg/schema/partitions/* \
-migration/ora2pg/schema/procedures/* \
-migration/ora2pg/schema/sequences/* \
-migration/ora2pg/schema/synonyms/* \
-migration/ora2pg/schema/tables/* \
-migration/ora2pg/schema/tablespaces/* \
-migration/ora2pg/schema/triggers/* \
-migration/ora2pg/schema/types/* \
-migration/ora2pg/schema/views/* \
-migration/ora2pg/sources/functions/* \
-migration/ora2pg/sources/mviews/* \
-migration/ora2pg/sources/packages/* \
-migration/ora2pg/sources/partitions/* \
-migration/ora2pg/sources/procedures/* \
-migration/ora2pg/sources/triggers/* \
-migration/ora2pg/sources/types/* \
-migration/ora2pg/sources/views/*
-```
-
-2) Données
-
-```bash
-sudo rm -rf migration/ora2pg/data/*
-```
