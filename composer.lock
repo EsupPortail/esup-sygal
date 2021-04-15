@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "318021b7143772e3fc48b269eaff4e02",
+    "content-hash": "973528ee1c7a6dcd68a5b685d8d29c61",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -3357,11 +3357,11 @@
         },
         {
             "name": "unicaen/app",
-            "version": "dev-release-3.1.15",
+            "version": "3.1.15",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/app.git",
-                "reference": "0e1b27192c0f794278614b657088bfec542baaee"
+                "reference": "7e5f013b8816535e3aab40cd54675adfeb946bec"
             },
             "require": {
                 "beberlei/assert": "^2.9",
@@ -3417,7 +3417,7 @@
                 ]
             },
             "description": "Module de base des applications unicaen",
-            "time": "2021-02-19T13:28:58+00:00"
+            "time": "2021-04-15T10:57:16+00:00"
         },
         {
             "name": "unicaen/auth",
@@ -8003,17 +8003,9 @@
             "time": "2019-06-11T19:33:38+00:00"
         }
     ],
-    "aliases": [
-        {
-            "alias": "3.1.14",
-            "alias_normalized": "3.1.14.0",
-            "version": "dev-release-3.1.15",
-            "package": "unicaen/app"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "unicaen/app": 20,
         "unicaen/auth": 20,
         "unicaen/db-import": 20
     },
