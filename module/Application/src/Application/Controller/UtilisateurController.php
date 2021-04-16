@@ -9,9 +9,7 @@ use Application\Form\CreationUtilisateurForm;
 use Application\Form\InitCompteForm;
 use Application\Form\InitCompteFormAwareTrait;
 use Application\Search\Controller\SearchControllerInterface;
-use Application\Search\Controller\SearchControllerPlugin;
 use Application\Search\Controller\SearchControllerTrait;
-use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -21,19 +19,14 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
-use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\Query\Expr;
-use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use UnicaenAuth\Entity\Db\AbstractUser;
-use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\ShibService;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
-use UnicaenLdap\Entity\People;
 use Zend\Authentication\AuthenticationService;
 use Zend\Http\Request;
 use Zend\Http\Response;
@@ -269,32 +262,6 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         }
 
         return $this->redirect()->toRoute('home');
-    }
-
-    /**
-     * Instancie un ShibUser à partir des attibuts de l'utilisateur spécifié.
-     *
-     * @param Utilisateur $utilisateur
-     * @return ShibUser
-     */
-    public function createShibUserFromUtilisateur(Utilisateur $utilisateur)
-    {
-        $individu = $utilisateur->getIndividu();
-        if ($individu === null) {
-            throw new RuntimeException("L'utilisateur '$utilisateur' n'a aucun individu lié");
-        }
-
-        $supannId = $this->sourceCodeStringHelper->removePrefixFrom($individu->getSourceCode());
-
-        $toShibUser = new ShibUser();
-        $toShibUser->setEppn($utilisateur->getUsername());
-        $toShibUser->setId($supannId);
-        $toShibUser->setDisplayName($individu->getNomComplet());
-        $toShibUser->setEmail($utilisateur->getEmail());
-        $toShibUser->setNom($individu->getNomUsuel());
-        $toShibUser->setPrenom($individu->getPrenom());
-
-        return $toShibUser;
     }
 
     public function retirerRoleAction()

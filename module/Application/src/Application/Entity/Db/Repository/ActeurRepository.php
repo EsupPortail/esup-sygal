@@ -10,7 +10,6 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\RuntimeException;
 
 class ActeurRepository extends DefaultEntityRepository
@@ -30,24 +29,6 @@ class ActeurRepository extends DefaultEntityRepository
             ->join('a.role', 'r')
             ->andWhere('pasHistorise(a) = 1')
             ->setParameter('sourceCode', $sourceCodeIndividu);
-
-        return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * Recherche des Acteur tels que "individu.sourceCode LIKE $sourceCodePattern".
-     *
-     * @param string $sourceCodePattern
-     * @return Acteur[]
-     */
-    public function findBySourceCodeIndividuPattern($sourceCodePattern)
-    {
-        $qb = $this->createQueryBuilder('a');
-        $qb
-            ->addSelect('r')
-            ->join('a.individu', 'i', Join::WITH, 'i.sourceCode like :sourceCode')
-            ->join('a.role', 'r')
-            ->setParameter('sourceCode', '%::' . $sourceCodePattern);
 
         return $qb->getQuery()->getResult();
     }
