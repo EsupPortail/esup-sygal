@@ -73,7 +73,9 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
         // renseigne le lien utilisateur-->individu
         /** @var Utilisateur $utilisateur */
         $utilisateur = $e->getDbUser();
-        $this->utilisateurService->setIndividuForUtilisateur($individu, $utilisateur);
+        if ($individu !== null) {
+            $this->utilisateurService->setIndividuForUtilisateur($individu, $utilisateur);
+        }
     }
 
     /**
@@ -116,7 +118,7 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
             }
         }
 
-        // création de l'Individu si besoin
+        // création de l'Individu si besoin et si possible
         if ($createIndividu) {
             $individu = $this->individuService->createIndividuFromUserWrapperAndEtab($userWrapper, $etablissement);
         }

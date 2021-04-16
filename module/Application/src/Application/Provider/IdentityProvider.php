@@ -117,7 +117,12 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
      */
     private function getRolesFromActeur(): array
     {
-        $acteurs = $this->acteurService->findAllActeursByUser($this->userWrapper);
+        $individu = $this->userWrapper->getIndividu();
+        if ($individu === null) {
+            return [];
+        }
+
+        $acteurs = $this->acteurService->getRepository()->findActeursByIndividu($individu);
 
         $acteursDirecteurThese = $this->acteurService->filterActeursDirecteurThese($acteurs);
         $acteursCoDirecteurThese = $this->acteurService->filterActeursCoDirecteurThese($acteurs);
@@ -139,12 +144,15 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
         // peut-être disposons-nous de l'Individu (cas d'une authentification locale)
         $individu = $this->userWrapper->getIndividu();
 
+        $individuRoles = [];
         if ($individu !== null) {
             $individuRoles = $this->roleService->findIndividuRolesByIndividu($individu);
         } else {
             $id = $this->userWrapper->getSupannId();
-            $pattern = $this->sourceCodeStringHelper->generateSearchPatternForAnyPrefix($id);
-            $individuRoles = $this->roleService->findIndividuRolesByIndividuSourceCodePattern($pattern);
+            if ($id) {
+                $pattern = $this->sourceCodeStringHelper->generateSearchPatternForAnyPrefix($id);
+                $individuRoles = $this->roleService->findIndividuRolesByIndividuSourceCodePattern($pattern);
+            }
         }
 
         usort($individuRoles, IndividuRole::getComparisonFunction());
