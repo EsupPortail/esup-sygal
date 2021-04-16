@@ -33,8 +33,9 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./data/db:/var/lib/postgresql/data
-      - ./docker/db/sql/:/sql
+      # Base de dev
+      - ./docker/db/dev/sql/:/sql              # Scripts de création/init
+      - ./data/db/dev:/var/lib/postgresql/data # Données persistées.
     networks:
       - sygalnet
 
