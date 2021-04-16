@@ -82,10 +82,15 @@ class IndividuService extends BaseService
                                                          Etablissement $etablissement,
                                                          Utilisateur $utilisateur = null)
     {
-        $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($userWrapper->getSupannId(), $etablissement);
+        $supannId = $userWrapper->getSupannId();
+        if (! $supannId) {
+            return null;
+        }
+
+        $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($supannId, $etablissement);
 
         $entity = new Individu();
-        $entity->setSupannId($userWrapper->getSupannId());
+        $entity->setSupannId($supannId);
         $entity->setNomUsuel($userWrapper->getNom() ?: "X"); // NB: le nom est obligatoire mais pas forcément disponible
         $entity->setNomPatronymique($userWrapper->getNom());
         $entity->setPrenom($userWrapper->getPrenom());
@@ -102,30 +107,6 @@ class IndividuService extends BaseService
         }
 
         return $entity;
-    }
-
-    /**
-     * @param Individu    $entity
-     * @param UserWrapper $userWrapper
-     * @param Utilisateur $utilisateur
-     */
-    public function updateIndividuFromUserWrapper(Individu $entity,
-                                                  UserWrapper $userWrapper,
-                                                  Utilisateur $utilisateur = null)
-    {
-        $entity->setSupannId($userWrapper->getSupannId());
-        $entity->setNomUsuel($userWrapper->getNom() ?: "X"); // NB: le nom est obligatoire mais quid si indisponible ?
-        $entity->setNomPatronymique($userWrapper->getNom());
-        $entity->setPrenom($userWrapper->getPrenom());
-        $entity->setCivilite($userWrapper->getCivilite());
-        $entity->setEmail($userWrapper->getEmail());
-        $entity->setHistoModificateur($utilisateur ?: $this->getAppPseudoUtilisateur());
-
-        try {
-            $this->getEntityManager()->flush($entity);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Impossible d'enregistrer l'Individu", null, $e);
-        }
     }
 
     /**

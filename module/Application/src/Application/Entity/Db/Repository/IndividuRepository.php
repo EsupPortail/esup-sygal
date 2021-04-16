@@ -43,7 +43,7 @@ class IndividuRepository extends DefaultEntityRepository
         // C'est l'identifiant trouvé dans le "supann{Ref|Emp|Etu}Id" présent dans les données d'authentification
         // qui nous permet de trouver l'Individu correspodant à l'Utilisateur.
         $supannId = $userWrapper->getSupannId();
-        if ($supannId === null) {
+        if (! $supannId) {
             // Si on a rien à se mettre sous la dent, on ne cherche pas plus loin !
             return null;
         }
