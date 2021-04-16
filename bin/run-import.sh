@@ -4,11 +4,9 @@
 #        Script de lancement de l'import et de la synchro pour un établissement.
 #############################################################################################
 #
-# Variables d'env requises :
-#   ETAB : code de l'établissement à traiter, ex: "UCN".
-#
-# Variables d'env possibles :
-#   SERVICE : code du service à traiter, ex: "variable".
+# Variables d'env attendues :
+#   ETAB    : Code de l'établissement à traiter (ex: "UCN"). OBLIGATOIRE.
+#   SERVICE : Code du service à traiter, (ex: "variable"). OPTIONNEL.
 #
 
 usage() {
@@ -30,17 +28,38 @@ APP_DIR=$(cd ${CURR_DIR}/.. && pwd)
 echo "Répertoire courant : $CURR_DIR"
 echo "Répertoire de l'appli : $APP_DIR"
 
+function run() {
+  service=$1
+  (
+    set -x ;
+    /usr/bin/php ${APP_DIR}/public/index.php import --synchronize=0 --etablissement=${ETAB} --service=${service} && \
+    /usr/bin/php ${APP_DIR}/public/index.php run synchro --name=${service}-${ETAB}
+  )
+}
+
 # Import (appel web service) puis Synchro
 if [ -z "$SERVICE" ]; then
   # tous les services
-  set -x
-  /usr/bin/php ${APP_DIR}/public/index.php import-all --etablissement=${ETAB} --synchronize=0 --breakOnServiceNotFound=0 && \
-  /usr/bin/php ${APP_DIR}/public/index.php run synchro --all
+  SERVICES[0]='structure'
+  SERVICES[1]='etablissement'
+  SERVICES[2]='ecole-doctorale'
+  SERVICES[3]='unite-recherche'
+  SERVICES[4]='individu'
+  SERVICES[5]='doctorant'
+  SERVICES[6]='these'
+  SERVICES[7]='these-annee-univ'
+  SERVICES[8]='role'
+  SERVICES[9]='acteur'
+  SERVICES[10]='origine-financement'
+  SERVICES[11]='financement'
+  SERVICES[12]='titre-acces'
+  SERVICES[13]='variable'
+  for SERVICE in ${SERVICES[@]}; do
+    run ${SERVICE}
+  done
 else
   # seul service spécifié
-  set -x
-  /usr/bin/php ${APP_DIR}/public/index.php import --etablissement=${ETAB} --service=${SERVICE} --synchronize=0 && \
-  /usr/bin/php ${APP_DIR}/public/index.php run synchro --name=${SERVICE}
+  run ${SERVICE}
 fi
 
 # Refresh de la vue matérialisée utilisée pour la recherche des thèses
