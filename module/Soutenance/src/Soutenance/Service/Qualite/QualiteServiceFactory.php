@@ -2,6 +2,7 @@
 
 namespace Soutenance\Service\Qualite;
 
+use Application\Service\UserContextService;
 use Doctrine\ORM\EntityManager;
 use Psr\Container\ContainerInterface;
 
@@ -16,12 +17,15 @@ class QualiteServiceFactory
     {
         /**
          * @var EntityManager $entityManager
+         * @var UserContextService $userContextService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $userContextService = $container->get('UnicaenAuth\Service\UserContext');
 
         /** @var QualiteService $service */
         $service = new QualiteService();
         $service->setEntityManager($entityManager);
+        $service->setUserContextService($userContextService);
         return $service;
     }
 }
