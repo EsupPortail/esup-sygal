@@ -6,6 +6,7 @@ Journal des modifications
 - Changement du fonctionnement de sursis pour les soutenances : seul la validation acteur vérifie le délai de deux mois et le sursis annule cette vérification.
 - Ajout d'une interface pour lier/délier des utilisateurs sans individu à un individu.
 - Le rôle de co-directeur est maintenant un rôle attribué automatiquement
+- Téléversement des rapports annuels : renommage en rapports d'activité (annuel ou de fin de thèse) ; création des privilèges *_TOUT et *_SIEN.
  
 2.1.6
 -----

@@ -22,7 +22,7 @@ class SearchControllerPlugin extends AbstractPlugin
      */
     public function search()
     {
-        $queryParams = $this->getController()->params()->fromQuery();
+        $queryParams = array_filter($this->getController()->params()->fromQuery());
 
         $searchService = $this->getSearchService();
         $searchService->init();

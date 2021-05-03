@@ -3,7 +3,6 @@
 namespace Application\Service\Utilisateur;
 
 use Application\Search\Filter\CheckboxSearchFilter;
-use Application\Search\Filter\Provider\SearchFilterProviderServiceAwareTrait;
 use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Search\Filter\TextSearchFilter;
@@ -13,7 +12,6 @@ use Doctrine\ORM\QueryBuilder;
 
 class UtilisateurSearchService extends SearchService
 {
-    use SearchFilterProviderServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
 
     /**
@@ -69,6 +67,7 @@ class UtilisateurSearchService extends SearchService
      */
     public function fetchValueOptionsForSelectFilter(SelectSearchFilter $filter): array
     {
-        return $this->searchFilterProviderService->fetchValueOptionsForSelectFilter($filter);
+        // aucun filtre à peupler
+        return [];
     }
 }

@@ -90,7 +90,6 @@ class ActeurService extends BaseService
         });
     }
 
-
     /**
      * @param Individu $individu
      * @return Acteur[]
