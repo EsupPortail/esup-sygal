@@ -124,6 +124,7 @@ abstract class SearchService implements SearchServiceInterface
 
         $filterValueOptions = [];
         foreach ($this->filters as $filterName => $filter) {
+            $filter->init();
             if ($filter instanceof SelectSearchFilter) {
                 $filterValueOptions[$filterName] = $this->fetchValueOptionsForSelectFilter($filter);
             } else {
@@ -139,6 +140,8 @@ abstract class SearchService implements SearchServiceInterface
     }
 
     /**
+     * Doit retourner les 'value_options' permettant de peupler la liste déroulante correspondant au filtre spécifié.
+     *
      * @param SelectSearchFilter $filter
      * @return array
      */
