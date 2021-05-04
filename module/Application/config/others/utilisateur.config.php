@@ -235,11 +235,6 @@ return [
                                 'icon'     => 'fa fa-users',
                                 'order'    => 60,
                                 'pages' => [
-                                    'voir' => [
-                                        'label'    => "Détails",
-                                        'route'    => 'utilisateur/voir',
-                                        'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'index'),
-                                    ],
                                     'creation' => [
                                         'label'    => "Création",
                                         'route'    => 'utilisateur/ajouter',

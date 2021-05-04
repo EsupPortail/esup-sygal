@@ -4,7 +4,7 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\ExportController;
 use Application\Service\FichierThese\FichierTheseService;
-use Application\Service\These\TheseRechercheService;
+use Application\Service\These\TheseSearchService;
 use Application\Service\These\TheseService;
 use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
@@ -22,16 +22,16 @@ class ExportControllerFactory
         /**
          * @var FichierTheseService   $fichierTheseService
          * @var TheseService          $theseService
-         * @var TheseRechercheService $theseRechercheService
+         * @var TheseSearchService $theseSearchService
          */
         $fichierTheseService = $container->get('FichierTheseService');
         $theseService = $container->get('TheseService');
-        $theseRechercheService = $container->get('TheseRechercheService');
+        $theseSearchService = $container->get(TheseSearchService::class);
 
         $controller = new ExportController();
         $controller->setFichierTheseService($fichierTheseService);
         $controller->setTheseService($theseService);
-        $controller->setTheseRechercheService($theseRechercheService);
+        $controller->setTheseSearchService($theseSearchService);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper

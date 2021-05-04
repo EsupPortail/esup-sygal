@@ -127,7 +127,7 @@ return [
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route' => '/presoutenance/:these',
+                            'route' => '/presoutenance',
                             'defaults' => [
                                 'controller' => PresoutenanceController::class,
                                 'action' => 'presoutenance',

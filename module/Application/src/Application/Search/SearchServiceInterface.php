@@ -8,6 +8,7 @@ interface SearchServiceInterface
 {
     /**
      * Initialisation nécessaires, ex: ajouts des filtres, des trieurs.
+     * @return void
      */
     public function init();
 
@@ -24,18 +25,19 @@ interface SearchServiceInterface
     public function updateQueryParamsWithDefaultSorters(array &$queryParams): bool;
 
     /**
-     * @return mixed
+     * @return void
      */
     public function initFiltersWithUnpopulatedOptions();
 
     /**
      * @return mixed
+     * @return void
      */
     public function initFilters();
 
     /**
      * @param array $queryParams
-     * @return mixed
+     * @return void
      */
     public function processQueryParams(array $queryParams);
 

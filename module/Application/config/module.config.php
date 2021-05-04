@@ -274,7 +274,6 @@ return array(
     'view_helpers' => array(
         'invokables' => array(
             'filterPanel' => 'Application\View\Helper\FilterPanel\FilterPanelHelper',
-            'selectsFilterPanel' => FiltersPanelHelper::class,
             'filtersPanel' => FiltersPanelHelper::class,
             'escapeText'  => EscapeTextHelper::class,
         ),

@@ -7,6 +7,10 @@ use Application\Entity\Db\Role;
 use Application\Filter\ActeursFormatter;
 use Application\Filter\IdifyFilter;
 use Application\Provider\Privilege\RapportPrivileges;
+use Application\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
+use Application\Search\Etablissement\EtablissementSearchFilter;
+use Application\Search\Rapport\AnneeRapportActiviteSearchFilter;
+use Application\Search\UniteRecherche\UniteRechercheSearchFilter;
 use Application\Service\Rapport\RapportSearchService;
 use UnicaenAuth\Provider\Privilege\Privileges;
 use Zend\Paginator\Paginator as ZendPaginator;
@@ -57,7 +61,7 @@ $this->headTitle($this->translate($title = "Rapports d'activité"));
         <tr>
             <?php if ($displayEtablissement = true): ?>
                 <th>
-                    <a href="<?php echo $s = $this->sortable(RapportSearchService::NAME_etab_inscription) ?>"
+                    <a href="<?php echo $s = $this->sortable(EtablissementSearchFilter::NAME) ?>"
                        title="<?php echo $this->translate("Établissement") ?> ">
                         <?php echo $this->translate("Étab.") ?>
                     </a> <?php echo $s->icon() ?>
@@ -73,19 +77,19 @@ $this->headTitle($this->translate($title = "Rapports d'activité"));
                 <?php echo $this->translate("Directeur(s) de thèse"); ?>
             </th>
             <th>
-                <a href="<?php echo $s = $this->sortable(RapportSearchService::NAME_ecole_doctorale); ?>"
+                <a href="<?php echo $s = $this->sortable(EcoleDoctoraleSearchFilter::NAME); ?>"
                    title="<?php echo $this->translate("École doctorale"); ?>">
                     <?php echo $this->translate("École<br>doct."); ?>
                 </a> <?php echo $s->icon() ?>
             </th>
             <th>
-                <a href="<?php echo $s = $this->sortable(RapportSearchService::NAME_unite_recherche); ?>"
+                <a href="<?php echo $s = $this->sortable(UniteRechercheSearchFilter::NAME); ?>"
                    title="<?php echo $this->translate("Unité de recherche"); ?>">
                     <?php echo $this->translate("Unité<br>rech."); ?>
                 </a> <?php echo $s->icon() ?>
             </th>
             <th>
-                <a href="<?php echo $s = $this->sortable(RapportSearchService::NAME_annee_rapport_annuel); ?>"
+                <a href="<?php echo $s = $this->sortable(AnneeRapportActiviteSearchFilter::NAME); ?>"
                    title="<?php echo $this->translate("Année universitaire concernée par le rapport"); ?>">
                     <?php echo $this->translate("Année du<br>rapport"); ?>
                 </a> <?php echo $s->icon() ?>

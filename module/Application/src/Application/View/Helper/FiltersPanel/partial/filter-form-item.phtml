@@ -3,26 +3,32 @@
 use Application\Search\Filter\CheckboxSearchFilter;
 use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
-use Application\Service\These\Filter\TheseSelectFilter;
-use Application\Service\These\Filter\TheseTextFilter;
+use Application\Search\Filter\TextCriteriaSearchFilter;
+use Application\Search\Filter\TextSearchFilter;
 use Application\View\Renderer\PhpRenderer;
 
 /**
- * @var PhpRenderer                                         $this
- * @var \Application\Service\These\Filter\TheseSelectFilter $filter
- * @var array                                               $queryParams
+ * @var PhpRenderer  $this
+ * @var SearchFilter $filter
+ * @var array $queryParams
  */
-
 ?>
 
-<?php if ($filter instanceof SelectSearchFilter OR $filter instanceof TheseSelectFilter): ?>
+<?php if ($filter instanceof SelectSearchFilter): ?>
     <?php echo $this->partial('filter-form-item-select') ?>
+
 <?php elseif ($filter instanceof CheckboxSearchFilter): ?>
     <?php echo $this->partial('filter-form-item-checkbox') ?>
+
+<?php elseif ($filter instanceof TextCriteriaSearchFilter): ?>
+    <?php echo $this->partial('filter-form-item-text-criteria') ?>
+
+<?php elseif ($filter instanceof TextSearchFilter): ?>
+    <?php echo $this->partial('filter-form-item-text') ?>
+
 <?php elseif ($filter instanceof SearchFilter): ?>
     <?php echo $this->partial('filter-form-item-text') ?>
-<?php elseif ($filter instanceof TheseTextFilter): ?>
-    <?php echo $this->partial('filter-form-item-text-criteria') ?>
+
 <?php else: ?>
     Filtre rencontré inattendu!
 <?php endif ?>

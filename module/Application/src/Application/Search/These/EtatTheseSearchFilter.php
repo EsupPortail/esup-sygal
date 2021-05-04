@@ -1,14 +1,14 @@
 <?php
 
-namespace Application\Service\Etablissement;
+namespace Application\Search\These;
 
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Search\Sorter\SearchSorter;
 use Doctrine\ORM\QueryBuilder;
 
-class EtablissementInscSearchFilter extends SelectSearchFilter
+class EtatTheseSearchFilter extends SelectSearchFilter
 {
-    const NAME = 'etab_inscription';
+    const NAME = 'etatThese';
 
     /**
      * @inheritDoc
@@ -24,24 +24,10 @@ class EtablissementInscSearchFilter extends SelectSearchFilter
     static public function newInstance(): self
     {
         return new self(
-            "Établissement<br>d'inscr.",
+            "État",
             self::NAME,
             []
         );
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function createValueOptionsFromData(array $data): array
-    {
-        $options = [];
-        $options[] = $this->valueOptionEmpty();
-        foreach ($data as $etablissement) {
-            $options[] = $this->valueOptionEntity($etablissement);
-        }
-
-        return $options;
     }
 
     /**
@@ -51,14 +37,9 @@ class EtablissementInscSearchFilter extends SelectSearchFilter
     {
         $alias = 'these'; // todo: rendre paramétrable
 
-        $filterValue = $this->getValue();
-        if (!$filterValue) {
-            return;
-        }
-
         $qb
-            ->andWhere("$alias.etablissement = :etab")
-            ->setParameter('etab', $filterValue);
+            ->andWhere("$alias.etatThese = :etat")
+            ->setParameter('etat', $this->getValue());
     }
 
     /**
@@ -67,17 +48,15 @@ class EtablissementInscSearchFilter extends SelectSearchFilter
     public function createSorter(): SearchSorter
     {
         $sorter = new SearchSorter(
-            "Établissement<br>d'inscr.",
+            "",
             self::NAME
         );
 
-        $sorter->setApplyToQueryBuilderCallable(
+        $sorter->setQueryBuilderApplier(
             function (SearchSorter $sorter, QueryBuilder $qb, $alias = 'these') {
                 $direction = $sorter->getDirection();
                 $qb
-                    ->join("$alias.etablissement", 'e_sort')
-                    ->join('e_sort.structure', 's_sort')
-                    ->addOrderBy('s_sort.code', $direction);
+                    ->addOrderBy("$alias.etatThese", $direction);
             }
         );
 

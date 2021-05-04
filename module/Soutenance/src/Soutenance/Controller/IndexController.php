@@ -60,17 +60,18 @@ class IndexController extends AbstractController
 
     public function indexActeurAction()
     {
-        $individu = $this->userContextService->getIdentityIndividu();
+        /** @var Role $role */
         $role = $this->userContextService->getSelectedIdentityRole();
+        $individu = $this->userContextService->getIdentityIndividu();
 
         $theses = null;
         switch ($role->getCode()) {
             case Role::CODE_DOCTORANT :
-                $theses = $this->getTheseService()->getRepository()->fetchThesesByDoctorantAsIndividu($individu);
+                $theses = $this->getTheseService()->getRepository()->findThesesByDoctorantAsIndividu($individu);
                 break;
             case Role::CODE_DIRECTEUR_THESE :
             case Role::CODE_CODIRECTEUR_THESE :
-                $theses = $this->getTheseService()->getRepository()->fetchThesesByEncadrant($individu);
+                $theses = $this->getTheseService()->getRepository()->findThesesByActeur($individu, $role, [These::ETAT_EN_COURS]);
                 break;
         }
 

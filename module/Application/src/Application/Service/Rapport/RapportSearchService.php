@@ -3,28 +3,30 @@
 namespace Application\Service\Rapport;
 
 use Application\Entity\Db\TypeStructure;
+use Application\Filter\AnneeUnivFormatter;
+use Application\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
+use Application\Search\Etablissement\EtablissementSearchFilter;
 use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Search\Filter\TextSearchFilter;
+use Application\Search\Financement\OrigineFinancementSearchFilter;
+use Application\Search\Rapport\AnneeRapportActiviteSearchFilter;
 use Application\Search\SearchService;
 use Application\Search\Sorter\SearchSorter;
+use Application\Search\These\TheseTextSearchFilter;
+use Application\Search\UniteRecherche\UniteRechercheSearchFilter;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
-use Application\Service\EcoleDoctorale\EcoleDoctoraleSearchFilter;
-use Application\Service\Etablissement\EtablissementInscSearchFilter;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Financement\FinancementServiceAwareTrait;
-use Application\Service\Financement\OrigineFinancementSearchFilter;
 use Application\Service\Structure\StructureServiceAwareTrait;
-use Application\Service\These\TheseRechercheService;
-use Application\Service\These\TheseRechercheServiceAwareTrait;
+use Application\Service\These\TheseSearchServiceAwareTrait;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
-use Application\Service\UniteRecherche\UniteRechercheSearchFilter;
 use Doctrine\ORM\QueryBuilder;
 
 class RapportSearchService extends SearchService
 {
     use FinancementServiceAwareTrait;
-    use TheseRechercheServiceAwareTrait;
+    use TheseSearchServiceAwareTrait;
     use TheseAnneeUnivServiceAwareTrait;
     use StructureServiceAwareTrait;
     use EtablissementServiceAwareTrait;
@@ -32,16 +34,11 @@ class RapportSearchService extends SearchService
     use RapportServiceAwareTrait;
     use RapportServiceAwareTrait;
 
-    const NAME_financement = OrigineFinancementSearchFilter::NAME;
-    const NAME_etab_inscription = EtablissementInscSearchFilter::NAME;
-    const NAME_ecole_doctorale = EcoleDoctoraleSearchFilter::NAME;
-    const NAME_unite_recherche = UniteRechercheSearchFilter::NAME;
     const NAME_nom_doctorant = 'nom_doctorant';
     const NAME_nom_directeur = 'nom_directeur';
-    const NAME_annee_rapport_annuel = AnneeRapportActiviteSearchFilter::NAME;
 
     /**
-     * @var EtablissementInscSearchFilter
+     * @var EtablissementSearchFilter
      */
     private $etablissementInscSearchFilter;
     /**
@@ -66,11 +63,26 @@ class RapportSearchService extends SearchService
      */
     public function init()
     {
-        $etablissementInscrFilter = $this->getEtablissementInscSearchFilter();
-        $origineFinancementFilter = $this->getOrigineFinancementSearchFilter();
-        $uniteRechercheFilter = $this->getUniteRechercheSearchFilter();
-        $ecoleDoctoraleFilter = $this->getEcoleDoctoraleSearchFilter();
-        $anneeRapportActiviteInscrFilter = $this->getAnneeRapportActiviteSearchFilter();
+        $etablissementInscrFilter = $this->getEtablissementInscSearchFilter()
+            ->setDataProvider(function(SelectSearchFilter $filter) {
+                return $this->fetchEtablissements($filter);
+            });
+        $origineFinancementFilter = $this->getOrigineFinancementSearchFilter()
+            ->setDataProvider(function(SelectSearchFilter $filter) {
+                return $this->fetchOriginesFinancements($filter);
+            });
+        $uniteRechercheFilter = $this->getUniteRechercheSearchFilter()
+            ->setDataProvider(function(SelectSearchFilter $filter) {
+                return $this->fetchUnitesRecherches($filter);
+            });
+        $ecoleDoctoraleFilter = $this->getEcoleDoctoraleSearchFilter()
+            ->setDataProvider(function(SelectSearchFilter $filter) {
+                return $this->fetchEcolesDoctorales($filter);
+            });
+        $anneeRapportActiviteInscrFilter = $this->getAnneeRapportActiviteSearchFilter()
+            ->setDataProvider(function(SelectSearchFilter $filter) {
+                return $this->fetchAnneesRapportActivite($filter);
+            });
 
         $this->addFilters([
             $etablissementInscrFilter,
@@ -91,9 +103,9 @@ class RapportSearchService extends SearchService
     }
 
     /**
-     * @return EtablissementInscSearchFilter
+     * @return EtablissementSearchFilter
      */
-    public function getEtablissementInscSearchFilter(): EtablissementInscSearchFilter
+    public function getEtablissementInscSearchFilter(): EtablissementSearchFilter
     {
         return $this->etablissementInscSearchFilter;
     }
@@ -131,10 +143,10 @@ class RapportSearchService extends SearchService
     }
 
     /**
-     * @param EtablissementInscSearchFilter $etablissementInscSearchFilter
+     * @param EtablissementSearchFilter $etablissementInscSearchFilter
      * @return RapportSearchService
      */
-    public function setEtablissementInscSearchFilter(EtablissementInscSearchFilter $etablissementInscSearchFilter): RapportSearchService
+    public function setEtablissementInscSearchFilter(EtablissementSearchFilter $etablissementInscSearchFilter): RapportSearchService
     {
         $this->etablissementInscSearchFilter = $etablissementInscSearchFilter;
         return $this;
@@ -180,85 +192,57 @@ class RapportSearchService extends SearchService
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function fetchValueOptionsForSelectFilter(SelectSearchFilter $filter): array
+    private function fetchEtablissements(SelectSearchFilter $filter): array
     {
-        switch ($filter->getName()) {
-            case self::NAME_financement:
-                return $this->fetchOriginesFinancementsValueOptions($filter);
-            case self::NAME_etab_inscription:
-                return $this->fetchEtablissementsValueOptions($filter);
-            case self::NAME_ecole_doctorale:
-                return $this->fetchEcolesDoctoralesValueOptions($filter);
-            case self::NAME_unite_recherche:
-                return $this->fetchUnitesRecherchesValueOptions($filter);
-            case self::NAME_annee_rapport_annuel:
-                return $this->fetchAnneesRapportActiviteValueOptions($filter);
-            default:
-                throw new \InvalidArgumentException("Cas imprévu");
-        }
+        return $this->etablissementService->getRepository()->findAllEtablissementsInscriptions(true);
     }
 
-    /**
-     * @param OrigineFinancementSearchFilter $filter
-     * @return array
-     */
-    private function fetchOriginesFinancementsValueOptions(SelectSearchFilter $filter): array
+    private function fetchEcolesDoctorales(SelectSearchFilter $filter): array
     {
-        $origines = $this->financementService->getOriginesFinancements("libelleLong", true);
-        $origines = array_filter($origines);
-
-        return $filter->createValueOptionsFromData($origines);
+        return $this->structureService->getAllStructuresAffichablesByType(
+            TypeStructure::CODE_ECOLE_DOCTORALE, 'sigle', true, true);
     }
 
-    /**
-     * @param EtablissementInscSearchFilter $filter
-     * @return array
-     */
-    private function fetchEtablissementsValueOptions(SelectSearchFilter $filter): array
+    private function fetchUnitesRecherches(SelectSearchFilter $filter): array
     {
-        $etablissements = $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions(true);
-
-        return $filter->createValueOptionsFromData($etablissements);
+        return $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'code', false, true);
     }
 
-    /**
-     * @param EcoleDoctoraleSearchFilter $filter
-     * @return array
-     */
-    private function fetchEcolesDoctoralesValueOptions(SelectSearchFilter $filter): array
+    private function fetchOriginesFinancements(SelectSearchFilter $filter): array
     {
-        // si des valeurs ont déjà été fournies, pas besoin de fetch.
-        $eds = $this->ecoleDoctoraleSearchFilter->getData();
-        if ($eds === null) {
-            $eds = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', true, true);
-        }
+        $values = $this->getFinancementService()->getOriginesFinancements("libelleLong");
 
-        return $filter->createValueOptionsFromData($eds);
-    }
-
-    /**
-     * @param UniteRechercheSearchFilter $filter
-     * @return array
-     */
-    private function fetchUnitesRecherchesValueOptions(SelectSearchFilter $filter): array
-    {
-        $urs = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle');
-
-        return $filter->createValueOptionsFromData($urs);
+        return array_filter($values);
     }
 
     /**
      * @param AnneeRapportActiviteSearchFilter $filter
      * @return array
      */
-    private function fetchAnneesRapportActiviteValueOptions(SelectSearchFilter $filter): array
+    private function fetchAnneesRapportActivite(SelectSearchFilter $filter): array
     {
         $annees = $this->rapportService->findDistinctAnnees();
+        $annees = array_reverse(array_filter($annees));
+        $annees = array_combine($annees, $annees);
 
-        return $filter->createValueOptionsFromData($annees);
+        return self::formatToAnneesUniv($annees);
+    }
+
+    /**
+     * @param array $annees
+     * @return array
+     */
+    static public function formatToAnneesUniv(array $annees): array
+    {
+        // formattage du label, ex: "2018" devient "2018/2019"
+        $f = new AnneeUnivFormatter();
+
+        return array_map(function($annee) use ($f) {
+            if (! is_numeric($annee)) {
+                return $annee; // déjà formattée
+            }
+            return $f->filter($annee);
+        }, $annees);
     }
 
     /**
@@ -300,12 +284,12 @@ class RapportSearchService extends SearchService
 
     private function applyNomDoctorantFilterToQueryBuilder(SearchFilter $filter, QueryBuilder $qb, $alias = 'these')
     {
-        $this->applyTextFilterToQueryBuilder($filter, $qb, [TheseRechercheService::CRITERIA_nom_doctorant], $alias);
+        $this->applyTextFilterToQueryBuilder($filter, $qb, [TheseTextSearchFilter::CRITERIA_nom_doctorant], $alias);
     }
 
     private function applyNomDirecteurFilterToQueryBuilder(SearchFilter $filter, QueryBuilder $qb, $alias = 'these')
     {
-        $this->applyTextFilterToQueryBuilder($filter, $qb, [TheseRechercheService::CRITERIA_nom_directeur], $alias);
+        $this->applyTextFilterToQueryBuilder($filter, $qb, [TheseTextSearchFilter::CRITERIA_nom_directeur], $alias);
     }
 
     private function applyTextFilterToQueryBuilder(SearchFilter $filter, QueryBuilder $qb, array $criteria, $alias = 'these')
@@ -313,7 +297,7 @@ class RapportSearchService extends SearchService
         $filterValue = $filter->getValue();
 
         if ($filterValue !== null && strlen($filterValue) > 1) {
-            $results = $this->theseRechercheService->rechercherThese($filterValue, $criteria);
+            $results = $this->theseSearchService->findThesesSourceCodesByText($filterValue, $criteria);
             $sourceCodes = array_unique(array_keys($results));
             if ($sourceCodes) {
                 $paramName = 'sourceCodes_' . $filter->getName();
@@ -364,7 +348,7 @@ class RapportSearchService extends SearchService
             self::NAME_nom_doctorant
         );
 
-        $filter->setApplyToQueryBuilderCallable([$this, 'applyFilterToQueryBuilder']);
+        $filter->setQueryBuilderApplier([$this, 'applyFilterToQueryBuilder']);
 
         return $filter;
     }
@@ -379,7 +363,7 @@ class RapportSearchService extends SearchService
             self::NAME_nom_directeur
         );
 
-        $filter->setApplyToQueryBuilderCallable([$this, 'applyFilterToQueryBuilder']);
+        $filter->setQueryBuilderApplier([$this, 'applyFilterToQueryBuilder']);
 
         return $filter;
     }
@@ -394,7 +378,7 @@ class RapportSearchService extends SearchService
             self::NAME_nom_doctorant
         );
 
-        $sorter->setApplyToQueryBuilderCallable([$this, 'applySorterToQueryBuilder']);
+        $sorter->setQueryBuilderApplier([$this, 'applySorterToQueryBuilder']);
 
         return $sorter;
     }

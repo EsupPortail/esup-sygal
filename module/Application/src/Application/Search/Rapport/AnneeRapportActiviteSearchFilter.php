@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Service\Rapport;
+namespace Application\Search\Rapport;
 
 use Application\Filter\AnneeUnivFormatter;
 use Application\Search\Filter\SelectSearchFilter;
@@ -9,7 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class AnneeRapportActiviteSearchFilter extends SelectSearchFilter
 {
-    const NAME = 'annee_rapport';
+    const NAME = 'anneeRapport';
 
     /**
      * @inheritDoc
@@ -39,7 +39,7 @@ class AnneeRapportActiviteSearchFilter extends SelectSearchFilter
         $options = [];
         $options[] = $this->valueOptionEmpty();
         foreach ($data as $annee) {
-            $options[] = $this->valueOptionScalar($annee);
+            $options[] = $this->valueOptionFromString((string) $annee);
         }
 
         return self::formatAnneesValueOptions($options);
@@ -52,14 +52,9 @@ class AnneeRapportActiviteSearchFilter extends SelectSearchFilter
     {
         $alias = 'these'; // todo: rendre paramétrable
 
-        $filterValue = $this->getValue();
-        if (!$filterValue) {
-            return;
-        }
-
         $qb
             ->andWhere("$alias.anneeUniv = :anneeRapportActivite")
-            ->setParameter('anneeRapportActivite', $filterValue);
+            ->setParameter('anneeRapportActivite', $this->getValue());
     }
 
     /**
@@ -72,7 +67,7 @@ class AnneeRapportActiviteSearchFilter extends SelectSearchFilter
             self::NAME
         );
 
-        $sorter->setApplyToQueryBuilderCallable(
+        $sorter->setQueryBuilderApplier(
             function (SearchSorter $sorter, QueryBuilder $qb, $alias = 'ra') {
                 $direction = $sorter->getDirection();
                 $qb->addOrderBy("$alias.anneeUniv", $direction);

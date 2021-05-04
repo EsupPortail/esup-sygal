@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Service\EcoleDoctorale;
+namespace Application\Search\EcoleDoctorale;
 
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Search\Filter\SelectSearchFilter;
@@ -9,7 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class EcoleDoctoraleSearchFilter extends SelectSearchFilter
 {
-    const NAME = 'ecole_doctorale';
+    const NAME = 'ecoleDoctorale';
 
     /**
      * @inheritDoc
@@ -37,22 +37,6 @@ class EcoleDoctoraleSearchFilter extends SelectSearchFilter
     }
 
     /**
-     * @inheritDoc
-     */
-    public function createValueOptionsFromData(array $data): array
-    {
-        $options = [];
-        if ($this->allowsEmptyOption()) {
-            $options[] = $this->valueOptionEmpty($this->getEmptyOptionLabel());
-        }
-        foreach ($data as $ed) {
-            $options[] = $this->valueOptionEntity($ed);
-        }
-
-        return $options;
-    }
-
-    /**
      * @param QueryBuilder $qb
      */
     public function applyToQueryBuilder(QueryBuilder $qb)
@@ -63,12 +47,15 @@ class EcoleDoctoraleSearchFilter extends SelectSearchFilter
         if ($filterValue === 'NULL') {
             $qb->andWhere("$alias.ecoleDoctorale IS NULL");
         } elseif ($filterValue) {
-            $qb->andWhere("$alias.ecoleDoctorale = :ed")->setParameter('ed', $filterValue);
+            $qb
+                ->join("$alias.ecoleDoctorale", 'ed')
+                ->andWhere("ed.sourceCode = :ed_sourceCode")
+                ->setParameter('ed_sourceCode', $filterValue);
         }
 
         if ($this->data !== null) {
             // garantit que l'ED éventuellement injectée est autorisée
-            $ids = array_map(function(EcoleDoctorale $ed) { return $ed->getId(); }, $this->data);
+            $ids = array_map(function(EcoleDoctorale $entity) { return $entity->getId(); }, $this->data);
             $qb->andWhere($qb->expr()->in("$alias.ecoleDoctorale", $ids));
         }
     }
@@ -85,7 +72,7 @@ class EcoleDoctoraleSearchFilter extends SelectSearchFilter
             self::NAME
         );
 
-        $sorter->setApplyToQueryBuilderCallable(
+        $sorter->setQueryBuilderApplier(
             function (SearchSorter $sorter, QueryBuilder $qb, $alias = 'these') {
                 $direction = $sorter->getDirection();
                 $qb

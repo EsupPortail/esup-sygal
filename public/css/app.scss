@@ -269,7 +269,10 @@ span.ballot-box {
 
 div#sidebar {
   margin-bottom: 30px;
-  .glyphicon {
+  .glyphicon,
+  .fa,
+  .fas,
+  .fab {
     margin-right: 3px;
   }
 }
@@ -510,8 +513,6 @@ td.acteurs {
 div.filters {
   $filterFontSize: 11px;
 
-  max-width: 80%;
-
   table {
     td,
     th {
@@ -570,6 +571,11 @@ div.filters {
       padding: 4px;
     }
   }
+}
+
+div#these-filters {
+  min-width: 30px;
+  min-height: 170px;
 }
 
 table.these-fiche {
@@ -788,9 +794,9 @@ ul.menu-secondaire,
 ul.menu-information,
 ul.menu-actualites {
   background: #f5f5f5;
-  border-radius: 4px;
+  //border-radius: 4px;
   padding: 2px;
-  box-shadow: 1px 1px 6px;
+  //box-shadow: 1px 1px 6px;
 
   li {
     margin-top: 0;
@@ -860,7 +866,7 @@ ul.menu-actualites {
 div.menu-information-header {
   font-weight: bold;
   font-size: 115%;
-  border-radius: 4px;
+  //border-radius: 4px;
   border: 4px solid #e1e1e1;
   padding: 5px;
   text-align: center;
@@ -913,6 +919,9 @@ ul.ui-autocomplete {
   content: 'SUPPRIMÉ';
 }
 
+.fermee { // NB: ne pas mettre `option.fermee` sinon le style n'est pas pris en compte par bootstrap-select
+  background: #ea9e9e !important;
+}
 
 /**************** Photo ********************/
 

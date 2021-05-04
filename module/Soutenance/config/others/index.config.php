@@ -49,10 +49,13 @@ return array(
     'router' => [
         'routes' => [
             'soutenance' => [
-                'type' => Literal::class,
+                'type' => Segment::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route' => '/soutenance',
+                    'route' => '/soutenance/:these',
+                    'constraints' => [
+                        'these' => '\d+',
+                    ],
                     'defaults' => [
                         'controller' => IndexController::class,
                         'action' => 'index',
@@ -74,7 +77,7 @@ return array(
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route' => '/index-rapporteur[/:these]',
+                            'route' => '/index-rapporteur[/:these]', // <<< param 'these' à enlever car il sera sur la route mère
                             'defaults' => [
                                 'controller' => IndexController::class,
                                 'action' => 'index-rapporteur',
