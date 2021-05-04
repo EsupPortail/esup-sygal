@@ -4,11 +4,15 @@ use Application\Entity\Db\Source;
 use Import\Model\ImportObserv;
 use Import\Model\ImportObservResult;
 
-// Déclinaison des synchros par établissement (pour pouvoir lancer la synchro pour un établissement précis).
-// ==> ajout d'un 'where' à toutes les destinations des synchros.
-$synchrosProto = [
-    [
-        'name' => 'structure-%s', // <<< Sera décliné en 'structure-UCN', 'structure-URN', etc.
+/**
+ * Il y a une déclinaison automatique des synchros par établissement (pour pouvoir lancer la synchro pour un
+ * établissement précis) : cf. fonction {@see generateConfigSynchros()} plus bas, appelée dans 'secret.local.php'.
+ * Ce qui suit n'est que la config "générique".
+ */
+
+const CONFIG_SYNCHROS = [
+    'structure' => [
+        'name' => 'structure',
         'source' => [
             'name'               => 'app',
             'table'              => 'SRC_STRUCTURE',
@@ -21,11 +25,10 @@ $synchrosProto = [
             'connection'         => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
-            'where' => "d.source_code like '%s::%%'", // <<< Sera déclinée en "d.source_code like 'UCN::%'", etc.
         ],
     ],
-    [
-        'name' => 'etablissement-%s',
+    'etablissement' => [
+        'name' => 'etablissement',
         'source' => [
             'name'               => 'app',
             'table'              => 'SRC_ETABLISSEMENT',
@@ -38,11 +41,10 @@ $synchrosProto = [
             'connection'         => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
-            'where' => "d.source_code like '%s::%%'",
         ],
     ],
-    [
-        'name' => 'ecole-doctorale-%s',
+    'ecole-doctorale' => [
+        'name' => 'ecole-doctorale',
         'source' => [
             'name'               => 'app',
             'table'              => 'SRC_ECOLE_DOCT',
@@ -55,11 +57,10 @@ $synchrosProto = [
             'connection'         => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
-            'where' => "d.source_code like '%s::%%'",
         ],
     ],
-    [
-        'name' => 'unite-recherche-%s',
+    'unite-recherche' => [
+        'name' => 'unite-recherche',
         'source' => [
             'name'               => 'app',
             'table'              => 'SRC_UNITE_RECH',
@@ -72,11 +73,10 @@ $synchrosProto = [
             'connection'         => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
-            'where' => "d.source_code like '%s::%%'",
         ],
     ],
-    [
-        'name' => 'individu-%s',
+    'individu' => [
+        'name' => 'individu',
         'source' => [
             'name'               => 'app',
             'table'              => 'SRC_INDIVIDU',
@@ -90,11 +90,10 @@ $synchrosProto = [
             'source_code_column' => 'SOURCE_CODE',
 //            'where'              => "d.source_code like 'UCN::%'", // todo: à virer
             'intermediate_table_auto_drop' => false,
-            'where' => "d.source_code like '%s::%%'",
         ],
     ],
-    [
-        'name' => 'doctorant-%s',
+    'doctorant' => [
+        'name' => 'doctorant',
         'source' => [
             'name'               => 'app',
             'table'              => 'SRC_DOCTORANT',
@@ -107,11 +106,10 @@ $synchrosProto = [
             'connection'         => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
-            'where' => "d.source_code like '%s::%%'",
         ],
     ],
-    [
-        'name' => 'these-%s',
+    'these' => [
+        'name' => 'these',
         'source' => [
             'name'               => 'app',
             'table'              => 'SRC_THESE',
@@ -124,11 +122,10 @@ $synchrosProto = [
             'connection'         => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
-            'where' => "d.source_code like '%s::%%'",
         ],
     ],
-    [
-        'name' => 'these-annee-univ-%s',
+    'these-annee-univ' => [
+        'name' => 'these-annee-univ',
         'source' => [
             'name'               => 'app',
             'table'              => 'SRC_THESE_ANNEE_UNIV',
@@ -141,11 +138,10 @@ $synchrosProto = [
             'connection'         => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
-            'where' => "d.source_code like '%s::%%'",
         ],
     ],
-    [
-        'name' => 'role-%s',
+    'role' => [
+        'name' => 'role',
         'source' => [
             'name'               => 'app',
             'table'              => 'SRC_ROLE',
@@ -158,11 +154,10 @@ $synchrosProto = [
             'connection'         => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
-            'where' => "d.source_code like '%s::%%'",
         ],
     ],
-    [
-        'name' => 'acteur-%s',
+    'acteur' => [
+        'name' => 'acteur',
         'source' => [
             'name'               => 'app',
             'table'              => 'SRC_ACTEUR',
@@ -175,11 +170,10 @@ $synchrosProto = [
             'connection'         => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
-            'where' => "d.source_code like '%s::%%'",
         ],
     ],
-    [
-        'name' => 'origine-financement-%s',
+    'origine-financement' => [
+        'name' => 'origine-financement',
         'source' => [
             'name'               => 'app',
             'table'              => 'SRC_ORIGINE_FINANCEMENT',
@@ -192,11 +186,10 @@ $synchrosProto = [
             'connection'         => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
-            'where' => "d.source_code like '%s::%%'",
         ],
     ],
-    [
-        'name' => 'financement-%s',
+    'financement' => [
+        'name' => 'financement',
         'source' => [
             'name'               => 'app',
             'table'              => 'SRC_FINANCEMENT',
@@ -209,11 +202,10 @@ $synchrosProto = [
             'connection'         => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
-            'where' => "d.source_code like '%s::%%'",
         ],
     ],
-    [
-        'name' => 'titre-acces-%s',
+    'titre-acces' => [
+        'name' => 'titre-acces',
         'source' => [
             'name'               => 'app',
             'table'              => 'SRC_TITRE_ACCES',
@@ -226,11 +218,10 @@ $synchrosProto = [
             'connection'         => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
-            'where' => "d.source_code like '%s::%%'",
         ],
     ],
-    [
-        'name' => 'variable-%s',
+    'variable' => [
+        'name' => 'variable',
         'source' => [
             'name'               => 'app',
             'table'              => 'SRC_VARIABLE',
@@ -243,19 +234,9 @@ $synchrosProto = [
             'connection'         => 'default',
             'source_code_column' => 'SOURCE_CODE',
             'intermediate_table_auto_drop' => false,
-            'where' => "d.source_code like '%s::%%'",
         ],
     ],
 ];
-$etabs = ['UCN', 'URN', 'ULHN', 'INSA'];
-$synchros = [];
-foreach ($etabs as $etab) {
-    foreach ($synchrosProto as $proto) {
-        $proto['name'] = sprintf($proto['name'], $etab);                                 // ex : "individu-UCN"
-        $proto['destination']['where'] = sprintf($proto['destination']['where'], $etab); // ex : "d.source_code like 'UCN::%'"
-        $synchros[] = $proto;
-    }
-}
 
 return [
     'import' => [
@@ -316,6 +297,30 @@ return [
         //
         // Synchros.
         //
-        'synchros' => $synchros,
+        'synchros' => [
+
+        ],
     ],
 ];
+
+
+/**
+ * Déclinaison des synchros par établissement (pour pouvoir lancer la synchro pour un établissement précis) :
+ * - renommage de chaque synchro,
+ * - ajout d'un 'where' à chaque destination de synchro.
+ *
+ * @param array $etabs
+ * @return array
+ */
+function generateConfigSynchros(array $etabs): array
+{
+    $synchros = [];
+    foreach ($etabs as $etab) {
+        foreach (CONFIG_SYNCHROS as $array) {
+            $array['name'] = $array['name'] . '-' .  $etab;                                 // ex : "individu-UCN"
+            $array['destination']['where'] = sprintf("d.source_code like '%s::%%'", $etab); // ex : "d.source_code like 'UCN::%'"
+            $synchros[] = $array;
+        }
+    }
+    return $synchros;
+}

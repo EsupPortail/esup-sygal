@@ -162,6 +162,14 @@ de la création de votre établissement dans la base de données (dans le script
                 'password' => 'yyy',
 ```
 
+- Idem dans la config des synchros juste après :
+
+```php
+    'import' => [
+        'synchros' => generateConfigSynchros(['UCN']), /* <-- code établissement */
+    ],
+```
+
 - Renseignez les infos de connexion à la base de données :
 
 ```php
