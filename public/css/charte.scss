@@ -41,7 +41,18 @@ body.production  .navbar-inverse .navbar-nav .active a {
 }
 
 .nav-pills > li > a {
-  border-radius: 20px;
+  //border-radius: 20px;
+}
+
+body.development .navbar-inverse .navbar-nav/*,
+body.test        .navbar-inverse .navbar-nav,
+body.production  .navbar-inverse .navbar-nav*/ {
+  .dropdown-menu > li > a {
+    background-color: white;
+  }
+  .dropdown-menu > .active a {
+    background-color: #004980;
+  }
 }
 
 #footer {
@@ -72,13 +83,13 @@ h1.app-name {
   bottom: 80px;
 }
 
+ul.breadcrumb,
 ul.menu-secondaire,
 ul.menu-information,
 ul.menu-actualites {
-  background: none;
-  border-radius: 18px;
-  padding: 2px;
-  box-shadow: 1px 1px 6px;
+  background: white;
+  padding: 8px 12px;
+  box-shadow: 1px 1px 10px lightgray;
 }
 ul.menu-secondaire li a,
 ul.menu-information li a {

@@ -65,16 +65,20 @@ return [
         'default' => [
             'home' => [
                 'pages' => [
-                    'soutenance' => [
+                    'MA_THESE_PLACEHOLDER' => [ /** {@see ApplicationNavigationFactory::processPage()} */
                         'pages' => [
-                            'intervention' => [
-                                'label' => 'Intervention de soutenance',
-                                'route' => 'soutenance/intervention/afficher',
-                                'order' => 600,
-                                'resource' => InterventionPrivileges::getResourceId(InterventionPrivileges::INTERVENTION_AFFICHER),
-                                'withtarget' => true,
-                                'paramsInject' => [
-                                    'these',
+                            'soutenance' => [
+                                'pages' => [
+                                    'intervention' => [
+                                        'label' => 'Intervention de soutenance',
+                                        'route' => 'soutenance/intervention/afficher',
+                                        'order' => 600,
+                                        'resource' => InterventionPrivileges::getResourceId(InterventionPrivileges::INTERVENTION_AFFICHER),
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'these',
+                                        ],
+                                    ],
                                 ],
                             ],
                         ],

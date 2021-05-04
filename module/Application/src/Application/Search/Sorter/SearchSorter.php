@@ -64,7 +64,7 @@ class SearchSorter
      * @param callable $applyToQueryBuilderCallable function(SearchFilter $filter, QueryBuilder $qb)
      * @return self
      */
-    public function setApplyToQueryBuilderCallable(callable $applyToQueryBuilderCallable): self
+    public function setQueryBuilderApplier(callable $applyToQueryBuilderCallable): self
     {
         if (! is_callable($applyToQueryBuilderCallable)) {
             throw new RuntimeException("Callable spécifié invalide !");

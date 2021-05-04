@@ -2,15 +2,16 @@
 
 namespace Application\Service\Rapport;
 
-use Application\Service\EcoleDoctorale\EcoleDoctoraleSearchFilter;
-use Application\Service\Etablissement\EtablissementInscSearchFilter;
+use Application\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
+use Application\Search\Etablissement\EtablissementSearchFilter;
+use Application\Search\Rapport\AnneeRapportActiviteSearchFilter;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Financement\FinancementService;
-use Application\Service\Financement\OrigineFinancementSearchFilter;
+use Application\Search\Financement\OrigineFinancementSearchFilter;
 use Application\Service\Structure\StructureService;
-use Application\Service\These\TheseRechercheService;
+use Application\Service\These\TheseSearchService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
-use Application\Service\UniteRecherche\UniteRechercheSearchFilter;
+use Application\Search\UniteRecherche\UniteRechercheSearchFilter;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
@@ -39,24 +40,24 @@ class RapportSearchServiceFactory implements FactoryInterface
          * @var EtablissementService $etablissementService
          * @var FinancementService $financementService
          * @var TheseAnneeUnivService $theseAnneeUnivService
-         * @var TheseRechercheService $theseRechercheService
+         * @var TheseSearchService $theseSearchService
          * @var RapportService $rapportService
          */
         $structureService = $container->get(StructureService::class);
         $etablissementService = $container->get(EtablissementService::class);
         $financementService = $container->get(FinancementService::class);
         $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
-        $theseRechercheService = $container->get(TheseRechercheService::class);
+        $theseSearchService = $container->get(TheseSearchService::class);
         $rapportService = $container->get(RapportService::class);
 
         $service->setFinancementService($financementService);
         $service->setTheseAnneeUnivService($theseAnneeUnivService);
         $service->setStructureService($structureService);
         $service->setEtablissementService($etablissementService);
-        $service->setTheseRechercheService($theseRechercheService);
+        $service->setTheseSearchService($theseSearchService);
         $service->setRapportService($rapportService);
 
-        $service->setEtablissementInscSearchFilter(EtablissementInscSearchFilter::newInstance());
+        $service->setEtablissementInscSearchFilter(EtablissementSearchFilter::newInstance());
         $service->setOrigineFinancementSearchFilter(OrigineFinancementSearchFilter::newInstance());
         $service->setUniteRechercheSearchFilter(UniteRechercheSearchFilter::newInstance());
         $service->setEcoleDoctoraleSearchFilter(EcoleDoctoraleSearchFilter::newInstance());

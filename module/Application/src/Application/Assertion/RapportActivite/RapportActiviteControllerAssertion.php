@@ -30,6 +30,10 @@ class RapportActiviteControllerAssertion extends ControllerAssertion
      */
     public function assert($privilege = null)
     {
+        if ($this->rapport->getThese() === null) {
+            return true;
+        }
+
         // Cas particulier de l'utilisateur Doctorant
         if ($identityDoctorant = $this->userContextService->getIdentityDoctorant()) {
             if (! $this->assertForDoctorant($identityDoctorant, $privilege)) {

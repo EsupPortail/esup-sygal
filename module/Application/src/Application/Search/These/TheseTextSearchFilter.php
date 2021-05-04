@@ -1,18 +1,17 @@
 <?php
 
-namespace Application\Service\These\Filter;
+namespace Application\Search\These;
 
-use Doctrine\ORM\QueryBuilder;
+use Application\Search\Filter\TextCriteriaSearchFilter;
 
 /**
  *
  *
  * @author Unicaen
  */
-class TheseTextFilter extends TheseFilter
+class TheseTextSearchFilter extends TextCriteriaSearchFilter
 {
-    const NAME_text = 'text';
-    const NAME_criteria = 'textCriteria';
+    const NAME = 'text';
 
     const CRITERIA_titre = 'titre';
     const CRITERIA_numero_doctorant = 'doctorant-numero';
@@ -23,8 +22,6 @@ class TheseTextFilter extends TheseFilter
     const CRITERIA_code_ur = 'code_ur';
 
     /**
-     * Critères possibles sur lesquels faire porter la recherche sur texte libre.
-     *
      * ATTENTION : les identifiants (clés) doivent être identiques à ceux utilisés dans
      *             le script de la vue matérialisée MV_RECHERCHE_THESE sollicitée pour la recherche.
      */
@@ -39,31 +36,28 @@ class TheseTextFilter extends TheseFilter
     ];
 
     /**
-     * @param array $queryParams
+     * Critères possibles sur lesquels faire porter la recherche sur texte libre.
      */
-    public function processQueryParams(array $queryParams)
+    protected $availableCriteria = self::CRITERIA;
+
+    /**
+     * TheseTextSearchFilter constructor.
+     * @param string $label
+     * @param string $name
+     */
+    protected function __construct(string $label, string $name)
     {
-        $filterValue = $this->paramFromQueryParams($queryParams);
-
-        if (array_key_exists(self::NAME_criteria, $queryParams) && !empty($queryParams[self::NAME_criteria])) {
-            $criteria = $queryParams[self::NAME_criteria];
-        } else {
-            $criteria = array_keys(self::CRITERIA); // par défaut, cochage de tous les critères
-        }
-
-        $filterValue = [
-            'text' => $filterValue,
-            'criteria' => $criteria,
-        ];
-
-        $this->setValue($filterValue);
+        parent::__construct($label, $name);
     }
 
     /**
-     * @param QueryBuilder $qb
+     * @return self
      */
-    public function applyToQueryBuilder(QueryBuilder $qb)
+    static public function newInstance(): self
     {
-        // not possible
+        return new self(
+            "Recherche de texte",
+            self::NAME
+        );
     }
 }

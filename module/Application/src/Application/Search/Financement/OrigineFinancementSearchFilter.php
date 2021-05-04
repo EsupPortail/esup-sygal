@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Service\Financement;
+namespace Application\Search\Financement;
 
 use Application\Search\Filter\SelectSearchFilter;
 use Doctrine\ORM\QueryBuilder;
@@ -33,21 +33,6 @@ class OrigineFinancementSearchFilter extends SelectSearchFilter
     }
 
     /**
-     * @inheritDoc
-     */
-    public function createValueOptionsFromData(array $data): array
-    {
-        $options = [];
-        $options[] = $this->valueOptionEmpty();
-        $options[] = $this->valueOptionUnknown(); // option spéciale pour valeur === null
-        foreach ($data as $origine) {
-            $options[] = $this->valueOptionEntity($origine, 'getLibelleLong');
-        }
-
-        return $options;
-    }
-
-    /**
      * @param QueryBuilder $qb
      */
     public function applyToQueryBuilder(QueryBuilder $qb)
@@ -55,9 +40,6 @@ class OrigineFinancementSearchFilter extends SelectSearchFilter
         $alias = 'these'; // todo: rendre paramétrable
 
         $filterValue = $this->getValue();
-        if (!$filterValue) {
-            return;
-        }
 
         $qb
             ->leftJoin("$alias.financements", 'fin')

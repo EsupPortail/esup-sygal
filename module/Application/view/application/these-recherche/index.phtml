@@ -4,6 +4,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Filter\ActeursFormatter;
 use Application\Provider\Privilege\ThesePrivileges;
+use Application\Search\SearchResultPaginator;
 use Application\Service\These\TheseSorter;
 use Application\View\Renderer\PhpRenderer;
 use UnicaenAuth\Provider\Privilege\Privileges;
@@ -11,11 +12,12 @@ use Zend\Paginator\Paginator;
 
 /**
  * @var PhpRenderer $this
- * @var Paginator   $theses
+ * @var SearchResultPaginator $theses
  * @var string      $text
  * @var Role        $roleDirecteurThese
  * @var bool        $displayEtablissement
  * @var bool        $displayDateSoutenance
+ * @var string      $filtersRoute
  *
  * @see \Application\Controller\TheseController::indexAction()
  */
@@ -42,8 +44,8 @@ $acteursFormatterCodirecteurs->asSeparated()
 
 <!-- Formulaire de filtrage -->
 <div class="pull-left">
-    <?php $loadFiltersUrl = $this->url('these/filters', [], ['query' => $this->queryParams()], true); ?>
-    <div id="these-filters" data-url="<?php echo $loadFiltersUrl ?>" style="min-height: 130px">
+    <?php $loadFiltersUrl = $this->url($filtersRoute, [], ['query' => $this->queryParams()], true); ?>
+    <div class="filters" id="these-filters" data-url="<?php echo $loadFiltersUrl ?>">
         <!-- Contenu chargé en AJAX -->
     </div>
 </div>
@@ -214,7 +216,11 @@ $acteursFormatterCodirecteurs->asSeparated()
 
 <?php else: ?>
 
-    <p>Aucune thèse trouvée.</p>
+    <?php if ($theses->containsRealSearchResult()): ?>
+        <p>Aucune thèse trouvée.</p>
+    <?php else: ?>
+        <p class="text-info text-center"><i class="fa fa-bullhorn"></i> Ajustez les filtres et lancez la recherche...</p>
+    <?php endif ?>
 
 <?php endif ?>
 
@@ -236,6 +242,6 @@ $acteursFormatterCodirecteurs->asSeparated()
 
 <script>
     $(function() {
-        $("#these-filters").refresh();
+        $("#these-filters").addClass("loading").refresh(null, function() { $(this).removeClass("loading"); });
     });
 </script>

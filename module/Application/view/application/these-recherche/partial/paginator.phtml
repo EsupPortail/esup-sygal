@@ -1,0 +1,85 @@
+<?php if ($this->pageCount): ?>
+    <div>
+        <ul class="pagination">
+            <!-- First page link -->
+            <?php if ($this->current !== $this->first): ?>
+                <li>
+                    <?php $queryParams = array_merge($this->queryParams(), ['page' => $this->first]) ?>
+                    <a title="Première page" href="<?php echo $this->url($this->route, [], ['query' => $queryParams], true) ?>">
+                        |<
+                    </a>
+                </li>
+            <?php else: ?>
+                <li class="disabled">
+                    <a href="#">
+                        |<
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <!-- Previous page link -->
+            <?php if (isset($this->previous)): ?>
+                <li>
+                    <?php $queryParams = array_merge($this->queryParams(), ['page' => $this->previous]) ?>
+                    <a title="Page précédente" href="<?php echo $this->url($this->route, [], ['query' => $queryParams], true) ?>">
+                        <
+                    </a>
+                </li>
+            <?php else: ?>
+                <li class="disabled">
+                    <a href="#">
+                        <
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <!-- Numbered page links -->
+            <?php foreach ($this->pagesInRange as $page): ?>
+                <?php if ($page != $this->current): ?>
+                    <li>
+                        <?php $queryParams = array_merge($this->queryParams(), ['page' => $page]) ?>
+                        <a href="<?php echo $this->url($this->route, [], ['query' => $queryParams], true) ?>">
+                            <?php echo $page; ?>
+                        </a>
+                    </li>
+                <?php else: ?>
+                    <li class="active">
+                        <a href="#"><?php echo $page; ?></a>
+                    </li>
+                <?php endif; ?>
+            <?php endforeach; ?>
+
+            <!-- Next page link -->
+            <?php if (isset($this->next)): ?>
+                <li>
+                    <?php $queryParams = array_merge($this->queryParams(), ['page' => $this->next]) ?>
+                    <a title="Page suivante" href="<?php echo $this->url($this->route, [], ['query' => $queryParams], true) ?>">
+                        >
+                    </a>
+                </li>
+            <?php else: ?>
+                <li class="disabled">
+                    <a href="#">
+                        >
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <!-- Last page link -->
+            <?php if ($this->current !== $this->last): ?>
+                <li>
+                    <?php $queryParams = array_merge($this->queryParams(), ['page' => $this->last]) ?>
+                    <a title="Dernière page" href="<?php echo $this->url($this->route, [], ['query' => $queryParams], true) ?>">
+                        >|
+                    </a>
+                </li>
+            <?php else: ?>
+                <li class="disabled">
+                    <a href="#">
+                        >|
+                    </a>
+                </li>
+            <?php endif; ?>
+        </ul>
+    </div>
+<?php endif; ?>

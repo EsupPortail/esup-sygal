@@ -310,7 +310,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
      */
     public function getEtablissement()
     {
-        return $this->etablissement->first();
+        return $this->etablissement->first() ?: null;
     }
 
     /**
@@ -318,7 +318,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
      */
     public function getEcoleDoctorale()
     {
-        return $this->ecoleDoctorale->first();
+        return $this->ecoleDoctorale->first() ?: null;
     }
 
     /**
@@ -326,7 +326,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
      */
     public function getUniteRecherche()
     {
-        return $this->uniteRecherche->first();
+        return $this->uniteRecherche->first() ?: null;
     }
 
     /**

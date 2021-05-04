@@ -12,8 +12,8 @@ use Application\View\Renderer\PhpRenderer;
 $paramAttributes = $filter->getAttributes();
 $paramName = $filter->getName();
 
-$width = isset($paramAttributes['width']) ? $paramAttributes['width'] : 'fit';
-$liveSearch = isset($paramAttributes['liveSearch']) ? (bool)$paramAttributes['liveSearch'] : false;
+$width = $paramAttributes['width'] ?? 'fit';
+$liveSearch = (bool) ($paramAttributes['liveSearch'] ?? false);
 ?>
 
 <select title=""
@@ -29,13 +29,13 @@ $liveSearch = isset($paramAttributes['liveSearch']) ? (bool)$paramAttributes['li
     <?php
     $value = $data['value'];
     $label = $data['label'];
-    $subtext = isset($data['subtext']) ? $data['subtext'] : '';
-    $isActive = $filter->isSelectOptionActive($value, $queryParams);
+    $subtext = $data['subtext'] ?? '';
+    $class = $data['class'] ?? '';
+    $isActive = $value === $filter->getValue() || $filter->isSelectOptionActive($value, $queryParams);
     ?>
-    <option value="<?php echo $value ?>" <?php echo $isActive ? 'selected' : '' ?>
-            <?php if (strpos($subtext,'FERME',0) !== false) : ?>
-                style="background: #ea9e9e; "
-            <?php endif; ?>
+    <option <?php echo $isActive ? 'selected' : '' ?>
+            value="<?php echo $value ?>"
+            class="<?php echo $class ?>"
             data-subtext="<?php echo $subtext ?>">
         <?php echo $label ?>
     </option>
