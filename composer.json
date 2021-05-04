@@ -28,7 +28,7 @@
         "unicaen/auth":                  "dev-release-3.2.0",
         "unicaen/bjy-authorize":         "^3.0",
         "unicaen/code":                  "^3.0",
-        "unicaen/db-import":             "dev-release-3.1.2",
+        "unicaen/db-import":             "^3.1",
         "unicaen/faq":                   "^3.0",
         "unicaen/ldap":                  "^3.0",
         "webmozart/assert":              "^1.3",
