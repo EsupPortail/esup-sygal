@@ -1,0 +1,19 @@
+<?php
+
+return [
+    'unicaen-app' => [
+        'maintenance' => [
+            // activation (true: activé, false: désactivé)
+            'enable' => false,
+            // message à afficher
+            'message' => "SyGAL est indisponible pour des raisons de maintenance, veuillez nous excuser pour la gêne occasionnée.",
+            // le mode console est-il aussi concerné (TRUE: oui, FALSE: non)
+            'include_cli' => false,
+            // liste blanche des adresses IP clientes non concernées
+            'white_list' => [
+                //['172.17.0.1'], // docker container ip
+                //['195.123.123.123', '194.123.123.124'],
+            ],
+        ],
+    ],
+];

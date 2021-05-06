@@ -259,7 +259,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * @var ArrayCollection
      */
-    private $rapportsAnnuels;
+    private $rapports;
 
     /**
      * @var ArrayCollection
@@ -290,7 +290,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         $this->rdvBus = new ArrayCollection();
         $this->anneesUnivInscription = new ArrayCollection();
         $this->anneesUniv1ereInscription = new ArrayCollection();
-        $this->rapportsAnnuels = new ArrayCollection();
+        $this->rapports = new ArrayCollection();
         $this->propositions = new ArrayCollection();
     }
 
@@ -1378,29 +1378,29 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * @return Collection
      */
-    public function getRapportsAnnuels()
+    public function getRapports()
     {
-        return $this->rapportsAnnuels;
+        return $this->rapports;
     }
 
     /**
-     * @param RapportAnnuel $rapportAnnuel
+     * @param Rapport $rapport
      * @return self
      */
-    public function addRapportAnnuel(RapportAnnuel $rapportAnnuel)
+    public function addRapport(Rapport $rapport)
     {
-        $this->rapportsAnnuels->add($rapportAnnuel);
+        $this->rapports->add($rapport);
 
         return $this;
     }
 
     /**
-     * @param RapportAnnuel $rapportAnnuel
+     * @param Rapport $rapport
      * @return self
      */
-    public function removeRapportAnnuel(RapportAnnuel $rapportAnnuel)
+    public function removeRapport(Rapport $rapport)
     {
-        $this->rapportsAnnuels->removeElement($rapportAnnuel);
+        $this->rapports->removeElement($rapport);
 
         return $this;
     }
