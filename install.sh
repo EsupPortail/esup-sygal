@@ -16,4 +16,4 @@ mkdir -p upload && \
   chmod -R 770 upload
 
 # Composer install
-composer install --no-suggest --prefer-dist --optimize-autoloader && \
+composer install --no-suggest --prefer-dist --optimize-autoloader
