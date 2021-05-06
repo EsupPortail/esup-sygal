@@ -5,14 +5,14 @@ namespace Application;
 use Application\Assertion\AssertionAbstractFactory;
 use Application\Cache\MemcachedFactory;
 use Application\Controller\Factory\IndexControllerFactory;
+use Application\Controller\Plugin\Forward;
+use Application\Controller\Plugin\ForwardFactory;
 use Application\Controller\Plugin\Uploader\UploaderPluginFactory;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Event\UserAuthenticatedEventListenerFactory;
 use Application\Event\UserRoleSelectedEventListener;
 use Application\Form\Factory\EcoleDoctoraleFormFactory;
 use Application\Navigation\NavigationFactoryFactory;
-use Application\Search\Filter\Provider\SearchFilterProviderService;
-use Application\Search\Filter\Provider\SearchFilterProviderServiceFactory;
 use Application\Service\AuthorizeServiceAwareInitializer;
 use Application\Service\Role\RoleService;
 use Application\Service\Role\RoleServiceFactory;
@@ -220,7 +220,6 @@ return array(
             'Sygal\Memcached'                => MemcachedFactory::class,
             'RoleService' => RoleServiceFactory::class,
             SourceCodeStringHelper::class => SourceCodeStringHelperFactory::class,
-            SearchFilterProviderService::class => SearchFilterProviderServiceFactory::class,
         ),
         'abstract_factories' => [
             AssertionAbstractFactory::class,
@@ -253,10 +252,11 @@ return array(
         'invokables' => [
         ],
         'factories' => [
-            'forward'  => 'Application\Controller\Plugin\ForwardFactory',
+            Forward::class => ForwardFactory::class,
             'uploader' => UploaderPluginFactory::class,
         ],
         'aliases' => [
+            'forward' => Forward::class,
             'Uploader' => 'uploader',
         ],
         'initializers' => [

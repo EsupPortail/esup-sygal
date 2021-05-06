@@ -91,19 +91,19 @@ class UserContextService extends BaseUserContextService
     }
 
     /**
-     * @return RoleInterface|null
+     * @return Role|null
      */
     public function getSelectedRoleDirecteurEcoleDoctorale()
     {
-        return $this->_getSelectedRoleForRoleId(Role::ROLE_ID_ECOLE_DOCT);
+        return $this->_getSelectedRoleForCode(Role::CODE_ED);
     }
 
     /**
-     * @return RoleInterface|null
+     * @return Role|null
      */
     public function getSelectedRoleDirecteurUniteRecherche()
     {
-        return $this->_getSelectedRoleForRoleId(Role::ROLE_ID_UNITE_RECH);
+        return $this->_getSelectedRoleForCode(Role::CODE_UR);
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace Application\Service\Utilisateur;
 
-use Application\Search\Filter\Provider\SearchFilterProviderService;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
@@ -20,14 +19,11 @@ class UtilisateurSearchServiceFactory implements FactoryInterface
     {
         /**
          * @var UtilisateurService $utilisateurService
-         * @var SearchFilterProviderService $searchFilterProviderService
          */
         $utilisateurService = $container->get(UtilisateurService::class);
-        $searchFilterProviderService = $container->get(SearchFilterProviderService::class);
 
         $service = new UtilisateurSearchService();
         $service->setUtilisateurService($utilisateurService);
-        $service->setSearchFilterProviderService($searchFilterProviderService);
 
         return $service;
     }
