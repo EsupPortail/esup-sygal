@@ -157,11 +157,12 @@ $canCoencadrantExport = $this->isAllowed(CoEncadrantPrivileges::getResourceId(Co
                     </tr>
                     </thead>
                     <tbody>
-                    <?php foreach ($individuListing as $denomination => $roles): ?>
-                        <?php foreach ($roles as $role): ?>
+                    <?php foreach ($individuListing as $denomination => $data): ?>
+                        <?php foreach ($data as $item): ?>
                             <tr>
                                 <td> <?php echo $denomination; ?> </td>
-                                <td> <?php echo $role; ?> </td>
+                                <td> <?php echo $item['Etablissement']; ?> </td>
+                                <td> <?php echo $item['Role']; ?> </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endforeach; ?>

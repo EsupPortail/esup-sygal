@@ -10,10 +10,10 @@ CURDIR=$(cd `dirname $0` && pwd)
 
 cd ${CURDIR}
 
-# Composer install
-composer install --no-dev --no-suggest --prefer-dist --optimize-autoloader && \
-
 # Répertoire pour l'upload de fichiers
 mkdir -p upload && \
   chown -R www-data:root upload && \
   chmod -R 770 upload
+
+# Composer install
+composer install --no-suggest --prefer-dist --optimize-autoloader && \

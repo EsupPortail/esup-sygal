@@ -3,7 +3,6 @@
 namespace Application\Search\Controller;
 
 use Application\Search\Filter\SearchFilter;
-use Application\Search\SearchServiceAwareTrait;
 use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Paginator\Paginator as ZendPaginator;
@@ -14,8 +13,6 @@ use Zend\View\Model\ViewModel;
  */
 trait SearchControllerTrait
 {
-    use SearchServiceAwareTrait;
-
     /**
      * @return ViewModel
      */
