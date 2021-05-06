@@ -2,10 +2,8 @@
 
 namespace Soutenance\Form\DateLieu;
 
-use DateTime;
-use Soutenance\Validator\DateGreaterThan;
 use Zend\Form\Element\Button;
-use Zend\Form\Element\Date;
+use Zend\Form\Element\DateTime;
 use Zend\Form\Element\Time;
 use Zend\Form\Element\Radio;
 use Zend\Form\Element\Text;
@@ -16,7 +14,6 @@ class DateLieuForm extends Form {
 
     public function init()
     {
-        $twomonth = new DateTime("+2 months");
 
         $this->add([
             'name' => 'date',
