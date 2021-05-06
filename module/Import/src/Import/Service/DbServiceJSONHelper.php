@@ -57,13 +57,9 @@ class DbServiceJSONHelper
             case 'ecoleDoctId':
             case 'uniteRechId':
             case 'acteurEtablissementId':
-                $prefixRequired = true;
-                $prefix = $codeEtablissement;
-                $value = isset($jsonObject->{$propertyName}) ? $jsonObject->{$propertyName} : null;
-                break;
             case 'origineFinancementId':
                 $prefixRequired = true;
-                $prefix = null; // particularité! prefix par défaut.
+                $prefix = $codeEtablissement;
                 $value = isset($jsonObject->{$propertyName}) ? $jsonObject->{$propertyName} : null;
                 break;
             default:
