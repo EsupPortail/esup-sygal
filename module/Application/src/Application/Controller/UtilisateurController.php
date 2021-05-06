@@ -10,6 +10,7 @@ use Application\Form\InitCompteForm;
 use Application\Form\InitCompteFormAwareTrait;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
+use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -38,6 +39,9 @@ use Zend\View\Model\ViewModel;
 
 class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurController implements SearchControllerInterface
 {
+    use SearchServiceAwareTrait;
+    use SearchControllerTrait;
+
     use ActeurServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use UserContextServiceAwareTrait;
@@ -53,7 +57,6 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use UserServiceAwareTrait;
 
     use InitCompteFormAwareTrait;
-    use SearchControllerTrait;
 
     /**
      * @var ModuleOptions

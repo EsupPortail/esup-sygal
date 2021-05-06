@@ -112,7 +112,8 @@ abstract class StructureConcreteController extends AbstractController
         foreach ($individuRoles as $individuRole) {
             $denomination = $individuRole->getIndividu()->getNomComplet(false, false, false, true, false);
             $role = $individuRole->getRole()->getLibelle();
-            $individuListings[$denomination][] = $role;
+            $etablissement = ($individuRole->getIndividu()->getEtablissement())?$individuRole->getIndividu()->getEtablissement()->getLibelle():"Aucun";
+            $individuListings[$denomination][] = [ 'Role' => $role, 'Etablissement' => $etablissement ];
             $roleListings[$role]++;
         }
 

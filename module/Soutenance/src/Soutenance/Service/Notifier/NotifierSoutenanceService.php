@@ -54,6 +54,28 @@ class NotifierSoutenanceService extends NotifierService
     }
 
     /**
+     * @param IndividuRole[] $individuRoles
+     * @param These $these
+     * @return array
+     */
+    protected function fetchEmailsByEtablissement(array $individuRoles, These $these) : array
+    {
+        $allEmails = [];
+        $emails = [];
+        foreach ($individuRoles as $individuRole) {
+            $individu = $individuRole->getIndividu();
+            if ($individu->getEmail() !== null) {
+                if ($individu->getEtablissement() === $these->getEtablissement()) {
+                    $emails[] = $individu->getEmail();
+                }
+                $allEmails[] = $individu->getEmail();
+            }
+        }
+        if (! empty($emails)) return $emails;
+        return $allEmails;
+    }
+
+    /**
      * @param These $these
      * @return array
      */
@@ -61,15 +83,8 @@ class NotifierSoutenanceService extends NotifierService
     {
         /** @var IndividuRole[] $individuRoles */
         $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
-
-        $emails = [];
-        foreach ($individuRoles as $individuRole) {
-            if ($individuRole->getIndividu()->getEmail() !== null)
-                $emails[] = $individuRole->getIndividu()->getEmail();
-        }
-        return $emails;
+        return $this->fetchEmailsByEtablissement($individuRoles, $these);
     }
-
 
     /**
      * @param These $these
@@ -79,13 +94,7 @@ class NotifierSoutenanceService extends NotifierService
     {
         /** @var IndividuRole[] $individuRoles */
         $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
-
-        $emails = [];
-        foreach ($individuRoles as $individuRole) {
-            if ($individuRole->getIndividu()->getEmail() !== null)
-                $emails[] = $individuRole->getIndividu()->getEmail();
-        }
-        return $emails;
+        return $this->fetchEmailsByEtablissement($individuRoles, $these);
     }
 
     /**

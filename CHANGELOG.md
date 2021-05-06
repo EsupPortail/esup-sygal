@@ -1,6 +1,15 @@
 Journal des modifications
 =========================
 
+2.1.8
+-----
+- Utilisation de l'établissement de la thèse pour le routing des mails du module soutenance au site concerné.
+- Retrait d'espace et renommage des fichiers pour signature (module Soutenance).
+- Téléversement des rapports annuels : renommage en rapports d'activité (annuel ou de fin de thèse) ; création des privilèges *_TOUT et *_SIEN.
+- [FIX] Import : le préfixe 'SyGAL' par défaut pour ORIGINE_FINANCEMENT_ID est incorrect depuis que les origines sont de nouveau importées de chaque établissement.
+- [FIX] Corrections pour le cas où le supannId est null.
+- [FIX] Un utilisateur authentifié était associé au mauvais utilisateur si les données shib ne fournisse aucun supann{Ref|Emp|Etu}Id.
+
 2.1.7
 -----
 - Changement du fonctionnement de sursis pour les soutenances : seul la validation acteur vérifie le délai de deux mois et le sursis annule cette vérification.

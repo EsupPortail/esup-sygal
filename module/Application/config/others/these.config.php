@@ -6,7 +6,7 @@ use Application\Controller\Factory\TheseConsoleControllerFactory;
 use Application\Controller\Factory\TheseControllerFactory;
 use Application\Controller\Factory\TheseObserverControllerFactory;
 use Application\Controller\Plugin\Url\UrlThesePluginFactory;
-use Application\Controller\RapportAnnuelController;
+use Application\Controller\RapportActiviteController;
 use Application\Controller\TheseConsoleController;
 use Application\Controller\TheseController;
 use Application\Entity\Db\Diffusion;
@@ -21,7 +21,7 @@ use Application\Form\Factory\PointsDeVigilanceHydratorFactory;
 use Application\Form\Factory\RdvBuHydratorFactory;
 use Application\Form\Factory\RdvBuTheseDoctorantFormFactory;
 use Application\Form\Factory\RdvBuTheseFormFactory;
-use Application\Provider\Privilege\RapportAnnuelPrivileges;
+use Application\Provider\Privilege\RapportPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Acteur\ActeurServiceFactory;
@@ -862,6 +862,7 @@ return [
                                 'etape' => null,
                                 'visible' => 'Assertion\\These',
                             ],
+
                             'divider-roadmap' => [
                                 'label'    => null,
                                 'uri' => '',
@@ -871,7 +872,6 @@ return [
                                 ],
                                 'class' => 'divider',
                             ],
-
 
                             'points-de-vigilance' => [
                                 'label'    => 'Points de vigilance',
@@ -898,17 +898,16 @@ return [
                                 'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
                                 'visible' => 'Assertion\\These',
                             ],
-                            'rapport-annuel' => [
-                                'id'       => 'these-rapport-annuel',
-                                'label'    => 'Rapports annuels',
-                                'route'    => 'rapport-annuel/consulter',
+                            'rapport-activite' => [
+                                'id'       => 'these-rapport-activite',
+                                'label'    => "Rapports d'activité",
+                                'route'    => 'rapport-activite/consulter',
                                 'withtarget' => true,
                                 'paramsInject' => [
                                     'these',
                                 ],
                                 'icon' => 'glyphicon glyphicon-duplicate',
-                                'resource' => PrivilegeController::getResourceId(RapportAnnuelController::class, 'consulter'),
-                                'privilege' => RapportAnnuelPrivileges::RAPPORT_ANNUEL_CONSULTER,
+                                'resource' => PrivilegeController::getResourceId(RapportActiviteController::class, 'consulter'),
                             ],
 
                             'divider-these' => [

@@ -453,7 +453,7 @@ class PropositionController extends AbstractController
             'libelle' => $this->getPropositionService()->generateLibelleSignaturePresidence($these),
             'nbCodirecteur' => count($codirecteurs),
         ]);
-        $exporter->export('export.pdf');
+        $exporter->export('Document_pour_signature_-_'.$these->getId().'_-_'.str_replace(' ','_',$these->getDoctorant()->getIndividu()->getNomComplet()).'.pdf');
         exit;
     }
 

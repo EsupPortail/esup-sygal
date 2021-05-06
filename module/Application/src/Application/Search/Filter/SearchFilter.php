@@ -56,6 +56,17 @@ abstract class SearchFilter implements SearchFilterInterface
     }
 
     /**
+     * @return self
+     */
+    public function init(): self
+    {
+        // initialisations utiles
+        // ...
+
+        return $this;
+    }
+
+    /**
      * @param callable $applyToQueryBuilderCallable
      * @return self
      */

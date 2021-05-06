@@ -117,6 +117,11 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     private $type;
 
     /**
+     * @var Etablissement|null
+     */
+    private $etablissement;
+
+    /**
      * Individu constructor.
      */
     public function __construct()
@@ -425,6 +430,8 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
         return 'Mme' === $this->getCivilite();
     }
 
+
+
     /**
      * Retourne la représentation littérale de cet objet.
      *
@@ -577,5 +584,22 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
         return $this;
     }
 
+    /**
+     * @return Etablissement|null
+     */
+    public function getEtablissement(): ?Etablissement
+    {
+        return $this->etablissement;
+    }
+
+    /**
+     * @param Etablissement|null $etablissement
+     * @return Individu
+     */
+    public function setEtablissement(?Etablissement $etablissement): Individu
+    {
+        $this->etablissement = $etablissement;
+        return $this;
+    }
 
 }
