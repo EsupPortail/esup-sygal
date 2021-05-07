@@ -621,25 +621,7 @@ class NotifierSoutenanceService extends NotifierService
                     'url' => $url,
                 ]);
             $this->trigger($notif);
-        }
-    }
 
-
-    /**
-     * @param Notification $notification
-     */
-    public function trigger(Notification $notification)
-    {
-        $notification->prepare();
-
-        $this->sendNotification($notification);
-
-        // collecte des éventuels messages exposés par la notification
-        foreach ($notification->getInfoMessages() as $message) {
-            $this->messageContainer->setMessage($message, 'info');
-        }
-        foreach ($notification->getWarningMessages() as $message) {
-            $this->messageContainer->setMessage($message, 'warning');
         }
     }
 
