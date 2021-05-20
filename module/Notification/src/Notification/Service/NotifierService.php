@@ -106,7 +106,7 @@ class NotifierService
         $nMail->setTo(implode(',', $mails));
         $nMail->setSubject($email->getSubject());
         $body = $email->getBodyText();
-        //$body = htmlentities($body);
+//        $body = htmlentities($body);
         $nMail->setBody($body);
         $nMail->setSentOn(new DateTime());
         $this->getEntityManager()->persist($nMail);
