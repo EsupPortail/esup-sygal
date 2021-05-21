@@ -21,6 +21,8 @@ class Qualite
     private $hdr;
     /** @var string */
     private $emeritat;
+    /** @var string */
+    private $justificatif;
 
     /** @var ArrayCollection (QualiteLibelleSupplementaire) */
     private $libellesSupplementaires;
@@ -134,6 +136,24 @@ class Qualite
     public function setEmeritat($emeritat)
     {
         $this->emeritat = $emeritat;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getJustificatif(): string
+    {
+        return $this->justificatif;
+    }
+
+    /**
+     * @param string $justificatif
+     * @return Qualite
+     */
+    public function setJustificatif(string $justificatif): Qualite
+    {
+        $this->justificatif = $justificatif;
         return $this;
     }
 

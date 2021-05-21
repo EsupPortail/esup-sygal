@@ -18,6 +18,7 @@ class QualiteEditiontHydrator implements HydratorInterface
         $qualite->setLibelle($data['libelle']);
         $qualite->setHdr($data['hdr']);
         $qualite->setEmeritat($data['emeritat']);
+        $qualite->setJustificatif($data['justificatif']);
 
         return $qualite;
     }
@@ -29,10 +30,11 @@ class QualiteEditiontHydrator implements HydratorInterface
     public function extract($qualite) {
 
         $data = [];
-        $data['libelle']    = $qualite->getLibelle();
-        $data['rang']       = $qualite->getRang();
-        $data['hdr']        = $qualite->getHdr();
+        $data['libelle']         = $qualite->getLibelle();
+        $data['rang']            = $qualite->getRang();
+        $data['hdr']             = $qualite->getHdr();
         $data['emeritat']        = $qualite->getEmeritat();
+        $data['justificatif']    = $qualite->getJustificatif();
 
         return $data;
     }

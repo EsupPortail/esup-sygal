@@ -11,6 +11,7 @@
         <field name="rang"              type="string"       length="1"          column="RANG"           nullable="false"/>
         <field name="hdr"               type="string"       length="1"          column="HDR"            nullable="false"/>
         <field name="emeritat"          type="string"       length="1"          column="EMERITAT"       nullable="false"/>
+        <field name="justificatif"      type="string"       length="1"          column="JUSTIFICATIF"   nullable="false"/>
 
         <one-to-many field="libellesSupplementaires" target-entity="Soutenance\Entity\QualiteLibelleSupplementaire" mapped-by="qualite"/>
 
