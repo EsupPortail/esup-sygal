@@ -140,9 +140,9 @@ class Qualite
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getJustificatif(): string
+    public function getJustificatif(): ?string
     {
         return $this->justificatif;
     }
