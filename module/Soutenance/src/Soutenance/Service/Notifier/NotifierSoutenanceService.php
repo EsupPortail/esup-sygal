@@ -627,7 +627,7 @@ class NotifierSoutenanceService extends NotifierService
         if (!empty($email)) {
             $notif = new Notification();
             $notif
-                ->setSubject("Initialisation de votre compte SyGAL")
+                ->setSubject("Initialisation de votre compte SyGAL pour la these de " . $these->getDoctorant()->getIndividu()->getNomComplet())
                 ->setTo($email)
                 ->setTemplatePath('soutenance/notification/init-compte')
                 ->setTemplateVariables([
@@ -636,7 +636,6 @@ class NotifierSoutenanceService extends NotifierService
                     'url' => $url,
                 ]);
             $this->trigger($notif);
-
         }
     }
 
