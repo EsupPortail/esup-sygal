@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+2.1.9
+-----
+- Ajout de demande de justificatif pour certaines qualités pour les soutenances (par exemple : membre étranger)
+
 2.1.8
 -----
 - Utilisation de l'établissement de la thèse pour le routing des mails du module soutenance au site concerné.

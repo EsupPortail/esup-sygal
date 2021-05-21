@@ -43,6 +43,7 @@ class NotifierServiceFactory
         $service->setNotifEntityService($notifEntityService);
         $service->setMailerService($mailerService);
         $service->setOptions($options);
+        $service->setEntityManager($container->get('doctrine.entitymanager.orm_default'));
 
         return $service;
     }
