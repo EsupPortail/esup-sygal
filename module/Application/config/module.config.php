@@ -193,17 +193,6 @@ return array(
             ],
         ],
     ],
-    'navigation'      => [
-        'default' => [
-            'home' => [
-                'pages' => [
-                    'droits' => [
-                        'order' => -80,
-                    ],
-                ],
-            ],
-        ],
-    ],
     'service_manager' => array(
         'aliases' => array(
             'UserContextService' => 'UnicaenAuth\Service\UserContext',
