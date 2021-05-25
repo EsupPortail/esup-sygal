@@ -7,7 +7,7 @@ return [
     'sygal' => [
         'archivabilite' => [
             'proxy' => [
-                'enable' => true,
+                'enabled' => true,
                 'proxy_host' => 'http://proxy.unicaen.fr',
                 'proxy_port' => 3128,
             ],
