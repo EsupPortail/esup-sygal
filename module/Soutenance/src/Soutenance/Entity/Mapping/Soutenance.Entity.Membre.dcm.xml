@@ -17,6 +17,7 @@
         <field name="prenom"            type="string"       length="256"        column="PRENOM"         nullable="false"/>
         <field name="nom"               type="string"       length="256"        column="NOM"            nullable="false"/>
         <field name="email"             type="string"       length="256"        column="EMAIL"          nullable="false"/>
+        <field name="clef"              type="string"       length="64"         column="CLEF"           nullable="true"/>
 
         <many-to-one field="qualite" target-entity="Soutenance\Entity\Qualite">
             <join-columns>

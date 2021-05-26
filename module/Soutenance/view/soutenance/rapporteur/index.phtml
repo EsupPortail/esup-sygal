@@ -1,0 +1,56 @@
+<?php
+
+/**
+ * @see \Soutenance\Controller\RapporteurController::indexAction()
+ * @var These $these
+ * @var Membre $membre
+ * @var string $clef
+ *
+ * @var bool $valide
+ *
+ * @var Acteur[] $encadrants
+ * @var Validation $engagement
+ * @var Validation $manuscrit
+ * @var Avis $avis
+ */
+
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
+use Application\Entity\Db\Validation;
+use Soutenance\Entity\Avis;
+use Soutenance\Entity\Membre;
+
+?>
+
+<h1 class="page-header">
+    Proposition de soutenance de thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>
+    <br/>
+    Partie rapporteur : <?php echo $membre->getDenomination(); ?>
+</h1>
+
+<?php if (!$valide) : ?>
+    Identification incorrecte
+<?php else : ?>
+    <!-- infos these -------------------------------------------------------------------------------------------------->
+    <a id='informations'></a>
+    <?php echo $this->partial('partial/informations', ['these' => $these, 'encadrants' => $encadrants,  'proposition' => $membre->getProposition()]); ?>
+
+    <!-- Partie engagement -------------------------------------------------------------------------------------------->
+    <a id='engagnement'></a>
+    <?php echo $this->partial('partial/engagement', ['these' => $these, 'encadrants' => $encadrants,  'membre' => $membre, 'engagement' => $engagement, 'clef' => $clef]); ?>
+
+    <!-- Manuscrit ---------------------------------------------------------------------------------------------------->
+    <!-- Le manuscrit est récupérable ssi l'engagement est signé et le dépôt validé                                  -->
+    <a id='manuscrit'></a>
+    <?php if ($engagement !== null AND $engagement->getTypeValidation()->getCode() === TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE) : ?>
+        <?php echo $this->partial('partial/manuscrit', ['these' => $these, 'manscrit' => $manuscrit]); ?>
+    <?php endif; ?>
+
+    <!-- Avis de pré-soutenance --------------------------------------------------------------------------------------->
+    <!-- L'avis est déposable ssi l'engagnement est signé                                                            -->
+    <a id='avis'></a>
+    <?php if ($engagement !== null AND $engagement->getTypeValidation()->getCode() === TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE ) : ?>
+        <?php echo $this->partial('partial/avis', ['these' => $these, 'membre' => $membre, 'clef' => $clef]); ?>
+    <?php endif; ?>
+<?php endif; ?>

@@ -42,6 +42,8 @@ class Membre {
 
     /** @var Acteur */
     private  $acteur;
+    /** @var string|null */
+    private $clef;
 
     /**
      * @return int
@@ -317,4 +319,24 @@ class Membre {
             $this->getActeur()->getRole()->getCode() === Role::CODE_CODIRECTEUR_THESE
         );
     }
+
+    /**
+     * @return string|null
+     */
+    public function getClef(): ?string
+    {
+        return $this->clef;
+    }
+
+    /**
+     * @param string|null $clef
+     * @return Membre
+     */
+    public function setClef(?string $clef): Membre
+    {
+        $this->clef = $clef;
+        return $this;
+    }
+
+
 }

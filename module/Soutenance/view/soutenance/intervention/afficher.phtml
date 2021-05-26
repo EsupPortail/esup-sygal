@@ -155,6 +155,26 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
     </div>
 <?php endif; ?>
 
+<?php /** @var Membre $membre */ ?>
+<?php foreach ($proposition->getMembres() as $membre) : ?>
+    <?php if ($membre->estRapporteur()) : ?>
+        <div class="panel panel-warning">
+            <div class="panel panel-heading">
+                Gestion des action du rapporteur <?php echo $membre->getDenomination(); ?>
+            </div>
+            <div class="panel-body">
+                <a  <?php /**  @see \Soutenance\Controller\EngagementImpartialiteController::presenterNoAuthAction() */ ?>
+                    href="<?php echo $this->url('soutenance/engagement-impartialite/presenter-no-auth', ['these' => $these->getId(), 'membre' => $membre->getId()], ['query' => ['clef' => 'todo']], true); ?>"
+                    target="_blank"
+                    class="btn btn-primary action"
+                >
+                    Engagement
+                </a>
+            </div>
+        </div>
+    <?php endif; ?>
+<?php endforeach; ?>
+
 <script>
     $(function() {
         $("body").on("modification", function (event) {

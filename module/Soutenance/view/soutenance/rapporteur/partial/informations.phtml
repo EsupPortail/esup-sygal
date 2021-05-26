@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * @var These $these
+ * @var Acteur[] $encadrants
+ * @var Proposition $proposition
+ */
+
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\These;
+use Soutenance\Entity\Proposition;
+
+?>
+
+<div class="box panel panel-info">
+    <div class="panel-heading">
+        <h2 class="first"> Information sur la thèse / Information about the PhD thesis </h2>
+    </div>
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+            <dt> Titre / Title </dt>
+            <dd> <?php echo $these->getTitre(); ?> </dd>
+            <dt> Doctorant / PhD Student</dt>
+            <dd> <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?> </dd>
+            <dt> Directeur(s) / Supervisor(s) </dt>
+            <dd>
+                <?php foreach ($encadrants as $encadrant): ?>
+                    <?php
+                    echo $encadrant->getIndividu();
+                    ?>
+                    <br/>
+                <?php endforeach; ?>
+            <dt> Discipline </dt>
+            <dd> <?php echo $these->getLibelleDiscipline(); ?> </dd>
+            <dt> Date de la soutenance </dt>
+            <dd> <?php echo $proposition->getDate()->format("d/m/Y"); ?> </dd>
+            <dt> Lieu de la soutenance </dt>
+            <dd> <?php echo $proposition->getLieu(); ?> </dd>
+        </dl>
+
+    </div>
+</div>

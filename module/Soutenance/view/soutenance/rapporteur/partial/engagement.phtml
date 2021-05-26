@@ -1,0 +1,73 @@
+<?php
+
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
+use Application\Entity\Db\Validation;use Soutenance\Entity\Membre;
+
+/**
+ * @var These $these
+ * @var Membre $membre
+ * @var string $clef
+ * @var Acteur[] $encadrants
+ * @var Validation $engagement
+ */
+
+$proposition = $membre->getProposition();
+?>
+
+<h2>
+    Engagement d'impartialité / Impartiality commitment
+</h2>
+
+<?php if ($engagement === null) : ?>
+<p>
+    En signant cet engagment d'impartialité, j'atteste ne pas avoir de liens d'intérêt, qu'ils soient de nature professionnelle, familiale, personnelle ou patrimoniale
+    avec le doctorant ou son directeur de thèse, ne pas avoir pris part aux travaux de la thèse et ne pas avoir de publication
+    cosignée avec le doctorant dans les cinq dernières années et ne pas avoir participer au comité de suivi de la thèse de
+    <?php echo $these->getDoctorant()->getIndividu(); ?>.
+</p>
+<p>
+    By signing, I certify that I have no personal or family connection with the doctoral student or his/her PhD supervisor
+    and that I have not taken part in the work of the thesis and not co-authored  publications with the doctoral student for
+    the last five years.
+</p>
+    <a      <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::signerNoAuthAction() */ ?>
+            href="<?php echo $this->url('soutenance/engagement-impartialite/signer-no-auth', ['these' => $these->getId(), 'membre' => $membre->getId()], ['query' => ['clef' => $clef]], true); ?>"
+            class="btn btn-success action signature"
+    >
+        <span class="glyphicon glyphicon-thumbs-up"></span>
+        Je signe / I agree
+    </a>
+    <a      <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::refuserNoAuthAction() */ ?>
+            href="<?php echo $this->url('soutenance/engagement-impartialite/refuser-no-auth', ['these' => $these->getId(), 'membre' => $membre->getId()], ['query' => ['clef' => $clef]], true); ?>"
+            class="btn btn-danger action signature">
+        <span class="glyphicon glyphicon-thumbs-down"></span>
+        Je ne signe pas / I disagree
+    </a>
+<?php else: ?>
+    <div class="box panel <?php echo ($engagement->getTypeValidation()->getCode() === TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE)?"panel-success":"panel-danger"; ?>">
+        <div class="panel-heading">
+            <h2 class="first"> Signature /  Acknowledgement </h2>
+        </div>
+        <div class="panel-body">
+            <?php if ($engagement->getTypeValidation()->getCode() === TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE) : ?>
+                Valider
+            <?php else : ?>
+                Refuser
+            <?php endif; ?>
+            Par <?php echo $engagement->getIndividu()->getNomComplet(); ?> le <?php echo $engagement->getHistoCreation()->format("d/m/Y à H:m:s"); ?>.
+        </div>
+    </div>
+<?php endif; ?>
+
+<style>
+    dl.infos > dt {
+        width:20rem;
+        margin-right: 1rem;
+    }
+
+    a.signature {
+        width:25rem;
+    }
+</style>

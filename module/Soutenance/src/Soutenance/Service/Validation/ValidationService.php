@@ -46,13 +46,19 @@ class ValidationService
      * @param string $type
      * @param These $these
      * @param Individu $individu
+     * @param Utilisateur|null $utilisateur
      * @return Validation
      */
-    public function create($type, $these, $individu) {
+    public function create($type, $these, $individu, $utilisateur = null) {
         $v = new Validation(
             $this->getTypeValidation($type),
             $these,
             $individu);
+        if ($utilisateur !== null) {
+            $v->setHistoCreateur($utilisateur);
+            $v->setHistoModificateur($utilisateur);
+        }
+
 
         $this->getEntityManager()->persist($v);
         try {

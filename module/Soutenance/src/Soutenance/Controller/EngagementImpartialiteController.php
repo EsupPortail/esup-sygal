@@ -5,6 +5,7 @@ namespace Soutenance\Controller;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Validation;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
+use Application\Service\These\TheseServiceAwareTrait;
 use Soutenance\Entity\Membre;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
@@ -20,6 +21,7 @@ use Zend\View\Model\ViewModel;
 class EngagementImpartialiteController extends AbstractController
 {
     use ActeurServiceAwareTrait;
+    use TheseServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
@@ -115,4 +117,60 @@ class EngagementImpartialiteController extends AbstractController
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
+
+    public function presenterNoAuthAction()
+    {
+        $these = $this->getTheseService()->getRequestedThese($this);
+        $membre = $this->getMembreService()->getRequestedMembre($this);
+        $clef = $this->params()->fromQuery('clef');
+
+        $valide = $this->getMembreService()->verifierClef($membre, $clef);
+
+        $vm = new ViewModel([
+            'these' => $these,
+            'proposition' => $membre->getProposition(),
+            'membre' => $membre,
+            'encadrants' => $this->getActeurService()->getRepository()->findEncadrementThese($these),
+            'urlSigner' => $this->url()->fromRoute('soutenance/engagement-impartialite/signer-no-auth', ['these' => $these->getId(), 'membre' => $membre->getId()], ['query' => ['clef' => $clef]], true),
+            'urlRefuser' => $this->url()->fromRoute('soutenance/engagement-impartialite/refuser-no-auth', ['these' => $these->getId(), 'membre' => $membre->getId()], ['query' => ['clef' => $clef]], true),
+
+            'clef' => $clef,
+            'valide' => $valide,
+        ]);
+        $vm->setTemplate('soutenance/engagement-impartialite/presenter');
+        return $vm;
+    }
+
+    public function signerNoAuthAction()
+    {
+        $these = $this->getTheseService()->getRequestedThese($this);
+        $membre = $this->getMembreService()->getRequestedMembre($this);
+        $clef = $this->params()->fromQuery('clef');
+
+        $valide = $this->getMembreService()->verifierClef($membre, $clef);
+        if ($valide) {
+            $this->getEngagementImpartialiteService()->create($membre, $these);
+            $this->getNotifierSoutenanceService()->triggerSignatureEngagementImpartialite($these, $membre->getProposition(), $membre);
+            //$this->getNotifierSoutenanceService()->triggerDemandeAvisSoutenance($these, $membre->getProposition(), $membre);
+        }
+
+        return $this->redirect()->toRoute('soutenance/rapporteur', ['these' => $these->getId(), 'membre' => $membre->getId()], ['query' => ['clef' => $clef]], true);
+    }
+
+    public function refuserNoAuthAction()
+    {
+        $these = $this->getTheseService()->getRequestedThese($this);
+        $membre = $this->getMembreService()->getRequestedMembre($this);
+        $clef = $this->params()->fromQuery('clef');
+
+        $valide = $this->getMembreService()->verifierClef($membre, $clef);
+        if ($valide) {
+            $this->getEngagementImpartialiteService()->createRefus($membre, $these);
+            $this->getPropositionService()->annulerValidations($membre->getProposition());
+            $this->getNotifierSoutenanceService()->triggerRefusEngagementImpartialite($these, $membre->getProposition(), $membre);
+        }
+
+        return $this->redirect()->toRoute('soutenance/rapporteur', ['these' => $these->getId(), 'membre' => $membre->getId()], ['query' => ['clef' => $clef]], true);
+    }
+
 }

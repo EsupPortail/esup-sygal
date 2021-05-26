@@ -6,6 +6,7 @@ use Application\Entity\Db\Individu;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 use Soutenance\Entity\Membre;
@@ -14,6 +15,7 @@ use UnicaenApp\Exception\RuntimeException;
 
 class EngagementImpartialiteService {
     use ValidatationServiceAwareTrait;
+    use UtilisateurServiceAwareTrait;
 
     /** GESTION DES ENTITES *******************************************************************************************/
 
@@ -24,7 +26,8 @@ class EngagementImpartialiteService {
      */
     public function create(Membre $membre, These $these)
     {
-        $validation = $this->getValidationService()->create(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $these, $membre->getIndividu());
+        $sygal = $this->getUtilisateurService()->getRepository()->findByUsername('sygal-app');
+        $validation = $this->getValidationService()->create(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $these, $membre->getIndividu(), $sygal);
         return $validation;
     }
 
@@ -35,7 +38,8 @@ class EngagementImpartialiteService {
      */
     public function createRefus(Membre $membre, These $these)
     {
-        $validation = $this->getValidationService()->create(TypeValidation::CODE_REFUS_ENGAGEMENT_IMPARTIALITE, $these, $membre->getIndividu());
+        $sygal = $this->getUtilisateurService()->getRepository()->findByUsername('sygal-app');
+        $validation = $this->getValidationService()->create(TypeValidation::CODE_REFUS_ENGAGEMENT_IMPARTIALITE, $these, $membre->getIndividu(), $sygal);
         return $validation;
     }
 

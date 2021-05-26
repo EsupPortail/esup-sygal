@@ -3,7 +3,6 @@
 namespace Soutenance\Service\Membre;
 
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\Etablissement;
 use Application\Service\UserContextServiceAwareTrait;
 use DateInterval;
 use DateTime;
@@ -12,6 +11,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
+use Ramsey\Uuid\Uuid;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -45,6 +45,7 @@ class MembreService {
         $membre->setHistoCreation($date);
         $membre->setHistoModificateur($user);
         $membre->setHistoModification($date);
+        $membre->setClef($this->genererClef());
 
         try {
             $this->getEntityManager()->persist($membre);
@@ -295,5 +296,29 @@ class MembreService {
         $membre->setRole(Membre::MEMBRE_JURY);
         $membre->setVisio(false);
         return $membre;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function genererClef() : string
+    {
+        $clef = "";
+        for($i = 0 ; $i < 4; $i++) {
+            if ($clef !== "") $clef .= "-";
+            $clef .=  Uuid::uuid4()->toString();
+        }
+        return $clef;
+    }
+
+    /**
+     * @param Membre $membre
+     * @param string $clef
+     * @return bool
+     */
+    public function verifierClef(Membre $membre, string $clef = '') : bool
+    {
+        return $membre->getClef() === $clef;
     }
 }

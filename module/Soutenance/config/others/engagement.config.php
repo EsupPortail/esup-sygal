@@ -68,6 +68,15 @@ return array(
                     ],
                     'privileges' => EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_ANNULER,
                 ],
+                [
+                    'controller' => EngagementImpartialiteController::class,
+                    'action' => [
+                        'presenter-no-auth',
+                        'signer-no-auth',
+                        'refuser-no-auth',
+                    ],
+                    'roles' => [],
+                ],
             ],
         ],
     ],
@@ -128,6 +137,39 @@ return array(
                                     'defaults' => [
                                         'controller' => EngagementImpartialiteController::class,
                                         'action' => 'annuler-engagement-impartialite',
+                                    ],
+                                ],
+                            ],
+                            'presenter-no-auth' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/presenter-no-auth',
+                                    'defaults' => [
+                                        'controller' => EngagementImpartialiteController::class,
+                                        'action' => 'presenter-no-auth',
+                                    ],
+                                ],
+                            ],
+                            'signer-no-auth' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/signer-no-auth',
+                                    'defaults' => [
+                                        'controller' => EngagementImpartialiteController::class,
+                                        'action' => 'signer-no-auth',
+                                    ],
+                                ],
+                            ],
+                            'refuser-no-auth' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/refuser-no-auth',
+                                    'defaults' => [
+                                        'controller' => EngagementImpartialiteController::class,
+                                        'action' => 'refuser-no-auth',
                                     ],
                                 ],
                             ],
