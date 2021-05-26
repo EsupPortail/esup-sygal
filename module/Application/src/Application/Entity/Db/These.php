@@ -1448,7 +1448,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      */
     public function getPresidentJuryEmail() : ?string
     {
-        $emails = [];
         /** @var Acteur[] $membres */
         $president = $this->getActeursByRoleCode(Role::CODE_PRESIDENT_JURY)->toArray();
         if (empty($president)) throw new \RuntimeException("Pas de président ...");
