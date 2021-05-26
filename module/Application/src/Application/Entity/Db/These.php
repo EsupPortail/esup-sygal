@@ -1444,34 +1444,19 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
     /**
      * Retourne les mails des directeurs de thèse.
-     *
-     * @param Individu[] $individusSansMail Liste des individus sans mail, format: "Paul Hochon" => Individu
-     * @return array
+     * @return string|null
      */
-    public function getPresidentJuryEmail(array &$individusSansMail = [])
+    public function getPresidentJuryEmail() : ?string
     {
         $emails = [];
         /** @var Acteur[] $membres */
-        $membres = $this->getActeursByRoleCode(Role::CODE_MEMBRE_JURY)->toArray();
-        /** @var Acteur[] $rapporteurs */
-        $rapporteurs = $this->getActeursByRoleCode(Role::CODE_RAPPORTEUR_JURY)->toArray();
-        $acteurs = array_merge($membres, $rapporteurs);
+        $president = $this->getActeursByRoleCode(Role::CODE_PRESIDENT_JURY)->toArray();
+        if (empty($president)) throw new \RuntimeException("Pas de président ...");
+        $president = current($president);
 
-        /** @var Acteur $acteur */
-        foreach ($acteurs as $acteur) {
-            if ($acteur->getRole()->getCode() === Role::CODE_PRESIDENT_JURY) {
-                $email = $acteur->getIndividu()->getEmail();
-
-                $name = (string)$acteur->getIndividu();
-                if (!$email) {
-                    $individusSansMail[$name] = $acteur->getIndividu();
-                } else {
-                    $emails[$email] = $name;
-                }
-            }
-        }
-
-        return $emails;
+        if ($president->getIndividu()->getEmail() !== null) return $president->getIndividu()->getEmail();
+        if ($president->getMembre()->getEmail() !== null) return $president->getMembre()->getEmail();
+        return null;
     }
 
     /**
