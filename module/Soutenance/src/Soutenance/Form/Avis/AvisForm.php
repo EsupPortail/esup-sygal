@@ -59,7 +59,7 @@ class AvisForm extends Form {
             ],
             'attributes' => [
                 'type' => 'submit',
-                'class' => 'btn btn-success',
+                'class' => 'btn btn-success signature',
             ],
         ]);
         $this->setInputFilter((new Factory())->createInputFilter([

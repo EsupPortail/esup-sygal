@@ -10,6 +10,7 @@ use Application\Filter\NomFichierFormatter;
 use Application\Service\BaseService;
 use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\NatureFichier\NatureFichierServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\ValiditeFichier\ValiditeFichierServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Doctrine\ORM\EntityRepository;
@@ -24,6 +25,7 @@ class FichierService extends BaseService
     use NatureFichierServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use ValiditeFichierServiceAwareTrait;
+    use UtilisateurServiceAwareTrait;
 
     /**
      * @var AbstractNomFichierFormatter
@@ -161,6 +163,9 @@ class FichierService extends BaseService
         $this->entityManager->beginTransaction();
         try {
             foreach ($fichiers as $fichier) {
+                $sygal = $this->getUtilisateurService()->getRepository()->findByUsername('sygal-app');
+                $fichier->setHistoCreateur($sygal);
+                $fichier->setHistoModificateur($sygal);
                 $this->entityManager->persist($fichier);
                 $this->entityManager->flush($fichier);
                 $this->moveUploadedFileForFichier($fichier);

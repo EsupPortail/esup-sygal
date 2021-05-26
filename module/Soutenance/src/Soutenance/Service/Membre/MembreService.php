@@ -314,11 +314,11 @@ class MembreService {
 
     /**
      * @param Membre $membre
-     * @param string $clef
+     * @param string|null $clef
      * @return bool
      */
-    public function verifierClef(Membre $membre, string $clef = '') : bool
+    public function verifierClef(Membre $membre, ?string $clef = '') : bool
     {
-        return $membre->getClef() === $clef;
+        return ($clef AND $membre->getClef() === $clef);
     }
 }

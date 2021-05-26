@@ -46,6 +46,8 @@ $proposition = $membre->getProposition();
         Je ne signe pas / I disagree
     </a>
 <?php else: ?>
+<div class="row">
+    <div class="col-md-9">
     <div class="box panel <?php echo ($engagement->getTypeValidation()->getCode() === TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE)?"panel-success":"panel-danger"; ?>">
         <div class="panel-heading">
             <h2 class="first"> Signature /  Acknowledgement </h2>
@@ -59,15 +61,13 @@ $proposition = $membre->getProposition();
             Par <?php echo $engagement->getIndividu()->getNomComplet(); ?> le <?php echo $engagement->getHistoCreation()->format("d/m/Y à H:m:s"); ?>.
         </div>
     </div>
+    </div>
+</div>
 <?php endif; ?>
 
 <style>
     dl.infos > dt {
         width:20rem;
         margin-right: 1rem;
-    }
-
-    a.signature {
-        width:25rem;
     }
 </style>

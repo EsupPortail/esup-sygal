@@ -1,0 +1,99 @@
+<?php
+
+use Application\Entity\Db\These;
+use Soutenance\Entity\Avis;
+use Soutenance\Entity\Membre;
+use Soutenance\Form\Avis\AvisForm;
+
+/**
+ * @var These $these
+ * @var Membre $membre
+ * @var string $clef
+ * @var Avis $avis
+ * @var AvisForm $avisForm
+ * @var string $urlAvis
+ */
+
+$proposition = $membre->getProposition();
+?>
+
+<h2>
+    Avis de soutenance / Notification on the PhD defense
+</h2>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessenger(); ?>
+<?php //echo $this->messenger()->addMessagesFromFlashMessengerWithNamespace('Soutenance/Avis'); ?>
+
+<?php if ($avis !== null) : ?>
+    <?php if ($avis->getAvis() === 'Favorable') : ?>
+    <div class="row">
+        <div class="col-md-9">
+            <div class="box panel panel-success">
+                <div class="panel-heading"> <h2>Avis favorable</h2></div>
+                <div class="panel-body">
+                    Favorable
+                </div>
+            </div>
+        </div>
+        <div class="pull-right" style="margin-right: 1.5rem;">
+            <a href="<?php echo $urlAvis; ?>" class="btn btn-primary signature">
+                <span class="glyphicon glyphicon-download"></span>
+                Télecharger / Download
+            </a>
+        </div>
+    </div>
+
+    <?php else : ?>
+        <div class="row">
+            <div class="col-md-9">
+                <div class="box panel panel-danger">
+                    <div class="panel-heading"> <h2>Avis défavorable</h2></div>
+                    <div class="panel-body">
+                        <?php echo $avis->getMotif(); ?>
+                    </div>
+                </div>
+            </div>
+            <div class="pull-right" style="margin-right: 1.5rem;">
+                <a href="<?php echo $urlAvis; ?>" class="btn btn-primary signature">
+                    <span class="glyphicon glyphicon-download"></span>
+                    Télecharger / Download
+                </a>
+            </div>
+        </div>
+    <?php endif; ?>
+<?php else : ?>
+<?php //echo $this->form()->openTag($avisForm); ?>
+<!--<div class="row">-->
+<!--    <div class="col-md-6">-->
+<!--        --><?php //echo $this->formControlGroup($avisForm->get('avis')); ?>
+<!--        --><?php //echo $this->formControlGroup($avisForm->get('motif')); ?>
+<!--    </div>-->
+<!--    <div class="col-md-6">-->
+<!--        --><?php //echo $this->formControlGroup($avisForm->get('rapport')); ?>
+<!--    </div>-->
+<!--</div>-->
+<!--<div class="pull-right">-->
+    <?php echo $this->formControlGroup($avisForm->get('enregistrer')); ?>
+<!--</div>-->
+<?php //echo $this->form()->closeTag(); ?>
+    <?php echo $this->form($avisForm); ?>
+<?php endif; ?>
+
+
+<style>
+    input[type='file'] {
+        height:auto;
+    }
+</style>
+
+<script>
+    $("textarea#motif").parent().hide();
+
+    $("input[name='avis']").change(function() {
+        if ($(this).attr('value') === 'Favorable') {
+            $("textarea#motif").parent().hide();
+        } else {
+            $("textarea#motif").parent().show();
+        }
+    })
+</script>

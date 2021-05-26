@@ -10,16 +10,20 @@
  *
  * @var Acteur[] $encadrants
  * @var Validation $engagement
- * @var Validation $manuscrit
+ * @var VersionFichier $manuscrit
  * @var Avis $avis
+ * @var AvisForm $avisForm;
+ * @var string $urlAvis
  */
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
+use Application\Entity\Db\VersionFichier;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
+use Soutenance\Form\Avis\AvisForm;
 
 ?>
 
@@ -44,13 +48,20 @@ use Soutenance\Entity\Membre;
     <!-- Le manuscrit est récupérable ssi l'engagement est signé et le dépôt validé                                  -->
     <a id='manuscrit'></a>
     <?php if ($engagement !== null AND $engagement->getTypeValidation()->getCode() === TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE) : ?>
-        <?php echo $this->partial('partial/manuscrit', ['these' => $these, 'manscrit' => $manuscrit]); ?>
+        <?php echo $this->partial('partial/manuscrit', ['these' => $these, 'manuscrit' => $manuscrit]); ?>
     <?php endif; ?>
 
     <!-- Avis de pré-soutenance --------------------------------------------------------------------------------------->
     <!-- L'avis est déposable ssi l'engagnement est signé                                                            -->
     <a id='avis'></a>
     <?php if ($engagement !== null AND $engagement->getTypeValidation()->getCode() === TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE ) : ?>
-        <?php echo $this->partial('partial/avis', ['these' => $these, 'membre' => $membre, 'clef' => $clef]); ?>
+        <?php echo $this->partial('partial/avis', ['these' => $these, 'membre' => $membre, 'clef' => $clef, 'avis' => $avis, 'avisForm' => $avisForm, 'urlAvis' => $urlAvis]); ?>
     <?php endif; ?>
 <?php endif; ?>
+
+<style>
+    a.signature,
+    button.signature {
+        width:25rem;
+    }
+</style>

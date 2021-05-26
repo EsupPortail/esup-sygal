@@ -10,6 +10,7 @@ use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
@@ -21,6 +22,7 @@ class ValidationService
     use EntityManagerAwareTrait;
     use UserContextServiceAwareTrait;
     use IndividuServiceAwareTrait;
+    use UtilisateurServiceAwareTrait;
 
     /**
      * @return ValidationRepository
@@ -266,12 +268,17 @@ class ValidationService
 
     }
 
-    public function signerAvisSoutenance($these, $individu)
+    public function signerAvisSoutenance($these, $individu, $sygal = null)
     {
         $v = new Validation(
             $this->getTypeValidation(TypeValidation::CODE_AVIS_SOUTENANCE),
             $these,
             $individu);
+        if ($sygal === true) {
+            $sygal = $this->getUtilisateurService()->getRepository()->findByUsername('sygal-app');
+            $v->setHistoCreateur($sygal);
+            $v->setHistoModificateur($sygal);
+        }
 
         $this->entityManager->persist($v);
         try {

@@ -1,1 +1,30 @@
+<?php
+
+/**
+ * @var These $these
+ * @var FichierThese[] $manuscrit
+ */
+
+use Application\Entity\Db\FichierThese;
+use Application\Entity\Db\These;
+
+?>
+
 <h2> Manuscrit </h2>
+
+<?php if ($manuscrit !== null) : ?>
+    Vous pouvez télécharger la version électronique de la thèse via <?php echo $this->appInfos()->nom; ?>.
+
+    <a  <?php /** @see \Application\Controller\FichierTheseController::telechargerFichierAction() */ ?>
+        href="<?php echo $this->url('fichier/these/telecharger', ['these' => $these->getId(), 'fichier' => '5f8e2dd1-d1f9-447d-9219-5bc512bfb207.pdf'], [], true);?>"
+        class="btn btn-primary action pull-right signature "
+    >
+        <span class="glyphicon glyphicon-download"></span>
+        Télecharger / Download
+    </a>
+
+<?php else : ?>
+    <span class="glyphicon glyphicon-warning-sign"></span>
+    La thèse de <?php echo $these->getDoctorant()->getIndividu(); ?> n'a pas encore été déposée dans <?php echo $this->appInfos()->nom; ?>.
+    Une fois le dépôt réalisé vous pourrez télécharger celle-ci via cette page.
+<?php endif; ?>

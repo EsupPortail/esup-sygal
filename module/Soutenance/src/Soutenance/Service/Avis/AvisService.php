@@ -5,6 +5,7 @@ namespace Soutenance\Service\Avis;
 use Application\Entity\DateTimeAwareTrait;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
+use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\VersionFichier;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
@@ -33,13 +34,14 @@ class AvisService {
      * @param Avis $avis
      * @return Avis
      */
-    public function create(Avis $avis)
+    public function create(Avis $avis, ?Utilisateur $userSygal)
     {
         /**
          * @var UserInterface $user
          * @var DateTime $date
          */
         $user = $this->userContextService->getIdentityDb();
+        if ($user === null) $user = $userSygal;
         $date = $this->getDateTime();
 
         $avis->setHistoCreation($date);
