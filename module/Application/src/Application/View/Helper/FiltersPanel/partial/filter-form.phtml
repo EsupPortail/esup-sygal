@@ -17,6 +17,7 @@ $queryParams = $this->queryParams();
     </div>
     <form class="panel-body form-inline filters" method="GET" action="">
         <?php foreach ($filters as $filter): ?>
+        <?php if (!$filter->isVisible()) continue; ?>
         <div class="form-group">
             <label for="<?php echo $filter->getName() ?>">
                 <?php echo $filter->getLabel() ?>

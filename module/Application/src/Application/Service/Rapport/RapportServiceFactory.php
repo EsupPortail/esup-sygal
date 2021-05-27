@@ -7,6 +7,7 @@ use Application\Service\Fichier\FichierService;
 use Application\Service\File\FileService;
 use Application\Service\NatureFichier\NatureFichierService;
 use Application\Service\Notification\NotifierService;
+use Application\Service\RapportValidation\RapportValidationService;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
 use Application\Service\VersionFichier\VersionFichierService;
 use Interop\Container\ContainerInterface;
@@ -34,6 +35,7 @@ class RapportServiceFactory implements FactoryInterface
          * @var EtablissementService $etablissementService
          * @var NotifierService $notifierService
          * @var NatureFichierService $natureFichierService
+         * @var RapportValidationService $rapportValidationService
          */
         $fichierService = $container->get(FichierService::class);
         $fileService = $container->get(FileService::class);
@@ -41,6 +43,7 @@ class RapportServiceFactory implements FactoryInterface
         $etablissementService = $container->get('EtablissementService');
         $notifierService = $container->get(NotifierService::class);
         $natureFichierService = $container->get('NatureFichierService');
+        $rapportValidationService = $container->get(RapportValidationService::class);
 
         $service = new RapportService();
 
@@ -50,6 +53,7 @@ class RapportServiceFactory implements FactoryInterface
         $service->setEtablissementService($etablissementService);
         $service->setNotifierService($notifierService);
         $service->setNatureFichierService($natureFichierService);
+        $service->setRapportValidationService($rapportValidationService);
 
         return $service;
     }

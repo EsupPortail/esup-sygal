@@ -77,7 +77,7 @@ return array(
                                 'paramsInject' => [
                                     'these',
                                 ],
-                                'icon' => 'fab fa-slideshare',
+                                'icon' => 'fas fa-chalkboard-teacher',
                                 'resource' => PresoutenancePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_VISUALISER),
                                 'pages' => $soutenancePages = [
                                     // DEPTH = 3
@@ -150,7 +150,7 @@ return array(
                                 'params' => [
                                     'these' => 0,
                                 ],
-                                'icon' => 'fab fa-slideshare',
+                                'icon' => 'fas fa-chalkboard-teacher',
                                 'resource' => PresoutenancePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_VISUALISER),
                                 'pages' => $soutenancePages,
                             ],
@@ -177,7 +177,7 @@ return array(
                                         'params' => [
                                             'these' => 0,
                                         ],
-                                        'icon' => 'fab fa-slideshare',
+                                        'icon' => 'fas fa-chalkboard-teacher',
                                         'resource' => PresoutenancePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_VISUALISER),
                                         'pages' => $soutenancePages,
                                     ],

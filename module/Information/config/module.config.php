@@ -228,7 +228,7 @@ return [
                     'admin' => [
                         'pages' => [
                             'information' => [
-                                'order'    => 100,
+                                'order'    => 600,
                                 'label'    => 'Pages d\'information',
                                 'route'    => 'informations',
                                 //'icon'     => 'glyphicon glyphicon-send',

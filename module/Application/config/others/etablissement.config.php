@@ -158,7 +158,7 @@ return [
                                 'label'    => 'Établissements',
                                 'route'    => 'etablissement',
                                 'resource' => PrivilegeController::getResourceId(EtablissementController::class, 'index'),
-                                'order'    => 5,
+                                'order'    => 10,
                                 'pages' => [
                                     'modification' => [
                                         'label'    => 'Modification',

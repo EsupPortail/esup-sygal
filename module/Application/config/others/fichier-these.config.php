@@ -83,7 +83,7 @@ return [
             'fichier' => [
                 'type'          => 'Segment',
                 'options'       => [
-                    'route' => '/[:language/]fichier',
+                    'route' => '/fichier',
                     'defaults'      => [
                         'controller' => 'Application\Controller\FichierThese',
                         'language'   => 'fr_FR',
@@ -219,7 +219,7 @@ return [
                             'fichiers-deposes' => [
                                 'label'    => 'Fichiers de thèses',
                                 'route'    => 'fichier/deposes',
-                                'order'    => 100,
+                                'order'    => 600,
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\FichierThese', 'deposes'),
                             ],
                         ],

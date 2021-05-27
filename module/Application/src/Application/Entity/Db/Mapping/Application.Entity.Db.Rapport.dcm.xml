@@ -10,10 +10,6 @@
     <field name="anneeUniv" type="integer" column="ANNEE_UNIV"/>
     <field name="estFinal" type="boolean" column="EST_FINAL"/>
 
-    <field name="histoCreation" type="datetime" column="HISTO_CREATION"/>
-    <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-    <field name="histoModification" type="datetime" column="HISTO_MODIFICATION"/>
-
     <many-to-one field="typeRapport" target-entity="Application\Entity\Db\TypeRapport">
       <join-column name="TYPE_RAPPORT_ID" referenced-column-name="ID"/>
     </many-to-one>
@@ -25,6 +21,12 @@
     <many-to-one field="these" target-entity="Application\Entity\Db\These">
       <join-column name="THESE_ID" referenced-column-name="ID"/>
     </many-to-one>
+
+    <one-to-many field="rapportValidations" target-entity="Application\Entity\Db\RapportValidation" mapped-by="rapport"/>
+
+    <field name="histoCreation" type="datetime" column="HISTO_CREATION"/>
+    <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
+    <field name="histoModification" type="datetime" column="HISTO_MODIFICATION"/>
 
     <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
       <join-columns>
