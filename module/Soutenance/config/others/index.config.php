@@ -2,6 +2,7 @@
 
 namespace Soutenance;
 
+use Application\Navigation\ApplicationNavigationFactory;
 use Soutenance\Controller\IndexController;
 use Soutenance\Controller\IndexControllerFactory;
 use Soutenance\Provider\Privilege\IndexPrivileges;
@@ -46,16 +47,38 @@ return array(
         ],
     ],
 
+    'navigation' => [
+        'default' => [
+            // DEPTH = 0
+            'home' => [
+                'pages' => [
+                    /**
+                     * Cette page aura une page fille 'these-1', 'these-2', etc. générées automatiquement.
+                     * @see ApplicationNavigationFactory::processPage()
+                     */
+                    // DEPTH = 1
+                    ApplicationNavigationFactory::NOS_THESES_PAGE_ID => [
+                        'pages' => [
+                            // DEPTH = 2
+                            'SOUTENANCES' => [
+                                'label' => '(Soutenances Structure)',
+                                'route' => 'soutenances/index-structure',
+//                                'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'index'),
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
     'router' => [
         'routes' => [
-            'soutenance' => [
+            'soutenances' => [
                 'type' => Segment::class,
                 'may_terminate' => true,
                 'options' => [
-                    'route' => '/soutenance/:these',
-                    'constraints' => [
-                        'these' => '\d+',
-                    ],
+                    'route' => '/soutenances',
                     'defaults' => [
                         'controller' => IndexController::class,
                         'action' => 'index',
@@ -77,7 +100,7 @@ return array(
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route' => '/index-rapporteur[/:these]', // <<< param 'these' à enlever car il sera sur la route mère
+                            'route' => '/index-rapporteur',
                             'defaults' => [
                                 'controller' => IndexController::class,
                                 'action' => 'index-rapporteur',
@@ -92,6 +115,32 @@ return array(
                             'defaults' => [
                                 'controller' => IndexController::class,
                                 'action' => 'index-acteur',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'soutenance' => [
+                'type' => Segment::class,
+                'may_terminate' => false,
+                'options' => [
+                    'route' => '/soutenance/:these',
+                    'constraints' => [
+                        'these' => '\d+',
+                    ],
+                    'defaults' => [
+                        'controller' => IndexController::class,
+                    ],
+                ],
+                'child_routes' => [
+                    'index-rapporteur' => [
+                        'type' => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route' => '/index-rapporteur',
+                            'defaults' => [
+                                'controller' => IndexController::class,
+                                'action' => 'index-rapporteur',
                             ],
                         ],
                     ],

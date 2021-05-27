@@ -907,7 +907,7 @@ return [
                      * Navigation pour LA thèse courante.
                      */
                     // DEPTH = 1
-                    'these' => [
+                    'these_selectionnee' => [
                         'label' => 'Thèse sélectionnée',
                         'route' => 'these/identite',
                         'withtarget' => true,
@@ -974,7 +974,7 @@ return [
                                 'class' => 'divider',
                             ],
                             //---------------------------------------------------
-                            'depot' => $depotPages = [
+                            'depot' => [
                                 'label' => 'Dépôt',
                                 'order' => 60,
                                 'route' => 'these/roadmap',
@@ -1189,7 +1189,7 @@ return [
                      * @see ApplicationNavigationFactory::processPage()
                      */
                     // DEPTH = 1
-                    'MA_THESE_PLACEHOLDER' => [
+                    ApplicationNavigationFactory::MA_THESE_PAGE_ID => [
                         'order' => -200,
                         'label' => 'Ma thèse',
                         'route' => 'these/identite',
@@ -1206,7 +1206,7 @@ return [
                      * @see ApplicationNavigationFactory::processPage()
                      */
                     // DEPTH = 1
-                    'MES_THESES_PLACEHOLDER' => [
+                    ApplicationNavigationFactory::MES_THESES_PAGE_ID => [
                         'order' => -200,
                         'label' => 'Mes thèses',
                         'uri' => '',
@@ -1231,7 +1231,7 @@ return [
                      * @see ApplicationNavigationFactory::processPage()
                      */
                     // DEPTH = 1
-                    'NOS_THESES_PLACEHOLDER' => [
+                    ApplicationNavigationFactory::NOS_THESES_PAGE_ID => [
                         'order' => -200,
                         'label' => 'Nos thèses',
                         'route' => 'these/recherche/notres',
@@ -1239,7 +1239,7 @@ return [
                         'pages' => [
                             // DEPTH = 2
                             'THESES' => [
-                                'label' => '(Structure)',
+                                'label' => '(Thèses Structure)',
                                 'route' => 'these/recherche/notres',
                                 'params' => [],
                                 'query' => [], // injection automatique du filtre "structure"

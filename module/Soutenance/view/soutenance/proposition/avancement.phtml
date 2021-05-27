@@ -27,7 +27,7 @@ $this->headTitle('Avancement de la soutenance');
 </h1>
 
 <div class="main">
-    <a href="<?php echo $this->url('soutenance', [], [], true); ?>"
+    <a href="<?php echo $this->url('soutenance', ['these' => $these->getId()], [], true); ?>"
        class="btn btn-primary action"
     >
         <span class="glyphicon glyphicon-menu-up"></span>

@@ -99,7 +99,7 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                                 <?php echo $this->justificatif()->render($justificatif, $urlFichierThese, ['court' => true]); ?>
                                 <?php if ($canModifier) : ?>
                                     <a      <?php /** @see \Soutenance\Controller\JustificatifController::retirerAction() */?>
-                                            href="<?php echo $this->url("soutenance/justificatif/retirer", ["justificatif" => $justificatif->getId()], ["query" => ["retour" => $this->url('soutenance/intervention/afficher', ["these" => $these->getId()], [], true)]], true); ?>"
+                                            href="<?php echo $this->url("soutenance/justificatif/retirer", ['these' => $these->getId(), "justificatif" => $justificatif->getId()], ["query" => ["retour" => $this->url('soutenance/intervention/afficher', ["these" => $these->getId()], [], true)]], true); ?>"
                                     >
                                     <span class="glyphicon glyphicon-trash"></span></a>
                                 <?php endif; ?>
@@ -107,7 +107,7 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                                 <span class="text text-danger">Déléguation de signature manquante pour <strong style="font-variant:small-caps;"><?php echo $membre->getDenomination(); ?></strong></span>
                                 <?php if ($canModifier) : ?>
                                     <a      <?php /** @see \Soutenance\Controller\JustificatifController::ajouterAction() */?>
-                                            href="<?php echo $this->url("soutenance/justificatif/ajouter", ["proposition" => $proposition->getId(), "nature" => NatureFichier::CODE_DELEGUATION_SIGNATURE, "membre" => $membre->getId()], [], true); ?>"
+                                            href="<?php echo $this->url("soutenance/justificatif/ajouter", ['these' => $these->getId(), "proposition" => $proposition->getId(), "nature" => NatureFichier::CODE_DELEGUATION_SIGNATURE, "membre" => $membre->getId()], [], true); ?>"
                                             class="btn btn-xs btn-primary ajax-modal" data-event='modification' style="margin: 1px;">
                                     <span class="glyphicon glyphicon-upload"></span> Déposer le justificatif </a>
                                 <?php endif; ?>
