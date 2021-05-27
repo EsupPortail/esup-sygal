@@ -106,6 +106,8 @@ class PdcData
     private $cotutuelleLibelle;
     /** @var string */
     private $cotutuellePays;
+    /** @var bool */
+    private  $huisClos;
 
     /** @var bool */
     private $associe;
@@ -610,5 +612,20 @@ class PdcData
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isHuisClos() : bool
+    {
+        if ($this->huisClos !== null AND $this->huisClos === true) return true;
+        return false;
+    }
 
+    /**
+     * @param bool $huisClos
+     */
+    public function setHuisClos(bool $huisClos)
+    {
+        $this->huisClos = $huisClos;
+    }
 }
