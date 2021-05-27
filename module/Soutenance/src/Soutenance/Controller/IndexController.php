@@ -41,18 +41,18 @@ class IndexController extends AbstractController
             case Role::CODE_DOCTORANT :
             case Role::CODE_DIRECTEUR_THESE :
             case Role::CODE_CODIRECTEUR_THESE :
-                $this->redirect()->toRoute('soutenance/index-acteur', [], [], true);
+                $this->redirect()->toRoute('soutenances/index-acteur', [], [], true);
                 break;
             case Role::CODE_RAPPORTEUR_JURY :
             case Role::CODE_RAPPORTEUR_ABSENT :
-                $this->redirect()->toRoute('soutenance/index-rapporteur', [], [], true);
+                $this->redirect()->toRoute('soutenances/index-rapporteur', [], [], true);
                 break;
             case Role::CODE_ADMIN_TECH :
             case Role::CODE_OBSERVATEUR :
             case Role::CODE_BDD :
             case Role::CODE_UR :
             case Role::CODE_ED :
-                $this->redirect()->toRoute('soutenance/index-structure', [], [], true);
+                $this->redirect()->toRoute('soutenances/index-structure', [], [], true);
                 break;
         }
         return new ViewModel();

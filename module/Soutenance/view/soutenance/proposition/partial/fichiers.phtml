@@ -29,7 +29,7 @@ foreach ($proposition->getMembres() as $membre) {
     <div class="panel-body">
 
         <?php if ($canModifier) : ?>
-            <a href="<?php echo $this->url('soutenance/justificatif/ajouter-justificatif', [ 'these' => $these->getId()], [], true); ?>"
+            <a href="<?php echo $this->url('soutenance/justificatif/ajouter-justificatif', ['these' => $these->getId()], [], true); ?>"
                class="btn btn-primary ajax-modal" data-event="modification">
                 Téléversement d'un justificatif
             </a>
@@ -88,7 +88,7 @@ foreach ($proposition->getMembres() as $membre) {
                             <?php /** @see \Soutenance\Controller\JustificatifController::retirerAction() */ ?>
                             <?php $retour = $this->url('soutenance/proposition', ['these' => $these->getId()],['force_canonical' => true ], true); ?>
                             <a href="<?php echo $this->url('soutenance/justificatif/retirer',
-                                    ['justificatif'=>$justificatif['justificatif']->getId()],
+                                    ['these' => $these->getId(), 'justificatif'=>$justificatif['justificatif']->getId()],
                                     ["query" => ["retour" => $retour]],
                                     true); ?>">
                                 <span style='color:darkred;' class="glyphicon glyphicon-remove" title="Supprimer le justificatif"></span>

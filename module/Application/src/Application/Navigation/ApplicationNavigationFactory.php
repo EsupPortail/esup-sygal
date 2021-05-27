@@ -2,6 +2,8 @@
 
 namespace Application\Navigation;
 
+use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
@@ -9,6 +11,7 @@ use Application\Search\Etablissement\EtablissementSearchFilter;
 use Application\Search\UniteRecherche\UniteRechercheSearchFilter;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Interop\Container\ContainerInterface;
 use UnicaenApp\Util;
 use Zend\Router\RouteMatch;
 
@@ -20,9 +23,36 @@ class ApplicationNavigationFactory extends NavigationFactory
     use UserContextServiceAwareTrait;
     use TheseServiceAwareTrait;
 
-    const MA_THESE_PAGE_PLACEHOLDER_ID = 'MA_THESE_PLACEHOLDER';
-    const MES_THESES_PAGE_PLACEHOLDER_ID = 'MES_THESES_PLACEHOLDER';
-    const NOS_THESES_PAGE_PLACEHOLDER_ID = 'NOS_THESES_PLACEHOLDER';
+    const MA_THESE_PAGE_ID = 'MA_THESE';
+    const MES_THESES_PAGE_ID = 'MES_THESES';
+    const NOS_THESES_PAGE_ID = 'NOS_THESES';
+
+    /**
+     * @var Doctorant|null
+     */
+    private $doctorant;
+
+    /**
+     * @var Role|null
+     */
+    private $role;
+
+    /**
+     * @var Individu|null
+     */
+    private $individu;
+
+    /**
+     * @inheritDoc
+     */
+    protected function preparePages(ContainerInterface $container, $pages): ?array
+    {
+        $this->doctorant = $this->userContextService->getIdentityDoctorant();
+        $this->role = $this->userContextService->getSelectedIdentityRole();
+        $this->individu = $this->userContextService->getIdentityIndividu();
+
+        return parent::preparePages($container, $pages);
+    }
 
     /**
      * @inheritDoc
@@ -48,7 +78,7 @@ class ApplicationNavigationFactory extends NavigationFactory
      */
     protected function processPage(array &$page, RouteMatch $routeMatch = null)
     {
-        $this->generateDynamicChildrenPages($page);
+        $this->handleDynamicPage($page);
 
         parent::processPage($page, $routeMatch);
     }
@@ -56,18 +86,19 @@ class ApplicationNavigationFactory extends NavigationFactory
     /**
      * @param array $page
      */
-    protected function generateDynamicChildrenPages(array &$page)
+    protected function handleDynamicPage(array &$page)
     {
         /**
          * Ma thèse
          */
         // Rôle Doctorant : génération d'une page "Ma thèse" pour chaque thèse du doctorant
-        if ($protoPage = $page['pages'][$key = self::MA_THESE_PAGE_PLACEHOLDER_ID] ?? null) {
-            if ($doctorant = $this->userContextService->getIdentityDoctorant()) {
-                $theses = $this->theseService->getRepository()->findThesesByDoctorant($doctorant, [These::ETAT_EN_COURS]);
+        if ($protoPage = $page['pages'][$key = self::MA_THESE_PAGE_ID] ?? null) {
+            if ($this->doctorant !== null) {
+                $theses = $this->theseService->getRepository()->findThesesByDoctorant($this->doctorant, [These::ETAT_EN_COURS]);
                 /////////////////////////////////// LOUVRY Isabelle 33383 : 2 thèses E et S
                 $newPages = $this->createPagesMaThese($protoPage, $theses);
                 $page['pages'] = array_merge($page['pages'], $newPages);
+                $page['visible'] = true;
             }
             unset($page['pages'][$key]);
         }
@@ -76,12 +107,10 @@ class ApplicationNavigationFactory extends NavigationFactory
          * Mes thèses
          */
         // Rôles acteurs de thèses (Dir, Codir, etc.) : génération d'une page "Mes thèses" contenant une page fille par thèse
-        if ($protoPage = $page['pages'][$key = self::MES_THESES_PAGE_PLACEHOLDER_ID] ?? null) {
+        if ($protoPage = $page['pages'][$key = self::MES_THESES_PAGE_ID] ?? null) {
             /** @var Role $role */
-            $role = $this->userContextService->getSelectedIdentityRole();
-            $individu = $this->userContextService->getIdentityIndividu();
-            if ($role !== null && $role->isActeurDeThese()) {
-                $theses = $this->theseService->getRepository()->findThesesByActeur($individu, $role, [These::ETAT_EN_COURS]);
+            if ($this->role !== null && $this->role->isActeurDeThese()) {
+                $theses = $this->theseService->getRepository()->findThesesByActeur($this->individu, $role, [These::ETAT_EN_COURS]);
                 $newPages = $this->createPageMesTheses($protoPage, $theses);
                 $page['pages'][$key]['pages'] = $newPages;
             } else {
@@ -93,11 +122,9 @@ class ApplicationNavigationFactory extends NavigationFactory
          * Nos thèses
          */
         // Rôles ED, UR, MDD, etc. : génération d'une page "Nos thèses" contenant une page fille indiquant la structure filtrante
-        if ($protoPage = $page['pages'][$key = self::NOS_THESES_PAGE_PLACEHOLDER_ID] ?? null) {
-            /** @var Role $role */
-            $role = $this->userContextService->getSelectedIdentityRole();
-            if ($role !== null && ($role->isEcoleDoctoraleDependant() || $role->isUniteRechercheDependant() || $role->isEtablissementDependant())) {
-                $newPages = $this->createPageNosTheses($protoPage, $role);
+        if ($protoPage = $page['pages'][$key = self::NOS_THESES_PAGE_ID] ?? null) {
+            if ($this->role !== null && ($this->role->isEcoleDoctoraleDependant() || $this->role->isUniteRechercheDependant() || $this->role->isEtablissementDependant())) {
+                $newPages = $this->createPageNosTheses($protoPage, $this->role);
                 $page['pages'][$key]['pages'] = $newPages;
             } else {
                 unset($page['pages'][$key]);
@@ -129,16 +156,6 @@ class ApplicationNavigationFactory extends NavigationFactory
             $newPage['title'] = $these->getTitre();
             // injection du paramètre de route 'these' dans la page et ses filles
             $this->setParamInPage($newPage, 'these', $these->getId());
-//            $newPage['params']['these'] = $these->getId();
-//            // injection du paramètre de route 'these' dans les pages filles (profondeur 1)
-//            if ($childrenPages = $newPage['pages'] ?? []) {
-//                foreach ($childrenPages as $key => $childPage) {
-//                    if (isset($childPage['params']['these'])) {
-//                        $childrenPages[$key]['params']['these'] = $these->getId();
-//                    }
-//                }
-//                $newPage['pages'] = $childrenPages;
-//            }
 
             $newPages['ma-these-' . ($i + 1)] = $newPage;
         }
@@ -199,7 +216,7 @@ class ApplicationNavigationFactory extends NavigationFactory
                 break;
             case $role->isEtablissementDependant():
                 $etab = $role->getStructure()->getEtablissement();
-                $label = $etab->getLibelle();
+                $label = $etab->getCode();
                 $query = [EtablissementSearchFilter::NAME => $etab->getSourceCode()];
                 break;
             default:
@@ -213,11 +230,17 @@ class ApplicationNavigationFactory extends NavigationFactory
         $protoPage = $parentPage['pages']['THESES'];
         $page = $protoPage;
         // label
-        $page['label'] = $label;
+        $page['label'] = "Thèses " . $label;
         // params
         $page['query'] = $page['query'] ?? [];
         $page['query'] = array_merge($page['query'], $query);
+        $newPages[] = $page;
 
+        // génération d'une page fille emmenant vers les soutenances
+        $protoPage = $parentPage['pages']['SOUTENANCES'];
+        $page = $protoPage;
+        // label
+        $page['label'] = "Soutenances " . $label;
         $newPages[] = $page;
 
         return $newPages;

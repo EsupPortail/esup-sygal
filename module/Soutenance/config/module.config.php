@@ -2,13 +2,12 @@
 
 namespace Soutenance;
 
-use Application\Provider\Privilege\UtilisateurPrivileges;
+use Application\Navigation\ApplicationNavigationFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Soutenance\Controller\AvisController;
 use Soutenance\Controller\EngagementImpartialiteController;
-use Soutenance\Controller\InterventionController;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Service\Membre\MembreService;
@@ -67,15 +66,16 @@ return array(
                      * Navigation pour LA thèse courante.
                      */
                     // DEPTH = 1
-                    'these' => [
+                    'these_selectionnee' => [
                         'pages' => [
                             // DEPTH = 2
                             'soutenance' => [
                                 'order' => 60,
                                 'label' => 'Soutenance',
-                                'route' => 'soutenance/index-acteur',
-                                'params' => [
-                                    'these' => 0,
+                                'route' => 'soutenance/proposition',
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
                                 ],
                                 'icon' => 'fab fa-slideshare',
                                 'resource' => PresoutenancePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_VISUALISER),
@@ -123,12 +123,12 @@ return array(
                                             'Acteur',
                                         ],
                                     ],
-                                    'retard' => [
-                                        'label' => 'Notifier attente de rapport',
-                                        'route' => 'soutenance/notifier-retard-rapport-presoutenance',
-                                        'order' => 500,
-                                        'resource' => UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION),
-                                    ],
+//                                    'retard' => [
+//                                        'label' => 'Notifier attente de rapport',
+//                                        'route' => 'soutenance/notifier-retard-rapport-presoutenance',
+//                                        'order' => 500,
+//                                        'resource' => UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION),
+//                                    ],
                                 ],
                             ],
                         ]
@@ -140,13 +140,13 @@ return array(
                      * @see ApplicationNavigationFactory::processPage()
                      */
                     // DEPTH = 1
-                    'MA_THESE_PLACEHOLDER' => [ /** {@see ApplicationNavigationFactory::processPage()} */
+                    ApplicationNavigationFactory::MA_THESE_PAGE_ID => [
                         'pages' => [
                             // DEPTH = 2
                             'soutenance' => [
                                 'order' => 60,
                                 'label' => 'Soutenance',
-                                'route' => 'soutenance/index-acteur',
+                                'route' => 'soutenance/proposition',
                                 'params' => [
                                     'these' => 0,
                                 ],
@@ -163,7 +163,7 @@ return array(
                      * @see ApplicationNavigationFactory::processPage()
                      */
                     // DEPTH = 1
-                    'MES_THESES_PLACEHOLDER' => [
+                    ApplicationNavigationFactory::MES_THESES_PAGE_ID => [
                         'pages' => [
                             // Déclinée en 'these-1', 'these-2', etc.
                             // DEPTH = 2
@@ -173,7 +173,7 @@ return array(
                                     'soutenance' => [
                                         'order' => 50,
                                         'label' => 'Soutenance',
-                                        'route' => 'soutenance/index-acteur',
+                                        'route' => 'soutenance/proposition',
                                         'params' => [
                                             'these' => 0,
                                         ],
