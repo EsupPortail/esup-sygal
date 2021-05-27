@@ -45,7 +45,7 @@ return [
                                 'label'    => 'Statistiques',
                                 'route'    => 'statistique',
                                 'resource' => IndicateurPrivileges::getResourceId(IndicateurPrivileges::INDICATEUR_STATISTIQUE),
-                                'order'    => 90,
+                                'order'    => 500,
                             ],
                         ],
                     ],

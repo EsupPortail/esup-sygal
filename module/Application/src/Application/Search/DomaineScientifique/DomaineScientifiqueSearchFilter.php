@@ -12,9 +12,9 @@ class DomaineScientifiqueSearchFilter extends SelectSearchFilter
     /**
      * @inheritDoc
      */
-    protected function __construct(string $label, string $name, array $options, array $attributes = [], $defaultValue = null)
+    protected function __construct(string $label, string $name, array $attributes = [], $defaultValue = null)
     {
-        parent::__construct($label, $name, $options, $attributes, $defaultValue);
+        parent::__construct($label, $name, $attributes, $defaultValue);
     }
 
     /**
@@ -25,7 +25,6 @@ class DomaineScientifiqueSearchFilter extends SelectSearchFilter
         $instance = new self(
             "Domaine<br>scientifique",
             self::NAME,
-            [],
             ['liveSearch' => true]
         );
 

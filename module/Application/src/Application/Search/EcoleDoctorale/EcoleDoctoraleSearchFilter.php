@@ -14,9 +14,9 @@ class EcoleDoctoraleSearchFilter extends SelectSearchFilter
     /**
      * @inheritDoc
      */
-    protected function __construct(string $label, string $name, array $options, array $attributes = [], $defaultValue = null)
+    protected function __construct(string $label, string $name, array $attributes = [], $defaultValue = null)
     {
-        parent::__construct($label, $name, $options, $attributes, $defaultValue);
+        parent::__construct($label, $name, $attributes, $defaultValue);
     }
 
     /**
@@ -27,7 +27,6 @@ class EcoleDoctoraleSearchFilter extends SelectSearchFilter
         $instance = new self(
             "École doctorale",
             self::NAME,
-            [],
             ['liveSearch' => true]
         );
 

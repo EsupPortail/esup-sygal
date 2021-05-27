@@ -7,6 +7,7 @@ use Application\Assertion\Interfaces\EntityAssertionInterface;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
 use Application\Provider\Privilege\RapportPrivileges;
 use Application\Service\UserContextServiceAwareTrait;
 
@@ -40,6 +41,10 @@ class RapportActiviteEntityAssertion implements EntityAssertionInterface
             case RapportPrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN:
             case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT:
             case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN:
+            case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT:
+            case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
+            case RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT:
+            case RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN:
                 $this->assertEtatThese();
         }
 
@@ -47,7 +52,19 @@ class RapportActiviteEntityAssertion implements EntityAssertionInterface
             case RapportPrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN:
             case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN:
             case RapportPrivileges::RAPPORT_ACTIVITE_TELECHARGER_SIEN:
+            case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT:
+            case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
+            case RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT:
+            case RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN:
                 $this->assertAppartenanceThese();
+        }
+
+        switch ($privilege) {
+            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT:
+            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN:
+            case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT:
+            case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
+                $this->assertAucuneValidation();
         }
 
         return true;
@@ -74,6 +91,14 @@ class RapportActiviteEntityAssertion implements EntityAssertionInterface
         $this->assertTrue(
             in_array($this->rapport->getThese()->getEtatThese(), [These::ETAT_EN_COURS, These::ETAT_SOUTENUE]),
             "La thèse doit être en cours ou soutenue"
+        );
+    }
+
+    private function assertAucuneValidation()
+    {
+        $this->assertTrue(
+            $this->rapport->getRapportValidationOfType(TypeValidation::CODE_RAPPORT_ACTIVITE) === null,
+            "Le rapport ne doit pas avoir été validé"
         );
     }
 }

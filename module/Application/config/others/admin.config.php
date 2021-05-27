@@ -95,7 +95,7 @@ return [
             'admin' => [
                 'type'          => 'Segment',
                 'options'       => [
-                    'route'    => '/[:language/]admin',
+                    'route'    => '/admin',
                     'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Admin',
@@ -220,7 +220,7 @@ return [
             'test-envoi-mail' => [
                 'type'          => 'Segment',
                 'options'       => [
-                    'route'    => '/[:language/]test-envoi-mail',
+                    'route'    => '/test-envoi-mail',
 //                    'defaults' => [
 //                        '__NAMESPACE__' => 'Application\Controller',
 //                        'controller'    => 'Admin',
@@ -245,6 +245,7 @@ return [
                                 'route'    => 'test-envoi-mail',
                                 'icon'     => 'glyphicon glyphicon-send',
                                 'resource' => PrivilegeController::getResourceId('UnicaenApp\Controller\Application', 'test-envoi-mail'),
+                                'order' => 10000,
                             ],
                         ],
                     ],

@@ -44,16 +44,14 @@ class SelectSearchFilter extends SearchFilter
      *
      * @param string $label
      * @param string $name
-     * @param array $options
      * @param array $attributes
      * @param string $defaultValue
      */
-    public function __construct(string $label, string $name, array $options, array $attributes = [], $defaultValue = null)
+    public function __construct(string $label, string $name, array $attributes = [], $defaultValue = null)
     {
         parent::__construct($label, $name);
 
         $this
-            ->setOptions($options)
             ->setAttributes($attributes)
             ->setDefaultValue($defaultValue);
     }

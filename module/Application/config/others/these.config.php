@@ -7,7 +7,9 @@ use Application\Controller\Factory\TheseControllerFactory;
 use Application\Controller\Factory\TheseObserverControllerFactory;
 use Application\Controller\Factory\TheseRechercheControllerFactory;
 use Application\Controller\Plugin\Url\UrlThesePluginFactory;
-use Application\Controller\RapportActiviteController;
+use Application\Controller\Rapport\RapportActiviteController;
+use Application\Controller\Rapport\RapportCsiController;
+use Application\Controller\Rapport\RapportMiparcoursController;
 use Application\Controller\TheseConsoleController;
 use Application\Controller\TheseController;
 use Application\Controller\TheseRechercheController;
@@ -904,7 +906,7 @@ return [
                     ],
 
                     /**
-                     * Navigation pour LA thèse courante.
+                     * Navigation pour LA thèse "sélectionnée".
                      */
                     // DEPTH = 1
                     'these_selectionnee' => [
@@ -935,6 +937,7 @@ return [
                                 'order' => 15,
                                 'uri' => '',
                                 'class' => 'divider',
+                                'separator' => true,
                             ],
                             //---------------------------------------------------
                             'rapport-activite' => [
@@ -946,32 +949,34 @@ return [
                                 'paramsInject' => [
                                     'these',
                                 ],
-                                'icon' => 'glyphicon glyphicon-duplicate',
                                 'resource' => PrivilegeController::getResourceId(RapportActiviteController::class, 'consulter'),
                             ],
-                            'csi' => [
-                                'label' => 'CSI',
+                            'rapport-csi' => [
+                                'label' => 'Rapports CSI',
                                 'order' => 30,
-                                'uri' => '#',
+                                'route' => 'rapport-csi/consulter',
                                 'withtarget' => true,
                                 'paramsInject' => [
                                     'these',
                                 ],
+                                'resource' => PrivilegeController::getResourceId(RapportCsiController::class, 'consulter'),
                             ],
                             'rapport-miparcours' => [
-                                'label' => 'Rapport mi-parcours',
-                                'order' => 40,
-                                'uri' => '#',
+                                'label' => 'Rapports mi-parcours',
+                                'order' => 30,
+                                'route' => 'rapport-miparcours/consulter',
                                 'withtarget' => true,
                                 'paramsInject' => [
                                     'these',
                                 ],
+                                'resource' => PrivilegeController::getResourceId(RapportMiparcoursController::class, 'consulter'),
                             ],
                             'divider-2' => [
                                 'label' => null,
                                 'order' => 45,
                                 'uri' => '',
                                 'class' => 'divider',
+                                'separator' => true,
                             ],
                             //---------------------------------------------------
                             'depot' => [
@@ -1032,6 +1037,7 @@ return [
                                             'these',
                                         ],
                                         'class' => 'divider',
+                                        'separator' => true,
                                     ],
                                     'validation-page-de-couverture' => [
                                         'id' => 'validation-page-de-couverture',

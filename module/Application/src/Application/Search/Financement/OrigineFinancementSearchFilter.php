@@ -12,9 +12,9 @@ class OrigineFinancementSearchFilter extends SelectSearchFilter
     /**
      * @inheritDoc
      */
-    protected function __construct(string $label, string $name, array $options, array $attributes = [], $defaultValue = null)
+    protected function __construct(string $label, string $name, array $attributes = [], $defaultValue = null)
     {
-        parent::__construct($label, $name, $options, $attributes, $defaultValue);
+        parent::__construct($label, $name, $attributes, $defaultValue);
     }
 
     /**
@@ -25,7 +25,6 @@ class OrigineFinancementSearchFilter extends SelectSearchFilter
         $instance = new self(
             "Origine<br>financement",
             self::NAME,
-            [],
             ['liveSearch' => true]
         );
 

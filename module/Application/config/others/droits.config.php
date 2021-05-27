@@ -79,6 +79,7 @@ return [
                                 'title'    => 'Gestion des droits d\'accès',
                                 'route'    => 'droits',
                                 'resource' => PrivilegeController::getResourceId('UnicaenAuth\Controller\Droits', 'index'),
+                                'icon'     => 'fas fa-user-lock',
                                 'pages'    => [
                                     'roles'      => [
                                         'label'      => "Rôles",

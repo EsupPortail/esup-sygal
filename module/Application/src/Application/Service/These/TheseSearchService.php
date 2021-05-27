@@ -394,7 +394,7 @@ EOS;
         if ($role && $role->isEtablissementDependant()) {
             $etablissement = $role->getStructure()->getEtablissement();
         }
-        $annees = $this->theseAnneeUnivService->getRepository()->fetchDistinctAnneesUniv1ereInscription($etablissement);
+        $annees = $this->theseAnneeUnivService->fetchDistinctAnneesUniv1ereInscription($etablissement);
         $annees = array_reverse(array_filter($annees));
         $annees = array_combine($annees, $annees);
 
@@ -403,7 +403,7 @@ EOS;
 
     private function fetchAnneesUnivInscription(SelectSearchFilter $filter): array
     {
-        $annees = $this->theseAnneeUnivService->getRepository()->fetchDistinctAnneesUniv1ereInscription();
+        $annees = $this->theseAnneeUnivService->fetchDistinctAnneesUniv1ereInscription();
         $annees = array_reverse(array_filter($annees));
         $annees = array_combine($annees, $annees);
 
@@ -473,8 +473,7 @@ EOS;
     {
         $filter = new SelectSearchFilter(
             "Année univ.<br>d'inscr.",
-            self::NAME_anneeUnivInscription,
-            []
+            self::NAME_anneeUnivInscription
         );
         $filter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
             $filterValue = $filter->getValue();
@@ -499,8 +498,7 @@ EOS;
     {
         $filter = new SelectSearchFilter(
             "Année univ.<br>1ère inscr.",
-            self::NAME_anneeUniv1ereInscription,
-            []
+            self::NAME_anneeUniv1ereInscription
         );
         $filter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
             $filterValue = $filter->getValue();
@@ -525,8 +523,7 @@ EOS;
     {
         $filter = new SelectSearchFilter(
             "Année civile<br>1ère inscr.",
-            self::NAME_anneeCivile1ereInscription,
-            []
+            self::NAME_anneeCivile1ereInscription
         );
         $filter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
             $filterValue = $filter->getValue();
@@ -549,8 +546,7 @@ EOS;
     {
         $filter = new SelectSearchFilter(
             "Soutenance",
-            self::NAME_anneeSoutenance,
-            []
+            self::NAME_anneeSoutenance
         );
         $filter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
             $filterValue = $filter->getValue();

@@ -18,6 +18,7 @@ use Application\Service\Role\RoleService;
 use Application\Service\Role\RoleServiceFactory;
 use Application\Service\ServiceAwareInitializer;
 use Application\Service\Url\UrlServiceFactory;
+use Application\Service\UserContextService;
 use Application\Service\UserContextServiceAwareInitializer;
 use Application\Service\UserContextServiceFactory;
 use Application\View\Helper\EscapeTextHelper;
@@ -54,6 +55,11 @@ return array(
                     ],
                     'roles' => [], // pas d'authentification requise
                 ],
+                [
+                    'controller' => 'DoctrineModule\Controller\Cli',
+                    'roles' => [],
+                ],
+
             ],
         ],
     ],
@@ -197,6 +203,7 @@ return array(
         'aliases' => array(
             'UserContextService' => 'UnicaenAuth\Service\UserContext',
             RoleService::class => 'RoleService',
+            UserContextService::class => 'UserContextService',
         ),
         'invokables' => array(
             'RouteMatchInjector' => RouteMatchInjector::class,

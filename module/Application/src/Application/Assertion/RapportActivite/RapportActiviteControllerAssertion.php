@@ -3,13 +3,16 @@
 namespace Application\Assertion\RapportActivite;
 
 use Application\Assertion\ControllerAssertion;
+use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\These;
+use Application\Provider\Privilege\RapportPrivileges;
 use Application\Service\UserContextServiceAwareTrait;
 
 class RapportActiviteControllerAssertion extends ControllerAssertion
 {
+    use ThrowsFailedAssertionExceptionTrait;
     use UserContextServiceAwareTrait;
 
     /**
@@ -30,25 +33,31 @@ class RapportActiviteControllerAssertion extends ControllerAssertion
      */
     public function assert($privilege = null)
     {
+        if ($this->rapport === null) {
+            return true;
+        }
         if ($this->rapport->getThese() === null) {
             return true;
         }
 
-        // Cas particulier de l'utilisateur Doctorant
-        if ($identityDoctorant = $this->userContextService->getIdentityDoctorant()) {
-            if (! $this->assertForDoctorant($identityDoctorant, $privilege)) {
-                return false;
-            }
-        }
+        $this->assertAppartenanceThese();
 
-        return in_array($this->rapport->getThese()->getEtatThese(), [
-            These::ETAT_EN_COURS,
-            These::ETAT_SOUTENUE,
-        ]);
+        return true;
     }
 
-    public function assertForDoctorant(Doctorant $utilisateur, $privilege = null)
+    private function assertAppartenanceThese()
     {
-        return $this->rapport->getThese()->getDoctorant()->getId() === $utilisateur->getId();
+        if ($doctorant = $this->userContextService->getIdentityDoctorant()) {
+            $this->assertTrue(
+                $this->rapport->getThese()->getDoctorant()->getId() === $doctorant->getId(),
+                "La thèse n'appartient pas au doctorant " . $doctorant
+            );
+        }
+        if ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleDirecteurEcoleDoctorale()) {
+            $this->assertTrue(
+                $this->rapport->getThese()->getEcoleDoctorale()->getStructure()->getId() === $roleEcoleDoctorale->getStructure()->getId(),
+                "La thèse n'est pas rattachée à l'ED " . $roleEcoleDoctorale->getStructure()->getCode()
+            );
+        }
     }
 }

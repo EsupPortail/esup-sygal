@@ -49,7 +49,9 @@ return [
                     'action'     => [
                         'lister-fichiers-communs',
                     ],
-                    'privileges' => FichierPrivileges::FICHIER_COMMUN_TELECHARGER,
+                    'privileges' => [
+                        FichierPrivileges::FICHIER_COMMUN_TELECHARGER,
+                    ],
                 ],
                 [
                     'controller' => 'Application\Controller\Fichier',
@@ -85,10 +87,9 @@ return [
             'fichier' => [
                 'type'          => 'Segment',
                 'options'       => [
-                    'route' => '/[:language/]fichier',
+                    'route' => '/fichier',
                     'defaults'      => [
                         'controller' => 'Application\Controller\Fichier',
-                        'language'   => 'fr_FR',
                     ],
                 ],
                 'may_terminate' => false,
