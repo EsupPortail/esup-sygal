@@ -15,6 +15,7 @@ use Application\Form\Validator\Factory\NewEmailValidatorFactory;
 use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\PasswordValidator;
 use Application\Provider\Privilege\UtilisateurPrivileges;
+use Application\Service\Individu\IndividuService;
 use Application\Service\Individu\IndividuServiceFactory;
 use Application\Service\Utilisateur\UtilisateurSearchService;
 use Application\Service\Utilisateur\UtilisateurSearchServiceFactory;
@@ -257,7 +258,8 @@ return [
             UtilisateurSearchService::class => UtilisateurSearchServiceFactory::class,
         ],
         'aliases' => [
-            UtilisateurService::class => 'UtilisateurService'
+            UtilisateurService::class => 'UtilisateurService',
+            IndividuService::class => 'IndividuService',
         ]
     ],
     'controllers'     => [

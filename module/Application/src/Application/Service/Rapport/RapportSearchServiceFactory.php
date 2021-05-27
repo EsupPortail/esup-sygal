@@ -2,6 +2,7 @@
 
 namespace Application\Service\Rapport;
 
+use Application\Entity\Db\TypeValidation;
 use Application\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
 use Application\Search\Etablissement\EtablissementSearchFilter;
 use Application\Search\Rapport\AnneeRapportActiviteSearchFilter;
@@ -12,6 +13,7 @@ use Application\Service\Structure\StructureService;
 use Application\Service\These\TheseSearchService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Application\Search\UniteRecherche\UniteRechercheSearchFilter;
+use Application\Service\Validation\ValidationService;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
@@ -42,6 +44,7 @@ class RapportSearchServiceFactory implements FactoryInterface
          * @var TheseAnneeUnivService $theseAnneeUnivService
          * @var TheseSearchService $theseSearchService
          * @var RapportService $rapportService
+         * @var ValidationService $validationService
          */
         $structureService = $container->get(StructureService::class);
         $etablissementService = $container->get(EtablissementService::class);
@@ -49,6 +52,8 @@ class RapportSearchServiceFactory implements FactoryInterface
         $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
         $theseSearchService = $container->get(TheseSearchService::class);
         $rapportService = $container->get(RapportService::class);
+        $validationService = $container->get(ValidationService::class);
+        $typeValidation = $validationService->findTypeValidationByCode(TypeValidation::CODE_RAPPORT_ACTIVITE);
 
         $service->setFinancementService($financementService);
         $service->setTheseAnneeUnivService($theseAnneeUnivService);
@@ -56,8 +61,9 @@ class RapportSearchServiceFactory implements FactoryInterface
         $service->setEtablissementService($etablissementService);
         $service->setTheseSearchService($theseSearchService);
         $service->setRapportService($rapportService);
+        $service->setTypeValidation($typeValidation);
 
-        $service->setEtablissementInscSearchFilter(EtablissementSearchFilter::newInstance());
+        $service->setEtablissementTheseSearchFilter(EtablissementSearchFilter::newInstance());
         $service->setOrigineFinancementSearchFilter(OrigineFinancementSearchFilter::newInstance());
         $service->setUniteRechercheSearchFilter(UniteRechercheSearchFilter::newInstance());
         $service->setEcoleDoctoraleSearchFilter(EcoleDoctoraleSearchFilter::newInstance());

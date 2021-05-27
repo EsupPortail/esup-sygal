@@ -16,7 +16,6 @@ use Application\Service\UserContextServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Query\Expr\Join;
-use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 
 class ValidationService extends BaseService
@@ -34,14 +33,37 @@ class ValidationService extends BaseService
     }
 
     /**
-     * Fetch le type de validation spécifié.
+     * Fetch le type de validation spécifié par son code.
      *
      * @param string $code
-     * @return null|TypeValidation
+     * @return TypeValidation
      */
-    public function getTypeValidation($code)
+    public function findTypeValidationByCode(string $code): TypeValidation
     {
-        return $this->entityManager->getRepository(TypeValidation::class)->findOneBy(['code' => $code]);
+        /** @var TypeValidation $type */
+        $type = $this->entityManager->getRepository(TypeValidation::class)->findOneBy(['code' => $code]);
+        if ($type === null) {
+            throw new RuntimeException("Type de validation introuvable avec ce code : " . $code);
+        }
+
+        return $type;
+    }
+
+    /**
+     * Fetch le type de validation spécifié par son id.
+     *
+     * @param int $id
+     * @return TypeValidation
+     */
+    public function findTypeValidationById(int $id): TypeValidation
+    {
+        /** @var TypeValidation $type */
+        $type = $this->entityManager->getRepository(TypeValidation::class)->find($id);
+        if ($type === null) {
+            throw new RuntimeException("Type de validation introuvable avec cet id : " . $id);
+        }
+
+        return $type;
     }
 
     /**
@@ -62,7 +84,7 @@ class ValidationService extends BaseService
      */
     public function validateRdvBu(These $these, Individu $createur)
     {
-        $v = new Validation($this->getTypeValidation(TypeValidation::CODE_RDV_BU), $these, $createur);
+        $v = new Validation($this->findTypeValidationByCode(TypeValidation::CODE_RDV_BU), $these, $createur);
 
         $this->entityManager->persist($v);
         $this->entityManager->flush($v);
@@ -104,7 +126,7 @@ class ValidationService extends BaseService
         $individu = $this->userContextService->getIdentityIndividu();
 
         $v = new Validation(
-            $this->getTypeValidation(TypeValidation::CODE_DEPOT_THESE_CORRIGEE),
+            $this->findTypeValidationByCode(TypeValidation::CODE_DEPOT_THESE_CORRIGEE),
             $these,
             $individu);
 
@@ -128,7 +150,7 @@ class ValidationService extends BaseService
         $individu = $this->userContextService->getIdentityIndividu();
 
         $v = new Validation(
-            $this->getTypeValidation(TypeValidation::CODE_VERSION_PAPIER_CORRIGEE),
+            $this->findTypeValidationByCode(TypeValidation::CODE_VERSION_PAPIER_CORRIGEE),
             $these,
             $individu);
 
@@ -178,7 +200,7 @@ class ValidationService extends BaseService
         $individu = $this->userContextService->getIdentityIndividu();
 
         $v = new Validation(
-            $this->getTypeValidation(TypeValidation::CODE_CORRECTION_THESE),
+            $this->findTypeValidationByCode(TypeValidation::CODE_CORRECTION_THESE),
             $these,
             $individu);
 
@@ -237,7 +259,7 @@ class ValidationService extends BaseService
         $individu = $this->userContextService->getIdentityIndividu();
 
         $v = new Validation(
-            $this->getTypeValidation(TypeValidation::CODE_PAGE_DE_COUVERTURE),
+            $this->findTypeValidationByCode(TypeValidation::CODE_PAGE_DE_COUVERTURE),
             $these,
             $individu);
 

@@ -190,7 +190,7 @@ return [
                                 'route'    => 'unite-recherche',
                                 'resource' => PrivilegeController::getResourceId(UniteRechercheController::class, 'index'),
 
-                                'order'    => 20,
+                                'order'    => 12,
                                 'pages' => [
                                     'modification' => [
                                         'label'    => 'Modification',

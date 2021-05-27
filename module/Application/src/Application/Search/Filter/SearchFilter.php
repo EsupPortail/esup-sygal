@@ -23,12 +23,12 @@ abstract class SearchFilter implements SearchFilterInterface
     protected $label;
 
     /**
-     * @var null|string|array
+     * @var null|bool|string|array
      */
     protected $value;
 
     /**
-     * @var string
+     * @var string|bool
      */
     protected $defaultValue;
 
@@ -36,6 +36,11 @@ abstract class SearchFilter implements SearchFilterInterface
      * @var array
      */
     protected $attributes = [];
+
+    /**
+     * @var bool
+     */
+    protected $visible = true;
 
     /**
      * @var callable
@@ -116,7 +121,7 @@ abstract class SearchFilter implements SearchFilterInterface
     public function applyToQueryBuilder(QueryBuilder $qb)
     {
         if ($this->applyToQueryBuilderCallable === null) {
-            throw new RuntimeException("Aucun callable spécifié");
+            throw new RuntimeException("Aucun callable spécifié pour le filtre suivant : " . $this->name);
         }
 
         $applyToQueryBuilder = $this->applyToQueryBuilderCallable;
@@ -162,7 +167,7 @@ abstract class SearchFilter implements SearchFilterInterface
     }
 
     /**
-     * @return null|string|array
+     * @return null|bool|string|array
      */
     public function getValue()
     {
@@ -170,10 +175,10 @@ abstract class SearchFilter implements SearchFilterInterface
     }
 
     /**
-     * @param string|null $value
+     * @param string|bool|null $value
      * @return self
      */
-    public function setValue(string $value = null): self
+    public function setValue($value = null): self
     {
         $this->value = $value;
 
@@ -181,18 +186,18 @@ abstract class SearchFilter implements SearchFilterInterface
     }
 
     /**
-     * @return string
+     * @return string|bool
      */
-    public function getDefaultValue(): ?string
+    public function getDefaultValue()
     {
         return $this->defaultValue;
     }
 
     /**
-     * @param string|null $defaultValue
+     * @param string|bool|null $defaultValue
      * @return self
      */
-    public function setDefaultValue(string $defaultValue = null): self
+    public function setDefaultValue($defaultValue = null): self
     {
         $this->defaultValue = $defaultValue;
 
@@ -216,6 +221,24 @@ abstract class SearchFilter implements SearchFilterInterface
     {
         $this->attributes = $overwrite ? $attributes : array_merge($this->attributes, $attributes);
 
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVisible(): bool
+    {
+        return $this->visible;
+    }
+
+    /**
+     * @param bool $visible
+     * @return self
+     */
+    public function setVisible(bool $visible = true): self
+    {
+        $this->visible = $visible;
         return $this;
     }
 }

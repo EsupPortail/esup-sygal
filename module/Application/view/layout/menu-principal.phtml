@@ -27,6 +27,8 @@ uasort($pagesNiv1, $sorterByOrder);
                     <?php endif; ?>>
                     <?php if ($page->get("icon") !== ""): ?>
                         <span class="<?php echo $page->get("icon"); ?>"></span>
+                    <?php elseif (in_array('divider', explode(' ', $page->getClass()))): ?>
+                        <span class="<?php echo $page->getClass() ?>"></span>
                     <?php endif; ?>
                     <?php echo $this->escapeHtml($this->translate($page->getLabel(), $this->navigation($container)->getTranslatorTextDomain())); ?>
                 </a>
@@ -66,6 +68,8 @@ uasort($pagesNiv1, $sorterByOrder);
                                         <span class="icon">
                                             <i class="<?php echo $child->get("icon"); ?>"></i>
                                         </span>
+                                    <?php elseif (in_array('divider', explode(' ', $child->getClass()))): ?>
+                                        <span class="<?php echo $child->getClass() ?>"></span>
                                     <?php endif; ?>
                                     <?php echo $this->escapeHtml($this->translate($child->getLabel(), $this->navigation($container)->getTranslatorTextDomain())); ?>
                                 </li>

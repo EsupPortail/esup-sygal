@@ -38,7 +38,7 @@ class TheseRechercheController extends AbstractController implements SearchContr
     /**
      * @var array
      */
-    private $searchIfRequired = true;
+    private $searchIfRequired = false; // todo : ne pas mettre à true car impossible de dépasser la page 1 !! :-(
 
     /**
      * @return ViewModel|Response
