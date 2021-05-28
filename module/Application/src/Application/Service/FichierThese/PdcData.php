@@ -3,6 +3,7 @@
 namespace Application\Service\FichierThese;
 
 use Application\Entity\Db\Acteur;
+use DateTime;
 
 class MembreData
 {
@@ -627,5 +628,21 @@ class PdcData
     public function setHuisClos(bool $huisClos)
     {
         $this->huisClos = $huisClos;
+    }
+
+    /**
+     * @return  DateTime|null
+     */
+    public function getDateFinConfidentialite()
+    {
+        return $this->dateFinConfidentialite;
+    }
+
+    /**
+     * @param  DateTime|null $fin
+     */
+    public function setDateFinConfidentialite($fin)
+    {
+        $this->dateFinConfidentialite = $fin;
     }
 }

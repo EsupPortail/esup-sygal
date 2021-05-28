@@ -94,13 +94,11 @@ use Application\View\Renderer\PhpRenderer;
 <table class='jury'>
     <tr>
         <th colspan='3'>
-            Thèse soutenue
-            <?php if ($informations->isHuisClos()) : ?>
-                à huis clos
-            <?php else : ?>
-                publiquement
+            Thèse
+            <?php if ($informations->getDateFinConfidentialite()) : ?>
+                à caractère confidentiel
             <?php endif; ?>
-            le
+            soutenue le
             <?php if ($informations->getDate() !== null): ?>
                 <?php echo $informations->getDate(); ?>
             <?php else: ?>

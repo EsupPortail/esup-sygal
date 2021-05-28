@@ -496,6 +496,8 @@ class TheseService extends BaseService implements ListenerAggregateInterface
             $pdcData->setHuisClos(false);
         }
 
+        /** confidentialité */
+        $pdcData->setDateFinConfidentialite($these->getDateFinConfidentialite());
         /** Jury de thèses */
         $acteurs = $these->getActeurs()->toArray();
 
