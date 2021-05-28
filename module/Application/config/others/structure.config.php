@@ -2,10 +2,13 @@
 
 use Application\Controller\Factory\StructureControllerFactory;
 use Application\Controller\StructureController;
+use Application\Entity\Db\StructureDocument;
 use Application\Provider\Privilege\EtablissementPrivileges;
 use Application\Provider\Privilege\StructurePrivileges;
 use Application\Service\Structure\StructureService;
 use Application\Service\Structure\StructureServiceFactory;
+use Application\Service\StructureDocument\StructureDocumentService;
+use Application\Service\StructureDocument\StructureDocumentServiceFactory;
 use Application\View\Helper\StructureSubstitHelper;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
@@ -48,6 +51,17 @@ return [
                     ],
                     'privileges' => StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES,
                 ],
+                [
+                    'controller' => StructureController::class,
+                    'action'     => [
+                        'televerser-document',
+                        'supprimer-document',
+                    ],
+                    'privileges' => [
+                        StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES,
+                        StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES,
+                    ],
+                ],
             ],
         ],
     ],
@@ -82,6 +96,24 @@ return [
                             ],
                         ],
                     ],
+                    'televerser-document' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/televerser-document/:structure',
+                            'defaults'    => [
+                                'action' => 'televerser-document',
+                            ],
+                        ],
+                    ],
+                    'supprimer-document' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/supprimer-document/:structure/:document',
+                            'defaults'    => [
+                                'action' => 'supprimer-document',
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -93,6 +125,7 @@ return [
     'service_manager' => [
         'factories' => [
             StructureService::class => StructureServiceFactory::class,
+            StructureDocumentService::class => StructureDocumentServiceFactory::class,
         ],
         'aliases' => [
             'StructureService' => StructureService::class,

@@ -437,5 +437,4 @@ class Proposition {
         return $this;
     }
 
-
 }

@@ -5,11 +5,10 @@ namespace Application\Controller\Factory;
 use Application\Controller\EtablissementController;
 use Application\Form\EtablissementForm;
 use Application\Service\Etablissement\EtablissementService;
-use Application\Service\Fichier\FichierService;
 use Application\Service\Individu\IndividuService;
-use Application\Service\NatureFichier\NatureFichierService;
 use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
+use Application\Service\StructureDocument\StructureDocumentService;
 use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
 
@@ -28,23 +27,21 @@ class EtablissementControllerFactory
 
         /**
          * @var EtablissementService $etablissmentService
-         * @var FichierService $fichierService
          * @var IndividuService $individuService
          * @var RoleService $roleService
          * @var StructureService $structureService
+         * @var StructureDocumentService $structureDocumentService
          */
         $etablissmentService = $container->get('EtablissementService');
-        $fichierService = $container->get(FichierService::class);
-        $natureService = $container->get(NatureFichierService::class);
         $roleService = $container->get('RoleService');
         $structureService = $container->get(StructureService::class);
+        $structureDocumentService = $container->get(StructureDocumentService::class);
 
         $controller = new EtablissementController();
         $controller->setEtablissementService($etablissmentService);
-        $controller->setFichierService($fichierService);
-        $controller->setNatureFichierService($natureService);
         $controller->setRoleService($roleService);
         $controller->setStructureService($structureService);
+        $controller->setStructureDocumentService($structureDocumentService);
         $controller->setStructureForm($form);
 
         /**

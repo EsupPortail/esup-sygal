@@ -4,6 +4,8 @@ Journal des modifications
 2.1.9
 -----
 - Ajout de demande de justificatif pour certaines qualités pour les soutenances (par exemple : membre étranger)
+- Mention soutenue à huis clos lorsque mentionné dans la proposition de soutenance
+- Generalisation des documents attachés aux structures + exploitation dans les convocations
 
 2.1.8
 -----

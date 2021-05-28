@@ -55,10 +55,6 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
      */
     protected $estComue = false;
 
-    /** @var Fichier */
-
-    protected $signatureConvocation;
-
     /**
      * Etablissement constructor.
      */
@@ -261,24 +257,6 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     public function setCheminLogo($cheminLogo)
     {
         $this->getStructure()->setCheminLogo($cheminLogo);
-    }
-
-    /**
-     * @return Fichier|null
-     */
-    public function getSignatureConvocation(): ?Fichier
-    {
-        return $this->signatureConvocation;
-    }
-
-    /**
-     * @param Fichier|null $signatureConvocation
-     * @return Etablissement
-     */
-    public function setSignatureConvocation(?Fichier $signatureConvocation): Etablissement
-    {
-        $this->signatureConvocation = $signatureConvocation;
-        return $this;
     }
 
     /**
