@@ -10,6 +10,7 @@ use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
+use Application\Service\StructureDocument\StructureDocumentService;
 use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
 
@@ -34,11 +35,13 @@ class EcoleDoctoraleControllerFactory
          * @var IndividuService $individuService
          * @var RoleService $roleService
          * @var StructureService $structureService
+         * @var StructureDocumentService $structureDocumentService
          */
         $coEncadrantService = $container->get(CoEncadrantService::class);
         $ecoleDoctoralService = $container->get('EcoleDoctoraleService');
         $structureService = $container->get(StructureService::class);
         $roleService = $container->get('RoleService');
+        $structureDocumentService = $container->get(StructureDocumentService::class);
 
         $controller = new EcoleDoctoraleController();
         $controller->setCoEncadrantService($coEncadrantService);
@@ -46,6 +49,7 @@ class EcoleDoctoraleControllerFactory
         $controller->setRoleService($roleService);
         $controller->setStructureForm($form);
         $controller->setStructureService($structureService);
+        $controller->setStructureDocumentService($structureDocumentService);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper

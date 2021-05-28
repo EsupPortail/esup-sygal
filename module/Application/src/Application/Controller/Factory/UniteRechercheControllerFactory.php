@@ -10,6 +10,7 @@ use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
+use Application\Service\StructureDocument\StructureDocumentService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
@@ -36,12 +37,14 @@ class UniteRechercheControllerFactory
          * @var RoleService $roleService
          * @var StructureService $structureService
          * @var DomaineScientifiqueService $domaineService
+         * @var StructureDocumentService $structureDocumentService
          */
         $coEncadrantService = $container->get(CoEncadrantService::class);
         $uniteRechercheService = $container->get('UniteRechercheService');
         $roleService = $container->get('RoleService');
         $structureService = $container->get(StructureService::class);
         $domaineService = $container->get(DomaineScientifiqueService::class);
+        $structureDocumentService = $container->get(StructureDocumentService::class);
 
         $controller = new UniteRechercheController();
         $controller->setCoEncadrantService($coEncadrantService);
@@ -50,6 +53,7 @@ class UniteRechercheControllerFactory
         $controller->setEtablissementService($this->locateEtablissementService($container));
         $controller->setDomaineScientifiqueService($domaineService);
         $controller->setStructureService($structureService);
+        $controller->setStructureDocumentService($structureDocumentService);
         $controller->setStructureForm($form);
 
         /**

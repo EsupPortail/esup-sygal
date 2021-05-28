@@ -255,6 +255,13 @@ class JustificatifService {
                     'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_JUSTIFICATIF_EMERITAT, $membre),
                 ];
             }
+            if ($membre->isExterieur() AND $membre->getQualite()->getJustificatif() === 'O') {
+                $justificatifs[] = [
+                    'type' => NatureFichier::CODE_JUSTIFICATIF_ETRANGER,
+                    'membre' => $membre,
+                    'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_JUSTIFICATIF_ETRANGER, $membre),
+                ];
+            }
         }
 
         return $justificatifs;
