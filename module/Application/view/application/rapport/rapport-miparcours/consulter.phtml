@@ -1,0 +1,171 @@
+<?php
+
+namespace Application;
+
+use Application\Entity\Db\Rapport;
+use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
+use Application\Form\RapportMiparcoursForm;
+use Application\Provider\Privilege\RapportPrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var Rapport[] $rapports
+ * @var RapportMiparcoursForm $form
+ * @var bool $tousLesRapportsTeleverses
+ * @var TypeValidation $typeValidation
+ *
+ * @see \Application\Controller\Rapport\RapportMiparcoursController::consulterAction()
+ */
+
+$routeName = 'rapport-miparcours';
+$privilege_TELEVERSER_TOUT = RapportPrivileges::RAPPORT_MIPARCOURS_TELEVERSER_TOUT;
+$privilege_TELEVERSER_SIEN = RapportPrivileges::RAPPORT_MIPARCOURS_TELEVERSER_SIEN;
+$privilege_SUPPRIMER_TOUT = RapportPrivileges::RAPPORT_MIPARCOURS_SUPPRIMER_TOUT;
+$privilege_SUPPRIMER_SIEN = RapportPrivileges::RAPPORT_MIPARCOURS_SUPPRIMER_SIEN;
+$privilege_TELECHARGER_TOUT = RapportPrivileges::RAPPORT_MIPARCOURS_TELECHARGER_TOUT;
+$privilege_TELECHARGER_SIEN = RapportPrivileges::RAPPORT_MIPARCOURS_TELECHARGER_SIEN;
+
+$form->prepare();
+$rapportProto = (new Rapport())->setThese($these);
+$canAdd = $this->isAllowed($rapportProto, $privilege_TELEVERSER_TOUT) || $this->isAllowed($rapportProto, $privilege_TELEVERSER_SIEN);
+if ($tousLesRapportsTeleverses) {
+    $canAdd = false;
+}
+?>
+
+<?php $this->headTitle($this->translate($title = "Rapports mi-parcours"))
+    ->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+
+<h1 class="page-header">
+    <?php echo $this->translate($title); ?>
+    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<p class="lead">
+    Explications, svp...
+</p>
+
+<div class="row">
+    <div class="col-md-11">
+
+        <h2>Rapports téléversés</h2>
+
+        <?php if (count($rapports) > 0): ?>
+
+            <?php echo $this->partial('application/rapport/partial/rapports-table', [
+                'rapports' => $rapports,
+                'routeName' => $routeName,
+                'typeValidation' => $typeValidation,
+                'privilege_TELEVERSER_TOUT' => $privilege_TELEVERSER_TOUT,
+                'privilege_TELEVERSER_SIEN' => $privilege_TELEVERSER_SIEN,
+                'privilege_SUPPRIMER_TOUT' => $privilege_SUPPRIMER_TOUT,
+                'privilege_SUPPRIMER_SIEN' => $privilege_SUPPRIMER_SIEN,
+                'privilege_TELECHARGER_TOUT' => $privilege_TELECHARGER_TOUT,
+                'privilege_TELECHARGER_SIEN' => $privilege_TELECHARGER_SIEN,
+//                'privilege_VALIDER_TOUT' => $privilege_VALIDER_TOUT,
+//                'privilege_VALIDER_SIEN' => $privilege_VALIDER_SIEN,
+//                'privilege_DEVALIDER_TOUT' => $privilege_DEVALIDER_TOUT,
+//                'privilege_DEVALIDER_SIEN' => $privilege_DEVALIDER_SIEN,
+                'displayEtablissement' => false,
+                'displayType' => false,
+                'displayDoctorant' => false,
+                'displayDirecteurThese' => false,
+                'displayEcoleDoctorale' => false,
+                'displayUniteRecherche' => false,
+                'displayValidation' => false,
+            ]) ?>
+
+        <?php else: ?>
+
+            Aucun.
+
+        <?php endif; ?>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-offset-1 col-md-8">
+
+        <?php if ($tousLesRapportsTeleverses): ?>
+            <div class="row">
+                <div class="col-md-6 text-success">
+                    <p>
+                        <span class="glyphicon glyphicon-info-sign"></span>
+                        Toutes les années universitaires d'inscription du doctorant ont fait l'objet d'un téléversement de rapport.
+                    </p>
+                </div>
+            </div>
+        <?php endif ?>
+
+        <?php $ajouterFormVisible = !empty($form->getMessages()); ?>
+        <div id="ajouterDiv">
+            <div class="row">
+                <div class="col-md-4">
+                    <a href="#" id="ajouterBtn" class="btn btn-primary <?php echo $canAdd ? '' : 'disabled' ?>"
+                       style="display: <?php echo !$ajouterFormVisible ? 'inherit' : 'none' ?>">
+                        <span class="glyphicon glyphicon-plus"></span> Téléverser un rapport</a>
+                </div>
+            </div>
+
+            <div id="ajouterForm" style="display: <?php echo $ajouterFormVisible ? 'inherit' : 'none' ?>">
+                <h3>Formulaire de téléversement</h3>
+
+                <?php echo $this->form()->openTag($form) ?>
+                <div class="row">
+                    <div class="col-md-4">
+                        <?php echo $this->formControlGroup($form->get('anneeUniv')) ?>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-7">
+                        <?php
+                        echo $this->formControlGroup($form->get('files'));
+                        echo $this->formControlGroup($form->get('security'));
+                        echo $this->formSubmit($form->get('submit')->setAttributes(['class' => 'btn btn-primary']));
+                        ?>
+                    </div>
+                </div>
+                <?php echo $this->form()->closeTag() ?>
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="#" id="annulerBtn" class="btn btn-danger">Annuler</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    $(function() {
+        var $ajouterBtn = $("#ajouterBtn");
+        var $annulerBtn = $("#annulerBtn");
+        var $ajouterForm = $("#ajouterForm");
+
+        $ajouterBtn.on('click', function() {
+            $ajouterForm.show();
+            $ajouterBtn.hide();
+            return false;
+        });
+        $annulerBtn.on('click', function() {
+            $ajouterForm.hide();
+            $ajouterBtn.show();
+            return false;
+        });
+        $('[data-toggle=confirmation]').confirmation({
+            rootSelector: '[data-toggle=confirmation]',
+            container: 'body',
+            title: "Êtes-vous sûr(e) ?",
+            btnOkLabel: "Oui",
+            btnCancelLabel: "Non",
+        });
+    });
+</script>

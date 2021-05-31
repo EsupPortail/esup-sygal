@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db;
 
+use Application\Search\Filter\SearchFilterValueInterface;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
@@ -11,7 +12,8 @@ use Zend\Permissions\Acl\Resource\ResourceInterface;
 /**
  * EcoleDoctorale
  */
-class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInterface, SourceAwareInterface, ResourceInterface
+class EcoleDoctorale
+    implements StructureConcreteInterface, HistoriqueAwareInterface, SourceAwareInterface, ResourceInterface, SearchFilterValueInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
@@ -220,5 +222,25 @@ class EcoleDoctorale implements StructureConcreteInterface, HistoriqueAwareInter
     {
         $this->offreThese = $offreThese;
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function createSearchFilterValueOption(): array
+    {
+        $estFermee = $this->getStructure()->isFerme();
+
+        $subtext = $this->getLibelle();
+        if ($estFermee) {
+            $subtext .= " - FERMÉE";
+        }
+
+        return [
+            'value' => $this->getSourceCode(),
+            'label' => $this->getSigle(),
+            'subtext' => $subtext,
+            'class' => $estFermee ? 'fermee' : '',
+        ];
     }
 }

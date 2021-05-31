@@ -235,10 +235,9 @@ return [
             'home' => [
                 'pages' => [
                     'admin' => [
-                        'order'    => -90,
+                        'order'    => 100,
                         'label'    => 'Administration',
                         'route'    => 'admin',
-                        'icon'     => 'glyphicon glyphicon-cog',
                         'resource' => PrivilegeController::getResourceId('Application\Controller\Admin', 'index'),
                         'pages' => [
                             'test-envoi-mail' => [

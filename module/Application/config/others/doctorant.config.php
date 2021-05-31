@@ -63,16 +63,12 @@ return [
         'default' => [
             'home' => [
                 'pages' => [
-                    'these' => [
-                        'pages' => [
-                            'modifier-persopass' => [
-                                'visible'  => false,
-                                'label'    => "Saisie de l'adresse électronique de contact",
-                                'route'    => 'doctorant/modifier-persopass',
-                                'resource' => PrivilegeController::getResourceId('Application\Controller\Doctorant', 'modifier-persopass'),
-                            ],
-                        ]
-                    ]
+                    'modifier-persopass' => [
+                        'visible'  => false,
+                        'label'    => "Saisie de l'adresse électronique de contact",
+                        'route'    => 'doctorant/modifier-persopass',
+                        'resource' => PrivilegeController::getResourceId('Application\Controller\Doctorant', 'modifier-persopass'),
+                    ],
                 ],
             ],
         ],
