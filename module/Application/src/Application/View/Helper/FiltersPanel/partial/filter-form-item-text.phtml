@@ -11,8 +11,6 @@ use Application\View\Renderer\PhpRenderer;
 
 $paramAttributes = $filter->getAttributes();
 $title = $paramAttributes['title'] ?: null;
-$width = isset($paramAttributes['width']) ? $paramAttributes['width'] : 'fit';
-$liveSearch = isset($paramAttributes['liveSearch']) ? (bool)$paramAttributes['liveSearch'] : false;
 ?>
 
 <div class="form-group">

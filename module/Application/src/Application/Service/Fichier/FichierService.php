@@ -299,24 +299,30 @@ class FichierService extends BaseService
      * être persistée.
      *
      * @param Fichier[] $fichiers
+     * @param string $zipFileName
      * @return Fichier
+     * @throws FichierServiceException
      */
-    public function compresserFichiers(array $fichiers)
+    public function compresserFichiers(array $fichiers, string $zipFileName = "archive.zip"): Fichier
     {
-        $archiveFilepath = sys_get_temp_dir() . '/' . uniqid('sygal_rapports_') . '.zip';
+        $archiveFilepath = sys_get_temp_dir() . '/' . uniqid('sygal_archive_') . '.zip';
 
         $archive = new ZipArchive();
         if ($archive->open($archiveFilepath, ZipArchive::CREATE) !== TRUE) {
-            throw new RuntimeException("Impossible de créer l'archive " . $archiveFilepath);
+            throw new FichierServiceException("Impossible de créer le fichier " . $archiveFilepath);
         }
         foreach ($fichiers as $fichier) {
             $filePath = $this->computeDestinationFilePathForFichier($fichier);
-            $archive->addFile($filePath, $fichier->getPath());
+            if (! is_readable($filePath)) {
+                throw new FichierServiceException("Impossible d'ajouter le fichier suivant car il n'est pas lisible : " . $filePath);
+            }
+            $filePathInArchive = $fichier->getPath();
+            $archive->addFile($filePath, $filePathInArchive);
         }
         $archive->close();
 
         $fichier = Fichier::fromFilepath($archiveFilepath);
-        $fichier->setNom("sygal_rapports_annuels.zip");
+        $fichier->setNom($zipFileName);
 
         return $fichier;
     }

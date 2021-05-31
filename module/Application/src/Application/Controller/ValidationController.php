@@ -19,8 +19,12 @@ use Notification\Notification;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
 
+/**
+ * Class ValidationController
+ *
+ * @todo : devrait être renommée en 'TheseValidationController'.
+ */
 class ValidationController extends AbstractController
-
 {
     use TheseServiceAwareTrait;
     use ValidationServiceAwareTrait;
@@ -146,7 +150,7 @@ class ValidationController extends AbstractController
             'these'          => $these,
             'validerUrl'     => $this->urlThese()->validerDepotTheseCorrigeeUrl($these),
             'devaliderUrl'   => $this->urlThese()->devaliderDepotTheseCorrigeeUrl($these),
-            'typeValidation' => $this->validationService->getTypeValidation($type = TypeValidation::CODE_DEPOT_THESE_CORRIGEE),
+            'typeValidation' => $this->validationService->findTypeValidationByCode($type = TypeValidation::CODE_DEPOT_THESE_CORRIGEE),
             'validation'     => $these->getValidation($type),
         ]);
 
@@ -170,7 +174,7 @@ class ValidationController extends AbstractController
             'these'          => $these,
             'validerUrl'     => $this->urlThese()->validerCorrectionTheseUrl($these),
             'devaliderUrl'   => $this->urlThese()->devaliderCorrectionTheseUrl($these),
-            'typeValidation' => $this->validationService->getTypeValidation($type = TypeValidation::CODE_CORRECTION_THESE),
+            'typeValidation' => $this->validationService->findTypeValidationByCode($type = TypeValidation::CODE_CORRECTION_THESE),
             'validations'    => $these->getValidations($type),
             'attendues'      => $this->validationService->getValidationsAttenduesPourCorrectionThese($these),
             'utilisateurs'   => $utilisateurs,

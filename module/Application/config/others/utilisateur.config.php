@@ -15,6 +15,7 @@ use Application\Form\Validator\Factory\NewEmailValidatorFactory;
 use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\PasswordValidator;
 use Application\Provider\Privilege\UtilisateurPrivileges;
+use Application\Service\Individu\IndividuService;
 use Application\Service\Individu\IndividuServiceFactory;
 use Application\Service\Utilisateur\UtilisateurSearchService;
 use Application\Service\Utilisateur\UtilisateurSearchServiceFactory;
@@ -235,11 +236,6 @@ return [
                                 'icon'     => 'fa fa-users',
                                 'order'    => 60,
                                 'pages' => [
-                                    'voir' => [
-                                        'label'    => "Détails",
-                                        'route'    => 'utilisateur/voir',
-                                        'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'index'),
-                                    ],
                                     'creation' => [
                                         'label'    => "Création",
                                         'route'    => 'utilisateur/ajouter',
@@ -262,7 +258,8 @@ return [
             UtilisateurSearchService::class => UtilisateurSearchServiceFactory::class,
         ],
         'aliases' => [
-            UtilisateurService::class => 'UtilisateurService'
+            UtilisateurService::class => 'UtilisateurService',
+            IndividuService::class => 'IndividuService',
         ]
     ],
     'controllers'     => [

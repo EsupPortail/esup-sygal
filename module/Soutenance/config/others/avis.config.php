@@ -68,7 +68,7 @@ return array(
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route' => '/avis-soutenance/:these/:rapporteur',
+                            'route' => '/avis-soutenance/:rapporteur',
                             'defaults' => [
                                 'controller' => AvisController::class,
                                 'action' => 'index',

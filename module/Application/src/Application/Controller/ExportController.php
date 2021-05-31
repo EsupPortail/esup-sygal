@@ -8,7 +8,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Provider\Privilege\FinancementPrivileges;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
-use Application\Service\These\TheseRechercheServiceAwareTrait;
+use Application\Service\These\TheseSearchServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use UnicaenApp\Exception\LogicException;
@@ -17,7 +17,7 @@ use UnicaenApp\View\Model\CsvModel;
 class ExportController extends AbstractController
 {
     use TheseServiceAwareTrait;
-    use TheseRechercheServiceAwareTrait;
+    use TheseSearchServiceAwareTrait;
     use FichierTheseServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
 
@@ -163,12 +163,9 @@ class ExportController extends AbstractController
 
         $queryParams = $this->params()->fromQuery();
 
-        $this->theseRechercheService
-            ->createFilters()
-            ->createSorters()
-            ->processQueryParams($queryParams);
-
-        $qb = $this->theseRechercheService->createQueryBuilder();
+        $this->theseSearchService->init();
+        $this->theseSearchService->processQueryParams($queryParams);
+        $qb = $this->theseSearchService->getQueryBuilder();
         $theses = $qb->getQuery()->getResult();
 
         $records = [];

@@ -94,7 +94,7 @@ return [
                             'ajouter-justificatif' => [
                                 'type' => Segment::class,
                                 'options' => [
-                                    'route' => '/ajouter-justificatif/:these',
+                                    'route' => '/ajouter-justificatif',
                                     'defaults' => [
                                         'controller' => JustificatifController::class,
                                         'action' => 'ajouter-justificatif',

@@ -32,7 +32,14 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
     echo $this->messenger()->addMessagesFromFlashMessenger();
 ?>
 
-<?php if ($validationBDD) : ?>
+<?php if (! $validationBDD) : ?>
+
+    <p class="lead text-danger">
+        La proposition de soutenance n'a pas encore été validée.
+    </p>
+
+<?php else: ?>
+
     <?php if ($proposition->getNouveauTitre() !== null) : ?>
     <?php $modificationFaite = ($proposition->getNouveauTitre() === $these->getTitre()); ?>
     <div class="box panel <?php echo (!$modificationFaite)?"panel-danger":"panel-success"; ?>">
