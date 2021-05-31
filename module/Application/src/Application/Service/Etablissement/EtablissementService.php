@@ -159,49 +159,6 @@ class EtablissementService extends BaseService
         return $result;
     }
 
-    /**
-     * Retourne au format chaîne de caractères le contenu de la signature pour les convocation
-     *
-     * @param Etablissement $etablissement
-     * @return string|null
-     */
-    public function getSignatureConvocationContent(Etablissement $etablissement) : ?string
-    {
-        if ($etablissement === null OR $etablissement->getSignatureConvocation() === null) {
-            return null;
-        }
-
-        $content = file_get_contents($this->fichierService->computeDestinationFilePathForFichier($etablissement->getSignatureConvocation()));
-        return $content;
-    }
-
-    /**
-     * Supprime le logo d'une structure.
-     *
-     * @param Etablissement $etablissement
-     * @param string $nature
-     */
-    public function deleteDocument(Etablissement $etablissement, string $nature)
-    {
-        if ($nature === 'SIGNATURE_CONVOCATION') {
-            if ($etablissement->getSignatureConvocation() !== null) {
-                $filepath = $this->fichierService->computeDestinationFilePathForFichier($etablissement->getSignatureConvocation());
-                if (file_exists($filepath)) {
-                    $ok = unlink($filepath);
-                    if (!$ok) {
-                        throw new RuntimeException("Impossible de supprimer physiquement le fichier de signature sur le disque.");
-                    }
-                }
-                try {
-                    $etablissement->setSignatureConvocation(null);
-                    $this->entityManager->flush($etablissement);
-                } catch (ORMException $e) {
-                    throw new RuntimeException("Erreur lors de l'enregistrement de l'établissement.", null, $e);
-                }
-            }
-        }
-    }
-
     private function persist(Etablissement $etablissement)
     {
         try {

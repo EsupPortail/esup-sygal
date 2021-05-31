@@ -33,6 +33,8 @@ use Application\Service\Variable\VariableServiceAwareTrait;
 use Assert\Assertion;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\OptimisticLockException;
+use Soutenance\Entity\Proposition;
+use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
@@ -57,6 +59,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
     use FileServiceAwareTrait;
     use AuthorizeServiceAwareTrait;
     use ActeurServiceAwareTrait;
+    use PropositionServiceAwareTrait;
 
     /**
      * Resaisir l'autorisation de diffusion ? Sinon celle saisie au 1er dépôt est reprise/dupliquée.
@@ -454,7 +457,9 @@ class TheseService extends BaseService implements ListenerAggregateInterface
     public function fetchInformationsPageDeCouverture(These $these)
     {
         $pdcData = new PdcData();
-
+        $propositions = $these->getPropositions()->toArray();
+        /** @var Proposition $proposition */
+        $proposition = end($propositions);
 
         if ($these->getDateSoutenance() !== null) {
             $mois = (int) $these->getDateSoutenance()->format('m');
@@ -484,6 +489,15 @@ class TheseService extends BaseService implements ListenerAggregateInterface
             if ($these->getLibellePaysCotutelle()) $pdcData->setCotutuellePays($these->getLibellePaysCotutelle());
         }
 
+        /** Huis Clos */
+        if ($proposition AND $proposition->isHuitClos()) {
+            $pdcData->setHuisClos(true);
+        } else {
+            $pdcData->setHuisClos(false);
+        }
+
+        /** confidentialité */
+        $pdcData->setDateFinConfidentialite($these->getDateFinConfidentialite());
         /** Jury de thèses */
         $acteurs = $these->getActeurs()->toArray();
 

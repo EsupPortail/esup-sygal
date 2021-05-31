@@ -148,8 +148,8 @@ $civilite = ($these->getDoctorant()->getIndividu()->getCivilite() === 'M.')?"Mon
         <td>
         </td>
         <td>
-            <?php if ($these->getEtablissement()->getSignatureConvocation()) : ?>
-            <img id="logo" style="background-color: white;"
+            <?php if ($signature) : ?>
+            <img id="logo" style="background-color: white; max-width: 50%;"
                  src="data:image/png;base64,<?php echo base64_encode($signature); ?>"/>
             <?php endif; ?>
         </td>

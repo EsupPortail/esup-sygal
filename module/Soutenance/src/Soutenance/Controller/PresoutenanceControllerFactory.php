@@ -6,6 +6,7 @@ use Application\Service\Acteur\ActeurService;
 use Application\Service\Fichier\FichierService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
+use Application\Service\StructureDocument\StructureDocumentService;
 use Application\Service\These\TheseService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Interop\Container\ContainerInterface;
@@ -44,6 +45,7 @@ class PresoutenanceControllerFactory
          * @var ParametreService $parametreService
          * @var EngagementImpartialiteService $engagementImpartialiteService
          * @var FichierService $fichierService
+         * @var StructureDocumentService $structureDocumentService
          */
         $propositionService = $container->get(PropositionService::class);
         $membreService = $container->get(MembreService::class);
@@ -59,6 +61,7 @@ class PresoutenanceControllerFactory
         $parametreService = $container->get(ParametreService::class);
         $engagementImpartialiteService = $container->get(EngagementImpartialiteService::class);
         $fichierService = $container->get(FichierService::class);
+        $structureDocumentService = $container->get(StructureDocumentService::class);
 
         /**
          * @var DateRenduRapportForm $dateRenduRapportForm
@@ -86,6 +89,7 @@ class PresoutenanceControllerFactory
         $controller->setParametreService($parametreService);
         $controller->setEngagementImpartialiteService($engagementImpartialiteService);
         $controller->setFichierService($fichierService);
+        $controller->setStructureDocumentService($structureDocumentService);
 
         $controller->setDateRenduRapportForm($dateRenduRapportForm);
         $controller->setAdresseSoutenanceForm($adresseSoutenanceForm);

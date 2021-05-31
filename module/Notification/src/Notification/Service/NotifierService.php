@@ -103,6 +103,7 @@ class NotifierService
         $nMail->setFrom(implode(',', $mails));
         $mails = [];
         foreach ($email->getTo() as $mail) { $mails[] = $mail->getEmail(); }
+        if ($mails === []) $mails = ["unknown"];
         $nMail->setTo(implode(',', $mails));
         $nMail->setSubject($email->getSubject());
         $body = $email->getBodyText();

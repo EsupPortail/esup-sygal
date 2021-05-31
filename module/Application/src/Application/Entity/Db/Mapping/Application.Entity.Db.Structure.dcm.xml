@@ -10,7 +10,7 @@
         </id>
         <field name="sigle"      type="string" column="SIGLE"       length="32"  nullable="true"/>
         <field name="libelle"    type="string" column="LIBELLE"     length="128" nullable="false"/>
-        <field name="ferme"      type="integer" column="EST_FERME"   nullable="false"/>
+        <field name="ferme"      type="integer" column="EST_FERME"               nullable="false"/>
         <field name="cheminLogo" type="string" column="CHEMIN_LOGO" length="200" nullable="true"/>
 
         <field name="adresse"    type="string" column="ADRESSE"     length="1024" nullable="true"/>
@@ -62,10 +62,12 @@
             </join-columns>
         </many-to-one>
 
+        <one-to-many field="documents" target-entity="Application\Entity\Db\StructureDocument" mapped-by="structure"/>
+
+        <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-
         <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur" fetch="EXTRA_LAZY">
             <join-columns>
                 <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>

@@ -3,6 +3,7 @@
 namespace Application\Service\FichierThese;
 
 use Application\Entity\Db\Acteur;
+use DateTime;
 
 class MembreData
 {
@@ -106,6 +107,8 @@ class PdcData
     private $cotutuelleLibelle;
     /** @var string */
     private $cotutuellePays;
+    /** @var bool */
+    private  $huisClos;
 
     /** @var bool */
     private $associe;
@@ -610,5 +613,36 @@ class PdcData
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isHuisClos() : bool
+    {
+        if ($this->huisClos !== null AND $this->huisClos === true) return true;
+        return false;
+    }
 
+    /**
+     * @param bool $huisClos
+     */
+    public function setHuisClos(bool $huisClos)
+    {
+        $this->huisClos = $huisClos;
+    }
+
+    /**
+     * @return  DateTime|null
+     */
+    public function getDateFinConfidentialite()
+    {
+        return $this->dateFinConfidentialite;
+    }
+
+    /**
+     * @param  DateTime|null $fin
+     */
+    public function setDateFinConfidentialite($fin)
+    {
+        $this->dateFinConfidentialite = $fin;
+    }
 }

@@ -6,12 +6,14 @@ use Application\Entity\Db\TypeStructure;
 use Application\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Application\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 
 class EcoleDoctoraleController extends StructureConcreteController
 {
     use CoEncadrantServiceAwareTrait;
+    use StructureDocumentServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
 
     protected $codeTypeStructure = TypeStructure::CODE_ECOLE_DOCTORALE;
@@ -49,12 +51,14 @@ class EcoleDoctoraleController extends StructureConcreteController
         $id = $this->params()->fromRoute('structure');
         $structureConcrete = $this->getStructureConcreteService()->getRepository()->findByStructureId($id);
         $coencadrants = $this->getCoEncadrantService()->getCoEncadrantsByStructureConcrete($structureConcrete, false);
+        $contenus = $this->getStructureDocumentService()->getContenus($structureConcrete->getStructure());
 
         $viewModel = parent::informationAction();
 
         $viewModel->setVariables([
             'ecole' => $viewModel->getVariable('structure'),
             'coencadrants' => $coencadrants,
+            'contenus' => $contenus,
         ]);
 
         return $viewModel;

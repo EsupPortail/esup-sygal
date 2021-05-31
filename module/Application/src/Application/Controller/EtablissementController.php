@@ -5,14 +5,12 @@ namespace Application\Controller;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
-use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeStructure;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Http\Response;
@@ -24,10 +22,9 @@ use Zend\View\Model\ViewModel;
 class EtablissementController extends StructureConcreteController
 {
     use EtablissementServiceAwareTrait;
-    use FichierServiceAwareTrait;
-    use NatureFichierServiceAwareTrait;
     use RoleServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
+    use StructureDocumentServiceAwareTrait;
 
     protected $codeTypeStructure = TypeStructure::CODE_ETABLISSEMENT;
 
@@ -75,6 +72,7 @@ class EtablissementController extends StructureConcreteController
         if ($etablissement === null) {
             throw new RuntimeException("Aucun établissement ne possède l'identifiant renseigné.");
         }
+        $contenus = $this->getStructureDocumentService()->getContenus($etablissement->getStructure());
 
         $roleListings = [];
         $individuListings = [];
@@ -110,7 +108,7 @@ class EtablissementController extends StructureConcreteController
             'roleListing'     => $roleListings,
             'individuListing' => $individuListings,
             'logoContent'     => $this->structureService->getLogoStructureContent($etablissement),
-            'signatureConvocation' => ($etablissement->getSignatureConvocation())?($this->fichierService->computeDestinationFilePathForFichier($etablissement->getSignatureConvocation())):null,
+            'contenus'        => $contenus,
         ]);
     }
 
@@ -146,39 +144,4 @@ class EtablissementController extends StructureConcreteController
         return $viewModel;
     }
 
-    /** gestion des signatures */
-    public function televerserSignatureConvocationAction()
-    {
-        $structure = $this->getStructureService()->getRequestedStructure($this);
-        $etablissement = $this->getStructureConcreteService()->getRepository()->findByStructureId($structure->getId());
-        $nature = $this->natureFichierService->getRepository()->findOneBy(['code' => NatureFichier::CODE_SIGNATURE_CONVOCATION]);
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-                $files = $request->getFiles()->toArray();
-                $fichiers = $this->fichierService->createFichiersFromUpload(['files' => $files], $nature);
-                $this->fichierService->saveFichiers($fichiers);
-                $etablissement->setSignatureConvocation($fichiers[0]);
-                $this->getEtablissementService()->update($etablissement);
-        }
-
-        $vm =  new ViewModel([
-            'title' => "Ajout d'une signature pour les convocation pour l'établissement [".$structure->getLibelle()."]",
-            'nature' => 'SIGNATURE_CONVOCATION',
-            'action' => $this->url()->fromRoute('etablissement/televerser-signature-convocation', ['structure' => $structure->getId()], [], true),
-        ]);
-        $vm->setTemplate('application/etablissement/televerser-document');
-        return $vm;
-    }
-
-    public function supprimerSignatureConvocationAction()
-    {
-        /** @var Etablissement $etablissement */
-        $structure = $this->getStructureService()->getRequestedStructure($this);
-        $etablissement = $this->getStructureConcreteService()->getRepository()->findByStructureId($structure->getId());
-        $this->fichierService->supprimerFichiers([$etablissement->getSignatureConvocation()]);
-        $etablissement->setSignatureConvocation(null);
-        $this->etablissementService->update($etablissement);
-
-        return $this->redirect()->toRoute($this->routeName."/information", [], ['query' => ['selected' => $structure->getId()], "fragment" => $structure->getId()], true);
-    }
 }
