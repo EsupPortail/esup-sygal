@@ -33,6 +33,9 @@ body.production .navbar-inverse .navbar-nav .active a {
   background-position: center 8px;
   text-indent: -9999px; }
 
+.nav-pills > li > a {
+  border-radius: 20px; }
+
 #footer {
   padding-top: 10px;
   margin-bottom: 0;
@@ -62,6 +65,7 @@ ul.menu-secondaire,
 ul.menu-information,
 ul.menu-actualites {
   background: none;
+  border-radius: 18px;
   padding: 2px;
   box-shadow: 1px 1px 6px; }
 

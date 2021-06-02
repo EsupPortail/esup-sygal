@@ -677,6 +677,24 @@ span.sas-highlight {
   font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
   font-size: 90%; }
 
+span.badge-success {
+  background: darkgreen; }
+
+span.badge.VALIDEE {
+  background: darkgreen; }
+
+span.badge-danger {
+  background: darkred; }
+
+span.badge.REJETEE {
+  background: darkred; }
+
+span.badge-default {
+  background: darkslategray; }
+
+span.badge.EN_COURS {
+  background: darkslategray; }
+
 /*# sourceMappingURL=app.css.map */
 
 span.badge-success {
