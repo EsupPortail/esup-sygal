@@ -81,22 +81,13 @@ return [
     'router' => [
         'routes' => [
             'fichier' => [
-                'type'          => 'Segment',
-                'options'       => [
-                    'route' => '/[:language/]fichier',
-                    'defaults'      => [
-                        'controller' => 'Application\Controller\FichierThese',
-                        'language'   => 'fr_FR',
-                    ],
-                ],
-                'may_terminate' => false,
                 'child_routes'  => [
                     'deposes' => [
                         'type'          => 'Literal',
                         'options'       => [
                             'route' => '/deposes',
                             'defaults'      => [
-                                'controller' => 'Application\Controller\FichierThese', // indispensable ! :-?
+                                'controller' => 'Application\Controller\FichierThese',
                                 'action' => 'deposes',
                             ],
                         ],
@@ -109,7 +100,7 @@ return [
                                 'these' => '\d+',
                             ],
                             'defaults' => [
-                                'controller' => 'Application\Controller\FichierThese', // indispensable ! :-?
+                                'controller' => 'Application\Controller\FichierThese',
                             ],
                         ],
                         'may_terminate' => false,
@@ -219,7 +210,7 @@ return [
                             'fichiers-deposes' => [
                                 'label'    => 'Fichiers de thèses',
                                 'route'    => 'fichier/deposes',
-                                'order'    => 100,
+                                'order'    => 600,
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\FichierThese', 'deposes'),
                             ],
                         ],
