@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
@@ -88,6 +89,9 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
 
     /** @var Structure */
     private $structureSubstituante;
+
+    /** @var ArrayCollection StructureDocument */
+    private $documents;
 
     /**
      * Instancie un Etablissement, une EcodeDoctorale ou une UniteRecherche à partir des données spécifiées.
@@ -485,4 +489,16 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
         $this->idRef = $idRef;
     }
 
+    /**
+     * @return array
+     */
+    public function getDocuments() : array
+    {
+        $array = [];
+        /** @var StructureDocument $document */
+        foreach ($this->documents as $document) {
+            if ($document->estNonHistorise()) $array[$document->getNature()->getCode()][] = $document;
+        }
+        return $array;
+    }
 }

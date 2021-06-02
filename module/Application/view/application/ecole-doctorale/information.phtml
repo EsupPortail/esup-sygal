@@ -7,10 +7,12 @@
  * @var array          $individuListing (string => string[])
  * @var string         $logoContent
  * @var Acteur[]       $coencadrants
+ * @var string[]       $contenus
  */
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\StructureDocument;
 use Application\Entity\Db\TypeStructure;
 use Application\Provider\Privilege\CoEncadrantPrivileges;
 use Application\Provider\Privilege\StructurePrivileges;
@@ -24,6 +26,7 @@ $canAddRole = $canEdit;
 $canCoencadrantAfficher = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_AFFICHER));
 $canCoencadrantExport = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_AFFICHER));
 
+$structure = $ecole->getStructure();
 ?>
 
 <h1 class="page-header">
@@ -59,6 +62,15 @@ $canCoencadrantExport = $this->isAllowed(CoEncadrantPrivileges::getResourceId(Co
            data-toggle="tab"
         >
             Co-encadrants
+        </a>
+    </li>
+    <li role="presentation">
+        <a href="#documents"
+           role="tab"
+           aria-controls="documents"
+           data-toggle="tab"
+        >
+            Documents
         </a>
     </li>
 </ul>
@@ -217,4 +229,28 @@ $canCoencadrantExport = $this->isAllowed(CoEncadrantPrivileges::getResourceId(Co
         <?php endforeach; ?>
         </ul>
     </div>
+
+    <div role="tabpanel" class="tab-pane" id="documents">
+        <?php echo $this->partial('partial/documents', ['structure' => $structure, 'contenus' => $contenus]); ?>
+    </div>
 </div>
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+
+        let hash = $(location).attr('hash');
+        let name = hash.substr(1);
+        if (name === undefined || name === "") name = "informations";
+
+        $('a[aria-controls=' + name + ']').tab('show');
+
+        $('.nav-tabs a').click(function (e) {
+            // No e.preventDefault() here
+            $(this).tab('show');
+        });
+    });
+</script>

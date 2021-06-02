@@ -5,6 +5,7 @@ namespace Soutenance\Service\Notifier;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
@@ -51,6 +52,7 @@ class NotifierSoutenanceService extends NotifierService
     {
         $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
         return $variable->getValeur();
+
     }
 
     /**
@@ -94,6 +96,18 @@ class NotifierSoutenanceService extends NotifierService
     {
         /** @var IndividuRole[] $individuRoles */
         $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
+        return $this->fetchEmailsByEtablissement($individuRoles, $these);
+    }
+
+    /**
+     * @param These $these
+     * @return string[]
+     */
+    protected function fetchEmailMaisonDuDoctorat(These $these)
+    {
+        /** @var IndividuRole[] $individuRoles */
+        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEtablissement()->getStructure());
+        $individuRoles = array_filter($individuRoles, function (IndividuRole $ir) { return $ir->getRole()->getCode() === Role::CODE_BDD;});
         return $this->fetchEmailsByEtablissement($individuRoles, $these);
     }
 
@@ -231,7 +245,7 @@ class NotifierSoutenanceService extends NotifierService
      */
     public function triggerNotificationBureauDesDoctoratsProposition($these)
     {
-        $email = $this->fetchEmailBdd($these);
+        $email = $this->fetchEmailMaisonDuDoctorat($these);
 
         if ($email !== null) {
             $notif = new Notification();
@@ -250,7 +264,7 @@ class NotifierSoutenanceService extends NotifierService
     /** @param These $these */
     public function triggerNotificationPropositionValidee($these)
     {
-        $emailsBDD = [$this->fetchEmailBdd($these)];
+        $emailsBDD = $this->fetchEmailMaisonDuDoctorat($these);
         $emailsED = $this->fetchEmailEcoleDoctorale($these);
         $emailsUR = $this->fetchEmailUniteRecherche($these);
         $emailsActeurs = $this->fetchEmailActeursDirects($these);
@@ -276,7 +290,7 @@ class NotifierSoutenanceService extends NotifierService
     /** @param These $these */
     public function triggerNotificationPresoutenance($these)
     {
-        $email = $this->fetchEmailBdd($these);
+        $email = $this->fetchEmailMaisonDuDoctorat($these);
 
         if ($email !== null) {
             $notif = new Notification();
@@ -354,7 +368,7 @@ class NotifierSoutenanceService extends NotifierService
      */
     public function triggerSignatureEngagementImpartialite($these, $proposition, $membre)
     {
-        $email = $this->fetchEmailBdd($these);
+        $email = $this->fetchEmailMaisonDuDoctorat($these);
 
         if ($email !== null) {
             $notif = new Notification();
@@ -379,8 +393,9 @@ class NotifierSoutenanceService extends NotifierService
     public function triggerRefusEngagementImpartialite($these, $proposition, $membre)
     {
 
-        $emails = $this->fetchEmailActeursDirects($these);
-        $emails[] = $this->fetchEmailBdd($these);
+        $emailsAD = $this->fetchEmailActeursDirects($these);
+        $emailsBDD = $this->fetchEmailMaisonDuDoctorat($these);
+        $emails = array_merge($emailsAD, $emailsBDD);
 
         $emails = array_filter($emails, function ($s) {
             return $s !== null;
@@ -454,7 +469,7 @@ class NotifierSoutenanceService extends NotifierService
      */
     public function triggerAvisRendus($these)
     {
-        $email = $this->fetchEmailBdd($these);
+        $email = $this->fetchEmailMaisonDuDoctorat($these);
 
         if ($email !== null) {
             $notif = new Notification();
@@ -476,7 +491,7 @@ class NotifierSoutenanceService extends NotifierService
      */
     public function triggerAvisFavorable($these, $avis, $url = null)
     {
-        $emailBDD = [$this->fetchEmailBdd($these)];
+        $emailBDD = $this->fetchEmailMaisonDuDoctorat($these);
         $emailsDirecteurs = $this->fetchEmailEncadrants($these);
         $emailsED = $this->fetchEmailEcoleDoctorale($these);
         $emailsUR = $this->fetchEmailUniteRecherche($these);
@@ -612,7 +627,7 @@ class NotifierSoutenanceService extends NotifierService
         if (!empty($email)) {
             $notif = new Notification();
             $notif
-                ->setSubject("Initialisation de votre compte SyGAL")
+                ->setSubject("Initialisation de votre compte SyGAL pour la these de " . $these->getDoctorant()->getIndividu()->getNomComplet())
                 ->setTo($email)
                 ->setTemplatePath('soutenance/notification/init-compte')
                 ->setTemplateVariables([
@@ -621,25 +636,6 @@ class NotifierSoutenanceService extends NotifierService
                     'url' => $url,
                 ]);
             $this->trigger($notif);
-        }
-    }
-
-
-    /**
-     * @param Notification $notification
-     */
-    public function trigger(Notification $notification)
-    {
-        $notification->prepare();
-
-        $this->sendNotification($notification);
-
-        // collecte des éventuels messages exposés par la notification
-        foreach ($notification->getInfoMessages() as $message) {
-            $this->messageContainer->setMessage($message, 'info');
-        }
-        foreach ($notification->getWarningMessages() as $message) {
-            $this->messageContainer->setMessage($message, 'warning');
         }
     }
 

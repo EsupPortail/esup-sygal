@@ -5,9 +5,12 @@ namespace Application\Controller\Factory;
 use Application\Controller\StructureController;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Etablissement\EtablissementService;
+use Application\Service\Fichier\FichierService;
 use Application\Service\Individu\IndividuService;
+use Application\Service\NatureFichier\NatureFichierService;
 use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
+use Application\Service\StructureDocument\StructureDocumentService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Interop\Container\ContainerInterface;
 
@@ -28,6 +31,9 @@ class StructureControllerFactory
          * @var EcoleDoctoraleService $ecoleService
          * @var UniteRechercheService $uniteService
          * @var EtablissementService $etablissementService
+         * @var NatureFichierService $natureFichierService
+         * @var FichierService $fichierService
+         * @var StructureDocumentService $structureDocumentService
          */
 
         $individuService = $container->get('IndividuService');
@@ -36,6 +42,9 @@ class StructureControllerFactory
         $ecoleService = $container->get('EcoleDoctoraleService');
         $uniteService = $container->get('UniteRechercheService');
         $etablissementService = $container->get('EtablissementService');
+        $natureFichierService = $container->get('NatureFichierService');
+        $fichierService = $container->get('FichierService');
+        $structureDocumentService = $container->get(StructureDocumentService::class);
 
         $controller = new StructureController();
         $controller->setIndividuService($individuService);
@@ -44,6 +53,10 @@ class StructureControllerFactory
         $controller->setEcoleDoctoraleService($ecoleService);
         $controller->setUniteRechercheService($uniteService);
         $controller->setEtablissementService($etablissementService);
+        $controller->setNatureFichierService($natureFichierService);
+        $controller->setFichierService($fichierService);
+        $controller->setStructureDocumentService($structureDocumentService);
+
 
         return $controller;
     }

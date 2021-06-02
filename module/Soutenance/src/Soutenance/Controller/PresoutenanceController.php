@@ -5,6 +5,7 @@ namespace Soutenance\Controller;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Profil;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
@@ -14,6 +15,7 @@ use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\FichierThese\PdcData;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
@@ -59,6 +61,7 @@ class PresoutenanceController extends AbstractController
     use ParametreServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;
     use FichierServiceAwareTrait;
+    use StructureDocumentServiceAwareTrait;
 
     use DateRenduRapportFormAwareTrait;
     use AdresseSoutenanceFormAwareTrait;
@@ -430,6 +433,8 @@ class PresoutenanceController extends AbstractController
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
+        $signature = $this->getStructureDocumentService()->getContenu($these->getEcoleDoctorale()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION);
+        if ($signature === null) $signature = $this->getStructureDocumentService()->getContenu($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION);
 
         /** @var PdcData $pdcData */
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
@@ -448,7 +453,7 @@ class PresoutenanceController extends AbstractController
             'informations' => $pdcData,
             'date' => $dateValidation,
             'ville' => $ville,
-            'signature' => ($these->getEtablissement()->getSignatureConvocation())?file_get_contents($this->fichierService->computeDestinationFilePathForFichier($these->getEtablissement()->getSignatureConvocation())):null,
+            'signature' => $signature,
         ]);
         $exporter->export($these->getId() . '_convocation.pdf');
         exit;
@@ -458,6 +463,8 @@ class PresoutenanceController extends AbstractController
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
+        $signature = $this->getStructureDocumentService()->getContenu($these->getEcoleDoctorale()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION);
+        if ($signature === null) $signature = $this->getStructureDocumentService()->getContenu($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION);
 
         /** @var PdcData $pdcData */
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
@@ -476,7 +483,7 @@ class PresoutenanceController extends AbstractController
             'informations' => $pdcData,
             'date' => $dateValidation,
             'ville' => $ville,
-            'signature' => ($these->getEtablissement()->getSignatureConvocation())?file_get_contents($this->fichierService->computeDestinationFilePathForFichier($these->getEtablissement()->getSignatureConvocation())):null,
+            'signature' => $signature,
         ]);
         $exporter->exportDoctorant($these->getId() . '_convocation.pdf');
         exit;
@@ -487,9 +494,12 @@ class PresoutenanceController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
+        $signature = $this->getStructureDocumentService()->getContenu($these->getEcoleDoctorale()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION);
+        if ($signature === null) $signature = $this->getStructureDocumentService()->getContenu($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION);
 
         /** @var PdcData $pdcData */
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+
 
         /** @var Validation[] $validationMDD */
         $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
@@ -505,6 +515,7 @@ class PresoutenanceController extends AbstractController
             'informations' => $pdcData,
             'date' => $dateValidation,
             'ville' => $ville,
+            'signature' => $signature,
         ]);
         $exporter->exportMembre($membre, $these->getId() . '_convocation.pdf');
         exit;

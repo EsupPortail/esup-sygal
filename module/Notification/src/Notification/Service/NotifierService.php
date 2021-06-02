@@ -2,9 +2,12 @@
 
 namespace Notification\Service;
 
+use DateTime;
+use Notification\Entity\NotifMail;
 use Notification\Entity\Service\NotifEntityServiceAwareTrait;
 use Notification\MessageContainer;
 use Notification\Notification;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\Service\Mailer\MailerServiceAwareTrait;
 use Zend\Mail\Message;
 
@@ -17,6 +20,7 @@ class NotifierService
 {
     use NotifEntityServiceAwareTrait;
     use MailerServiceAwareTrait;
+    use EntityManagerAwareTrait;
 
     /**
      * @var MessageContainer
@@ -75,7 +79,6 @@ class NotifierService
     public function trigger(Notification $notification)
     {
         $notification->prepare();
-
         $this->sendNotification($notification);
 
         // collecte des éventuels messages exposés par la notification
@@ -92,12 +95,28 @@ class NotifierService
      */
     protected function sendNotification(Notification $notification)
     {
-        $mail = $this->createMailForNotification($notification);
+        $email = $this->createMailForNotification($notification);
+        $nMail = new NotifMail();
 
-        $message = $this->mailerService->send($mail);
+        $mails = [];
+        foreach ($email->getFrom() as $mail) { $mails[] = $mail->getEmail(); }
+        $nMail->setFrom(implode(',', $mails));
+        $mails = [];
+        foreach ($email->getTo() as $mail) { $mails[] = $mail->getEmail(); }
+        $nMail->setTo(implode(',', $mails));
+        $nMail->setSubject($email->getSubject());
+        $body = $email->getBodyText();
+//        $body = htmlentities($body);
+        $nMail->setBody($body);
+        $nMail->setSentOn(new DateTime());
+        $this->getEntityManager()->persist($nMail);
+        $this->getEntityManager()->flush($nMail);
+
+        $message = $this->mailerService->send($email);
 
         $sendDate = $this->extractDateFromMessage($message) ?: new \DateTime();
         $notification->setSendDate($sendDate);
+
     }
 
     /**
