@@ -107,7 +107,7 @@ return [
                                 'label'    => 'Présidents du jury',
                                 'route'    => 'president-jury',
                                 'resource' => PrivilegeController::getResourceId(CoEncadrantController::class, 'index'),
-                                'order'    => 1100,
+                                'order'    => 300,
                             ],
                         ],
                     ],

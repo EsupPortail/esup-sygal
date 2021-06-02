@@ -37,7 +37,7 @@ return [
             'substitution-index' => [
                 'type'          => Segment::class,
                 'options'       => [
-                    'route'    => '/[:language/]substitution/index',
+                    'route'    => '/substitution/index',
                     'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Substitution',
@@ -49,7 +49,7 @@ return [
             'substitution-index-structure' => [
                 'type'          => Segment::class,
                 'options'       => [
-                    'route'    => '/[:language/]substitution/index-structure/:type',
+                    'route'    => '/substitution/index-structure/:type',
                     'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Substitution',

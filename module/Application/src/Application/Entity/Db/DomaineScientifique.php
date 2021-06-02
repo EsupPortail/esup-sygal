@@ -3,8 +3,10 @@
 namespace Application\Entity\Db;
 
 
-class DomaineScientifique {
+use Application\Search\Filter\SearchFilterValueInterface;
 
+class DomaineScientifique implements SearchFilterValueInterface
+{
     /** @var int */
     private $id;
     /** @var string */
@@ -15,6 +17,14 @@ class DomaineScientifique {
     public function __construct()
     {
         $this->unites = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getLibelle();
     }
 
     /**
@@ -71,4 +81,11 @@ class DomaineScientifique {
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function createSearchFilterValueOption(): array
+    {
+        return ['value' => (string) $this->getId(), 'label' => $this->getLibelle()];
+    }
 }

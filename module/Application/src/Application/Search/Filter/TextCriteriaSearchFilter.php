@@ -2,33 +2,31 @@
 
 namespace Application\Search\Filter;
 
-use Doctrine\ORM\QueryBuilder;
-
 /**
  *
  *
  * @author Unicaen
  */
-class TextCriteriaSearchFilter extends SearchFilter
+class TextCriteriaSearchFilter extends TextSearchFilter
 {
     const NAME_text = 'text';
     const NAME_criteria = 'textCriteria';
 
     /**
-     * Critères possibles sur lesquels faire porter la recherche sur texte libre.
-     *
-     * ATTENTION : les identifiants (clés) doivent être identiques à ceux utilisés dans
-     *             le script de la vue matérialisée MV_RECHERCHE_THESE sollicitée pour la recherche.
+     * @var string
      */
-    const CRITERIA = [
-        'titre' => "Titre de la thèse",
-        'doctorant-numero' => "Numéro étudiant du doctorant",
-        'doctorant-nom' => "Nom d'usage ou patronymique du doctorant",
-        'doctorant-prenom' => "Prénom du doctorant",
-        'directeur-nom' => "Nom d'usage ou patronymique du directeur ou co-directeur de thèse",
-        'code-ed' => "Code national de l'école doctorale concernée (ex: 181)",
-        'code-ur' => "Unité de recherche concernée (ex: umr6211)",
-    ];
+    protected $textValue;
+
+    /**
+     * @var string[]
+     */
+    protected $criteriaValue = [];
+
+    /**
+     * Critères possibles sur lesquels faire porter la recherche sur texte libre.
+     * @var string[]
+     */
+    protected $availableCriteria = [];
 
     /**
      * @param array $queryParams
@@ -40,22 +38,59 @@ class TextCriteriaSearchFilter extends SearchFilter
         if (array_key_exists(self::NAME_criteria, $queryParams) && !empty($queryParams[self::NAME_criteria])) {
             $criteria = $queryParams[self::NAME_criteria];
         } else {
-            $criteria = array_keys(self::CRITERIA);
+            $criteria = array_keys($this->availableCriteria);
         }
 
-        $filterValue = [
-            'text' => $filterValue,
-            'criteria' => $criteria,
-        ];
-
+        $this->setTextValue($filterValue);
+        $this->setCriteriaValue($criteria);
+//        $this->setValue([
+//            'text' => $filterValue,
+//            'criteria' => $criteria,
+//        ]);
         $this->setValue($filterValue);
     }
 
     /**
-     * @param QueryBuilder $qb
+     * @return string[]
      */
-    public function applyToQueryBuilder(QueryBuilder $qb)
+    public function getAvailableCriteria(): array
     {
-        // not possible
+        return $this->availableCriteria;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTextValue(): ?string
+    {
+        return $this->textValue;
+    }
+
+    /**
+     * @param string|null $textValue
+     * @return self
+     */
+    public function setTextValue(string $textValue = null): self
+    {
+        $this->textValue = $textValue;
+        return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getCriteriaValue(): array
+    {
+        return (array) $this->criteriaValue;
+    }
+
+    /**
+     * @param string[] $criteriaValue
+     * @return self
+     */
+    public function setCriteriaValue(array $criteriaValue): self
+    {
+        $this->criteriaValue = $criteriaValue;
+        return $this;
     }
 }

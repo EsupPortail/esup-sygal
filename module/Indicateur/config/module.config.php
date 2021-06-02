@@ -85,7 +85,7 @@ return array(
                                 'label'    => 'Indicateurs',
                                 'route'    => 'indicateur',
                                 'resource' => IndicateurPrivileges::getResourceId(IndicateurPrivileges::INDICATEUR_CONSULTATION),
-                                'order'    => 1,
+                                'order'    => 400,
                             ],
                         ],
                     ],

@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db;
 
+use Application\Search\Filter\SearchFilterValueInterface;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
@@ -10,7 +11,8 @@ use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 /**
  * Etablissement
  */
-class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterface, SourceAwareInterface
+class Etablissement
+    implements StructureConcreteInterface, HistoriqueAwareInterface, SourceAwareInterface, SearchFilterValueInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
@@ -310,5 +312,18 @@ class Etablissement implements StructureConcreteInterface, HistoriqueAwareInterf
     public function estToutEtablissementConfondu()
     {
         return $this->getCode() === self::CODE_TOUT_ETABLISSEMENT_CONFONDU;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function createSearchFilterValueOption(): array
+    {
+        $label = $this->getCode();
+        if ($this->getStructure()->isFerme()) {
+            $label .= "&nbsp; FERMÉ";
+        }
+
+        return ['value' => $this->getSourceCode(), 'label' => $label];
     }
 }

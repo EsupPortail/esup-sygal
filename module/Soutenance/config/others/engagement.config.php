@@ -80,7 +80,7 @@ return array(
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route' => '/engagement-impartialite/:these/:membre',
+                            'route' => '/engagement-impartialite/:membre',
                             'defaults' => [
                                 'controller' => EngagementImpartialiteController::class,
                                 'action' => 'engagement-impartialite',

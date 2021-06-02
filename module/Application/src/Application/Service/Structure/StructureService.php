@@ -625,6 +625,7 @@ class StructureService extends BaseService
      * @param string $type Ex: {@see TypeStructure::CODE_ECOLE_DOCTORALE}
      * @param string|null $order Ex: 'libelle'
      * @param bool $includeFermees
+     * @param bool $includeFermees
      * @param bool $cacheable
      * @return StructureConcreteInterface[]
      */
