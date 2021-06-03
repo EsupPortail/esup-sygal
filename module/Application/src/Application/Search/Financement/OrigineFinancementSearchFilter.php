@@ -49,7 +49,7 @@ class OrigineFinancementSearchFilter extends SelectSearchFilter
                 ->andWhere('orig.id IS NULL');
         } else {
             $qb
-                ->andWhere('orig.id = :origine')
+                ->andWhere('orig.code = :origine')
                 ->setParameter('origine', $filterValue);
         }
     }
