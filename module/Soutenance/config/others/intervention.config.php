@@ -65,16 +65,26 @@ return [
         'default' => [
             'home' => [
                 'pages' => [
-                    'soutenance' => [
+                    /**
+                     * Navigation pour LA thèse courante.
+                     */
+                    // DEPTH = 1
+                    'these_selectionnee' => [
                         'pages' => [
-                            'intervention' => [
-                                'label' => 'Intervention de soutenance',
-                                'route' => 'soutenance/intervention/afficher',
-                                'order' => 600,
-                                'resource' => InterventionPrivileges::getResourceId(InterventionPrivileges::INTERVENTION_AFFICHER),
-                                'withtarget' => true,
-                                'paramsInject' => [
-                                    'these',
+                            // DEPTH = 2
+                            'soutenance' => [
+                                'pages' => [
+                                    // DEPTH = 3
+                                    'intervention' => [
+                                        'label' => 'Intervention de soutenance',
+                                        'route' => 'soutenance/intervention/afficher',
+                                        'order' => 250,
+                                        'resource' => InterventionPrivileges::getResourceId(InterventionPrivileges::INTERVENTION_AFFICHER),
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'these',
+                                        ],
+                                    ],
                                 ],
                             ],
                         ],
@@ -103,9 +113,8 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route' => '/afficher/:these',
+                                    'route' => '/afficher',
                                     'defaults' => [
-                                        'controller' => InterventionController::class,
                                         'action' => 'afficher',
                                     ],
                                 ],
@@ -114,9 +123,8 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route' => '/toggle-president-distanciel/:these',
+                                    'route' => '/toggle-president-distanciel',
                                     'defaults' => [
-                                        'controller' => InterventionController::class,
                                         'action' => 'toggle-president-distanciel',
                                     ],
                                 ],

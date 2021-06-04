@@ -6,29 +6,27 @@ use Zend\Filter\AbstractFilter;
 
 class AnneeUnivFormatter extends AbstractFilter
 {
-    protected $separator = '/';
-
     /**
      * Returns the result of filtering $value
      *
-     * @param  string|string[]|int|int[] $annee
+     * @param  string|string[]|int|int[] $value
      * @return string|string[]
      */
-    public function filter($annee)
+    public function filter($value, string $separator = '/')
     {
-        if (! $annee) {
-            return $annee;
+        if (! $value) {
+            return $value;
         }
 
-        if (is_array($annee)) {
-            $annees = $annee;
-            return array_map(function($annee) {
-                $annee = (int) $annee;
-                return $annee . '/' . ($annee+1);
-            }, $annees);
+        if (is_array($value)) {
+            $values = $value;
+            return array_map(function($value) use ($separator) {
+                $value = (int) $value;
+                return $value . $separator . ($value+1);
+            }, $values);
         } else {
-            $annee = (int) $annee;
-            return $annee . '/' . ($annee+1);
+            $value = (int) $value;
+            return $value . $separator . substr(($value+1), 2);
         }
     }
 }

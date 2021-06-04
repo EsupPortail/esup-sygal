@@ -138,7 +138,7 @@ return [
                                 'route'    => 'ecole-doctorale',
                                 'resource' => PrivilegeController::getResourceId(EcoleDoctoraleController::class, 'index'),
 
-                                'order'    => 10,
+                                'order'    => 11,
                                 'pages' => [
                                     'modification' => [
                                         'label'    => 'Modification',

@@ -7,8 +7,9 @@ namespace Application\Entity\Db;
  */
 class TypeRapport
 {
-    const RAPPORT_ACTIVITE_ANNUEL = 'RAPPORT_ACTIVITE_ANNUEL';
-    const RAPPORT_ACTIVITE_FINTHESE = 'RAPPORT_ACTIVITE_FINTHESE';
+    const RAPPORT_ACTIVITE = 'RAPPORT_ACTIVITE';
+    const RAPPORT_CSI = 'RAPPORT_CSI';
+    const RAPPORT_MIPARCOURS = 'RAPPORT_MIPARCOURS';
 
     /**
      * @var string
@@ -33,11 +34,25 @@ class TypeRapport
     /**
      * @return bool
      */
-    public function estRapportActivite()
+    public function estRapportActivite(): bool
     {
-        return
-            $this->getCode() === self::RAPPORT_ACTIVITE_ANNUEL ||
-            $this->getCode() === self::RAPPORT_ACTIVITE_FINTHESE;
+        return $this->getCode() === self::RAPPORT_ACTIVITE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function estRapportCsi(): bool
+    {
+        return $this->getCode() === self::RAPPORT_CSI;
+    }
+
+    /**
+     * @return bool
+     */
+    public function estRapportMiparcours(): bool
+    {
+        return $this->getCode() === self::RAPPORT_MIPARCOURS;
     }
 
     /**
@@ -46,7 +61,7 @@ class TypeRapport
      */
     public function __toString()
     {
-        return $this->getLibelle();
+        return $this->getLibelleCourt();
     }
 
     /**

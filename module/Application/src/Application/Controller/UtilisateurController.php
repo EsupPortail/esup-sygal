@@ -248,7 +248,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             exit(1);
         }
 
-        $individuId = $request->getPost('individu');
+        $individuId = $request->getPost('individu', $request->getQuery('individu'));
         if (!$individuId) {
             return $this->redirect()->toRoute('home');
         }

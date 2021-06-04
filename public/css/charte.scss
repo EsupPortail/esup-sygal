@@ -1,3 +1,5 @@
+$fontSize: 13px;
+$fontColor: #333;
 $navbarBackgroundColor: #006EAD;
 $navbarBackgroundColorActive: #004980;
 
@@ -6,7 +8,77 @@ $navbarBackgroundColorActive: #004980;
  */
 
 body {
+  font-size: $fontSize;
   padding-bottom: 100px;
+}
+
+h1 {
+  font-size: $fontSize * 2.25;
+}
+h2 {
+  font-size: $fontSize * 1.75;
+}
+h3 {
+  font-size: $fontSize * 1.50;
+}
+h4 {
+  font-size: $fontSize * 1.25;
+}
+
+th {
+  font-weight: 450;
+}
+
+.navbar {
+  font-size: $fontSize * 1.1;
+  .dropdown-menu {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+.popover,
+.popover-title {
+  font-size: $fontSize;
+}
+.dropdown-menu {
+  font-size: $fontSize;
+  > li > a {
+    font-weight: normal;
+    padding: 5px 10px;
+  }
+  li.divider {
+    display: block;
+    height: 3px;
+    border-top: solid 3px #e1e1e1;
+    margin: 0;
+  }
+}
+.lead {
+  font-size: $fontSize * 1.1;
+  margin-bottom: 1rem;
+}
+
+.form-control {
+  padding: 0 8px;
+  height: $fontSize * 2 + 2;
+}
+.form-group {
+  //padding: 5px 0;
+  //height: $fontSize * 2 + 2;
+}
+.input-group-addon {
+  padding: 2px 6px;
+  font-size: $fontSize;
+  height: $fontSize * 2 + 2;
+
+  .dropdown {
+    height: $fontSize * 2 + 2;
+  }
+}
+.btn, input, select {
+  font-size: $fontSize;
+  padding: 3px 6px;
+  height: $fontSize * 2 + 2;
 }
 
 body.development .navbar-inverse,
@@ -31,6 +103,9 @@ body.production  .navbar-inverse .navbar-nav .active a {
 .navbar-inverse .navbar-link {
   color: white;
 }
+.navbar-inverse .navbar-text {
+  color: $fontColor;
+}
 .navbar > .container .navbar-brand {
   width: 120px;
   background-image: url('/css/SyGAL_logo_Blanc03.png');
@@ -41,7 +116,32 @@ body.production  .navbar-inverse .navbar-nav .active a {
 }
 
 .nav-pills > li > a {
-  border-radius: 20px;
+  //border-radius: 20px;
+}
+
+body.development .navbar-inverse .navbar-nav,
+body.test        .navbar-inverse .navbar-nav,
+body.production  .navbar-inverse .navbar-nav {
+  .dropdown-menu > li > a {
+    background-color: white;
+  }
+  .dropdown-menu > li > a:hover {
+    background-color: #eee;
+  }
+  .dropdown-menu > li.active a {
+    background-color: #337ab7;
+  }
+  .dropdown-menu > li.active a:hover {
+    color: #eee;
+  }
+}
+
+.page-header {
+  padding-bottom: 5px;
+}
+
+.jumbotron p {
+  font-weight: normal;
 }
 
 #footer {
@@ -72,20 +172,19 @@ h1.app-name {
   bottom: 80px;
 }
 
+ul.breadcrumb,
 ul.menu-secondaire,
 ul.menu-information,
 ul.menu-actualites {
-  background: none;
-  border-radius: 18px;
-
-  padding: 2px;
-  box-shadow: 1px 1px 6px;
+  background: white;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  box-shadow: 1px 1px 10px lightgray;
+}
+ul.menu-secondaire {
+  padding: 3px;
 }
 ul.menu-secondaire li a,
 ul.menu-information li a {
-  padding: 7px 10px;
-}
-
-ul.menu-actualites {
-  box-shadow: 1px 1px 6px inset;
+  padding: 5px 10px;
 }

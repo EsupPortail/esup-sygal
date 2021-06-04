@@ -555,7 +555,7 @@ class PresoutenanceController extends AbstractController
     {
         $delai = new DateInterval('P15D');
         $membres = $this->getMembreService()->getRapporteursEnRetard($delai);
-        $url = $this->url()->fromRoute('soutenance/index-rapporteur', [], ['force_canonical' => true], true);
+        $url = $this->url()->fromRoute('soutenances/index-rapporteur', [], ['force_canonical' => true], true);
 
         foreach ($membres as $membre) {
             $this->getNotifierSoutenanceService()->triggerNotificationRapporteurRetard($membre, $url);

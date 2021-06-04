@@ -1,23 +1,18 @@
 <?php
 
-use Application\Service\These\Filter\TheseTextFilter;
+use Application\Search\Filter\TextSearchFilter;
+use Application\Search\These\TheseTextSearchFilter;
 use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
- * @var TheseTextFilter $filter
+ * @var TextSearchFilter $filter
  * @var array $queryParams
  */
 
-$paramAttributes = $filter->getAttributes();
-$paramName = $filter->getName();
-
-$width = isset($paramAttributes['width']) ? $paramAttributes['width'] : 'fit';
-$liveSearch = isset($paramAttributes['liveSearch']) ? (bool)$paramAttributes['liveSearch'] : false;
-
-$value = $filter->getValue();
-$text = $value['text'];
-$criteria = $value['criteria'];
+$name = $filter->getName();
+$text = $filter->getTextValue();
+$criteria = $filter->getCriteriaValue();
 
 $title = htmlspecialchars(
     "<div class=\"these-search-input-help\">" .
@@ -32,21 +27,21 @@ $title = htmlspecialchars(
         <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
         <input type="search"
                value="<?php echo $text; ?>"
-               name="text"
+               name="<?php echo $name; ?>"
                class="form-control filter"
                id="search-input"
                placeholder="<?php echo $this->translate("Entrez 2 caractères au moins...");?>"
                data-content="<?php echo $title ?>">
         <div class="input-group-addon filter">
-            <select multiple name="textCriteria[]" id="" class="selectpicker show-menu-arrow"
+            <select multiple name="<?php echo $name; ?>Criteria[]" id="" class="selectpicker show-menu-arrow"
                     title="Sélectionnez un critère..."
                     data-selected-text-format="count"
                     data-count-selected-text="{0} critères sélectionnés"
                     data-actions-box="true"
                     data-header="Critères sur lesquels portera la recherche textuelle">
-                <?php foreach (TheseTextFilter::CRITERIA as $value => $label): ?>
-                <?php $isActive = in_array($value, $criteria); ?>
-                    <option value="<?php echo $value ?>" <?php echo $isActive ? 'selected' : '' ?>><?php echo $label ?></option>
+                <?php foreach (TheseTextSearchFilter::CRITERIA as $key => $label): ?>
+                    <?php $isActive = in_array($key, $criteria); ?>
+                    <option value="<?php echo $key ?>" <?php echo $isActive ? 'selected' : '' ?>><?php echo $label ?></option>
                 <?php endforeach ?>
             </select>
         </div>

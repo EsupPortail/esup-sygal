@@ -39,15 +39,13 @@ class TheseQueryBuilder extends DefaultQueryBuilder
     }
 
     /**
-     * @param string $etat Ex: These::ETAT_EN_COURS
+     * @param string[] $etats Ex: [These::ETAT_EN_COURS]
      * @return $this
      * @see These
      */
-    public function andWhereEtatIs($etat)
+    public function andWhereEtatIn(array $etats)
     {
-        $this
-            ->andWhere("$this->rootAlias.etatThese = :" . ($name = uniqid('etat')))
-            ->setParameter($name, $etat);
+        $this->andWhere($this->expr()->in("$this->rootAlias.etatThese", $etats));
 
         return $this;
     }

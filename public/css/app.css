@@ -70,7 +70,8 @@ h2.modal-title {
   width: 50%; }
 
 .panel .panel-heading {
-  text-transform: uppercase; }
+  text-transform: uppercase;
+  font-weight: 400; }
 
 .panel-info {
   border-color: #009ce4; }
@@ -172,10 +173,14 @@ span.ballot-box {
 #menu-acces-rapide:focus {
   left: auto; }
 
+.nav .glyphicon,
+.nav .fa,
+.nav .fas,
+.nav .fab {
+  margin-right: 3px; }
+
 div#sidebar {
   margin-bottom: 30px; }
-  div#sidebar .glyphicon {
-    margin-right: 3px; }
 
 div#contenu-principal {
   min-height: 500px; }
@@ -326,46 +331,55 @@ td.acteurs ul {
   td.acteurs ul li:nth-last-of-type(1) {
     border-bottom: none; }
 
-div.filters {
-  max-width: 80%; }
-  div.filters table td,
-  div.filters table th {
-    border-left: none !important;
-    border-right: none !important;
-    padding-top: 4px !important;
-    padding-bottom: 6px !important; }
-  div.filters .panel-heading {
-    padding: 5px 10px; }
-  div.filters span.filter {
-    padding-right: 5px; }
-    div.filters span.filter span,
-    div.filters span.filter a {
-      font-size: 90%; }
-  div.filters form {
-    padding: 10px; }
-    div.filters form .form-group {
-      margin-right: 4px;
-      vertical-align: bottom;
+div.filters table td,
+div.filters table th {
+  border-left: none !important;
+  border-right: none !important;
+  padding-top: 4px !important;
+  padding-bottom: 6px !important; }
+div.filters .panel-heading {
+  padding: 5px 10px; }
+div.filters .panel-body {
+  background-color: #f5f5f5; }
+div.filters span.filter {
+  padding-right: 5px; }
+  div.filters span.filter span,
+  div.filters span.filter a {
+    font-size: 90%; }
+div.filters .filter-option-inner-inner {
+  padding-right: 3px; }
+div.filters form {
+  padding: 10px; }
+  div.filters form .form-group {
+    margin-right: 4px;
+    vertical-align: bottom;
+    font-size: 11px; }
+    div.filters form .form-group ul.dropdown-menu {
       font-size: 11px; }
-      div.filters form .form-group ul.dropdown-menu {
-        font-size: 11px; }
-        div.filters form .form-group ul.dropdown-menu a {
-          padding: 3px 7px; }
-      div.filters form .form-group .dropdown-toggle {
-        font-size: 11px;
-        padding: 3px 25px 3px 10px; }
-    div.filters form label {
-      display: block;
-      margin-bottom: 3px;
-      line-height: 95%; }
-    div.filters form .filter-option, div.filters form #search-input {
-      font-size: 11px; }
-    div.filters form .input-group-addon.filter {
-      padding: 4px; }
+      div.filters form .form-group ul.dropdown-menu a {
+        padding: 3px 7px; }
+    div.filters form .form-group .dropdown-toggle {
+      font-size: 11px;
+      padding: 3px 4px 3px 4px;
+      height: 24px; }
+  div.filters form label {
+    display: block;
+    margin-bottom: 3px;
+    line-height: 95%; }
+  div.filters form .filter-option, div.filters form #search-input {
+    font-size: 11px; }
+  div.filters form .input-group-addon.filter {
+    padding: 2px; }
+  div.filters form .bootstrap-select {
+    height: 22px; }
+
+div#these-filters {
+  min-width: 30px;
+  min-height: 170px; }
 
 table.these-fiche {
   max-width: 400px;
-  font-size: 80%; }
+  font-size: 85%; }
 
 .popover {
   max-width: 100%;
@@ -376,7 +390,7 @@ table.these-fiche {
   font-style: oblique; }
 
 ul.autorisation-diffusion li {
-  margin-bottom: 15px; }
+  margin-bottom: 1em; }
   ul.autorisation-diffusion li p.autoris-diffusion-motif {
     padding-left: 15px; }
 
@@ -500,13 +514,16 @@ ul.roadmap.pagination {
       vertical-align: text-bottom; }
 
 /************* Menu *************/
+li > span.divider {
+  display: block;
+  height: 4px;
+  border-top: solid 4px #e1e1e1; }
+
 ul.menu-secondaire,
 ul.menu-information,
 ul.menu-actualites {
   background: #f5f5f5;
-  border-radius: 4px;
-  padding: 2px;
-  box-shadow: 1px 1px 6px; }
+  padding: 2px; }
   ul.menu-secondaire li,
   ul.menu-information li,
   ul.menu-actualites li {
@@ -515,8 +532,8 @@ ul.menu-actualites {
     ul.menu-information li span.divider,
     ul.menu-actualites li span.divider {
       display: block;
-      height: 4px;
-      border-top: solid 4px #e1e1e1; }
+      height: 3px;
+      border-top: solid 3px #e1e1e1; }
 
 ul.menu-secondaire li a.roadmap {
   font-weight: bold; }
@@ -557,7 +574,6 @@ ul.menu-actualites {
 div.menu-information-header {
   font-weight: bold;
   font-size: 115%;
-  border-radius: 4px;
   border: 4px solid #e1e1e1;
   padding: 5px;
   text-align: center;
@@ -591,6 +607,9 @@ ul.ui-autocomplete li .extra {
 .historise::after {
   content: 'SUPPRIMÉ'; }
 
+.fermee {
+  background: #ea9e9e !important; }
+
 /**************** Photo ********************/
 div.photo-placeholder {
   width: 100px;
@@ -609,8 +628,7 @@ div.photo-placeholder.loading {
 
 /************* FAQ *************/
 dl.faq dt {
-  font-weight: bold;
-  font-size: 120%; }
+  font-weight: bold; }
 
 /*********** Utilisateurs *********************/
 span.sas-highlight {
@@ -623,6 +641,9 @@ span.sas-highlight {
     margin: 0 0 0 8px; }
 
 /********** à déplacer... ************/
+.user-profile-select-form label > input[type=radio] {
+  margin-top: -6px; }
+
 .user-usurpation-form {
   padding-top: 1em; }
   .user-usurpation-form .form-group {
@@ -666,6 +687,12 @@ span.sas-highlight {
     margin: auto; }
   .div-connexion .connect-submit {
     margin-top: 20px; }
+    .div-connexion .connect-submit button {
+      height: auto;
+      font-size: 120%;
+      padding: 10px 15px;
+      background-color: #d23544;
+      border-color: #d23544; }
   .div-connexion .messenger {
     width: auto;
     max-width: 350px;
@@ -677,22 +704,8 @@ span.sas-highlight {
   font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
   font-size: 90%; }
 
-span.badge-success {
-  background: darkgreen; }
-
-span.badge.VALIDEE {
-  background: darkgreen; }
-
-span.badge-danger {
-  background: darkred; }
-
-span.badge.REJETEE {
-  background: darkred; }
-
-span.badge-default {
-  background: darkslategray; }
-
-span.badge.EN_COURS {
-  background: darkslategray; }
+.valide {
+  font-weight: 600;
+  color: #2EA662; }
 
 /*# sourceMappingURL=app.css.map */

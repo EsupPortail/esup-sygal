@@ -14,7 +14,7 @@ class UserAuthenticatedEventListenerFactory
     use EtablissementServiceLocateTrait;
     use UtilisateurServiceLocateTrait;
 
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): UserAuthenticatedEventListener
     {
         /** @var UserContextService $userContextService */
         $userContextService = $container->get('AuthUserContext');
@@ -22,7 +22,7 @@ class UserAuthenticatedEventListenerFactory
         $etablissementService = $this->locateEtablissementService($container);
 
         $listener = new UserAuthenticatedEventListener();
-        $listener->setAuthUserContextService($userContextService);
+        $listener->setServiceUserContext($userContextService);
         $listener->setIndividuService($individuService);
         $listener->setEtablissementService($etablissementService);
         $listener->setUtilisateurService($this->locateUtilisateurService($container));

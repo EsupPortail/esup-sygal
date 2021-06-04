@@ -226,13 +226,9 @@ return [
             'home' => [
                 'pages' => [
                     'admin' => [
-                        'label'    => 'Administration',
-                        'route'    => 'admin',
-                        'icon'     => 'glyphicon glyphicon-cog',
-                        'resource' => PrivilegeController::getResourceId('Application\Controller\Admin', 'index'),
                         'pages' => [
                             'information' => [
-                                'order'    => 100,
+                                'order'    => 600,
                                 'label'    => 'Pages d\'information',
                                 'route'    => 'informations',
                                 //'icon'     => 'glyphicon glyphicon-send',

@@ -25,19 +25,14 @@ use Application\Form\MetadonneeTheseForm;
 use Application\Form\PointsDeVigilanceForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
-use Application\Form\RechercherCoEncadrantFormAwareTrait;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
-use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\MailConfirmationServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\Convention\ConventionPdfExporter;
-use Application\Service\These\Filter\TheseSelectFilter;
-use Application\Service\These\TheseRechercheServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
@@ -48,8 +43,6 @@ use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\Tools\Pagination\Paginator;
-use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use Import\Service\Traits\ImportServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -74,7 +67,6 @@ class TheseController extends AbstractController
     use MessageCollectorAwareTrait;
     use NotifierServiceAwareTrait;
     use RoleServiceAwareTrait;
-    use TheseRechercheServiceAwareTrait;
     use TheseServiceAwareTrait;
     use ValidationServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
@@ -184,89 +176,11 @@ class TheseController extends AbstractController
     }
 
     /**
-     * @return ViewModel|Response
+     * @see TheseRechercheController::indexAction()
      */
-    public function indexAction()
+    public function indexAction(): Response
     {
-        /**
-         * NB (2019/03/20) : désactiver pour donner l'accès à toutes les thèses pour les rôles doctorant et directeur/co-directeur
-         * L'utilisateur est un doctorant, redirection vers l'accueil. *
-         */
-//        if ($this->userContextService->getSelectedRoleDoctorant()) {
-//            return $this->redirect()->toRoute('home');
-//        }
-
-        $queryParams = $this->params()->fromQuery();
-        $text = $this->params()->fromQuery('text');
-
-        // Application des filtres et tris par défaut, puis redirection éventuelle
-        $filtersUpdated = $this->theseRechercheService->updateQueryParamsWithDefaultFilters($queryParams);
-        $sortersUpdated = $this->theseRechercheService->updateQueryParamsWithDefaultSorters($queryParams);
-        if ($filtersUpdated || $sortersUpdated) {
-            return $this->redirect()->toRoute(null, [], ['query' => $queryParams], true);
-        }
-
-        $this->theseRechercheService
-            ->createFiltersWithUnpopulatedOptions()
-            ->createSorters()
-            ->processQueryParams($queryParams);
-
-        $etablissement = $this->theseRechercheService->getFilterValueByName(TheseSelectFilter::NAME_etablissement);
-        $etatThese     = $this->theseRechercheService->getFilterValueByName(TheseSelectFilter::NAME_etatThese);
-
-        /** Configuration du paginator **/
-        $qb = $this->theseRechercheService->createQueryBuilder();
-        $maxi = $this->params()->fromQuery('maxi', 50);
-        $page = $this->params()->fromQuery('page', 1);
-        $paginator = new \Zend\Paginator\Paginator(new DoctrinePaginator(new Paginator($qb, true)));
-        $paginator
-            ->setPageRange(30)
-            ->setItemCountPerPage((int)$maxi)
-            ->setCurrentPageNumber((int)$page);
-
-        return new ViewModel([
-            'theses'                => $paginator,
-            'text'                  => $text,
-            'roleDirecteurThese'    => $this->roleService->getRepository()->findOneBy(['sourceCode' => Role::CODE_DIRECTEUR_THESE]),
-            'displayEtablissement'  => !$etablissement,
-            'displayDateSoutenance' => $etatThese === These::ETAT_SOUTENUE || !$etatThese,
-            'etatThese'             => $etatThese,
-        ]);
-    }
-
-    /**
-     * @return Response|ViewModel
-     */
-    public function filtersAction()
-    {
-        $queryParams = $this->params()->fromQuery();
-
-        $this->theseRechercheService
-            ->createFilters()
-            ->processQueryParams($queryParams);
-
-        return new ViewModel([
-            'filters' => $this->theseRechercheService->getFilters(),
-        ]);
-    }
-
-    public function rechercherAction()
-    {
-        $prg = $this->postRedirectGet();
-        if ($prg instanceof \Zend\Http\PhpEnvironment\Response) {
-            return $prg;
-        }
-
-        $queryParams = $this->params()->fromQuery();
-
-        if (is_array($prg)) {
-            if (isset($queryParams['page'])) {
-                unset($queryParams['page']);
-            }
-            $queryParams['text'] = $prg['text'];
-        }
-
-        return $this->redirect()->toRoute('these', [], ['query' => $queryParams]);
+        return $this->redirect()->toRoute('these/recherche', [], [], true);
     }
 
     /**
@@ -275,23 +189,29 @@ class TheseController extends AbstractController
      * - pour un bu et mdd la liste des thèses en cours dans son établissement
      * - sinon un message disant de sélectionner une thèse via l'annuaire
      **/
-    public function depotAccueilAction() {
-
+    public function depotAccueilAction()
+    {
+        /** @var Role $role */
         $role = $this->userContextService->getSelectedIdentityRole();
-        $user = $this->userContextService->getIdentityDb();
 
-        $codeRole = $role ? $role->getCode() : null;
-        $theses = [];
-        switch ($codeRole) {
-            case Role::CODE_DOCTORANT :
-                $theses = $this->getTheseService()->getRepository()->findTheseByDoctorant($user->getIndividu());
-                break;
-            case Role::CODE_DIRECTEUR_THESE :
-            case Role::CODE_CODIRECTEUR_THESE :
-                $theses = $this->getTheseService()->getRepository()->findTheseByActeur($user->getIndividu());
-                break;
-            default :
-                break;
+        if ($these = $this->requestedThese()) {
+            $theses = [$these];
+        } else {
+            $user = $this->userContextService->getIdentityDb();
+
+            $codeRole = $role ? $role->getCode() : null;
+            $theses = [];
+            switch ($codeRole) {
+                case Role::CODE_DOCTORANT :
+                    $theses = $this->getTheseService()->getRepository()->findThesesByDoctorantAsIndividu($user->getIndividu());
+                    break;
+                case Role::CODE_DIRECTEUR_THESE :
+                case Role::CODE_CODIRECTEUR_THESE :
+                    $theses = $this->getTheseService()->getRepository()->findThesesByActeur($user->getIndividu(), $role);
+                    break;
+                default :
+                    break;
+            }
         }
 
         return new ViewModel([
