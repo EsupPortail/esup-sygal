@@ -108,9 +108,8 @@ class ApplicationNavigationFactory extends NavigationFactory
          */
         // Rôles acteurs de thèses (Dir, Codir, etc.) : génération d'une page "Mes thèses" contenant une page fille par thèse
         if ($protoPage = $page['pages'][$key = self::MES_THESES_PAGE_ID] ?? null) {
-            /** @var Role $role */
             if ($this->role !== null && $this->role->isActeurDeThese()) {
-                $theses = $this->theseService->getRepository()->findThesesByActeur($this->individu, $role, [These::ETAT_EN_COURS]);
+                $theses = $this->theseService->getRepository()->findThesesByActeur($this->individu, $this->role, [These::ETAT_EN_COURS]);
                 $newPages = $this->createPageMesTheses($protoPage, $theses);
                 $page['pages'][$key]['pages'] = $newPages;
             } else {
