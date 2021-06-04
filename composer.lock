@@ -3497,7 +3497,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/auth.git",
-                "reference": "f890573eed9254bdca62bfbfdef0582043e73c1c"
+                "reference": "f908e668fea5a37c64f9e4456570c7b88ebe292f"
             },
             "require": {
                 "jasig/phpcas": "^1.3",
@@ -3519,7 +3519,7 @@
                 ]
             },
             "description": "Module d'authentification pour les applications Unicaen",
-            "time": "2021-06-04T11:57:27+00:00"
+            "time": "2021-06-04T12:22:59+00:00"
         },
         {
             "name": "unicaen/bjy-authorize",
