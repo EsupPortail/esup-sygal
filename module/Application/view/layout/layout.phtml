@@ -1,3 +1,15 @@
+<?php
+use Application\View\Renderer\PhpRenderer;
+use Zend\View\Helper\Navigation as NavigationHelper;
+
+/**
+ * @var PhpRenderer         $this
+ * @var NavigationHelper    $navigationHelper
+ */
+$navigationHelper = $this->navigation();
+$identity = $this->zfcUserIdentity();
+?>
+
 <?php echo $this->doctype(); ?>
 <html lang="fr">
     <head>
@@ -45,7 +57,10 @@
                     <?php echo $this->appLink($this->appInfos()->nom) ?>
                 </div>
                 <div class="navbar-collapse bs-navbar-collapse collapse">
-                    <?php echo $this->navigation()->menuPrincipal('navigation'); ?>
+                    <?php echo $navigationHelper
+                        ->menu('navigation')
+                        ->setUlClass('nav navbar-nav')
+                        ->setPartial('layout/menu-principal.phtml'); ?>
                     <p class="navbar-text navbar-right">
                         <?php echo $this->appConnection(); ?>
                     </p>
@@ -60,12 +75,14 @@
 
         <div class="container ">
             <?php
-            echo $this->navigation('navigation')->filAriane('navigation')->setRenderInvisible(false)->render() ?:
+            echo $navigationHelper->filAriane('navigation')->setRenderInvisible(false)->render() ?:
                  $this->navigation()->filAriane('Zend\Navigation\Information')->setRenderInvisible(false)->render() ?>
         </div>
         
         <div id="contenu-principal" class="container">
-            <?php if (($menuSecondaire = $this->navigation()->menuSecondaire('navigation')->setMaxDepth(1)->render())): ?>
+            <?php
+            $menuSecondaireHelper = $navigationHelper->menuSecondaire('navigation');
+            if ($menuSecondaire = (string) $menuSecondaireHelper): ?>
                 <div class="row">
                     <div id="sidebar" class="col-xs-12 col-md-2" role="navigation">
                         <?php echo $menuSecondaire; ?>
@@ -81,7 +98,7 @@
 
         <nav id="footer" class="navbar navbar-default navbar-fixed-bottom">
             <div class="container">
-                <?php echo $this->navigation()->menuPiedDePage('navigation'); ?>
+                <?php echo $navigationHelper->menuPiedDePage('navigation'); ?>
             </div>
         </nav>
 

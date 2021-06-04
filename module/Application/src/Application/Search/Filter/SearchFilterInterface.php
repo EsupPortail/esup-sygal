@@ -42,14 +42,14 @@ interface SearchFilterInterface
     public function setLabel(string $label);
 
     /**
-     * @return string|string[]
+     * @return null|string|array
      */
     public function getValue();
 
     /**
      * @param string|null $value
      */
-    public function setValue($value = null);
+    public function setValue(string $value = null);
 
     /**
      * @return array

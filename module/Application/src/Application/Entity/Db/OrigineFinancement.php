@@ -2,10 +2,11 @@
 
 namespace Application\Entity\Db;
 
+use Application\Search\Filter\SearchFilterValueInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 
-class OrigineFinancement implements ResourceInterface
+class OrigineFinancement implements ResourceInterface, SearchFilterValueInterface
 {
     use HistoriqueAwareTrait;
 
@@ -23,6 +24,14 @@ class OrigineFinancement implements ResourceInterface
     private $sourceCode;
     /** @var bool */
     private $visible;
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getLibelleLong();
+    }
 
     /**
      * @inheritDoc
@@ -146,5 +155,13 @@ class OrigineFinancement implements ResourceInterface
     {
         $this->visible = $visible;
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function createSearchFilterValueOption(): array
+    {
+        return ['value' => $this->getCode(), 'label' => $this->getLibelleLong()];
     }
 }

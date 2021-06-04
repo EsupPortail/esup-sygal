@@ -1,3 +1,4 @@
+$filterFontSize: 11px;
 $uploadedFileFontSize: 80%;
 
 $infoColor: #009ce4;
@@ -112,6 +113,7 @@ h2.modal-title {
 
 .panel .panel-heading {
   text-transform: uppercase;
+  font-weight: 400;
 }
 
 .panel-info {
@@ -267,11 +269,16 @@ span.ballot-box {
   left: auto;
 }
 
-div#sidebar {
-  margin-bottom: 30px;
-  .glyphicon {
+.nav {
+  .glyphicon,
+  .fa,
+  .fas,
+  .fab {
     margin-right: 3px;
   }
+}
+div#sidebar {
+  margin-bottom: 30px;
 }
 
 div#contenu-principal {
@@ -508,10 +515,6 @@ td.acteurs {
 }
 
 div.filters {
-  $filterFontSize: 11px;
-
-  max-width: 80%;
-
   table {
     td,
     th {
@@ -528,12 +531,18 @@ div.filters {
   .panel-heading {
     padding: 5px 10px;
   }
+  .panel-body {
+    background-color: #f5f5f5;
+  }
   span.filter {
     padding-right: 5px;
     span,
     a {
       font-size: 90%;
     }
+  }
+  .filter-option-inner-inner {
+    padding-right: 3px
   }
 
   form {
@@ -550,7 +559,8 @@ div.filters {
       }
       .dropdown-toggle {
         font-size: $filterFontSize;
-        padding: 3px 25px 3px 10px;
+        padding: 3px 4px 3px 4px;
+        height: 24px;
       }
       .input-group {
         div {
@@ -567,14 +577,22 @@ div.filters {
       font-size: $filterFontSize;
     }
     .input-group-addon.filter {
-      padding: 4px;
+      padding: 2px;
+    }
+    .bootstrap-select {
+      height: 22px;
     }
   }
 }
 
+div#these-filters {
+  min-width: 30px;
+  min-height: 170px;
+}
+
 table.these-fiche {
   max-width: 400px;
-  font-size: 80%;
+  font-size: 85%;
 }
 
 .popover {
@@ -590,7 +608,7 @@ table.these-fiche {
 
 ul.autorisation-diffusion {
   li {
-    margin-bottom: 15px;
+    margin-bottom: 1em;
     p.autoris-diffusion-motif {
       padding-left: 15px;
     }
@@ -784,21 +802,28 @@ ul.roadmap.pagination {
 
 /************* Menu *************/
 
+li > span.divider {
+  display: block;
+  height: 4px;
+  border-top: solid 4px #e1e1e1;
+  //margin: 5px 0 5px;
+}
+
 ul.menu-secondaire,
 ul.menu-information,
 ul.menu-actualites {
   background: #f5f5f5;
-  border-radius: 4px;
+  //border-radius: 4px;
   padding: 2px;
-  box-shadow: 1px 1px 6px;
+  //box-shadow: 1px 1px 6px;
 
   li {
     margin-top: 0;
 
     span.divider {
       display: block;
-      height: 4px;
-      border-top: solid 4px #e1e1e1;
+      height: 3px;
+      border-top: solid 3px #e1e1e1;
       //margin: 5px 0 5px;
     }
   }
@@ -860,7 +885,7 @@ ul.menu-actualites {
 div.menu-information-header {
   font-weight: bold;
   font-size: 115%;
-  border-radius: 4px;
+  //border-radius: 4px;
   border: 4px solid #e1e1e1;
   padding: 5px;
   text-align: center;
@@ -913,6 +938,9 @@ ul.ui-autocomplete {
   content: 'SUPPRIMÉ';
 }
 
+.fermee { // NB: ne pas mettre `option.fermee` sinon le style n'est pas pris en compte par bootstrap-select
+  background: #ea9e9e !important;
+}
 
 /**************** Photo ********************/
 
@@ -941,7 +969,6 @@ div.photo-placeholder.loading {
 dl.faq {
   dt {
     font-weight: bold;
-    font-size: 120%;
   }
 }
 
@@ -965,6 +992,10 @@ span.sas-highlight {
 }
 
 /********** à déplacer... ************/
+
+.user-profile-select-form label > input[type=radio] {
+  margin-top: -6px;
+}
 .user-usurpation-form {
   padding-top: 1em;
   .form-group {
@@ -1024,6 +1055,13 @@ span.sas-highlight {
   }
   .connect-submit {
     margin-top: 20px;
+    button {
+      height: auto;
+      font-size: 120%;
+      padding: 10px 15px;
+      background-color: $dangerColor;
+      border-color: $dangerColor;
+    }
   }
   .messenger {
     width: auto;
@@ -1037,4 +1075,9 @@ span.sas-highlight {
 .debug-infos {
   font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
   font-size: 90%;
+}
+
+.valide {
+  font-weight: 600;
+  color: $successColor;
 }

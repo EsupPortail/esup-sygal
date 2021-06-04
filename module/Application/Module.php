@@ -4,12 +4,15 @@ namespace Application;
 
 use Application\Event\UserAuthenticatedEventListener;
 use Application\Event\UserRoleSelectedEventListener;
+use Application\View\Helper\Navigation\MenuSecondaire;
 use Zend\Config\Factory as ConfigFactory;
 use Zend\Console\Adapter\AdapterInterface as Console;
 use Zend\Http\Request as HttpRequest;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\Stdlib\Glob;
+use Zend\View\Helper\Navigation;
+use Zend\View\HelperPluginManager;
 
 class Module
 {
@@ -57,6 +60,12 @@ class Module
         /** @var UserRoleSelectedEventListener $listener */
         $listener = $sm->get('UserRoleSelectedEventListener');
         $listener->attach($eventManager);
+
+        /* @var $vhm HelperPluginManager */
+        $vhm = $sm->get('ViewHelperManager');
+        /* @var $nvh Navigation */
+        $nvh = $vhm->get('Zend\View\Helper\Navigation');
+        $nvh->getPluginManager()->setInvokableClass('menuSecondaire', MenuSecondaire::class);
     }
 
     public function getConfig()

@@ -30,29 +30,66 @@ class SelectSearchFilter extends SearchFilter
     protected $emptyOptionLabel = "(Peu importe)";
 
     /**
+     * @var bool
+     */
+    protected $allowsNoneOption = false;
+
+    /**
+     * @var string
+     */
+    protected $noneOptionLabel = "(Non renseigné)";
+
+    /**
      * SelectFilter constructor.
      *
      * @param string $label
      * @param string $name
-     * @param array $options
      * @param array $attributes
      * @param string $defaultValue
      */
-    public function __construct(string $label, string $name, array $options, array $attributes = [], $defaultValue = null)
+    public function __construct(string $label, string $name, array $attributes = [], $defaultValue = null)
     {
         parent::__construct($label, $name);
 
         $this
-            ->setOptions($options)
             ->setAttributes($attributes)
             ->setDefaultValue($defaultValue);
     }
 
     /**
+     * @param SearchFilterValueInterface|null $defaultValue
+     * @return self
+     */
+    public function setDefaultValueAsObject(SearchFilterValueInterface $defaultValue = null): self
+    {
+        return $this->setDefaultValue($defaultValue ? $defaultValue->createSearchFilterValueOption()['value'] : null);
+    }
+
+    /**
+     * @var callable|null
+     */
+    protected $dataProvider;
+    /**
+     * @param callable $dataProvider function(SelectSearchFilter $filter) { return []; }
+     * @return self
+     */
+    public function setDataProvider(callable $dataProvider): self
+    {
+        $this->dataProvider = $dataProvider;
+
+        return $this;
+    }
+    /**
+     * @return callable
+     */
+    public function getDataProvider(): ?callable
+    {
+        return $this->dataProvider;
+    }
+
+    /**
      * Génére à partir des valeurs spécifiées les 'value_options'
      * permettant de peupler la liste déroulante correspondant à ce filtre.
-     *
-     * Par défaut, s'attend à recevoir un tableau de valeurs scalaires.
      *
      * @param array $data
      * @return array
@@ -60,9 +97,18 @@ class SelectSearchFilter extends SearchFilter
     public function createValueOptionsFromData(array $data): array
     {
         $options = [];
-        $options[] = static::valueOptionEmpty();
-        foreach ($data as $value) {
-            $options[] = static::valueOptionScalar($value);
+        if ($this->allowsEmptyOption()) {
+            $options[] = static::valueOptionEmpty($this->getEmptyOptionLabel());
+        }
+        if ($this->allowsNoneOption()) {
+            $options[] = static::valueOptionUnknown($this->getNoneOptionLabel());
+        }
+        foreach ($data as $key => $value) {
+            if ($value instanceof SearchFilterValueInterface) {
+                $options[] = $value->createSearchFilterValueOption();
+            } else {
+                $options[] = static::valueOption((string) $value, (string) $key);
+            }
         }
 
         return $options;
@@ -143,7 +189,7 @@ class SelectSearchFilter extends SearchFilter
      * @param bool $allowsEmptyOption
      * @return self
      */
-    public function setAllowsEmptyOption(bool $allowsEmptyOption): self
+    public function setAllowsEmptyOption(bool $allowsEmptyOption = true): self
     {
         $this->allowsEmptyOption = $allowsEmptyOption;
         return $this;
@@ -163,11 +209,56 @@ class SelectSearchFilter extends SearchFilter
      * Spécifie le libellé de l'option "vide", ex: "Toutes" ou "Peu importe".
      *
      * @param string $emptyOptionLabel
-     * @return SelectSearchFilter
+     * @return self
      */
     public function setEmptyOptionLabel(string $emptyOptionLabel): self
     {
         $this->emptyOptionLabel = $emptyOptionLabel;
+
+        return $this;
+    }
+
+    /**
+     * Retourne true si ce filtre autorise la sélection de l'option "non renseigné".
+     *
+     * @return bool
+     */
+    public function allowsNoneOption(): bool
+    {
+        return $this->allowsNoneOption;
+    }
+
+    /**
+     * Spécifie si ce filtre autorise la sélection de l'option "non renseigné".
+     *
+     * @param bool $allowsNoneOption
+     * @return self
+     */
+    public function setAllowsNoneOption(bool $allowsNoneOption = true): self
+    {
+        $this->allowsNoneOption = $allowsNoneOption;
+        return $this;
+    }
+
+    /**
+     * Retourne le libellé de l'option "non renseigné", ex: "Non renseigné".
+     *
+     * @return string
+     */
+    public function getNoneOptionLabel(): string
+    {
+        return $this->noneOptionLabel;
+    }
+
+    /**
+     * Spécifie le libellé de l'option "non renseigné", ex: "Non renseigné".
+     *
+     * @param string $noneOptionLabel
+     * @return self
+     */
+    public function setNoneOptionLabel(string $noneOptionLabel): self
+    {
+        $this->noneOptionLabel = $noneOptionLabel;
 
         return $this;
     }
@@ -208,25 +299,21 @@ class SelectSearchFilter extends SearchFilter
     }
 
     /**
-     * @param object $entity
-     * @param string|callable $getterOrCallableForLabel
-     * @param string|callable $getterOrCallableForValue
+     * @param string $label
+     * @param string $value DOIT être une chaîne de caractères
      * @return array
      */
-    static public function valueOptionEntity(object $entity, $getterOrCallableForLabel = '__toString', $getterOrCallableForValue = 'getId'): array
+    static public function valueOption(string $label, string $value): array
     {
-        $label = is_callable($getterOrCallableForLabel) ? $getterOrCallableForLabel($entity) : $entity->$getterOrCallableForLabel();
-        $value = is_callable($getterOrCallableForValue) ? $getterOrCallableForValue($entity) : $entity->$getterOrCallableForValue();
-
-        return ['value' => (string) $value, 'label' => $label];
+        return ['value' => $value, 'label' => $label];
     }
 
     /**
-     * @param mixed $scalar
+     * @param string $string
      * @return array
      */
-    static public function valueOptionScalar($scalar): array
+    static public function valueOptionFromString(string $string): array
     {
-        return ['value' => $scalar, 'label' => $scalar];
+        return ['value' => $string, 'label' => $string];
     }
 }

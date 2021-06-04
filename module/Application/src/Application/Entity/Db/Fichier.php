@@ -111,7 +111,7 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
      * @param string $filepath
      * @return static
      */
-    static public function fromFilepath($filepath)
+    static public function fromFilepath(string $filepath): Fichier
     {
         $content = file_get_contents($filepath);
 
