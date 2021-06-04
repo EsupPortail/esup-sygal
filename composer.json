@@ -25,7 +25,7 @@
         "guzzlehttp/guzzle":             "^6.3",
         "ramsey/uuid":                   "^3.3",
         "unicaen/app":                   "^3.1",
-        "unicaen/auth":                  "^3.2",
+        "unicaen/auth":                  "dev-release-3.2.1",
         "unicaen/bjy-authorize":         "^3.0",
         "unicaen/code":                  "^3.0",
         "unicaen/db-import":             "^3.1",
