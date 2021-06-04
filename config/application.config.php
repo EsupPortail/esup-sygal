@@ -39,6 +39,11 @@ $modules = ['Zend\Cache',
     'Notification',
     'Information',
     'Application',
+
+    'UnicaenOauth',
+    'ZF\ApiProblem',
+    'ZF\ContentNegotiation',
+    'ZF\OAuth2',
 ];
 
 $devModules =  [
