@@ -12,6 +12,7 @@ use Application\Service\Individu\IndividuService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Rapport\RapportService;
 use Application\Service\These\TheseService;
+use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\VersionFichier\VersionFichierService;
 use Interop\Container\ContainerInterface;
@@ -44,6 +45,7 @@ class RapportMiparcoursControllerFactory
         $individuService = $container->get('IndividuService');
         $rapportForm = $container->get('FormElementManager')->get(RapportMiparcoursForm::class);
         $validationService = $container->get(ValidationService::class);
+        $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
         $typeRapport = $rapportService->findTypeRapportByCode(TypeRapport::RAPPORT_MIPARCOURS);
         $typeValidation = $validationService->findTypeValidationByCode(TypeValidation::CODE_RAPPORT_MIPARCOURS);
 
@@ -56,6 +58,7 @@ class RapportMiparcoursControllerFactory
         $controller->setIndividuService($individuService);
         $controller->setForm($rapportForm);
         $controller->setValidationService($validationService);
+        $controller->setTheseAnneeUnivService($theseAnneeUnivService);
         $controller->setTypeRapport($typeRapport);
         $controller->setTypeValidation($typeValidation);
 

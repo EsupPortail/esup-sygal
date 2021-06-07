@@ -109,7 +109,7 @@ class Rapport implements ResourceInterface, HistoriqueAwareInterface
     /**
      * @return bool
      */
-    public function getEstFinal(): bool
+    public function estFinal(): bool
     {
         return $this->estFinal;
     }

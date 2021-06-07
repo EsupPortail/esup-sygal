@@ -51,7 +51,7 @@ class Source extends \UnicaenDbImport\Entity\Db\Source
      *
      * @return string
      */
-    public function getCode()
+    public function getCode(): string
     {
         return $this->code;
     }
@@ -75,7 +75,7 @@ class Source extends \UnicaenDbImport\Entity\Db\Source
      *
      * @return boolean
      */
-    public function getImportable()
+    public function getImportable(): bool
     {
         return $this->importable;
     }
@@ -99,7 +99,7 @@ class Source extends \UnicaenDbImport\Entity\Db\Source
      *
      * @return string
      */
-    public function getLibelle()
+    public function getLibelle(): string
     {
         return $this->libelle;
     }
@@ -109,7 +109,7 @@ class Source extends \UnicaenDbImport\Entity\Db\Source
      *
      * @return integer
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -127,7 +127,7 @@ class Source extends \UnicaenDbImport\Entity\Db\Source
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getLibelle();
     }

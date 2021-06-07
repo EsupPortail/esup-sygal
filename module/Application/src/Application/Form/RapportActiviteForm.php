@@ -22,7 +22,7 @@ class RapportActiviteForm extends RapportForm
                 'label' => false,
                 'value_options' => [
                     '0' => "Rapport d'activité annuel",
-                    //'1' => "Rapport d'activité de fin de thèse", // pas de rapport de fin de thèse pour l'instant
+                    '1' => "Rapport d'activité de fin de thèse",
                 ],
             ],
             'attributes' => [
@@ -40,7 +40,7 @@ class RapportActiviteForm extends RapportForm
     {
         return array_merge(parent::getInputFilterSpecification(), [
             'estFinal' => [
-                'required' => false,
+                'required' => true,
             ],
         ]);
     }

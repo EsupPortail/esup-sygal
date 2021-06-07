@@ -9,9 +9,9 @@ use Zend\Permissions\Acl\Resource\ResourceInterface;
 class RapportActiviteAssertion extends BaseAssertion
 {
     /**
-     * @return static
+     * @return self
      */
-    protected function initControllerAssertion()
+    protected function initControllerAssertion(): self
     {
         $this->controllerAssertion->setContext([
             'rapport' => $this->getRapportActivite(),
@@ -21,9 +21,9 @@ class RapportActiviteAssertion extends BaseAssertion
     }
 
     /**
-     * @return static
+     * @return self
      */
-    protected function initPageAssertion()
+    protected function initPageAssertion(): self
     {
         $this->pageAssertion->setContext([
             'rapport' => $this->getRapportActivite(),
@@ -34,9 +34,9 @@ class RapportActiviteAssertion extends BaseAssertion
 
     /**
      * @param ResourceInterface $entity
-     * @return static
+     * @return self
      */
-    protected function initEntityAssertion(ResourceInterface $entity)
+    protected function initEntityAssertion(ResourceInterface $entity): self
     {
         $this->entityAssertion->setContext([
             'rapport' => $entity,
@@ -46,19 +46,19 @@ class RapportActiviteAssertion extends BaseAssertion
     }
 
     /**
-     * @return Rapport
+     * @return Rapport|null
      */
-    protected function getRapportActivite()
+    protected function getRapportActivite(): ?Rapport
     {
         $these = $this->getRouteMatch()->getThese();
         $rapport = $this->getRouteMatch()->getRapport();
 
-        if ($rapport === null) {
-            $rapport = new Rapport();
-            if ($these !== null) {
-                $rapport->setThese($these);
-            }
-        }
+//        if ($rapport === null) {
+//            $rapport = new Rapport();
+//            if ($these !== null) {
+//                $rapport->setThese($these);
+//            }
+//        }
 
         return $rapport;
     }

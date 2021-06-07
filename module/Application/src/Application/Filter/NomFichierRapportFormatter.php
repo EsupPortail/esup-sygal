@@ -33,7 +33,7 @@ class NomFichierRapportFormatter extends AbstractNomFichierFormatter
      * @param  Fichier $fichier
      * @return string
      */
-    public function filter($fichier)
+    public function filter($fichier): string
     {
         $doctorant = $this->rapport->getThese()->getDoctorant();
         $ed = $this->rapport->getThese()->getEcoleDoctorale()->getStructure()->getCode();
@@ -41,7 +41,7 @@ class NomFichierRapportFormatter extends AbstractNomFichierFormatter
         $extension = $this->extractExtensionFromFichier($fichier);
 
         $parts = [];
-        $parts['type'] = $this->normalizedString($this->rapport->getTypeRapport()->getCode());
+        $parts['type'] = $this->normalizedString($this->type());
         $parts['ed'] = 'ED' . $ed;
         $parts['nomDoctorant'] = $this->normalizedString($doctorant->getIndividu()->getNomUsuel());
         $parts['prenomDoctorant'] = ucfirst(mb_strtolower($this->normalizedString($doctorant->getIndividu()->getPrenom())));
@@ -51,5 +51,14 @@ class NomFichierRapportFormatter extends AbstractNomFichierFormatter
         $name = implode($this->separator, $parts);
 
         return $name . '.' . $extension;
+    }
+
+    protected function type(): string
+    {
+        if ($this->rapport->getTypeRapport()->estRapportActivite()) {
+            return $this->rapport->getTypeRapport()->getCode() . ($this->rapport->estFinal() ? '_FINTHESE' : '_ANNUEL');
+        } else {
+            return $this->rapport->getTypeRapport()->getCode();
+        }
     }
 }

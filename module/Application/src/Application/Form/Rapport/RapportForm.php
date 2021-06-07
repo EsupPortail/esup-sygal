@@ -2,6 +2,7 @@
 
 namespace Application\Form\Rapport;
 
+use Application\Entity\AnneeUniv;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\TheseAnneeUniv;
 use Zend\Form\Element\Csrf;
@@ -23,15 +24,15 @@ abstract class RapportForm extends Form implements InputFilterProviderInterface
     /**
      * @var TheseAnneeUniv[]
      */
-    protected $theseAnneeUnivs;
+    protected $anneesUnivs;
 
     /**
-     * @param array $theseAnneeUnivs
+     * @param TheseAnneeUniv[]|AnneeUniv[] $anneesUnivs
      * @return self
      */
-    public function setTheseAnneeUnivs(array $theseAnneeUnivs): self
+    public function setAnneesUnivs(array $anneesUnivs): self
     {
-        $this->theseAnneeUnivs = $theseAnneeUnivs;
+        $this->anneesUnivs = $anneesUnivs;
 
         return $this;
     }
@@ -47,21 +48,6 @@ abstract class RapportForm extends Form implements InputFilterProviderInterface
             'type' => Hidden::class,
             'name' => 'id',
         ]);
-
-//        $this->add([
-//            'name' => 'estFinal',
-//            'type' => Radio::class,
-//            'options' => [
-//                'label' => false,
-//                'value_options' => [
-//                    '0' => "Rapport d'activité annuel",
-//                    //'1' => "Rapport d'activité de fin de thèse", // pas de rapport de fin de thèse pour l'instant
-//                ],
-//            ],
-//            'attributes' => [
-//                'id' => 'estFinal',
-//            ],
-//        ]);
 
         $factory = $this->getFormFactory();
         $this->add($factory->create([
@@ -119,13 +105,22 @@ abstract class RapportForm extends Form implements InputFilterProviderInterface
     protected function prepareAnneeUnivSelect()
     {
         $anneesUnivs = [];
-        foreach ($this->theseAnneeUnivs as $tau) {
-            /** @var TheseAnneeUniv $tau */
-            $anneesUnivs[$tau->getAnneeUniv()] = $tau->getAnneeUnivToString();
+        foreach ($this->anneesUnivs as $anneeUniv) {
+            if ($anneeUniv instanceof TheseAnneeUniv) {
+                $anneesUnivs[$anneeUniv->getAnneeUniv()] = $anneeUniv->getAnneeUnivToString();
+            } elseif ($anneeUniv instanceof AnneeUniv) {
+                $anneesUnivs[$anneeUniv->getAnnee()] = (string) $anneeUniv;
+            }
         }
         /** @var Select $anneeUnivSelect */
         $anneeUnivSelect = $this->get('anneeUniv');
         $anneeUnivSelect->setValueOptions($anneesUnivs);
+
+        if (count($anneesUnivs) === 1) {
+            $anneeUnivSelect
+                ->setValue(key($anneesUnivs))
+                ->setEmptyOption(null);
+        }
     }
 
     /**
@@ -202,10 +197,6 @@ abstract class RapportForm extends Form implements InputFilterProviderInterface
                         ],
                     ],
                 ],
-            ],
-
-            'estFinal' => [
-                'required' => false,
             ],
         ];
     }

@@ -91,12 +91,10 @@ return [
                 'type'          => Segment::class,
                 'options'       => [
                     'route'    => '/utilisateur',
-//                    'route'    => '/[:language/]utilisateur',
                     'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Utilisateur',
                         'action'        => 'index',
-//                        'language'      => 'fr_FR',
                     ],
                 ],
                 'may_terminate' => true,

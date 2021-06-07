@@ -375,7 +375,13 @@ EOS;
     {
         $values = $this->getFinancementService()->getOriginesFinancements("libelleLong");
 
-        return array_filter($values);
+        // dédoublonnage (sur le code origine) car chaque établissement pourrait fournir les mêmes données
+        $origines = [];
+        foreach (array_filter($values) as $origine) {
+            $origines[$origine->getCode()] = $origine;
+        }
+
+        return $origines;
     }
 
     private function fetchAnneesInscription(SelectSearchFilter $filter): array
@@ -394,7 +400,7 @@ EOS;
         if ($role && $role->isEtablissementDependant()) {
             $etablissement = $role->getStructure()->getEtablissement();
         }
-        $annees = $this->theseAnneeUnivService->getRepository()->fetchDistinctAnneesUniv1ereInscription($etablissement);
+        $annees = $this->theseAnneeUnivService->fetchDistinctAnneesUniv1ereInscription($etablissement);
         $annees = array_reverse(array_filter($annees));
         $annees = array_combine($annees, $annees);
 
@@ -403,7 +409,7 @@ EOS;
 
     private function fetchAnneesUnivInscription(SelectSearchFilter $filter): array
     {
-        $annees = $this->theseAnneeUnivService->getRepository()->fetchDistinctAnneesUniv1ereInscription();
+        $annees = $this->theseAnneeUnivService->fetchDistinctAnneesUniv1ereInscription();
         $annees = array_reverse(array_filter($annees));
         $annees = array_combine($annees, $annees);
 

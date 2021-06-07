@@ -16,6 +16,7 @@ use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Rapport\RapportServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Doctrine\ORM\NoResultException;
@@ -34,6 +35,7 @@ abstract class RapportController extends AbstractController
     use IndividuServiceAwareTrait;
     use ValidationServiceAwareTrait;
     use EventRouterReplacerAwareTrait;
+    use TheseAnneeUnivServiceAwareTrait;
     use TypeRapportAwareTrait;
     use TypeValidationAwareTrait;
 
@@ -92,12 +94,14 @@ abstract class RapportController extends AbstractController
 
         $these = $this->requestedThese();
         $rapports = $this->rapportService->findRapportsForThese($these, $this->typeRapport);
-        $theseAnneeUnivsDispo = $this->rapportService->computeAvailableTheseAnneeUniv(
-            $these->getAnneesUnivInscription()->toArray(),
+        //$allAnneesUnivs = $these->getAnneesUnivInscription()->toArray();
+        $allAnneesUnivs = [$this->theseAnneeUnivService->anneeUnivCourante()];
+        $anneesUnivs = $this->rapportService->computeAvailableTheseAnneeUniv(
+            $allAnneesUnivs,
             $rapports
         );
-        $this->form->setTheseAnneeUnivs($theseAnneeUnivsDispo);
-        $tousLesRapportsTeleverses = empty($theseAnneeUnivsDispo);
+        $this->form->setAnneesUnivs($anneesUnivs);
+        $tousLesRapportsTeleverses = empty($anneesUnivs);
 
         return new ViewModel([
             'rapports' => $rapports,

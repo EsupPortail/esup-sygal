@@ -33,6 +33,9 @@ class RapportActiviteControllerAssertion extends ControllerAssertion
      */
     public function assert($privilege = null)
     {
+        if ($this->rapport === null) {
+            return true;
+        }
         if ($this->rapport->getThese() === null) {
             return true;
         }
