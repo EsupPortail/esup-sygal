@@ -8,6 +8,7 @@ use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Soutenance\Controller\AvisController;
 use Soutenance\Controller\EngagementImpartialiteController;
+use Soutenance\Provider\Privilege\IndexPrivileges;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Service\Membre\MembreService;
@@ -118,7 +119,7 @@ return array(
                                     'these',
                                 ],
                                 'icon' => 'fas fa-clipboard',
-                                'resource' => PresoutenancePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_VISUALISER),
+                                'resource' => IndexPrivileges::getResourceId(IndexPrivileges::INDEX_RAPPORTEUR),
                                 'child_routes' => [
                                     'engagement' => [
                                         'label' => 'Engagement d\'impartialité',
