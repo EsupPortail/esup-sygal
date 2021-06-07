@@ -26,7 +26,20 @@ $these = $proposition->getThese();
                 </h4>
                 <ul>
                     <li>
-                        <?php echo $these->getUniteRecherche()->getLibelle(); ?>  (Unité de recherche) <br/>
+                        <?php if ($these->getUniteRecherche()) : ?>
+                            <?php echo $these->getUniteRecherche()->getLibelle(); ?>  (Unité de recherche) <br/>
+                        <?php else: ?>
+                            <strong style="color:darkred;">
+                                Libellé complémentaire :
+                                <?php if ($these->getLibelleUniteRecherche() === null) : ?>
+                                    Aucun
+                                <?php else : ?>
+                                    <?php echo $these->getLibelleUniteRecherche(); ?>
+                                <?php endif; ?>
+                                (Unité de recherche)
+                            </strong>
+                            <br/>
+                        <?php endif; ?>
                         <?php if ($validations[Role::CODE_UR]) : ?>
                             <?php $validation = current($validations[Role::CODE_UR]); ?>
                             <span class="badge badge-success"> Validée</span>

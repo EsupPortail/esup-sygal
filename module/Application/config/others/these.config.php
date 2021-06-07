@@ -41,6 +41,7 @@ use Application\Service\These\TheseService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceFactory;
 use Application\View\Helper\Url\UrlTheseHelperFactory;
+use Soutenance\Provider\Privilege\IndexPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
@@ -977,6 +978,18 @@ return [
                                 'uri' => '',
                                 'class' => 'divider',
                                 'separator' => true,
+                            ],
+                            //---------------------------------------------------
+                            'page-rapporteur' => [
+                                'order' => 60,
+                                'label' => 'Dépôt du rapport',
+                                'route' => 'soutenance/index-rapporteur',
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                ],
+                                'icon' => 'fas fa-clipboard',
+                                'resource' => IndexPrivileges::getResourceId(IndexPrivileges::INDEX_RAPPORTEUR),
                             ],
                             //---------------------------------------------------
                             'depot' => [

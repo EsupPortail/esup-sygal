@@ -86,21 +86,49 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
                     <?php endforeach; ?>
                 </td>
                 <td>
-                    <span class="structure etablissement"
-                          title="Établissement : <?php echo $proposition->getThese()->getEtablissement()->getLibelle(); ?> (<?php echo $proposition->getThese()->getEtablissement()->getCode(); ?>)"
-                    >
-                        <?php echo $proposition->getThese()->getEtablissement()->getLibelle(); ?>
-                    </span> <br/>
-                    <span class="structure ecole-doctorale"
-                          title="École doctorale : <?php echo $proposition->getThese()->getEcoleDoctorale()->getLibelle(); ?> (<?php echo $proposition->getThese()->getEcoleDoctorale()->getSigle(); ?>)"
-                    >
-                        <?php echo $proposition->getThese()->getEcoleDoctorale()->getLibelle(); ?>
-                    </span> <br/>
-                    <span class="structure unite-recherche"
-                          title="Unité de recherche : <?php echo ($unite)?$unite->getLibelle():$these->getLibelleUniteRecherche(); ?> <?php echo ($unite)?"(".$unite->getSigle() .")":""; ?>"
-                    >
-                        <?php echo ($unite)?$unite->getLibelle():"<span style='background:lightsalmon;'><strong>".$these->getLibelleUniteRecherche()."</strong></span>"; ?>
-                    </span>
+                    <?php if ($these->getEtablissement()) : ?>
+                        <span class="structure etablissement"
+                              title="Établissement : <?php echo $these->getEtablissement()->getLibelle(); ?> (<?php echo $these->getEtablissement()->getCode(); ?>)"
+                        >
+                            <?php echo $these->getEtablissement()->getLibelle(); ?>
+                        </span>
+                    <?php else : ?>
+                        <strong style="color:darkred;">
+                            Établissement  : Aucun
+                        </strong>
+                    <?php endif; ?>
+                    <br/>
+
+                    <?php if ($these->getEcoleDoctorale()) : ?>
+                        <span class="structure ecole-doctorale"
+                              title="École doctorale : <?php echo $these->getEcoleDoctorale()->getLibelle(); ?> <?php echo "(".$these->getEcoleDoctorale()->getSigle() .")"; ?>"
+                        >
+                            <?php echo $these->getEcoleDoctorale()->getLibelle(); ?>
+                        </span>
+                    <?php else : ?>
+                        <strong style="color:darkred;">
+                            École doctorale  : Aucune
+                        </strong>
+                    <?php endif; ?>
+                    <br/>
+
+                    <?php if ($these->getUniteRecherche()) : ?>
+                        <span class="structure unite-recherche"
+                              title="Unité de recherche : <?php echo $these->getUniteRecherche()->getLibelle(); ?> <?php echo "(".$these->getUniteRecherche()->getSigle() .")"; ?>"
+                        >
+                            <?php echo $these->getUniteRecherche()->getLibelle(); ?>
+                        </span>
+                    <?php else : ?>
+                        <!-- Gestion des unités de recherche -->
+                        <strong style="color:darkred;">
+                            Unité de recherche :
+                            <?php if ($these->getLibelleUniteRecherche() === null) : ?>
+                                Aucune
+                            <?php else : ?>
+                                <?php echo $these->getLibelleUniteRecherche(); ?>
+                            <?php endif; ?>
+                        </strong>
+                    <?php endif; ?>
                 </td>
                 <td>
                     <span class="badge <?php echo $proposition->getEtat()->getCode(); ?>">

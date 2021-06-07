@@ -21,35 +21,31 @@ $canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceI
 </h1>
 
 <p class="lead">
-    Le module permet de préparer la soutenance de la <strong>proposition du jury</strong> jusqu'au <strong>rendu des rapports de présoutenance</strong>.
+    Ce module permet de préparer votre soutenance de thèse, de la <strong>proposition du jury jusqu'à la réception des rapports de pré-soutenance</strong>.
 </p>
 
 <h2> Constituer votre jury de thèse </h2>
 
 <p>
-    SyGAL permet la constitution de votre jury de thèse de façon dématérialisée.
-    La composition de votre jury se passe en deux étapes :
+    SyGAL permet la constitution de votre jury de thèse de façon dématérialisée et ceci en deux étapes :
 </p>
 <ol>
-    <li> la composition et acceptation par le doctorant et les directeurs et co-directeurs ;</li>
-    <li> la validation par l'unité de recherche, l'école doctorale et maison des doctorats associé à la thèse.</li>
+    <li> <strong>proposition</strong> de jury par le doctorant et le directeur de thèse (et le cas échéant le co-directeur de thèse) ;</li>
+    <li> <strong>validation de cette proposition</strong> successivement par le directeur de l'unité de recherche, l'école doctorale et la maison du doctorat.</li>
 </ol>
 
-<p>
-    Votre jury doit respecter les règles suivantes :
-</p>
+<strong>Attention, votre jury doit respecter les règles suivantes :</strong>
     <ul>
-        <li> le jury doit être contenir aux moins deux rapporteurs ;</li>
-        <li> au moins la motié des membres doivent être de rang A (Professeurs des universités, Directeur de recherche, ...) ; </li>
-        <li> au moins la motié des membres doivent être extérieurs à l'université dans laquelle la thèse se déroule. </li>
+        <li> le jury doit inclure deux rapporteurs, extérieurs aux établissements membres de la ComUE Normandie Université, et soit de rang A (Professeur des universités, Directeur de recherche, ...), soit d’un niveau équivalent (Professeur ou personnalité exerçant à l’étranger qui peuvent justifier d’un statut équivalent), soit de rang B détenteur d’une HDR (Maître de Conférence-HDR, Chargé de Recherche-HDR) ;</li>
+        <li> au moins la moitié des membres doivent être de rang A (Professeur des universités, Directeur de recherche, ...) ou équivalents (Professeur ou personnalité à l’étranger qui peuvent justifier d’un statut équivalent) ; </li>
+        <li> au moins la moitié des membres doivent être extérieurs aux établissements membres de la ComUE Normandie Université. </li>
     </ul>
 
-    <u>N.B. :</u> Le jury doit idéalement respecter la parité homme/femme.
+    <u>N.B. :</u> En fonction des disciplines, le jury doit respecter un équilibre entre hommes et femmes..
 
 
 <p>
-    Pour passer à la second étape de la composition de votre jury tous les acteurs directs (doctorant, directeurs et
-    co-directeurs) doivent valider unanimement la proposition de soutenance (jury, date et lieu de soutenance).
+    Lors de cette étape, il pourra vous être demandé de télécharger des documents et justificatifs (délégation de signature, attestation d’HDR ...)
 </p>
 
     <?php if ($canProposer && $theses !== []) : ?>
@@ -78,18 +74,9 @@ $canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceI
 <h2> Voir l'avancement des validations de votre soutenance </h2>
 
 <p>
-    Avant de pouvoir soutenir de nombreuses validations sont nécessaires par :
-</p>
-    <ul>
-        <li> les acteurs directs de la thèse (doctorant, directeurs et co-directeurs) ; </li>
-        <li> les structures associés à la thèses (unité de recherche, école doctorale, ...) ;</li>
-        <li> les rapporteurs de la thèse.</li>
-    </ul>
-
-
-<p>
-    Afin de suivre ces validations, SyGAL fournit une interface permettant de suivre l'évolution de celle-ci.
-    Cette interface permet de connaître la liste de validations reçus, celles en attentes et l'ordre des validations.
+    Avant de pouvoir soutenir, <strong>votre proposition de jury doit être validée</strong> par les directeur et co-directeur de thèse, directeur de l’unité de recherche, l’école doctorale et l’établissement d’inscription puis <strong>votre thèse doit recevoir un avis positif des 2 rapporteurs</strong> de votre thèse.
+    Afin de suivre ces validations, SyGAL fournit une interface permettant de suivre l'évolution de la procédure.
+    Cette interface permet de connaître la liste de validations reçues et celles en attente.
 </p>
 
     <?php if ($canVisualiser && $theses !== []) : ?>
