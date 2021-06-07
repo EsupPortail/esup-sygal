@@ -101,6 +101,25 @@ return array(
                                             'these',
                                         ],
                                     ],
+//                                    'retard' => [
+//                                        'label' => 'Notifier attente de rapport',
+//                                        'route' => 'soutenance/notifier-retard-rapport-presoutenance',
+//                                        'order' => 500,
+//                                        'resource' => UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION),
+//                                    ],
+                                ],
+                            ],
+                            'page-rapporteur' => [
+                                'order' => 60,
+                                'label' => 'Dépôt du rapport',
+                                'route' => 'soutenance/index-rapporteur',
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                ],
+                                'icon' => 'fas fa-clipboard',
+                                'resource' => PresoutenancePrivileges::getResourceId(PropositionPrivileges::PROPOSITION_VISUALISER),
+                                'child_routes' => [
                                     'engagement' => [
                                         'label' => 'Engagement d\'impartialité',
                                         'route' => 'soutenance/engagement-impartialite',
@@ -123,15 +142,9 @@ return array(
                                             'Acteur',
                                         ],
                                     ],
-//                                    'retard' => [
-//                                        'label' => 'Notifier attente de rapport',
-//                                        'route' => 'soutenance/notifier-retard-rapport-presoutenance',
-//                                        'order' => 500,
-//                                        'resource' => UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION),
-//                                    ],
-                                ],
+                                ]
                             ],
-                        ]
+                        ],
                     ],
 
                     /**
