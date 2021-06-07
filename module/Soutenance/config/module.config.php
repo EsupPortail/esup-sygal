@@ -8,6 +8,7 @@ use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Soutenance\Controller\AvisController;
 use Soutenance\Controller\EngagementImpartialiteController;
+use Soutenance\Provider\Privilege\IndexPrivileges;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Service\Membre\MembreService;
@@ -101,6 +102,25 @@ return array(
                                             'these',
                                         ],
                                     ],
+//                                    'retard' => [
+//                                        'label' => 'Notifier attente de rapport',
+//                                        'route' => 'soutenance/notifier-retard-rapport-presoutenance',
+//                                        'order' => 500,
+//                                        'resource' => UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION),
+//                                    ],
+                                ],
+                            ],
+                            'page-rapporteur' => [
+                                'order' => 60,
+                                'label' => 'Dépôt du rapport',
+                                'route' => 'soutenance/index-rapporteur',
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                ],
+                                'icon' => 'fas fa-clipboard',
+                                'resource' => IndexPrivileges::getResourceId(IndexPrivileges::INDEX_RAPPORTEUR),
+                                'child_routes' => [
                                     'engagement' => [
                                         'label' => 'Engagement d\'impartialité',
                                         'route' => 'soutenance/engagement-impartialite',
@@ -123,15 +143,9 @@ return array(
                                             'Acteur',
                                         ],
                                     ],
-//                                    'retard' => [
-//                                        'label' => 'Notifier attente de rapport',
-//                                        'route' => 'soutenance/notifier-retard-rapport-presoutenance',
-//                                        'order' => 500,
-//                                        'resource' => UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION),
-//                                    ],
-                                ],
+                                ]
                             ],
-                        ]
+                        ],
                     ],
 
                     /**
