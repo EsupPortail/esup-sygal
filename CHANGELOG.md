@@ -4,6 +4,7 @@ Journal des modifications
 2.2.1
 -----
 - Ajout de la possibilité de modifier une proposition de soutenance pour gestion (sans retrait de validation)
+- [FIX] Ligne de commande de lancement de toutes les synchros.
 
 2.2.0
 -----
