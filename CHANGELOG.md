@@ -1,6 +1,14 @@
 Journal des modifications
 =========================
 
+2.2.1
+-----
+- Ajout de la possibilité de modifier une proposition de soutenance pour gestion (sans retrait de validation)
+
+2.2.0
+-----
+MISSING
+
 2.1.9
 -----
 - Ajout de demande de justificatif pour certaines qualités pour les soutenances (par exemple : membre étranger)

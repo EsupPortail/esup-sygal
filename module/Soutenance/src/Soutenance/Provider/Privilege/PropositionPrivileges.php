@@ -9,6 +9,7 @@ class PropositionPrivileges extends Privileges
     // PROPOSITION ET VALIDATION DE LA PROPOSITION ---------------------------------------------------------------------
     const PROPOSITION_VISUALISER                      = 'soutenance-proposition-visualisation';
     const PROPOSITION_MODIFIER                        = 'soutenance-proposition-modification';
+    const PROPOSITION_MODIFIER_GESTION                = 'soutenance-proposition-modification_gestion';
     const PROPOSITION_VALIDER_ACTEUR                  = 'soutenance-proposition-validation-acteur';
     const PROPOSITION_VALIDER_ED                      = 'soutenance-proposition-validation-ed';
     const PROPOSITION_VALIDER_UR                      = 'soutenance-proposition-validation-ur';
