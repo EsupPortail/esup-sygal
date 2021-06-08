@@ -52,8 +52,10 @@ class PropositionAssertion implements  AssertionInterface {
         $dateValidationMax = ($proposition->getDate())?DateTime::createFromFormat('d/m/Y',$proposition->getDate()->format('d/m/Y'))->sub(new DateInterval('P2M')):null;
         $dateCurrent = new DateTime();
 
-        $role = $this->userContextService->getSelectedIdentityRole()->getCode();
-        $structure = $this->userContextService->getSelectedIdentityRole()->getStructure();
+        /** @var Role $identityRole */
+        $identityRole = $this->userContextService->getSelectedIdentityRole();
+        $role = $identityRole->getCode();
+        $structure = $identityRole->getStructure();
         $individu = $this->userContextService->getIdentityDb()->getIndividu();
 
         $doctorant = $these->getDoctorant()->getIndividu();
@@ -67,31 +69,26 @@ class PropositionAssertion implements  AssertionInterface {
 
 //        if ($role === Role::CODE_ADMIN_TECH) return true;
 
+        $theseEtablissementStructure = $these->getEtablissement()->getStructure();
+
         switch ($privilege) {
             case PropositionPrivileges::PROPOSITION_VISUALISER:
                 switch ($role) {
                     case Role::CODE_ADMIN_TECH:
                         return true;
-                        break;
                     case Role::CODE_BDD :
-                        return $structure === $these->getEtablissement()->getStructure();
-                        break;
+                        return $structure === $theseEtablissementStructure;
                     case Role::CODE_ED :
                         return $structure === $these->getEcoleDoctorale()->getStructure();
-                        break;
                     case Role::CODE_UR :
                         return $structure === $these->getUniteRecherche()->getStructure();
-                        break;
                     case Role::CODE_DOCTORANT :
                         return $doctorant->getId() === $individu->getId();
-                        break;
                     case Role::CODE_DIRECTEUR_THESE :
                     case Role::CODE_CODIRECTEUR_THESE :
                         return (array_search($individu, $directeurs) !== false);
-                        break;
                     default:
                         return false;
-                        break;
                 }
             case PropositionPrivileges::PROPOSITION_MODIFIER:
                 /** REMARQUE : une fois que l'unite de recherche, l'école doctorale ou le bureau des doctorats a validé, on ne peut plus modifier la proposition **/
@@ -101,16 +98,22 @@ class PropositionAssertion implements  AssertionInterface {
                 if ($validations_UNITE || $validations_ECOLE || $validations_BUREAU) return false;
 
                 switch ($role) {
+                    case Role::CODE_ADMIN_TECH :
+                        return true;
+                    case Role::CODE_BDD :
+                        $validations_ACTEUR = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PROPOSITION_SOUTENANCE, $these);
+                        $validations_UNITE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
+                        $nbDirs = count($these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE));
+                        $nbCoDirs = count($these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE));
+                        $nbActeur = 1 + $nbDirs + $nbCoDirs;
+                        return !$validations_UNITE && count($validations_ACTEUR) === $nbActeur && $structure === $theseEtablissementStructure;
                     case Role::CODE_DOCTORANT :
                         return $doctorant->getId() === $individu->getId();
-                        break;
                     case Role::CODE_DIRECTEUR_THESE :
                     case Role::CODE_CODIRECTEUR_THESE :
                         return (array_search($individu, $directeurs) !== false);
-                        break;
                     default:
                         return false;
-                        break;
                 }
             case PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR:
 
@@ -119,17 +122,13 @@ class PropositionAssertion implements  AssertionInterface {
                         $isDoctorant = $doctorant->getId() === $individu->getId();
                         $dateOk = ($sursis OR ($dateCurrent <= $dateValidationMax));
                         return ($isDoctorant AND $dateOk);
-
-                        break;
                     case Role::CODE_DIRECTEUR_THESE :
                     case Role::CODE_CODIRECTEUR_THESE :
                         $idDirecteur = (array_search($individu, $directeurs) !== false);
                         $dateOk = ($sursis OR ($dateCurrent <= $dateValidationMax));
                         return ($idDirecteur AND $dateOk);
-                        break;
                     default:
                         return false;
-                        break;
                 }
             case PropositionPrivileges::PROPOSITION_VALIDER_UR:
                 switch ($role) {
@@ -140,10 +139,8 @@ class PropositionAssertion implements  AssertionInterface {
                         $nbCoDirs = count($these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE));
                         $nbActeur = 1 + $nbDirs + $nbCoDirs;
                         return !$validations_UNITE && count($validations_ACTEUR) === $nbActeur && $structure === $these->getUniteRecherche()->getStructure();
-                        break;
                     default:
                         return false;
-                        break;
                 }
             case PropositionPrivileges::PROPOSITION_VALIDER_ED:
                 switch ($role) {
@@ -151,10 +148,8 @@ class PropositionAssertion implements  AssertionInterface {
                         $validations_UNITE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
                         $validations_ECOLE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
                         return !$validations_ECOLE && $validations_UNITE && $structure === $these->getEcoleDoctorale()->getStructure();
-                        break;
                     default:
                         return false;
-                        break;
                 }
             case PropositionPrivileges::PROPOSITION_VALIDER_BDD:
 
@@ -163,24 +158,19 @@ class PropositionAssertion implements  AssertionInterface {
                         $validations_UNITE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
                         $validations_ECOLE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
                         $validations_BDD    = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
-                        return !$validations_BDD && $validations_UNITE && $validations_ECOLE && $structure === $these->getEtablissement()->getStructure();
-                        break;
+                        return !$validations_BDD && $validations_UNITE && $validations_ECOLE && $structure === $theseEtablissementStructure;
                     default:
                         return false;
-                        break;
                 }
             case PropositionPrivileges::PROPOSITION_PRESIDENCE:
                 switch($role) {
                     case Role::CODE_BDD :
-                        return $structure === $these->getEtablissement()->getStructure();
-                        break;
+                        return $structure === $theseEtablissementStructure;
                     default:
                         return false;
-                        break;
                 }
             default :
                 return false;
-                break;
         }
     }
 }
