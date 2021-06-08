@@ -237,7 +237,11 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     }
 
     /**
-     * Usurpe l'identité d'un individu.
+     * Usurpe l'identité d'un **individu**.
+     *
+     * *Pour pouvoir usurper l'identité d'un individu, il faut que celui-ci se soit connecté au moins
+     * une fois à l'application, de manière à ce que son compte utilisateur ait été créé avec
+     * des données complètes.*
      *
      * @return Response
      */
@@ -252,17 +256,19 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         if (!$individuId) {
             return $this->redirect()->toRoute('home');
         }
+        $individu = $this->individuService->getRepository()->find($individuId);
 
         /** @var Utilisateur $utilisateur */
         $utilisateur = $this->utilisateurService->getRepository()->findOneBy(['individu' => $individuId]);
         if ($utilisateur === null) {
-            /** @var Individu $individu */
-            $individu = $this->individuService->getRepository()->find($individuId);
-            try {
-                $utilisateur = $this->utilisateurService->createFromIndividuForUsurpationShib($individu);
-            } catch (RuntimeException $e) {
-                throw new RuntimeException("Impossible d'ajouter l'individu $individu aux utilisateurs de l'application.", null, $e);
-            }
+            throw new RuntimeException(sprintf(
+                "La demande d'usurpation de l'individu '%s' (%d) a échoué car aucun compte utilisateur correspondant " .
+                "n'a été trouvé. " .
+                "Pour pouvoir usurper l'identité d'un individu, il faut que celui-ci se soit connecté au moins " .
+                "une fois à l'application, de manière à ce que son compte utilisateur ait été créé avec " .
+                "des données complètes.",
+                $individu, $individu->getId()
+            ));
         }
 
         $usernameUsurpe = $utilisateur->getUsername();
