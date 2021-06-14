@@ -7,7 +7,7 @@ Journal des modifications
 - Ajout d'un filtrage des soutenances par états
 - [FIX] Ligne de commande de lancement de toutes les synchros.
 - [FIX] Correction du texte de la convocation s'attendant à avoir un individu (pas toujours le cas car le lien n'est pas fait systèmatiquement).
-
+- [FIX] La recherche du doctorant lié à un individu doit écarter les individus historisés.
 2.2.0
 -----
 MISSING
