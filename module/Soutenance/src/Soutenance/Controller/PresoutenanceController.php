@@ -568,7 +568,7 @@ class PresoutenanceController extends AbstractController
      * @param Membre $membre
      * @return string
      */
-    private function generateUsername($membre)
+    private function generateUsername(Membre $membre) : string
     {
         $acteur = $membre->getActeur();
         if ($acteur === null) throw new LogicException("La génération du username est basée sur l'Individu qui est mamquant.");
