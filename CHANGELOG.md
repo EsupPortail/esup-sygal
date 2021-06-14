@@ -6,6 +6,7 @@ Journal des modifications
 - Ajout de la possibilité de modifier une proposition de soutenance pour gestion (sans retrait de validation)
 - Ajout d'un filtrage des soutenances par états
 - [FIX] Ligne de commande de lancement de toutes les synchros.
+- [FIX] Correction du texte de la convocation s'attendant à avoir un individu (pas toujours le cas car le lien n'est pas fait systèmatiquement).
 
 2.2.0
 -----
