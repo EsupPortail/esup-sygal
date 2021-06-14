@@ -516,6 +516,7 @@ class PresoutenanceController extends AbstractController
             'date' => $dateValidation,
             'ville' => $ville,
             'signature' => $signature,
+            'membre' => $membre,
         ]);
         $exporter->exportMembre($membre, $these->getId() . '_convocation.pdf');
         exit;
