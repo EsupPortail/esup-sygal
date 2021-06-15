@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b1bf40cb1f3410dbc328c7265044483",
+    "content-hash": "976ebe7b9bad8719358c8416f4627d87",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -3493,11 +3493,11 @@
         },
         {
             "name": "unicaen/auth",
-            "version": "dev-release-3.2.1",
+            "version": "3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/auth.git",
-                "reference": "9c003a42dc9fd83465a336cc728e1b0109f65efc"
+                "reference": "4b37875b503ff0b787b8ec09b29f85b0470db947"
             },
             "require": {
                 "jasig/phpcas": "^1.3",
@@ -3519,7 +3519,34 @@
                 ]
             },
             "description": "Module d'authentification pour les applications Unicaen",
-            "time": "2021-06-04T14:04:43+00:00"
+            "time": "2021-06-15T08:28:00+00:00"
+        },
+        {
+            "name": "unicaen/auth-token",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/auth-token.git",
+                "reference": "782bf7f578e672c9098fb896affe2b2274013f52"
+            },
+            "require": {
+                "ramsey/uuid": "^3.7",
+                "unicaen/auth": ">= 3.2.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "UnicaenAuthToken": "src/"
+                },
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "description": "Authentification à l'aide d'un token",
+            "time": "2021-06-15T08:30:26+00:00"
         },
         {
             "name": "unicaen/bjy-authorize",
@@ -8056,7 +8083,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "unicaen/auth": 20
+        "unicaen/auth-token": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
