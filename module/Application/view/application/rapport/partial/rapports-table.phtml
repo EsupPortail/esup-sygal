@@ -141,7 +141,7 @@ $acteursFormatterCodirecteurs->asSeparated()
         <tr>
             <?php
             $these = $rapport->getThese();
-            $rapportValidation = $rapport->getRapportValidationOfType($typeValidation);
+            $rapportValidation = $rapport->getRapportValidation();
             $classRapport = $rapportValidation !== null ? 'valide' : '';
             $canDel = $this->isAllowed($rapport, $privilege_SUPPRIMER_TOUT) || $this->isAllowed($rapport, $privilege_SUPPRIMER_SIEN);
             $canDl = $this->isAllowed($rapport, $privilege_TELECHARGER_TOUT) || $this->isAllowed($rapport, $privilege_TELECHARGER_SIEN);

@@ -200,16 +200,32 @@ class Rapport implements ResourceInterface, HistoriqueAwareInterface
     }
 
     /**
+     * Retourne le code du type de validation attendue.
+     *
+     * @return string
+     */
+    public function getCodeTypeValidationAttendu(): string
+    {
+        switch ($code = $this->getTypeRapport()->getCode()) {
+            case TypeRapport::RAPPORT_ACTIVITE:
+                return TypeValidation::CODE_RAPPORT_ACTIVITE;
+            case TypeRapport::RAPPORT_CSI:
+                return TypeValidation::CODE_RAPPORT_CSI;
+            case TypeRapport::RAPPORT_MIPARCOURS:
+                return TypeValidation::CODE_RAPPORT_MIPARCOURS;
+            default:
+                throw new \InvalidArgumentException("Code non prévu : " . $code);
+        }
+    }
+
+    /**
      * Retourne l'éventuelle validation du type spécifié.
      *
-     * @param TypeValidation|string $type
      * @return RapportValidation|null
      */
-    public function getRapportValidationOfType($type): ?RapportValidation
+    public function getRapportValidation(): ?RapportValidation
     {
-        if ($type instanceof TypeValidation) {
-            $type = $type->getCode();
-        }
+        $type = $this->getCodeTypeValidationAttendu();
 
         $validations = $this->rapportValidations;
         $validations = $validations->filter(function(RapportValidation $v) use ($type) {
