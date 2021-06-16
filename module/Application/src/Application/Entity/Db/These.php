@@ -1014,13 +1014,16 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @param string $code
+     * Retourne les acteurs de cette thèse dont le rôle est parmi ceux spécifiés.
+     *
+     * @param string|string[] $code
      * @return Collection
      */
-    public function getActeursByRoleCode($code)
+    public function getActeursByRoleCode($code): Collection
     {
-        $filter = function(Acteur $a) use ($code) {
-            return $a->getRole()->getCode() === $code;
+        $codes = (array) $code;
+        $filter = function(Acteur $a) use ($codes) {
+            return in_array($a->getRole()->getCode(), $codes);
         };
 
         return $this->getActeurs()->filter($filter);
@@ -1051,7 +1054,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @param string|Role $role
      * @return bool
      */
-    public function hasActeurWithRole(Individu $individu, $role)
+    public function hasActeurWithRole(Individu $individu, $role): bool
     {
         if ($role instanceof Role) {
             $role = $role->getCode();

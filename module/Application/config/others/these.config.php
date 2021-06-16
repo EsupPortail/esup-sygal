@@ -951,6 +951,7 @@ return [
                                     'these',
                                 ],
                                 'resource' => PrivilegeController::getResourceId(RapportActiviteController::class, 'consulter'),
+                                'visible' => 'Assertion\\Rapport',
                             ],
                             'rapport-csi' => [
                                 'label' => 'Rapports CSI',
@@ -961,6 +962,7 @@ return [
                                     'these',
                                 ],
                                 'resource' => PrivilegeController::getResourceId(RapportCsiController::class, 'consulter'),
+                                'visible' => 'Assertion\\Rapport',
                             ],
                             'rapport-miparcours' => [
                                 'label' => 'Rapports mi-parcours',
@@ -971,6 +973,7 @@ return [
                                     'these',
                                 ],
                                 'resource' => PrivilegeController::getResourceId(RapportMiparcoursController::class, 'consulter'),
+                                'visible' => 'Assertion\\Rapport',
                             ],
                             'divider-2' => [
                                 'label' => null,
