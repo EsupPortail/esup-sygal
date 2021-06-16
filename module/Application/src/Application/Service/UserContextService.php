@@ -18,6 +18,9 @@ use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Service\UserContext as BaseUserContextService;
 use Zend\Permissions\Acl\Role\RoleInterface;
 
+/**
+ * @method Role getSelectedIdentityRole()
+ */
 class UserContextService extends BaseUserContextService
 {
     use IndividuServiceAwareTrait;
@@ -85,9 +88,17 @@ class UserContextService extends BaseUserContextService
     /**
      * @return Role|null
      */
-    public function getSelectedRoleDirecteurThese()
+    public function getSelectedRoleDirecteurThese(): ?Role
     {
         return $this->_getSelectedRoleForCode(Role::CODE_DIRECTEUR_THESE);
+    }
+
+    /**
+     * @return Role|null
+     */
+    public function getSelectedRoleCodirecteurThese(): ?Role
+    {
+        return $this->_getSelectedRoleForCode(Role::CODE_CODIRECTEUR_THESE);
     }
 
     /**
