@@ -24,6 +24,7 @@ class UserWrapperFactory
      *
      * @param StorageChainEvent $event
      * @return UserWrapper|null
+     * @throws \Exception
      */
     public function createInstanceFromStorageChainEvent(StorageChainEvent $event)
     {
@@ -55,6 +56,7 @@ class UserWrapperFactory
      *
      * @param array $identity ['ldap' => People|null, 'db' => Utilisateur|null, 'shib' => ShibUser|null]
      * @return UserWrapper
+     * @throws \Exception
      */
     public function createInstanceFromIdentity(array $identity)
     {
@@ -76,8 +78,9 @@ class UserWrapperFactory
      *
      * @param UserAuthenticatedEvent $event
      * @return UserWrapper
+     * @throws \Exception
      */
-    public function createInstanceFromUserAuthenticatedEvent(UserAuthenticatedEvent $event)
+    public function createInstanceFromUserAuthenticatedEvent(UserAuthenticatedEvent $event): UserWrapper
     {
         $inst = new UserWrapper();
 
