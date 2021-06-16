@@ -88,7 +88,13 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
         $identity = $this->authenticationService->getIdentity();
 
         $userWrapperFactory = new UserWrapperFactory();
-        $this->userWrapper = $userWrapperFactory->createInstanceFromIdentity($identity);
+        try {
+            $this->userWrapper = $userWrapperFactory->createInstanceFromIdentity($identity);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            error_log($e->getTraceAsString());
+            return [];
+        }
         if ($this->userWrapper === null) {
             return [];
         }
