@@ -1,17 +1,17 @@
 <?php
 
-namespace Application\Assertion\RapportActivite;
+namespace Application\Assertion\Rapport;
 
 use Application\Assertion\Exception\FailedAssertionException;
 use Application\Assertion\Interfaces\EntityAssertionInterface;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\Entity\Db\Rapport;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
-use Application\Entity\Db\TypeValidation;
 use Application\Provider\Privilege\RapportPrivileges;
 use Application\Service\UserContextServiceAwareTrait;
 
-class RapportActiviteEntityAssertion implements EntityAssertionInterface
+class RapportEntityAssertion implements EntityAssertionInterface
 {
     use UserContextServiceAwareTrait;
     use ThrowsFailedAssertionExceptionTrait;
@@ -45,6 +45,16 @@ class RapportActiviteEntityAssertion implements EntityAssertionInterface
             case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
             case RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT:
             case RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN:
+
+            case RapportPrivileges::RAPPORT_CSI_TELEVERSER_TOUT:
+            case RapportPrivileges::RAPPORT_CSI_TELEVERSER_SIEN:
+            case RapportPrivileges::RAPPORT_CSI_SUPPRIMER_TOUT:
+            case RapportPrivileges::RAPPORT_CSI_SUPPRIMER_SIEN:
+
+            case RapportPrivileges::RAPPORT_MIPARCOURS_TELEVERSER_TOUT:
+            case RapportPrivileges::RAPPORT_MIPARCOURS_TELEVERSER_SIEN:
+            case RapportPrivileges::RAPPORT_MIPARCOURS_SUPPRIMER_TOUT:
+            case RapportPrivileges::RAPPORT_MIPARCOURS_SUPPRIMER_SIEN:
                 $this->assertEtatThese();
         }
 
@@ -56,6 +66,14 @@ class RapportActiviteEntityAssertion implements EntityAssertionInterface
             case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
             case RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT:
             case RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN:
+
+            case RapportPrivileges::RAPPORT_CSI_TELEVERSER_SIEN:
+            case RapportPrivileges::RAPPORT_CSI_SUPPRIMER_SIEN:
+            case RapportPrivileges::RAPPORT_CSI_TELECHARGER_SIEN:
+
+            case RapportPrivileges::RAPPORT_MIPARCOURS_TELEVERSER_SIEN:
+            case RapportPrivileges::RAPPORT_MIPARCOURS_SUPPRIMER_SIEN:
+            case RapportPrivileges::RAPPORT_MIPARCOURS_TELECHARGER_SIEN:
                 $this->assertAppartenanceThese();
         }
 
@@ -64,6 +82,12 @@ class RapportActiviteEntityAssertion implements EntityAssertionInterface
             case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN:
             case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT:
             case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
+
+            case RapportPrivileges::RAPPORT_CSI_SUPPRIMER_TOUT:
+            case RapportPrivileges::RAPPORT_CSI_SUPPRIMER_SIEN:
+
+            case RapportPrivileges::RAPPORT_MIPARCOURS_SUPPRIMER_TOUT:
+            case RapportPrivileges::RAPPORT_MIPARCOURS_SUPPRIMER_SIEN:
                 $this->assertAucuneValidation();
         }
 
@@ -84,6 +108,14 @@ class RapportActiviteEntityAssertion implements EntityAssertionInterface
                 "La thèse n'est pas rattachée à l'ED " . $roleEcoleDoctorale->getStructure()->getCode()
             );
         }
+        if ($this->userContextService->getSelectedRoleDirecteurThese()) {
+            $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
+            $this->assertTrue(
+                $this->rapport->getThese()->hasActeurWithRole($individuUtilisateur, Role::CODE_DIRECTEUR_THESE) ||
+                $this->rapport->getThese()->hasActeurWithRole($individuUtilisateur, Role::CODE_CODIRECTEUR_THESE),
+                "La thèse n'est pas dirigée par " . $individuUtilisateur
+            );
+        }
     }
 
     private function assertEtatThese()
@@ -97,7 +129,7 @@ class RapportActiviteEntityAssertion implements EntityAssertionInterface
     private function assertAucuneValidation()
     {
         $this->assertTrue(
-            $this->rapport->getRapportValidationOfType(TypeValidation::CODE_RAPPORT_ACTIVITE) === null,
+            $this->rapport->getRapportValidation() === null,
             "Le rapport ne doit pas avoir été validé"
         );
     }
