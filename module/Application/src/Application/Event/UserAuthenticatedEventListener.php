@@ -28,7 +28,13 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
         parent::onUserAuthenticatedPrePersist($e);
 
         $userWrapperFactory = new UserWrapperFactory();
-        $userWrapper = $userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
+        try {
+            $userWrapper = $userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            error_log($e->getTraceAsString());
+            return;
+        }
 
         /** @var Utilisateur $utilisateur */
         $utilisateur = $e->getDbUser();
@@ -47,7 +53,13 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
         parent::onUserAuthenticatedPostPersist($e);
 
         $userWrapperFactory = new UserWrapperFactory();
-        $userWrapper = $userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
+        try {
+            $userWrapper = $userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            error_log($e->getTraceAsString());
+            return;
+        }
 
         if ($userWrapper->getIndividu() !== null) {
             $individu = $userWrapper->getIndividu();
@@ -67,14 +79,16 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
      * @param UserWrapper $userWrapper
      * @return Individu
      */
-    private function processIndividu(UserWrapper $userWrapper)
+    private function processIndividu(UserWrapper $userWrapper): Individu
     {
         $createIndividu = false;
         $etablissementInconnu = $this->etablissementService->getRepository()->fetchEtablissementInconnu();
 
         // recherche de l'établissement de connexion l'utilisateur : à partir du domaine de l'EPPN, ex: 'unicaen.fr'
-        $domaineEtab = $userWrapper->getDomainFromEppn();
-        $etablissement = $this->etablissementService->getRepository()->findOneByDomaine($domaineEtab);
+        $etablissement = null;
+        if ($domaineEtab = $userWrapper->getDomainFromEppn()) {
+            $etablissement = $this->etablissementService->getRepository()->findOneByDomaine($domaineEtab);
+        }
 
         if ($etablissement === null) {
             // si aucun établissement ne correspond au domaine, on essaie l'établissement "inconnu"...
