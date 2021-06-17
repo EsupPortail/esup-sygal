@@ -5,11 +5,22 @@ insert into CATEGORIE_PRIVILEGE(ID, CODE, LIBELLE, ORDRE) values (666, 'utilisat
 
 
 --
--- Nouveau privilège.
+-- Nouveaux privilèges.
 --
 insert into PRIVILEGE(ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
-  select privilege_id_seq.nextval, cp.id, 'creation', 'Création d''école doctorale', 105
-  from CATEGORIE_PRIVILEGE cp where cp.CODE = 'ecole-doctorale';
+with d(ordre, code, lib) as (
+    select 10, 'lister', 'Lister les jetons utilisateur' from dual union
+    select 20, 'consulter', 'Consulter un jeton utilisateur' from dual union
+    select 30, 'creer', 'Créer un jeton utilisateur' from dual union
+    select 40, 'modifier', 'Modifier un jeton utilisateur' from dual union
+    select 50, 'prolonger', 'Prolonger un jeton utilisateur' from dual union
+    select 60, 'supprimer', 'SUpprimer un jeton utilisateur' from dual union
+    select 70, 'tester', 'Tester unejeton utilisateur' from dual
+)
+select privilege_id_seq.nextval, cp.id, d.code, d.lib, d.ordre
+from d
+join CATEGORIE_PRIVILEGE cp on cp.CODE = 'unicaen-auth-token'
+;
 
 --
 -- Accord de privilèges à des profils.

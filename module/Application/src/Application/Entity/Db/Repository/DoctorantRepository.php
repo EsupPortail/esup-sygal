@@ -41,6 +41,7 @@ class DoctorantRepository extends DefaultEntityRepository
         $qb
             ->addSelect('i')
             ->join('d.individu', 'i', Join::WITH, 'i = :individu')
+            ->andWhereNotHistorise()
             ->setParameter('individu', $individu);
 
         return $qb->getQuery()->getOneOrNullResult();

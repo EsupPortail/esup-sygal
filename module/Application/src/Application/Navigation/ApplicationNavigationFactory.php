@@ -60,13 +60,20 @@ class ApplicationNavigationFactory extends NavigationFactory
     protected function handleParamsInjection(array &$page, RouteMatch $routeMatch = null)
     {
         parent::handleParamsInjection($page, $routeMatch);
+        if (($page['visible'] ?? true) === false) {
+            return $this;
+        }
 
         /** @var \Application\RouteMatch $routeMatch */
 
         if (in_array('these', (array)$page['paramsInject'])) {
-            $these = $routeMatch->getThese();
-            if ($these !== null) {
-                $this->injectThese($page, $these);
+            if ($routeMatch === null) {
+                $page['visible'] = false;
+            } else {
+                $these = $routeMatch->getThese();
+                if ($these !== null) {
+                    $this->injectThese($page, $these);
+                }
             }
         }
 
