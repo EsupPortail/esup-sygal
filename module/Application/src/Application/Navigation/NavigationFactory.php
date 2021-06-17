@@ -86,7 +86,7 @@ class NavigationFactory extends DefaultNavigationFactory
         }
 
         // injections éventuelles de paramètres de page à partir du RouteMatch
-        if ($this->canHandleParamsInjection($page, $routeMatch)) {
+        if ($this->canHandleParamsInjection($page)) {
             $this->handleParamsInjection($page, $routeMatch);
         }
     }
@@ -170,12 +170,11 @@ class NavigationFactory extends DefaultNavigationFactory
 
     /**
      * @param array $page
-     * @param RouteMatch|null $routeMatch
      * @return bool
      */
-    protected function canHandleParamsInjection(array $page, RouteMatch $routeMatch = null)
+    protected function canHandleParamsInjection(array $page)
     {
-        return $routeMatch && isset($page['withtarget']) && isset($page['paramsInject']);
+        return isset($page['withtarget']) && isset($page['paramsInject']);
     }
 
     /**
@@ -200,7 +199,7 @@ class NavigationFactory extends DefaultNavigationFactory
     protected function handleParamsInjection(array &$page, RouteMatch $routeMatch = null)
     {
         foreach ((array) $page['paramsInject'] as $param) {
-            if (($id = $routeMatch->getParam($param))) {
+            if ($routeMatch && ($id = $routeMatch->getParam($param))) {
                 $page['params'][$param] = $id;
             }
             else {

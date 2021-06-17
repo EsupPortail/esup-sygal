@@ -147,6 +147,14 @@ class PdcData
     private $ecoleDoctorale;
 
     /**
+     * PdcData constructor.
+     */
+    public function __construct()
+    {
+        $this->acteursEnCouverture = [];
+    }
+
+    /**
      * @return string
      */
     public function getUniteRecherche()
