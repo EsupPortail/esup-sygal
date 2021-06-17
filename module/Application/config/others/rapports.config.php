@@ -2,7 +2,7 @@
 
 namespace Application;
 
-use Application\Assertion\RapportActivite\RapportActiviteAssertion;
+use Application\Assertion\Rapport\RapportAssertion;
 use Application\Controller\Factory\Rapport\RapportActiviteControllerFactory;
 use Application\Controller\Factory\Rapport\RapportActiviteRechercheControllerFactory;
 use Application\Controller\Factory\Rapport\RapportCsiControllerFactory;
@@ -81,7 +81,7 @@ return [
                             RapportPrivileges::RAPPORT_MIPARCOURS_TELECHARGER_SIEN,
                         ],
                         'resources'  => ['Rapport'],
-                        'assertion' => 'Assertion\\RapportActivite', /** @see RapportActiviteAssertion */
+                        'assertion' => 'Assertion\\Rapport', /** @see RapportAssertion */
                     ],
                 ],
             ],
@@ -98,7 +98,7 @@ return [
                         RapportPrivileges::RAPPORT_ACTIVITE_LISTER_TOUT,
                         RapportPrivileges::RAPPORT_ACTIVITE_LISTER_SIEN,
                     ],
-                    'assertion' => 'Assertion\\RapportActivite',
+                    'assertion' => 'Assertion\\Rapport',
                 ],
                 [
                     'controller' => RapportActiviteController::class,
@@ -109,7 +109,7 @@ return [
                         RapportPrivileges::RAPPORT_ACTIVITE_TELECHARGER_TOUT,
                         RapportPrivileges::RAPPORT_ACTIVITE_TELECHARGER_SIEN,
                     ],
-                    'assertion' => 'Assertion\\RapportActivite',
+                    'assertion' => 'Assertion\\Rapport',
                 ],
                 [
                     'controller' => RapportActiviteController::class,
@@ -120,7 +120,7 @@ return [
                         RapportPrivileges::RAPPORT_ACTIVITE_TELEVERSER_TOUT,
                         RapportPrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN,
                     ],
-                    'assertion' => 'Assertion\\RapportActivite',
+                    'assertion' => 'Assertion\\Rapport',
                 ],
                 [
                     'controller' => RapportActiviteController::class,
@@ -131,7 +131,7 @@ return [
                         RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT,
                         RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN,
                     ],
-                    'assertion' => 'Assertion\\RapportActivite',
+                    'assertion' => 'Assertion\\Rapport',
                 ],
                 [
                     'controller' => RapportActiviteRechercheController::class,
@@ -143,7 +143,7 @@ return [
                         RapportPrivileges::RAPPORT_ACTIVITE_RECHERCHER_TOUT,
                         RapportPrivileges::RAPPORT_ACTIVITE_RECHERCHER_SIEN,
                     ],
-                    'assertion' => 'Assertion\\RapportActivite',
+                    'assertion' => 'Assertion\\Rapport',
                 ],
                 [
                     'controller' => RapportActiviteRechercheController::class,
@@ -151,7 +151,7 @@ return [
                         'telecharger-zip',
                     ],
                     'privileges' => RapportPrivileges::RAPPORT_ACTIVITE_TELECHARGER_ZIP,
-                    'assertion' => 'Assertion\\RapportActivite',
+                    'assertion' => 'Assertion\\Rapport',
                 ],
                 [
                     'controller' => RapportValidationController::class,
@@ -162,7 +162,7 @@ return [
                         RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT,
                         RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN,
                     ],
-                    'assertion' => 'Assertion\\RapportActivite',
+                    'assertion' => 'Assertion\\Rapport',
                 ],
                 [
                     'controller' => RapportValidationController::class,
@@ -173,7 +173,7 @@ return [
                         RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT,
                         RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN,
                     ],
-                    'assertion' => 'Assertion\\RapportActivite',
+                    'assertion' => 'Assertion\\Rapport',
                 ],
 
                 ////////////////////////////////////////// Rapports CSI //////////////////////////////////////////
@@ -186,7 +186,7 @@ return [
                         RapportPrivileges::RAPPORT_CSI_LISTER_TOUT,
                         RapportPrivileges::RAPPORT_CSI_LISTER_SIEN,
                     ],
-                    'assertion' => 'Assertion\\RapportActivite',
+                    'assertion' => 'Assertion\\Rapport',
                 ],
                 [
                     'controller' => RapportCsiController::class,
@@ -197,7 +197,7 @@ return [
                         RapportPrivileges::RAPPORT_CSI_TELECHARGER_TOUT,
                         RapportPrivileges::RAPPORT_CSI_TELECHARGER_SIEN,
                     ],
-                    'assertion' => 'Assertion\\RapportActivite',
+                    'assertion' => 'Assertion\\Rapport',
                 ],
                 [
                     'controller' => RapportCsiController::class,
@@ -208,7 +208,7 @@ return [
                         RapportPrivileges::RAPPORT_CSI_TELEVERSER_TOUT,
                         RapportPrivileges::RAPPORT_CSI_TELEVERSER_SIEN,
                     ],
-                    'assertion' => 'Assertion\\RapportActivite',
+                    'assertion' => 'Assertion\\Rapport',
                 ],
                 [
                     'controller' => RapportCsiController::class,
@@ -219,7 +219,7 @@ return [
                         RapportPrivileges::RAPPORT_CSI_SUPPRIMER_TOUT,
                         RapportPrivileges::RAPPORT_CSI_SUPPRIMER_SIEN,
                     ],
-                    'assertion' => 'Assertion\\RapportActivite',
+                    'assertion' => 'Assertion\\Rapport',
                 ],
                 [
                     'controller' => RapportCsiRechercheController::class,
@@ -250,7 +250,7 @@ return [
                         RapportPrivileges::RAPPORT_MIPARCOURS_LISTER_TOUT,
                         RapportPrivileges::RAPPORT_MIPARCOURS_LISTER_SIEN,
                     ],
-                    'assertion' => 'Assertion\\RapportActivite',
+                    'assertion' => 'Assertion\\Rapport',
                 ],
                 [
                     'controller' => RapportMiparcoursController::class,
@@ -261,7 +261,7 @@ return [
                         RapportPrivileges::RAPPORT_MIPARCOURS_TELECHARGER_TOUT,
                         RapportPrivileges::RAPPORT_MIPARCOURS_TELECHARGER_SIEN,
                     ],
-                    'assertion' => 'Assertion\\RapportActivite',
+                    'assertion' => 'Assertion\\Rapport',
                 ],
                 [
                     'controller' => RapportMiparcoursController::class,
@@ -272,7 +272,7 @@ return [
                         RapportPrivileges::RAPPORT_MIPARCOURS_TELEVERSER_TOUT,
                         RapportPrivileges::RAPPORT_MIPARCOURS_TELEVERSER_SIEN,
                     ],
-                    'assertion' => 'Assertion\\RapportActivite',
+                    'assertion' => 'Assertion\\Rapport',
                 ],
                 [
                     'controller' => RapportMiparcoursController::class,
@@ -283,7 +283,7 @@ return [
                         RapportPrivileges::RAPPORT_MIPARCOURS_SUPPRIMER_TOUT,
                         RapportPrivileges::RAPPORT_MIPARCOURS_SUPPRIMER_SIEN,
                     ],
-                    'assertion' => 'Assertion\\RapportActivite',
+                    'assertion' => 'Assertion\\Rapport',
                 ],
                 [
                     'controller' => RapportMiparcoursRechercheController::class,
@@ -676,6 +676,7 @@ return [
                                     RapportPrivileges::RAPPORT_ACTIVITE_RECHERCHER_TOUT,
                                     RapportPrivileges::RAPPORT_ACTIVITE_RECHERCHER_SIEN,
                                 ],
+                                'visible' => 'Assertion\\Rapport',
                             ],
                             'rapport-csi' => [
                                 'label'    => "Rapports CSI",
@@ -686,6 +687,7 @@ return [
                                     RapportPrivileges::RAPPORT_CSI_RECHERCHER_TOUT,
                                     RapportPrivileges::RAPPORT_CSI_RECHERCHER_SIEN,
                                 ],
+                                'visible' => 'Assertion\\Rapport',
                             ],
                             'rapport-miparcours' => [
                                 'label'    => "Rapports mi-parcours",
@@ -696,6 +698,7 @@ return [
                                     RapportPrivileges::RAPPORT_MIPARCOURS_RECHERCHER_TOUT,
                                     RapportPrivileges::RAPPORT_MIPARCOURS_RECHERCHER_SIEN,
                                 ],
+                                'visible' => 'Assertion\\Rapport',
                             ],
                             '----------' => [
                                 'label' => null,

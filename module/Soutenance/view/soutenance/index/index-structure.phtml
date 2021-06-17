@@ -7,9 +7,11 @@
  * @var Etablissement[] $etablissements
  * @var EcoleDoctorale[] $ecoles
  * @var UniteRecherche[] $unites
+ * @var Etat[] $etats
  * @var integer $etablissementId
  * @var integer $ecoleDoctoraleId
  * @var integer $uniteRechercheId
+ * @var integer $etatId
  */
 
 use Application\Entity\Db\EcoleDoctorale;
@@ -18,6 +20,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\UniteRecherche;
 use Application\Provider\Privilege\ThesePrivileges;
+use Soutenance\Entity\Etat;
 use Soutenance\Entity\Proposition;
 
 $canVoirThese = $this->isAllowed(ThesePrivileges::getResourceId(ThesePrivileges::THESE_CONSULTATION_FICHE));
@@ -32,8 +35,8 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
 </h1>
 
 <?php echo $this->partial('partial/filtre-proposition',
-    ['etablissements' => $etablissements, 'ecoles' => $ecoles, 'unites' => $unites,
-     'etablissementId' => $etablissementId, 'ecoleDoctoraleId' => $ecoleDoctoraleId, 'uniteRechercheId' => $uniteRechercheId ]); ?>
+    ['etablissements' => $etablissements, 'ecoles' => $ecoles, 'unites' => $unites, 'etats' => $etats,
+     'etablissementId' => $etablissementId, 'ecoleDoctoraleId' => $ecoleDoctoraleId, 'uniteRechercheId' => $uniteRechercheId, 'etatId' => $etatId ]); ?>
 
 <table class="table table-condensed">
     <thead>
