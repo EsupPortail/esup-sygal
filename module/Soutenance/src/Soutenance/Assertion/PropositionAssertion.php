@@ -111,12 +111,13 @@ class PropositionAssertion implements  AssertionInterface {
                     case Role::CODE_ADMIN_TECH :
                         return true;
                     case Role::CODE_BDD :
-                        $validations_ACTEUR = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PROPOSITION_SOUTENANCE, $these);
-                        $validations_UNITE = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
-                        $nbDirs = count($these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE));
-                        $nbCoDirs = count($these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE));
-                        $nbActeur = 1 + $nbDirs + $nbCoDirs;
-                        return !$validations_UNITE && count($validations_ACTEUR) === $nbActeur && $structure === $theseEtablissementStructure;
+                        return ($these->getEtablissement()->getStructure() === $identityRole->getStructure());
+//                        $validations_ACTEUR = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PROPOSITION_SOUTENANCE, $these);
+//                        $validations_UNITE = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
+//                        $nbDirs = count($these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE));
+//                        $nbCoDirs = count($these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE));
+//                        $nbActeur = 1 + $nbDirs + $nbCoDirs;
+//                        return !$validations_UNITE && count($validations_ACTEUR) === $nbActeur && $structure === $theseEtablissementStructure;
                     default:
                         return false;
                 }
