@@ -13,7 +13,7 @@ Journal des modifications
 
 2.2.0
 -----
-MISSING
+- Modification de la partie rendu
 
 2.1.9
 -----
