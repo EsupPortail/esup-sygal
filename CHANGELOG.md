@@ -13,7 +13,13 @@ Journal des modifications
 
 2.2.0
 -----
-MISSING
+- Refonte des menus (menu principal déroulant notamment)
+- Validation des rapports d'activité.
+- [FIX] Désormais impossible d'ursurper un individu dont on ne trouve pas l'utilisateur (risque d'erreur de doublon oracle)  
+- [FIX] AJout du 'Dépôt du rapport'
+- [FIX] Correction du filtre Origine de financement ; dédoublonnage des origines en 4 exemplaires (1 par établissement).
+- [FIX] Correction erreur de variable.
+- [FIX] Suppression de 'Et ensuite' de la Fiche thèse car elle a été sortie du menu Dépôt Bertrand GAUTHIER 04/06/2021 14:55
 
 2.1.9
 -----
