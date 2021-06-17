@@ -33,6 +33,7 @@ use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
+use UnicaenAuthToken\Service\TokenServiceAwareTrait;
 use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
@@ -56,6 +57,7 @@ class PresoutenanceController extends AbstractController
     use EngagementImpartialiteServiceAwareTrait;
     use FichierServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
+    use TokenServiceAwareTrait;
 
     use DateRenduRapportFormAwareTrait;
     use AdresseSoutenanceFormAwareTrait;
@@ -209,8 +211,17 @@ class PresoutenanceController extends AbstractController
                 $user = $this->utilisateurService->createFromIndividu($individu, $this->generateUsername($membre), 'none');
                 $user->setEmail($membre->getEmail());
                 $this->userService->updateUserPasswordResetToken($user);
-                $url = $this->url()->fromRoute('utilisateur/init-compte', ['token' => $user->getPasswordResetToken()], ['force_canonical' => true], true);
-                $this->getNotifierSoutenanceService()->triggerInitialisationCompte($these, $user, $url);
+
+                $token = $this->tokenService->createUserToken($proposition->getDate());
+                $token->setUser($user);
+                $this->tokenService->saveUserToken($token);
+
+                $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
+                $url = $this->url()->fromRoute('zfcuser/login', ['type'=> 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $acteur->getRole()->getRoleId()], 'force_canonical' => true], true );
+                $this->getNotifierSoutenanceService()->triggerConnexionRapporteur($these, $url);
+
+//                $url = $this->url()->fromRoute('utilisateur/init-compte', ['token' => $user->getPasswordResetToken()], ['force_canonical' => true], true);
+//                $this->getNotifierSoutenanceService()->triggerInitialisationCompte($these, $user, $url);
             }
         }
 
