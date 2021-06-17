@@ -72,6 +72,17 @@ class ActeurService extends BaseService
      * @param Acteur[] $acteurs
      * @return Acteur[]
      */
+    public function filterActeursRapporteurJury(array $acteurs): array
+    {
+        return array_filter($acteurs, function(Acteur $a) {
+            return $a->getRole()->getCode() === Role::CODE_RAPPORTEUR_JURY;
+        });
+    }
+
+    /**
+     * @param Acteur[] $acteurs
+     * @return Acteur[]
+     */
     public function filterActeursDirecteurThese(array $acteurs): array
     {
         return array_filter($acteurs, function(Acteur $a) {

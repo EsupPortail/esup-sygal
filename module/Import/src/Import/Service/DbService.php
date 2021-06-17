@@ -139,7 +139,7 @@ class DbService
         $this->loadEntityClassMetadata();
 
         $filters = $this->prepareFiltersForTableUpdate($filters);
-        $filters['etablissement_id'] = $this->etablissement->getCode();
+        $filters['etablissement_id'] = $this->etablissement->getStructure()->getCode();
 
         $query = $this->sqlGenerator->generateSQLQueryForClearingExistingData($this->tableName, $filters);
 
@@ -250,7 +250,7 @@ class DbService
 
         $message = sprintf("Interrogation du service '%s' de l'établissement '%s', en %s seconde(s).",
             $serviceName,
-            $this->etablissement->getCode(),
+            $this->etablissement->getStructure()->getCode(),
             $duration
         );
 
@@ -271,7 +271,7 @@ class DbService
         try {
             $connection->executeQuery($sql, [
                 'message' => $message,
-                'etab' => $this->etablissement->getCode(),
+                'etab' => $this->etablissement->getStructure()->getCode(),
                 'status' => $status,
                 'route' => $route,
                 'service' => $serviceName,

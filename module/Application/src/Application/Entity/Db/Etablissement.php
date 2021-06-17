@@ -28,6 +28,11 @@ class Etablissement
     protected $roles;
 
     /**
+     * @var string
+     */
+    protected $code;
+
+    /**
      * @var Structure
      */
     protected $structure;
@@ -83,12 +88,23 @@ class Etablissement
     }
 
     /**
+     * Retourne le code de cet établissement, ex: 0761904GE' pour l'Université de Rouen.
+     *
      * @return string
-     * @see StructureConcreteInterface
      */
-    public function getCode()
+    public function getCode(): string
     {
-        return $this->getStructure()->getCode();
+        return $this->code;
+    }
+
+    /**
+     * @param string $code
+     * @return self
+     */
+    public function setCode(string $code): self
+    {
+        $this->code = $code;
+        return $this;
     }
 
     /**
@@ -311,7 +327,7 @@ class Etablissement
      */
     public function estToutEtablissementConfondu()
     {
-        return $this->getCode() === self::CODE_TOUT_ETABLISSEMENT_CONFONDU;
+        return $this->getStructure()->getCode() === self::CODE_TOUT_ETABLISSEMENT_CONFONDU;
     }
 
     /**

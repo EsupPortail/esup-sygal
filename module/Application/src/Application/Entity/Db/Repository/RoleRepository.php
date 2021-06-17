@@ -131,7 +131,7 @@ class RoleRepository extends DefaultEntityRepository
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException('Plusieurs Role partagent le même code ['.$code.'] et le même établissement ['.$etablissement->getCode().']');
+            throw new RuntimeException('Plusieurs Role partagent le même code ['.$code.'] et le même établissement ['.$etablissement->getStructure()->getCode().']');
         }
         return $result;
     }
