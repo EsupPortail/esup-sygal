@@ -35,7 +35,7 @@ if [ -z "$SERVICE" ]; then
   # tous les services
   set -x
   /usr/bin/php ${APP_DIR}/public/index.php import-all --etablissement=${ETAB} --synchronize=0 --breakOnServiceNotFound=0 && \
-  /usr/bin/php ${APP_DIR}/public/index.php run synchro --all
+  /usr/bin/php ${APP_DIR}/public/index.php run synchro
 else
   # seul service spécifié
   set -x
