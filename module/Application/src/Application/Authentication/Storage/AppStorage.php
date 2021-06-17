@@ -48,7 +48,13 @@ class AppStorage implements ChainableStorage
     public function read(ChainEvent $e)
     {
         $userWrapperFactory = new UserWrapperFactory();
-        $this->userWrapper = $userWrapperFactory->createInstanceFromStorageChainEvent($e);
+        try {
+            $this->userWrapper = $userWrapperFactory->createInstanceFromStorageChainEvent($e);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            error_log($e->getTraceAsString());
+            return;
+        }
         if ($this->userWrapper === null) {
             return;
         }

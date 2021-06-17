@@ -1,6 +1,20 @@
 Journal des modifications
 =========================
 
+2.2.1
+-----
+- Ajout de la possibilité de modifier une proposition de soutenance pour gestion (sans retrait de validation)
+- Ajout d'un filtrage des soutenances par états
+- [FIX] Vilain plantage des aides de vues de navigation lorsque la route demandée n'existe pas.  
+- [FIX] Ligne de commande de lancement de toutes les synchros.
+- [FIX] Correction du texte de la convocation s'attendant à avoir un individu (pas toujours le cas car le lien n'est pas fait systèmatiquement).
+- [FIX] La recherche du doctorant lié à un individu doit écarter les individus historisés.
+- [FIX] Warning lors de la génération de la PDC à cause d'un tableau non initialisé"
+
+2.2.0
+-----
+MISSING
+
 2.1.9
 -----
 - Ajout de demande de justificatif pour certaines qualités pour les soutenances (par exemple : membre étranger)

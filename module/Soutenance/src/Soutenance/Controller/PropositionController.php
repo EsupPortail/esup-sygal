@@ -192,7 +192,8 @@ class PropositionController extends AbstractController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $this->updateAndUnvalidate($request, $form, $proposition);
+            $this->update($request, $form, $proposition);
+            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($proposition);
         }
 
         $vm = new ViewModel();
@@ -268,7 +269,8 @@ class PropositionController extends AbstractController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $this->updateAndUnvalidate($request, $form, $proposition);
+            $this->update($request, $form, $proposition);
+            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($proposition);
         }
 
         $vm = new ViewModel();
@@ -291,7 +293,8 @@ class PropositionController extends AbstractController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $this->updateAndUnvalidate($request, $form, $proposition);
+            $this->update($request, $form, $proposition);
+            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($proposition);
         }
 
         $vm = new ViewModel();
@@ -314,7 +317,8 @@ class PropositionController extends AbstractController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $this->updateAndUnvalidate($request, $form, $proposition);
+            $this->update($request, $form, $proposition);
+            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($proposition);
         }
 
         $vm = new ViewModel();
@@ -337,7 +341,8 @@ class PropositionController extends AbstractController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $this->updateAndUnvalidate($request, $form, $proposition);
+            $this->update($request, $form, $proposition);
+            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($proposition);
         }
 
         $vm = new ViewModel();
@@ -502,13 +507,12 @@ class PropositionController extends AbstractController
      * @param Proposition $proposition
      * @return Proposition
      */
-    private function updateAndUnvalidate(Request $request, Form $form, Proposition $proposition)
+    private function update(Request $request, Form $form, Proposition $proposition)
     {
         $data = $request->getPost();
         $form->setData($data);
         if ($form->isValid()) {
             $this->getPropositionService()->update($proposition);
-            $this->getPropositionService()->annulerValidations($proposition);
         }
         return $proposition;
     }

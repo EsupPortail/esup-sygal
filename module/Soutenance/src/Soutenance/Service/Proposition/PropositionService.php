@@ -589,6 +589,20 @@ class PropositionService {
     /** PROPOSTITION ETAT  ********************************************************************************************/
 
     /**
+     * @return Etat[]
+     */
+    public function getPropositionEtats() : array
+    {
+        $qb = $this->getEntityManager()->getRepository(Etat::class)->createQueryBuilder('etat')
+            ->orderBy('etat.id')
+        ;
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+
+    }
+
+    /**
      * @param string $code
      * @return Etat
      */
