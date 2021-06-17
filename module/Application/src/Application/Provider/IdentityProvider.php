@@ -133,10 +133,11 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
         $acteursDirecteurThese = $this->acteurService->filterActeursDirecteurThese($acteurs);
         $acteursCoDirecteurThese = $this->acteurService->filterActeursCoDirecteurThese($acteurs);
         $acteursPresidentJury = $this->acteurService->filterActeursPresidentJury($acteurs);
+        $acteursRapporteurJury = $this->acteurService->filterActeursRapporteurJury($acteurs);
 
         return array_map(
             function(Acteur $a) { return $a->getRole(); },
-            array_merge($acteursDirecteurThese, $acteursCoDirecteurThese, $acteursPresidentJury)
+            array_merge($acteursDirecteurThese, $acteursCoDirecteurThese, $acteursPresidentJury, $acteursRapporteurJury)
         );
     }
 

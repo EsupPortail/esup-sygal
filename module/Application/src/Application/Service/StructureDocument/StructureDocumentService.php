@@ -229,10 +229,16 @@ class StructureDocumentService {
         return $contenus;
     }
 
-    public function getContenu(Structure $structure, string $nature_code) {
+    /**
+     * @param Structure $structure
+     * @param string $nature_code
+     * @param Etablissement|null $etablissement
+     * @return string|null
+     */
+    public function getContenu(Structure $structure, string $nature_code, ?Etablissement $etablissement = null) {
         $documents = $this->getStructuresDocumentsByStructure($structure);
         foreach ($documents as $document) {
-            if ($document->getNature()->getCode() === $nature_code) return $this->fichierService->fetchContenuFichier($document->getFichier());
+            if ($document->getNature()->getCode() === $nature_code AND $document->getEtablissement() === $etablissement) return $this->fichierService->fetchContenuFichier($document->getFichier());
         }
         return null;
     }
