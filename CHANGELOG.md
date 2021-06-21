@@ -1,8 +1,9 @@
 Journal des modifications
 =========================
+
 2.2.2
 -----
-- Ajout de l'utilisation du module auth-token pour la gestion des rapporteurs 
+- Authentification simplifiée des rapporteurs à l'aide d'un token.
 
 2.2.1
 -----
