@@ -1,0 +1,134 @@
+<?php
+
+namespace Application;
+
+use Application\Controller\Rapport\RapportRechercheController;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\TypeRapport;
+use Application\Entity\Db\TypeValidation;
+use Application\Filter\ActeursFormatter;
+use UnicaenAuth\Provider\Privilege\Privileges;
+use Zend\Paginator\Paginator as ZendPaginator;
+
+/**
+ * @var string $title
+ * @var ZendPaginator $paginator
+ * @var string $text
+ *
+ * @var TypeRapport $typeRapport
+ * @var TypeValidation $typeValidation
+ * @var string $routeName
+ * @var string $privilege_LISTER_TOUT
+ * @var string $privilege_LISTER_SIEN
+ * @var string $privilege_TELEVERSER_TOUT
+ * @var string $privilege_TELEVERSER_SIEN
+ * @var string $privilege_SUPPRIMER_TOUT
+ * @var string $privilege_SUPPRIMER_SIEN
+ * @var string $privilege_RECHERCHER_TOUT
+ * @var string $privilege_RECHERCHER_SIEN
+ * @var string $privilege_TELECHARGER_TOUT
+ * @var string $privilege_TELECHARGER_SIEN
+ * @var string $privilege_TELECHARGER_ZIP
+ * @var string $privilege_VALIDER_TOUT
+ * @var string $privilege_VALIDER_SIEN
+ * @var string $privilege_DEVALIDER_TOUT
+ * @var string $privilege_DEVALIDER_SIEN
+ *
+ * @var string $returnUrl
+ *
+ * @var bool $displayEtablissement
+ * @var bool $displayType
+ * @var bool $displayDoctorant
+ * @var bool $displayDirecteurThese
+ * @var bool $displayEcoleDoctorale
+ * @var bool $displayUniteRecherche
+ * @var bool $displayValidation
+ *
+ * @see RapportRechercheController::indexAction()
+ */
+
+$canDlZip = $this->isAllowed(Privileges::getResourceId($privilege_TELECHARGER_ZIP));
+$queryParams = $this->queryParams();
+
+$acteursFormatterDirecteurs = new ActeursFormatter();
+$acteursFormatterDirecteurs->asSeparated()
+    ->paramDisplay(['role' => false, 'complement' => false, "qualite" => false, "etablissement" => false,])
+    ->paramFilter((['role' => Role::CODE_DIRECTEUR_THESE]));
+$acteursFormatterCodirecteurs = new ActeursFormatter();
+$acteursFormatterCodirecteurs->asSeparated()
+    ->paramDisplay(['role' => false, 'complement' => false, "qualite" => false, "etablissement" => false,])
+    ->paramFilter((['role' => Role::CODE_CODIRECTEUR_THESE]));
+
+$this->headTitle($this->translate($title));
+?>
+
+<h1 class="page-header"><?php echo $title ?></h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<!-- Formulaire de filtrage -->
+<div class="pull-left">
+    <?php $loadFiltersUrl = $this->url($routeName . '/recherche/filters', [], ['query' => $this->queryParams()], true); ?>
+    <div id="filters" data-url="<?php echo $loadFiltersUrl ?>" style="min-height: 160px">
+        <!-- Contenu chargé en AJAX -->
+    </div>
+</div>
+<div class="clearfix"></div>
+
+
+<?php if (count($paginator) > 0): ?>
+
+    <p>
+        <?php
+        echo $paginator->getTotalItemCount();
+        echo " ";
+        echo $this->translate("rapport(s) trouvé(s).");
+        ?>
+    </p>
+
+    <?php echo $this->partial('application/rapport/partial/rapports-table', [
+        'rapports' => $paginator,
+        'routeName' => $routeName,
+        'typeValidation' => $typeValidation,
+        'privilege_TELEVERSER_TOUT' => $privilege_TELEVERSER_TOUT,
+        'privilege_TELEVERSER_SIEN' => $privilege_TELEVERSER_SIEN,
+        'privilege_SUPPRIMER_TOUT' => $privilege_SUPPRIMER_TOUT,
+        'privilege_SUPPRIMER_SIEN' => $privilege_SUPPRIMER_SIEN,
+        'privilege_TELECHARGER_TOUT' => $privilege_TELECHARGER_TOUT,
+        'privilege_TELECHARGER_SIEN' => $privilege_TELECHARGER_SIEN,
+        'privilege_VALIDER_TOUT' => $privilege_VALIDER_TOUT,
+        'privilege_VALIDER_SIEN' => $privilege_VALIDER_SIEN,
+        'privilege_DEVALIDER_TOUT' => $privilege_DEVALIDER_TOUT,
+        'privilege_DEVALIDER_SIEN' => $privilege_DEVALIDER_SIEN,
+        'returnUrl' => $returnUrl,
+        'displayEtablissement' => $displayEtablissement,
+        'displayType' => $displayType,
+        'displayDoctorant' => $displayDoctorant,
+        'displayDirecteurThese' => $displayDirecteurThese,
+        'displayEcoleDoctorale' => $displayEcoleDoctorale,
+        'displayUniteRecherche' => $displayUniteRecherche,
+        'displayValidation' => $displayValidation,
+    ]) ?>
+
+    <?php echo $this->paginationControl($paginator, 'sliding', 'partial/paginator.phtml', ['route' => $routeName . '/recherche/index']) ?>
+
+    <?php if ($canDlZip): ?>
+        <a class="btn btn-default" href="<?php echo $this->url($routeName . '/recherche/telecharger-zip', [], ['query' => $queryParams]) ?>"
+           title="Télécharger tous ces rapports sous la forme d'une archive compressée (.zip)">
+            <span class="glyphicon glyphicon-export"></span>
+            <?php echo $this->translate("Télécharger les rapports"); ?>
+        </a>
+    <?php endif ?>
+
+<?php else: ?>
+
+    <p>Aucun rapport trouvé.</p>
+
+<?php endif ?>
+
+
+<script>
+    $(function() {
+        $("#filters").addClass("loading").refresh(null, function() { $(this).removeClass("loading"); });
+    });
+</script>

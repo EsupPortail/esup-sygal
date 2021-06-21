@@ -2,7 +2,7 @@
 
 use UnicaenFaq\Entity\Db\Faq;
 
-return array(
+return [
     'unicaen-faq' => [
         // Nom du gestionnaire d'entité concerné.
         // Par défaut: 'orm_default'.
@@ -13,20 +13,32 @@ return array(
         'faq_entity_class' => Faq::class,
     ],
 
-     // Customisation de la navigation.
-     // Ex: masquer le menu, modifier sa position, changer son label, associer une ressource ACL.
-//    'navigation'      => [
-//        'default' => [
-//            'home' => [
-//                'pages' => [
-//                    'faq' => [
-//                        'visible'  => true,
-//                        'order'    => -1000,
-//                        'label'    => 'FAQ',
-//                        'resource' => PrivilegeController::getResourceId('UnicaenFaq\Controller\Index', 'index'),
-//                    ],
-//                ],
-//            ],
-//        ],
-//    ],
-);
+    // Customisation de la navigation.
+    // Ex: masquer le menu, modifier sa position, changer son label, associer une ressource ACL.
+    'navigation' => [
+        'default' => [
+            'home' => [
+                'pages' => [
+                    'faq' => [
+                        'order' => 200,
+                        'label' => "Aide",
+                        'pages' => [
+                            'faq' => [
+                                'label' => 'Questions fréquentes',
+                                'route' => 'faq',
+                            ],
+                            'contact' => [
+                                'label' => 'Contact / assistance',
+                                'route' => 'contact',
+                            ],
+                            'apropos' => [
+                                'label' => 'À propos...',
+                                'route' => 'apropos',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+];

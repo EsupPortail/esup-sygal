@@ -12,7 +12,7 @@ class NatureFichier
 
     const CODE_PV_SOUTENANCE = 'PV_SOUTENANCE';
     const CODE_RAPPORT_SOUTENANCE = 'RAPPORT_SOUTENANCE';
-    const CODE_RAPPORT_ANNUEL = 'RAPPORT_ANNUEL';
+    const CODE_RAPPORT_ACTIVITE = 'RAPPORT_ACTIVITE';
     const CODE_PRE_RAPPORT_SOUTENANCE = 'PRE_RAPPORT_SOUTENANCE';
     const CODE_DEMANDE_CONFIDENT = 'DEMANDE_CONFIDENT';
     const CODE_PROLONG_CONFIDENT = 'PROLONG_CONFIDENT';
@@ -23,6 +23,7 @@ class NatureFichier
 
     const CODE_JUSTIFICATIF_HDR = 'JUSTIFICATIF_HDR';
     const CODE_JUSTIFICATIF_EMERITAT = 'JUSTIFICATIF_EMERITAT';
+    const CODE_JUSTIFICATIF_ETRANGER = 'JUSTIFICATIF_ETRANGER';
     const CODE_DELOCALISATION_SOUTENANCE = 'DELOCALISATION_SOUTENANCE';
     const CODE_DELEGUATION_SIGNATURE = 'DELEGUATION_SIGNATURE';
     const CODE_DEMANDE_LABEL = 'DEMANDE_LABEL_EUROPEEN';
@@ -31,6 +32,7 @@ class NatureFichier
 
     const LABEL_JUSTIFICATIF_HDR = "Justificatif d'habilitation à diriger des recherches";
     const LABEL_JUSTIFICATIF_EMERITAT = "Justificatif d'émeritat";
+    const LABEL_JUSTIFICATIF_ETRANGER = "Justificatif dans le cas d'un membre du jury étranger";
     const LABEL_DELOCALISATION_SOUTENANCE = "Formulaire de délocalisation de soutenance";
     const LABEL_DELEGUATION_SIGNATURE = "Formulaire de délégation de signature du rapport de soutenance (visioconférence)";
     const LABEL_LANGUE_ANGLAISE = "Formulaire d'utilisation de la langue anglaise";

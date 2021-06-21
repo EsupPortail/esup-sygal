@@ -160,8 +160,11 @@ class IndividuService extends BaseService
     {
         $id = $controller->params()->fromRoute($param);
         /** @var Individu $individu */
-        $individu = $this->getRepository()->find($id);
-        return $individu;
+        if ($id !== null) {
+            $individu = $this->getRepository()->find($id);
+            return $individu;
+        }
+        return null;
 
     }
 }

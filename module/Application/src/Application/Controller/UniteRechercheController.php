@@ -7,6 +7,7 @@ use Application\Entity\Db\UniteRecherche;
 use Application\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
 use Application\Service\DomaineScientifiqueServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Application\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
@@ -20,6 +21,7 @@ class UniteRechercheController extends StructureConcreteController
     use EtablissementServiceAwareTrait;
     use DomaineScientifiqueServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
+    use StructureDocumentServiceAwareTrait;
 
     protected $codeTypeStructure = TypeStructure::CODE_UNITE_RECHERCHE;
 
@@ -56,6 +58,7 @@ class UniteRechercheController extends StructureConcreteController
         $id = $this->params()->fromRoute('structure');
         $structureConcrete = $this->getStructureConcreteService()->getRepository()->findByStructureId($id);
         $coencadrants = $this->getCoEncadrantService()->getCoEncadrantsByStructureConcrete($structureConcrete, false);
+        $contenus = $this->getStructureDocumentService()->getContenus($structureConcrete->getStructure());
 
         $viewModel = parent::informationAction();
 
@@ -67,6 +70,7 @@ class UniteRechercheController extends StructureConcreteController
             'unite'                       => $unite,
             'etablissementsRattachements' => $etablissementsRattachements,
             'coencadrants'                => $coencadrants,
+            'contenus'                    => $contenus,
         ]);
 
         return $viewModel;

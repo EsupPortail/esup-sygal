@@ -23,11 +23,6 @@ class Utilisateur extends AbstractUser implements UserInterface, ProviderInterfa
     protected $individu;
 
     /**
-     * @var Role
-     */
-    protected $lastRole;
-
-    /**
      * @return Individu
      */
     public function getIndividu()
@@ -39,28 +34,9 @@ class Utilisateur extends AbstractUser implements UserInterface, ProviderInterfa
      * @param Individu $individu
      * @return self
      */
-    public function setIndividu(Individu $individu = null)
+    public function setIndividu(?Individu $individu = null)
     {
         $this->individu = $individu;
-
-        return $this;
-    }
-
-    /**
-     * @return Role|null
-     */
-    public function getLastRole()
-    {
-        return $this->lastRole;
-    }
-
-    /**
-     * @param Role|null $lastRole
-     * @return self
-     */
-    public function setLastRole(Role $lastRole = null)
-    {
-        $this->lastRole = $lastRole;
 
         return $this;
     }

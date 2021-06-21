@@ -16,7 +16,7 @@ return [
             'check_ws_script_path' => __DIR__ . '/../../bin/from_cines/check_webservice_response.sh',
             'script_path'          => __DIR__ . '/../../bin/validation_cines.sh',
             'proxy' => [
-                'enable' => false,
+                'enabled' => false,
                 //'proxy_host' => 'http://proxy.unicaen.fr',
                 //'proxy_port' => 3128,
             ],

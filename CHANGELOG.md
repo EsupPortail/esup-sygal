@@ -1,6 +1,47 @@
 Journal des modifications
 =========================
 
+2.2.1
+-----
+- Ajout de la possibilité de modifier une proposition de soutenance pour gestion (sans retrait de validation)
+- Ajout d'un filtrage des soutenances par états
+- [FIX] Vilain plantage des aides de vues de navigation lorsque la route demandée n'existe pas.  
+- [FIX] Ligne de commande de lancement de toutes les synchros.
+- [FIX] Correction du texte de la convocation s'attendant à avoir un individu (pas toujours le cas car le lien n'est pas fait systèmatiquement).
+- [FIX] La recherche du doctorant lié à un individu doit écarter les individus historisés.
+- [FIX] Warning lors de la génération de la PDC à cause d'un tableau non initialisé"
+
+2.2.0
+-----
+- Refonte des menus (menu principal déroulant notamment)
+- Validation des rapports d'activité.
+- [FIX] Désormais impossible d'ursurper un individu dont on ne trouve pas l'utilisateur (risque d'erreur de doublon oracle)  
+- [FIX] AJout du 'Dépôt du rapport'
+- [FIX] Correction du filtre Origine de financement ; dédoublonnage des origines en 4 exemplaires (1 par établissement).
+- [FIX] Correction erreur de variable.
+- [FIX] Suppression de 'Et ensuite' de la Fiche thèse car elle a été sortie du menu Dépôt Bertrand GAUTHIER 04/06/2021 14:55
+
+2.1.9
+-----
+- Ajout de demande de justificatif pour certaines qualités pour les soutenances (par exemple : membre étranger)
+- Mention du caractère confidentiel sur la page de couverture
+- Generalisation des documents attachés aux structures + exploitation dans les convocations
+
+2.1.8
+-----
+- Utilisation de l'établissement de la thèse pour le routing des mails du module soutenance au site concerné.
+- Retrait d'espace et renommage des fichiers pour signature (module Soutenance).
+- Téléversement des rapports annuels : renommage en rapports d'activité (annuel ou de fin de thèse) ; création des privilèges *_TOUT et *_SIEN.
+- [FIX] Import : le préfixe 'SyGAL' par défaut pour ORIGINE_FINANCEMENT_ID est incorrect depuis que les origines sont de nouveau importées de chaque établissement.
+- [FIX] Corrections pour le cas où le supannId est null.
+- [FIX] Un utilisateur authentifié était associé au mauvais utilisateur si les données shib ne fournisse aucun supann{Ref|Emp|Etu}Id.
+
+2.1.7
+-----
+- Changement du fonctionnement de sursis pour les soutenances : seul la validation acteur vérifie le délai de deux mois et le sursis annule cette vérification.
+- Ajout d'une interface pour lier/délier des utilisateurs sans individu à un individu.
+- Le rôle de co-directeur est maintenant un rôle attribué automatiquement
+ 
 2.1.6
 -----
 - Utilisation de l'id permanent CHARTE_DEPOT_DIFFUSION_THESE pour télécharger la charte de dépôt et diffusion de thèse.

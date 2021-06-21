@@ -8,6 +8,7 @@
  * @var EtablissementRattachement[] $etablissementsRattachements
  * @var string                      $logoContent
  * @var array                       $coencadrants
+ * @var string[]                    $contenus
  */
 
 use Application\Entity\Db\EtablissementRattachement;
@@ -25,6 +26,7 @@ $canAddRole = $canEdit;
 $canCoencadrantAfficher = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_AFFICHER));
 $canCoencadrantExport = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_AFFICHER));
 
+$structure = $unite->getStructure();
 ?>
 
 <h1 class="page-header">
@@ -60,6 +62,15 @@ $canCoencadrantExport = $this->isAllowed(CoEncadrantPrivileges::getResourceId(Co
            data-toggle="tab"
         >
             Co-encadrants
+        </a>
+    </li>
+    <li role="documents">
+        <a href="#documents"
+           role="tab"
+           aria-controls="documents"
+           data-toggle="tab"
+        >
+            Documents
         </a>
     </li>
 </ul>
@@ -163,15 +174,17 @@ $canCoencadrantExport = $this->isAllowed(CoEncadrantPrivileges::getResourceId(Co
                     <thead>
                     <tr>
                         <th> Dénomination</th>
+                        <th> Établissement</th>
                         <th> Rôle</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <?php foreach ($individuListing as $denomination => $roles): ?>
-                        <?php foreach ($roles as $role): ?>
+                    <?php foreach ($individuListing as $denomination => $data): ?>
+                        <?php foreach ($data as $item): ?>
                             <tr>
                                 <td> <?php echo $denomination; ?> </td>
-                                <td> <?php echo $role; ?> </td>
+                                <td> <?php echo $item['Etablissement']; ?> </td>
+                                <td> <?php echo $item['Role']; ?> </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endforeach; ?>
@@ -228,4 +241,30 @@ $canCoencadrantExport = $this->isAllowed(CoEncadrantPrivileges::getResourceId(Co
         </ul>
 
     </div>
+
+    <div role="tabpanel" class="tab-pane" id="documents">
+        <?php echo $this->partial('partial/documents', ['structure' => $structure, 'contenus' => $contenus]); ?>
+    </div>
+
 </div>
+
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+
+        let hash = $(location).attr('hash');
+        let name = hash.substr(1);
+        if (name === undefined || name === "") name = "informations";
+
+        $('a[aria-controls=' + name + ']').tab('show');
+
+        $('.nav-tabs a').click(function (e) {
+            // No e.preventDefault() here
+            $(this).tab('show');
+        });
+    });
+</script>

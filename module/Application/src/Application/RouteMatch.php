@@ -6,7 +6,7 @@ use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
-use Application\Entity\Db\RapportAnnuel;
+use Application\Entity\Db\Rapport;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Structure;
@@ -252,18 +252,18 @@ class RouteMatch extends BaseRouteMatch
         return $this->structure;
     }
 
-    /** @var RapportAnnuel */
-    private $rapportAnnuel;
+    /** @var Rapport */
+    private $rapport;
 
     /**
-     * @return RapportAnnuel
+     * @return Rapport
      */
-    public function getRapportAnnuel()
+    public function getRapport()
     {
-        if (null === $this->rapportAnnuel) {
-            $this->rapportAnnuel = $this->fetchEntityParam('rapportAnnuel');
+        if (null === $this->rapport) {
+            $this->rapport = $this->fetchEntityParam('rapport');
         }
 
-        return $this->rapportAnnuel;
+        return $this->rapport;
     }
 }

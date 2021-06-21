@@ -88,7 +88,13 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
         $identity = $this->authenticationService->getIdentity();
 
         $userWrapperFactory = new UserWrapperFactory();
-        $this->userWrapper = $userWrapperFactory->createInstanceFromIdentity($identity);
+        try {
+            $this->userWrapper = $userWrapperFactory->createInstanceFromIdentity($identity);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            error_log($e->getTraceAsString());
+            return [];
+        }
         if ($this->userWrapper === null) {
             return [];
         }
@@ -125,11 +131,13 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
         $acteurs = $this->acteurService->getRepository()->findActeursByIndividu($individu);
 
         $acteursDirecteurThese = $this->acteurService->filterActeursDirecteurThese($acteurs);
+        $acteursCoDirecteurThese = $this->acteurService->filterActeursCoDirecteurThese($acteurs);
         $acteursPresidentJury = $this->acteurService->filterActeursPresidentJury($acteurs);
+        $acteursRapporteurJury = $this->acteurService->filterActeursRapporteurJury($acteurs);
 
         return array_map(
             function(Acteur $a) { return $a->getRole(); },
-            array_merge($acteursDirecteurThese, $acteursPresidentJury)
+            array_merge($acteursDirecteurThese, $acteursCoDirecteurThese, $acteursPresidentJury, $acteursRapporteurJury)
         );
     }
 

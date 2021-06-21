@@ -41,18 +41,18 @@ class IndexController extends AbstractController
             case Role::CODE_DOCTORANT :
             case Role::CODE_DIRECTEUR_THESE :
             case Role::CODE_CODIRECTEUR_THESE :
-                $this->redirect()->toRoute('soutenance/index-acteur', [], [], true);
+                $this->redirect()->toRoute('soutenances/index-acteur', [], [], true);
                 break;
             case Role::CODE_RAPPORTEUR_JURY :
             case Role::CODE_RAPPORTEUR_ABSENT :
-                $this->redirect()->toRoute('soutenance/index-rapporteur', [], [], true);
+                $this->redirect()->toRoute('soutenances/index-rapporteur', [], [], true);
                 break;
             case Role::CODE_ADMIN_TECH :
             case Role::CODE_OBSERVATEUR :
             case Role::CODE_BDD :
             case Role::CODE_UR :
             case Role::CODE_ED :
-                $this->redirect()->toRoute('soutenance/index-structure', [], [], true);
+                $this->redirect()->toRoute('soutenances/index-structure', [], [], true);
                 break;
         }
         return new ViewModel();
@@ -60,17 +60,18 @@ class IndexController extends AbstractController
 
     public function indexActeurAction()
     {
-        $individu = $this->userContextService->getIdentityIndividu();
+        /** @var Role $role */
         $role = $this->userContextService->getSelectedIdentityRole();
+        $individu = $this->userContextService->getIdentityIndividu();
 
         $theses = null;
         switch ($role->getCode()) {
             case Role::CODE_DOCTORANT :
-                $theses = $this->getTheseService()->getRepository()->fetchThesesByDoctorantAsIndividu($individu);
+                $theses = $this->getTheseService()->getRepository()->findThesesByDoctorantAsIndividu($individu);
                 break;
             case Role::CODE_DIRECTEUR_THESE :
             case Role::CODE_CODIRECTEUR_THESE :
-                $theses = $this->getTheseService()->getRepository()->fetchThesesByEncadrant($individu);
+                $theses = $this->getTheseService()->getRepository()->findThesesByActeur($individu, $role, [These::ETAT_EN_COURS]);
                 break;
         }
 
@@ -129,13 +130,16 @@ class IndexController extends AbstractController
         $role = $this->userContextService->getSelectedIdentityRole();
         $propositions = $this->getPropositionService()->getPropositionsByRole($role);
 
+
         $etablissementId = $this->params()->fromQuery('etablissement');
         $ecoleDoctoraleId = $this->params()->fromQuery('ecoledoctorale');
         $uniteRechercheId = $this->params()->fromQuery('uniterecherche');
+        $etatId = $this->params()->fromQuery('etat');
 
         if ($etablissementId != '') $propositions = array_filter($propositions, function($proposition) use ($etablissementId) { return $proposition->getThese()->getEtablissement()->getId() == $etablissementId; });
         if ($ecoleDoctoraleId != '') $propositions = array_filter($propositions, function($proposition) use ($ecoleDoctoraleId) { return $proposition->getThese()->getEcoleDoctorale()->getId() == $ecoleDoctoraleId; });
         if ($uniteRechercheId != '') $propositions = array_filter($propositions, function($proposition) use ($uniteRechercheId) { return $proposition->getThese()->getUniteRecherche()->getId() == $uniteRechercheId; });
+        if ($etatId != '') $propositions = array_filter($propositions, function($proposition) use ($etatId) { return $proposition->getEtat()->getId() == $etatId; });
 
         return new ViewModel([
             'propositions' => $propositions,
@@ -144,9 +148,11 @@ class IndexController extends AbstractController
             'etablissementId' => $etablissementId,
             'ecoleDoctoraleId' => $ecoleDoctoraleId,
             'uniteRechercheId' => $uniteRechercheId,
+            'etatId' => $etatId,
             'etablissements' => $this->getEtablissementService()->getRepository()->findAllEtablissementsMembres(),
             'ecoles' => $this->getEcoleDoctoraleService()->getRepository()->findAll(true),
             'unites' => $this->getUniteRechercheService()->getRepository()->findAll(true),
+            'etats' =>  $this->getPropositionService()->getPropositionEtats(),
         ]);
     }
 }

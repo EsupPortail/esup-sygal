@@ -5,19 +5,20 @@ namespace Application;
 use Application\Assertion\AssertionAbstractFactory;
 use Application\Cache\MemcachedFactory;
 use Application\Controller\Factory\IndexControllerFactory;
+use Application\Controller\Plugin\Forward;
+use Application\Controller\Plugin\ForwardFactory;
 use Application\Controller\Plugin\Uploader\UploaderPluginFactory;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Event\UserAuthenticatedEventListenerFactory;
 use Application\Event\UserRoleSelectedEventListener;
 use Application\Form\Factory\EcoleDoctoraleFormFactory;
 use Application\Navigation\NavigationFactoryFactory;
-use Application\Search\Filter\Provider\SearchFilterProviderService;
-use Application\Search\Filter\Provider\SearchFilterProviderServiceFactory;
 use Application\Service\AuthorizeServiceAwareInitializer;
 use Application\Service\Role\RoleService;
 use Application\Service\Role\RoleServiceFactory;
 use Application\Service\ServiceAwareInitializer;
 use Application\Service\Url\UrlServiceFactory;
+use Application\Service\UserContextService;
 use Application\Service\UserContextServiceAwareInitializer;
 use Application\Service\UserContextServiceFactory;
 use Application\View\Helper\EscapeTextHelper;
@@ -54,6 +55,11 @@ return array(
                     ],
                     'roles' => [], // pas d'authentification requise
                 ],
+                [
+                    'controller' => 'DoctrineModule\Controller\Cli',
+                    'roles' => [],
+                ],
+
             ],
         ],
     ],
@@ -193,21 +199,11 @@ return array(
             ],
         ],
     ],
-    'navigation'      => [
-        'default' => [
-            'home' => [
-                'pages' => [
-                    'droits' => [
-                        'order' => -80,
-                    ],
-                ],
-            ],
-        ],
-    ],
     'service_manager' => array(
         'aliases' => array(
             'UserContextService' => 'UnicaenAuth\Service\UserContext',
             RoleService::class => 'RoleService',
+            UserContextService::class => 'UserContextService',
         ),
         'invokables' => array(
             'RouteMatchInjector' => RouteMatchInjector::class,
@@ -220,7 +216,6 @@ return array(
             'Sygal\Memcached'                => MemcachedFactory::class,
             'RoleService' => RoleServiceFactory::class,
             SourceCodeStringHelper::class => SourceCodeStringHelperFactory::class,
-            SearchFilterProviderService::class => SearchFilterProviderServiceFactory::class,
         ),
         'abstract_factories' => [
             AssertionAbstractFactory::class,
@@ -253,10 +248,11 @@ return array(
         'invokables' => [
         ],
         'factories' => [
-            'forward'  => 'Application\Controller\Plugin\ForwardFactory',
+            Forward::class => ForwardFactory::class,
             'uploader' => UploaderPluginFactory::class,
         ],
         'aliases' => [
+            'forward' => Forward::class,
             'Uploader' => 'uploader',
         ],
         'initializers' => [
@@ -274,7 +270,6 @@ return array(
     'view_helpers' => array(
         'invokables' => array(
             'filterPanel' => 'Application\View\Helper\FilterPanel\FilterPanelHelper',
-            'selectsFilterPanel' => FiltersPanelHelper::class,
             'filtersPanel' => FiltersPanelHelper::class,
             'escapeText'  => EscapeTextHelper::class,
         ),

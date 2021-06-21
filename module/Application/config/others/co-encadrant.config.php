@@ -133,7 +133,7 @@ return [
                                 'route'    => 'co-encadrant',
                                 'resource' => PrivilegeController::getResourceId(CoEncadrantController::class, 'index'),
 
-                                'order'    => 1000,
+                                'order'    => 300,
                                 'pages' => [
                                     'historique' => [
                                         'label'    => 'Historique',

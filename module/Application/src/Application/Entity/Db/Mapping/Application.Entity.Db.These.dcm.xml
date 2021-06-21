@@ -50,7 +50,7 @@
         <one-to-many field="titreAcces" target-entity="Application\Entity\Db\TitreAcces" mapped-by="these"/>
         <one-to-many field="anneesUnivInscription" target-entity="Application\Entity\Db\TheseAnneeUniv" mapped-by="these"/>
         <one-to-many field="anneesUniv1ereInscription" target-entity="Application\Entity\Db\VTheseAnneeUnivFirst" mapped-by="these"/>
-        <one-to-many field="rapportsAnnuels" target-entity="Application\Entity\Db\RapportAnnuel" mapped-by="these"/>
+        <one-to-many field="rapports" target-entity="Application\Entity\Db\Rapport" mapped-by="these"/>
 
         <many-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement" fetch="LAZY">
             <join-columns>

@@ -23,12 +23,12 @@ abstract class SearchFilter implements SearchFilterInterface
     protected $label;
 
     /**
-     * @var string
+     * @var null|bool|string|array
      */
     protected $value;
 
     /**
-     * @var string
+     * @var string|bool
      */
     protected $defaultValue;
 
@@ -36,6 +36,11 @@ abstract class SearchFilter implements SearchFilterInterface
      * @var array
      */
     protected $attributes = [];
+
+    /**
+     * @var bool
+     */
+    protected $visible = true;
 
     /**
      * @var callable
@@ -56,15 +61,22 @@ abstract class SearchFilter implements SearchFilterInterface
     }
 
     /**
+     * @return self
+     */
+    public function init(): self
+    {
+        // initialisations utiles
+        // ...
+
+        return $this;
+    }
+
+    /**
      * @param callable $applyToQueryBuilderCallable
      * @return self
      */
-    public function setApplyToQueryBuilderCallable(callable $applyToQueryBuilderCallable): self
+    public function setQueryBuilderApplier(callable $applyToQueryBuilderCallable): self
     {
-        if (! is_callable($applyToQueryBuilderCallable)) {
-            throw new RuntimeException("Callable spécifié invalide !");
-        }
-
         $this->applyToQueryBuilderCallable = $applyToQueryBuilderCallable;
 
         return $this;
@@ -99,17 +111,17 @@ abstract class SearchFilter implements SearchFilterInterface
     }
 
     /**
+     * Application de ce filtre au query builder spécifié.
+     *
+     * Cette méthode appelle le callable spécifié via {@see setQueryBuilderApplier()}.
+     * Mais elle peut être redéfinie dans les classes filles.
+     *
      * @param QueryBuilder $qb
      */
     public function applyToQueryBuilder(QueryBuilder $qb)
     {
-        $filterValue = $this->getValue();
-        if (! $filterValue) {
-            return;
-        }
-
         if ($this->applyToQueryBuilderCallable === null) {
-            throw new RuntimeException("Aucun callable spécifié");
+            throw new RuntimeException("Aucun callable spécifié pour le filtre suivant : " . $this->name);
         }
 
         $applyToQueryBuilder = $this->applyToQueryBuilderCallable;
@@ -155,7 +167,7 @@ abstract class SearchFilter implements SearchFilterInterface
     }
 
     /**
-     * @return string|string[]
+     * @return null|bool|string|array
      */
     public function getValue()
     {
@@ -163,7 +175,7 @@ abstract class SearchFilter implements SearchFilterInterface
     }
 
     /**
-     * @param string|null $value
+     * @param string|bool|null $value
      * @return self
      */
     public function setValue($value = null): self
@@ -174,18 +186,18 @@ abstract class SearchFilter implements SearchFilterInterface
     }
 
     /**
-     * @return string
+     * @return string|bool
      */
-    public function getDefaultValue(): ?string
+    public function getDefaultValue()
     {
         return $this->defaultValue;
     }
 
     /**
-     * @param string|null $defaultValue
+     * @param string|bool|null $defaultValue
      * @return self
      */
-    public function setDefaultValue(string $defaultValue = null): self
+    public function setDefaultValue($defaultValue = null): self
     {
         $this->defaultValue = $defaultValue;
 
@@ -209,6 +221,24 @@ abstract class SearchFilter implements SearchFilterInterface
     {
         $this->attributes = $overwrite ? $attributes : array_merge($this->attributes, $attributes);
 
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVisible(): bool
+    {
+        return $this->visible;
+    }
+
+    /**
+     * @param bool $visible
+     * @return self
+     */
+    public function setVisible(bool $visible = true): self
+    {
+        $this->visible = $visible;
         return $this;
     }
 }

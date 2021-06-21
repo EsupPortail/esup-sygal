@@ -15,6 +15,10 @@ use Soutenance\Entity\Proposition;
  * @var int $nbCodirecteur
  * @see
  */
+
+$these = $proposition->getThese();
+$unite = ($these->getUniteRecherche())?$these->getUniteRecherche()->getLibelle():$these->getLibelleUniteRecherche();
+$ecole = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getLibelle():"Information manquante";
 ?>
 
 <style>
@@ -35,6 +39,7 @@ use Soutenance\Entity\Proposition;
         font-size: x-large;
     }
     h2 {
+        margin-top: 0.5cm;
         font-size: large;
     }
     table {
@@ -64,6 +69,7 @@ use Soutenance\Entity\Proposition;
         border-bottom:solid 1px gray;
         /*margin-right: 0.5rem;*/
         padding-right: 0.5rem;
+        font-size: 8pt;
     }
 
     table.composition tbody tr {
@@ -94,8 +100,12 @@ use Soutenance\Entity\Proposition;
     table.validation td{
         border-bottom:solid 1px gray;
         margin: 1rem;
+        font-size: 8pt;
     }
 
+    table.validation td.validation {
+        text-align: right;
+    }
 
 </style>
 <!-- SECTION DU LOGO DE LA COMUE -------------------------------------------------------------------------------------->
@@ -252,20 +262,22 @@ use Soutenance\Entity\Proposition;
     <thead>
         <tr>
             <th> Rôle </th>
+            <th> Complément </th>
             <th> Dénomination </th>
             <th> Avis </th>
             <th> Date de validation </th>
         </tr>
     </thead>
-    <tbody>
+    <tbody >
         <!-- Doctorant -->
         <?php if (!empty($validations[Role::CODE_DOCTORANT])): ?>
             <?php foreach($validations[Role::CODE_DOCTORANT] as $validation) : ?>
-                <tr>
-                    <td> Doctorant </td>
+                <tr style="font-size:6pt;">
+                    <td > Doctorant </td>
+                    <td></td>
                     <td> <?php echo $validation->getIndividu()->getNomComplet(); ?> </td>
                     <td> Favorable </td>
-                    <td> <?php echo $validation->getHistoCreation()->format('d/m/Y'); ?> </td>
+                    <td class="validation"> <?php echo $validation->getHistoCreation()->format('d/m/Y'); ?> </td>
                 </tr>
             <?php endforeach; ?>
         <?php else : ?>
@@ -277,9 +289,10 @@ use Soutenance\Entity\Proposition;
             <?php foreach($validations[Role::CODE_DIRECTEUR_THESE] as $validation) : ?>
                 <tr>
                     <td> Directeur de thèse </td>
+                    <td></td>
                     <td> <?php echo $validation->getIndividu()->getNomComplet(); ?> </td>
                     <td> Favorable </td>
-                    <td> <?php echo $validation->getHistoCreation()->format('d/m/Y'); ?> </td>
+                    <td class="validation"> <?php echo $validation->getHistoCreation()->format('d/m/Y'); ?> </td>
                 </tr>
             <?php endforeach; ?>
         <?php else : ?>
@@ -291,9 +304,10 @@ use Soutenance\Entity\Proposition;
             <?php foreach($validations[Role::CODE_CODIRECTEUR_THESE] as $validation) : ?>
                 <tr>
                     <td> Co-directeur de thèse </td>
+                    <td></td>
                     <td> <?php echo $validation->getIndividu()->getNomComplet(); ?> </td>
                     <td> Favorable </td>
-                    <td> <?php echo $validation->getHistoCreation()->format('d/m/Y'); ?> </td>
+                    <td class="validation"> <?php echo $validation->getHistoCreation()->format('d/m/Y'); ?> </td>
                 </tr>
             <?php endforeach; ?>
         <?php else :?>
@@ -309,9 +323,10 @@ use Soutenance\Entity\Proposition;
             <?php foreach($validations[Role::CODE_UR] as $validation) : ?>
                 <tr>
                     <td> Directeur de l'unité de recherche </td>
+                    <td><?php echo $unite; ?></td>
                     <td> <?php echo $validation->getIndividu()->getNomComplet(); ?> </td>
                     <td> Favorable </td>
-                    <td> <?php echo $validation->getHistoCreation()->format('d/m/Y'); ?> </td>
+                    <td class="validation"> <?php echo $validation->getHistoCreation()->format('d/m/Y'); ?> </td>
                 </tr>
             <?php endforeach; ?>
         <?php else: ?>
@@ -324,9 +339,10 @@ use Soutenance\Entity\Proposition;
             <?php foreach($validations[Role::CODE_ED] as $validation) : ?>
                 <tr>
                     <td> Directeur de l'école doctorale </td>
+                    <td><?php echo $ecole; ?></td>
                     <td> <?php echo $validation->getIndividu()->getNomComplet(); ?> </td>
                     <td> Favorable </td>
-                    <td> <?php echo $validation->getHistoCreation()->format('d/m/Y'); ?> </td>
+                    <td class="validation"> <?php echo $validation->getHistoCreation()->format('d/m/Y'); ?> </td>
                 </tr>
             <?php endforeach; ?>
         <?php else: ?>
@@ -349,9 +365,6 @@ use Soutenance\Entity\Proposition;
     </tr>
 </table>
 
-
-<br/>
-<br/>
 <br/>
 <br/>
 <br/>

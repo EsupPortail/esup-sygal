@@ -18,6 +18,9 @@ use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Service\UserContext as BaseUserContextService;
 use Zend\Permissions\Acl\Role\RoleInterface;
 
+/**
+ * @method Role getSelectedIdentityRole()
+ */
 class UserContextService extends BaseUserContextService
 {
     use IndividuServiceAwareTrait;
@@ -85,25 +88,33 @@ class UserContextService extends BaseUserContextService
     /**
      * @return Role|null
      */
-    public function getSelectedRoleDirecteurThese()
+    public function getSelectedRoleDirecteurThese(): ?Role
     {
         return $this->_getSelectedRoleForCode(Role::CODE_DIRECTEUR_THESE);
     }
 
     /**
-     * @return RoleInterface|null
+     * @return Role|null
      */
-    public function getSelectedRoleDirecteurEcoleDoctorale()
+    public function getSelectedRoleCodirecteurThese(): ?Role
     {
-        return $this->_getSelectedRoleForRoleId(Role::ROLE_ID_ECOLE_DOCT);
+        return $this->_getSelectedRoleForCode(Role::CODE_CODIRECTEUR_THESE);
     }
 
     /**
-     * @return RoleInterface|null
+     * @return Role|null
+     */
+    public function getSelectedRoleDirecteurEcoleDoctorale()
+    {
+        return $this->_getSelectedRoleForCode(Role::CODE_ED);
+    }
+
+    /**
+     * @return Role|null
      */
     public function getSelectedRoleDirecteurUniteRecherche()
     {
-        return $this->_getSelectedRoleForRoleId(Role::ROLE_ID_UNITE_RECH);
+        return $this->_getSelectedRoleForCode(Role::CODE_UR);
     }
 
     /**
@@ -207,7 +218,7 @@ class UserContextService extends BaseUserContextService
      *
      * @return Individu|null
      */
-    public function getIdentityIndividu()
+    public function getIdentityIndividu(): ?Individu
     {
         $userWrapper = $this->createUserWrapperFromIdentity();
         if ($userWrapper === null) {
@@ -218,13 +229,22 @@ class UserContextService extends BaseUserContextService
             return $userWrapper->getIndividu();
         }
 
+        if ($userWrapper->getSupannId() === null) {
+            return null;
+        }
+
+        $etablissement = null;
         $domaineEtab = $userWrapper->getDomainFromEppn();
-        $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
+        if ($domaineEtab) {
+            $etablissement = $this->getEtablissementService()->getRepository()->findOneByDomaine($domaineEtab);
+        }
+        if ($etablissement === null) {
+            $etablissement = $this->getEtablissementService()->getRepository()->fetchEtablissementInconnu();
+        }
+
         $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($userWrapper->getSupannId(), $etablissement);
 
-        $individu = $this->individuService->getRepository()->findOneBySourceCode($sourceCode);
-
-        return $individu;
+        return $this->individuService->getRepository()->findOneBySourceCode($sourceCode);
     }
 
     /**
@@ -245,7 +265,13 @@ class UserContextService extends BaseUserContextService
         }
 
         $userWrapperFactory = new UserWrapperFactory();
-        $userWrapper = $userWrapperFactory->createInstanceFromIdentity($this->getIdentity());
+        try {
+            $userWrapper = $userWrapperFactory->createInstanceFromIdentity($this->getIdentity());
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            error_log($e->getTraceAsString());
+            return null;
+        }
 
         return $userWrapper;
     }

@@ -5,6 +5,7 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Application\Service\FichierThese\PdcData;
 use Application\View\Renderer\PhpRenderer;
+use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 
 /**
@@ -18,10 +19,11 @@ use Soutenance\Entity\Proposition;
  * @var These $these
  * @var DateTime $date
  * @var string $ville
- * @var Acteur $membre
+ * @var Membre $membre
  * @var string $signature
  * @see
  */
+
 
 $date = new DateTime();
 
@@ -29,12 +31,15 @@ $date = new DateTime();
 if ($membre->getIndividu()) {
     if ($membre->getIndividu()->getCivilite() === 'M.') $civilite = "Monsieur";
     if ($membre->getIndividu()->getCivilite() === 'Mme') $civilite = "Madame";
+    $denomination = $membre->getIndividu()->getNomComplet();
+
+} else {
+    if ($membre->getGenre() === 'F') $civilite = "Madame";
+    if ($membre->getGenre() === 'H') $civilite = "Monsieur";
+    $denomination = $membre->getDenomination();
 }
-
-//$denomination = $membre->getDenomination();
-if ($membre->getIndividu()) $denomination = $membre->getIndividu()->getNomComplet();
-
 ?>
+
 
 <style>
     .not-yet {
@@ -86,9 +91,11 @@ if ($membre->getIndividu()) $denomination = $membre->getIndividu()->getNomComple
 <br/>
 <br/>
 
+<?php if ($civilite !== null OR $denomination !== null) : ?>
 <p>
     <?php echo $civilite ?>  <?php echo $denomination; ?>, <br/>
 </p>
+<?php endif; ?>
 
 Par décision en date du
 <?php if ($date): ?>
@@ -172,8 +179,8 @@ $texte_directeur = implode(" et ", $encadrement);
         <td>
         </td>
         <td>
-            <?php if ($these->getEtablissement()->getSignatureConvocation()) : ?>
-                <img id="logo" style="background-color: white;"
+            <?php if ($signature) : ?>
+                <img id="logo" style="background-color: white; max-width: 50%;"
                      src="data:image/png;base64,<?php echo base64_encode($signature); ?>"/>
             <?php endif; ?>
         </td>

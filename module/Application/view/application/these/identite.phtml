@@ -174,10 +174,10 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                     } else {
                         $ligne[] = sprintf('<span class="glyphicon glyphicon-info-sign text-warning" title="Compte local"></span>');
                     }
-                    if ($canCreate) {
-                        $ligne[] = sprintf('<a href="%s" class="btn btn-sm btn-warning">Gérer l\'utilisateur</a>',
-                            $this->url('utilisateur/gerer-utilisateur', ['individu' => $acteur->getIndividu()->getId()], [], true));
-                    }
+//                    if ($canCreate) {
+//                        $ligne[] = sprintf('<a href="%s" class="btn btn-sm btn-warning">Gérer l\'utilisateur</a>',
+//                            $this->url('utilisateur/gerer-utilisateur', ['individu' => $acteur->getIndividu()->getId()], [], true));
+//                    }
                 }
 
 
@@ -429,12 +429,6 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 </div>
 
 
-<!-------------------------------------- Next step --------------------------------------->
-<div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>" style="display: none">
-    <!-- màj via ajax -->
-</div>
-
-
 <script>
     $(function() {
         $("body").on("modification", function (event) {
@@ -445,25 +439,6 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 
     $(function () {
         var body = $("body");
-        var self = this;
-
-        var loaderFactory = function (divName) {
-            return function (done, effect) {
-                return function () {
-                    $("#" + divName).addClass("loading").refresh(null, function () {
-                        $(this).removeClass("loading").show();
-                        if (done) done();
-                    });
-                };
-            };
-        };
-
-        var refreshingNextStep = loaderFactory("nextStepDiv");
-
-        // Au chargement de la page, on actualise les div
-        runInCascade([
-            refreshingNextStep
-        ], self);
 
         body.one("<?php echo $persopassModifiedEvent ?>", function (event, data) {
             // Le persopass vient d'être modifié.
@@ -475,33 +450,33 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             window.location.reload();
         });
 
-        $(window).load(function () {
-            $(".photo-placeholder").each(function () {
-                loadPhoto(this);
-            });
-        });
+        // $(window).load(function () {
+        //     $(".photo-placeholder").each(function () {
+        //         loadPhoto(this);
+        //     });
+        // });
     });
 
-    function loadPhoto(photoPlaceholder) {
-        debugger;
-        var photoUrl = $(photoPlaceholder).data('src');
-
-        //create image to preload:
-        var imgPreload = new Image();
-        $(imgPreload).load(function (response, status, xhr) {
-            if (status == 'error') {
-                imgPreload = null;
-            }
-            insertResult();
-        });
-        $(imgPreload).attr({
-            src: photoUrl,
-            width: $(photoPlaceholder).css('width')
-        });
-
-        function insertResult() {
-            var content = imgPreload ? $(imgPreload) : $("<span />").html("Erreur!");
-            $(photoPlaceholder).removeClass('loading').replaceWith(content);
-        }
-    }
+    // function loadPhoto(photoPlaceholder) {
+    //     debugger;
+    //     var photoUrl = $(photoPlaceholder).data('src');
+    //
+    //     //create image to preload:
+    //     var imgPreload = new Image();
+    //     $(imgPreload).load(function (response, status, xhr) {
+    //         if (status == 'error') {
+    //             imgPreload = null;
+    //         }
+    //         insertResult();
+    //     });
+    //     $(imgPreload).attr({
+    //         src: photoUrl,
+    //         width: $(photoPlaceholder).css('width')
+    //     });
+    //
+    //     function insertResult() {
+    //         var content = imgPreload ? $(imgPreload) : $("<span />").html("Erreur!");
+    //         $(photoPlaceholder).removeClass('loading').replaceWith(content);
+    //     }
+    // }
 </script>

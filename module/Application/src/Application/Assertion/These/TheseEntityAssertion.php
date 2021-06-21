@@ -265,7 +265,7 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
         $informations = $this->theseService->fetchInformationsPageDeCouverture($this->these);
 
         foreach ($informations as $clef => $information) {
-            if ($information == "") {
+            if ($clef !== 'dateFinConfidentialite' AND $information == "") {
                 return false;
             }
         }

@@ -10,6 +10,7 @@ use Application\Form\InitCompteForm;
 use Application\Form\InitCompteFormAwareTrait;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
+use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -21,9 +22,11 @@ use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\ShibService;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
@@ -36,6 +39,9 @@ use Zend\View\Model\ViewModel;
 
 class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurController implements SearchControllerInterface
 {
+    use SearchServiceAwareTrait;
+    use SearchControllerTrait;
+
     use ActeurServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use UserContextServiceAwareTrait;
@@ -51,7 +57,6 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use UserServiceAwareTrait;
 
     use InitCompteFormAwareTrait;
-    use SearchControllerTrait;
 
     /**
      * @var ModuleOptions
@@ -200,10 +205,8 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
      */
     public function ajouterAction()
     {
-        /** @var CreationUtilisateurForm $form */
         $form = $this->creationUtilisateurForm;
-//        $infos = new CreationUtilisateurInfos();
-//        $form->bind($infos);
+        $form->setData(['individu' => 1]);
 
         /** @var Request $request */
         $request = $this->getRequest();
@@ -214,7 +217,15 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
                 if (!trim($data['nomPatronymique'])) {
                     $data['nomPatronymique'] = $data['nomUsuel'];
                 }
-                $utilisateur = $this->utilisateurService->createFromFormData($data->toArray());
+                if ($data['individu'] == '1') {
+                    $individu = $this->utilisateurService->createIndividuFromFormData($data->toArray());
+                    $utilisateur = $this->utilisateurService->createFromIndividuAndFormData($individu, $data->toArray());
+
+                } else {
+                    $utilisateur = $this->utilisateurService->createFromFormData($data->toArray());
+                }
+                $this->userService->updateUserPasswordResetToken($utilisateur);
+                $this->notifierService->triggerInitialisationCompte($utilisateur, $utilisateur->getPasswordResetToken());
                 $this->flashMessenger()->addSuccessMessage("Utilisateur <strong>{$utilisateur->getUsername()}</strong> créé avec succès.");
                 $this->redirect()->toRoute('utilisateur');
             }
@@ -226,7 +237,11 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     }
 
     /**
-     * Usurpe l'identité d'un individu.
+     * Usurpe l'identité d'un **individu**.
+     *
+     * *Pour pouvoir usurper l'identité d'un individu, il faut que celui-ci se soit connecté au moins
+     * une fois à l'application, de manière à ce que son compte utilisateur ait été créé avec
+     * des données complètes.*
      *
      * @return Response
      */
@@ -237,21 +252,23 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             exit(1);
         }
 
-        $individuId = $request->getPost('individu');
+        $individuId = $request->getPost('individu', $request->getQuery('individu'));
         if (!$individuId) {
             return $this->redirect()->toRoute('home');
         }
+        $individu = $this->individuService->getRepository()->find($individuId);
 
         /** @var Utilisateur $utilisateur */
         $utilisateur = $this->utilisateurService->getRepository()->findOneBy(['individu' => $individuId]);
         if ($utilisateur === null) {
-            /** @var Individu $individu */
-            $individu = $this->individuService->getRepository()->find($individuId);
-            try {
-                $utilisateur = $this->utilisateurService->createFromIndividuForUsurpationShib($individu);
-            } catch (RuntimeException $e) {
-                throw new RuntimeException("Impossible d'ajouter l'individu $individu aux utilisateurs de l'application.", null, $e);
-            }
+            throw new RuntimeException(sprintf(
+                "La demande d'usurpation de l'individu '%s' (%d) a échoué car aucun compte utilisateur correspondant " .
+                "n'a été trouvé. " .
+                "Pour pouvoir usurper l'identité d'un individu, il faut que celui-ci se soit connecté au moins " .
+                "une fois à l'application, de manière à ce que son compte utilisateur ait été créé avec " .
+                "des données complètes.",
+                $individu, $individu->getId()
+            ));
         }
 
         $usernameUsurpe = $utilisateur->getUsername();
@@ -262,6 +279,32 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         }
 
         return $this->redirect()->toRoute('home');
+    }
+
+    /**
+     * Instancie un ShibUser à partir des attibuts de l'utilisateur spécifié.
+     *
+     * @param Utilisateur $utilisateur
+     * @return ShibUser
+     */
+    public function createShibUserFromUtilisateur(Utilisateur $utilisateur)
+    {
+        $individu = $utilisateur->getIndividu();
+        if ($individu === null) {
+            throw new RuntimeException("L'utilisateur '$utilisateur' n'a aucun individu lié");
+        }
+
+        $supannId = $this->sourceCodeStringHelper->removePrefixFrom($individu->getSourceCode());
+
+        $toShibUser = new ShibUser();
+        $toShibUser->setEppn($utilisateur->getUsername());
+        $toShibUser->setId($supannId);
+        $toShibUser->setDisplayName($individu->getNomComplet());
+        $toShibUser->setEmail($utilisateur->getEmail());
+        $toShibUser->setNom($individu->getNomUsuel());
+        $toShibUser->setPrenom($individu->getPrenom());
+
+        return $toShibUser;
     }
 
     public function retirerRoleAction()
@@ -387,6 +430,73 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             'form' => $form,
             'utilisateur' => $utilisateur,
         ]);
+    }
+
+    public function lierIndividuAction()
+    {
+        $utilisateur = $this->getUtilisateurService()->getRequestedUtilisateur($this);
+
+        /**
+         * Si on a un utilisateur et un individu alors on doit réaliser le lien
+         */
+        $individu = $this->getIndividuService()->getRequestedIndividu($this);
+        if ($individu !== null) {
+            $utilisateur->setIndividu($individu);
+            try {
+                $this->getUtilisateurService()->getEntityManager()->flush($utilisateur);
+            } catch(ORMException $e) {
+                throw new RuntimeException("Un problème est survenu lors de l'enregistrement en base de donnée", 0, $e);
+            }
+            $vm = new ViewModel([
+                'title' => "Création de lien entre un individu et l'utilisateur ".$utilisateur->getDisplayName() . " [".$utilisateur->getId()."]",
+                'utilisateur' => $utilisateur,
+                'individu' => $individu,
+            ]);
+            return $vm;
+        }
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+
+            /**
+             * Si on revient du post un individu à été selectionné et on examine pour validation
+             */
+            $data = $request->getPost();
+            $individuId = $data['individu']['id'];
+            /** @var Individu $individu */
+            $individu = $this->getIndividuService()->getRepository()->find($individuId);
+            if ($individu !== null) {
+                $acteurs = $this->getActeurService()->getRepository()->findActeursByIndividu($individu);
+                $roles = $individu->getRoles();
+
+                $vm = new ViewModel([
+                    "title" => "Création de lien entre un individu et l'utilisateur " . $utilisateur->getDisplayName() . " [" . $utilisateur->getId() . "]",
+                    "utilisateur" => $utilisateur,
+                    "individu" => $individu,
+                    "acteurs" => $acteurs,
+                    "roles" => $roles,
+                ]);
+                return $vm;
+            }
+        }
+
+        $vm = new ViewModel([
+            'title' => "Création de lien entre un individu et l'utilisateur ".$utilisateur->getDisplayName() . " [".$utilisateur->getId()."]",
+            'utilisateur' => $utilisateur,
+        ]);
+        return $vm;
+    }
+
+    public function delierIndividuAction()
+    {
+        $utilisateur = $this->getUtilisateurService()->getRequestedUtilisateur($this);
+        $utilisateur->setIndividu(null);
+        try {
+            $this->getUtilisateurService()->getEntityManager()->flush($utilisateur);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenu lors de l'enregistrement en base de donnée", 0, $e);
+        }
+        return $this->redirect()->toRoute('utilisateur/voir', ['utilisateur' => $utilisateur->getId()], [], true);
     }
 
 }

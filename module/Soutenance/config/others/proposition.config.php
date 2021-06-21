@@ -49,6 +49,7 @@ return [
                         'privileges' => [
                             PropositionPrivileges::PROPOSITION_VISUALISER,
                             PropositionPrivileges::PROPOSITION_MODIFIER,
+                            PropositionPrivileges::PROPOSITION_MODIFIER_GESTION,
                             PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR,
                             PropositionPrivileges::PROPOSITION_VALIDER_ED,
                             PropositionPrivileges::PROPOSITION_VALIDER_UR,
@@ -84,7 +85,10 @@ return [
                         'confidentialite',
                         'changement-titre',
                     ],
-                    'privileges' => PropositionPrivileges::PROPOSITION_MODIFIER,
+                    'privileges' => [
+                        PropositionPrivileges::PROPOSITION_MODIFIER,
+                        PropositionPrivileges::PROPOSITION_MODIFIER_GESTION,
+                    ],
                 ],
                 [
                     'controller' => PropositionController::class,
@@ -141,7 +145,7 @@ return [
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route' => '/avancement/:these',
+                            'route' => '/avancement',
                             'defaults' => [
                                 'controller' => PropositionController::class,
                                 'action' => 'avancement',
@@ -152,7 +156,7 @@ return [
                         'type' => Segment::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route' => '/proposition/:these',
+                            'route' => '/proposition',
                             'defaults' => [
                                 'controller' => PropositionController::class,
                                 'action' => 'proposition',

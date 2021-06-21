@@ -17,6 +17,7 @@ use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use UnicaenLdap\Entity\People;
 use Zend\Crypt\Password\Bcrypt;
+use Zend\Mvc\Controller\AbstractActionController;
 
 class UtilisateurService extends BaseService
 {
@@ -105,13 +106,36 @@ class UtilisateurService extends BaseService
         return $this->createFromIndividu($individu, $username, $password);
     }
 
+    public function createFromFormData(array $data)
+    {
+        $userName = $data['email'];
+        $displayName = $data['prenom'] . " " . $data['nomUsuel'];
+        $email = $data['email'];
+
+        $utilisateur = new Utilisateur();
+        $utilisateur->setDisplayName($displayName);
+        $utilisateur->setEmail($email);
+        $utilisateur->setUsername($userName);
+        $utilisateur->setPassword('none');
+        $utilisateur->setState(1);
+
+        try {
+            $this->getEntityManager()->persist($utilisateur);
+            $this->getEntityManager()->flush($utilisateur);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Impossible d'enregistrer le nouvel utilisateur", null, $e);
+        }
+
+        return $utilisateur;
+    }
+
     /**
      * @param Individu $individu
      * @param string   $username
      * @param string   $password
      * @return Utilisateur
      */
-    public function createFromIndividu(Individu $individu, $username, $password)
+    public function createFromIndividu(Individu $individu, string $username, string $password) : Utilisateur
     {
         if (! $username) {
             throw new RuntimeException("Impossible de créer un utilisateur sans username");
@@ -131,10 +155,10 @@ class UtilisateurService extends BaseService
         $utilisateur->setState(1);
         $utilisateur->setIndividu($individu);
 
-        $this->getEntityManager()->persist($utilisateur);
         try {
+            $this->getEntityManager()->persist($utilisateur);
             $this->getEntityManager()->flush($utilisateur);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Impossible d'enregistrer le nouvel utilisateur", null, $e);
         }
 
@@ -164,9 +188,9 @@ class UtilisateurService extends BaseService
      * Crée un utilisateur ainsi que l'individu associé, à partir des données du formulaire de création d'utilisateur.
      *
      * @param array $formData
-     * @return Utilisateur
+     * @return Individu
      */
-    public function createFromFormData(array $formData)
+    public function createIndividuFromFormData(array $formData)
     {
         $source = $this->sourceService->fetchApplicationSource();
 
@@ -176,7 +200,6 @@ class UtilisateurService extends BaseService
         $individu->setNomUsuel($formData['nomUsuel']);
         $individu->setNomPatronymique($formData['nomPatronymique']);
         $individu->setPrenom1($formData['prenom']);
-        $individu->setEmail($formData['email']);
         $individu->setEmail($formData['email']);
         $individu->setSource($source);
         $individu->setSourceCode(uniqid()); // NB: sera remplacé par "COMUE::{INDIVIDU.ID}"
@@ -194,11 +217,11 @@ class UtilisateurService extends BaseService
 
         try {
             $this->getEntityManager()->flush($individu);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Erreur lors de l'enregistrement de l'individu", null, $e);
         }
 
-        return $this->createFromIndividuAndFormData($individu, $formData);
+        return $individu;
     }
 
     /**
@@ -254,4 +277,19 @@ class UtilisateurService extends BaseService
 
         return $utilisateur;
     }
+
+    /**
+     * @param AbstractActionController $controller
+     * @param string $param
+     * @return Utilisateur|null
+     */
+    public function getRequestedUtilisateur(AbstractActionController $controller, string $param = "utilisateur") : ?Utilisateur
+    {
+        $id = $controller->params()->fromRoute($param);
+        /** @var Utilisateur $result */
+        $result = $this->getRepository()->find($id);
+        return $result;
+    }
+
+
 }

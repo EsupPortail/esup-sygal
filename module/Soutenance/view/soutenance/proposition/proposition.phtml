@@ -33,7 +33,9 @@ use Soutenance\Provider\Privilege\PropositionPrivileges;
  * @var $FORMULAIRE_DEMANDE_CONFIDENTIALITE
  */
 
-$canModifier = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER);
+$a = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER);
+$b = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION);
+$canModifier = ($this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER) OR $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION));
 
 $this->headTitle("Proposition de soutenance");
 ?>

@@ -3,7 +3,7 @@
 namespace Application\Search\Controller;
 
 use Application\Search\Filter\SearchFilter;
-use Application\Search\SearchServiceAwareTrait;
+use DomainException;
 use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Paginator\Paginator as ZendPaginator;
@@ -14,8 +14,6 @@ use Zend\View\Model\ViewModel;
  */
 trait SearchControllerTrait
 {
-    use SearchServiceAwareTrait;
-
     /**
      * @return ViewModel
      */
@@ -30,6 +28,16 @@ trait SearchControllerTrait
 
     /**
      * @return Response|ZendPaginator
+     * @see SearchControllerPlugin::searchIfRequested()
+     */
+    public function searchIfRequested()
+    {
+        return $this->getSearchPluginController()->searchIfRequested();
+    }
+
+    /**
+     * @return Response|ZendPaginator
+     * @see SearchControllerPlugin::search()
      */
     public function search()
     {
@@ -49,11 +57,10 @@ trait SearchControllerTrait
      */
     protected function getSearchPluginController(): SearchControllerPlugin
     {
-        /** @var AbstractActionController $that */
-        $that = $this;
-        /** @var SearchControllerPlugin $searchControllerPlugin */
-        $searchControllerPlugin = $that->getPluginManager()->get('searchControllerPlugin');
+        if (! $this instanceof AbstractActionController) {
+            throw new DomainException("Ce trait n'est utilisable que sur un contrôleur de type " . AbstractActionController::class);
+        }
 
-        return $searchControllerPlugin;
+        return $this->getPluginManager()->get('searchControllerPlugin');
     }
 }

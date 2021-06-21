@@ -1,6 +1,7 @@
 <?php
 
 use Application\Entity\Db\These;
+use Application\Service\FichierThese\PdcData;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 
@@ -9,6 +10,8 @@ use Soutenance\Entity\Proposition;
  * @var These $these
  * @var Proposition $proposition
  * @var Membre $membre
+ * @var DateTime $date
+ * @var PdcData $informations
  * @var string $url
  */
 $civilite = ($membre->getGenre() !== "H")?"Madame":"Monsieur";
@@ -20,6 +23,7 @@ $justification = true;
     <?php echo $civilite ?>, <br/>
 </p>
 
+<p>
 Par décision en date du
 <?php if ($date): ?>
     <?php echo $date->format('d/m/Y'); ?>,
@@ -85,21 +89,9 @@ $texte_directeur = implode(" et ", $encadrement);
 <p> P.S.: Vous pouvez obtenir une version imprimable de cette convocation à l'adresse suivante : <a href="<?php echo $url; ?>">convocation au format PDF</a> </p>
 
 <?php if ($justification) : ?>
-    <p>
-        Vous avez reçu ce mail car :
-    <ol>
-        <li> votre proposition de soutenance a été validé par la maison du doctorat;  </li>
-        <li> vous êtes le doctorant associé à la proposition de soutenance.  </li>
-    </ol>
-    </p>
-<?php endif; ?>
-
-<?php if ($justification) : ?>
-    <p>
-        Vous avez reçu ce mail car :
+    Vous avez reçu ce mail car :
     <ol>
         <li> la proposition de soutenance de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?> a été validé;  </li>
         <li> vous avez été désigné comme membre du jury pour la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>. </li>
     </ol>
-    </p>
 <?php endif; ?>

@@ -24,13 +24,17 @@ $explications[NatureFichier::CODE_JUSTIFICATIF_HDR] =
     "<div class='alert alert-warning'>" .
         "<strong><span class='glyphicon glyphicon-info-sign'></span> Justification d'habilitation à diriger des recherches</strong> <br/>".
         "Le justificatif d'habilitation à diriger des recherches est demandé pour tous les membres de rang B titulaire d'un HDR extérieur à l'établissement/la COMUE de soutenance. <br/>" .
-        "<u>NB:</u> <i>Pour les membres du jury étrangers, il est nécessaire de fournir un équivalent à l'habilitation à diriger des recherches ou d'un curriculum vitae en dernier recours.</i>".
     "</div>";
 $explications[NatureFichier::CODE_JUSTIFICATIF_EMERITAT] =
     "<div class='alert alert-warning'>" .
     "<strong><span class='glyphicon glyphicon-info-sign'></span> Justification d'émeritat</strong> <br/>".
     "Le justificatif d'émeritat est demandé pour tous les membres disposant d'un éméritat extérieur à l'établissement/la COMUE de soutenance. <br/>" .
-    "<u>NB:</u> <i>Pour les membres du jury étrangers, il est nécessaire de fournir un équivalent à l'éméritat ou d'un curriculum vitae en dernier recours.</i>" .
+    "</div>";
+$explications[NatureFichier::CODE_JUSTIFICATIF_ETRANGER] =
+    "<div class='alert alert-warning'>" .
+    "<strong><span class='glyphicon glyphicon-info-sign'></span> Justification du rang d'un membre de jury de nationalité étrangère</strong> <br/>".
+    "Téléchargez un CV court (1-2 page) résumant les principales fonctions (scientifiques, administratives, encadrements de doctorants) et productions scientifiques de la personne exerçant à l'étranger que vous souhaitez nommer comme rapporteur de votre thèse. ".
+    "Ce document permettra à l'établissement de vérifier si les qualifications de cette personne sont suffisantes pour lui accorder le statut de rapporteur d’une thèse en France.".
     "</div>";
 $explications[NatureFichier::CODE_DELOCALISATION_SOUTENANCE] =
     "<div class='alert alert-warning'>" .
@@ -92,6 +96,7 @@ $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
     let needVisio = [];
     let needHDR = [];
     let needEmeritat = [];
+    let needEtranger = [];
     <?php foreach ($justificatifs as $tuple) : ?>
         <?php if (isset($tuple['membre']) AND $tuple['justificatif'] === null) : ?>
             <?php
@@ -106,6 +111,12 @@ $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
             }
             if (<?php echo "'".$tuple['type']."'"; ?> === <?php echo "'".NatureFichier::CODE_JUSTIFICATIF_EMERITAT."'"; ?>) {
                 needEmeritat.push([
+                    <?php echo  "'".$membre->getId()."'"; ?>,
+                    <?php echo  "'".$membre->getDenomination()."'"; ?>
+                ]);
+            }
+            if (<?php echo "'".$tuple['type']."'"; ?> === <?php echo "'".NatureFichier::CODE_JUSTIFICATIF_ETRANGER."'"; ?>) {
+                needEtranger.push([
                     <?php echo  "'".$membre->getId()."'"; ?>,
                     <?php echo  "'".$membre->getDenomination()."'"; ?>
                 ]);
@@ -154,6 +165,11 @@ $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
                     $('select[name="membre"]').append(new Option(needEmeritat[position][1], needEmeritat[position][0]));
                 }
                 break;
+            case <?php echo "'" . NatureFichier::CODE_JUSTIFICATIF_ETRANGER . "'"; ?> :
+                for (let position = 0 ; position < needEtranger.length ; position++ ) {
+                    $('select[name="membre"]').append(new Option(needEtranger[position][1], needEtranger[position][0]));
+                }
+                break;
             case <?php echo "'" . NatureFichier::CODE_DELEGUATION_SIGNATURE . "'"; ?> :
                 for (let position = 0 ; position < needVisio.length ; position++ ) {
                     $('select[name="membre"]').append(new Option(needVisio[position][1], needVisio[position][0]));
@@ -176,6 +192,9 @@ $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
                 break;
             case <?php echo "'".NatureFichier::CODE_JUSTIFICATIF_EMERITAT."'"; ?> :
                 $('div.explication').html("<?php echo $explications[NatureFichier::CODE_JUSTIFICATIF_EMERITAT]; ?>");
+                break;
+            case <?php echo "'".NatureFichier::CODE_JUSTIFICATIF_ETRANGER."'"; ?> :
+                $('div.explication').html("<?php echo $explications[NatureFichier::CODE_JUSTIFICATIF_ETRANGER]; ?>");
                 break;
             case <?php echo "'".NatureFichier::CODE_DELOCALISATION_SOUTENANCE."'"; ?> :
                 $('div.explication').html("<?php echo $explications[NatureFichier::CODE_DELOCALISATION_SOUTENANCE]; ?>");
@@ -207,6 +226,7 @@ $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
         value = type[position];
         if (value === "<?php echo NatureFichier::CODE_JUSTIFICATIF_HDR; ?>")          label = "<?php echo NatureFichier::LABEL_JUSTIFICATIF_HDR; ?>";
         if (value === "<?php echo NatureFichier::CODE_JUSTIFICATIF_EMERITAT; ?>")     label = "<?php echo NatureFichier::LABEL_JUSTIFICATIF_EMERITAT; ?>";
+        if (value === "<?php echo NatureFichier::CODE_JUSTIFICATIF_ETRANGER; ?>")     label = "<?php echo NatureFichier::LABEL_JUSTIFICATIF_ETRANGER; ?>";
         if (value === "<?php echo NatureFichier::CODE_DELOCALISATION_SOUTENANCE; ?>") label = "<?php echo NatureFichier::LABEL_DELOCALISATION_SOUTENANCE; ?>";
         if (value === "<?php echo NatureFichier::CODE_DELEGUATION_SIGNATURE; ?>")     label = "<?php echo NatureFichier::LABEL_DELEGUATION_SIGNATURE; ?>";
         if (value === "<?php echo NatureFichier::CODE_DEMANDE_LABEL; ?>")             label = "<?php echo NatureFichier::LABEL_DEMANDE_LABEL; ?>";

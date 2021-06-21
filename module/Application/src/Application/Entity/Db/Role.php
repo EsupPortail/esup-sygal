@@ -100,7 +100,7 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     /**
      * @return bool
      */
-    public function isDoctorant()
+    public function isDoctorant(): bool
     {
         return $this->getCode() === self::CODE_DOCTORANT;
     }
@@ -108,9 +108,25 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     /**
      * @return bool
      */
-    public function isDirecteurThese()
+    public function isDirecteurThese(): bool
     {
         return $this->getCode() === self::CODE_DIRECTEUR_THESE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActeurDeThese(): bool
+    {
+        return in_array($this->getCode(), [
+            self::CODE_DIRECTEUR_THESE,
+            self::CODE_CODIRECTEUR_THESE,
+            self::CODE_MEMBRE_JURY,
+            self::CODE_PRESIDENT_JURY,
+            self::CODE_RAPPORTEUR_JURY,
+            self::CODE_RAPPORTEUR_ABSENT,
+            self::CODE_CO_ENCADRANT,
+        ]);
     }
 
     /**
@@ -254,7 +270,7 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     /**
      * @return bool
      */
-    public function isEtablissementDependant()
+    public function isEtablissementDependant(): bool
     {
         return ($tsd = $this->getTypeStructureDependant()) && $tsd->isEtablissement();
     }
@@ -262,7 +278,7 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     /**
      * @return bool
      */
-    public function isEcoleDoctoraleDependant()
+    public function isEcoleDoctoraleDependant(): bool
     {
         return ($tsd = $this->getTypeStructureDependant()) && $tsd->isEcoleDoctorale();
     }
@@ -270,7 +286,7 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     /**
      * @return bool
      */
-    public function isUniteRechercheDependant()
+    public function isUniteRechercheDependant(): bool
     {
         return ($tsd = $this->getTypeStructureDependant()) && $tsd->isUniteRecherche();
     }
@@ -278,7 +294,7 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     /**
      * @return bool
      */
-    public function isStructureDependant()
+    public function isStructureDependant(): bool
     {
         return $this->getTypeStructureDependant() !== null;
     }

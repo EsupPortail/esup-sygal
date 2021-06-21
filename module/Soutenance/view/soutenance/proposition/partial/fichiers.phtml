@@ -29,7 +29,7 @@ foreach ($proposition->getMembres() as $membre) {
     <div class="panel-body">
 
         <?php if ($canModifier) : ?>
-            <a href="<?php echo $this->url('soutenance/justificatif/ajouter-justificatif', [ 'these' => $these->getId()], [], true); ?>"
+            <a href="<?php echo $this->url('soutenance/justificatif/ajouter-justificatif', ['these' => $these->getId()], [], true); ?>"
                class="btn btn-primary ajax-modal" data-event="modification">
                 Téléversement d'un justificatif
             </a>
@@ -63,6 +63,7 @@ foreach ($proposition->getMembres() as $membre) {
         $typesJustificatif = [
             NatureFichier::CODE_JUSTIFICATIF_HDR => NatureFichier::LABEL_JUSTIFICATIF_HDR,
             NatureFichier::CODE_JUSTIFICATIF_EMERITAT => NatureFichier::LABEL_JUSTIFICATIF_EMERITAT,
+            NatureFichier::CODE_JUSTIFICATIF_ETRANGER => NatureFichier::CODE_JUSTIFICATIF_ETRANGER,
             NatureFichier::CODE_DELOCALISATION_SOUTENANCE => NatureFichier::LABEL_DELOCALISATION_SOUTENANCE,
             NatureFichier::CODE_DELEGUATION_SIGNATURE => NatureFichier::LABEL_DELEGUATION_SIGNATURE,
             NatureFichier::CODE_LANGUE_ANGLAISE => NatureFichier::LABEL_LANGUE_ANGLAISE,
@@ -88,7 +89,7 @@ foreach ($proposition->getMembres() as $membre) {
                             <?php /** @see \Soutenance\Controller\JustificatifController::retirerAction() */ ?>
                             <?php $retour = $this->url('soutenance/proposition', ['these' => $these->getId()],['force_canonical' => true ], true); ?>
                             <a href="<?php echo $this->url('soutenance/justificatif/retirer',
-                                    ['justificatif'=>$justificatif['justificatif']->getId()],
+                                    ['these' => $these->getId(), 'justificatif'=>$justificatif['justificatif']->getId()],
                                     ["query" => ["retour" => $retour]],
                                     true); ?>">
                                 <span style='color:darkred;' class="glyphicon glyphicon-remove" title="Supprimer le justificatif"></span>

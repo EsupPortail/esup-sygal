@@ -26,6 +26,10 @@ class TypeValidation implements HistoriqueAwareInterface
     const CODE_VALIDATION_PROPOSITION_BDD    = 'VALIDATION_PROPOSITION_BDD';
     const CODE_AVIS_SOUTENANCE               = 'AVIS_SOUTENANCE';
 
+    const CODE_RAPPORT_ACTIVITE              = 'RAPPORT_ACTIVITE';
+    const CODE_RAPPORT_CSI                   = 'RAPPORT_CSI';
+    const CODE_RAPPORT_MIPARCOURS            = 'RAPPORT_MIPARCOURS';
+
     /**
      * @var string
      */

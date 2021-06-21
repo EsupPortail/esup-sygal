@@ -259,7 +259,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * @var ArrayCollection
      */
-    private $rapportsAnnuels;
+    private $rapports;
 
     /**
      * @var ArrayCollection
@@ -290,7 +290,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         $this->rdvBus = new ArrayCollection();
         $this->anneesUnivInscription = new ArrayCollection();
         $this->anneesUniv1ereInscription = new ArrayCollection();
-        $this->rapportsAnnuels = new ArrayCollection();
+        $this->rapports = new ArrayCollection();
         $this->propositions = new ArrayCollection();
     }
 
@@ -1014,13 +1014,16 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @param string $code
+     * Retourne les acteurs de cette thèse dont le rôle est parmi ceux spécifiés.
+     *
+     * @param string|string[] $code
      * @return Collection
      */
-    public function getActeursByRoleCode($code)
+    public function getActeursByRoleCode($code): Collection
     {
-        $filter = function(Acteur $a) use ($code) {
-            return $a->getRole()->getCode() === $code;
+        $codes = (array) $code;
+        $filter = function(Acteur $a) use ($codes) {
+            return in_array($a->getRole()->getCode(), $codes);
         };
 
         return $this->getActeurs()->filter($filter);
@@ -1051,7 +1054,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @param string|Role $role
      * @return bool
      */
-    public function hasActeurWithRole(Individu $individu, $role)
+    public function hasActeurWithRole(Individu $individu, $role): bool
     {
         if ($role instanceof Role) {
             $role = $role->getCode();
@@ -1370,29 +1373,29 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * @return Collection
      */
-    public function getRapportsAnnuels()
+    public function getRapports()
     {
-        return $this->rapportsAnnuels;
+        return $this->rapports;
     }
 
     /**
-     * @param RapportAnnuel $rapportAnnuel
+     * @param Rapport $rapport
      * @return self
      */
-    public function addRapportAnnuel(RapportAnnuel $rapportAnnuel)
+    public function addRapport(Rapport $rapport)
     {
-        $this->rapportsAnnuels->add($rapportAnnuel);
+        $this->rapports->add($rapport);
 
         return $this;
     }
 
     /**
-     * @param RapportAnnuel $rapportAnnuel
+     * @param Rapport $rapport
      * @return self
      */
-    public function removeRapportAnnuel(RapportAnnuel $rapportAnnuel)
+    public function removeRapport(Rapport $rapport)
     {
-        $this->rapportsAnnuels->removeElement($rapportAnnuel);
+        $this->rapports->removeElement($rapport);
 
         return $this;
     }
@@ -1444,34 +1447,17 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
     /**
      * Retourne les mails des directeurs de thèse.
-     *
-     * @param Individu[] $individusSansMail Liste des individus sans mail, format: "Paul Hochon" => Individu
-     * @return array
+     * @return string|null
      */
-    public function getPresidentJuryEmail(array &$individusSansMail = [])
+    public function getPresidentJuryEmail() : ?string
     {
-        $emails = [];
-        /** @var Acteur[] $membres */
-        $membres = $this->getActeursByRoleCode(Role::CODE_MEMBRE_JURY)->toArray();
-        /** @var Acteur[] $rapporteurs */
-        $rapporteurs = $this->getActeursByRoleCode(Role::CODE_RAPPORTEUR_JURY)->toArray();
-        $acteurs = array_merge($membres, $rapporteurs);
+        $president = $this->getActeursByRoleCode(Role::CODE_PRESIDENT_JURY)->toArray();
+        if (count($president) !== 1) throw new \RuntimeException("Nombre de président incorrect ...");
+        $president = current($president);
 
-        /** @var Acteur $acteur */
-        foreach ($acteurs as $acteur) {
-            if ($acteur->getRole()->getCode() === Role::CODE_PRESIDENT_JURY) {
-                $email = $acteur->getIndividu()->getEmail();
-
-                $name = (string)$acteur->getIndividu();
-                if (!$email) {
-                    $individusSansMail[$name] = $acteur->getIndividu();
-                } else {
-                    $emails[$email] = $name;
-                }
-            }
-        }
-
-        return $emails;
+        if ($president->getIndividu()->getEmail() !== null) return $president->getIndividu()->getEmail();
+        if ($president->getMembre()->getEmail() !== null) return $president->getMembre()->getEmail();
+        return null;
     }
 
     /**

@@ -11,7 +11,6 @@ use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use UnicaenAuth\Event\Listener\AuthenticatedUserSavedAbstractListener;
 use UnicaenAuth\Event\UserAuthenticatedEvent;
-use UnicaenAuth\Service\UserContext as UserContextService;
 
 class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListener
 {
@@ -20,36 +19,26 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
     use UtilisateurServiceAwareTrait;
 
     /**
-     * @var UserContextService
-     */
-    private $userContextService;
-
-    /**
-     * @param UserContextService $userContextService
-     */
-    public function setAuthUserContextService(UserContextService $userContextService)
-    {
-        $this->userContextService = $userContextService;
-    }
-
-    /**
      * Méthode appelée juste avant que l'entité utilisateur soit persistée.
      *
      * @param UserAuthenticatedEvent $e
      */
     public function onUserAuthenticatedPrePersist(UserAuthenticatedEvent $e)
     {
+        parent::onUserAuthenticatedPrePersist($e);
+
         $userWrapperFactory = new UserWrapperFactory();
-        $userWrapper = $userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
+        try {
+            $userWrapper = $userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            error_log($e->getTraceAsString());
+            return;
+        }
 
         /** @var Utilisateur $utilisateur */
         $utilisateur = $e->getDbUser();
         $utilisateur->setDisplayName($userWrapper->getDisplayName()); // màj NOM Prénom
-
-        // Sélection du dernier rôle endossé.
-        if ($role = $utilisateur->getLastRole()) {
-            $this->userContextService->setNextSelectedIdentityRole($role);
-        }
     }
 
     /**
@@ -61,8 +50,16 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
      */
     public function onUserAuthenticatedPostPersist(UserAuthenticatedEvent $e)
     {
+        parent::onUserAuthenticatedPostPersist($e);
+
         $userWrapperFactory = new UserWrapperFactory();
-        $userWrapper = $userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
+        try {
+            $userWrapper = $userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            error_log($e->getTraceAsString());
+            return;
+        }
 
         if ($userWrapper->getIndividu() !== null) {
             $individu = $userWrapper->getIndividu();
@@ -82,14 +79,16 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
      * @param UserWrapper $userWrapper
      * @return Individu
      */
-    private function processIndividu(UserWrapper $userWrapper)
+    private function processIndividu(UserWrapper $userWrapper): Individu
     {
         $createIndividu = false;
         $etablissementInconnu = $this->etablissementService->getRepository()->fetchEtablissementInconnu();
 
         // recherche de l'établissement de connexion l'utilisateur : à partir du domaine de l'EPPN, ex: 'unicaen.fr'
-        $domaineEtab = $userWrapper->getDomainFromEppn();
-        $etablissement = $this->etablissementService->getRepository()->findOneByDomaine($domaineEtab);
+        $etablissement = null;
+        if ($domaineEtab = $userWrapper->getDomainFromEppn()) {
+            $etablissement = $this->etablissementService->getRepository()->findOneByDomaine($domaineEtab);
+        }
 
         if ($etablissement === null) {
             // si aucun établissement ne correspond au domaine, on essaie l'établissement "inconnu"...

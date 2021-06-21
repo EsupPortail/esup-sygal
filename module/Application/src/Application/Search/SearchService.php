@@ -6,6 +6,7 @@ use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Search\Sorter\SearchSorter;
 use Doctrine\ORM\QueryBuilder;
+use UnicaenApp\Exception\RuntimeException;
 
 abstract class SearchService implements SearchServiceInterface
 {
@@ -30,7 +31,7 @@ abstract class SearchService implements SearchServiceInterface
     protected $defaultSorter;
 
     /**
-     * Initialisation nécessaires, ex: ajouts des filtres, des trieurs.
+     * @inheritDoc
      */
     abstract public function init();
 
@@ -87,9 +88,9 @@ abstract class SearchService implements SearchServiceInterface
     }
 
     /**
-     * @return self
+     * @inheritDoc
      */
-    public function initFiltersWithUnpopulatedOptions(): self
+    public function initFiltersWithUnpopulatedOptions()
     {
         $filterValueOptions = [];
         foreach ($this->filters as $filterName => $filter) {
@@ -99,8 +100,6 @@ abstract class SearchService implements SearchServiceInterface
         $this->initFiltersArray($filterValueOptions);
 
         $this->unpopulatedOptions = true;
-
-        return $this;
     }
 
     /**
@@ -114,18 +113,24 @@ abstract class SearchService implements SearchServiceInterface
     }
 
     /**
-     * @return self
+     * @inheritDoc
      */
-    public function initFilters(): self
+    public function initFilters()
     {
-//        if (! $this->unpopulatedOptions/* && ! empty($this->filters)*/) {
-//            return $this;
-//        }
-
         $filterValueOptions = [];
         foreach ($this->filters as $filterName => $filter) {
+            $filter->init();
             if ($filter instanceof SelectSearchFilter) {
-                $filterValueOptions[$filterName] = $this->fetchValueOptionsForSelectFilter($filter);
+                // si des valeurs ont déjà été fournies, pas besoin de fetch.
+                if (($data = $filter->getData()) === null) {
+                    if ($dataProvider = $filter->getDataProvider()) {
+                        $data = $dataProvider($filter); // obtention des données
+                    } else {
+                        throw new RuntimeException("Aucun 'data provider' fourni pour le filtre '$filterName'");
+                    }
+                }
+                $valueOptions = $filter->createValueOptionsFromData($data);
+                $filterValueOptions[$filterName] = $valueOptions;
             } else {
                 $filterValueOptions[$filterName] = [];
             }
@@ -134,15 +139,7 @@ abstract class SearchService implements SearchServiceInterface
         $this->initFiltersArray($filterValueOptions);
 
         $this->unpopulatedOptions = false;
-
-        return $this;
     }
-
-    /**
-     * @param SelectSearchFilter $filter
-     * @return array
-     */
-    abstract protected function fetchValueOptionsForSelectFilter(SelectSearchFilter $filter): array;
 
     /**
      * @param array $valueOptions
@@ -160,9 +157,8 @@ abstract class SearchService implements SearchServiceInterface
 
     /**
      * @param array $queryParams
-     * @return self
      */
-    public function processQueryParams(array $queryParams): self
+    public function processQueryParams(array $queryParams)
     {
         foreach ($this->filters as $filter) {
             $filter->processQueryParams($queryParams);
@@ -170,8 +166,6 @@ abstract class SearchService implements SearchServiceInterface
         foreach ($this->sorters as $sorter) {
             $sorter->processQueryParams($queryParams);
         }
-
-        return $this;
     }
 
     /**
@@ -261,7 +255,9 @@ abstract class SearchService implements SearchServiceInterface
         $qb = $this->createQueryBuilder();
 
         foreach ($this->filters as $filter) {
-            $filter->applyToQueryBuilder($qb);
+            if ($filter->getValue()) {
+                $filter->applyToQueryBuilder($qb);
+            }
         }
 
         foreach ($this->sorters as $sorter) {

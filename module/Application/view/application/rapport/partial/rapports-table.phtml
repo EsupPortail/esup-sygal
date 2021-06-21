@@ -1,0 +1,280 @@
+<?php
+
+namespace Application;
+
+use Application\Entity\Db\Rapport;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
+use Application\Filter\ActeursFormatter;
+use Application\Filter\IdifyFilter;
+use Application\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
+use Application\Search\Etablissement\EtablissementSearchFilter;
+use Application\Search\UniteRecherche\UniteRechercheSearchFilter;
+use Application\Service\Rapport\RapportSearchService;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var Rapport[] $rapports
+ *
+ * @var string $routeName
+ * @var TypeValidation $typeValidation
+ * @var string $privilege_TELEVERSER_TOUT
+ * @var string $privilege_TELEVERSER_SIEN
+ * @var string $privilege_SUPPRIMER_TOUT
+ * @var string $privilege_SUPPRIMER_SIEN
+ * @var string $privilege_TELECHARGER_TOUT
+ * @var string $privilege_TELECHARGER_SIEN
+ * @var string $privilege_VALIDER_TOUT
+ * @var string $privilege_VALIDER_SIEN
+ * @var string $privilege_DEVALIDER_TOUT
+ * @var string $privilege_DEVALIDER_SIEN
+ *
+ * @var bool $displayEtablissement
+ * @var bool $displayType
+ * @var bool $displayDoctorant
+ * @var bool $displayDirecteurThese
+ * @var bool $displayEcoleDoctorale
+ * @var bool $displayUniteRecherche
+ * @var bool $displayValidation
+ *
+ * @var string $returnUrl
+ *
+ * @see \Application\Controller\Rapport\RapportActiviteController::consulterAction()
+ */
+
+$acteursFormatterDirecteurs = new ActeursFormatter();
+$acteursFormatterDirecteurs->asSeparated()
+    ->paramDisplay(['role' => false, 'complement' => false, "qualite" => false, "etablissement" => false,])
+    ->paramFilter((['role' => Role::CODE_DIRECTEUR_THESE]));
+$acteursFormatterCodirecteurs = new ActeursFormatter();
+$acteursFormatterCodirecteurs->asSeparated()
+    ->paramDisplay(['role' => false, 'complement' => false, "qualite" => false, "etablissement" => false,])
+    ->paramFilter((['role' => Role::CODE_CODIRECTEUR_THESE]));
+
+?>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <?php if ($displayEtablissement): ?>
+        <th>
+            <a href="<?php echo $s = $this->sortable(EtablissementSearchFilter::NAME) ?>"
+               title="<?php echo $this->translate("Établissement") ?> ">
+                <?php echo $this->translate("Étab.") ?>
+            </a> <?php echo $s->icon() ?>
+        </th>
+        <?php endif ?>
+
+        <?php if ($displayType): ?>
+        <th>
+            <a href="<?php echo $s = $this->sortable(RapportSearchService::NAME_type); ?>"
+               title="<?php echo $this->translate("Type"); ?>">
+                <?php echo $this->translate("Type"); ?>
+            </a> <?php echo $s->icon() ?>
+        </th>
+        <?php endif ?>
+
+        <th>
+            <a href="<?php echo $s = $this->sortable('anneeRapport'); ?>"
+               title="<?php echo $this->translate("Année universitaire du rapport"); ?>">
+                <?php echo $this->translate("Année"); ?>
+            </a> <?php echo $s->icon() ?>
+        </th>
+
+        <?php if ($displayDoctorant): ?>
+        <th>
+            <a href="<?php echo $s = $this->sortable(RapportSearchService::NAME_nom_doctorant) ?>"
+               title="<?php echo $this->translate("Identité du doctorant") ?>">
+                <?php echo $this->translate("Doctorant") ?>
+            </a> <?php echo $s->icon() ?>
+        </th>
+        <?php endif ?>
+
+        <?php if ($displayDirecteurThese): ?>
+        <th>
+            <?php echo $this->translate("Directeur(s) de thèse"); ?>
+        </th>
+        <?php endif ?>
+
+        <?php if ($displayEcoleDoctorale): ?>
+        <th>
+            <a href="<?php echo $s = $this->sortable(EcoleDoctoraleSearchFilter::NAME); ?>"
+               title="<?php echo $this->translate("École doctorale"); ?>">
+                <?php echo $this->translate("École<br>doct."); ?>
+            </a> <?php echo $s->icon() ?>
+        </th>
+        <?php endif ?>
+
+        <?php if ($displayUniteRecherche): ?>
+        <th>
+            <a href="<?php echo $s = $this->sortable(UniteRechercheSearchFilter::NAME); ?>"
+               title="<?php echo $this->translate("Unité de recherche"); ?>">
+                <?php echo $this->translate("Unité<br>rech."); ?>
+            </a> <?php echo $s->icon() ?>
+        </th>
+        <?php endif ?>
+
+        <th>
+            Téléversement
+        </th>
+
+        <th>
+            Document
+        </th>
+
+        <?php if ($displayValidation): ?>
+        <th>
+            <a href="<?php echo $s = $this->sortable(RapportSearchService::NAME_validation); ?>"
+               title="<?php echo $this->translate("Validation"); ?>">
+                <?php echo $this->translate("Validation"); ?>
+            </a> <?php echo $s->icon() ?>
+        </th>
+        <?php endif ?>
+
+        <th></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <?php foreach ($rapports as $rapport): ?>
+        <tr>
+            <?php
+            $these = $rapport->getThese();
+            $rapportValidation = $rapport->getRapportValidation();
+            $classRapport = $rapportValidation !== null ? 'valide' : '';
+            $canDel = $this->isAllowed($rapport, $privilege_SUPPRIMER_TOUT) || $this->isAllowed($rapport, $privilege_SUPPRIMER_SIEN);
+            $canDl = $this->isAllowed($rapport, $privilege_TELECHARGER_TOUT) || $this->isAllowed($rapport, $privilege_TELECHARGER_SIEN);
+            ?>
+
+            <?php if ($displayEtablissement): ?>
+            <td>
+                <abbr title="<?php echo $these->getEtablissement()->getLibelle() ?>">
+                    <?php echo $these->getEtablissement()->getCode() ?>
+                </abbr>
+            </td>
+            <?php endif ?>
+
+            <?php if ($displayType): ?>
+            <td>
+                <?php echo $rapport->getTypeRapportToString() ?>
+            </td>
+            <?php endif ?>
+
+            <td>
+                <?php echo $rapport->getAnneeUnivToString() ?>
+            </td>
+
+            <?php if ($displayDoctorant): ?>
+            <td>
+                <a href="<?php echo $this->url('these/identite', ['these' => $these->getId()], [], true) ?>"
+                   title="<?php echo $these->getTitre() ?>">
+                    <?php echo $these->getDoctorant()->getIndividu()->getNomComplet() ?>
+                </a>
+            </td>
+            <?php endif ?>
+
+            <?php if ($displayDirecteurThese): ?>
+            <td class="acteurs text-sm">
+                <?php
+                $directeurs = $acteursFormatterDirecteurs->filter($these->getActeurs());
+                foreach ($directeurs as $directeur) {
+                    echo $acteursFormatterDirecteurs->htmlifyActeur($directeur)."<br/>";
+                }
+                $codirecteurs = $acteursFormatterCodirecteurs->filter($these->getActeurs());
+                foreach ($codirecteurs as $codirecteur) {
+                    echo $acteursFormatterCodirecteurs->htmlifyActeur($codirecteur)."<br/>";
+                }
+                ?>
+            </td>
+            <?php endif ?>
+
+            <?php if ($displayEcoleDoctorale): ?>
+            <td>
+                <?php if ($ed = $these->getEcoleDoctorale()): ?>
+                    <abbr title="<?php echo $ed->getLibelle() ?>">
+                        <?php echo $ed->getStructure()->getCode(); ?>
+                    </abbr>
+                <?php endif ?>
+            </td>
+            <?php endif ?>
+
+            <?php if ($displayUniteRecherche): ?>
+            <td>
+                <?php if ($ur = $these->getUniteRecherche()): ?>
+                    <abbr title="<?php echo $ur->getLibelle() ?>">
+                        <?php echo $ur->getStructure()->getCode(); ?>
+                    </abbr>
+                <?php endif ?>
+            </td>
+            <?php endif ?>
+
+            <td class="text-sm">
+                <?php echo $rapport->getHistoCreateur() ?><br>
+                <?php echo $rapport->getHistoCreation()->format('d/m/Y H:i') ?>
+            </td>
+
+            <td>
+                <?php if ($canDl): ?>
+                    <a href="<?php echo $this->url($routeName . '/telecharger', ['rapport' => IdifyFilter::id($rapport)]) ?>"
+                       title="Cliquez pour télécharger">
+                        <?php echo $rapport->getFichier()->getNom() ?>
+                    </a>
+                <?php else: ?>
+                    <?php echo $rapport->getFichier()->getNom() ?>
+                <?php endif; ?>
+            </td>
+
+            <?php if ($displayValidation): ?>
+            <td class="<?php echo $classRapport ?>">
+                <?php $returnUrl = $returnUrl ?: $this->url($routeName . '/consulter', ['these' => $these->getId()]) ?>
+                <?php if ($rapportValidation !== null): ?>
+                    <p>
+                        <span class="glyphicon glyphicon-thumbs-up"></span> <strong>Validé</strong> <br>
+                        <span class="text-sm"><?php echo $rapportValidation->getHistoCreateur() ?><br>
+                            <?php echo $rapportValidation->getHistoCreation()->format('d/m/Y H:i') ?></span>
+                    </p>
+                    <?php $canDevalider = $this->isAllowed($rapport, $privilege_DEVALIDER_TOUT) || $this->isAllowed($rapport, $privilege_DEVALIDER_SIEN) ?>
+                    <?php if ($canDevalider): ?>
+                        <a href="<?php echo $this->url($routeName . '/devalider', ['rapportValidation' => $rapportValidation->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
+                           class="btn btn-danger"
+                           title="Dévalider ce rapport ?"
+                           data-toggle="confirmation">Dévalider</span></a>
+                    <?php endif ?>
+                <?php else: ?>
+                    <p>Non validé</p>
+                    <?php $canValider = $this->isAllowed($rapport, $privilege_VALIDER_TOUT) || $this->isAllowed($rapport, $privilege_VALIDER_SIEN) ?>
+                    <?php if ($canValider): ?>
+                        <a href="<?php echo $this->url($routeName . '/valider', ['rapport' => $rapport->getId(), 'typeValidation' => $typeValidation->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
+                           class="btn btn-success"
+                           title="Valider ce rapport ?"
+                           data-toggle="confirmation">Valider</span></a>
+                    <?php endif ?>
+                <?php endif ?>
+            </td>
+            <?php endif; ?>
+
+            <td class="action">
+                <?php if ($canDel): ?>
+                    <a href="<?php echo $this->url($routeName . '/supprimer', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
+                       title="Supprimer ce rapport ?"
+                       data-toggle="confirmation"><span class="glyphicon glyphicon-trash"></span></a>
+                <?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+
+<script>
+    $(function() {
+        $('[data-toggle=confirmation]').confirmation({
+            rootSelector: '[data-toggle=confirmation]',
+            container: 'body',
+            title: "Êtes-vous sûr(e) ?",
+            btnOkLabel: "Oui",
+            btnCancelLabel: "Non",
+        });
+    });
+</script>

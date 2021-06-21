@@ -15,6 +15,7 @@ use Application\Form\Validator\Factory\NewEmailValidatorFactory;
 use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\PasswordValidator;
 use Application\Provider\Privilege\UtilisateurPrivileges;
+use Application\Service\Individu\IndividuService;
 use Application\Service\Individu\IndividuServiceFactory;
 use Application\Service\Utilisateur\UtilisateurSearchService;
 use Application\Service\Utilisateur\UtilisateurSearchServiceFactory;
@@ -53,6 +54,8 @@ return [
                         'ajouter-role',
                         'ajouter',
                         'ajouterFromIndividu',
+                        'lier-individu',
+                        'delier-individu',
                     ],
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_MODIFICATION,
                 ],
@@ -88,12 +91,10 @@ return [
                 'type'          => Segment::class,
                 'options'       => [
                     'route'    => '/utilisateur',
-//                    'route'    => '/[:language/]utilisateur',
                     'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Utilisateur',
                         'action'        => 'index',
-//                        'language'      => 'fr_FR',
                     ],
                 ],
                 'may_terminate' => true,
@@ -122,6 +123,24 @@ return [
                             'route'       => '/gerer-utilisateur/:individu',
                             'defaults'    => [
                                 'action' => 'gerer-utilisateur',
+                            ],
+                        ],
+                    ],
+                    'lier-individu' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/lier-individu/:utilisateur[/:individu]',
+                            'defaults'    => [
+                                'action' => 'lier-individu',
+                            ],
+                        ],
+                    ],
+                    'delier-individu' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/delier-individu/:utilisateur',
+                            'defaults'    => [
+                                'action' => 'delier-individu',
                             ],
                         ],
                     ],
@@ -215,11 +234,6 @@ return [
                                 'icon'     => 'fa fa-users',
                                 'order'    => 60,
                                 'pages' => [
-                                    'voir' => [
-                                        'label'    => "Détails",
-                                        'route'    => 'utilisateur/voir',
-                                        'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'index'),
-                                    ],
                                     'creation' => [
                                         'label'    => "Création",
                                         'route'    => 'utilisateur/ajouter',
@@ -242,7 +256,8 @@ return [
             UtilisateurSearchService::class => UtilisateurSearchServiceFactory::class,
         ],
         'aliases' => [
-            UtilisateurService::class => 'UtilisateurService'
+            UtilisateurService::class => 'UtilisateurService',
+            IndividuService::class => 'IndividuService',
         ]
     ],
     'controllers'     => [

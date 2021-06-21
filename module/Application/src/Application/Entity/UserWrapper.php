@@ -5,6 +5,8 @@ namespace Application\Entity;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
 use Application\Exception\DomainException;
+use Exception;
+use InvalidArgumentException;
 use UnicaenApp\Entity\Ldap\People as UnicaenAppPeople;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
@@ -36,11 +38,24 @@ class UserWrapper implements UserInterface
 
     /**
      * @param Utilisateur|UnicaenAppPeople|ShibUser|UnicaenLdapPeople $userData
-     * @return UserWrapper
+     * @return self
+     * @throws \Exception
      */
-    public function setUserData($userData)
+    public function setUserData($userData): self
     {
-        $this->userData = $userData;
+        switch (true) {
+            case $userData instanceof UnicaenLdapPeople:
+            case $userData instanceof UnicaenAppPeople:
+            case $userData instanceof ShibUser:
+            case $userData instanceof Utilisateur:
+                $this->userData = $userData;
+                break;
+            default:
+                throw new Exception(
+                    "Type de données utilisateurs spécifié inattendu : " .
+                    is_object($userData) ? get_class($userData) : gettype($userData)
+                );
+        }
 
         if ($this->userData instanceof Utilisateur) {
             $this->individu = $this->userData->getIndividu();
@@ -75,13 +90,13 @@ class UserWrapper implements UserInterface
      *
      * Retourne par exemple "unicaen.fr" lorsque l'EPPN est "tartempion@unicaen.fr"
      *
-     * @return string
+     * @return string|null
      */
-    public function getDomainFromEppn()
+    public function getDomainFromEppn(): ?string
     {
         $parts = explode('@', $this->getEppn());
 
-        return $parts[1];
+        return $parts[1] ?? null;
     }
 
     /**
@@ -102,23 +117,21 @@ class UserWrapper implements UserInterface
      * Retourne l'EduPersonPrincipalName (EPPN), si applicable aux données utilisateur courantes.
      *
      * @return string
-     * @throws DomainException Si l'EPPN n'a pas de sens pour les données utilisateur courantes
      */
-    public function getEppn()
+    public function getEppn(): string
     {
         switch (true) {
             case $this->userData instanceof UnicaenLdapPeople:
             case $this->userData instanceof UnicaenAppPeople:
                 return $this->userData->getEduPersonPrincipalName();
 
-            case $this->userData instanceof Utilisateur:
-                throw new DomainException("Les données d'identité de type Utilisateur ne sont pas supportées");
-
             case $this->userData instanceof ShibUser:
                 return $this->userData->getEppn();
 
             default:
-                throw new LogicException("Cas imprévu!");
+                throw new DomainException(
+                    "Pas d'EPPN pour des données d'identité de type " .
+                    is_object($this->userData) ? get_class($this->userData) : gettype($this->userData));
         }
     }
 
