@@ -11,15 +11,15 @@ select nextval('individu_id_seq'),
        'Premier',
        'Premier',
        'François',
-       'francois.premier@univ.fr',
+       'francois.premier@{ETAB_DOMAINE}',
        'INCONNU::00012345',
        '00012345',
        1, 1, 1
 ;
 insert into utilisateur (id, username, email, display_name, password, individu_id)
 select nextval('utilisateur_id_seq'),
-       'premierf@univ.fr', -- du genre EPPN (si shibboleth activé) ou supannAliasLogin (si LDAP activé)
-       'francois.premier@univ.fr',
+       'premierf@{ETAB_DOMAINE}', -- du genre EPPN (si shibboleth activé) ou supannAliasLogin (si LDAP activé)
+       'francois.premier@{ETAB_DOMAINE}',
        'François PREMIER',
        'shib', -- 'shib' (si authentification shibboleth), ou 'ldap' (si auth LDAP), ou mdp bcrypté (si auth BDD locale)
        i.id

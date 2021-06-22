@@ -10,5 +10,5 @@ CREATE OR REPLACE VIEW v_situ_autoris_diff_these (these_id, diffusion_id) AS SEL
     d.these_id,
     d.id AS diffusion_id
  FROM DIFFUSION d
-where d.VERSION_CORRIGEE = 0 and d.HISTO_DESTRUCTEUR_ID is null;
+where d.VERSION_CORRIGEE = false and d.HISTO_DESTRUCTEUR_ID is null;
 

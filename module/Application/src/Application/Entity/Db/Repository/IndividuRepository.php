@@ -77,7 +77,6 @@ class IndividuRepository extends DefaultEntityRepository
             $sql .= sprintf(" AND i.type = '%s'", $type);
             $tmp = null;
         }
-        $sql .= sprintf(" LIMIT %d", (int)$limit);
 
         $sqlCri = [];
         foreach ($criteres as $c) {
@@ -93,6 +92,8 @@ class IndividuRepository extends DefaultEntityRepository
         $orc = implode(' OR ', $orc);
 
         $sql .= ' AND (' . $orc . ') ';
+
+        $sql .= sprintf(" LIMIT %d", (int)$limit);
 
         try {
             $stmt = $this->getEntityManager()->getConnection()->executeQuery($sql);

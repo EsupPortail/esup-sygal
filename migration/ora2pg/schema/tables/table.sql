@@ -40,16 +40,16 @@ COMMENT ON TABLE api_log IS E'Logs des appels aux API des établissements.';
 CREATE TABLE attestation (
 	id bigint NOT NULL,
 	these_id bigint NOT NULL,
-	ver_depo_est_ver_ref smallint NOT NULL DEFAULT 0,
-	ex_impr_conform_ver_depo smallint DEFAULT null,
+	ver_depo_est_ver_ref boolean NOT NULL DEFAULT 'f',
+	ex_impr_conform_ver_depo boolean DEFAULT null,
 	histo_creation timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
 	histo_createur_id bigint NOT NULL,
 	histo_modification timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
 	histo_modificateur_id bigint NOT NULL,
 	histo_destruction timestamp,
 	histo_destructeur_id bigint,
-	version_corrigee smallint NOT NULL DEFAULT 0,
-	creation_auto smallint NOT NULL DEFAULT 0
+	version_corrigee boolean NOT NULL DEFAULT 'f',
+	creation_auto boolean NOT NULL DEFAULT 'f'
 ) ;
 
 CREATE TABLE categorie_privilege (
@@ -62,7 +62,7 @@ CREATE TABLE categorie_privilege (
 CREATE TABLE diffusion (
 	id bigint NOT NULL,
 	these_id bigint NOT NULL,
-	droit_auteur_ok smallint NOT NULL DEFAULT 0,
+	droit_auteur_ok boolean NOT NULL DEFAULT 'f',
 	autoris_mel smallint NOT NULL DEFAULT 0,
 	autoris_embargo_duree varchar(20),
 	autoris_motif varchar(2000),
@@ -72,19 +72,19 @@ CREATE TABLE diffusion (
 	histo_modificateur_id bigint NOT NULL,
 	histo_destruction timestamp,
 	histo_destructeur_id bigint,
-	certif_charte_diff smallint NOT NULL DEFAULT 0,
-	confident smallint NOT NULL DEFAULT 0,
+	certif_charte_diff boolean NOT NULL DEFAULT 'f',
+	confident boolean NOT NULL DEFAULT 'f',
 	confident_date_fin timestamp,
 	orcid varchar(200),
 	nnt varchar(30),
 	hal_id varchar(100),
-	version_corrigee smallint NOT NULL DEFAULT 0,
-	creation_auto smallint NOT NULL DEFAULT 0
+	version_corrigee boolean NOT NULL DEFAULT 'f',
+	creation_auto boolean NOT NULL DEFAULT 'f'
 ) ;
 COMMENT ON COLUMN diffusion.droit_auteur_ok IS E'Je garantis que tous les documents de la version mise en ligne sont libres de droits ou que j''ai acquis les droits afférents pour la reproduction et la représentation sur tous supports';
-COMMENT ON COLUMN diffusion.autoris_embargo_duree IS E'Durée de l''embargo éventuel';
 COMMENT ON COLUMN diffusion.autoris_mel IS E'J''autorise la mise en ligne de la version de diffusion de la thèse sur Internet';
 COMMENT ON COLUMN diffusion.confident IS E'La thèse est-elle confidentielle ?';
+COMMENT ON COLUMN diffusion.autoris_embargo_duree IS E'Durée de l''embargo éventuel';
 COMMENT ON COLUMN diffusion.certif_charte_diff IS E'En cochant cette case, je certifie avoir pris connaissance de la charte de diffusion des thèses en vigueur à la date de signature de la convention de mise en ligne';
 
 CREATE TABLE doctorant (
@@ -148,10 +148,10 @@ CREATE TABLE etablissement (
 	domaine varchar(50),
 	source_id bigint NOT NULL,
 	source_code varchar(64) NOT NULL,
-	est_membre smallint NOT NULL DEFAULT 0,
-	est_associe smallint NOT NULL DEFAULT 0,
-	est_comue smallint NOT NULL DEFAULT 0,
-	est_etab_inscription bigint NOT NULL DEFAULT 0,
+	est_membre boolean NOT NULL DEFAULT 'f',
+	est_associe boolean NOT NULL DEFAULT 'f',
+	est_comue boolean NOT NULL DEFAULT 'f',
+	est_etab_inscription boolean NOT NULL DEFAULT 'f',
 	code varchar(64),
 	signature_convocation_id bigint
 ) ;
@@ -193,11 +193,11 @@ CREATE TABLE fichier_these (
 	id bigint NOT NULL,
 	fichier_id bigint NOT NULL,
 	these_id bigint NOT NULL,
-	est_annexe smallint NOT NULL DEFAULT 0,
-	est_expurge smallint NOT NULL DEFAULT 0,
-	est_conforme smallint,
+	est_annexe boolean NOT NULL DEFAULT 'f',
+	est_expurge boolean NOT NULL DEFAULT 'f',
+	est_conforme boolean,
 	retraitement varchar(50),
-	est_partiel smallint NOT NULL DEFAULT 0
+	est_partiel boolean NOT NULL DEFAULT 'f'
 ) ;
 
 CREATE TABLE financement (
@@ -224,7 +224,7 @@ CREATE TABLE financement (
 CREATE TABLE import_log (
 	type varchar(128) NOT NULL,
 	name varchar(128) NOT NULL,
-	success smallint NOT NULL,
+	success boolean NOT NULL,
 	log text NOT NULL,
 	started_on timestamp NOT NULL,
 	ended_on timestamp NOT NULL
@@ -248,7 +248,7 @@ CREATE TABLE import_observ (
 	operation varchar(50) NOT NULL DEFAULT 'UPDATE',
 	to_value varchar(1000),
 	description varchar(200),
-	enabled smallint NOT NULL DEFAULT 0,
+	enabled boolean NOT NULL DEFAULT 'f',
 	filter text
 ) ;
 
@@ -332,7 +332,7 @@ CREATE TABLE information (
 	histo_destructeur_id bigint,
 	contenu text NOT NULL,
 	priorite bigint NOT NULL DEFAULT 0,
-	est_visible bigint NOT NULL DEFAULT 1,
+	est_visible boolean NOT NULL DEFAULT 't',
 	langue_id varchar(64) NOT NULL
 ) ;
 
@@ -353,7 +353,7 @@ CREATE TABLE information_langue (
 CREATE TABLE liste_diff (
 	id bigint NOT NULL,
 	adresse varchar(256) NOT NULL,
-	enabled smallint NOT NULL DEFAULT 0,
+	enabled boolean NOT NULL DEFAULT 'f',
 	histo_creation timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
 	histo_createur_id bigint NOT NULL,
 	histo_modification timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
@@ -398,6 +398,15 @@ CREATE TABLE notif (
 	enabled bigint NOT NULL DEFAULT 1
 ) ;
 
+CREATE TABLE notif_mail (
+	id bigint NOT NULL,
+	mail_from varchar(1024),
+	mail_to varchar(1024) NOT NULL,
+	subject varchar(1024),
+	body_text text,
+	sent_on timestamp
+) ;
+
 CREATE TABLE notif_result (
 	id bigint NOT NULL,
 	notif_id bigint NOT NULL,
@@ -420,7 +429,7 @@ CREATE TABLE origine_financement (
 	histo_modificateur_id bigint,
 	histo_destruction timestamp,
 	histo_destructeur_id bigint,
-	visible bigint NOT NULL DEFAULT 1
+	visible boolean NOT NULL DEFAULT 't'
 ) ;
 
 CREATE TABLE parametre (
@@ -456,18 +465,32 @@ CREATE TABLE profil_to_role (
 	role_id bigint NOT NULL
 ) ;
 
-CREATE TABLE rapport_annuel (
+CREATE TABLE rapport (
 	id bigint NOT NULL,
 	these_id bigint NOT NULL,
 	fichier_id bigint NOT NULL,
 	annee_univ bigint NOT NULL,
-	est_final smallint NOT NULL DEFAULT 0,
+	est_final boolean,
 	histo_createur_id bigint NOT NULL,
 	histo_modificateur_id bigint,
 	histo_destructeur_id bigint,
 	histo_creation timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
 	histo_modification timestamp,
-	histo_destruction timestamp
+	histo_destruction timestamp,
+	type_rapport_id bigint NOT NULL
+) ;
+
+CREATE TABLE rapport_validation (
+	id bigint NOT NULL,
+	type_validation_id bigint NOT NULL,
+	rapport_id bigint NOT NULL,
+	individu_id bigint DEFAULT NULL,
+	histo_creation timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
+	histo_createur_id bigint NOT NULL DEFAULT 1,
+	histo_modification timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
+	histo_modificateur_id bigint NOT NULL DEFAULT 1,
+	histo_destruction timestamp,
+	histo_destructeur_id bigint
 ) ;
 
 CREATE TABLE rdv_bu (
@@ -476,9 +499,9 @@ CREATE TABLE rdv_bu (
 	coord_doctorant varchar(2000),
 	dispo_doctorant varchar(2000),
 	mots_cles_rameau varchar(1024),
-	convention_mel_signee smallint NOT NULL DEFAULT 0,
-	exempl_papier_fourni smallint DEFAULT null,
-	version_archivable_fournie smallint NOT NULL DEFAULT 0,
+	convention_mel_signee boolean NOT NULL DEFAULT 'f',
+	exempl_papier_fourni boolean DEFAULT null,
+	version_archivable_fournie boolean NOT NULL DEFAULT 'f',
 	divers text,
 	histo_creation timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
 	histo_createur_id bigint NOT NULL,
@@ -487,9 +510,9 @@ CREATE TABLE rdv_bu (
 	histo_destruction timestamp,
 	histo_destructeur_id bigint
 ) ;
+COMMENT ON COLUMN rdv_bu.convention_mel_signee IS E'Convention de mise en ligne signée ?';
 COMMENT ON COLUMN rdv_bu.version_archivable_fournie IS E'Témoin indiquant si une version archivable de la thèse existe';
 COMMENT ON COLUMN rdv_bu.exempl_papier_fourni IS E'Exemplaire papier remis ?';
-COMMENT ON COLUMN rdv_bu.convention_mel_signee IS E'Convention de mise en ligne signée ?';
 
 CREATE TABLE role (
 	id bigint NOT NULL,
@@ -498,10 +521,10 @@ CREATE TABLE role (
 	source_code varchar(64) NOT NULL,
 	source_id bigint NOT NULL,
 	role_id varchar(64) NOT NULL,
-	is_default bigint DEFAULT 0,
+	is_default boolean DEFAULT 'f',
 	ldap_filter varchar(255),
-	attrib_auto smallint NOT NULL DEFAULT 0,
-	these_dep smallint NOT NULL DEFAULT 0,
+	attrib_auto boolean NOT NULL DEFAULT 'f',
+	these_dep boolean NOT NULL DEFAULT 'f',
 	histo_createur_id bigint NOT NULL,
 	histo_creation timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
 	histo_modificateur_id bigint DEFAULT null,
@@ -523,7 +546,7 @@ CREATE TABLE source (
 	id bigint NOT NULL,
 	code varchar(64) NOT NULL,
 	libelle varchar(128) NOT NULL,
-	importable smallint NOT NULL,
+	importable boolean NOT NULL,
 	etablissement_id bigint
 ) ;
 COMMENT ON TABLE source IS E'Sources de données, importables ou non, ex: Apogée, Physalis.';
@@ -598,7 +621,7 @@ CREATE TABLE soutenance_membre (
 	exterieur varchar(3),
 	email varchar(256),
 	acteur_id bigint,
-	visio bigint NOT NULL DEFAULT 0,
+	visio boolean NOT NULL DEFAULT 'f',
 	nom varchar(256),
 	prenom varchar(256),
 	histo_creation timestamp NOT NULL,
@@ -606,7 +629,8 @@ CREATE TABLE soutenance_membre (
 	histo_modification timestamp NOT NULL,
 	histo_modificateur_id bigint NOT NULL,
 	histo_destruction timestamp,
-	histo_destructeur_id bigint
+	histo_destructeur_id bigint,
+	clef varchar(64)
 ) ;
 
 CREATE TABLE soutenance_proposition (
@@ -616,11 +640,11 @@ CREATE TABLE soutenance_proposition (
 	lieu varchar(256),
 	rendu_rapport timestamp,
 	confidentialite timestamp,
-	label_europeen bigint NOT NULL DEFAULT 0,
-	manuscrit_anglais bigint NOT NULL DEFAULT 0,
-	soutenance_anglais bigint NOT NULL DEFAULT 0,
-	huit_clos bigint NOT NULL DEFAULT 0,
-	exterieur bigint NOT NULL DEFAULT 0,
+	label_europeen boolean NOT NULL DEFAULT 'f',
+	manuscrit_anglais boolean NOT NULL DEFAULT 'f',
+	soutenance_anglais boolean NOT NULL DEFAULT 'f',
+	huit_clos boolean NOT NULL DEFAULT 'f',
+	exterieur boolean NOT NULL DEFAULT 'f',
 	nouveau_titre varchar(2048),
 	etat_id bigint NOT NULL,
 	sursis varchar(1),
@@ -644,7 +668,8 @@ CREATE TABLE soutenance_qualite (
 	histo_modification timestamp NOT NULL,
 	histo_modificateur_id bigint NOT NULL,
 	histo_destruction timestamp,
-	histo_destructeur_id bigint
+	histo_destructeur_id bigint,
+	justificatif varchar(1) NOT NULL DEFAULT 'N'
 ) ;
 
 CREATE TABLE soutenance_qualite_sup (
@@ -674,13 +699,27 @@ CREATE TABLE structure (
 	source_id bigint NOT NULL,
 	source_code varchar(64) NOT NULL,
 	code varchar(64) NOT NULL DEFAULT 'NULL',
-	est_ferme smallint DEFAULT 0,
+	est_ferme boolean DEFAULT 'f',
 	adresse varchar(1024),
 	telephone varchar(64),
 	fax varchar(64),
 	email varchar(64),
 	site_web varchar(512),
 	id_ref varchar(1024)
+) ;
+
+CREATE TABLE structure_document (
+	id bigint NOT NULL,
+	nature_id bigint NOT NULL,
+	structure_id bigint NOT NULL,
+	etablissement_id bigint,
+	fichier_id bigint NOT NULL,
+	histo_creation timestamp NOT NULL,
+	histo_createur_id bigint NOT NULL,
+	histo_modification timestamp,
+	histo_modificateur_id bigint,
+	histo_destruction timestamp,
+	histo_destructeur_id bigint
 ) ;
 
 CREATE TABLE structure_substit (
@@ -719,7 +758,7 @@ CREATE TABLE these (
 	doctorant_id bigint NOT NULL DEFAULT NULL,
 	ecole_doct_id bigint,
 	unite_rech_id bigint,
-	besoin_expurge smallint NOT NULL DEFAULT 0,
+	besoin_expurge boolean NOT NULL DEFAULT 'f',
 	cod_unit_rech varchar(50),
 	correc_autorisee varchar(30),
 	date_autoris_soutenance timestamp,
@@ -872,6 +911,7 @@ CREATE TABLE tmp_individu (
 	source_insert_date timestamp DEFAULT LOCALTIMESTAMP
 ) ;
 
+
 CREATE TABLE tmp_origine_financement (
 	insert_date timestamp DEFAULT LOCALTIMESTAMP,
 	id varchar(64),
@@ -991,6 +1031,13 @@ CREATE TABLE tmp_variable (
 	source_insert_date timestamp DEFAULT LOCALTIMESTAMP
 ) ;
 
+CREATE TABLE type_rapport (
+	id bigint NOT NULL,
+	code varchar(50) NOT NULL,
+	libelle_court varchar(64) NOT NULL,
+	libelle_long varchar(128) NOT NULL
+) ;
+
 CREATE TABLE type_structure (
 	id bigint NOT NULL,
 	code varchar(50) NOT NULL,
@@ -1024,6 +1071,27 @@ CREATE TABLE unite_rech (
 	rnsr_id varchar(128)
 ) ;
 
+CREATE TABLE user_token (
+	id bigint NOT NULL,
+	user_id bigint NOT NULL,
+	token varchar(256) NOT NULL,
+	action varchar(256),
+	actions_count bigint NOT NULL DEFAULT 0,
+	actions_max_count bigint NOT NULL DEFAULT 0,
+	created_on timestamp NOT NULL DEFAULT LOCALTIMESTAMP,
+	expired_on timestamp NOT NULL,
+	last_used_on timestamp
+) ;
+COMMENT ON TABLE user_token IS E'Jetons d''authentification utilisateur';
+COMMENT ON COLUMN user_token.created_on IS E'Date de création du jeton';
+COMMENT ON COLUMN user_token.token IS E'Le jeton !';
+COMMENT ON COLUMN user_token.action IS E'Spécification de l''action précise autorisée, le cas échéant';
+COMMENT ON COLUMN user_token.actions_max_count IS E'Nombre maximum d''utilisations du jeton autorisée (0 = pas de limite)';
+COMMENT ON COLUMN user_token.user_id IS E'Identifiant unique de l''utilisateur';
+COMMENT ON COLUMN user_token.last_used_on IS E'Date de dernière utilisation du jeton';
+COMMENT ON COLUMN user_token.expired_on IS E'Date d''expiration du jeton';
+COMMENT ON COLUMN user_token.actions_count IS E'Nombre d''utilisation du jeton';
+
 CREATE TABLE utilisateur (
 	id bigint NOT NULL,
 	username varchar(255),
@@ -1033,7 +1101,8 @@ CREATE TABLE utilisateur (
 	state bigint NOT NULL DEFAULT 1,
 	last_role_id bigint,
 	individu_id bigint,
-	password_reset_token varchar(256)
+	password_reset_token varchar(256),
+	created_at timestamp DEFAULT LOCALTIMESTAMP
 ) ;
 COMMENT ON TABLE utilisateur IS E'Comptes utilisateurs s''étant déjà connecté à l''application + comptes avec mot de passe local.';
 
@@ -1053,7 +1122,7 @@ CREATE TABLE validation (
 CREATE TABLE validite_fichier (
 	id bigint NOT NULL,
 	fichier_id bigint NOT NULL,
-	est_valide smallint,
+	est_valide boolean,
 	message text,
 	log text,
 	histo_createur_id bigint NOT NULL,
@@ -1094,7 +1163,7 @@ CREATE TABLE wf_etape (
 	code varchar(128) NOT NULL,
 	ordre bigint NOT NULL DEFAULT 1,
 	chemin bigint NOT NULL DEFAULT 1,
-	obligatoire smallint NOT NULL DEFAULT 1,
+	obligatoire boolean NOT NULL DEFAULT 't',
 	route varchar(200) NOT NULL,
 	libelle_acteur varchar(150) NOT NULL,
 	libelle_autres varchar(150) NOT NULL,

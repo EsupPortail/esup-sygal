@@ -14,5 +14,5 @@ CREATE OR REPLACE VIEW v_situ_archivab_va (these_id, retraitement, est_valide) A
          JOIN FICHIER f ON ft.FICHIER_ID = f.id and f.HISTO_DESTRUCTION is null
          JOIN VERSION_FICHIER v ON f.VERSION_FICHIER_ID = v.id AND v.CODE = 'VA'
          JOIN VALIDITE_FICHIER vf ON vf.FICHIER_ID = f.id
-where EST_ANNEXE = 0 AND EST_EXPURGE = 0;
+where EST_ANNEXE = false AND EST_EXPURGE = false;
 

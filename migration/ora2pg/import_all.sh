@@ -409,7 +409,7 @@ if [ $SCHEMA_ONLY -eq 0 ]; then
 		if confirm "Would you like to import data from $NAMESPACE/data/data.sql?" ; then
 			echo "Running: psql$DB_HOST$DB_PORT -U $DB_OWNER -d $DB_NAME -f $NAMESPACE/data/data.sql"
 			if [ $DEBUG -eq 0 ]; then
-				psql$DB_HOST$DB_PORT -U $DB_OWNER -d $DB_NAME -f $NAMESPACE/data/data.sql
+				psql$DB_HOST$DB_PORT -U $DB_OWNER -d $DB_NAME -v ON_ERROR_STOP=1 -f $NAMESPACE/data/data.sql
 				if [ $? -ne 0 ]; then
 					die "an error occurs when importing file $NAMESPACE/data/data.sql."
 				fi

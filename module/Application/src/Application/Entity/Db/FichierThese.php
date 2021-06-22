@@ -30,19 +30,9 @@ class FichierThese implements ResourceInterface
     private $id;
 
     /**
-     * @var bool
-     */
-    private $estAnnexe = false;
-
-    /**
      * @var string
      */
     private $retraitement;
-
-    /**
-     * @var bool
-     */
-    private $estExpurge = false;
 
     /**
      * @var null|int

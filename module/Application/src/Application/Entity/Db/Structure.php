@@ -24,13 +24,12 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
      * @var string $sigle
      * @var string $libelle
      * @var string $cheminLogo
-     * @var integer $cheminLogo
      */
     private     $id;
     protected   $sigle;
     protected   $libelle;
     protected   $cheminLogo;
-    protected   $ferme;
+    protected   $estFermee = false;
 
     /**
      * @var string $adresse
@@ -370,17 +369,17 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     /**
      * @return bool
      */
-    public function isFerme()
+    public function estFermee(): bool
     {
-        return $this->ferme === 1;
+        return $this->estFermee;
     }
 
     /**
-     * @param boolean $ferme
+     * @param boolean $estFermee
      */
-    public function setFerme($ferme)
+    public function setEstFermee(bool $estFermee = true)
     {
-        if (!$ferme) $this->ferme = 0; else $this->ferme = 1;
+        $this->estFermee = $estFermee;
     }
 
     /**

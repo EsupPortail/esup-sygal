@@ -8,7 +8,7 @@ namespace Application\Entity\Db\VSitu;
 class DepotVersionCorrigeeValidationPresident
 {
     /**
-     * @var boolean
+     * @var int
      */
     private $valide;
 
@@ -31,7 +31,7 @@ class DepotVersionCorrigeeValidationPresident
     /**
      * Set valide
      *
-     * @param boolean $valide
+     * @param int $valide
      *
      * @return DepotVersionCorrigeeValidationPresident
      */
@@ -45,7 +45,7 @@ class DepotVersionCorrigeeValidationPresident
     /**
      * Get valide
      *
-     * @return boolean
+     * @return int
      */
     public function getValide()
     {

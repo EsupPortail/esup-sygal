@@ -117,7 +117,7 @@ $structure = $unite->getStructure();
                     </dd>
                     <dt> Statut :</dt>
                     <dd>
-                        <?php if ($unite->getStructure()->isFerme()) : ?>
+                        <?php if ($unite->getStructure()->estFermee()) : ?>
                             <span class="label" style="background-color:darkred">Structure fermée</span>
                         <?php else : ?>
                             <span class="label" style="background-color:darkgreen">Structure ouverte</span>

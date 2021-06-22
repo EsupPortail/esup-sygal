@@ -11,8 +11,8 @@ CREATE OR REPLACE VIEW v_situ_autoris_diff_these_voc (these_id, diffusion_id) AS
     d.id AS diffusion_id
  FROM DIFFUSION d
          -- NB: on se base sur l'existence d'une version corrigée et pas sur t.CORRECTION_AUTORISEE qui peut revenir à null
-         JOIN FICHIER_THESE ft ON ft.THESE_ID = d.THESE_ID AND EST_ANNEXE = 0 AND EST_EXPURGE = 0
+         JOIN FICHIER_THESE ft ON ft.THESE_ID = d.THESE_ID AND EST_ANNEXE = false AND EST_EXPURGE = false
          JOIN FICHIER f ON ft.FICHIER_ID = f.id and f.HISTO_DESTRUCTION is null
          JOIN VERSION_FICHIER v ON f.VERSION_FICHIER_ID = v.id AND v.CODE = 'VOC'
-where d.VERSION_CORRIGEE = 1 and d.HISTO_DESTRUCTEUR_ID is null;
+where d.VERSION_CORRIGEE = true and d.HISTO_DESTRUCTEUR_ID is null;
 

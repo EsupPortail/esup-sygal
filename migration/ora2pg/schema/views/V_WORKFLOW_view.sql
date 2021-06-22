@@ -16,8 +16,8 @@ CREATE OR REPLACE VIEW v_workflow (these_id, etape_id, code, ordre, franchie, re
     t.OBJECTIF,
     -- NB: dans les 3 lignes suivantes, c'est la même expression 'dense_rank() over(...)' qui est répétée :
     (dense_rank() over (partition by t.THESE_ID, t.FRANCHIE order by t.ORDRE)) dense_rank,
-    case when t.FRANCHIE = 1 or (dense_rank() over (partition by t.THESE_ID, t.FRANCHIE order by t.ORDRE)) = 1 then 1 else 0 end atteignable,
-    case when(dense_rank() over (partition by t.THESE_ID, t.FRANCHIE order by t.ORDRE)) = 1 and t.FRANCHIE = 0 then 1 else 0 end courante,
+    case when t.FRANCHIE = 1 or (dense_rank() over (partition by t.THESE_ID, t.FRANCHIE order by t.ORDRE)) = 1 then true else false end atteignable,
+    case when(dense_rank() over (partition by t.THESE_ID, t.FRANCHIE order by t.ORDRE)) = 1 and t.FRANCHIE = 0 then true else false end courante,
     row_number() over (order by 1,2) as id
  FROM (
 
@@ -143,14 +143,14 @@ UNION ALL
              --   CASE WHEN v.EST_VALIDE IS NULL THEN
              --     1 -- test d'archivabilité existant mais résultat indéterminé (plantage)
              --   ELSE
-             --     CASE WHEN v.EST_VALIDE = 1 THEN
+             --     CASE WHEN v.EST_VALIDE = true THEN
              --       1 -- test d'archivabilité réussi
              --     ELSE
              --       0 -- test d'archivabilité échoué
              --     END
              --   END
              -- END franchie,
-             CASE WHEN v.EST_VALIDE IS NULL OR v.EST_VALIDE = 0 THEN 0 ELSE 1 END resultat,
+             CASE WHEN v.EST_VALIDE IS NULL OR v.EST_VALIDE = false THEN 0 ELSE 1 END resultat,
              1 objectif
          FROM these t
                   JOIN WF_ETAPE e ON e.code = 'ARCHIVABILITE_VERSION_ORIGINALE'
@@ -195,7 +195,7 @@ UNION ALL
              CASE WHEN v.EST_VALIDE IS NULL
                       THEN 0
                   ELSE 1 END franchie,
-             CASE WHEN v.EST_VALIDE IS NULL OR v.EST_VALIDE = 0
+             CASE WHEN v.EST_VALIDE IS NULL OR v.EST_VALIDE = false
                       THEN 0
                   ELSE 1 END resultat,
              1          objectif
@@ -218,7 +218,7 @@ UNION ALL
              CASE WHEN v.EST_CONFORME IS NULL
                       THEN 0
                   ELSE 1 END franchie,
-             CASE WHEN v.EST_CONFORME IS NULL OR v.EST_CONFORME = 0
+             CASE WHEN v.EST_CONFORME IS NULL OR v.EST_CONFORME = false
                       THEN 0
                   ELSE 1 END resultat,
              1          objectif
@@ -344,7 +344,7 @@ UNION ALL
              e.code,
              e.ORDRE,
              CASE WHEN v.THESE_ID IS NULL THEN 0 ELSE 1 END franchie,
-             CASE WHEN v.EST_VALIDE IS NULL OR v.EST_VALIDE = 0 THEN 0 ELSE 1 END resultat,
+             CASE WHEN v.EST_VALIDE IS NULL OR v.EST_VALIDE = false THEN 0 ELSE 1 END resultat,
              1 objectif
          FROM these t
                   JOIN WF_ETAPE e ON e.code = 'ARCHIVABILITE_VERSION_ORIGINALE_CORRIGEE'
@@ -386,8 +386,8 @@ UNION ALL
              e.id AS    etape_id,
              e.code,
              e.ORDRE,
-             CASE WHEN v.EST_VALIDE = 1 THEN 1 ELSE 0 END franchie,
-             CASE WHEN v.EST_VALIDE = 1 THEN 1 ELSE 0 END resultat,
+             CASE WHEN v.EST_VALIDE = true THEN 1 ELSE 0 END franchie,
+             CASE WHEN v.EST_VALIDE = true THEN 1 ELSE 0 END resultat,
              1 objectif
          FROM these t
                   JOIN WF_ETAPE e ON e.code = 'ARCHIVABILITE_VERSION_ARCHIVAGE_CORRIGEE'
@@ -405,8 +405,8 @@ UNION ALL
              e.id AS    etape_id,
              e.code,
              e.ORDRE,
-             CASE WHEN v.EST_CONFORME = 1 THEN 1 ELSE 0 END franchie,
-             CASE WHEN v.EST_CONFORME = 1 THEN 1 ELSE 0 END resultat,
+             CASE WHEN v.EST_CONFORME = true THEN 1 ELSE 0 END franchie,
+             CASE WHEN v.EST_CONFORME = true THEN 1 ELSE 0 END resultat,
              1 objectif
          FROM these t
                   JOIN WF_ETAPE e ON e.code = 'VERIFICATION_VERSION_ARCHIVAGE_CORRIGEE'

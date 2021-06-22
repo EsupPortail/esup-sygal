@@ -149,7 +149,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
         // établissements : pour l'instant les rôles ne concernent que des établissements d'inscription donc on flitre
         $etablissementsQb = $this->structureService->getAllStructuresAffichablesByTypeQb(TypeStructure::CODE_ETABLISSEMENT, 'libelle', true);
-        $etablissementsQb->join('structure.etablissement', 'etab', Expr\Join::WITH, 'etab.estInscription = 1');
+        $etablissementsQb->join('structure.etablissement', 'etab', Expr\Join::WITH, 'etab.estInscription = true');
         $etablissements = $etablissementsQb->getQuery()->execute();
 
         $unites = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle', true, true);

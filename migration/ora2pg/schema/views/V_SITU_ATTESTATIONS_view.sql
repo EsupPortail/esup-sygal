@@ -10,5 +10,5 @@ CREATE OR REPLACE VIEW v_situ_attestations (these_id, attestation_id) AS SELECT
     a.these_id,
     a.id AS attestation_id
  FROM ATTESTATION a
-where a.VERSION_CORRIGEE = 0 and a.HISTO_DESTRUCTEUR_ID is null;
+where a.VERSION_CORRIGEE = false and a.HISTO_DESTRUCTEUR_ID is null;
 

@@ -1,8 +1,7 @@
 <?php
 
-$env = getenv('APPLICATION_ENV') ?: 'production';
-
-$modules = ['Zend\Cache',
+$modules = [
+    'Zend\Cache',
     'Zend\Filter',
     'Zend\Form',
     'Zend\Hydrator',

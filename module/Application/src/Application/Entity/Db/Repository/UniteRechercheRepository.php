@@ -25,7 +25,7 @@ class UniteRechercheRepository extends DefaultEntityRepository
             ->orderBy("str.libelle");
 
         if ($ouverte) {
-            $qb = $qb->andWhere('str.ferme = 0')
+            $qb = $qb->andWhere('str.estFermee = false')
                 ->leftJoin('str.structureSubstituante', 'substitutionTo')
                 ->andWhere('substitutionTo IS NULL')
                 ->orderBy('str.sigle')

@@ -105,7 +105,7 @@ class RoleRepository extends DefaultEntityRepository
     public function findAllRolesTheseDependantByEtablissement($etablissement)
     {
         $qb = $this->createQueryBuilder("role")
-            ->andWhere("role.theseDependant = 1")
+            ->andWhere("role.theseDependant = true")
             ->andWhere("role.structure = :etablissement")
             ->setParameter("etablissement", $etablissement)
             ->orderBy("role.ordreAffichage", "DESC")

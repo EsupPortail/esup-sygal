@@ -13,5 +13,5 @@ CREATE OR REPLACE VIEW v_situ_depot_vac (these_id, fichier_id) AS SELECT
          JOIN FICHIER f ON ft.FICHIER_ID = f.id and f.HISTO_DESTRUCTION is null
          JOIN NATURE_FICHIER nf ON f.NATURE_ID = nf.id AND nf.CODE = 'THESE_PDF'
          JOIN VERSION_FICHIER v ON f.VERSION_FICHIER_ID = v.id AND v.CODE = 'VAC'
-where EST_ANNEXE = 0 AND EST_EXPURGE = 0;
+where EST_ANNEXE = false AND EST_EXPURGE = false;
 

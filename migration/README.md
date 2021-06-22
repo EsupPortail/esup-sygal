@@ -27,7 +27,8 @@ ora2pg-image \
 ./export_schema.sh -c ./config/ora2pg.conf
 ```
 
-Les scripts sont générés dans `${PWD}/migration/ora2pg/schema/`.
+*Les scripts sont générés dans `${PWD}/migration/ora2pg/schema/`.*
+
 Pour effacer les existants :
 ```bash
 sudo rm -f \
@@ -125,6 +126,7 @@ PROFIL_PRIVILEGE,\
 SOUTENANCE_CONFIGURATION,\
 SOUTENANCE_ETAT,\
 SOUTENANCE_QUALITE,\
+TYPE_RAPPORT,\
 TYPE_STRUCTURE,\
 TYPE_VALIDATION,\
 VERSION_FICHIER,\
@@ -139,12 +141,6 @@ sudo rm -rf migration/ora2pg/data/*
 
 
 
-Vidage éventuel de la base PostgreSQL
--------------------------------------
-
-**Si besoin**, le script `migration/pg_clean.sql` permet de vider entièrement la base de données PostgreSQL.
-
-
 Import des objets et données dans la base PostgreSQL
 ----------------------------------------------------
 
@@ -156,8 +152,10 @@ PGDATABASE=sygal \
 PGUSER=ad_sygal \
 PGHOST=localhost \
 PGPORT=5432 \
-PGPASSWORD=MOT_DE_PASSE_PAR_DEFAUT
+PGPASSWORD=azerty
 ```
+
+**Si besoin**, utiliser le script `migration/pg_clean.sql` pour vider entièrement la base de données PostgreSQL.
 
 2) Lancer l'import
 
@@ -196,21 +194,6 @@ ora2pg-image \
 psql -d ${PGDATABASE} -h ${PGHOST} -U ${PGUSER} -f /tmp/pg_after_import.sql
 ```
 
-
-Collecte des scripts d'install
-------------------------------
-
-Lancer le script suivant :
-```
-bash ${PWD}/migration/bin/prepare_distrib_scripts.sh 
-```
-
-Les scripts sont générés dans `${PWD}/migration/distrib/`.
-
-Ils complètent les scripts situés dans `${PWD}/doc/database/`.
-```
-cp -rv ${PWD}/migration/distrib/* ${PWD}/doc/database/
-```
 
 
 The end

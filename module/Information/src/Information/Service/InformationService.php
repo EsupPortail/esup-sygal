@@ -24,7 +24,7 @@ class InformationService {
         ;
 
         if ($visibleOnly)
-            $qb = $qb->andWhere('information.visible = 1');
+            $qb = $qb->andWhere('information.visible = true');
 
         $result = $qb->getQuery()->getResult();
         return $result;

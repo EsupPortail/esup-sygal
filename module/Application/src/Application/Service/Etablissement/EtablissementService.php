@@ -40,7 +40,7 @@ class EtablissementService extends BaseService
         $qb = $this->getRepository()->createQueryBuilder('e')
             ->addSelect('s')
             ->join('e.structure', 's')
-            ->where('e.estComue = 1');
+            ->where('e.estComue = true');
 
         try {
             $comue = $qb->getQuery()->getOneOrNullResult();

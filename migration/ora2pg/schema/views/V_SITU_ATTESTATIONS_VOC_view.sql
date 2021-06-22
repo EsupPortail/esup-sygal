@@ -11,8 +11,8 @@ CREATE OR REPLACE VIEW v_situ_attestations_voc (these_id, attestation_id) AS SEL
     a.id AS attestation_id
  FROM ATTESTATION a
          -- NB: on se base sur l'existence d'une version corrigée et pas sur t.CORRECTION_AUTORISEE qui peut revenir à null
-         JOIN FICHIER_THESE ft ON ft.THESE_ID = a.THESE_ID AND EST_ANNEXE = 0 AND EST_EXPURGE = 0
+         JOIN FICHIER_THESE ft ON ft.THESE_ID = a.THESE_ID AND EST_ANNEXE = false AND EST_EXPURGE = false
          JOIN FICHIER f ON ft.FICHIER_ID = f.id and f.HISTO_DESTRUCTION is null
          JOIN VERSION_FICHIER v ON f.VERSION_FICHIER_ID = v.id AND v.CODE = 'VOC'
-where a.VERSION_CORRIGEE = 1 and a.HISTO_DESTRUCTEUR_ID is null;
+where a.VERSION_CORRIGEE = true and a.HISTO_DESTRUCTEUR_ID is null;
 

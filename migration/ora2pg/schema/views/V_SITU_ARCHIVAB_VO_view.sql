@@ -13,5 +13,5 @@ CREATE OR REPLACE VIEW v_situ_archivab_vo (these_id, est_valide) AS SELECT
          JOIN FICHIER f ON ft.FICHIER_ID = f.id and f.HISTO_DESTRUCTION is null
          JOIN VERSION_FICHIER v ON f.VERSION_FICHIER_ID = v.id AND v.CODE = 'VO'
          JOIN VALIDITE_FICHIER vf ON vf.FICHIER_ID = f.id
-where EST_ANNEXE = 0 AND EST_EXPURGE = 0;
+where EST_ANNEXE = false AND EST_EXPURGE = false;
 

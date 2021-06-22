@@ -112,7 +112,7 @@ union all
              e.ordre
          from these t
                   join wf_etape e on e.code = 'DEPOT_VERSION_ARCHIVAGE'
-                  join v_situ_archivab_vo situ on situ.these_id = t.id and situ.est_valide = 0 -- VO non archivable
+                  join v_situ_archivab_vo situ on situ.these_id = t.id and situ.est_valide = false -- VO non archivable
          where t.ETAT_THESE in ('E', 'S') -- thèses en cours ou soutenues
          
 union all
@@ -128,7 +128,7 @@ union all
              e.ordre
          from these t
                   join wf_etape e on e.code = 'ARCHIVABILITE_VERSION_ARCHIVAGE'
-                  join v_situ_archivab_vo situ on situ.these_id = t.id and situ.est_valide = 0 -- VO non archivable
+                  join v_situ_archivab_vo situ on situ.these_id = t.id and situ.est_valide = false -- VO non archivable
          where t.ETAT_THESE in ('E', 'S') -- thèses en cours ou soutenues
          
 union all
@@ -144,7 +144,7 @@ union all
              e.ordre
          from these t
                   join wf_etape e on e.code = 'VERIFICATION_VERSION_ARCHIVAGE'
-                  join v_situ_archivab_va situ on situ.these_id = t.id and situ.est_valide = 1 -- VA archivable
+                  join v_situ_archivab_va situ on situ.these_id = t.id and situ.est_valide = true -- VA archivable
          where t.ETAT_THESE in ('E', 'S') -- thèses en cours ou soutenues
          
 union all
@@ -271,7 +271,7 @@ union all
              e.ordre
          from these t
                   join wf_etape e on e.code = 'DEPOT_VERSION_ARCHIVAGE_CORRIGEE'
-                  join v_situ_archivab_voc situ on situ.these_id = t.id and situ.est_valide = 0 -- VOC non archivable
+                  join v_situ_archivab_voc situ on situ.these_id = t.id and situ.est_valide = false -- VOC non archivable
          where (t.correc_autorisee is not null or t.CORREC_AUTORISEE_FORCEE is not null or t.CORREC_EFFECTUEE = 'O') -- correction attendue ou effectuée
            and t.ETAT_THESE in ('E', 'S') -- thèses en cours ou soutenues
          
@@ -288,7 +288,7 @@ union all
              e.ordre
          from these t
                   join wf_etape e on e.code = 'ARCHIVABILITE_VERSION_ARCHIVAGE_CORRIGEE'
-                  join v_situ_archivab_voc situ on situ.these_id = t.id and situ.est_valide = 0 -- VOC non archivable
+                  join v_situ_archivab_voc situ on situ.these_id = t.id and situ.est_valide = false -- VOC non archivable
          where (t.correc_autorisee is not null or t.CORREC_AUTORISEE_FORCEE is not null or t.CORREC_EFFECTUEE = 'O') -- correction attendue ou effectuée
            and t.ETAT_THESE in ('E', 'S') -- thèses en cours ou soutenues
          
@@ -305,7 +305,7 @@ union all
              e.ordre
          from these t
                   join wf_etape e on e.code = 'VERIFICATION_VERSION_ARCHIVAGE_CORRIGEE'
-                  join v_situ_archivab_vac situ on situ.these_id = t.id and situ.est_valide = 1 -- VAC archivable
+                  join v_situ_archivab_vac situ on situ.these_id = t.id and situ.est_valide = true -- VAC archivable
          where (t.correc_autorisee is not null or t.CORREC_AUTORISEE_FORCEE is not null or t.CORREC_EFFECTUEE = 'O') -- correction attendue ou effectuée
            and t.ETAT_THESE in ('E', 'S') -- thèses en cours ou soutenues
          
@@ -358,7 +358,7 @@ union all
            and t.ETAT_THESE in ('E', 'S') -- thèses en cours ou soutenues
            and exists (
                  select * from DIFFUSION d
-                 where d.THESE_ID = t.id and d.VERSION_CORRIGEE = 1 and d.AUTORIS_MEL in (0/*Non*/
+                 where d.THESE_ID = t.id and d.VERSION_CORRIGEE = true and d.AUTORIS_MEL in (0/*Non*/
 , 1/*Oui+embargo*/
 ) -- exemplaire papier requis
              )

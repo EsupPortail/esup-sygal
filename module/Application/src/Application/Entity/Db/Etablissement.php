@@ -320,7 +320,7 @@ class Etablissement
     public function createSearchFilterValueOption(): array
     {
         $label = $this->getCode();
-        if ($this->getStructure()->isFerme()) {
+        if ($this->getStructure()->estFermee()) {
             $label .= "&nbsp; FERMÉ";
         }
 
