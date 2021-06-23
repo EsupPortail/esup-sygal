@@ -900,6 +900,8 @@ return [
                         'order' => -50,
                         'label' => 'Annuaire des thèses',
                         'route' => 'these',
+                        'params' => [],
+                        'query' => ['etatThese' => 'E'],
                         'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'index'),
                         'pages' => [
                             // PAS de pages filles sinon le menu disparaît ! :-/
@@ -1264,7 +1266,7 @@ return [
                                 'label' => '(Thèses Structure)',
                                 'route' => 'these/recherche/notres',
                                 'params' => [],
-                                'query' => [], // injection automatique du filtre "structure"
+                                'query' => ['etatThese' => 'E'], // injection automatique du filtre "structure"
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'index'),
                             ],
                         ],
