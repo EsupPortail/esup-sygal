@@ -1,5 +1,8 @@
 # Base de données : génération de la doc d'installation
 
+Ce README s'adresse au développeur souhaitant générer les scripts de création d'une base de données PostgreSQL
+toute neuve *à partir d'une base de données modèle existante*.
+
 ## Génération des fichiers
 
 Le script shell [`./build_db_install_files.sh`](build_db_install_files.sh) génère dans un répertoire de votre choix :
@@ -17,7 +20,7 @@ Le script shell [`./build_db_install_files.sh`](build_db_install_files.sh) gén�
   - un script bash et un fichier de config pour "préparer" les scripts SQL ayant l'extension `.sql.dist` :    
     - [`build_db_files.conf.dist`](build_db_files.conf.dist)
     - [`build_db_files.sh`](build_db_files.sh)
-  - un fichier expliquant comment procéder pour créer une base de données :
+  - un fichier expliquant comment procéder pour créer la base de données à l'aide de tous ces scripts :
     - [`README.md`](README.md)
 
 Ce script [`./build_db_install_files.sh`](build_db_install_files.sh) :
@@ -28,7 +31,7 @@ Ce script [`./build_db_install_files.sh`](build_db_install_files.sh) :
 Le script prend en argument le chemin d'un fichier de config et le chemin du répertoire où doivent être générés 
 les fichiers.
 
-Pour générer les fichiers de création d'une base de données :
+Voici un exemple pour générer les fichiers de création d'une base de données...
   - dans le répertoire destination `./build`,
   - à partir de la base modèle `sygal` (spécifiée par les variables d'env `PGDATABASE`, etc.),
   - qui permettront de créer une base et un utilisateur spécifiés dans le fichier de config
