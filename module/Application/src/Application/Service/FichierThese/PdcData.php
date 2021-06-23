@@ -126,6 +126,8 @@ class PdcData
     private $rapporteurs;
     /** @var Acteur[] */
     private $membres;
+    /** @var Acteur[] */
+    private $jury;
 
     /** @var MembreData[] */
     private $acteursEnCouverture;
@@ -459,6 +461,24 @@ class PdcData
     public function setMembres($membres)
     {
         $this->membres = $membres;
+        return $this;
+    }
+
+    /**
+     * @return Acteur[]
+     */
+    public function getJury(): array
+    {
+        return $this->jury;
+    }
+
+    /**
+     * @param Acteur[] $jury
+     * @return PdcData
+     */
+    public function setJury(array $jury): PdcData
+    {
+        $this->jury = $jury;
         return $this;
     }
 
