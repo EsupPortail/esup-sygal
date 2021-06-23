@@ -126,7 +126,7 @@ class TheseSearchService extends SearchService
             });
 
         $this->addFilters([
-            $etatTheseSearchFilter->setDefaultValue(These::ETAT_EN_COURS),
+            $etatTheseSearchFilter,//->setDefaultValue(These::ETAT_EN_COURS),
             $etablissementInscrFilter,
             $ecoleDoctoraleFilter,
             $uniteRechercheFilter,
