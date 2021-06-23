@@ -9,6 +9,7 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
+        <field name="code" length="64" column="CODE"/>
         <field name="domaine"   type="string"   length="50"  column="DOMAINE"   nullable="true"/>
         <field name="estMembre"  type="boolean" column="EST_MEMBRE" nullable="false"/>
         <field name="estAssocie" type="boolean" column="EST_ASSOCIE" nullable="false"/>

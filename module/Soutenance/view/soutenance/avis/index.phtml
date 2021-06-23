@@ -59,6 +59,13 @@ $canEdit = $this->isAllowed($rapporteur, AvisSoutenancePrivileges::AVIS_MODIFIER
     </div>
 <?php endif; ?>
 
+<div class="pull-right">
+    <a href="<?php echo $this->url('soutenance/index-rapporteur', ['these' => $these->getId()], [], true); ?>"
+       class="btn btn-primary action">
+        Retour à l'index rapporteur
+    </a>
+</div>
+
 <style>
     .form-control {
         height: auto;

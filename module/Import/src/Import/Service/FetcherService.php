@@ -205,7 +205,7 @@ class FetcherService
      */
     private function getConfigForEtablissement()
     {
-        $codeEtablissement = $this->etablissement->getCode();
+        $codeEtablissement = $this->etablissement->getStructure()->getCode();
 
         try {
             Assertion::keyIsset($this->config, $codeEtablissement);

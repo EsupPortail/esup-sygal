@@ -182,3 +182,10 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
     </div>
 </div>
 <?php endif; ?>
+
+<div class="pull-right">
+<a href="<?php echo $this->url('soutenance/index-rapporteur', ['these' => $these->getId()], [], true); ?>"
+   class="btn btn-primary action">
+   Retour à l'index rapporteur
+</a>
+</div>

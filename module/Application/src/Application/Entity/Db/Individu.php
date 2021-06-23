@@ -421,6 +421,17 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     }
 
     /**
+     * @return string 'F' ou 'M'
+     */
+    public function getCiviliteAsLetter(): string
+    {
+        return [
+            self::CIVILITE_M => 'M',
+            self::CIVILITE_MME => 'F',
+        ][$this->getCivilite()];
+    }
+
+    /**
      * Get estUneFemme
      *
      * @return bool

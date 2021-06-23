@@ -9,6 +9,7 @@ use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\RuntimeException;
