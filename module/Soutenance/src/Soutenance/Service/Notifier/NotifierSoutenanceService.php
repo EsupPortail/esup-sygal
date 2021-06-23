@@ -44,6 +44,8 @@ class NotifierSoutenanceService extends NotifierService
         $this->urlHelper = $urlHelper;
     }
 
+
+
     /**
      * @param These $these
      * @return string
@@ -633,6 +635,31 @@ class NotifierSoutenanceService extends NotifierService
                 ->setTemplateVariables([
                     'these' => $these,
                     'username' => $utilisateur->getUsername(),
+                    'url' => $url,
+                ]);
+            $this->trigger($notif);
+        }
+    }
+
+    /**
+     * @param These $these
+     * @param Utilisateur $user
+     * @param string $url
+     */
+    public function triggerConnexionRapporteur(These $these, Utilisateur $user, string $url)
+    {
+        $email = $user->getEmail();
+        if ($email === null) throw new LogicException("Aucun email de fourni !");
+
+        if (!empty($email)) {
+            $notif = new Notification();
+            $notif
+                ->setSubject("Connexion à SyGAL en tant que rapporteur de la thèse de " . $these->getDoctorant()->getIndividu()->getNomComplet())
+                ->setTo($email)
+                ->setTemplatePath('soutenance/notification/connexion-rapporteur')
+                ->setTemplateVariables([
+                    'these' => $these,
+                    'username' => $user->getUsername(),
                     'url' => $url,
                 ]);
             $this->trigger($notif);

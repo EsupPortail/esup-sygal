@@ -96,3 +96,23 @@ $canAnnuler = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoute
         Annuler l'avis de soutance
     </a>
 <?php endif; ?>
+
+<?php if ($avis !== null AND $avis->estNonHistorise()): ?>
+    <div class="box panel panel-success">
+        <div class="panel-heading">
+            <h2 class="first"> Et ensuite ? </h2>
+        </div>
+        <div class="panel-body">
+
+            Vous avez maintenant terminé la procédure de pré-soutenance.
+
+        </div>
+    </div>
+<?php endif; ?>
+
+<div class="pull-right">
+    <a href="<?php echo $this->url('soutenance/index-rapporteur', ['these' => $these->getId()], [], true); ?>"
+       class="btn btn-primary action">
+        Retour à l'index rapporteur
+    </a>
+</div>

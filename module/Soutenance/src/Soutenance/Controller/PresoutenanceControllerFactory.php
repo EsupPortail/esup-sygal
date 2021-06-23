@@ -20,6 +20,7 @@ use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
 use UnicaenAuth\Service\User as UserService;
+use UnicaenAuthToken\Service\TokenService;
 use Zend\View\Renderer\PhpRenderer;
 
 class PresoutenanceControllerFactory
@@ -46,6 +47,7 @@ class PresoutenanceControllerFactory
          * @var EngagementImpartialiteService $engagementImpartialiteService
          * @var FichierService $fichierService
          * @var StructureDocumentService $structureDocumentService
+         * @var TokenService $tokenService
          */
         $propositionService = $container->get(PropositionService::class);
         $membreService = $container->get(MembreService::class);
@@ -62,6 +64,7 @@ class PresoutenanceControllerFactory
         $engagementImpartialiteService = $container->get(EngagementImpartialiteService::class);
         $fichierService = $container->get(FichierService::class);
         $structureDocumentService = $container->get(StructureDocumentService::class);
+        $tokenService = $container->get(TokenService::class);
 
         /**
          * @var DateRenduRapportForm $dateRenduRapportForm
@@ -90,6 +93,7 @@ class PresoutenanceControllerFactory
         $controller->setEngagementImpartialiteService($engagementImpartialiteService);
         $controller->setFichierService($fichierService);
         $controller->setStructureDocumentService($structureDocumentService);
+        $controller->setTokenService($tokenService);
 
         $controller->setDateRenduRapportForm($dateRenduRapportForm);
         $controller->setAdresseSoutenanceForm($adresseSoutenanceForm);

@@ -238,7 +238,8 @@ EOS
         /** @var Role $role */
         $role = $this->userContextService->getSelectedIdentityRole();
         if ($role !== null && $structure = $role->getStructure()) {
-            return $this->etablissementService->getRepository()->findByStructureId($structure->getId());
+            $etablissement =  $this->etablissementService->getRepository()->findByStructureId($structure->getId());
+            if ($etablissement) return $etablissement;
         }
 
         return $this->etablissementService->getRepository()->findOneForUserWrapper($userWrapper);
