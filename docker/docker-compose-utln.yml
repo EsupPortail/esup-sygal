@@ -1,0 +1,43 @@
+version: '2.2'
+
+services:
+  sygal-utln:
+    image: registre.unicaen.fr:5000/sygal-image-php7.3
+    container_name: sygal-container-php7.3
+    environment:
+      - http_proxy
+      - https_proxy
+      - no_proxy
+      - HTTP_PROXY
+      - HTTPS_PROXY
+      - NO_PROXY
+    ports:
+      - "8003:443"
+    volumes:
+     - .:/app
+     - /tmp:/tmp
+     - $HOME/.ssh:/root/.ssh
+    working_dir: /app
+    networks:
+      - sygalnet
+    depends_on:
+      - sygal-db-utln
+
+  sygal-db-utln:
+    image: registre.unicaen.fr:5000/sygal-db-image
+    container_name: sygal-db-utln-container
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - 5442:5432
+    volumes:
+      - ./docker/db/utln/sql/:/sql              # Scripts de création/init
+      - ./data/db/utln:/var/lib/postgresql/data # Données persistées.
+    networks:
+      - sygalnet
+
+networks:
+  sygalnet:
+    driver: bridge
