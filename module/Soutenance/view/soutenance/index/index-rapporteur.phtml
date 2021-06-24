@@ -21,10 +21,12 @@ use Application\Entity\Db\Validation;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 
 $canEngagement = true;
 $canTelecharger = true;
 $canAvis = true;
+$canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::AVIS_ANNULER);
 ?>
 
 <?php /** Plusieurs thèses ont été trouvées, le rapporteurs doit alors sélectionner celle sur laquelle il veut travailler */ ?>
@@ -122,7 +124,7 @@ $canAvis = true;
     </div>
     <div class="panel-body">
         <?php if ($engagement !== null) : ?>
-            Vous avez signez l'engagement pour la thèse de <?php echo $these->getDoctorant(); ?>.
+            Vous avez signé l'engagement pour la thèse de <?php echo $these->getDoctorant(); ?>.
             <div class="panel panel-default pull-right">
                 <div class="panel-heading">
                     Signature de l'engagment d'impartialité
@@ -213,11 +215,20 @@ $canAvis = true;
                             </a>
                         </div>
                     </div>
+
+                    <a
+                        <?php /** @see \Soutenance\Controller\AvisController::annulerAction() */ ?>
+                        href="<?php echo $this->url('soutenance/avis-soutenance/annuler', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [] , true); ?>"
+                        class="btn btn-danger">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        Annuler l'avis de soutance
+                    </a>
                 </div>
             <?php else : ?>
                 Afin de valider la soutenance de thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>, vous devez rendre votre
                 avis de soutenance et votre prérapport de soutenance.
 
+            <?php if ($canAnnuler) : ?>
                 <a
                     <?php /** @see \Soutenance\Controller\AvisController::indexAction() */ ?>
                     href="<?php echo $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true); ?>"
@@ -226,6 +237,7 @@ $canAvis = true;
                     <span class="glyphicon glyphicon-pencil"></span>
                     Rendre l'avis de soutenance / Give our report
                 </a>
+            <?php endif; ?>
 
             <?php endif; ?>
         <?php else : ?>

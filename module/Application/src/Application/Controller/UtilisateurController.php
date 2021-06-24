@@ -206,7 +206,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     public function ajouterAction()
     {
         $form = $this->creationUtilisateurForm;
-        $form->setData(['individu' => 1]);
+//        $form->setData(['individu' => 1]);
 
         /** @var Request $request */
         $request = $this->getRequest();
