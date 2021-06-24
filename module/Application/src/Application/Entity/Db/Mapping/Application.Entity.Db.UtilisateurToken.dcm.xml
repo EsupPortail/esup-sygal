@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="Application\Entity\Db\UtilisateurToken" table="USER_TOKEN">
+
+    <id name="id" type="integer" column="ID">
+      <generator strategy="SEQUENCE"/>
+    </id>
+
+    <field name="userId" type="integer" column="USER_ID"/>
+
+    <field name="token" column="TOKEN"/>
+    <field name="action" column="ACTION"/>
+    <field name="actionsCount" type="integer" column="ACTIONS_COUNT"/>
+    <field name="actionsMaxCount" type="integer" column="ACTIONS_MAX_COUNT"/>
+    <field name="createdOn" type="datetime" column="CREATED_ON"/>
+    <field name="expiredOn" type="datetime" column="EXPIRED_ON"/>
+    <field name="lastUsedOn" type="datetime" column="LAST_USED_ON" nullable="true"/>
+
+    <many-to-one field="user" target-entity="Application\Entity\Db\Utilisateur" fetch="LAZY">
+      <join-columns>
+        <join-column name="USER_ID" referenced-column-name="ID"/>
+      </join-columns>
+    </many-to-one>
+
+  </entity>
+</doctrine-mapping>

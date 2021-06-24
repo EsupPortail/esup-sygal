@@ -116,6 +116,7 @@ class AvisController extends AbstractController
         return new ViewModel([
             'these' => $these,
             'rapporteur' => $rapporteur,
+            'membre' => $membre,
             'avis' => $avis,
             'url' => $this->urlFichierThese()->telechargerFichierThese($these, $avis->getFichier()),
         ]);
@@ -129,7 +130,7 @@ class AvisController extends AbstractController
         $avis = $this->getAvisService()->getAvisByMembre($membre);
         $this->getAvisService()->historiser($avis);
 
-        $this->redirect()->toRoute('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true);
+        $this->redirect()->toRoute('soutenance/index-rapporteur', ['these' => $these->getId()], [], true);
     }
 
 }
