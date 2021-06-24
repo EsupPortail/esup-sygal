@@ -94,8 +94,8 @@ $civilite = ($these->getDoctorant()->getIndividu()->getCivilite() === 'M.')?"Mon
 
 <p>
     La soutenance aura lieu le
-    <?php if ($informations->getDate() !== null): ?>
-        <?php echo $informations->getDate(); ?>
+    <?php if ($proposition->getDate() !== null): ?>
+        <?php echo $proposition->getDate()->format('d/m/Y à H:i'); ?>
     <?php else : ?>
         <span style='background-color:red;'>
                 Date manquante,

@@ -157,8 +157,8 @@ use Soutenance\Entity\Proposition;
     </strong>
     présente ses travaux en soutenance le
     <strong>
-    <?php if ($informations->getDate() !== null): ?>
-        <?php echo $informations->getDate(); ?>
+    <?php if ($proposition->getDate() !== null): ?>
+        <?php echo $proposition->getDate()->format('d/m/Y à H:i'); ?>
     <?php else : ?>
         <span style='background-color:red;'>
                 Date manquante
