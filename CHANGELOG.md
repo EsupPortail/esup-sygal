@@ -3,6 +3,8 @@ Journal des modifications
 
 2.2.3
 -----
+- Utilisation des dates et lieux des dossiers de soutenances plutôt que celles saisies dans les SIs pour la génération des documents du module soutenance.
+- Précision de la date de rendu des rapports dès le premier mail des rapporteurs
 
 2.2.2
 -----
