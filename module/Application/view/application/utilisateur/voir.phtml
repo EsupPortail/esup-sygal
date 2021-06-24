@@ -10,17 +10,17 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
 use Application\Provider\Privilege\UtilisateurPrivileges;
-use Application\View\Helper\IndividuUsurpationHelper;
 use Application\View\Helper\RoleHelper;
 use Application\View\Renderer\PhpRenderer;
 use UnicaenApp\Util;
-use UnicaenAuth\Entity\Db\AbstractUser;
 use UnicaenAuth\Provider\Privilege\Privileges;
 use UnicaenAuth\View\Helper\UserUsurpationHelper;
+use UnicaenAuthToken\Entity\Db\UserToken;
 
 /**
  * @var PhpRenderer $this
  * @var Utilisateur $utilisateur
+ * @var UserToken[] $tokens
  * @var Role[] $roles
  * @var Role[] $rolesAffectes
  * @var Individu $individu
@@ -149,6 +149,53 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
 
     </div>
 
+</div>
+
+<!-- TOKEN D'AUTHENTIFICATION ----------------------------------------------------------------------------------------->
+
+<div class="box panel panel-info">
+    <div class="panel-heading">
+        <h2 class="first">
+            <?php echo $this->translate("Jeton d'authentification") ?>
+            <div class="pull-right">
+                <br/>
+                <a  <?php /** @see UtilisateurController::ajouterTokenAction() */?>
+                    href="<?php echo $this->url('utilisateur/ajouter-token', ['utilisateur' => $utilisateur->getId()], [], true);?>" class="btn btn-danger">
+                    Ajouter un jeton
+                </a>
+            </div>
+        </h2>
+    </div>
+    <div class="panel-body">
+        <table class="table table-condensed">
+            <thead>
+            <tr>
+                <td>Jeton Id</td>
+                <td>Créer le </td>
+                <td>Expire le</td>
+                <td>Nombre d'utilisation</td>
+                <td>Action</td>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($tokens as $token) : ?>
+                <tr
+                    <?php if ($token->isExpired()) : ?>
+                        style="background: lightgray;"  <!-- todo class ---->
+                    <?php endif; ?>
+                >
+                    <td> <?php echo $token->getId(); ?> </td>
+                    <td> <?php echo $token->getCreatedOnToString(); ?> </td>
+                    <td> <?php echo $token->getExpiredOnToString(); ?> </td>
+                    <td> <?php echo $token->getActionsCountToString(); ?> </td>
+                    <td>
+                        ...
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <?php if ($individu = $utilisateur->getIndividu()) : ?>

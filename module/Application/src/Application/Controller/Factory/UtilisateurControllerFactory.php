@@ -23,6 +23,7 @@ use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\ShibService;
 use UnicaenAuth\Service\User as UserService;
 use UnicaenAuth\Service\UserContext;
+use UnicaenAuthToken\Service\TokenService;
 use Zend\Authentication\AuthenticationService;
 use ZfcUser\Mapper\UserInterface;
 
@@ -42,6 +43,7 @@ class UtilisateurControllerFactory
          * @var StructureService $structureService
          * @var EntityManager $entityManager
          * @var NotifierService $notifierService
+         * @var TokenService $tokenService
          * @var UserContextService $userContextService
          * @var UserService $userService
          * @var UtilisateurSearchService $utilisateurSearchService
@@ -53,6 +55,7 @@ class UtilisateurControllerFactory
         $etablissementService = $container->get('EtablissementService');
         $ecoleService = $container->get('EcoleDoctoraleService');
         $uniteService = $container->get('UniteRechercheService');
+        $tokenService = $container->get(TokenService::class);
         $structureService = $container->get(StructureService::class);
         $notifierService = $container->get(NotifierService::class);
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
@@ -93,6 +96,7 @@ class UtilisateurControllerFactory
         $controller->setServiceUserContext($userContextService);
         $controller->setUserService($userService);
         $controller->setShibService($shibService);
+        $controller->setTokenService($tokenService);
         $controller->setAuthenticationService($authenticationService);
         $controller->setInitCompteForm($initCompteForm);
         $controller->setCreationUtilisateurForm($creationUtilisateurForm);

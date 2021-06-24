@@ -22,6 +22,7 @@ use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
+use DateTime;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr;
 use UnicaenApp\Exception\RuntimeException;
@@ -30,10 +31,14 @@ use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\ShibService;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
+use UnicaenAuthToken\Entity\Db\UserToken;
+use UnicaenAuthToken\Service\TokenServiceAwareTrait;
+use UnicaenAuthToken\Service\TokenServiceException;
 use Zend\Authentication\AuthenticationService;
 use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\Paginator\Paginator as ZendPaginator;
+use Zend\Validator\Date;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
@@ -55,6 +60,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use StructureServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
     use UserServiceAwareTrait;
+    use TokenServiceAwareTrait;
 
     use InitCompteFormAwareTrait;
 
@@ -155,8 +161,11 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $unites = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle', true, true);
         $ecoles = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', true, true);
 
+        $tokens = $this->tokenService->findUserTokensByUserId($utilisateur->getId());
+
         return new ViewModel([
             'utilisateur' => $utilisateur,
+            'tokens' => $tokens,
             'roles' => $roles,
             'rolesAffectes' => $rolesAffectes,
             'etablissements' => $etablissements,
@@ -171,10 +180,10 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
      *
      * Recherche d'un Individu.
      *
-     * @param string $type => permet de spécifier un type d'acteur ...
+     * @param string|null $type => permet de spécifier un type d'acteur ...
      * @return JsonModel
      */
-    public function rechercherIndividuAction($type = null)
+    public function rechercherIndividuAction(?string $type = null)
     {
         $type = $this->params()->fromQuery('type');
         if (($term = $this->params()->fromQuery('term'))) {
@@ -499,4 +508,19 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         return $this->redirect()->toRoute('utilisateur/voir', ['utilisateur' => $utilisateur->getId()], [], true);
     }
 
+    public function ajouterTokenAction()
+    {
+        $utilisateur = $this->getUtilisateurService()->getRequestedUtilisateur($this);
+        $date = (new DateTime())->modify('+ 2 months');
+        $token = null;
+        try {
+            $token = $this->tokenService->createUserToken($date);
+            $token->setUser($utilisateur);
+            $this->tokenService->saveUserToken($token);
+        } catch (TokenServiceException $e) {
+            throw new RuntimeException("Un problème est survenu lors de la création du token", 0,$e);
+        }
+
+        return $this->redirect()->toRoute('utilisateur/voir', ['utilisateur' => $utilisateur->getId()], [], true);
+    }
 }

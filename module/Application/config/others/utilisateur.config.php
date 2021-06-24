@@ -56,6 +56,8 @@ return [
                         'ajouterFromIndividu',
                         'lier-individu',
                         'delier-individu',
+
+                        'ajouter-token'
                     ],
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_MODIFICATION,
                 ],
@@ -213,6 +215,15 @@ return [
                             'route'       => '/ajouter-role/:individu/:role',
                             'defaults'    => [
                                 'action' => 'ajouter-role',
+                            ],
+                        ],
+                    ],
+                    'ajouter-token' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/ajouter-token/:utilisateur',
+                            'defaults'    => [
+                                'action' => 'ajouter-token',
                             ],
                         ],
                     ],

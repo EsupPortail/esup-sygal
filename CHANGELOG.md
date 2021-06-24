@@ -1,6 +1,9 @@
 Journal des modifications
 =========================
 
+2.2.3
+-----
+
 2.2.2
 -----
 - Authentification simplifiée des rapporteurs à l'aide d'un token.
