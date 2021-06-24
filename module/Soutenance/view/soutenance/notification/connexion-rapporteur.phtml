@@ -1,12 +1,13 @@
 <?php
 
 use Application\Entity\Db\These;
-use Application\View\Renderer\PhpRenderer;
+use Application\View\Renderer\PhpRenderer;use Soutenance\Entity\Proposition;
 
 /**
  * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerConnexionRapporteur()
  *
  * @var PhpRenderer $this
+ * @var Proposition $proposition
  * @var These $these
  * @var string $username
  * @var string $url
@@ -28,6 +29,9 @@ $justification = true;
     et ainsi pouvoir rendre votre avis de pré-soutenance, vous pouvez utiliser l'adresse suivante : <a href="<?php echo $url; ?>"><?php echo $url;?> </a>.
 </p>
 <p>
+    Vous avez jusqu'au <?php $proposition->getRenduRapport()->format('d/m/Y'); ?> pour effectuer ce dépôt.
+</p>
+<p>
     Cordialement,
 </p>
 
@@ -39,6 +43,9 @@ $justification = true;
     You have been appointed as an external referee for the PhD thesis presented by <strong><?php echo $doctorant; ?></strong> entitled
     <strong><?php echo $titre; ?></strong>. In order to have access to the <strong> <?php echo $this->appInfos()->nom; ?> </strong>
     web-based application for submitting your report, you can use the following link : <a href="<?php echo $url; ?>"><?php echo $url;?> </a>.
+</p>
+<p>
+    You have until the <?php $proposition->getRenduRapport()->format('d/m/Y'); ?> to upload your report.
 </p>
 <p>
     Best regards,
