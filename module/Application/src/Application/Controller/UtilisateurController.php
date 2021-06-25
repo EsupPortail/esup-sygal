@@ -521,8 +521,8 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             throw new RuntimeException("Un problème est survenu lors de la création du token", 0,$e);
         }
 
-        $lien = $this->url()->fromRoute('zfcuser/login', ['type'=> 'token'], ['query' => ['token' => $token->getToken()], 'force_canonical' => true], true );
-        $this->notifierService->triggerCreationTokenAuthentification($utilisateur, $token, $lien);
+        $this->tokenService->injectLogInUriInUserTokens([ $token ]);
+        $this->notifierService->triggerCreationTokenAuthentification($utilisateur, $token, $token->getLogInUri()->toString());
         return $this->redirect()->toRoute('utilisateur/voir', ['utilisateur' => $utilisateur->getId()], [], true);
     }
 }

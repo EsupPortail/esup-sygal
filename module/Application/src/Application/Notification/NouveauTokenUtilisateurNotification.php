@@ -8,7 +8,7 @@ use Notification\Notification;
 
 class NouveauTokenUtilisateurNotification extends Notification
 {
-    protected $templatePath = 'application/notification/mail/notif-notif-nouveau-token-utilisateur';
+    protected $templatePath = 'application/notification/mail/notif-nouveau-token-utilisateur';
     /** @var Utilisateur */
     protected $utilisateur;
     /** @var UtilisateurToken */
