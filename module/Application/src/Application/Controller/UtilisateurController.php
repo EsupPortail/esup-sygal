@@ -31,14 +31,12 @@ use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\ShibService;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
-use UnicaenAuthToken\Entity\Db\UserToken;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
 use UnicaenAuthToken\Service\TokenServiceException;
 use Zend\Authentication\AuthenticationService;
 use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\Paginator\Paginator as ZendPaginator;
-use Zend\Validator\Date;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 
@@ -161,16 +159,18 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $unites = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle', true, true);
         $ecoles = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', true, true);
 
-        $tokens = $this->tokenService->findUserTokensByUserId($utilisateur->getId());
+        $userTokens = $this->tokenService->findUserTokensByUserId($utilisateur->getId());
+        $this->tokenService->injectLogInUriInUserTokens($userTokens);
 
         return new ViewModel([
             'utilisateur' => $utilisateur,
-            'tokens' => $tokens,
+            'tokens' => $userTokens,
             'roles' => $roles,
             'rolesAffectes' => $rolesAffectes,
             'etablissements' => $etablissements,
             'ecoles' => $ecoles,
             'unites' => $unites,
+            'redirect' => $this->url()->fromRoute(null, [], [], true),
         ]);
 
     }

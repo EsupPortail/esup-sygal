@@ -27,8 +27,9 @@ use UnicaenAuthToken\Entity\Db\UserToken;
  * @var Etablissement[] $etablissements
  * @var EcoleDoctorale[] $ecoles
  * @var UniteRecherche[] $unites
+ * @var string $redirect
  *
- * @see \Application\Controller\UtilisateurController::indexAction()
+ * @see \Application\Controller\UtilisateurController::voirAction()
  */
 
 $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION));
@@ -158,43 +159,20 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
         <h2 class="first">
             <?php echo $this->translate("Jeton d'authentification") ?>
             <div class="pull-right">
-                <br/>
-                <a  <?php /** @see UtilisateurController::ajouterTokenAction() */?>
-                    href="<?php echo $this->url('utilisateur/ajouter-token', ['utilisateur' => $utilisateur->getId()], [], true);?>" class="btn btn-danger">
-                    Ajouter un jeton
-                </a>
+                <br>
+                <?php echo $this->partial('unicaen-auth-token/token/partial/add-button', [
+                    'redirect' => $redirect,
+                    'user' => $utilisateur->getId(),
+                ]) ?>
             </div>
         </h2>
     </div>
     <div class="panel-body">
-        <table class="table table-condensed">
-            <thead>
-            <tr>
-                <td>Jeton Id</td>
-                <td>Créer le </td>
-                <td>Expire le</td>
-                <td>Nombre d'utilisation</td>
-                <td>Action</td>
-            </tr>
-            </thead>
-            <tbody>
-            <?php foreach ($tokens as $token) : ?>
-                <tr
-                    <?php if ($token->isExpired()) : ?>
-                        style="background: lightgray;"  <!-- todo class ---->
-                    <?php endif; ?>
-                >
-                    <td> <?php echo $token->getId(); ?> </td>
-                    <td> <?php echo $token->getCreatedOnToString(); ?> </td>
-                    <td> <?php echo $token->getExpiredOnToString(); ?> </td>
-                    <td> <?php echo $token->getActionsCountToString(); ?> </td>
-                    <td>
-                        ...
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
+        <?php if (empty($tokens)): ?>
+            L'utilisateur n'a aucun jeton d'authentification.
+        <?php else: ?>
+            <?php echo $this->partial('unicaen-auth-token/token/partial/table', ['paginator' => $tokens, 'redirect' => $redirect]); ?>
+        <?php endif ?>
     </div>
 </div>
 
