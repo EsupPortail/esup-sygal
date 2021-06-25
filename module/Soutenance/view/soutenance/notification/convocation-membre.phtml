@@ -2,6 +2,7 @@
 
 use Application\Entity\Db\These;
 use Application\Service\FichierThese\PdcData;
+use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 
@@ -13,6 +14,7 @@ use Soutenance\Entity\Proposition;
  * @var DateTime $date
  * @var PdcData $informations
  * @var string $url
+ * @var array $avisArray $avisArray[Denomination] = lien_de_telechargement
  */
 $civilite = ($membre->getGenre() !== "H")?"Madame":"Monsieur";
 if ($membre->getIndividu()) $civilite = ($membre->getIndividu()->estUneFemme())?"Madame":"Monsieur";
@@ -53,8 +55,8 @@ $texte_directeur = implode(" et ", $encadrement);
 
 <p>
     La soutenance aura lieu le
-    <?php if ($informations->getDate() !== null): ?>
-        <?php echo $informations->getDate(); ?>
+    <?php if ($proposition->getDate() !== null): ?>
+        <?php echo $proposition->getDate()->format('d/m/Y à H:i'); ?>
     <?php else : ?>
         <span style='background-color:red;'>
                 Date manquante
@@ -80,6 +82,19 @@ $texte_directeur = implode(" et ", $encadrement);
     <?php else: ?>
         <span style='background-color:red;'> information sur l'aspect public manquante </span>
     <?php endif; ?>
+</p>
+
+<p>
+    Vous pouvez accéder aux rapports de présoutenance grâce aux liens suivants :
+<ul>
+    <?php /** @var Avis $avis */?>
+    <?php foreach ($avisArray as $denomination => $lien) : ?>
+        <li>
+            Avis de soutenance de <?php echo $denomination; ?> :
+            <a href="<?php echo $lien; ?>"> Télécharger le pré-rapport de soutenance</a>
+        </li>
+    <?php endforeach; ?>
+</ul>
 </p>
 
 <p>

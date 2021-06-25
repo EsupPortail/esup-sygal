@@ -2,6 +2,7 @@
 
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\These;
+use Soutenance\Entity\Avis;
 use Soutenance\Entity\Proposition;
 
 /**
@@ -9,7 +10,9 @@ use Soutenance\Entity\Proposition;
  * @var These $these
  * @var Proposition $proposition
  * @var Doctorant $doctorant
+ * @var DateTime $date
  * @var string $url
+ * @var array $avisArray $avisArray[Denomination] = lien_de_telechargement
  */
 
 $justification = true;
@@ -21,7 +24,7 @@ Bonjour,
 
 <p>
 Par décision en date du
-<?php if ($proposition->get): ?>
+<?php if ($date): ?>
     <?php echo $date->format('d/m/Y'); ?>,
 <?php else: ?>
     <span style='background-color:red;'>
@@ -35,8 +38,8 @@ Doctorat en <?php echo $these->getLibelleDiscipline(); ?>.
 
 <p>
     La soutenance aura lieu le
-    <?php if ($these->getDateSoutenance() !== null): ?>
-        <?php echo $these->getDateSoutenance()->format('d/m/Y à H:i'); ?>
+    <?php if ($proposition->getDate() !== null): ?>
+        <?php echo $proposition->getDate()->format('d/m/Y à H:i'); ?>
     <?php else : ?>
         <span style='background-color:red;'>
                 Date manquante,
@@ -65,7 +68,20 @@ Doctorat en <?php echo $these->getLibelleDiscipline(); ?>.
 </p>
 
 <p>
-    Nous vous prions d'agréer, <?php echo $civilite; ?>, l'expression de nos salutations distinguées.
+    Vous pouvez accéder aux rapports de présoutenance grâce aux liens suivants :
+<ul>
+    <?php /** @var Avis $avis */?>
+    <?php foreach ($avisArray as $denomination => $lien) : ?>
+        <li>
+            Avis de soutenance de <?php echo $denomination; ?> :
+            <a href="<?php echo $lien; ?>"> Télécharger le pré-rapport de soutenance</a>
+        </li>
+    <?php endforeach; ?>
+</ul>
+</p>
+
+<p>
+    Nous vous prions d'agréer, <?php echo ($doctorant->getIndividu()->getCivilite() === 'M.')?"Monsieur":"Madame"; ?>, l'expression de nos salutations distinguées.
 </p>
 
 <p> P.S.: Vous pouvez obtenir une version imprimable de cette convocation à l'adresse suivante : <a href="<?php echo $url; ?>">convocation au format PDF</a> </p>
