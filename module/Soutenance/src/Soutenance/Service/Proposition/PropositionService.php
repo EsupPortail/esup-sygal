@@ -542,6 +542,7 @@ class PropositionService {
         $qb = $this->createQueryBuilder()
             ->andWhere('these.etatThese = :encours')
             ->setParameter('encours', These::ETAT_EN_COURS)
+            ->orderBy('proposition.date', 'ASC')
         ;
 
         switch ($role->getCode()) {

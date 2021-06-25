@@ -709,3 +709,13 @@ span.sas-highlight {
   color: #2EA662; }
 
 /*# sourceMappingURL=app.css.map */
+
+span.badge.EN_COURS {
+  background: #009ce4;
+}
+span.badge.VALIDEE {
+  background: #2EA662;
+}
+span.badge.REJETEE {
+  background: #d23544;
+}

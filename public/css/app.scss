@@ -1081,3 +1081,17 @@ span.sas-highlight {
   font-weight: 600;
   color: $successColor;
 }
+
+span.badge {
+  font-weight: bold;
+}
+
+span.badge.EN_COURS {
+    background: $infoColor;
+  }
+span.badge.VALIDEE {
+    background: $successColor;
+  }
+span.badge.REJETEE {
+    background: $dangerColor;
+}
