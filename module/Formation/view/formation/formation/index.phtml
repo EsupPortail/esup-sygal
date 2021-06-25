@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * @see \Formation\Controller\FormationController::indexAction()
+ * @var Formation[] $formations
+ */
+
+use Formation\Entity\Db\Formation;
+
+?>
+
+<h1> Index des formations </h1>
+
+
+<a
+    <?php /** @see \Formation\Controller\FormationController::ajouterAction() */ ?>
+    href="<?php echo $this->url('formation/formation/ajouter', [], [], true); ?>"
+    class="btn btn-primary action">
+    <span class="glyphicon glyphicon-plus"></span>
+    Ajouter une formation
+</a>
+
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Identifiant</th>
+            <th>Description</th>
+            <th>#Session</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($formations as $formation) : ?>
+        <tr>
+            <td> <?php echo $formation->getId(); ?> </td>
+            <td>
+                <?php echo $formation->getLibelle(); ?>
+                <?php if ($formation->getDescription() !== null AND trim($formation->getDescription()) !== null) : ?>
+                    <span class="glyphicon glyphicon-info-sign" title="<?php echo $formation->getDescription(); ?>"></span>
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php echo count($formation->getSessions()); ?>
+            </td>
+            <td></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

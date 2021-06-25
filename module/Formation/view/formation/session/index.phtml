@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * @see \Formation\Controller\SessionController::indexAction()
+ * @var Session[] $sessions
+ */
+
+use Formation\Entity\Db\Session;
+
+?>
+
+<h1> Index des sessions </h1>
+
+
+<a
+    <?php /** @see \Formation\Controller\SessionController::ajouterAction() */ ?>
+    href="<?php echo $this->url('formation/session/ajouter', [], [], true); ?>"
+    class="btn btn-primary action">
+    <span class="glyphicon glyphicon-plus"></span>
+    Ajouter une session
+</a>
+
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th>Identifiant</th>
+        <th>Formation liée</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($sessions as $session) : ?>
+        <tr>
+            <td> <?php echo $session->getId(); ?> </td>
+            <td>
+                <?php echo $session->getFormation()->getId(); ?>
+                -
+                <?php echo $session->getFormation()->getLibelle(); ?>
+            </td>
+            <td></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

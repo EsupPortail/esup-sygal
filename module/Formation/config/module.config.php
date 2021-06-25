@@ -40,17 +40,19 @@ return array(
             'orm_default' => [
                 'class' => MappingDriverChain::class,
                 'drivers' => [
-                    'Formation\Entity' => 'orm_default_xml_driver',
+                    'Formation\Entity\Db' => 'orm_default_xml_driver',
                 ],
             ],
             'orm_default_xml_driver' => [
                 'class' => XmlDriver::class,
                 'cache' => 'array',
                 'paths' => [
-                    __DIR__ . '/../src/Formation/Entity/Mapping',
+                    __DIR__ . '/../src/Formation/Entity/Db/Mapping',
                 ],
             ],
         ],
+
+        //todo remove ?
         'connection' => [
             'orm_default' => [
                 'driver_class' => OCI8::class,
