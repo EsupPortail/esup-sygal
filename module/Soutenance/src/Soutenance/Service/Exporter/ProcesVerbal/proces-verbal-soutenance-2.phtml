@@ -237,13 +237,9 @@ use Soutenance\Entity\Proposition;
     <strong>Noms et signatures des membres du jury</strong>
 
     <?php
-        /** @var Acteur[] $rapporteurs */
-        /** @var Acteur[] $membres */
-//        $rapporteurs = $informations->getRapporteurs();
-//        $membres = $informations->getMembres();
-//        $acteurs = array_merge($rapporteurs, $membres);
-          $jury = $informations->getJury();
-          usort($jury, function(Acteur $a, Acteur $b) { return $a->getIndividu()->getNomComplet() > $b->getIndividu()->getNomComplet(); });
+          $signataires = $informations->getJury();
+          $signataires = array_diff($signataires, $informations->getDirecteurs(), $informations->getCodirecteurs());
+          usort($signataires, function(Acteur $a, Acteur $b) { return $a->getIndividu()->getNomComplet() > $b->getIndividu()->getNomComplet(); });
     ?>
 
     <?php $position = 0; ?>
@@ -251,7 +247,7 @@ use Soutenance\Entity\Proposition;
 
     <?php
 
-    foreach ($jury as $membre) :
+    foreach ($signataires as $membre) :
     ?>
 
     <?php if ($position % 2 == 0 and $position !== 0) : ?>
