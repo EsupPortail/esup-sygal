@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="Formation\Entity\Db\Seance"
-            table="FORMATION_SEANCE"
-            repository-class="Formation\Entity\Db\Repository\SeanceRepository">
+    <entity name="Formation\Entity\Db\Inscription"
+            table="FORMATION_INSCRIPTION"
+            repository-class="Formation\Entity\Db\Repository\InscriptionRepository">
 
             <id name="id" type="integer" column="ID">
                 <generator strategy="SEQUENCE"/>
@@ -13,10 +13,13 @@
                     <join-column name="SESSION_ID" referenced-column-name="ID"/>
                 </join-columns>
             </many-to-one>
+            <many-to-one field="individu" target-entity="Application\Entity\Db\Individu">
+                <join-columns>
+                    <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
+                </join-columns>
+            </many-to-one>
 
-            <field name="debut"               type="datetime"                         column="DEBUT"            nullable="false"/>
-            <field name="fin"                 type="datetime"                         column="FIN"              nullable="false"/>
-            <field name="lieu"                type="string"       length="1024"       column="LIEU"             nullable="true"/>
+            <field name="liste"               type="string"       length="1"          column="LISTE"            nullable="true"/>
             <field name="description"         type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
 
             <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->

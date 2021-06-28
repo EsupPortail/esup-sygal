@@ -2,6 +2,9 @@
 
 namespace Formation\Entity\Db;
 
+use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\Structure;
 use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
@@ -23,6 +26,21 @@ class Formation implements HistoriqueAwareInterface {
 
     /** @var Collection (Session) */
     private $sessions;
+
+    /** @var Etablissement|null */
+    private $site;
+    /** @var Individu|null */
+    private $responsable;
+    /** @var string|null */
+    private $modalite;
+    /** @var string|null */
+    private $type;
+    /** @var Structure|null */
+    private $typeStructure;
+    /** @var int */
+    private $tailleListePrincipale;
+    /** @var int */
+    private $tailleListeComplementaire;
 
     /**
      * @return int
@@ -95,31 +113,130 @@ class Formation implements HistoriqueAwareInterface {
     }
 
     /**
-     * @param Session $session
-     * @return bool
+     * @return Etablissement|null
      */
-    public function hasSession(Session $session) : bool
+    public function getSite(): ?Etablissement
     {
-        return $this->sessions->contains($session);
+        return $this->site;
     }
 
     /**
-     * @param Session $session
+     * @param Etablissement|null $site
      * @return Formation
      */
-    public function addSession(Session $session) : Formation
+    public function setSite(?Etablissement $site): Formation
     {
-        if (! $this->hasSession($session)) $this->sessions->add($session);
+        $this->site = $site;
         return $this;
     }
 
     /**
-     * @param Session $session
+     * @return Individu|null
+     */
+    public function getResponsable(): ?Individu
+    {
+        return $this->responsable;
+    }
+
+    /**
+     * @param Individu|null $responsable
      * @return Formation
      */
-    public function removeSession(Session $session) : Formation
+    public function setResponsable(?Individu $responsable): Formation
     {
-        $this->sessions->removeElement($session);
+        $this->responsable = $responsable;
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getModalite()
+    {
+        return $this->modalite;
+    }
+
+    /**
+     * @param string|null $modalite
+     * @return Formation
+     */
+    public function setModalite(?string $modalite) : Formation
+    {
+        $this->modalite = $modalite;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getType() : ?string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string|null $type
+     * @return Formation
+     */
+    public function setType(?string $type) : Formation
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * @return Structure|null
+     */
+    public function getTypeStructure(): ?Structure
+    {
+        return $this->typeStructure;
+    }
+
+    /**
+     * @param Structure|null $typeStructure
+     * @return Formation
+     */
+    public function setTypeStructure(?Structure $typeStructure): Formation
+    {
+        $this->typeStructure = $typeStructure;
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getTailleListePrincipale(): ?int
+    {
+        return $this->tailleListePrincipale;
+    }
+
+    /**
+     * @param int|null $tailleListePrincipale
+     * @return Formation
+     */
+    public function setTailleListePrincipale(?int $tailleListePrincipale): Formation
+    {
+        $this->tailleListePrincipale = $tailleListePrincipale;
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getTailleListeComplementaire(): ?int
+    {
+        return $this->tailleListeComplementaire;
+    }
+
+    /**
+     * @param int|null $tailleListeComplementaire
+     * @return Formation
+     */
+    public function setTailleListeComplementaire(?int $tailleListeComplementaire): Formation
+    {
+        $this->tailleListeComplementaire = $tailleListeComplementaire;
+        return $this;
+    }
+
+
 }

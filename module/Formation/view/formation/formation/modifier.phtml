@@ -1,0 +1,54 @@
+<?php
+/**
+ * @var \Formation\Form\Formation\FormationForm $form
+ */
+?>
+
+<h2> Information sur la formation </h2>
+
+<?php
+echo $this->form()->openTag($form);
+?>
+
+<?php echo $this->formControlGroup($form->get('libelle')); ?>
+<?php echo $this->formControlGroup($form->get('description')); ?>
+
+<h2> Valeur par défaut des sessions de cette formation </h2>
+
+<?php echo $this->formControlGroup($form->get('site')); ?>
+<?php echo $this->formControlGroup($form->get('responsable')); ?>
+<?php echo $this->formControlGroup($form->get('modalite')); ?>
+<?php echo $this->formControlGroup($form->get('type')); ?>
+<?php echo $this->formControlGroup($form->get('type_structure')); ?>
+<?php echo $this->formControlGroup($form->get('taille_liste_principale')); ?>
+<?php echo $this->formControlGroup($form->get('taille_liste_complementaire')); ?>
+
+<?php echo $this->formControlGroup($form->get('bouton')); ?>
+
+<?php echo $this->form()->closeTag(); ?>
+
+<script>
+
+    $(document).ready(function() {
+        tinymce.remove();
+        tinymce.init({
+            selector: '.tinymce',
+            toolbar: 'newdocument undo redo | bold italic removeformat | bullist',
+            resize: true,
+            language: 'fr_FR',
+            plugins: 'lists',
+            statusbar: true,
+            browser_spellcheck : true,
+            branding: false,
+            menu: {},
+            body_id: 'description',
+            setup: function (editor) {
+                editor.on("focusout", function () {
+                    console.log(tinymce.get('description').getContent());
+                    $('textarea').val(tinymce.get('description').getContent());
+                });
+            }
+        });
+        $('select').selectpicker();
+    });
+</script>

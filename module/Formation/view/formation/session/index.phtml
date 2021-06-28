@@ -5,6 +5,8 @@
  * @var Session[] $sessions
  */
 
+use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
 
 ?>
@@ -24,22 +26,146 @@ use Formation\Entity\Db\Session;
 <table class="table table-condensed">
     <thead>
     <tr>
-        <th>Identifiant</th>
-        <th>Formation liée</th>
+<!--        <th>Identifiant</th>-->
+        <th>Module</th>
+        <th>Site</th>
+        <th>Responsable</th>
+        <th>Modalité</th>
+        <th>Type</th>
+        <th>État</th>
+        <th>Séances</th>
+        <th>Inscriptions</th>
         <th>Action</th>
     </tr>
     </thead>
     <tbody>
     <?php foreach ($sessions as $session) : ?>
         <tr>
-            <td> <?php echo $session->getId(); ?> </td>
+<!--            <td> --><?php //echo $session->getId(); ?><!-- </td>-->
             <td>
-                <?php echo $session->getFormation()->getId(); ?>
-                -
+<!--                --><?php //echo $session->getFormation()->getId(); ?>
                 <?php echo $session->getFormation()->getLibelle(); ?>
             </td>
-            <td></td>
+            <td>
+                <?php if ($session->getSite() !== null) : ?>
+                    <?php echo $session->getSite()->getSigle(); ?>
+                <?php else : ?>
+                    Aucun site
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php if ($session->getResponsable() !== null) : ?>
+                    <?php echo $session->getResponsable()->getDisplayName(); ?>
+                <?php else : ?>
+                    Aucun responsable
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php
+                    $modalite = null;
+                    switch($session->getModalite()) {
+                        case Session::MODALITE_PRESENTIEL:
+                            $modalite = "Présentielle";
+                            break;
+                        case Session::MODALITE_DISTANCIEL:
+                            $modalite = "Distancielle";
+                            break;
+                        default :
+                            $modalite = "Non précisée";
+                            break;
+                    };
+                    echo $modalite;
+                ?>
+            </td>
+            <td>
+                <?php
+                $type = null;
+                switch($session->getType()) {
+                    case Session::TYPE_SPECIFIQUE:
+                        $type = "Spécifique";
+                        break;
+                    case Session::TYPE_TRANSVERSALE:
+                        $type = "Transerversale";
+                        break;
+                    default :
+                        $type = "Non précisée";
+                        break;
+                };
+                echo $type;
+                if ($session->getType() === Session::TYPE_SPECIFIQUE AND $session->getTypeStructure() !== null) {
+                    echo "<br/>" . $session->getTypeStructure()->getSigle();
+                }
+                ?>
+            </td>
+            <td>
+                <?php echo ($session->getEtat())?:"Non Précisé"; ?>
+            </td>
+            <td> <!-- Seances ----------------------------------------------------------------------------------------->
+                <?php echo count($session->getSeances()); ?>
+                séance<?php if (count($session->getSeances())>1) echo "s"; ?>
+                (<?php echo $session->getDuree(); ?> h.)
+                <a href="<?php echo $this->url('formation/seance/ajouter', ['session' => $session->getId()], [], true); ?>"
+                   class="ajax-modal" data-event="modification"
+                   title="Ajout d'une séance pour la session de formation #<?php echo $session->getId(); ?>"
+                   data-toggle="tooltip" data-html="true">
+                    <span class="glyphicon glyphicon-plus"></span>
+                </a>
+
+                    <ul>
+                        <?php /** @var Seance $seance */ ?>
+                        <?php foreach ($session->getSeances() as $seance) : ?>
+                        <li>
+                            <?php echo $seance->getDebut()->format('d/m/Y'); ?>
+                            <?php echo $seance->getDebut()->format('H:i') ; ?>
+                            &rightarrow;
+                            <?php echo $seance->getFin()->format('H:i') ; ?>
+                            -
+                            <?php echo $seance->getLieu() ; ?>
+                            <?php /** @see \Formation\Controller\SeanceController::modifierAction() */?>
+                            <a href="<?php echo $this->url('formation/seance/modifier',['seance' => $seance->getId()], [], true); ?>"
+                               class="ajax-modal" data-event="modification"
+                               title="Modification de la séance #<?php echo $seance->getId(); ?>" data-toggle="tooltip" data-html="true">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </a>
+                            <?php if ($seance->estNonHistorise()) : ?>
+                                <a href="<?php echo $this->url('formation/seance/historiser',['seance' => $seance->getId()], ['query' => ['retour' => $this->url('formation/session',[],[],true)]], true); ?>"
+                                   title="Historisation de la séance #<?php echo $seance->getId(); ?>" data-toggle="tooltip" data-html="true">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </a>
+                            <?php else : ?>
+                                <a href="<?php echo $this->url('formation/seance/restaurer',['seance' => $seance->getId()], ['query' => ['retour' => $this->url('formation/session',[],[],true)]], true); ?>"
+                                   title="Restauration de la séance #<?php echo $seance->getId(); ?>" data-toggle="tooltip" data-html="true">
+                                    <span class="glyphicon glyphicon-leaf"></span>
+                                </a>
+                            <?php endif; ?>
+                            <?php /** @see \Formation\Controller\SeanceController::supprimerAction() */?>
+                            <a href="<?php echo $this->url('formation/seance/supprimer',['seance' => $seance->getId()], [], true); ?>"
+                               class="ajax-modal" data-event="modification"
+                               title="Suppression de la séance #<?php echo $seance->getId(); ?>" data-toggle="tooltip" data-html="true">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </a>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
+            </td>
+            <td> <!-- Inscriptions ------------------------------------------------------------------------------------>
+                Liste principale : <?php echo count($session->getInscriptionsByListe(Inscription::LISTE_PRINCIPALE)); ?>/<?php echo $session->getTailleListePrincipale(); ?> <br/>
+                Liste secondaire : <?php echo count($session->getInscriptionsByListe(Inscription::LISTE_COMPLEMENTAIRE)); ?>/<?php echo $session->getTailleListeComplementaire(); ?> <br/>
+                Hors liste : <?php echo count($session->getInscriptionsByListe(null)); ?><br/>
+            </td>
+            <td>
+
+            </td>
         </tr>
     <?php endforeach; ?>
     </tbody>
 </table>
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

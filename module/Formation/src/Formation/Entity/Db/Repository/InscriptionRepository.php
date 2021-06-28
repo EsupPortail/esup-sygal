@@ -3,32 +3,26 @@
 namespace Formation\Entity\Db\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\Mvc\Controller\AbstractActionController;
 
-class SessionRepository extends EntityRepository
+class InscriptionRepository extends EntityRepository
 {
     use EntityManagerAwareTrait;
 
     /**
      * @param AbstractActionController $controller
      * @param string $param
-     * @return Session|null
+     * @return Inscription|null
      */
-    public function getRequestedSession(AbstractActionController $controller, string $param = 'session') : ?Session
+    public function getRequestedInscription(AbstractActionController $controller, string $param = 'inscription') : ?Inscription
     {
         $id = $controller->params()->fromRoute($param);
-        /** @var Session|null $session */
-        $session = $this->find($id);
-        return $session;
+        /** @var Inscription|null $inscription */
+        $inscription = $this->find($id);
+        return $inscription;
     }
 
-//    /**
-//     * @return Formation[]
-//     */
-//    public function findAllByResponsable() : array
-//    {
-//
-//    }
 }

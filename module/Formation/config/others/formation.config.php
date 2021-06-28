@@ -4,6 +4,10 @@ namespace Formation;
 
 use Formation\Controller\FormationController;
 use Formation\Controller\FormationControllerFactory;
+use Formation\Form\Formation\FormationForm;
+use Formation\Form\Formation\FormationFormFactory;
+use Formation\Form\Formation\FormationHydrator;
+use Formation\Form\Formation\FormationHydratorFactory;
 use Formation\Provider\Privilege\IndexPrivileges;
 use Formation\Service\Formation\FormationService;
 use Formation\Service\Formation\FormationServiceFactory;
@@ -20,6 +24,10 @@ return [
                     'action' => [
                         'index',
                         'ajouter',
+                        'modifier',
+                        'historiser',
+                        'restaurer',
+                        'supprimer',
                     ],
                     'privileges' => [
                         IndexPrivileges::INDEX_AFFICHER,
@@ -74,6 +82,50 @@ return [
                                     ],
                                 ],
                             ],
+                            'modifier' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/modifier/:formation',
+                                    'defaults' => [
+                                        'controller' => FormationController::class,
+                                        'action'     => 'modifier',
+                                    ],
+                                ],
+                            ],
+                            'historiser' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/historiser/:formation',
+                                    'defaults' => [
+                                        'controller' => FormationController::class,
+                                        'action'     => 'historiser',
+                                    ],
+                                ],
+                            ],
+                            'restaurer' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/restaurer/:formation',
+                                    'defaults' => [
+                                        'controller' => FormationController::class,
+                                        'action'     => 'restaurer',
+                                    ],
+                                ],
+                            ],
+                            'supprimer' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/supprimer/:formation',
+                                    'defaults' => [
+                                        'controller' => FormationController::class,
+                                        'action'     => 'supprimer',
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                 ],
@@ -92,10 +144,14 @@ return [
         ],
     ],
     'form_elements' => [
-        'factories' => [],
+        'factories' => [
+            FormationForm::class => FormationFormFactory::class,
+        ],
     ],
     'hydrators' => [
-        'factories' => [],
+        'factories' => [
+            FormationHydrator::class => FormationHydratorFactory::class,
+        ],
     ]
 
 ];

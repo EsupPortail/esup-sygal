@@ -14,8 +14,9 @@ use Formation\Entity\Db\Seance;
 
 <a
     <?php /** @see \Formation\Controller\SeanceController::ajouterAction() */ ?>
-    href="<?php echo $this->url('formation/seance/ajouter', [], [], true); ?>"
-    class="btn btn-primary action">
+    href="<?php echo $this->url('formation/seance/ajouter', ['session' => 2], [], true); ?>"
+    class="btn btn-primary action ajax-modal" data-event="modification"
+>
     <span class="glyphicon glyphicon-plus"></span>
     Ajouter une seance
 </a>
@@ -53,3 +54,12 @@ use Formation\Entity\Db\Seance;
     <?php endforeach; ?>
     </tbody>
 </table>
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

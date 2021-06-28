@@ -3,6 +3,8 @@
 namespace Formation\Controller;
 
 use Doctrine\ORM\EntityManager;
+use Formation\Form\Seance\SeanceForm;
+use Formation\Service\Seance\SeanceService;
 use Formation\Service\Session\SessionService;
 use Interop\Container\ContainerInterface;
 
@@ -22,8 +24,12 @@ class SessionControllerFactory {
         $sessionService = $container->get(SessionService::class);
 
         $controller = new SessionController();
+
         $controller->setEntityManager($entityManager);
+        //services
         $controller->setSessionService($sessionService);
+        //forms
+
         return $controller;
     }
 }

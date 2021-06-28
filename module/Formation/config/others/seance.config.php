@@ -2,9 +2,12 @@
 
 namespace Formation;
 
-use Formation\Controller\FormationController;
 use Formation\Controller\SeanceController;
 use Formation\Controller\SeanceControllerFactory;
+use Formation\Form\Seance\SeanceForm;
+use Formation\Form\Seance\SeanceFormFactory;
+use Formation\Form\Seance\SeanceHydrator;
+use Formation\Form\Seance\SeanceHydratorFactory;
 use Formation\Provider\Privilege\IndexPrivileges;
 use Formation\Service\Seance\SeanceService;
 use Formation\Service\Seance\SeanceServiceFactory;
@@ -21,6 +24,10 @@ return [
                     'action' => [
                         'index',
                         'ajouter',
+                        'modifier',
+                        'historiser',
+                        'restaurer',
+                        'supprimer',
                     ],
                     'privileges' => [
                         IndexPrivileges::INDEX_AFFICHER,
@@ -65,13 +72,57 @@ return [
                         ],
                         'child_routes' => [
                             'ajouter' => [
-                                'type'  => Literal::class,
+                                'type'  => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/ajouter',
+                                    'route'    => '/ajouter/:session',
                                     'defaults' => [
                                         'controller' => SeanceController::class,
                                         'action'     => 'ajouter',
+                                    ],
+                                ],
+                            ],
+                            'modifier' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/modifier/:seance',
+                                    'defaults' => [
+                                        'controller' => SeanceController::class,
+                                        'action'     => 'modifier',
+                                    ],
+                                ],
+                            ],
+                            'historiser' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/historiser/:seance',
+                                    'defaults' => [
+                                        'controller' => SeanceController::class,
+                                        'action'     => 'historiser',
+                                    ],
+                                ],
+                            ],
+                            'restaurer' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/restaurer/:seance',
+                                    'defaults' => [
+                                        'controller' => SeanceController::class,
+                                        'action'     => 'restaurer',
+                                    ],
+                                ],
+                            ],
+                            'supprimer' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/supprimer/:seance',
+                                    'defaults' => [
+                                        'controller' => SeanceController::class,
+                                        'action'     => 'supprimer',
                                     ],
                                 ],
                             ],
@@ -93,10 +144,14 @@ return [
         ],
     ],
     'form_elements' => [
-        'factories' => [],
+        'factories' => [
+            SeanceForm::class => SeanceFormFactory::class,
+        ],
     ],
     'hydrators' => [
-        'factories' => [],
+        'factories' => [
+            SeanceHydrator::class => SeanceHydratorFactory::class,
+        ],
     ]
 
 ];

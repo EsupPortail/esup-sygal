@@ -4,38 +4,61 @@
             table="FORMATION_SESSION"
             repository-class="Formation\Entity\Db\Repository\SessionRepository">
 
-            <id name="id" type="integer" column="ID">
-                <generator strategy="SEQUENCE"/>
-            </id>
+        <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
+        </id>
 
-            <many-to-one field="formation" target-entity="Formation\Entity\Db\Formation">
-                <join-columns>
-                    <join-column name="FORMATION_ID" referenced-column-name="ID"/>
-                </join-columns>
-            </many-to-one>
+        <many-to-one field="formation" target-entity="Formation\Entity\Db\Formation">
+            <join-columns>
+                <join-column name="FORMATION_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
 
-<!--            <one-to-many field="sceance" target-entity="Formation\Entity\Db\Seance" mapped-by="session"/>-->
+        <many-to-one field="site" target-entity="Application\Entity\Db\Etablissement">
+            <join-columns>
+                <join-column name="SITE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="responsable" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="RESPONSABLE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <field name="modalite"          type="string"       length="1"       column="MODALITE"      nullable="true"/>
+        <field name="type"              type="string"       length="1"       column="TYPE"      nullable="true"/>
+        <many-to-one field="typeStructure" target-entity="Application\Entity\Db\Structure">
+            <join-columns>
+                <join-column name="TYPE_STRUCTURE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <field name="etat"              type="string"       length="1"       column="ETAT"      nullable="true"/>
+        <field name="description"          type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
 
-            <field name="description"         type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
+        <one-to-many field="seances" target-entity="Formation\Entity\Db\Seance" mapped-by="session"/>
 
-            <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-            <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
-            <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
-            <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
-            <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
-                <join-columns>
-                    <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
-                </join-columns>
-            </many-to-one>
-            <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
-                <join-columns>
-                    <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
-                </join-columns>
-            </many-to-one>
-            <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
-                <join-columns>
-                    <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
-                </join-columns>
-            </many-to-one>
+        <one-to-many field="inscriptions" target-entity="Formation\Entity\Db\Inscription" mapped-by="session"/>
+        <field name="tailleListePrincipale"     type="integer"                     column="TAILLE_LISTE_PRINCIPALE"      nullable="true"/>
+        <field name="tailleListeComplementaire" type="integer"                     column="TAILLE_LISTE_COMPLEMENTAIRE"  nullable="true"/>
+
+
+        <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
+        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+        <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
     </entity>
 </doctrine-mapping>

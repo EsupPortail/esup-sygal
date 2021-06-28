@@ -54,9 +54,9 @@ class Seance implements HistoriqueAwareInterface {
     }
 
     /**
-     * @return DateTime
+     * @return DateTime|null
      */
-    public function getDebut(): DateTime
+    public function getDebut(): ?DateTime
     {
         return $this->debut;
     }
@@ -72,9 +72,9 @@ class Seance implements HistoriqueAwareInterface {
     }
 
     /**
-     * @return DateTime
+     * @return DateTime|null
      */
-    public function getFin(): DateTime
+    public function getFin(): ?DateTime
     {
         return $this->fin;
     }
@@ -90,36 +90,36 @@ class Seance implements HistoriqueAwareInterface {
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getLieu(): string
+    public function getLieu(): ?string
     {
         return $this->lieu;
     }
 
     /**
      * @param string $lieu
-     * @return Seance
+     * @return Seance|null
      */
-    public function setLieu(string $lieu): Seance
+    public function setLieu(?string $lieu): Seance
     {
         $this->lieu = $lieu;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
     /**
-     * @param string $description
+     * @param string|null $description
      * @return Seance
      */
-    public function setDescription(string $description): Seance
+    public function setDescription(?string $description): Seance
     {
         $this->description = $description;
         return $this;

@@ -1,0 +1,68 @@
+<?php
+
+/**
+ * @see \Formation\Controller\InscriptionController::indexAction()
+ * @var Inscription[] $inscriptions
+ */
+
+use Formation\Entity\Db\Inscription;
+
+?>
+
+<h1> Index des inscriptions </h1>
+
+
+<a
+    <?php /** @see \Formation\Controller\Inscription::ajouterAction() */ ?>
+    href="<?php echo $this->url('formation/inscription/ajouter', ['session' => 2, 'individu' => 5001], [], true); ?>"
+    class="btn btn-primary action">
+    <span class="glyphicon glyphicon-plus"></span>
+    Ajouter une formation
+</a>
+
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Identifiant</th>
+            <th>Session</th>
+            <th>Individu</th>
+            <th>Liste</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($inscriptions as $inscription) : ?>
+        <tr>
+            <td> <?php echo $inscription->getId(); ?> </td>
+            <td>
+                <?php echo $inscription->getSession()->getId(); ?>
+                <?php echo $inscription->getSession()->getFormation()->getLibelle(); ?>
+            </td>
+            <td> <?php echo $inscription->getIndividu()->getNomComplet(); ?> </td>
+            <td>
+                <?php if ($inscription->isListePrincipale()) : ?>
+                    <span class="liste-principale">
+                        Principale
+                    </span>
+                <?php endif; ?>
+                <?php if ($inscription->isListeComplementaire()) : ?>
+                    <span class="liste-complementaire">
+                        Complémentaire
+                    </span>
+                <?php endif; ?>
+            </td>
+            <td></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

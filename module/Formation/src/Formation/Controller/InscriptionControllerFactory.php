@@ -3,37 +3,30 @@
 namespace Formation\Controller;
 
 use Doctrine\ORM\EntityManager;
-use Formation\Form\Seance\SeanceForm;
-use Formation\Service\Seance\SeanceService;
+use Formation\Service\Inscription\InscriptionService;
 use Interop\Container\ContainerInterface;
 
-class SeanceControllerFactory {
+class InscriptionControllerFactory {
 
     /**
      * @param ContainerInterface $container
-     * @return SeanceController
+     * @return InscriptionController
      */
     public function __invoke(ContainerInterface $container)
     {
         /**
          * @var EntityManager $entityManager
-         * @var SeanceService $seanceService
+         * @var InscriptionService $seanceService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
-        $seanceService = $container->get(SeanceService::class);
-
-        /**
-         * @var SeanceForm $seanceForm
-         */
-        $seanceForm = $container->get('FormElementManager')->get(SeanceForm::class);
+        $seanceService = $container->get(InscriptionService::class);
 
 
-        $controller = new SeanceController();
+        $controller = new InscriptionController();
         /** services **************************************************************************************************/
         $controller->setEntityManager($entityManager);
-        $controller->setSeanceService($seanceService);
+        $controller->setInscriptionService($seanceService);
         /** forms *****************************************************************************************************/
-        $controller->setSeanceForm($seanceForm);
 
         return $controller;
     }
