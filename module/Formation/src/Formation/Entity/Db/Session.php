@@ -18,6 +18,9 @@ class Session implements HistoriqueAwareInterface {
     /** @var Collection (Seance) */
     private $seances;
 
+    /** @var string|null */
+    private $description;
+
     /**
      * @return int
      */
@@ -65,7 +68,7 @@ class Session implements HistoriqueAwareInterface {
      * @param Seance $seance
      * @return Session
      */
-    public function addSession(Seance $seance) : Session
+    public function addSeance(Seance $seance) : Session
     {
         if (! $this->hasSeance($seance)) $this->seances->add($seance);
         return $this;
@@ -75,10 +78,27 @@ class Session implements HistoriqueAwareInterface {
      * @param Seance $seance
      * @return $this
      */
-    public function removeSession(Seance $seance) : Session
+    public function removeSeance(Seance $seance) : Session
     {
         $this->seances->removeElement($seance);
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string|null $description
+     * @return Session
+     */
+    public function setDescription(?string $description): Session
+    {
+        $this->description = $description;
+        return $this;
+    }
 }

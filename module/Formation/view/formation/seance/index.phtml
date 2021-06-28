@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @see \Formation\Controller\SeanceController::indexAction()
+ * @var Seance[] $seances
+ */
+
+use Formation\Entity\Db\Seance;
+
+?>
+
+<h1> Index des seances </h1>
+
+
+<a
+    <?php /** @see \Formation\Controller\SeanceController::ajouterAction() */ ?>
+    href="<?php echo $this->url('formation/seance/ajouter', [], [], true); ?>"
+    class="btn btn-primary action">
+    <span class="glyphicon glyphicon-plus"></span>
+    Ajouter une seance
+</a>
+
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th>Identifiant</th>
+        <th>Formation liée</th>
+        <th>Période</th>
+        <th>Lieu</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($seances as $seance) : ?>
+        <tr>
+            <td> <?php echo $seance->getId(); ?> </td>
+            <td>
+                <?php echo $seance->getSession()->getFormation()->getId(); ?>/<?php echo $seance->getSession()->getId(); ?>
+                -
+                <?php echo $seance->getSession()->getFormation()->getLibelle(); ?>
+            </td>
+            <td>
+                <?php echo $seance->getDebut()->format('d/m/Y à H:i'); ?>
+                &rightarrow;
+                <?php echo $seance->getFin()->format('d/m/Y à H:i'); ?>
+                <br/>
+                DUREE (TODO)
+            </td>
+            <td> <?php echo $seance->getLieu(); ?> </td>
+            <td></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

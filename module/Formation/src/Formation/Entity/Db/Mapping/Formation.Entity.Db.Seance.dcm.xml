@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="Formation\Entity\Db\Session"
-            table="FORMATION_SESSION"
-            repository-class="Formation\Entity\Db\Repository\SessionRepository">
+    <entity name="Formation\Entity\Db\Seance"
+            table="FORMATION_SEANCE"
+            repository-class="Formation\Entity\Db\Repository\SeanceRepository">
 
             <id name="id" type="integer" column="ID">
                 <generator strategy="SEQUENCE"/>
             </id>
 
-            <many-to-one field="formation" target-entity="Formation\Entity\Db\Formation">
+            <many-to-one field="session" target-entity="Formation\Entity\Db\Session">
                 <join-columns>
-                    <join-column name="FORMATION_ID" referenced-column-name="ID"/>
+                    <join-column name="SESSION_ID" referenced-column-name="ID"/>
                 </join-columns>
             </many-to-one>
 
-<!--            <one-to-many field="sceance" target-entity="Formation\Entity\Db\Seance" mapped-by="session"/>-->
-
+            <field name="debut"               type="date"                             column="DEBUT"            nullable="false"/>
+            <field name="fin"                 type="date"                             column="FIN"              nullable="false"/>
+            <field name="lieu"                type="string"       length="1024"       column="LIEU"             nullable="true"/>
             <field name="description"         type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
 
             <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
