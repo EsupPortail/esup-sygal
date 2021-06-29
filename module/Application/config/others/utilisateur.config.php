@@ -56,7 +56,6 @@ return [
                         'ajouterFromIndividu',
                         'lier-individu',
                         'delier-individu',
-
                         'ajouter-token'
                     ],
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_MODIFICATION,
@@ -221,7 +220,8 @@ return [
                     'ajouter-token' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/ajouter-token/:utilisateur',
+                            /** @see \Application\Controller\UtilisateurController::ajouterTokenAction() */
+                            'route'       => '/ajouter-token/:user',
                             'defaults'    => [
                                 'action' => 'ajouter-token',
                             ],

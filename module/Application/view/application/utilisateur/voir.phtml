@@ -161,6 +161,7 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
             <div class="pull-right">
                 <br>
                 <?php echo $this->partial('unicaen-auth-token/token/partial/add-button', [
+                    'route' => 'utilisateur/ajouter-token',
                     'redirect' => $redirect,
                     'user' => $utilisateur->getId(),
                 ]) ?>
@@ -509,10 +510,6 @@ function generateRoleUnite($individu, $roles, $rolesAffectes, $unites, $canModif
 
     select {
         margin-top: 5px;
-    }
-
-    span {
-        margin: 5px 5px 5px 5px;
     }
 
     .dropdown-menu {

@@ -22,7 +22,6 @@ use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
-use DateTime;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr;
 use UnicaenApp\Exception\RuntimeException;
@@ -31,9 +30,10 @@ use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\ShibService;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
+use UnicaenAuthToken\Controller\TokenController;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
-use UnicaenAuthToken\Service\TokenServiceException;
 use Zend\Authentication\AuthenticationService;
+use Zend\EventManager\EventInterface;
 use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\Paginator\Paginator as ZendPaginator;
@@ -508,21 +508,42 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         return $this->redirect()->toRoute('utilisateur/voir', ['utilisateur' => $utilisateur->getId()], [], true);
     }
 
+    /**
+     * Demande de création d'un jeton d'authentification.
+     *
+     * NB : à l'issue de la création, l'utilisateur reçoit automatiquement son jeton, cf {@see envoyerToken()}.
+     *
+     * @return ViewModel|Response
+     */
     public function ajouterTokenAction()
     {
         $utilisateur = $this->getUtilisateurService()->getRequestedUtilisateur($this);
-        $date = (new DateTime())->modify('+ 2 months');
-        $token = null;
-        try {
-            $token = $this->tokenService->createUserToken($date);
-            $token->setUser($utilisateur);
-            $this->tokenService->saveUserToken($token);
-        } catch (TokenServiceException $e) {
-            throw new RuntimeException("Un problème est survenu lors de la création du token", 0,$e);
-        }
 
-        $this->tokenService->injectLogInUriInUserTokens([ $token ]);
-        $this->notifierService->triggerCreationTokenAuthentification($utilisateur, $token, $token->getLogInUri()->toString());
-        return $this->redirect()->toRoute('utilisateur/voir', ['utilisateur' => $utilisateur->getId()], [], true);
+        // on délègue au module unicaen/auth-token
+        return $this->forward()->dispatch(TokenController::class, [
+            'action' => 'creer',
+            'user' => $utilisateur->getId(),
+        ]);
+    }
+
+    public function listenEventsOf(TokenController $tokenController)
+    {
+        // écoute pour envoyer automatiquement tout jeton nouvellement créé à l'utlisateur
+        $tokenController->getEventManager()->attach(
+            $tokenController::EVENT_TOKEN_CREATE_AFTER_SAVE,
+            [$this, 'envoyerToken']
+        );
+    }
+
+    public function envoyerToken(EventInterface $event)
+    {
+        /** @var \Application\Entity\Db\UtilisateurToken $utilisateurToken */
+        $utilisateurToken = $event->getParam('userToken');
+
+        // on délègue au module unicaen/auth-token
+        $this->forward()->dispatch(TokenController::class, [
+            'action' => 'envoyer',
+            'userToken' => $utilisateurToken->getId(),
+        ]);
     }
 }

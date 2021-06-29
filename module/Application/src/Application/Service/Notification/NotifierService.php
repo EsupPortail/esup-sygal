@@ -8,10 +8,8 @@ use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
-use Application\Entity\Db\UtilisateurToken;
 use Application\Entity\Db\Variable;
 use Application\Notification\CorrectionAttendueUpdatedNotification;
-use Application\Notification\NouveauTokenUtilisateurNotification;
 use Application\Notification\PasDeMailPresidentJury;
 use Application\Notification\ResultatTheseAdmisNotification;
 use Application\Notification\ResultatTheseModifieNotification;
@@ -26,8 +24,6 @@ use Application\Service\Variable\VariableServiceAwareTrait;
 use Import\Model\ImportObservResult;
 use Notification\Notification;
 use UnicaenApp\Exception\LogicException;
-use UnicaenAuthToken\Entity\Db\AbstractUserToken;
-use UnicaenAuthToken\Entity\Db\UserToken;
 use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Zend\View\Helper\Url as UrlHelper;
 
@@ -470,19 +466,5 @@ class NotifierService extends \Notification\Service\NotifierService
             ]);
 
         return $notif;
-    }
-
-    public function triggerCreationTokenAuthentification(Utilisateur $utilisateur, AbstractUserToken $token, string $lien)
-    {
-        // envoi de mail aux directeurs de thèse
-        $notif = new NouveauTokenUtilisateurNotification();
-        $notif
-            ->setTemplateVariables([
-                'utilisateur' => $utilisateur,
-                'token' => $token,
-                'lien' => $lien,
-            ]);
-
-        $this->trigger($notif);
     }
 }

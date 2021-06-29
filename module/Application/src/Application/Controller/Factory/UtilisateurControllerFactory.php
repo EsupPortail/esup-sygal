@@ -23,6 +23,7 @@ use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\ShibService;
 use UnicaenAuth\Service\User as UserService;
 use UnicaenAuth\Service\UserContext;
+use UnicaenAuthToken\Controller\TokenController;
 use UnicaenAuthToken\Service\TokenService;
 use Zend\Authentication\AuthenticationService;
 use ZfcUser\Mapper\UserInterface;
@@ -31,7 +32,7 @@ class UtilisateurControllerFactory
 {
     use IndividuServiceLocateTrait;
 
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): UtilisateurController
     {
         /**
          * @var ActeurService $acteurService
@@ -110,6 +111,10 @@ class UtilisateurControllerFactory
          */
         $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
         $controller->setSourceCodeStringHelper($sourceCodeHelper);
+
+        /** @var TokenController $tokenController */
+        $tokenController = $container->get('ControllerManager')->get(TokenController::class);
+        $controller->listenEventsOf($tokenController);
 
         return $controller;
     }
