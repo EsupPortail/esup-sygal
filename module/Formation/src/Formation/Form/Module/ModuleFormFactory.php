@@ -1,29 +1,29 @@
 <?php
 
-namespace Formation\Form\Formation;
+namespace Formation\Form\Module;
 
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Structure\StructureService;
 use Interop\Container\ContainerInterface;
 use Zend\View\Helper\Url;
 
-class FormationFormFactory {
+class ModuleFormFactory {
 
     /**
      * @param ContainerInterface $container
-     * @return FormationForm
+     * @return ModuleForm
      */
-    public function __invoke(ContainerInterface $container) : FormationForm
+    public function __invoke(ContainerInterface $container) : ModuleForm
     {
         /** @var EtablissementService $etablissementService */
         /** @var StructureService $structureService */
         $etablissementService = $container->get(EtablissementService::class);
         $structureService = $container->get(StructureService::class);
 
-        /** @var FormationHydrator $hydrator */
-        $hydrator = $container->get('HydratorManager')->get(FormationHydrator::class);
+        /** @var ModuleHydrator $hydrator */
+        $hydrator = $container->get('HydratorManager')->get(ModuleHydrator::class);
 
-        $form = new FormationForm();
+        $form = new ModuleForm();
         /** @var Url $urlManager */
         $pluginManager = $container->get('ViewHelperManager');
         $urlManager = $pluginManager->get('Url');

@@ -6,6 +6,9 @@ use Application\Navigation\ApplicationNavigationFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Formation\View\Helper\ModaliteViewHelper;
+use Formation\View\Helper\SiteViewHelper;
+use Formation\View\Helper\TypeViewHelper;
 use Soutenance\Controller\AvisController;
 use Soutenance\Controller\EngagementImpartialiteController;
 use Soutenance\Provider\Privilege\IndexPrivileges;
@@ -69,6 +72,14 @@ return array(
         'template_path_stack' => [
             __DIR__ . '/../view',
         ],
+    ],
+
+    'view_helpers' => [
+        'invokables' => [
+            'modalite' => ModaliteViewHelper::class,
+            'site' => SiteViewHelper::class,
+            'type' => TypeViewHelper::class,
+        ]
     ],
 
     'public_files' => [

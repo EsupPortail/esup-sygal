@@ -1,15 +1,15 @@
 <?php
 
-namespace Formation\Service\Formation;
+namespace Formation\Service\Module;
 
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
 
-class FormationServiceFactory {
+class ModuleServiceFactory {
 
     /**
      * @param ContainerInterface $container
-     * @return FormationService
+     * @return ModuleService
      */
     public function __invoke(ContainerInterface $container)
     {
@@ -18,7 +18,7 @@ class FormationServiceFactory {
          */
         $entitymanager = $container->get('doctrine.entitymanager.orm_default');
 
-        $service = new FormationService();
+        $service = new ModuleService();
         $service->setEntityManager($entitymanager);
         return $service;
     }

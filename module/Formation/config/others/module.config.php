@@ -2,15 +2,15 @@
 
 namespace Formation;
 
-use Formation\Controller\FormationController;
-use Formation\Controller\FormationControllerFactory;
-use Formation\Form\Formation\FormationForm;
-use Formation\Form\Formation\FormationFormFactory;
-use Formation\Form\Formation\FormationHydrator;
-use Formation\Form\Formation\FormationHydratorFactory;
+use Formation\Controller\ModuleController;
+use Formation\Controller\ModuleControllerFactory;
+use Formation\Form\Module\ModuleForm;
+use Formation\Form\Module\ModuleFormFactory;
+use Formation\Form\Module\ModuleHydrator;
+use Formation\Form\Module\ModuleHydratorFactory;
 use Formation\Provider\Privilege\IndexPrivileges;
-use Formation\Service\Formation\FormationService;
-use Formation\Service\Formation\FormationServiceFactory;
+use Formation\Service\Module\ModuleService;
+use Formation\Service\Module\ModuleServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
@@ -20,7 +20,7 @@ return [
         'guards' => [
             PrivilegeController::class => [
                 [
-                    'controller' => FormationController::class,
+                    'controller' => ModuleController::class,
                     'action' => [
                         'index',
                         'ajouter',
@@ -43,10 +43,10 @@ return [
                 'pages' => [
                     'formation' => [
                         'pages' => [
-                            'formation' => [
-                                'label'    => 'Formations',
-                                'route'    => 'formation/formation',
-                                'resource' => PrivilegeController::getResourceId(FormationController::class, 'index') ,
+                            'module' => [
+                                'label'    => 'Modules',
+                                'route'    => 'formation/module',
+                                'resource' => PrivilegeController::getResourceId(ModuleController::class, 'index') ,
                                 'order'    => 100,
                             ],
                         ],
@@ -60,13 +60,13 @@ return [
         'routes' => [
             'formation' => [
                 'child_routes' => [
-                    'formation' => [
+                    'module' => [
                         'type'  => Literal::class,
                         'may_terminate' => true,
                         'options' => [
-                            'route'    => '/formation',
+                            'route'    => '/module',
                             'defaults' => [
-                                'controller' => FormationController::class,
+                                'controller' => ModuleController::class,
                                 'action'     => 'index',
                             ],
                         ],
@@ -77,7 +77,7 @@ return [
                                 'options' => [
                                     'route'    => '/ajouter',
                                     'defaults' => [
-                                        'controller' => FormationController::class,
+                                        'controller' => ModuleController::class,
                                         'action'     => 'ajouter',
                                     ],
                                 ],
@@ -86,9 +86,9 @@ return [
                                 'type'  => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/modifier/:formation',
+                                    'route'    => '/modifier/:module',
                                     'defaults' => [
-                                        'controller' => FormationController::class,
+                                        'controller' => ModuleController::class,
                                         'action'     => 'modifier',
                                     ],
                                 ],
@@ -97,9 +97,9 @@ return [
                                 'type'  => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/historiser/:formation',
+                                    'route'    => '/historiser/:module',
                                     'defaults' => [
-                                        'controller' => FormationController::class,
+                                        'controller' => ModuleController::class,
                                         'action'     => 'historiser',
                                     ],
                                 ],
@@ -108,9 +108,9 @@ return [
                                 'type'  => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/restaurer/:formation',
+                                    'route'    => '/restaurer/:module',
                                     'defaults' => [
-                                        'controller' => FormationController::class,
+                                        'controller' => ModuleController::class,
                                         'action'     => 'restaurer',
                                     ],
                                 ],
@@ -119,9 +119,9 @@ return [
                                 'type'  => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/supprimer/:formation',
+                                    'route'    => '/supprimer/:module',
                                     'defaults' => [
-                                        'controller' => FormationController::class,
+                                        'controller' => ModuleController::class,
                                         'action'     => 'supprimer',
                                     ],
                                 ],
@@ -135,22 +135,22 @@ return [
 
     'service_manager' => [
         'factories' => [
-            FormationService::class => FormationServiceFactory::class,
+            ModuleService::class => ModuleServiceFactory::class,
         ],
     ],
     'controllers'     => [
         'factories' => [
-            FormationController::class => FormationControllerFactory::class,
+            ModuleController::class => ModuleControllerFactory::class,
         ],
     ],
     'form_elements' => [
         'factories' => [
-            FormationForm::class => FormationFormFactory::class,
+            ModuleForm::class => ModuleFormFactory::class,
         ],
     ],
     'hydrators' => [
         'factories' => [
-            FormationHydrator::class => FormationHydratorFactory::class,
+            ModuleHydrator::class => ModuleHydratorFactory::class,
         ],
     ]
 

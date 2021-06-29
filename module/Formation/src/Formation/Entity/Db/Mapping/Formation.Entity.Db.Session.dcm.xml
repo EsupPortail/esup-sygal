@@ -8,9 +8,10 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <many-to-one field="formation" target-entity="Formation\Entity\Db\Formation">
+        <field name="index" type="integer" column="SESSION_INDEX" nullable="false"/>
+        <many-to-one field="module" target-entity="Formation\Entity\Db\Module">
             <join-columns>
-                <join-column name="FORMATION_ID" referenced-column-name="ID"/>
+                <join-column name="MODULE_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
 
@@ -19,7 +20,7 @@
                 <join-column name="SITE_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="responsable" target-entity="Application\Entity\Db\Utilisateur">
+        <many-to-one field="responsable" target-entity="Application\Entity\Db\Individu">
             <join-columns>
                 <join-column name="RESPONSABLE_ID" referenced-column-name="ID"/>
             </join-columns>

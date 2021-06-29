@@ -3,19 +3,26 @@
 namespace Formation\Entity\Db;
 
 use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\Utilisateur;
-use DateInterval;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
+use Formation\Entity\Db\Interfaces\HasModaliteInterface;
+use Formation\Entity\Db\Interfaces\HasSiteInterface;
+use Formation\Entity\Db\Interfaces\HasTypeInterface;
+use Formation\Entity\Db\Traits\HasModaliteTrait;
+use Formation\Entity\Db\Traits\HasSiteTrait;
+use Formation\Entity\Db\Traits\HasTypeTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class Session implements HistoriqueAwareInterface {
+class Session implements HistoriqueAwareInterface,
+    HasSiteInterface, HasModaliteInterface, HasTypeInterface {
     use HistoriqueAwareTrait;
-
-    const MODALITE_PRESENTIEL   = 'P';
-    const MODALITE_DISTANCIEL   = 'D';
+    use HasSiteTrait;
+    use HasModaliteTrait;
+    use HasTypeTrait;
 
     const ETAT_PREPARATION      = 'P';
     const ETAT_INSCRIPTION      = 'I';
@@ -23,14 +30,13 @@ class Session implements HistoriqueAwareInterface {
     const ETAT_TERMINE          = 'T';
     const ETAT_CLOS_FINAL       = 'C';
 
-    const TYPE_SPECIFIQUE       = 'S';
-    const TYPE_TRANSVERSALE     = 'T';
-
     /** @var int */
     private $id;
 
-    /** @var Formation|null */
-    private $formation;
+    /** @var int */
+    private $index;
+    /** @var Module|null */
+    private $module;
 
     /** Informations générale sur la session **************************************************************************/
     /** @var Etablissement|null */
@@ -38,13 +44,7 @@ class Session implements HistoriqueAwareInterface {
     /** @var Utilisateur|null */
     private $responsable;
     /** @var string|null */
-    private $modalite;
-    /** @var string|null */
     private $etat;
-    /** @var string */
-    private $type;
-    /** @var Structure|null */
-    private $typeStructure;
     /** @var string|null */
     private $description;
 
@@ -60,10 +60,6 @@ class Session implements HistoriqueAwareInterface {
     /** @var Collection (Inscription) */
     private $inscriptions;
 
-
-
-
-
     /**
      * @return int
      */
@@ -73,74 +69,58 @@ class Session implements HistoriqueAwareInterface {
     }
 
     /**
-     * @return Formation|null
+     * @return int|null
      */
-    public function getFormation(): ?Formation
+    public function getIndex(): ?int
     {
-        return $this->formation;
+        return $this->index;
     }
 
     /**
-     * @param Formation|null $formation
+     * @param int $index
      * @return Session
      */
-    public function setFormation(?Formation $formation): Session
+    public function setIndex(int $index): Session
     {
-        $this->formation = $formation;
+        $this->index = $index;
         return $this;
     }
 
     /**
-     * @return Etablissement|null
+     * @return Module|null
      */
-    public function getSite(): ?Etablissement
+    public function getModule(): ?Module
     {
-        return $this->site;
+        return $this->module;
     }
 
     /**
-     * @param Etablissement|null $site
+     * @param Module|null $module
      * @return Session
      */
-    public function setSite(?Etablissement $site): Session
+    public function setModule(?Module $module): Session
     {
-        $this->site = $site;
+        $this->module = $module;
         return $this;
     }
+
+
 
     /**
      * @return Utilisateur|null
      */
-    public function getResponsable(): ?Utilisateur
+    public function getResponsable(): ?Individu
     {
         return $this->responsable;
     }
 
     /**
-     * @param Utilisateur|null $responsable
+     * @param Individu|null $responsable
      * @return Session
      */
-    public function setResponsable(?Utilisateur $responsable): Session
+    public function setResponsable(?Individu $responsable): Session
     {
         $this->responsable = $responsable;
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getModalite(): ?string
-    {
-        return $this->modalite;
-    }
-
-    /**
-     * @param string|null $modalite
-     * @return Session
-     */
-    public function setModalite(?string $modalite): Session
-    {
-        $this->modalite = $modalite;
         return $this;
     }
 
@@ -159,42 +139,6 @@ class Session implements HistoriqueAwareInterface {
     public function setEtat(?string $etat): Session
     {
         $this->etat = $etat;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param string $type
-     * @return Session
-     */
-    public function setType(string $type): Session
-    {
-        $this->type = $type;
-        return $this;
-    }
-
-    /**
-     * @return Structure|null
-     */
-    public function getTypeStructure(): ?Structure
-    {
-        return $this->typeStructure;
-    }
-
-    /**
-     * @param Structure|null $typeStructure
-     * @return Session
-     */
-    public function setTypeStructure(?Structure $typeStructure): Session
-    {
-        $this->typeStructure = $typeStructure;
         return $this;
     }
 
@@ -225,36 +169,36 @@ class Session implements HistoriqueAwareInterface {
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getTailleListePrincipale(): int
+    public function getTailleListePrincipale(): ?int
     {
         return $this->tailleListePrincipale;
     }
 
     /**
-     * @param int $tailleListePrincipale
+     * @param int|null $tailleListePrincipale
      * @return Session
      */
-    public function setTailleListePrincipale(int $tailleListePrincipale): Session
+    public function setTailleListePrincipale(?int $tailleListePrincipale): Session
     {
         $this->tailleListePrincipale = $tailleListePrincipale;
         return $this;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getTailleListeComplementaire(): int
+    public function getTailleListeComplementaire(): ?int
     {
         return $this->tailleListeComplementaire;
     }
 
     /**
-     * @param int $tailleListeComplementaire
+     * @param int|null $tailleListeComplementaire
      * @return Session
      */
-    public function setTailleListeComplementaire(int $tailleListeComplementaire): Session
+    public function setTailleListeComplementaire(?int $tailleListeComplementaire): Session
     {
         $this->tailleListeComplementaire = $tailleListeComplementaire;
         return $this;

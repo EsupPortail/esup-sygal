@@ -1,20 +1,19 @@
 <?php
 
-namespace Formation\Form\Formation;
+namespace Formation\Form\Module;
 
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Structure\StructureService;
-use Application\Service\Utilisateur\UtilisateurService;
 use Interop\Container\ContainerInterface;
 
-class FormationHydratorFactory {
+class ModuleHydratorFactory {
 
     /**
      * @param ContainerInterface $container
-     * @return FormationHydrator
+     * @return ModuleHydrator
      */
-    public function __invoke(ContainerInterface $container) : FormationHydrator
+    public function __invoke(ContainerInterface $container) : ModuleHydrator
     {
         /**
          * @var EtablissementService $etablissementService
@@ -25,7 +24,7 @@ class FormationHydratorFactory {
         $individuService = $container->get(IndividuService::class);
         $structureService = $container->get(StructureService::class);
 
-        $hydrator = new FormationHydrator();
+        $hydrator = new ModuleHydrator();
         $hydrator->setEtablissementService($etablissementService);
         $hydrator->setIndividuService($individuService);
         $hydrator->setStructureService($structureService);

@@ -4,6 +4,7 @@ namespace Formation\Service\Session;
 
 use DateTime;
 use Doctrine\ORM\ORMException;
+use Formation\Entity\Db\Module;
 use Formation\Entity\Db\Session;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -19,6 +20,8 @@ class SessionService {
      */
     public function create(Session $session) : Session
     {
+        $index = $this->getEntityManager()->getRepository(Module::class)->fetchIndexMax($session->getModule()) + 1;
+        $session->setIndex($index);
         try {
             $this->getEntityManager()->persist($session);
             $this->getEntityManager()->flush($session);
@@ -84,6 +87,21 @@ class SessionService {
             $this->getEntityManager()->flush($session);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Session]",0, $e);
+        }
+        return $session;
+    }
+
+    public function setValeurParDefaut(Session $session) : Session
+    {
+        $module = $session->getModule();
+        if ($module !== null) {
+            $session->setSite($module->getSite());
+            $session->setResponsable($module->getResponsable());
+            $session->setModalite($module->getModalite());
+            $session->setType($module->getType());
+            $session->setTypeStructure($module->getTypeStructure());
+            $session->setTailleListePrincipale($module->getTailleListePrincipale());
+            $session->setTailleListeComplementaire($module->getTailleListeComplementaire());
         }
         return $session;
     }

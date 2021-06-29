@@ -13,10 +13,9 @@ use Formation\Entity\Db\Session;
 
 <h1> Index des sessions </h1>
 
-
 <a
     <?php /** @see \Formation\Controller\SessionController::ajouterAction() */ ?>
-    href="<?php echo $this->url('formation/session/ajouter', [], [], true); ?>"
+    href="<?php echo $this->url('formation/session/ajouter', ['module' => 2], [], true); ?>"
     class="btn btn-primary action">
     <span class="glyphicon glyphicon-plus"></span>
     Ajouter une session
@@ -44,59 +43,19 @@ use Formation\Entity\Db\Session;
 <!--            <td> --><?php //echo $session->getId(); ?><!-- </td>-->
             <td>
 <!--                --><?php //echo $session->getFormation()->getId(); ?>
-                <?php echo $session->getFormation()->getLibelle(); ?>
+                <?php echo $session->getModule()->getLibelle(); ?> <br/>
+                Session #<?php echo $session->getIndex(); ?> <br/>
             </td>
-            <td>
-                <?php if ($session->getSite() !== null) : ?>
-                    <?php echo $session->getSite()->getSigle(); ?>
-                <?php else : ?>
-                    Aucun site
-                <?php endif; ?>
-            </td>
+            <td> <?php echo $this->site($session); ?> </td>
             <td>
                 <?php if ($session->getResponsable() !== null) : ?>
-                    <?php echo $session->getResponsable()->getDisplayName(); ?>
+                    <?php echo $session->getResponsable()->getNomComplet(); ?>
                 <?php else : ?>
                     Aucun responsable
                 <?php endif; ?>
             </td>
-            <td>
-                <?php
-                    $modalite = null;
-                    switch($session->getModalite()) {
-                        case Session::MODALITE_PRESENTIEL:
-                            $modalite = "Présentielle";
-                            break;
-                        case Session::MODALITE_DISTANCIEL:
-                            $modalite = "Distancielle";
-                            break;
-                        default :
-                            $modalite = "Non précisée";
-                            break;
-                    };
-                    echo $modalite;
-                ?>
-            </td>
-            <td>
-                <?php
-                $type = null;
-                switch($session->getType()) {
-                    case Session::TYPE_SPECIFIQUE:
-                        $type = "Spécifique";
-                        break;
-                    case Session::TYPE_TRANSVERSALE:
-                        $type = "Transerversale";
-                        break;
-                    default :
-                        $type = "Non précisée";
-                        break;
-                };
-                echo $type;
-                if ($session->getType() === Session::TYPE_SPECIFIQUE AND $session->getTypeStructure() !== null) {
-                    echo "<br/>" . $session->getTypeStructure()->getSigle();
-                }
-                ?>
-            </td>
+            <td> <?php echo $this->modalite($session); ?> </td>
+            <td> <?php echo $this->type($session); ?> </td>
             <td>
                 <?php echo ($session->getEtat())?:"Non Précisé"; ?>
             </td>

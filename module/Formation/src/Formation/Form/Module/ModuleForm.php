@@ -1,6 +1,6 @@
 <?php
 
-namespace Formation\Form\Formation;
+namespace Formation\Form\Module;
 
 use Application\Entity\Db\TypeStructure;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -14,7 +14,7 @@ use Zend\Form\Element\Textarea;
 use Zend\Form\Form;
 use Zend\InputFilter\Factory;
 
-class FormationForm extends Form {
+class ModuleForm extends Form {
     use EtablissementServiceAwareTrait;
     use StructureServiceAwareTrait;
 
@@ -23,9 +23,9 @@ class FormationForm extends Form {
 
     /**
      * @param string $urlResponsable
-     * @return FormationForm
+     * @return ModuleForm
      */
-    public function setUrlResponsable(string $urlResponsable): FormationForm
+    public function setUrlResponsable(string $urlResponsable): ModuleForm
     {
         $this->urlResponsable = $urlResponsable;
         return $this;
@@ -124,7 +124,7 @@ class FormationForm extends Form {
                 'value_options' => $this->getStructureService()->getStructuresFormationsAsOptions(),
             ],
             'attributes' => [
-                'id' => 'type',
+                'id' => 'type_structure',
                 'class' => 'show-tick',
                 'data-live-search' => 'true',
             ],

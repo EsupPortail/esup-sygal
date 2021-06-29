@@ -27,9 +27,27 @@ echo $this->form()->openTag($form);
 
 <?php echo $this->form()->closeTag(); ?>
 
+<p class="lead alert alert-warning">Ajouter JS pour masquer sutrcture lorsque pas necessaire</p>
 <script>
+    function updateType() {
+        console.log('here');
+        let val =  $('select#type').val();
+        console.log(val);
+        if (val === 'S') {
+            $('button[data_id=type_structure]').show();
+            $('select#type_structure').show();
+            $('label[for=type_structure]').show();
+        } else {
+            $('button[data_id=type_structure]').hide();
+            $('select#type_structure').hide();
+            $('label[for=type_structure]').hide();
+        }
+    }
+
+
 
     $(document).ready(function() {
+        // updateType();
         tinymce.remove();
         tinymce.init({
             selector: '.tinymce',
@@ -50,5 +68,8 @@ echo $this->form()->openTag($form);
             }
         });
         $('select').selectpicker();
+        // $('select#type').change(function() {
+        //     updateType();
+        // });
     });
 </script>

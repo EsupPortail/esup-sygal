@@ -1,6 +1,6 @@
 <?php
 
-namespace Formation\Form\Formation;
+namespace Formation\Form\Module;
 
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
@@ -8,16 +8,16 @@ use Application\Entity\Db\Structure;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
-use Formation\Entity\Db\Formation;
+use Formation\Entity\Db\Module;
 use Zend\Hydrator\HydratorInterface;
 
-class FormationHydrator implements HydratorInterface {
+class ModuleHydrator implements HydratorInterface {
     use EtablissementServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use StructureServiceAwareTrait;
 
     /**
-     * @param Formation $object
+     * @param Module $object
      * @return array
      */
     public function extract($object)
@@ -38,8 +38,8 @@ class FormationHydrator implements HydratorInterface {
 
     /**
      * @param array $data
-     * @param Formation $object
-     * @return Formation
+     * @param Module $object
+     * @return Module
      */
     public function hydrate(array $data, $object)
     {

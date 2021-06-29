@@ -37,9 +37,8 @@ use Formation\Entity\Db\Seance;
         <tr>
             <td> <?php echo $seance->getId(); ?> </td>
             <td>
-                <?php echo $seance->getSession()->getFormation()->getId(); ?>/<?php echo $seance->getSession()->getId(); ?>
-                -
-                <?php echo $seance->getSession()->getFormation()->getLibelle(); ?>
+                <?php echo $seance->getSession()->getModule()->getLibelle(); ?>
+                - #<?php echo $seance->getSession()->getIndex(); ?>
             </td>
             <td>
                 <?php echo $seance->getDebut()->format('d/m/Y à H:i'); ?>

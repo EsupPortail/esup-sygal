@@ -3,7 +3,7 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use Formation\Entity\Db\Formation;
+use Formation\Entity\Db\Module;
 use Formation\Entity\Db\Session;
 use Formation\Service\Session\SessionServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -26,10 +26,12 @@ class SessionController extends AbstractController
 
     public function ajouterAction()
     {
+        /** @var Module $module */
+        $module = $this->getEntityManager()->getRepository(Module::class)->getRequestedModule($this);
+
         $session = new Session();
-        /** @var Formation $bidon */
-        $bidon = $this->getEntityManager()->getRepository(Formation::class)->find(2);
-        $session->setFormation($bidon);
+        $session->setModule($module);
+        $session = $this->getSessionService()->setValeurParDefaut($session);
         $this->getSessionService()->create($session);
 
         return $this->redirect()->toRoute('formation/session');

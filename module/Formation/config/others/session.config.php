@@ -65,10 +65,10 @@ return [
                         ],
                         'child_routes' => [
                             'ajouter' => [
-                                'type'  => Literal::class,
+                                'type'  => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/ajouter',
+                                    'route'    => '/ajouter/:module',
                                     'defaults' => [
                                         'controller' => SessionController::class,
                                         'action'     => 'ajouter',

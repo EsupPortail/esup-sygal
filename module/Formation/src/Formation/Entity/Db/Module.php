@@ -2,15 +2,23 @@
 
 namespace Formation\Entity\Db;
 
-use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
-use Application\Entity\Db\Structure;
 use Doctrine\Common\Collections\Collection;
+use Formation\Entity\Db\Interfaces\HasModaliteInterface;
+use Formation\Entity\Db\Interfaces\HasSiteInterface;
+use Formation\Entity\Db\Interfaces\HasTypeInterface;
+use Formation\Entity\Db\Traits\HasModaliteTrait;
+use Formation\Entity\Db\Traits\HasSiteTrait;
+use Formation\Entity\Db\Traits\HasTypeTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class Formation implements HistoriqueAwareInterface {
+class Module implements HistoriqueAwareInterface,
+    HasSiteInterface, HasModaliteInterface, HasTypeInterface {
     use HistoriqueAwareTrait;
+    use HasSiteTrait;
+    use HasModaliteTrait;
+    use HasTypeTrait;
 
     /** @var int */
     private $id;
@@ -27,16 +35,9 @@ class Formation implements HistoriqueAwareInterface {
     /** @var Collection (Session) */
     private $sessions;
 
-    /** @var Etablissement|null */
-    private $site;
     /** @var Individu|null */
     private $responsable;
-    /** @var string|null */
-    private $modalite;
-    /** @var string|null */
-    private $type;
-    /** @var Structure|null */
-    private $typeStructure;
+
     /** @var int */
     private $tailleListePrincipale;
     /** @var int */
@@ -60,9 +61,9 @@ class Formation implements HistoriqueAwareInterface {
 
     /**
      * @param string|null $libelle
-     * @return Formation
+     * @return Module
      */
-    public function setLibelle(?string $libelle): Formation
+    public function setLibelle(?string $libelle): Module
     {
         $this->libelle = $libelle;
         return $this;
@@ -78,9 +79,9 @@ class Formation implements HistoriqueAwareInterface {
 
     /**
      * @param string|null $description
-     * @return Formation
+     * @return Module
      */
-    public function setDescription(?string $description): Formation
+    public function setDescription(?string $description): Module
     {
         $this->description = $description;
         return $this;
@@ -96,9 +97,9 @@ class Formation implements HistoriqueAwareInterface {
 
     /**
      * @param string|null $lien
-     * @return Formation
+     * @return Module
      */
-    public function setLien(?string $lien): Formation
+    public function setLien(?string $lien): Module
     {
         $this->lien = $lien;
         return $this;
@@ -113,24 +114,6 @@ class Formation implements HistoriqueAwareInterface {
     }
 
     /**
-     * @return Etablissement|null
-     */
-    public function getSite(): ?Etablissement
-    {
-        return $this->site;
-    }
-
-    /**
-     * @param Etablissement|null $site
-     * @return Formation
-     */
-    public function setSite(?Etablissement $site): Formation
-    {
-        $this->site = $site;
-        return $this;
-    }
-
-    /**
      * @return Individu|null
      */
     public function getResponsable(): ?Individu
@@ -140,65 +123,11 @@ class Formation implements HistoriqueAwareInterface {
 
     /**
      * @param Individu|null $responsable
-     * @return Formation
+     * @return Module
      */
-    public function setResponsable(?Individu $responsable): Formation
+    public function setResponsable(?Individu $responsable): Module
     {
         $this->responsable = $responsable;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getModalite()
-    {
-        return $this->modalite;
-    }
-
-    /**
-     * @param string|null $modalite
-     * @return Formation
-     */
-    public function setModalite(?string $modalite) : Formation
-    {
-        $this->modalite = $modalite;
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getType() : ?string
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param string|null $type
-     * @return Formation
-     */
-    public function setType(?string $type) : Formation
-    {
-        $this->type = $type;
-        return $this;
-    }
-
-    /**
-     * @return Structure|null
-     */
-    public function getTypeStructure(): ?Structure
-    {
-        return $this->typeStructure;
-    }
-
-    /**
-     * @param Structure|null $typeStructure
-     * @return Formation
-     */
-    public function setTypeStructure(?Structure $typeStructure): Formation
-    {
-        $this->typeStructure = $typeStructure;
         return $this;
     }
 
@@ -212,9 +141,9 @@ class Formation implements HistoriqueAwareInterface {
 
     /**
      * @param int|null $tailleListePrincipale
-     * @return Formation
+     * @return Module
      */
-    public function setTailleListePrincipale(?int $tailleListePrincipale): Formation
+    public function setTailleListePrincipale(?int $tailleListePrincipale): Module
     {
         $this->tailleListePrincipale = $tailleListePrincipale;
         return $this;
@@ -230,9 +159,9 @@ class Formation implements HistoriqueAwareInterface {
 
     /**
      * @param int|null $tailleListeComplementaire
-     * @return Formation
+     * @return Module
      */
-    public function setTailleListeComplementaire(?int $tailleListeComplementaire): Formation
+    public function setTailleListeComplementaire(?int $tailleListeComplementaire): Module
     {
         $this->tailleListeComplementaire = $tailleListeComplementaire;
         return $this;
