@@ -9,6 +9,7 @@ Journal des modifications
 - Utilisation des dates et lieux des dossiers de soutenances plutôt que celles saisies dans les SIs pour la génération des documents du module soutenance.
 - Précision de la date de rendu des rapports dès le premier mail des rapporteurs
 - Recherche de rapports d'activité : nouveau filtre "Annuel ou fin de thèse".  
+- Fiche d'identité de la thèse : la date prévisionnelle de soutenance n'est plus affichée car elle peut être erronée.
 - [FIX] Dédoublonnage des origines de financement dans le filtres de la page des rapports.
 
 2.2.2
