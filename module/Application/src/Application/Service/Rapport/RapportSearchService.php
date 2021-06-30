@@ -8,7 +8,6 @@ use Application\Entity\Db\TypeStructure;
 use Application\Filter\AnneeUnivFormatter;
 use Application\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
 use Application\Search\Etablissement\EtablissementSearchFilter;
-use Application\Search\Filter\CheckboxSearchFilter;
 use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Search\Filter\TextSearchFilter;
@@ -69,6 +68,10 @@ class RapportSearchService extends SearchService
      * @var SelectSearchFilter
      */
     private $validationSearchFilter;
+    /**
+     * @var SelectSearchFilter
+     */
+    private $finalSearchFilter;
 
     /**
      * @inheritDoc
@@ -96,8 +99,9 @@ class RapportSearchService extends SearchService
                 return $this->fetchAnneesRapportActivite();
             });
         $validationSearchFilter = $this->getValidationSearchFilter();
+        $finalSearchFilter = $this->getFinalSearchFilter();
 
-        $this->addFilters([
+        $this->addFilters(array_filter([
             $etablissementInscrFilter,
             $origineFinancementFilter,
             $ecoleDoctoraleFilter,
@@ -105,8 +109,9 @@ class RapportSearchService extends SearchService
             $anneeRapportActiviteInscrFilter,
             $this->createFilterNomDoctorant(),
             $this->createFilterNomDirecteur(),
+            $finalSearchFilter,
             $validationSearchFilter,
-        ]);
+        ]));
         $this->addSorters([
             $etablissementInscrFilter->createSorter(),
             $this->createSorterTypeRapport(),
@@ -255,6 +260,14 @@ class RapportSearchService extends SearchService
         }
     }
 
+    public function applyFinalFilterToQueryBuilder(SearchFilter $filter, QueryBuilder $qb, $alias = 'ra')
+    {
+        $filterValue = $filter->getValue();
+        $qb
+            ->andWhere("$alias.estFinal = :final")
+            ->setParameter('final', $filterValue === 'finthese');
+    }
+
     public function applyNomDoctorantSorterToQueryBuilder(SearchSorter $sorter, QueryBuilder $qb, $alias = 'these')
     {
         $direction = $sorter->getDirection();
@@ -382,6 +395,26 @@ class RapportSearchService extends SearchService
         }
 
         return $this->validationSearchFilter;
+    }
+
+    public function getFinalSearchFilter(): ?SelectSearchFilter
+    {
+        if (! $this->typeRapport->estRapportActivite()) {
+            return null;
+        }
+
+        if ($this->finalSearchFilter === null) {
+            $this->finalSearchFilter = new SelectSearchFilter("Type", self::NAME_type);
+            $this->finalSearchFilter
+                ->setDataProvider(function () {
+                    return ['annuel' => "Annuel", 'finthese' => "Fin de thèse"];
+                })
+                ->setEmptyOptionLabel("(Peu importe)")
+                ->setAllowsEmptyOption()
+                ->setQueryBuilderApplier([$this, 'applyFinalFilterToQueryBuilder']);
+        }
+
+        return $this->finalSearchFilter;
     }
 
     /**
