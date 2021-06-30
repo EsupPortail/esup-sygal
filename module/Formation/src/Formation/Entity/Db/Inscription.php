@@ -2,6 +2,7 @@
 
 namespace Formation\Entity\Db;
 
+use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
@@ -16,8 +17,8 @@ class Inscription implements HistoriqueAwareInterface {
     private $id;
     /** @var Session */
     private $session;
-    /** @var Individu */
-    private $individu;
+    /** @var Doctorant */
+    private $doctorant;
     /** @var string|null */
     private $liste;
     /** @var string|null */
@@ -50,20 +51,20 @@ class Inscription implements HistoriqueAwareInterface {
     }
 
     /**
-     * @return Individu|null
+     * @return Doctorant|null
      */
-    public function getIndividu(): ?Individu
+    public function getDoctorant(): ?Doctorant
     {
-        return $this->individu;
+        return $this->doctorant;
     }
 
     /**
-     * @param Individu $individu
+     * @param Doctorant $doctorant
      * @return Inscription
      */
-    public function setIndividu(Individu $individu): Inscription
+    public function setDoctorant(Doctorant $doctorant): Inscription
     {
-        $this->individu = $individu;
+        $this->doctorant = $doctorant;
         return $this;
     }
 

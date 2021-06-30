@@ -37,9 +37,9 @@ use Formation\Entity\Db\Inscription;
             <td> <?php echo $inscription->getId(); ?> </td>
             <td>
                 <?php echo $inscription->getSession()->getId(); ?>
-                <?php echo $inscription->getSession()->getFormation()->getLibelle(); ?>
+                <?php echo $inscription->getSession()->getModule()->getLibelle(); ?>
             </td>
-            <td> <?php echo $inscription->getIndividu()->getNomComplet(); ?> </td>
+            <td> <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?> </td>
             <td>
                 <?php if ($inscription->isListePrincipale()) : ?>
                     <span class="liste-principale">

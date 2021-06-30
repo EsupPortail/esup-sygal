@@ -1,0 +1,151 @@
+<?php
+
+use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Session;
+
+/**
+ * @see \Formation\Controller\SessionController::afficherAction()
+ * @var Session $session
+ */
+
+$module = $session->getModule();
+
+$pageTitle = 'Affichage de la Session : ' . $module->getLibelle() . ' #'.$session->getIndex();
+$this->headTitle($pageTitle);
+
+$canModifier = true;
+$canHistoriser = true;
+$canSupprimer = true;
+
+$canModifierInscription = true;
+$canHistoriserInscription = true;
+$canSupprimerInscription = true;
+
+/** @var Inscription[] $inscrits */
+$inscrits = $session->getInscriptions()->toArray();
+$listeNonClassee = array_filter($inscrits, function (Inscription $a) { return $a->getListe() === null;});
+$listePrincipale = array_filter($inscrits, function (Inscription $a) { return $a->getListe() === Inscription::LISTE_PRINCIPALE;});
+$listeComplementaire = array_filter($inscrits, function (Inscription $a) { return $a->getListe() === Inscription::LISTE_COMPLEMENTAIRE;});
+?>
+
+<h1 class="page-header">
+    <?php echo $pageTitle; ?>
+</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <dl class="dl-horizontal">
+    <dt> Module </dt>
+    <dd> <?php echo $module->getLibelle(); ?> </dd>
+    <?php if ($module->getDescription()) : ?>
+        <dt> Description du module </dt>
+        <dd> <?php echo $module->getDescription(); ?> </dd>
+    <?php endif ?>
+    <?php if ($session->getDescription()) : ?>
+        <dt> Description de la session </dt>
+        <dd> <?php echo $session->getDescription(); ?> </dd>
+    <?php endif; ?>
+    <dt> État </dt>
+    <dd> <?php echo ($session->getEtat())?:"Non défini"; ?> </dd>
+
+    <dt> Site </dt>
+    <dd> <?php echo $this->site($session); ?> </dd>
+    <dt> Responsable </dt>
+    <dd> <?php echo $session->getResponsable()->getNomComplet(); ?> </dd>
+    <dt> Modalité </dt>
+    <dd> <?php echo $this->modalite($session); ?> </dd>
+    <dt> Type </dt>
+    <dd> <?php echo $this->type($session); ?> </dd>
+
+    <dt> Liste principale </dt>
+    <dd> <?php echo count($listePrincipale); ?>/<?php echo $session->getTailleListePrincipale(); ?></dd>
+    <dt> Liste complémentaire </dt>
+    <dd> <?php echo count($listeComplementaire); ?>/<?php echo $session->getTailleListeComplementaire(); ?></dd>
+    <dt> Nombre d'inscription </dt>
+    <dd> <?php echo count($inscrits); ?></dd>
+</dl>
+    </div>
+    <div class="pull-right">
+        <?php if ($canModifier) : ?>
+            <?php /** @see \Formation\Controller\SessionController::modifierAction() */?>
+            <a class="btn btn-primary ajax-modal" data-event="modification"
+               href="<?php echo $this->url('formation/session/modifier', ['session' => $session->getId()], [], true); ?>"
+            >
+                <span class="glyphicon glyphicon-pencil"></span>
+                Modifier les informations
+            </a>
+        <?php endif; ?>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2> Inscriptions et listes </h2>
+    </div>
+    <div class="pull-right">
+        <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
+        <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId()], [] , true); ?>"
+           class="btn btn-primary ajax-modal" data-event="modification">
+            <span class="glyphicon glyphicon-pencil"></span>
+            Inscrit un·e doctorant·e
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h3>
+            Listes des inscrits (non classés)
+            <span class="badge">
+                <?php echo count($listeNonClassee); ?>
+            </span>
+        </h3>
+
+        <ul>
+        <?php foreach ($listeNonClassee as $inscrit) : ?>
+            <?php echo $this->inscription($inscrit, []); ?>
+            <?php endforeach; ?>
+        </ul>
+
+    </div>
+    <div class="col-md-4">
+        <h3>
+            Liste principale
+            <span class="badge">
+                <?php echo count($listePrincipale); ?>
+            </span>
+        </h3>
+
+        <ul>
+        <?php foreach ($listePrincipale as $inscription) : ?>
+            <?php echo $this->inscription($inscription, ['action-liste-principale' => false]); ?>
+        <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <div class="col-md-4">
+        <h3>
+            Liste complémentaire
+            <span class="badge">
+                <?php echo count($listeComplementaire); ?>
+            </span>
+        </h3>
+
+        <ul>
+            <?php foreach ($listeComplementaire as $inscription) : ?>
+                <?php echo $this->inscription($inscription, ['action-liste-complementaire' => false]); ?>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</div>
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>
+
+

@@ -7,6 +7,7 @@ use Formation\Controller\InscriptionControllerFactory;
 use Formation\Provider\Privilege\IndexPrivileges;
 use Formation\Service\Inscription\InscriptionService;
 use Formation\Service\Inscription\InscriptionServiceFactory;
+use Formation\View\Helper\InscriptionViewHelper;
 use UnicaenAuth\Guard\PrivilegeController;
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
@@ -20,6 +21,11 @@ return [
                     'action' => [
                         'index',
                         'ajouter',
+                        'historiser',
+                        'restaurer',
+                        'supprimer',
+                        'passer-liste-principale',
+                        'passer-liste-secondaire',
                     ],
                     'privileges' => [
                         IndexPrivileges::INDEX_AFFICHER,
@@ -74,6 +80,61 @@ return [
                                     ],
                                 ],
                             ],
+                            'historiser' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/historiser/:inscription',
+                                    'defaults' => [
+                                        'controller' => InscriptionController::class,
+                                        'action'     => 'historiser',
+                                    ],
+                                ],
+                            ],
+                            'restaurer' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/restaurer/:inscription',
+                                    'defaults' => [
+                                        'controller' => InscriptionController::class,
+                                        'action'     => 'restaurer',
+                                    ],
+                                ],
+                            ],
+                            'supprimer' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/supprimer/:inscription',
+                                    'defaults' => [
+                                        'controller' => InscriptionController::class,
+                                        'action'     => 'supprimer',
+                                    ],
+                                ],
+                            ],
+                            'passer-liste-principale' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/passer-liste-principale/:inscription',
+                                    'defaults' => [
+                                        'controller' => InscriptionController::class,
+                                        'action'     => 'passer-liste-principale',
+                                    ],
+                                ],
+                            ],
+                            'passer-liste-complementaire' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/passer-liste-complementaire/:inscription',
+                                    'defaults' => [
+                                        'controller' => InscriptionController::class,
+                                        'action'     => 'passer-liste-complementaire',
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                 ],
@@ -96,6 +157,12 @@ return [
     ],
     'hydrators' => [
         'factories' => [],
-    ]
+    ],
+
+    'view_helpers' => [
+        'invokables' => [
+            'inscription' => InscriptionViewHelper::class,
+        ],
+    ],
 
 ];

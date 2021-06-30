@@ -9,6 +9,10 @@ use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
 
+
+$canAfficher = true;
+$canModifier = true;
+$canHistoriser= true;
 ?>
 
 <h1> Index des sessions </h1>
@@ -113,7 +117,36 @@ use Formation\Entity\Db\Session;
                 Hors liste : <?php echo count($session->getInscriptionsByListe(null)); ?><br/>
             </td>
             <td>
+                <?php if ($canAfficher) : ?>
+                    <?php /** @see \Formation\Controller\SessionController::afficherAction() */ ?>
+                    <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>">
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    </a>
+                <?php endif; ?>
+                <?php if ($canModifier) : ?>
+                    <?php /** @see \Formation\Controller\SessionController::modifierAction() */ ?>
+                    <a href="<?php echo $this->url('formation/session/modifier', ['session' => $session->getId()], [], true); ?>"
+                       class="ajax-modal" data-event="modification"
+                    >
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                <?php endif; ?>
 
+                <?php if ($canHistoriser) : ?>
+                    <?php if ($session->estNonHistorise()) : ?>
+                        <?php /** @see \Formation\Controller\SessionController::historiserAction() */ ?>
+                        <a href="<?php echo $this->url('formation/session/historiser', ['session' => $session->getId()], [], true); ?>"
+                        >
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    <?php else : ?>
+                        <?php /** @see \Formation\Controller\SessionController::restaurerAction() */ ?>
+                        <a href="<?php echo $this->url('formation/session/restaurer', ['session' => $session->getId()], [], true); ?>"
+                        >
+                            <span class="glyphicon glyphicon-leaf"></span>
+                        </a>
+                    <?php endif; ?>
+                <?php endif; ?>
             </td>
         </tr>
     <?php endforeach; ?>

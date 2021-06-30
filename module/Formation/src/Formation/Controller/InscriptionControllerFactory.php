@@ -2,6 +2,8 @@
 
 namespace Formation\Controller;
 
+use Application\Service\Doctorant\DoctorantService;
+use Application\Service\Individu\IndividuService;
 use Doctrine\ORM\EntityManager;
 use Formation\Service\Inscription\InscriptionService;
 use Interop\Container\ContainerInterface;
@@ -16,16 +18,21 @@ class InscriptionControllerFactory {
     {
         /**
          * @var EntityManager $entityManager
-         * @var InscriptionService $seanceService
+         * @var DoctorantService $doctorantService
+         * @var InscriptionService $inscriptionService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
-        $seanceService = $container->get(InscriptionService::class);
+        $doctorantService = $container->get(DoctorantService::class);
+        $individuService = $container->get(IndividuService::class);
+        $inscriptionService = $container->get(InscriptionService::class);
 
 
         $controller = new InscriptionController();
         /** services **************************************************************************************************/
         $controller->setEntityManager($entityManager);
-        $controller->setInscriptionService($seanceService);
+        $controller->setDoctorantService($doctorantService);
+        $controller->setIndividuService($individuService);
+        $controller->setInscriptionService($inscriptionService);
         /** forms *****************************************************************************************************/
 
         return $controller;

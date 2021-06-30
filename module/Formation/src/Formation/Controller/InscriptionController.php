@@ -3,8 +3,13 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use Formation\Entity\Db\Formation;
+use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Individu;
+use Application\Service\Doctorant\DoctorantServiceAwareTrait;
+use Application\Service\Individu\IndividuServiceAwareTrait;
 use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Module;
+use Formation\Entity\Db\Session;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\View\Model\ViewModel;
@@ -12,6 +17,8 @@ use Zend\View\Model\ViewModel;
 class InscriptionController extends AbstractController
 {
     use EntityManagerAwareTrait;
+    use IndividuServiceAwareTrait;
+    use DoctorantServiceAwareTrait;
     use InscriptionServiceAwareTrait;
 
     public function indexAction()
@@ -22,5 +29,112 @@ class InscriptionController extends AbstractController
         return new ViewModel([
             'inscriptions' => $inscriptions,
         ]);
+    }
+
+    public function ajouterAction()
+    {
+        /** @var Session $session */
+        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
+
+        /** @var Doctorant|null $doctorant */
+        $doctorant = null;
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            //todo ajouter une fonction de recherche des doctorants directement ...
+            if ($data["individu"]["id"] !== null) {
+                /** @var Individu $individu */
+                $individu = $this->getIndividuService()->getRepository()->find($data["individu"]["id"]);
+                $doctorant = $this->doctorantService->getRepository()->findOneByIndividu($individu);
+            }
+            if ($doctorant !== null) {
+                $inscription = new Inscription();
+                $inscription->setSession($session);
+                $inscription->setDoctorant($doctorant);
+                $this->getInscriptionService()->create($inscription);
+            }
+        }
+
+        return new ViewModel([
+            'title' => "Ajout d'une inscription doctorant",
+            'session' => $session,
+        ]);
+    }
+
+    public function historiserAction()
+    {
+        /** @var Inscription $inscription */
+        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
+        $retour = $this->params()->fromQuery('retour');
+
+        $this->getInscriptionService()->historise($inscription);
+
+        if ($retour) return $this->redirect()->toUrl($retour);
+        return $this->redirect()->toRoute('formation/inscription',[],[], true);
+    }
+
+    public function restaurerAction()
+    {
+        /** @var Inscription $inscription */
+        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
+        $retour = $this->params()->fromQuery('retour');
+
+        $this->getInscriptionService()->restore($inscription);
+
+        if ($retour) return $this->redirect()->toUrl($retour);
+        return $this->redirect()->toRoute('formation/inscription',[],[], true);
+    }
+
+    public function supprimerAction()
+    {
+        /** @var Inscription|null $inscription */
+        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            if ($data["reponse"] === "oui") $this->getInscriptionService()->delete($inscription);
+            exit();
+        }
+
+        $vm = new ViewModel();
+        if ($inscription !== null) {
+            $vm->setTemplate('formation/default/confirmation');
+            $vm->setVariables([
+                'title' => "Suppression de l'inscription de " . $inscription->getDoctorant()->getIndividu()->getNomComplet(),
+                'text' => "La suppression est définitive êtes-vous sûr&middot;e de vouloir continuer ?",
+                'action' => $this->url()->fromRoute('formation/inscription/supprimer', ["inscription" => $inscription->getId()], [], true),
+            ]);
+        }
+        return $vm;
+    }
+
+    public function passerListePrincipaleAction()
+    {
+        /** @var Inscription|null $inscription */
+        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
+        $retour = $this->params()->fromQuery('retour');
+
+        $inscription->setListe(Inscription::LISTE_PRINCIPALE);
+        //todo mailing tout çà
+        $this->getInscriptionService()->update($inscription);
+
+        if ($retour) return $this->redirect()->toUrl($retour);
+        return $this->redirect()->toRoute('formation/inscription',[],[], true);
+    }
+
+    public function passerListeComplementaireAction()
+    {
+        /** @var Inscription|null $inscription */
+        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
+        $retour = $this->params()->fromQuery('retour');
+
+        $inscription->setListe(Inscription::LISTE_COMPLEMENTAIRE);
+        //todo mailing tout çà
+        $this->getInscriptionService()->update($inscription);
+
+        if ($retour) return $this->redirect()->toUrl($retour);
+        return $this->redirect()->toRoute('formation/inscription',[],[], true);
     }
 }

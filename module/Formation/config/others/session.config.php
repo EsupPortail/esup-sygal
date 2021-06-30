@@ -2,9 +2,12 @@
 
 namespace Formation;
 
-use Formation\Controller\FormationController;
 use Formation\Controller\SessionController;
 use Formation\Controller\SessionControllerFactory;
+use Formation\Form\Session\SessionForm;
+use Formation\Form\Session\SessionFormFactory;
+use Formation\Form\Session\SessionHydrator;
+use Formation\Form\Session\SessionHydratorFactory;
 use Formation\Provider\Privilege\IndexPrivileges;
 use Formation\Service\Session\SessionService;
 use Formation\Service\Session\SessionServiceFactory;
@@ -20,7 +23,11 @@ return [
                     'controller' => SessionController::class,
                     'action' => [
                         'index',
+                        'afficher',
                         'ajouter',
+                        'modifier',
+                        'historiser',
+                        'restaurer',
                     ],
                     'privileges' => [
                         IndexPrivileges::INDEX_AFFICHER,
@@ -64,6 +71,17 @@ return [
                             ],
                         ],
                         'child_routes' => [
+                            'afficher' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/afficher/:session',
+                                    'defaults' => [
+                                        'controller' => SessionController::class,
+                                        'action'     => 'afficher',
+                                    ],
+                                ],
+                            ],
                             'ajouter' => [
                                 'type'  => Segment::class,
                                 'may_terminate' => true,
@@ -72,6 +90,39 @@ return [
                                     'defaults' => [
                                         'controller' => SessionController::class,
                                         'action'     => 'ajouter',
+                                    ],
+                                ],
+                            ],
+                            'modifier' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/modifier/:session',
+                                    'defaults' => [
+                                        'controller' => SessionController::class,
+                                        'action'     => 'modifier',
+                                    ],
+                                ],
+                            ],
+                            'historiser' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/historiser/:session',
+                                    'defaults' => [
+                                        'controller' => SessionController::class,
+                                        'action'     => 'historiser',
+                                    ],
+                                ],
+                            ],
+                            'restaurer' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/restaurer/:session',
+                                    'defaults' => [
+                                        'controller' => SessionController::class,
+                                        'action'     => 'restaurer',
                                     ],
                                 ],
                             ],
@@ -93,10 +144,14 @@ return [
         ],
     ],
     'form_elements' => [
-        'factories' => [],
+        'factories' => [
+            SessionForm::class => SessionFormFactory::class,
+        ],
     ],
     'hydrators' => [
-        'factories' => [],
+        'factories' => [
+            SessionHydrator::class => SessionHydratorFactory::class,
+        ],
     ]
 
 ];
