@@ -62,8 +62,15 @@ class TheseAssertion extends BaseAssertion implements WorkflowServiceAwareInterf
                     return (array_search($individu, $individus) !== false);
                 }
                 // structure
-                if ($role->getCode() === Role::CODE_ED) return $these->getEcoleDoctorale()->getStructure() === $role->getStructure();
-                if ($role->getCode() === Role::CODE_UR) return $these->getUniteRecherche()->getStructure() === $role->getStructure();
+                // todo : remplacer par $role->isStructureDependant() && $role->getTypeStructureDependant()->isEcoleDoctorale() :
+                if (in_array($role->getCode(), [Role::CODE_RESP_ED, Role::CODE_GEST_ED])) {
+                    return $these->getEcoleDoctorale()->getStructure() === $role->getStructure();
+                }
+                // todo : remplacer par $role->isStructureDependant() && $role->getTypeStructureDependant()->isUniteRecherche() :
+                if (in_array($role->getCode(), [Role::CODE_RESP_UR, Role::CODE_GEST_UR])) {
+                    return $these->getUniteRecherche()->getStructure() === $role->getStructure();
+                }
+                // todo : remplacer par $role->isStructureDependant() && $role->getTypeStructureDependant()->isEtablissement() :
                 if ($role->getCode() === Role::CODE_ADMIN || $role->getCode() === Role::CODE_BDD || $role->getCode() === Role::CODE_BU)
                     return $these->getEtablissement()->getStructure() === $role->getStructure();
                 break;

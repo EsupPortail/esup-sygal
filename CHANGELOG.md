@@ -3,6 +3,9 @@ Journal des modifications
 
 2.2.3
 -----
+- Scission du rôle "École doctorale" en 2 : "Responsable École doctorale" et "Gestionnaire École doctorale".
+- Scission du rôle "Unité de recherche" en 2 : "Responsable Unité de recherche" et "Gestionnaire Unité de recherche".
+- Envoi automatique par mail des jetons d'authentification créés + possibilité de les renvoyer.
 - Utilisation des dates et lieux des dossiers de soutenances plutôt que celles saisies dans les SIs pour la génération des documents du module soutenance.
 - Précision de la date de rendu des rapports dès le premier mail des rapporteurs
 
