@@ -3528,11 +3528,11 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/auth-token.git",
-                "reference": "60912b5a510aef43c015e601139b8fec3f0bf31b"
+                "reference": "c1b0e17f0de4f5988bc397097c3b574d06c645a5"
             },
             "require": {
                 "ramsey/uuid": "^3.7",
-                "unicaen/app": "^3.2",
+                "unicaen/app": "^3.0",
                 "unicaen/auth": ">= 3.2.1"
             },
             "require-dev": {
@@ -3548,7 +3548,7 @@
                 ]
             },
             "description": "Authentification à l'aide d'un token",
-            "time": "2021-06-25T09:56:26+00:00"
+            "time": "2021-06-30T09:34:04+00:00"
         },
         {
             "name": "unicaen/bjy-authorize",
