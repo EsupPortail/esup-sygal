@@ -8,6 +8,7 @@ Journal des modifications
 - Envoi automatique par mail des jetons d'authentification créés + possibilité de les renvoyer.
 - Utilisation des dates et lieux des dossiers de soutenances plutôt que celles saisies dans les SIs pour la génération des documents du module soutenance.
 - Précision de la date de rendu des rapports dès le premier mail des rapporteurs
+- [FIX] Dédoublonnage des origines de financement dans le filtres de la page des rapports.
 
 2.2.2
 -----

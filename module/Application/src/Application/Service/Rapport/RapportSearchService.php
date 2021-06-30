@@ -138,7 +138,13 @@ class RapportSearchService extends SearchService
     {
         $values = $this->getFinancementService()->getOriginesFinancements("libelleLong");
 
-        return array_filter($values);
+        // dédoublonnage (sur le code origine) car chaque établissement pourrait fournir les mêmes données
+        $origines = [];
+        foreach (array_filter($values) as $origine) {
+            $origines[$origine->getCode()] = $origine;
+        }
+
+        return $origines;
     }
 
     private function fetchAnneesRapportActivite(): array
