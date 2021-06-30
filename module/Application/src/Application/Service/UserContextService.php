@@ -104,17 +104,17 @@ class UserContextService extends BaseUserContextService
     /**
      * @return Role|null
      */
-    public function getSelectedRoleDirecteurEcoleDoctorale()
+    public function getSelectedRoleEcoleDoctorale(): ?Role
     {
-        return $this->_getSelectedRoleForCode(Role::CODE_ED);
+        return $this->_getSelectedRoleForCode(Role::CODE_RESP_ED) ?: $this->_getSelectedRoleForCode(Role::CODE_GEST_ED);
     }
 
     /**
      * @return Role|null
      */
-    public function getSelectedRoleDirecteurUniteRecherche()
+    public function getSelectedRoleUniteRecherche(): ?Role
     {
-        return $this->_getSelectedRoleForCode(Role::CODE_UR);
+        return $this->_getSelectedRoleForCode(Role::CODE_RESP_UR) ?: $this->_getSelectedRoleForCode(Role::CODE_GEST_UR);
     }
 
     /**

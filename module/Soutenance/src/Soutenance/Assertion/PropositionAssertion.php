@@ -78,9 +78,10 @@ class PropositionAssertion implements  AssertionInterface {
                         return true;
                     case Role::CODE_BDD :
                         return $structure === $theseEtablissementStructure;
-                    case Role::CODE_ED :
+                    case Role::CODE_RESP_ED :
+                    case Role::CODE_GEST_ED :
                         return $structure === $these->getEcoleDoctorale()->getStructure();
-                    case Role::CODE_UR :
+                    case Role::CODE_RESP_UR :
                         return $structure === $these->getUniteRecherche()->getStructure();
                     case Role::CODE_DOCTORANT :
                         return $doctorant->getId() === $individu->getId();
@@ -138,7 +139,7 @@ class PropositionAssertion implements  AssertionInterface {
                 }
             case PropositionPrivileges::PROPOSITION_VALIDER_UR:
                 switch ($role) {
-                    case Role::CODE_UR :
+                    case Role::CODE_RESP_UR :
                         $validations_ACTEUR = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PROPOSITION_SOUTENANCE, $these);
                         $validations_UNITE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
                         $nbDirs = count($these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE));
@@ -150,7 +151,8 @@ class PropositionAssertion implements  AssertionInterface {
                 }
             case PropositionPrivileges::PROPOSITION_VALIDER_ED:
                 switch ($role) {
-                    case Role::CODE_ED :
+                    case Role::CODE_RESP_ED :
+                    case Role::CODE_GEST_ED :
                         $validations_UNITE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
                         $validations_ECOLE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
                         return !$validations_ECOLE && $validations_UNITE && $structure === $these->getEcoleDoctorale()->getStructure();

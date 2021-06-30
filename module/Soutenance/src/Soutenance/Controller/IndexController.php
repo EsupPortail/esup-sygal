@@ -50,8 +50,9 @@ class IndexController extends AbstractController
             case Role::CODE_ADMIN_TECH :
             case Role::CODE_OBSERVATEUR :
             case Role::CODE_BDD :
-            case Role::CODE_UR :
-            case Role::CODE_ED :
+            case Role::CODE_RESP_UR :
+            case Role::CODE_RESP_ED :
+            case Role::CODE_GEST_ED :
                 $this->redirect()->toRoute('soutenances/index-structure', [], [], true);
                 break;
         }

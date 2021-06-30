@@ -449,14 +449,14 @@ class PropositionService {
         }
 
         /** Recuperation de la validation de l'unite de recherche */
-        $validations[Role::CODE_UR] = [];
+        $validations[Role::CODE_RESP_UR] = [];
         $validation = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
-        if (!empty($validation)) $validations[Role::CODE_UR][] = current($validation);
+        if (!empty($validation)) $validations[Role::CODE_RESP_UR][] = current($validation);
 
         /** Recuperation de la validation de l'école doctorale */
-        $validations[Role::CODE_ED] = [];
+        $validations[Role::CODE_RESP_ED] = [];
         $validation = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
-        if (!empty($validation)) $validations[Role::CODE_ED][] = current($validation);
+        if (!empty($validation)) $validations[Role::CODE_RESP_ED][] = current($validation);
 
         /** Recuperation de la validation du bureau des doctorats */
         $validations[Role::CODE_BDD] = [];
@@ -520,10 +520,11 @@ class PropositionService {
                 $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PROPOSITION_SOUTENANCE, $these);
                 $validations = array_filter($validations, function (Validation $v) use ($currentIndividu) { return $v->getIndividu() === $currentIndividu;});
                 break;
-            case Role::CODE_UR :
+            case Role::CODE_RESP_UR :
                 $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
                 break;
-            case Role::CODE_ED :
+            case Role::CODE_RESP_ED :
+            case Role::CODE_GEST_ED :
                 $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
                 break;
             case Role::CODE_BDD :
@@ -546,12 +547,13 @@ class PropositionService {
         ;
 
         switch ($role->getCode()) {
-            case Role::CODE_UR :
+            case Role::CODE_RESP_UR :
                 $qb = $qb ->andWhere('structure_ur.id = :unite')
                     ->setParameter('unite', $role->getStructure()->getId())
                 ;
                 break;
-            case Role::CODE_ED :
+            case Role::CODE_RESP_ED :
+            case Role::CODE_GEST_ED :
                 $qb = $qb->andWhere('structure_ed.id = :ecole')
                     ->setParameter('ecole', $role->getStructure()->getId())
                 ;
