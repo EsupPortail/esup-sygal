@@ -23,6 +23,7 @@ return [
                     'controller' => ModuleController::class,
                     'action' => [
                         'index',
+                        'afficher',
                         'ajouter',
                         'modifier',
                         'historiser',
@@ -48,6 +49,15 @@ return [
                                 'route'    => 'formation/module',
                                 'resource' => PrivilegeController::getResourceId(ModuleController::class, 'index') ,
                                 'order'    => 100,
+                                'pages' => [
+                                    'afficher' => [
+                                        'label'    => "Affichage d'un module",
+                                        'route'    => 'formation/module/afficher',
+                                        'resource' => PrivilegeController::getResourceId(ModuleController::class, 'afficher') ,
+                                        'order'    => 100,
+                                        'visible' => false,
+                                    ],
+                                ],
                             ],
                         ],
                     ],
@@ -71,6 +81,17 @@ return [
                             ],
                         ],
                         'child_routes' => [
+                            'afficher' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/afficher/:module',
+                                    'defaults' => [
+                                        'controller' => ModuleController::class,
+                                        'action'     => 'afficher',
+                                    ],
+                                ],
+                            ],
                             'ajouter' => [
                                 'type'  => Literal::class,
                                 'may_terminate' => true,

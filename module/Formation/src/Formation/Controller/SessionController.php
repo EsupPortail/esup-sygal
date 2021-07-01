@@ -117,4 +117,28 @@ class SessionController extends AbstractController
         return $this->redirect()->toRoute('formation/session');
     }
 
+    public function supprimerAction()
+    {
+        /**@var Session $session */
+        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            if ($data["reponse"] === "oui") $this->getSessionService()->delete($session);
+            exit();
+        }
+
+        $vm = new ViewModel();
+        if ($session !== null) {
+            $vm->setTemplate('formation/default/confirmation');
+            $vm->setVariables([
+                'title' => "Suppression de la session #" . $session->getIndex(),
+                'text' => "La suppression est définitive êtes-vous sûr&middot;e de vouloir continuer ?",
+                'action' => $this->url()->fromRoute('formation/session/supprimer', ["module" => $session->getId()], [], true),
+            ]);
+        }
+        return $vm;
+    }
+
 }

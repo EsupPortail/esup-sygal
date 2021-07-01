@@ -1,6 +1,7 @@
 <?php
 
 use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
 
 /**
@@ -9,6 +10,9 @@ use Formation\Entity\Db\Session;
  */
 
 $module = $session->getModule();
+/** @var Seance[] $seances */
+$seances = $session->getSeances()->toArray();
+usort($seances, function(Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
 
 $pageTitle = 'Affichage de la Session : ' . $module->getLibelle() . ' #'.$session->getIndex();
 $this->headTitle($pageTitle);
@@ -16,6 +20,10 @@ $this->headTitle($pageTitle);
 $canModifier = true;
 $canHistoriser = true;
 $canSupprimer = true;
+
+$canModifierSeance = true;
+$canHistoriserSeance = true;
+$canSupprimerSeance = true;
 
 $canModifierInscription = true;
 $canHistoriserInscription = true;
@@ -51,7 +59,13 @@ $listeComplementaire = array_filter($inscrits, function (Inscription $a) { retur
     <dt> Site </dt>
     <dd> <?php echo $this->site($session); ?> </dd>
     <dt> Responsable </dt>
-    <dd> <?php echo $session->getResponsable()->getNomComplet(); ?> </dd>
+    <dd>
+        <?php if ($session->getResponsable()) : ?>
+            <?php echo $session->getResponsable()->getNomComplet(); ?>
+        <?php else : ?>
+            Aucun responsable
+        <?php endif; ?>
+    </dd>
     <dt> Modalité </dt>
     <dd> <?php echo $this->modalite($session); ?> </dd>
     <dt> Type </dt>
@@ -80,6 +94,81 @@ $listeComplementaire = array_filter($inscrits, function (Inscription $a) { retur
 
 <div class="row">
     <div class="col-md-6">
+        <h2> Séances </h2>
+    </div>
+    <div class="pull-right">
+        <?php /** @see \Formation\Controller\SeanceController::ajouterAction() */ ?>
+        <a href="<?php echo $this->url('formation/seance/ajouter', ['session' => $session->getId()], [] , true); ?>"
+           class="btn btn-primary ajax-modal" data-event="modification">
+            <span class="glyphicon glyphicon-plus"></span>
+            Ajouter une séance
+        </a>
+    </div>
+</div>
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th> Lieu </th>
+        <th> Jour </th>
+        <th> Début </th>
+        <th> Fin </th>
+        <th> Durée </th>
+        <th> Action </th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($seances as $seance) : ?>
+        <tr>
+            <td> <?php echo $seance->getLieu(); ?> </td>
+            <td> <?php echo $seance->getDebut()->format('d/m/y'); ?> </td>
+            <td> <?php echo $seance->getDebut()->format('H:i'); ?> </td>
+            <td> <?php echo $seance->getFin()->format('H:i'); ?> </td>
+            <td> <?php echo $seance->getDuree(); ?> h. </td>
+            <td>
+                <?php if ($canModifierSeance) : ?>
+                    <?php /** @see \Formation\Controller\SeanceController::modifierAction() */ ?>
+                    <a href="<?php echo $this->url('formation/seance/modifier', ['seance' => $seance->getId()], [], true); ?>"
+                       class="ajax-modal" data-event="modification"
+                       title="Modification de la séance" data-toggle="tooltip" data-html="true"
+                    >
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                <?php endif; ?>
+                <?php if ($canHistoriser) : ?>
+                    <?php if ($seance->estNonHistorise()) : ?>
+                        <?php /** @see \Formation\Controller\SeanceController::historiserAction() */ ?>
+                        <a href="<?php echo $this->url('formation/seance/historiser', ['seance' => $seance->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()], [], true)]], true); ?>"
+                           title="Historisation de la séance" data-toggle="tooltip" data-html="true"
+                        >
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    <?php else : ?>
+                        <?php /** @see \Formation\Controller\SeanceController::restaurerAction() */ ?>
+                        <a href="<?php echo $this->url('formation/seance/restaurer', ['seance' => $seance->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()], [], true)]], true); ?>"
+                           title="Restauration de la séance" data-toggle="tooltip" data-html="true"
+                        >
+                            <span class="glyphicon glyphicon-leaf"></span>
+                        </a>
+                    <?php endif; ?>
+                <?php endif; ?>
+                <?php if ($canSupprimer) : ?>
+                    <?php /** @see \Formation\Controller\SeanceController::supprimerAction() */ ?>
+                    <a href="<?php echo $this->url('formation/seance/supprimer', ['seance' => $seance->getId()], [], true); ?>"
+                       class="ajax-modal" data-event="modification"
+                       title="Suppression de la séance" data-toggle="tooltip" data-html="true"
+                    >
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                <?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<div class="row">
+    <div class="col-md-6">
         <h2> Inscriptions et listes </h2>
     </div>
     <div class="pull-right">
@@ -88,6 +177,20 @@ $listeComplementaire = array_filter($inscrits, function (Inscription $a) { retur
            class="btn btn-primary ajax-modal" data-event="modification">
             <span class="glyphicon glyphicon-pencil"></span>
             Inscrit un·e doctorant·e
+        </a>
+
+        <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
+        <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId()], [] , true); ?>"
+           class="btn btn-primary ajax-modal" data-event="modification">
+            <span class="glyphicon glyphicon-indent-left"></span>
+            Classer les inscrits
+        </a>
+
+        <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
+        <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId()], [] , true); ?>"
+           class="btn btn-primary ajax-modal" data-event="modification">
+            <span class="glyphicon glyphicon-indent-right"></span>
+            Déclasser les inscrits
         </a>
     </div>
 </div>

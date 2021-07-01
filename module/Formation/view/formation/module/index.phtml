@@ -77,24 +77,15 @@ $canSupprimer = true;
             </td>
             <td>
                 <?php if ($canModifier) : ?>
-                    <?php /** @see \Formation\Controller\ModuleController::modifierAction() */ ?>
-                    <a href="<?php echo $this->url('formation/module/modifier', ['module' => $module->getId()], [], true); ?>"
-                       class="ajax-modal" data-event="modification"
-                       title="Modifier le module de  formation #<?php echo $module->getId(); ?>"
+                    <?php /** @see \Formation\Controller\ModuleController::afficherAction() */ ?>
+                    <a href="<?php echo $this->url('formation/module/afficher', ['module' => $module->getId()], [], true); ?>"
+                       title="afficher le module de  formation #<?php echo $module->getId(); ?>"
                        data-toggle="tooltip" data-html="true">
-                        <span class="glyphicon glyphicon-pencil"></span>
+                        <span class="glyphicon glyphicon-eye-open"></span>
                     </a>
                 <?php endif; ?>
 
-                <?php if ($canModifier) : ?>
-                    <?php /** @see \Formation\Controller\SessionController::ajouterAction() */ ?>
-                    <a href="<?php echo $this->url('formation/session/ajouter', ['module' => $module->getId()], [], true); ?>"
-                       class="ajax-modal" data-event="modification"
-                       title="Ajouter une session au module de formation #<?php echo $module->getId(); ?>"
-                       data-toggle="tooltip" data-html="true">
-                        <span class="glyphicon glyphicon-plus"></span>
-                    </a>
-                <?php endif; ?>
+
 
                 <?php if ($canHistoriser) : ?>
                     <?php if ($module->estNonHistorise()) : ?>

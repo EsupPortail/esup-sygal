@@ -25,6 +25,16 @@ class ModuleController extends AbstractController
         ]);
     }
 
+    public function afficherAction()
+    {
+        /** @var Module|null $module */
+        $module = $this->getEntityManager()->getRepository(Module::class)->getRequestedModule($this);
+
+        return new ViewModel([
+            'module' => $module,
+        ]);
+    }
+
     public function ajouterAction()
     {
         $module = new Module();

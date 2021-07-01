@@ -25,7 +25,7 @@ return [
                         'restaurer',
                         'supprimer',
                         'passer-liste-principale',
-                        'passer-liste-secondaire',
+                        'passer-liste-complementaire',
                     ],
                     'privileges' => [
                         IndexPrivileges::INDEX_AFFICHER,

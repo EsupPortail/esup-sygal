@@ -28,6 +28,7 @@ return [
                         'modifier',
                         'historiser',
                         'restaurer',
+                        'supprimer',
                     ],
                     'privileges' => [
                         IndexPrivileges::INDEX_AFFICHER,
@@ -123,6 +124,17 @@ return [
                                     'defaults' => [
                                         'controller' => SessionController::class,
                                         'action'     => 'restaurer',
+                                    ],
+                                ],
+                            ],
+                            'supprimer' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/supprimer/:session',
+                                    'defaults' => [
+                                        'controller' => SessionController::class,
+                                        'action'     => 'supprimer',
                                     ],
                                 ],
                             ],

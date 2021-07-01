@@ -125,4 +125,14 @@ class Seance implements HistoriqueAwareInterface {
         return $this;
     }
 
+    public function getDuree() : float
+    {
+        $somme = new DateTime('00:00');
+        $debut = $this->getDebut();
+        $fin = $this->getFin();
+        $interval = $debut->diff($fin);
+        $somme->add($interval);
+        $interval = $somme->diff(new DateTime('00:00'));
+        return ((float) $interval->format('%h')) + ((float) $interval->format('%i'))/60;
+    }
 }
