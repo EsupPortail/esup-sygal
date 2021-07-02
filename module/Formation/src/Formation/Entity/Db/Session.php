@@ -6,6 +6,7 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\Utilisateur;
+use DateInterval;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Formation\Entity\Db\Interfaces\HasModaliteInterface;
@@ -16,6 +17,7 @@ use Formation\Entity\Db\Traits\HasSiteTrait;
 use Formation\Entity\Db\Traits\HasTypeTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
+use Zend\Validator\Date;
 
 class Session implements HistoriqueAwareInterface,
     HasSiteInterface, HasModaliteInterface, HasTypeInterface {
@@ -43,7 +45,7 @@ class Session implements HistoriqueAwareInterface,
     private $site;
     /** @var Utilisateur|null */
     private $responsable;
-    /** @var string|null */
+    /** @var Etat|null */
     private $etat;
     /** @var string|null */
     private $description;
@@ -125,18 +127,18 @@ class Session implements HistoriqueAwareInterface,
     }
 
     /**
-     * @return string|null
+     * @return Etat|null
      */
-    public function getEtat(): ?string
+    public function getEtat(): ?Etat
     {
         return $this->etat;
     }
 
     /**
-     * @param string|null $etat
+     * @param Etat|null $etat
      * @return Session
      */
-    public function setEtat(?string $etat): Session
+    public function setEtat(?Etat $etat): Session
     {
         $this->etat = $etat;
         return $this;
@@ -247,5 +249,37 @@ class Session implements HistoriqueAwareInterface,
         }
         $interval = $somme->diff(new DateTime('00:00'));
         return ((float) $interval->format('%h')) + ((float) $interval->format('%i'))/60;
+    }
+
+    public function estTerminee() : bool
+    {
+        $maintenant = new DateTime();
+        /** @var Seance $seance */
+        foreach ($this->getSeances() as $seance) {
+            if ($seance->estNonHistorise() AND $seance->getFin() > $maintenant) return false;
+        }
+        return true;
+    }
+
+    public function getDateDebut() : ?DateTime
+    {
+        $debut = null;
+        /** @var Seance $seance */
+        foreach ($this->getSeances() as $seance) {
+            if ($seance->estNonHistorise()) {
+                if ($debut === null or $seance->getDebut() < $debut) $debut = $seance->getDebut();
+            }
+        }
+        return $debut;
+    }
+
+    public function getLimiteInscription() : ?DateTime
+    {
+        $debut = $this->getDateDebut();
+        if ($debut === null) return null;
+
+        $limite = DateTime::createFromFormat('d/m/Y', $debut->format('d/m/y'));
+        $limite->sub(new DateInterval('P14D'));
+        return $limite;
     }
 }

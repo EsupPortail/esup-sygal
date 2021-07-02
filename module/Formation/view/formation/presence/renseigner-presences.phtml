@@ -21,13 +21,13 @@ usort($inscriptions, function(Inscription $a, Inscription $b) { return $a->getDo
 
 $canPresenceModifier = true;
 
-$titre= " Présences pour la formation : " . $session->getModule()->getLibelle() . " #" . $session->getIndex();
-$this->headTitle($titre);
+$titrePage= " Présences pour la formation : " . $session->getModule()->getLibelle() . " #" . $session->getIndex();
+$this->headTitle($titrePage);
 ?>
 
 <?php if ($titre !== false) : ?>
     <h1 class="page-header">
-        <?php echo $titre; ?>
+        <?php echo $titrePage; ?>
     </h1>
 <?php endif; ?>
 

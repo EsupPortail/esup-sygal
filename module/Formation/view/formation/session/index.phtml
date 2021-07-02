@@ -52,20 +52,17 @@ $canHistoriser= true;
             </td>
             <td> <?php echo $this->modalite($session); ?> </td>
             <td> <?php echo $this->type($session); ?> </td>
-            <td>
-                <?php echo ($session->getEtat())?:"Non Précisé"; ?>
-            </td>
+            <td> <?php echo $this->etat($session); ?> </td>
             <td> <!-- Seances ----------------------------------------------------------------------------------------->
                 <?php echo count($session->getSeances()); ?>
                 séance<?php if (count($session->getSeances())>1) echo "s"; ?>
                 (<?php echo $session->getDuree(); ?> h.)
-                <a href="<?php echo $this->url('formation/seance/ajouter', ['session' => $session->getId()], [], true); ?>"
-                   class="ajax-modal" data-event="modification"
-                   title="Ajout d'une séance pour la session de formation #<?php echo $session->getId(); ?>"
-                   data-toggle="tooltip" data-html="true">
-                    <span class="glyphicon glyphicon-plus"></span>
-                </a>
-
+<!--                <a href="--><?php //echo $this->url('formation/seance/ajouter', ['session' => $session->getId()], [], true); ?><!--"-->
+<!--                   class="ajax-modal" data-event="modification"-->
+<!--                   title="Ajout d'une séance pour la session de formation #--><?php //echo $session->getId(); ?><!--"-->
+<!--                   data-toggle="tooltip" data-html="true">-->
+<!--                    <span class="glyphicon glyphicon-plus"></span>-->
+<!--                </a>-->
                     <ul>
                         <?php /** @var Seance $seance */ ?>
                         <?php foreach ($session->getSeances() as $seance) : ?>
@@ -76,29 +73,29 @@ $canHistoriser= true;
                             <?php echo $seance->getFin()->format('H:i') ; ?>
                             -
                             <?php echo $seance->getLieu() ; ?>
-                            <?php /** @see \Formation\Controller\SeanceController::modifierAction() */?>
-                            <a href="<?php echo $this->url('formation/seance/modifier',['seance' => $seance->getId()], [], true); ?>"
-                               class="ajax-modal" data-event="modification"
-                               title="Modification de la séance #<?php echo $seance->getId(); ?>" data-toggle="tooltip" data-html="true">
-                                <span class="glyphicon glyphicon-pencil"></span>
-                            </a>
-                            <?php if ($seance->estNonHistorise()) : ?>
-                                <a href="<?php echo $this->url('formation/seance/historiser',['seance' => $seance->getId()], ['query' => ['retour' => $this->url('formation/session',[],[],true)]], true); ?>"
-                                   title="Historisation de la séance #<?php echo $seance->getId(); ?>" data-toggle="tooltip" data-html="true">
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </a>
-                            <?php else : ?>
-                                <a href="<?php echo $this->url('formation/seance/restaurer',['seance' => $seance->getId()], ['query' => ['retour' => $this->url('formation/session',[],[],true)]], true); ?>"
-                                   title="Restauration de la séance #<?php echo $seance->getId(); ?>" data-toggle="tooltip" data-html="true">
-                                    <span class="glyphicon glyphicon-leaf"></span>
-                                </a>
-                            <?php endif; ?>
-                            <?php /** @see \Formation\Controller\SeanceController::supprimerAction() */?>
-                            <a href="<?php echo $this->url('formation/seance/supprimer',['seance' => $seance->getId()], [], true); ?>"
-                               class="ajax-modal" data-event="modification"
-                               title="Suppression de la séance #<?php echo $seance->getId(); ?>" data-toggle="tooltip" data-html="true">
-                                <span class="glyphicon glyphicon-remove"></span>
-                            </a>
+<!--                            --><?php ///** @see \Formation\Controller\SeanceController::modifierAction() */?>
+<!--                            <a href="--><?php //echo $this->url('formation/seance/modifier',['seance' => $seance->getId()], [], true); ?><!--"-->
+<!--                               class="ajax-modal" data-event="modification"-->
+<!--                               title="Modification de la séance #--><?php //echo $seance->getId(); ?><!--" data-toggle="tooltip" data-html="true">-->
+<!--                                <span class="glyphicon glyphicon-pencil"></span>-->
+<!--                            </a>-->
+<!--                            --><?php //if ($seance->estNonHistorise()) : ?>
+<!--                                <a href="--><?php //echo $this->url('formation/seance/historiser',['seance' => $seance->getId()], ['query' => ['retour' => $this->url('formation/session',[],[],true)]], true); ?><!--"-->
+<!--                                   title="Historisation de la séance #--><?php //echo $seance->getId(); ?><!--" data-toggle="tooltip" data-html="true">-->
+<!--                                    <span class="glyphicon glyphicon-trash"></span>-->
+<!--                                </a>-->
+<!--                            --><?php //else : ?>
+<!--                                <a href="--><?php //echo $this->url('formation/seance/restaurer',['seance' => $seance->getId()], ['query' => ['retour' => $this->url('formation/session',[],[],true)]], true); ?><!--"-->
+<!--                                   title="Restauration de la séance #--><?php //echo $seance->getId(); ?><!--" data-toggle="tooltip" data-html="true">-->
+<!--                                    <span class="glyphicon glyphicon-leaf"></span>-->
+<!--                                </a>-->
+<!--                            --><?php //endif; ?>
+<!--                            --><?php ///** @see \Formation\Controller\SeanceController::supprimerAction() */?>
+<!--                            <a href="--><?php //echo $this->url('formation/seance/supprimer',['seance' => $seance->getId()], [], true); ?><!--"-->
+<!--                               class="ajax-modal" data-event="modification"-->
+<!--                               title="Suppression de la séance #--><?php //echo $seance->getId(); ?><!--" data-toggle="tooltip" data-html="true">-->
+<!--                                <span class="glyphicon glyphicon-remove"></span>-->
+<!--                            </a>-->
                         </li>
                         <?php endforeach; ?>
                     </ul>

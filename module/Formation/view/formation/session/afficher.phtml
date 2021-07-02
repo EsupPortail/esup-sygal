@@ -57,7 +57,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
         <dd> <?php echo $session->getDescription(); ?> </dd>
     <?php endif; ?>
     <dt> État </dt>
-    <dd> <?php echo ($session->getEtat())?:"Non défini"; ?> </dd>
+    <dd> <?php echo $this->etat($session); ?> </dd>
 
     <dt> Site </dt>
     <dd> <?php echo $this->site($session); ?> </dd>
@@ -245,7 +245,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     </div>
 </div>
 
-<h2> Présence aux scéances</h2>
+<h2> Présences aux scéances</h2>
 
 <?php echo $this->partial('formation/presence/renseigner-presences', ['session' => $session, 'presences' => $presences, 'titre' => false], [], true); ?>
 

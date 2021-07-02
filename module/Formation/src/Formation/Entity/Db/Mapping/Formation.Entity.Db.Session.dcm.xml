@@ -32,7 +32,13 @@
                 <join-column name="TYPE_STRUCTURE_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <field name="etat"              type="string"       length="1"       column="ETAT"      nullable="true"/>
+
+        <many-to-one field="etat" target-entity="Formation\Entity\Db\Etat">
+            <join-columns>
+                <join-column name="ETAT_CODE" referenced-column-name="CODE"/>
+            </join-columns>
+        </many-to-one>
+
         <field name="description"          type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
 
         <one-to-many field="seances" target-entity="Formation\Entity\Db\Seance" mapped-by="session"/>

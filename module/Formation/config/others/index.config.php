@@ -17,6 +17,7 @@ return [
                     'controller' => IndexController::class,
                     'action' => [
                         'index',
+                        'index-doctorant',
                     ],
                     'privileges' => [
                         IndexPrivileges::INDEX_AFFICHER,
@@ -35,6 +36,14 @@ return [
                         'route'    => 'formation',
                         'resource' => PrivilegeController::getResourceId(IndexController::class, 'index') ,
                         'order'    => 9999,
+                        'pages' => [
+                            'Index Doctorants' => [
+                                'label'    => 'Mes formations',
+                                'route'    => 'formation/index-doctorant',
+                                'resource' => PrivilegeController::getResourceId(IndexController::class, 'index-doctorant') ,
+                                'order'    => 10,
+                            ],
+                        ],
                     ],
                 ],
             ],
@@ -51,6 +60,19 @@ return [
                     'defaults' => [
                         'controller' => IndexController::class,
                         'action'     => 'index',
+                    ],
+                ],
+                'child_routes' => [
+                    'index-doctorant' => [
+                        'type'  => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/index-doctorant[/:doctorant]',
+                            'defaults' => [
+                                'controller' => IndexController::class,
+                                'action'     => 'index-doctorant',
+                            ],
+                        ],
                     ],
                 ],
             ],

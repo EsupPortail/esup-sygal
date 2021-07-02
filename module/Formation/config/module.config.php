@@ -6,7 +6,9 @@ use Application\Navigation\ApplicationNavigationFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Formation\View\Helper\EtatViewHelper;
 use Formation\View\Helper\ModaliteViewHelper;
+use Formation\View\Helper\SeancesViewHelper;
 use Formation\View\Helper\SiteViewHelper;
 use Formation\View\Helper\TypeViewHelper;
 use Soutenance\Controller\AvisController;
@@ -79,6 +81,8 @@ return array(
             'modalite' => ModaliteViewHelper::class,
             'site' => SiteViewHelper::class,
             'type' => TypeViewHelper::class,
+            'etat' => EtatViewHelper::class,
+            'seances' => SeancesViewHelper::class,
         ]
     ],
 

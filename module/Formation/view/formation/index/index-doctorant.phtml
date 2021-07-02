@@ -1,0 +1,178 @@
+<?php
+
+/**
+ * @see \Formation\Controller\IndexController::indexDoctorantAction()
+ * @var Doctorant $doctorant
+ * @var Session[] $sessions
+ * @var Inscription[] $inscriptions
+ */
+
+
+use Application\Entity\Db\Doctorant;
+use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Session;
+
+$this->headTitle('Mes formations');
+
+$encours = [];
+$terminees = [];
+foreach ($inscriptions as $inscription) {
+    if ($inscription->getSession()->estTerminee()) $terminees[] = $inscription;
+    else $encours[] = $inscription;
+}
+?>
+
+<h1 class="page-header">
+    Mes Formations
+</h1>
+
+<h2> Modules ouverts à inscription </h2>
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th> Module de formation </th>
+        <th> Session </th>
+        <th> Intervenant </th>
+        <th> Site </th>
+        <th> Dates et lieux </th>
+        <th> Modalité </th>
+        <th> Type </th>
+        <th> État </th>
+        <th> Limite d’inscription </th>
+        <th> Inscription </th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($sessions as $session) : ?>
+        <tr>
+            <td> <?php echo $session->getModule()->getLibelle(); ?> </td>
+            <td> <?php echo $session->getIndex(); ?> </td>
+            <td> <span style="background: salmon;">Missing infos </span></td>
+            <td> <?php echo $this->site($session); ?> </td>
+            <td> <?php echo $this->seances($session); ?> </td>
+            <td> <?php echo $this->modalite($session); ?></td>
+            <td> <?php echo $this->type($session); ?></td>
+            <td> <?php echo $this->etat($session); ?></td>
+            <td>
+                Date limite :
+                <?php
+                    $limite = $session->getLimiteInscription();
+                    if ($limite) {
+                        echo $limite->format('d/m/Y');
+                    } else {
+                        echo "N.C.";
+                    }
+                ?>
+                <br/>
+                Liste principale :  <?php echo ($session->getTailleListePrincipale())?:"N.C."; ?>
+                <br/>
+                Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
+            </td>
+            <td> ... </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<h2> Mes inscriptions </h2>
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th> Module de formation </th>
+        <th> Session </th>
+        <th> Intervenant </th>
+        <th> Site </th>
+        <th> Dates et lieux </th>
+        <th> Modalité </th>
+        <th> Type </th>
+        <th> État </th>
+        <th> Limite d’inscription </th>
+        <th> Inscription </th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($encours as $inscription) : ?>
+        <?php $session = $inscription->getSession(); ?>
+        <tr>
+            <td> <?php echo $session->getModule()->getLibelle(); ?> </td>
+            <td> <?php echo $session->getIndex(); ?> </td>
+            <td> <span style="background: salmon;">Missing infos </span></td>
+            <td> <?php echo $this->site($session); ?> </td>
+            <td> <?php echo $this->seances($session); ?> </td>
+            <td> <?php echo $this->modalite($session); ?></td>
+            <td> <?php echo $this->type($session); ?></td>
+            <td> <?php echo $this->etat($session); ?></td>
+            <td>
+                Date limite :
+                <?php
+                $limite = $session->getLimiteInscription();
+                if ($limite) {
+                    echo $limite->format('d/m/Y');
+                } else {
+                    echo "N.C.";
+                }
+                ?>
+                <br/>
+                Liste principale :  <?php echo ($session->getTailleListePrincipale())?:"N.C."; ?>
+                <br/>
+                Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
+            </td>
+            <td> ... </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<h2> Mes formations suivis</h2>
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th> Module de formation </th>
+        <th> Session </th>
+        <th> Intervenant </th>
+        <th> Site </th>
+        <th> Dates et lieux </th>
+        <th> Modalité </th>
+        <th> Type </th>
+        <th> État </th>
+        <th> Limite d’inscription </th>
+        <th> Inscription </th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($terminees as $inscription) : ?>
+        <?php $session = $inscription->getSession(); ?>
+        <tr>
+            <td> <?php echo $session->getModule()->getLibelle(); ?> </td>
+            <td> <?php echo $session->getIndex(); ?> </td>
+            <td> <span style="background: salmon;">Missing infos </span></td>
+            <td> <?php echo $this->site($session); ?> </td>
+            <td> <?php echo $this->seances($session); ?> </td>
+            <td> <?php echo $this->modalite($session); ?></td>
+            <td> <?php echo $this->type($session); ?></td>
+            <td> <?php echo $this->etat($session); ?></td>
+            <td>
+                Date limite :
+                <?php
+                $limite = $session->getLimiteInscription();
+                if ($limite) {
+                    echo $limite->format('d/m/Y');
+                } else {
+                    echo "N.C.";
+                }
+                ?>
+                <br/>
+                Liste principale :  <?php echo ($session->getTailleListePrincipale())?:"N.C."; ?>
+                <br/>
+                Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
+            </td>
+            <td> ... </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+
