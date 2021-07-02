@@ -1,15 +1,44 @@
 
 --
+-- Correction de la vue `src_role` : colonne `these_dep` => booléen
+--
+drop view v_diff_role
+;
+drop view src_role
+;
+create or replace view src_role
+            (id, source_code, source_id, libelle, code, role_id, these_dep, structure_id,
+             type_structure_dependant_id) as
+SELECT NULL::text                                       AS id,
+       tmp.source_code,
+       src.id                                           AS source_id,
+       tmp.lib_roj                                      AS libelle,
+       tmp.id                                           AS code,
+       (tmp.lib_roj::text || ' '::text) || s.code::text AS role_id,
+       true                                             AS these_dep,
+       s.id                                             AS structure_id,
+       NULL::bigint                                     AS type_structure_dependant_id
+FROM tmp_role tmp
+         JOIN structure s ON s.source_code::text = tmp.etablissement_id::text
+         JOIN etablissement e ON e.structure_id = s.id
+         JOIN source src ON src.code::text = tmp.source_id::text
+;
+
+
+--
 -- Cf. migration/docker/pg_before_import.sql
 --
-CREATE MATERIALIZED VIEW mv_indicateur_121 AS
-select * FROM individu
-where SOURCE_CODE in (
-    SELECT SOURCE_CODE
-    FROM V_DIFF_INDIVIDU
-    WHERE operation = 'insert'
-)
-;
+-- >>>> On ne peut pas créer cette MV car elle se base sur V_DIFF_INDIVIDU qui est surpprimé/générée à chaque import par unicaen/db-import
+--      la solution est d'inclure le source de V_DIFF_INDIVIDU dans cette MV.
+--
+-- CREATE MATERIALIZED VIEW mv_indicateur_121 AS
+-- select * FROM individu
+-- where SOURCE_CODE in (
+--     SELECT SOURCE_CODE
+--     FROM V_DIFF_INDIVIDU
+--     WHERE operation = 'insert'
+-- )
+-- ;
 
 --
 -- Peuplement des VM.
