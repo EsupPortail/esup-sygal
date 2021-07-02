@@ -48,7 +48,9 @@ mkdir -p $OUTPUT_DIR
 [[ -z $PGUSER ]] && echo "Vous devez faire un 'export PGUSER=xxxx'." && exit 1
 [[ -z $PGPASSWORD ]] && echo "Vous devez faire un 'export PGPASSWORD=xxxx'." && exit 1
 
-# Chargement des variables de config
+# Chargement des variables de config :
+#   DBNAME
+#   DBUSER
 source ${CONFIG_FILE}
 
 THIS_DIR=$(cd $(dirname $0) && pwd)
@@ -62,16 +64,22 @@ echo "  PGUSER=$PGUSER"
 echo "Fichier de config chargé : $(realpath ${CONFIG_FILE})"
 echo "Génération des fichiers permettant de créer la base de données '$DBNAME' et l'utilisateur '$DBUSER'..."
 
-function applyDbParamsInScript() {
+function replacePgDatabaseAndUserInScript() {
   FILE=$1
-  sed -i -e "s|$PGDATABASE|${DBNAME}|g" $FILE
-  sed -i -e "s|$PGUSER|${DBUSER}|g" $FILE
+  # NB : d'abord le nom de la base puis le user
+#  sed -i -e "s|$PGDATABASE|${DBNAME}|g" $FILE
+  sed -i -e "s|OWNER TO $PGUSER|OWNER TO ${DBUSER}|g" $FILE
+  sed -i -e "s|Owner: $PGUSER|Owner: ${DBUSER}|g" $FILE
+}
+function injectConfParamsInScript() {
+  FILE=$1
   sed -i -e "s|{DBNAME}|${DBNAME}|g" $FILE
   sed -i -e "s|{DBUSER}|${DBUSER}|g" $FILE
 }
-function removeSchemaInScript() {
+function prepareScript() {
   FILE=$1
-#  sed -i -e 's/public\.//g' $FILE
+  #sed -i -e 's/public\.//g' $FILE  # suppression du nom de schém "public"
+  sed -i -e 's/FOR EACH ROW EXECUTE FUNCTION/FOR EACH ROW EXECUTE PROCEDURE/g' $FILE  # 9.x compatible
 }
 
 #=========================================================================#
@@ -82,7 +90,7 @@ function removeSchemaInScript() {
 OUTPUT_FILE=$OUTPUT_DIR/README.md
 SRC_SCRIPT=$THIS_DIR/src/README.template.md
 cp $SRC_SCRIPT $OUTPUT_FILE
-applyDbParamsInScript $OUTPUT_FILE
+injectConfParamsInScript $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
 
 #
@@ -108,6 +116,7 @@ NAME_CREATE_DB_USER='create_db_user'
 NAME_CREATE_SCHEMA='create_schema'
 NAME_INSERT_BOOTSTRAP_DATA='insert_bootstrap_data'
 NAME_INSERT_DATA='insert_data'
+NAME_PREPARE_DATA='prepare_data'
 NAME_CREATE_COMUE='create_comue'
 NAME_INIT='init'
 NAME_CREATE_FIXTURE='create_fixture'
@@ -129,7 +138,7 @@ mkdir -p $OUTPUT_DIR/sql
 OUTPUT_FILE=$OUTPUT_DIR/sql/01_$NAME_CREATE_DB_USER.sql
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_CREATE_DB_USER.template.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
-applyDbParamsInScript $OUTPUT_FILE
+injectConfParamsInScript $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
 
 #
@@ -137,8 +146,8 @@ echo "> $OUTPUT_FILE"
 #
 OUTPUT_FILE=$OUTPUT_DIR/sql/02_$NAME_CREATE_SCHEMA.sql
 pg_dump --section=pre-data --schema-only --exclude-table 'MV_INDICATEUR*' >$OUTPUT_FILE
-applyDbParamsInScript $OUTPUT_FILE
-removeSchemaInScript $OUTPUT_FILE
+replacePgDatabaseAndUserInScript $OUTPUT_FILE
+#prepareScript $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
 
 #
@@ -154,41 +163,46 @@ echo "> $OUTPUT_FILE"
 #
 OUTPUT_FILE=$OUTPUT_DIR/sql/04_$NAME_INSERT_DATA.sql
 PATTERN='categorie_privilege|domaine_scientifique|import_observ|information_langue|nature_fichier|privilege|profil|profil_privilege|soutenance_configuration|soutenance_etat|soutenance_qualite|type_rapport|type_structure|type_validation|version_fichier|wf_etape'
-pg_dump --data-only --column-inserts --table "($PATTERN)" >$OUTPUT_FILE
-applyDbParamsInScript $OUTPUT_FILE
-removeSchemaInScript $OUTPUT_FILE
+pg_dump --data-only --column-inserts --table="($PATTERN)" >$OUTPUT_FILE
+replacePgDatabaseAndUserInScript $OUTPUT_FILE
+echo "> $OUTPUT_FILE"
+
+#
+# prepare data
+#
+OUTPUT_FILE=$OUTPUT_DIR/sql/05_$NAME_PREPARE_DATA.sql
+SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_PREPARE_DATA.sql
+cp $SRC_SCRIPT $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
 
 #
 # constraints
 #
-OUTPUT_FILE=$OUTPUT_DIR/sql/05_$NAME_CREATE_CONSTRAINTS.sql
+OUTPUT_FILE=$OUTPUT_DIR/sql/06_$NAME_CREATE_CONSTRAINTS.sql
 pg_dump --section=post-data --schema-only >$OUTPUT_FILE
-removeSchemaInScript $OUTPUT_FILE
+replacePgDatabaseAndUserInScript $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
 
 #
 # COMUE
 #
-OUTPUT_FILE=$OUTPUT_DIR/sql/06_$NAME_CREATE_COMUE.sql.dist
+OUTPUT_FILE=$OUTPUT_DIR/sql/07_$NAME_CREATE_COMUE.sql.dist
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_CREATE_COMUE.template.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
-#applyDbParamsInScript $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
 
 #
 # init
 #
-OUTPUT_FILE=$OUTPUT_DIR/sql/07_$NAME_INIT.sql.dist
+OUTPUT_FILE=$OUTPUT_DIR/sql/08_$NAME_INIT.sql.dist
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_INIT.template.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
-#applyDbParamsInScript $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
 
 #
 # fixtures
 #
-OUTPUT_FILE=$OUTPUT_DIR/sql/08_$NAME_CREATE_FIXTURE.sql.dist
+OUTPUT_FILE=$OUTPUT_DIR/sql/09_$NAME_CREATE_FIXTURE.sql.dist
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_CREATE_FIXTURE.template.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
 echo "> $OUTPUT_FILE"

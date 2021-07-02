@@ -17,7 +17,7 @@ insert into etablissement (id, structure_id, domaine, source_id, source_code, es
 select
   nextval('etablissement_id_seq'), s.id,
   '{ETAB_COMUE_DOMAINE}', --> domaine à personnaliser
-  1, 'COMUE', 1, 0, 1, 1
+  1, 'COMUE', true, false, 1, 1
 from structure s
 where s.source_code = 'COMUE'
 ;

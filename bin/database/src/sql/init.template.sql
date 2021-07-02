@@ -34,8 +34,8 @@ select
     s.id,
     '{ETAB_DOMAINE}',
     '{ETAB_CODE}',
-    0,
-    1,
+    false,
+    true,
     1,
     1, 1
 from structure s
@@ -48,13 +48,13 @@ where s.source_code = '{ETAB_CODE}'
 delete from source where code <> 'SYGAL::sygal'
 ;
 insert into source (id, code, libelle, importable, etablissement_id)
-select 2, source_code||'::apogee', 'Apogée '||source_code, 1, id
+select 2, source_code||'::apogee', 'Apogée '||source_code, true, id
 from etablissement
 where source_code = '{ETAB_CODE}'
   and {SOURCE_APOGEE} = 1
 ;
 insert into source (id, code, libelle, importable, etablissement_id)
-select 3, source_code||'::physalis', 'Physalis '||source_code, 1, id
+select 3, source_code||'::physalis', 'Physalis '||source_code, true, id
 from etablissement
 where source_code = '{ETAB_CODE}'
   and {SOURCE_PHYSALIS} = 1
@@ -77,10 +77,10 @@ insert into role (
     type_structure_dependant_id
 )
 with tmp(code, libelle, these_dep) as (
-    select 'ADMIN',     'Administrateur',             0 union
-    select 'MDD',       'Maison du doctorat',         0 union
-    select 'BU',        'Bibliothèque universitaire', 0 union
-    select 'DOCTORANT', 'Doctorant',                  1
+    select 'ADMIN',     'Administrateur',             false union
+    select 'MDD',       'Maison du doctorat',         false union
+    select 'BU',        'Bibliothèque universitaire', false union
+    select 'DOCTORANT', 'Doctorant',                  true
 )
 select
     nextval('role_id_seq'),

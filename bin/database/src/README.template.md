@@ -12,10 +12,11 @@ Les fichiers fournis permettant de créer une base de données pour SyGAL sont :
     - [`02_create_schema.sql`](sql/02_create_schema.sql)
     - [`03_insert_bootstrap_data.sql`](sql/03_insert_bootstrap_data.sql)
     - [`04_insert_data.sql`](sql/04_insert_data.sql)
-    - [`05_create_constraints.sql`](sql/05_create_constraints.sql)
-    - [`06_create_comue.sql.dist`](sql/06_create_comue.sql.dist) (à "préparer" avec le script) 
-    - [`07_init.sql.dist`](sql/07_init.sql.dist) (idem)
-    - [`08_create_fixture.sql.dist`](sql/08_create_fixture.sql.dist) (idem)
+    - [`05_prepare_data.sql`](sql/05_prepare_data.sql)
+    - [`06_create_constraints.sql`](sql/06_create_constraints.sql)
+    - [`07_create_comue.sql.dist`](sql/07_create_comue.sql.dist) (à "préparer" avec le script) 
+    - [`08_init.sql.dist`](sql/08_init.sql.dist) (idem)
+    - [`09_create_fixture.sql.dist`](sql/09_create_fixture.sql.dist) (idem)
     
 
 ## Case départ
@@ -27,9 +28,9 @@ Ouvez un shell et placez-vous dans le répertoire contenant le présent README e
 ## Préparation de certains scripts SQL
 
 Les scripts SQL à "préparer" portent l'extension `.sql.dist` :
-  - [`06_create_comue.sql.dist`](sql/06_create_comue.sql.dist)
-  - [`07_init.sql.dist`](sql/07_init.sql.dist)
-  - [`08_create_fixture.sql.dist`](sql/08_create_fixture.sql.dist)
+  - [`07_create_comue.sql.dist`](sql/07_create_comue.sql.dist)
+  - [`08_init.sql.dist`](sql/08_init.sql.dist)
+  - [`09_create_fixture.sql.dist`](sql/09_create_fixture.sql.dist)
 
 Pour les préparer, vous devez dans l'ordre :
 
@@ -47,9 +48,9 @@ Pour les préparer, vous devez dans l'ordre :
 
 Une fois le script bash exécuté, vous devriez vous retrouver avec 3 scripts SQL supplémentaires dans le répertoire 
 [`sql/`](sql) :
-  - [`06_create_comue.sql`](sql/06_create_comue.sql)
-  - [`07_init.sql`](sql/07_init.sql)
-  - [`08_create_fixture.sql`](sql/08_create_fixture.sql)
+  - [`07_create_comue.sql`](sql/07_create_comue.sql)
+  - [`08_init.sql`](sql/08_init.sql)
+  - [`09_create_fixture.sql`](sql/09_create_fixture.sql)
 
 À présent, tout est prêt pour lancer la création de la base de données.
 
@@ -61,11 +62,11 @@ Une fois le script bash exécuté, vous devriez vous retrouver avec 3 scripts SQ
 
 ```bash
 ON_ERROR_STOP=1 \
-PGHOST=host.domain.fr \
+PGHOST=localhost \
 PGPORT=5432 \
 PGDATABASE=postgres \
 PGUSER=postgres \
-PGPASSWORD=xxxxxxxx \
+PGPASSWORD=admin \
 psql -f sql/01_create_db_user.sql
 ```
 
@@ -74,11 +75,11 @@ Ce 1er script SQL crée la base de données `{DBNAME}` et l'utilisateur `{DBUSER
 **Attention, l'utilisateur est créé avec un mot de passe par défaut** donc vous devez le modifier en faisant un 
 truc du genre :
 ```bash
-PGHOST=host.domain.fr \
+PGHOST=localhost \
 PGPORT=5432 \
 PGDATABASE=postgres \
 PGUSER=postgres \
-PGPASSWORD=xxxxxxxx \
+PGPASSWORD=admin \
 psql -c "alter user {DBUSER} with encrypted password 'VRAI_MOT_DE_PASSE'"
 ```
 
@@ -92,11 +93,11 @@ Pour cela, exportez les variables d'environnement PostgreSQL comme suit :
 ```bash
 export \
 ON_ERROR_STOP=1 \
-PGHOST=host.domain.fr \
+PGHOST=localhost \
 PGPORT=5432 \
 PGDATABASE={DBNAME} \
 PGUSER={DBUSER} \
-PGPASSWORD=xxxxxx
+PGPASSWORD=VRAI_MOT_DE_PASSE
 ```
 
 Lancez ensuite *dans l'ordre* chacun des scripts suivants :
@@ -105,10 +106,11 @@ Lancez ensuite *dans l'ordre* chacun des scripts suivants :
 psql -f sql/02_create_schema.sql && \
 psql -f sql/03_insert_bootstrap_data.sql && \
 psql -f sql/04_insert_data.sql && \
-psql -f sql/05_create_constraints.sql && \
-psql -f sql/06_create_comue.sql && \
-psql -f sql/07_init.sql && \
-psql -f sql/08_create_fixture.sql
+psql -f sql/05_prepare_data.sql && \
+psql -f sql/06_create_constraints.sql && \
+psql -f sql/07_create_comue.sql && \
+psql -f sql/08_init.sql && \
+psql -f sql/09_create_fixture.sql
 ```
 
 Par précaution, effacez éventuellement les variables d'environnement PostgreSQL :
