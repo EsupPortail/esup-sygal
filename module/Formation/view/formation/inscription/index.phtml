@@ -7,19 +7,14 @@
 
 use Formation\Entity\Db\Inscription;
 
+
+$canVoirSession = true;
+
+$canHistoriser = true;
+$canSupprimer = true;
 ?>
 
 <h1> Index des inscriptions </h1>
-
-
-<a
-    <?php /** @see \Formation\Controller\Inscription::ajouterAction() */ ?>
-    href="<?php echo $this->url('formation/inscription/ajouter', ['session' => 2, 'individu' => 5001], [], true); ?>"
-    class="btn btn-primary action">
-    <span class="glyphicon glyphicon-plus"></span>
-    Ajouter une formation
-</a>
-
 
 <table class="table table-condensed">
     <thead>
@@ -52,7 +47,41 @@ use Formation\Entity\Db\Inscription;
                     </span>
                 <?php endif; ?>
             </td>
-            <td></td>
+            <td>
+                <?php if ($canVoirSession AND $inscription->getSession() !== null) : ?>
+                    <?php /** @see \Formation\Controller\SessionController::afficherAction() */ ?>
+                    <a href="<?php echo $this->url('formation/session/afficher', ['session' => $inscription->getSession()->getId()], [], true); ?>"
+                       title="Accéder à la session associée" data-toggle="tooltip" data-html="true"
+                    >
+                        <span class="glyphicon glyphicon-list-alt"></span>
+                    </a>
+                <?php endif; ?>
+                <?php if ($canHistoriser) : ?>
+                    <?php if ($inscription->estNonHistorise()) : ?>
+                        <?php /** @see \Formation\Controller\InscriptionController::historiserAction() */ ?>
+                        <a href="<?php echo $this->url('formation/inscription/historiser', ['inscription' => $inscription->getId()], [], true); ?>"
+                           title="Historiser l'inscription" data-toggle="tooltip" data-html="true"
+                        >
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    <?php else : ?>
+                        <?php /** @see \Formation\Controller\InscriptionController::restaurerAction() */ ?>
+                        <a href="<?php echo $this->url('formation/inscription/restaurer', ['inscription' => $inscription->getId()], [], true); ?>"
+                           title="Restaurer l'inscription" data-toggle="tooltip" data-html="true"
+                        >
+                            <span class="glyphicon glyphicon-leaf"></span>
+                        </a>
+                    <?php endif; ?>
+                <?php endif; ?>
+                <?php if ($canSupprimer) : ?>
+                    <?php /** @see \Formation\Controller\InscriptionController::supprimerAction() */?>
+                    <a href="<?php echo $this->url('formation/inscription/supprimer',['inscription' => $inscription->getId()], [], true); ?>"
+                       class="ajax-modal" data-event="modification"
+                       title="Suppression de l'inscription de <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?>" data-toggle="tooltip" data-html="true">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                <?php endif; ?>
+            </td>
         </tr>
     <?php endforeach; ?>
     </tbody>

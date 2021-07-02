@@ -8,7 +8,6 @@ use Application\Entity\Db\Individu;
 use Application\Service\Doctorant\DoctorantServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Formation\Entity\Db\Inscription;
-use Formation\Entity\Db\Module;
 use Formation\Entity\Db\Session;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;

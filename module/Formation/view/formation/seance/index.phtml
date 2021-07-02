@@ -7,20 +7,13 @@
 
 use Formation\Entity\Db\Seance;
 
+$canHistoriser = true;
+$canSupprimer = true;
+$canVoirSession = true;
+
 ?>
 
 <h1> Index des seances </h1>
-
-
-<a
-    <?php /** @see \Formation\Controller\SeanceController::ajouterAction() */ ?>
-    href="<?php echo $this->url('formation/seance/ajouter', ['session' => 2], [], true); ?>"
-    class="btn btn-primary action ajax-modal" data-event="modification"
->
-    <span class="glyphicon glyphicon-plus"></span>
-    Ajouter une seance
-</a>
-
 
 <table class="table table-condensed">
     <thead>
@@ -45,10 +38,44 @@ use Formation\Entity\Db\Seance;
                 &rightarrow;
                 <?php echo $seance->getFin()->format('d/m/Y à H:i'); ?>
                 <br/>
-                DUREE (TODO)
+                <?php echo $seance->getDuree(); ?> h.
             </td>
             <td> <?php echo $seance->getLieu(); ?> </td>
-            <td></td>
+            <td>
+                <?php if ($canVoirSession AND $seance->getSession() !== null) : ?>
+                    <?php /** @see \Formation\Controller\SessionController::afficherAction() */ ?>
+                    <a href="<?php echo $this->url('formation/session/afficher', ['session' => $seance->getSession()->getId()], [], true); ?>"
+                       title="Accéder à la session associée" data-toggle="tooltip" data-html="true"
+                    >
+                    <span class="glyphicon glyphicon-list-alt"></span>
+                    </a>
+                <?php endif; ?>
+                <?php if ($canHistoriser) : ?>
+                    <?php if ($seance->estNonHistorise()) : ?>
+                        <?php /** @see \Formation\Controller\SeanceController::historiserAction() */ ?>
+                        <a href="<?php echo $this->url('formation/seance/historiser', ['seance' => $seance->getId()], [], true); ?>"
+                           title="Historiser la seance" data-toggle="tooltip" data-html="true"
+                        >
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    <?php else : ?>
+                        <?php /** @see \Formation\Controller\SeanceController::restaurerAction() */ ?>
+                        <a href="<?php echo $this->url('formation/seance/restaurer', ['seance' => $seance->getId()], [], true); ?>"
+                           title="Restaurer la seance" data-toggle="tooltip" data-html="true"
+                        >
+                            <span class="glyphicon glyphicon-leaf"></span>
+                        </a>
+                    <?php endif; ?>
+                <?php endif; ?>
+                <?php if ($canSupprimer) : ?>
+                    <?php /** @see \Formation\Controller\SeanceController::supprimerAction() */?>
+                    <a href="<?php echo $this->url('formation/seance/supprimer',['seance' => $seance->getId()], [], true); ?>"
+                       class="ajax-modal" data-event="modification"
+                       title="Suppression de la seance #<?php echo $seance->getId(); ?>" data-toggle="tooltip" data-html="true">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                <?php endif; ?>
+            </td>
         </tr>
     <?php endforeach; ?>
     </tbody>
