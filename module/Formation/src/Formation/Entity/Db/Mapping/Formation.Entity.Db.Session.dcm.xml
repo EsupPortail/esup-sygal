@@ -42,6 +42,7 @@
         <field name="description"          type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
 
         <one-to-many field="seances" target-entity="Formation\Entity\Db\Seance" mapped-by="session"/>
+        <one-to-many field="formateurs" target-entity="Formation\Entity\Db\Formateur" mapped-by="session"/>
 
         <one-to-many field="inscriptions" target-entity="Formation\Entity\Db\Inscription" mapped-by="session"/>
         <field name="tailleListePrincipale"     type="integer"                     column="TAILLE_LISTE_PRINCIPALE"      nullable="true"/>

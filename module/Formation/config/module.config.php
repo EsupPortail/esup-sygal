@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Formation\View\Helper\EtatViewHelper;
+use Formation\View\Helper\FormateursViewHelper;
 use Formation\View\Helper\ModaliteViewHelper;
 use Formation\View\Helper\SeancesViewHelper;
 use Formation\View\Helper\SiteViewHelper;
@@ -83,6 +84,7 @@ return array(
             'type' => TypeViewHelper::class,
             'etat' => EtatViewHelper::class,
             'seances' => SeancesViewHelper::class,
+            'formateurs' => FormateursViewHelper::class,
         ]
     ],
 

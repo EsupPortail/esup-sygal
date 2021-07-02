@@ -1,6 +1,6 @@
 <?php
 
-use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Formateur;use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
 
@@ -14,6 +14,10 @@ $module = $session->getModule();
 /** @var Seance[] $seances */
 $seances = $session->getSeances()->toArray();
 usort($seances, function(Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
+
+/** @var Formateur[] $formateurs */
+$formateurs = $session->getFormateurs()->toArray();
+usort($formateurs, function (Formateur $a, Formateur $b) { return $a->getIndividu()->getNomComplet() > $b->getIndividu()->getNomComplet();});
 
 $pageTitle = 'Affichage de la Session : ' . $module->getLibelle() . ' #'.$session->getIndex();
 $this->headTitle($pageTitle);
@@ -94,6 +98,35 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
         <?php endif; ?>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2> Formateur </h2>
+    </div>
+    <div class="pull-right">
+        <?php /** @see \Formation\Controller\FormateurController::ajouterAction() */ ?>
+        <a href="<?php echo $this->url('formation/formateur/ajouter', ['session' => $session->getId()], [] , true); ?>"
+           class="btn btn-primary ajax-modal" data-event="modification">
+            <span class="glyphicon glyphicon-plus"></span>
+            Ajouter un·e formateur·trice
+        </a>
+    </div>
+</div>
+
+<ul>
+<?php foreach ($formateurs as $formateur) : ?>
+    <li>
+        <?php echo $formateur->getIndividu()->getNomComplet(); ?>
+        <?php /** @see \Formation\Controller\FormateurController::retirerAction() */ ?>
+        <a href="<?php echo $this->url('formation/formateur/retirer', ['formateur' => $formateur->getId()], [] , true); ?>"
+           title="Retirer le·a formateur·trice" data-toggle="tooltip" data-html="true"
+           class="ajax-modal" data-event="modification"
+        >
+            <span class="glyphicon glyphicon-remove"></span>
+        </a>
+    </li>
+<?php endforeach; ?>
+</ul>
 
 <div class="row">
     <div class="col-md-6">

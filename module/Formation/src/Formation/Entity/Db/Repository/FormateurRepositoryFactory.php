@@ -3,24 +3,24 @@
 namespace Formation\Entity\Db\Repository;
 
 use Doctrine\ORM\EntityManager;
-use Formation\Entity\Db\Module;
+use Formation\Entity\Db\Formateur;
 use Interop\Container\ContainerInterface;
 
-class ModuleRepositoryFactory {
+class FormateurRepositoryFactory {
 
     /**
      * @param ContainerInterface $container
-     * @return ModuleRepository
+     * @return FormateurRepository
      */
-    public function __invoke(ContainerInterface $container) : ModuleRepository
+    public function __invoke(ContainerInterface $container) : FormateurRepository
     {
         /**
          * @var EntityManager $entitymanager
          */
         $entitymanager = $container->get('doctrine.entitymanager.orm_default');
 
-        /** @var ModuleRepository $repository */
-        $repository = $entitymanager->getRepository(Module::class);
+        /** @var FormateurRepository $repository */
+        $repository = $entitymanager->getRepository(Formateur::class);
         return $repository;
     }
 }

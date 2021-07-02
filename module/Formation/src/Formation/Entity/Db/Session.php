@@ -53,6 +53,9 @@ class Session implements HistoriqueAwareInterface,
     /** Liste des scéances ********************************************************************************************/
     /** @var Collection (Seance) */
     private $seances;
+    /** Liste des formateurs ******************************************************************************************/
+    /** @var Collection (Formateur) */
+    private $formateurs;
 
     /** Liste des insscriptions et listes associées *******************************************************************/
     /** @var int */
@@ -150,6 +153,14 @@ class Session implements HistoriqueAwareInterface,
     public function getSeances() : Collection
     {
         return $this->seances;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getFormateurs() : Collection
+    {
+        return $this->formateurs;
     }
 
     /**

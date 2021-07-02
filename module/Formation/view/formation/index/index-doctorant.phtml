@@ -9,6 +9,7 @@
 
 
 use Application\Entity\Db\Doctorant;
+use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
 
@@ -33,14 +34,14 @@ foreach ($inscriptions as $inscription) {
     <tr>
         <th> Module de formation </th>
         <th> Session </th>
-        <th> Intervenant </th>
+        <th> Formateur&middot;trice&middot;s </th>
         <th> Site </th>
         <th> Dates et lieux </th>
         <th> Modalité </th>
         <th> Type </th>
         <th> État </th>
         <th> Limite d’inscription </th>
-        <th> Inscription </th>
+        <th> Action </th>
     </tr>
     </thead>
     <tbody>
@@ -48,7 +49,7 @@ foreach ($inscriptions as $inscription) {
         <tr>
             <td> <?php echo $session->getModule()->getLibelle(); ?> </td>
             <td> <?php echo $session->getIndex(); ?> </td>
-            <td> <span style="background: salmon;">Missing infos </span></td>
+            <td> <?php echo $this->formateurs($session); ?> </td>
             <td> <?php echo $this->site($session); ?> </td>
             <td> <?php echo $this->seances($session); ?> </td>
             <td> <?php echo $this->modalite($session); ?></td>
@@ -69,7 +70,12 @@ foreach ($inscriptions as $inscription) {
                 <br/>
                 Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
             </td>
-            <td> ... </td>
+            <td>
+                <a href="">
+                <span class="glyphicon glyphicon-plus"
+                      title="M'inscrire" data-toggle="tooltip" data-html="true"
+                ></span></a>
+            </td>
         </tr>
     <?php endforeach; ?>
     </tbody>
@@ -82,14 +88,14 @@ foreach ($inscriptions as $inscription) {
     <tr>
         <th> Module de formation </th>
         <th> Session </th>
-        <th> Intervenant </th>
+        <th> Formateur&middot;trice&middot;s </th>
         <th> Site </th>
         <th> Dates et lieux </th>
         <th> Modalité </th>
         <th> Type </th>
         <th> État </th>
-        <th> Limite d’inscription </th>
         <th> Inscription </th>
+        <th> Action </th>
     </tr>
     </thead>
     <tbody>
@@ -98,28 +104,30 @@ foreach ($inscriptions as $inscription) {
         <tr>
             <td> <?php echo $session->getModule()->getLibelle(); ?> </td>
             <td> <?php echo $session->getIndex(); ?> </td>
-            <td> <span style="background: salmon;">Missing infos </span></td>
+            <td> <?php echo $this->formateurs($session); ?> </td>
             <td> <?php echo $this->site($session); ?> </td>
             <td> <?php echo $this->seances($session); ?> </td>
             <td> <?php echo $this->modalite($session); ?></td>
             <td> <?php echo $this->type($session); ?></td>
             <td> <?php echo $this->etat($session); ?></td>
             <td>
-                Date limite :
-                <?php
-                $limite = $session->getLimiteInscription();
-                if ($limite) {
-                    echo $limite->format('d/m/Y');
-                } else {
-                    echo "N.C.";
-                }
-                ?>
-                <br/>
-                Liste principale :  <?php echo ($session->getTailleListePrincipale())?:"N.C."; ?>
-                <br/>
-                Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
+                <?php if ($inscription->isListePrincipale()) echo "Liste principale"; ?>
+                <?php if ($inscription->isListeComplementaire()) echo "Liste complementaire #???"; ?>
+                <?php if ($inscription->getListe() === null) : ?>
+                    <?php if ($session->getEtat()->getCode() === Etat::CODE_OUVERTE) echo "En attente"; ?>
+                    <?php if ($session->getEtat()->getCode() === Etat::CODE_FERME) echo "Non classée"; ?>
+                <?php endif; ?>
             </td>
-            <td> ... </td>
+            <td>
+                <a href="">
+                <span class="glyphicon glyphicon-remove"
+                      title="Annuler mon inscription" data-toggle="tooltip" data-html="true"
+                ></span></a>
+                <a href="">
+                <span class="glyphicon glyphicon-share"
+                      title="Télécharger la convocation" data-toggle="tooltip" data-html="true"
+                ></span></a>
+            </td>
         </tr>
     <?php endforeach; ?>
     </tbody>
@@ -132,14 +140,14 @@ foreach ($inscriptions as $inscription) {
     <tr>
         <th> Module de formation </th>
         <th> Session </th>
-        <th> Intervenant </th>
+        <th> Formateur&middot;trice&middot;s </th>
         <th> Site </th>
         <th> Dates et lieux </th>
         <th> Modalité </th>
         <th> Type </th>
         <th> État </th>
         <th> Limite d’inscription </th>
-        <th> Inscription </th>
+        <th> Action </th>
     </tr>
     </thead>
     <tbody>
@@ -148,7 +156,7 @@ foreach ($inscriptions as $inscription) {
         <tr>
             <td> <?php echo $session->getModule()->getLibelle(); ?> </td>
             <td> <?php echo $session->getIndex(); ?> </td>
-            <td> <span style="background: salmon;">Missing infos </span></td>
+            <td> <?php echo $this->formateurs($session); ?> </td>
             <td> <?php echo $this->site($session); ?> </td>
             <td> <?php echo $this->seances($session); ?> </td>
             <td> <?php echo $this->modalite($session); ?></td>
@@ -169,7 +177,16 @@ foreach ($inscriptions as $inscription) {
                 <br/>
                 Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
             </td>
-            <td> ... </td>
+            <td>
+                <a href="">
+                <span class="glyphicon glyphicon-edit"
+                      title="Compléter l'enquête" data-toggle="tooltip" data-html="true"
+                ></span></a>
+                <a href="">
+                <span class="glyphicon glyphicon-check"
+                      title="Télécharger l'attestation" data-toggle="tooltip" data-html="true"
+                ></span></a>
+            </td>
         </tr>
     <?php endforeach; ?>
     </tbody>
