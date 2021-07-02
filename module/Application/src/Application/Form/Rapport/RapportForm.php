@@ -109,7 +109,7 @@ abstract class RapportForm extends Form implements InputFilterProviderInterface
             if ($anneeUniv instanceof TheseAnneeUniv) {
                 $anneesUnivs[$anneeUniv->getAnneeUniv()] = $anneeUniv->getAnneeUnivToString();
             } elseif ($anneeUniv instanceof AnneeUniv) {
-                $anneesUnivs[$anneeUniv->getAnnee()] = (string) $anneeUniv;
+                $anneesUnivs[$anneeUniv->getPremiereAnnee()] = (string) $anneeUniv;
             }
         }
         /** @var Select $anneeUnivSelect */

@@ -10,6 +10,7 @@ Journal des modifications
 - Précision de la date de rendu des rapports dès le premier mail des rapporteurs
 - Recherche de rapports d'activité : nouveau filtre "Annuel ou fin de thèse".  
 - Fiche d'identité de la thèse : la date prévisionnelle de soutenance n'est plus affichée car elle peut être erronée.
+- Rapports d'activité, CSI, de fin de thèse : la date de bascule pour déterminer l'année universitaire est le 01/11. 
 - [FIX] Dédoublonnage des origines de financement dans le filtres de la page des rapports.
 
 2.2.2
