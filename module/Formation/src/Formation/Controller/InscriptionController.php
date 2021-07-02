@@ -116,9 +116,15 @@ class InscriptionController extends AbstractController
         $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
         $retour = $this->params()->fromQuery('retour');
 
-        $inscription->setListe(Inscription::LISTE_PRINCIPALE);
-        //todo mailing tout çà
-        $this->getInscriptionService()->update($inscription);
+        $session = $inscription->getSession();
+
+        $listePrincipale = $session->getListePrincipale();
+        if (count($listePrincipale) < $session->getTailleListePrincipale()) {
+            $inscription->setListe(Inscription::LISTE_PRINCIPALE);
+            $this->getInscriptionService()->update($inscription);
+        } else {
+            $this->flashMessenger()->addErrorMessage('La liste principale est déjà complète.');
+        }
 
         if ($retour) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/inscription',[],[], true);
@@ -130,9 +136,15 @@ class InscriptionController extends AbstractController
         $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
         $retour = $this->params()->fromQuery('retour');
 
-        $inscription->setListe(Inscription::LISTE_COMPLEMENTAIRE);
-        //todo mailing tout çà
-        $this->getInscriptionService()->update($inscription);
+        $session = $inscription->getSession();
+
+        $listePrincipale = $session->getListeComplementaire();
+        if (count($listePrincipale) < $session->getTailleListeComplementaire()) {
+            $inscription->setListe(Inscription::LISTE_COMPLEMENTAIRE);
+            $this->getInscriptionService()->update($inscription);
+        } else {
+            $this->flashMessenger()->addErrorMessage('La liste complémentaire est déjà complète.');
+        }
 
         if ($retour) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/inscription',[],[], true);

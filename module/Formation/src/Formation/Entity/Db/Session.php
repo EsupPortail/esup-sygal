@@ -186,6 +186,11 @@ class Session implements HistoriqueAwareInterface,
         return $this;
     }
 
+    public function getListePrincipale() : array
+    {
+        $inscriptions = array_filter($this->getInscriptions()->toArray(), function (Inscription $a) { return $a->estNonHistorise() AND $a->getListe() === Inscription::LISTE_PRINCIPALE; });
+        return $inscriptions;
+    }
     /**
      * @return int|null
      */
@@ -202,6 +207,12 @@ class Session implements HistoriqueAwareInterface,
     {
         $this->tailleListeComplementaire = $tailleListeComplementaire;
         return $this;
+    }
+
+    public function getListeComplementaire() : array
+    {
+        $inscriptions = array_filter($this->getInscriptions()->toArray(), function (Inscription $a) { return $a->estNonHistorise() AND $a->getListe() === Inscription::LISTE_COMPLEMENTAIRE; });
+        return $inscriptions;
     }
 
     /**

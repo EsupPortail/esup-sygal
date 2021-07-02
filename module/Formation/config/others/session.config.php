@@ -29,6 +29,9 @@ return [
                         'historiser',
                         'restaurer',
                         'supprimer',
+
+                        'classer-inscriptions',
+                        'declasser-inscriptions',
                     ],
                     'privileges' => [
                         IndexPrivileges::INDEX_AFFICHER,
@@ -135,6 +138,28 @@ return [
                                     'defaults' => [
                                         'controller' => SessionController::class,
                                         'action'     => 'supprimer',
+                                    ],
+                                ],
+                            ],
+                            'classer-inscriptions' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/classer-inscriptions/:session',
+                                    'defaults' => [
+                                        'controller' => SessionController::class,
+                                        'action'     => 'classer-inscriptions',
+                                    ],
+                                ],
+                            ],
+                            'declasser-inscriptions' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/declasser-inscriptions/:session',
+                                    'defaults' => [
+                                        'controller' => SessionController::class,
+                                        'action'     => 'declasser-inscriptions',
                                     ],
                                 ],
                             ],

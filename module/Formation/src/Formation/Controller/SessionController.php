@@ -3,9 +3,11 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Module;
 use Formation\Entity\Db\Session;
 use Formation\Form\Session\SessionFormAwareTrait;
+use Formation\Service\Inscription\InscriptionServiceAwareTrait;
 use Formation\Service\Session\SessionServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\View\Model\ViewModel;
@@ -13,6 +15,7 @@ use Zend\View\Model\ViewModel;
 class SessionController extends AbstractController
 {
     use EntityManagerAwareTrait;
+    use InscriptionServiceAwareTrait;
     use SessionServiceAwareTrait;
 
     use SessionFormAwareTrait;
@@ -141,4 +144,59 @@ class SessionController extends AbstractController
         return $vm;
     }
 
+    public function classerInscriptionsAction()
+    {
+        /**@var Session $session */
+        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
+        $retour = $this->params()->fromQuery('retour');
+
+        $inscriptions = $session->getInscriptions();
+        $classements = [Inscription::LISTE_PRINCIPALE => [],  Inscription::LISTE_COMPLEMENTAIRE => [], 'N' => []];
+        /** @var Inscription $inscription */
+        foreach ($inscriptions as $inscription) {
+            if ($inscription->estNonHistorise()) {
+                $liste = $inscription->getListe() ?: 'N';
+                $classements[$liste][] = $inscription;
+            }
+        }
+        $positionPrincipale = count($classements[Inscription::LISTE_PRINCIPALE]);
+        $positionComplementaire = count($classements[Inscription::LISTE_COMPLEMENTAIRE]);
+        usort($classements['N'], function(Inscription $a,Inscription $b) { return $a->getHistoCreation() > $b->getHistoCreation(); });
+        foreach ($classements['N'] as $inscription) {
+
+            if ($positionPrincipale < $session->getTailleListePrincipale()) {
+                $inscription->setListe(Inscription::LISTE_PRINCIPALE);
+                $this->getInscriptionService()->update($inscription);
+                $positionPrincipale++;
+            } else {
+                if ($positionComplementaire < $session->getTailleListeComplementaire()) {
+                    $inscription->setListe(Inscription::LISTE_COMPLEMENTAIRE);
+                    $this->getInscriptionService()->update($inscription);
+                    $positionComplementaire++;
+                }
+                else {
+                    break;
+                }
+            }
+        }
+
+        if ($retour) return $this->redirect()->toUrl($retour);
+        return $this->redirect()->toRoute('formation/session/afficher', ['session' => $session->getId()], [], true);
+    }
+
+    public function declasserInscriptionsAction()
+    {
+        /**@var Session $session */
+        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
+        $retour = $this->params()->fromQuery('retour');
+
+        /** @var Inscription $inscription */
+        foreach ($session->getInscriptions() as $inscription) {
+            $inscription->setListe(null);
+            $this->getInscriptionService()->update($inscription);
+        }
+
+        if ($retour) return $this->redirect()->toUrl($retour);
+        return $this->redirect()->toRoute('formation/session/afficher', ['session' => $session->getId()], [], true);
+    }
 }

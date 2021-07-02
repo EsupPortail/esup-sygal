@@ -179,16 +179,16 @@ $listeComplementaire = array_filter($inscrits, function (Inscription $a) { retur
             Inscrit un·e doctorant·e
         </a>
 
-        <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
-        <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId()], [] , true); ?>"
-           class="btn btn-primary ajax-modal" data-event="modification">
+        <?php /** @see \Formation\Controller\SessionController::classerInscriptionsAction() */ ?>
+        <a href="<?php echo $this->url('formation/session/classer-inscriptions', ['session' => $session->getId()], [] , true); ?>"
+           class="btn btn-primary">
             <span class="glyphicon glyphicon-indent-left"></span>
             Classer les inscrits
         </a>
 
-        <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
-        <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId()], [] , true); ?>"
-           class="btn btn-primary ajax-modal" data-event="modification">
+        <?php /** @see \Formation\Controller\SessionController::declasserInscriptionsAction() */ ?>
+        <a href="<?php echo $this->url('formation/session/declasser-inscriptions', ['session' => $session->getId()], [] , true); ?>"
+           class="btn btn-primary">
             <span class="glyphicon glyphicon-indent-right"></span>
             Déclasser les inscrits
         </a>
