@@ -11,6 +11,8 @@ Pré-requis
 - Se placer dans le répertoire racine du projet SyGAL. 
   Dans la suite, `${PWD}` correspond donc à ce répertoire racine.
 
+- Configurer la connexion à la base de données Oracle source dans la configuration de l'application.
+
 
 Génération des scripts SQL de migration
 ---------------------------------------
@@ -148,10 +150,10 @@ Import des objets et données dans la base PostgreSQL
 
 ```bash
 export \
-PGDATABASE=sygal \
-PGUSER=ad_sygal \
 PGHOST=localhost \
 PGPORT=5432 \
+PGDATABASE=sygal \
+PGUSER=ad_sygal \
 PGPASSWORD=azerty
 ```
 

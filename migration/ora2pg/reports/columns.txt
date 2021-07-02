@@ -14,7 +14,7 @@
 	HISTO_DESTRUCTEUR_ID : NUMBER(22) => bigint
 	HISTO_DESTRUCTION : DATE(7) => timestamp
 	ACTEUR_ETABLISSEMENT_ID : NUMBER(22) => bigint
-[2] TABLE API_LOG (owner: SYGAL, 124246 rows)
+[2] TABLE API_LOG (owner: SYGAL, 137285 rows)
 	ID : NUMBER(22) => bigint
 	REQ_URI : VARCHAR2(2000) => varchar(2000)
 	REQ_START_DATE : DATE(7) => timestamp
@@ -129,7 +129,7 @@
 	QUESTION : VARCHAR2(2000) => varchar(2000)
 	REPONSE : VARCHAR2(2000) => varchar(2000)
 	ORDRE : NUMBER(22) => bigint
-[13] TABLE FICHIER (owner: SYGAL, 4414 rows)
+[13] TABLE FICHIER (owner: SYGAL, 5124 rows)
 	ID : NUMBER(22) => bigint
 	UUID : VARCHAR2(60) => varchar(60)
 	NATURE_ID : NUMBER(22) => bigint
@@ -174,7 +174,7 @@
 	HISTO_DESTRUCTEUR_ID : NUMBER(22) => bigint
 	CODE_TYPE_FINANCEMENT : VARCHAR2(8) => varchar(8)
 	LIBELLE_TYPE_FINANCEMENT : VARCHAR2(100) => varchar(100)
-[16] TABLE IMPORT_LOG (owner: SYGAL, 103251 rows)
+[16] TABLE IMPORT_LOG (owner: SYGAL, 114672 rows)
 	TYPE : VARCHAR2(128) => varchar(128)
 	NAME : VARCHAR2(128) => varchar(128)
 	SUCCESS : NUMBER(1) => boolean
@@ -199,7 +199,7 @@
 	DESCRIPTION : VARCHAR2(200) => varchar(200)
 	ENABLED : NUMBER(1) => boolean
 	FILTER : CLOB(4000) => text
-[19] TABLE IMPORT_OBSERV_RESULT (owner: SYGAL, 59 rows)
+[19] TABLE IMPORT_OBSERV_RESULT (owner: SYGAL, 62 rows)
 	ID : NUMBER(22) => bigint
 	IMPORT_OBSERV_ID : NUMBER(22) => bigint
 	DATE_CREATION : DATE(7) => timestamp
@@ -286,7 +286,7 @@
 	HISTO_MODIFICATEUR_ID : NUMBER(22) => bigint
 	HISTO_DESTRUCTION : DATE(7) => timestamp
 	HISTO_DESTRUCTEUR_ID : NUMBER(22) => bigint
-[30] TABLE MAIL_CONFIRMATION (owner: SYGAL, 1169 rows)
+[30] TABLE MAIL_CONFIRMATION (owner: SYGAL, 1437 rows)
 	ID : NUMBER(22) => bigint
 	INDIVIDU_ID : NUMBER(22) => bigint
 	EMAIL : VARCHAR2(256) => varchar(256)
@@ -314,7 +314,7 @@
 	RECIPIENTS : VARCHAR2(500) => varchar(500)
 	TEMPLATE : CLOB(4000) => text
 	ENABLED : NUMBER(22) => bigint
-[34] TABLE NOTIF_MAIL (owner: SYGAL, 1682 rows)
+[34] TABLE NOTIF_MAIL (owner: SYGAL, 2270 rows)
 	ID : NUMBER(22) => bigint
 	MAIL_FROM : VARCHAR2(1024) => varchar(1024)
 	MAIL_TO : VARCHAR2(1024) => varchar(1024)
@@ -365,7 +365,7 @@
 [41] TABLE PROFIL_TO_ROLE (owner: SYGAL, 149 rows)
 	PROFIL_ID : NUMBER(38) => bigint
 	ROLE_ID : NUMBER(38) => bigint
-[42] TABLE RAPPORT (owner: SYGAL, 547 rows)
+[42] TABLE RAPPORT (owner: SYGAL, 1081 rows)
 	ID : NUMBER(22) => bigint
 	THESE_ID : NUMBER(22) => bigint
 	FICHIER_ID : NUMBER(22) => bigint
@@ -378,7 +378,7 @@
 	HISTO_MODIFICATION : DATE(7) => timestamp
 	HISTO_DESTRUCTION : DATE(7) => timestamp
 	TYPE_RAPPORT_ID : NUMBER(22) => bigint
-[43] TABLE RAPPORT_VALIDATION (owner: SYGAL, 32 rows)
+[43] TABLE RAPPORT_VALIDATION (owner: SYGAL, 59 rows)
 	ID : NUMBER(22) => bigint
 	TYPE_VALIDATION_ID : NUMBER(22) => bigint
 	RAPPORT_ID : NUMBER(22) => bigint
@@ -434,7 +434,7 @@
 	LIBELLE : VARCHAR2(128) => varchar(128)
 	IMPORTABLE : NUMBER(1) => boolean
 	ETABLISSEMENT_ID : NUMBER(22) => bigint
-[48] TABLE SOUTENANCE_AVIS (owner: SYGAL, 87 rows)
+[48] TABLE SOUTENANCE_AVIS (owner: SYGAL, 99 rows)
 	ID : NUMBER(22) => bigint
 	PROPOSITION_ID : NUMBER(22) => bigint
 	MEMBRE_ID : NUMBER(22) => bigint
@@ -484,7 +484,7 @@
 	HISTO_MODIFICATEUR_ID : NUMBER(22) => bigint
 	HISTO_DESTRUCTION : DATE(7) => timestamp
 	HISTO_DESTRUCTEUR_ID : NUMBER(22) => bigint
-[53] TABLE SOUTENANCE_MEMBRE (owner: SYGAL, 763 rows)
+[53] TABLE SOUTENANCE_MEMBRE (owner: SYGAL, 904 rows)
 	ID : NUMBER(22) => bigint
 	PROPOSITION_ID : NUMBER(22) => bigint
 	GENRE : VARCHAR2(1) => varchar(1)
@@ -504,7 +504,7 @@
 	HISTO_DESTRUCTION : DATE(7) => timestamp
 	HISTO_DESTRUCTEUR_ID : NUMBER(22) => bigint
 	CLEF : VARCHAR2(64) => varchar(64)
-[54] TABLE SOUTENANCE_PROPOSITION (owner: SYGAL, 254 rows)
+[54] TABLE SOUTENANCE_PROPOSITION (owner: SYGAL, 342 rows)
 	ID : NUMBER(22) => bigint
 	THESE_ID : NUMBER(22) => bigint
 	DATEPREV : DATE(7) => timestamp
@@ -549,7 +549,7 @@
 	HISTO_MODIFICATEUR_ID : NUMBER(22) => bigint
 	HISTO_DESTRUCTION : DATE(7) => timestamp
 	HISTO_DESTRUCTEUR_ID : NUMBER(22) => bigint
-[57] TABLE STRUCTURE (owner: SYGAL, 3059 rows)
+[57] TABLE STRUCTURE (owner: SYGAL, 3078 rows)
 	ID : NUMBER(22) => bigint
 	SIGLE : VARCHAR2(40) => varchar(40)
 	LIBELLE : VARCHAR2(300) => varchar(300)
@@ -671,7 +671,7 @@
 	HISTO_MODIFICATION : DATE(7) => timestamp
 	HISTO_DESTRUCTEUR_ID : NUMBER(22) => bigint
 	HISTO_DESTRUCTION : DATE(7) => timestamp
-[65] TABLE TMP_ACTEUR (owner: SYGAL, 72089 rows)
+[65] TABLE TMP_ACTEUR (owner: SYGAL, 72139 rows)
 	INSERT_DATE : DATE(7) => timestamp
 	ID : VARCHAR2(64) => varchar(64)
 	ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
@@ -688,7 +688,7 @@
 	TEM_RAP_RECU : VARCHAR2(1) => varchar(1)
 	ACTEUR_ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
 	SOURCE_INSERT_DATE : DATE(7) => timestamp
-[66] TABLE TMP_DOCTORANT (owner: SYGAL, 12303 rows)
+[66] TABLE TMP_DOCTORANT (owner: SYGAL, 12305 rows)
 	INSERT_DATE : DATE(7) => timestamp
 	ID : VARCHAR2(64) => varchar(64)
 	ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
@@ -705,7 +705,7 @@
 	SOURCE_ID : VARCHAR2(64) => varchar(64)
 	SOURCE_CODE : VARCHAR2(64) => varchar(64)
 	SOURCE_INSERT_DATE : DATE(7) => timestamp
-[68] TABLE TMP_ETABLISSEMENT (owner: SYGAL, 2451 rows)
+[68] TABLE TMP_ETABLISSEMENT (owner: SYGAL, 2454 rows)
 	INSERT_DATE : DATE(7) => timestamp
 	ID : VARCHAR2(64) => varchar(64)
 	ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
@@ -713,7 +713,7 @@
 	SOURCE_ID : VARCHAR2(64) => varchar(64)
 	SOURCE_CODE : VARCHAR2(64) => varchar(64)
 	SOURCE_INSERT_DATE : DATE(7) => timestamp
-[69] TABLE TMP_FINANCEMENT (owner: SYGAL, 3884 rows)
+[69] TABLE TMP_FINANCEMENT (owner: SYGAL, 3887 rows)
 	INSERT_DATE : DATE(7) => timestamp
 	ID : VARCHAR2(64) => varchar(64)
 	ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
@@ -729,7 +729,7 @@
 	SOURCE_INSERT_DATE : DATE(7) => timestamp
 	CODE_TYPE_FINANCEMENT : VARCHAR2(8) => varchar(8)
 	LIBELLE_TYPE_FINANCEMENT : VARCHAR2(100) => varchar(100)
-[70] TABLE TMP_INDIVIDU (owner: SYGAL, 34083 rows)
+[70] TABLE TMP_INDIVIDU (owner: SYGAL, 34098 rows)
 	INSERT_DATE : DATE(7) => timestamp
 	ID : VARCHAR2(64) => varchar(64)
 	ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
@@ -747,29 +747,7 @@
 	LIB_NAT : VARCHAR2(128) => varchar(128)
 	SUPANN_ID : VARCHAR2(30) => varchar(30)
 	SOURCE_INSERT_DATE : DATE(7) => timestamp
-[71] TABLE TMP_INSA (owner: SYGAL, 1502 rows)
-	ID : NUMBER(22) => bigint
-	TYPE : VARCHAR2(32) => varchar(32)
-	CIVILITE : VARCHAR2(5) => varchar(5)
-	NOM_USUEL : VARCHAR2(60) => varchar(60)
-	NOM_PATRONYMIQUE : VARCHAR2(60) => varchar(60)
-	PRENOM1 : VARCHAR2(60) => varchar(60)
-	PRENOM2 : VARCHAR2(60) => varchar(60)
-	PRENOM3 : VARCHAR2(60) => varchar(60)
-	EMAIL : VARCHAR2(255) => varchar(255)
-	DATE_NAISSANCE : DATE(7) => timestamp
-	NATIONALITE : VARCHAR2(128) => varchar(128)
-	SOURCE_CODE : VARCHAR2(64) => varchar(64)
-	SOURCE_ID : NUMBER(22) => bigint
-	HISTO_CREATEUR_ID : NUMBER(22) => bigint
-	HISTO_CREATION : DATE(7) => timestamp
-	HISTO_MODIFICATEUR_ID : NUMBER(22) => bigint
-	HISTO_MODIFICATION : DATE(7) => timestamp
-	HISTO_DESTRUCTEUR_ID : NUMBER(22) => bigint
-	HISTO_DESTRUCTION : DATE(7) => timestamp
-	SUPANN_ID : VARCHAR2(30) => varchar(30)
-	ETABLISSEMENT_ID : NUMBER(22) => bigint
-[72] TABLE TMP_ORIGINE_FINANCEMENT (owner: SYGAL, 132 rows)
+[71] TABLE TMP_ORIGINE_FINANCEMENT (owner: SYGAL, 132 rows)
 	INSERT_DATE : DATE(7) => timestamp
 	ID : VARCHAR2(64) => varchar(64)
 	ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
@@ -779,7 +757,7 @@
 	LIC_OFI : VARCHAR2(50) => varchar(50)
 	LIB_OFI : VARCHAR2(200) => varchar(200)
 	SOURCE_INSERT_DATE : DATE(7) => timestamp
-[73] TABLE TMP_ROLE (owner: SYGAL, 29 rows)
+[72] TABLE TMP_ROLE (owner: SYGAL, 29 rows)
 	INSERT_DATE : DATE(7) => timestamp
 	ID : VARCHAR2(64) => varchar(64)
 	ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
@@ -788,7 +766,7 @@
 	LIB_ROJ : VARCHAR2(200) => varchar(200)
 	LIC_ROJ : VARCHAR2(50) => varchar(50)
 	SOURCE_INSERT_DATE : DATE(7) => timestamp
-[74] TABLE TMP_STRUCTURE (owner: SYGAL, 2906 rows)
+[73] TABLE TMP_STRUCTURE (owner: SYGAL, 2909 rows)
 	INSERT_DATE : DATE(7) => timestamp
 	ID : VARCHAR2(64) => varchar(64)
 	ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
@@ -801,7 +779,7 @@
 	LIBELLE_PAYS : VARCHAR2(200) => varchar(200)
 	CODE : VARCHAR2(64) => varchar(64)
 	SOURCE_INSERT_DATE : DATE(7) => timestamp
-[75] TABLE TMP_THESE (owner: SYGAL, 12430 rows)
+[74] TABLE TMP_THESE (owner: SYGAL, 12431 rows)
 	INSERT_DATE : DATE(7) => timestamp
 	ID : VARCHAR2(64) => varchar(64)
 	ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
@@ -829,7 +807,7 @@
 	DAT_TRANSFERT_DEP : DATE(7) => timestamp
 	SOURCE_INSERT_DATE : DATE(7) => timestamp
 	CORRECTION_EFFECTUEE : VARCHAR2(30) => varchar(30)
-[76] TABLE TMP_THESE_ANNEE_UNIV (owner: SYGAL, 46200 rows)
+[75] TABLE TMP_THESE_ANNEE_UNIV (owner: SYGAL, 46208 rows)
 	INSERT_DATE : DATE(7) => timestamp
 	ID : VARCHAR2(64) => varchar(64)
 	ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
@@ -838,7 +816,7 @@
 	THESE_ID : VARCHAR2(50) => varchar(50)
 	ANNEE_UNIV : NUMBER(38) => bigint
 	SOURCE_INSERT_DATE : DATE(7) => timestamp
-[77] TABLE TMP_TITRE_ACCES (owner: SYGAL, 3740 rows)
+[76] TABLE TMP_TITRE_ACCES (owner: SYGAL, 3743 rows)
 	INSERT_DATE : DATE(7) => timestamp
 	ID : VARCHAR2(64) => varchar(64)
 	ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
@@ -852,7 +830,7 @@
 	CODE_DEPT_TITRE_ACCES : VARCHAR2(20) => varchar(20)
 	CODE_PAYS_TITRE_ACCES : VARCHAR2(20) => varchar(20)
 	SOURCE_INSERT_DATE : DATE(7) => timestamp
-[78] TABLE TMP_UNITE_RECH (owner: SYGAL, 417 rows)
+[77] TABLE TMP_UNITE_RECH (owner: SYGAL, 417 rows)
 	INSERT_DATE : DATE(7) => timestamp
 	ID : VARCHAR2(64) => varchar(64)
 	ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
@@ -860,7 +838,7 @@
 	SOURCE_ID : VARCHAR2(64) => varchar(64)
 	SOURCE_CODE : VARCHAR2(64) => varchar(64)
 	SOURCE_INSERT_DATE : DATE(7) => timestamp
-[79] TABLE TMP_VARIABLE (owner: SYGAL, 28 rows)
+[78] TABLE TMP_VARIABLE (owner: SYGAL, 28 rows)
 	INSERT_DATE : DATE(7) => timestamp
 	ID : VARCHAR2(64) => varchar(64)
 	ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
@@ -872,23 +850,23 @@
 	DATE_DEB_VALIDITE : DATE(7) => timestamp
 	DATE_FIN_VALIDITE : DATE(7) => timestamp
 	SOURCE_INSERT_DATE : DATE(7) => timestamp
-[80] TABLE TYPE_RAPPORT (owner: SYGAL, 3 rows)
+[79] TABLE TYPE_RAPPORT (owner: SYGAL, 3 rows)
 	ID : NUMBER(22) => bigint
 	CODE : VARCHAR2(50) => varchar(50)
 	LIBELLE_COURT : VARCHAR2(64) => varchar(64)
 	LIBELLE_LONG : VARCHAR2(128) => varchar(128)
-[81] TABLE TYPE_STRUCTURE (owner: SYGAL, 3 rows)
+[80] TABLE TYPE_STRUCTURE (owner: SYGAL, 3 rows)
 	ID : NUMBER(22) => bigint
 	CODE : VARCHAR2(50) => varchar(50)
 	LIBELLE : VARCHAR2(100) => varchar(100)
-[82] TABLE TYPE_VALIDATION (owner: SYGAL, 15 rows)
+[81] TABLE TYPE_VALIDATION (owner: SYGAL, 15 rows)
 	ID : NUMBER(22) => bigint
 	CODE : VARCHAR2(50) => varchar(50)
 	LIBELLE : VARCHAR2(100) => varchar(100)
-[83] TABLE UNITE_DOMAINE_LINKER (owner: SYGAL, 102 rows)
+[82] TABLE UNITE_DOMAINE_LINKER (owner: SYGAL, 102 rows)
 	UNITE_ID : NUMBER(22) => bigint
 	DOMAINE_ID : NUMBER(22) => bigint
-[84] TABLE UNITE_RECH (owner: SYGAL, 512 rows)
+[83] TABLE UNITE_RECH (owner: SYGAL, 512 rows)
 	ID : NUMBER(22) => bigint
 	ETAB_SUPPORT : VARCHAR2(500) => varchar(500)
 	AUTRES_ETAB : VARCHAR2(500) => varchar(500)
@@ -902,7 +880,7 @@
 	HISTO_DESTRUCTEUR_ID : NUMBER(22) => bigint
 	STRUCTURE_ID : NUMBER(22) => bigint
 	RNSR_ID : VARCHAR2(128) => varchar(128)
-[85] TABLE USER_TOKEN (owner: SYGAL, 3 rows)
+[84] TABLE USER_TOKEN (owner: SYGAL, 6 rows)
 	ID : NUMBER(22) => bigint
 	USER_ID : NUMBER(22) => bigint
 	TOKEN : VARCHAR2(256) => varchar(256)
@@ -912,7 +890,8 @@
 	CREATED_ON : DATE(7) => timestamp
 	EXPIRED_ON : DATE(7) => timestamp
 	LAST_USED_ON : DATE(7) => timestamp
-[86] TABLE UTILISATEUR (owner: SYGAL, 3539 rows)
+	SENT_ON : DATE(7) => timestamp
+[85] TABLE UTILISATEUR (owner: SYGAL, 3875 rows)
 	ID : NUMBER(22) => bigint
 	USERNAME : VARCHAR2(255) => varchar(255)
 	EMAIL : VARCHAR2(255) => varchar(255)
@@ -923,7 +902,7 @@
 	INDIVIDU_ID : NUMBER(22) => bigint
 	PASSWORD_RESET_TOKEN : VARCHAR2(256) => varchar(256)
 	CREATED_AT : DATE(7) => timestamp
-[87] TABLE VALIDATION (owner: SYGAL, 2427 rows)
+[86] TABLE VALIDATION (owner: SYGAL, 2427 rows)
 	ID : NUMBER(22) => bigint
 	TYPE_VALIDATION_ID : NUMBER(22) => bigint
 	THESE_ID : NUMBER(22) => bigint
@@ -934,7 +913,7 @@
 	HISTO_MODIFICATEUR_ID : NUMBER(22) => bigint
 	HISTO_DESTRUCTION : DATE(7) => timestamp
 	HISTO_DESTRUCTEUR_ID : NUMBER(22) => bigint
-[88] TABLE VALIDITE_FICHIER (owner: SYGAL, 1108 rows)
+[87] TABLE VALIDITE_FICHIER (owner: SYGAL, 1108 rows)
 	ID : NUMBER(22) => bigint
 	FICHIER_ID : NUMBER(22) => bigint
 	EST_VALIDE : NUMBER(1) => boolean
@@ -946,7 +925,7 @@
 	HISTO_DESTRUCTEUR_ID : NUMBER(22) => bigint
 	HISTO_CREATION : DATE(7) => timestamp
 	HISTO_MODIFICATION : DATE(7) => timestamp
-[89] TABLE VARIABLE (owner: SYGAL, 31 rows)
+[88] TABLE VARIABLE (owner: SYGAL, 31 rows)
 	ID : NUMBER(22) => bigint
 	ETABLISSEMENT_ID : NUMBER(22) => bigint
 	DESCRIPTION : VARCHAR2(300) => varchar(300)
@@ -962,11 +941,11 @@
 	DATE_DEB_VALIDITE : DATE(7) => timestamp
 	DATE_FIN_VALIDITE : DATE(7) => timestamp
 	CODE : VARCHAR2(64) => varchar(64)
-[90] TABLE VERSION_FICHIER (owner: SYGAL, 6 rows)
+[89] TABLE VERSION_FICHIER (owner: SYGAL, 6 rows)
 	ID : NUMBER(22) => bigint
 	CODE : VARCHAR2(16) => varchar(16)
 	LIBELLE : VARCHAR2(128) => varchar(128)
-[91] TABLE WF_ETAPE (owner: SYGAL, 22 rows)
+[90] TABLE WF_ETAPE (owner: SYGAL, 22 rows)
 	ID : NUMBER(22) => bigint
 	CODE : VARCHAR2(128) => varchar(128)
 	ORDRE : NUMBER(22) => bigint
@@ -978,27 +957,27 @@
 	DESC_NON_FRANCHIE : VARCHAR2(250) => varchar(250)
 	DESC_SANS_OBJECTIF : VARCHAR2(250) => varchar(250)
 ----------------------------------------------------------
-Total number of rows: 670763
+Total number of rows: 696538
 
 Top 10 of tables sorted by number of rows:
-	[1] TABLE API_LOG has 124246 rows
-	[2] TABLE IMPORT_LOG has 103251 rows
-	[3] TABLE TMP_ACTEUR has 72089 rows
+	[1] TABLE API_LOG has 137285 rows
+	[2] TABLE IMPORT_LOG has 114672 rows
+	[3] TABLE TMP_ACTEUR has 72139 rows
 	[4] TABLE ACTEUR has 64302 rows
-	[5] TABLE TMP_THESE_ANNEE_UNIV has 46200 rows
+	[5] TABLE TMP_THESE_ANNEE_UNIV has 46208 rows
 	[6] TABLE THESE_ANNEE_UNIV has 44322 rows
 	[7] TABLE INDIVIDU has 36507 rows
 	[8] TABLE INDIVIDU_RECH has 36507 rows
-	[9] TABLE TMP_INDIVIDU has 34083 rows
+	[9] TABLE TMP_INDIVIDU has 34098 rows
 	[10] TABLE DOCTORANT has 12754 rows
 Top 10 of largest tables:
-	[1] TABLE VERSION_FICHIER: 0 MB (6 rows)
-	[2] TABLE UNITE_DOMAINE_LINKER: 0 MB (102 rows)
-	[3] TABLE UNITE_RECH: 0 MB (512 rows)
-	[4] TABLE TYPE_RAPPORT: 0 MB (3 rows)
-	[5] TABLE TMP_VARIABLE: 0 MB (28 rows)
-	[6] TABLE WF_ETAPE: 0 MB (22 rows)
-	[7] TABLE VARIABLE: 0 MB (31 rows)
+	[1] TABLE TYPE_RAPPORT: 0 MB (3 rows)
+	[2] TABLE TYPE_VALIDATION: 0 MB (15 rows)
+	[3] TABLE WF_ETAPE: 0 MB (22 rows)
+	[4] TABLE UNITE_RECH: 0 MB (512 rows)
+	[5] TABLE USER_TOKEN: 0 MB (6 rows)
+	[6] TABLE VARIABLE: 0 MB (31 rows)
+	[7] TABLE VERSION_FICHIER: 0 MB (6 rows)
 	[8] TABLE TYPE_STRUCTURE: 0 MB (3 rows)
-	[9] TABLE TYPE_VALIDATION: 0 MB (15 rows)
-	[10] TABLE USER_TOKEN: 0 MB (3 rows)
+	[9] TABLE TMP_VARIABLE: 0 MB (28 rows)
+	[10] TABLE UNITE_DOMAINE_LINKER: 0 MB (102 rows)
