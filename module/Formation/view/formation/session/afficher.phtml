@@ -7,6 +7,7 @@ use Formation\Entity\Db\Session;
 /**
  * @see \Formation\Controller\SessionController::afficherAction()
  * @var Session $session
+ * @var array $presences
  */
 
 $module = $session->getModule();
@@ -32,8 +33,10 @@ $canSupprimerInscription = true;
 /** @var Inscription[] $inscrits */
 $inscrits = $session->getInscriptions()->toArray();
 $listeNonClassee = array_filter($inscrits, function (Inscription $a) { return $a->getListe() === null;});
-$listePrincipale = array_filter($inscrits, function (Inscription $a) { return $a->getListe() === Inscription::LISTE_PRINCIPALE;});
-$listeComplementaire = array_filter($inscrits, function (Inscription $a) { return $a->getListe() === Inscription::LISTE_COMPLEMENTAIRE;});
+$listePrincipale = array_filter($inscrits, function (Inscription $a) { return  $a->getListe() === Inscription::LISTE_PRINCIPALE;});
+$listePrincipaleTrue = array_filter($listePrincipale, function (Inscription $a) { return $a->estNonHistorise();});
+$listeComplementaire = array_filter($inscrits, function (Inscription $a) { return  $a->getListe() === Inscription::LISTE_COMPLEMENTAIRE;});
+$listeComplementaireTrue = array_filter($listeComplementaire, function (Inscription $a) { return $a->estNonHistorise();});
 ?>
 
 <h1 class="page-header">
@@ -72,9 +75,9 @@ $listeComplementaire = array_filter($inscrits, function (Inscription $a) { retur
     <dd> <?php echo $this->type($session); ?> </dd>
 
     <dt> Liste principale </dt>
-    <dd> <?php echo count($listePrincipale); ?>/<?php echo $session->getTailleListePrincipale(); ?></dd>
+    <dd> <?php echo count($listePrincipaleTrue); ?>/<?php echo $session->getTailleListePrincipale(); ?></dd>
     <dt> Liste complémentaire </dt>
-    <dd> <?php echo count($listeComplementaire); ?>/<?php echo $session->getTailleListeComplementaire(); ?></dd>
+    <dd> <?php echo count($listeComplementaireTrue); ?>/<?php echo $session->getTailleListeComplementaire(); ?></dd>
     <dt> Nombre d'inscription </dt>
     <dd> <?php echo count($inscrits); ?></dd>
 </dl>
@@ -215,7 +218,7 @@ $listeComplementaire = array_filter($inscrits, function (Inscription $a) { retur
         <h3>
             Liste principale
             <span class="badge">
-                <?php echo count($listePrincipale); ?>
+                <?php echo count($listePrincipaleTrue); ?>
             </span>
         </h3>
 
@@ -230,7 +233,7 @@ $listeComplementaire = array_filter($inscrits, function (Inscription $a) { retur
         <h3>
             Liste complémentaire
             <span class="badge">
-                <?php echo count($listeComplementaire); ?>
+                <?php echo count($listeComplementaireTrue); ?>
             </span>
         </h3>
 
@@ -241,6 +244,10 @@ $listeComplementaire = array_filter($inscrits, function (Inscription $a) { retur
         </ul>
     </div>
 </div>
+
+<h2> Présence aux scéances</h2>
+
+<?php echo $this->partial('formation/presence/renseigner-presences', ['session' => $session, 'presences' => $presences, 'titre' => false], [], true); ?>
 
 <script>
     $(function() {

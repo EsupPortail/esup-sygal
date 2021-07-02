@@ -5,6 +5,7 @@ namespace Formation\Controller;
 use Application\Controller\AbstractController;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Module;
+use Formation\Entity\Db\Presence;
 use Formation\Entity\Db\Session;
 use Formation\Form\Session\SessionFormAwareTrait;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
@@ -35,8 +36,15 @@ class SessionController extends AbstractController
         /**@var Session $session */
         $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
 
+        $presences = $this->getEntityManager()->getRepository(Presence::class)->findPresencesBySession($session);
+        $dictionnaire = [];
+        foreach ($presences as $presence) {
+            $dictionnaire[$presence->getSeance()->getId()][$presence->getInscription()->getId()] = $presence;
+        }
+
         return new ViewModel([
             'session' => $session,
+            'presences' => $dictionnaire,
         ]);
     }
 

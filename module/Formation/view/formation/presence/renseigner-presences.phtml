@@ -1,0 +1,188 @@
+<?php
+
+/**
+ * @see \Formation\Controller\PresenceController::renseignerPresencesAction()
+ * @var Session $session
+ * @var Presence[][] $presences
+ * @var bool $titre
+ */
+
+use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Seance;
+use Formation\Entity\Db\Session;
+use Formation\Entity\Db\Presence;
+
+/** @var Seance[] $seances */
+$seances = $session->getSeances()->toArray();
+usort($seances, function(Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
+/** @var Inscription[] $inscriptions */
+$inscriptions = $session->getListePrincipale();
+usort($inscriptions, function(Inscription $a, Inscription $b) { return $a->getDoctorant()->getIndividu()->getNomComplet() > $b->getDoctorant()->getIndividu()->getNomComplet();});
+
+$canPresenceModifier = true;
+
+$titre= " Présences pour la formation : " . $session->getModule()->getLibelle() . " #" . $session->getIndex();
+$this->headTitle($titre);
+?>
+
+<?php if ($titre !== false) : ?>
+    <h1 class="page-header">
+        <?php echo $titre; ?>
+    </h1>
+<?php endif; ?>
+
+<div class="main">
+
+    <table class="presence">
+        <tr>
+            <td class="separateur"></td>
+            <?php foreach ($seances as $seance) : ?>
+                <td class="journee">
+                    <?php echo $seance->getDebut()->format('d/m/Y');?> <br/>
+                    <?php echo $seance->getDebut()->format('H:i');?> &rightarrow; <?php echo $seance->getFin()->format('H:i');?> </td>
+            <?php endforeach; ?>
+        </tr>
+        <?php foreach ($inscriptions as $inscription) : ?>
+        <tr>
+            <td class="inscrit">
+                    <div style="float:left;">
+                            <strong><?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?></strong>
+                    </div>
+                    <div style="float:right;" style="padding-right: 1rem;">
+                        <?php if ($canPresenceModifier) : ?>
+                            <span class="all_toggle glyphicon glyphicon-ok" id="on_<?php echo $inscription->getId(); ?>"           data-toggle="tooltip" data-html="true" title="Passer à présent toutes les journées de <span class='highlight agent'><?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?></span>"></span>
+                            <span class="all_toggle glyphicon glyphicon-remove" id="off_<?php echo $inscription->getId(); ?>"    data-toggle="tooltip" data-html="true" title="Passer à absent toutes les journées de <span class='highlight agent'><?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?></span>"></span>
+                        <?php endif; ?>
+                    </div>
+            </td>
+            <?php foreach ($seances as $seance) : ?>
+                <td class="reponse <?php if ($canPresenceModifier) echo "toggle"; ?>" id="<?php echo $seance->getId(); ?>_<?php echo $inscription->getId(); ?>">
+                    <?php if ($presences[$seance->getId()][$inscription->getId()] && $presences[$seance->getId()][$inscription->getId()]->isPresent()) : ?>
+                        <span class="glyphicon glyphicon-ok" style="color:darkgreen;" title="Présent"></span>
+                    <?php else : ?>
+                        <span class="glyphicon glyphicon-remove" style="color:darkred;" title="Non présent"></span>
+                    <?php endif; ?>
+                </td>
+            <?php endforeach; ?>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+</div>
+
+<style>
+    table.presence {
+        /*border : 1px solid black;*/
+    }
+
+    table.presence tr td {
+        border : 1px solid black;
+    }
+
+    table.presence tr td.separateur{
+        border : 0;
+    }
+    table.presence tr td.journee{
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        padding-top:.5rem;
+        padding-bottom:1rem;
+        background: #1b6d85;
+        color:white;
+        width: 5rem;
+    }
+
+    table.presence tr td.inscrit{
+        padding-left:.5rem;
+        padding-right:1rem;
+        background: #1b6d85;
+        color:white;
+        height: 5rem;
+        width: 30rem;
+    }
+
+    table.presence tr td.reponse {
+        vertical-align: center;
+        text-align: center;
+        min-width: 3rem;
+        min-height: 3rem;
+    }
+
+    td.toggle {
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    let seances = [
+        <?php
+            $array = array_map(function(Seance $a) {return $a->getId();}, $seances);
+            echo implode(",", $array);
+        ?>
+    ];
+    $(function() {
+        $("td.toggle").on("click", function () {
+            let id = $(this).attr('id');
+            let split = id.split("_");
+            let inscrit = split[1];
+            let journee = split[0];
+            // console.log('inscrit: ' + inscrit);
+            // console.log('journee: ' + journee);
+
+            <?php /** @see \Formation\Controller\PresenceController::togglePresenceAction() */ ?>
+            let url = "../../presence/toggle-presence/" + journee + "/" + inscrit;
+            $.ajax({
+                type: "POST",
+                url : url,
+                beforeSend:
+                    function () {
+                        document.getElementById(id).innerHTML = "<i class='fas fa-hourglass' style='color:#1b6d85;'></i>";
+                    },
+                success:
+                    function(retour){
+                        // console.log(retour);
+                        // console.log(id);
+                        let texte;
+                        if (retour == 1) texte = "<span class='glyphicon glyphicon-ok' style='color:darkgreen;'></span>";
+                        else texte = "<span class='glyphicon glyphicon-remove' style='color:darkred;'></span>";
+                        document.getElementById(id).innerHTML = texte;
+                    }
+            });
+        });
+
+        $("span.all_toggle").on("click", function () {
+            let id = $(this).attr('id');
+            let split = id.split("_");
+            let inscrit = split[1];
+            let mode = split[0];
+            console.log('mode: ' + mode);
+            console.log('inscrit: ' + inscrit);
+
+            <?php /** @see PresenceController::togglePresencesAction() */ ?>
+            let url = "../../presence/toggle-presences/" + mode + "/" + inscrit;
+            $.ajax({
+                type: "POST",
+                url : url,
+                beforeSend:
+                    function () {
+                        $.each(seances, function(index, journee) {
+                            // console.log(inscrit);
+                            // console.log(journee);
+                            document.getElementById(journee + "_" + inscrit).innerHTML = "<i class='fas fa-hourglass' style='color:#1b6d85;'></i>";
+                        });
+                    },
+                success:
+                    function(retour){
+                        // console.log(retour);
+                        let texte = "";
+                        $.each(seances, function(index, journee) {
+                            // console.log(inscrit);
+                            // console.log(journee);
+                            if (mode == 'on') texte = "<span class='glyphicon glyphicon-ok' style='color:darkgreen;'></span>";
+                            else texte = "<span class='glyphicon glyphicon-remove' style='color:darkred;'></span>";
+                            document.getElementById(journee + "_" + inscrit).innerHTML = texte;
+                        });
+                    }
+            });
+        });
+    });
+</script>
