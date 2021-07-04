@@ -2,9 +2,9 @@
 --
 -- Correction de la vue `src_role` : colonne `these_dep` => booléen
 --
-drop view v_diff_role
+drop view if exists v_diff_role
 ;
-drop view src_role
+drop view if exists src_role
 ;
 create or replace view src_role
             (id, source_code, source_id, libelle, code, role_id, these_dep, structure_id,

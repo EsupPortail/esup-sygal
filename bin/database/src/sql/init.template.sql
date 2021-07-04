@@ -99,15 +99,29 @@ where s.source_code = '{ETAB_CODE}'
 ;
 
 --
--- Accord des privilèges de "gestion des privilèges" au rôle ADMIN_TECH.
--- NB: cela débloque l'accès au menu "Droits d'accès" dans l'appli.
+-- Accord de tous les privilèges au rôle ADMIN_TECH.
 --
+insert into profil_privilege(profil_id, privilege_id)
+select pro.id, pri.id
+from profil pro,
+     privilege pri
+where pro.role_id = 'ADMIN_TECH'
+  and not exists(select * from profil_privilege where profil_id = pro.id and privilege_id = pri.id)
+;
 insert into role_privilege(role_id, privilege_id)
-select r.id, p.id
-from role r, privilege p, categorie_privilege cp
-where r.SOURCE_CODE = 'ADMIN_TECH'
-  and cp.CODE = 'droit'
-  and p.CATEGORIE_ID = cp.id
+select r.id, pri.id
+from role r,
+     privilege pri
+where r.code = 'ADMIN_TECH'
+  and not exists(select * from role_privilege where role_id = r.id and privilege_id = pri.id)
+;
+insert into profil_to_role(profil_id, role_id)
+select pro.id, r.id
+from profil pro,
+     role r
+where pro.role_id = 'ADMIN_TECH'
+  and r.code = 'ADMIN_TECH'
+  and not exists(select * from profil_to_role where profil_id = pro.id and role_id = r.id)
 ;
 
 
