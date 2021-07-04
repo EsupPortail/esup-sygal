@@ -56,7 +56,7 @@ refresh materialized view mv_indicateur_61;
 refresh materialized view mv_indicateur_62;
 refresh materialized view mv_indicateur_81;
 refresh materialized view mv_indicateur_101;
-refresh materialized view mv_indicateur_121;
+--refresh materialized view mv_indicateur_121;
 refresh materialized view mv_indicateur_141;
 
 
