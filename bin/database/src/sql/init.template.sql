@@ -21,22 +21,25 @@ select
     '{ETAB_CODE}',
     '{ETAB_SIGLE}',
     '{ETAB_LIBELLE}',
-    1, 1,
+    1,
+    1,
     1, 1
 ;
 
 --
 -- 2/ ETABLISSEMENT
 --
-insert into etablissement (id, structure_id, domaine, source_code, est_comue, est_membre, source_id, histo_createur_id, histo_modificateur_id)
+insert into etablissement (id, structure_id, domaine, source_code, source_id, est_comue, est_membre,
+                           est_etab_inscription, histo_createur_id, histo_modificateur_id)
 select
     nextval('etablissement_id_seq'),
     s.id,
     '{ETAB_DOMAINE}',
     '{ETAB_CODE}',
+   1,
     false,
     true,
-    1,
+    true,
     1, 1
 from structure s
 where s.source_code = '{ETAB_CODE}'
@@ -51,13 +54,13 @@ insert into source (id, code, libelle, importable, etablissement_id)
 select 2, source_code||'::apogee', 'Apogée '||source_code, true, id
 from etablissement
 where source_code = '{ETAB_CODE}'
-  and {SOURCE_APOGEE} = 1
+  and '{SOURCE_APOGEE}' = '1'
 ;
 insert into source (id, code, libelle, importable, etablissement_id)
 select 3, source_code||'::physalis', 'Physalis '||source_code, true, id
 from etablissement
 where source_code = '{ETAB_CODE}'
-  and {SOURCE_PHYSALIS} = 1
+  and '{SOURCE_PHYSALIS}' = '1'
 ;
 
 --

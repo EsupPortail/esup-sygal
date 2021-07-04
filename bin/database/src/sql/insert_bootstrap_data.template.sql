@@ -57,13 +57,12 @@ select nextval('structure_id_seq'),
        'ETAB_INCONNU', -- source code unique
        'INCONNU' -- code
 ;
-insert into etablissement(id, structure_id, histo_createur_id, histo_modificateur_id, source_id, source_code, est_etab_inscription)
+insert into etablissement(id, structure_id, histo_createur_id, histo_modificateur_id, source_id, source_code)
 select nextval('etablissement_id_seq'),
        currval('structure_id_seq'),
        1, 1,
        1, -- source sygal
-       'ETAB_INCONNU', -- source code unique, idem structure
-       true
+       'ETAB_INCONNU' -- source code unique, idem structure
 ;
 
 -- --
