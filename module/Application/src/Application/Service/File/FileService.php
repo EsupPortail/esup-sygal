@@ -57,7 +57,7 @@ class FileService
     public function computeLogoFileNameForStructure(StructureInterface $structure)
     {
         if ($structure instanceof Etablissement) {
-            $name = $structure->getCode() ?: $structure->generateUniqCode();
+            $name = $structure->getStructure()->getCode() ?: $structure->generateUniqCode();
         } else {
             $name = $structure->getSourceCode() . "-" . $structure->getSigle();
         }

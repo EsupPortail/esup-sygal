@@ -34,7 +34,7 @@ services:
       - 5432:5432
     volumes:
       # Base de dev
-      - ./docker/db/dev/sql/:/sql              # Scripts de création/init
+      - ./tmp/docker/db/dev/sql/:/sql          # Scripts de création/init
       - ./data/db/dev:/var/lib/postgresql/data # Données persistées.
     networks:
       - sygalnet

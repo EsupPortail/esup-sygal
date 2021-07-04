@@ -1,6 +1,11 @@
 Journal des modifications
 =========================
 
+2.2.2
+-----
+- Authentification simplifiée des rapporteurs à l'aide d'un token.
+- Le rapporteur peut annuler son avis de soutenance.
+
 2.2.1
 -----
 - Ajout de la possibilité de modifier une proposition de soutenance pour gestion (sans retrait de validation)

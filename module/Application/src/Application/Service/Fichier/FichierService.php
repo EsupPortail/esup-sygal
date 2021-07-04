@@ -252,7 +252,7 @@ class FichierService extends BaseService
      *                         stocké sur disque
      * @return string
      */
-    public function computeDestinationFilePathForFichier(Fichier $fichier)
+    public function computeDestinationFilePathForFichier(Fichier $fichier): string
     {
         return $this->computeDestinationDirectoryPathForFichier($fichier) . '/' . $fichier->getNom();
     }

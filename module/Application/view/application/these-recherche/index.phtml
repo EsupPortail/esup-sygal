@@ -146,7 +146,7 @@ $acteursFormatterCodirecteurs->asSeparated()
                         echo "<abbr title='";
                         echo $these->getEtablissement()->getLibelle();
                         echo "'>";
-                        echo $these->getEtablissement()->getCode();
+                        echo $these->getEtablissement()->getStructure()->getCode();
                         echo "</abbr>";
                         echo "</td>";
                     }

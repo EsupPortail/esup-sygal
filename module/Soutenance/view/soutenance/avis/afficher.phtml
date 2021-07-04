@@ -4,6 +4,7 @@ use Application\Constants;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\These;
 use Soutenance\Entity\Avis;
+use Soutenance\Entity\Membre;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 
 /**
@@ -11,6 +12,7 @@ use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
  *
  * @var These $these
  * @var Acteur $rapporteur
+ * @var Membre $membre
  * @var Avis $avis
  * @var string $url
  */
@@ -87,12 +89,33 @@ $canAnnuler = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoute
 
 </div>
 
+<?php if ($avis !== null AND $avis->estNonHistorise()): ?>
+    <div class="box panel panel-success">
+        <div class="panel-heading">
+            <h2 class="first"> Et ensuite ? </h2>
+        </div>
+        <div class="panel-body">
+
+            Vous avez maintenant terminé la procédure de pré-soutenance.
+
+        </div>
+    </div>
+<?php endif; ?>
+
+<div class="row">
 <?php if ($canAnnuler) : ?>
     <a
         <?php /** @see \Soutenance\Controller\AvisController::annulerAction() */ ?>
-        href="<?php echo $this->url('soutenance/avis-soutenance/annuler', ['these' => $these->getId(), 'rapporteur' => $rapporteur->getId()], [] , true); ?>"
-        class="btn btn-danger">
+            href="<?php echo $this->url('soutenance/avis-soutenance/annuler', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [] , true); ?>"
+            class="btn btn-danger">
         <span class="glyphicon glyphicon-remove"></span>
         Annuler l'avis de soutance
     </a>
 <?php endif; ?>
+<div class="pull-right">
+    <a href="<?php echo $this->url('soutenance/index-rapporteur', ['these' => $these->getId()], [], true); ?>"
+       class="btn btn-primary action">
+        Retour à l'index rapporteur
+    </a>
+</div>
+</div>
