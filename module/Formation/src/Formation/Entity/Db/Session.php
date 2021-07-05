@@ -2,6 +2,7 @@
 
 namespace Formation\Entity\Db;
 
+use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
@@ -302,5 +303,18 @@ class Session implements HistoriqueAwareInterface,
         $limite = DateTime::createFromFormat('d/m/Y', $debut->format('d/m/y'));
         $limite->sub(new DateInterval('P14D'));
         return $limite;
+    }
+
+    /**
+     * @param Doctorant $doctorant
+     * @return bool
+     */
+    public function estInscrit(Doctorant $doctorant) : bool
+    {
+        /** @var Inscription $inscription */
+        foreach ($this->inscriptions as $inscription) {
+            if ($inscription->estNonHistorise() AND $inscription->getDoctorant() === $doctorant) return true;
+        }
+        return false;
     }
 }

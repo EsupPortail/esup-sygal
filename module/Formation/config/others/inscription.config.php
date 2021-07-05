@@ -75,7 +75,7 @@ return [
                                 'type'  => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/ajouter/:session[/:individu]',
+                                    'route'    => '/ajouter/:session[/:doctorant]',
                                     'defaults' => [
                                         'controller' => InscriptionController::class,
                                         'action'     => 'ajouter',

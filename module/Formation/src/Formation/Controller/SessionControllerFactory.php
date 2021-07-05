@@ -7,6 +7,7 @@ use Application\Service\File\FileService;
 use Doctrine\ORM\EntityManager;
 use Formation\Form\Session\SessionForm;
 use Formation\Service\Inscription\InscriptionService;
+use Formation\Service\Notification\NotificationService;
 use Formation\Service\Session\SessionService;
 use Interop\Container\ContainerInterface;
 use Zend\View\Renderer\PhpRenderer;
@@ -30,6 +31,7 @@ class SessionControllerFactory {
         $etablissementService = $container->get(EtablissementService::class);
         $fileService = $container->get(FileService::class);
         $inscriptionService = $container->get(InscriptionService::class);
+        $notificationService = $container->get(NotificationService::class);
         $sessionService = $container->get(SessionService::class);
 
         /**
@@ -46,6 +48,7 @@ class SessionControllerFactory {
         $controller->setEtablissementService($etablissementService);
         $controller->setFileService($fileService);
         $controller->setInscriptionService($inscriptionService);
+        $controller->setNotificationService($notificationService);
         $controller->setSessionService($sessionService);
         /** Form ******************************************************************************************************/
         $controller->setSessionForm($sessionForm);

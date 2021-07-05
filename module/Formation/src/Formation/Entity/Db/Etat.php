@@ -7,6 +7,7 @@ class Etat {
     const CODE_PREPARATION = 'P';
     const CODE_OUVERTE = 'O';
     const CODE_FERME = 'F';
+    const CODE_CLOTURER = 'C';
     const CODE_ANNULE = 'A';
 
     /** @var string */

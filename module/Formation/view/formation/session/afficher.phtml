@@ -96,6 +96,13 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
                 <span class="glyphicon glyphicon-pencil"></span>
                 Modifier les informations
             </a>
+            <?php /** @see \Formation\Controller\SessionController::changerEtatAction() */?>
+            <a class="btn btn-primary ajax-modal" data-event="modification"
+               href="<?php echo $this->url('formation/session/changer-etat', ['session' => $session->getId()], [], true); ?>"
+            >
+                <span class="glyphicon glyphicon-adjust"></span>
+                Changer l'état
+            </a>
         <?php endif; ?>
     </div>
 </div>

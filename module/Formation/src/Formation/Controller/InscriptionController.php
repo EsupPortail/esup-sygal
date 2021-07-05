@@ -54,9 +54,20 @@ class InscriptionController extends AbstractController
     {
         /** @var Session $session */
         $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
-
         /** @var Doctorant|null $doctorant */
-        $doctorant = null;
+        $doctorantId = $this->params()->fromRoute('doctorant');
+        $doctorant = $this->getEntityManager()->getRepository(Doctorant::class)->find($doctorantId);
+
+        if ($doctorant !== null) {
+            $inscription = new Inscription();
+            $inscription->setSession($session);
+            $inscription->setDoctorant($doctorant);
+            $this->getInscriptionService()->create($inscription);
+            $this->flashMessenger()->addSuccessMessage("Inscription à la formation [] faite.");
+            $retour=$this->params()->fromQuery('retour');
+            if ($retour) return $this->redirect()->toUrl($retour);
+            return $this->redirect()->toRoute('formation/session/afficher', ['session' => $session->getId()], [], true);
+        }
 
         $request = $this->getRequest();
         if ($request->isPost()) {

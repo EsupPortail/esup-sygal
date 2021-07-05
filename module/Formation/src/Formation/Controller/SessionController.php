@@ -5,6 +5,7 @@ namespace Formation\Controller;
 use Application\Controller\AbstractController;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
+use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Module;
 use Formation\Entity\Db\Presence;
@@ -13,6 +14,7 @@ use Formation\Entity\Db\Session;
 use Formation\Form\Session\SessionFormAwareTrait;
 use Formation\Service\Exporter\Emargement\EmargementExporter;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
+use Formation\Service\Notification\NotificationServiceAwareTrait;
 use Formation\Service\Session\SessionServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\View\Model\ViewModel;
@@ -24,6 +26,7 @@ class SessionController extends AbstractController
     use EtablissementServiceAwareTrait;
     use FileServiceAwareTrait;
     use InscriptionServiceAwareTrait;
+    use NotificationServiceAwareTrait;
     use SessionServiceAwareTrait;
 
     use SessionFormAwareTrait;
@@ -168,6 +171,42 @@ class SessionController extends AbstractController
             ]);
         }
         return $vm;
+    }
+
+    public function changerEtatAction()
+    {
+        /**@var Session $session */
+        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
+        /**@var Etat $etat */
+        $etat = $this->getEntityManager()->getRepository(Etat::class)->getRequestedEtat($this);
+
+        if ($etat) {
+            $retour = $this->params()->fromQuery('retour');
+            $session->setEtat($etat);
+            $this->getSessionService()->update($session);
+
+            if ($retour) return $this->redirect()->toUrl($retour);
+            return $this->redirect()->toRoute('formation/session/afficher', ['session' => $session->getId()], [], true);
+        }
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $etat = $this->getEntityManager()->getRepository(Etat::class)->find($data["etat"]);
+
+            if ($etat !== null) {
+                $session->setEtat($etat);
+                $this->getSessionService()->update($session);
+                //todo ceci est un test ...
+                if ($session->getEtat()->getCode() === Etat::CODE_FERME) $this->getNotificationService()->triggerSessionImminente($session);
+            }
+        }
+
+        return new ViewModel([
+           "title" => "Changement de l'état de la session",
+           "etats" => $this->getEntityManager()->getRepository(Etat::class)->findAll(),
+           "session" => $session,
+        ]);
     }
 
     public function classerInscriptionsAction()

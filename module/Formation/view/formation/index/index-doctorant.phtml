@@ -18,8 +18,14 @@ $this->headTitle('Mes formations');
 $encours = [];
 $terminees = [];
 foreach ($inscriptions as $inscription) {
-    if ($inscription->getSession()->estTerminee()) $terminees[] = $inscription;
-    else $encours[] = $inscription;
+    $seances = $inscription->getSession()->getSeances()->toArray();
+    $seances = array_filter($seances, function ($a) { return $a->estNonHistorise(); });
+    $nbSeance = count($seances);
+    if ($nbSeance > 0 AND $inscription->getSession()->estTerminee()) {
+        $terminees[] = $inscription;
+    } else {
+        $encours[] = $inscription;
+    }
 }
 $terminees = array_filter($terminees, function (Inscription $a) { return $a->getListe() === Inscription::LISTE_PRINCIPALE; });
 ?>
@@ -72,10 +78,21 @@ $terminees = array_filter($terminees, function (Inscription $a) { return $a->get
                 Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
             </td>
             <td>
-                <a href="">
-                <span class="glyphicon glyphicon-plus"
-                      title="M'inscrire" data-toggle="tooltip" data-html="true"
-                ></span></a>
+                <?php $inscrit = $session->estInscrit($doctorant); ?>
+                <?php if ($session->getEtat()->getCode() === Etat::CODE_OUVERTE AND !$inscrit) : ?>
+                    <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
+                    <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId(), 'doctorant' => $doctorant->getId()], ['query' => ['retour' => $this->url('formation/index-doctorant', [], [], true)]], true); ?>"
+                    >
+                    <span class="glyphicon glyphicon-plus"
+                          title="M'inscrire" data-toggle="tooltip" data-html="true"
+                    ></span></a>
+                <?php else: ?>
+                    <?php if ($inscrit) : ?>
+                        <span class="glyphicon glyphicon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
+                    <?php else : ?>
+                        <span class="glyphicon glyphicon-info-sign" title="Les inscriptions ne sont pas ouvertes"></span>
+                    <?php endif; ?>
+                <?php endif; ?>
             </td>
         </tr>
     <?php endforeach; ?>
@@ -120,7 +137,10 @@ $terminees = array_filter($terminees, function (Inscription $a) { return $a->get
                 <?php endif; ?>
             </td>
             <td>
-                <a href="">
+                <?php /** @see \Formation\Controller\InscriptionController::supprimerAction() */ ?>
+                <a href="<?php echo $this->url('formation/inscription/supprimer', ['inscription' => $inscription->getId()], [], true); ?>"
+                   class="ajax-modal" data-event="modification"
+                >
                 <span class="glyphicon glyphicon-remove"
                       title="Annuler mon inscription" data-toggle="tooltip" data-html="true"
                 ></span></a>
@@ -195,4 +215,11 @@ $terminees = array_filter($terminees, function (Inscription $a) { return $a->get
     </tbody>
 </table>
 
-
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

@@ -30,6 +30,7 @@ return [
                         'restaurer',
                         'supprimer',
 
+                        'changer-etat',
                         'classer-inscriptions',
                         'declasser-inscriptions',
                         'generer-emargements',
@@ -139,6 +140,17 @@ return [
                                     'defaults' => [
                                         'controller' => SessionController::class,
                                         'action'     => 'supprimer',
+                                    ],
+                                ],
+                            ],
+                            'changer-etat' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/changer-etat/:session[/:etat]',
+                                    'defaults' => [
+                                        'controller' => SessionController::class,
+                                        'action'     => 'changer-etat',
                                     ],
                                 ],
                             ],

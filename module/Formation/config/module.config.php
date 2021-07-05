@@ -6,6 +6,8 @@ use Application\Navigation\ApplicationNavigationFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Formation\Service\Notification\NotificationService;
+use Formation\Service\Notification\NotificationServiceFactory;
 use Formation\View\Helper\EtatViewHelper;
 use Formation\View\Helper\FormateursViewHelper;
 use Formation\View\Helper\ModaliteViewHelper;
@@ -68,6 +70,7 @@ return array(
 
     'service_manager' => [
         'factories' => [
+            NotificationService::class => NotificationServiceFactory::class,
         ],
     ],
 
