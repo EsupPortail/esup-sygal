@@ -3,23 +3,41 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Application\Service\File\FileServiceAwareTrait;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Module;
 use Formation\Entity\Db\Presence;
+use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
 use Formation\Form\Session\SessionFormAwareTrait;
+use Formation\Service\Exporter\Emargement\EmargementExporter;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
 use Formation\Service\Session\SessionServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\View\Model\ViewModel;
+use Zend\View\Renderer\PhpRenderer;
 
 class SessionController extends AbstractController
 {
     use EntityManagerAwareTrait;
+    use EtablissementServiceAwareTrait;
+    use FileServiceAwareTrait;
     use InscriptionServiceAwareTrait;
     use SessionServiceAwareTrait;
 
     use SessionFormAwareTrait;
+
+    /** @var PhpRenderer */
+    private $renderer;
+
+    /**
+     * @param PhpRenderer $renderer
+     */
+    public function setRenderer($renderer)
+    {
+        $this->renderer = $renderer;
+    }
 
     public function indexAction()
     {
@@ -206,5 +224,28 @@ class SessionController extends AbstractController
 
         if ($retour) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/session/afficher', ['session' => $session->getId()], [], true);
+    }
+
+    public function genererEmargementsAction()
+    {
+        /**@var Session $session */
+        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
+        $seances = $session->getSeances()->toArray();
+        $seances = array_filter($seances, function ($a) { return $a->estNonHistorise();});
+        usort($seances, function (Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
+
+        $logos = [];
+        $logos['site'] = $this->fileService->computeLogoFilePathForStructure($session->getSite());
+        if ($comue = $this->etablissementService->fetchEtablissementComue()) {
+            $logos['comue'] = $this->fileService->computeLogoFilePathForStructure($comue);
+        }
+
+        //exporter
+        $export = new EmargementExporter($this->renderer, 'A4');
+        $export->setVars([
+            'seance' => $seances[0],
+            'logos' => $logos,
+        ]);
+        $export->exportAll($seances, 'SYGAL_emargement_' . $session->getId() . ".pdf");
     }
 }

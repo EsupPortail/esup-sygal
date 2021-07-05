@@ -28,6 +28,7 @@ return [
                         'historiser',
                         'restaurer',
                         'supprimer',
+                        'generer-emargement',
                     ],
                     'privileges' => [
                         IndexPrivileges::INDEX_AFFICHER,
@@ -123,6 +124,17 @@ return [
                                     'defaults' => [
                                         'controller' => SeanceController::class,
                                         'action'     => 'supprimer',
+                                    ],
+                                ],
+                            ],
+                            'generer-emargement' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/generer-emargement/:seance',
+                                    'defaults' => [
+                                        'controller' => SeanceController::class,
+                                        'action'     => 'generer-emargement',
                                     ],
                                 ],
                             ],

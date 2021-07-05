@@ -29,6 +29,7 @@ $canSupprimer = true;
 $canModifierSeance = true;
 $canHistoriserSeance = true;
 $canSupprimerSeance = true;
+$canEmargementSeance = true;
 
 $canModifierInscription = true;
 $canHistoriserInscription = true;
@@ -139,6 +140,12 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
             <span class="glyphicon glyphicon-plus"></span>
             Ajouter une séance
         </a>
+        <?php /** @see \Formation\Controller\SessionController::genererEmargementsAction() */ ?>
+        <a href="<?php echo $this->url('formation/session/generer-emargements', ['session' => $session->getId()], [] , true); ?>" target="_blank"
+           class="btn btn-primary">
+            <span class="glyphicon glyphicon-list"></span>
+            Générer les émargements
+        </a>
     </div>
 </div>
 
@@ -195,6 +202,14 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
                        title="Suppression de la séance" data-toggle="tooltip" data-html="true"
                     >
                         <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                <?php endif; ?>
+                <?php if ($canEmargementSeance) : ?>
+                    <?php /** @see \Formation\Controller\SeanceController::genererEmargementAction() */ ?>
+                    <a href="<?php echo $this->url('formation/seance/generer-emargement', ['seance' => $seance->getId()], [], true); ?>" target="_blank"
+                       title="Générer l'émargement de la séance" data-toggle="tooltip" data-html="true"
+                    >
+                        <span class="glyphicon glyphicon-list"></span>
                     </a>
                 <?php endif; ?>
             </td>

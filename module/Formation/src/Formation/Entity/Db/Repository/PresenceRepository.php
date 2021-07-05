@@ -32,10 +32,9 @@ class PresenceRepository extends EntityRepository
 
     /**
      * @param string $alias
-     * @param string|null $indexBy
      * @return QueryBuilder
      */
-    public function createQB(string $alias, ?string $indexBy = null) : QueryBuilder
+    public function createQB(string $alias) : QueryBuilder
     {
         $qb = $this->createQueryBuilder($alias)
             ->leftJoin($alias.".inscription", "inscription")->addSelect("inscription")
@@ -75,6 +74,20 @@ class PresenceRepository extends EntityRepository
         $qb = $this->createQB('presence')
             ->andWhere('seance.session = :session')
             ->setParameter('session', $session)
+        ;
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
+     * @param Inscription $inscription
+     * @return Presence[]
+     */
+    public function findPresencesByInscription(Inscription $inscription) : array
+    {
+        $qb = $this->createQB('presence')
+            ->andWhere('presence.inscription = :inscription')
+            ->setParameter('inscription', $inscription)
         ;
         $result = $qb->getQuery()->getResult();
         return $result;

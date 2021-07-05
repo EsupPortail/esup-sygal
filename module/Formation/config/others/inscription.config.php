@@ -26,6 +26,8 @@ return [
                         'supprimer',
                         'passer-liste-principale',
                         'passer-liste-complementaire',
+                        'generer-convocation',
+                        'generer-attestation',
                     ],
                     'privileges' => [
                         IndexPrivileges::INDEX_AFFICHER,
@@ -132,6 +134,29 @@ return [
                                     'defaults' => [
                                         'controller' => InscriptionController::class,
                                         'action'     => 'passer-liste-complementaire',
+                                    ],
+                                ],
+                            ],
+
+                            'generer-convocation' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/generer-convocation/:inscription',
+                                    'defaults' => [
+                                        'controller' => InscriptionController::class,
+                                        'action'     => 'generer-convocation',
+                                    ],
+                                ],
+                            ],
+                            'generer-attestation' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/generer-attestation/:inscription',
+                                    'defaults' => [
+                                        'controller' => InscriptionController::class,
+                                        'action'     => 'generer-attestation',
                                     ],
                                 ],
                             ],

@@ -32,6 +32,7 @@ return [
 
                         'classer-inscriptions',
                         'declasser-inscriptions',
+                        'generer-emargements',
                     ],
                     'privileges' => [
                         IndexPrivileges::INDEX_AFFICHER,
@@ -160,6 +161,17 @@ return [
                                     'defaults' => [
                                         'controller' => SessionController::class,
                                         'action'     => 'declasser-inscriptions',
+                                    ],
+                                ],
+                            ],
+                            'generer-emargements' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/generer-emargements/:session',
+                                    'defaults' => [
+                                        'controller' => SessionController::class,
+                                        'action'     => 'generer-emargements',
                                     ],
                                 ],
                             ],

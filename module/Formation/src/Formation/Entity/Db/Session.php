@@ -4,7 +4,6 @@ namespace Formation\Entity\Db;
 
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
-use Application\Entity\Db\Structure;
 use Application\Entity\Db\Utilisateur;
 use DateInterval;
 use DateTime;
@@ -17,7 +16,6 @@ use Formation\Entity\Db\Traits\HasSiteTrait;
 use Formation\Entity\Db\Traits\HasTypeTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use Zend\Validator\Date;
 
 class Session implements HistoriqueAwareInterface,
     HasSiteInterface, HasModaliteInterface, HasTypeInterface {
@@ -282,6 +280,18 @@ class Session implements HistoriqueAwareInterface,
             }
         }
         return $debut;
+    }
+
+    public function getDateFin() : ?DateTime
+    {
+        $fin = null;
+        /** @var Seance $seance */
+        foreach ($this->getSeances() as $seance) {
+            if ($seance->estNonHistorise()) {
+                if ($fin === null or $seance->getFin() > $fin) $fin = $seance->getFin();
+            }
+        }
+        return $fin;
     }
 
     public function getLimiteInscription() : ?DateTime

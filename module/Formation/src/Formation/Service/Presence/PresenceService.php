@@ -4,6 +4,7 @@ namespace Formation\Service\Presence;
 
 use DateTime;
 use Doctrine\ORM\ORMException;
+use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Presence;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -89,4 +90,24 @@ class PresenceService {
     }
 
     /** FACADE ********************************************************************************************************/
+
+    /**
+     * @param Inscription $inscription
+     * @return float
+     */
+    public function calculerDureePresence(Inscription $inscription) : float
+    {
+        $duree = 0;
+
+        /** @var Presence[] $presences */
+        $presences = $this->getEntityManager()->getRepository(Presence::class)->findPresencesByInscription($inscription);
+        foreach ($presences as $presence) {
+            if ($presence->isPresent()) {
+                $duree += $presence->getSeance()->getDuree();
+            }
+        }
+        return $duree;
+    }
+
+
 }

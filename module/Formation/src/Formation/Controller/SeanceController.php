@@ -3,21 +3,36 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use DateTime;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Application\Service\File\FileServiceAwareTrait;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
 use Formation\Form\Seance\SeanceFormAwareTrait;
+use Formation\Service\Exporter\Emargement\EmargementExporter;
 use Formation\Service\Seance\SeanceServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Http\Request;
 use Zend\View\Model\ViewModel;
+use Zend\View\Renderer\PhpRenderer;
 
 class SeanceController extends AbstractController
 {
     use EntityManagerAwareTrait;
+    use EtablissementServiceAwareTrait;
+    use FileServiceAwareTrait;
     use SeanceServiceAwareTrait;
     use SeanceFormAwareTrait;
+
+    /** @var PhpRenderer */
+    private $renderer;
+
+    /**
+     * @param PhpRenderer $renderer
+     */
+    public function setRenderer($renderer)
+    {
+        $this->renderer = $renderer;
+    }
 
     public function indexAction()
     {
@@ -139,5 +154,26 @@ class SeanceController extends AbstractController
             ]);
         }
         return $vm;
+    }
+
+    public function genererEmargementAction()
+    {
+        /** @var Seance|null $seance */
+        $seance = $this->getEntityManager()->getRepository(Seance::class)->getRequestedSeance($this);
+        $session = $seance->getSession();
+
+        $logos = [];
+        $logos['site'] = $this->fileService->computeLogoFilePathForStructure($session->getSite());
+        if ($comue = $this->etablissementService->fetchEtablissementComue()) {
+            $logos['comue'] = $this->fileService->computeLogoFilePathForStructure($comue);
+        }
+
+        //exporter
+        $export = new EmargementExporter($this->renderer, 'A4');
+        $export->setVars([
+            'seance' => $seance,
+            'logos' => $logos,
+        ]);
+        $export->export('SYGAL_emargement_' . $session->getId() . "_" . $seance->getId() . ".pdf");
     }
 }

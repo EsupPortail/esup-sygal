@@ -6,19 +6,39 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Service\Doctorant\DoctorantServiceAwareTrait;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
+use Formation\Service\Exporter\Attestation\AttestationExporter;
+use Formation\Service\Exporter\Convocation\ConvocationExporter;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
+use Formation\Service\Presence\PresenceServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\View\Model\ViewModel;
+use Zend\View\Renderer\PhpRenderer;
 
 class InscriptionController extends AbstractController
 {
     use EntityManagerAwareTrait;
-    use IndividuServiceAwareTrait;
     use DoctorantServiceAwareTrait;
+    use EtablissementServiceAwareTrait;
+    use FileServiceAwareTrait;
+    use IndividuServiceAwareTrait;
     use InscriptionServiceAwareTrait;
+    use PresenceServiceAwareTrait;
+
+    /** @var PhpRenderer */
+    private $renderer;
+
+    /**
+     * @param PhpRenderer $renderer
+     */
+    public function setRenderer($renderer)
+    {
+        $this->renderer = $renderer;
+    }
 
     public function indexAction()
     {
@@ -147,5 +167,50 @@ class InscriptionController extends AbstractController
 
         if ($retour) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/inscription',[],[], true);
+    }
+
+    public function genererConvocationAction()
+    {
+        /** @var Inscription|null $inscription */
+        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
+        $session = $inscription->getSession();
+
+        $logos = [];
+        $logos['site'] = $this->fileService->computeLogoFilePathForStructure($session->getSite());
+        if ($comue = $this->etablissementService->fetchEtablissementComue()) {
+            $logos['comue'] = $this->fileService->computeLogoFilePathForStructure($comue);
+        }
+
+        //exporter
+        $export = new ConvocationExporter($this->renderer, 'A4');
+        $export->setVars([
+            'inscription' => $inscription,
+            'logos' => $logos,
+        ]);
+        $export->export('SYGAL_convocation_' . $session->getId() . "_" . $inscription->getId() . ".pdf");
+    }
+
+    public function genererAttestationAction()
+    {
+        /** @var Inscription|null $inscription */
+        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
+        $session = $inscription->getSession();
+
+        $presences = $this->getPresenceService()->calculerDureePresence($inscription);
+
+        $logos = [];
+        $logos['site'] = $this->fileService->computeLogoFilePathForStructure($session->getSite());
+        if ($comue = $this->etablissementService->fetchEtablissementComue()) {
+            $logos['comue'] = $this->fileService->computeLogoFilePathForStructure($comue);
+        }
+
+        //exporter
+        $export = new AttestationExporter($this->renderer, 'A4');
+        $export->setVars([
+            'inscription' => $inscription,
+            'logos' => $logos,
+            'presences' => $presences,
+        ]);
+        $export->export('SYGAL_attestation_' . $session->getId() . "_" . $inscription->getId() . ".pdf");
     }
 }
