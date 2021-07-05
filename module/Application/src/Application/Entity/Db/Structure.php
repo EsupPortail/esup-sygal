@@ -195,7 +195,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
      *
      * @return string
      */
-    public function getCode()
+    public function getCode(): string
     {
 //        if ($this->code !== null) return $this->code;
 //        if ($this->sourceCode !== null) {
@@ -211,9 +211,9 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getSigle()
+    public function getSigle(): ?string
     {
         return $this->sigle;
     }
