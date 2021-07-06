@@ -15,6 +15,8 @@ services:
       - "8003:443"
     volumes:
      - ../../:/app
+     - ./config/autoload/utln.local.php:/app/config/autoload/dev.local.php
+     - ./config/autoload/utln.secret.local.php:/app/config/autoload/dev.secret.local.php
      - /tmp:/tmp
     working_dir: /app
     networks:
@@ -23,21 +25,21 @@ services:
       - sygal-db-utln
 
   sygal-db-utln:
-#    image: registre.unicaen.fr:5000/sygal-db-image
+    #    image: registre.unicaen.fr:5000/sygal-db-image
     image: sygal-db-image
     container_name: sygal-db-utln-container
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
-      SYGAL_DB: sygal_dev
-      SYGAL_USER: ad_sygal_dev
+      SYGAL_DB: sygal_test
+      SYGAL_USER: ad_sygal_test
       SYGAL_PASSWORD: azerty
     ports:
       - 5442:5432
     volumes:
-      - ../../etabs/utln/tmp/build/sql/:/sql/              # Répertoire des scripts de création de la bdd
-      - ../../etabs/utln/data/db:/var/lib/postgresql/data  # Répertoire pour persister la bdd
+      - ./docker/db/sql/:/sql/              # Répertoire des scripts d'initialisation de la bdd from scratch
+      - ./data/db:/var/lib/postgresql/data  # Répertoire pour persister la bdd
     networks:
       - sygalnet
 
