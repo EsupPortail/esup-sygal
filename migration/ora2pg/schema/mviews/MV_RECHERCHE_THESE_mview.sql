@@ -6,7 +6,7 @@ SET client_encoding TO 'UTF8';
 
 \set ON_ERROR_STOP ON
 
-CREATE MATERIALIZED VIEW mv_recherche_these AS
+CREATE VIEW mv_recherche_these_mview AS
 with acteurs as (
     select a.these_id, i.nom_usuel, INDIVIDU_ID
     FROM individu i
@@ -38,5 +38,7 @@ from these t
          left join structure urs on ur.STRUCTURE_ID = urs.id
          left join acteurs a on a.these_id = t.id
          left join individu ia on ia.id = a.INDIVIDU_ID;
+
+--SELECT create_materialized_view('mv_recherche_these','mv_recherche_these_mview', change with the name of the colum to used for the index);
 
 
