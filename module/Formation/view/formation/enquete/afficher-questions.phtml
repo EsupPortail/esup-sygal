@@ -1,0 +1,30 @@
+<?php
+
+use Formation\Entity\Db\EnqueteQuestion;
+
+/**
+ * @see \Formation\Controller\EnqueteController::afficherQuestionsAction()
+ * @var EnqueteQuestion[] $questions
+ */
+
+$this->headTitle("Liste des questions de l'enquête");
+
+?>
+
+<h1 class="page-header">
+    Liste des questions de l'enquête
+</h1>
+
+
+<ol>
+<?php foreach ($questions as $question) : ?>
+    <li>
+        <?php echo $question->getLibelle(); ?>
+        <?php if ($question->getDescription()) : ?>
+            <span class="glyphicon glyphicon-info-sign"
+                  title="<?php echo $question->getDescription(); ?>" data-toggle="tooltip" data-html="true"
+                  ></span>
+        <?php endif; ?>
+    </li>
+<?php endforeach; ?>
+</ol>

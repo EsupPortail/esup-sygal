@@ -200,7 +200,8 @@ $terminees = array_filter($terminees, function (Inscription $a) { return $a->get
                 Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
             </td>
             <td>
-                <a href="">
+                <?php /** @see \Formation\Controller\EnqueteController::repondreQuestionsAction() */?>
+                <a href="<?php echo $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true); ?>">
                 <span class="glyphicon glyphicon-edit"
                       title="Compléter l'enquête" data-toggle="tooltip" data-html="true"
                 ></span></a>
