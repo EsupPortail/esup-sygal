@@ -306,6 +306,7 @@ class TheseSearchService extends SearchService
         foreach ($words as $word) {
             // le caractère '*' est autorisé pour signifier "n'importe quel caractère répété 0 ou N fois"
             $word = str_replace('*', '.*', $word);
+            $word = str_replace("'", "''", $word);
             if (count($criteria) === count(TheseTextSearchFilter::CRITERIA)) {
                 // si tous les critères possibles sont spécifiés, on peut simplifier la regexp :
                 // regexp : \{[^}]*<terme>.*\}
@@ -314,16 +315,17 @@ class TheseSearchService extends SearchService
                 // regexp : (<critere>|<critere>)\{[^}]*<terme>.*\}
                 $regexp = '(' . implode('|', $criteria) . ')' . "\{[^}]*" . $word . ".*\}";
             }
-            $orc[] = "    REGEXP_LIKE(haystack, q'[" . $regexp . "]', 'i')"; // la syntaxe q'[]' dispense de doubler les '
+            $orc[] = "    haystack ~* '" . $regexp . "'"; // la syntaxe q'[]' dispense de doubler les '
         }
         $orc = implode(' OR ' . PHP_EOL, $orc);
 
         $sql = <<<EOS
-SELECT distinct CODE_THESE, CODE_DOCTORANT, CODE_ECOLE_DOCT, to_char(HAYSTACK) HAYSTACK 
+SELECT distinct CODE_THESE, CODE_DOCTORANT, CODE_ECOLE_DOCT, HAYSTACK 
 FROM MV_RECHERCHE_THESE MV 
-WHERE rownum <= $limit AND (
+WHERE (
 $orc
 )
+limit $limit 
 EOS;
 
         try {
@@ -334,9 +336,9 @@ EOS;
 
         $theses = [];
         while ($r = $stmt->fetch()) {
-            $theses[$r['CODE_THESE']] = [
-                'code'           => $r['CODE_THESE'],
-                'code-doctorant' => $r['CODE_DOCTORANT'],
+            $theses[$r['code_these']] = [
+                'code'           => $r['code_these'],
+                'code-doctorant' => $r['code_doctorant'],
             ];
         }
 
