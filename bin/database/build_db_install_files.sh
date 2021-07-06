@@ -162,7 +162,7 @@ echo "> $OUTPUT_FILE"
 # data
 #
 OUTPUT_FILE=$OUTPUT_DIR/sql/04_$NAME_INSERT_DATA.sql
-PATTERN='categorie_privilege|domaine_scientifique|import_observ|information_langue|nature_fichier|privilege|profil|profil_privilege|soutenance_configuration|soutenance_etat|soutenance_qualite|type_rapport|type_structure|type_validation|version_fichier|wf_etape'
+PATTERN='categorie_privilege|domaine_scientifique|import_observ|information_langue|nature_fichier|notif|privilege|profil|profil_privilege|soutenance_configuration|soutenance_etat|soutenance_qualite|type_rapport|type_structure|type_validation|version_fichier|wf_etape'
 pg_dump --data-only --column-inserts --table="($PATTERN)" >$OUTPUT_FILE
 replacePgDatabaseAndUserInScript $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
