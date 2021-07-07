@@ -56,8 +56,42 @@ $body$
 
 
 --
--- Création à la main des VM mal traduites par oré2pg.
+-- Création à la main des VM mal traduites par ora2pg.
 --
+
+CREATE MATERIALIZED VIEW mv_recherche_these AS
+with acteurs as (
+    select a.these_id, i.nom_usuel, INDIVIDU_ID
+    FROM individu i
+             join acteur a on i.id = a.individu_id
+             join these t on t.id = a.these_id
+             join role r on a.role_id = r.id and r.CODE in ('D', 'K') -- (co)directeur de thèse
+)
+select
+            LOCALTIMESTAMP as date_creation,
+            t.source_code code_these,
+            d.source_code code_doctorant,
+            ed.source_code code_ecole_doct,
+            trim(both str_reduce(
+                        'code-ed{' || eds.code || '} ' ||
+                        'code-ur{' || urs.code || '} ' ||
+                        'titre{' || t.TITRE || '} ' ||
+                        'doctorant-numero{' || substr(d.SOURCE_CODE, position('::' in d.SOURCE_CODE)+2) || '} ' ||
+                        'doctorant-nom{' || id.NOM_PATRONYMIQUE || ' ' || id.NOM_USUEL || '} ' ||
+                        'doctorant-prenom{' || id.PRENOM1 || '} ' ||
+                        'directeur-nom{' || a.nom_usuel || '} '
+                )) as haystack
+from these t
+         join doctorant d on d.id = t.doctorant_id
+         join individu id on id.id = d.INDIVIDU_ID
+         join these th on th.source_code = t.source_code
+         left join ecole_doct ed on t.ecole_doct_id = ed.id
+         left join structure eds on ed.STRUCTURE_ID = eds.id
+         left join UNITE_RECH ur on t.UNITE_RECH_ID = ur.id
+         left join structure urs on ur.STRUCTURE_ID = urs.id
+         left join acteurs a on a.these_id = t.id
+         left join individu ia on ia.id = a.INDIVIDU_ID;
+
 
 CREATE MATERIALIZED VIEW mv_indicateur_141 AS
 select distinct *

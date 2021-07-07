@@ -28,7 +28,7 @@ function processFile() {
 }
 
 for f in ${SCHEMA_DIR}/functions/*_function.sql ; do processFile $f ; done
-for f in ${SCHEMA_DIR}/mviews/*_mview.sql ;       do processFile $f ; done
+#for f in ${SCHEMA_DIR}/mviews/*_mview.sql ;       do processFile $f ; done
 for f in ${SCHEMA_DIR}/tables/*_table.sql ;       do processFile $f ; done
 for f in ${SCHEMA_DIR}/triggers/*_trigger.sql ;   do processFile $f ; done
 for f in ${SCHEMA_DIR}/views/*_view.sql ;         do processFile $f ; done

@@ -199,7 +199,7 @@
 	DESCRIPTION : VARCHAR2(200) => varchar(200)
 	ENABLED : NUMBER(1) => boolean
 	FILTER : CLOB(4000) => text
-[19] TABLE IMPORT_OBSERV_RESULT (owner: SYGAL, 62 rows)
+[19] TABLE IMPORT_OBSERV_RESULT (owner: SYGAL, 66 rows)
 	ID : NUMBER(22) => bigint
 	IMPORT_OBSERV_ID : NUMBER(22) => bigint
 	DATE_CREATION : DATE(7) => timestamp
@@ -504,7 +504,7 @@
 	HISTO_DESTRUCTION : DATE(7) => timestamp
 	HISTO_DESTRUCTEUR_ID : NUMBER(22) => bigint
 	CLEF : VARCHAR2(64) => varchar(64)
-[54] TABLE SOUTENANCE_PROPOSITION (owner: SYGAL, 342 rows)
+[54] TABLE SOUTENANCE_PROPOSITION (owner: SYGAL, 361 rows)
 	ID : NUMBER(22) => bigint
 	THESE_ID : NUMBER(22) => bigint
 	DATEPREV : DATE(7) => timestamp
@@ -671,7 +671,7 @@
 	HISTO_MODIFICATION : DATE(7) => timestamp
 	HISTO_DESTRUCTEUR_ID : NUMBER(22) => bigint
 	HISTO_DESTRUCTION : DATE(7) => timestamp
-[65] TABLE TMP_ACTEUR (owner: SYGAL, 72174 rows)
+[65] TABLE TMP_ACTEUR (owner: SYGAL, 72192 rows)
 	INSERT_DATE : DATE(7) => timestamp
 	ID : VARCHAR2(64) => varchar(64)
 	ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
@@ -705,7 +705,7 @@
 	SOURCE_ID : VARCHAR2(64) => varchar(64)
 	SOURCE_CODE : VARCHAR2(64) => varchar(64)
 	SOURCE_INSERT_DATE : DATE(7) => timestamp
-[68] TABLE TMP_ETABLISSEMENT (owner: SYGAL, 2460 rows)
+[68] TABLE TMP_ETABLISSEMENT (owner: SYGAL, 2459 rows)
 	INSERT_DATE : DATE(7) => timestamp
 	ID : VARCHAR2(64) => varchar(64)
 	ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
@@ -729,7 +729,7 @@
 	SOURCE_INSERT_DATE : DATE(7) => timestamp
 	CODE_TYPE_FINANCEMENT : VARCHAR2(8) => varchar(8)
 	LIBELLE_TYPE_FINANCEMENT : VARCHAR2(100) => varchar(100)
-[70] TABLE TMP_INDIVIDU (owner: SYGAL, 34110 rows)
+[70] TABLE TMP_INDIVIDU (owner: SYGAL, 34111 rows)
 	INSERT_DATE : DATE(7) => timestamp
 	ID : VARCHAR2(64) => varchar(64)
 	ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
@@ -766,7 +766,7 @@
 	LIB_ROJ : VARCHAR2(200) => varchar(200)
 	LIC_ROJ : VARCHAR2(50) => varchar(50)
 	SOURCE_INSERT_DATE : DATE(7) => timestamp
-[73] TABLE TMP_STRUCTURE (owner: SYGAL, 2915 rows)
+[73] TABLE TMP_STRUCTURE (owner: SYGAL, 2914 rows)
 	INSERT_DATE : DATE(7) => timestamp
 	ID : VARCHAR2(64) => varchar(64)
 	ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
@@ -807,7 +807,7 @@
 	DAT_TRANSFERT_DEP : DATE(7) => timestamp
 	SOURCE_INSERT_DATE : DATE(7) => timestamp
 	CORRECTION_EFFECTUEE : VARCHAR2(30) => varchar(30)
-[75] TABLE TMP_THESE_ANNEE_UNIV (owner: SYGAL, 46210 rows)
+[75] TABLE TMP_THESE_ANNEE_UNIV (owner: SYGAL, 46212 rows)
 	INSERT_DATE : DATE(7) => timestamp
 	ID : VARCHAR2(64) => varchar(64)
 	ETABLISSEMENT_ID : VARCHAR2(64) => varchar(64)
@@ -880,7 +880,7 @@
 	HISTO_DESTRUCTEUR_ID : NUMBER(22) => bigint
 	STRUCTURE_ID : NUMBER(22) => bigint
 	RNSR_ID : VARCHAR2(128) => varchar(128)
-[84] TABLE USER_TOKEN (owner: SYGAL, 9 rows)
+[84] TABLE USER_TOKEN (owner: SYGAL, 10 rows)
 	ID : NUMBER(22) => bigint
 	USER_ID : NUMBER(22) => bigint
 	TOKEN : VARCHAR2(256) => varchar(256)
@@ -957,27 +957,27 @@
 	DESC_NON_FRANCHIE : VARCHAR2(250) => varchar(250)
 	DESC_SANS_OBJECTIF : VARCHAR2(250) => varchar(250)
 ----------------------------------------------------------
-Total number of rows: 708447
+Total number of rows: 708490
 
 Top 10 of tables sorted by number of rows:
 	[1] TABLE API_LOG has 137285 rows
 	[2] TABLE IMPORT_LOG has 126227 rows
-	[3] TABLE TMP_ACTEUR has 72174 rows
+	[3] TABLE TMP_ACTEUR has 72192 rows
 	[4] TABLE ACTEUR has 64302 rows
-	[5] TABLE TMP_THESE_ANNEE_UNIV has 46210 rows
+	[5] TABLE TMP_THESE_ANNEE_UNIV has 46212 rows
 	[6] TABLE THESE_ANNEE_UNIV has 44322 rows
-	[7] TABLE INDIVIDU has 36507 rows
-	[8] TABLE INDIVIDU_RECH has 36507 rows
-	[9] TABLE TMP_INDIVIDU has 34110 rows
+	[7] TABLE INDIVIDU_RECH has 36507 rows
+	[8] TABLE INDIVIDU has 36507 rows
+	[9] TABLE TMP_INDIVIDU has 34111 rows
 	[10] TABLE DOCTORANT has 12754 rows
 Top 10 of largest tables:
-	[1] TABLE UNITE_DOMAINE_LINKER: 0 MB (102 rows)
-	[2] TABLE USER_TOKEN: 0 MB (9 rows)
-	[3] TABLE TMP_VARIABLE: 0 MB (28 rows)
-	[4] TABLE VARIABLE: 0 MB (31 rows)
-	[5] TABLE VERSION_FICHIER: 0 MB (6 rows)
-	[6] TABLE UNITE_RECH: 0 MB (512 rows)
-	[7] TABLE TYPE_RAPPORT: 0 MB (3 rows)
-	[8] TABLE TYPE_STRUCTURE: 0 MB (3 rows)
+	[1] TABLE VERSION_FICHIER: 0 MB (6 rows)
+	[2] TABLE TYPE_STRUCTURE: 0 MB (3 rows)
+	[3] TABLE USER_TOKEN: 0 MB (10 rows)
+	[4] TABLE TYPE_VALIDATION: 0 MB (15 rows)
+	[5] TABLE TMP_VARIABLE: 0 MB (28 rows)
+	[6] TABLE TYPE_RAPPORT: 0 MB (3 rows)
+	[7] TABLE UNITE_RECH: 0 MB (512 rows)
+	[8] TABLE VARIABLE: 0 MB (31 rows)
 	[9] TABLE WF_ETAPE: 0 MB (22 rows)
-	[10] TABLE TYPE_VALIDATION: 0 MB (15 rows)
+	[10] TABLE UNITE_DOMAINE_LINKER: 0 MB (102 rows)

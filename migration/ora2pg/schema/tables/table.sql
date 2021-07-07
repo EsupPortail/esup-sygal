@@ -81,11 +81,11 @@ CREATE TABLE diffusion (
 	version_corrigee boolean NOT NULL DEFAULT 'f',
 	creation_auto boolean NOT NULL DEFAULT 'f'
 ) ;
-COMMENT ON COLUMN diffusion.droit_auteur_ok IS E'Je garantis que tous les documents de la version mise en ligne sont libres de droits ou que j''ai acquis les droits afférents pour la reproduction et la représentation sur tous supports';
 COMMENT ON COLUMN diffusion.autoris_mel IS E'J''autorise la mise en ligne de la version de diffusion de la thèse sur Internet';
-COMMENT ON COLUMN diffusion.certif_charte_diff IS E'En cochant cette case, je certifie avoir pris connaissance de la charte de diffusion des thèses en vigueur à la date de signature de la convention de mise en ligne';
 COMMENT ON COLUMN diffusion.autoris_embargo_duree IS E'Durée de l''embargo éventuel';
+COMMENT ON COLUMN diffusion.certif_charte_diff IS E'En cochant cette case, je certifie avoir pris connaissance de la charte de diffusion des thèses en vigueur à la date de signature de la convention de mise en ligne';
 COMMENT ON COLUMN diffusion.confident IS E'La thèse est-elle confidentielle ?';
+COMMENT ON COLUMN diffusion.droit_auteur_ok IS E'Je garantis que tous les documents de la version mise en ligne sont libres de droits ou que j''ai acquis les droits afférents pour la reproduction et la représentation sur tous supports';
 
 CREATE TABLE doctorant (
 	id bigint NOT NULL,
@@ -511,8 +511,8 @@ CREATE TABLE rdv_bu (
 	histo_destructeur_id bigint
 ) ;
 COMMENT ON COLUMN rdv_bu.convention_mel_signee IS E'Convention de mise en ligne signée ?';
-COMMENT ON COLUMN rdv_bu.exempl_papier_fourni IS E'Exemplaire papier remis ?';
 COMMENT ON COLUMN rdv_bu.version_archivable_fournie IS E'Témoin indiquant si une version archivable de la thèse existe';
+COMMENT ON COLUMN rdv_bu.exempl_papier_fourni IS E'Exemplaire papier remis ?';
 
 CREATE TABLE role (
 	id bigint NOT NULL,
@@ -1083,14 +1083,14 @@ CREATE TABLE user_token (
 	sent_on timestamp
 ) ;
 COMMENT ON TABLE user_token IS E'Jetons d''authentification utilisateur';
+COMMENT ON COLUMN user_token.last_used_on IS E'Date de dernière utilisation du jeton';
+COMMENT ON COLUMN user_token.expired_on IS E'Date d''expiration du jeton';
+COMMENT ON COLUMN user_token.created_on IS E'Date de création du jeton';
 COMMENT ON COLUMN user_token.actions_count IS E'Nombre d''utilisation du jeton';
 COMMENT ON COLUMN user_token.actions_max_count IS E'Nombre maximum d''utilisations du jeton autorisée (0 = pas de limite)';
-COMMENT ON COLUMN user_token.token IS E'Le jeton !';
-COMMENT ON COLUMN user_token.last_used_on IS E'Date de dernière utilisation du jeton';
-COMMENT ON COLUMN user_token.created_on IS E'Date de création du jeton';
 COMMENT ON COLUMN user_token.action IS E'Spécification de l''action précise autorisée, le cas échéant';
-COMMENT ON COLUMN user_token.expired_on IS E'Date d''expiration du jeton';
 COMMENT ON COLUMN user_token.user_id IS E'Identifiant unique de l''utilisateur';
+COMMENT ON COLUMN user_token.token IS E'Le jeton !';
 
 CREATE TABLE utilisateur (
 	id bigint NOT NULL,
