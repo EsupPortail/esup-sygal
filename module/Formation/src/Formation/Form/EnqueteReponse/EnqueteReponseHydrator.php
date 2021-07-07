@@ -2,6 +2,7 @@
 
 namespace Formation\Form\EnqueteReponse;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Formation\Entity\Db\EnqueteQuestion;
 use Formation\Entity\Db\EnqueteReponse;
 use Formation\Entity\Db\Inscription;
@@ -12,17 +13,15 @@ class EnqueteReponseHydrator implements HydratorInterface {
     use EntityManagerAwareTrait;
 
     /**
-     * @param Inscription $object
+     * @param ArrayCollection $object
      * @return array|void
      */
     public function extract($object)
     {
-        /** @var EnqueteReponse[] $reponses */
-        $reponses = $this->getEntityManager()->getRepository(EnqueteReponse::class)->findEnqueteReponseByInscription($object);
-        $reponses =array_filter($reponses, function (EnqueteReponse $a) { return $a->getQuestion()->estNonHistorise() AND $a->estNonHistorise(); });
-
         $data = [];
-        foreach ($reponses as $reponse) {
+        foreach ($object as $item) {
+            [$question, $reponse] = $item;
+
             $data["select_".$reponse->getQuestion()->getId()] = $reponse->getNiveau();
             $data["textarea_".$reponse->getQuestion()->getId()] = $reponse->getDescription();
         }
@@ -37,17 +36,13 @@ class EnqueteReponseHydrator implements HydratorInterface {
      */
     public function hydrate(array $data, $object)
     {
-        /** @var EnqueteQuestion[] $question */
-        $questions = $this->getEntityManager()->getRepository(EnqueteQuestion::class)->findAll();
-        $array = [];
-        foreach($questions as $question) {
-            $array[$question->getId()] = $question;
-        }
+        foreach($object as $item) {
+            [$question, $reponse] = $item;
 
-        foreach ($data as $name => $value) {
-            [$type, $id] = explode("_", $name);
-            if ($type === "select") $array[$id]->setNiveau($value);
-            if ($type === "textarea") $array[$id]->setDescription($value);
+            $select_id = "select_" . $question->getId();
+            $reponse->setNiveau($data[$select_id]);
+            $textarea_id = "textarea_" . $question->getId();
+            $reponse->setDescription($data[$textarea_id]);
         }
 
         return $object;

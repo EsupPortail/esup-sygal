@@ -45,8 +45,8 @@ class EnqueteReponseRepository extends EntityRepository
      */
     public function findEnqueteReponseByInscription(Inscription $inscription) : array
     {
-        $qb = $this->createQB('enquete-reponse')
-            ->andWhere('enquete-reponse.inscription  = :inscription')
+        $qb = $this->createQB('enquetereponse')
+            ->andWhere('enquetereponse.inscription  = :inscription')
             ->setParameter('inscription', $inscription)
         ;
         $result = $qb->getQuery()->getResult();

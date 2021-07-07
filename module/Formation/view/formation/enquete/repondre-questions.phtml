@@ -19,6 +19,7 @@ use Formation\Form\EnqueteReponse\EnqueteReponseForm;
     <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?>
 </h1>
 
+<?php echo $this->form()->openTag($form); ?>
 <?php foreach ($questions as $question) : ?>
     <h2>
         <?php echo $question->getLibelle(); ?>
@@ -35,3 +36,4 @@ use Formation\Form\EnqueteReponse\EnqueteReponseForm;
 <?php endforeach; ?>
 
 <?php echo $this->formControlGroup($form->get("bouton")); ?>
+<?php echo $this->form()->closeTag(); ?>
