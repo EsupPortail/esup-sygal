@@ -3219,16 +3219,16 @@
         },
         {
             "name": "symfony/string",
-            "version": "v5.3.2",
+            "version": "v5.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/string.git",
-                "reference": "0732e97e41c0a590f77e231afc16a327375d50b0"
+                "reference": "bd53358e3eccec6a670b5f33ab680d8dbe1d4ae1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/string/zipball/0732e97e41c0a590f77e231afc16a327375d50b0",
-                "reference": "0732e97e41c0a590f77e231afc16a327375d50b0",
+                "url": "https://api.github.com/repos/symfony/string/zipball/bd53358e3eccec6a670b5f33ab680d8dbe1d4ae1",
+                "reference": "bd53358e3eccec6a670b5f33ab680d8dbe1d4ae1",
                 "shasum": ""
             },
             "require": {
@@ -3295,20 +3295,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-06-06T09:51:56+00:00"
+            "time": "2021-06-27T11:44:38+00:00"
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v5.3.2",
+            "version": "v5.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "905a22c68b292ffb6f20d7636c36b220d1fba5ae"
+                "reference": "46aa709affb9ad3355bd7a810f9662d71025c384"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/905a22c68b292ffb6f20d7636c36b220d1fba5ae",
-                "reference": "905a22c68b292ffb6f20d7636c36b220d1fba5ae",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/46aa709affb9ad3355bd7a810f9662d71025c384",
+                "reference": "46aa709affb9ad3355bd7a810f9662d71025c384",
                 "shasum": ""
             },
             "require": {
@@ -3380,7 +3380,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-06-06T09:51:56+00:00"
+            "time": "2021-06-24T08:13:00+00:00"
         },
         {
             "name": "true/punycode",
@@ -3430,11 +3430,11 @@
         },
         {
             "name": "unicaen/app",
-            "version": "3.1.18",
+            "version": "3.1.19",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/app.git",
-                "reference": "4676702d03c1b748913a5207436c024cd81a244e"
+                "reference": "cfd68a5c18308b0c54b8a449a71f9b11fbf1bccf"
             },
             "require": {
                 "beberlei/assert": "^2.9",
@@ -3490,15 +3490,15 @@
                 ]
             },
             "description": "Module de base des applications unicaen",
-            "time": "2021-05-04T07:57:25+00:00"
+            "time": "2021-06-25T09:52:59+00:00"
         },
         {
             "name": "unicaen/auth",
-            "version": "3.2.3",
+            "version": "3.2.4",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/auth.git",
-                "reference": "4fa0c9dc8a76829ea7f95efbcf55aa5495bf0948"
+                "reference": "66a0e5409388a2379bd16065199056eedd184281"
             },
             "require": {
                 "jasig/phpcas": "^1.3",
@@ -3520,7 +3520,7 @@
                 ]
             },
             "description": "Module d'authentification pour les applications Unicaen",
-            "time": "2021-06-24T09:16:46+00:00"
+            "time": "2021-06-28T09:05:28+00:00"
         },
         {
             "name": "unicaen/auth-token",
@@ -3528,10 +3528,11 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/auth-token.git",
-                "reference": "81d5e165bef0a62762255a35be757c4bfe7b6176"
+                "reference": "c1b0e17f0de4f5988bc397097c3b574d06c645a5"
             },
             "require": {
                 "ramsey/uuid": "^3.7",
+                "unicaen/app": "^3.0",
                 "unicaen/auth": ">= 3.2.1"
             },
             "require-dev": {
@@ -3547,7 +3548,7 @@
                 ]
             },
             "description": "Authentification à l'aide d'un token",
-            "time": "2021-06-18T09:34:01+00:00"
+            "time": "2021-06-30T09:34:04+00:00"
         },
         {
             "name": "unicaen/bjy-authorize",
@@ -3638,11 +3639,11 @@
         },
         {
             "name": "unicaen/db-import",
-            "version": "3.1.3",
+            "version": "3.1.4",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/db-import.git",
-                "reference": "8db89f7020515d0011ffd008f4f02a855bf06933"
+                "reference": "7418575fc1b2a04012f2db3f8c410c117514822d"
             },
             "require": {
                 "beberlei/assert": "^2.7",
@@ -3672,7 +3673,7 @@
                 }
             },
             "description": "Module d'import entre bases de données",
-            "time": "2021-06-02T08:43:15+00:00"
+            "time": "2021-07-02T13:11:06+00:00"
         },
         {
             "name": "unicaen/faq",
@@ -7822,7 +7823,6 @@
             ],
             "description": "Provides a list of PHP built-in functions that operate on resources",
             "homepage": "https://www.github.com/sebastianbergmann/resource-operations",
-            "abandoned": true,
             "time": "2015-07-28T20:34:47+00:00"
         },
         {
@@ -7870,16 +7870,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v4.4.25",
+            "version": "v4.4.26",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "81cdac5536925c1c4b7b50aabc9ff6330b9eb5fc"
+                "reference": "e096ef4b4c4c9a2f72c2ac660f54352cd31c60f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/81cdac5536925c1c4b7b50aabc9ff6330b9eb5fc",
-                "reference": "81cdac5536925c1c4b7b50aabc9ff6330b9eb5fc",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/e096ef4b4c4c9a2f72c2ac660f54352cd31c60f8",
+                "reference": "e096ef4b4c4c9a2f72c2ac660f54352cd31c60f8",
                 "shasum": ""
             },
             "require": {
@@ -7934,7 +7934,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-05-26T17:39:37+00:00"
+            "time": "2021-06-23T19:06:53+00:00"
         },
         {
             "name": "unicaen/test",

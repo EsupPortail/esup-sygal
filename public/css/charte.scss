@@ -78,7 +78,32 @@ th {
 .btn, input, select {
   font-size: $fontSize;
   padding: 3px 6px;
-  height: $fontSize * 2 + 2;
+  min-height: $fontSize * 1.75;
+  vertical-align: middle;
+}
+.btn.btn-lg {
+  font-size: $fontSize * 1.10;
+  line-height: 110%;
+  padding: 8px;
+  .glyphicon {
+    margin-right: 5px;
+  }
+}
+.btn.btn-sm {
+  font-size: $fontSize * 0.90;
+  line-height: 100%;
+  padding: 6px;
+  .glyphicon {
+    margin-right: 3px;
+  }
+}
+.btn.btn-xs {
+  font-size: $fontSize * 0.80;
+  line-height: 100%;
+  padding: 4px;
+  .glyphicon {
+    margin-right: 2px;
+  }
 }
 
 body.development .navbar-inverse,

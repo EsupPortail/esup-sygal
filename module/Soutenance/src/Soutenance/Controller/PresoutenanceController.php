@@ -16,6 +16,7 @@ use Application\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
+use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceFormAwareTrait;
@@ -521,12 +522,28 @@ class PresoutenanceController extends AbstractController
         $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
         $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
 
+        $avisArray = [];
+        /** @var Avis $avis */
+        foreach ($proposition->getAvis() as $avis) {
+            if ($avis->estNonHistorise()) {
+                $denomination = $avis->getMembre()->getDenomination();
+                $lien = $this->url()->fromRoute('fichier/these/telecharger', [
+                    'these'      => $these->getId(),
+                    'fichier'    => $avis->getFichier()->getUuid(),
+                    'fichierNom' => $avis->getFichier()->getNom(),
+                ], [
+                    'force_canonical'=>true
+                ],true);
+                $avisArray[$denomination] = $lien;
+            }
+        }
+
         //doctorant
         $doctorant = $these->getDoctorant();
         $email = $doctorant->getIndividu()->getEmail();
         /** @see PresoutenanceController::convocationDoctorantAction() */
         $url = $this->url()->fromRoute('soutenance/presoutenance/convocation-doctorant', ['proposition' => $proposition->getId()], ['force_canonical' => true], true);
-        $this->getNotifierSoutenanceService()->triggerEnvoiConvocationDoctorant($doctorant, $proposition, $dateValidation, $email, $url);
+        $this->getNotifierSoutenanceService()->triggerEnvoiConvocationDoctorant($doctorant, $proposition, $dateValidation, $email, $url, $avisArray);
 
         //membres
         /** @var Membre $membre */
@@ -535,7 +552,7 @@ class PresoutenanceController extends AbstractController
                 $email = ($membre->getIndividu() and $membre->getIndividu()->getEmail()) ? $membre->getIndividu()->getEmail() : $membre->getEmail();
                 /** @see PresoutenanceController::convocationMembreAction() */
                 $url = $this->url()->fromRoute('soutenance/presoutenance/convocation-membre', ['proposition' => $proposition->getId(), 'membre' => $membre->getId()], ['force_canonical' => true], true);
-                $this->getNotifierSoutenanceService()->triggerEnvoiConvocationMembre($membre, $proposition, $dateValidation, $email, $url);
+                $this->getNotifierSoutenanceService()->triggerEnvoiConvocationMembre($membre, $proposition, $dateValidation, $email, $url, $avisArray);
             }
         }
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);

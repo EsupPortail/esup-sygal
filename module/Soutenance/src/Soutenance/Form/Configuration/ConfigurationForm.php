@@ -120,7 +120,7 @@ class ConfigurationForm extends Form {
                 'type' => Text::class,
                 'name' => Parametre::CODE_FORMULAIRE_DELEGUATION,
                 'options' => [
-                    'label' => "Formulaire de déléguation de signature : ",
+                    'label' => "Formulaire de délégation de signature : ",
                 ],
                 'attributes' => [
                     'id' => Parametre::CODE_FORMULAIRE_DELEGUATION,

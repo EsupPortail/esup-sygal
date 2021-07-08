@@ -90,9 +90,9 @@ class Etablissement
     /**
      * Retourne le code de cet établissement, ex: 0761904GE' pour l'Université de Rouen.
      *
-     * @return string
+     * @return string|null
      */
-    public function getCode(): string
+    public function getCode(): ?string
     {
         return $this->code;
     }

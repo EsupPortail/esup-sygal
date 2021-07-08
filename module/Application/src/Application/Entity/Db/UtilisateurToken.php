@@ -7,7 +7,7 @@ use UnicaenAuthToken\Entity\Db\AbstractUserToken;
 /**
  * Class UtilisateurToken
  *
- * @method Utilisateur getUser()UnicaenAuthToken/Controller/TokenController.php 77
+ * @method Utilisateur getUser()
  * @method self setUser(Utilisateur $user)
  */
 class UtilisateurToken extends AbstractUserToken
@@ -18,4 +18,14 @@ class UtilisateurToken extends AbstractUserToken
      * @var \Application\Entity\Db\Utilisateur
      */
     protected $user;
+
+    /**
+     * Proxy pour {@see getUser()}.
+     *
+     * @return \Application\Entity\Db\Utilisateur|null
+     */
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->getUser();
+    }
 }
