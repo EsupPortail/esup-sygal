@@ -2,6 +2,7 @@
 
 namespace Soutenance\Service\Notifier;
 
+use Application\Controller\Plugin\UrlFichierThese;
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
@@ -703,8 +704,9 @@ class NotifierSoutenanceService extends NotifierService
      * @param DateTime $date
      * @param string $email
      * @param string $url
+     * @param array $avisArray
      */
-    public function triggerEnvoiConvocationDoctorant(Doctorant $doctorant, Proposition $proposition, DateTime $date, $email, $url)
+    public function triggerEnvoiConvocationDoctorant(Doctorant $doctorant, Proposition $proposition, DateTime $date, string $email, string $url, array $avisArray)
     {
         if ($email === null) throw new LogicException("Aucun mail n'est fourni pour l'envoi de la convocation.", 0);
 
@@ -723,6 +725,9 @@ class NotifierSoutenanceService extends NotifierService
                 'date' => $date,
                 'url' => $url,
                 'informations' => $pdcData,
+
+                'avisArray' => $avisArray,
+
             ]);
         $this->trigger($notif);
     }
@@ -733,8 +738,9 @@ class NotifierSoutenanceService extends NotifierService
      * @param DateTime $date
      * @param string $email
      * @param string $url
+     * @param array $avisArray
      */
-    public function triggerEnvoiConvocationMembre(Membre $membre, Proposition $proposition, DateTime $date, $email, $url)
+    public function triggerEnvoiConvocationMembre(Membre $membre, Proposition $proposition, DateTime $date, string $email, string $url, array $avisArray)
     {
         if ($email === null) throw new LogicException("Aucun mail n'est fourni pour l'envoi de la convocation.", 0);
 
@@ -754,6 +760,8 @@ class NotifierSoutenanceService extends NotifierService
                 'date' => $date,
                 'membre' => $membre,
                 'url' => $url,
+
+                'avisArray' => $avisArray,
             ]);
         $this->trigger($notif);
     }

@@ -63,108 +63,112 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
     </thead>
     <tbody>
         <?php foreach ($propositions as $proposition) : ?>
-            <?php
-                /** @var These $these **/
-                $these = $proposition->getThese();
-                $unite = $these->getUniteRecherche();
-            ?>
-            <tr>
-                <td>
-                    <?php if ($canVoirThese) : ?>
-                        <a  <?php /** @see \Application\Controller\TheseController::detailIdentiteAction() */ ?>
-                            href="<?php echo $this->url('these/identite', ['these' => $proposition->getThese()->getId()], [] ,true); ?>">
-                    <?php endif; ?>
-                        <?php echo $proposition->getThese()->getTitre(); ?>
-                    <?php if ($canVoirThese) : ?>
-                        </a>
-                    <?php endif; ?>
-                </td>
-                <td> <?php echo $proposition->getThese()->getDoctorant()->getIndividu(); ?> </td>
-                <td>
-                    <?php foreach ($proposition->getThese()->getEncadrements() as $encadrement) : ?>
-                        <?php if ($encadrement->getRole()->getCode() !== Role::CODE_DIRECTEUR_THESE) echo "<i>"; ?>
-                        <?php echo $encadrement->getIndividu() ; ?>
-                        <?php if ($encadrement->getRole()->getCode() !== Role::CODE_DIRECTEUR_THESE) echo "</i>"; ?>
-                        <br/>
-                    <?php endforeach; ?>
-                </td>
-                <td>
-                    <?php if ($these->getEtablissement()) : ?>
-                        <span class="structure etablissement"
-                              title="Établissement : <?php echo $these->getEtablissement()->getLibelle(); ?> (<?php echo $these->getEtablissement()->getCode(); ?>)"
-                        >
-                            <?php echo $these->getEtablissement()->getLibelle(); ?>
-                        </span>
-                    <?php else : ?>
-                        <strong style="color:darkred;">
-                            Établissement  : Aucun
-                        </strong>
-                    <?php endif; ?>
-                    <br/>
-
-                    <?php if ($these->getEcoleDoctorale()) : ?>
-                        <span class="structure ecole-doctorale"
-                              title="École doctorale : <?php echo $these->getEcoleDoctorale()->getLibelle(); ?> <?php echo "(".$these->getEcoleDoctorale()->getSigle() .")"; ?>"
-                        >
-                            <?php echo $these->getEcoleDoctorale()->getLibelle(); ?>
-                        </span>
-                    <?php else : ?>
-                        <strong style="color:darkred;">
-                            École doctorale  : Aucune
-                        </strong>
-                    <?php endif; ?>
-                    <br/>
-
-                    <?php if ($these->getUniteRecherche()) : ?>
-                        <span class="structure unite-recherche"
-                              title="Unité de recherche : <?php echo $these->getUniteRecherche()->getLibelle(); ?> <?php echo "(".$these->getUniteRecherche()->getSigle() .")"; ?>"
-                        >
-                            <?php echo $these->getUniteRecherche()->getLibelle(); ?>
-                        </span>
-                    <?php else : ?>
-                        <!-- Gestion des unités de recherche -->
-                        <strong style="color:darkred;">
-                            Unité de recherche :
-                            <?php if ($these->getLibelleUniteRecherche() === null) : ?>
-                                Aucune
-                            <?php else : ?>
-                                <?php echo $these->getLibelleUniteRecherche(); ?>
+                <?php
+                    /** @var These $these **/
+                    $these = $proposition->getThese();
+                    $unite = $these->getUniteRecherche();
+                ?>
+                <tr>
+                    <td>
+                        <?php if ($canVoirThese) : ?>
+                            <a  <?php /** @see \Application\Controller\TheseController::detailIdentiteAction() */ ?>
+                                href="<?php echo $this->url('these/identite', ['these' => $proposition->getThese()->getId()], [] ,true); ?>">
+                        <?php endif; ?>
+                            <?php echo $proposition->getThese()->getTitre(); ?>
+                        <?php if ($canVoirThese) : ?>
+                            </a>
+                            <?php if ($proposition->getDate()) : ?>
+                                <br>
+                                Date de soutenance prévue : <?php echo $proposition->getDate()->format('d/m/Y à H:i'); ?>
                             <?php endif; ?>
-                        </strong>
-                    <?php endif; ?>
-                </td>
-                <td>
-                    <span class="badge <?php echo $proposition->getEtat()->getCode(); ?>">
-                        <?php echo $proposition->getEtat()->getLibelle(); ?>
-                    </span>
-                </td>
-                <td>
-                    <a
-                        <?php /** @see \Soutenance\Controller\PropositionController::propositionAction() */ ?>
-                        href="<?php echo $this->url('soutenance/proposition', ['these' => $proposition->getThese()->getId()], [], true); ?>"
-                       title="Visualiser la proposition de soutenance"
-                    >
-                        Proposition
-                    </a>
-                    <br/>
-                    <a
-                        <?php /** @see \Soutenance\Controller\PresoutenanceController::presoutenanceAction() */ ?>
-                        href="<?php echo $this->url('soutenance/presoutenance', ['these' => $proposition->getThese()->getId()], [], true); ?>"
-                       title="Visualiser la préparation de la soutenance"
-                    >
-                        Présoutenance
-                    </a>
-                    <br/>
-                    <?php if ($canSuppression) : ?>
-                    <a
-                        <?php /** @see \Soutenance\Controller\PropositionController::suppressionAction() */ ?>
-                        href="<?php echo $this->url('soutenance/proposition/suppression', ['these' => $proposition->getThese()->getId()], [], true); ?>"
-                       title="">
-                        Suppression
-                    </a>
-                    <?php endif; ?>
-                </td>
-            </tr>
+                        <?php endif; ?>
+                    </td>
+                    <td> <?php echo $proposition->getThese()->getDoctorant()->getIndividu(); ?> </td>
+                    <td>
+                        <?php foreach ($proposition->getThese()->getEncadrements() as $encadrement) : ?>
+                            <?php if ($encadrement->getRole()->getCode() !== Role::CODE_DIRECTEUR_THESE) echo "<i>"; ?>
+                            <?php echo $encadrement->getIndividu() ; ?>
+                            <?php if ($encadrement->getRole()->getCode() !== Role::CODE_DIRECTEUR_THESE) echo "</i>"; ?>
+                            <br/>
+                        <?php endforeach; ?>
+                    </td>
+                    <td>
+                        <?php if ($these->getEtablissement()) : ?>
+                            <span class="structure etablissement"
+                                  title="Établissement : <?php echo $these->getEtablissement()->getLibelle(); ?> (<?php echo $these->getEtablissement()->getCode(); ?>)"
+                            >
+                                <?php echo $these->getEtablissement()->getLibelle(); ?>
+                            </span>
+                        <?php else : ?>
+                            <strong style="color:darkred;">
+                                Établissement  : Aucun
+                            </strong>
+                        <?php endif; ?>
+                        <br/>
+
+                        <?php if ($these->getEcoleDoctorale()) : ?>
+                            <span class="structure ecole-doctorale"
+                                  title="École doctorale : <?php echo $these->getEcoleDoctorale()->getLibelle(); ?> <?php echo "(".$these->getEcoleDoctorale()->getSigle() .")"; ?>"
+                            >
+                                <?php echo $these->getEcoleDoctorale()->getLibelle(); ?>
+                            </span>
+                        <?php else : ?>
+                            <strong style="color:darkred;">
+                                École doctorale  : Aucune
+                            </strong>
+                        <?php endif; ?>
+                        <br/>
+
+                        <?php if ($these->getUniteRecherche()) : ?>
+                            <span class="structure unite-recherche"
+                                  title="Unité de recherche : <?php echo $these->getUniteRecherche()->getLibelle(); ?> <?php echo "(".$these->getUniteRecherche()->getSigle() .")"; ?>"
+                            >
+                                <?php echo $these->getUniteRecherche()->getLibelle(); ?>
+                            </span>
+                        <?php else : ?>
+                            <!-- Gestion des unités de recherche -->
+                            <strong style="color:darkred;">
+                                Unité de recherche :
+                                <?php if ($these->getLibelleUniteRecherche() === null) : ?>
+                                    Aucune
+                                <?php else : ?>
+                                    <?php echo $these->getLibelleUniteRecherche(); ?>
+                                <?php endif; ?>
+                            </strong>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <span class="badge <?php echo $proposition->getEtat()->getCode(); ?>">
+                            <?php echo $proposition->getEtat()->getLibelle(); ?>
+                        </span>
+                    </td>
+                    <td>
+                        <a
+                            <?php /** @see \Soutenance\Controller\PropositionController::propositionAction() */ ?>
+                            href="<?php echo $this->url('soutenance/proposition', ['these' => $proposition->getThese()->getId()], [], true); ?>"
+                           title="Visualiser la proposition de soutenance"
+                        >
+                            Proposition
+                        </a>
+                        <br/>
+                        <a
+                            <?php /** @see \Soutenance\Controller\PresoutenanceController::presoutenanceAction() */ ?>
+                            href="<?php echo $this->url('soutenance/presoutenance', ['these' => $proposition->getThese()->getId()], [], true); ?>"
+                           title="Visualiser la préparation de la soutenance"
+                        >
+                            Présoutenance
+                        </a>
+                        <br/>
+                        <?php if ($canSuppression) : ?>
+                        <a
+                            <?php /** @see \Soutenance\Controller\PropositionController::suppressionAction() */ ?>
+                            href="<?php echo $this->url('soutenance/proposition/suppression', ['these' => $proposition->getThese()->getId()], [], true); ?>"
+                           title="">
+                            Suppression
+                        </a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
         <?php endforeach; ?>
     </tbody>
 </table>

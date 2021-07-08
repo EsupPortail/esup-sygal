@@ -756,12 +756,6 @@ form {
   border-color: $warningColor;
 }
 
-.btn.btn-xs {
-  span.glyphicon {
-    margin-right: 2px;
-  }
-}
-
 .box {
   .btn.btn-primary {
     margin-bottom: 10px;
@@ -1080,4 +1074,18 @@ span.sas-highlight {
 .valide {
   font-weight: 600;
   color: $successColor;
+}
+
+span.badge {
+  font-weight: bold;
+}
+
+span.badge.EN_COURS {
+    background: $infoColor;
+  }
+span.badge.VALIDEE {
+    background: $successColor;
+  }
+span.badge.REJETEE {
+    background: $dangerColor;
 }

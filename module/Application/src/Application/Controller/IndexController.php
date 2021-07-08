@@ -156,13 +156,13 @@ EOS
         /**
          * Profil "Ecole doctorale".
          */
-        elseif ($role = $this->userContextService->getSelectedRoleDirecteurEcoleDoctorale()) {
+        elseif ($role = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
             $vm->setTemplate('application/index/partial/ed');
         }
         /**
          * Profil "Unité de recherche".
          */
-        elseif ($role = $this->userContextService->getSelectedRoleDirecteurUniteRecherche()) {
+        elseif ($role = $this->userContextService->getSelectedRoleUniteRecherche()) {
             $vm->setTemplate('application/index/partial/ur');
         }
         /**

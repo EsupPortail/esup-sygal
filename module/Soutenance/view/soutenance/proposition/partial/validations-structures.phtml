@@ -40,8 +40,8 @@ $these = $proposition->getThese();
                             </strong>
                             <br/>
                         <?php endif; ?>
-                        <?php if ($validations[Role::CODE_UR]) : ?>
-                            <?php $validation = current($validations[Role::CODE_UR]); ?>
+                        <?php if ($validations[Role::CODE_RESP_UR]) : ?>
+                            <?php $validation = current($validations[Role::CODE_RESP_UR]); ?>
                             <span class="badge badge-success"> Validée</span>
                             Le <?php echo $validation->getHistoModification()->format('d/m/Y à H:i'); ?>
                             par <?php echo $validation->getIndividu(); ?>
@@ -51,8 +51,8 @@ $these = $proposition->getThese();
                     </li>
                     <li>
                         <?php echo $these->getEcoleDoctorale()->getLibelle(); ?>  (École doctorale) <br/>
-                        <?php if ($validations[Role::CODE_ED]) : ?>
-                            <?php $validation = current($validations[Role::CODE_ED]); ?>
+                        <?php if ($validations[Role::CODE_RESP_ED]) : ?>
+                            <?php $validation = current($validations[Role::CODE_RESP_ED]); ?>
                             <span class="badge badge-success"> Validée</span>
                             Le <?php echo $validation->getHistoModification()->format('d/m/Y à H:i'); ?>
                             par <?php echo $validation->getIndividu(); ?>

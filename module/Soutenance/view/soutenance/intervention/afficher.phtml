@@ -90,7 +90,7 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
 
                 <?php /** LISTE DES JUSTIFICATIFS ******************************************************************/ ?>
                 <div>
-                    Liste des déléguations designatures :
+                    Liste des délégations de signatures :
                     <ul>
                     <?php foreach ($proposition->getMembres() as $membre) : ?>
                         <?php $justificatif = getJustificatif($justificatifs, NatureFichier::CODE_DELEGUATION_SIGNATURE, $membre); ?>
@@ -122,10 +122,10 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
 
                 <?php /** LIEN VERS LE FORMULAIRE DOC **************************************************************/ ?>
                 <div class="alert alert-info">
-                    Vous pouvez télécharger les formulaires de déléguation grâce au lien suivant :
+                    Vous pouvez télécharger les formulaires de délégation grâce au lien suivant :
                     <strong><u>
                     <a href="<?php echo $FORMULAIRE_DELEGUATION; ?>">
-                        formulaire de demande de déléguation
+                        formulaire de demande de délégation
                     </a>
                     </u></strong>.
                 </div>
@@ -148,7 +148,7 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                 </div>
 
                 <div class="alert alert-warning">
-                    <span class="glyphicon glyphicon-warning-sign"></span> Si le Président du jury est en distanciel tous les membres du jury devront remplir une déléguation de signature.
+                    <span class="glyphicon glyphicon-warning-sign"></span> Si le Président du jury est en distanciel tous les membres du jury devront remplir une délégation de signature.
                 </div>
             <?php endif; ?>
         </div>

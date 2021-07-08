@@ -393,11 +393,12 @@ class PropositionController extends AbstractController
         $individu = $this->userContextService->getIdentityDb()->getIndividu();
 
         switch ($role->getCode()) {
-            case Role::CODE_UR :
+            case Role::CODE_RESP_UR :
                 $this->getValidationService()->validateValidationUR($these, $individu);
                 $this->getNotifierSoutenanceService()->triggerNotificationEcoleDoctoraleProposition($these);
                 break;
-            case Role::CODE_ED :
+            case Role::CODE_RESP_ED :
+            case Role::CODE_GEST_ED :
                 $this->getValidationService()->validateValidationED($these, $individu);
                 $this->getNotifierSoutenanceService()->triggerNotificationBureauDesDoctoratsProposition($these);
                 break;

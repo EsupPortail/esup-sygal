@@ -8,9 +8,14 @@ use DateTime;
 class AnneeUniv
 {
     /**
+     * Spécification pour calculer la date de bascule d'une année universitaire sur la suivante.
+     */
+    const SPEC_DATE_BASCULE = '-10 months'; // revient à basculer le 01/11
+
+    /**
      * @var int
      */
-    protected $annee;
+    protected $premiereAnnee;
 
     /**
      * @var DateTime
@@ -28,57 +33,60 @@ class AnneeUniv
     protected $formatter;
 
     /**
-     * AnneeUniv constructor.
+     * Construit une instance correspondant à l'année universitaire de la date est spécifiée,
+     * ou à l'année universitaire courante.
      */
-    protected function __construct()
+    public function __construct(DateTime $date = null)
     {
         $this->formatter = new AnneeUnivFormatter();
+
+        $this->setPremiereAnnee($this->computePremiereAnneeFromDate($date ?: new DateTime()));
     }
 
-    /**
-     * @return self
-     */
-    static public function courante(): self
-    {
-        return static::fromDate(new DateTime());
-    }
-
-    /**
-     * @param DateTime $date
-     * @return self
-     */
-    static public function fromDate(DateTime $date): self
-    {
-        $annee = (int) $date->modify('-6 months')->format('Y');
-
-        $instance = new static();
-        $instance->annee = $annee;
-        $instance->computeDatesDebFin($annee);
-
-        return $instance;
-    }
-
-    protected function computeDatesDebFin(int $annee)
-    {
-        $dateDeb = DateTime::createFromFormat('d/m/Y H:i:s', sprintf("01/09/%s 00:00:00", $annee));
-        $dateFin = DateTime::createFromFormat('d/m/Y H:i:s', sprintf("31/08/%s 00:00:00", $annee+1));
-        $this->dateDeb = $dateDeb;
-        $this->dateFin = $dateFin;
-    }
     /**
      * @return string
      */
     public function __toString(): string
     {
-        return $this->formatter->filter($this->annee);
+        return $this->formatter->filter($this->premiereAnnee);
+    }
+
+    /**
+     * Calcule la première année à partir de la date spécifiée.
+     *
+     * Exemples :
+     * 09/07/2020 => 2019 ;
+     * 11/09/2020 => 2020 ;
+     * 15/08/2020 => 2020
+     *
+     * @param \DateTime $date
+     * @return int
+     */
+    protected function computePremiereAnneeFromDate(DateTime $date): int
+    {
+        return (int) $date->modify(static::SPEC_DATE_BASCULE)->format('Y');
+    }
+
+    protected function computeDatesDebFin()
+    {
+        $dateDeb = DateTime::createFromFormat('d/m/Y H:i:s', sprintf("01/09/%s 00:00:00", $this->premiereAnnee));
+        $dateFin = DateTime::createFromFormat('d/m/Y H:i:s', sprintf("31/08/%s 00:00:00", $this->premiereAnnee + 1));
+        $this->dateDeb = $dateDeb;
+        $this->dateFin = $dateFin;
+    }
+
+    protected function setPremiereAnnee(int $premiereAnnee)
+    {
+        $this->premiereAnnee = $premiereAnnee;
+        $this->computeDatesDebFin();
     }
 
     /**
      * @return int
      */
-    public function getAnnee(): int
+    public function getPremiereAnnee(): int
     {
-        return $this->annee;
+        return $this->premiereAnnee;
     }
 
     /**

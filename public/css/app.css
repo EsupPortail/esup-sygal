@@ -488,9 +488,6 @@ form input[type='submit'] {
   background-color: #f1732d;
   border-color: #f1732d; }
 
-.btn.btn-xs span.glyphicon {
-  margin-right: 2px; }
-
 .box .btn.btn-primary {
   margin-bottom: 10px;
   padding-left: 15px;
@@ -707,5 +704,17 @@ span.sas-highlight {
 .valide {
   font-weight: 600;
   color: #2EA662; }
+
+span.badge {
+  font-weight: bold; }
+
+span.badge.EN_COURS {
+  background: #009ce4; }
+
+span.badge.VALIDEE {
+  background: #2EA662; }
+
+span.badge.REJETEE {
+  background: #d23544; }
 
 /*# sourceMappingURL=app.css.map */
