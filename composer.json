@@ -20,15 +20,10 @@
         "ext-intl":                      "*",
         "ext-json":                      "*",
         "ext-readline":                  "*",
-        "ext-saxonc":                    "*",
-        "ext-soap":                      "*",
-        "ext-xmlwriter":                 "*",
-        "ext-xsl":                       "*",
         "ext-zip":                       "*",
         "beberlei/assert":               "^2.9",
         "guzzlehttp/guzzle":             "^6.3",
         "ramsey/uuid":                   "^3.3",
-        "twig/twig":                     "^3.0",
         "unicaen/app":                   "^3.1",
         "unicaen/auth":                  "^3.2",
         "unicaen/auth-token":            "dev-master",
@@ -39,8 +34,7 @@
         "unicaen/ldap":                  "^3.0",
         "unicaen/oracle":                "^3.0",
         "webmozart/assert":              "^1.3",
-        "zendframework/zend-feed":       "^2.12",
-        "zendframework/zend-soap":       "^2.8"
+        "zendframework/zend-feed":       "^2.12"
     },
     "autoload": {
         "psr-0": {

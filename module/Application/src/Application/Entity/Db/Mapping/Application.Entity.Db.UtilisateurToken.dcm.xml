@@ -15,6 +15,7 @@
     <field name="createdOn" type="datetime" column="CREATED_ON"/>
     <field name="expiredOn" type="datetime" column="EXPIRED_ON"/>
     <field name="lastUsedOn" type="datetime" column="LAST_USED_ON" nullable="true"/>
+    <field name="sentOn" type="datetime" column="SENT_ON" nullable="true"/>
 
     <many-to-one field="user" target-entity="Application\Entity\Db\Utilisateur" fetch="LAZY">
       <join-columns>

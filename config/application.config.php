@@ -39,7 +39,7 @@ $modules = ['Zend\Cache',
     'Soutenance',
     'Notification',
     'Information',
-    'StepStar',
+//    'StepStar',
     'Application',
 ];
 

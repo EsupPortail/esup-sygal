@@ -54,6 +54,6 @@ class TheseAnneeUnivService extends BaseService
      */
     public function anneeUnivCourante(): AnneeUniv
     {
-        return AnneeUniv::courante();
+        return new AnneeUniv();
     }
 }

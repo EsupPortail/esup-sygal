@@ -132,7 +132,6 @@ use Soutenance\Entity\Proposition;
 <br/>
 <br/>
 <br/>
-<br/>
 
 <h2 style="text-align:center;">
     Désignation des rapporteurs et des membres du jury
@@ -142,7 +141,6 @@ use Soutenance\Entity\Proposition;
     Avis de soutenance
 </h2>
 
-    <br/>
     <br/>
 
 <p>
@@ -157,8 +155,8 @@ use Soutenance\Entity\Proposition;
     </strong>
     présente ses travaux en soutenance le
     <strong>
-    <?php if ($informations->getDate() !== null): ?>
-        <?php echo $informations->getDate(); ?>
+    <?php if ($proposition->getDate() !== null): ?>
+        <?php echo $proposition->getDate()->format('d/m/Y à H:i'); ?>
     <?php else : ?>
         <span style='background-color:red;'>
                 Date manquante
@@ -311,13 +309,12 @@ use Soutenance\Entity\Proposition;
 
 
 <br/>
-<br/>
 
     <!-- Signature ---------------------------------------------------------------------------------------------------->
 
 <table>
     <tr>
-        <td width="60%"></td>
+        <td width="50%"></td>
         <td>
             Fait à ................., le ........................<br/>
             Pour le Président et p.o.<br/>

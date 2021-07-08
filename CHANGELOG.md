@@ -1,6 +1,18 @@
 Journal des modifications
 =========================
 
+2.2.3
+-----
+- Scission du rôle "École doctorale" en 2 : "Responsable École doctorale" et "Gestionnaire École doctorale".
+- Scission du rôle "Unité de recherche" en 2 : "Responsable Unité de recherche" et "Gestionnaire Unité de recherche".
+- Envoi automatique par mail des jetons d'authentification créés + possibilité de les renvoyer.
+- Utilisation des dates et lieux des dossiers de soutenances plutôt que celles saisies dans les SIs pour la génération des documents du module soutenance.
+- Précision de la date de rendu des rapports dès le premier mail des rapporteurs
+- Recherche de rapports d'activité : nouveau filtre "Annuel ou fin de thèse".  
+- Fiche d'identité de la thèse : la date prévisionnelle de soutenance n'est plus affichée car elle peut être erronée.
+- Rapports d'activité, CSI, de fin de thèse : la date de bascule pour déterminer l'année universitaire est le 01/11. 
+- [FIX] Dédoublonnage des origines de financement dans le filtres de la page des rapports.
+
 2.2.2
 -----
 - Authentification simplifiée des rapporteurs à l'aide d'un token.

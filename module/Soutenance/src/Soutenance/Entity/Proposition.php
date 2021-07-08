@@ -437,4 +437,13 @@ class Proposition {
         return $this;
     }
 
+    /**
+     * retour vrai si un début de saisie a été fait (date/lieu)
+     * @return bool
+     */
+    public function hasSaisie() : bool
+    {
+        if ($this->getDate() OR $this->getLieu())  return true;
+        return false;
+    }
 }

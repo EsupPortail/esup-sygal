@@ -13,7 +13,7 @@ return [
             /**
              * Description facultative de ce mode d'authentification qui apparaîtra sur la page de connexion.
              */
-            'description' => "Description ????",
+//            'description' => "Description ????",
         ],
     ],
 

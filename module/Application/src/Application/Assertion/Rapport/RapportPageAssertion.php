@@ -60,7 +60,8 @@ class RapportPageAssertion implements PageAssertionInterface, UserContextService
                 "La thèse n'appartient pas au doctorant " . $doctorant
             );
         }
-        if ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleDirecteurEcoleDoctorale()) {
+        // todo : remplacer par $role->isStructureDependant() && $role->getTypeStructureDependant()->isEcoleDoctorale() :
+        if ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
             $this->assertTrue(
                 $this->these->getEcoleDoctorale()->getStructure()->getId() === $roleEcoleDoctorale->getStructure()->getId(),
                 "La thèse n'est pas rattachée à l'ED " . $roleEcoleDoctorale->getStructure()->getCode()

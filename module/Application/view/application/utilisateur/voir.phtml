@@ -10,25 +10,26 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
 use Application\Provider\Privilege\UtilisateurPrivileges;
-use Application\View\Helper\IndividuUsurpationHelper;
 use Application\View\Helper\RoleHelper;
 use Application\View\Renderer\PhpRenderer;
 use UnicaenApp\Util;
-use UnicaenAuth\Entity\Db\AbstractUser;
 use UnicaenAuth\Provider\Privilege\Privileges;
 use UnicaenAuth\View\Helper\UserUsurpationHelper;
+use UnicaenAuthToken\Entity\Db\UserToken;
 
 /**
  * @var PhpRenderer $this
  * @var Utilisateur $utilisateur
+ * @var UserToken[] $tokens
  * @var Role[] $roles
  * @var Role[] $rolesAffectes
  * @var Individu $individu
  * @var Etablissement[] $etablissements
  * @var EcoleDoctorale[] $ecoles
  * @var UniteRecherche[] $unites
+ * @var string $redirect
  *
- * @see \Application\Controller\UtilisateurController::indexAction()
+ * @see \Application\Controller\UtilisateurController::voirAction()
  */
 
 $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION));
@@ -149,6 +150,31 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
 
     </div>
 
+</div>
+
+<!-- TOKEN D'AUTHENTIFICATION ----------------------------------------------------------------------------------------->
+
+<div class="box panel panel-info">
+    <div class="panel-heading">
+        <h2 class="first">
+            <?php echo $this->translate("Jeton d'authentification") ?>
+            <div class="pull-right">
+                <br>
+                <?php echo $this->partial('unicaen-auth-token/token/partial/add-button', [
+                    'route' => 'utilisateur/ajouter-token',
+                    'redirect' => $redirect,
+                    'user' => $utilisateur->getId(),
+                ]) ?>
+            </div>
+        </h2>
+    </div>
+    <div class="panel-body">
+        <?php if (empty($tokens)): ?>
+            L'utilisateur n'a aucun jeton d'authentification.
+        <?php else: ?>
+            <?php echo $this->partial('unicaen-auth-token/token/partial/table', ['paginator' => $tokens, 'redirect' => $redirect]); ?>
+        <?php endif ?>
+    </div>
 </div>
 
 <?php if ($individu = $utilisateur->getIndividu()) : ?>
@@ -484,10 +510,6 @@ function generateRoleUnite($individu, $roles, $rolesAffectes, $unites, $canModif
 
     select {
         margin-top: 5px;
-    }
-
-    span {
-        margin: 5px 5px 5px 5px;
     }
 
     .dropdown-menu {
