@@ -11,6 +11,8 @@ use Application\Service\BaseService;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use InvalidArgumentException;
 use UnicaenApp\Entity\UserInterface;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenLdap\Entity\People;
@@ -73,18 +75,18 @@ class IndividuService extends BaseService
     }
 
     /**
-     * @param UserWrapper   $userWrapper
+     * @param UserWrapper $userWrapper
      * @param Etablissement $etablissement
-     * @param Utilisateur   $utilisateur   Auteur éventuel de la création
+     * @param \Application\Entity\Db\Utilisateur|null $utilisateur Auteur éventuel de la création
      * @return Individu
      */
     public function createIndividuFromUserWrapperAndEtab(UserWrapper $userWrapper,
                                                          Etablissement $etablissement,
-                                                         Utilisateur $utilisateur = null)
+                                                         Utilisateur $utilisateur = null): ?Individu
     {
         $supannId = $userWrapper->getSupannId();
         if (! $supannId) {
-            return null;
+            throw new InvalidArgumentException("Impossible de créer un individu si son supannId est vide.");
         }
 
         $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($supannId, $etablissement);
@@ -99,10 +101,10 @@ class IndividuService extends BaseService
         $entity->setSourceCode($sourceCode);
         $entity->setHistoCreateur($utilisateur ?: $this->getAppPseudoUtilisateur());
 
-        $this->getEntityManager()->persist($entity);
         try {
+            $this->getEntityManager()->persist($entity);
             $this->getEntityManager()->flush($entity);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Impossible d'enregistrer l'Individu", null, $e);
         }
 
