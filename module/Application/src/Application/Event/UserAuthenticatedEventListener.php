@@ -77,9 +77,9 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
 
     /**
      * @param UserWrapper $userWrapper
-     * @return Individu
+     * @return Individu|null
      */
-    private function processIndividu(UserWrapper $userWrapper): Individu
+    private function processIndividu(UserWrapper $userWrapper): ?Individu
     {
         $createIndividu = false;
         $etablissementInconnu = $this->etablissementService->getRepository()->fetchEtablissementInconnu();
@@ -119,7 +119,9 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
 
         // création de l'Individu si besoin et si possible
         if ($createIndividu) {
-            $individu = $this->individuService->createIndividuFromUserWrapperAndEtab($userWrapper, $etablissement);
+            if ($userWrapper->getSupannId()) {
+                $individu = $this->individuService->createIndividuFromUserWrapperAndEtab($userWrapper, $etablissement);
+            }
         }
 
         return $individu;
