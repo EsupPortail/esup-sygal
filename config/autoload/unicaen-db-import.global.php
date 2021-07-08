@@ -1,7 +1,242 @@
 <?php
 
+use Application\Entity\Db\Source;
 use Import\Model\ImportObserv;
 use Import\Model\ImportObservResult;
+
+/**
+ * Il y a une déclinaison automatique des synchros par établissement (pour pouvoir lancer la synchro pour un
+ * établissement précis) : cf. fonction {@see generateConfigSynchros()} plus bas, appelée dans 'secret.local.php'.
+ * Ce qui suit n'est que la config "générique".
+ */
+
+const CONFIG_SYNCHROS = [
+    'structure' => [
+        'name' => 'structure',
+        'source' => [
+            'name'               => 'app',
+            'table'              => 'SRC_STRUCTURE',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name'               => 'app',
+            'table'              => 'STRUCTURE',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'intermediate_table_auto_drop' => false,
+        ],
+    ],
+    'etablissement' => [
+        'name' => 'etablissement',
+        'source' => [
+            'name'               => 'app',
+            'table'              => 'SRC_ETABLISSEMENT',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name'               => 'app',
+            'table'              => 'ETABLISSEMENT',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'intermediate_table_auto_drop' => false,
+        ],
+    ],
+    'ecole-doctorale' => [
+        'name' => 'ecole-doctorale',
+        'source' => [
+            'name'               => 'app',
+            'table'              => 'SRC_ECOLE_DOCT',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name'               => 'app',
+            'table'              => 'ECOLE_DOCT',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'intermediate_table_auto_drop' => false,
+        ],
+    ],
+    'unite-recherche' => [
+        'name' => 'unite-recherche',
+        'source' => [
+            'name'               => 'app',
+            'table'              => 'SRC_UNITE_RECH',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name'               => 'app',
+            'table'              => 'UNITE_RECH',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'intermediate_table_auto_drop' => false,
+        ],
+    ],
+    'individu' => [
+        'name' => 'individu',
+        'source' => [
+            'name'               => 'app',
+            'table'              => 'SRC_INDIVIDU',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name'               => 'app',
+            'table'              => 'INDIVIDU',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+//            'where'              => "d.source_code like 'UCN::%'", // todo: à virer
+            'intermediate_table_auto_drop' => false,
+        ],
+    ],
+    'doctorant' => [
+        'name' => 'doctorant',
+        'source' => [
+            'name'               => 'app',
+            'table'              => 'SRC_DOCTORANT',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name'               => 'app',
+            'table'              => 'DOCTORANT',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'intermediate_table_auto_drop' => false,
+        ],
+    ],
+    'these' => [
+        'name' => 'these',
+        'source' => [
+            'name'               => 'app',
+            'table'              => 'SRC_THESE',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name'               => 'app',
+            'table'              => 'THESE',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'intermediate_table_auto_drop' => false,
+        ],
+    ],
+    'these-annee-univ' => [
+        'name' => 'these-annee-univ',
+        'source' => [
+            'name'               => 'app',
+            'table'              => 'SRC_THESE_ANNEE_UNIV',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name'               => 'app',
+            'table'              => 'THESE_ANNEE_UNIV',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'intermediate_table_auto_drop' => false,
+        ],
+    ],
+    'role' => [
+        'name' => 'role',
+        'source' => [
+            'name'               => 'app',
+            'table'              => 'SRC_ROLE',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name'               => 'app',
+            'table'              => 'ROLE',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'intermediate_table_auto_drop' => false,
+        ],
+    ],
+    'acteur' => [
+        'name' => 'acteur',
+        'source' => [
+            'name'               => 'app',
+            'table'              => 'SRC_ACTEUR',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name'               => 'app',
+            'table'              => 'ACTEUR',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'intermediate_table_auto_drop' => false,
+        ],
+    ],
+    'origine-financement' => [
+        'name' => 'origine-financement',
+        'source' => [
+            'name'               => 'app',
+            'table'              => 'SRC_ORIGINE_FINANCEMENT',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name'               => 'app',
+            'table'              => 'ORIGINE_FINANCEMENT',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'intermediate_table_auto_drop' => false,
+        ],
+    ],
+    'financement' => [
+        'name' => 'financement',
+        'source' => [
+            'name'               => 'app',
+            'table'              => 'SRC_FINANCEMENT',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name'               => 'app',
+            'table'              => 'FINANCEMENT',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'intermediate_table_auto_drop' => false,
+        ],
+    ],
+    'titre-acces' => [
+        'name' => 'titre-acces',
+        'source' => [
+            'name'               => 'app',
+            'table'              => 'SRC_TITRE_ACCES',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name'               => 'app',
+            'table'              => 'TITRE_ACCES',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'intermediate_table_auto_drop' => false,
+        ],
+    ],
+    'variable' => [
+        'name' => 'variable',
+        'source' => [
+            'name'               => 'app',
+            'table'              => 'SRC_VARIABLE',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name'               => 'app',
+            'table'              => 'VARIABLE',
+            'connection'         => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'intermediate_table_auto_drop' => false,
+        ],
+    ],
+];
 
 return [
     'import' => [
@@ -12,6 +247,16 @@ return [
         'connections' => [
             // Cf. config locale
         ],
+
+        //
+        // Classe de l'entité Doctrine représentant une "Source".
+        //
+        'source_entity_class' => Source::class,
+
+        //
+        // Code de la Source par défaut (injectée dans les entités implémentant SoucreAwareInterface).
+        //
+        'default_source_code' => 'SYGAL::sygal',
 
         //
         // Alias éventuels des noms de colonnes d'historique.
@@ -53,258 +298,29 @@ return [
         // Synchros.
         //
         'synchros' => [
-            [
-                'name' => 'structure',
-                'source' => [
-                    'name'               => 'app',
-                    'table'              => 'SRC_STRUCTURE',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                ],
-                'destination' => [
-                    'name'               => 'app',
-                    'table'              => 'STRUCTURE',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                    //'log_table' => 'import_log',
-                    //'intermediate_table' => 'TMP_STRUCTURE',
-                    'intermediate_table_auto_drop' => false,
-                ],
-            ],
-            [
-                'name' => 'etablissement',
-                'source' => [
-                    'name'               => 'app',
-                    'table'              => 'SRC_ETABLISSEMENT',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                ],
-                'destination' => [
-                    'name'               => 'app',
-                    'table'              => 'ETABLISSEMENT',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                    //'log_table' => 'import_log',
-                    //'intermediate_table' => 'TMP_ETABLISSEMENT',
-                    'intermediate_table_auto_drop' => false,
-                ],
-            ],
-            [
-                'name' => 'ecole-doctorale',
-                'source' => [
-                    'name'               => 'app',
-                    'table'              => 'SRC_ECOLE_DOCT',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                ],
-                'destination' => [
-                    'name'               => 'app',
-                    'table'              => 'ECOLE_DOCT',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                    //'log_table' => 'import_log',
-                    //'intermediate_table' => 'TMP_ECOLE_DOCT',
-                    'intermediate_table_auto_drop' => false,
-                ],
-            ],
-            [
-                'name' => 'unite-recherche',
-                'source' => [
-                    'name'               => 'app',
-                    'table'              => 'SRC_UNITE_RECH',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                ],
-                'destination' => [
-                    'name'               => 'app',
-                    'table'              => 'UNITE_RECH',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                    //'log_table' => 'import_log',
-                    //'intermediate_table' => 'TMP_UNITE_RECH',
-                    'intermediate_table_auto_drop' => false,
-                ],
-            ],
-            [
-                'name' => 'individu',
-                'source' => [
-                    'name'               => 'app',
-                    'table'              => 'SRC_INDIVIDU',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                ],
-                'destination' => [
-                    'name'               => 'app',
-                    'table'              => 'INDIVIDU',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                    //'log_table' => 'import_log',
-                    //'intermediate_table' => 'TMP_INDIVIDU',
-                    'intermediate_table_auto_drop' => false,
-                ],
-            ],
-            [
-                'name' => 'doctorant',
-                'source' => [
-                    'name'               => 'app',
-                    'table'              => 'SRC_DOCTORANT',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                ],
-                'destination' => [
-                    'name'               => 'app',
-                    'table'              => 'DOCTORANT',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                    //'log_table' => 'import_log',
-                    //'intermediate_table' => 'TMP_DOCTORANT',
-                    'intermediate_table_auto_drop' => false,
-                ],
-            ],
-            [
-                'name' => 'these',
-                'source' => [
-                    'name'               => 'app',
-                    'table'              => 'SRC_THESE',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                ],
-                'destination' => [
-                    'name'               => 'app',
-                    'table'              => 'THESE',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                    //'log_table' => 'import_log',
-                    //'intermediate_table' => 'TMP_THESE',
-                    'intermediate_table_auto_drop' => false,
-                ],
-            ],
-            [
-                'name' => 'these-annee-univ',
-                'source' => [
-                    'name'               => 'app',
-                    'table'              => 'SRC_THESE_ANNEE_UNIV',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                ],
-                'destination' => [
-                    'name'               => 'app',
-                    'table'              => 'THESE_ANNEE_UNIV',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                    //'log_table' => 'import_log',
-                    //'intermediate_table' => 'TMP_THESE_ANNEE_UNIV',
-                    'intermediate_table_auto_drop' => false,
-                ],
-            ],
-            [
-                'name' => 'role',
-                'source' => [
-                    'name'               => 'app',
-                    'table'              => 'SRC_ROLE',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                ],
-                'destination' => [
-                    'name'               => 'app',
-                    'table'              => 'ROLE',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                    //'log_table' => 'import_log',
-                    //'intermediate_table' => 'TMP_ROLE',
-                    'intermediate_table_auto_drop' => false,
-                ],
-            ],
-            [
-                'name' => 'acteur',
-                'source' => [
-                    'name'               => 'app',
-                    'table'              => 'SRC_ACTEUR',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                ],
-                'destination' => [
-                    'name'               => 'app',
-                    'table'              => 'ACTEUR',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                    //'log_table' => 'import_log',
-                    //'intermediate_table' => 'TMP_ACTEUR',
-                    'intermediate_table_auto_drop' => false,
-                ],
-            ],
-            [
-                'name' => 'origine-financement',
-                'source' => [
-                    'name'               => 'app',
-                    'table'              => 'SRC_ORIGINE_FINANCEMENT',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                ],
-                'destination' => [
-                    'name'               => 'app',
-                    'table'              => 'ORIGINE_FINANCEMENT',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                    //'log_table' => 'import_log',
-                    //'intermediate_table' => 'TMP_ORIGINE_FINANCEMENT',
-                    'intermediate_table_auto_drop' => false,
-                ],
-            ],
-            [
-                'name' => 'financement',
-                'source' => [
-                    'name'               => 'app',
-                    'table'              => 'SRC_FINANCEMENT',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                ],
-                'destination' => [
-                    'name'               => 'app',
-                    'table'              => 'FINANCEMENT',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                    //'log_table' => 'import_log',
-                    //'intermediate_table' => 'TMP_FINANCEMENT',
-                    'intermediate_table_auto_drop' => false,
-                ],
-            ],
-            [
-                'name' => 'titre-acces',
-                'source' => [
-                    'name'               => 'app',
-                    'table'              => 'SRC_TITRE_ACCES',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                ],
-                'destination' => [
-                    'name'               => 'app',
-                    'table'              => 'TITRE_ACCES',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                    //'log_table' => 'import_log',
-                    //'intermediate_table' => 'TMP_TITRE_ACCES',
-                    'intermediate_table_auto_drop' => false,
-                ],
-            ],
-            [
-                'name' => 'variable',
-                'source' => [
-                    'name'               => 'app',
-                    'table'              => 'SRC_VARIABLE',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                ],
-                'destination' => [
-                    'name'               => 'app',
-                    'table'              => 'VARIABLE',
-                    'connection'         => 'default',
-                    'source_code_column' => 'SOURCE_CODE',
-                    //'log_table' => 'import_log',
-                    //'intermediate_table' => 'TMP_VARIABLE',
-                    'intermediate_table_auto_drop' => false,
-                ],
-            ],
+
         ],
     ],
 ];
+
+
+/**
+ * Déclinaison des synchros par établissement (pour pouvoir lancer la synchro pour un établissement précis) :
+ * - renommage de chaque synchro,
+ * - ajout d'un 'where' à chaque destination de synchro.
+ *
+ * @param array $etabs
+ * @return array
+ */
+function generateConfigSynchros(array $etabs): array
+{
+    $synchros = [];
+    foreach ($etabs as $etab) {
+        foreach (CONFIG_SYNCHROS as $array) {
+            $array['name'] = $array['name'] . '-' .  $etab;                                 // ex : "individu-UCN"
+            $array['destination']['where'] = sprintf("d.source_code like '%s::%%'", $etab); // ex : "d.source_code like 'UCN::%'"
+            $synchros[] = $array;
+        }
+    }
+    return $synchros;
+}

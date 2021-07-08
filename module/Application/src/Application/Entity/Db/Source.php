@@ -36,14 +36,10 @@ class Source extends \UnicaenDbImport\Entity\Db\Source
      * Set code
      *
      * @param string $code
-     *
-     * @return Source
      */
-    public function setCode($code)
+    public function setCode(string $code)
     {
         $this->code = $code;
-
-        return $this;
     }
 
     /**
@@ -60,14 +56,10 @@ class Source extends \UnicaenDbImport\Entity\Db\Source
      * Set importable
      *
      * @param boolean $importable
-     *
-     * @return Source
      */
-    public function setImportable($importable)
+    public function setImportable(bool $importable)
     {
         $this->importable = $importable;
-
-        return $this;
     }
 
     /**
@@ -84,14 +76,10 @@ class Source extends \UnicaenDbImport\Entity\Db\Source
      * Set libelle
      *
      * @param string $libelle
-     *
-     * @return Source
      */
-    public function setLibelle($libelle)
+    public function setLibelle(string $libelle)
     {
         $this->libelle = $libelle;
-
-        return $this;
     }
 
     /**
@@ -115,9 +103,9 @@ class Source extends \UnicaenDbImport\Entity\Db\Source
     }
 
     /**
-     * @return Etablissement
+     * @return Etablissement|null
      */
-    public function getEtablissement()
+    public function getEtablissement(): ?Etablissement
     {
         return $this->etablissement;
     }
@@ -140,7 +128,7 @@ class Source extends \UnicaenDbImport\Entity\Db\Source
      * @return array
      * @link  http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.debuginfo
      */
-    function __debugInfo()
+    function __debugInfo(): array
     {
         return [
             'libelle' => $this->libelle,

@@ -15,10 +15,10 @@ class CompletIndicateurStructureHelper extends AbstractHelper
     public function render($indicateur, $data) {
 
         $rubriques = [
-            'id'                    => 'ID',
-            'Sigle'                 => 'SIGLE',
-            'Libelle'               => 'LIBELLE',
-            'Type'                  => 'TYPE_STRUCTURE_ID',
+            'id'                    => 'id',
+            'Sigle'                 => 'sigle',
+            'Libelle'               => 'libelle',
+            'Type'                  => 'type_structure_id',
         ];
 
         $html  = '';
@@ -44,10 +44,10 @@ class CompletIndicateurStructureHelper extends AbstractHelper
                     } else {
                         $html .= '<td>';
                         if ($clef === 'Libelle') {
-                            switch($entry['TYPE_STRUCTURE_ID']) {
-                                case "1" : $html .= '<a href="'.$this->getView()->url('etablissement/information', ['structure' => $entry['ID']], [], true).'">'; break;
-                                case "2" : $html .= '<a href="'.$this->getView()->url('ecole-doctorale/information', ['structure' => $entry['ID']], [], true).'">'; break;
-                                case "3" : $html .= '<a href="'.$this->getView()->url('unite-recherche/information', ['structure' => $entry['ID']], [], true).'">'; break;
+                            switch($entry['type_structure_id']) {
+                                case "1" : $html .= '<a href="'.$this->getView()->url('etablissement/information', ['structure' => $entry['id']], [], true).'">'; break;
+                                case "2" : $html .= '<a href="'.$this->getView()->url('ecole-doctorale/information', ['structure' => $entry['id']], [], true).'">'; break;
+                                case "3" : $html .= '<a href="'.$this->getView()->url('unite-recherche/information', ['structure' => $entry['id']], [], true).'">'; break;
                                 default : $html .=  '<a href="">' ; break;
                             }
                         }

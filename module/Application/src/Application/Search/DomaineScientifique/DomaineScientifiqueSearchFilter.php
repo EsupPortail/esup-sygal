@@ -42,8 +42,8 @@ class DomaineScientifiqueSearchFilter extends SelectSearchFilter
 
         $filterValue = $this->getValue();
         $qb
-            ->leftJoin("$alias.uniteRecherche", 'ur')
-            ->leftJoin('ur.domaines', 'dom')
+            ->leftJoin("$alias.uniteRecherche", 'ur2')
+            ->leftJoin('ur2.domaines', 'dom')
         ;
         if ($filterValue === 'NULL') {
             $qb

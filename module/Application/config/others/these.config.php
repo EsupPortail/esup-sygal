@@ -1006,7 +1006,7 @@ return [
                                     'these',
                                 ],
                                 'icon' => 'fas fa-file-upload',
-                                'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'index'),
+                                'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'roadmap'),
                                 'pages' => [
                                     // DEPTH = 3
                                     'roadmap' => [

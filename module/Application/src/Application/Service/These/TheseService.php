@@ -617,14 +617,14 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         $toId = $toThese->getId();
 
         $sql = <<<EOS
-begin        
+DO $$ BEGIN        
     update FICHIER          set THESE_ID = $toId where THESE_ID = $fromId;
     update ATTESTATION      set THESE_ID = $toId where THESE_ID = $fromId;
     update DIFFUSION        set THESE_ID = $toId where THESE_ID = $fromId;
     update METADONNEE_THESE set THESE_ID = $toId where THESE_ID = $fromId;
     update RDV_BU           set THESE_ID = $toId where THESE_ID = $fromId;
     update VALIDATION       set THESE_ID = $toId where THESE_ID = $fromId;
-end;
+END $$;
 EOS;
         try {
             $this->entityManager->getConnection()->executeQuery($sql);

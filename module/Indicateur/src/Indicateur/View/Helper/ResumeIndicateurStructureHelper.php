@@ -35,11 +35,11 @@ class ResumeIndicateurStructureHelper extends AbstractHelper
                     $html .= '<tbody>';
                     for($position = 0 ; $position < $limite && $position < count($data) ; $position++) {
                         $html .= '<tr>';
-                            $html .= '<td>'.$data[$position]["ID"].'</td>';
-                            $html .= '<td>'.$data[$position]["SIGLE"].'</td>';
-//                            $html .= '<td>'.$data[$position]["LIBELLE"].'</td>';
+                            $html .= '<td>'.$data[$position]["id"].'</td>';
+                            $html .= '<td>'.$data[$position]["sigle"].'</td>';
+//                            $html .= '<td>'.$data[$position]["libelle"].'</td>';
                             $html .= '<td>';
-                            switch($data[$position]["TYPE_STRUCTURE_ID"]) {
+                            switch($data[$position]["type_structure_id"]) {
                                 case 1 : $html .= "Etab"; break;
                                 case 2 : $html .= "ED"; break;
                                 case 3 : $html .= "UR"; break;

@@ -136,60 +136,8 @@ class UserWrapper implements UserInterface
     }
 
     /**
-     * Retourne l'identifiant "supannEmpId" éventuel, en fonction de la nauture des données utilisateur disponibles.
-     *
-     * Valeur retournée :
-     * - Si les données utilisateur proviennent de l'annuaire LDAP : l'attribut "supannEmpId" ;
-     * - Si les données utilisateur proviennent de Shibboleth : l'id (dont la valeur est sensée être un supann{Emp|Etu}Id).
-     * - Sinon : null
-     *
-     * @return string|null
-     * @throws DomainException Si l'EPPN n'a pas de sens pour les données utilisateur courantes
-     */
-    protected function getSupannEmpId()
-    {
-        switch (true) {
-            case $this->userData instanceof UnicaenLdapPeople:
-            case $this->userData instanceof UnicaenAppPeople:
-                return $this->userData->getSupannEmpId();
-
-            case $this->userData instanceof ShibUser:
-                return $this->userData->getId();
-
-            default:
-                return null;
-        }
-    }
-
-    /**
-     * Retourne l'identifiant "supannEtuId" éventuel, en fonction de la nauture des données utilisateur disponibles.
-     *
-     * Valeur retournée :
-     * - Si les données utilisateur proviennent de l'annuaire LDAP : l'attribut "supannEtuId" ;
-     * - Si les données utilisateur proviennent de Shibboleth : l'id (dont la valeur est sensée être un supann{Emp|Etu}Id).
-     * - Sinon : null
-     *
-     * @return string|null
-     * @throws DomainException Si l'EPPN n'a pas de sens pour les données utilisateur courantes
-     */
-    protected function getSupannEtuId()
-    {
-        switch (true) {
-            case $this->userData instanceof UnicaenLdapPeople:
-            case $this->userData instanceof UnicaenAppPeople:
-                return $this->userData->getSupannEtuId();
-
-            case $this->userData instanceof ShibUser:
-                return $this->userData->getId();
-
-            default:
-                return null;
-        }
-    }
-
-    /**
      * Retourne :
-     * - soit le "supann{Emp|Etu}Id" issu des données utilisateur ;
+     * - soit le "supann{Ref|Emp|Etu}Id" issu des données utilisateur ;
      * - soit le "supannId" des données individu éventuelles ;
      * - soit null.
      *
@@ -197,7 +145,19 @@ class UserWrapper implements UserInterface
      */
     public function getSupannId()
     {
-        $supannId = $this->getSupannEmpId() ?: $this->getSupannEtuId();
+        switch (true) {
+            case $this->userData instanceof UnicaenLdapPeople:
+            case $this->userData instanceof UnicaenAppPeople:
+                $supannId = $this->userData->getSupannEmpId() ?: $this->userData->getSupannEtuId();
+                break;
+
+            case $this->userData instanceof ShibUser:
+                $supannId = $this->userData->getId();
+                break;
+
+            default:
+                $supannId = null;
+        }
 
         if ($supannId !== null) {
             return $supannId;

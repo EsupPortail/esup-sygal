@@ -153,7 +153,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
         // établissements : pour l'instant les rôles ne concernent que des établissements d'inscription donc on flitre
         $etablissementsQb = $this->structureService->getAllStructuresAffichablesByTypeQb(TypeStructure::CODE_ETABLISSEMENT, 'libelle', true);
-        $etablissementsQb->join('structure.etablissement', 'etab', Expr\Join::WITH, 'etab.estInscription = 1');
+        $etablissementsQb->join('structure.etablissement', 'etab', Expr\Join::WITH, 'etab.estInscription = true');
         $etablissements = $etablissementsQb->getQuery()->execute();
 
         $unites = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle', true, true);
@@ -190,12 +190,12 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $rows = $this->individuService->getRepository()->findByText($term, $type);
             $result = [];
             foreach ($rows as $row) {
-                $prenoms = implode(' ', array_filter([$row['PRENOM1'], $row['PRENOM2'], $row['PRENOM3']]));
+                $prenoms = implode(' ', array_filter([$row['prenom1'], $row['prenom2'], $row['prenom3']]));
                 // mise en forme attendue par l'aide de vue FormSearchAndSelect
-                $label = $row['NOM_USUEL'] . ' ' . $prenoms;
-                $extra = $row['EMAIL'] ?: $row['SOURCE_CODE'];
+                $label = $row['nom_usuel'] . ' ' . $prenoms;
+                $extra = $row['email'] ?: $row['source_code'];
                 $result[] = array(
-                    'id' => $row['ID'], // identifiant unique de l'item
+                    'id' => $row['id'], // identifiant unique de l'item
                     'label' => $label,     // libellé de l'item
                     'extra' => $extra,     // infos complémentaires (facultatives) sur l'item
                 );

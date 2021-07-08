@@ -101,7 +101,7 @@ $canModifierEtablissement = $this->isAllowed(StructurePrivileges::getResourceId(
                         <?php if ($etablissement->estInscription()): ?>
                             <span class="label label-warning">Inscription</span>
                         <?php endif ?>
-                        <?php if ($etablissement->getStructure()->isFerme()) : ?>
+                        <?php if ($etablissement->getStructure()->estFermee()) : ?>
                             <span class="label" style="background-color:darkred">Structure fermée</span>
                         <?php else : ?>
                             <span class="label" style="background-color:darkgreen">Structure ouverte</span>
