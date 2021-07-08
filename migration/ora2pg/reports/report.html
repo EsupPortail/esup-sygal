@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <title>Ora2Pg - Database Migration Report</title>
+  <meta HTTP-EQUIV="Generator" CONTENT="Ora2Pg v20.0">
+  <meta HTTP-EQUIV="Date" CONTENT="Thu Jul  8 10:06:49 2021">
+  <style>
+body {
+	margin: 30px 0;
+	padding: 0;
+	background: #EFEFEF;
+	font-size: 12px;
+	color: #1e1e1e;
+}
+
+h1 {
+	margin-bottom: 20px;
+	border-bottom: 1px solid #DFDFDF;
+	font-size: 22px;
+	padding: 0px;
+	padding-bottom: 5px;
+	font-weight: bold;
+	color: #0094C7;
+}
+
+h2 {
+	margin-bottom: 10px;
+	font-size: 18px;
+	padding: 0px;
+	padding-bottom: 5px;
+	font-weight: bold;
+	color: #0094C7;
+}
+
+#header table {
+	padding: 0 5px 0 5px;
+	border: 1px solid #DBDBDB;
+	margin-bottom: 20px;
+	margin-left: 30px;
+}
+
+#header th {
+	padding: 0 5px 0 5px;
+	text-decoration: none;
+	font-size: 16px;
+	color: #EC5800;
+}
+
+#content table {
+	padding: 0 5px 0 5px;
+	border: 1px solid #DBDBDB;
+	margin-bottom: 20px;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+#content td {
+	padding: 0 5px 0 5px;
+	border-bottom: 1px solid #888888;
+	margin-bottom: 20px;
+	text-align: left;
+	vertical-align: top;
+}
+
+#content th {
+	border-bottom: 1px solid #BBBBBB;
+	padding: 0 5px 0 5px;
+	text-decoration: none;
+	font-size: 16px;
+	color: #EC5800;
+}
+
+.object_name {
+        font-weight: bold;
+        color: #0094C7;
+	text-align: left;
+	white-space: pre;
+}
+
+.detail {
+	white-space: pre;
+}
+
+#footer {
+	margin-right: 10px;
+	text-align: right;
+}
+
+#footer a {
+	color: #EC5800;
+}
+
+#footer a:hover {
+	text-decoration: none;
+}
+  </style>
+</head>
+<body>
+<div id="header">
+<h1>Ora2Pg - Database Migration Report</h1>
+<table>
+<tr><th>Version</th><td>Oracle Database 11g Enterprise Edition Release 11.2.0.3.0</td></tr>
+<tr><th>Schema</th><td>SYGAL</td></tr>
+<tr><th>Size</th><td>1063.19 MB</td></tr>
+</table>
+</div>
+<div id="content">
+<table>
+<tr><th>Object</th><th>Number</th><th>Invalid</th><th>Estimated cost</th><th>Comments</th><th>Details</th></tr>
+<tr><td class="object_name">DATABASE LINK</td><td style="text-align: center;">0</td><td style="text-align: center;">0</td><td style="text-align: center;">0</td><td>Database links will be exported as SQL/MED PostgreSQL's Foreign Data Wrapper (FDW) extensions using oracle_fdw.</td><td class="detail"></td></tr>
+<tr><td class="object_name">FUNCTION</td><td style="text-align: center;">3</td><td style="text-align: center;">0</td><td style="text-align: center;">17.4</td><td>Total size of function code: 1497 bytes.</td><td class="detail">comprise_entre: 3.6<br>str_reduce: 6<br>individu_haystack: 4.8<br></td></tr>
+<tr><td class="object_name">GLOBAL TEMPORARY TABLE</td><td style="text-align: center;">0</td><td style="text-align: center;">0</td><td style="text-align: center;">0</td><td>Global temporary table are not supported by PostgreSQL and will not be exported. You will have to rewrite some application code to match the PostgreSQL temporary table behavior.</td><td class="detail"></td></tr>
+<tr><td class="object_name">INDEX</td><td style="text-align: center;">247</td><td style="text-align: center;">0</td><td style="text-align: center;">42.5</td><td>178 index(es) are concerned by the export, others are automatically generated and will do so on PostgreSQL. Bitmap will be exported as btree_gin index(es) and hash index(es) will be exported as b-tree index(es) if any. Domain index are exported as b-tree but commented to be edited to mainly use FTS. Cluster, bitmap join and IOT indexes will not be exported at all. Reverse indexes are not exported too, you may use a trigram-based index (see pg_trgm) or a reverse() function based index and search. Use 'varchar_pattern_ops', 'text_pattern_ops' or 'bpchar_pattern_ops' operators in your indexes to improve search with the LIKE operator respectively into varchar, text or char columns.</td><td class="detail">178 b-tree index(es)<br></td></tr>
+<tr><td class="object_name">JOB</td><td style="text-align: center;">13</td><td style="text-align: center;">0</td><td style="text-align: center;">26</td><td>Job are not exported. You may set external cron job with them.</td><td class="detail"></td></tr>
+<tr><td class="object_name">MATERIALIZED VIEW</td><td style="text-align: center;">16</td><td style="text-align: center;">15</td><td style="text-align: center;">3</td><td>All materialized view will be exported as snapshot materialized views, they are only updated when fully refreshed.</td><td class="detail"></td></tr>
+<tr><td class="object_name">PACKAGE BODY</td><td style="text-align: center;">2</td><td style="text-align: center;">0</td><td style="text-align: center;">294.1</td><td>Total size of package code: 31229 bytes. Number of procedures and functions found inside those packages: 27.</td><td class="detail">ucbn_ldap.alias2mail: 3.2<br>ucbn_ldap.etu2eppn: 3.1<br>ucbn_ldap.etu2mail: 3.1<br>ucbn_ldap.free: 9<br>ucbn_ldap.get: 84.4<br>ucbn_ldap.getinvites: 88.3<br>ucbn_ldap.hid2alias: 3.1<br>ucbn_ldap.hid2eppn: 3.1<br>ucbn_ldap.hid2mail: 3.1<br>ucbn_ldap.hidisprimaryteacher: 3.1<br>ucbn_ldap.hidisteacher: 3.1<br>ucbn_ldap.ldap_connect: 24<br>ucbn_ldap.oid2alias: 3.5<br>ucbn_ldap.oid2eppn: 3.5<br>ucbn_ldap.oid2mail: 3.5<br>ucbn_ldap.uid2alias: 3.1<br>ucbn_ldap.uid2cn: 3.1<br>ucbn_ldap.uid2givenname: 3.1<br>ucbn_ldap.uid2gn: 3.4<br>ucbn_ldap.uid2mail: 3.2<br>ucbn_ldap.uid2sn: 3.1<br>ucbn_ldap.version: 3<br>unicaen_oracle.comprise_entre: 3.6<br>unicaen_oracle.liked: 3<br>unicaen_oracle.str_find: 3.2<br>unicaen_oracle.str_reduce: 6<br>unicaen_oracle.implode: 3.2<br></td></tr>
+<tr><td class="object_name">SEQUENCE</td><td style="text-align: center;">63</td><td style="text-align: center;">0</td><td style="text-align: center;">6.3</td><td>Sequences are fully supported, but all call to sequence_name.NEXTVAL or sequence_name.CURRVAL will be transformed into NEXTVAL('sequence_name') or CURRVAL('sequence_name').</td><td class="detail"></td></tr>
+<tr><td class="object_name">SYNONYM</td><td style="text-align: center;">0</td><td style="text-align: center;">0</td><td style="text-align: center;">0</td><td>SYNONYMs will be exported as views. SYNONYMs do not exists with PostgreSQL but a common workaround is to use views or set the PostgreSQL search_path in your session to access object outside the current schema.</td><td class="detail"></td></tr>
+<tr><td class="object_name">TABLE</td><td style="text-align: center;">96</td><td style="text-align: center;">0</td><td style="text-align: center;">9.6</td><td></td><td class="detail">Total number of rows: 760363<br>Top 10 of tables sorted by number of rows:<br>api_log has 137285 rows<br>import_log has 126227 rows<br>tmp_acteur has 72201 rows<br>acteur has 64302 rows<br>z_import_observ_etab_result has 49958 rows<br>tmp_these_annee_univ has 46212 rows<br>these_annee_univ has 44322 rows<br>individu_rech has 36507 rows<br>individu has 36507 rows<br>tmp_individu has 34115 rows<br>Top 10 of largest tables:<br></td></tr>
+<tr><td class="object_name">TRIGGER</td><td style="text-align: center;">1</td><td style="text-align: center;">0</td><td style="text-align: center;">4</td><td>Total size of trigger code: 448 bytes.</td><td class="detail">individu_rech_update: 3<br></td></tr>
+<tr><td class="object_name">VIEW</td><td style="text-align: center;">60</td><td style="text-align: center;">2</td><td style="text-align: center;">61.9</td><td>Views are fully supported but can use specific functions.</td><td class="detail">src_acteur: 1.1<br>src_role: 1.2<br>v_import_tab_cols: 1.1<br>v_situ_depot_vc_valid_pres: 1.2<br>v_situ_depot_vc_valid_pres_new: 1.2<br>v_tmp_anomalie: 4.1<br></td></tr>
+<tr><th style="text-align: center; border-bottom: 0px; vertical-align: bottom;">Total</th><td style="text-align: center; border-bottom: 0px; vertical-align: bottom;">501</td><td style="text-align: center; border-bottom: 0px; vertical-align: bottom;">17</td><td style="text-align: center; border-bottom: 0px; vertical-align: bottom;">464.80</td><td colspan="2" style="border-bottom: 0px; vertical-align: bottom;">464.80 cost migration units means approximatively 6 man-day(s). The migration unit was set to 5 minute(s)
+</td></tr>
+</table>
+</div>
+<h2>Migration level: C-5</h2>
+
+<ul>
+<li>Migration levels:</li>
+  <ul>
+    <li>A - Migration that might be run automatically</li>
+    <li>B - Migration with code rewrite and a human-days cost up to 5 days</li>
+    <li>C - Migration with code rewrite and a human-days cost above 5 days</li>
+  </ul>
+<li>Technical levels:</li>
+  <ul>
+    <li>1 = trivial: no stored functions and no triggers</li>
+    <li>2 = easy: no stored functions but with triggers, no manual rewriting</li>
+    <li>3 = simple: stored functions and/or triggers, no manual rewriting</li>
+    <li>4 = manual: no stored functions but with triggers or views with code rewriting</li>
+    <li>5 = difficult: stored functions and/or triggers with code rewriting</li>
+  </ul>
+</ul>
+<h2>Details of cost assessment per function</h2>
+<ul>
+<li>Function ucbn_ldap.getinvites total estimated cost: 88.3</li>
+<ul>
+<li>DBMS_ => 26 (cost: 3)</li>
+<li>CONCAT => 21 (cost: 0.1)</li>
+<li>SIZE => 6</li>
+<li>TEST => 2</li>
+<li>TO_NUMBER => 2 (cost: 0.1)</li>
+</ul>
+<li>Function ucbn_ldap.get total estimated cost: 84.4</li>
+<ul>
+<li>DBMS_ => 26 (cost: 3)</li>
+<li>SIZE => 4</li>
+<li>CONCAT => 2 (cost: 0.1)</li>
+<li>TEST => 2</li>
+<li>TO_NUMBER => 2 (cost: 0.1)</li>
+</ul>
+<li>Function ucbn_ldap.ldap_connect total estimated cost: 24</li>
+<ul>
+<li>DBMS_ => 7 (cost: 3)</li>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function ucbn_ldap.free total estimated cost: 9</li>
+<ul>
+<li>TEST => 2</li>
+<li>DBMS_ => 2 (cost: 3)</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function unicaen_oracle.str_reduce total estimated cost: 6</li>
+<ul>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+<li>UTL_ => 1 (cost: 3)</li>
+</ul>
+<li>Function str_reduce total estimated cost: 6</li>
+<ul>
+<li>TEST => 2</li>
+<li>UTL_ => 1 (cost: 3)</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function individu_haystack total estimated cost: 4.8</li>
+<ul>
+<li>CONCAT => 18 (cost: 0.1)</li>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function comprise_entre total estimated cost: 3.6</li>
+<ul>
+<li>TRUNC => 6 (cost: 0.1)</li>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function unicaen_oracle.comprise_entre total estimated cost: 3.6</li>
+<ul>
+<li>TRUNC => 6 (cost: 0.1)</li>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function ucbn_ldap.oid2mail total estimated cost: 3.5</li>
+<ul>
+<li>CONCAT => 5 (cost: 0.1)</li>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function ucbn_ldap.oid2alias total estimated cost: 3.5</li>
+<ul>
+<li>CONCAT => 5 (cost: 0.1)</li>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function ucbn_ldap.oid2eppn total estimated cost: 3.5</li>
+<ul>
+<li>CONCAT => 5 (cost: 0.1)</li>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function ucbn_ldap.uid2gn total estimated cost: 3.4</li>
+<ul>
+<li>CONCAT => 4 (cost: 0.1)</li>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function unicaen_oracle.str_find total estimated cost: 3.2</li>
+<ul>
+<li>CONCAT => 2 (cost: 0.1)</li>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function ucbn_ldap.alias2mail total estimated cost: 3.2</li>
+<ul>
+<li>CONCAT => 2 (cost: 0.1)</li>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function unicaen_oracle.implode total estimated cost: 3.2</li>
+<ul>
+<li>CONCAT => 2 (cost: 0.1)</li>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+<li>NOTFOUND => 1</li>
+</ul>
+<li>Function ucbn_ldap.uid2mail total estimated cost: 3.2</li>
+<ul>
+<li>CONCAT => 2 (cost: 0.1)</li>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function ucbn_ldap.hid2alias total estimated cost: 3.1</li>
+<ul>
+<li>TEST => 2</li>
+<li>CONCAT => 1 (cost: 0.1)</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function ucbn_ldap.uid2cn total estimated cost: 3.1</li>
+<ul>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+<li>CONCAT => 1 (cost: 0.1)</li>
+</ul>
+<li>Function ucbn_ldap.hid2mail total estimated cost: 3.1</li>
+<ul>
+<li>TEST => 2</li>
+<li>CONCAT => 1 (cost: 0.1)</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function ucbn_ldap.hidisprimaryteacher total estimated cost: 3.1</li>
+<ul>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+<li>CONCAT => 1 (cost: 0.1)</li>
+</ul>
+<li>Function ucbn_ldap.hidisteacher total estimated cost: 3.1</li>
+<ul>
+<li>TEST => 2</li>
+<li>CONCAT => 1 (cost: 0.1)</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function ucbn_ldap.etu2eppn total estimated cost: 3.1</li>
+<ul>
+<li>TEST => 2</li>
+<li>CONCAT => 1 (cost: 0.1)</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function ucbn_ldap.etu2mail total estimated cost: 3.1</li>
+<ul>
+<li>TEST => 2</li>
+<li>CONCAT => 1 (cost: 0.1)</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function ucbn_ldap.uid2sn total estimated cost: 3.1</li>
+<ul>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+<li>CONCAT => 1 (cost: 0.1)</li>
+</ul>
+<li>Function ucbn_ldap.uid2givenname total estimated cost: 3.1</li>
+<ul>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+<li>CONCAT => 1 (cost: 0.1)</li>
+</ul>
+<li>Function ucbn_ldap.uid2alias total estimated cost: 3.1</li>
+<ul>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+<li>CONCAT => 1 (cost: 0.1)</li>
+</ul>
+<li>Function ucbn_ldap.hid2eppn total estimated cost: 3.1</li>
+<ul>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+<li>CONCAT => 1 (cost: 0.1)</li>
+</ul>
+<li>Function ucbn_ldap.version total estimated cost: 3</li>
+<ul>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+</ul>
+<li>Function unicaen_oracle.liked total estimated cost: 3</li>
+<ul>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+</ul>
+</ul>
+<h2>Details of cost assessment per trigger</h2>
+<ul>
+<li>Trigger individu_rech_update total estimated cost: 3</li>
+<ul>
+<li>TG_OP => 3</li>
+<li>TEST => 2</li>
+<li>SIZE => 1</li>
+</ul>
+</ul>
+<h2>Details of cost assessment per view</h2>
+<ul>
+<li>View v_tmp_anomalie total estimated cost: 4.1</li>
+<ul>
+<li>CONCAT => 31 (cost: 0.1)</li>
+</ul>
+<li>View v_situ_depot_vc_valid_pres_new total estimated cost: 1.2</li>
+<ul>
+<li>CONCAT => 2 (cost: 0.1)</li>
+</ul>
+<li>View src_role total estimated cost: 1.2</li>
+<ul>
+<li>CONCAT => 2 (cost: 0.1)</li>
+</ul>
+<li>View v_situ_depot_vc_valid_pres total estimated cost: 1.2</li>
+<ul>
+<li>CONCAT => 2 (cost: 0.1)</li>
+</ul>
+<li>View src_acteur total estimated cost: 1.1</li>
+<ul>
+<li>CONCAT => 1 (cost: 0.1)</li>
+</ul>
+<li>View v_import_tab_cols total estimated cost: 1.1</li>
+<ul>
+<li>CONCAT => 1 (cost: 0.1)</li>
+</ul>
+</ul>
+
+<div id="footer">
+Generated by <a href="http://ora2pg.darold.net/">Ora2Pg v20.0</a>
+</div>
+</body>
+</html>

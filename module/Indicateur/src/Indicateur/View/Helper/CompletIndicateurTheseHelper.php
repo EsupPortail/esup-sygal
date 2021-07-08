@@ -21,14 +21,14 @@ class CompletIndicateurTheseHelper extends AbstractHelper
     public function render($indicateur, $data, $structureService) {
 
         $rubriques = [
-            'id'                    => 'ID',
-            'Source Code'           => 'SOURCE_CODE',
-            'Titre'                 => 'TITRE',
-            'Première inscription'  => 'DATE_PREM_INSC',
-            'Date de soutenance'    => 'DATE_SOUTENANCE',
-            'Établissement d\'inscription'         => 'ETABLISSEMENT_ID',
-            'École doctorale'       => 'ECOLE_DOCT_ID',
-            'Unité de recherche'       => 'UNITE_RECH_ID',
+            'id'                    => 'id',
+            'Source Code'           => 'source_code',
+            'Titre'                 => 'titre',
+            'Première inscription'  => 'date_prem_insc',
+            'Date de soutenance'    => 'date_soutenance',
+            'Établissement d\'inscription'         => 'etablissement_id',
+            'École doctorale'       => 'ecole_doct_id',
+            'Unité de recherche'       => 'unite_rech_id',
         ];
 
         $html  = '';
@@ -47,7 +47,7 @@ class CompletIndicateurTheseHelper extends AbstractHelper
                     $html .= '<td>';
                     switch($clef) {
                         case 'Titre':
-                            $html .= '<a href="' . $this->getView()->url('these/identite', ['these' => $entry['ID']], [], true) . '">';
+                            $html .= '<a href="' . $this->getView()->url('these/identite', ['these' => $entry['id']], [], true) . '">';
                             $html .= $entry[$valeur];
                             $html .= '</a>';
                             break;

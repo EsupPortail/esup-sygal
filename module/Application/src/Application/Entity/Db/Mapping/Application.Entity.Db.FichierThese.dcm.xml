@@ -8,9 +8,7 @@
       <generator strategy="SEQUENCE"/>
     </id>
 
-    <field name="estAnnexe" type="boolean" column="EST_ANNEXE"/>
     <field name="retraitement" column="RETRAITEMENT" nullable="true"/>
-    <field name="estExpurge" type="boolean" column="EST_EXPURGE"/>
     <field name="estConforme" type="integer" column="EST_CONFORME" nullable="true"/>
     <field name="estPartiel" type="boolean" column="EST_PARTIEL"/>
 

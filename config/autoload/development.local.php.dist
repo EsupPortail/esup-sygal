@@ -1,0 +1,20 @@
+<?php
+
+return [
+    'doctrine' => [
+        'configuration' => [
+            'orm_default' => [
+                'metadata_cache'   => 'array',
+                'query_cache'      => 'array',
+                'result_cache'     => 'array',
+                'hydration_cache'  => 'array',
+                'generate_proxies' => true,
+            ],
+        ],
+    ],
+
+    'view_manager' => [
+        'display_not_found_reason' => true,
+        'display_exceptions' => true,
+    ]
+];

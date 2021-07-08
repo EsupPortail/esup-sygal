@@ -287,7 +287,7 @@ class UniteRecherche
      */
     public function createSearchFilterValueOption(): array
     {
-        $estFermee = $this->getStructure()->isFerme();
+        $estFermee = $this->getStructure()->estFermee();
 
         $subtext = $this->getLibelle();
         if ($estFermee) {

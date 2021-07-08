@@ -35,8 +35,8 @@ class ResumeIndicateurIndividuHelper extends AbstractHelper
                     $html .= '<tbody>';
                     for($position = 0 ; $position < $limite && $position < count($data) ; $position++) {
                         $html .= '<tr>';
-                            $html .= '<td>'.$data[$position]["PRENOM1"].' '.$data[$position]["NOM_USUEL"] . '</td>';
-                            $html .= '<td>'.$data[$position]["SOURCE_CODE"].'</td>';
+                            $html .= '<td>'.$data[$position]["prenom1"].' '.$data[$position]["nom_usuel"] . '</td>';
+                            $html .= '<td>'.$data[$position]["source_code"].'</td>';
                         $html .= '</tr>';
                     }
                     $html .= '</tbody>';

@@ -62,7 +62,7 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
                 <td>
                     <a href="<?php echo $this->url('unite-recherche/information', ['structure' => $unite->getStructure()->getId()], [], true); ?>">
                         <?php echo $unite->getLibelle(); ?>
-                        <?php if ($unite->getStructure()->isFerme()) : ?>
+                        <?php if ($unite->getStructure()->estFermee()) : ?>
                             &nbsp;<span class="label" style="background-color: darkred">Structure fermée</span>
                         <?php endif; ?>
                     </a>

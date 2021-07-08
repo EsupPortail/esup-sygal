@@ -239,7 +239,7 @@ class ValidationService extends BaseService
      * @param These $these
      * @return DepotVersionCorrigeeValidationPresident[]
      */
-    public function getValidationsAttenduesPourCorrectionThese(These $these)
+    public function getValidationsAttenduesPourCorrectionThese(These $these): array
     {
         $qb = $this->getEntityManager()->getRepository(DepotVersionCorrigeeValidationPresident::class)->createQueryBuilder('va')
             ->addSelect('t, i')
@@ -248,9 +248,7 @@ class ValidationService extends BaseService
             ->andWhere('va.valide = 0')
             ->setParameter('these', $these);
 
-        $results = $qb->getQuery()->getResult();
-
-        return $results;
+        return $qb->getQuery()->getResult();
     }
 
     public function validatePageDeCouverture($these)

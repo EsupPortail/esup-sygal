@@ -126,8 +126,8 @@ class ImportController extends AbstractActionController
         $result = $connection->executeQuery("SELECT REQ_END_DATE, REQ_RESPONSE FROM API_LOG WHERE REQ_ETABLISSEMENT='" . $etablissement . "' AND REQ_TABLE='" . $table . "' ORDER BY REQ_END_DATE DESC");
         $data = $result->fetch();
 
-        $last_time = $data["REQ_END_DATE"];
-        $message = $data["REQ_RESPONSE"];
+        $last_time = $data["req_end_date"];
+        $message = $data["req_response"];
 
         return new ViewModel([
             'query'     => $etablissement . ' | ' . $table,

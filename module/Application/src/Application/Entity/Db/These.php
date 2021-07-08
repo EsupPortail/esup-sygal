@@ -295,6 +295,14 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->id;
+    }
+
+    /**
      * Get histoModification
      *
      * @return \DateTime

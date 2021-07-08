@@ -15,14 +15,14 @@ class CompletIndicateurIndividuHelper extends AbstractHelper
     public function render($indicateur, $data) {
 
         $rubriques = [
-            'id'                    => 'ID',
-            'Source Code'           => 'SOURCE_CODE',
-            'Nom usuel'             => 'NOM_USUEL',
-            'Nom Patronymique'      => 'NOM_PATRONYMIQUE',
-            'Prénom 1'              => 'PRENOM1',
-            'Prénom 2'              => 'PRENOM2',
-            'Prénom 3'              => 'PRENOM3',
-            'Email'                 => 'EMAIL',
+            'id'                    => 'id',
+            'Source Code'           => 'source_code',
+            'Nom usuel'             => 'nom_usuel',
+            'Nom Patronymique'      => 'nom_patronymique',
+            'Prénom 1'              => 'prenom1',
+            'Prénom 2'              => 'prenom2',
+            'Prénom 3'              => 'prenom3',
+            'Email'                 => 'email',
         ];
 
         $html  = '';
@@ -39,9 +39,9 @@ class CompletIndicateurIndividuHelper extends AbstractHelper
             $html .= '<tr>';
             foreach ($rubriques as $clef => $valeur) {
                 $html .= '<td>';
-//                if ($clef === 'SOURCE_CODE') $html .= '<a href="'.$this->getView()->url('these/identite', ['these' => $entry['ID']], [], true).'">';
+//                if ($clef === 'source_code') $html .= '<a href="'.$this->getView()->url('these/identite', ['these' => $entry['id']], [], true).'">';
                 $html .= $entry[$valeur] ;
-//                if ($clef === 'SOURCE_CODE') $html .= '</a>';
+//                if ($clef === 'source_code') $html .= '</a>';
                 $html .= '</td>';
             }
             $html .= '</tr>';

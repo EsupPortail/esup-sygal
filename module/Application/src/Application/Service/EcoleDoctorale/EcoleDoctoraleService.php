@@ -127,9 +127,8 @@ class EcoleDoctoraleService extends BaseService
         $ecoles = $this->getEntityManager()->getRepository(EcoleDoctorale::class)->createQueryBuilder('ecole')
             ->addSelect('structure')->join('ecole.structure','structure')
             ->andWhere('ecole.histoDestruction IS NULL')
-            ->andWhere('structure.ferme = :false')
+            ->andWhere('structure.estFermee = false')
             ->andWhere('ecole.theme IS NOT NULL')
-            ->setParameter('false', 0)
             ->orderBy('ecole.theme', 'asc')
         ;
 

@@ -309,12 +309,12 @@ class PropositionService {
         $nbRapporteur   = 0;
 
         $parameters     =  $this->getParametreService()->getParametresAsArray();
-        $parite_min     =  $parameters['JURY_PARITE_RATIO_MIN'];
-        $membre_min     =  $parameters['JURY_SIZE_MIN'];
-        $membre_max     =  $parameters['JURY_SIZE_MAX'];
-        $rapporteur_min =  $parameters['JURY_RAPPORTEUR_SIZE_MIN'];
-        $rangA_min      =  $parameters['JURY_RANGA_RATIO_MIN'];
-        $exterieur_min  =  $parameters['JURY_EXTERIEUR_RATIO_MIN'];
+        $parite_min     =  $parameters['jury_parite_ratio_min'];
+        $membre_min     =  $parameters['jury_size_min'];
+        $membre_max     =  $parameters['jury_size_max'];
+        $rapporteur_min =  $parameters['jury_rapporteur_size_min'];
+        $rangA_min      =  $parameters['jury_ranga_ratio_min'];
+        $exterieur_min  =  $parameters['jury_exterieur_ratio_min'];
 
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {

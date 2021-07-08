@@ -108,7 +108,7 @@ $structure = $ecole->getStructure();
                         <?php endif; ?>
                     <dt> Statut :</dt>
                     <dd>
-                        <?php if ($ecole->getStructure()->isFerme()) : ?>
+                        <?php if ($ecole->getStructure()->estFermee()) : ?>
                             <span class="label" style="background-color:darkred">Structure fermée</span>
                         <?php else : ?>
                             <span class="label" style="background-color:darkgreen">Structure ouverte</span>
