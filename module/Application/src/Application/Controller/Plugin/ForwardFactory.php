@@ -3,7 +3,7 @@
 namespace Application\Controller\Plugin;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 
 class ForwardFactory
 {

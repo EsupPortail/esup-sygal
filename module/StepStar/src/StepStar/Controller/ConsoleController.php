@@ -8,8 +8,8 @@ use StepStar\Service\Api\ApiServiceAwareTrait;
 use StepStar\Service\Tef\TefServiceAwareTrait;
 use StepStar\Service\Xml\XmlServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Mvc\Console\Controller\AbstractConsoleController;
-use Zend\Stdlib\Glob;
+use Laminas\Mvc\Console\Controller\AbstractConsoleController;
+use Laminas\Stdlib\Glob;
 
 class ConsoleController extends AbstractConsoleController
 {

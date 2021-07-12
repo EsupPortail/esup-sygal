@@ -11,8 +11,8 @@ use Application\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
-use Zend\Http\Response;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
 
 class UniteRechercheController extends StructureConcreteController
 {

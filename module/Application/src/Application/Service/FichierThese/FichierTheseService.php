@@ -32,8 +32,8 @@ use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Exporter\Pdf;
 use UnicaenApp\Util;
-use Zend\Http\Response;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\Http\Response;
+use Laminas\View\Renderer\PhpRenderer;
 
 class FichierTheseService extends BaseService
 {

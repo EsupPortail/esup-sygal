@@ -9,9 +9,9 @@ use Application\Service\UserContextService;
 use Interop\Container\ContainerInterface;
 use UnicaenApp\Service\MessageCollector;
 use UnicaenAuth\Service\AuthorizeService;
-use Zend\Mvc\MvcEvent;
-use Zend\ServiceManager\Exception\InvalidArgumentException;
-use Zend\ServiceManager\Factory\AbstractFactoryInterface;
+use Laminas\Mvc\MvcEvent;
+use Laminas\ServiceManager\Exception\InvalidArgumentException;
+use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 
 /**
  * Instancie l'Assertion de base correspondant au nom de service suivant :
@@ -98,7 +98,7 @@ class AssertionAbstractFactory implements AbstractFactoryInterface
         $baseAssertion->setServiceAuthorize($authorizeService);
 
 //        $logger = new Logger();
-//        $logger->addWriter(new \Zend\Log\Writer\Stream('/tmp/TheseEntityAssertion.log'));
+//        $logger->addWriter(new \Laminas\Log\Writer\Stream('/tmp/TheseEntityAssertion.log'));
 //        $entityAssertion->setLogger($logger);
 
         return $baseAssertion;

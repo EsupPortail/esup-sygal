@@ -5,8 +5,8 @@ namespace Application\Controller;
 use Application\Entity\Db\These;
 use Application\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Log\LoggerAwareTrait;
-use Zend\Mvc\Controller\AbstractConsoleController;
+use Laminas\Log\LoggerAwareTrait;
+use Laminas\Mvc\Controller\AbstractConsoleController;
 
 class TheseConsoleController extends AbstractConsoleController
 {

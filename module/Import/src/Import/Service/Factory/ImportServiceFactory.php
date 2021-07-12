@@ -7,8 +7,8 @@ use Doctrine\ORM\EntityManager;
 use Import\Service\FetcherService;
 use Import\Service\ImportService;
 use Import\Service\SynchroService;
-use Zend\Log\Logger;
-use Zend\Log\Writer\Noop;
+use Laminas\Log\Logger;
+use Laminas\Log\Writer\Noop;
 use Interop\Container\ContainerInterface;
 
 class ImportServiceFactory

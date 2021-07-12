@@ -12,7 +12,7 @@ use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Notification\Notification;
 use UnicaenApp\Options\ModuleOptions;
-use Zend\View\Helper\Url as UrlHelper;
+use Laminas\View\Helper\Url as UrlHelper;
 
 /**
  * Classe de construction de notifications par mail.

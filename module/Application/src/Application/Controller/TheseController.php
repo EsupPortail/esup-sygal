@@ -48,17 +48,17 @@ use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
 use UnicaenApp\Traits\MessageAwareInterface;
-use Zend\Form\Element\Hidden;
-use Zend\Form\Element\Radio;
-use Zend\Form\Element\Submit;
-use Zend\Form\Form;
-use Zend\Http\Response;
-use Zend\InputFilter\InputFilter;
-use Zend\Log\Logger;
-use Zend\Log\Writer\Noop;
-use Zend\Stdlib\ParametersInterface;
-use Zend\View\Model\ViewModel;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\Form\Element\Hidden;
+use Laminas\Form\Element\Radio;
+use Laminas\Form\Element\Submit;
+use Laminas\Form\Form;
+use Laminas\Http\Response;
+use Laminas\InputFilter\InputFilter;
+use Laminas\Log\Logger;
+use Laminas\Log\Writer\Noop;
+use Laminas\Stdlib\ParametersInterface;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Renderer\PhpRenderer;
 
 class TheseController extends AbstractController
 {

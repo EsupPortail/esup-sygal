@@ -4,7 +4,7 @@ namespace StepStar\Service\Api;
 
 use Interop\Container\ContainerInterface;
 use StepStar\Service\Soap\SoapClient;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class ApiServiceFactory implements FactoryInterface
 {

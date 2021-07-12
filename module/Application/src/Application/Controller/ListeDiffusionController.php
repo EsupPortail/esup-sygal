@@ -22,8 +22,8 @@ use InvalidArgumentException;
 use SplObjectStorage;
 use UnicaenApp\View\Model\CsvModel;
 use Webmozart\Assert\Assert;
-use Zend\Http\Response;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
 
 class ListeDiffusionController extends AbstractController
 {

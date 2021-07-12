@@ -54,7 +54,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
     <div id="logo-div" class="col-md-6">
 
         <?php
-        /** @var \Zend\Form\Element\File $logoFile */
+        /** @var \Laminas\Form\Element\File $logoFile */
         $logoFile = $form->get('cheminLogo');
         echo $this->formLabel($logoFile);
         ?>

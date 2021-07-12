@@ -6,8 +6,8 @@ use Application\Filter\IdifyFilterAwareTrait;
 use Application\RouteMatch;
 use Traversable;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Mvc\ModuleRouteListener;
-use Zend\Router\RouteStackInterface;
+use Laminas\Mvc\ModuleRouteListener;
+use Laminas\Router\RouteStackInterface;
 
 abstract class UrlService
 {

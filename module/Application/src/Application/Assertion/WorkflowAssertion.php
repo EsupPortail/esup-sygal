@@ -6,7 +6,7 @@ use Application\Acl\WfEtapeResource;
 use Application\Service\UserContextService;
 use Application\Service\Workflow\WorkflowServiceAwareInterface;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * Class WorkflowAssertion

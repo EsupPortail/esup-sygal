@@ -1,10 +1,10 @@
 <?php
 namespace Soutenance;
 
-use Zend\Mvc\ModuleRouteListener;
-use Zend\Mvc\MvcEvent;
-use Zend\Config\Factory as ConfigFactory;
-use Zend\Stdlib\Glob;
+use Laminas\Mvc\ModuleRouteListener;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Config\Factory as ConfigFactory;
+use Laminas\Stdlib\Glob;
 
 class Module
 {
@@ -35,7 +35,7 @@ class Module
     public function getAutoloaderConfig()
     {
         return array(
-            'Zend\Loader\StandardAutoloader' => array(
+            'Laminas\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                 ),

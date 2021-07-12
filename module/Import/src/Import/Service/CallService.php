@@ -12,8 +12,8 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
 use Import\Exception\CallException;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Http\Response;
-use Zend\Log\LoggerAwareTrait;
+use Laminas\Http\Response;
+use Laminas\Log\LoggerAwareTrait;
 
 /**
  * Service dédié à l'envoi de requêtes au Web Service.

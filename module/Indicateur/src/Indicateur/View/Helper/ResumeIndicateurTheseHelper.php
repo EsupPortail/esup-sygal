@@ -3,7 +3,7 @@
 namespace Indicateur\View\Helper;
 
 use Indicateur\Model\Indicateur;
-use Zend\Form\View\Helper\AbstractHelper;
+use Laminas\Form\View\Helper\AbstractHelper;
 
 class ResumeIndicateurTheseHelper extends AbstractHelper
 {

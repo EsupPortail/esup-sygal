@@ -8,7 +8,7 @@
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Application\Provider\Privilege\ValidationPrivileges;
-use Zend\Form\Form;
+use Laminas\Form\Form;
 
 $canEdit = $this->isAllowed($these, ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE);
 $toggleDetails = clone $this->toggleDetails('div-depot-corrige');
@@ -46,7 +46,7 @@ $toggleDetails = clone $this->toggleDetails('div-depot-corrige');
                 //'value' => $these->getId(),
                 'type' => 'hidden',
             ));
-            $this->add((new \Zend\Form\Element\Submit('submit'))
+            $this->add((new \Laminas\Form\Element\Submit('submit'))
                 ->setValue("Validation")
                 ->setAttribute('class', 'btn btn-primary')
             );

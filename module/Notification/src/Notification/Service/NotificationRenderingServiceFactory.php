@@ -3,8 +3,8 @@
 namespace Notification\Service;
 
 use Interop\Container\ContainerInterface;
-use Zend\Mvc\Console\View\ViewManager as ConsoleViewManager;
-use Zend\Mvc\View\Http\ViewManager as HttpViewManager;
+use Laminas\Mvc\Console\View\ViewManager as ConsoleViewManager;
+use Laminas\Mvc\View\Http\ViewManager as HttpViewManager;
 
 /**
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>

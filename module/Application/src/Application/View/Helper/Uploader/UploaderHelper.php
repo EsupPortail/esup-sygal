@@ -5,9 +5,9 @@ namespace Application\View\Helper\Uploader;
 use Application\Controller\Plugin\Uploader\UploadedFileInterface;
 use Application\Controller\Plugin\Uploader\UploaderPlugin;
 use Application\Controller\Plugin\Uploader\UploadForm;
-use Zend\View\Helper\AbstractHelper;
-use Zend\View\Renderer\PhpRenderer;
-use Zend\View\Resolver\TemplatePathStack;
+use Laminas\View\Helper\AbstractHelper;
+use Laminas\View\Renderer\PhpRenderer;
+use Laminas\View\Resolver\TemplatePathStack;
 
 /**
  * Aide de vue simplifiant l'upload de fichier.

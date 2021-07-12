@@ -7,7 +7,7 @@ use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * EcoleDoctorale

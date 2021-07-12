@@ -10,8 +10,8 @@ use Application\Form\AdresseMail\AdresseMailFormFactory;
 use Application\Form\AdresseMail\AdresseMailHydrator;
 use Application\Provider\Privilege\PresidentJuryPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [

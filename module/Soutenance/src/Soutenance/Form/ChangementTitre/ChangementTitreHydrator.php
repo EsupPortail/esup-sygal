@@ -4,7 +4,7 @@ namespace Soutenance\Form\ChangementTitre;
 
 use DateTime;
 use Soutenance\Entity\Proposition;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class ChangementTitreHydrator implements HydratorInterface
 {

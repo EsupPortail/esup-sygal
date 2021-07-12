@@ -33,7 +33,7 @@ class FichierTheseServiceFactory
          * @var RetraitementService $retraitementService
          * @var EtablissementService $etablissementService
          * @var NotifierService $notifierService
-         * @var \Zend\View\Renderer\PhpRenderer $renderer
+         * @var \Laminas\View\Renderer\PhpRenderer $renderer
          */
         $fichierService = $container->get(FichierService::class);
         $fileService = $container->get(FileService::class);

@@ -3,7 +3,7 @@
 namespace Soutenance\Form\QualiteEdition;
 
 use Soutenance\Entity\Qualite;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class QualiteEditiontHydrator implements HydratorInterface
 {

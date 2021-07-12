@@ -6,9 +6,9 @@ use Soutenance\Entity\Parametre;
 use Soutenance\Form\Configuration\ConfigurationForm;
 use Soutenance\Form\Configuration\ConfigurationFormAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
-use Zend\Http\Request;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
 
 class ConfigurationController extends AbstractActionController
 {

@@ -4,9 +4,9 @@ namespace Application\Service\Url;
 
 use Application\RouteMatch;
 use Interop\Container\ContainerInterface;
-use Zend\Console\Console;
-use Zend\Router\RouteStackInterface;
-use Zend\ServiceManager\Factory\AbstractFactoryInterface;
+use Laminas\Console\Console;
+use Laminas\Router\RouteStackInterface;
+use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 
 class UrlServiceFactory implements AbstractFactoryInterface
 {

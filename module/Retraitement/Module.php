@@ -2,10 +2,10 @@
 
 namespace Retraitement;
 
-use Zend\Console\Adapter\AdapterInterface as Console;
-use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
-use Zend\Mvc\ModuleRouteListener;
-use Zend\Mvc\MvcEvent;
+use Laminas\Console\Adapter\AdapterInterface as Console;
+use Laminas\ModuleManager\Feature\ConsoleUsageProviderInterface;
+use Laminas\Mvc\ModuleRouteListener;
+use Laminas\Mvc\MvcEvent;
 
 class Module implements ConsoleUsageProviderInterface
 {
@@ -28,7 +28,7 @@ class Module implements ConsoleUsageProviderInterface
     public function getAutoloaderConfig()
     {
         return [
-            'Zend\Loader\StandardAutoloader' => [
+            'Laminas\Loader\StandardAutoloader' => [
                 'namespaces' => [
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                 ],

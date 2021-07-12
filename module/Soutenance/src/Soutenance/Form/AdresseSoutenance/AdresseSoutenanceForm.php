@@ -2,8 +2,8 @@
 
 namespace Soutenance\Form\AdresseSoutenance;
 
-use Zend\Form\Element\Submit;
-use Zend\Form\Form;
+use Laminas\Form\Element\Submit;
+use Laminas\Form\Form;
 
 class AdresseSoutenanceForm extends Form
 {

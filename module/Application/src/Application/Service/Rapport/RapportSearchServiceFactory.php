@@ -15,7 +15,7 @@ use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Application\Search\UniteRecherche\UniteRechercheSearchFilter;
 use Application\Service\Validation\ValidationService;
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class RapportSearchServiceFactory implements FactoryInterface
 {

@@ -2,9 +2,9 @@
 
 namespace Soutenance\Form\Anglais;
 
-use Zend\Form\Element\Checkbox;
-use Zend\Form\Element\Submit;
-use Zend\Form\Form;
+use Laminas\Form\Element\Checkbox;
+use Laminas\Form\Element\Submit;
+use Laminas\Form\Form;
 
 class AnglaisForm extends Form
 {

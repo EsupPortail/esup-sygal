@@ -3,7 +3,7 @@
 namespace Indicateur\Form;
 
 use Indicateur\Model\Indicateur;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class IndicateurHydrator implements HydratorInterface
 {

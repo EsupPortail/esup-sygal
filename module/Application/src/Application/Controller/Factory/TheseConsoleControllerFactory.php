@@ -5,9 +5,9 @@ namespace Application\Controller\Factory;
 use Application\Controller\TheseConsoleController;
 use Application\Service\These\TheseService;
 use Interop\Container\ContainerInterface;
-use Zend\Log\Logger;
-use Zend\Log\LoggerInterface;
-use Zend\Log\Writer\Stream;
+use Laminas\Log\Logger;
+use Laminas\Log\LoggerInterface;
+use Laminas\Log\Writer\Stream;
 
 class TheseConsoleControllerFactory
 {

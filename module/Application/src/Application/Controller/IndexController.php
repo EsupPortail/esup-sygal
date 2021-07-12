@@ -14,10 +14,10 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Information\Service\InformationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\Http\Response;
-use Zend\Validator\EmailAddress as EmailAddressValidator;
-use Zend\View\Model\ViewModel;
+use Laminas\Authentication\AuthenticationServiceInterface;
+use Laminas\Http\Response;
+use Laminas\Validator\EmailAddress as EmailAddressValidator;
+use Laminas\View\Model\ViewModel;
 
 class IndexController extends AbstractController
 {

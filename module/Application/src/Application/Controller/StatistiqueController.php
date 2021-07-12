@@ -10,8 +10,8 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
-use Zend\Http\Request;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\View\Model\ViewModel;
 
 class StatistiqueController extends AbstractController
 {

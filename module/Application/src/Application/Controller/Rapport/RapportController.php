@@ -21,8 +21,8 @@ use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Doctrine\ORM\NoResultException;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Http\Response;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
 
 abstract class RapportController extends AbstractController
 {

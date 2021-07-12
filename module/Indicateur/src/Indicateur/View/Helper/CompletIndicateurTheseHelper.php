@@ -8,7 +8,7 @@ use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Service\Structure\StructureService;
 use Indicateur\Model\Indicateur;
-use Zend\Form\View\Helper\AbstractHelper;
+use Laminas\Form\View\Helper\AbstractHelper;
 
 class CompletIndicateurTheseHelper extends AbstractHelper
 {

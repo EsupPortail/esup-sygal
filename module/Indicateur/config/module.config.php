@@ -16,8 +16,8 @@ use Indicateur\View\Helper\CompletIndicateurTheseHelper;
 use Indicateur\View\Helper\ResumeIndicateurIndividuHelper;
 use Indicateur\View\Helper\ResumeIndicateurStructureHelper;
 use Indicateur\View\Helper\ResumeIndicateurTheseHelper;
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 
 return array(
     'bjyauthorize'    => [

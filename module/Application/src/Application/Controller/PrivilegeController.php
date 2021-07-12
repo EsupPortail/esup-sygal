@@ -12,7 +12,7 @@ use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenAuth\Service\Traits\PrivilegeServiceAwareTrait;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class PrivilegeController extends AbstractController
 {

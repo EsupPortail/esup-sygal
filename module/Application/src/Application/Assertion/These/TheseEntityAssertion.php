@@ -19,7 +19,7 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareInterface;
 use Application\Service\Validation\ValidationServiceAwareTrait;
-use Zend\Log\LoggerAwareTrait;
+use Laminas\Log\LoggerAwareTrait;
 
 class TheseEntityAssertion extends GeneratedTheseEntityAssertion
     implements EntityAssertionInterface, ValidationServiceAwareInterface, FichierTheseServiceAwareInterface, TheseServiceAwareInterface

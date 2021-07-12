@@ -39,11 +39,11 @@ use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
-use Zend\EventManager\Event;
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\ListenerAggregateInterface;
-use Zend\EventManager\ListenerAggregateTrait;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\EventManager\Event;
+use Laminas\EventManager\EventManagerInterface;
+use Laminas\EventManager\ListenerAggregateInterface;
+use Laminas\EventManager\ListenerAggregateTrait;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class TheseService extends BaseService implements ListenerAggregateInterface
 {

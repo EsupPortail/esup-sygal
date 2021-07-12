@@ -2,7 +2,7 @@
 
 namespace Application\Entity\Db;
 
-use Zend\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * Classe représentant un fichier lié *à une thèse*.
