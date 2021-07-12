@@ -1,8 +1,7 @@
 --
--- COMUE or not COMUE ?
+-- COMUE éventuelle
 --
--- NB : Ce script vous concerne uniquement si vous avez besoin de déclarer une structure particulière
--- pour votre COMUE.
+-- NB : Ce script crée une COMUE *uniquement si* vous l'avez demandé dans la config de préparation des scripts.
 --
 
 insert into structure (id, source_code, sigle, libelle, type_structure_id, source_id, code, histo_createur_id, histo_modificateur_id)
@@ -18,7 +17,7 @@ insert into etablissement (id, structure_id, domaine, source_id, source_code, es
 select
   nextval('etablissement_id_seq'), s.id,
   '{ETAB_COMUE_DOMAINE}', --> domaine à personnaliser
-  1, 'COMUE', 1, 0, 1, 1
+  1, 'COMUE', true, false, 1, 1
 from structure s
 where s.source_code = 'COMUE'
 ;

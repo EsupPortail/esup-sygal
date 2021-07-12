@@ -21,22 +21,25 @@ select
     '{ETAB_CODE}',
     '{ETAB_SIGLE}',
     '{ETAB_LIBELLE}',
-    1, 1,
+    1,
+    1,
     1, 1
 ;
 
 --
 -- 2/ ETABLISSEMENT
 --
-insert into etablissement (id, structure_id, domaine, source_code, est_comue, est_membre, source_id, histo_createur_id, histo_modificateur_id)
+insert into etablissement (id, structure_id, domaine, source_code, source_id, est_comue, est_membre,
+                           est_etab_inscription, histo_createur_id, histo_modificateur_id)
 select
     nextval('etablissement_id_seq'),
     s.id,
     '{ETAB_DOMAINE}',
     '{ETAB_CODE}',
-    0,
-    1,
-    1,
+   1,
+    false,
+    true,
+    true,
     1, 1
 from structure s
 where s.source_code = '{ETAB_CODE}'
@@ -48,16 +51,16 @@ where s.source_code = '{ETAB_CODE}'
 delete from source where code <> 'SYGAL::sygal'
 ;
 insert into source (id, code, libelle, importable, etablissement_id)
-select 2, source_code||'::apogee', 'Apogée '||source_code, 1, id
+select 2, source_code||'::apogee', 'Apogée '||source_code, true, id
 from etablissement
 where source_code = '{ETAB_CODE}'
-  and {SOURCE_APOGEE} = 1
+  and '{SOURCE_APOGEE}' = '1'
 ;
 insert into source (id, code, libelle, importable, etablissement_id)
-select 3, source_code||'::physalis', 'Physalis '||source_code, 1, id
+select 3, source_code||'::physalis', 'Physalis '||source_code, true, id
 from etablissement
 where source_code = '{ETAB_CODE}'
-  and {SOURCE_PHYSALIS} = 1
+  and '{SOURCE_PHYSALIS}' = '1'
 ;
 
 --
@@ -77,10 +80,10 @@ insert into role (
     type_structure_dependant_id
 )
 with tmp(code, libelle, these_dep) as (
-    select 'ADMIN',     'Administrateur',             0 union
-    select 'MDD',       'Maison du doctorat',         0 union
-    select 'BU',        'Bibliothèque universitaire', 0 union
-    select 'DOCTORANT', 'Doctorant',                  1
+    select 'ADMIN',     'Administrateur',             false union
+    select 'MDD',       'Maison du doctorat',         false union
+    select 'BU',        'Bibliothèque universitaire', false union
+    select 'DOCTORANT', 'Doctorant',                  true
 )
 select
     nextval('role_id_seq'),
@@ -99,15 +102,29 @@ where s.source_code = '{ETAB_CODE}'
 ;
 
 --
--- Accord des privilèges de "gestion des privilèges" au rôle ADMIN_TECH.
--- NB: cela débloque l'accès au menu "Droits d'accès" dans l'appli.
+-- Accord de tous les privilèges au rôle ADMIN_TECH.
 --
+insert into profil_privilege(profil_id, privilege_id)
+select pro.id, pri.id
+from profil pro,
+     privilege pri
+where pro.role_id = 'ADMIN_TECH'
+  and not exists(select * from profil_privilege where profil_id = pro.id and privilege_id = pri.id)
+;
 insert into role_privilege(role_id, privilege_id)
-select r.id, p.id
-from role r, privilege p, categorie_privilege cp
-where r.SOURCE_CODE = 'ADMIN_TECH'
-  and cp.CODE = 'droit'
-  and p.CATEGORIE_ID = cp.id
+select r.id, pri.id
+from role r,
+     privilege pri
+where r.code = 'ADMIN_TECH'
+  and not exists(select * from role_privilege where role_id = r.id and privilege_id = pri.id)
+;
+insert into profil_to_role(profil_id, role_id)
+select pro.id, r.id
+from profil pro,
+     role r
+where pro.role_id = 'ADMIN_TECH'
+  and r.code = 'ADMIN_TECH'
+  and not exists(select * from profil_to_role where profil_id = pro.id and role_id = r.id)
 ;
 
 
