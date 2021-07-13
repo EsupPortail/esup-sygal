@@ -31,7 +31,7 @@ class ConfidentialiteHydrator implements HydratorInterface
      * @param Proposition $proposition
      * @return array
      */
-    public function extract($proposition) {
+    public function extract($proposition): array {
 
         $data = [];
         $data['date']  = ($proposition->getConfidentialite())?$proposition->getConfidentialite()->format("Y-m-d"):"";

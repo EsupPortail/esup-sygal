@@ -17,7 +17,7 @@ class DiffusionHydrator extends DoctrineObject implements EntityManagerAwareInte
      * @param  Diffusion $diffusion
      * @return array
      */
-    public function extract($diffusion)
+    public function extract($diffusion): array
     {
         $data = parent::extract($diffusion);
 

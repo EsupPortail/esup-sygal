@@ -11,7 +11,7 @@ class AdresseSoutenanceHydrator implements HydratorInterface {
      * @param Proposition $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         $data = [
           'adresse' => $object->getAdresse(),

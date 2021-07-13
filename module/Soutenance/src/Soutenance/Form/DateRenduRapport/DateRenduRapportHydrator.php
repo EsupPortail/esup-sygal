@@ -25,7 +25,7 @@ class DateRenduRapportHydrator implements HydratorInterface
      * @param Proposition $proposition
      * @return array
      */
-    public function extract($proposition) {
+    public function extract($proposition): array {
 
         $data = [];
         $data['date']       = $proposition->getRenduRapport();

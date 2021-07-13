@@ -33,7 +33,7 @@ class MembreHydrator implements HydratorInterface
      * @param Membre $membre
      * @return array
      */
-    public function extract($membre) {
+    public function extract($membre): array {
 
         $data = [];
         $data['sexe']               = $membre->getGenre();

@@ -21,7 +21,7 @@ class JusticatifHydrator implements HydratorInterface {
      * @param Justificatif $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         $data  = [
             'nature' => ($object && $object->getFichier() &&  $object->getFichier()->getFichier()->getNature())? $object->getFichier()->getFichier()->getNature()->getCode(): null,

@@ -27,7 +27,7 @@ class DateLieuHydrator implements HydratorInterface
      * @param Proposition $proposition
      * @return array
      */
-    public function extract($proposition) {
+    public function extract($proposition): array {
 
         /** @var DateTime $datetime */
         $datetime = $proposition->getDate();

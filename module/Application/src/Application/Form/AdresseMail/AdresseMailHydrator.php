@@ -6,7 +6,7 @@ use Laminas\Hydrator\HydratorInterface;
 
 class AdresseMailHydrator implements HydratorInterface {
 
-    public function extract($object)
+    public function extract($object): array
     {
         $data  = [
             'email' => $object->getEmail(),

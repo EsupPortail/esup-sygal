@@ -14,7 +14,7 @@ class ProfilHydrator implements HydratorInterface
      * @param Profil $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return [
             'libelle' => $object->getLibelle(),
