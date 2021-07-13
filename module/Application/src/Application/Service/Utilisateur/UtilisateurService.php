@@ -283,7 +283,7 @@ class UtilisateurService extends BaseService
      * @param string $param
      * @return Utilisateur|null
      */
-    public function getRequestedUtilisateur(AbstractActionController $controller, string $param = "user") : ?Utilisateur
+    public function getRequestedUtilisateur(AbstractActionController $controller, string $param = "utilisateur") : ?Utilisateur
     {
         $id = $controller->params()->fromRoute($param);
         /** @var Utilisateur $result */
