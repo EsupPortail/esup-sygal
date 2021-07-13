@@ -3,7 +3,7 @@
 namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\UniteRecherche;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 
 class UniteRechercheHydrator extends DoctrineObject
 {
@@ -13,7 +13,7 @@ class UniteRechercheHydrator extends DoctrineObject
      * @param  UniteRecherche $ur
      * @return array
      */
-    public function extract($ur)
+    public function extract($ur): array
     {
         $data = parent::extract($ur);
         $data['libelle'] = $ur->getLibelle();

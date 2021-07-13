@@ -3,7 +3,7 @@
 namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\EcoleDoctorale;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 
 class EcoleDoctoraleHydrator extends DoctrineObject
 {
@@ -13,7 +13,7 @@ class EcoleDoctoraleHydrator extends DoctrineObject
      * @param  EcoleDoctorale $ed
      * @return array
      */
-    public function extract($ed)
+    public function extract($ed): array
     {
         $data = parent::extract($ed);
         $data['libelle'] = $ed->getLibelle();

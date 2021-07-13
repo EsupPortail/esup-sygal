@@ -3,7 +3,7 @@
 namespace Application\Form\Factory;
 
 use Application\Form\MetadonneeTheseForm;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Interop\Container\ContainerInterface;
 
 class MetadonneeTheseFormFactory
@@ -11,7 +11,7 @@ class MetadonneeTheseFormFactory
     public function __invoke(ContainerInterface $container)
     {
         /** @var DoctrineObject $hydrator */
-        $hydrator = $container->get('HydratorManager')->get('DoctrineModule\Stdlib\Hydrator\DoctrineObject');
+        $hydrator = $container->get('HydratorManager')->get(DoctrineObject::class);
 
         $form = new MetadonneeTheseForm();
         $form->setHydrator($hydrator);

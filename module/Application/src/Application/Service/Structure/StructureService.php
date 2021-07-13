@@ -24,7 +24,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\QueryBuilder;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Import\Service\Traits\SynchroServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;

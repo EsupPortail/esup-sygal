@@ -9,7 +9,7 @@
     ],
     "require-dev": {
         "laminas/laminas-developer-tools": "^1.0",
-        "unicaen/test": "^3.0"
+        "unicaen/test": "dev-laminas_migration"
     },
     "require": {
         "beberlei/assert": "^2.9",
@@ -34,8 +34,6 @@
         "ramsey/uuid": "^3.3",
         "twig/twig": "^3.0",
         "unicaen/app": "dev-laminas_migration",
-        "doctrine/doctrine-orm-module": "^3.0",
-        "laminas/laminas-form": "3.0.0 as 2.15.1",
         "unicaen/auth": "dev-laminas_migration",
         "unicaen/auth-token": "dev-laminas_migration",
         "unicaen/bjy-authorize": "dev-laminas_migration",

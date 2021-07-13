@@ -38,7 +38,7 @@ cd vendor/unicaen/code          && git remote set-url origin git@git:lib/unicaen
 cd vendor/unicaen/db-import     && git remote set-url origin git@git:lib/unicaen/db-import     && git push origin -u laminas_migration ; cd ../../..
 cd vendor/unicaen/faq           && git remote set-url origin git@git:lib/unicaen/faq           && git push origin -u laminas_migration ; cd ../../..
 cd vendor/unicaen/ldap          && git remote set-url origin git@git:lib/unicaen/ldap          && git push origin -u laminas_migration ; cd ../../..
-cd vendor/unicaen/test          && git remote set-url origin git@git:lib/unicaen/test          && git push origin -u laminas_migration ; cd ../../..
+cd vendor/unicaen/zfc-user      && git remote set-url origin git@git:lib/unicaen/zfc-user      && git push origin -u laminas_migration ; cd ../../..
 
 cd vendor/unicaen/app           && git add . && git commit -m "Dépendance avec unicaen/* laminas_migration" && git push  ; cd ../../..
 cd vendor/unicaen/auth          && git add . && git commit -m "Dépendance avec unicaen/* laminas_migration" && git push  ; cd ../../..
@@ -71,4 +71,6 @@ for lib in ${libs[*]}
 do
    git clone git@git.unicaen.fr:lib/unicaen/$lib.git ./unicaen/$lib
 done
+
+composer require doctrine/doctrine-orm-module laminas/laminas-config laminas/laminas-console laminas/laminas-eventmanager laminas/laminas-form laminas/laminas-http laminas/laminas-i18n laminas/laminas-i18n-resources laminas/laminas-json laminas/laminas-ldap laminas/laminas-log laminas/laminas-mail laminas/laminas-mvc laminas/laminas-mvc-console laminas/laminas-mvc-i18n laminas/laminas-mvc-plugin-fileprg laminas/laminas-mvc-plugin-flashmessenger laminas/laminas-mvc-plugin-identity laminas/laminas-mvc-plugin-prg laminas/laminas-navigation laminas/laminas-serializer laminas/laminas-servicemanager laminas/laminas-session laminas/laminas-view 
 

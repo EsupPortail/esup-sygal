@@ -2,8 +2,7 @@
 
 namespace Application\Form\Hydrator;
 
-use Application\Entity\Db\Attestation;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 
 class AttestationHydrator extends DoctrineObject
 {

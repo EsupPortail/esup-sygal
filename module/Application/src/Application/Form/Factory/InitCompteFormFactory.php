@@ -3,7 +3,7 @@
 namespace Application\Form\Factory;
 
 use Application\Form\InitCompteForm;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Interop\Container\ContainerInterface;
 
 class InitCompteFormFactory {
@@ -11,7 +11,7 @@ class InitCompteFormFactory {
     public function __invoke(ContainerInterface $container)
     {
         /** @var DoctrineObject $hydrator */
-        $hydrator = $container->get('HydratorManager')->get('DoctrineModule\Stdlib\Hydrator\DoctrineObject');
+        $hydrator = $container->get('HydratorManager')->get(DoctrineObject::class);
 
         /** @var InitCompteForm $form */
         $form = new InitCompteForm();
