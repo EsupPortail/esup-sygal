@@ -4,7 +4,7 @@
 use Application\Assertion\Loader\AssertionCsvLoader;
 use Application\Assertion\Generator\AssertionGenerator;
 use Composer\Autoload\ClassLoader;
-use Zend\Console;
+use Laminas\Console;
 
 /** @var ClassLoader $autoloader */
 $autoloader = include __DIR__ . '/../../vendor/autoload.php';
