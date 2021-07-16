@@ -23,7 +23,7 @@ class DomaineScientifiqueSearchFilter extends SelectSearchFilter
     static public function newInstance(): self
     {
         $instance = new self(
-            "Domaine<br>scientifique",
+            "Dom. scien.",
             self::NAME,
             ['liveSearch' => true]
         );

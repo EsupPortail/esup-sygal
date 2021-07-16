@@ -59,7 +59,7 @@ class ProfilForm extends Form {
             'options' => [
                 'label' => 'Description du profil : ',
                 'label_attributes' => [
-                    'class' => 'control-label',
+                    'class' => 'col-form-label',
                 ],
             ],
             'attributes' => [

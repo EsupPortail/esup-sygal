@@ -24,32 +24,32 @@ use Application\Entity\Db\Utilisateur;
     <!-- PARTIE INFORMATION ------------------------------------------------------------------------------------------->
     <div class="row">
 
-        <div class="col-md-4">
+        <div class="col-md-5">
             <h2> Information sur l'individu </h2>
 
-            <dl class="dl-horizontal">
-                <dt> Nom usuel </dt>
-                <dd> <?php echo $individu->getNomUsuel(); ?> </dd>
+            <dl class="row">
+                <dt class="col-md-5"> Nom usuel </dt>
+                <dd class="col-md-5"> <?php echo $individu->getNomUsuel(); ?> </dd>
                 <?php if ($individu->getNomPatronymique() AND $individu->getNomPatronymique() !== $individu->getNomUsuel()) : ?>
-                    <dt> Nom patronymique </dt>
-                    <dd> <?php echo $individu->getNomPatronymique(); ?></dd>
+                    <dt class="col-md-5"> Nom patronymique </dt>
+                    <dd class="col-md-5"> <?php echo $individu->getNomPatronymique(); ?></dd>
                 <?php endif; ?>
-                <dt> Prénom </dt>
-                <dd> <?php echo $individu->getPrenoms(); ?></dd>
-                <dt> Email</dt>
-                <dd> <?php echo $individu->getEmail(); ?> </dd>
+                <dt class="col-md-5"> Prénom </dt>
+                <dd class="col-md-5"> <?php echo $individu->getPrenoms(); ?></dd>
+                <dt class="col-md-5"> Email</dt>
+                <dd class="col-md-5"> <?php echo $individu->getEmail(); ?> </dd>
             </dl>
 
             <h2> Information sur l'utilisateur </h2>
 
             <?php if ($utilisateur !== null) : ?>
-                <dl class="dl-horizontal">
-                    <dt> Nom d'utilisateur </dt>
-                    <dd> <?php echo $utilisateur->getUsername(); ?> </dd>
-                    <dt> Email </dt>
-                    <dd> <?php echo $utilisateur->getEmail(); ?> </dd>
-                    <dt> Est un compte local </dt>
-                    <dd> <?php echo ($utilisateur->isLocal())?'Oui':'Non'; ?> </dd>
+                <dl class="row">
+                    <dt class="col-md-5"> Nom d'utilisateur </dt>
+                    <dd class="col-md-5"> <?php echo $utilisateur->getUsername(); ?> </dd>
+                    <dt class="col-md-5"> Email </dt>
+                    <dd class="col-md-5"> <?php echo $utilisateur->getEmail(); ?> </dd>
+                    <dt class="col-md-5"> Est un compte local </dt>
+                    <dd class="col-md-5"> <?php echo ($utilisateur->isLocal())?'Oui':'Non'; ?> </dd>
                 </dl>
             <?php else : ?>
                 Aucun utilisateur
@@ -104,7 +104,7 @@ use Application\Entity\Db\Utilisateur;
             <?php if ($utilisateur->getEmail() === null AND $acteur->getIndividu()->getEmail() === null) : ?>
                 <div class="alert alert-warning">
                     <strong>
-                        <span class="glyphicon glyphicon-warning-sign"></span>
+                        <span class="fas fa-exclamation-triangle"></span>
                         Aucune adresse électronique de connue pour l'utilisateur et l'individu.
                     </strong>
                     <br/>
@@ -115,7 +115,7 @@ use Application\Entity\Db\Utilisateur;
                     href="<?php echo $this->url('utilisateur/reset-password', ['individu' => $individu->getId()], [], true); ?>"
                     class="btn btn-primary action"
                 >
-                    <span class="glyphicon glyphicon-refresh"></span>
+                    <span class="icon icon-refresh"></span>
                     Reinitialiser le mot de passe
                 </a>
             <?php endif; ?>
@@ -126,7 +126,7 @@ use Application\Entity\Db\Utilisateur;
         <?php if ($acteur->getIndividu()->getEmail() === null) : ?>
             <div class="alert alert-warning">
                 <strong>
-                    <span class="glyphicon glyphicon-warning-sign"></span>
+                    <span class="fas fa-exclamation-triangle"></span>
                     Aucune adresse électronique de connue pour l'individu.
                 </strong>
                 <br/>
@@ -137,7 +137,7 @@ use Application\Entity\Db\Utilisateur;
                 href="<?php echo $this->url('utilisateur/creer-compte-local-individu', ['individu' => $individu->getId()], [], true); ?>"
                 class="btn btn-primary"
             >
-                <span class="glyphicon glyphicon-plus"></span>
+                <span class="icon icon-plus"></span>
                 Creer un compte local
             </a>
         <?php endif; ?>

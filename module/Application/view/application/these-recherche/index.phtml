@@ -43,7 +43,7 @@ $acteursFormatterCodirecteurs->asSeparated()
 
 
 <!-- Formulaire de filtrage -->
-<div class="pull-left">
+<div class="float-start">
     <?php $loadFiltersUrl = $this->url($filtersRoute, [], ['query' => $this->queryParams()], true); ?>
     <div class="filters" id="these-filters" data-url="<?php echo $loadFiltersUrl ?>">
         <!-- Contenu chargé en AJAX -->
@@ -61,7 +61,7 @@ $acteursFormatterCodirecteurs->asSeparated()
         ?>
     </p>
 
-    <table class="table table-condensed">
+    <table class="table table-sm">
         <thead>
         <tr>
             <th>
@@ -208,8 +208,8 @@ $acteursFormatterCodirecteurs->asSeparated()
     <?php echo $paginationControl = $this->paginationControl($theses, 'sliding', 'partial/paginator.phtml', ['route' => 'these']) ?>
 
     <?php if ($canExport): ?>
-        <a class="btn btn-default" href="<?php echo $this->url('export/csv', [], ['query' => $queryParams]) ?>">
-            <span class="glyphicon glyphicon-export"></span>
+        <a class="btn btn-secondary" href="<?php echo $this->url('export/csv', [], ['query' => $queryParams]) ?>">
+            <span class="icon icon-export"></span>
             <?php echo $this->translate("Exporter ces thèses au format CSV"); ?>
         </a>
     <?php endif ?>

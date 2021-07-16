@@ -34,22 +34,22 @@ $canEdit = $this->isAllowed($rapporteur, AvisSoutenancePrivileges::AVIS_MODIFIER
 <?php echo $this->messenger()->addMessagesFromFlashMessenger(); ?>
 
 <?php if ($canEdit) : ?>
-    <div class="panel panel-info">
-        <div class="panel-heading">
+    <div class="card">
+        <div class="card-header bg-info">
             <h2> Avis sur la soutenance et dépôt du pré-rapport de soutenance /
                 Notification on the PhD defense and uploading of the PhD report </h2>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
 
     <?php echo $this->form($form); ?>
         </div>
     </div>
 <?php else : ?>
-    <div class="panel panel-danger">
-        <div class="panel-heading">
+    <div class="card">
+        <div class="card-header bg-danger">
             <h2> Vous ne pouvez pas modifier cette avis de soutenance </h2>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
             Les raisons de cette impossiblité peuvent être :
             <ul>
                 <li> vous n'êtes pas connecté&middot;e avec le rôle de 'Rapporteur' ;</li>
@@ -59,23 +59,18 @@ $canEdit = $this->isAllowed($rapporteur, AvisSoutenancePrivileges::AVIS_MODIFIER
     </div>
 <?php endif; ?>
 
-<div class="pull-right">
+<div class="float-end">
     <a href="<?php echo $this->url('soutenance/index-rapporteur', ['these' => $these->getId()], [], true); ?>"
        class="btn btn-primary action">
         Retour à l'index rapporteur
     </a>
 </div>
 
-<style>
-    .form-control {
-        height: auto;
-    }
-</style>
 
 <script>
     $("textarea#motif").parent().hide();
 
-    $("input[name='avis']").change(function() {
+    $("input[name='avis']").on("change", function() {
         if ($(this).attr('value') === 'Favorable') {
             $("textarea#motif").parent().hide();
         } else {

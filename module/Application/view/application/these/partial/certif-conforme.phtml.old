@@ -19,7 +19,7 @@ $certificationSaisie = $fichierTheseRetraite->getEstConforme() !== null;
         "Vous avez déclaré que la version retraitée est <strong>conforme</strong> et qu'elle peut être archivée en l'état." :
         "Vous avez déclaré que la version retraitée n'est <strong>pas conforme</strong> et qu'elle ne peut pas être archivée en l'état.";
     $textClass = $certifieConforme ? 'text-success' : 'text-danger';
-//    $iconClass = $certifieConforme ? 'glyphicon-ok-circle' : 'glyphicon-ban-circle';
+//    $iconClass = $certifieConforme ? 'fa-check-circle' : 'fa-ban';
     ?>
     <p class="<?php echo $textClass ?> lead">
         <?php echo $text ?>
@@ -27,7 +27,7 @@ $certificationSaisie = $fichierTheseRetraite->getEstConforme() !== null;
 
     <?php if (!$certifieConforme): ?>
         <p class="alert alert-info alert-sm">
-            <span class="glyphicon glyphicon-info-sign"></span>
+            <span class="fas fa-info-circle"></span>
             Si vous avez besoin d'assistance, envoyez un mail à <a href="mailto: bruno.bernard@unicaen.fr">bruno.bernard@unicaen.fr</a>...
         </p>
     <?php endif ?>

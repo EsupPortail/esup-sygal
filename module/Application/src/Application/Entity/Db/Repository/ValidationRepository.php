@@ -38,9 +38,9 @@ class ValidationRepository extends DefaultEntityRepository
      * @param These $these
      * @param string $code
      * @param Individu $individu
-     * @return Validation[]
+     * @return Validation|null
      */
-    public function findValidationByTheseAndCodeAndIndividu(These $these, string $code, Individu $individu) : array
+    public function findValidationByTheseAndCodeAndIndividu(These $these, string $code, Individu $individu) : ?Validation
     {
         $qb = $this->createQueryBuilder('v')
             ->where('tv.code = :code')
@@ -52,7 +52,7 @@ class ValidationRepository extends DefaultEntityRepository
             ->setParameter('these', $these)
         ;
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**

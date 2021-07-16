@@ -51,7 +51,7 @@ $this->headTitle("Proposition de soutenance");
     Les règles de composition du jury sont rappelées dans la page d'accueil <q>Guide de la thèse</q>.
 </p>
 <div class="alert alert-warning">
-    <span class="glyphicon glyphicon-warning-sign"></span>
+    <span class="fas fa-exclamation-triangle"></span>
     En cas de modifications de la proposition, toutes validations seront annulées et la proposition devra être à nouveau être validée.
 </div>
 
@@ -132,11 +132,11 @@ $this->headTitle("Proposition de soutenance");
     if ($validations[Role::CODE_BDD]) { $validationMDD = current($validations[Role::CODE_BDD]); }
 
     if ($validationMDD AND $proposition->getEtat()->getCode() === Etat::EN_COURS AND $canPresidence): ?>
-    <div class="box panel panel-success">
-        <div class="panel-heading">
+    <div class="box card">
+        <div class="card-header bg-success">
             <h2 class="first"> Et ensuite ? </h2>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
 
             Vous pouvez maintenant procéder aux saisies des informations de préparation de la soutenance.
             <nav aria-label="Etape suivante">
@@ -146,7 +146,7 @@ $this->headTitle("Proposition de soutenance");
                             <?php /** @see \Soutenance\Controller\AvisController::indexAction()  */ ?>
                                 class="roadmap-step-link"
                                 href="<?php echo $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true); ?>">
-                            <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                            <span class="fas fa-arrow-alt-circle-right"></span>
                             Préparation de la soutenance
                         </a>
                     </li>
@@ -168,7 +168,7 @@ $this->headTitle("Proposition de soutenance");
                     url : "<?php echo $this->url('soutenance/proposition/generate-view-date-lieu', ["these" => $these->getId()], [], true); ?>",
                     beforeSend:
                         function () {
-                            $("div#BOXDIV_DATE_LIEU").html("<div class='alert alert-warning'> <span class='glyphicon glyphicon-warning-sign'></span> Rechargement de la vue associée à la date et lieu de soutenance.</div><br/>");
+                            $("div#BOXDIV_DATE_LIEU").html("<div class='alert alert-warning'> <span class='fas fa-exclamation-triangle'></span> Rechargement de la vue associée à la date et lieu de soutenance.</div><br/>");
                         },
                     success:
                         function(retour){
@@ -188,7 +188,7 @@ $this->headTitle("Proposition de soutenance");
                 //    url : "<?php //echo $this->url('soutenance/proposition/generate-view-jury', ["these" => $these->getId()], [], true); ?>//",
                 //    beforeSend:
                 //        function () {
-                //            $("div#BOXDIV_JURY").html("<div class='alert alert-warning'> <span class='glyphicon glyphicon-warning-sign'></span> Rechargement de la vue associée au jury.</div><br/>");
+                //            $("div#BOXDIV_JURY").html("<div class='alert alert-warning'> <span class='icon icon-warning'></span> Rechargement de la vue associée au jury.</div><br/>");
                 //        },
                 //    success:
                 //        function(retour){
@@ -208,7 +208,7 @@ $this->headTitle("Proposition de soutenance");
                 //    url : "<?php //echo $this->url('soutenance/proposition/generate-view-informations', ["these" => $these->getId()], [], true); ?>//",
                 //    beforeSend:
                 //        function () {
-                //            $("div#BOXDIV_INFORMATIONS").html("<div class='alert alert-warning'> <span class='glyphicon glyphicon-warning-sign'></span> Rechargement de la vue associée aux inforamtions.</div><br/>");
+                //            $("div#BOXDIV_INFORMATIONS").html("<div class='alert alert-warning'> <span class='icon icon-warning'></span> Rechargement de la vue associée aux inforamtions.</div><br/>");
                 //        },
                 //    success:
                 //        function(retour){

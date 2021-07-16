@@ -14,9 +14,9 @@ $title = $paramAttributes['title'] ?: null;
 ?>
 
 <div class="form-group">
-    <label class="sr-only" for="search-input"></label>
+    <label class="form-label visually-hidden" for="search-input"></label>
     <div class="input-group">
-        <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+        <span class="input-group-text"><span class="icon iconly icon-search"></span></span>
         <input type="search"
                value="<?php echo $filter->getValue(); ?>"
                name="<?php echo $filter->getName(); ?>"

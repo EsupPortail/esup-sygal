@@ -22,50 +22,50 @@ use Soutenance\Form\Justificatif\JustificatifForm;
 $explications = [];
 $explications[NatureFichier::CODE_JUSTIFICATIF_HDR] =
     "<div class='alert alert-warning'>" .
-        "<strong><span class='glyphicon glyphicon-info-sign'></span> Justification d'habilitation à diriger des recherches</strong> <br/>".
+        "<strong><span class='fas fa-info-circle'></span> Justification d'habilitation à diriger des recherches</strong> <br/>".
         "Le justificatif d'habilitation à diriger des recherches est demandé pour tous les membres de rang B titulaire d'un HDR extérieur à l'établissement/la COMUE de soutenance. <br/>" .
     "</div>";
 $explications[NatureFichier::CODE_JUSTIFICATIF_EMERITAT] =
     "<div class='alert alert-warning'>" .
-    "<strong><span class='glyphicon glyphicon-info-sign'></span> Justification d'émeritat</strong> <br/>".
+    "<strong><span class='fas fa-info-circle'></span> Justification d'émeritat</strong> <br/>".
     "Le justificatif d'émeritat est demandé pour tous les membres disposant d'un éméritat extérieur à l'établissement/la COMUE de soutenance. <br/>" .
     "</div>";
 $explications[NatureFichier::CODE_JUSTIFICATIF_ETRANGER] =
     "<div class='alert alert-warning'>" .
-    "<strong><span class='glyphicon glyphicon-info-sign'></span> Justification du rang d'un membre de jury de nationalité étrangère</strong> <br/>".
+    "<strong><span class='fas fa-info-circle'></span> Justification du rang d'un membre de jury de nationalité étrangère</strong> <br/>".
     "Téléchargez un CV court (1-2 page) résumant les principales fonctions (scientifiques, administratives, encadrements de doctorants) et productions scientifiques de la personne exerçant à l'étranger que vous souhaitez nommer comme rapporteur de votre thèse. ".
     "Ce document permettra à l'établissement de vérifier si les qualifications de cette personne sont suffisantes pour lui accorder le statut de rapporteur d’une thèse en France.".
     "</div>";
 $explications[NatureFichier::CODE_DELOCALISATION_SOUTENANCE] =
     "<div class='alert alert-warning'>" .
-    "<strong><span class='glyphicon glyphicon-info-sign'></span> Délocalisation de la soutenance</strong> <br/>".
+    "<strong><span class='fas fa-info-circle'></span> Délocalisation de la soutenance</strong> <br/>".
     "Lorsque la soutenance se déroule à l'extérieur de l'établissement d'inscription il est nécessaire de fournir un justificatif de délocalisation de soutenance. <br/>" .
     "<u>NB:</u> Le formulaire de demande de délocalisation de la soutenance peut être téléchargé ici : ".
     "<a href='". $FORMULAIRE_DELOCALISATION ."'>formulaire de demande de délocalisation.</a></i>" .
     "</div>";
 $explications[NatureFichier::CODE_DELEGUATION_SIGNATURE] =
     "<div class='alert alert-warning'>" .
-    "<strong><span class='glyphicon glyphicon-info-sign'></span> Délégation de signature</strong> <br/>".
+    "<strong><span class='fas fa-info-circle'></span> Délégation de signature</strong> <br/>".
     "Les membres du jury participant à la soutenance en visioconférence doivent au préalable remplir une demande de délégation de signature <br/>" .
     "<u>NB:</u> Le formulaire de demande de délégation de signature peut être téléchargé ici : ".
     "<a href='". $FORMULAIRE_DELEGUATION ."'>formulaire de demande de délégation.</a></i>" .
     "</div>";
 $explications[NatureFichier::CODE_DEMANDE_LABEL] =
     "<div class='alert alert-warning'>" .
-    "<strong><span class='glyphicon glyphicon-info-sign'></span> Demande de label européen</strong> <br/>".
+    "<strong><span class='fas fa-info-circle'></span> Demande de label européen</strong> <br/>".
     "<u>NB:</u> La demande d'un label européen nécessite le retour du formulaire de demande de label européen qui peut être téléchargé ici : ".
     "<a href='". $FORMULAIRE_DEMANDE_LABEL ."'>formulaire de demande de label européen.</a></i>" .
     "</div>";
 $explications[NatureFichier::CODE_LANGUE_ANGLAISE] =
     "<div class='alert alert-warning'>" .
-    "<strong><span class='glyphicon glyphicon-info-sign'></span> Usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse</strong> <br/>".
+    "<strong><span class='fas fa-info-circle'></span> Usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse</strong> <br/>".
     "L'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse doit être motivé par un lettre justifiant la nécessité de l'usage de la langue anglaise. <br/>" .
     "<u>NB:</u> La demande de l'usage de la langue anglaise nécessite le retour du formulaire de demande de l'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse qui peut être téléchargé ici : ".
     "<a href='". $FORMULAIRE_DEMANDE_ANGLAIS ."'>formulaire de l'usage de la langue anglaise pour la rédaction du manuscrit ou la soutenance de la thèse.</a></i>" .
     "</div>";
 $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
     "<div class='alert alert-warning'>" .
-    "<strong><span class='glyphicon glyphicon-info-sign'></span> Demande de confidentialité</strong> <br/>".
+    "<strong><span class='fas fa-info-circle'></span> Demande de confidentialité</strong> <br/>".
     "<u>NB:</u> La demande de confidentialité nécessite le retour du formulaire de demande de label européen qui peut être téléchargé ici : ".
     "<a href='". $FORMULAIRE_DEMANDE_CONFIDENTIALITE ."'>formulaire de demande de confidentialité.</a></i>" .
     "</div>";
@@ -148,7 +148,7 @@ $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
 
 
     $('select[name="membre"]').parent().hide();
-    $('select[name="nature"]').change(function() {
+    $('select[name="nature"]').on("change", function() {
         let value = $(this).children("option:selected").val();
         // console.log('changement => ' + value);
         $('select[name="membre"]').empty();
@@ -182,7 +182,7 @@ $explications[NatureFichier::CODE_DEMANDE_CONFIDENT] =
     });
 
     /** Changement du texte explicatif associé au type de document **/
-    $('select[name="nature"]').change(function() {
+    $('select[name="nature"]').on("change", function() {
         console.log('Changes');
         let value =  $(this). children("option:selected"). val();
         $('div.explication').html("");

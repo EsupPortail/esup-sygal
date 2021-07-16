@@ -19,7 +19,7 @@ use Application\Entity\Db\Role;
     <?php $roles = $mappedRoles[$etablissement->getStructure()->getCode()]; ?>
     <h2>
         <?php echo $etablissement->getLibelle(); ?>
-        <span class="badge">
+        <span class="badge bg-secondary">
             <?php echo count($roles); ?>
         </span>
     </h2>

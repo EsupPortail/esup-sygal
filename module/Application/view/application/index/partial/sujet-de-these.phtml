@@ -7,21 +7,22 @@
 
 ?>
 
-<br/>
-<ul class="nav nav-pills nav-stacked menu-secondaire" style="padding: 1rem;">
-    <strong>Offre de thèses</strong>
-
+<div id="menu-offretheses" class="card">
+    <div class="card-header">
+       Offre de thèses
+    </div>
+    <ul class="card-body nav flex-column">
         <?php foreach ($offre as $theme => $lien) : ?>
-            <li>
+            <li class="nav-item">
                 <?php if ($lien) : ?>
-                    <a href="<?php echo $lien; ?>" title="Lien vers l'offre des thèses du thème <?php echo $theme; ?>">
-                <?php endif; ?>
-                <?php echo $theme; ?>
-                <?php if ($lien) : ?>
-                    </a>
-                <?php endif; ?>
+                <a class="nav-link"
+                   href="<?php echo $lien; ?>" title="Lien vers l'offre des thèses du thème <?php echo $theme; ?>">
+                    <?php endif; ?>
+                    <?php echo $theme; ?>
+                    <?php if ($lien) : ?>
+                </a>
+            <?php endif; ?>
             </li>
         <?php endforeach; ?>
     </ul>
-
-</ul>
+</div>

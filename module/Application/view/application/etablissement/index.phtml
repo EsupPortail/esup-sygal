@@ -24,7 +24,7 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
 
 <h1 class="page-header first">
     <?php echo $this->translate("Établissements") ?>
-    <span class="badge">
+    <span class="badge bg-secondary">
         <?php echo count($etablissementsSygal) + count($etablissementsExternes); ?>
     </span>
 </h1>
@@ -36,20 +36,20 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
     <a href="<?php echo $this->url('etablissement/ajouter', [], [], true) ?>"
        class="btn btn-primary"
        title="<?php echo $this->translate("Créer un nouvel établissement");?>">
-        <span class="glyphicon glyphicon-plus"></span>
+        <span class="icon icon-plus"></span>
         <?php echo $this->translate("Ajouter un nouvel établissement");?>
     </a>
 <?php endif ?>
 
 <h2>
     Établissements participant à <?php echo $appName ?>
-    <span class="badge">
+    <span class="badge bg-secondary">
         <?php echo count($etablissementsSygal); ?>
     </span>
 </h2>
 
 <div>
-    <table class="table table-condensed">
+    <table class="table table-sm">
         <thead>
         <tr>
             <th> Libellé </th>
@@ -73,17 +73,17 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
                     <a href="<?php echo $this->url('etablissement/information', ['structure' => $etablissement->getStructure()->getId()], [], true); ?>">
                         <?php echo $etablissement->getLibelle(); ?>
                         <?php if ($etablissement->getStructure()->estFermee()) : ?>
-                            &nbsp;<span class="label" style="background-color: darkred">Structure fermée</span>
+                            &nbsp;<span class="badge bg-danger">Structure fermée</span>
                         <?php endif; ?>
                     </a>
                     <?php if ($etablissement->estMembre()): ?>
-                        <span class="label label-primary">Membre</span>
+                        <span class="badge bg-primary">Membre</span>
                     <?php endif ?>
                     <?php if ($etablissement->estAssocie()): ?>
-                        <span class="label label-info">Associé</span>
+                        <span class="badge bg-info">Associé</span>
                     <?php endif ?>
                     <?php if ($etablissement->estInscription()): ?>
-                        <span class="label label-warning">Inscription</span>
+                        <span class="badge bg-warning">Inscription</span>
                     <?php endif ?>
                 </td>
                 <td>
@@ -97,14 +97,14 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
                     <?php if (($canModifier OR $canModifierCetEtab) && !$historisee) : ?>
                         <a href="<?php echo $this->url('etablissement/supprimer', ["structure" => $etablissement->getStructure()->getId()], [], true); ?>"
                            title="Historiser l'établissement">
-                            <span class="glyphicon glyphicon-trash"></span>
+                            <span class="icon icon-delete iconly"></span>
                         </a>
                     <?php endif; ?>
 
                     <?php if ($canSubstituer && !$historisee && $hasSousStructure) : ?>
                         <a href="<?php echo $this->url('substitution-modifier', ['cible' => $etablissement->getStructure()->getId(), [], true]); ?>"
                            title="Historiser l'établissement">
-                            <span class="glyphicon glyphicon-link" title="Éditer la substitution"></span>
+                            <span class="fas fa-link" title="Éditer la substitution"></span>
                         </a>
                     <?php endif; ?>
 
@@ -125,13 +125,13 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
 
 <h2>
     Autres établissements
-    <span class="badge">
+    <span class="badge bg-secondary">
         <?php echo count($etablissementsExternes); ?>
     </span>
 </h2>
 
 <div>
-    <table class="table table-condensed">
+    <table class="table table-sm">
         <thead>
         <tr>
             <th> Libellé </th>
@@ -156,10 +156,10 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
                         <?php echo $etablissement->getLibelle(); ?>
                     </a>
                     <?php if ($etablissement->estMembre()): ?>
-                        <span class="label label-primary">Membre</span>
+                        <span class="badge bg-primary">Membre</span>
                     <?php endif ?>
                     <?php if ($etablissement->estAssocie()): ?>
-                        <span class="label label-info">Associé</span>
+                        <span class="badge bg-info">Associé</span>
                     <?php endif ?>
                 </td>
                 <td>
@@ -173,14 +173,14 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
                     <?php if (($canModifier OR $canModifierCetEtab) && !$historisee) : ?>
                         <a href="<?php echo $this->url('etablissement/supprimer', ["structure" => $etablissement->getStructure()->getId()], [], true); ?>"
                            title="Historiser l'établissement">
-                            <span class="glyphicon glyphicon-trash"></span>
+                            <span class="icon icon-delete iconly"></span>
                         </a>
                     <?php endif; ?>
 
                     <?php if (($canModifier OR $canModifierCetEtab) && !$historisee && $hasSousStructure) : ?>
                         <a href="<?php echo $this->url('substitution-modifier', ['cible' => $etablissement->getStructure()->getId(), [], true]); ?>"
                            title="Historiser l'établissement">
-                            <span class="glyphicon glyphicon-link" title="Éditer la substitution"></span>
+                            <span class="fas fa-link" title="Éditer la substitution"></span>
                         </a>
                     <?php endif; ?>
 

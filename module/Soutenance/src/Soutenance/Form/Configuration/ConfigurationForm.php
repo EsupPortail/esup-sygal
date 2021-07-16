@@ -20,7 +20,6 @@ class ConfigurationForm extends Form {
                 ],
                 'attributes' => [
                     'id' => Parametre::CODE_AVIS_DEADLINE,
-                    'class' => 'form-control',
                 ],
             ]
         );

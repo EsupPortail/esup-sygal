@@ -24,22 +24,20 @@ $class = $these->estConfidentielle() ? 'text-danger' : '';
 <?php if ($these->estConfidentielle()): ?>
     <?php $content = sprintf('<span class="text-danger">Confidentielle jusqu\'au %s</span>', $these->getDateFinConfidentialiteToString()) ?>
     <span class="text-danger"
-       data-toggle="popover"
-       data-content="<?php echo htmlspecialchars($content) ?>"
-       data-trigger="hover"
-       data-html="true"
-       data-placement="bottom"><span class="label label-danger">CONFIDENTIELLE</span></span>
+       data-bs-toggle="popover"
+       data-bs-content="<?php echo htmlspecialchars($content) ?>"
+       data-bs-trigger="hover"
+       data-bs-html="true"
+       data-bs-placement="bottom"><span class="badge bg-danger">CONFIDENTIELLE</span></span>
 <?php endif ?>
 
 <?php if ($description !== false) : ?>
     <a title="Thèse"
-       data-toggle="popover"
-       data-content="<?php echo htmlspecialchars($this->partial('application/these/partial/fiche')) ?>"
-       data-trigger="click"
-       data-placement="bottom"
-       data-container="body"
-       data-html="true"
-       tabindex="0"
-       role="button"><span class="glyphicon glyphicon-list-alt"></span>
+       data-bs-toggle="popover"
+       data-bs-content="<?php echo htmlspecialchars($this->partial('application/these/partial/fiche')) ?>"
+       data-bs-trigger="click"
+       data-bs-placement="bottom"
+       data-bs-html="true"
+       role="button"><span class="fas fa-list-alt"></span>
     </a>
 <?php endif; ?>
