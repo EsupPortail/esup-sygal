@@ -49,25 +49,24 @@ $canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceI
 </p>
 
     <?php if ($canProposer && $theses !== []) : ?>
-        <div class="btn-group pull-right action">
+        <div class="btn-group float-right action">
             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="glyphicon glyphicon-pencil"></span>
-                Consulter les propositions <span class="caret"></span>
+                <span class="icon icon-edit"></span>
+                Consulter les propositions
             </button>
-            <ul class="dropdown-menu">
+            <div class="dropdown-menu">
                 <?php foreach($theses as $theseLink) : ?>
-                    <li class="complete">
                         <a
+                            class="dropdown-item complete"
                             <?php /** @see \Soutenance\Controller\PropositionController::propositionAction() */ ?>
                             href="<?php echo $this->url('soutenance/proposition', ['these' => $theseLink->getId()], [], true); ?>">
-                            <span class="badge"><?php echo $theseLink->getDoctorant(); ?></span>
+                            <span class="badge badge-secondary"><?php echo $theseLink->getDoctorant(); ?></span>
                             <?php
                                  echo $this->partial('application/these/partial/titre', ['these' => $theseLink, 'useTitreThese' => true, 'length' => 120, 'description' => false])
                             ?>
                         </a>
-                    </li>
                 <?php endforeach; ?>
-            </ul>
+            </div>
         </div>
     <?php endif; ?>
 
@@ -80,24 +79,24 @@ $canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceI
 </p>
 
     <?php if ($canVisualiser && $theses !== []) : ?>
-        <div class="btn-group pull-right action">
+        <div class="btn-group float-right action">
             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="glyphicon glyphicon-eye-open"></span>
+                <span class="icon icon-voir"></span>
                 Voir les validations <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu">
+            <div class="dropdown-menu">
                 <?php foreach($theses as $theseLink) : ?>
-                    <li class="complete">
-                        <a  <?php /** @see \Soutenance\Controller\PropositionController::avancementAction() */ ?>
+                        <a
+                            class="dropdown-item complete"
+                            <?php /** @see \Soutenance\Controller\PropositionController::avancementAction() */ ?>
                             href="<?php echo $this->url('soutenance/avancement', ['these' => $theseLink->getId()], [], true); ?>">
-                            <span class="badge"><?php echo $theseLink->getDoctorant(); ?></span>
+                            <span class="badge badge-secondary"><?php echo $theseLink->getDoctorant(); ?></span>
                             <?php
                             echo $this->partial('application/these/partial/titre', ['these' => $theseLink, 'useTitreThese' => true, 'length' => 120, 'description' => false])
                             ?>
                         </a>
-                    </li>
                 <?php endforeach; ?>
-            </ul>
+            </div>
         </div>
     <?php endif; ?>
 

@@ -14,12 +14,12 @@ use Application\Entity\Db\StructureDocument;
     <div class="col-md-8">
         <h2> Documents liés à la structure  </h2>
     </div>
-    <div class="pull-right">
+    <div class="float-right">
         <br/>
         <a      <?php /** @see \Application\Controller\StructureController::televerserDocumentAction() */?>
             href="<?php echo $this->url('structure/televerser-document', ['structure' => $structure->getId(), 'etablissement' => false], [], true); ?>"
             class="btn btn-primary action ajax-modal" data-event="modification">
-            <span class="glyphicon glyphicon-upload"></span>
+            <span class="icon icon-upload"></span>
             Téléverser un document
         </a>
     </div>
@@ -34,7 +34,7 @@ use Application\Entity\Db\StructureDocument;
             <li>
                 <a      <?php /** @see \Application\Controller\StructureController::supprimerDocumentAction() */ ?>
                     href="<?php echo $this->url('structure/supprimer-document', ['structure' => $structure->getId(), 'document' => $document->getId()], [], true); ?>">
-                    <span class="glyphicon glyphicon-remove" style="color:darkred;" title="Supprimer le document"></span>
+                    <span class="icon icon-delete iconly" style="color:darkred;" title="Supprimer le document"></span>
                 </a>
                 <br/>
                 <img alt="document ... " class="signature" src="data:image/png;base64,<?php echo base64_encode($contenus[$document->getId()]); ?>" />

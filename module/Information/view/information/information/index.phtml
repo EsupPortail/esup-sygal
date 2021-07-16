@@ -29,7 +29,7 @@ $canFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivilege
 <a href="<?php echo $this->url('informations/ajouter', [], [], true); ?>"
    class="btn btn-primary action"
 >
-    <span class="glyphicon glyphicon-plus"></span>
+    <span class="icon icon-plus"></span>
     Ajouter une page d'information
 </a>
 
@@ -37,7 +37,7 @@ $canFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivilege
     <a href="<?php echo $this->url('informations/fichiers', [], [], true); ?>"
        class="btn btn-primary action"
     >
-        <span class="glyphicon glyphicon-folder-open "></span>
+        <span class="fas fa-folder-open "></span>
         Gestion des fichiers
     </a>
 <?php endif; ?>
@@ -68,17 +68,17 @@ $canFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivilege
                 <td>
                     <?php if ($canView) : ?>
                         <a href="<?php echo $this->url('informations/afficher', ['id' => $information->getId()], [], true); ?>">
-                            <span class="glyphicon glyphicon-eye-open"></span>
+                            <span class="icon icon-voir iconly"></span>
                         </a>
                     <?php endif; ?>
                     <?php if ($canEdit) : ?>
                         <a href="<?php echo $this->url('informations/modifier', ['id' => $information->getId()], [], true); ?>">
-                            <span class="glyphicon glyphicon-pencil"></span>
+                            <span class="icon icon-edit iconly"></span>
                         </a>
                     <?php endif; ?>
                     <?php if ($canDelete) : ?>
                         <a href="<?php echo $this->url('informations/supprimer', ['id' => $information->getId()], [], true); ?>">
-                            <span class="glyphicon glyphicon-trash"></span>
+                            <span class="icon icon-delete iconly"></span>
                         </a>
                     <?php endif; ?>
                 </td>

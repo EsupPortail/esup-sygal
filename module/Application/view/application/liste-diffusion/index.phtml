@@ -28,7 +28,7 @@ $adressesListesActives = array_map(function (ListeDiffusion $liste) {
 
 <h1 class="page-header first">
     <?php echo $this->translate("Listes de diffusion") ?>
-    <span class="badge"><?php //echo count($listes); ?></span>
+    <span class="badge badge-secondary"><?php //echo count($listes); ?></span>
 </h1>
 
 <p class="lead">
@@ -47,26 +47,28 @@ $adressesListesActives = array_map(function (ListeDiffusion $liste) {
     foreach ($dataByEtablissement as $etablissement):
     ?>
     <li role="presentation"
-        class="<?php echo $codeEtablissement === ($code = $etablissement->getStructure()->getCode()) ? 'active' : '' ?>">
-        <a href="<?php echo $this->url('liste-diffusion', [], ['query' => ['etablissement' => $code]]) ?>"
+        class="nav-item <?php echo $codeEtablissement === ($code = $etablissement->getStructure()->getCode()) ? 'active' : '' ?>">
+        <a class="nav-link"
+           href="<?php echo $this->url('liste-diffusion', [], ['query' => ['etablissement' => $code]]) ?>"
            role="tab"><h2><?php echo $code ?></h2></a>
     </li>
     <?php endforeach; ?>
 
     <?php if ($adressesListesActivesMaisInexistanteDansGenerees): ?>
 
-        <li role="presentation" class="pull-right">
+        <li role="presentation" class="nav-item float-right">
             <a href="#anomalies"
                role="tab"
                aria-controls="anomalies"
                data-toggle="tab"
-               class="text-danger"><span class="glyphicon glyphicon-alert"></span> Anomalies</a>
+               class="nav-link text-danger"><span class="icon icon-alert"></span> Anomalies</a>
         </li>
 
     <?php endif ?>
 
-    <li role="presentation" class="pull-right">
-        <a href="#operations"
+    <li role="presentation" class="nav-item float-right">
+        <a class="nav-link"
+           href="#operations"
            role="tab"
            aria-controls="operations"
            data-toggle="tab">Operations</a>
@@ -153,7 +155,7 @@ $adressesListesActives = array_map(function (ListeDiffusion $liste) {
     <div role="tabpanel" class="tab-pane" id="operations">
 
         <a href="<?php echo $this->url('liste-diffusion/export-tableau') ?>"
-           class="btn btn-default"><span class="glyphicon glyphicon-export"></span> Exporter tableau pour Sympa</a>
+           class="btn btn-secondary"><span class="icon icon-export"></span> Exporter tableau pour Sympa</a>
 
     </div>
 

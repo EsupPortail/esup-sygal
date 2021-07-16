@@ -435,7 +435,9 @@ $(function () {
     WidgetInitializer.add('widget-titre-langue-these', 'widgetTitreLangueThese');
     WidgetInitializer.add('widget-image-loader', 'widgetImageLoader');
 
-    $('[data-toggle="popover"]').popover();
+    $('[data-toggle="popover"]').popover({
+        sanitize: false,
+    });
     $('[data-toggle="tooltip"]').tooltip();
 });
 

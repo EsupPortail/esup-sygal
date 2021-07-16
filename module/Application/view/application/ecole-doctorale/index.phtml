@@ -21,7 +21,7 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
 
 <h1 class="page-header first">
     <?php echo $this->translate("Écoles doctorales") ?>
-    <span class="badge"><?php echo count($ecoles); ?></span>
+    <span class="badge badge-secondary"><?php echo count($ecoles); ?></span>
 </h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
@@ -31,13 +31,13 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
     <a href="<?php echo $this->url('ecole-doctorale/ajouter', [], [], true) ?>"
        class="btn btn-primary"
        title="<?php echo $this->translate("Créer une nouvelle école doctorale"); ?>">
-        <span class="glyphicon glyphicon-plus"></span>
+        <span class="icon icon-plus"></span>
         <?php echo $this->translate("Ajouter une nouvelle école doctorale"); ?>
     </a>
 <?php endif ?>
 
 <div>
-    <table class="table table-condensed">
+    <table class="table table-sm">
         <thead>
         <tr>
             <th> Libellé</th>
@@ -61,7 +61,7 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
                     <a href="<?php echo $this->url('ecole-doctorale/information', ['structure' => $ecole->getStructure()->getId()], [], true); ?>">
                         <?php echo $ecole->getLibelle(); ?>
                         <?php if ($ecole->getStructure()->estFermee()) : ?>
-                            &nbsp;<span class="label" style="background-color: darkred">Structure fermée</span>
+                            &nbsp;<span class="badge badge-danger">Structure fermée</span>
                         <?php endif; ?>
                     </a>
                 </td>
@@ -76,14 +76,14 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
                     <?php if (($canModifier OR $canModifierCetteEcole) && !$historisee) : ?>
                         <a href="<?php echo $this->url('ecole-doctorale/supprimer', ["structure" => $ecole->getStructure()->getId()], [], true); ?>"
                            title="Historiser l'établissement">
-                            <span class="glyphicon glyphicon-trash"></span>
+                            <span class="icon icon-delete iconly"></span>
                         </a>
                     <?php endif; ?>
 
                     <?php if ($canSubstituer AND !$historisee AND $hasSousStructure) : ?>
                         <a href="<?php echo $this->url('substitution-modifier', ['cible' => $ecole->getStructure()->getId(), [], true]); ?>"
                            title="Historiser l'établissement">
-                            <span class="glyphicon glyphicon-link" title="Éditer la substitution"></span>
+                            <span class="fas fa-link" title="Éditer la substitution"></span>
                         </a>
                     <?php endif; ?>
 

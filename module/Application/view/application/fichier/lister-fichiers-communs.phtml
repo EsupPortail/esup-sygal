@@ -20,7 +20,7 @@ use Zend\Paginator\Paginator;
 
 <h1 class="page-header">
     <?php echo $this->translate("Fichiers communs"); ?>
-    <span class="badge"><?php echo $fichiers->getTotalItemCount(); ?></span>
+    <span class="badge badge-secondary"><?php echo $fichiers->getTotalItemCount(); ?></span>
 </h1>
 
 <div class="upload-container"> <!-- Cette div.upload-container est INDISPENSABLE -->
@@ -33,7 +33,7 @@ use Zend\Paginator\Paginator;
             <?php
             $form = $uploader->getForm();
             $form->setAjaxMode(false);
-            $form->get('submit')->setAttribute('class', 'pull-right');
+            $form->get('submit')->setAttribute('class', 'float-right');
             echo $uploader->renderForm();
             ?>
         </div>
@@ -42,7 +42,7 @@ use Zend\Paginator\Paginator;
 
 <hr>
 
-<table class="table table-bordered table-hovered table-condensed">
+<table class="table table-bordered table-hovered table-sm">
     <thead>
     <tr>
         <th><a href="<?php echo $s = $this->sortable('f.nom'); ?>">
@@ -88,7 +88,7 @@ use Zend\Paginator\Paginator;
             </td>
             <td>
                 <a href="<?php echo $urlFichierPlugin->supprimerFichier($fichier) ?>"
-                    ><span class="glyphicon glyphicon-remove text-danger" title="Supprimer le fichier"></span></a>
+                    ><span class="icon icon-delete iconly text-danger" title="Supprimer le fichier"></span></a>
             </td>
         </tr>
     <?php endforeach ?>

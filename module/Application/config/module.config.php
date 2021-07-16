@@ -307,13 +307,14 @@ return array(
         'inline_scripts' => [
             '070_bootstrap-select' => '/vendor/bootstrap-select-1.13.18/js/bootstrap-select.min.js',
             '070_bootstrap-select-fr' => '/vendor/bootstrap-select-1.13.18/js/i18n/defaults-fr_FR.js',
-            '081_bootstrap-confirmation' => '/vendor/bootstrap-confirmation.min.js',
+            '081_bootstrap-confirmation' => '/vendor/bootstrap-confirmation.js',
         ],
         'stylesheets'           => [
             '050_bootstrap-theme' => false,
             '100_charte' => '/css/charte.css',
-            '200_fa' => '/fontawesome-free-5.12.0-web/css/all.min.css',
+            '200_fa' => '/vendor/fontawesome-free-5.12.0-web/css/all.min.css',
             '300_bs' => '/vendor/bootstrap-select-1.13.18/css/bootstrap-select.min.css',
+            '400_faa' => '/vendor/font-awesome-animation.min.css',
         ],
         'printable_stylesheets' => [
         ],

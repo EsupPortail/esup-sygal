@@ -13,30 +13,30 @@ use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 $canEditDateRenduRapport = $this->isAllowed($these, PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION);
 ?>
 
-<div class="box panel panel-info">
+<div class="box card">
 
-    <div class="panel-heading">
+    <div class="card-header bg-info">
         <h2> Date de retour des rapports </h2>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
         <p class="lead">
             Les prérapports doivent être reçus <?php echo $deadline; ?> jours avant la date de soutenance.
         </p>
 
-        <div class="pull-left">
+        <div class="float-left">
             Date de retour :
             <strong><?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?> </strong>
         </div>
 
         <?php if($canEditDateRenduRapport): ?>
-            <div class="pull-right">
+            <div class="float-right">
                 <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::dateRenduRapportAction() */ ?>
                     href="<?php echo $this->url('soutenance/presoutenance/date-rendu-rapport', ['these' => $these->getId()], [] , true); ?>"
                     class="btn btn-primary action ajax-modal"
                     data-event="modification-date-rendu-rapport"
                 >
-                    <span class="glyphicon glyphicon-pencil"></span> Modifier
+                    <span class="icon icon-edit"></span> Modifier
                 </a>
             </div>
         <?php endif; ?>

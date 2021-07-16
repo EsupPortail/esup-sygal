@@ -40,11 +40,11 @@ $rdvBu = $these->getRdvBu();
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
-<div class="panel panel-info box">
-    <div class="panel-heading">
+<div class="card box">
+    <div class="card-header bg-info">
         <h2 class="first">Téléchargement de la version imprimable de votre thèse</h2>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <p>
         <?php if ($diffusion->isRemiseExemplairePapierRequise()): ?>
             Suite à votre choix de mise en ligne, vous devez imprimer un exemplaire papier de votre thèse et le rapporter lors du Rendez-vous à la BU.
@@ -60,21 +60,21 @@ $rdvBu = $these->getRdvBu();
             </label>
         </div>
         <div class="btn-group">
-            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Version à récupérer <span class="caret"></span>
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" id="dropdownMenuButton" aria-haspopup="true" aria-expanded="false">
+                Version à récupérer
             </button>
-            <ul class="dropdown-menu">
-                <li class="complete"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VO'], [], true); ?>">Version originale</a></li>
-                <li class="removal"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VO', 'removal' => true], [], true); ?>">Version originale</a></li>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item complete" href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VO'], [], true); ?>">Version originale</a>
+                <a class="dropdown-item removal" href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VO', 'removal' => true], [], true); ?>">Version originale</a>
                 <?php if ($hasVD): ?>
-                    <li class="complete"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VD'], [], true); ?>">Version diffusion</a></li>
-                    <li class="removal"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VD', 'removal' => true], [], true); ?>">Version diffusion</a></li>
+                    <a class="dropdown-item complete" href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VD'], [], true); ?>">Version diffusion</a>
+                    <a class="dropdown-item removal" href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VD', 'removal' => true], [], true); ?>">Version diffusion</a>
                 <?php endif; ?>
                 <?php if ($hasVA): ?>
-                    <li class="complete"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VA' ], [], true); ?>">Version archivable</a></li>
-                    <li class="removal"><a href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VA', 'removal' => true ], [], true); ?>">Version archivable</a></li>
+                    <a class="dropdown-item complete" href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VA' ], [], true); ?>">Version archivable</a>
+                    <a class="dropdown-item removal" href="<?php echo $this->url('these/fusion', ['these' => $these->getId(), 'corrigee' => 0, 'version' => 'VA', 'removal' => true ], [], true); ?>">Version archivable</a>
                 <?php endif; ?>
-            </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -89,11 +89,11 @@ alert("Le traitement peut prendre plusieurs minutes. \n\n" +
 <?php endif;?>
 
 
-<div class="panel panel-info box">
-    <div class="panel-heading">
+<div class="card box">
+    <div class="card-header bg-info">
         <h2 class="first">Rendez-vous avec la bibliothèque universitaire</h2>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNamespace('RdvBu/*'); ?>
         <?php if ($rdvBu): ?>
             <div class="row">
@@ -113,38 +113,38 @@ alert("Le traitement peut prendre plusieurs minutes. \n\n" +
             </div>
             <?php if ($canEdit): ?>
                 <a href="<?php echo $modifierUrl ?>"
-                   class="btn btn-default ajax-modal"
-                   data-event="event-rdv-bu-modified"><span class="glyphicon glyphicon-pencil"></span> Modifier</a>
+                   class="btn btn-secondary ajax-modal"
+                   data-event="event-rdv-bu-modified"><span class="icon icon-edit"></span> Modifier</a>
             <?php endif ?>
         <?php else: ?>
             <p>Vous n'avez pas encore completé les informations concernant le rendez-vous à la bibliothèque universitaire.</p>
             <?php if ($canEdit): ?>
                 <a href="<?php echo $modifierUrl ?>"
                    class="btn btn-primary ajax-modal"
-                   data-event="event-rdv-bu-modified"><span class="glyphicon glyphicon-pencil"></span> Compléter</a>
+                   data-event="event-rdv-bu-modified"><span class="icon icon-edit"></span> Compléter</a>
             <?php endif ?>
         <?php endif ?>
     </div>
 </div>
 
-<div class="panel panel-info box">
-    <div class="panel-heading">
+<div class="card box">
+    <div class="card-header bg-info">
         <h2 class="first">Validation</h2>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <?php if ($validation): ?>
             <?php echo $this->validation($validation) ?>
             <?php if ($canUnvalidate): ?>
                 <a href="<?php echo $devaliderUrl ?>"
                    class="btn btn-danger ajax-modal"
-                   data-event="event-rdv-bu-validated"><span class="glyphicon glyphicon-trash"></span> Annuler la validation</a>
+                   data-event="event-rdv-bu-validated"><span class="icon icon-delete"></span> Annuler la validation</a>
             <?php endif ?>
         <?php else: ?>
             <p>Aucune.</p>
             <?php if ($canValidate): ?>
                 <a href="<?php echo $validerUrl ?>"
                    class="btn btn-success ajax-modal"
-                   data-event="event-rdv-bu-validated"><span class="glyphicon glyphicon-thumbs-up"></span> Valider</a>
+                   data-event="event-rdv-bu-validated"><span class="fas fa-thumbs-up"></span> Valider</a>
             <?php //elseif ($msgCollector->hasMessages($etape = WfEtape::CODE_RDV_BU_VALIDATION_BU)): ?>
                 <?php
     //            $message = "La validation n'est pas possible pour la raison suivante : " .
@@ -170,7 +170,6 @@ alert("Le traitement peut prendre plusieurs minutes. \n\n" +
     $(function () {
         var refreshingNextStep = function(done, effect) {
             return function() {
-                console.log("refreshingNextStep");
                 $("#nextStepDiv").addClass("loading").refresh(null, function () {
                     $(this).removeClass("loading").show();
                     if (done) done();

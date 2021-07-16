@@ -1,7 +1,10 @@
 $fontSize: 13px;
 $fontColor: #333;
+$navbarHeight: 50px;
 $navbarBackgroundColor: #006EAD;
 $navbarBackgroundColorActive: #004980;
+$sidebarBackgroundColor: #e9ecef;;
+$sidebarBackgroundColorActive: #004980;
 
 /**
  * Charte Normandie Université
@@ -9,6 +12,7 @@ $navbarBackgroundColorActive: #004980;
 
 body {
   font-size: $fontSize;
+  padding-top: $navbarHeight + 10px;
   padding-bottom: 100px;
 }
 
@@ -29,13 +33,6 @@ th {
   font-weight: 450;
 }
 
-.navbar {
-  font-size: $fontSize * 1.1;
-  .dropdown-menu {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-}
 .popover,
 .popover-title {
   font-size: $fontSize;
@@ -85,79 +82,21 @@ th {
   font-size: $fontSize * 1.10;
   line-height: 110%;
   padding: 8px;
-  .glyphicon {
+  .icon {
     margin-right: 5px;
   }
 }
-.btn.btn-sm {
+.btn-sm {
   font-size: $fontSize * 0.90;
   line-height: 100%;
   padding: 6px;
-  .glyphicon {
-    margin-right: 3px;
-  }
 }
-.btn.btn-xs {
+.btn.btn-sm {
   font-size: $fontSize * 0.80;
   line-height: 100%;
   padding: 4px;
-  .glyphicon {
+  .icon {
     margin-right: 2px;
-  }
-}
-
-body.development .navbar-inverse,
-body.test        .navbar-inverse,
-body.production  .navbar-inverse {
-  background-image: none; //linear-gradient(to bottom, #660000 0px, #870a0a 100%);
-  background-color: $navbarBackgroundColor;
-  border-color: $navbarBackgroundColor;
-}
-
-body.development .navbar-inverse .navbar-nav .active a,
-body.test        .navbar-inverse .navbar-nav .active a,
-body.production  .navbar-inverse .navbar-nav .active a {
-  background-image: none; //linear-gradient(to bottom, #d22828 0px, #a41212 100%);
-  background-color: $navbarBackgroundColorActive;
-  border-color: $navbarBackgroundColorActive
-}
-
-.navbar-inverse .navbar-nav > li > a {
-  color: white;
-}
-.navbar-inverse .navbar-link {
-  color: white;
-}
-.navbar-inverse .navbar-text {
-  color: $fontColor;
-}
-.navbar > .container .navbar-brand {
-  width: 120px;
-  background-image: url('/css/ESUPSyGAL_logo_Blanc03.png');
-  background-repeat: no-repeat;
-  background-size: 85%;
-  background-position: center 8px;
-  text-indent: -9999px;
-}
-
-.nav-pills > li > a {
-  //border-radius: 20px;
-}
-
-body.development .navbar-inverse .navbar-nav,
-body.test        .navbar-inverse .navbar-nav,
-body.production  .navbar-inverse .navbar-nav {
-  .dropdown-menu > li > a {
-    background-color: white;
-  }
-  .dropdown-menu > li > a:hover {
-    background-color: #eee;
-  }
-  .dropdown-menu > li.active a {
-    background-color: #337ab7;
-  }
-  .dropdown-menu > li.active a:hover {
-    color: #eee;
   }
 }
 
@@ -197,19 +136,76 @@ h1.app-name {
   bottom: 80px;
 }
 
-ul.breadcrumb,
-ul.menu-secondaire,
-ul.menu-information,
-ul.menu-actualites {
-  background: white;
-  padding: 8px 12px;
-  margin-bottom: 10px;
-  box-shadow: 1px 1px 10px lightgray;
+
+
+
+#navbar,
+#sidebar {
 }
-ul.menu-secondaire {
-  padding: 3px;
+
+#navbar {
+  font-size: $fontSize * 1.1;
+  height: $navbarHeight;
+  background-color: $navbarBackgroundColor;
+
+  .navbar-brand {
+    width: 85px;
+    background-image: url("/css/SyGAL_logo_Blanc03.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    text-indent: -9999px;
+  }
+
+  .nav-link,
+  .navbar-link {
+    color: white;
+  }
+
+  .nav-item {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+
+  .nav-item.active {
+    .nav-link {
+      background-color: $navbarBackgroundColorActive;
+    }
+  }
+
+  .dropdown-item {
+    padding: 0.2rem 1rem;
+  }
+  .dropdown-item.active {
+    background-color: $navbarBackgroundColorActive;
+  }
+
+  .dropdown-divider {
+    margin: .25rem 0;
+  }
+
+  .navbar-text {
+    line-height: 0.85;
+  }
 }
-ul.menu-secondaire li a,
-ul.menu-information li a {
-  padding: 5px 10px;
+
+#breadcrumb {
+  ol.breadcrumb {
+    padding-top: 0.3rem;
+    padding-bottom: 0.4rem;
+  }
+}
+
+#sidebar {
+  background-color: $sidebarBackgroundColor;
+  border-color: $sidebarBackgroundColorActive;
+
+  .nav-link {
+    color: $fontColor;
+    padding: .25rem 0.75rem;
+  }
+  .active .nav-link {
+    background-color: $navbarBackgroundColorActive;
+    border-color: $navbarBackgroundColorActive;
+    color: white;
+  }
 }

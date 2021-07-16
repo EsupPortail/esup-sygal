@@ -26,14 +26,14 @@ $this->headTitle('Historique de co-encadrement de ' . $denomination);
     </a>
 
     <h2> Thèses en cours
-        <span class="badge"> <?php echo count($encours); ?></span>
+        <span class="badge badge-secondary"> <?php echo count($encours); ?></span>
     </h2>
 
     <?php echo $this->partial('partial/table-these', ['theses' => $encours]); ?>
 
     <h2>
         Thèses closes
-        <span class="badge"> <?php echo count($closes); ?></span>
+        <span class="badge badge-secondary"> <?php echo count($closes); ?></span>
     </h2>
 
     <?php echo $this->partial('partial/table-these', ['theses' => $closes]); ?>

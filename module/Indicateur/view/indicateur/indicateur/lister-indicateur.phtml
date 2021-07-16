@@ -17,26 +17,26 @@ $canDelete  = $this->isAllowed(IndicateurPrivileges::getResourceId(IndicateurPri
 
 <h1 class="page-header">
     Liste des indicateurs enregistrés en base
-    <span class="badge"><?php echo count($indicateurs); ?></span>
+    <span class="badge badge-secondary"><?php echo count($indicateurs); ?></span>
 </h1>
 
 <a href="<?php echo $this->url('indicateur', [], [], true); ?>"
    class="btn btn-primary"
 >
-    <span class="glyphicon glyphicon-th"></span> Retourner à la liste des indicateurs
+    <span class="fas fa-th"></span> Retourner à la liste des indicateurs
 </a>
 
 <?php if($canEdit):?>
     <a href="<?php echo $this->url('indicateur/editer', [], [], true); ?>"
        class="btn btn-primary"
     >
-        <span class="glyphicon glyphicon-plus"></span> Ajouter un nouvel indicateur
+        <span class="icon icon-plus"></span> Ajouter un nouvel indicateur
     </a>
 <?php endif; ?>
 
 <br/><br/>
 
-<table class="table table-condensed">
+<table class="table table-sm">
     <thead>
     <tr>
 <!--        <th> Id </th>-->
@@ -56,22 +56,22 @@ $canDelete  = $this->isAllowed(IndicateurPrivileges::getResourceId(IndicateurPri
             <td>
                 <?php if($canEdit):?>
                     <a href="<?php echo $this->url('indicateur/editer',['indicateur'=>$indicateur->getId()],[], true); ?>">
-                        <span class="glyphicon glyphicon-pencil" title="Éditer un indicateur"></span>
+                        <span class="icon icon-edit iconly" title="Éditer un indicateur"></span>
                     </a>
                 <?php endif; ?>
                 <?php if($canRefresh):?>
                     <a href="<?php echo $this->url('indicateur/rafraichir',['indicateur'=>$indicateur->getId()],[], true); ?>">
-                        <span class="glyphicon glyphicon-refresh" title="Rafraichir un indicateur"></span>
+                        <span class="icon icon-refresh iconly" title="Rafraichir un indicateur"></span>
                     </a>
                 <?php endif; ?>
                 <?php if($canToggle):?>
                     <a href="<?php echo $this->url('indicateur/toggle',['indicateur'=>$indicateur->getId()],[], true); ?>">
-                        <span class="glyphicon glyphicon-off" title="Activer/Désactiver un indicateur"></span>
+                        <span class="fas fa-power-off" title="Activer/Désactiver un indicateur"></span>
                     </a>
                 <?php endif;?>
                 <?php if($canDelete):?>
                     <a href="<?php echo $this->url('indicateur/effacer',['indicateur'=>$indicateur->getId()],[], true); ?>">
-                        <span class="glyphicon glyphicon-trash" title="Effacer définitivement un indicateur"></span>
+                        <span class="icon icon-delete iconly" title="Effacer définitivement un indicateur"></span>
                     </a>
                 <?php endif;?>
             </td>

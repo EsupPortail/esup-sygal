@@ -12,14 +12,14 @@ use Import\Controller\ImportController;
  */
 function generateDiv($tableName, $class) {
     $texte = '';
-    $texte .= '<div class="panel '.$class.'">';
-    $texte .= '    <div class="panel-heading"> '.$tableName.' </div>';
-    $texte .= '    <div class="panel-body">';
-    $texte .= '        <div id="control-'.$tableName.'" class="pull-left">';
+    $texte .= '<div class="card '.$class.'">';
+    $texte .= '    <div class="card-header"> '.$tableName.' </div>';
+    $texte .= '    <div class="card-body">';
+    $texte .= '        <div id="control-'.$tableName.'" class="float-left">';
     $texte .= '            <img id="'.$tableName.'" src="css/grey.png"/>';
     $texte .= '            <button class="btn btn-info" service="'.$tableName.'">Lancer ! </button>';
     $texte .= '        </div>';
-    $texte .= '        <div id="info-'.$tableName.'" class="pull-right"></div>';
+    $texte .= '        <div id="info-'.$tableName.'" class="float-right"></div>';
     $texte .= '    </div>';
     $texte .= '</div>';
     return $texte;
@@ -45,28 +45,12 @@ function generateDiv($tableName, $class) {
 
     <div>
         <div class="col-md-4">
-            <?php echo generateDiv("structure", "panel-success"); ?>
+            <?php echo generateDiv("structure", "bg-success"); ?>
         </div>
         <div class="col-md-4">
-            <?php echo generateDiv("ecole-doctorale", "panel-success"); ?>
-            <?php echo generateDiv("etablissement", "panel-success"); ?>
-            <?php echo generateDiv("unite-recherche", "panel-success"); ?>
-        </div>
-    </div>
-
-    <div style="clear:both;"></div>
-
-    <div>
-        <div class="col-md-4">
-            <?php echo generateDiv("individu", "panel-info"); ?>
-            <?php echo generateDiv("role", "panel-info"); ?>
-        </div>
-        <div class="col-md-4">
-            <?php echo generateDiv("doctorant", "panel-info"); ?>
-            <?php echo generateDiv("acteur", "panel-info"); ?>
-        </div>
-        <div class="col-md-4">
-            <?php echo generateDiv("these", "panel-info"); ?>
+            <?php echo generateDiv("ecole-doctorale", "bg-success"); ?>
+            <?php echo generateDiv("etablissement", "bg-success"); ?>
+            <?php echo generateDiv("unite-recherche", "bg-success"); ?>
         </div>
     </div>
 
@@ -74,7 +58,23 @@ function generateDiv($tableName, $class) {
 
     <div>
         <div class="col-md-4">
-            <?php echo generateDiv("variable", "panel-warning"); ?>
+            <?php echo generateDiv("individu", "bg-info"); ?>
+            <?php echo generateDiv("role", "bg-info"); ?>
+        </div>
+        <div class="col-md-4">
+            <?php echo generateDiv("doctorant", "bg-info"); ?>
+            <?php echo generateDiv("acteur", "bg-info"); ?>
+        </div>
+        <div class="col-md-4">
+            <?php echo generateDiv("these", "bg-info"); ?>
+        </div>
+    </div>
+
+    <div style="clear:both;"></div>
+
+    <div>
+        <div class="col-md-4">
+            <?php echo generateDiv("variable", "bg-warning"); ?>
         </div>
     </div>
 
@@ -109,11 +109,11 @@ function generateDiv($tableName, $class) {
 
         $.reset();
 
-        $("button#reset").click( function() { $.reset(); });
-        $("button#all").click( function() { $.fetchAll(); });
-        $("input[name=etablissement]").change( function() { $.reset(); });
+        $("button#reset").on("click",  function() { $.reset(); });
+        $("button#all").on("click",  function() { $.fetchAll(); });
+        $("input[name=etablissement]").on("change",  function() { $.reset(); });
 
-        $("button").click( function() {
+        $("button").on("click",  function() {
 
             var etablissement = $("input[name=etablissement]:checked").val();
             var service = $(this).attr("service");

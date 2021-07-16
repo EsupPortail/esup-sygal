@@ -17,7 +17,7 @@ use Indicateur\Provider\Privilege\IndicateurPrivileges;
 
 <h1 class="page-header">
     <?php echo $indicateur->getLibelle(); ?>
-    <span class="badge">
+    <span class="badge badge-secondary">
         <?php echo count($data); ?>
     </span>
 </h1>
@@ -25,12 +25,12 @@ use Indicateur\Provider\Privilege\IndicateurPrivileges;
 <p>
 <?php if($canExport): ?>
     <a href="<?php echo $this->url('indicateur/export', ['indicateur' => $indicateur->getId()], [] , true);?>" class="btn btn-primary">
-        <span class="glyphicon glyphicon-export"></span>
+        <span class="icon icon-export"></span>
         Export les données au format CSV
     </a>
 <?php endif; ?>
 <!--    <a href="--><?php //echo $this->url('indicateur/rafraichir', ['indicateur' => $indicateur->getId()], [] , true);?><!--" class="btn btn-primary">-->
-<!--        <span class="glyphicon glyphicon-refresh"></span>-->
+<!--        <span class="icon icon-refresh"></span>-->
 <!--        Forcer le rafraîchissement de l'indicateur-->
 <!--    </a>-->
 </p>

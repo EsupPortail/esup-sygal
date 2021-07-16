@@ -26,11 +26,11 @@ function durationInWords(milliseconds)
 
     function substitute(stringOrFunction, number)
     {
-        var string = $.isFunction(stringOrFunction) ? stringOrFunction(number, milliseconds) : stringOrFunction;
+        var string = typeof stringOrFunction === "function" ? stringOrFunction(number, milliseconds) : stringOrFunction;
         return number ? (string.replace(/%d/i, number) + (number > 1 ? "s" : "") + " ") : "";
     }
 
-    return $.trim(substitute(l.years, years) + (substitute(l.months, month)) + (substitute(l.days, days)) + (substitute(l.hours, hours)) + (substitute(l.minutes, minutes)) + (substitute(l.seconds, seconds)) + (substitute(l.milliseconds, ms)));
+    return (substitute(l.years, years) + (substitute(l.months, month)) + (substitute(l.days, days)) + (substitute(l.hours, hours)) + (substitute(l.minutes, minutes)) + (substitute(l.seconds, seconds)) + (substitute(l.milliseconds, ms))).trim();
 }
 
 /**
@@ -196,7 +196,7 @@ function installIcons(options)
             if (!$(this).attr('title')) {
                 $(this).attr('title', $(this).text());
             }
-            $(this).html('<button type="button" class="btn btn-link btn-xs"><span class="glyphicon ' + classes[c] + '"></span></button>');
+            $(this).html('<button type="button" class="btn btn-link btn-sm"><span class="glyphicon ' + classes[c] + '"></span></button>');
         });
     }
 }
@@ -216,11 +216,11 @@ function installConfirm()
             message = $(this).attr('title');
             message = "Êtes-vous sûr(e) de vouloir " + message.substr(0, 1).toLowerCase() + message.substr(1) + " ?";
         }
-        $(this).click(function () { askConfirmation($(this), message); });
+        $(this).on("click", function () { askConfirmation($(this), message); });
     });
     $(".actions .confirm").each(function ()
     {
-        $(this).click(function () { askConfirmation($(this)); });
+        $(this).on("click", function () { askConfirmation($(this)); });
     });
 }
 
@@ -314,7 +314,7 @@ function installMenuToggleButton()
     atoggle = $('<a title="Afficher/masquer le menu"></a>')
         .button({icons: {primary: 'ui-icon-carat-2-e-w'}, texte: false})
         .css('height', '12px').css('width', '30px').css('margin-bottom', '2px')
-        .click(function ()
+        .on("click", function ()
         {
             var visible = $.jStorage.get('menuvisible', '?');
             if (visible == '?') {
@@ -354,7 +354,7 @@ function setMenuVisible(visible)
  */
 function installOpacifier(element, opacity, ajaxLoadingElement)
 {
-    element.click(function ()
+    element.on("click", function ()
     {
         $("body").css("opacity", opacity ? opacity : "0.5");
         $(ajaxLoadingElement ? ajaxLoadingElement : "#ajax-loader").show().position({
@@ -544,8 +544,8 @@ function installCheckboxes(targetElements, checkboxName, initiallyChecked)
         )
     );
 
-    cocherTout.click(function () { $("input.check-" + checkboxName).prop('checked', true).trigger("change"); });
-    decocherTout.click(function () { $("input.check-" + checkboxName).prop('checked', false).trigger("change"); });
+    cocherTout.on("click", function () { $("input.check-" + checkboxName).prop('checked', true).trigger("change"); });
+    decocherTout.on("click", function () { $("input.check-" + checkboxName).prop('checked', false).trigger("change"); });
 
     return $("input.check-" + checkboxName);
 }

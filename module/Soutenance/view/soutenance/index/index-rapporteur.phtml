@@ -40,7 +40,7 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
         Veuillez sélectionner la thèse sur laquelle vous souhaitez intervenir.
     </p>
 
-    <table class="table table-condensed">
+    <table class="table table-sm">
         <thead>
             <tr>
                 <th class="these-titre">    Titre </th>
@@ -80,18 +80,18 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
-<div class="box panel panel-info">
-    <div class="panel-heading">
+<div class="box card">
+    <div class="card-header bg-info">
         <h2> Proposition de jury / Jury Proposal </h2>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <?php if ($proposition !== null) : ?>
             <h3> Date et lieu </h3>
             La soutenance est prévue pour le <strong><?php echo $proposition->getDate()->format(Constants::DATETIME_FORMAT); ?></strong>
             dans <strong><?php echo $proposition->getLieu(); ?></strong>.
 
             <h3> Jury </h3>
-            <table class="table table-condensed">
+            <table class="table table-sm">
                 <thead>
                     <tr>
                         <th> Dénomination </th>
@@ -118,18 +118,18 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
     </div>
 </div>
 
-<div class="box panel panel-info">
-    <div class="panel-heading">
+<div class="box card">
+    <div class="card-header bg-info">
         <h2> Engagement d'impartialité / Impartiality Commitement </h2>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <?php if ($engagement !== null) : ?>
             Vous avez signé l'engagement pour la thèse de <?php echo $these->getDoctorant(); ?>.
-            <div class="panel panel-default pull-right">
-                <div class="panel-heading">
+            <div class="card float-right">
+                <div class="card-header bg-secondary">
                     Signature de l'engagment d'impartialité
                 </div>
-                <div class="panel-body">
+                <div class="card-body">
                     <ul>
                         <li><?php echo $engagement->getIndividu(); ?></li>
                         <li><?php echo $engagement->getHistoCreation()->format(Constants::DATETIME_FORMAT); ?></li>
@@ -143,9 +143,9 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
             <a
                     <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::engagementImpartialiteAction() */?>
                     href="<?php echo $this->url('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
-               class="btn btn-primary pull-right"
+               class="btn btn-primary float-right"
             >
-                <span class="glyphicon glyphicon-pencil"></span>
+                <span class="icon icon-edit"></span>
 <!--                Signer / Sign-->
                 Accès à l'engagement d'impartialité / Access to the impartiality commitment
             </a>
@@ -153,13 +153,13 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
     </div>
 </div>
 
-<div class="box panel <?php echo ($depot !== null)?"panel-info":"panel-warning"; ?>">
-    <div class="panel-heading">
+<div class="box card">
+    <div class="card-header <?php echo ($depot !== null)?"bg-info":"bg-warning"; ?>">
         <h2> Téléchargement de la thèse / Downloading the manuscrit </h2>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <?php if ($engagement === null) : ?>
-            <span class="glyphicon glyphicon-warning-sign"></span> Vous ne pourrez télécharger la version électronique de la thèse qu'après avoir signé l'engagement d'impartialité.
+            <span class="fas fa-exclamation-triangle"></span> Vous ne pourrez télécharger la version électronique de la thèse qu'après avoir signé l'engagement d'impartialité.
         <?php else : ?>
             <?php if ($depot !== null) : ?>
                 Vous pouvez télécharger la version électronique de la thèse via <?php echo $this->appInfos()->nom; ?>.
@@ -167,13 +167,13 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
                 <a
                     <?php /** @see \Application\Controller\TheseController::fusionAction() */ ?>
                     href="<?php echo $this->url("these/fusion", ["these" => $these->getId()], [], true); ?>"
-                   class="btn btn-primary pull-right"
+                   class="btn btn-primary float-right"
                 >
-                    <span class="glyphicon glyphicon-download"></span>
+                    <span class="icon icon-download"></span>
                     Télécharger la thèse / Downloading manuscrit
                 </a>
             <?php else : ?>
-                <span class="glyphicon glyphicon-warning-sign"></span>
+                <span class="fas fa-exclamation-triangle"></span>
                 La thèse de <?php echo $these->getDoctorant()->getIndividu(); ?> n'a pas encore été déposée dans <?php echo $this->appInfos()->nom; ?>.
                 Une fois le dépôt réalisé vous pourrez télécharger celle-ci via cette page.
             <?php endif; ?>
@@ -181,21 +181,21 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
     </div>
 </div>
 
-<div class="box panel <?php echo ($engagement !== null)?"panel-info":"panel-warning"; ?>">
-    <div class="panel-heading">
+<div class="box card">
+    <div class="card-header <?php echo ($engagement !== null)?"bg-info":"bg-warning"; ?>">
         <h2> Avis de soutenance / Notification on the PhD defense </h2>
     </div>
-    <div class="panel-body">
+    <div class="row card-body">
     <?php if ($engagement !== null) : ?>
             <?php if ($avis !== null) : ?>
                 Vous avez rendu votre avis de soutenance pour la thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>.
 
-                <div class="col-md-5 pull-right">
-                    <div class="panel <?php echo ($avis->getAvis() === 'Favorable')?"panel-success":"panel-danger"; ?> ">
-                        <div class="panel-heading">
+                <div class="col-md-5 float-right">
+                    <div class="card">
+                        <div class="card-header <?php echo ($avis->getAvis() === 'Favorable')?"bg-success":"bg-danger"; ?>">
                             Avis de soutenance : <strong><?php echo $avis->getAvis(); ?></strong>
                         </div>
-                        <div class="panel-body">
+                        <div class="card-body">
                             <ul>
                                 <li>Rendu le <?php echo $avis->getValidation()->getHistoModification()->format(Constants::DATETIME_FORMAT); ?> par <?php echo $avis->getValidation()->getIndividu(); ?></li>
                             </ul>
@@ -220,7 +220,7 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
                         <?php /** @see \Soutenance\Controller\AvisController::annulerAction() */ ?>
                         href="<?php echo $this->url('soutenance/avis-soutenance/annuler', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [] , true); ?>"
                         class="btn btn-danger">
-                        <span class="glyphicon glyphicon-remove"></span>
+                        <span class="icon icon-delete"></span>
                         Annuler l'avis de soutance
                     </a>
                 </div>
@@ -232,16 +232,16 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
                 <a
                     <?php /** @see \Soutenance\Controller\AvisController::indexAction() */ ?>
                     href="<?php echo $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true); ?>"
-                   class="btn btn-primary pull-right"
+                   class="btn btn-primary float-right"
                 >
-                    <span class="glyphicon glyphicon-pencil"></span>
+                    <span class="icon icon-edit"></span>
                     Rendre l'avis de soutenance / Give our report
                 </a>
             <?php endif; ?>
 
             <?php endif; ?>
         <?php else : ?>
-        <span class="glyphicon glyphicon-warning-sign"></span> Pour pouvoir rendre votre avis de soutenance vous devez avoir signez l'engagement d'impartialité.
+        <span class="fas fa-exclamation-triangle"></span> Pour pouvoir rendre votre avis de soutenance vous devez avoir signez l'engagement d'impartialité.
         <?php endif; ?>
     </div>
 </div>

@@ -37,19 +37,19 @@ $protoDiffusion = new Diffusion();
 <h2>Confidentialité de la thèse</h2>
 <div class="widget-confidentialite-these" id="confidentialite-these">
     <div class="row">
-        <div class="col-xs-4">
+        <div class="col-4">
             <?php echo $fcg->render($form->get('confidentielle')->setLabel("")) ?>
         </div>
-        <div class="col-xs-3 confidentDateFin" style="display: none">
+        <div class="col-3 confidentDateFin" style="display: none">
             <?php echo $this->formDate()->setDateReadonly(true)->render($form->get('dateFinConfidentialite')) ?>
         </div>
     </div>
     <div id="explicConfidentialiteOui" class="alert alert-md alert-info" style="display: none">
-        <span class="glyphicon glyphicon-info-sign"></span>
+        <span class="fas fa-info-circle"></span>
         <?php echo $this->message()->render(DiffusionMessages::CONFIDENTIALITE_LAIUS, [], Diffusion::CONFIDENTIELLE_OUI) ?>
     </div>
     <div id="explicConfidentialiteNon" class="alert alert-md alert-info" style="display: none">
-        <span class="glyphicon glyphicon-info-sign"></span>
+        <span class="fas fa-info-circle"></span>
         <?php echo $this->message()->render(DiffusionMessages::CONFIDENTIALITE_LAIUS, [], Diffusion::CONFIDENTIELLE_NON) ?>
     </div>
 </div>
@@ -92,15 +92,15 @@ Cliquez sur <a href="<?php echo $this->url('fichier/telecharger-permanent', ['id
         <?php echo $fcg($form->get('autorisMotif')->setAttributes(['rows' => 3])) ?>
     </div>
     <div id="explicOuiImmediat" class="alert alert-md alert-info" style="display: none">
-        <span class="glyphicon glyphicon-info-sign"></span>
+        <span class="fas fa-info-circle"></span>
         <?php echo $this->message()->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_LAIUS, [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_OUI_IMMEDIAT)) ?>
     </div>
     <div id="explicOuiEmbargo" class="alert alert-md alert-info" style="display: none">
-        <span class="glyphicon glyphicon-info-sign"></span>
+        <span class="fas fa-info-circle"></span>
         <?php echo $this->message()->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_LAIUS, [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_OUI_EMBARGO)) ?>
     </div>
     <div id="explicNon" class="alert alert-md alert-info" style="display: none">
-        <span class="glyphicon glyphicon-info-sign"></span>
+        <span class="fas fa-info-circle"></span>
         <?php echo $this->message()->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_LAIUS, [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_NON)) ?>
     </div>
     <div class="row auteur" style="display: none">

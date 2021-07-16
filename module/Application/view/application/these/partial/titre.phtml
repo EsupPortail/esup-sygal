@@ -28,7 +28,7 @@ $class = $these->estConfidentielle() ? 'text-danger' : '';
        data-content="<?php echo htmlspecialchars($content) ?>"
        data-trigger="hover"
        data-html="true"
-       data-placement="bottom"><span class="label label-danger">CONFIDENTIELLE</span></span>
+       data-placement="bottom"><span class="badge bg-danger">CONFIDENTIELLE</span></span>
 <?php endif ?>
 
 <?php if ($description !== false) : ?>
@@ -37,9 +37,7 @@ $class = $these->estConfidentielle() ? 'text-danger' : '';
        data-content="<?php echo htmlspecialchars($this->partial('application/these/partial/fiche')) ?>"
        data-trigger="click"
        data-placement="bottom"
-       data-container="body"
        data-html="true"
-       tabindex="0"
-       role="button"><span class="glyphicon glyphicon-list-alt"></span>
+       role="button"><span class="fas fa-list-alt"></span>
     </a>
 <?php endif; ?>

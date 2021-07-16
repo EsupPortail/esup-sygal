@@ -59,7 +59,7 @@ class MembreForm extends Form {
             'options' => [
                 'label' => 'Qualité : ',
                 'label_attributes' => [
-                    'class' => 'control-label',
+                    'class' => 'col-form-label',
                 ],
                 'empty_option' => "Sélectionner une qualité ... ",
                 'value_options' => $this->getQualiteService()->getQualitesAsGroupOptions(),

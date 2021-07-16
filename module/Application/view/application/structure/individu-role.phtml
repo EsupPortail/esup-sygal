@@ -20,7 +20,7 @@ $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePriv
 
 <h3 xmlns="http://www.w3.org/1999/html">
     Rôles
-    <span class="badge"> <?php echo count($roles); ?> </span>
+    <span class="badge badge-secondary"> <?php echo count($roles); ?> </span>
 </h3>
 
 <table class="table table-extra-condensed">
@@ -50,7 +50,7 @@ $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePriv
 
 <h3>
     Membres
-    <span class="badge"> <?php echo count($membres); ?> </span>
+    <span class="badge badge-secondary"> <?php echo count($membres); ?> </span>
 </h3>
 
 <table class="table table-extra-condensed">
@@ -81,7 +81,7 @@ $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePriv
                     </td>
                     <td>
                         <?php if ($canModifier): ?>
-                            <span id="<?php echo $membre->getId();?>_<?php echo $role->getId();?>" class="remove-role glyphicon glyphicon-trash"> </span>
+                            <span id="<?php echo $membre->getId();?>_<?php echo $role->getId();?>" class="remove-role icon icon-delete iconly"> </span>
                         <?php endif; ?>
                     </td>
                 </tr>
@@ -92,7 +92,7 @@ $canModifier = $this->isAllowed(StructurePrivileges::getResourceId(StructurePriv
 
 <script>
     // $(document).ready(function () {
-    //     $(".remove-role").click(function () {
+    //     $(".remove-role").on("click", function () {
     //         var id = $(this).attr("id");
     //         var splits = id.split("_");
     //         var role = splits[1];

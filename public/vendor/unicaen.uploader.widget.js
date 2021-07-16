@@ -111,7 +111,7 @@ $.widget("unicaen.widgetUploader", {
         });
 
         // affichage/masquage bouton d'envoi selon sélection de fichier
-        choose.change(function () {
+        choose.on("change", function () {
             self.updateUploadButton();
         });
 

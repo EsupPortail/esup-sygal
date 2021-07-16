@@ -14,7 +14,7 @@ $canChangePrivilege = true;
 
 <h1 class="page-header">
     Profils
-    <span class="badge">
+    <span class="badge badge-secondary">
         <?php echo count($profils); ?>
     </span>
 </h1>
@@ -22,10 +22,10 @@ $canChangePrivilege = true;
 <h2> Liste des profils </h2>
 
 <a href="<?php echo $this->url('profil/editer', [], [], true); ?>" class="btn btn-primary ajax-modal" data-event="modification">
-    <span class="glyphicon glyphicon-plus"></span> Ajouter un nouveau profil
+    <span class="icon icon-plus"></span> Ajouter un nouveau profil
 </a>
 
-<table class="table table-condensed">
+<table class="table table-sm">
     <thead>
     <tr>
         <th> Code </th>
@@ -45,22 +45,22 @@ $canChangePrivilege = true;
             <td>
                 <?php if ($canEdit) : ?>
                     <a href="<?php echo $this->url('profil/editer', ['profil' => $profil->getId()], [], true);?>" class="ajax-modal" data-event="modification">
-                        <span class="glyphicon glyphicon-pencil" title="Éditer les informations du profil"></span>
+                        <span class="icon icon-edit" title="Éditer les informations du profil"></span>
                     </a>
                 <?php endif; ?>
                 <?php if ($canEdit) : ?>
                     <a class="ajax-modal" data-event="modification" href="<?php echo $this->url('profil/dupliquer', ['profil' => $profil->getId()], [], true);?>">
-                        <span class="glyphicon glyphicon-paste" title="Recopier privilèges d'une autre profil"></span>
+                        <span class="fas fa-paste" title="Recopier privilèges d'une autre profil"></span>
                     </a>
                 <?php endif; ?>
                 <?php if ($canDelete) : ?>
                     <a href="<?php echo $this->url('profil/supprimer', ['profil' => $profil->getId()], [], true);?>">
-                        <span class="glyphicon glyphicon-trash" title="Supprimer le profil"></span>
+                        <span class="icon icon-delete iconly" title="Supprimer le profil"></span>
                     </a>
                 <?php endif; ?>
                 <?php if ($canManage) : ?>
                     <a href="<?php echo $this->url('profil/gerer-roles', ['profil' => $profil->getId()], [], true);?>">
-                        <span class="glyphicon glyphicon-link" title="Gérer les rôles associés au profil" ></span>
+                        <span class="fas fa-link" title="Gérer les rôles associés au profil" ></span>
                     </a>
                 <?php endif; ?>
             </td>
@@ -95,9 +95,9 @@ $canChangePrivilege = true;
                 <td class="<?php echo ($profil->getStructureType())?$profil->getStructureType()->getCode():"aucun"; ?>" id="<?php echo $privilege->getId(); ?>_<?php echo $profil->getId();?>"
                     data-legend="<?php echo $profil->getLibelle() ?>">
                     <?php if ($profil->hasPrivilege($privilege)) : ?>
-                        <span class="glyphicon glyphicon-ok text-success checkable" title="Cliquer pour retirer le privilège"></span>
+                        <span class="fa fa-check faa-spin faa-fast text-success checkable" title="Cliquer pour retirer le privilège"></span>
                     <?php else: ?>
-                        <span class="glyphicon glyphicon-remove text-danger checkable" title="Cliquer pour ajouter le privilège"></span>
+                        <span class="fa fa-ban faa-spin faa-fast text-danger checkable" title="Cliquer pour ajouter le privilège"></span>
                     <?php endif; ?>
                 </td>
             <?php endforeach; ?>
@@ -148,11 +148,11 @@ $canChangePrivilege = true;
         var profil = $checkable.parent("td").data("legend");
         var privilege = $checkable.parent("td").parent("tr").data("legend");
         var title = $checkable.attr("title") + " <strong>" + privilege + "</strong><br>au profil<br><strong>" + profil + "</strong>";
-        $checkable.attr("title", title).tooltip({trigger: "hover", html: true, placement: "bottom"});
+        $checkable.attr("title", title).tooltip({trigger: "hover", html: true, placement: "bottom", container: "body"});
     }
 
     $(document).ready(function() {
-        $("td").click(function() {
+        $("td").on("click", function() {
 
             var canModifier =  Boolean(<?php echo $canChangePrivilege; ?>);
             if (!canModifier) {
@@ -161,6 +161,7 @@ $canChangePrivilege = true;
             }
 
             var $td = $(this);
+            var $checkable = $(this).find(".checkable");
             var id = $td.attr("id");
             var splits = id.split("_");
             var role = splits[1];
@@ -172,14 +173,19 @@ $canChangePrivilege = true;
                 url : url,
                 beforeSend:
                     function () {
-                        document.getElementById(id).innerHTML = "<img style='height:40px;' src='css/loading.gif'/>";
+                        $checkable.tooltip("dispose");
+                        $checkable.addClass("animated");
                     },
                 success:
                     function(retour){
-                        if (retour["value"] == 1) texte = "<span class='glyphicon glyphicon-ok text-success checkable' title='Cliquer pour retirer le privilège'></span>";
-                        else var texte = "<span class='glyphicon glyphicon-remove text-danger checkable' title='Cliquer pour ajouter le privilège'></span>";
+                        if (retour["value"] == 1) texte = "<span class='icon icon-ok text-success checkable' title='Cliquer pour retirer le privilège'></span>";
+                        else var texte = "<span class='icon icon-delete iconly text-danger checkable' title='Cliquer pour ajouter le privilège'></span>";
                         $td.html(texte);
                         installTooltipOnCheckable($td.find(".checkable"))
+                    },
+                error:
+                    function() {
+                        $checkable.removeClass("animated");
                     }
             });
         });
