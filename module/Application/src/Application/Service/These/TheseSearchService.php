@@ -481,7 +481,7 @@ EOS;
     private function createFilterAnneeUnivInscription(): SelectSearchFilter
     {
         $filter = new SelectSearchFilter(
-            "Année univ.<br>d'inscr.",
+            "An. univ. inscr.",
             self::NAME_anneeUnivInscription
         );
         $filter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
@@ -506,7 +506,7 @@ EOS;
     private function createFilterAnneeUniv1ereInscription(): SelectSearchFilter
     {
         $filter = new SelectSearchFilter(
-            "Année univ.<br>1ère inscr.",
+            "An. univ. 1ère inscr.",
             self::NAME_anneeUniv1ereInscription
         );
         $filter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
@@ -531,7 +531,7 @@ EOS;
     private function createFilterAnneeCivile1ereInscription(): SelectSearchFilter
     {
         $filter = new SelectSearchFilter(
-            "Année civile<br>1ère inscr.",
+            "An. civile 1ère inscr.",
             self::NAME_anneeCivile1ereInscription
         );
         $filter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {

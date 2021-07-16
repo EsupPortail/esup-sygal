@@ -18,9 +18,9 @@ const CERTIF_CONFORME_MODIFIED_EVENT = "CERTIF_CONFORME_MODIFIED_EVENT";
 
 <?php if ($fichierTheseRetraite && ($v = $fichierTheseRetraite->getFichier()->getValidite()) && $v->getEstValide() === true): ?>
 
-    <div class="panel panel-info box">
+    <div class="card box">
 
-        <div class="panel-heading">
+        <div class="card-header bg-info">
             <?php
             $version = $fichierTheseRetraite->getFichier()->getVersion();
             $estVersionCorrigee = $version->estVersionCorrigee();
@@ -32,7 +32,7 @@ const CERTIF_CONFORME_MODIFIED_EVENT = "CERTIF_CONFORME_MODIFIED_EVENT";
             <h2 class="first"><?php echo $heading ?></h2>
         </div>
 
-        <div class="panel-body">
+        <div class="card-body">
 
             <?php
             $certificationSaisie = $fichierTheseRetraite && $fichierTheseRetraite->getEstConforme() !== null;
@@ -48,7 +48,7 @@ const CERTIF_CONFORME_MODIFIED_EVENT = "CERTIF_CONFORME_MODIFIED_EVENT";
                 $textClass = $certifieConforme ? 'text-success' : 'text-danger';
                 ?>
                 <p class="<?php echo $textClass ?> lead">
-                    <span class="glyphicon glyphicon-check"></span> <?php echo $text ?>
+                    <span class="icon icon-ok"></span> <?php echo $text ?>
                 </p>
 
             <?php elseif ($canEdit): ?>
@@ -74,8 +74,8 @@ const CERTIF_CONFORME_MODIFIED_EVENT = "CERTIF_CONFORME_MODIFIED_EVENT";
                 <p>
                     <a href="<?php echo $validerFichierRetraiteUrl ?>"
                        data-event="<?php echo CERTIF_CONFORME_MODIFIED_EVENT ?>"
-                       class="btn <?php echo $certificationSaisie ? "btn-default" : "btn-primary" ?> ajax-modal"
-                    ><span class="glyphicon glyphicon-pencil"></span>
+                       class="btn <?php echo $certificationSaisie ? "btn-secondary" : "btn-primary" ?> ajax-modal"
+                    ><span class="icon icon-edit"></span>
                         <?php echo $certificationSaisie ? "Modifier" : "Répondre" ?></a>
                 </p>
             <?php endif ?>

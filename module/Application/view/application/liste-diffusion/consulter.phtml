@@ -25,12 +25,12 @@ use Application\Entity\Db\ListeDiffusion;
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
-<h2>Abonnés <span class="badge badge-default"><?php echo count($memberIndividusAvecAdresse) ?></span></h2>
+<h2>Abonnés <span class="badge badge-secondary"><?php echo count($memberIndividusAvecAdresse) ?></span></h2>
 
 <div class="row">
     <div class="col-md-6">
         <?php if (count($memberIndividusAvecAdresse)): ?>
-            <table class="table table-bordered table-condensed table-hover">
+            <table class="table table-bordered table-sm table-hover">
                 <thead>
                 <tr>
                     <th>Nom</th>
@@ -58,12 +58,12 @@ use Application\Entity\Db\ListeDiffusion;
 </a>
 
 <h2>Abonnés potentiels sans adresse connue
-    <span class="badge badge-default"><?php echo count($memberIndividusSansAdresse) ?></span></h2>
+    <span class="badge badge-secondary"><?php echo count($memberIndividusSansAdresse) ?></span></h2>
 
 <div class="row">
     <div class="col-md-6">
         <?php if (count($memberIndividusSansAdresse)): ?>
-            <table class="table table-bordered table-condensed table-hover">
+            <table class="table table-bordered table-sm table-hover">
                 <thead>
                 <tr>
                     <th>Nom</th>
@@ -84,12 +84,12 @@ use Application\Entity\Db\ListeDiffusion;
 </div>
 
 
-<h2>Propriétaires <span class="badge badge-default"><?php echo count($ownerIndividusAvecAdresse) ?></span></h2>
+<h2>Propriétaires <span class="badge badge-secondary"><?php echo count($ownerIndividusAvecAdresse) ?></span></h2>
 
 <div class="row">
     <div class="col-md-6">
         <?php if (count($ownerIndividusAvecAdresse)): ?>
-            <table class="table table-bordered table-condensed table-hover">
+            <table class="table table-bordered table-sm table-hover">
                 <thead>
                 <tr>
                     <th>Nom</th>
@@ -117,12 +117,12 @@ use Application\Entity\Db\ListeDiffusion;
 </a>
 
 <h2>Propriétaires potentiels sans adresse électronique connue
-    <span class="badge badge-default"><?php echo count($ownerIndividusSansAdresse) ?></span></h2>
+    <span class="badge badge-secondary"><?php echo count($ownerIndividusSansAdresse) ?></span></h2>
 
 <div class="row">
     <div class="col-md-6">
         <?php if (count($ownerIndividusSansAdresse)): ?>
-            <table class="table table-bordered table-condensed table-hover">
+            <table class="table table-bordered table-sm table-hover">
                 <thead>
                 <tr>
                     <th>Nom</th>

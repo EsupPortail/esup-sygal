@@ -43,18 +43,18 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
 </p>
 
 <div>
-    <div class="box panel panel-info">
-        <div class="panel-heading">
+    <div class="box card">
+        <div class="card-header bg-info">
             <h2 class="first"> Information sur la thèse / Information about the PhD thesis </h2>
         </div>
-        <div class="panel-body">
-            <dl class="dl-horizontal">
-                <dt> Titre / Title </dt>
-                <dd> <?php echo $these->getTitre(); ?> </dd>
-                <dt> Doctorant / PhD Student</dt>
-                <dd> <?php echo $doctorantNom; ?> </dd>
-                <dt> Directeur(s) / Supervisor(s) </dt>
-                <dd>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-md-5"> Titre / Title </dt>
+                <dd class="col-md-5"> <?php echo $these->getTitre(); ?> </dd>
+                <dt class="col-md-5"> Doctorant / PhD Student</dt>
+                <dd class="col-md-5"> <?php echo $doctorantNom; ?> </dd>
+                <dt class="col-md-5"> Directeur(s) / Supervisor(s) </dt>
+                <dd class="col-md-5">
                     <?php foreach ($encadrants as $encadrant): ?>
                         <?php
                         /** @var Acteur $encadrant */
@@ -62,12 +62,12 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
                         ?>
                         <br/>
                     <?php endforeach; ?>
-                <dt> Discipline </dt>
-                <dd> <?php echo $these->getLibelleDiscipline(); ?> </dd>
-                <dt> Date de la soutenance </dt>
-                <dd> <?php echo $proposition->getDate()->format("d/m/Y"); ?> </dd>
-                <dt> Lieu de la soutenance </dt>
-                <dd> <?php echo $proposition->getLieu(); ?> </dd>
+                <dt class="col-md-5"> Discipline </dt>
+                <dd class="col-md-5"> <?php echo $these->getLibelleDiscipline(); ?> </dd>
+                <dt class="col-md-5"> Date de la soutenance </dt>
+                <dd class="col-md-5"> <?php echo $proposition->getDate()->format("d/m/Y"); ?> </dd>
+                <dt class="col-md-5"> Lieu de la soutenance </dt>
+                <dd class="col-md-5"> <?php echo $proposition->getLieu(); ?> </dd>
             </dl>
 
         </div>
@@ -94,13 +94,13 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
 <!--            <p>-->
 <!--                <center>-->
 <!--                <a href="--><?php //echo $urlAnnuler; ?><!--" class="btn btn-danger">-->
-<!--                    <span class="glyphicon glyphicon-thumbs-up"></span>-->
+<!--                    <span class="fas fa-thumbs-up"></span>-->
 <!--                    Annulation de la signature</a>-->
 <!--                </center>-->
 <!--            </p>-->
 <!--        --><?php //else: ?>
-<!--        <div class="panel panel-danger">-->
-<!--            <div class="panel-heading">-->
+<!--        <div class="card card-danger">-->
+<!--            <div class="card-heading">-->
 <!--                Vous n'êtes pas habilité à annuler une signature d'engagement d'impartialité.-->
 <!--            </div>-->
 <!--        </div>-->
@@ -112,7 +112,7 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
             <a      <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::signerEngagementImpartialiteAction()  */ ?>
                     href="<?php echo $urlSigner;  ?>"
                     class="btn btn-success" style="width:80%;">
-                <span class="glyphicon glyphicon-thumbs-up"></span>
+                <span class="fas fa-thumbs-up"></span>
                 Je signe / I agree </a>
 
                 <br/>
@@ -120,14 +120,14 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
 
             <a      <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::refuserEngagementImpartialiteAction()  */ ?>
                     href="<?php echo $urlRefuser;  ?>" class="btn btn-danger" style="width:80%;">
-                <span class="glyphicon glyphicon-thumbs-down"></span>
+                <span class="fas fa-thumbs-down"></span>
                 Je ne signe pas / I disagree </a>
             </span>
 
         </p>
         <?php else: ?>
-        <div class="panel panel-danger">
-            <div class="panel-heading">
+        <div class="card">
+            <div class="card-header bg-danger">
                 Vous n'êtes pas habilité à signer cet engagement d'impartialité.
             </div>
         </div>
@@ -137,20 +137,20 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
     <div class="col-md-8">
         <!-- affichage -->
         <?php if ($validation): ?>
-        <div class="panel
+        <div class="card">
+            <div class="card-header
             <?php  if ($validation && $validation->getTypeValidation()->getCode() === TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE): ?>
-                panel-success
+                bg-success
             <?php else : ?>
-                panel-danger
+                bg-danger
             <?php endif; ?>
-        ">
-            <div class="panel-heading">
+            ">
                 <?php echo $this->validation($validation) ?>
             </div>
         </div>
         <?php else: ?>
-            <div class="panel panel-warning">
-                <div class="panel-heading">
+            <div class="card">
+                <div class="card-header bg-warning">
                     Aucune signature.
                 </div>
             </div>
@@ -159,11 +159,11 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
 </div>
 
 <?php if ($validation && $validation->getTypeValidation()->getCode() === TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE): ?>
-<div class="box panel panel-success">
-    <div class="panel-heading">
+<div class="box card">
+    <div class="card-header bg-success">
         <h2 class="first"> Et ensuite ? </h2>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
 
         Vous pouvez maintenant accéder à la partie de remise de votre avis de soutenance et dépôt du pré-rapport de soutenance.
         <nav aria-label="Etape suivante">
@@ -173,7 +173,7 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
                         <?php /** @see \Soutenance\Controller\AvisController::indexAction()  */ ?>
                         class="roadmap-step-link"
                         href="<?php echo $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true); ?>">
-                    <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                    <span class="fas fa-arrow-alt-circle-right"></span>
                         Avis de soutenance
                 </a>
             </li>
@@ -183,7 +183,7 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
 </div>
 <?php endif; ?>
 
-<div class="pull-right">
+<div class="float-right">
 <a href="<?php echo $this->url('soutenance/index-rapporteur', ['these' => $these->getId()], [], true); ?>"
    class="btn btn-primary action">
    Retour à l'index rapporteur

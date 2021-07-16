@@ -39,13 +39,13 @@ if ($validite === null || $validiteEstInconnue || $estValide) {
 
 <?php if ($info): ?>
     <div class="alert alert-md alert-danger">
-        <span class="glyphicon glyphicon-exclamation-sign"></span> <?php echo $info ?>
+        <span class="icon icon-warning"></span> <?php echo $info ?>
     </div>
 <?php endif ?>
 
-<div class="panel panel-info box">
+<div class="card box">
 
-    <div class="panel-body">
+    <div class="card-body">
 
         <div class="row" id="uploader-div-these">
 
@@ -77,7 +77,7 @@ if ($validite === null || $validiteEstInconnue || $estValide) {
                 <?php if ($displayContent): ?>
 
                     <h3 class="text-center first">
-                        <?php if (! $displayForm): ?><span class="glyphicon glyphicon-check"></span><?php endif ?>
+                        <?php if (! $displayForm): ?><span class="icon icon-ok"></span><?php endif ?>
                         Retraitement automatique
                     </h3>
 
@@ -97,9 +97,9 @@ if ($validite === null || $validiteEstInconnue || $estValide) {
                         </p>
                         <?php if ($fichierVAouVAC->getEstPartiel()): ?>
                             <div class="alert alert-md alert-success alert-strong">
-                                <span class="glyphicon glyphicon-info-sign"></span>
+                                <span class="fas fa-info-circle"></span>
                                 Le retraitement du fichier est en cours, vous recevrez un courriel lorsqu'il sera terminé...
-                                <button class="btn btn-link btn-xs pull-right glyphicon glyphicon-refresh"
+                                <button class="btn btn-link btn-sm float-right icon icon-refresh"
                                         onclick="$('body').trigger('event-version-retraitee-creee'); return false;"
                                         title="Cliquez pour recharger les informations..."></button>
                             </div>
@@ -109,7 +109,7 @@ if ($validite === null || $validiteEstInconnue || $estValide) {
                     <?php if ($displayForm): ?>
                         <?php if ($canEdit): ?>
                             <a href="<?php echo $creerVersionRetraiteeUrl ?>" id="btnCreerVersionRetraitee"
-                               class="btn btn-default">Générer</a>
+                               class="btn btn-secondary">Générer</a>
                             <div class="text-sm text-info" style="margin-top: 8px; margin-bottom: 12px; max-width: 250px">
                                 <strong>NB: </strong> <?php echo FichierThese::MESSAGE_RETRAITEMENT_DUREE ?>
                             </div>
@@ -159,7 +159,7 @@ if ($validite === null || $validiteEstInconnue || $estValide) {
                 <?php if ($displayContent): ?>
 
                     <h3 class="text-center">
-                        <?php if (! $displayForm): ?><span class="glyphicon glyphicon-check"></span><?php endif ?>
+                        <?php if (! $displayForm): ?><span class="icon icon-ok"></span><?php endif ?>
                         Retraitement par vos soins
                     </h3>
 
@@ -223,7 +223,7 @@ if ($validite === null || $validiteEstInconnue || $estValide) {
         var body = $("body");
 
         // Comportement du bouton "Créer une version retraitée".
-        $("#btnCreerVersionRetraitee").click(function(event) {
+        $("#btnCreerVersionRetraitee").on("click", function(event) {
             event.preventDefault();
             $(this).data("loading-text", "Patientez, svp...").button('loading');
             $("body").addClass("wait");

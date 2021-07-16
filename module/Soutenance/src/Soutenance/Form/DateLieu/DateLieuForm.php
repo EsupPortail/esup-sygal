@@ -21,7 +21,7 @@ class DateLieuForm extends Form {
             'options' => [
                 'label' => 'Date de la soutenance : ',
                 'label_attributes' => [
-                    'class' => 'control-label',
+                    'class' => 'col-form-label',
                 ],
                 'format' => 'd/m/Y',
             ],
@@ -38,7 +38,7 @@ class DateLieuForm extends Form {
             'options' => [
                 'label' => 'Heure de la soutenance : ',
                 'label_attributes' => [
-                    'class' => 'control-label',
+                    'class' => 'col-form-label',
                 ],
                 'format' => 'H:i',
             ],
@@ -50,7 +50,7 @@ class DateLieuForm extends Form {
             'options' => [
                 'label' => 'Lieu de la soutenance : ',
                 'label_attributes' => [
-                    'class' => 'control-label',
+                    'class' => 'col-form-label',
                 ],
             ],
             'attributes' => [
@@ -64,7 +64,7 @@ class DateLieuForm extends Form {
             'options' => [
                 'label' => 'La soutenance aura lieu :',
                 'label_attributes' => [
-                    'class' => 'control-label',
+                    'class' => 'col-form-label',
                 ],
                 'value_options' => [
                     '0' => 'dans l\'établissement d\'encadrement',

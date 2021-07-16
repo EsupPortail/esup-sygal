@@ -10,7 +10,7 @@ $canEdit = $this->isAllowed('privilege/'.Privileges::DROIT_ROLE_EDITION);
 $ajoutUrl = $this->url( 'droits/roles/edition' );
 
 ?>
-<table class="table table-condensed table-bordered">
+<table class="table table-sm table-bordered">
     <tr>
         <th>Role (ROLE_ID)</th>
         <th>Code</th>
@@ -38,8 +38,8 @@ $ajoutUrl = $this->url( 'droits/roles/edition' );
         <td><?php echo $role->getTypeStructureDependant(); ?></td>
         <td style="width:1%;white-space: nowrap;text-align: center">
             <?php if ($canEditThisRole): ?>
-            <a href="<?php echo $editionUrl; ?>" class="ajax-modal" data-event="role-edition"><span class="glyphicon glyphicon-edit"></span></a>
-            <a href="<?php echo $suppressionUrl; ?>" class="ajax-modal" data-event="role-suppression"><span class="glyphicon glyphicon-remove"></span></a>
+            <a href="<?php echo $editionUrl; ?>" class="ajax-modal" data-event="role-edition"><span class="icon icon-edit iconly"></span></a>
+            <a href="<?php echo $suppressionUrl; ?>" class="ajax-modal" data-event="role-suppression"><span class="icon icon-delete iconly"></span></a>
             <?php endif; ?>
         </td>
     </tr>

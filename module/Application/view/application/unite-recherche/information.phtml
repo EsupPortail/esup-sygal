@@ -36,39 +36,43 @@ $structure = $unite->getStructure();
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
 <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active">
-        <a href="#informations"
+    <li role="presentation" class="nav-item active">
+        <a class="nav-link"
+           href="#informations"
            role="tab"
            aria-controls="informations"
-           data-toggle="tab"
+           data-bs-toggle="tab"
            
         >
             Informations générales
         </a>
     </li>
-    <li role="presentation">
-        <a href="#membres"
+    <li role="presentation" class="nav-item">
+        <a class="nav-link"
+           href="#membres"
            role="tab"
            aria-controls="membres"
-           data-toggle="tab"
+           data-bs-toggle="tab"
         >
             Rôles et membres
         </a>
     </li>
-    <li role="presentation">
-        <a href="#coencadrants"
+    <li role="presentation" class="nav-item">
+        <a class="nav-link"
+           href="#coencadrants"
            role="tab"
            aria-controls="coencadrants"
-           data-toggle="tab"
+           data-bs-toggle="tab"
         >
             Co-encadrants
         </a>
     </li>
-    <li role="documents">
-        <a href="#documents"
+    <li role="documents" class="nav-item">
+        <a class="nav-link"
+           href="#documents"
            role="tab"
            aria-controls="documents"
-           data-toggle="tab"
+           data-bs-toggle="tab"
         >
             Documents
         </a>
@@ -118,9 +122,9 @@ $structure = $unite->getStructure();
                     <dt> Statut :</dt>
                     <dd>
                         <?php if ($unite->getStructure()->estFermee()) : ?>
-                            <span class="label" style="background-color:darkred">Structure fermée</span>
+                            <span class="badge badge-secondary" style="background-color:darkred">Structure fermée</span>
                         <?php else : ?>
-                            <span class="label" style="background-color:darkgreen">Structure ouverte</span>
+                            <span class="badge badge-secondary" style="background-color:darkgreen">Structure ouverte</span>
                         <?php endif; ?>
                     </dd>
                 </dl>
@@ -138,7 +142,7 @@ $structure = $unite->getStructure();
 
         <?php if ($canEdit): ?>
             <a href="<?php echo $this->url('unite-recherche/modifier', ['structure' => $unite->getStructure()->getId()], [], true); ?>"
-               class="btn btn-primary action"><span class="glyphicon glyphicon-pencil"></span> Modifier l'unité de recherche</a>
+               class="btn btn-primary action"><span class="icon icon-edit"></span> Modifier l'unité de recherche</a>
         <?php endif; ?>
 
     </div>
@@ -149,7 +153,7 @@ $structure = $unite->getStructure();
         </h2>
         <div class="row">
             <div class="col-md-6">
-                <table class="table table-condensed">
+                <table class="table table-sm">
                     <thead>
                     <tr>
                         <th> Libellé du rôle</th>
@@ -170,7 +174,7 @@ $structure = $unite->getStructure();
 
 
             <div class="col-md-6">
-                <table class="table table-condensed">
+                <table class="table table-sm">
                     <thead>
                     <tr>
                         <th> Dénomination</th>
@@ -197,7 +201,7 @@ $structure = $unite->getStructure();
             <a href="<?php echo $this->url('structure/generer-roles-defauts', [
                 'id'   => $unite->getStructure()->getId(),
                 'type' => TypeStructure::CODE_UNITE_RECHERCHE], [], true); ?>"
-               class="btn btn-warning"><span class="glyphicon glyphicon-cog"></span>Générer rôles par défaut</a>
+               class="btn btn-warning"><span class="fas fa-cog"></span>Générer rôles par défaut</a>
         <?php endif; ?>
 
     </div>
@@ -206,7 +210,7 @@ $structure = $unite->getStructure();
 
         <h2>
             Co-encadrants
-            <span class="badge"> <?php echo count($coencadrants); ?> </span>
+            <span class="badge badge-secondary"> <?php echo count($coencadrants); ?> </span>
         </h2>
 
         <?php if($canCoencadrantExport) : ?>
@@ -214,7 +218,7 @@ $structure = $unite->getStructure();
             <a href="<?php echo $this->url('co-encadrant/generer-export-csv', ['structure-type' => 'unite-recherche', 'structure-id' => $unite->getId()], [], true); ?>"
                class="btn btn-primary"
             >
-                <span class="glyphicon glyphicon-export"></span>
+                <span class="icon icon-export"></span>
                 Générer l'export CSV des co-encadrants
             </a>
         <?php endif; ?>
@@ -234,7 +238,7 @@ $structure = $unite->getStructure();
                     (<?php echo $count; ?> co-encadrement<?php if ($count > 1) echo "s"; ?>.)
                     <?php if ($canCoencadrantAfficher) : ?>
                         <a href="<?php echo $this->url('co-encadrant/historique', ['co-encadrant' => $acteur->getId()],[], true); ?>">
-                            <span class="glyphicon glyphicon-eye-open" title="Accéder à l'historique de co-encadrement"></span></a>
+                            <span class="icon icon-voir" title="Accéder à l'historique de co-encadrement"></span></a>
                     <?php endif; ?>
                 </li>
             <?php endforeach; ?>
@@ -262,7 +266,7 @@ $structure = $unite->getStructure();
 
         $('a[aria-controls=' + name + ']').tab('show');
 
-        $('.nav-tabs a').click(function (e) {
+        $('.nav-tabs a').on("click", function (e) {
             // No e.preventDefault() here
             $(this).tab('show');
         });

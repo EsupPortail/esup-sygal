@@ -24,15 +24,15 @@ $title = htmlspecialchars(
 <div class="form-group">
     <label class="sr-only" for="search-input">Recherche d'une thèse (code, titre de la thèse ; code, nom, prénom de l'auteur) :</label>
     <div class="input-group">
-        <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+        <span class="input-group-text"><span class="icon iconly icon-search"></span></span>
         <input type="search"
                value="<?php echo $text; ?>"
                name="<?php echo $name; ?>"
                class="form-control filter"
                id="search-input"
                placeholder="<?php echo $this->translate("Entrez 2 caractères au moins...");?>"
-               data-content="<?php echo $title ?>">
-        <div class="input-group-addon filter">
+               data-bs-content="<?php echo $title ?>">
+        <div class="input-group-text">
             <select multiple name="<?php echo $name; ?>Criteria[]" id="" class="selectpicker show-menu-arrow"
                     title="Sélectionnez un critère..."
                     data-selected-text-format="count"

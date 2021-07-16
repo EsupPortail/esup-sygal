@@ -230,7 +230,7 @@ $acteursFormatterCodirecteurs->asSeparated()
                 <?php $returnUrl = $returnUrl ?: $this->url($routeName . '/consulter', ['these' => $these->getId()]) ?>
                 <?php if ($rapportValidation !== null): ?>
                     <p>
-                        <span class="glyphicon glyphicon-thumbs-up"></span> <strong>Validé</strong> <br>
+                        <span class="fas fa-thumbs-up"></span> <strong>Validé</strong> <br>
                         <span class="text-sm"><?php echo $rapportValidation->getHistoCreateur() ?><br>
                             <?php echo $rapportValidation->getHistoCreation()->format('d/m/Y H:i') ?></span>
                     </p>
@@ -258,7 +258,7 @@ $acteursFormatterCodirecteurs->asSeparated()
                 <?php if ($canDel): ?>
                     <a href="<?php echo $this->url($routeName . '/supprimer', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
                        title="Supprimer ce rapport ?"
-                       data-toggle="confirmation"><span class="glyphicon glyphicon-trash"></span></a>
+                       data-toggle="confirmation"><span class="icon icon-delete iconly"></span></a>
                 <?php endif; ?>
             </td>
         </tr>

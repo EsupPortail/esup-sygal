@@ -435,8 +435,10 @@ $(function () {
     WidgetInitializer.add('widget-titre-langue-these', 'widgetTitreLangueThese');
     WidgetInitializer.add('widget-image-loader', 'widgetImageLoader');
 
-    $('[data-toggle="popover"]').popover();
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-bs-toggle="popover"]').popover({
+        sanitize: false,
+    });
+    $('[data-bs-toggle="tooltip"]').tooltip();
 });
 
 // /**

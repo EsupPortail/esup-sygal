@@ -18,13 +18,13 @@ class ResumeIndicateurStructureHelper extends AbstractHelper
 
         $html  = '';
         $html .= '<div class="col-md-4">';
-        $html .= '<div class="panel panel-'.$indicateur->getClass().'">';
-            $html .= '<div class="panel-heading">';
-                $html .= '<span class="glyphicon glyphicon-home"></span> &nbsp; ';
+        $html .= '<div class="card card-'.$indicateur->getClass().'">';
+            $html .= '<div class="card-header">';
+                $html .= '<span class="fas fa-home"></span> &nbsp; ';
                 $html .= $indicateur->getLibelle();
-                $html .= ' <span class="badge">' . count($data) . '</span>';
+                $html .= ' <span class="badge badge-secondary">' . count($data) . '</span>';
             $html .= '</div>';
-            $html .= '<div class="panel-body">';
+            $html .= '<div class="card-body">';
                 $html .= '<table class="table table-extra-condensed">';
                     $html .= '<thead>';
                         $html .= '<th> Id </th>';
@@ -53,7 +53,7 @@ class ResumeIndicateurStructureHelper extends AbstractHelper
                     $html .= '</tbody>';
                 $html .= '</table>';
 
-                $html .= '<a href="'.$url.'" class="btn btn-primary"> <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données </a>';
+                $html .= '<a href="'.$url.'" class="btn btn-primary"> <span class="icon icon-voir"></span> Visualiser les données </a>';
 
             $html .= '</div>';
 

@@ -57,28 +57,28 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
-<div class="box panel panel-info">
+<div class="box card">
 
-    <div class="panel-heading">
+    <div class="card-header bg-info">
         <h2 class="first">
             <?php echo $this->translate("Fiche"); ?>
         </h2>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
 
-        <div id="photo-div" class="pull-right">
+        <div id="photo-div" class="float-right">
             <!--            <div class="photo-placeholder loading"-->
             <!--                 data-src="-->
             <?php //echo $this->url('leocarte/photo', ['id' => $these->getDoctorant()->getSourceCodeSansPrefix()]) ?><!--"></div>-->
         </div>
 
-        <dl class="dl-horizontal">
+        <dl class="row">
 
-            <dt>
+            <dt class="col-md-4">
                 <?php echo $this->translate("Doctorant"); ?>
             </dt>
-            <dd>
+            <dd class="col-md-8">
                 <?php echo sprintf("%s (%s)",
                     $these->getDoctorant()->getIndividu()->getNomComplet(true, true, true),
                     $these->getDoctorant()->getIndividu()->getDateNaissanceToString());
@@ -130,8 +130,8 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 <?php if ($canEditPersopass): ?>
                     <a href="<?php echo $modifierPersopassUrl ?>"
                        data-event="<?php echo $persopassModifiedEvent ?>"
-                       class="btn btn-default btn-xs ajax-modal">
-                        <span class="glyphicon glyphicon-pencil"></span>
+                       class="btn btn-secondary btn-sm ajax-modal">
+                        <span class="icon icon-edit"></span>
                         <?php echo $this->translate("Modifier"); ?>
                     </a>
                 <?php endif ?>
@@ -151,8 +151,8 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 $acteur = $result["acteur"];
                 if ($previous != $result["role"]) {
                     echo "</dd>";
-                    echo "<dt>" . $result["role"] . "</dt>";
-                    echo "<dd>";
+                    echo '<dt class="col-md-4">' . $result["role"] . "</dt>";
+                    echo '<dd class="col-md-8">';
                     $previous = $result["role"];
                 }
                 $ligne = [];
@@ -170,10 +170,10 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 }
                 if ($acteur->estDirecteur() && $aucunSupannIdDansIndividu) {
                     if (empty($utilisateurs[$acteur->getId()])) {
-                        $ligne[] = sprintf('<span class="glyphicon glyphicon-warning-sign text-danger" title="%s"></span>',
+                        $ligne[] = sprintf('<span class="fas fa-exclamation-triangle text-danger" title="%s"></span>',
                             $result['alerte-supann-id']);
                     } else {
-                        $ligne[] = sprintf('<span class="glyphicon glyphicon-info-sign text-warning" title="Compte local"></span>');
+                        $ligne[] = sprintf('<span class="fas fa-info-circle text-warning" title="Compte local"></span>');
                     }
 //                    if ($canCreate) {
 //                        $ligne[] = sprintf('<a href="%s" class="btn btn-sm btn-warning">Gérer l\'utilisateur</a>',
@@ -197,11 +197,11 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 
                 if ($canCoEncadrantAfficher AND $acteur->estCoEncadrant()) {
                     echo " <a href='".$this->url('co-encadrant/historique', ['co-encadrant' => $acteur->getId()], [], true) ."'>";
-                    echo "<span class='glyphicon glyphicon-eye-open' title='Voir historique de co-encadrement'></span></a>";
+                    echo "<span class='icon icon-voir' title='Voir historique de co-encadrement'></span></a>";
                 }
                 if ($canCoEncadrantGerer AND $acteur->estCoEncadrant()) {
                     echo " <a href='".$this->url('co-encadrant/retirer-co-encadrant', ['these' => $these->getId(), 'co-encadrant' => $acteur->getId()], [], true) ."'>";
-                    echo "<span class='glyphicon glyphicon-remove' title='Retirer le co-encadrant'></span></a>";
+                    echo "<span class='icon icon-delete iconly' title='Retirer le co-encadrant'></span></a>";
                 }
 
                 echo "<br/>";
@@ -209,45 +209,46 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             ?>
 
             <?php if ($canCoEncadrantGerer) : ?>
-                <dd>
+                <dt class="col-md-4"></dt>
+                <dd class="col-md-8">
                     <a  <?php /**  @see CoEncadrantController::ajouterCoEncadrantAction() */ ?>
                         class="btn btn-primary ajax-modal" data-event="modification"
                         href="<?php echo $this->url('co-encadrant/ajouter-co-encadrant', ['these' => $these->getId()], [], true); ?>"
                     >
-                        <span class="glyphicon glyphicon-plus"></span>
+                        <span class="icon icon-plus"></span>
                         Ajouter un co-encadrant
                     </a>
                 </dd>
             <?php endif; ?>
-            <dt>
+            <dt class="col-md-4">
                 <?php echo $this->translate("Établissement <br/> d'inscription"); ?>
             </dt>
-            <dd>
+            <dd class="col-md-8">
                 <?php
                 if ($these->getEtablissement()) {
                     echo /*$these->getEtablissement()->getCode() . " - " .*/
                     $these->getEtablissement()->getLibelle();
                 } else {
                     echo "<div class='alert alert-sm alert-warning'>";
-                    echo "<span class='glyphicon glyphicon-warning-sign'></span> Aucun établissement n'est renseignée.";
+                    echo "<span class='fas fa-exclamation-triangle'></span> Aucun établissement n'est renseignée.";
                     echo "</div>";
                 }
                 ?>
             </dd>
 
-            <dt>
+            <dt class="col-md-4">
                 <?php echo $this->translate("Titre d'accès<br/>à l'inscr. en thèse") ?>
             </dt>
-            <dd>
+            <dd class="col-md-8">
                 <?php
                 echo ($titreAcces = $these->getTitreAcces()) ?: "(Non renseigné)";
                 ?>
             </dd>
 
-            <dt>
+            <dt class="col-md-4">
                 <?php echo $this->translate("Unité de recherche"); ?>
             </dt>
-            <dd>
+            <dd class="col-md-8">
                 <?php
                 if ($these->getUniteRecherche()) {
                     echo /*$these->getUniteRecherche()->getSourceCode() . " - " .*/
@@ -255,23 +256,23 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 } elseif ($these->getCodeUniteRecherche() && $these->getLibelleUniteRecherche()) {
                     echo $these->getCodeUniteRecherche() . " - " . $these->getLibelleUniteRecherche();
                     echo "<div class='alert alert-sm alert-warning'>";
-                    echo "<span class='glyphicon glyphicon-warning-sign'></span> Utilisation du champs libre (unité de recherche mal renseignée).";
+                    echo "<span class='fas fa-exclamation-triangle'></span> Utilisation du champs libre (unité de recherche mal renseignée).";
                     echo "</div>";
                 } else {
                     echo "<div class='alert alert-sm alert-warning'>";
-                    echo "<span class='glyphicon glyphicon-warning-sign'></span> Aucune unité de recherche n'est renseignée";
+                    echo "<span class='fas fa-exclamation-triangle'></span> Aucune unité de recherche n'est renseignée";
                     echo "</div>";
                 }
                 ?>
 
             </dd>
 
-            <dt>
+            <dt class="col-md-4">
                 Établissements de <br/>
                 rattachement de <br/>
                 l'unité de recherche
             </dt>
-            <dd>
+            <dd class="col-md-8">
                 <?php
                 if (empty($rattachements)) {
                     echo "(Aucun établissement de rattachement renseigné)";
@@ -285,25 +286,25 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             </dd>
 
 
-            <dt>
+            <dt class="col-md-4">
                 <?php echo $this->translate("École doctorale"); ?>
             </dt>
-            <dd>
+            <dd class="col-md-8">
                 <?php if ($these->getEcoleDoctorale()) {
                     echo /*$these->getEcoleDoctorale()->getSourceCode() . " - " .*/
                     $these->getEcoleDoctorale()->getLibelle();
                 } else {
                     echo "<div class='alert alert-sm alert-warning'>";
-                    echo "<span class='glyphicon glyphicon-warning-sign'></span> Aucune école doctorale n'est renseignée.";
+                    echo "<span class='fas fa-exclamation-triangle'></span> Aucune école doctorale n'est renseignée.";
                     echo "</div>";
                 }
                 ?>
             </dd>
 
-            <dt>
+            <dt class="col-md-4">
                 Financement(s)
             </dt>
-            <dd>
+            <dd class="col-md-8">
                 <?php if ($these->getFinancements()->isEmpty()): ?>
                     (Non renseigné)
                 <?php else: ?>
@@ -311,75 +312,75 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 <?php endif ?>
             </dd>
 
-            <dt>
+            <dt class="col-md-4">
                 <?php echo $this->translate("Titre"); ?>
             </dt>
-            <dd>
+            <dd class="col-md-8">
                 <?php echo $these->getTitre() ?>
             </dd>
 
-            <dt>
+            <dt class="col-md-4">
                 <?php echo $this->translate("Confidentialité"); ?>
             </dt>
             <?php if ($these->etaitConfidentielle()): ?>
-                <dd>Confidentielle, jusqu'au <?php echo $these->getDateFinConfidentialiteToString() ?></dd>
+                <dd class="col-md-8">Confidentielle, jusqu'au <?php echo $these->getDateFinConfidentialiteToString() ?></dd>
             <?php elseif ($these->estConfidentielle()): ?>
-                <dd class="text-danger">Confidentielle,
+                <dd class="col-md-8 text-danger">Confidentielle,
                     jusqu'au <?php echo $these->getDateFinConfidentialiteToString() ?></dd>
             <?php else: ?>
-                <dd>Non confidentielle</dd>
+                <dd class="col-md-8">Non confidentielle</dd>
             <?php endif ?>
 
-            <dt>État</dt>
-            <dd>
-                <span class="label label-default"><?php echo $these->getEtatTheseToString() ?></span>
+            <dt class="col-md-4">État</dt>
+            <dd class="col-md-8">
+                <span class="badge badge-secondary"><?php echo $these->getEtatTheseToString() ?></span>
             </dd>
 
             <?php if ($resultat = $these->getResultatToString(false)): ?>
-                <dt>Résultat</dt>
-                <dd>
+                <dt class="col-md-4">Résultat</dt>
+                <dd class="col-md-8">
                     <?php echo $resultat ?>
                 </dd>
             <?php endif ?>
 
-            <dt>Discipline</dt>
-            <dd><?php echo $these->getLibelleDiscipline() ?></dd>
+            <dt class="col-md-4">Discipline</dt>
+            <dd class="col-md-8"><?php echo $these->getLibelleDiscipline() ?></dd>
 
-            <dt>Date de 1ère<br>inscription</dt>
-            <dd><?php echo $these->getDatePremiereInscriptionToString() ?: "(Non renseignée)" ?></dd>
+            <dt class="col-md-4">Date de 1ère<br>inscription</dt>
+            <dd class="col-md-8"><?php echo $these->getDatePremiereInscriptionToString() ?: "(Non renseignée)" ?></dd>
 
-            <dt>Année universitaire<br>de 1ère inscription</dt>
-            <dd><?php echo $these->getAnneeUniv1ereInscription() ?></dd>
+            <dt class="col-md-4">Année universitaire<br>de 1ère inscription</dt>
+            <dd class="col-md-8"><?php echo $these->getAnneeUniv1ereInscription() ?></dd>
 
-            <dt>Années universitaires<br>d'inscription</dt>
-            <dd><?php echo $these->getAnneesUnivInscriptionToString('<br>') ?: "(Non renseignée)" ?></dd>
+            <dt class="col-md-4">Années universitaires<br>d'inscription</dt>
+            <dd class="col-md-8"><?php echo $these->getAnneesUnivInscriptionToString('<br>') ?: "(Non renseignée)" ?></dd>
 
             <?php if ($these->getDateAbandon()): ?>
-            <dt>Date d'abandon</dt>
-            <dd><?php echo $these->getDateAbandonToString() ?></dd>
+            <dt class="col-md-4">Date d'abandon</dt>
+            <dd class="col-md-8"><?php echo $these->getDateAbandonToString() ?></dd>
             <?php endif ?>
 
             <?php if ($these->getDateTransfert()): ?>
-            <dt>Date de transfert
-            <dd><?php echo $these->getDateTransfertToString() ?></dd>
+            <dt class="col-md-4">Date de transfert
+            <dd class="col-md-8"><?php echo $these->getDateTransfertToString() ?></dd>
             <?php endif ?>
 
             <?php if ($these->getSoutenanceAutorisee()): ?>
-                <dt>Soutenance autorisée</dt>
-                <dd><?php echo $these->getSoutenanceAutorisee() === 'O' ? "Oui" : "Non" ?></dd>
+                <dt class="col-md-4">Soutenance autorisée</dt>
+                <dd class="col-md-8"><?php echo $these->getSoutenanceAutorisee() === 'O' ? "Oui" : "Non" ?></dd>
             <?php endif ?>
 
             <?php if ($these->getDateSoutenance()): ?>
-                <dt>Date réelle<br>de soutenance</dt>
-                <dd><?php echo $these->getDateSoutenanceToString() ?></dd>
+                <dt class="col-md-4">Date réelle<br>de soutenance</dt>
+                <dd class="col-md-8"><?php echo $these->getDateSoutenanceToString() ?></dd>
             <?php else: ?>
                 <!--<dt>Date prévisionnelle<br>de soutenance</dt>
                 <dd><?php /*echo $these->getDatePrevisionSoutenanceToString() ?: "(Non renseignée)" */?></dd>-->
             <?php endif ?>
 
             <?php if ($these->getLibelleEtabCotutelle()): ?>
-                <dt>Cotutelle</dt>
-                <dd>En cotutelle avec <?php echo $these->getLibelleEtabCotutelle() ?>,
+                <dt class="col-md-4">Cotutelle</dt>
+                <dd class="col-md-8">En cotutelle avec <?php echo $these->getLibelleEtabCotutelle() ?>,
                     <?php echo $these->getLibellePaysCotutelle() ?></dd>
             <?php endif ?>
 
@@ -489,7 +490,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             window.location.reload();
         });
 
-        // $(window).load(function () {
+        // $(window).on("load", function () {
         //     $(".photo-placeholder").each(function () {
         //         loadPhoto(this);
         //     });
@@ -502,7 +503,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
     //
     //     //create image to preload:
     //     var imgPreload = new Image();
-    //     $(imgPreload).load(function (response, status, xhr) {
+    //     $(imgPreload).on("load", function (response, status, xhr) {
     //         if (status == 'error') {
     //             imgPreload = null;
     //         }

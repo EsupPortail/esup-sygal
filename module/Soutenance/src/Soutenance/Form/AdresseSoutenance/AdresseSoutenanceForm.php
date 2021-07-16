@@ -15,7 +15,7 @@ class AdresseSoutenanceForm extends Form
             'options' => [
                 'label' => 'Adresse exacte de la soutenance : ',
                 'label_attributes' => [
-                    'class' => 'control-label',
+                    'class' => 'col-form-label',
                 ],
             ],
             'attributes' => [

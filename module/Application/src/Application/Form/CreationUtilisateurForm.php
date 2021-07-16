@@ -49,7 +49,7 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
         );
         $this->add(
             (new Checkbox('individu'))
-                ->setLabel("Création d'individu pour cet utilisateur <br/> <span class='text-danger'><span class='glyphicon glyphicon-warning-sign'></span> Ne pas cocher si pour lier à un individu existant</span>")
+                ->setLabel("Création d'individu pour cet utilisateur <br/> <span class='text-danger'><span class='fas fa-exclamation-triangle'></span> Ne pas cocher si pour lier à un individu existant</span>")
         );
         $this->add((new Submit('submit'))
             ->setValue("Enregistrer")
