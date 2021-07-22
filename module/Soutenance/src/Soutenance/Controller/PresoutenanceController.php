@@ -229,7 +229,7 @@ class PresoutenanceController extends AbstractController
 
             $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
             $url = $this->url()->fromRoute('zfcuser/login', ['type'=> 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $acteur->getRole()->getRoleId()], 'force_canonical' => true], true );
-            $this->getNotifierSoutenanceService()->triggerConnexionRapporteur($these, $user, $url);
+            $this->getNotifierSoutenanceService()->triggerConnexionRapporteur($proposition, $user, $url);
         }
 
 
