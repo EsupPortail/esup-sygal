@@ -643,11 +643,11 @@ class NotifierSoutenanceService extends NotifierService
     }
 
     /**
-     * @param These $these
+     * @param Proposition $proposition
      * @param Utilisateur $user
      * @param string $url
      */
-    public function triggerConnexionRapporteur(These $these, Utilisateur $user, string $url)
+    public function triggerConnexionRapporteur(Proposition $proposition, Utilisateur $user, string $url)
     {
         $email = $user->getEmail();
         if ($email === null) throw new LogicException("Aucun email de fourni !");
@@ -655,11 +655,12 @@ class NotifierSoutenanceService extends NotifierService
         if (!empty($email)) {
             $notif = new Notification();
             $notif
-                ->setSubject("Connexion à SyGAL en tant que rapporteur de la thèse de " . $these->getDoctorant()->getIndividu()->getNomComplet())
+                ->setSubject("Connexion à SyGAL en tant que rapporteur de la thèse de " . $proposition->getThese()->getDoctorant()->getIndividu()->getNomComplet())
                 ->setTo($email)
                 ->setTemplatePath('soutenance/notification/connexion-rapporteur')
                 ->setTemplateVariables([
-                    'these' => $these,
+                    'proposition' => $proposition,
+                    'these' => $proposition->getThese(),
                     'username' => $user->getUsername(),
                     'url' => $url,
                 ]);
