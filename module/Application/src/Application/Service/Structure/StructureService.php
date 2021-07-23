@@ -972,7 +972,7 @@ class StructureService extends BaseService
         $structures = array_merge($ecoles, $etablissements);
         $array = [];
         foreach ($structures as $structure) {
-            if (!$structure->getStructure()->isFerme()) {
+            if (!$structure->getStructure()->estFermee()) {
                 $array[$structure->getStructure()->getId()] = (($structure->getStructure()->getTypeStructure())?$structure->getStructure()->getTypeStructure()->getLibelle():"Non précisé"). " - ".$structure->getSigle(). " - " .$structure->getLibelle();
             }
         }
