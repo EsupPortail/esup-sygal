@@ -92,7 +92,7 @@ class RapportService extends BaseService
             if ($anneeUniv instanceof TheseAnneeUniv) {
                 return !in_array($anneeUniv->getAnneeUniv(), $rapportsExistantsAnneesUnivs);
             } elseif ($anneeUniv instanceof AnneeUniv) {
-                return !in_array($anneeUniv->getAnnee(), $rapportsExistantsAnneesUnivs);
+                return !in_array($anneeUniv->getPremiereAnnee(), $rapportsExistantsAnneesUnivs);
             } else {
                 return false;
             }

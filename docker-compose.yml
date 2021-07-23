@@ -2,12 +2,15 @@ version: '3'
 
 services:
   sygal:
-    image: sygal-image-php7.3
+    image: registre.unicaen.fr:5000/sygal-image-php7.3
     container_name: sygal-container-php7.3
     environment:
       - http_proxy
       - https_proxy
       - no_proxy
+      - HTTP_PROXY
+      - HTTPS_PROXY
+      - NO_PROXY
     ports:
       - "8003:443"
     volumes:
@@ -17,14 +20,37 @@ services:
     working_dir: /app
     networks:
       - sygalnet
+    depends_on:
+      - sygal-db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  sygal-db:
+    image: registre.unicaen.fr:5000/sygal-db-image
+    container_name: sygal-db-container
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - 5432:5432
+    volumes:
+      # Base de dev
+      - ./tmp/docker/db/dev/sql/:/sql          # Scripts de création/init
+      - ./data/db/dev:/var/lib/postgresql/data # Données persistées.
+    networks:
+      - sygalnet
 
   sygal-import-ws:
-    image: sygal-import-ws-image-php7.0
+    image: registre.unicaen.fr:5000/sygal-import-ws-image-php7.0
     container_name: sygal-import-ws-container-php7.0
     environment:
       - http_proxy
       - https_proxy
       - no_proxy
+      - HTTP_PROXY
+      - HTTPS_PROXY
+      - NO_PROXY
     ports:
      - "8443:443"
     volumes:

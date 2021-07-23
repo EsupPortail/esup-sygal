@@ -319,8 +319,8 @@ $ecole = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getLibelle()
         <?php endif; ?>
 
         <!-- UR -->
-        <?php if ($validations[Role::CODE_UR]): ?>
-            <?php foreach($validations[Role::CODE_UR] as $validation) : ?>
+        <?php if ($validations[Role::CODE_RESP_UR]): ?>
+            <?php foreach($validations[Role::CODE_RESP_UR] as $validation) : ?>
                 <tr>
                     <td> Directeur de l'unité de recherche </td>
                     <td><?php echo $unite; ?></td>
@@ -335,8 +335,8 @@ $ecole = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getLibelle()
             </tr>
         <?php endif; ?>
         <!-- ED -->
-        <?php if ($validations[Role::CODE_ED]): ?>
-            <?php foreach($validations[Role::CODE_ED] as $validation) : ?>
+        <?php if ($validations[Role::CODE_RESP_ED]): ?>
+            <?php foreach($validations[Role::CODE_RESP_ED] as $validation) : ?>
                 <tr>
                     <td> Directeur de l'école doctorale </td>
                     <td><?php echo $ecole; ?></td>

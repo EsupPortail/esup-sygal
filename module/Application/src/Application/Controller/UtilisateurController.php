@@ -30,7 +30,10 @@ use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\ShibService;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
+use UnicaenAuthToken\Controller\TokenController;
+use UnicaenAuthToken\Service\TokenServiceAwareTrait;
 use Zend\Authentication\AuthenticationService;
+use Zend\EventManager\EventInterface;
 use Zend\Http\Request;
 use Zend\Http\Response;
 use Zend\Paginator\Paginator as ZendPaginator;
@@ -55,6 +58,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use StructureServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
     use UserServiceAwareTrait;
+    use TokenServiceAwareTrait;
 
     use InitCompteFormAwareTrait;
 
@@ -149,19 +153,24 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
         // établissements : pour l'instant les rôles ne concernent que des établissements d'inscription donc on flitre
         $etablissementsQb = $this->structureService->getAllStructuresAffichablesByTypeQb(TypeStructure::CODE_ETABLISSEMENT, 'libelle', true);
-        $etablissementsQb->join('structure.etablissement', 'etab', Expr\Join::WITH, 'etab.estInscription = 1');
+        $etablissementsQb->join('structure.etablissement', 'etab', Expr\Join::WITH, 'etab.estInscription = true');
         $etablissements = $etablissementsQb->getQuery()->execute();
 
         $unites = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle', true, true);
         $ecoles = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', true, true);
 
+        $userTokens = $this->tokenService->findUserTokensByUserId($utilisateur->getId());
+        $this->tokenService->injectLogInUriInUserTokens($userTokens);
+
         return new ViewModel([
             'utilisateur' => $utilisateur,
+            'tokens' => $userTokens,
             'roles' => $roles,
             'rolesAffectes' => $rolesAffectes,
             'etablissements' => $etablissements,
             'ecoles' => $ecoles,
             'unites' => $unites,
+            'redirect' => $this->url()->fromRoute(null, [], [], true),
         ]);
 
     }
@@ -171,22 +180,22 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
      *
      * Recherche d'un Individu.
      *
-     * @param string $type => permet de spécifier un type d'acteur ...
+     * @param string|null $type => permet de spécifier un type d'acteur ...
      * @return JsonModel
      */
-    public function rechercherIndividuAction($type = null)
+    public function rechercherIndividuAction(?string $type = null)
     {
         $type = $this->params()->fromQuery('type');
         if (($term = $this->params()->fromQuery('term'))) {
             $rows = $this->individuService->getRepository()->findByText($term, $type);
             $result = [];
             foreach ($rows as $row) {
-                $prenoms = implode(' ', array_filter([$row['PRENOM1'], $row['PRENOM2'], $row['PRENOM3']]));
+                $prenoms = implode(' ', array_filter([$row['prenom1'], $row['prenom2'], $row['prenom3']]));
                 // mise en forme attendue par l'aide de vue FormSearchAndSelect
-                $label = $row['NOM_USUEL'] . ' ' . $prenoms;
-                $extra = $row['EMAIL'] ?: $row['SOURCE_CODE'];
+                $label = $row['nom_usuel'] . ' ' . $prenoms;
+                $extra = $row['email'] ?: $row['source_code'];
                 $result[] = array(
-                    'id' => $row['ID'], // identifiant unique de l'item
+                    'id' => $row['id'], // identifiant unique de l'item
                     'label' => $label,     // libellé de l'item
                     'extra' => $extra,     // infos complémentaires (facultatives) sur l'item
                 );
@@ -261,21 +270,23 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         /** @var Utilisateur $utilisateur */
         $utilisateur = $this->utilisateurService->getRepository()->findOneBy(['individu' => $individuId]);
         if ($utilisateur === null) {
-            throw new RuntimeException(sprintf(
+            $message = sprintf(
                 "La demande d'usurpation de l'individu '%s' (%d) a échoué car aucun compte utilisateur correspondant " .
                 "n'a été trouvé. " .
                 "Pour pouvoir usurper l'identité d'un individu, il faut que celui-ci se soit connecté au moins " .
                 "une fois à l'application, de manière à ce que son compte utilisateur ait été créé avec " .
                 "des données complètes.",
                 $individu, $individu->getId()
-            ));
+            );
+            $this->flashMessenger()->addErrorMessage($message);
+            return $this->redirect()->toRoute('home');
         }
 
         $usernameUsurpe = $utilisateur->getUsername();
         $sessionIdentity = $this->serviceUserContext->usurperIdentite($usernameUsurpe);
         if ($sessionIdentity !== null) {
             // cuisine spéciale si l'utilisateur courant s'est authentifié via Shibboleth
-            $this->usurperIdentiteShib($usernameUsurpe);
+            $this->usurperIdentiteShib($utilisateur);
         }
 
         return $this->redirect()->toRoute('home');
@@ -499,4 +510,42 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         return $this->redirect()->toRoute('utilisateur/voir', ['utilisateur' => $utilisateur->getId()], [], true);
     }
 
+    /**
+     * Demande de création d'un jeton d'authentification.
+     *
+     * NB : à l'issue de la création, l'utilisateur reçoit automatiquement son jeton, cf {@see envoyerToken()}.
+     *
+     * @return ViewModel|Response
+     */
+    public function ajouterTokenAction()
+    {
+        $utilisateur = $this->getUtilisateurService()->getRequestedUtilisateur($this);
+
+        // on délègue au module unicaen/auth-token
+        return $this->forward()->dispatch(TokenController::class, [
+            'action' => 'creer',
+            'user' => $utilisateur->getId(),
+        ]);
+    }
+
+    public function listenEventsOf(TokenController $tokenController)
+    {
+        // écoute pour envoyer automatiquement tout jeton nouvellement créé à l'utlisateur
+        $tokenController->getEventManager()->attach(
+            $tokenController::EVENT_TOKEN_CREATE_AFTER_SAVE,
+            [$this, 'envoyerToken']
+        );
+    }
+
+    public function envoyerToken(EventInterface $event)
+    {
+        /** @var \Application\Entity\Db\UtilisateurToken $utilisateurToken */
+        $utilisateurToken = $event->getParam('userToken');
+
+        // on délègue au module unicaen/auth-token
+        $this->forward()->dispatch(TokenController::class, [
+            'action' => 'envoyer',
+            'userToken' => $utilisateurToken->getId(),
+        ]);
+    }
 }

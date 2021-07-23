@@ -16,6 +16,7 @@ use Application\Service\UserContextServiceAwareTrait;
 use BjyAuthorize\Exception\UnAuthorizedException;
 use UnicaenApp\Controller\Plugin\ConfirmPlugin;
 use UnicaenApp\Controller\Plugin\Mail;
+use UnicaenApp\Exception\RuntimeException;
 use Zend\Http\Request as HttpRequest;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
@@ -69,12 +70,17 @@ class AbstractController extends AbstractActionController
      *
      * @return These
      */
-    protected function requestedThese()
+    protected function requestedThese(): These
     {
         /** @var RouteMatch $routeMatch */
         $routeMatch = $this->getEvent()->getRouteMatch();
 
-        return $routeMatch->getThese();
+        $these = $routeMatch->getThese();
+        if ($these === null) {
+            throw new RuntimeException("Thèse introuvable");
+        }
+
+        return $these;
     }
 
     /**

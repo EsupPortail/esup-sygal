@@ -152,7 +152,7 @@ abstract class RapportRechercheController extends AbstractController implements 
             // aucune restriction sur les ED sélectionnables
         } elseif ($this->isAllowed($protoRapport, $this->privilege_LISTER_SIEN)) {
             // restrictions en fonction du rôle
-            if ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleDirecteurEcoleDoctorale()) {
+            if ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
                 $ed = $roleEcoleDoctorale->getStructure()->getEcoleDoctorale();
                 $edFilter->setData([$ed]);
                 $edFilter->setDefaultValueAsObject($ed);

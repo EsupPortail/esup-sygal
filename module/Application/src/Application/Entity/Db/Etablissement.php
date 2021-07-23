@@ -88,11 +88,11 @@ class Etablissement
     }
 
     /**
-     * Retourne le code de cet établissement, ex: 0761904GE' pour l'Université de Rouen.
+     * Retourne le code de cet établissement ou null, ex: '0761904GE' pour l'Université de Rouen.
      *
-     * @return string
+     * @return string|null
      */
-    public function getCode(): string
+    public function getCode(): ?string
     {
         return $this->code;
     }
@@ -171,17 +171,17 @@ class Etablissement
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getSigle()
+    public function getSigle(): ?string
     {
         return $this->getStructure()->getSigle();
     }
 
     /**
-     * @param string $sigle
+     * @param string|null $sigle
      */
-    public function setSigle($sigle)
+    public function setSigle(string $sigle = null)
     {
         $this->getStructure()->setSigle($sigle);
     }
@@ -335,8 +335,8 @@ class Etablissement
      */
     public function createSearchFilterValueOption(): array
     {
-        $label = $this->getCode();
-        if ($this->getStructure()->isFerme()) {
+        $label = ($this->getCode() ?: $this->getSigle()) ?: $this->getLibelle();
+        if ($this->getStructure()->estFermee()) {
             $label .= "&nbsp; FERMÉ";
         }
 

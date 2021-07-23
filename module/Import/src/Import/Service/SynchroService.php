@@ -55,7 +55,8 @@ class SynchroService
             }
         }
         $this->executeProcedureCalls([
-            $this->backgroundify("DBMS_MVIEW.REFRESH('MV_RECHERCHE_THESE', 'C');"),
+//            $this->backgroundify("DBMS_MVIEW.REFRESH('MV_RECHERCHE_THESE', 'C');"),
+            'refresh materialized view mv_recherche_these;',
         ]);
     }
 
@@ -64,7 +65,7 @@ class SynchroService
      */
     private function executeProcedureCalls(array $calls)
     {
-        $plsql = implode(PHP_EOL, array_merge(['BEGIN'], $calls, ['END;']));
+        $plsql = implode(PHP_EOL, array_merge(['DO $$ BEGIN'], $calls, ['END $$;']));
 
         $startDate = date_create();
 
@@ -100,9 +101,12 @@ class SynchroService
      * @param string $plsql
      * @param int $secondsToWait
      * @return string
+     * @deprecated Plus possible avec PostgreSQL
      */
     private function backgroundify(string $plsql, $secondsToWait = 0): string
     {
+        throw new \BadMethodCallException("Plus possible avec PostgreSQL !");
+
         $nextDateSql = 'SYSDATE';
         if ($secondsToWait > 0) {
             $nextDateSql = sprintf("SYSDATE + INTERVAL '%d' SECOND", $secondsToWait);

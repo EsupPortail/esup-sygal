@@ -8,7 +8,7 @@
 
         <id name="id" type="string" column="ID"/>
 
-        <field name="valide" type="boolean" column="VALIDE" nullable="false"/>
+        <field name="valide" type="integer" column="VALIDE" nullable="false"/>
 
         <many-to-one field="these" target-entity="Application\Entity\Db\These">
             <join-columns>

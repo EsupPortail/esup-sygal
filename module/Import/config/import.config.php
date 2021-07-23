@@ -1,7 +1,6 @@
 <?php
 
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
-use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Import\Controller\ImportController;
 use Import\Service\CallService;
@@ -56,11 +55,6 @@ return [
                 'paths' => [
                     __DIR__ . '/../src/Import/Model/Mapping',
                 ],
-            ],
-        ],
-        'connection'    => [
-            'orm_default' => [
-                'driver_class' => OCI8::class,
             ],
         ],
     ],

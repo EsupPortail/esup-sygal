@@ -55,7 +55,7 @@ class ImportObservResultRepository extends DefaultEntityRepository
         $qb = $this->createQueryBuilder('ior')
             ->addSelect('io')
             ->join('ior.importObserv', 'io', Join::WITH, 'io = :io')
-            ->andWhere('io.enabled = 1')
+            ->andWhere('io.enabled = true')
             ->setParameter('io', $importObserv);
 
         if ($these !== null) {

@@ -135,9 +135,9 @@ class EtablissementRepository extends DefaultEntityRepository
      * Tente de trouver l'établissement auquel appartient un utilisateur.
      *
      * @param UserWrapper $userWrapper Utilisateur
-     * @return Etablissement|null
+     * @return Etablissement
      */
-    public function findOneForUserWrapper(UserWrapper $userWrapper)
+    public function findOneForUserWrapper(UserWrapper $userWrapper): Etablissement
     {
         $domaine = $userWrapper->getDomainFromEppn() ?: $userWrapper->getDomainFromEmail();
         if (! $domaine) {
@@ -145,6 +145,9 @@ class EtablissementRepository extends DefaultEntityRepository
         }
 
         $etablissement = $this->findOneByDomaine($domaine);
+        if ($etablissement === null) {
+            throw new RuntimeException("Aucun établissement trouvé pour le domaine " . $domaine);
+        }
 
         return $etablissement;
     }
@@ -211,7 +214,7 @@ class EtablissementRepository extends DefaultEntityRepository
         $qb = $this->createQueryBuilder("e")
             ->addSelect("s")
             ->join("e.structure", "s")
-            ->andWhere("e.estMembre = 1")
+            ->andWhere("e.estMembre = true")
             ->orderBy('s.libelle')
         ;
 
@@ -227,7 +230,7 @@ class EtablissementRepository extends DefaultEntityRepository
         $qb = $this->createQueryBuilder("e")
             ->addSelect("s")
             ->join("e.structure", "s")
-            ->andWhere("e.estInscription = 1")
+            ->andWhere("e.estInscription = true")
             ->orderBy('s.libelle')
         ;
 

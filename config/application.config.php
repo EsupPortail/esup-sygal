@@ -1,8 +1,7 @@
 <?php
 
-$env = getenv('APPLICATION_ENV') ?: 'production';
-
-$modules = ['Zend\Cache',
+$modules = [
+    'Zend\Cache',
     'Zend\Filter',
     'Zend\Form',
     'Zend\Hydrator',
@@ -30,7 +29,6 @@ $modules = ['Zend\Cache',
     'UnicaenAuth',
     'UnicaenAuthToken',
     'UnicaenLdap',
-    'UnicaenOracle',
     'UnicaenDbImport',
     'UnicaenFaq',
     'Import',
@@ -40,19 +38,9 @@ $modules = ['Zend\Cache',
     'Formation',
     'Notification',
     'Information',
-    'StepStar',
+//    'StepStar',
     'Application',
 ];
-
-$devModules =  [
-    'ZendDeveloperTools',
-    'UnicaenCode',
-    'UnicaenTest',
-];
-
-if ('development' === $env) {
-    $modules = array_merge($modules, $devModules);
-}
 
 $moduleListenerOptions = [
     'config_glob_paths'    => [

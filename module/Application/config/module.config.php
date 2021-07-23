@@ -28,7 +28,7 @@ use Application\View\Helper\SortableHelperFactory;
 use Application\View\Helper\Uploader\UploaderHelper;
 use Application\View\Helper\Uploader\UploaderHelperFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
-use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
+use Doctrine\DBAL\Driver\PDO\PgSQL\Driver as PgSQL;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use UnicaenApp\Controller\ConsoleController;
 use UnicaenApp\Service\EntityManagerAwareInitializer;
@@ -97,7 +97,7 @@ return array(
         ],
         'connection'    => [
             'orm_default' => [
-                'driver_class' => OCI8::class,
+                'driver_class' => PgSQL::class,
             ],
         ],
         'configuration' => [
@@ -303,6 +303,7 @@ return array(
             '061_uploader' => "/js/jquery.iframe-transport.js",
             '062_uploader' => "/js/jquery.fileupload.js",
             '063_uploader' => "/js/unicaen.uploader.widget.js",
+            '070_clipboard' => "/js/clipboard.min.js",
         ],
         'inline_scripts' => [
             '070_bootstrap-select' => '/vendor/bootstrap-select-1.13.18/js/bootstrap-select.min.js',

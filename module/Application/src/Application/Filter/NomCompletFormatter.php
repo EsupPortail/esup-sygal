@@ -96,15 +96,15 @@ class NomCompletFormatter extends AbstractFilter
         }
         elseif (is_array($value)) {
             /* @var $value array */
-            foreach (['NOM_USUEL', 'NOM_PATRONYMIQUE', 'PRENOM', 'CIVILITE'] as $prop) {
+            foreach (['nom_usuel', 'nom_patronymique', 'prenom', 'civilite'] as $prop) {
                 if (!array_key_exists($prop, $value)) {
                     throw new \LogicException("Le tableau à formatter doit posséder la clé '$prop'.");
                 }
             }
-            $nomUsuel = $value['NOM_USUEL'];
-            $nomPatro = $value['NOM_PATRONYMIQUE'];
-            $prenom   = $value['PRENOM'];
-            $civilite = $value['CIVILITE'];
+            $nomUsuel = $value['nom_usuel'];
+            $nomPatro = $value['nom_patronymique'];
+            $prenom   = $value['prenom'];
+            $civilite = $value['civilite'];
         }
         else {
             throw new \LogicException("L'objet à formatter n'est pas d'un type supporté.");

@@ -85,10 +85,10 @@ $this->headTitle('Avancement de la soutenance');
             if ($these) $etab  = $these->getEtablissement()->getStructure();
         ?>
 
-        <?php echo getBadge(!empty($validations[Role::CODE_UR])); ?>
+        <?php echo getBadge(!empty($validations[Role::CODE_RESP_UR])); ?>
         <?php echo $unite->getLibelle(); ?> (<?php echo $unite->getSigle(); ?> ) <br/>
 
-        <?php echo getBadge(!empty($validations[Role::CODE_ED])); ?>
+        <?php echo getBadge(!empty($validations[Role::CODE_RESP_ED])); ?>
         <?php echo $ecole->getLibelle(); ?> (<?php echo $ecole->getSigle(); ?> ) <br/>
 
         <?php echo getBadge(!empty($validations[Role::CODE_BDD])); ?>

@@ -665,11 +665,11 @@ class StructureService extends BaseService
         }
         else {
             if ($type === TypeStructure::CODE_ECOLE_DOCTORALE || $type === TypeStructure::CODE_UNITE_RECHERCHE) {
-                $qb->orderBy('structure.ferme, structureConcrete.sourceCode');
+                $qb->orderBy('structure.estFermee, structureConcrete.sourceCode');
             }
         }
         if (! $includeFermees) {
-            $qb->andWhere('structure.ferme = 0');
+            $qb->andWhere('structure.estFermee = false');
         }
 
         return $qb;

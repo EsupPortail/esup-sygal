@@ -11,5 +11,3 @@
 # temporaire (pour la branche migration_postgres)
 bin/aaa.sh
 data/db/
-docker/
-migration/

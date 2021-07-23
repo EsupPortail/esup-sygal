@@ -35,10 +35,10 @@ class ResumeIndicateurTheseHelper extends AbstractHelper
                     $html .= '<tbody>';
                     for($position = 0 ; $position < $limite && $position < count($data) ; $position++) {
                         $html .= '<tr>';
-                            $html .= '<td>'.$data[$position]["SOURCE_CODE"].'</td>';
-                            $html .= '<td>'.$data[$position]["ETAT_THESE"].'</td>';
-                            $html .= '<td>'.explode(" ",$data[$position]["DATE_PREM_INSC"])[0].'</td>';
-                            $html .= '<td>'.explode(" ",$data[$position]["DATE_SOUTENANCE"])[0].'</td>';
+                            $html .= '<td>'.$data[$position]["source_code"].'</td>';
+                            $html .= '<td>'.$data[$position]["etat_these"].'</td>';
+                            $html .= '<td>'.explode(" ",$data[$position]["date_prem_insc"])[0].'</td>';
+                            $html .= '<td>'.explode(" ",$data[$position]["date_soutenance"])[0].'</td>';
                         $html .= '</tr>';
                     }
                     for ( ; $position < $limite ; $position++) {
