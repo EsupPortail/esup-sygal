@@ -23,13 +23,22 @@ class IndexController extends AbstractController
     public function indexDoctorantAction()
     {
         /** @var Doctorant $doctorant */
-        $doctorant = $this->getEntityManager()->getRepository(Doctorant::class)->find(38765);
+        $doctorantId = $this->params()->fromRoute('doctorant');
+        if ($doctorantId !== null) {
+            $doctorant = $this->getEntityManager()->getRepository(Doctorant::class)->find($doctorantId);
+        } else {
+            $doctorant = null;
+        }
 
-        /** @var Session[] $session */
-        $sessions = $this->getEntityManager()->getRepository(Session::class)->findSessionsDisponiblesByDoctorant($doctorant);
-
-        /** @var Inscription[] $inscription */
-        $inscriptions = $this->getEntityManager()->getRepository(Inscription::class)->findInscriptionsByDoctorant($doctorant);
+        if($doctorant) {
+            /** @var Session[] $session */
+            $sessions = $this->getEntityManager()->getRepository(Session::class)->findSessionsDisponiblesByDoctorant($doctorant);
+            /** @var Inscription[] $inscription */
+            $inscriptions = $this->getEntityManager()->getRepository(Inscription::class)->findInscriptionsByDoctorant($doctorant);
+        } else {
+            $sessions = [];
+            $inscriptions = [];
+        }
 
         return new ViewModel([
             'doctorant' => $doctorant,

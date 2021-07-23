@@ -4,7 +4,6 @@ namespace Formation;
 
 use Formation\Controller\InscriptionController;
 use Formation\Controller\InscriptionControllerFactory;
-use Formation\Provider\Privilege\IndexPrivileges;
 use Formation\Provider\Privilege\InscriptionPrivileges;
 use Formation\Service\Inscription\InscriptionService;
 use Formation\Service\Inscription\InscriptionServiceFactory;

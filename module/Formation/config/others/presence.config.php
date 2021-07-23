@@ -5,7 +5,7 @@ namespace Formation;
 use Formation\Controller\FormationInstancePresenceController;
 use Formation\Controller\PresenceController;
 use Formation\Controller\PresenceControllerFactory;
-use Formation\Provider\Privilege\IndexPrivileges;
+use Formation\Provider\Privilege\SeancePrivileges;
 use Formation\Service\Presence\PresenceService;
 use Formation\Service\Presence\PresenceServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -22,7 +22,7 @@ return [
                         'index',
                     ],
                     'privileges' => [
-                        IndexPrivileges::INDEX_AFFICHER,
+                        SeancePrivileges::SEANCE_PRESENCE,
                     ],
                 ],
                 [
@@ -31,7 +31,7 @@ return [
                         'renseigner-presences',
                     ],
                     'privileges' => [
-                        IndexPrivileges::INDEX_AFFICHER,
+                        SeancePrivileges::SEANCE_PRESENCE,
                     ],
                 ],
                 [
@@ -41,7 +41,7 @@ return [
                         'toggle-presences',
                     ],
                     'privileges' => [
-                        IndexPrivileges::INDEX_AFFICHER,
+                        SeancePrivileges::SEANCE_PRESENCE,
                     ],
                 ],
             ],

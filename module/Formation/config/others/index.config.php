@@ -17,10 +17,18 @@ return [
                     'controller' => IndexController::class,
                     'action' => [
                         'index',
-                        'index-doctorant',
                     ],
                     'privileges' => [
                         IndexPrivileges::INDEX_AFFICHER,
+                    ],
+                ],
+                [
+                    'controller' => IndexController::class,
+                    'action' => [
+                        'index-doctorant',
+                    ],
+                    'privileges' => [
+                        IndexPrivileges::INDEX_DOCTORANT,
                     ],
                 ],
             ],
@@ -35,15 +43,13 @@ return [
                         'label'    => 'Formations',
                         'route'    => 'formation',
                         'resource' => PrivilegeController::getResourceId(IndexController::class, 'index') ,
+                        'order'    => 9998,
+                    ],
+                    'formation-doctorant' => [
+                        'label'    => 'Mes formations',
+                        'route'    => 'formation/index-doctorant',
+                        'resource' => PrivilegeController::getResourceId(IndexController::class, 'index-doctorant') ,
                         'order'    => 9999,
-                        'pages' => [
-                            'Index Doctorants' => [
-                                'label'    => 'Mes formations',
-                                'route'    => 'formation/index-doctorant',
-                                'resource' => PrivilegeController::getResourceId(IndexController::class, 'index-doctorant') ,
-                                'order'    => 10,
-                            ],
-                        ],
                     ],
                 ],
             ],

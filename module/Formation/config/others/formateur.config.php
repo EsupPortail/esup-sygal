@@ -5,6 +5,7 @@ namespace Formation;
 use Formation\Controller\FormateurController;
 use Formation\Controller\FormateurControllerFactory;
 use Formation\Provider\Privilege\IndexPrivileges;
+use Formation\Provider\Privilege\SessionPrivileges;
 use Formation\Service\Formateur\FormateurService;
 use Formation\Service\Formateur\FormateurServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -22,7 +23,7 @@ return [
                         'retirer',
                     ],
                     'privileges' => [
-                        IndexPrivileges::INDEX_AFFICHER,
+                        SessionPrivileges::SESSION_MODIFIER,
                     ],
                 ],
             ],

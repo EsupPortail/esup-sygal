@@ -1,5 +1,6 @@
 INSERT INTO CATEGORIE_PRIVILEGE (ID, CODE, LIBELLE, ORDRE) VALUES (4000, 'formation', 'Module de formation', 3000);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (800, 4000, 'index', 'Accès à l''index du module de formation',1);
+INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (799, 4000, 'index_doctorant', 'Accès à l''index doctorant',2);
 
 INSERT INTO CATEGORIE_PRIVILEGE (ID, CODE, LIBELLE, ORDRE) VALUES (4001, 'formation_module', 'Gestion des modules de formations', 3100);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (801, 4001, 'index', 'Accès à l''index des modules de formation', 1);

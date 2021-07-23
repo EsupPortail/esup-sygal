@@ -42,197 +42,206 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
     Mes Formations
 </h1>
 
-<h2> Modules ouverts à inscription </h2>
+<?php if ($doctorant === null) : ?>
+    <p class="lead">
+        Aucun&middot;e doctorant&middot;e de trouvé&middot;e.
+    </p>
 
-<table class="table table-condensed">
-    <thead>
-    <tr>
-        <th> Module de formation </th>
-        <th> Session </th>
-        <th> Formateur&middot;trice&middot;s </th>
-        <th> Site </th>
-        <th> Dates et lieux </th>
-        <th> Modalité </th>
-        <th> Type </th>
-        <th> État </th>
-        <th> Limite d’inscription </th>
-        <th> Action </th>
-    </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($sessions as $session) : ?>
+    <u>N.B.:</u> Mon cobaye est Josselin GUENERON dans l'id est <tt>38765</tt>
+<?php else : ?>
+
+    <h2> Modules ouverts à inscription </h2>
+
+    <table class="table table-condensed">
+        <thead>
         <tr>
-            <td> <?php echo $session->getModule()->getLibelle(); ?> </td>
-            <td> <?php echo $session->getIndex(); ?> </td>
-            <td> <?php echo $this->formateurs($session); ?> </td>
-            <td> <?php echo $this->site($session); ?> </td>
-            <td> <?php echo $this->seances($session); ?> </td>
-            <td> <?php echo $this->modalite($session); ?></td>
-            <td> <?php echo $this->type($session); ?></td>
-            <td> <?php echo $this->etat($session); ?></td>
-            <td>
-                Date limite :
-                <?php
+            <th> Module de formation </th>
+            <th> Session </th>
+            <th> Formateur&middot;trice&middot;s </th>
+            <th> Site </th>
+            <th> Dates et lieux </th>
+            <th> Modalité </th>
+            <th> Type </th>
+            <th> État </th>
+            <th> Limite d’inscription </th>
+            <th> Action </th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($sessions as $session) : ?>
+            <tr>
+                <td> <?php echo $session->getModule()->getLibelle(); ?> </td>
+                <td> <?php echo $session->getIndex(); ?> </td>
+                <td> <?php echo $this->formateurs($session); ?> </td>
+                <td> <?php echo $this->site($session); ?> </td>
+                <td> <?php echo $this->seances($session); ?> </td>
+                <td> <?php echo $this->modalite($session); ?></td>
+                <td> <?php echo $this->type($session); ?></td>
+                <td> <?php echo $this->etat($session); ?></td>
+                <td>
+                    Date limite :
+                    <?php
+                        $limite = $session->getLimiteInscription();
+                        if ($limite) {
+                            echo $limite->format('d/m/Y');
+                        } else {
+                            echo "N.C.";
+                        }
+                    ?>
+                    <br/>
+                    Liste principale :  <?php echo ($session->getTailleListePrincipale())?:"N.C."; ?>
+                    <br/>
+                    Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
+                </td>
+                <td>
+                    <?php $inscrit = $session->estInscrit($doctorant); ?>
+                    <?php if ($session->getEtat()->getCode() === Etat::CODE_OUVERTE AND !$inscrit) : ?>
+                        <?php if ($canAjouterInscription) : ?>
+                            <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
+                            <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId(), 'doctorant' => $doctorant->getId()], ['query' => ['retour' => $this->url('formation/index-doctorant', [], [], true)]], true); ?>"
+                            >
+                            <span class="glyphicon glyphicon-plus"
+                                  title="M'inscrire" data-toggle="tooltip" data-html="true"
+                            ></span></a>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <?php if ($inscrit) : ?>
+                            <span class="glyphicon glyphicon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
+                        <?php else : ?>
+                            <span class="glyphicon glyphicon-info-sign" title="Les inscriptions ne sont pas ouvertes"></span>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <h2> Mes inscriptions </h2>
+
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th> Module de formation </th>
+            <th> Session </th>
+            <th> Formateur&middot;trice&middot;s </th>
+            <th> Site </th>
+            <th> Dates et lieux </th>
+            <th> Modalité </th>
+            <th> Type </th>
+            <th> État </th>
+            <th> Inscription </th>
+            <th> Action </th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($encours as $inscription) : ?>
+            <?php $session = $inscription->getSession(); ?>
+            <tr>
+                <td> <?php echo $session->getModule()->getLibelle(); ?> </td>
+                <td> <?php echo $session->getIndex(); ?> </td>
+                <td> <?php echo $this->formateurs($session); ?> </td>
+                <td> <?php echo $this->site($session); ?> </td>
+                <td> <?php echo $this->seances($session); ?> </td>
+                <td> <?php echo $this->modalite($session); ?></td>
+                <td> <?php echo $this->type($session); ?></td>
+                <td> <?php echo $this->etat($session); ?></td>
+                <td>
+                    <?php if ($inscription->isListePrincipale()) echo "Liste principale"; ?>
+                    <?php if ($inscription->isListeComplementaire()) echo "Liste complementaire #???"; ?>
+                    <?php if ($inscription->getListe() === null) : ?>
+                        <?php if ($session->getEtat()->getCode() === Etat::CODE_OUVERTE) echo "En attente"; ?>
+                        <?php if ($session->getEtat()->getCode() === Etat::CODE_FERME) echo "Non classée"; ?>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <?php if ($canSupprimerInscription) : ?>
+                        <?php /** @see \Formation\Controller\InscriptionController::supprimerAction() */ ?>
+                        <a href="<?php echo $this->url('formation/inscription/supprimer', ['inscription' => $inscription->getId()], [], true); ?>"
+                           class="ajax-modal" data-event="modification"
+                        >
+                        <span class="glyphicon glyphicon-remove"
+                              title="Annuler mon inscription" data-toggle="tooltip" data-html="true"
+                        ></span></a>
+                    <?php endif; ?>
+                    <?php if ($canConvocationInscription) : ?>
+                        <?php /** @see \Formation\Controller\InscriptionController::genererConvocationAction() */?>
+                        <a href="<?php echo $this->url('formation/inscription/generer-convocation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
+                        <span class="glyphicon glyphicon-share"
+                              title="Télécharger la convocation" data-toggle="tooltip" data-html="true"
+                        ></span></a>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <h2> Mes formations suivis</h2>
+
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th> Module de formation </th>
+            <th> Session </th>
+            <th> Formateur&middot;trice&middot;s </th>
+            <th> Site </th>
+            <th> Dates et lieux </th>
+            <th> Modalité </th>
+            <th> Type </th>
+            <th> État </th>
+            <th> Limite d’inscription </th>
+            <th> Action </th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($terminees as $inscription) : ?>
+            <?php $session = $inscription->getSession(); ?>
+            <tr>
+                <td> <?php echo $session->getModule()->getLibelle(); ?> </td>
+                <td> <?php echo $session->getIndex(); ?> </td>
+                <td> <?php echo $this->formateurs($session); ?> </td>
+                <td> <?php echo $this->site($session); ?> </td>
+                <td> <?php echo $this->seances($session); ?> </td>
+                <td> <?php echo $this->modalite($session); ?></td>
+                <td> <?php echo $this->type($session); ?></td>
+                <td> <?php echo $this->etat($session); ?></td>
+                <td>
+                    Date limite :
+                    <?php
                     $limite = $session->getLimiteInscription();
                     if ($limite) {
                         echo $limite->format('d/m/Y');
                     } else {
                         echo "N.C.";
                     }
-                ?>
-                <br/>
-                Liste principale :  <?php echo ($session->getTailleListePrincipale())?:"N.C."; ?>
-                <br/>
-                Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
-            </td>
-            <td>
-                <?php $inscrit = $session->estInscrit($doctorant); ?>
-                <?php if ($session->getEtat()->getCode() === Etat::CODE_OUVERTE AND !$inscrit) : ?>
-                    <?php if ($canAjouterInscription) : ?>
-                        <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
-                        <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId(), 'doctorant' => $doctorant->getId()], ['query' => ['retour' => $this->url('formation/index-doctorant', [], [], true)]], true); ?>"
-                        >
-                        <span class="glyphicon glyphicon-plus"
-                              title="M'inscrire" data-toggle="tooltip" data-html="true"
+                    ?>
+                    <br/>
+                    Liste principale :  <?php echo ($session->getTailleListePrincipale())?:"N.C."; ?>
+                    <br/>
+                    Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
+                </td>
+                <td>
+                    <?php if ($canRepondreEnquete) : ?>
+                        <?php /** @see \Formation\Controller\EnqueteController::repondreQuestionsAction() */?>
+                        <a href="<?php echo $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true); ?>">
+                        <span class="glyphicon glyphicon-edit"
+                              title="Compléter l'enquête" data-toggle="tooltip" data-html="true"
                         ></span></a>
                     <?php endif; ?>
-                <?php else: ?>
-                    <?php if ($inscrit) : ?>
-                        <span class="glyphicon glyphicon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
-                    <?php else : ?>
-                        <span class="glyphicon glyphicon-info-sign" title="Les inscriptions ne sont pas ouvertes"></span>
+                    <?php if ($canAttestationInscription) : ?>
+                        <?php /** @see \Formation\Controller\InscriptionController::genererAttestationAction() */?>
+                        <a href="<?php echo $this->url('formation/inscription/generer-attestation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
+                        <span class="glyphicon glyphicon-check"
+                              title="Télécharger l'attestation" data-toggle="tooltip" data-html="true"
+                        ></span></a>
                     <?php endif; ?>
-                <?php endif; ?>
-            </td>
-        </tr>
-    <?php endforeach; ?>
-    </tbody>
-</table>
-
-<h2> Mes inscriptions </h2>
-
-<table class="table table-condensed">
-    <thead>
-    <tr>
-        <th> Module de formation </th>
-        <th> Session </th>
-        <th> Formateur&middot;trice&middot;s </th>
-        <th> Site </th>
-        <th> Dates et lieux </th>
-        <th> Modalité </th>
-        <th> Type </th>
-        <th> État </th>
-        <th> Inscription </th>
-        <th> Action </th>
-    </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($encours as $inscription) : ?>
-        <?php $session = $inscription->getSession(); ?>
-        <tr>
-            <td> <?php echo $session->getModule()->getLibelle(); ?> </td>
-            <td> <?php echo $session->getIndex(); ?> </td>
-            <td> <?php echo $this->formateurs($session); ?> </td>
-            <td> <?php echo $this->site($session); ?> </td>
-            <td> <?php echo $this->seances($session); ?> </td>
-            <td> <?php echo $this->modalite($session); ?></td>
-            <td> <?php echo $this->type($session); ?></td>
-            <td> <?php echo $this->etat($session); ?></td>
-            <td>
-                <?php if ($inscription->isListePrincipale()) echo "Liste principale"; ?>
-                <?php if ($inscription->isListeComplementaire()) echo "Liste complementaire #???"; ?>
-                <?php if ($inscription->getListe() === null) : ?>
-                    <?php if ($session->getEtat()->getCode() === Etat::CODE_OUVERTE) echo "En attente"; ?>
-                    <?php if ($session->getEtat()->getCode() === Etat::CODE_FERME) echo "Non classée"; ?>
-                <?php endif; ?>
-            </td>
-            <td>
-                <?php if ($canSupprimerInscription) : ?>
-                    <?php /** @see \Formation\Controller\InscriptionController::supprimerAction() */ ?>
-                    <a href="<?php echo $this->url('formation/inscription/supprimer', ['inscription' => $inscription->getId()], [], true); ?>"
-                       class="ajax-modal" data-event="modification"
-                    >
-                    <span class="glyphicon glyphicon-remove"
-                          title="Annuler mon inscription" data-toggle="tooltip" data-html="true"
-                    ></span></a>
-                <?php endif; ?>
-                <?php if ($canConvocationInscription) : ?>
-                    <?php /** @see \Formation\Controller\InscriptionController::genererConvocationAction() */?>
-                    <a href="<?php echo $this->url('formation/inscription/generer-convocation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
-                    <span class="glyphicon glyphicon-share"
-                          title="Télécharger la convocation" data-toggle="tooltip" data-html="true"
-                    ></span></a>
-                <?php endif; ?>
-            </td>
-        </tr>
-    <?php endforeach; ?>
-    </tbody>
-</table>
-
-<h2> Mes formations suivis</h2>
-
-<table class="table table-condensed">
-    <thead>
-    <tr>
-        <th> Module de formation </th>
-        <th> Session </th>
-        <th> Formateur&middot;trice&middot;s </th>
-        <th> Site </th>
-        <th> Dates et lieux </th>
-        <th> Modalité </th>
-        <th> Type </th>
-        <th> État </th>
-        <th> Limite d’inscription </th>
-        <th> Action </th>
-    </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($terminees as $inscription) : ?>
-        <?php $session = $inscription->getSession(); ?>
-        <tr>
-            <td> <?php echo $session->getModule()->getLibelle(); ?> </td>
-            <td> <?php echo $session->getIndex(); ?> </td>
-            <td> <?php echo $this->formateurs($session); ?> </td>
-            <td> <?php echo $this->site($session); ?> </td>
-            <td> <?php echo $this->seances($session); ?> </td>
-            <td> <?php echo $this->modalite($session); ?></td>
-            <td> <?php echo $this->type($session); ?></td>
-            <td> <?php echo $this->etat($session); ?></td>
-            <td>
-                Date limite :
-                <?php
-                $limite = $session->getLimiteInscription();
-                if ($limite) {
-                    echo $limite->format('d/m/Y');
-                } else {
-                    echo "N.C.";
-                }
-                ?>
-                <br/>
-                Liste principale :  <?php echo ($session->getTailleListePrincipale())?:"N.C."; ?>
-                <br/>
-                Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
-            </td>
-            <td>
-                <?php if ($canRepondreEnquete) : ?>
-                    <?php /** @see \Formation\Controller\EnqueteController::repondreQuestionsAction() */?>
-                    <a href="<?php echo $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true); ?>">
-                    <span class="glyphicon glyphicon-edit"
-                          title="Compléter l'enquête" data-toggle="tooltip" data-html="true"
-                    ></span></a>
-                <?php endif; ?>
-                <?php if ($canAttestationInscription) : ?>
-                    <?php /** @see \Formation\Controller\InscriptionController::genererAttestationAction() */?>
-                    <a href="<?php echo $this->url('formation/inscription/generer-attestation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
-                    <span class="glyphicon glyphicon-check"
-                          title="Télécharger l'attestation" data-toggle="tooltip" data-html="true"
-                    ></span></a>
-                <?php endif; ?>
-            </td>
-        </tr>
-    <?php endforeach; ?>
-    </tbody>
-</table>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php endif; ?>
 
 <script>
     $(function() {
