@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * @see \Formation\View\Helper\ModaliteViewHelper
+ * @var HasModaliteInterface|null $objet
+ * @var array $options
+ */
+
+use Formation\Entity\Db\Interfaces\HasModaliteInterface;
+
+?>
+
+<?php if ($objet->getModalite() !== null) : ?>
+    <?php
+        $title = "Non reconnue [".$objet->getModalite()."]";
+        $texte = "Non reconnue [".$objet->getModalite()."]";
+        switch($objet->getModalite()) {
+            case HasModaliteInterface::MODALITE_DISTANCIEL :
+                $title = "Formation en distancielle";
+                $texte = "Distancielle";
+                break;
+            case HasModaliteInterface::MODALITE_PRESENTIEL :
+                $title = "Formation en présentielle";
+                $texte = "Présentielle";
+                break;
+        }
+    ?>
+
+    <span class="modalite" title="<?php echo $title; ?>"
+          data-toggle="tooltip" data-html="true">
+            <?php echo $texte; ?>
+    </span>
+<?php else : ?>
+    <span class="modalite" title="Aucune modalité de spécifiée"
+          data-toggle="tooltip" data-html="true">
+        N.C.
+    </span>
+<?php endif; ?>
+

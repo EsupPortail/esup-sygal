@@ -963,4 +963,19 @@ class StructureService extends BaseService
         $structure = $this->getRepository()->find($id);
         return $structure;
     }
+
+    public function getStructuresFormationsAsOptions()
+    {
+        $ecoles = $this->getEcoleDoctoraleService()->getRepository()->findAll(true);
+        $etablissements = $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions();
+        //$unites = $this->getUnitesRechercheService()->getRepository()->findAll(true);
+        $structures = array_merge($ecoles, $etablissements);
+        $array = [];
+        foreach ($structures as $structure) {
+            if (!$structure->getStructure()->estFermee()) {
+                $array[$structure->getStructure()->getId()] = (($structure->getStructure()->getTypeStructure())?$structure->getStructure()->getTypeStructure()->getLibelle():"Non précisé"). " - ".$structure->getSigle(). " - " .$structure->getLibelle();
+            }
+        }
+        return $array;
+    }
 }

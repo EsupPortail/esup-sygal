@@ -1,0 +1,39 @@
+<?php
+
+use Formation\Entity\Db\EnqueteQuestion;
+use Formation\Entity\Db\Inscription;
+use Formation\Form\EnqueteReponse\EnqueteReponseForm;
+
+/**
+ * @see \Formation\Controller\EnqueteController::repondreQuestionsAction()
+ * @var Inscription $inscription
+ * @var EnqueteQuestion[] $questions
+ * @var EnqueteReponseForm $form
+ */
+
+?>
+
+<h1 class="page-header">
+    Enquête de satisfaction pour la formation <br/>
+    <?php echo $inscription->getSession()->getModule()->getLibelle(); ?> #<?php echo $inscription->getSession()->getIndex(); ?> <br/>
+    <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?>
+</h1>
+
+<?php echo $this->form()->openTag($form); ?>
+<?php foreach ($questions as $question) : ?>
+    <h2>
+        <?php echo $question->getLibelle(); ?>
+      <?php if ($question->getDescription()) : ?>
+        <span class="glyphicon glyphicon-info-sign" title="<?php echo $question->getDescription(); ?>" data-toggle="tooltip" data-html="true"></span>
+      <?php endif; ?>
+    </h2>
+      <?php if ($select = $form->get("select_".$question->getId())) : ?>
+        <?php echo $this->formControlGroup($select); ?>
+      <?php endif; ?>
+      <?php if ($textarea = $form->get("textarea_".$question->getId())) : ?>
+          <?php echo $this->formControlGroup($textarea); ?>
+      <?php endif; ?>
+<?php endforeach; ?>
+
+<?php echo $this->formControlGroup($form->get("bouton")); ?>
+<?php echo $this->form()->closeTag(); ?>

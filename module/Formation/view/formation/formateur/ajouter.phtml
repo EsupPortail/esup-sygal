@@ -1,0 +1,24 @@
+<?php
+
+use Application\Entity\Db\Individu;
+use Formation\Entity\Db\Session;
+use UnicaenApp\Form\Element\SearchAndSelect;
+
+/**
+ * @see \Formation\Controller\FormateurController::ajouterAction()
+ * @var Session $session
+ */
+
+?>
+
+<form method="post" action="<?php echo $this->url('formation/formateur/ajouter', ['session' => $session->getId()], [], true); ?>">
+    <?php
+    $sas = new SearchAndSelect('individu');
+    $sas->setLabel($this->translate("Recherche d'un·e formateur·trice"));
+    $sas->setAttribute('class', 'individu-finder');
+    $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu', [], [], true));
+    echo $this->formControlGroup($sas, 'formSearchAndSelect');
+    ?>
+
+    <input type="Submit" value="Ajouter le·a formateur·trice" class="btn btn-primary" />
+</form>

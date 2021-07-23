@@ -1,0 +1,129 @@
+<?php
+
+/**
+ * @see \Formation\Controller\ModuleController::indexAction()
+ * @var Module[] $modules
+ */
+
+use Formation\Entity\Db\Module;
+use Formation\Provider\Privilege\ModulePrivileges;
+
+$canAfficherModule      = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_AFFICHER));
+$canAjouterModule       = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_AJOUTER));
+$canHistoriserModule    = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_HISTORISER));
+$canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_SUPPRIMER));
+
+?>
+
+<h1> Index des formations </h1>
+
+
+<?php if ($canAjouterModule) : ?>
+    <a
+        <?php /** @see \Formation\Controller\ModuleController::ajouterAction() */ ?>
+        href="<?php echo $this->url('formation/module/ajouter', [], [], true); ?>"
+        class="btn btn-primary action ajax-modal" data-event="modification">
+        <span class="glyphicon glyphicon-plus"></span>
+        Ajouter une formation
+    </a>
+<?php endif; ?>
+
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Libellé</th>
+            <th>Site<span title="valeur par défaut">*</span></th>
+            <th>Responsable<span title="valeur par défaut">*</span></th>
+            <th>Modalité<span title="valeur par défaut">*</span> </th>
+            <th>Type<span title="valeur par défaut">*</span> </th>
+            <th>Taille des listes<span title="valeur par défaut">*</span> </th>
+            <th>#Session</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($modules as $module) : ?>
+        <tr>
+            <td>
+                <?php echo $module->getLibelle(); ?>
+                <?php if ($module->getDescription() !== null AND trim($module->getDescription()) !== null) : ?>
+                    <span class="glyphicon glyphicon-info-sign"
+                          title="<?php echo $module->getDescription(); ?>" data-toggle="tooltip" data-html="true"
+
+                    ></span>
+                <?php endif; ?>
+            </td>
+            <td> <?php echo $this->site($module); ?> </td>
+            <td>
+                <?php if ($module->getResponsable()) : ?>
+                    <?php echo $module->getResponsable()->getNomComplet(); ?>
+                <?php else : ?>
+                    N.C.
+                <?php endif; ?>
+            </td>
+            <td> <?php echo $this->modalite($module); ?> </td>
+            <td> <?php echo $this->type($module); ?> </td>
+            <td>
+                Liste principale :
+                <?php echo $module->getTailleListePrincipale()?:"N.C."; ?>
+                <br/>
+                Liste complémentaire :
+                <?php echo $module->getTailleListeComplementaire()?:"N.C."; ?>
+            </td>
+            <td>
+                <?php echo count($module->getSessions()); ?>
+            </td>
+            <td>
+                <?php if ($canAfficherModule) : ?>
+                    <?php /** @see \Formation\Controller\ModuleController::afficherAction() */ ?>
+                    <a href="<?php echo $this->url('formation/module/afficher', ['module' => $module->getId()], [], true); ?>"
+                       title="afficher le module de  formation #<?php echo $module->getId(); ?>"
+                       data-toggle="tooltip" data-html="true">
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    </a>
+                <?php endif; ?>
+                <?php if ($canHistoriserModule) : ?>
+                    <?php if ($module->estNonHistorise()) : ?>
+                        <?php /** @see \Formation\Controller\FormationController::historiserAction() */ ?>
+                        <a href="<?php echo $this->url('formation/module/historiser', ['module' => $module->getId()], [], true); ?>"
+                           title="Historiser le module de  formation #<?php echo $module->getId(); ?>"
+                           data-toggle="tooltip" data-html="true">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    <?php else : ?>
+                        <?php /** @see \Formation\Controller\ModuleController::restaurerAction() */ ?>
+                        <a href="<?php echo $this->url('formation/module/restaurer', ['module' => $module->getId()], [], true); ?>"
+                           title="Restaurer le module de  formation #<?php echo $module->getId(); ?>"
+                           data-toggle="tooltip" data-html="true">
+                            <span class="glyphicon glyphicon-leaf"></span>
+                        </a>
+                    <?php endif; ?>
+                <?php endif; ?>
+
+                <?php if ($canSupprimerModule) : ?>
+                    <?php /** @see \Formation\Controller\ModuleController::supprimerAction() */?>
+                    <a href="<?php echo $this->url('formation/module/supprimer',['module' => $module->getId()], [], true); ?>"
+                       class="ajax-modal" data-event="modification"
+                       title="Suppression du module de formation #<?php echo $module->getId(); ?>" data-toggle="tooltip" data-html="true">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                <?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip({});
+    });
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+
+    });
+</script>

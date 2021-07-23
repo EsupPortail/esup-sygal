@@ -1,0 +1,33 @@
+<?php
+
+use Formation\Entity\Db\Seance;
+use Formation\Entity\Db\Session;
+
+/**
+ * @see \Formation\View\Helper\EtatViewHelper
+ * @var Session $session
+ * @var array $options
+ */
+
+
+/** @var Seance[] $seances */
+$seances = $session->getSeances()->toArray();
+$seances = array_filter($seances, function (Seance $a) { return $a->estNonHistorise();});
+$nbSeances = count($seances);
+
+?>
+
+<?php echo $nbSeances; ?> séance<?php if ($nbSeances > 1) echo "s"; ?>
+ -
+<?php echo $session->getDuree(); ?> h.
+<ul>
+    <?php foreach ($seances as $seance) : ?>
+    <li>
+        <?php echo $seance->getDebut()->format("d/m/Y"); ?>
+        <?php echo $seance->getDebut()->format("H:i"); ?>
+        &rightarrow;
+        <?php echo $seance->getFin()->format("H:i"); ?>
+    </li>
+    <?php endforeach; ?>
+</ul>
+

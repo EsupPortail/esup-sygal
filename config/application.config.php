@@ -35,6 +35,7 @@ $modules = [
     'Indicateur',
     'Retraitement',
     'Soutenance',
+    'Formation',
     'Notification',
     'Information',
 //    'StepStar',

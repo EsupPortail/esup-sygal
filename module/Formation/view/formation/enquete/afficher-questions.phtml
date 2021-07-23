@@ -1,0 +1,91 @@
+<?php
+
+use Formation\Entity\Db\EnqueteQuestion;
+use Formation\Provider\Privilege\EnquetePrivileges;
+
+/**
+ * @see \Formation\Controller\EnqueteController::afficherQuestionsAction()
+ * @var EnqueteQuestion[] $questions
+ */
+
+$this->headTitle("Liste des questions de l'enquête");
+
+$canAjouterQuestion     = $this->isAllowed(EnquetePrivileges::getResourceId(EnquetePrivileges::ENQUETE_QUESTION_AJOUTER));
+$canModifierQuestion    = $this->isAllowed(EnquetePrivileges::getResourceId(EnquetePrivileges::ENQUETE_QUESTION_MODIFIER));
+$canHistoriserQuestion  = $this->isAllowed(EnquetePrivileges::getResourceId(EnquetePrivileges::ENQUETE_QUESTION_HISTORISER));
+$canSupprimerQuestion   = $this->isAllowed(EnquetePrivileges::getResourceId(EnquetePrivileges::ENQUETE_QUESTION_SUPPRIMER));
+
+?>
+
+<h1 class="page-header">
+    Liste des questions de l'enquête
+</h1>
+
+<?php if ($canAjouterQuestion) : ?>
+    <?php /** @see \Formation\Controller\EnqueteController::ajouterQuestionAction() */?>
+    <a href="<?php echo $this->url('formation/enquete/question/ajouter', [], [], true); ?>"
+       class="btn btn-primary ajax-modal" data-event="modification"
+    >
+        <span class="glyphicon glyphicon-plus"></span>
+        Ajouter une question
+    </a>
+<?php endif; ?>
+
+<ol>
+<?php foreach ($questions as $question) : ?>
+    <li>
+        <span class="<?php if ($question->estHistorise()) echo "question-historisee"; ?>">
+            <?php echo $question->getLibelle(); ?>
+        </span>
+        <?php if ($question->getDescription()) : ?>
+            <span class="glyphicon glyphicon-info-sign"
+                  title="<?php echo $question->getDescription(); ?>" data-toggle="tooltip" data-html="true"
+                  ></span>
+        <?php endif; ?>
+        <?php if ($canModifierQuestion) : ?>
+            <?php /** @see \Formation\Controller\EnqueteController::modifierQuestionAction() */?>
+            <a href="<?php echo $this->url('formation/enquete/question/modifier', ['question' => $question->getId()], [], true); ?>"
+               class="ajax-modal" data-event="modification"
+            >
+                <span class="glyphicon glyphicon-pencil"></span></a>
+        <?php endif; ?>
+        <?php if ($canHistoriserQuestion) : ?>
+            <?php if ($question->estNonHistorise()) : ?>
+                <?php /** @see \Formation\Controller\EnqueteController::historiserQuestionAction() */?>
+                <a href="<?php echo $this->url('formation/enquete/question/historiser', ['question' => $question->getId()], [], true); ?>"
+                >
+                    <span class="glyphicon glyphicon-trash"></span></a>
+            <?php else : ?>
+                <?php /** @see \Formation\Controller\EnqueteController::restaurerQuestionAction() */?>
+                <a href="<?php echo $this->url('formation/enquete/question/restaurer', ['question' => $question->getId()], [], true); ?>"
+                >
+                    <span class="glyphicon glyphicon-leaf"></span></a>
+            <?php endif; ?>
+        <?php endif; ?>
+        <?php if ($canSupprimerQuestion) : ?>
+            <?php /** @see \Formation\Controller\EnqueteController::supprimerQuestionAction() */?>
+            <a href="<?php echo $this->url('formation/enquete/question/supprimer', ['question' => $question->getId()], [], true); ?>"
+               class="ajax-modal" data-event="modification"
+            >
+                <span class="glyphicon glyphicon-remove"></span></a>
+        <?php endif; ?>
+    </li>
+<?php endforeach; ?>
+</ol>
+
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>
+
+<style>
+    span.question-historisee {
+        /*background: lightgray;*/
+        text-decoration: line-through;
+    }
+</style>

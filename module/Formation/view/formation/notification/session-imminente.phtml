@@ -1,0 +1,34 @@
+<?php
+
+use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Seance;
+
+/**
+ * @see \Formation\Service\Notification\NotificationService::triggerSessionImminente()
+ * @var Inscription $inscription
+ * @var string $lilbelle
+ */
+
+$seances = $inscription->getSession()->getSeances()->toArray();
+$seances = array_filter($seances, function (Seance $a) { return $a->estNonHistorise();});
+usort($seances, function (Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
+
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Le session de formation <strong><?php echo $lilbelle; ?></strong> va bientôt débuter.
+    Vous êtes inscrit sur la liste principale de cette formation.
+</p>
+<p>
+    Les séances de cette formation se tiendront :
+</p>
+<ul>
+    <?php foreach ($seances as $seance) : ?>
+    <li>
+        <?php echo $seance->getDebut()->format("d/m/Y"); ?> de <?php echo $seance->getDebut()->format("H:i"); ?> à <?php echo $seance->getFin()->format("H:i"); ?> - <?php echo $seance->getLieu(); ?>
+    </li>
+    <?php endforeach; ?>
+</ul>

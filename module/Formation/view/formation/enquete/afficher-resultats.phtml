@@ -1,0 +1,186 @@
+<?php
+
+use Formation\Entity\Db\EnqueteQuestion;
+use Formation\Entity\Db\EnqueteReponse;
+
+/**
+ * @see \Formation\Controller\EnqueteController::afficherResultatsAction()
+ * @var array $array;
+ * @var array $histogramme;
+ * @var int $nbReponses;
+ * @var EnqueteQuestion[] $questions
+ */
+
+$this->headTitle("Résultats de  l'enquête");
+
+?>
+<!-- todo remplacer -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.js">
+</script>
+
+<h1 class="page-header">
+    Résultats de  l'enquête
+</h1>
+
+ICI FILTRE
+
+
+
+<div class="row">
+    <div class="col-md-6">
+        <h2> Histogrammes </h2>
+    </div>
+    <div class="pull-right">
+        <span class="btn btn-primary export" id="histogrammes">
+            <span class="glyphicon glyphicon-download"></span>
+            Exporter les histogrammes
+        </span>
+    </div>
+</div>
+
+<div>
+<?php foreach ($questions as $question) : ?>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3> <?php echo $question->getLibelle(); ?> </h3>
+            <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th> Niveaux </th>
+            <th> Nombres </th>
+            <th> Ratio </th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach (EnqueteReponse::NIVEAUX as $clef => $libelle) : ?>
+            <tr>
+                <td> <?php echo $libelle; ?> </td>
+                <td> <?php echo $histogramme[$question->getId()][$clef]; ?> </td>
+                <td> <?php echo ($histogramme[$question->getId()][$clef]/$nbReponses); ?> </td>
+            </tr>
+        </tbody>
+        <?php endforeach; ?>
+    </table>
+        </div>
+        <div class="col-md-6">
+            <canvas id="myChart_<?php echo $question->getId(); ?>" width="400" height="200"></canvas>
+            <script>
+        var ctx = document.getElementById('myChart_<?php echo $question->getId(); ?>').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [<?php foreach (EnqueteReponse::NIVEAUX as $niveau) echo "'".$niveau."',"; ?>],
+                datasets: [{
+                    label: 'Nombre de réponses',
+                    data: [<?php echo implode(",", $histogramme[$question->getId()]); ?>],
+                    backgroundColor: [
+                        'rgb(156,0,0,1)',
+                        'rgb(222,76,0,1)',
+                        'rgb(255,171,3,1)',
+                        'rgb(161,191,0,1)',
+                        'rgb(18,199,0,1)',
+                    ],
+
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                legend: {
+                    display: false,
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            min: 0,
+                            max: <?php echo $nbReponses; ?>,
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+        </div>
+    </div>
+<?php endforeach; ?>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2> Réponses brutes</h2>
+    </div>
+    <div class="pull-right">
+        <span class="btn btn-primary export" id="resultats">
+            <span class="glyphicon glyphicon-download"></span>
+            Exporter les résultats
+        </span>
+    </div>
+</div>
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th> Id. </th>
+        <?php foreach ($questions as $question) : ?>
+            <th class="niveau">Niveau Q. <?php echo $question->getId(); ?></th>
+            <th class="commentaire">Commentaire Q. <?php echo $question->getId(); ?></th>
+        <?php endforeach; ?>
+    </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($array as $inscription => $item) : ?>
+        <tr>
+            <td> <?php echo $inscription; ?></td>
+            <?php foreach ($questions as $question) : ?>
+                <td class="niveau"><?php echo $item["Niveau_" . $question->getId()]; ?></td>
+                <td class="commentaire"><?php echo $item["Commentaire_" . $question->getId()]; ?></td>
+            <?php endforeach; ?>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
+<script>
+    downloadCSVFromJson = (filename, headerJson, arrayOfJson) => {
+        // convert JSON to CSV
+        let csv = "";
+        for (let value in headerJson) {
+            csv += headerJson[value] + ";";
+        }
+        csv += "\n";
+
+        for (let line in arrayOfJson) {
+            csv += line + ";";
+            for (let value in arrayOfJson[line]) {
+                csv += arrayOfJson[line][value] + ";";
+            }
+            csv += "\n";
+        }
+        console.log(csv);
+
+        // Create link and download
+        var link = document.createElement('a');
+        link.setAttribute('href', 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURIComponent(csv));
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    $('span.export#resultats').on('click', function() {
+        let header = {0:"Inscription" <?php foreach ($questions as $question) {$id = $question->getId(); echo ", ".($id*1000)."1: \"Niveau_".$id."\"";echo ", ".($id*1000)."2: \"Commentaire_".$id."\"";}?>};
+        let tableau = <?php echo json_encode($array); ?>;
+        for (let j in tableau[0]) {
+            console.log(j);
+        }
+        downloadCSVFromJson('enquete_'+$(this).attr('id')+'_'+ Date.now().toString() +'.csv', header, tableau);
+    });
+
+    $('span.export#histogrammes').on('click', function() {
+        let header = {0:"Question", 1:"Pas du tout satisfait", 2:"Peu satisfait", 3:"Sans Avis", 4:"Assez satisfait", 5:"Très satisfait"};
+        let tableau = <?php echo json_encode($histogramme); ?>;
+        downloadCSVFromJson('enquete_'+$(this).attr('id')+'_'+ Date.now().toString() +'.csv', header, tableau);
+    });
+
+</script>

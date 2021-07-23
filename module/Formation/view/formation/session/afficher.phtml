@@ -1,0 +1,321 @@
+<?php
+
+use Formation\Entity\Db\Formateur;use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Seance;
+use Formation\Entity\Db\Session;
+use Formation\Provider\Privilege\InscriptionPrivileges;
+use Formation\Provider\Privilege\SeancePrivileges;
+use Formation\Provider\Privilege\SessionPrivileges;
+
+/**
+ * @see \Formation\Controller\SessionController::afficherAction()
+ * @var Session $session
+ * @var array $presences
+ */
+
+$module = $session->getModule();
+/** @var Seance[] $seances */
+$seances = $session->getSeances()->toArray();
+usort($seances, function(Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
+
+/** @var Formateur[] $formateurs */
+$formateurs = $session->getFormateurs()->toArray();
+usort($formateurs, function (Formateur $a, Formateur $b) { return $a->getIndividu()->getNomComplet() > $b->getIndividu()->getNomComplet();});
+
+$pageTitle = 'Affichage de la Session : ' . $module->getLibelle() . ' #'.$session->getIndex();
+$this->headTitle($pageTitle);
+
+$canModifierSession     = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_MODIFIER));
+$canHistoriserSession   = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_HISTORISER));
+$canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_SUPPRIMER));
+
+$canModifierSeance      = $this->isAllowed(SeancePrivileges::getResourceId(SeancePrivileges::SEANCE_MODIFIER));
+$canHistoriserSeance    = $this->isAllowed(SeancePrivileges::getResourceId(SeancePrivileges::SEANCE_HISTORISER));
+$canSupprimerSeance     = $this->isAllowed(SeancePrivileges::getResourceId(SeancePrivileges::SEANCE_SUPPRIMER));
+
+$canEmargementSeance    = ($this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AFFICHER))
+                       OR  $this->isAllowed(SeancePrivileges::getResourceId(SeancePrivileges::SEANCE_AFFICHER)) );
+
+$canModifierInscription     = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_MODIFIER));
+$canHistoriserInscription   = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_HISTORISER));
+$canSupprimerInscription    = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_SUPPRIMER));
+
+/** @var Inscription[] $inscrits */
+$inscrits = $session->getInscriptions()->toArray();
+$listeNonClassee = array_filter($inscrits, function (Inscription $a) { return $a->getListe() === null;});
+$listePrincipale = array_filter($inscrits, function (Inscription $a) { return  $a->getListe() === Inscription::LISTE_PRINCIPALE;});
+$listePrincipaleTrue = array_filter($listePrincipale, function (Inscription $a) { return $a->estNonHistorise();});
+$listeComplementaire = array_filter($inscrits, function (Inscription $a) { return  $a->getListe() === Inscription::LISTE_COMPLEMENTAIRE;});
+$listeComplementaireTrue = array_filter($listeComplementaire, function (Inscription $a) { return $a->estNonHistorise();});
+?>
+
+<h1 class="page-header">
+    <?php echo $pageTitle; ?>
+</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <dl class="dl-horizontal">
+    <dt> Module </dt>
+    <dd> <?php echo $module->getLibelle(); ?> </dd>
+    <?php if ($module->getDescription()) : ?>
+        <dt> Description du module </dt>
+        <dd> <?php echo $module->getDescription(); ?> </dd>
+    <?php endif ?>
+    <?php if ($session->getDescription()) : ?>
+        <dt> Description de la session </dt>
+        <dd> <?php echo $session->getDescription(); ?> </dd>
+    <?php endif; ?>
+    <dt> État </dt>
+    <dd> <?php echo $this->etat($session); ?> </dd>
+
+    <dt> Site </dt>
+    <dd> <?php echo $this->site($session); ?> </dd>
+    <dt> Responsable </dt>
+    <dd>
+        <?php if ($session->getResponsable()) : ?>
+            <?php echo $session->getResponsable()->getNomComplet(); ?>
+        <?php else : ?>
+            Aucun responsable
+        <?php endif; ?>
+    </dd>
+    <dt> Modalité </dt>
+    <dd> <?php echo $this->modalite($session); ?> </dd>
+    <dt> Type </dt>
+    <dd> <?php echo $this->type($session); ?> </dd>
+
+    <dt> Liste principale </dt>
+    <dd> <?php echo count($listePrincipaleTrue); ?>/<?php echo $session->getTailleListePrincipale(); ?></dd>
+    <dt> Liste complémentaire </dt>
+    <dd> <?php echo count($listeComplementaireTrue); ?>/<?php echo $session->getTailleListeComplementaire(); ?></dd>
+    <dt> Nombre d'inscription </dt>
+    <dd> <?php echo count($inscrits); ?></dd>
+</dl>
+    </div>
+    <div class="pull-right">
+        <?php if ($canModifierSession) : ?>
+            <?php /** @see \Formation\Controller\SessionController::modifierAction() */?>
+            <a class="btn btn-primary ajax-modal" data-event="modification"
+               href="<?php echo $this->url('formation/session/modifier', ['session' => $session->getId()], [], true); ?>"
+            >
+                <span class="glyphicon glyphicon-pencil"></span>
+                Modifier les informations
+            </a>
+            <?php /** @see \Formation\Controller\SessionController::changerEtatAction() */?>
+            <a class="btn btn-primary ajax-modal" data-event="modification"
+               href="<?php echo $this->url('formation/session/changer-etat', ['session' => $session->getId()], [], true); ?>"
+            >
+                <span class="glyphicon glyphicon-adjust"></span>
+                Changer l'état
+            </a>
+        <?php endif; ?>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2> Formateur </h2>
+    </div>
+    <div class="pull-right">
+        <?php /** @see \Formation\Controller\FormateurController::ajouterAction() */ ?>
+        <a href="<?php echo $this->url('formation/formateur/ajouter', ['session' => $session->getId()], [] , true); ?>"
+           class="btn btn-primary ajax-modal" data-event="modification">
+            <span class="glyphicon glyphicon-plus"></span>
+            Ajouter un·e formateur·trice
+        </a>
+    </div>
+</div>
+
+<ul>
+<?php foreach ($formateurs as $formateur) : ?>
+    <li>
+        <?php echo $formateur->getIndividu()->getNomComplet(); ?>
+        <?php /** @see \Formation\Controller\FormateurController::retirerAction() */ ?>
+        <a href="<?php echo $this->url('formation/formateur/retirer', ['formateur' => $formateur->getId()], [] , true); ?>"
+           title="Retirer le·a formateur·trice" data-toggle="tooltip" data-html="true"
+           class="ajax-modal" data-event="modification"
+        >
+            <span class="glyphicon glyphicon-remove"></span>
+        </a>
+    </li>
+<?php endforeach; ?>
+</ul>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2> Séances </h2>
+    </div>
+    <div class="pull-right">
+        <?php /** @see \Formation\Controller\SeanceController::ajouterAction() */ ?>
+        <a href="<?php echo $this->url('formation/seance/ajouter', ['session' => $session->getId()], [] , true); ?>"
+           class="btn btn-primary ajax-modal" data-event="modification">
+            <span class="glyphicon glyphicon-plus"></span>
+            Ajouter une séance
+        </a>
+        <?php /** @see \Formation\Controller\SessionController::genererEmargementsAction() */ ?>
+        <a href="<?php echo $this->url('formation/session/generer-emargements', ['session' => $session->getId()], [] , true); ?>" target="_blank"
+           class="btn btn-primary">
+            <span class="glyphicon glyphicon-list"></span>
+            Générer les émargements
+        </a>
+    </div>
+</div>
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th> Lieu </th>
+        <th> Jour </th>
+        <th> Début </th>
+        <th> Fin </th>
+        <th> Durée </th>
+        <th> Action </th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($seances as $seance) : ?>
+        <tr>
+            <td> <?php echo $seance->getLieu(); ?> </td>
+            <td> <?php echo $seance->getDebut()->format('d/m/y'); ?> </td>
+            <td> <?php echo $seance->getDebut()->format('H:i'); ?> </td>
+            <td> <?php echo $seance->getFin()->format('H:i'); ?> </td>
+            <td> <?php echo $seance->getDuree(); ?> h. </td>
+            <td>
+                <?php if ($canModifierSeance) : ?>
+                    <?php /** @see \Formation\Controller\SeanceController::modifierAction() */ ?>
+                    <a href="<?php echo $this->url('formation/seance/modifier', ['seance' => $seance->getId()], [], true); ?>"
+                       class="ajax-modal" data-event="modification"
+                       title="Modification de la séance" data-toggle="tooltip" data-html="true"
+                    >
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                <?php endif; ?>
+                <?php if ($canHistoriserSession) : ?>
+                    <?php if ($seance->estNonHistorise()) : ?>
+                        <?php /** @see \Formation\Controller\SeanceController::historiserAction() */ ?>
+                        <a href="<?php echo $this->url('formation/seance/historiser', ['seance' => $seance->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()], [], true)]], true); ?>"
+                           title="Historisation de la séance" data-toggle="tooltip" data-html="true"
+                        >
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    <?php else : ?>
+                        <?php /** @see \Formation\Controller\SeanceController::restaurerAction() */ ?>
+                        <a href="<?php echo $this->url('formation/seance/restaurer', ['seance' => $seance->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()], [], true)]], true); ?>"
+                           title="Restauration de la séance" data-toggle="tooltip" data-html="true"
+                        >
+                            <span class="glyphicon glyphicon-leaf"></span>
+                        </a>
+                    <?php endif; ?>
+                <?php endif; ?>
+                <?php if ($canSupprimerSession) : ?>
+                    <?php /** @see \Formation\Controller\SeanceController::supprimerAction() */ ?>
+                    <a href="<?php echo $this->url('formation/seance/supprimer', ['seance' => $seance->getId()], [], true); ?>"
+                       class="ajax-modal" data-event="modification"
+                       title="Suppression de la séance" data-toggle="tooltip" data-html="true"
+                    >
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                <?php endif; ?>
+                <?php if ($canEmargementSeance) : ?>
+                    <?php /** @see \Formation\Controller\SeanceController::genererEmargementAction() */ ?>
+                    <a href="<?php echo $this->url('formation/seance/generer-emargement', ['seance' => $seance->getId()], [], true); ?>" target="_blank"
+                       title="Générer l'émargement de la séance" data-toggle="tooltip" data-html="true"
+                    >
+                        <span class="glyphicon glyphicon-list"></span>
+                    </a>
+                <?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2> Inscriptions et listes </h2>
+    </div>
+    <div class="pull-right">
+        <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
+        <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId()], [] , true); ?>"
+           class="btn btn-primary ajax-modal" data-event="modification">
+            <span class="glyphicon glyphicon-pencil"></span>
+            Inscrit un·e doctorant·e
+        </a>
+
+        <?php /** @see \Formation\Controller\SessionController::classerInscriptionsAction() */ ?>
+        <a href="<?php echo $this->url('formation/session/classer-inscriptions', ['session' => $session->getId()], [] , true); ?>"
+           class="btn btn-primary">
+            <span class="glyphicon glyphicon-indent-left"></span>
+            Classer les inscrits
+        </a>
+
+        <?php /** @see \Formation\Controller\SessionController::declasserInscriptionsAction() */ ?>
+        <a href="<?php echo $this->url('formation/session/declasser-inscriptions', ['session' => $session->getId()], [] , true); ?>"
+           class="btn btn-primary">
+            <span class="glyphicon glyphicon-indent-right"></span>
+            Déclasser les inscrits
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h3>
+            Listes des inscrits (non classés)
+            <span class="badge">
+                <?php echo count($listeNonClassee); ?>
+            </span>
+        </h3>
+
+        <ul>
+        <?php foreach ($listeNonClassee as $inscrit) : ?>
+            <?php echo $this->inscription($inscrit, []); ?>
+            <?php endforeach; ?>
+        </ul>
+
+    </div>
+    <div class="col-md-4">
+        <h3>
+            Liste principale
+            <span class="badge">
+                <?php echo count($listePrincipaleTrue); ?>
+            </span>
+        </h3>
+
+        <ul>
+        <?php foreach ($listePrincipale as $inscription) : ?>
+            <?php echo $this->inscription($inscription, ['action-liste-principale' => false]); ?>
+        <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <div class="col-md-4">
+        <h3>
+            Liste complémentaire
+            <span class="badge">
+                <?php echo count($listeComplementaireTrue); ?>
+            </span>
+        </h3>
+
+        <ul>
+            <?php foreach ($listeComplementaire as $inscription) : ?>
+                <?php echo $this->inscription($inscription, ['action-liste-complementaire' => false]); ?>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</div>
+
+<h2> Présences aux scéances</h2>
+
+<?php echo $this->partial('formation/presence/renseigner-presences', ['session' => $session, 'presences' => $presences, 'titre' => false], [], true); ?>
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>
+
+

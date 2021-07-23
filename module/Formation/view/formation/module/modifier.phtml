@@ -1,0 +1,78 @@
+<?php
+/**
+ * @var ModuleForm $form
+ */
+
+use Formation\Form\Module\ModuleForm;
+
+?>
+
+<h2> Information sur la formation </h2>
+
+<?php
+echo $this->form()->openTag($form);
+?>
+
+<?php echo $this->formControlGroup($form->get('libelle')); ?>
+<?php echo $this->formControlGroup($form->get('description')); ?>
+
+<h2> Valeur par défaut des sessions de cette formation </h2>
+
+<?php echo $this->formControlGroup($form->get('site')); ?>
+<?php echo $this->formControlGroup($form->get('responsable')); ?>
+<?php echo $this->formControlGroup($form->get('modalite')); ?>
+<?php echo $this->formControlGroup($form->get('type')); ?>
+<?php echo $this->formControlGroup($form->get('type_structure')); ?>
+<?php echo $this->formControlGroup($form->get('taille_liste_principale')); ?>
+<?php echo $this->formControlGroup($form->get('taille_liste_complementaire')); ?>
+
+<?php echo $this->formControlGroup($form->get('bouton')); ?>
+
+<?php echo $this->form()->closeTag(); ?>
+
+<p class="lead alert alert-warning">Ajouter JS pour masquer sutrcture lorsque pas necessaire</p>
+<script>
+    function updateType() {
+        console.log('here');
+        let val =  $('select#type').val();
+        console.log(val);
+        if (val === 'S') {
+            $('button[data_id=type_structure]').show();
+            $('select#type_structure').show();
+            $('label[for=type_structure]').show();
+        } else {
+            $('button[data_id=type_structure]').hide();
+            $('select#type_structure').hide();
+            $('label[for=type_structure]').hide();
+        }
+    }
+
+
+
+    $(document).ready(function() {
+        // updateType();
+        tinymce.remove();
+        tinymce.init({
+            selector: '.tinymce',
+            toolbar: 'newdocument undo redo | bold italic removeformat | bullist',
+            resize: true,
+            language: 'fr_FR',
+            plugins: 'lists',
+            statusbar: true,
+            browser_spellcheck : true,
+            branding: false,
+            menu: {},
+            body_id: 'description',
+            setup: function (editor) {
+                editor.on("focusout", function () {
+                    console.log(tinymce.get('description').getContent());
+                    $('textarea').val(tinymce.get('description').getContent());
+                });
+            }
+        });
+        $('select').selectpicker();
+        // $('select#type').change(function() {
+        //     updateType();
+        // });
+    });
+</script>

@@ -178,4 +178,17 @@ class EtablissementService extends BaseService
             throw new RuntimeException("Erreur lors de l'enregistrement de l'Etablissement", null, $e);
         }
     }
+
+    /**
+     * @return array
+     */
+    public function getEtablissementInscriptionAsOption() : array
+    {
+        $etablissements = $this->getRepository()->findAllEtablissementsInscriptions();
+        $array = [];
+        foreach ($etablissements as $etablissement) {
+            $array[$etablissement->getId()] = $etablissement->getLibelle();
+        }
+        return $array;
+    }
 }
