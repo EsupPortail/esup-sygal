@@ -9,6 +9,7 @@ use Formation\Form\Seance\SeanceFormFactory;
 use Formation\Form\Seance\SeanceHydrator;
 use Formation\Form\Seance\SeanceHydratorFactory;
 use Formation\Provider\Privilege\IndexPrivileges;
+use Formation\Provider\Privilege\SeancePrivileges;
 use Formation\Service\Seance\SeanceService;
 use Formation\Service\Seance\SeanceServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -23,15 +24,55 @@ return [
                     'controller' => SeanceController::class,
                     'action' => [
                         'index',
-                        'ajouter',
-                        'modifier',
-                        'historiser',
-                        'restaurer',
-                        'supprimer',
+                    ],
+                    'privileges' => [
+                        SeancePrivileges::SEANCE_INDEX,
+                    ],
+                ],
+                [
+                    'controller' => SeanceController::class,
+                    'action' => [
                         'generer-emargement',
                     ],
                     'privileges' => [
-                        IndexPrivileges::INDEX_AFFICHER,
+                        SeancePrivileges::SEANCE_AFFICHER,
+                    ],
+                ],
+                [
+                    'controller' => SeanceController::class,
+                    'action' => [
+                        'ajouter',
+                    ],
+                    'privileges' => [
+                        SeancePrivileges::SEANCE_AJOUTER,
+                    ],
+                ],
+                [
+                    'controller' => SeanceController::class,
+                    'action' => [
+                        'modifier',
+                    ],
+                    'privileges' => [
+                        SeancePrivileges::SEANCE_MODIFIER,
+                    ],
+                ],
+                [
+                    'controller' => SeanceController::class,
+                    'action' => [
+                        'historiser',
+                        'restaurer',
+                    ],
+                    'privileges' => [
+                        SeancePrivileges::SEANCE_HISTORISER,
+                    ],
+                ],
+                [
+                    'controller' => SeanceController::class,
+                    'action' => [
+                        'supprimer',
+                    ],
+                    'privileges' => [
+                        SeancePrivileges::SEANCE_SUPPRIMER,
                     ],
                 ],
             ],

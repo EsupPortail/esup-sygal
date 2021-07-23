@@ -44,28 +44,31 @@ $session = $inscription->getSession();
                     href="<?php echo $this->url('formation/inscription/passer-liste-principale', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
                     title="Passer <?php echo $doctorant->getIndividu()->getNomComplet(); ?> en liste principale" data-toggle="tooltip" data-html="true"
             >
-                <strong>P</strong>
-            </a>
+                <strong>P</strong></a>
         <?php endif; ?>
         <?php if ($actionListeComplementaire) : ?>
         <a <?php /** @see \Formation\Controller\InscriptionController::passerListeComplementaireAction() */?>
                 href="<?php echo $this->url('formation/inscription/passer-liste-complementaire', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
                 title="Passer <?php echo $doctorant->getIndividu()->getNomComplet(); ?> en liste complémentaire" data-toggle="tooltip" data-html="true"
         >
-            <strong>C</strong>
-        </a>
+            <strong>C</strong></a>
+        <?php endif; ?>
+        <?php if (($actionListePrincipale OR $actionListeComplementaire) AND $inscription->getListe()) : ?>
+            <a <?php /** @see \Formation\Controller\InscriptionController::retirerListeAction() */?>
+                    href="<?php echo $this->url('formation/inscription/retirer-liste', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
+                    title="Retirer des liste l'inscription de  <?php echo $doctorant->getIndividu()->getNomComplet(); ?>" data-toggle="tooltip" data-html="true"
+            >
+                <strong>∅</strong></a>
         <?php endif; ?>
         <?php if ($actionHistoriser) : ?>
             <?php if ($inscription->estNonHistorise()) : ?>
                 <?php /** @see \Formation\Controller\InscriptionController::historiserAction() */ ?>
                 <a href="<?php echo $this->url('formation/inscription/historiser', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>">
-                    <span class="glyphicon glyphicon-trash"></span>
-                </a>
+                    <span class="glyphicon glyphicon-trash"></span></a>
             <?php else : ?>
                 <?php /** @see \Formation\Controller\InscriptionController::restaurerAction() */ ?>
                 <a href="<?php echo $this->url('formation/inscription/restaurer', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>">
-                    <span class="glyphicon glyphicon-leaf"></span>
-                </a>
+                    <span class="glyphicon glyphicon-leaf"></span></a>
             <?php endif; ?>
         <?php endif; ?>
         <?php if ($actionSupprimer) : ?>
@@ -73,8 +76,7 @@ $session = $inscription->getSession();
             <a href="<?php echo $this->url('formation/inscription/supprimer', ['inscription' => $inscription->getId()], [], true); ?>"
                class="ajax-modal" data-event="modification"
             >
-                <span class="glyphicon glyphicon-remove"></span>
-            </a>
+                <span class="glyphicon glyphicon-remove"></span></a>
         <?php endif; ?>
     <?php endif; ?>
 </li>

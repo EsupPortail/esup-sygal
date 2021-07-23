@@ -1,2 +1,0 @@
-INSERT INTO CATEGORIE_PRIVILEGE (ID, CODE, LIBELLE, ORDRE) VALUES (4000, 'formation', 'Module de formation', 3000);
-INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (800, 4000, 'index', 'Accès à l''index du module de formation',1);

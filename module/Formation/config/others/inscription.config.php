@@ -5,6 +5,7 @@ namespace Formation;
 use Formation\Controller\InscriptionController;
 use Formation\Controller\InscriptionControllerFactory;
 use Formation\Provider\Privilege\IndexPrivileges;
+use Formation\Provider\Privilege\InscriptionPrivileges;
 use Formation\Service\Inscription\InscriptionService;
 use Formation\Service\Inscription\InscriptionServiceFactory;
 use Formation\View\Helper\InscriptionViewHelper;
@@ -20,17 +21,66 @@ return [
                     'controller' => InscriptionController::class,
                     'action' => [
                         'index',
+                    ],
+                    'privileges' => [
+                        InscriptionPrivileges::INSCRIPTION_INDEX,
+                    ],
+                ],
+                [
+                    'controller' => InscriptionController::class,
+                    'action' => [
                         'ajouter',
-                        'historiser',
-                        'restaurer',
-                        'supprimer',
+                    ],
+                    'privileges' => [
+                        InscriptionPrivileges::INSCRIPTION_AJOUTER,
+                    ],
+                ],
+                [
+                    'controller' => InscriptionController::class,
+                    'action' => [
                         'passer-liste-principale',
                         'passer-liste-complementaire',
+                        'retirer-liste',
+                    ],
+                    'privileges' => [
+                        InscriptionPrivileges::INSCRIPTION_MODIFIER,
+                    ],
+                ],
+                [
+                    'controller' => InscriptionController::class,
+                    'action' => [
+                        'historiser',
+                        'restaurer',
+                    ],
+                    'privileges' => [
+                        InscriptionPrivileges::INSCRIPTION_HISTORISER,
+                    ],
+                ],
+                [
+                    'controller' => InscriptionController::class,
+                    'action' => [
+                        'supprimer',
+                    ],
+                    'privileges' => [
+                        InscriptionPrivileges::INSCRIPTION_SUPPRIMER,
+                    ],
+                ],
+                [
+                    'controller' => InscriptionController::class,
+                    'action' => [
                         'generer-convocation',
+                    ],
+                    'privileges' => [
+                        InscriptionPrivileges::INSCRIPTION_CONVOCATION,
+                    ],
+                ],
+                [
+                    'controller' => InscriptionController::class,
+                    'action' => [
                         'generer-attestation',
                     ],
                     'privileges' => [
-                        IndexPrivileges::INDEX_AFFICHER,
+                        InscriptionPrivileges::INSCRIPTION_ATTESTATION,
                     ],
                 ],
             ],
@@ -137,7 +187,17 @@ return [
                                     ],
                                 ],
                             ],
-
+                            'retirer-liste' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/retirer-liste/:inscription',
+                                    'defaults' => [
+                                        'controller' => InscriptionController::class,
+                                        'action'     => 'retirer-liste',
+                                    ],
+                                ],
+                            ],
                             'generer-convocation' => [
                                 'type'  => Segment::class,
                                 'may_terminate' => true,

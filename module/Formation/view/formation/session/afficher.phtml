@@ -3,6 +3,9 @@
 use Formation\Entity\Db\Formateur;use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
+use Formation\Provider\Privilege\InscriptionPrivileges;
+use Formation\Provider\Privilege\SeancePrivileges;
+use Formation\Provider\Privilege\SessionPrivileges;
 
 /**
  * @see \Formation\Controller\SessionController::afficherAction()
@@ -22,18 +25,20 @@ usort($formateurs, function (Formateur $a, Formateur $b) { return $a->getIndivid
 $pageTitle = 'Affichage de la Session : ' . $module->getLibelle() . ' #'.$session->getIndex();
 $this->headTitle($pageTitle);
 
-$canModifier = true;
-$canHistoriser = true;
-$canSupprimer = true;
+$canModifierSession     = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_MODIFIER));
+$canHistoriserSession   = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_HISTORISER));
+$canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_SUPPRIMER));
 
-$canModifierSeance = true;
-$canHistoriserSeance = true;
-$canSupprimerSeance = true;
-$canEmargementSeance = true;
+$canModifierSeance      = $this->isAllowed(SeancePrivileges::getResourceId(SeancePrivileges::SEANCE_MODIFIER));
+$canHistoriserSeance    = $this->isAllowed(SeancePrivileges::getResourceId(SeancePrivileges::SEANCE_HISTORISER));
+$canSupprimerSeance     = $this->isAllowed(SeancePrivileges::getResourceId(SeancePrivileges::SEANCE_SUPPRIMER));
 
-$canModifierInscription = true;
-$canHistoriserInscription = true;
-$canSupprimerInscription = true;
+$canEmargementSeance    = ($this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AFFICHER))
+                       OR  $this->isAllowed(SeancePrivileges::getResourceId(SeancePrivileges::SEANCE_AFFICHER)) );
+
+$canModifierInscription     = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_MODIFIER));
+$canHistoriserInscription   = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_HISTORISER));
+$canSupprimerInscription    = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_SUPPRIMER));
 
 /** @var Inscription[] $inscrits */
 $inscrits = $session->getInscriptions()->toArray();
@@ -88,7 +93,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
 </dl>
     </div>
     <div class="pull-right">
-        <?php if ($canModifier) : ?>
+        <?php if ($canModifierSession) : ?>
             <?php /** @see \Formation\Controller\SessionController::modifierAction() */?>
             <a class="btn btn-primary ajax-modal" data-event="modification"
                href="<?php echo $this->url('formation/session/modifier', ['session' => $session->getId()], [], true); ?>"
@@ -185,7 +190,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
                         <span class="glyphicon glyphicon-pencil"></span>
                     </a>
                 <?php endif; ?>
-                <?php if ($canHistoriser) : ?>
+                <?php if ($canHistoriserSession) : ?>
                     <?php if ($seance->estNonHistorise()) : ?>
                         <?php /** @see \Formation\Controller\SeanceController::historiserAction() */ ?>
                         <a href="<?php echo $this->url('formation/seance/historiser', ['seance' => $seance->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()], [], true)]], true); ?>"
@@ -202,7 +207,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
                         </a>
                     <?php endif; ?>
                 <?php endif; ?>
-                <?php if ($canSupprimer) : ?>
+                <?php if ($canSupprimerSession) : ?>
                     <?php /** @see \Formation\Controller\SeanceController::supprimerAction() */ ?>
                     <a href="<?php echo $this->url('formation/seance/supprimer', ['seance' => $seance->getId()], [], true); ?>"
                        class="ajax-modal" data-event="modification"

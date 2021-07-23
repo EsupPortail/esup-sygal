@@ -9,6 +9,7 @@ use Formation\Form\Session\SessionFormFactory;
 use Formation\Form\Session\SessionHydrator;
 use Formation\Form\Session\SessionHydratorFactory;
 use Formation\Provider\Privilege\IndexPrivileges;
+use Formation\Provider\Privilege\SessionPrivileges;
 use Formation\Service\Session\SessionService;
 use Formation\Service\Session\SessionServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -23,20 +24,67 @@ return [
                     'controller' => SessionController::class,
                     'action' => [
                         'index',
+                    ],
+                    'privileges' => [
+                        SessionPrivileges::SESSION_INDEX,
+                    ],
+                ],
+                [
+                    'controller' => SessionController::class,
+                    'action' => [
                         'afficher',
-                        'ajouter',
-                        'modifier',
-                        'historiser',
-                        'restaurer',
-                        'supprimer',
-
-                        'changer-etat',
-                        'classer-inscriptions',
-                        'declasser-inscriptions',
                         'generer-emargements',
                     ],
                     'privileges' => [
-                        IndexPrivileges::INDEX_AFFICHER,
+                        SessionPrivileges::SESSION_AFFICHER,
+                    ],
+                ],
+                [
+                    'controller' => SessionController::class,
+                    'action' => [
+                        'ajouter',
+                    ],
+                    'privileges' => [
+                        SessionPrivileges::SESSION_AJOUTER,
+                    ],
+                ],
+                [
+                    'controller' => SessionController::class,
+                    'action' => [
+                        'modifier',
+                        'changer-etat',
+                    ],
+                    'privileges' => [
+                        SessionPrivileges::SESSION_MODIFIER,
+                    ],
+                ],
+                [
+                    'controller' => SessionController::class,
+                    'action' => [
+                        'historiser',
+                        'supprimer',
+                    ],
+                    'privileges' => [
+                        SessionPrivileges::SESSION_HISTORISER,
+                    ],
+                ],
+                [
+                    'controller' => SessionController::class,
+                    'action' => [
+                        'supprimer',
+                    ],
+                    'privileges' => [
+                        SessionPrivileges::SESSION_SUPPRIMER,
+                    ],
+                ],
+                [
+                    'controller' => SessionController::class,
+                    'action' => [
+                        'classer-inscriptions',
+                        'declasser-inscriptions',
+                    ],
+                    'privileges' => [
+                        SessionPrivileges::SESSION_INSCRIPTION,
                     ],
                 ],
             ],

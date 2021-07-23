@@ -180,6 +180,19 @@ class InscriptionController extends AbstractController
         return $this->redirect()->toRoute('formation/inscription',[],[], true);
     }
 
+    public function retirerListeAction()
+    {
+        /** @var Inscription|null $inscription */
+        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
+        $retour = $this->params()->fromQuery('retour');
+
+        $inscription->setListe(null);
+        $this->getInscriptionService()->update($inscription);
+
+        if ($retour) return $this->redirect()->toUrl($retour);
+        return $this->redirect()->toRoute('formation/inscription',[],[], true);
+    }
+
     public function genererConvocationAction()
     {
         /** @var Inscription|null $inscription */

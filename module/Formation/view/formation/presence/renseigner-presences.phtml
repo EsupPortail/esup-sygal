@@ -11,6 +11,8 @@ use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
 use Formation\Entity\Db\Presence;
+use Formation\Provider\Privilege\SeancePrivileges;
+use Formation\Provider\Privilege\SessionPrivileges;
 
 /** @var Seance[] $seances */
 $seances = $session->getSeances()->toArray();
@@ -19,7 +21,7 @@ usort($seances, function(Seance $a, Seance $b) { return $a->getDebut() > $b->get
 $inscriptions = $session->getListePrincipale();
 usort($inscriptions, function(Inscription $a, Inscription $b) { return $a->getDoctorant()->getIndividu()->getNomComplet() > $b->getDoctorant()->getIndividu()->getNomComplet();});
 
-$canPresenceModifier = true;
+$canPresenceModifier = $this->isAllowed(SeancePrivileges::getResourceId(SeancePrivileges::SEANCE_PRESENCE));
 
 $titrePage= " Présences pour la formation : " . $session->getModule()->getLibelle() . " #" . $session->getIndex();
 $this->headTitle($titrePage);

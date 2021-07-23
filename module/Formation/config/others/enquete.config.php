@@ -13,7 +13,7 @@ use Formation\Form\EnqueteReponse\EnqueteReponseForm;
 use Formation\Form\EnqueteReponse\EnqueteReponseFormFactory;
 use Formation\Form\EnqueteReponse\EnqueteReponseHydrator;
 use Formation\Form\EnqueteReponse\EnqueteReponseHydratorFactory;
-use Formation\Provider\Privilege\IndexPrivileges;
+use Formation\Provider\Privilege\EnquetePrivileges;
 use Formation\Service\EnqueteQuestion\EnqueteQuestionService;
 use Formation\Service\EnqueteQuestion\EnqueteQuestionServiceFactory;
 use Formation\Service\EnqueteReponse\EnqueteReponseService;
@@ -30,18 +30,64 @@ return [
                     'controller' => EnqueteController::class,
                     'action' => [
                         'afficher-questions',
+                    ],
+                    'privileges' => [
+                        EnquetePrivileges::ENQUETE_QUESTION_AFFICHER,
+                    ],
+                ],
+                [
+                    'controller' => EnqueteController::class,
+                    'action' => [
                         'ajouter-question',
+                    ],
+                    'privileges' => [
+                        EnquetePrivileges::ENQUETE_QUESTION_AJOUTER,
+                    ],
+                ],
+                [
+                    'controller' => EnqueteController::class,
+                    'action' => [
                         'modifier-question',
+                    ],
+                    'privileges' => [
+                        EnquetePrivileges::ENQUETE_QUESTION_MODIFIER,
+                    ],
+                ],
+                [
+                    'controller' => EnqueteController::class,
+                    'action' => [
                         'historiser-question',
                         'restaurer-question',
+                    ],
+                    'privileges' => [
+                        EnquetePrivileges::ENQUETE_QUESTION_HISTORISER,
+                    ],
+                ],
+                [
+                    'controller' => EnqueteController::class,
+                    'action' => [
                         'supprimer-question',
-
+                    ],
+                    'privileges' => [
+                        EnquetePrivileges::ENQUETE_QUESTION_SUPPRIMER,
+                    ],
+                ],
+                [
+                    'controller' => EnqueteController::class,
+                    'action' => [
                         'afficher-resultats',
-
+                    ],
+                    'privileges' => [
+                        EnquetePrivileges::ENQUETE_REPONSE_RESULTAT,
+                    ],
+                ],
+                [
+                    'controller' => EnqueteController::class,
+                    'action' => [
                         'repondre-questions',
                     ],
                     'privileges' => [
-                        IndexPrivileges::INDEX_AFFICHER,
+                        EnquetePrivileges::ENQUETE_REPONSE_REPONDRE,
                     ],
                 ],
             ],

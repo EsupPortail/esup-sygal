@@ -6,12 +6,14 @@
  */
 
 use Formation\Entity\Db\Inscription;
+use Formation\Provider\Privilege\InscriptionPrivileges;
+use Formation\Provider\Privilege\SessionPrivileges;
 
 
-$canVoirSession = true;
+$canVoirSession     = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AFFICHER));
 
-$canHistoriser = true;
-$canSupprimer = true;
+$canHistoriserInscription      = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_HISTORISER));
+$canSupprimerInscription       = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_SUPPRIMER));
 ?>
 
 <h1> Index des inscriptions </h1>

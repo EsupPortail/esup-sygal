@@ -1,6 +1,7 @@
 <?php
 
 use Formation\Entity\Db\EnqueteQuestion;
+use Formation\Provider\Privilege\EnquetePrivileges;
 
 /**
  * @see \Formation\Controller\EnqueteController::afficherQuestionsAction()
@@ -9,10 +10,11 @@ use Formation\Entity\Db\EnqueteQuestion;
 
 $this->headTitle("Liste des questions de l'enquête");
 
-$canModifierQuestion = true;
-$canHistoriserQuestion = true;
-$canSupprimerQuestion = true;
-$canAjouterQuestion = true;
+$canAjouterQuestion     = $this->isAllowed(EnquetePrivileges::getResourceId(EnquetePrivileges::ENQUETE_QUESTION_AJOUTER));
+$canModifierQuestion    = $this->isAllowed(EnquetePrivileges::getResourceId(EnquetePrivileges::ENQUETE_QUESTION_MODIFIER));
+$canHistoriserQuestion  = $this->isAllowed(EnquetePrivileges::getResourceId(EnquetePrivileges::ENQUETE_QUESTION_HISTORISER));
+$canSupprimerQuestion   = $this->isAllowed(EnquetePrivileges::getResourceId(EnquetePrivileges::ENQUETE_QUESTION_SUPPRIMER));
+
 ?>
 
 <h1 class="page-header">

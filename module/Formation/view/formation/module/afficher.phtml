@@ -3,6 +3,8 @@
 use Formation\Entity\Db\Module;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
+use Formation\Provider\Privilege\ModulePrivileges;
+use Formation\Provider\Privilege\SessionPrivileges;
 
 /**
  * @see \Formation\Controller\ModuleController::afficherAction()
@@ -12,14 +14,12 @@ use Formation\Entity\Db\Session;
 $pageTitle = 'Affichage du module : ' . $module->getLibelle();
 $this->headTitle($pageTitle);
 
-$canModifier = true;
-$canHistoriser = true;
-$canSupprimer = true;
+$canModifierModule      = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_MODIFIER));
 
-$canAfficherSession = true;
-$canModifierSession = true;
-$canHistoriserSession = true;
-$canSupprimerSession = true;
+$canAfficherSession     = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AFFICHER));
+$canAjouterSession      = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AJOUTER));
+$canHistoriserSession   = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_HISTORISER));
+$canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_SUPPRIMER));
 
 /** @var Session[] $sessions */
 $sessions = $module->getSessions()->toArray();
@@ -75,7 +75,7 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
     </div>
 
     <div class="pull-right">
-        <?php if ($canModifier) : ?>
+        <?php if ($canModifierModule) : ?>
             <?php /** @see \Formation\Controller\ModuleController::modifierAction() */?>
             <a class="btn btn-primary ajax-modal" data-event="modification"
                href="<?php echo $this->url('formation/module/modifier', ['module' => $module->getId()], [], true); ?>"
@@ -92,7 +92,7 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
         <h2> Liste des sessions </h2>
     </div>
     <div class="pull-right">
-        <?php if ($canModifierSession) : ?>
+        <?php if ($canAjouterSession) : ?>
             <?php /** @see \Formation\Controller\SessionController::ajouterAction() */ ?>
             <a href="<?php echo $this->url('formation/session/ajouter', ['module' => $module->getId()], [], true); ?>"
                class="btn btn-primary ajax-modal" data-event="modification"
@@ -132,7 +132,7 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
             </td>
             <td> <?php echo $this->modalite($session); ?> </td>
             <td> <?php echo $this->type($session); ?> </td>
-            <td> <?php echo $session->getEtat(); ?> </td>
+            <td> <?php echo $this->etat($session); ?></td>
             <td>
                 <?php echo count($session->getSeances()); ?>
                 séance<?php if (count($session->getSeances())>1) echo "s"; ?>

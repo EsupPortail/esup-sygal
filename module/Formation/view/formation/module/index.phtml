@@ -6,18 +6,19 @@
  */
 
 use Formation\Entity\Db\Module;
+use Formation\Provider\Privilege\ModulePrivileges;
 
-$canAjouter = true;
-$canAjouterSession = true;
-$canModifier = true;
-$canHistoriser = true;
-$canSupprimer = true;
+$canAfficherModule      = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_AFFICHER));
+$canAjouterModule       = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_AJOUTER));
+$canHistoriserModule    = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_HISTORISER));
+$canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_SUPPRIMER));
+
 ?>
 
 <h1> Index des formations </h1>
 
 
-<?php if ($canAjouter) : ?>
+<?php if ($canAjouterModule) : ?>
     <a
         <?php /** @see \Formation\Controller\ModuleController::ajouterAction() */ ?>
         href="<?php echo $this->url('formation/module/ajouter', [], [], true); ?>"
@@ -31,7 +32,6 @@ $canSupprimer = true;
 <table class="table table-condensed">
     <thead>
         <tr>
-<!--            <th>Identifiant</th>-->
             <th>Libellé</th>
             <th>Site<span title="valeur par défaut">*</span></th>
             <th>Responsable<span title="valeur par défaut">*</span></th>
@@ -45,7 +45,6 @@ $canSupprimer = true;
     <tbody>
     <?php foreach ($modules as $module) : ?>
         <tr>
-<!--            <td> --><?php //echo $formation->getId(); ?><!-- </td>-->
             <td>
                 <?php echo $module->getLibelle(); ?>
                 <?php if ($module->getDescription() !== null AND trim($module->getDescription()) !== null) : ?>
@@ -76,7 +75,7 @@ $canSupprimer = true;
                 <?php echo count($module->getSessions()); ?>
             </td>
             <td>
-                <?php if ($canModifier) : ?>
+                <?php if ($canAfficherModule) : ?>
                     <?php /** @see \Formation\Controller\ModuleController::afficherAction() */ ?>
                     <a href="<?php echo $this->url('formation/module/afficher', ['module' => $module->getId()], [], true); ?>"
                        title="afficher le module de  formation #<?php echo $module->getId(); ?>"
@@ -84,10 +83,7 @@ $canSupprimer = true;
                         <span class="glyphicon glyphicon-eye-open"></span>
                     </a>
                 <?php endif; ?>
-
-
-
-                <?php if ($canHistoriser) : ?>
+                <?php if ($canHistoriserModule) : ?>
                     <?php if ($module->estNonHistorise()) : ?>
                         <?php /** @see \Formation\Controller\FormationController::historiserAction() */ ?>
                         <a href="<?php echo $this->url('formation/module/historiser', ['module' => $module->getId()], [], true); ?>"
@@ -105,7 +101,7 @@ $canSupprimer = true;
                     <?php endif; ?>
                 <?php endif; ?>
 
-                <?php if ($canSupprimer) : ?>
+                <?php if ($canSupprimerModule) : ?>
                     <?php /** @see \Formation\Controller\ModuleController::supprimerAction() */?>
                     <a href="<?php echo $this->url('formation/module/supprimer',['module' => $module->getId()], [], true); ?>"
                        class="ajax-modal" data-event="modification"

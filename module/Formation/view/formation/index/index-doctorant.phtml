@@ -12,6 +12,8 @@ use Application\Entity\Db\Doctorant;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
+use Formation\Provider\Privilege\EnquetePrivileges;
+use Formation\Provider\Privilege\InscriptionPrivileges;
 
 $this->headTitle('Mes formations');
 
@@ -28,6 +30,12 @@ foreach ($inscriptions as $inscription) {
     }
 }
 $terminees = array_filter($terminees, function (Inscription $a) { return $a->getListe() === Inscription::LISTE_PRINCIPALE; });
+
+$canAjouterInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_AJOUTER));
+$canSupprimerInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_SUPPRIMER));
+$canConvocationInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_CONVOCATION));
+$canRepondreEnquete = $this->isAllowed(EnquetePrivileges::getResourceId(EnquetePrivileges::ENQUETE_REPONSE_REPONDRE));
+$canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_ATTESTATION));
 ?>
 
 <h1 class="page-header">
@@ -80,12 +88,14 @@ $terminees = array_filter($terminees, function (Inscription $a) { return $a->get
             <td>
                 <?php $inscrit = $session->estInscrit($doctorant); ?>
                 <?php if ($session->getEtat()->getCode() === Etat::CODE_OUVERTE AND !$inscrit) : ?>
-                    <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
-                    <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId(), 'doctorant' => $doctorant->getId()], ['query' => ['retour' => $this->url('formation/index-doctorant', [], [], true)]], true); ?>"
-                    >
-                    <span class="glyphicon glyphicon-plus"
-                          title="M'inscrire" data-toggle="tooltip" data-html="true"
-                    ></span></a>
+                    <?php if ($canAjouterInscription) : ?>
+                        <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
+                        <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId(), 'doctorant' => $doctorant->getId()], ['query' => ['retour' => $this->url('formation/index-doctorant', [], [], true)]], true); ?>"
+                        >
+                        <span class="glyphicon glyphicon-plus"
+                              title="M'inscrire" data-toggle="tooltip" data-html="true"
+                        ></span></a>
+                    <?php endif; ?>
                 <?php else: ?>
                     <?php if ($inscrit) : ?>
                         <span class="glyphicon glyphicon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
@@ -137,18 +147,22 @@ $terminees = array_filter($terminees, function (Inscription $a) { return $a->get
                 <?php endif; ?>
             </td>
             <td>
-                <?php /** @see \Formation\Controller\InscriptionController::supprimerAction() */ ?>
-                <a href="<?php echo $this->url('formation/inscription/supprimer', ['inscription' => $inscription->getId()], [], true); ?>"
-                   class="ajax-modal" data-event="modification"
-                >
-                <span class="glyphicon glyphicon-remove"
-                      title="Annuler mon inscription" data-toggle="tooltip" data-html="true"
-                ></span></a>
-                <?php /** @see \Formation\Controller\InscriptionController::genererConvocationAction() */?>
-                <a href="<?php echo $this->url('formation/inscription/generer-convocation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
-                <span class="glyphicon glyphicon-share"
-                      title="Télécharger la convocation" data-toggle="tooltip" data-html="true"
-                ></span></a>
+                <?php if ($canSupprimerInscription) : ?>
+                    <?php /** @see \Formation\Controller\InscriptionController::supprimerAction() */ ?>
+                    <a href="<?php echo $this->url('formation/inscription/supprimer', ['inscription' => $inscription->getId()], [], true); ?>"
+                       class="ajax-modal" data-event="modification"
+                    >
+                    <span class="glyphicon glyphicon-remove"
+                          title="Annuler mon inscription" data-toggle="tooltip" data-html="true"
+                    ></span></a>
+                <?php endif; ?>
+                <?php if ($canConvocationInscription) : ?>
+                    <?php /** @see \Formation\Controller\InscriptionController::genererConvocationAction() */?>
+                    <a href="<?php echo $this->url('formation/inscription/generer-convocation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
+                    <span class="glyphicon glyphicon-share"
+                          title="Télécharger la convocation" data-toggle="tooltip" data-html="true"
+                    ></span></a>
+                <?php endif; ?>
             </td>
         </tr>
     <?php endforeach; ?>
@@ -200,16 +214,20 @@ $terminees = array_filter($terminees, function (Inscription $a) { return $a->get
                 Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
             </td>
             <td>
-                <?php /** @see \Formation\Controller\EnqueteController::repondreQuestionsAction() */?>
-                <a href="<?php echo $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true); ?>">
-                <span class="glyphicon glyphicon-edit"
-                      title="Compléter l'enquête" data-toggle="tooltip" data-html="true"
-                ></span></a>
-                <?php /** @see \Formation\Controller\InscriptionController::genererAttestationAction() */?>
-                <a href="<?php echo $this->url('formation/inscription/generer-attestation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
-                <span class="glyphicon glyphicon-check"
-                      title="Télécharger l'attestation" data-toggle="tooltip" data-html="true"
-                ></span></a>
+                <?php if ($canRepondreEnquete) : ?>
+                    <?php /** @see \Formation\Controller\EnqueteController::repondreQuestionsAction() */?>
+                    <a href="<?php echo $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true); ?>">
+                    <span class="glyphicon glyphicon-edit"
+                          title="Compléter l'enquête" data-toggle="tooltip" data-html="true"
+                    ></span></a>
+                <?php endif; ?>
+                <?php if ($canAttestationInscription) : ?>
+                    <?php /** @see \Formation\Controller\InscriptionController::genererAttestationAction() */?>
+                    <a href="<?php echo $this->url('formation/inscription/generer-attestation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
+                    <span class="glyphicon glyphicon-check"
+                          title="Télécharger l'attestation" data-toggle="tooltip" data-html="true"
+                    ></span></a>
+                <?php endif; ?>
             </td>
         </tr>
     <?php endforeach; ?>

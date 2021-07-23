@@ -9,6 +9,7 @@ use Formation\Form\Module\ModuleFormFactory;
 use Formation\Form\Module\ModuleHydrator;
 use Formation\Form\Module\ModuleHydratorFactory;
 use Formation\Provider\Privilege\IndexPrivileges;
+use Formation\Provider\Privilege\ModulePrivileges;
 use Formation\Service\Module\ModuleService;
 use Formation\Service\Module\ModuleServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -23,15 +24,55 @@ return [
                     'controller' => ModuleController::class,
                     'action' => [
                         'index',
+                    ],
+                    'privileges' => [
+                        ModulePrivileges::MODULE_INDEX,
+                    ],
+                ],
+                [
+                    'controller' => ModuleController::class,
+                    'action' => [
                         'afficher',
+                    ],
+                    'privileges' => [
+                        ModulePrivileges::MODULE_AFFICHER,
+                    ],
+                ],
+                [
+                    'controller' => ModuleController::class,
+                    'action' => [
                         'ajouter',
+                    ],
+                    'privileges' => [
+                        ModulePrivileges::MODULE_AJOUTER,
+                    ],
+                ],
+                [
+                    'controller' => ModuleController::class,
+                    'action' => [
                         'modifier',
+                    ],
+                    'privileges' => [
+                        ModulePrivileges::MODULE_MODIFIER,
+                    ],
+                ],
+                [
+                    'controller' => ModuleController::class,
+                    'action' => [
                         'historiser',
                         'restaurer',
+                    ],
+                    'privileges' => [
+                        ModulePrivileges::MODULE_HISTORISER,
+                    ],
+                ],
+                [
+                    'controller' => ModuleController::class,
+                    'action' => [
                         'supprimer',
                     ],
                     'privileges' => [
-                        IndexPrivileges::INDEX_AFFICHER,
+                        ModulePrivileges::MODULE_SUPPRIMER,
                     ],
                 ],
             ],
