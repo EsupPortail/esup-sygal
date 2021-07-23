@@ -56,7 +56,11 @@ class InscriptionController extends AbstractController
         $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
         /** @var Doctorant|null $doctorant */
         $doctorantId = $this->params()->fromRoute('doctorant');
-        $doctorant = $this->getEntityManager()->getRepository(Doctorant::class)->find($doctorantId);
+        if ($doctorantId !== null) {
+            $doctorant = $this->getEntityManager()->getRepository(Doctorant::class)->find($doctorantId);
+        } else {
+            $doctorant = null;
+        }
 
         if ($doctorant !== null) {
             $inscription = new Inscription();
