@@ -47,11 +47,11 @@ class SessionHydrator implements HydratorInterface {
         /** @var Etablissement|null $site */
         $site = (isset($data['site']))?$this->getEtablissementService()->getRepository()->find($data['site']):null;
         /** @var Individu|null $responsable */
-        $responsable = (isset($data['responsable']))?$this->getIndividuService()->getRepository()->find($data['responsable']['id']):null;
+        $responsable = (isset($data['responsable']) AND trim($data['responsable']['id']) !== '')?$this->getIndividuService()->getRepository()->find($data['responsable']['id']):null;
         $modalite = (isset($data['modalite']))?$data['modalite']:null;
         $type = (isset($data['type']))?$data['type']:null;
         /** @var Structure $structure */
-        $structure = (isset($data['type_structure']))?$this->getStructureService()->getRepository()->find($data['type_structure']):null;
+        $structure = (isset($data['type_structure']) AND trim($data['type_structure']) !== "")?$this->getStructureService()->getRepository()->find($data['type_structure']):null;
         $tailleListePrincipale = (isset($data['taille_liste_principale']) AND trim($data['taille_liste_principale']) !== '')?trim($data['taille_liste_principale']):null;
         $tailleListeComplementaire = (isset($data['taille_liste_complementaire']) AND trim($data['taille_liste_complementaire']) !== '')?trim($data['taille_liste_complementaire']):null;
 
@@ -61,8 +61,8 @@ class SessionHydrator implements HydratorInterface {
         $object->setModalite($modalite);
         $object->setType($type);
         $object->setTypeStructure($structure);
-        $object->setTailleListePrincipale($tailleListePrincipale);
-        $object->setTailleListeComplementaire($tailleListeComplementaire);
+        $object->setTailleListePrincipale((int) $tailleListePrincipale);
+        $object->setTailleListeComplementaire((int) $tailleListeComplementaire);
         return $object;
     }
 
