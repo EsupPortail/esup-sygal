@@ -292,7 +292,7 @@ class Membre {
         return $this;
     }
 
-    public function isMembre() {
+    public function estMembre() {
         switch ($this->getRole()) {
             case Membre::RAPPORTEUR_JURY :
             case Membre::RAPPORTEUR_VISIO :
