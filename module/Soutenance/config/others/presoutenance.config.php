@@ -48,6 +48,14 @@ return [
                 [
                     'controller' => PresoutenanceController::class,
                     'action' => [
+                        'generer-simulation',
+                        'nettoyer-simulation',
+                    ],
+                    'privileges' => PresoutenancePrivileges::PRESOUTENANCE_SIMULER_REMONTEES,
+                ],
+                [
+                    'controller' => PresoutenanceController::class,
+                    'action' => [
                         'presoutenance',
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION,
@@ -134,6 +142,28 @@ return [
                             ],
                         ],
                         'child_routes' => [
+                            'generer-simulation' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/generer-simulation',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action' => 'generer-simulation',
+                                    ],
+                                ],
+                            ],
+                            'nettoyer-simulation' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/nettoyer-simulation',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action' => 'nettoyer-simulation',
+                                    ],
+                                ],
+                            ],
                             'avis-soutenance' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
