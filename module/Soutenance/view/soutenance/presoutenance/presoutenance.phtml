@@ -21,6 +21,9 @@ use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 $tousLesAvis = count($rapporteurs) === count($avis) ;
 $canFeuVert = $this->isAllowed(PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU));
 $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->getIndividu());
+
+$canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_SIMULER_REMONTEES));
+
 ?>
 
 <h1 class="page-header">
@@ -40,6 +43,22 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
     </p>
 
 <?php else: ?>
+
+    <?php if ($canSimulerRemonter) : ?>
+        <div>
+            <?php /** @see \Soutenance\Controller\PresoutenanceController::genererSimulationAction() */ ?>
+            <a href="<?php echo $this->url('soutenance/presoutenance/generer-simulation', ['these' => $these->getId()], [], true); ?>" class="btn btn-warning action">
+                Simulation de la remonter SI
+            </a>
+
+            <?php /** @see \Soutenance\Controller\PresoutenanceController::nettoyerSimulationAction() */ ?>
+            <a href="<?php echo $this->url('soutenance/presoutenance/nettoyer-simulation', ['these' => $these->getId()], [], true); ?>" class="btn btn-warning action">
+                Nettoyer simulation
+            </a>
+            <br/>
+            <br/>
+        </div>
+    <?php endif; ?>
 
     <?php if ($proposition->getNouveauTitre() !== null) : ?>
 <!--    --><?php //$modificationFaite = ($proposition->getNouveauTitre() === $these->getTitre()); ?>
