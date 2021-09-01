@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+3.0.1
+-----
+- [FIX] Bloquage de la signature multiple de l'engagement d'impartilité
+
 2.2.3
 -----
 - Scission du rôle "École doctorale" en 2 : "Responsable École doctorale" et "Gestionnaire École doctorale".

@@ -82,9 +82,12 @@ class EngagementImpartialiteController extends AbstractController
         $proposition = $this->getPropositionService()->findByThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
-        $this->getEngagementImpartialiteService()->create($membre, $these);
-        $this->getNotifierSoutenanceService()->triggerSignatureEngagementImpartialite($these, $proposition, $membre);
-        $this->getNotifierSoutenanceService()->triggerDemandeAvisSoutenance($these, $proposition, $membre);
+        $signature = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($these, $membre);
+        if ($signature === null) {
+            $this->getEngagementImpartialiteService()->create($membre, $these);
+            $this->getNotifierSoutenanceService()->triggerSignatureEngagementImpartialite($these, $proposition, $membre);
+            $this->getNotifierSoutenanceService()->triggerDemandeAvisSoutenance($these, $proposition, $membre);
+        }
 
         $this->redirect()->toRoute('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);
     }
