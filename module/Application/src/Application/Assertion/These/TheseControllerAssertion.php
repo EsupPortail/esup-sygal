@@ -62,19 +62,25 @@ class TheseControllerAssertion extends ControllerAssertion
         return true;
     }
 
-    protected function assertAsDoctorant()
+    protected function assertAsDoctorant(): bool
     {
-        if ($this->getIdentityDoctorant() === null) {
+        $identityDoctorant = $this->getIdentityDoctorant();
+
+        if ($identityDoctorant === null) {
             throw new RuntimeException("Anomalie: le role doctorant est sélectionné mais aucune donnée d'identité doctorant n'est disponible");
         }
 
         switch (true) {
             case $this->actionIs(self::DOCTORANT_CONTROLLER, 'modifier-persopass'):
-                return $this->doctorant && $this->doctorant->getId() === $this->getIdentityDoctorant()->getId();
+                return $this->doctorant && $this->doctorant->getId() === $identityDoctorant->getId();
                 break;
         }
 
-        return $this->these && $this->these->getDoctorant()->getId() === $this->getIdentityDoctorant()->getId();
+        if ($this->these === null) {
+            return true;
+        }
+
+        return $this->these->getDoctorant()->getId() === $identityDoctorant->getId();
     }
 
     /**
