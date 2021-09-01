@@ -8,7 +8,7 @@
 delete from source where code = 'SYGAL::sygal'
 ;
 insert into source (id, code, libelle, importable)
-values (1, 'SYGAL::sygal', 'SyGAL', 0)
+values (1, 'SYGAL::sygal', 'SyGAL', false)
 ;
 
 --
@@ -26,10 +26,10 @@ values (1, 'sygal-app', 'Application SyGAL', 'ldap')
 delete from role where source_code in ('ADMIN_TECH', 'OBSERV')
 ;
 insert into role (id, code, libelle, source_code, source_id, role_id, these_dep, histo_createur_id, histo_modificateur_id)
-  values (1, 'ADMIN_TECH', 'Administrateur technique', 'ADMIN_TECH', 1, 'Administrateur technique', 0, 1, 1)
+  values (1, 'ADMIN_TECH', 'Administrateur technique', 'ADMIN_TECH', 1, 'Administrateur technique', false, 1, 1)
 ;
-insert into role (id, code, libelle, role_id, source_code, source_id, these_dep, histo_createur_id, histo_modificateur_id)
-  values (2 /*241*/, 'OBSERV', 'Observateur', 'Observateur', 'OBSERV', 1, 0, 1, 1)
+insert into role (id, code, libelle, source_code, source_id, role_id, these_dep, histo_createur_id, histo_modificateur_id)
+  values (2 /*241*/, 'OBSERV', 'Observateur', 'OBSERV', 1, 'Observateur', false, 1, 1)
 ;
 
 -- drop sequence INDIVIDU_ID_SEQ;
