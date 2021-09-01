@@ -7,6 +7,7 @@ Journal des modifications
   *Attention : aucun script SQL universel de migration d'une base Oracle existante vers une base PostgreSQL n'est fourni 
   avec cette version. Si vous êtes déjà utilisateur de SyGAL en production, prenez contact avec les développeurs de 
   SyGAL pour réaliser une telle migration.*
+- Ajout de bouton pour simuler les remontés des SI pour le jeury de thèse
 - [FIX] Meilleure gestion d'erreur en cas de demande d'usurpation d'un individu n'ayant pas de compte utilisateur.
 
 2.2.3
