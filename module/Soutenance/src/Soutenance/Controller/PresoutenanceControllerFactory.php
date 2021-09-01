@@ -6,6 +6,7 @@ use Application\Service\Acteur\ActeurService;
 use Application\Service\Fichier\FichierService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
+use Application\Service\Source\SourceService;
 use Application\Service\StructureDocument\StructureDocumentService;
 use Application\Service\These\TheseService;
 use Application\Service\Utilisateur\UtilisateurService;
@@ -48,6 +49,7 @@ class PresoutenanceControllerFactory
          * @var FichierService $fichierService
          * @var StructureDocumentService $structureDocumentService
          * @var TokenService $tokenService
+         * @var SourceService $sourceService
          */
         $propositionService = $container->get(PropositionService::class);
         $membreService = $container->get(MembreService::class);
@@ -65,6 +67,7 @@ class PresoutenanceControllerFactory
         $fichierService = $container->get(FichierService::class);
         $structureDocumentService = $container->get(StructureDocumentService::class);
         $tokenService = $container->get(TokenService::class);
+        $sourceService = $container->get(SourceService::class);
 
         /**
          * @var DateRenduRapportForm $dateRenduRapportForm
@@ -85,6 +88,7 @@ class PresoutenanceControllerFactory
         $controller->setActeurService($acteurService);
         $controller->setNotifierSoutenanceService($notifierService);
         $controller->setValidationService($validationService);
+        $controller->setSourceService($sourceService);
         $controller->setRoleService($roleService);
         $controller->setAvisService($avisService);
         $controller->setUtilisateurService($utilisateurService);
