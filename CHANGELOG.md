@@ -4,6 +4,7 @@ Journal des modifications
 3.0.1
 -----
 - [FIX] Bloquage de la signature multiple de l'engagement d'impartilité
+- [FIX] Correction du tri des thèses par titre (plantage) et par date de soutenance (inopérant)
 
 2.2.3
 -----
