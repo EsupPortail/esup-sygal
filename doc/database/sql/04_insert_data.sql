@@ -291,6 +291,7 @@ INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (36
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (37, 19, 'consultation-sa-structure', 'Consultation de la substitution de sa structure', 300);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (38, 19, 'modification-toutes-structures', 'Modification de toutes les substitutions ', 400);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (39, 19, 'modification-sa-structure', 'Modification de la substitution de sa structure', 500);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (662, 101, 'simuler_remontees', 'Simulation des remontées du jury du SI', 1000);
 
 
 --
@@ -881,7 +882,6 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (409, 21);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (83, 41);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (129, 41);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (520, 41);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (522, 41);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (11, 61);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (81, 61);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (82, 61);
@@ -902,6 +902,10 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (513, 61);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (520, 61);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (521, 61);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (518, 101);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (82, 41);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (409, 41);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (661, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (662, 6);
 
 
 --
@@ -957,6 +961,7 @@ INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_c
 INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (34, 'Membre étranger de rang A', 'A', 'N', 'N', '2021-05-28 15:22:14', 1446, '2021-05-28 15:22:14', 1446, NULL, NULL, 'O');
 INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (35, 'Membre étranger de rang B', 'B', 'N', 'N', '2021-05-28 15:22:37', 1446, '2021-05-28 15:22:37', 1446, NULL, NULL, 'O');
 INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (54, 'Chercheur HDR', 'A', 'O', 'N', '2021-07-07 09:07:44', 1461, '2021-07-07 09:07:44', 1461, NULL, NULL, 'O');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (74, 'Professeur des universités-praticien hospitalier ', 'A', 'O', 'N', '2021-07-12 13:43:02', 1446, '2021-07-12 13:43:02', 1446, NULL, NULL, 'N');
 
 
 --
