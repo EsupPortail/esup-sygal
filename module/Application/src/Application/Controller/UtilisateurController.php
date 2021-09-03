@@ -270,21 +270,23 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         /** @var Utilisateur $utilisateur */
         $utilisateur = $this->utilisateurService->getRepository()->findOneBy(['individu' => $individuId]);
         if ($utilisateur === null) {
-            throw new RuntimeException(sprintf(
+            $message = sprintf(
                 "La demande d'usurpation de l'individu '%s' (%d) a échoué car aucun compte utilisateur correspondant " .
                 "n'a été trouvé. " .
                 "Pour pouvoir usurper l'identité d'un individu, il faut que celui-ci se soit connecté au moins " .
                 "une fois à l'application, de manière à ce que son compte utilisateur ait été créé avec " .
                 "des données complètes.",
                 $individu, $individu->getId()
-            ));
+            );
+            $this->flashMessenger()->addErrorMessage($message);
+            return $this->redirect()->toRoute('home');
         }
 
         $usernameUsurpe = $utilisateur->getUsername();
         $sessionIdentity = $this->serviceUserContext->usurperIdentite($usernameUsurpe);
         if ($sessionIdentity !== null) {
             // cuisine spéciale si l'utilisateur courant s'est authentifié via Shibboleth
-            $this->usurperIdentiteShib($usernameUsurpe);
+            $this->usurperIdentiteShib($utilisateur);
         }
 
         return $this->redirect()->toRoute('home');

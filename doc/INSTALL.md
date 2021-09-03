@@ -4,6 +4,8 @@
 
 ## Création de la base de données
 
+À partir de la version 3.0.0, SyGAL s'appuie sur une base de données PostgreSQL et non plus Oracle.
+
 Reportez-vous au [README consacré à la création de la base de données](database/README.md).
 
 
@@ -81,7 +83,7 @@ Notamment, lorsque sa valeur est `development`, cela active l'affichage détaill
 
 ### Installation d'une version précise de l'application
 
-Normalement, vous ne devez installer que les versions officielles, c'est à dire les versions taguées, du genre `2.1.5`
+Normalement, vous ne devez installer que les versions officielles, c'est à dire les versions taguées, du genre `3.0.0`
 par exemple.
 
 Placez-vous dans le répertoire des sources de l'application puis lancez les commandes suivantes pour obtenir la liste des
@@ -90,10 +92,10 @@ versions officielles (taguées) :
 git fetch && git fetch --tags && git tag
 ```
 
-Si la version la plus récente est par exemple la `2.1.5`, utilisez les commandes suivantes pour "installer" cette version 
+Si la version la plus récente est par exemple la `3.0.0`, utilisez les commandes suivantes pour "installer" cette version 
 sur votre serveur :
 ```bash
-git checkout --force 2.1.5 && bash install.sh
+git checkout --force 3.0.0 && bash install.sh
 ```
 
 
@@ -184,7 +186,7 @@ Dans la suite, vous adapterez le contenu de ces fichiers à votre situation.
 #### Fichier `${APPLICATION_ENV}.secret.local.php`
 
 - Dans la config de connexion au WS suivante, `UCN` doit être remplacé par le code établissement choisi lors
-de la création de votre établissement dans la base de données (dans le script [`07_init.sql`](database/sql/07_init.sql)) :
+de la création de votre établissement dans la base de données (dans le script [`08_init.sql`](database/sql/08_init.sql)) :
 
 ```php
     'import-api' => [
@@ -222,7 +224,7 @@ de la création de votre établissement dans la base de données (dans le script
 
 - Les lignes de config suivantes permettent de simuler l'authentification Shibboleth d'un premier utilisateur
   'premierf@xxxxx.fr' créé en base de données avec le rôle "Administrateur technique" (par le script
-  [`08_create_fixture.sql`](database/sql/08_create_fixture.sql)).
+  [`09_create_fixture.sql`](database/sql/09_create_fixture.sql)).
   Cela permet d'avoir un accès quasi omnipotent à l'application, notamment aux pages de gestion des droits d'accès.
 
 ```php
@@ -264,12 +266,12 @@ de la création de votre établissement dans la base de données (dans le script
 
 Si vous n'avez rien changé à la config de l'application concernant Shibboleth et si vous cliquez en haut à droite de
 la page d'accueil de SyGAL sur "Connexion" puis sur "Fédération d'identité", vous devriez être dans la peau de 
-François Premier, administrateur technique de test créé en base de données (dans le script [`07_init.sql`](database/sql/07_init.sql)).
+François Premier, administrateur technique de test créé en base de données (dans le script [`08_init.sql`](database/sql/08_init.sql)).
 
 
 ### Droits d'accès
 
-Dans l'application SyGAL, allez dans menu "Droits d'accès" > "Gestion des profils de rôle".
+Dans l'application SyGAL, allez dans menu "Administration" > "Droits d'accès" > "Gestion des profils de rôle".
 
 Appliquez, svp : 
 - le profil `ADMIN_TECH` au rôle *Administrateur technique*
@@ -285,7 +287,7 @@ Par exemple, pour appliquer le profil `ADMIN_TECH` au rôle *Administrateur tech
 - appuyer sur le bouton "Ajouter un rôle".
 
 NB : "UCN" n'est qu'un exemple et pour vous ce sera le code établissement choisi lors
-de la création de votre établissement dans la base de données (dans le script [`07_init.sql`](database/sql/07_init.sql)) 
+de la création de votre établissement dans la base de données (dans le script [`08_init.sql`](database/sql/08_init.sql)) 
 
 
 
