@@ -13,6 +13,7 @@ patterns1j=(
     'sygal_trunc_*.pdf'        # fichier de thèse sans la 1ere page
     'sygal_notif_template_*'   # rendu d'un script de vue stocké en bdd pour une notification par mail
     'gs_*'                     # fichiers temporaires ghostscript
+    'run-sql-*'                # logs d'exécution d'instructions SQL (import)
 )
 
 echo "Suppression des fichiers de plus de 7j..."
