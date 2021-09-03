@@ -1,7 +1,7 @@
-Création d'une base de données pour SyGAL
-=========================================
+Création d'une base de données PostgreSQL pour SyGAL
+====================================================
 
-Les fichiers fournis permettant de créer une base de données pour SyGAL sont :
+Les fichiers fournis permettant de créer une base de données PostgreSQL pour SyGAL sont :
 
 - d'une part, le fichier de config et le script bash de construction :
     - [`build_db_files.conf.dist`](build_db_files.conf.dist) (à adpater puis à renommer en `.conf`)

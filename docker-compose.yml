@@ -1,4 +1,4 @@
-version: '2.2'
+version: '3'
 
 services:
   sygal:
@@ -22,6 +22,8 @@ services:
       - sygalnet
     depends_on:
       - sygal-db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   sygal-db:
     image: registre.unicaen.fr:5000/sygal-db-image
