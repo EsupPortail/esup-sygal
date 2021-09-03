@@ -91,7 +91,7 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                         <?php else: ?>
                             <span class="text-danger">
                                 <span class="glyphicon glyphicon-warning-sign"></span>
-                                <i> N'est pas un individu SyGAL</i>
+                                <i> N'est pas un individu <?php echo $this->appInfos()->nom ?></i>
                                 <span class="glyphicon glyphicon-warning-sign"></span>
                             </span>
                         <?php endif; ?>

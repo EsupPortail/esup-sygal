@@ -382,7 +382,7 @@ class NotifierService extends \Notification\Service\NotifierService
         if (!empty($email)) {
             $notif = new Notification();
             $notif
-                ->setSubject("Initialisation de votre compte SyGAL")
+                ->setSubject("Initialisation de votre compte")
                 ->setTo($email)
                 ->setTemplatePath('application/utilisateur/mail/init-compte')
                 ->setTemplateVariables([
@@ -408,7 +408,7 @@ class NotifierService extends \Notification\Service\NotifierService
         if (!empty($email)) {
             $notif = new Notification();
             $notif
-                ->setSubject("Réinitialisation de votre mot de passe de votre compte SyGAL")
+                ->setSubject("Réinitialisation de votre mot de passe de votre compte")
                 ->setTo($email)
                 ->setTemplatePath('application/utilisateur/mail/reinit-compte')
                 ->setTemplateVariables([

@@ -630,7 +630,7 @@ class NotifierSoutenanceService extends NotifierService
         if (!empty($email)) {
             $notif = new Notification();
             $notif
-                ->setSubject("Initialisation de votre compte SyGAL pour la these de " . $these->getDoctorant()->getIndividu()->getNomComplet())
+                ->setSubject("Initialisation de votre compte pour la these de " . $these->getDoctorant()->getIndividu()->getNomComplet())
                 ->setTo($email)
                 ->setTemplatePath('soutenance/notification/init-compte')
                 ->setTemplateVariables([
@@ -655,7 +655,7 @@ class NotifierSoutenanceService extends NotifierService
         if (!empty($email)) {
             $notif = new Notification();
             $notif
-                ->setSubject("Connexion à SyGAL en tant que rapporteur de la thèse de " . $proposition->getThese()->getDoctorant()->getIndividu()->getNomComplet())
+                ->setSubject("Connexion en tant que rapporteur de la thèse de " . $proposition->getThese()->getDoctorant()->getIndividu()->getNomComplet())
                 ->setTo($email)
                 ->setTemplatePath('soutenance/notification/connexion-rapporteur')
                 ->setTemplateVariables([

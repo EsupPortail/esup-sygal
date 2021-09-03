@@ -15,7 +15,7 @@ class SourceService extends BaseService
     const APPL_SOURCE_CODE = 'SYGAL::sygal';
 
     const SQL_TEMPLATE_CREATE_APP_SOURCE =
-        "INSERT INTO SOURCE (ID, CODE, LIBELLE, IMPORTABLE) VALUES (1, '%s', 'SyGAL', 0);";
+        "INSERT INTO SOURCE (ID, CODE, LIBELLE, IMPORTABLE) VALUES (1, '%s', 'ESUP-SyGAL', 0);";
 
     /**
      * @return EntityRepository

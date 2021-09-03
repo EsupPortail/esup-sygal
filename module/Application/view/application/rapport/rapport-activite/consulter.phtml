@@ -63,7 +63,7 @@ if ($tousLesRapportsTeleverses) {
     <li>
         <strong>Vous devez rédiger un rapport d'activité de fin de thèse</strong> au moment de votre soutenance.
         Dans ce cas, les données indiquées doivent couvrir l'ensemble de la thèse. Il doit être
-        <strong>déposé ci-dessous dans l’application SyGAL au maximum 1 mois avant votre date de soutenance.</strong>
+        <strong>déposé ci-dessous dans l’application <?php echo $this->appInfos()->nom ?> au maximum 1 mois avant votre date de soutenance.</strong>
         Son dépôt conditionne votre autorisation de soutenance.
         <a href="<?php echo $this->url('fichier/telecharger-permanent', ['idPermanent' => 'RAPPORT_ACTIVITE_FINTHESE']) ?>"
         >Cliquez ici pour télécharger le document.</a>

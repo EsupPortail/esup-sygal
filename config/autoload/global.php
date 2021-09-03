@@ -47,7 +47,7 @@ return [
     // Options pour le service de notification par mail
     'notification' => [
         // préfixe à ajouter systématiquement devant le sujet des mails
-        'subject_prefix' => '[SyGAL]',
+        'subject_prefix' => '[ESUP-SyGAL]',
         // destinataires à ajouter systématiquement en copie simple ou cachée de tous les mails
         //'cc' => [],
         //'bcc' => [],
