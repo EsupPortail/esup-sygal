@@ -29,6 +29,12 @@ le site de l'établissement.
   le pied des pages de l'application.
 
 
+Favicon
+-------
+
+- Créez le fichier `public/favicon.png` symbolisant votre établissement.
+
+
 Fil d'actualités sur la page d'accueil
 ------------------
 
