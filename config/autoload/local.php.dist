@@ -5,6 +5,14 @@
 
 return [
     'sygal' => [
+        'page_de_couverture' => [
+            'template' => [
+                // template .phtml
+                'phtml_file_path' => APPLICATION_DIR . '/module/Application/src/Application/Service/PageDeCouverture/pagedecouverture.phtml',
+                // feuille de styles
+                'css_file_path' => APPLICATION_DIR . '/module/Application/src/Application/Service/PageDeCouverture/pagedecouverture.css',
+            ],
+        ],
         'archivabilite' => [
             'proxy' => [
                 'enabled' => true,

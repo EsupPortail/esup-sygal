@@ -20,7 +20,6 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\View\Helper\Sortable;
-use Zend\View\Renderer\PhpRenderer;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
@@ -44,19 +43,6 @@ class FichierTheseController extends AbstractController
     use EventRouterReplacerAwareTrait;
 
     const FICHIER_THESE_TELEVERSE = 'FICHIER_THESE_DEPOSE';
-
-    /**
-     * @var PhpRenderer
-     */
-    private $renderer;
-
-    /**
-     * @param PhpRenderer $renderer
-     */
-    public function setRenderer(PhpRenderer $renderer)
-    {
-        $this->renderer = $renderer;
-    }
 
     public function deposesAction()
     {
@@ -422,9 +408,8 @@ class FichierTheseController extends AbstractController
         }
 
         $filename = uniqid() . '.pdf';
-        $renderer = $this->renderer;
         $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
-        $this->fichierTheseService->generatePageDeCouverture($pdcData, $renderer, $filename);
+        $this->fichierTheseService->generatePageDeCouverture($pdcData, $filename);
 
         $filepath = sys_get_temp_dir() . '/' . $filename; // NB: l'exporter PDF stocke dans sys_get_temp_dir()
         try {

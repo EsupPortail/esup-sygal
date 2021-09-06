@@ -32,6 +32,8 @@ use Application\Service\Acteur\ActeurServiceFactory;
 use Application\Service\Financement\FinancementService;
 use Application\Service\Financement\FinancementServiceFactory;
 use Application\Service\Message\DiffusionMessages;
+use Application\Service\PageDeCouverture\PageDeCouverturePdfExporter;
+use Application\Service\PageDeCouverture\PageDeCouverturePdfExporterFactory;
 use Application\Service\ServiceAwareInitializer;
 use Application\Service\These\Factory\TheseObserverServiceFactory;
 use Application\Service\These\Factory\TheseSearchServiceFactory;
@@ -1307,6 +1309,7 @@ return [
             'TheseObserverService' => TheseObserverServiceFactory::class,
             FinancementService::class => FinancementServiceFactory::class,
             TheseAnneeUnivService::class => TheseAnneeUnivServiceFactory::class,
+            PageDeCouverturePdfExporter::class => PageDeCouverturePdfExporterFactory::class,
         ],
         'aliases' => [
             TheseService::class => 'TheseService',

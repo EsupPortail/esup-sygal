@@ -1,7 +1,6 @@
 <?php
 
 use Application\Navigation\NavigationFactoryFactory;
-use Doctrine\Common\Cache\PhpFileCache;
 use Retraitement\Filter\Command\MinesCommand;
 
 return [
@@ -11,6 +10,15 @@ return [
     'sygal' => [
         // Préfixe par défaut à utiliser pour générer le SOURCE_CODE d'un enregistrement créé dans l'application
         'default_prefix_for_source_code' => 'SyGAL',
+        // Page de couverture
+        'page_de_couverture' => [
+            'template' => [
+                // template .phtml
+                'phtml_file_path' => APPLICATION_DIR . '/module/Application/src/Application/Service/PageDeCouverture/pagedecouverture.phtml',
+                // feuille de styles
+                'css_file_path' => APPLICATION_DIR . '/module/Application/src/Application/Service/PageDeCouverture/pagedecouverture.css',
+            ],
+        ],
         // Options pour le test d'archivabilité
         'archivabilite' => [
             'check_ws_script_path' => __DIR__ . '/../../bin/from_cines/check_webservice_response.sh',
