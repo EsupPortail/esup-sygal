@@ -28,7 +28,7 @@ return [
 
     'actualite' => [
         'actif' => false,
-        'flux' => "https://www-normandie-univ.fr/feed/?post_type=post&cat=406,448,472",
+        'flux' => "https://www.normandie-univ.fr/feed/?post_type=post&cat=406,448,472",
     ],
 
     'offre-these' => [
