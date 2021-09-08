@@ -3,6 +3,9 @@ Journal des modifications
 
 3.0.1
 -----
+- Renommage de l'application en ESUP-SyGAL.
+- Modèle de page de couverture de thèse personnalisable.
+- Substitution possible du favicon.
 - [FIX] Bloquage de la signature multiple de l'engagement d'impartilité
 - [FIX] Correction du tri des thèses par titre (plantage) et par date de soutenance (inopérant)
 - [FIX] Ajout de garde pour les actions de la page de presoutenance (au cas où l'accés est donnée aux acteurs directs)

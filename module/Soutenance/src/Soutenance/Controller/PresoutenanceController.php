@@ -243,7 +243,7 @@ class PresoutenanceController extends AbstractController
 //                $this->getNotifierSoutenanceService()->triggerInitialisationCompte($these, $user, $url);
 
         return new ViewModel([
-            'title' => "Association de " . $membre->getDenomination() . " à un acteur SyGAL",
+            'title' => "Association de " . $membre->getDenomination() . " à un acteur " . $this->appInfos()->getNom(),
             'acteurs' => $acteurs_libres,
             'membre' => $membre,
             'these' => $these,

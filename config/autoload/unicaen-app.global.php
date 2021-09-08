@@ -8,7 +8,7 @@ return [
     'unicaen-app' => [
         // Informations concernant l'application.
         'app_infos' => [
-            'nom'     => "SyGAL",
+            'nom'     => "ESUP-SyGAL",
             'desc'    => "SYstème de Gestion et d'Accompagnement doctoraL",
             'version' => '?', // surchargée dans un autre fichier de config (ex: 'config/autoload/auto.version.local.php')
             'date'    => '?', // idem

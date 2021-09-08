@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #
-# Script bash de préparation des scripts SQL permettant de créer une base de données pour SyGAL.
+# Script bash de préparation des scripts SQL permettant de créer une base de données pour ESUP-SyGAL.
 #
 
 usage() {

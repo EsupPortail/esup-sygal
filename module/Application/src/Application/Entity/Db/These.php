@@ -1716,7 +1716,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         return $this;
     }
 
-    public function getPresidentJury()
+    public function getPresidentJury(): ?Acteur
     {
         /** @var Acteur $acteur */
         foreach ($this->getActeurs() as $acteur) {

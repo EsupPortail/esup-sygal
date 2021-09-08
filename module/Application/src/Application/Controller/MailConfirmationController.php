@@ -103,17 +103,18 @@ class MailConfirmationController extends AbstractController {
         //$this->mailConfirmationService->generateCode($id);
         $mailConfirmation = $this->mailConfirmationService->getDemandeById($id);
 
+        $appName = $this->appInfos()->getNom();
 
         $confirm = $this->url()->fromRoute('mail-confirmation-reception', ['id' => $mailConfirmation->getId(), 'code' => $mailConfirmation->getCode()], ['force_canonical' => true] , true);
         $destinataire = $mailConfirmation->getIndividu()->getPrenom1() ." ". $mailConfirmation->getIndividu()->getNomUsuel() . " " . "&lt;<tt>".$mailConfirmation->getEmail()."</tt>&gt;";
-        $titre = "[SyGAL] Confirmation de votre email";
+        $titre = "Confirmation de votre email";
         $corps = "<br/>"
             ."&nbsp;&nbsp;&nbsp;&nbsp;Bonjour,<br/><br/>"
             ."Pour finaliser l'enregistrement de votre email de contact veuillez confirmer celui-ci en cliquant sur le liens suivant :<br/>"
             ."<a href='".$confirm."'>"
             .$confirm
             ."</a><br/><br/>"
-            ."Une fois confirmé, cet email sera utilisé pour recevoir les notifications de SyGAL et vous permettera de vous connecter à SyGAL.";
+            ."Une fois confirmé, cet email sera utilisé pour recevoir les notifications de $appName et vous permettera de vous connecter à $appName.";
 
 
         $this->notifierService->triggerMailConfirmation($mailConfirmation, $titre, $corps);

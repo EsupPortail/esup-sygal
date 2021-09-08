@@ -238,7 +238,7 @@ class TheseController extends AbstractController
         $etablissement = $these->getEtablissement();
 
         $validationsDesCorrectionsEnAttente = null;
-        if ($these->getCorrectionAutorisee()) {
+        if ($these->getCorrectionAutorisee() && $these->getPresidentJury()) {
             $validationsDesCorrectionsEnAttente = $this->validationService->getValidationsAttenduesPourCorrectionThese($these);
         }
 

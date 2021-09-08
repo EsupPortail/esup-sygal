@@ -402,7 +402,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                         "Trop tard, le délai pour corrections obligatoires est écoulé : ni l’attestation de réussite ni le diplôme ne peuvent désormais être délivrés." :
                         "Oui, obligatoires.";
                 }
-                if (empty($validationsDesCorrectionsEnAttente)) {
+                if (is_array($validationsDesCorrectionsEnAttente) && empty($validationsDesCorrectionsEnAttente)) {
                     $titre = "Corrections";
                     $message = sprintf("Les corrections %s ont été validées.", lcfirst($these->getCorrectionAutoriseeToString(true)));
                     $canEditForcageCorrectionAutorisee = false;

@@ -548,9 +548,9 @@ ul.menu-secondaire li a.version-initiale.correction-effectuee-O {
 ul.menu-actualites {
   margin-top: 2em; }
   ul.menu-actualites li:first-child {
-    padding-top: 10px; }
+    padding-top: 7px; }
   ul.menu-actualites li {
-    padding: 0 1em 10px; }
+    padding: 0 0 10px; }
     ul.menu-actualites li span.label {
       padding: 1px 2px;
       font-size: 70%;

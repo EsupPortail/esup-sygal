@@ -35,7 +35,7 @@ echo $this->messenger()
 
             <?php echo $this->partial('application/index/partial/informations', ['informations' => $informations]) ?>
 
-            <?php echo $this->partial('application/index/partial/actualites') ?>
+            <?php echo $this->actualite()->render() ?>
 
             <?php if($offre) : ?>
                 <?php echo $this->partial('application/index/partial/sujet-de-these', ['offre' => $offre]) ?>
