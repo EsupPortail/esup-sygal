@@ -28,7 +28,7 @@ class CorrectionAttendueUpdatedNotification extends Notification
             $directeursTheseEnCopie = true;
         }
 
-        $to = $this->these->getDoctorant()->getEmailPro() ?: $this->these->getDoctorant()->getEmail();
+        $to = $this->these->getDoctorant()->getEmail();
 
         $cc = null;
         if ($directeursTheseEnCopie) {

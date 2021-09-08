@@ -29,7 +29,7 @@ class ValidationRdvBuNotification extends Notification
             $cc = $emailBDD;
         } else {
             if ($this->notifierDoctorant) {
-                $emailDoctorant = $doctorant->getEmailPro() ?: $doctorant->getEmail();
+                $emailDoctorant = $doctorant->getEmail();;
                 if ($emailDoctorant) {
                     $to = $emailDoctorant;
                     $cc = $emailBDD;

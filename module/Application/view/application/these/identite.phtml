@@ -103,7 +103,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 <strong>
                     <?php echo $this->translate("Adresse électronique :"); ?>
                 </strong>
-                <?php if ($email = $these->getDoctorant()->getEmailPro() ?: $these->getDoctorant()->getEmail()): ?>
+                <?php if ($email = $these->getDoctorant()->getEmail()): ?>
                     <a href="mailto: <?php echo $email ?>"><?php echo $email ?></a>
                 <?php else: ?>
                     <?php echo $this->translate("(Inconnu)"); ?>

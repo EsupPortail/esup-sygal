@@ -260,7 +260,7 @@ class NotifierService extends \Notification\Service\NotifierService
      */
     public function triggerValidationCorrectionTheseEtudiant(Notification $notif, These $these)
     {
-        $to = $these->getDoctorant()->getEmailPro() ?: $these->getDoctorant()->getIndividu()->getEmail();
+        $to = $these->getDoctorant()->getEmail();
         if (!$to) {
             $this->messageContainer->setMessage("Impossible d'envoyer un mail à {$these->getDoctorant()} car son adresse est inconnue", 'danger');
 
@@ -352,7 +352,7 @@ class NotifierService extends \Notification\Service\NotifierService
      */
     public function triggerChangementRole($type, $role, $individu)
     {
-        $mail = $individu->getEmail();
+        $mail = $individu->getEmailBestOf();
 
         $notif = new Notification();
         $notif
