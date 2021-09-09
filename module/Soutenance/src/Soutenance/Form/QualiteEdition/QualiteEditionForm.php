@@ -36,7 +36,7 @@ class QualiteEditionForm extends Form {
 
         $this->add(
             (new Radio('justificatif'))
-                ->setLabel("Nécessite un justificatif (chercheur&middot; étranger&middot;ère):")
+                ->setLabel("Nécessite un justificatif (chercheur&middot;e étranger&middot;ère):")
                 ->setValueOptions(['O' => 'Oui', 'N' => 'Non']))
         ;
 

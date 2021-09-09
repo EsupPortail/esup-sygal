@@ -1,0 +1,26 @@
+<?php
+
+use Application\Entity\Db\These;
+use Application\Entity\Db\VersionFichier;
+use Application\Filter\IdifyFilter;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var string $destinataire
+ * @var string $titre
+ * @var string $corps
+ */
+?>
+
+<p>
+    <?php echo $corps; ?>
+</p>
+
+$corps = "<br/>"
+."&nbsp;&nbsp;&nbsp;&nbsp;Bonjour,<br/><br/>"
+."Pour finaliser l'enregistrement de votre email de contact veuillez confirmer celui-ci en cliquant sur le liens suivant :<br/>"
+."<a href='".$confirm."'>"
+    .$confirm
+    ."</a><br/><br/>"
+."Une fois confirmé, cet email sera utilisé pour recevoir les notifications de $appName et vous permettera de vous connecter à $appName.";

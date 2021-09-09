@@ -290,7 +290,7 @@ class NotifierService extends \Notification\Service\NotifierService
         $notif
             ->setSubject($titre)
             ->setTo($mailConfirmation->getEmail())
-            ->setTemplatePath('application/doctorant/empty-mail')
+            ->setTemplatePath('application/doctorant/demande-confirmation-mail')
             ->setTemplateVariables([
                 'destinataire' => $mailConfirmation->getIndividu()->getNomUsuel(),
                 'titre'        => $titre,
