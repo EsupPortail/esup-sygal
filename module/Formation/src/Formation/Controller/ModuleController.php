@@ -3,6 +3,7 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Formation\Entity\Db\Module;
 use Formation\Form\Module\ModuleFormAwareTrait;
 use Formation\Service\Module\ModuleServiceAwareTrait;
@@ -15,13 +16,42 @@ class ModuleController extends AbstractController
     use ModuleServiceAwareTrait;
     use ModuleFormAwareTrait;
 
-    public function indexAction()
+    use EtablissementServiceAwareTrait;
+
+    public function indexAction() : ViewModel
     {
-        /** @var Module[] $formations */
+        /** Recupération des paramètres du filtres */
+        $site = $this->params()->fromQuery('site');
+        $libelle = $this->params()->fromQuery('libelle');
+        $responsable = $this->params()->fromQuery('responsable');
+        $modalite = $this->params()->fromQuery('modalite');
+        $structure = $this->params()->fromQuery('structure');
+
+        /** Listing pour les filtres */
+        $sites = $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions();
+        $responsables = $this->getEntityManager()->getRepository(Module::class)->fetchListeResponsable();
+        $structures = $this->getEntityManager()->getRepository(Module::class)->fetchListeStructures();
+
+        /** @var Module[] $formations */ //todo appliquer les filtre dans le repository
         $modules = $this->getEntityManager()->getRepository(Module::class)->findAll();
+        if ($site !== null AND $site !== '') $modules = array_filter($modules, function(Module $a) use ($site) { return $a->getSite()->getCode() === $site;});
+        if ($libelle !== null AND $libelle !== '') $modules = array_filter($modules, function(Module $a) use ($libelle) { return str_contains(strtolower($a->getLibelle()), strtolower($libelle));});
+        if ($responsable !== null AND $responsable !== '') $modules = array_filter($modules, function(Module $a) use ($responsable) { return $a->getResponsable()->getId() == $responsable;});
+        if ($structure !== null AND $structure !== '') $modules = array_filter($modules, function(Module $a) use ($structure) { return ($a->getTypeStructure() === null OR $a->getTypeStructure()->getId() == $structure);});
+        if ($modalite !== null AND $modalite !== '') $modules = array_filter($modules, function(Module $a) use ($modalite) { return ($a->getModalite() === null OR $a->getModalite() === $modalite);});
 
         return new ViewModel([
             'modules' => $modules,
+            //valeurs sélectionnées
+            'site' => $site,
+            'libelle' => $libelle,
+            'responsable' => $responsable,
+            'modalite' => $modalite,
+            'structure' => $structure,
+            //données pour le filtre
+            'sites' => $sites,
+            'responsables' => $responsables,
+            'structures' => $structures,
         ]);
     }
 

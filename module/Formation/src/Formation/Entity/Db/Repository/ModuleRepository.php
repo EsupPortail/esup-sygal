@@ -34,4 +34,34 @@ class ModuleRepository extends EntityRepository
         }
         return $index;
     }
+
+    public function fetchListeResponsable() : array
+    {
+        /** @var Module[] $modules */
+        $modules = $this->findAll();
+        $responsables = [];
+
+        foreach ($modules as $module) {
+            $responsable = $module->getResponsable();
+            if ($responsable) {
+                $responsables[$responsable->getId()] = $responsable;
+            }
+        }
+        return $responsables;
+    }
+
+    public function fetchListeStructures() : array
+    {
+        /** @var Module[] $modules */
+        $modules = $this->findAll();
+        $structures = [];
+
+        foreach ($modules as $module) {
+            $structure = $module->getTypeStructure();
+            if ($structure) {
+                $structures[$structure->getId()] = $structure;
+            }
+        }
+        return $structures;
+    }
 }

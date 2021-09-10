@@ -2,7 +2,6 @@
 
 namespace Formation;
 
-use Formation\Controller\FormationInstancePresenceController;
 use Formation\Controller\PresenceController;
 use Formation\Controller\PresenceControllerFactory;
 use Formation\Provider\Privilege\SeancePrivileges;
@@ -48,24 +47,24 @@ return [
         ],
     ],
 
-    'navigation' => [
-        'default' => [
-            'home' => [
-                'pages' => [
-                    'formation' => [
-                        'pages' => [
-                            'presence' => [
-                                'label'    => 'Presences',
-                                'route'    => 'formation/presence',
-                                'resource' => PrivilegeController::getResourceId(PresenceController::class, 'index') ,
-                                'order'    => 500,
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ],
+//    'navigation' => [
+//        'default' => [
+//            'home' => [
+//                'pages' => [
+//                    'formation' => [
+//                        'pages' => [
+//                            'presence' => [
+//                                'label'    => 'Presences',
+//                                'route'    => 'formation/presence',
+//                                'resource' => PrivilegeController::getResourceId(PresenceController::class, 'index') ,
+//                                'order'    => 500,
+//                            ],
+//                        ],
+//                    ],
+//                ],
+//            ],
+//        ],
+//    ],
 
     'router'          => [
         'routes' => [
