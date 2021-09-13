@@ -1,26 +1,24 @@
 <?php
 
-use Application\Entity\Db\These;
-use Application\Entity\Db\VersionFichier;
-use Application\Filter\IdifyFilter;
 use Application\View\Renderer\PhpRenderer;
 
 /**
+ * @see \Application\Service\Notification\NotifierService::triggerMailConfirmation()
  * @var PhpRenderer $this
- * @var string $destinataire
- * @var string $titre
- * @var string $corps
+ * @var string $confirm
  */
 ?>
 
 <p>
-    <?php echo $corps; ?>
+    Bonjour,
 </p>
-
-$corps = "<br/>"
-."&nbsp;&nbsp;&nbsp;&nbsp;Bonjour,<br/><br/>"
-."Pour finaliser l'enregistrement de votre email de contact veuillez confirmer celui-ci en cliquant sur le liens suivant :<br/>"
-."<a href='".$confirm."'>"
-    .$confirm
-    ."</a><br/><br/>"
-."Une fois confirmé, cet email sera utilisé pour recevoir les notifications de $appName et vous permettera de vous connecter à $appName.";
+<p>
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.
+</p>
+<p>
+    Pour finaliser l'enregistrement de votre email de contact veuillez confirmer celui-ci en cliquant sur le liens suivant :
+    <a href="<?php echo $confirm; ?>"><?php echo $confirm; ?></a>.
+</p>
+<p>
+    Une fois confirmé, cet email sera utilisé pour recevoir les notifications de <?php echo $this->appInfos()->nom ?>.
+</p>
