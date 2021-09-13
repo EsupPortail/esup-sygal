@@ -134,7 +134,7 @@ class ModuleForm extends Form {
             'type' => Number::class,
             'name' => 'taille_liste_principale',
             'options' => [
-                'label' => "Taille de la liste principale :",
+                'label' => "Effectif de la liste principale :",
             ],
             'attributes' => [
                 'id' => 'taille_liste_principale',
@@ -145,7 +145,7 @@ class ModuleForm extends Form {
             'type' => Number::class,
             'name' => 'taille_liste_complementaire',
             'options' => [
-                'label' => "Taille de la liste complémentaire :",
+                'label' => "Effectif de la liste complémentaire :",
             ],
             'attributes' => [
                 'id' => 'taille_liste_complementaire',

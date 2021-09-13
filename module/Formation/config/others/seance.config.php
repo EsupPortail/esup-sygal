@@ -79,24 +79,24 @@ return [
         ],
     ],
 
-    'navigation' => [
-        'default' => [
-            'home' => [
-                'pages' => [
-                    'formation' => [
-                        'pages' => [
-                            'seance' => [
-                                'label'    => 'Seances',
-                                'route'    => 'formation/seance',
-                                'resource' => PrivilegeController::getResourceId(SeanceController::class, 'index') ,
-                                'order'    => 300,
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ],
+//    'navigation' => [
+//        'default' => [
+//            'home' => [
+//                'pages' => [
+//                    'formation' => [
+//                        'pages' => [
+//                            'seance' => [
+//                                'label'    => 'Seances',
+//                                'route'    => 'formation/seance',
+//                                'resource' => PrivilegeController::getResourceId(SeanceController::class, 'index') ,
+//                                'order'    => 300,
+//                            ],
+//                        ],
+//                    ],
+//                ],
+//            ],
+//        ],
+//    ],
 
     'router'          => [
         'routes' => [

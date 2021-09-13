@@ -3,8 +3,14 @@
 /**
  * @see \Formation\Controller\ModuleController::indexAction()
  * @var Module[] $modules
+ *
+ * @var string[] $filtres
+ * @var array $listings
  */
 
+use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Individu;
+use Application\Entity\Db\Structure;
 use Formation\Entity\Db\Module;
 use Formation\Provider\Privilege\ModulePrivileges;
 
@@ -17,6 +23,7 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
 
 <h1> Index des formations </h1>
 
+<?php echo $this->partial('partial/filtre', [ 'filtres' => $filtres, 'listings' => $listings ]); ?>
 
 <?php if ($canAjouterModule) : ?>
     <a
@@ -29,7 +36,7 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
 <?php endif; ?>
 
 
-<table class="table table-condensed">
+<table class="table table-condensed table-hover">
     <thead>
         <tr>
             <th>Libellé</th>

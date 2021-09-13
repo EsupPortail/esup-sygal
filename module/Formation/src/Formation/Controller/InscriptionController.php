@@ -9,7 +9,9 @@ use Application\Service\Doctorant\DoctorantServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
+use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Module;
 use Formation\Entity\Db\Session;
 use Formation\Service\Exporter\Attestation\AttestationExporter;
 use Formation\Service\Exporter\Convocation\ConvocationExporter;
@@ -42,11 +44,20 @@ class InscriptionController extends AbstractController
 
     public function indexAction()
     {
+        $filtres = [
+            'session' => $this->params()->fromQuery('session'),
+            'doctorant' => $this->params()->fromQuery('doctorant'),
+            'liste' => $this->params()->fromQuery('liste'),
+        ];
+        $listings = [
+        ];
         /** @var Inscription[] $inscriptions */
-        $inscriptions = $this->getEntityManager()->getRepository(Inscription::class)->findAll();
+        $inscriptions = $this->getEntityManager()->getRepository(Inscription::class)->fetchInscriptionsWithFiltres($filtres);
 
         return new ViewModel([
             'inscriptions' => $inscriptions,
+            'filtres' => $filtres,
+            'listings' => $listings,
         ]);
     }
 

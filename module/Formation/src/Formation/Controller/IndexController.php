@@ -4,7 +4,6 @@ namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Doctorant;
-use Application\Service\Doctorant\DoctorantServiceAwareTrait;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -33,16 +32,20 @@ class IndexController extends AbstractController
         if($doctorant) {
             /** @var Session[] $session */
             $sessions = $this->getEntityManager()->getRepository(Session::class)->findSessionsDisponiblesByDoctorant($doctorant);
+            $ouvertes = array_filter($sessions, function(Session $a) { return $a->getEtat()->getCode() === Session::ETAT_INSCRIPTION;});
+            $preparations = array_filter($sessions, function(Session $a) { return $a->getEtat()->getCode() === Session::ETAT_PREPARATION;});
             /** @var Inscription[] $inscription */
             $inscriptions = $this->getEntityManager()->getRepository(Inscription::class)->findInscriptionsByDoctorant($doctorant);
         } else {
-            $sessions = [];
+            $ouvertes = [];
+            $preparations = [];
             $inscriptions = [];
         }
 
         return new ViewModel([
             'doctorant' => $doctorant,
-            'sessions' => $sessions,
+            'ouvertes' => $ouvertes,
+            'preparations' => $preparations,
             'inscriptions' => $inscriptions,
         ]);
     }

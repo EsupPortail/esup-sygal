@@ -26,7 +26,7 @@ class Session implements HistoriqueAwareInterface,
     use HasTypeTrait;
 
     const ETAT_PREPARATION      = 'P';
-    const ETAT_INSCRIPTION      = 'I';
+    const ETAT_INSCRIPTION      = 'O';
     const ETAT_EN_COURS         = 'E';
     const ETAT_TERMINE          = 'T';
     const ETAT_CLOS_FINAL       = 'C';
@@ -107,8 +107,6 @@ class Session implements HistoriqueAwareInterface,
         $this->module = $module;
         return $this;
     }
-
-
 
     /**
      * @return Utilisateur|null

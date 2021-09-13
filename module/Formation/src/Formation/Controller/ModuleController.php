@@ -3,6 +3,7 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Formation\Entity\Db\Module;
 use Formation\Form\Module\ModuleFormAwareTrait;
 use Formation\Service\Module\ModuleServiceAwareTrait;
@@ -15,13 +16,32 @@ class ModuleController extends AbstractController
     use ModuleServiceAwareTrait;
     use ModuleFormAwareTrait;
 
-    public function indexAction()
+    use EtablissementServiceAwareTrait;
+
+    public function indexAction() : ViewModel
     {
+        /** Recupération des paramètres du filtres */
+        $filtres = [
+            'site' => $this->params()->fromQuery('site'),
+            'libelle' => $this->params()->fromQuery('libelle'),
+            'responsable' => $this->params()->fromQuery('responsable'),
+            'modalite' => $this->params()->fromQuery('modalite'),
+            'structure' => $this->params()->fromQuery('structure'),
+        ];
+        /** Listing pour les filtres */
+        $listings = [
+            'sites' => $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions(),
+            'responsables' => $this->getEntityManager()->getRepository(Module::class)->fetchListeResponsable(),
+            'structures' => $this->getEntityManager()->getRepository(Module::class)->fetchListeStructures(),
+        ];
+
         /** @var Module[] $formations */
-        $modules = $this->getEntityManager()->getRepository(Module::class)->findAll();
+        $modules = $this->getEntityManager()->getRepository(Module::class)->fetchModulesWithFiltres($filtres);
 
         return new ViewModel([
             'modules' => $modules,
+            'filtres' => $filtres,
+            'listings' => $listings,
         ]);
     }
 
