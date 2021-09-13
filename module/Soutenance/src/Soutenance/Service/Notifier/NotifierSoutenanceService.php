@@ -280,7 +280,7 @@ class NotifierSoutenanceService extends NotifierService
         if (!empty($emails)) {
             $notif = new Notification();
             $notif
-                ->setSubject("Demande de validation d'une proposition de soutenance")
+                ->setSubject("Validation de proposition de soutenance de ".$these->getDoctorant()->getIndividu()->getNomComplet())
                 ->setTo($emails)
                 ->setTemplatePath('soutenance/notification/validation-soutenance')
                 ->setTemplateVariables([

@@ -3,9 +3,10 @@
 namespace Soutenance\Entity;
 
 use Application\Entity\Db\FichierThese;
+use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class Justificatif {
+class Justificatif implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
     /** @var integer */

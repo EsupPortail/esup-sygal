@@ -6,9 +6,10 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
+use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class Avis {
+class Avis implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
     const FAVORABLE = 'Favorable';
