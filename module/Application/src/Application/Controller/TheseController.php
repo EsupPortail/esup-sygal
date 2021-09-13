@@ -1034,9 +1034,6 @@ class TheseController extends AbstractController
                     if ($validite->getEstValide() && $version->estVersionCorrigee()) {
                         $this->validationService->validateDepotTheseCorrigee($these);
                         $this->theseService->notifierCorrectionsApportees($these);
-
-                        // envoi de mail aux directeurs de thèse
-                        $this->notifierService->triggerValidationDepotTheseCorrigee($these);
                     }
                 } catch (ValidationImpossibleException $vie) {
                     // Le test d'archivabilité du fichier '%s' a rencontré un problème indépendant de notre volonté
@@ -1458,8 +1455,6 @@ class TheseController extends AbstractController
                     $this->validationService->validateDepotTheseCorrigee($these);
                     $this->theseService->notifierCorrectionsApportees($these);
 
-                    // notification des directeurs de thèse
-                    $this->notifierService->triggerValidationDepotTheseCorrigee($these);
                 }
             }
         }

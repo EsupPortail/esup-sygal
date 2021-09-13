@@ -11,6 +11,7 @@ Journal des modifications
 - Ajout des gardes pour les actions de la page de presoutenance (au cas où l'accés est donnée aux acteurs directs)
 - [FIX] Changement du sujet associé à la validation finale de la proposition de soutenance
 - Templatisation de la notification de confirmation d'adresse électronique
+- [FIX] Correction de l'envoi multiple de notification vers le président de jury lors du dépôt d'une version corrigée.
 
 3.0.0 (oracle => postgres)
 -----
