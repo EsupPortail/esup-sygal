@@ -6,7 +6,7 @@ use Application\Entity\Db\Interfaces\TheseAwareTrait;
 use Notification\Notification;
 use UnicaenApp\Exception\LogicException;
 
-class CorrectionAttendueUpdatedNotification extends Notification
+class ChangementCorrectionAttendueNotification extends Notification
 {
     use TheseAwareTrait;
 

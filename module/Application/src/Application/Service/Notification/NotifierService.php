@@ -9,10 +9,10 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Variable;
-use Application\Notification\CorrectionAttendueUpdatedNotification;
+use Application\Notification\ChangementCorrectionAttendueNotification;
 use Application\Notification\PasDeMailPresidentJury;
 use Application\Notification\ResultatTheseAdmisNotification;
-use Application\Notification\ResultatTheseModifieNotification;
+use Application\Notification\ChangementsResultatsThesesNotification;
 use Application\Notification\ValidationDepotTheseCorrigeeNotification;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
@@ -63,19 +63,19 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
-     * Notification du BDD concernant l'évolution des résultats de thèses.
+     * Notification concernant des changements quelconques de résultats de thèses.
      *
-     * @param array $data
-     * @return ResultatTheseModifieNotification
+     * @param array $data Données concernant les thèses dont le résultat a changé
+     * @return ChangementsResultatsThesesNotification
      */
-    public function triggerBdDUpdateResultat(array $data)
+    public function triggerChangementResultatTheses(array $data): ChangementsResultatsThesesNotification
     {
         $these = current($data)['these'];
 
         $emailBdd = $this->fetchEmailBdd($these);
         $emailBu = $this->fetchEmailBu($these);
 
-        $notif = new ResultatTheseModifieNotification();
+        $notif = new ChangementsResultatsThesesNotification();
         $notif->setData($data);
         $notif->setTo([$emailBdd, $emailBu]);
 
@@ -85,12 +85,12 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
-     * Notification des doctorants dont le résultat de la thèse est passé à Admis.
+     * Notification à propos de résultats de thèses passés à 'Admis'.
      *
      * @param array $data
      * @return ResultatTheseAdmisNotification[]
      */
-    public function triggerDoctorantResultatAdmis(array $data)
+    public function triggerChangementResultatThesesAdmis(array $data): array
     {
         $notifs = [];
 
@@ -113,12 +113,14 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
+     * Notification à propos de corrections attendues.
+     *
      * @param ImportObservResult $record
      * @param These $these
      * @param string $message
-     * @return CorrectionAttendueUpdatedNotification|null
+     * @return ChangementCorrectionAttendueNotification|null
      */
-    public function triggerCorrectionAttendue(ImportObservResult $record, These $these, &$message = null)
+    public function triggerCorrectionAttendue(ImportObservResult $record, These $these, &$message = null): ?ChangementCorrectionAttendueNotification
     {
         // interrogation de la règle métier pour savoir comment agir...
         $rule = new NotificationDepotVersionCorrigeeAttenduRule();
@@ -141,7 +143,7 @@ class NotifierService extends \Notification\Service\NotifierService
             return null;
         }
 
-        $notif = new CorrectionAttendueUpdatedNotification();
+        $notif = new ChangementCorrectionAttendueNotification();
         $notif
             ->setThese($these)
             ->setEstPremiereNotif($estPremiereNotif);
@@ -152,6 +154,8 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
+     * Notification à propos du dépassement de la date butoir de dépôt de la version corrigée de la thèse.
+     *
      * @param These $these
      */
     public function triggerDateButoirCorrectionDepassee(These $these)
@@ -171,7 +175,7 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
-     * Notification par mail des directeurs de thèse pour les inviter à valider les corrections.
+     * Notification pour inviter à valider les corrections.
      *
      * @param These $these
      */
@@ -204,14 +208,13 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
-     * Notification par mail des directeurs de thèse pour les inviter à valider les corrections.
+     * Notification à propos de l'absence de mail connu pour le président du jury.
      *
      * @param These $these
      * @param Acteur|null $president
      */
     public function triggerPasDeMailPresidentJury(These $these, ?Acteur $president)
     {
-        // envoi de mail aux directeurs de thèse
         $notif = new PasDeMailPresidentJury();
         $notif
             ->setThese($these)
@@ -236,6 +239,8 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
+     * Notification à propos de la validation des corrections attendues.
+     *
      * @param Notification $notif
      * @param These        $these
      */
@@ -280,6 +285,8 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
+     * Notification pour confirmation d'une adresse mail.
+     *
      * @param MailConfirmation $mailConfirmation
      * @param string           $confirm
      */
@@ -344,6 +351,8 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
+     * Notification à propos d'un rôle attribué/retiré à un utilisateur.
+     *
      * @var string $type
      * @var Role $role
      * @var Individu $individu
@@ -366,6 +375,8 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
+     * Notification à propos de la création d'un compte local.
+     *
      * @param Utilisateur $utilisateur
      * @param string $token
      */
@@ -392,6 +403,8 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
+     * Notification à propos de la réinitialisation d'un compte local.
+     *
      * @param Utilisateur $utilisateur
      * @param string $url
      */
@@ -418,6 +431,8 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
+     * Notification à propos d'abonnés de liste de diffusion sans adresse connue.
+     *
      * @param string[] $to
      * @param string $liste
      * @param string[] $individusAvecAdresse
@@ -440,6 +455,8 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
+     * Notification à propos d'abonnés de liste de diffusion sans adresse connue.
+     *
      * @param string[] $to
      * @param string $liste
      * @param string[] $individusAvecAdresse
@@ -450,7 +467,7 @@ class NotifierService extends \Notification\Service\NotifierService
         array $to,
         $liste,
         array $individusAvecAdresse,
-        array $individusSansAdresse)
+        array $individusSansAdresse): Notification
     {
         $notif = new Notification();
         $notif

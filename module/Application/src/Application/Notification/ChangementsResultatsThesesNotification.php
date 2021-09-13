@@ -5,7 +5,7 @@ namespace Application\Notification;
 use Application\Entity\Db\Interfaces\TheseAwareTrait;
 use Notification\Notification;
 
-class ResultatTheseModifieNotification extends Notification
+class ChangementsResultatsThesesNotification extends Notification
 {
     use TheseAwareTrait;
 

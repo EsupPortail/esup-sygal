@@ -325,7 +325,7 @@ class NotifierSoutenanceService extends NotifierService
         if (!empty($emails)) {
             $notif = new Notification();
             $notif
-                ->setSubject("Votre proposistion de soutenance a été réfusé")
+                ->setSubject("Votre proposition de soutenance a été réfusée")
                 ->setTo($emails)
                 ->setTemplatePath('soutenance/notification/refus')
                 ->setTemplateVariables([
@@ -431,7 +431,7 @@ class NotifierSoutenanceService extends NotifierService
         if ($email) {
             $notif = new Notification();
             $notif
-                ->setSubject("Annulation de l'engagement d'impartialité de la thèse de " . $these->getDoctorant()->getIndividu())
+                ->setSubject("Annulation de la signature de l'engagement d'impartialité de la thèse de " . $these->getDoctorant()->getIndividu())
                 ->setTo($email)
                 ->setTemplatePath('soutenance/notification/engagement-impartialite-annulation')
                 ->setTemplateVariables([
@@ -617,6 +617,8 @@ class NotifierSoutenanceService extends NotifierService
      * @param These $these
      * @param Utilisateur $utilisateur
      * @param string $url
+     *
+     * @deprecated Pas utilisée !
      */
     public function triggerInitialisationCompte($these, $utilisateur, $url)
     {

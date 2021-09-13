@@ -108,10 +108,10 @@ class ImportObservResultService extends \UnicaenDbImport\Entity\Db\Service\Impor
         }
 
         // Notification des doctorants dont le résultat de la thèse est passé à Admis.
-        $notifs = $this->notifierService->triggerDoctorantResultatAdmis($data);
+        $notifs = $this->notifierService->triggerChangementResultatThesesAdmis($data);
         $this->logAboutNotifications($notifs);
-        // Notification du BDD concernant l'évolution des résultats de thèses.
-        $notif = $this->notifierService->triggerBdDUpdateResultat($data);
+        // Notification concernant l'évolution des résultats de thèses.
+        $notif = $this->notifierService->triggerChangementResultatTheses($data);
         $this->logAboutNotifications([$notif]);
 
         // Enregistrement de la date de dernière notification
@@ -129,7 +129,7 @@ class ImportObservResultService extends \UnicaenDbImport\Entity\Db\Service\Impor
      * @param \Import\Model\ImportObservResult[] $importObservResults
      * @return array
      */
-    private function prepareDataForResultatAdmis(array $importObservResults)
+    private function prepareDataForResultatAdmis(array $importObservResults): array
     {
         // Mise en forme des résultats d'observation
         $sourceCodes = [];
@@ -158,13 +158,6 @@ class ImportObservResultService extends \UnicaenDbImport\Entity\Db\Service\Impor
         $theses = $qb->getQuery()->getResult();
         /** @var These[] $theses */
 
-        $detailsToString = [
-            '>1' => "Résultat passé à 'Admis'",
-            '>0' => "Résultat passé à 'Non admis'",
-            '1>' => "Résultat effacé",
-            '0>' => "Résultat effacé",
-        ];
-
         // Mise en forme des données pour le template du mail
         $data = [];
         foreach ($theses as $index => $these) {
@@ -173,10 +166,9 @@ class ImportObservResultService extends \UnicaenDbImport\Entity\Db\Service\Impor
                 continue;
             }
             $detail = trim($details[$index]);
-            $detailToString = $detailsToString[$detail] ?? $detail;
             $data[] = [
-                'these'  => $these,
-                'detail' => $detailToString,
+                'these' => $these,
+                'detail' => $detail,
             ];
         }
 
