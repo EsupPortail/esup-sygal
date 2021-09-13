@@ -10,6 +10,7 @@ Journal des modifications
 - [FIX] Correction du tri des thèses par titre (plantage) et par date de soutenance (inopérant)
 - Ajout des gardes pour les actions de la page de presoutenance (au cas où l'accés est donnée aux acteurs directs)
 - [FIX] Changement du sujet associé à la validation finale de la proposition de soutenance
+- Templatisation de la notification de confirmation d'adresse électronique
 
 3.0.0 (oracle => postgres)
 -----
