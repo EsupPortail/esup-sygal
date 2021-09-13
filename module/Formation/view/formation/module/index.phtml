@@ -4,14 +4,8 @@
  * @see \Formation\Controller\ModuleController::indexAction()
  * @var Module[] $modules
  *
- * @var string $site
- * @var string $libelle
- * @var string $responsable
- * @var string $modalite
- * @var string $structure
- * @var Etablissement[] $sites
- * @var Individu[] $responsables
- * @var Structure[] $structures
+ * @var string[] $filtres
+ * @var array $listings
  */
 
 use Application\Entity\Db\Etablissement;
@@ -29,9 +23,7 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
 
 <h1> Index des formations </h1>
 
-<?php echo $this->partial('partial/filtre', [
-                                        'site' => $site, 'libelle' => $libelle, 'responsable' => $responsable, 'modalite' => $modalite, 'structure' => $structure,
-                                        'sites' => $sites, 'responsables' => $responsables, 'structures' => $structures]); ?>
+<?php echo $this->partial('partial/filtre', [ 'filtres' => $filtres, 'listings' => $listings ]); ?>
 
 <?php if ($canAjouterModule) : ?>
     <a

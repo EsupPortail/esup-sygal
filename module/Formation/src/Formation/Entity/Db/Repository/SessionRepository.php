@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Interfaces\HasTypeInterface;
+use Formation\Entity\Db\Module;
 use Formation\Entity\Db\Session;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -42,6 +43,49 @@ class SessionRepository extends EntityRepository
             ->leftJoin($alias.".etat", "etat")->addSelect("etat")
         ;
         return $qb;
+    }
+
+    /**
+     * @param array $filtres
+     * @return Session[]
+     */
+    public function fetchSessionsWithFiltres(array $filtres) : array
+    {
+        $alias = 'session';
+        $qb = $this->createQueryBuilder($alias);
+
+        if ($filtres['site']) {
+            $qb = $qb->leftJoin($alias.'.site', 'site')->addSelect('site')
+                ->andWhere('site.code = :site')
+                ->setParameter('site', $filtres['site']);
+        }
+        if ($filtres['responsable']) {
+            $qb = $qb->leftJoin($alias.'.responsable', 'responsable')->addSelect('responsable')
+                ->andWhere('responsable.id = :responsable')
+                ->setParameter('responsable', $filtres['responsable']);
+        }
+        if ($filtres['structure']) {
+            $qb = $qb->leftJoin($alias.'.typeStructure', 'structure')->addSelect('structure')
+                ->andWhere('structure.id = :structure')
+                ->setParameter('structure', $filtres['structure']);
+        }
+        if ($filtres['etat']) {
+            $qb = $qb->leftJoin($alias.'.etat', 'etat')->addSelect('etat')
+                ->andWhere('etat.code = :etat')
+                ->setParameter('etat', $filtres['etat']);
+        }
+        if ($filtres['modalite']) {
+            $qb = $qb->andWhere($alias.'.modalite = :modalite')
+                ->setParameter('modalite', $filtres['modalite']);
+        }
+        if ($filtres['libelle']) {
+            $libelle = '%' . strtolower($filtres['libelle']) . '%';
+            $qb = $qb->andWhere('lower('.$alias.'.libelle) like :libelle')
+                ->setParameter('libelle', $libelle);
+        }
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
     }
 
     /**

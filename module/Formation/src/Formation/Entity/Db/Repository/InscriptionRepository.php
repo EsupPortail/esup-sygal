@@ -42,6 +42,39 @@ class InscriptionRepository extends EntityRepository
     }
 
     /**
+     * @param array $filtres
+     * @return Session[]
+     */
+    public function fetchInscriptionsWithFiltres(array $filtres) : array
+    {
+        $alias = 'inscription';
+        $qb = $this->createQB($alias);
+
+        if ($filtres['session']) {
+            $libelle = '%' . strtolower($filtres['session']) . '%';
+            $qb = $qb
+                ->andWhere('lower(module.libelle) like :libelle')
+                ->setParameter('libelle', $libelle);
+        }
+        if ($filtres['doctorant']) {
+            $qb = $qb->leftJoin('doctorant.individu', 'individu')->addSelect('individu')
+                ->andWhere("(lower(individu.nomUsuel)) = :doctorant")
+                ->setParameter('doctorant', strtolower($filtres['doctorant']));
+        }
+        if ($filtres['liste']) {
+            if ($filtres['liste'] === 'null') {
+                $qb = $qb->andWhere($alias.'.liste IS NULL');
+            } else {
+                $qb = $qb->andWhere($alias . '.liste = :liste')
+                    ->setParameter('liste', $filtres['liste']);
+            }
+        }
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
      * @param Doctorant $doctorant
      * @return array
      */

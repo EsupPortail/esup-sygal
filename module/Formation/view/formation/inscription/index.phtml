@@ -3,6 +3,8 @@
 /**
  * @see \Formation\Controller\InscriptionController::indexAction()
  * @var Inscription[] $inscriptions
+ * @var array $filtres
+ * @var array $listings
  */
 
 use Formation\Entity\Db\Inscription;
@@ -17,6 +19,8 @@ $canSupprimerInscription       = $this->isAllowed(InscriptionPrivileges::getReso
 ?>
 
 <h1> Index des inscriptions </h1>
+
+<?php echo $this->partial('partial/filtre', [ 'filtres' => $filtres, 'listings' => $listings ]); ?>
 
 <table class="table table-condensed">
     <thead>

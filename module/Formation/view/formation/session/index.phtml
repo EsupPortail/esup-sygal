@@ -3,6 +3,8 @@
 /**
  * @see \Formation\Controller\SessionController::indexAction()
  * @var Session[] $sessions
+ * @var array $filtres
+ * @var array $listings
  */
 
 use Formation\Entity\Db\Inscription;
@@ -17,7 +19,7 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
 
 <h1> Index des sessions </h1>
 
-AJOUTER FILTRE
+<?php echo $this->partial('partial/filtre', [ 'filtres' => $filtres, 'listings' => $listings ]); ?>
 
 <table class="table table-condensed">
     <thead>

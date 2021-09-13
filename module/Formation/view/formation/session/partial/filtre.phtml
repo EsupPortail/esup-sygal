@@ -5,13 +5,15 @@
  * @var array $listings
  */
 
+use Formation\Entity\Db\Session;
+
 ?>
 
 
 <div class="panel panel-default">
     <div class="panel-heading">
         <span class="glyphicon glyphicon-filter"></span>
-        Filtre des formations
+        Filtre des sessions
     </div>
     <div class="panel-body">
         <form id="filter" method="get" action="">
@@ -24,7 +26,7 @@
                         <option value=""> Tous les sites </option>
                         <?php foreach ($listings['sites'] as $site_) : ?>
                             <option value="<?php echo $site_->getCode(); ?>"
-                                    <?php if ($site_->getCode() === $filtres['site']) echo " selected "; ?>
+                                <?php if ($site_->getCode() === $filtres['site']) echo " selected "; ?>
                             >
                                 <?php echo $site_->getLibelle(); ?>
                             </option>
@@ -42,6 +44,26 @@
                                 <?php if ($structure_->getId() == $filtres['structure']) echo " selected "; ?>
                             >
                                 <?php echo $structure_->getLibelle(); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <!-- Etat --------------------------------------------------------------------------------------------->
+                <div class="col-md-4">
+                    <label for="responsable">État :</label>
+                    <select name="etat" id="etat" class="selectpicker" data-live-search="true">
+                        <option value=""> Tous les états </option>
+                        <?php foreach ($listings['etats'] as $etat_) : ?>
+                            <?php
+                                //todo imrove viewhelper
+                                $session = new Session(); $session->setEtat($etat_);
+                            ?>
+                            <option value="<?php echo $etat_->getCode(); ?>"
+                                data-content='<?php echo $this->etat($session); ?>'
+                                <?php if ($etat_->getCode() == $filtres['etat']) echo " selected "; ?>
+                            >
+                                <?php echo $this->etat($session); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -96,12 +118,9 @@
                     </button>
                 </div>
             </div>
-
         </form>
-
     </div>
 </div>
-
 
 <style>
     .filter-action {

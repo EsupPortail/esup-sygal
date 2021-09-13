@@ -1,0 +1,83 @@
+<?php
+
+/**
+ * @var string[] $filtres
+ * @var array $listings
+ */
+
+?>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <span class="glyphicon glyphicon-filter"></span>
+        Filtre des inscriptions
+    </div>
+    <div class="panel-body">
+        <form id="filter" method="get" action="">
+
+            <div class="row">
+
+                <!-- libelle du session ------------------------------------------------------------------------------------>
+                <div class="col-md-4">
+                    <label for="session">Session : </label>
+                    <input type="text" name="session" id="session" <?php if ($filtres['session'] !== null AND $filtres['session'] !== '') echo " value='".$filtres['session']."' "; ?>/>
+                </div>
+
+                <!-- libelle du doctorant ------------------------------------------------------------------------------------>
+                <div class="col-md-4">
+                    <label for="doctorant">Nom usuel : </label>
+                    <input type="text" name="doctorant" id="doctorant" <?php if ($filtres['doctorant'] !== null AND $filtres['doctorant'] !== '') echo " value='".$filtres['doctorant']."' "; ?>/>
+                </div>
+
+                <!-- liste des liste ------------------------------------------------------------------------------------------>
+                <div class="col-md-4">
+                    <label for="liste">Liste :</label>
+                    <select name="liste" id="liste" class="selectpicker" data-live-search="true">
+                        <option value=""> Tous les listes </option>
+                        <option value="null" <?php if ($filtres['liste'] === 'null') echo " selected "; ?>> Aucune liste </option>
+                        <option value="P"    <?php if ($filtres['liste'] === 'P'   ) echo " selected "; ?>> Liste principale </option>
+                        <option value="C"    <?php if ($filtres['liste'] === 'C'   ) echo " selected "; ?>> Liste complémentaire </option>
+                    </select>
+                </div>
+            </div>
+
+            <br/>
+
+            <div class="row">
+                <div class="pull-right">
+                    <button type="button" id="filter" class="btn btn-primary filter-action">
+                        <span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Filtrer
+                    </button>
+                    <button type="button" id="reset" class="btn btn-primary filter-action">
+                        <span class="glyphicon glyphicon-erase" aria-hidden="true"></span> R.A.Z.
+                    </button>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+
+<style>
+    .filter-action {
+        width: 20rem;
+        margin: 0 1rem;
+    }
+
+    form#filter label {
+        width: 10rem;
+    }
+</style>
+
+<script>
+    $('button#reset').click(function (e) {
+        e.preventDefault();
+        window.location = '?';
+    });
+    $('button#filter').click(function () {
+        $('form#filter').submit();
+    });
+</script>
