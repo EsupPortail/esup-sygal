@@ -17,9 +17,20 @@ class ModuleController extends AbstractController {
 
     public function indexAction()
     {
-        $modules = $this->getEntityManager()->getRepository(Module::class)->findAll();
+        /** Recupération des paramètres du filtres */
+        $filtres = [
+            'libelle' => $this->params()->fromQuery('libelle'),
+        ];
+        /** Listing pour les filtres */
+        $listings = [];
+
+        /** @var Module[] $modules */
+        $modules = $this->getEntityManager()->getRepository(Module::class)->fetchModulesWithFiltres($filtres);
+
         return new ViewModel([
             'modules' => $modules,
+            'filtres' => $filtres,
+            'listings' => $listings,
         ]);
     }
 

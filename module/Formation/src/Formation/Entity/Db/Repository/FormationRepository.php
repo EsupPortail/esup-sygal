@@ -29,7 +29,7 @@ class FormationRepository extends EntityRepository
      * @param array $filtres
      * @return Formation[]
      */
-    public function fetchModulesWithFiltres(array $filtres) : array
+    public function fetchFormationsWithFiltres(array $filtres) : array
     {
         $alias = 'module';
         $qb = $this->createQueryBuilder($alias);

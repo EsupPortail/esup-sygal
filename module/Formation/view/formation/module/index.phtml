@@ -61,7 +61,6 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
             </td>
             <td> <?php echo count($module->getFormations()); ?> </td>
             <td>
-            <td>
                 <?php if ($canAfficherModule) : ?>
                     <?php /** @see \Formation\Controller\ModuleController::afficherAction() */ ?>
                     <a href="<?php echo $this->url('formation/module/afficher', ['module' => $module->getId()], [], true); ?>"

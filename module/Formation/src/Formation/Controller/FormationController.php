@@ -36,7 +36,7 @@ class FormationController extends AbstractController
         ];
 
         /** @var Formation[] $formations */
-        $formations = $this->getEntityManager()->getRepository(Formation::class)->fetchModulesWithFiltres($filtres);
+        $formations = $this->getEntityManager()->getRepository(Formation::class)->fetchFormationsWithFiltres($filtres);
 
         return new ViewModel([
             'formations' => $formations,
