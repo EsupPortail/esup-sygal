@@ -13,7 +13,7 @@ use Formation\Provider\Privilege\SessionPrivileges;
  * @var array $presences
  */
 
-$module = $session->getModule();
+$module = $session->getFormation();
 /** @var Seance[] $seances */
 $seances = $session->getSeances()->toArray();
 usort($seances, function(Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});

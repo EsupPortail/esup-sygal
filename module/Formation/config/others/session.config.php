@@ -101,7 +101,7 @@ return [
                                 'label'    => 'Sessions',
                                 'route'    => 'formation/session',
                                 'resource' => PrivilegeController::getResourceId(SessionController::class, 'index') ,
-                                'order'    => 200,
+                                'order'    => 300,
                             ],
                         ],
                     ],

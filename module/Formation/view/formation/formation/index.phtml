@@ -1,0 +1,133 @@
+<?php
+
+/**
+ * @see \Formation\Controller\FormationController::indexAction()
+ * @var Formation[] $formations
+ *
+ * @var string[] $filtres
+ * @var array $listings
+ */
+
+use Formation\Entity\Db\Formation;
+use Formation\Provider\Privilege\FormationPrivileges;
+
+$canAfficherFormation      = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_AFFICHER));
+$canAjouterFormation       = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_AJOUTER));
+$canHistoriserFormation    = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_HISTORISER));
+$canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_SUPPRIMER));
+
+?>
+
+<h1> Index des formations </h1>
+
+<?php echo $this->partial('partial/filtre', [ 'filtres' => $filtres, 'listings' => $listings ]); ?>
+
+<?php if ($canAjouterFormation) : ?>
+    <a
+        <?php /** @see \Formation\Controller\FormationController::ajouterAction() */ ?>
+        href="<?php echo $this->url('formation/formation/ajouter', [], [], true); ?>"
+        class="btn btn-primary action ajax-modal" data-event="modification">
+        <span class="glyphicon glyphicon-plus"></span>
+        Ajouter une formation
+    </a>
+<?php endif; ?>
+
+
+<table class="table table-condensed table-hover">
+    <thead>
+        <tr>
+            <th>Libellé</th>
+            <th>Site<span title="valeur par défaut">*</span></th>
+            <th>Responsable<span title="valeur par défaut">*</span></th>
+            <th>Modalité<span title="valeur par défaut">*</span> </th>
+            <th>Type<span title="valeur par défaut">*</span> </th>
+            <th>Taille des listes<span title="valeur par défaut">*</span> </th>
+            <th>#Session</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($formations as $formation) : ?>
+        <tr>
+            <td>
+                <?php echo $formation->getLibelle(); ?>
+                <?php if ($formation->getDescription() !== null AND trim($formation->getDescription()) !== null) : ?>
+                    <span class="glyphicon glyphicon-info-sign"
+                          title="<?php echo $formation->getDescription(); ?>" data-toggle="tooltip" data-html="true"
+
+                    ></span>
+                <?php endif; ?>
+            </td>
+            <td> <?php echo $this->site($formation); ?> </td>
+            <td>
+                <?php if ($formation->getResponsable()) : ?>
+                    <?php echo $formation->getResponsable()->getNomComplet(); ?>
+                <?php else : ?>
+                    N.C.
+                <?php endif; ?>
+            </td>
+            <td> <?php echo $this->modalite($formation); ?> </td>
+            <td> <?php echo $this->type($formation); ?> </td>
+            <td>
+                Liste principale :
+                <?php echo $formation->getTailleListePrincipale()?:"N.C."; ?>
+                <br/>
+                Liste complémentaire :
+                <?php echo $formation->getTailleListeComplementaire()?:"N.C."; ?>
+            </td>
+            <td>
+                <?php echo count($formation->getSessions()); ?>
+            </td>
+            <td>
+                <?php if ($canAfficherFormation) : ?>
+                    <?php /** @see \Formation\Controller\FormationController::afficherAction() */ ?>
+                    <a href="<?php echo $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true); ?>"
+                       title="afficher la formation #<?php echo $formation->getId(); ?>"
+                       data-toggle="tooltip" data-html="true">
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    </a>
+                <?php endif; ?>
+                <?php if ($canHistoriserFormation) : ?>
+                    <?php if ($formation->estNonHistorise()) : ?>
+                        <?php /** @see \Formation\Controller\FormationController::historiserAction() */ ?>
+                        <a href="<?php echo $this->url('formation/formation/historiser', ['formation' => $formation->getId()], [], true); ?>"
+                           title="Historiser la formation #<?php echo $formation->getId(); ?>"
+                           data-toggle="tooltip" data-html="true">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    <?php else : ?>
+                        <?php /** @see \Formation\Controller\FormationController::restaurerAction() */ ?>
+                        <a href="<?php echo $this->url('formation/formation/restaurer', ['formation' => $formation->getId()], [], true); ?>"
+                           title="Restaurer la formation #<?php echo $formation->getId(); ?>"
+                           data-toggle="tooltip" data-html="true">
+                            <span class="glyphicon glyphicon-leaf"></span>
+                        </a>
+                    <?php endif; ?>
+                <?php endif; ?>
+
+                <?php if ($canSupprimerFormation) : ?>
+                    <?php /** @see \Formation\Controller\FormationController::supprimerAction() */?>
+                    <a href="<?php echo $this->url('formation/formation/supprimer',['formation' => $formation->getId()], [], true); ?>"
+                       class="ajax-modal" data-event="modification"
+                       title="Suppression de la formation #<?php echo $formation->getId(); ?>" data-toggle="tooltip" data-html="true">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                <?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip({});
+    });
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+
+    });
+</script>

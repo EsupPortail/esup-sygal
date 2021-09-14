@@ -23,7 +23,7 @@ usort($inscriptions, function(Inscription $a, Inscription $b) { return $a->getDo
 
 $canPresenceModifier = $this->isAllowed(SeancePrivileges::getResourceId(SeancePrivileges::SEANCE_PRESENCE));
 
-$titrePage= " Présences pour la formation : " . $session->getModule()->getLibelle() . " #" . $session->getIndex();
+$titrePage= " Présences pour la formation : " . $session->getFormation()->getLibelle() . " #" . $session->getIndex();
 $this->headTitle($titrePage);
 ?>
 

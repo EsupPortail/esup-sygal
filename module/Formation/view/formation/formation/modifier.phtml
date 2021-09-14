@@ -1,9 +1,9 @@
 <?php
 /**
- * @var ModuleForm $form
+ * @var FormationForm $form
  */
 
-use Formation\Form\Module\ModuleForm;
+use Formation\Form\Formation\FormationForm;
 
 ?>
 
@@ -47,8 +47,6 @@ echo $this->form()->openTag($form);
         }
     }
 
-
-
     $(document).ready(function() {
         // updateType();
         tinymce.remove();
@@ -71,8 +69,5 @@ echo $this->form()->openTag($form);
             }
         });
         $('select').selectpicker();
-        // $('select#type').change(function() {
-        //     updateType();
-        // });
     });
 </script>

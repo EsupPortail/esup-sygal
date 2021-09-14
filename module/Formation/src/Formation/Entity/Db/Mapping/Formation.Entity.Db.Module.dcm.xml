@@ -2,37 +2,16 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Formation\Entity\Db\Module"
             table="FORMATION_MODULE"
-            repository-class="Formation\Entity\Db\Repository\ModuleRepository">
+            repository-class="Formation\Entity\Db\Repository\ModuleRepository"
+    >
 
         <id name="id" type="integer" column="ID">
             <generator strategy="SEQUENCE"/>
         </id>
         <field name="libelle"             type="string"       length="1024"       column="LIBELLE"          nullable="false"/>
         <field name="description"         type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
-        <field name="lien"                type="string"       length="1024"       column="LIEN"             nullable="true"/>
 
-        <one-to-many field="sessions" target-entity="Formation\Entity\Db\Session" mapped-by="module"/>
-
-        <!-- VALEUR PAR DEFAUT DES SESSIONS ASSOCIEES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-        <many-to-one field="site" target-entity="Application\Entity\Db\Etablissement">
-            <join-columns>
-                <join-column name="SITE_ID" referenced-column-name="ID"/>
-            </join-columns>
-        </many-to-one>
-        <many-to-one field="responsable" target-entity="Application\Entity\Db\Individu">
-            <join-columns>
-                <join-column name="RESPONSABLE_ID" referenced-column-name="ID"/>
-            </join-columns>
-        </many-to-one>
-        <field name="modalite"            type="string"       length="1"          column="MODALITE"         nullable="true"/>
-        <field name="type"                type="string"       length="1"          column="TYPE"             nullable="true"/>
-        <many-to-one field="typeStructure" target-entity="Application\Entity\Db\Structure">
-            <join-columns>
-                <join-column name="TYPE_STRUCTURE_ID" referenced-column-name="ID"/>
-            </join-columns>
-        </many-to-one>
-        <field name="tailleListePrincipale"     type="integer"                     column="TAILLE_LISTE_PRINCIPALE"      nullable="true"/>
-        <field name="tailleListeComplementaire" type="integer"                     column="TAILLE_LISTE_COMPLEMENTAIRE"  nullable="true"/>
+        <one-to-many field="formations" target-entity="Formation\Entity\Db\Formation" mapped-by="module"/>
 
         <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>

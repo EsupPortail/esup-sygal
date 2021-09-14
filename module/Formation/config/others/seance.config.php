@@ -89,7 +89,7 @@ return [
 //                                'label'    => 'Seances',
 //                                'route'    => 'formation/seance',
 //                                'resource' => PrivilegeController::getResourceId(SeanceController::class, 'index') ,
-//                                'order'    => 300,
+//                                'order'    => 400,
 //                            ],
 //                        ],
 //                    ],

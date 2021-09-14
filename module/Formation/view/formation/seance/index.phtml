@@ -33,7 +33,7 @@ $canAfficherSession     = $this->isAllowed(SessionPrivileges::getResourceId(Sess
         <tr>
             <td> <?php echo $seance->getId(); ?> </td>
             <td>
-                <?php echo $seance->getSession()->getModule()->getLibelle(); ?>
+                <?php echo $seance->getSession()->getFormation()->getLibelle(); ?>
                 - #<?php echo $seance->getSession()->getIndex(); ?>
             </td>
             <td>

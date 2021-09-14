@@ -1,0 +1,210 @@
+<?php
+
+use Formation\Entity\Db\Formation;
+use Formation\Entity\Db\Seance;
+use Formation\Entity\Db\Session;
+use Formation\Provider\Privilege\FormationPrivileges;
+use Formation\Provider\Privilege\SessionPrivileges;
+
+/**
+ * @see \Formation\Controller\FormationController::afficherAction()
+ * @var Formation $formation
+ */
+
+$pageTitle = 'Affichage de la formation : ' . $formation->getLibelle();
+$this->headTitle($pageTitle);
+
+$canModifierModule      = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_MODIFIER));
+
+$canAfficherSession     = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AFFICHER));
+$canAjouterSession      = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AJOUTER));
+$canHistoriserSession   = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_HISTORISER));
+$canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_SUPPRIMER));
+
+/** @var Session[] $sessions */
+$sessions = $formation->getSessions()->toArray();
+usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->getIndex();});
+?>
+
+<h1 class="page-header">
+    <?php echo $pageTitle; ?>
+</h1>
+
+<div class="row">
+    <div class="col-md-8">
+
+        <h2> Informations sur la formation </h2>
+
+        <dl class="dl-horizontal">
+            <dt> Module </dt>
+            <dd>
+                <?php if($formation->getModule()) : ?>
+                    <?php echo $formation->getModule()->getLibelle(); ?>
+                <?php else : ?>
+                    <i>Aucun module associé à cette formation</i>
+                <?php endif; ?>
+            </dd>
+            <dt> Formation </dt>
+            <dd> <?php echo $formation->getLibelle(); ?> </dd>
+            <?php if ($formation->getDescription()) : ?>
+                <dt> Description du module </dt>
+                <dd> <?php echo $formation->getDescription(); ?> </dd>
+            <?php endif ?>
+        </dl>
+
+        <h2> Valeur par défaut transmises aux sessions </h2>
+
+        <dl class="dl-horizontal">
+            <?php if ($formation->getSite()) : ?>
+                <dt> Site</dt>
+                <dd> <?php echo $this->site($formation); ?> </dd>
+            <?php endif; ?>
+            <?php if ($formation->getResponsable()) : ?>
+                <dt> Responsable</dt>
+                <dd> <?php echo $formation->getResponsable()->getNomComplet(); ?> </dd>
+            <?php endif; ?>
+            <?php if ($formation->getModalite()) : ?>
+                <dt> Modalité</dt>
+                <dd> <?php echo $this->modalite($formation); ?> </dd>
+            <?php endif; ?>
+            <?php if ($formation->getType()) : ?>
+                <dt> Type</dt>
+                <dd> <?php echo $this->type($formation); ?> </dd>
+            <?php endif; ?>
+            <?php if ($formation->getTailleListePrincipale()) : ?>
+                <dt> Taille de la liste principale </dt>
+                <dd> <?php echo $formation->getTailleListePrincipale(); ?> </dd>
+            <?php endif; ?>
+            <?php if ($formation->getTailleListeComplementaire()) : ?>
+                <dt> Taille de la liste complémentaire </dt>
+                <dd> <?php echo $formation->getTailleListeComplementaire(); ?> </dd>
+            <?php endif; ?>
+        </dl>
+    </div>
+
+    <div class="pull-right">
+        <?php if ($canModifierModule) : ?>
+            <?php /** @see \Formation\Controller\FormationController::modifierAction() */?>
+            <a class="btn btn-primary ajax-modal" data-event="modification"
+               href="<?php echo $this->url('formation/formation/modifier', ['formation' => $formation->getId()], [], true); ?>"
+            >
+                <span class="glyphicon glyphicon-pencil"></span>
+                Modifier les informations
+            </a>
+        <?php endif; ?>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <h2> Liste des sessions </h2>
+    </div>
+    <div class="pull-right">
+        <?php if ($canAjouterSession) : ?>
+            <?php /** @see \Formation\Controller\SessionController::ajouterAction() */ ?>
+            <a href="<?php echo $this->url('formation/session/ajouter', ['module' => $formation->getId()], [], true); ?>"
+               class="btn btn-primary ajax-modal" data-event="modification"
+               title="Ajouter une session"
+               data-toggle="tooltip" data-html="true">
+                <span class="glyphicon glyphicon-plus"></span>
+                Ajouter une session
+            </a>
+        <?php endif; ?>
+    </div>
+</div>
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th>Index</th>
+        <th>Site</th>
+        <th>Responsable</th>
+        <th>Modalité</th>
+        <th>Type</th>
+        <th>État</th>
+        <th>Séances</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($sessions as $session) : ?>
+        <tr>
+            <td> <?php echo $session->getIndex(); ?> </td>
+            <td> <?php echo $this->site($session); ?> </td>
+            <td>
+                <?php if ($session->getResponsable()) : ?>
+                    <?php echo $session->getResponsable()->getNomComplet(); ?>
+                <?php else : ?>
+                    Aucun responsable
+                <?php endif; ?>
+            </td>
+            <td> <?php echo $this->modalite($session); ?> </td>
+            <td> <?php echo $this->type($session); ?> </td>
+            <td> <?php echo $this->etat($session); ?></td>
+            <td>
+                <?php echo count($session->getSeances()); ?>
+                séance<?php if (count($session->getSeances())>1) echo "s"; ?>
+                -
+                <?php echo $session->getDuree(); ?> h.
+                <ul>
+                <?php foreach ($session->getSeances() as $seance) : ?>
+                    <?php /** @var Seance $seance*/?>
+                    <li>
+                        <?php echo $seance->getDebut()->format('d/m/Y'); ?>
+                        <?php echo $seance->getDebut()->format('H:i'); ?>
+                        &rightarrow;
+                        <?php echo $seance->getFin()->format('H:i'); ?>
+                    </li>
+                <?php endforeach;?>
+                </ul>
+            </td>
+            <td>
+                <?php if ($canAfficherSession) : ?>
+                    <?php /** @see \Formation\Controller\SessionController::afficherAction() */ ?>
+                    <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>">
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    </a>
+                <?php endif; ?>
+                <?php if ($canHistoriserSession) : ?>
+                    <?php if ($session->estNonHistorise()) : ?>
+                        <?php /** @see \Formation\Controller\SessionController::historiserAction() */ ?>
+                        <a href="<?php echo $this->url('formation/session/historiser', ['session' => $session->getId()], ['query' => ['retour' => $this->url('formation/module/afficher', ['module' => $formation->getId()], [], true)]], true); ?>"
+                        >
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    <?php else : ?>
+                        <?php /** @see \Formation\Controller\SessionController::restaurerAction() */ ?>
+                        <a href="<?php echo $this->url('formation/session/restaurer', ['session' => $session->getId()], ['query' => ['retour' => $this->url('formation/module/afficher', ['module' => $formation->getId()], [], true)]], true); ?>"
+                        >
+                            <span class="glyphicon glyphicon-leaf"></span>
+                        </a>
+                    <?php endif; ?>
+                <?php endif; ?>
+                <?php if ($canSupprimerSession) : ?>
+                    <?php /** @see \Formation\Controller\SessionController::supprimerAction() */ ?>
+                    <a href="<?php echo $this->url('formation/session/supprimer', ['session' => $session->getId()], [], true); ?>"
+                       class="ajax-modal" data-event="modification"
+                       title="supprimer une session"
+                       data-toggle="tooltip" data-html="true">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                <?php endif; ?>
+
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>
+
+

@@ -3,45 +3,23 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Module;
 use Formation\Form\Module\ModuleFormAwareTrait;
 use Formation\Service\Module\ModuleServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\View\Model\ViewModel;
 
-class ModuleController extends AbstractController
-{
+class ModuleController extends AbstractController {
     use EntityManagerAwareTrait;
     use ModuleServiceAwareTrait;
     use ModuleFormAwareTrait;
 
-    use EtablissementServiceAwareTrait;
-
-    public function indexAction() : ViewModel
+    public function indexAction()
     {
-        /** Recupération des paramètres du filtres */
-        $filtres = [
-            'site' => $this->params()->fromQuery('site'),
-            'libelle' => $this->params()->fromQuery('libelle'),
-            'responsable' => $this->params()->fromQuery('responsable'),
-            'modalite' => $this->params()->fromQuery('modalite'),
-            'structure' => $this->params()->fromQuery('structure'),
-        ];
-        /** Listing pour les filtres */
-        $listings = [
-            'sites' => $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions(),
-            'responsables' => $this->getEntityManager()->getRepository(Module::class)->fetchListeResponsable(),
-            'structures' => $this->getEntityManager()->getRepository(Module::class)->fetchListeStructures(),
-        ];
-
-        /** @var Module[] $formations */
-        $modules = $this->getEntityManager()->getRepository(Module::class)->fetchModulesWithFiltres($filtres);
-
+        $modules = $this->getEntityManager()->getRepository(Module::class)->findAll();
         return new ViewModel([
             'modules' => $modules,
-            'filtres' => $filtres,
-            'listings' => $listings,
         ]);
     }
 
@@ -76,7 +54,7 @@ class ModuleController extends AbstractController
             'title' => "Ajout d'un module de formation",
             'form' => $form,
         ]);
-        $vm->setTemplate('formation/module/modifier');
+        $vm->setTemplate('formation/default/default-form');
         return $vm;
     }
 
@@ -102,7 +80,7 @@ class ModuleController extends AbstractController
             'title' => "Modification d'un module de formation",
             'form' => $form,
         ]);
-        $vm->setTemplate('formation/module/modifier');
+        $vm->setTemplate('formation/default/default-form');
         return $vm;
     }
 

@@ -2,23 +2,13 @@
 
 namespace Formation\Entity\Db;
 
-use Application\Entity\Db\Individu;
 use Doctrine\Common\Collections\Collection;
-use Formation\Entity\Db\Interfaces\HasModaliteInterface;
-use Formation\Entity\Db\Interfaces\HasSiteInterface;
-use Formation\Entity\Db\Interfaces\HasTypeInterface;
-use Formation\Entity\Db\Traits\HasModaliteTrait;
-use Formation\Entity\Db\Traits\HasSiteTrait;
-use Formation\Entity\Db\Traits\HasTypeTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class Module implements HistoriqueAwareInterface,
-    HasSiteInterface, HasModaliteInterface, HasTypeInterface {
+class Module implements HistoriqueAwareInterface
+{
     use HistoriqueAwareTrait;
-    use HasSiteTrait;
-    use HasModaliteTrait;
-    use HasTypeTrait;
 
     /** @var int */
     private $id;
@@ -29,19 +19,8 @@ class Module implements HistoriqueAwareInterface,
     /** @var string|null */
     private $description;
 
-    /** @var string|null */
-    private $lien;
-
-    /** @var Collection (Session) */
-    private $sessions;
-
-    /** @var Individu|null */
-    private $responsable;
-
-    /** @var int */
-    private $tailleListePrincipale;
-    /** @var int */
-    private $tailleListeComplementaire;
+    /** @var Collection (Formation) */
+    private $formations;
 
     /**
      * @return int
@@ -88,84 +67,11 @@ class Module implements HistoriqueAwareInterface,
     }
 
     /**
-     * @return string|null
-     */
-    public function getLien(): ?string
-    {
-        return $this->lien;
-    }
-
-    /**
-     * @param string|null $lien
-     * @return Module
-     */
-    public function setLien(?string $lien): Module
-    {
-        $this->lien = $lien;
-        return $this;
-    }
-
-    /**
      * @return Collection
      */
-    public function getSessions() : Collection
+    public function getFormations(): Collection
     {
-        return $this->sessions;
+        return $this->formations;
     }
-
-    /**
-     * @return Individu|null
-     */
-    public function getResponsable(): ?Individu
-    {
-        return $this->responsable;
-    }
-
-    /**
-     * @param Individu|null $responsable
-     * @return Module
-     */
-    public function setResponsable(?Individu $responsable): Module
-    {
-        $this->responsable = $responsable;
-        return $this;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getTailleListePrincipale(): ?int
-    {
-        return $this->tailleListePrincipale;
-    }
-
-    /**
-     * @param int|null $tailleListePrincipale
-     * @return Module
-     */
-    public function setTailleListePrincipale(?int $tailleListePrincipale): Module
-    {
-        $this->tailleListePrincipale = $tailleListePrincipale;
-        return $this;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getTailleListeComplementaire(): ?int
-    {
-        return $this->tailleListeComplementaire;
-    }
-
-    /**
-     * @param int|null $tailleListeComplementaire
-     * @return Module
-     */
-    public function setTailleListeComplementaire(?int $tailleListeComplementaire): Module
-    {
-        $this->tailleListeComplementaire = $tailleListeComplementaire;
-        return $this;
-    }
-
 
 }

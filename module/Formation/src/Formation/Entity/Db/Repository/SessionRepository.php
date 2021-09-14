@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Interfaces\HasTypeInterface;
-use Formation\Entity\Db\Module;
+use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Session;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\Mvc\Controller\AbstractActionController;
@@ -37,7 +37,7 @@ class SessionRepository extends EntityRepository
     public function createQB(string $alias) : QueryBuilder
     {
         $qb = $this->createQueryBuilder($alias)
-            ->join($alias.".module", "module")->addSelect("module")
+            ->join($alias.".formation", "formation")->addSelect("formation")
             ->leftJoin($alias.".inscriptions", "inscription")->addSelect("inscription")
             ->leftJoin($alias.".seances", "seance")->addSelect("seance")
             ->leftJoin($alias.".etat", "etat")->addSelect("etat")

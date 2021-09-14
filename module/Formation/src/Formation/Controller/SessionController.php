@@ -7,7 +7,7 @@ use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
-use Formation\Entity\Db\Module;
+use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Presence;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
@@ -54,8 +54,8 @@ class SessionController extends AbstractController
         ];
         $listings = [
             'sites' => $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions(),
-            'responsables' => $this->getEntityManager()->getRepository(Module::class)->fetchListeResponsable(),
-            'structures' => $this->getEntityManager()->getRepository(Module::class)->fetchListeStructures(),
+            'responsables' => $this->getEntityManager()->getRepository(Formation::class)->fetchListeResponsable(),
+            'structures' => $this->getEntityManager()->getRepository(Formation::class)->fetchListeStructures(),
             'etats' => $this->getEntityManager()->getRepository(Etat::class)->findAll(),
         ];
 
@@ -88,11 +88,11 @@ class SessionController extends AbstractController
 
     public function ajouterAction()
     {
-        /** @var Module $module */
-        $module = $this->getEntityManager()->getRepository(Module::class)->getRequestedModule($this);
+        /** @var Formation $module */
+        $module = $this->getEntityManager()->getRepository(Formation::class)->getRequestedModule($this);
 
         $session = new Session();
-        $session->setModule($module);
+        $session->setFormation($module);
         $session = $this->getSessionService()->setValeurParDefaut($session);
 
         $form = $this->getSessionForm();
