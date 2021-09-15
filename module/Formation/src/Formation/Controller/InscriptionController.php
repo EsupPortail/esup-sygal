@@ -11,7 +11,7 @@ use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
-use Formation\Entity\Db\Module;
+use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Session;
 use Formation\Service\Exporter\Attestation\AttestationExporter;
 use Formation\Service\Exporter\Convocation\ConvocationExporter;

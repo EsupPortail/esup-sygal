@@ -13,7 +13,7 @@ $session = $seance->getSession();
 $inscriptions = $session->getListePrincipale();
 usort($inscriptions, function(Inscription $a, Inscription $b) { return $a->getDoctorant()->getIndividu()->getNomComplet() > $b->getDoctorant()->getIndividu()->getNomComplet();});
 
-$libelle = $session->getModule()->getLibelle(). " #".$session->getIndex();
+$libelle = $session->getFormation()->getLibelle(). " #".$session->getIndex();
 /** @var Formateur[] $formateurs */
 $formateurs = $session->getFormateurs();
 ?>

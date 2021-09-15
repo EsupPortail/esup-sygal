@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @see \Formation\Controller\ModuleController::catalogueAction()
+ * @var array $catalogue
+ */
+
+?>
+
+<h1 class="page-header">
+    Catalogue des formations
+</h1>
+
+<?php foreach ($catalogue as $key => $element) : ?>
+    <span class="module">
+        <?php if ($element["module"] !== null) : ?>
+            <?php echo $element["module"]->getLibelle(); ?>
+        <?php else : ?>
+            Formations non liées à un module
+        <?php endif ; ?>
+    </span>
+    <?php if (empty($element['formations'])) : ?>
+        <span style="display:block; margin-left: 3rem; margin-bottom: 1rem;">
+            Aucune formation
+        </span>
+    <?php else : ?>
+        <ul>
+            <?php foreach ($element['formations'] as $formation) : ?>
+                <li>
+                    <?php echo $formation->getLibelle(); ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+<?php endforeach; ?>

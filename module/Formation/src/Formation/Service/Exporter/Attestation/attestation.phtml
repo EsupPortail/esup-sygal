@@ -14,7 +14,7 @@ use Formation\Entity\Db\Seance;
 $session = $inscription->getSession();
 $doctorant = $inscription->getDoctorant();
 
-$libelle = $session->getModule()->getLibelle() . " #".$session->getIndex();
+$libelle = $session->getFormation()->getLibelle() . " #".$session->getIndex();
 $denomination = $doctorant->getIndividu()->getNomComplet(false, false,false,true);
 $responsable = null;
 if ($individu = $session->getResponsable()) {

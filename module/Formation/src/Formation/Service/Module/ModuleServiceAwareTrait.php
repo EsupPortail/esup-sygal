@@ -16,12 +16,12 @@ trait ModuleServiceAwareTrait
     }
 
     /**
-     * @param ModuleService $formationService
+     * @param ModuleService $moduleService
      * @return ModuleService
      */
-    public function setModuleService(ModuleService $formationService): ModuleService
+    public function setModuleService(ModuleService $moduleService): ModuleService
     {
-        $this->moduleService = $formationService;
+        $this->moduleService = $moduleService;
         return $this->moduleService;
     }
 

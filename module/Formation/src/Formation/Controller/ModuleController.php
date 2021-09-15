@@ -3,39 +3,28 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Module;
 use Formation\Form\Module\ModuleFormAwareTrait;
 use Formation\Service\Module\ModuleServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\View\Model\ViewModel;
 
-class ModuleController extends AbstractController
-{
+class ModuleController extends AbstractController {
     use EntityManagerAwareTrait;
     use ModuleServiceAwareTrait;
     use ModuleFormAwareTrait;
 
-    use EtablissementServiceAwareTrait;
-
-    public function indexAction() : ViewModel
+    public function indexAction()
     {
         /** Recupération des paramètres du filtres */
         $filtres = [
-            'site' => $this->params()->fromQuery('site'),
             'libelle' => $this->params()->fromQuery('libelle'),
-            'responsable' => $this->params()->fromQuery('responsable'),
-            'modalite' => $this->params()->fromQuery('modalite'),
-            'structure' => $this->params()->fromQuery('structure'),
         ];
         /** Listing pour les filtres */
-        $listings = [
-            'sites' => $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions(),
-            'responsables' => $this->getEntityManager()->getRepository(Module::class)->fetchListeResponsable(),
-            'structures' => $this->getEntityManager()->getRepository(Module::class)->fetchListeStructures(),
-        ];
+        $listings = [];
 
-        /** @var Module[] $formations */
+        /** @var Module[] $modules */
         $modules = $this->getEntityManager()->getRepository(Module::class)->fetchModulesWithFiltres($filtres);
 
         return new ViewModel([
@@ -76,7 +65,7 @@ class ModuleController extends AbstractController
             'title' => "Ajout d'un module de formation",
             'form' => $form,
         ]);
-        $vm->setTemplate('formation/module/modifier');
+        $vm->setTemplate('formation/default/default-form');
         return $vm;
     }
 
@@ -102,7 +91,7 @@ class ModuleController extends AbstractController
             'title' => "Modification d'un module de formation",
             'form' => $form,
         ]);
-        $vm->setTemplate('formation/module/modifier');
+        $vm->setTemplate('formation/default/default-form');
         return $vm;
     }
 
@@ -157,5 +146,47 @@ class ModuleController extends AbstractController
             ]);
         }
         return $vm;
+    }
+
+    public function catalogueAction()
+    {
+        /** @var Module[] $modules */
+        $modules = $this->getEntityManager()->getRepository(Module::class)->findAll();
+        usort($modules, function (Module $a, Module $b) { return $a->getLibelle() > $b->getLibelle(); });
+        /** @var Formation[] $formations */
+        $formations = $this->getEntityManager()->getRepository(Formation::class)->findAll();
+
+        $catalogue = [];
+        foreach ($modules as $module) {
+            if ($module->estNonHistorise()) {
+                $liste = [];
+                foreach ($formations as $formation) {
+                    if ($formation->estNonHistorise() AND $formation->getModule() === $module) {
+                        $liste[] = $formation;
+                    }
+                }
+                usort($liste, function (Formation $a, Formation $b) { return $a->getLibelle() > $b->getLibelle();});
+
+                $catalogue[$module->getId()]["module"] = $module;
+                $catalogue[$module->getId()]["formations"] = $liste;
+            }
+        }
+
+        {
+            $liste = [];
+            foreach ($formations as $formation) {
+                if ($formation->estNonHistorise() AND $formation->getModule() === null) {
+                    $liste[] = $formation;
+                }
+            }
+            usort($liste, function (Formation $a, Formation $b) { return $a->getLibelle() > $b->getLibelle();});
+
+            $catalogue[-1]["module"] = null;
+            $catalogue[-1]["formations"] = $liste;
+        }
+
+        return new ViewModel([
+            'catalogue' => $catalogue
+        ]);
     }
 }

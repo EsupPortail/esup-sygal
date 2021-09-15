@@ -38,7 +38,7 @@ $canSupprimerInscription       = $this->isAllowed(InscriptionPrivileges::getReso
             <td> <?php echo $inscription->getId(); ?> </td>
             <td>
                 <?php echo $inscription->getSession()->getId(); ?>
-                <?php echo $inscription->getSession()->getModule()->getLibelle(); ?>
+                <?php echo $inscription->getSession()->getFormation()->getLibelle(); ?>
             </td>
             <td> <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?> </td>
             <td>

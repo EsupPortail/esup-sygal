@@ -6,7 +6,6 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\Individu;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Formation\Entity\Db\Formateur;
-use Formation\Entity\Db\Module;
 use Formation\Entity\Db\Session;
 use Formation\Service\Formateur\FormateurServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -36,7 +35,7 @@ class FormateurController extends AbstractController {
         }
 
         return new ViewModel([
-            'title' => "Ajout d'un formateur pour la session " . $session->getModule()->getLibelle() . " #" . $session->getIndex(),
+            'title' => "Ajout d'un formateur pour la session " . $session->getFormation()->getLibelle() . " #" . $session->getIndex(),
             'session' => $session,
         ]);
     }

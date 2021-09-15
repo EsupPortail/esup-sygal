@@ -96,7 +96,7 @@ return [
                                 'label'    => 'Inscriptions',
                                 'route'    => 'formation/inscription',
                                 'resource' => PrivilegeController::getResourceId(InscriptionController::class, 'index') ,
-                                'order'    => 400,
+                                'order'    => 500,
                             ],
                         ],
                     ],

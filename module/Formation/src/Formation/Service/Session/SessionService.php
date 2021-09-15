@@ -4,7 +4,7 @@ namespace Formation\Service\Session;
 
 use DateTime;
 use Doctrine\ORM\ORMException;
-use Formation\Entity\Db\Module;
+use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Session;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -20,7 +20,7 @@ class SessionService {
      */
     public function create(Session $session) : Session
     {
-        $index = $this->getEntityManager()->getRepository(Module::class)->fetchIndexMax($session->getModule()) + 1;
+        $index = $this->getEntityManager()->getRepository(Formation::class)->fetchIndexMax($session->getFormation()) + 1;
         $session->setIndex($index);
         try {
             $this->getEntityManager()->persist($session);
@@ -93,7 +93,7 @@ class SessionService {
 
     public function setValeurParDefaut(Session $session) : Session
     {
-        $module = $session->getModule();
+        $module = $session->getFormation();
         if ($module !== null) {
             $session->setSite($module->getSite());
             $session->setResponsable($module->getResponsable());

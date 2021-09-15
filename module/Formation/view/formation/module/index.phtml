@@ -1,29 +1,33 @@
 <?php
 
+use Formation\Entity\Db\Module;
+use Formation\Provider\Privilege\ModulePrivileges;
+
 /**
  * @see \Formation\Controller\ModuleController::indexAction()
  * @var Module[] $modules
- *
- * @var string[] $filtres
+ * @var array $filtres
  * @var array $listings
  */
 
-use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\Individu;
-use Application\Entity\Db\Structure;
-use Formation\Entity\Db\Module;
-use Formation\Provider\Privilege\ModulePrivileges;
+$this->headTitle('Index des modules de formation');
+
 
 $canAfficherModule      = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_AFFICHER));
 $canAjouterModule       = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_AJOUTER));
 $canHistoriserModule    = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_HISTORISER));
 $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_SUPPRIMER));
 
+
 ?>
 
-<h1> Index des formations </h1>
+<h1 class="page-header">
+    Index des modules de formation
+</h1>
+
 
 <?php echo $this->partial('partial/filtre', [ 'filtres' => $filtres, 'listings' => $listings ]); ?>
+
 
 <?php if ($canAjouterModule) : ?>
     <a
@@ -31,26 +35,20 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
         href="<?php echo $this->url('formation/module/ajouter', [], [], true); ?>"
         class="btn btn-primary action ajax-modal" data-event="modification">
         <span class="glyphicon glyphicon-plus"></span>
-        Ajouter une formation
+        Ajouter un module
     </a>
 <?php endif; ?>
-
 
 <table class="table table-condensed table-hover">
     <thead>
         <tr>
-            <th>Libellé</th>
-            <th>Site<span title="valeur par défaut">*</span></th>
-            <th>Responsable<span title="valeur par défaut">*</span></th>
-            <th>Modalité<span title="valeur par défaut">*</span> </th>
-            <th>Type<span title="valeur par défaut">*</span> </th>
-            <th>Taille des listes<span title="valeur par défaut">*</span> </th>
-            <th>#Session</th>
-            <th>Action</th>
+            <th> Libellé </th>
+            <th> #Formation </th>
+            <th> Action </th>
         </tr>
     </thead>
     <tbody>
-    <?php foreach ($modules as $module) : ?>
+    <?php foreach($modules as $module): ?>
         <tr>
             <td>
                 <?php echo $module->getLibelle(); ?>
@@ -61,38 +59,19 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
                     ></span>
                 <?php endif; ?>
             </td>
-            <td> <?php echo $this->site($module); ?> </td>
-            <td>
-                <?php if ($module->getResponsable()) : ?>
-                    <?php echo $module->getResponsable()->getNomComplet(); ?>
-                <?php else : ?>
-                    N.C.
-                <?php endif; ?>
-            </td>
-            <td> <?php echo $this->modalite($module); ?> </td>
-            <td> <?php echo $this->type($module); ?> </td>
-            <td>
-                Liste principale :
-                <?php echo $module->getTailleListePrincipale()?:"N.C."; ?>
-                <br/>
-                Liste complémentaire :
-                <?php echo $module->getTailleListeComplementaire()?:"N.C."; ?>
-            </td>
-            <td>
-                <?php echo count($module->getSessions()); ?>
-            </td>
+            <td> <?php echo count($module->getFormations()); ?> </td>
             <td>
                 <?php if ($canAfficherModule) : ?>
                     <?php /** @see \Formation\Controller\ModuleController::afficherAction() */ ?>
                     <a href="<?php echo $this->url('formation/module/afficher', ['module' => $module->getId()], [], true); ?>"
-                       title="afficher le module de  formation #<?php echo $module->getId(); ?>"
+                       title="afficher le module de formation #<?php echo $module->getId(); ?>"
                        data-toggle="tooltip" data-html="true">
                         <span class="glyphicon glyphicon-eye-open"></span>
                     </a>
                 <?php endif; ?>
                 <?php if ($canHistoriserModule) : ?>
                     <?php if ($module->estNonHistorise()) : ?>
-                        <?php /** @see \Formation\Controller\FormationController::historiserAction() */ ?>
+                        <?php /** @see \Formation\Controller\ModuleController::historiserAction() */ ?>
                         <a href="<?php echo $this->url('formation/module/historiser', ['module' => $module->getId()], [], true); ?>"
                            title="Historiser le module de  formation #<?php echo $module->getId(); ?>"
                            data-toggle="tooltip" data-html="true">
@@ -121,6 +100,8 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
     <?php endforeach; ?>
     </tbody>
 </table>
+
+
 
 <script>
     $(function () {

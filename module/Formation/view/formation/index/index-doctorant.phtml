@@ -109,7 +109,7 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
             <tbody>
             <?php foreach ($ouvertes as $session) : ?>
                 <tr>
-                    <td> <?php echo $session->getModule()->getLibelle(); ?> </td>
+                    <td> <?php echo $session->getFormation()->getLibelle(); ?> </td>
                     <td> <?php echo $session->getIndex(); ?> </td>
                     <td> <?php echo $this->formateurs($session); ?> </td>
                     <td> <?php echo $this->site($session); ?> </td>
@@ -178,7 +178,7 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
             <tbody>
             <?php foreach ($preparations as $session) : ?>
                 <tr>
-                    <td> <?php echo $session->getModule()->getLibelle(); ?> </td>
+                    <td> <?php echo $session->getFormation()->getLibelle(); ?> </td>
                     <td> <?php echo $session->getIndex(); ?> </td>
                     <td> <?php echo $this->formateurs($session); ?> </td>
                     <td> <?php echo $this->site($session); ?> </td>
@@ -251,7 +251,7 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
             <?php foreach ($encours as $inscription) : ?>
                 <?php $session = $inscription->getSession(); ?>
                 <tr>
-                    <td> <?php echo $session->getModule()->getLibelle(); ?> </td>
+                    <td> <?php echo $session->getFormation()->getLibelle(); ?> </td>
                     <td> <?php echo $session->getIndex(); ?> </td>
                     <td> <?php echo $this->formateurs($session); ?> </td>
                     <td> <?php echo $this->site($session); ?> </td>

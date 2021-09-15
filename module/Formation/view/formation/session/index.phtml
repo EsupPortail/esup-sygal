@@ -42,7 +42,7 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
 <!--            <td> --><?php //echo $session->getId(); ?><!-- </td>-->
             <td>
 <!--                --><?php //echo $session->getFormation()->getId(); ?>
-                <?php echo $session->getModule()->getLibelle(); ?> <br/>
+                <?php echo $session->getFormation()->getLibelle(); ?> <br/>
                 Session #<?php echo $session->getIndex(); ?> <br/>
             </td>
             <td> <?php echo $this->site($session); ?> </td>

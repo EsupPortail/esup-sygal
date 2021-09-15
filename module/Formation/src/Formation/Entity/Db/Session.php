@@ -36,8 +36,8 @@ class Session implements HistoriqueAwareInterface,
 
     /** @var int */
     private $index;
-    /** @var Module|null */
-    private $module;
+    /** @var Formation|null */
+    private $formation;
 
     /** Informations générale sur la session **************************************************************************/
     /** @var Etablissement|null */
@@ -91,20 +91,20 @@ class Session implements HistoriqueAwareInterface,
     }
 
     /**
-     * @return Module|null
+     * @return Formation|null
      */
-    public function getModule(): ?Module
+    public function getFormation(): ?Formation
     {
-        return $this->module;
+        return $this->formation;
     }
 
     /**
-     * @param Module|null $module
+     * @param Formation|null $module
      * @return Session
      */
-    public function setModule(?Module $module): Session
+    public function setFormation(?Formation $formation): Session
     {
-        $this->module = $module;
+        $this->formation = $formation;
         return $this;
     }
 

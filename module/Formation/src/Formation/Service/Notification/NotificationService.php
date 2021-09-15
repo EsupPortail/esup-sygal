@@ -29,7 +29,7 @@ class NotificationService extends NotifierService
     {
         /** @var Inscription[] $inscriptions */
         $inscriptions = $session->getListePrincipale();
-        $libelle = $session->getModule()->getLibelle(). " #".$session->getIndex();
+        $libelle = $session->getFormation()->getLibelle(). " #".$session->getIndex();
 
         foreach ($inscriptions as $inscription) {
             $mail = $inscription->getDoctorant()->getIndividu()->getEmail();

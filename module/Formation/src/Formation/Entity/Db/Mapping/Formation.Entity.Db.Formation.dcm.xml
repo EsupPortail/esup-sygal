@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="Formation\Entity\Db\Session"
-            table="FORMATION_SESSION"
-            repository-class="Formation\Entity\Db\Repository\SessionRepository">
+    <entity name="Formation\Entity\Db\Formation"
+            table="FORMATION_FORMATION"
+            repository-class="Formation\Entity\Db\Repository\FormationRepository"
+    >
 
         <id name="id" type="integer" column="ID">
             <generator strategy="SEQUENCE"/>
         </id>
+        <field name="libelle"             type="string"       length="1024"       column="LIBELLE"          nullable="false"/>
+        <field name="description"         type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
+        <field name="lien"                type="string"       length="1024"       column="LIEN"             nullable="true"/>
 
-        <field name="index" type="integer" column="SESSION_INDEX" nullable="false"/>
-        <many-to-one field="formation" target-entity="Formation\Entity\Db\Formation">
-            <join-columns>
-                <join-column name="FORMATION_ID" referenced-column-name="ID"/>
-            </join-columns>
-        </many-to-one>
+        <one-to-many field="sessions" target-entity="Formation\Entity\Db\Session" mapped-by="formation"/>
 
+        <!-- VALEUR PAR DEFAUT DES SESSIONS ASSOCIEES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <many-to-one field="site" target-entity="Application\Entity\Db\Etablissement">
             <join-columns>
                 <join-column name="SITE_ID" referenced-column-name="ID"/>
@@ -25,29 +25,22 @@
                 <join-column name="RESPONSABLE_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <field name="modalite"          type="string"       length="1"       column="MODALITE"      nullable="true"/>
-        <field name="type"              type="string"       length="1"       column="TYPE"      nullable="true"/>
+        <field name="modalite"            type="string"       length="1"          column="MODALITE"         nullable="true"/>
+        <field name="type"                type="string"       length="1"          column="TYPE"             nullable="true"/>
         <many-to-one field="typeStructure" target-entity="Application\Entity\Db\Structure">
             <join-columns>
                 <join-column name="TYPE_STRUCTURE_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-
-        <many-to-one field="etat" target-entity="Formation\Entity\Db\Etat">
-            <join-columns>
-                <join-column name="ETAT_CODE" referenced-column-name="CODE"/>
-            </join-columns>
-        </many-to-one>
-
-        <field name="description"          type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
-
-        <one-to-many field="seances" target-entity="Formation\Entity\Db\Seance" mapped-by="session"/>
-        <one-to-many field="formateurs" target-entity="Formation\Entity\Db\Formateur" mapped-by="session"/>
-
-        <one-to-many field="inscriptions" target-entity="Formation\Entity\Db\Inscription" mapped-by="session"/>
         <field name="tailleListePrincipale"     type="integer"                     column="TAILLE_LISTE_PRINCIPALE"      nullable="true"/>
         <field name="tailleListeComplementaire" type="integer"                     column="TAILLE_LISTE_COMPLEMENTAIRE"  nullable="true"/>
 
+        <!-- MODULE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <many-to-one field="module" target-entity="Formation\Entity\Db\Module">
+            <join-columns>
+                <join-column name="MODULE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
 
         <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>

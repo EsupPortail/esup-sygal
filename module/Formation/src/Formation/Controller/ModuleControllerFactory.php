@@ -2,7 +2,6 @@
 
 namespace Formation\Controller;
 
-use Application\Service\Etablissement\EtablissementService;
 use Doctrine\ORM\EntityManager;
 use Formation\Form\Module\ModuleForm;
 use Formation\Service\Module\ModuleService;
@@ -14,15 +13,13 @@ class ModuleControllerFactory {
      * @param ContainerInterface $container
      * @return ModuleController
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container) : ModuleController
     {
         /**
          * @var EntityManager $entityManager
-         * @var EtablissementService $etablissementService
          * @var ModuleService $moduleService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
-        $etablissementService = $container->get(EtablissementService::class);
         $moduleService = $container->get(ModuleService::class);
 
         /**
@@ -32,7 +29,6 @@ class ModuleControllerFactory {
 
         $controller = new ModuleController();
         $controller->setEntityManager($entityManager);
-        $controller->setEtablissementService($etablissementService);
         $controller->setModuleService($moduleService);
         $controller->setModuleForm($moduleForm);
         return $controller;
