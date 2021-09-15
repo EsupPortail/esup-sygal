@@ -35,7 +35,7 @@ class InscriptionRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder($alias)
             ->join($alias.".session", "session")->addSelect("session")
-            ->join("session.module", "module")->addSelect("module")
+            ->join("session.formation", "formation")->addSelect("formation")
             ->join($alias.".doctorant", "doctorant")->addSelect("doctorant")
         ;
         return $qb;
