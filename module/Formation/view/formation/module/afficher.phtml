@@ -51,7 +51,7 @@ usort($formations, function(Formation $a, Formation $b) { return $a->getLibelle(
         <?php if ($canModifierModule) : ?>
             <?php /** @see \Formation\Controller\FormationController::modifierAction() */?>
             <a class="btn btn-primary ajax-modal" data-event="modification"
-               href="<?php echo $this->url('formation/formation/modifier', ['formation' => $module->getId()], [], true); ?>"
+               href="<?php echo $this->url('formation/module/modifier', ['module' => $module->getId()], [], true); ?>"
             >
                 <span class="glyphicon glyphicon-pencil"></span>
                 Modifier les informations

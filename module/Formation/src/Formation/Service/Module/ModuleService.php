@@ -5,11 +5,22 @@ namespace Formation\Service\Module;
 use DateTime;
 use Doctrine\ORM\ORMException;
 use Formation\Entity\Db\Module;
+use Formation\Entity\Db\Repository\ModuleRepository;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class ModuleService {
     use EntityManagerAwareTrait;
+
+    /**
+     * @return ModuleRepository
+     */
+    public function getRepository()
+    {
+        /** @var ModuleRepository $repo */
+        $repo = $this->entityManager->getRepository(Module::class);
+        return $repo;
+    }
 
     /** GESTION DES ENTITES *******************************************************************************************/
 
@@ -89,5 +100,21 @@ class ModuleService {
     }
 
     /** FACADE ********************************************************************************************************/
+
+    /**
+     * @return array
+     */
+    public function getModulesAsOptions() : array
+    {
+        /** @var Module[] $modules */
+        $modules = $this->getRepository()->findAll();
+        $options = [];
+        foreach ($modules as $module) {
+            if ($module->estNonHistorise()) {
+                $options[$module->getId()] = $module->getLibelle();
+            }
+        }
+        return $options;
+    }
 
 }

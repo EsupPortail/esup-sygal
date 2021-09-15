@@ -9,11 +9,14 @@ use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Formation\Entity\Db\Formation;
+use Formation\Entity\Db\Module;
+use Formation\Service\Module\ModuleServiceAwareTrait;
 use Zend\Hydrator\HydratorInterface;
 
 class FormationHydrator implements HydratorInterface {
     use EtablissementServiceAwareTrait;
     use IndividuServiceAwareTrait;
+    use ModuleServiceAwareTrait;
     use StructureServiceAwareTrait;
 
     /**
@@ -25,6 +28,7 @@ class FormationHydrator implements HydratorInterface {
         $data = [
             'libelle' => $object->getLibelle(),
             'description' => $object->getDescription(),
+            'module' => ($object->getModule())?$object->getModule()->getId():null,
             'site' => ($object->getSite())?$object->getSite()->getId():null,
             'responsable' => ($object->getResponsable())?['id' => $object->getResponsable()->getId(), 'label' => $object->getResponsable()->getNomComplet()]:null,
             'modalite' => $object->getModalite(),
@@ -45,6 +49,8 @@ class FormationHydrator implements HydratorInterface {
     {
         $libelle = (isset($data['libelle']) AND trim($data['libelle']) !== '')?trim($data['libelle']):null;
         $description = (isset($data['description']) AND trim($data['description']) !== '')?trim($data['description']):null;
+        /** @var Module|null $module */
+        $module = (isset($data['module']) AND trim($data['module']) !== '')?$this->getModuleService()->getRepository()->find($data['module']):null;
         /** @var Etablissement|null $site */
         $site = (isset($data['site']))?$this->getEtablissementService()->getRepository()->find($data['site']):null;
         /** @var Individu|null $responsable */
@@ -58,6 +64,7 @@ class FormationHydrator implements HydratorInterface {
 
         $object->setLibelle($libelle);
         $object->setDescription($description);
+        $object->setModule($module);
         $object->setSite($site);
         $object->setResponsable($responsable);
         $object->setModalite($modalite);

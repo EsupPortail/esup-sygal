@@ -4,6 +4,7 @@ namespace Formation\Form\Formation;
 
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
+use Formation\Service\Module\ModuleServiceAwareTrait;
 use UnicaenApp\Form\Element\SearchAndSelect;
 use Zend\Form\Element\Button;
 use Zend\Form\Element\Number;
@@ -16,6 +17,7 @@ use Zend\InputFilter\Factory;
 class FormationForm extends Form {
     use EtablissementServiceAwareTrait;
     use StructureServiceAwareTrait;
+    use ModuleServiceAwareTrait;
 
     /** @var string */
     private $urlResponsable;
@@ -55,6 +57,21 @@ class FormationForm extends Form {
             'attributes' => [
                 'id' => 'description',
                 'class' => 'tinymce',
+            ],
+        ]);
+        //site
+        $this->add([
+            'type' => Select::class,
+            'name' => 'module',
+            'options' => [
+                'label' => "Module associé à la formation :",
+                'empty_option' => "Aucun module",
+                'value_options' => $this->getModuleService()->getModulesAsOptions(),
+            ],
+            'attributes' => [
+                'id' => 'structure',
+                'class' => 'show-tick',
+                'data-live-search' => 'true',
             ],
         ]);
 
@@ -171,6 +188,7 @@ class FormationForm extends Form {
         $this->setInputFilter((new Factory())->createInputFilter([
             'libelle'       => [ 'required' => true, ],
             'description'   => [ 'required' => false, ],
+            'module'        => [ 'required' => false, ],
             'site'          => [ 'required' => false, ],
             'responsable'   => [ 'required' => false, ],
             'modalite'      => [ 'required' => false, ],

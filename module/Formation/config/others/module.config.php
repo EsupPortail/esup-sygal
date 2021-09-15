@@ -2,7 +2,6 @@
 
 namespace Formation;
 
-use Formation\Controller\FormationController;
 use Formation\Controller\ModuleController;
 use Formation\Controller\ModuleControllerFactory;
 use Formation\Form\Module\ModuleForm;
@@ -20,6 +19,15 @@ return [
     'bjyauthorize' => [
         'guards' => [
             PrivilegeController::class => [
+                [
+                    'controller' => ModuleController::class,
+                    'action' => [
+                        'catalogue',
+                    ],
+                    'privileges' => [
+                        ModulePrivileges::MODULE_INDEX,
+                    ],
+                ],
                 [
                     'controller' => ModuleController::class,
                     'action' => [
@@ -85,6 +93,12 @@ return [
                 'pages' => [
                     'formation' => [
                         'pages' => [
+                            'catalogue' => [
+                                'label'    => 'Catalogue des formations',
+                                'route'    => 'formation/catalogue',
+                                'resource' => PrivilegeController::getResourceId(ModuleController::class, 'catalogue') ,
+                                'order'    => 0,
+                            ],
                             'module' => [
                                 'label'    => 'Modules',
                                 'route'    => 'formation/module',
@@ -111,6 +125,17 @@ return [
         'routes' => [
             'formation' => [
                 'child_routes' => [
+                    'catalogue' => [
+                        'type'  => Literal::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/catalogue',
+                            'defaults' => [
+                                'controller' => ModuleController::class,
+                                'action'     => 'catalogue',
+                            ],
+                        ],
+                    ],
                     'module' => [
                         'type'  => Literal::class,
                         'may_terminate' => true,

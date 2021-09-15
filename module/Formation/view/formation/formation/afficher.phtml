@@ -47,7 +47,7 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
             <dt> Formation </dt>
             <dd> <?php echo $formation->getLibelle(); ?> </dd>
             <?php if ($formation->getDescription()) : ?>
-                <dt> Description du module </dt>
+                <dt> Description de la formation </dt>
                 <dd> <?php echo $formation->getDescription(); ?> </dd>
             <?php endif ?>
         </dl>

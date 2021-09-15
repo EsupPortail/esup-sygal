@@ -147,4 +147,46 @@ class ModuleController extends AbstractController {
         }
         return $vm;
     }
+
+    public function catalogueAction()
+    {
+        /** @var Module[] $modules */
+        $modules = $this->getEntityManager()->getRepository(Module::class)->findAll();
+        usort($modules, function (Module $a, Module $b) { return $a->getLibelle() > $b->getLibelle(); });
+        /** @var Formation[] $formations */
+        $formations = $this->getEntityManager()->getRepository(Formation::class)->findAll();
+
+        $catalogue = [];
+        foreach ($modules as $module) {
+            if ($module->estNonHistorise()) {
+                $liste = [];
+                foreach ($formations as $formation) {
+                    if ($formation->estNonHistorise() AND $formation->getModule() === $module) {
+                        $liste[] = $formation;
+                    }
+                }
+                usort($liste, function (Formation $a, Formation $b) { return $a->getLibelle() > $b->getLibelle();});
+
+                $catalogue[$module->getId()]["module"] = $module;
+                $catalogue[$module->getId()]["formations"] = $liste;
+            }
+        }
+
+        {
+            $liste = [];
+            foreach ($formations as $formation) {
+                if ($formation->estNonHistorise() AND $formation->getModule() === null) {
+                    $liste[] = $formation;
+                }
+            }
+            usort($liste, function (Formation $a, Formation $b) { return $a->getLibelle() > $b->getLibelle();});
+
+            $catalogue[-1]["module"] = null;
+            $catalogue[-1]["formations"] = $liste;
+        }
+
+        return new ViewModel([
+            'catalogue' => $catalogue
+        ]);
+    }
 }

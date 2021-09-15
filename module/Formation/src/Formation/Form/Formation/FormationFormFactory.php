@@ -4,6 +4,7 @@ namespace Formation\Form\Formation;
 
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Structure\StructureService;
+use Formation\Service\Module\ModuleService;
 use Interop\Container\ContainerInterface;
 use Zend\View\Helper\Url;
 
@@ -15,9 +16,13 @@ class FormationFormFactory {
      */
     public function __invoke(ContainerInterface $container) : FormationForm
     {
-        /** @var EtablissementService $etablissementService */
-        /** @var StructureService $structureService */
+        /**
+         * @var EtablissementService $etablissementService
+         * @var ModuleService $moduleService
+         * @var StructureService $structureService
+        **/
         $etablissementService = $container->get(EtablissementService::class);
+        $moduleService = $container->get(ModuleService::class);
         $structureService = $container->get(StructureService::class);
 
         /** @var FormationHydrator $hydrator */
@@ -31,6 +36,7 @@ class FormationFormFactory {
         $urlResponsable =  $urlManager->__invoke('utilisateur/rechercher-individu', [], [], true);
         $form->setUrlResponsable($urlResponsable);
         $form->setEtablissementService($etablissementService);
+        $form->setModuleService($moduleService);
         $form->setStructureService($structureService);
         $form->setHydrator($hydrator);
         return $form;
