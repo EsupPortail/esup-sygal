@@ -133,10 +133,10 @@ return [
                                 ],
                             ],
                             'ajouter' => [
-                                'type'  => Literal::class,
+                                'type'  => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/ajouter',
+                                    'route'    => '/ajouter[/:module]',
                                     'defaults' => [
                                         'controller' => FormationController::class,
                                         'action'     => 'ajouter',

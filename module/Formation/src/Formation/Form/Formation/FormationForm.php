@@ -59,6 +59,17 @@ class FormationForm extends Form {
                 'class' => 'tinymce',
             ],
         ]);
+        //lien
+        $this->add([
+            'type' => Text::class,
+            'name' => 'lien',
+            'options' => [
+                'label' => "Lien vers la fiche de la formation :",
+            ],
+            'attributes' => [
+                'id' => 'lien',
+            ],
+        ]);
         //site
         $this->add([
             'type' => Select::class,
@@ -188,6 +199,7 @@ class FormationForm extends Form {
         $this->setInputFilter((new Factory())->createInputFilter([
             'libelle'       => [ 'required' => true, ],
             'description'   => [ 'required' => false, ],
+            'lien'          => [ 'required' => false, ],
             'module'        => [ 'required' => false, ],
             'site'          => [ 'required' => false, ],
             'responsable'   => [ 'required' => false, ],

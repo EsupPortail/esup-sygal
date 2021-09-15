@@ -41,7 +41,7 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
             <th>Responsable<span title="valeur par défaut">*</span></th>
             <th>Modalité<span title="valeur par défaut">*</span> </th>
             <th>Type<span title="valeur par défaut">*</span> </th>
-            <th>Taille des listes<span title="valeur par défaut">*</span> </th>
+            <th>Effectif des listes<span title="valeur par défaut">*</span> </th>
             <th>#Session</th>
             <th>Action</th>
         </tr>
@@ -49,12 +49,11 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
     <tbody>
     <?php foreach ($formations as $formation) : ?>
         <tr>
-            <td>
+            <td <?php if ($formation->estHistorise()) echo " class='historise' "; ?> >
                 <?php echo $formation->getLibelle(); ?>
                 <?php if ($formation->getDescription() !== null AND trim($formation->getDescription()) !== null) : ?>
                     <span class="glyphicon glyphicon-info-sign"
                           title="<?php echo $formation->getDescription(); ?>" data-toggle="tooltip" data-html="true"
-
                     ></span>
                 <?php endif; ?>
             </td>
@@ -131,3 +130,9 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
 
     });
 </script>
+
+<style>
+    a.btn.action {
+        width:25rem;
+    }
+</style>

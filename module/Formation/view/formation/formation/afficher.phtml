@@ -14,7 +14,8 @@ use Formation\Provider\Privilege\SessionPrivileges;
 $pageTitle = 'Affichage de la formation : ' . $formation->getLibelle();
 $this->headTitle($pageTitle);
 
-$canModifierModule      = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_MODIFIER));
+$canIndexFormation      = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_INDEX));
+$canModifierFormation   = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_MODIFIER));
 
 $canAfficherSession     = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AFFICHER));
 $canAjouterSession      = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AJOUTER));
@@ -50,6 +51,10 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
                 <dt> Description de la formation </dt>
                 <dd> <?php echo $formation->getDescription(); ?> </dd>
             <?php endif ?>
+            <?php if ($formation->getLien()) : ?>
+                <dt> Lien vers de la fiche </dt>
+                <dd> <a href="<?php echo $formation->getLien(); ?>" target="_blank"><?php echo $formation->getLien(); ?></a> </dd>
+            <?php endif ?>
         </dl>
 
         <h2> Valeur par défaut transmises aux sessions </h2>
@@ -72,25 +77,40 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
                 <dd> <?php echo $this->type($formation); ?> </dd>
             <?php endif; ?>
             <?php if ($formation->getTailleListePrincipale()) : ?>
-                <dt> Taille de la liste principale </dt>
+                <dt> Effectif de la liste principale </dt>
                 <dd> <?php echo $formation->getTailleListePrincipale(); ?> </dd>
             <?php endif; ?>
             <?php if ($formation->getTailleListeComplementaire()) : ?>
-                <dt> Taille de la liste complémentaire </dt>
+                <dt> Effectif de la liste complémentaire </dt>
                 <dd> <?php echo $formation->getTailleListeComplementaire(); ?> </dd>
             <?php endif; ?>
         </dl>
     </div>
 
     <div class="pull-right">
-        <?php if ($canModifierModule) : ?>
+        <?php if ($canIndexFormation) : ?>
+            <?php /** @see \Formation\Controller\FormationController::indexAction() */?>
+            <a class="btn btn-primary action"
+               href="<?php echo $this->url('formation/formation', [], [], true); ?>"
+            >
+                <span class="glyphicon glyphicon-chevron-up"></span>
+                Retour à la liste des formations
+            </a>
+            <br/>
+            <br/>
+        <?php endif; ?>
+    </div>
+    <div class="pull-right">
+        <?php if ($canModifierFormation) : ?>
             <?php /** @see \Formation\Controller\FormationController::modifierAction() */?>
-            <a class="btn btn-primary ajax-modal" data-event="modification"
+            <a class="btn btn-primary action ajax-modal" data-event="modification"
                href="<?php echo $this->url('formation/formation/modifier', ['formation' => $formation->getId()], [], true); ?>"
             >
                 <span class="glyphicon glyphicon-pencil"></span>
                 Modifier les informations
             </a>
+        <br/>
+        <br/>
         <?php endif; ?>
     </div>
 </div>
@@ -103,7 +123,7 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
         <?php if ($canAjouterSession) : ?>
             <?php /** @see \Formation\Controller\SessionController::ajouterAction() */ ?>
             <a href="<?php echo $this->url('formation/session/ajouter', ['module' => $formation->getId()], [], true); ?>"
-               class="btn btn-primary ajax-modal" data-event="modification"
+               class="btn btn-primary action ajax-modal" data-event="modification"
                title="Ajouter une session"
                data-toggle="tooltip" data-html="true">
                 <span class="glyphicon glyphicon-plus"></span>
@@ -168,13 +188,13 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
                 <?php if ($canHistoriserSession) : ?>
                     <?php if ($session->estNonHistorise()) : ?>
                         <?php /** @see \Formation\Controller\SessionController::historiserAction() */ ?>
-                        <a href="<?php echo $this->url('formation/session/historiser', ['session' => $session->getId()], ['query' => ['retour' => $this->url('formation/module/afficher', ['module' => $formation->getId()], [], true)]], true); ?>"
+                        <a href="<?php echo $this->url('formation/session/historiser', ['session' => $session->getId()], ['query' => ['retour' => $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true)]], true); ?>"
                         >
                             <span class="glyphicon glyphicon-trash"></span>
                         </a>
                     <?php else : ?>
                         <?php /** @see \Formation\Controller\SessionController::restaurerAction() */ ?>
-                        <a href="<?php echo $this->url('formation/session/restaurer', ['session' => $session->getId()], ['query' => ['retour' => $this->url('formation/module/afficher', ['module' => $formation->getId()], [], true)]], true); ?>"
+                        <a href="<?php echo $this->url('formation/session/restaurer', ['session' => $session->getId()], ['query' => ['retour' => $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true)]], true); ?>"
                         >
                             <span class="glyphicon glyphicon-leaf"></span>
                         </a>
@@ -206,5 +226,11 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
         });
     });
 </script>
+
+<style>
+    a.btn.action {
+        width:25rem;
+    }
+</style>
 
 

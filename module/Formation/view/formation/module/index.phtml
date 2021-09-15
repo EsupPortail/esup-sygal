@@ -50,7 +50,7 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
     <tbody>
     <?php foreach($modules as $module): ?>
         <tr>
-            <td>
+            <td <?php if ($module->estHistorise()) echo " class='historise' "; ?>>
                 <?php echo $module->getLibelle(); ?>
                 <?php if ($module->getDescription() !== null AND trim($module->getDescription()) !== null) : ?>
                     <span class="glyphicon glyphicon-info-sign"
@@ -58,6 +58,7 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
 
                     ></span>
                 <?php endif; ?>
+
             </td>
             <td> <?php echo count($module->getFormations()); ?> </td>
             <td>
@@ -115,3 +116,9 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
 
     });
 </script>
+
+<style>
+    a.btn.action {
+        width:25rem;
+    }
+</style>

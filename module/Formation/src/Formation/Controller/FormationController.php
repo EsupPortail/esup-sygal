@@ -5,6 +5,7 @@ namespace Formation\Controller;
 use Application\Controller\AbstractController;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Formation\Entity\Db\Formation;
+use Formation\Entity\Db\Module;
 use Formation\Form\Formation\FormationFormAwareTrait;
 use Formation\Service\Formation\FormationServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -57,10 +58,13 @@ class FormationController extends AbstractController
 
     public function ajouterAction()
     {
+        $module = $this->getEntityManager()->getRepository(Module::class)->getRequestedModule($this);
         $formation = new Formation();
 
+        if ($module !== null) $formation->setModule($module);
+
         $form = $this->getFormationForm();
-        $form->setAttribute('action', $this->url()->fromRoute('formation/formation/ajouter', [], [], true));
+        $form->setAttribute('action', $this->url()->fromRoute('formation/formation/ajouter', ['module' => $module->getId()], [], true));
         $form->bind($formation);
 
         $request = $this->getRequest();

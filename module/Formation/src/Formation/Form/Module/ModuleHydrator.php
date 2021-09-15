@@ -22,6 +22,7 @@ class ModuleHydrator implements HydratorInterface {
         $data = [
             'libelle' => $object->getLibelle(),
             'description' => $object->getDescription(),
+            'lien' => $object->getLien(),
         ];
         return $data;
     }
@@ -35,9 +36,11 @@ class ModuleHydrator implements HydratorInterface {
     {
         $libelle = (isset($data['libelle']) AND trim($data['libelle']) !== '')?trim($data['libelle']):null;
         $description = (isset($data['description']) AND trim($data['description']) !== '')?trim($data['description']):null;
+        $lien = (isset($data['lien']) AND trim($data['lien']) !== '')?trim($data['lien']):null;
 
         $object->setLibelle($libelle);
         $object->setDescription($description);
+        $object->setLien($lien);
         return $object;
     }
 
