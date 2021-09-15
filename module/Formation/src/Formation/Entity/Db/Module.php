@@ -18,6 +18,8 @@ class Module implements HistoriqueAwareInterface
 
     /** @var string|null */
     private $description;
+    /** @var string|null */
+    private $lien;
 
     /** @var Collection (Formation) */
     private $formations;
@@ -63,6 +65,24 @@ class Module implements HistoriqueAwareInterface
     public function setDescription(?string $description): Module
     {
         $this->description = $description;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLien(): ?string
+    {
+        return $this->lien;
+    }
+
+    /**
+     * @param string|null $lien
+     * @return Module
+     */
+    public function setLien(?string $lien): Module
+    {
+        $this->lien = $lien;
         return $this;
     }
 

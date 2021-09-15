@@ -12,8 +12,8 @@ use Formation\Entity\Db\Interfaces\HasModaliteInterface;
 
 <?php if ($objet->getModalite() !== null) : ?>
     <?php
-        $title = "Non reconnue [".$objet->getModalite()."]";
-        $texte = "Non reconnue [".$objet->getModalite()."]";
+        $title = "Valeur non communiquée";
+        $texte = "N.C.";
         switch($objet->getModalite()) {
             case HasModaliteInterface::MODALITE_DISTANCIEL :
                 $title = "Formation en distancielle";

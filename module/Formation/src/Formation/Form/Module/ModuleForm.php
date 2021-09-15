@@ -17,7 +17,7 @@ class ModuleForm extends Form {
             'type' => Text::class,
             'name' => 'libelle',
             'options' => [
-                'label' => "Libellé de la formation :",
+                'label' => "Libellé du module de formation :",
             ],
             'attributes' => [
                 'id' => 'libelle',
@@ -29,11 +29,23 @@ class ModuleForm extends Form {
             'type' => Textarea::class,
             'name' => 'description',
             'options' => [
-                'label' => "Complément d'information à propos de la séance :",
+                'label' => "Complément d'information à propos du module :",
             ],
             'attributes' => [
                 'id' => 'description',
                 'class' => 'tinymce',
+            ],
+        ]);
+        //titre
+        $this->add([
+            'type' => Text::class,
+            'name' => 'lien',
+            'options' => [
+                'label' => "Lien vers la fiche du module :",
+            ],
+            'attributes' => [
+                'id' => 'lien',
+                'class' => 'required',
             ],
         ]);
 
@@ -57,6 +69,7 @@ class ModuleForm extends Form {
         $this->setInputFilter((new Factory())->createInputFilter([
             'libelle'       => [ 'required' => true, ],
             'description'   => [ 'required' => false, ],
+            'lien'          => [ 'required' => false, ],
         ]));
     }
 }

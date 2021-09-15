@@ -12,8 +12,8 @@ use Formation\Entity\Db\Interfaces\HasTypeInterface;
 
 <?php if ($objet->getType() !== null) : ?>
     <?php
-        $title = "Non reconnue [".$objet->getType()."]";
-        $texte = "Non reconnue [".$objet->getType()."]";
+        $title = "Valeur non communiquée";
+        $texte = "N.C.";
         switch($objet->getType()) {
             case HasTypeInterface::TYPE_TRANSVERSALE :
                 $title = "Formation transversale";

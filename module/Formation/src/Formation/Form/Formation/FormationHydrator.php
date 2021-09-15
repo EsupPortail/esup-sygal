@@ -28,6 +28,7 @@ class FormationHydrator implements HydratorInterface {
         $data = [
             'libelle' => $object->getLibelle(),
             'description' => $object->getDescription(),
+            'lien' => $object->getLien(),
             'module' => ($object->getModule())?$object->getModule()->getId():null,
             'site' => ($object->getSite())?$object->getSite()->getId():null,
             'responsable' => ($object->getResponsable())?['id' => $object->getResponsable()->getId(), 'label' => $object->getResponsable()->getNomComplet()]:null,
@@ -49,10 +50,11 @@ class FormationHydrator implements HydratorInterface {
     {
         $libelle = (isset($data['libelle']) AND trim($data['libelle']) !== '')?trim($data['libelle']):null;
         $description = (isset($data['description']) AND trim($data['description']) !== '')?trim($data['description']):null;
+        $lien = (isset($data['lien']) AND trim($data['lien']) !== '')?trim($data['lien']):null;
         /** @var Module|null $module */
         $module = (isset($data['module']) AND trim($data['module']) !== '')?$this->getModuleService()->getRepository()->find($data['module']):null;
         /** @var Etablissement|null $site */
-        $site = (isset($data['site']))?$this->getEtablissementService()->getRepository()->find($data['site']):null;
+        $site = (isset($data['site']) AND trim($data['site']) !== '')?$this->getEtablissementService()->getRepository()->find($data['site']):null;
         /** @var Individu|null $responsable */
         $responsable = (isset($data['responsable']) AND trim($data['responsable']['id']) !== '')?$this->getIndividuService()->getRepository()->find($data['responsable']['id']):null;
         $modalite = (isset($data['modalite']))?$data['modalite']:null;
@@ -64,6 +66,7 @@ class FormationHydrator implements HydratorInterface {
 
         $object->setLibelle($libelle);
         $object->setDescription($description);
+        $object->setLien($lien);
         $object->setModule($module);
         $object->setSite($site);
         $object->setResponsable($responsable);
