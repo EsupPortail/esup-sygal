@@ -1,6 +1,32 @@
 Notifications envoyées par l'application
 ========================================
 
+```php
+'notification' => [
+    'templates' => [
+        'NOTIF_VALID_PDC' => APPLICATION_DIR . '/module/Application/view/application/notification/mail/notif-validation-page-couverture.phtml'
+        'NOTIF_FIN_RETRAIT' => APPLICATION_DIR . '/module/Application/view/application/these/mail/notif-retraitement-fini.phtml'
+        'NOTIF_SAISIE_RDVBU' => APPLICATION_DIR . '/module/Application/view/application/these/mail/notif-modif-rdv-bu-doctorant.phtml'
+        'NOTIF_VALID_RDVBU' => APPLICATION_DIR . '/module/Application/view/application/these/mail/notif-validation-rdv-bu.phtml'
+        'NOTIF_DEVALID_RDVBU' => APPLICATION_DIR . '/module/Application/view/application/these/mail/notif-validation-rdv-bu.phtml'
+        'NOTIF_RESULT_ADMIS' => APPLICATION_DIR . '/module/Application/view/application/these/mail/notif-evenement-import.phtml'
+        'NOTIF_DOCT_RESULT_ADMIS' => APPLICATION_DIR . '/module/Application/view/application/these/mail/notif-resultat-admis-doctorant.phtml'
+        'NOTIF_CORRECT_ATTEND' => APPLICATION_DIR . '/module/Application/view/application/these/mail/notif-depot-version-corrigee-attendu.phtml'
+        'NOTIF_DATE_CORREC_DEPASS' => APPLICATION_DIR . '/module/Application/view/application/these/mail/notif-date-butoir-correction-depassee.phtml'
+        'NOTIF_ATTENT_VALID_CORREC' => APPLICATION_DIR . '/module/Application/view/application/notification/mail/notif-validation-depot-these-corrigee.phtml'
+        'NOTIF_MAIL_INCONNU_PRES_JURY' => APPLICATION_DIR . '/module/Application/view/application/notification/mail/notif-pas-de-mail-president-jury.phtml'
+        'NOTIF_VALID_CORREC' => APPLICATION_DIR . '/module/Application/view/application/notification/mail/notif-validation-correction-these.phtml'
+        'NOTIF_DEMAND_CONFIRM_MAIL' => APPLICATION_DIR . '/module/Application/view/application/doctorant/demande-confirmation-mail.phtml'
+        'NOTIF_CHANG_ROLE' => APPLICATION_DIR . '/module/Application/view/application/utilisateur/changement-role.phtml'
+        'NOTIF_CREA_COMPTE_LOCAL' => APPLICATION_DIR . '/module/Application/view/application/utilisateur/mail/init-compte.phtml'
+        'NOTIF_REINIT_MOT_PASSE' => APPLICATION_DIR . '/module/Application/view/application/utilisateur/mail/reinit-compte.phtml'
+        'NOTIF_LISTE_DIFF_MANQ_ADRESS' => APPLICATION_DIR . '/module/Application/view/application/liste-diffusion/mail/notif-abonnes-sans-adresse.phtml'
+        'NOTIF_FIN_FUSION_PDC_THESE' => APPLICATION_DIR . '/module/Application/view/application/these/mail/notif-fusion-fini.phtml'
+        'NOTIF_TELEVERS_THESE' => null, // en bdd
+        'NOTIF_TELEVERS_RAPP_SOUTEN' => APPLICATION_DIR . '/module/Application/view/application/these/mail/notif-depot-rapport-soutenance.phtml'
+    ],
+];
+```
 
 Module Dépôt
 ------------
@@ -12,6 +38,8 @@ Module Dépôt
   - Auto
 - Destinataires :
   - BU
+- Code :
+  - NOTIF_VALID_PDC
 - Template :
   - module/Application/view/application/notification/mail/notif-validation-page-couverture.phtml
 
@@ -24,6 +52,8 @@ Module Dépôt
   - Auto
 - Destinataires :
   - Utilisateur ayant lancé le retraitement.
+- Code :
+  - NOTIF_FIN_RETRAIT
 - Template :
   - module/Application/view/application/these/mail/notif-retraitement-fini.phtml
 
@@ -34,6 +64,8 @@ Module Dépôt
   - Auto
 - Destinataires :
   - BU
+- Code :
+  - NOTIF_SAISIE_RDVBU
 - Template :
   - module/Application/view/application/these/mail/notif-modif-rdv-bu-doctorant.phtml
 
@@ -46,6 +78,8 @@ Module Dépôt
   - Doctorant (à la 1ere validation seulement).
   - MDD
   - BU
+- Code :
+  - NOTIF_VALID_RDVBU
 - Template :
   - module/Application/view/application/these/mail/notif-validation-rdv-bu.phtml
 
@@ -57,6 +91,8 @@ Module Dépôt
 - Destinataires : 
   - MDD
   - BU
+- Code :
+  - NOTIF_DEVALID_RDVBU
 - Template :
   - module/Application/view/application/these/mail/notif-validation-rdv-bu.phtml
 
@@ -68,16 +104,20 @@ Module Dépôt
 - Destinataires : 
   - MDD
   - BU
+- Code :
+  - NOTIF_RESULT_ADMIS
 - Template :
   - module/Application/view/application/these/mail/notif-evenement-import.phtml
 
-### Notification à propos de résultats de thèses passés à 'Admis'
+### Notification du doctorant à propos de résultats de thèses passés à 'Admis'
 - Quand :
   - À l'issue de l'import, si des résultats de thèses sont passés à 'Admis'.
 - Déclenchement :
   - Auto
 - Destinataires :
   - Doctorant dont le résultat de thèse est passé à 'Admis'.
+- Code :
+  - NOTIF_DOCT_RESULT_ADMIS
 - Template :
   - module/Application/view/application/these/mail/notif-resultat-admis-doctorant.phtml
 
@@ -90,6 +130,8 @@ Module Dépôt
 - Destinataires :
   - Doctorant
   - Directeur et co-directeur de thèse en copie en cas de corrections obligatoires
+- Code :
+  - NOTIF_CORRECT_ATTEND
 - Template :
   - module/Application/view/application/these/mail/notif-depot-version-corrigee-attendu.phtml
 
@@ -100,6 +142,8 @@ Module Dépôt
   - Auto
 - Destinataires :
   - MDD
+- Code :
+  - NOTIF_DATE_CORREC_DEPASS
 - Template :
   - module/Application/view/application/these/mail/notif-date-butoir-correction-depassee.phtml
 
@@ -114,6 +158,8 @@ Module Dépôt
 - Destinataires :
   - Président du jury
   - MDD en copie
+- Code :
+  - NOTIF_ATTENT_VALID_CORREC
 - Template :
   - module/Application/view/application/notification/mail/notif-validation-depot-these-corrigee.phtml
 
@@ -125,6 +171,8 @@ Module Dépôt
   - Auto
 - Destinataires :
   - MDD
+- Code :
+  - NOTIF_MAIL_INCONNU_PRES_JURY
 - Template :
   - module/Application/view/application/notification/mail/notif-pas-de-mail-president-jury.phtml
 
@@ -136,6 +184,8 @@ Module Dépôt
 - Destinataires :
   - MDD
   - Doctorant
+- Code :
+  - NOTIF_VALID_CORREC
 - Template :
   - module/Application/view/application/notification/mail/notif-validation-correction-these.phtml
 
@@ -146,10 +196,11 @@ Module Dépôt
 - Déclenchement :
   - Auto
 - Destinataires :
-  - À l'adresse renseignée par un utitlisateur et dont il faut confirmer la validité.
+  - À l'adresse renseignée par un utilisateur et dont il faut confirmer la validité.
+- Code :
+  - NOTIF_DEMAND_CONFIRM_MAIL
 - Template :
-  - module/Application/view/application/doctorant/empty-mail.phtml 
-    PAS UN TEMPLATE !! Y placer ce qui est dans MailConfirmationController::envoieAction().
+  - module/Application/view/application/doctorant/demande-confirmation-mail.phtml
 
 ### Modification dans vos rôles
 - Quand :
@@ -158,6 +209,8 @@ Module Dépôt
   - Auto
 - Destinataires :
   - L'utilisateur en question.
+- Code :
+  - NOTIF_CHANG_ROLE
 - Template :
   - module/Application/view/application/utilisateur/changement-role.phtml
 
@@ -169,6 +222,8 @@ Module Dépôt
   - Auto
 - Destinataires :
   - Adresse de la personne spécifiée dans le formulaire de création d'un compte local. 
+- Code :
+  - NOTIF_CREA_COMPTE_LOCAL
 - Template :
   - module/Application/view/application/utilisateur/mail/init-compte.phtml
 
@@ -179,6 +234,8 @@ Module Dépôt
   - Auto
 - Destinataires :
   - Adresse mail associée au compte local en question.
+- Code :
+  - NOTIF_REINIT_MOT_PASSE
 - Template :
   - module/Application/view/application/utilisateur/mail/reinit-compte.phtml
 
@@ -189,6 +246,8 @@ Module Dépôt
   - Auto
 - Destinataires :
   - Utilisateurs ayant le rôle "Administrateur technique".
+- Code :
+  - NOTIF_LISTE_DIFF_MANQ_ADRESS
 - Template :
   - module/Application/view/application/liste-diffusion/mail/notif-abonnes-sans-adresse.phtml
 
@@ -201,6 +260,8 @@ Module Dépôt
   - Auto
 - Destinataires :
   - Utilisateur ayant demandé le téléchargement de la thèse PDF avec page de couverture.
+- Code :
+  - NOTIF_FIN_FUSION_PDC_THESE
 - Template :
   - module/Application/view/application/these/mail/notif-fusion-fini.phtml
 
@@ -211,6 +272,8 @@ Module Dépôt
   - Auto
 - Destinataires :
   - MDD
+- Code :
+  - NOTIF_TELEVERS_THESE
 - Template :
   - En bdd (table NOTIF)
 
@@ -221,6 +284,8 @@ Module Dépôt
   - Auto
 - Destinataires :
   - MDD
+- Code :
+  - NOTIF_TELEVERS_RAPP_SOUTEN
 - Template :
   - module/Application/view/application/these/mail/notif-depot-rapport-soutenance.phtml
 
@@ -240,6 +305,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
 - Destinataires :
   - Doctorant
   - Directeur et codirecteur de thèse
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/validation-acteur.phtml
 
@@ -250,6 +317,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - Auto
 - Destinataires :
   - ED ou UR ou MDD.
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/validation-structure.phtml
 
@@ -260,6 +329,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - Auto
 - Destinataires :
   - Auteur de la validation annulée.
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/devalidation.phtml
 
@@ -275,6 +346,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - ED
   - UR
   - MDD
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/validation-soutenance.phtml
 
@@ -286,6 +359,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - Auto
 - Destinataires :
   - MDD
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/presoutenance.phtml
   
@@ -296,6 +371,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - Auto
 - Destinataires :
   - MDD
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/refus.phtml
   
@@ -306,6 +383,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - ?
 - Destinataires :
   - Chaque rapporteur du jury
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/engagement-impartialite-demande.phtml
 
@@ -316,6 +395,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - Auto
 - Destinataires :
   - MDD
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/engagement-impartialite-signature.phtml
 
@@ -328,6 +409,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - Doctorant
   - Directeur et codirecteur de thèse
   - MDD
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/engagement-impartialite-refus.phtml
 
@@ -338,6 +421,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - Auto
 - Destinataires :
   - Rapporteur ayant signé.
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/engagement-impartialite-annulation.phtml
 
@@ -348,6 +433,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - ?
 - Destinataires :
   - Chaque rapporteur.
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/demande-avis-soutenance.phtml
 
@@ -359,6 +446,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - ?
 - Destinataires :
   - Rapporteur
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/connexion-rapporteur.phtml
 
@@ -369,6 +458,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - Auto
 - Destinataires :
   - MDD
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/tous-avis-soutenance.phtml
 
@@ -383,6 +474,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - MDD
   - ED
   - UR
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/avis-favorable.phtml
   
@@ -395,6 +488,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - Directeur et codirecteur de thèse
   - ED
   - UR
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/avis-defavorable.phtml
   
@@ -408,6 +503,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - Directeur et codirecteur de thèse
   - ED
   - UR
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/feu-vert-soutenance.phtml
 
@@ -421,6 +518,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - Directeur et codirecteur de thèse
   - ED
   - UR
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/stopper-demarche-soutenance.phtml
 
@@ -434,6 +533,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - Directeur et codirecteur de thèse
   - ED
   - UR
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/stopper-demarche-soutenance.phtml
 
@@ -444,6 +545,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - Auto ?
 - Destinataires :
   - Rapporteurs en retard dans le rendu du rapport de présoutenance
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/retard-rapporteur.phtml
   
@@ -454,6 +557,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - Auto ?
 - Destinataires :
   - Doctorant
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/convocation-doctorant.phtml
 
@@ -464,6 +569,8 @@ Doctorant => dir & codir => resp UR => resp ED => MDD (signature du pres).
   - Auto ?
 - Destinataires :
   - Membres du jury sensés assister à la soutenance
+- Code :
+  - NOTIF_
 - Template :
   - module/Soutenance/view/soutenance/notification/convocation-membre.phtml
   
