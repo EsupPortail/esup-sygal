@@ -1,5 +1,6 @@
 <?php
 
+use Formation\Entity\Db\EnqueteCategorie;
 use Formation\Entity\Db\EnqueteQuestion;
 use Formation\Entity\Db\Inscription;
 use Formation\Form\EnqueteReponse\EnqueteReponseForm;
@@ -7,9 +8,13 @@ use Formation\Form\EnqueteReponse\EnqueteReponseForm;
 /**
  * @see \Formation\Controller\EnqueteController::repondreQuestionsAction()
  * @var Inscription $inscription
+ * @var EnqueteCategorie[] $categories
  * @var EnqueteQuestion[] $questions
  * @var EnqueteReponseForm $form
  */
+
+$categories = array_filter($categories, function (EnqueteCategorie $a) { return $a->estNonHistorise();});
+usort($categories, function (EnqueteCategorie $a, EnqueteCategorie $b) { return $a->getOrdre() > $b->getOrdre();});
 
 ?>
 
@@ -20,20 +25,62 @@ use Formation\Form\EnqueteReponse\EnqueteReponseForm;
 </h1>
 
 <?php echo $this->form()->openTag($form); ?>
-<?php foreach ($questions as $question) : ?>
-    <h2>
-        <?php echo $question->getLibelle(); ?>
-      <?php if ($question->getDescription()) : ?>
-        <span class="glyphicon glyphicon-info-sign" title="<?php echo $question->getDescription(); ?>" data-toggle="tooltip" data-html="true"></span>
-      <?php endif; ?>
-    </h2>
-      <?php if ($select = $form->get("select_".$question->getId())) : ?>
-        <?php echo $this->formControlGroup($select); ?>
-      <?php endif; ?>
-      <?php if ($textarea = $form->get("textarea_".$question->getId())) : ?>
-          <?php echo $this->formControlGroup($textarea); ?>
-      <?php endif; ?>
+
+<?php foreach ($categories as $categorie) : ?>
+    <?php
+        $questionsC = $categorie->getQuestions()->toArray();
+        $questionsC = array_filter($questionsC, function (EnqueteQuestion $a) { return $a->estNonHistorise();});
+        usort($questionsC, function (EnqueteQuestion $a, EnqueteQuestion $b) { return $a->getOrdre() > $b->getOrdre();});
+    ?>
+
+    <?php if (!empty($questionsC)) : ?>
+        <h2>
+            <?php echo $categorie->getLibelle(); ?>
+            <?php if ($categorie->getDescription()) : ?>
+                <span class="glyphicon glyphicon-info-sign" title="<?php echo $categorie->getDescription(); ?>" data-toggle="tooltip" data-html="true"></span>
+            <?php endif; ?>
+        </h2>
+
+        <?php foreach ($questionsC as $question) : ?>
+        <h3>
+            <?php echo $question->getLibelle(); ?>
+            <?php if ($question->getDescription()) : ?>
+                <span class="glyphicon glyphicon-info-sign" title="<?php echo $question->getDescription(); ?>" data-toggle="tooltip" data-html="true"></span>
+            <?php endif; ?>
+        </h3>
+        <?php if ($select = $form->get("select_".$question->getId())) : ?>
+            <?php echo $this->formControlGroup($select); ?>
+        <?php endif; ?>
+        <?php if ($textarea = $form->get("textarea_".$question->getId())) : ?>
+            <?php echo $this->formControlGroup($textarea); ?>
+        <?php endif; ?>
+    <?php endforeach; ?>
+    <?php endif; ?>
 <?php endforeach; ?>
+
+<?php
+    $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getCategorie() === null;});
+    $sans = array_filter($sans, function (EnqueteQuestion $a) { return $a->estNonHistorise();});
+    usort($sans, function (EnqueteQuestion $a, EnqueteQuestion $b) { return $a->getOrdre() > $b->getOrdre();});
+?>
+<?php if (!empty($sans)) : ?>
+    <h2> Questions hors catégorie</h2>
+    <?php foreach ($sans as $question) : ?>
+        <h3>
+            <?php echo $question->getLibelle(); ?>
+            <?php if ($question->getDescription()) : ?>
+                <span class="glyphicon glyphicon-info-sign" title="<?php echo $question->getDescription(); ?>" data-toggle="tooltip" data-html="true"></span>
+            <?php endif; ?>
+        </h3>
+        <?php if ($select = $form->get("select_".$question->getId())) : ?>
+            <?php echo $this->formControlGroup($select); ?>
+        <?php endif; ?>
+        <?php if ($textarea = $form->get("textarea_".$question->getId())) : ?>
+            <?php echo $this->formControlGroup($textarea); ?>
+        <?php endif; ?>
+    <?php endforeach; ?>
+<?php endif; ?>
+
 
 <?php echo $this->formControlGroup($form->get("bouton")); ?>
 <?php echo $this->form()->closeTag(); ?>

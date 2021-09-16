@@ -6,6 +6,7 @@
  * @var Session[] $ouvertes
  * @var Session[] $preparations
  * @var Inscription[] $inscriptions
+ * @var array[] $resultats
  */
 
 
@@ -347,7 +348,7 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
                               title="Compléter l'enquête" data-toggle="tooltip" data-html="true"
                         ></span></a>
                         <?php endif; ?>
-                        <?php if ($canAttestationInscription) : ?>
+                        <?php if (isset($resultats[$inscription->getId()]) AND $canAttestationInscription) : ?>
                             <?php /** @see \Formation\Controller\InscriptionController::genererAttestationAction() */?>
                             <a href="<?php echo $this->url('formation/inscription/generer-attestation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
                         <span class="glyphicon glyphicon-check"

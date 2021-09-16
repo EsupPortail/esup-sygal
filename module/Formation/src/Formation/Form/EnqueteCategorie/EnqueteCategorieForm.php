@@ -1,17 +1,14 @@
 <?php
 
-namespace Formation\Form\EnqueteQuestion;
+namespace Formation\Form\EnqueteCategorie;
 
-use Formation\Service\EnqueteCategorie\EnqueteCategorieServiceAwareTrait;
 use Zend\Form\Element\Button;
-use Zend\Form\Element\Select;
 use Zend\Form\Element\Text;
 use Zend\Form\Element\Textarea;
 use Zend\Form\Form;
 use Zend\InputFilter\Factory;
 
-class EnqueteQuestionForm extends Form {
-    use EnqueteCategorieServiceAwareTrait;
+class EnqueteCategorieForm extends Form {
 
     public function init()
     {
@@ -20,7 +17,7 @@ class EnqueteQuestionForm extends Form {
             'type' => Text::class,
             'name' => 'libelle',
             'options' => [
-                'label' => "Libellé de la question :",
+                'label' => "Libellé de la catégorie :",
             ],
             'attributes' => [
                 'id' => 'libelle',
@@ -32,26 +29,11 @@ class EnqueteQuestionForm extends Form {
             'type' => Textarea::class,
             'name' => 'description',
             'options' => [
-                'label' => "Complément d'information à propos de la question :",
+                'label' => "Complément d'information à propos de la catégorie :",
             ],
             'attributes' => [
                 'id' => 'description',
                 'class' => 'tinymce',
-            ],
-        ]);
-        //categorie
-        $this->add([
-           'type' => Select::class,
-           'name' => 'categorie',
-            'options' => [
-                'label' => "Catégorie associée à la question :",
-                'empty_option' => "Aucune catégorie",
-                'value_options' => $this->getEnqueteCategorieService()->getCategoriesAsOptions(),
-            ],
-            'attributes' => [
-                'id' => 'categorie',
-                'class' => 'show-tick',
-                'data-live-search' => 'true',
             ],
         ]);
         //ordre
@@ -59,7 +41,7 @@ class EnqueteQuestionForm extends Form {
             'type' => Text::class,
             'name' => 'ordre',
             'options' => [
-                'label' => "Ordre de la question *:",
+                'label' => "Ordre de la catégorie *:",
             ],
             'attributes' => [
                 'id' => 'ordre',

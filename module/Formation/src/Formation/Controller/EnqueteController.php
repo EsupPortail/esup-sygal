@@ -4,11 +4,14 @@ namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
 use Doctrine\Common\Collections\ArrayCollection;
+use Formation\Entity\Db\EnqueteCategorie;
 use Formation\Entity\Db\EnqueteQuestion;
 use Formation\Entity\Db\EnqueteReponse;
 use Formation\Entity\Db\Inscription;
+use Formation\Form\EnqueteCategorie\EnqueteCategorieFormAwareTrait;
 use Formation\Form\EnqueteQuestion\EnqueteQuestionFormAwareTrait;
 use Formation\Form\EnqueteReponse\EnqueteReponseFormAwareTrait;
+use Formation\Service\EnqueteCategorie\EnqueteCategorieServiceAwareTrait;
 use Formation\Service\EnqueteQuestion\EnqueteQuestionServiceAwareTrait;
 use Formation\Service\EnqueteReponse\EnqueteReponseServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -16,8 +19,10 @@ use Zend\View\Model\ViewModel;
 
 class EnqueteController extends AbstractController {
     use EntityManagerAwareTrait;
+    use EnqueteCategorieServiceAwareTrait;
     use EnqueteQuestionServiceAwareTrait;
     use EnqueteReponseServiceAwareTrait;
+    use EnqueteCategorieFormAwareTrait;
     use EnqueteQuestionFormAwareTrait;
     use EnqueteReponseFormAwareTrait;
 
@@ -58,24 +63,126 @@ class EnqueteController extends AbstractController {
             }
         }
 
+        $categories = $this->getEntityManager()->getRepository(EnqueteCategorie::class)->findAll();
         return new ViewModel([
             "array" => $array,
             "histogramme" => $histogramme,
             "nbReponses" => count($array),
             "questions" => $questions,
+            "categories" => $categories,
         ]);
     }
 
     /** QUESTIONS *****************************************************************************************************/
+
     public function afficherQuestionsAction() {
 
         $questions = $this->getEntityManager()->getRepository(EnqueteQuestion::class)->findAll();
-//        $questions = array_filter($questions, function (EnqueteQuestion $a) { return $a->estNonHistorise();});
-        usort($questions, function (EnqueteQuestion $a, EnqueteQuestion $b) { return $a->getOrdre() > $b->getOrdre();});
+        $categories = $this->getEntityManager()->getRepository(EnqueteCategorie::class)->findAll();
 
         return new ViewModel([
+            'categories' => $categories,
             'questions' => $questions,
         ]);
+    }
+
+    public function ajouterCategorieAction() {
+
+        $question = new EnqueteCategorie();
+
+        $form = $this->getEnqueteCategorieForm();
+        $form->setAttribute('action', $this->url()->fromRoute('formation/enquete/categorie/ajouter', [], [], true));
+        $form->bind($question);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->getEnqueteCategorieService()->create($question);
+            }
+        }
+
+        $vm =  new ViewModel([
+            'title' => "Ajout d'une catégorie",
+            'form' => $form,
+        ]);
+        $vm->setTemplate('formation/default/default-form');
+        return $vm;
+    }
+
+    public function modifierCategorieAction() {
+
+        /** @var EnqueteCategorie $categorie */
+        $categorie = $this->getEntityManager()->getRepository(EnqueteCategorie::class)->getRequestedEnqueteCategorie($this);
+
+        $form = $this->getEnqueteCategorieForm();
+        $form->setAttribute('action', $this->url()->fromRoute('formation/enquete/categorie/modifier', ['categorie' => $categorie->getId()], [], true));
+        $form->bind($categorie);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->getEnqueteCategorieService()->update($categorie);
+            }
+        }
+
+        $vm =  new ViewModel([
+            'title' => "Modification de la catégorie",
+            'form' => $form,
+        ]);
+        $vm->setTemplate('formation/default/default-form');
+        return $vm;
+    }
+
+    public function historiserCategorieAction()
+    {
+        /** @var EnqueteCategorie $categorie */
+        $categorie = $this->getEntityManager()->getRepository(EnqueteCategorie::class)->getRequestedEnqueteCategorie($this);
+        $retour = $this->params()->fromQuery('retour');
+
+        $this->getEnqueteCategorieService()->historise($categorie);
+
+        if ($retour) return $this->redirect()->toUrl($retour);
+        return $this->redirect()->toRoute('formation/enquete/question', [], [], true);
+    }
+
+    public function restaurerCategorieAction()
+    {
+        /** @var EnqueteCategorie $categorie */
+        $categorie = $this->getEntityManager()->getRepository(EnqueteCategorie::class)->getRequestedEnqueteCategorie($this);
+        $retour = $this->params()->fromQuery('retour');
+
+        $this->getEnqueteCategorieService()->restore($categorie);
+
+        if ($retour) return $this->redirect()->toUrl($retour);
+        return $this->redirect()->toRoute('formation/enquete/question', [], [], true);
+    }
+
+    public function supprimerCategorieAction()
+    {
+        /** @var EnqueteCategorie|null $categorie */
+        $categorie = $this->getEntityManager()->getRepository(EnqueteCategorie::class)->getRequestedEnqueteCategorie($this);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            if ($data["reponse"] === "oui") $this->getEnqueteCategorieService()->delete($categorie);
+            exit();
+        }
+
+        $vm = new ViewModel();
+        if ($categorie !== null) {
+            $vm->setTemplate('formation/default/confirmation');
+            $vm->setVariables([
+                'title' => "Suppression de la catégorie",
+                'text' => "La suppression est définitive êtes-vous sûr&middot;e de vouloir continuer ?",
+                'action' => $this->url()->fromRoute('formation/enquete/categorie/supprimer', ["categorie" => $categorie->getId()], [], true),
+            ]);
+        }
+        return $vm;
     }
 
     public function ajouterQuestionAction() {
@@ -171,7 +278,7 @@ class EnqueteController extends AbstractController {
             $vm->setVariables([
                 'title' => "Suppression de la question",
                 'text' => "La suppression est définitive êtes-vous sûr&middot;e de vouloir continuer ?",
-                'action' => $this->url()->fromRoute('formation/enquete/question/supprimer', ["module" => $question->getId()], [], true),
+                'action' => $this->url()->fromRoute('formation/enquete/question/supprimer', ["question" => $question->getId()], [], true),
             ]);
         }
         return $vm;
@@ -222,9 +329,12 @@ class EnqueteController extends AbstractController {
             }
         }
 
+        $categories = $this->getEntityManager()->getRepository(EnqueteCategorie::class)->findAll();
+
         return new ViewModel([
             'inscription' => $inscription,
             'questions' => $questions,
+            'categories' => $categories,
             'form' => $form,
         ]);
     }

@@ -1,5 +1,6 @@
 <?php
 
+use Formation\Entity\Db\EnqueteCategorie;
 use Formation\Entity\Db\EnqueteQuestion;
 use Formation\Entity\Db\EnqueteReponse;
 
@@ -8,10 +9,14 @@ use Formation\Entity\Db\EnqueteReponse;
  * @var array $array;
  * @var array $histogramme;
  * @var int $nbReponses;
+ * @var EnqueteCategorie[] $categories
  * @var EnqueteQuestion[] $questions
  */
 
-$this->headTitle("Résultats de  l'enquête");
+$this->headTitle("Résultats de l'enquête");
+
+
+usort($categories, function (EnqueteCategorie $a, EnqueteCategorie $b) { return $a->getOrdre() > $b->getOrdre();});
 
 ?>
 <!-- todo remplacer -->
@@ -23,8 +28,6 @@ $this->headTitle("Résultats de  l'enquête");
 </h1>
 
 ICI FILTRE
-
-
 
 <div class="row">
     <div class="col-md-6">
@@ -39,72 +42,167 @@ ICI FILTRE
 </div>
 
 <div>
-<?php foreach ($questions as $question) : ?>
 
-    <div class="row">
-        <div class="col-md-6">
-            <h3> <?php echo $question->getLibelle(); ?> </h3>
-            <table class="table table-condensed">
-        <thead>
-        <tr>
-            <th> Niveaux </th>
-            <th> Nombres </th>
-            <th> Ratio </th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php foreach (EnqueteReponse::NIVEAUX as $clef => $libelle) : ?>
+<?php foreach ($categories as $categorie) : ?>
+    <?php
+        $questionsC = $categorie->getQuestions()->toArray();
+        usort($questionsC, function (EnqueteQuestion $a, EnqueteQuestion $b) { return $a->getOrdre() > $b->getOrdre();});
+    ?>
+
+    <?php foreach ($questionsC as $question) : ?>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h3>
+                    <?php echo $categorie->getLibelle(); ?> <br/>
+                    <?php echo $question->getLibelle(); ?>
+                </h3>
+                <table class="table table-condensed">
+            <thead>
             <tr>
-                <td> <?php echo $libelle; ?> </td>
-                <td> <?php echo $histogramme[$question->getId()][$clef]; ?> </td>
-                <td> <?php echo ($histogramme[$question->getId()][$clef]/$nbReponses); ?> </td>
+                <th> Niveaux </th>
+                <th> Nombres </th>
+                <th> Ratio </th>
             </tr>
-        </tbody>
-        <?php endforeach; ?>
-    </table>
-        </div>
-        <div class="col-md-6">
-            <canvas id="myChart_<?php echo $question->getId(); ?>" width="400" height="200"></canvas>
-            <script>
-        var ctx = document.getElementById('myChart_<?php echo $question->getId(); ?>').getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: [<?php foreach (EnqueteReponse::NIVEAUX as $niveau) echo "'".$niveau."',"; ?>],
-                datasets: [{
-                    label: 'Nombre de réponses',
-                    data: [<?php echo implode(",", $histogramme[$question->getId()]); ?>],
-                    backgroundColor: [
-                        'rgb(156,0,0,1)',
-                        'rgb(222,76,0,1)',
-                        'rgb(255,171,3,1)',
-                        'rgb(161,191,0,1)',
-                        'rgb(18,199,0,1)',
-                    ],
+            </thead>
+            <tbody>
+            <?php foreach (EnqueteReponse::NIVEAUX as $clef => $libelle) : ?>
+                <tr>
+                    <td> <?php echo $libelle; ?> </td>
+                    <td> <?php echo $histogramme[$question->getId()][$clef]; ?> </td>
+                    <td>
+                        <?php if ($nbReponses !== 0) : ?>
+                            <?php echo number_format(($histogramme[$question->getId()][$clef]/$nbReponses)*100,2,',',''); ?> </td>
+                        <?php else : ?>
+                            0
+                        <?php endif ; ?>
 
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                legend: {
-                    display: false,
-                },
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            min: 0,
-                            max: <?php echo $nbReponses; ?>,
-                        }
+                </tr>
+            </tbody>
+            <?php endforeach; ?>
+        </table>
+            </div>
+            <div class="col-md-6">
+                <canvas id="myChart_<?php echo $question->getId(); ?>" width="400" height="200"></canvas>
+                <script>
+            var ctx = document.getElementById('myChart_<?php echo $question->getId(); ?>').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [<?php foreach (EnqueteReponse::NIVEAUX as $niveau) echo "'".$niveau."',"; ?>],
+                    datasets: [{
+                        label: 'Nombre de réponses',
+                        data: [<?php echo implode(",", $histogramme[$question->getId()]); ?>],
+                        backgroundColor: [
+                            'rgb(156,0,0,1)',
+                            'rgb(222,76,0,1)',
+                            'rgb(255,171,3,1)',
+                            'rgb(161,191,0,1)',
+                            'rgb(18,199,0,1)',
+                        ],
+
+                        borderWidth: 1
                     }]
+                },
+                options: {
+                    legend: {
+                        display: false,
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                min: 0,
+                                max: <?php echo $nbReponses; ?>,
+                            }
+                        }]
+                    }
                 }
-            }
-        });
-    </script>
+            });
+        </script>
+            </div>
         </div>
-    </div>
+    <?php endforeach; ?>
 <?php endforeach; ?>
+
+<?php
+$sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getCategorie() === null;});
+usort($sans, function (EnqueteQuestion $a, EnqueteQuestion $b) { return $a->getOrdre() > $b->getOrdre();});
+?>
+    <?php foreach ($sans as $question) : ?>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h3>
+                    <?php echo $question->getLibelle(); ?>
+                </h3>
+                <table class="table table-condensed">
+                    <thead>
+                    <tr>
+                        <th> Niveaux </th>
+                        <th> Nombres </th>
+                        <th> Ratio </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach (EnqueteReponse::NIVEAUX as $clef => $libelle) : ?>
+                    <tr>
+                        <td> <?php echo $libelle; ?> </td>
+                        <td> <?php echo $histogramme[$question->getId()][$clef]; ?> </td>
+                        <td>
+                        <?php if ($nbReponses !== 0) : ?>
+                            <?php echo number_format(($histogramme[$question->getId()][$clef]/$nbReponses)*100,2,',',''); ?> </td>
+                        <?php else : ?>
+                            0
+                        <?php endif ; ?>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <?php endforeach; ?>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <canvas id="myChart_<?php echo $question->getId(); ?>" width="400" height="200"></canvas>
+                <script>
+                    var ctx = document.getElementById('myChart_<?php echo $question->getId(); ?>').getContext('2d');
+                    var myChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: [<?php foreach (EnqueteReponse::NIVEAUX as $niveau) echo "'".$niveau."',"; ?>],
+                            datasets: [{
+                                label: 'Nombre de réponses',
+                                data: [<?php echo implode(",", $histogramme[$question->getId()]); ?>],
+                                backgroundColor: [
+                                    'rgb(156,0,0,1)',
+                                    'rgb(222,76,0,1)',
+                                    'rgb(255,171,3,1)',
+                                    'rgb(161,191,0,1)',
+                                    'rgb(18,199,0,1)',
+                                ],
+
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            legend: {
+                                display: false,
+                            },
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        min: 0,
+                                        max: <?php echo $nbReponses; ?>,
+                                    }
+                                }]
+                            }
+                        }
+                    });
+                </script>
+            </div>
+        </div>
+    <?php endforeach; ?>
 </div>
 
+<!-- REPONSE BRUTE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 <div class="row">
     <div class="col-md-6">
         <h2> Réponses brutes</h2>
