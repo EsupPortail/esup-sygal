@@ -45,14 +45,14 @@ class SessionService {
         return $session;
     }
 
-    /** (todo ...)
+    /**
      * @param Session $session
      * @return Session
      */
     public function historise(Session $session) : Session
     {
         try {
-            $session->setHistoDestruction(new DateTime());
+            $session->historiser();
             $this->getEntityManager()->flush($session);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Session]",0, $e);
@@ -67,8 +67,7 @@ class SessionService {
     public function restore(Session $session) : Session
     {
         try {
-            $session->setHistoDestructeur(null);
-            $session->setHistoDestruction(null);
+            $session->dehistoriser();
             $this->getEntityManager()->flush($session);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Session]",0, $e);

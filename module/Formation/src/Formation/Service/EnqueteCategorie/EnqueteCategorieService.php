@@ -42,14 +42,14 @@ class EnqueteCategorieService {
         return $question;
     }
 
-    /** (todo ...)
+    /**
      * @param EnqueteCategorie $question
      * @return EnqueteCategorie
      */
     public function historise(EnqueteCategorie $question) : EnqueteCategorie
     {
         try {
-            $question->setHistoDestruction(new DateTime());
+            $question->historiser();
             $this->getEntityManager()->flush($question);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [EnqueteCategorie]",0, $e);
@@ -58,19 +58,18 @@ class EnqueteCategorieService {
     }
 
     /**
-     * @param EnqueteCategorie $question
+     * @param EnqueteCategorie $categorie
      * @return EnqueteCategorie
      */
-    public function restore(EnqueteCategorie $question) : EnqueteCategorie
+    public function restore(EnqueteCategorie $categorie) : EnqueteCategorie
     {
         try {
-            $question->setHistoDestructeur(null);
-            $question->setHistoDestruction(null);
-            $this->getEntityManager()->flush($question);
+            $categorie->dehistoriser();
+            $this->getEntityManager()->flush($categorie);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [EnqueteCategorie]",0, $e);
         }
-        return $question;
+        return $categorie;
     }
 
     /**

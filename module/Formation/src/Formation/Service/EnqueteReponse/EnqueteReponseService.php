@@ -42,14 +42,14 @@ class EnqueteReponseService {
         return $reponse;
     }
 
-    /** (todo ...)
+    /**
      * @param EnqueteReponse $reponse
      * @return EnqueteReponse
      */
     public function historise(EnqueteReponse $reponse) : EnqueteReponse
     {
         try {
-            $reponse->setHistoDestruction(new DateTime());
+            $reponse->historiser();
             $this->getEntityManager()->flush($reponse);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [EnqueteReponse]",0, $e);
@@ -64,8 +64,7 @@ class EnqueteReponseService {
     public function restore(EnqueteReponse $reponse) : EnqueteReponse
     {
         try {
-            $reponse->setHistoDestructeur(null);
-            $reponse->setHistoDestruction(null);
+            $reponse->dehistoriser();
             $this->getEntityManager()->flush($reponse);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [EnqueteReponse]",0, $e);

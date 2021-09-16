@@ -59,13 +59,6 @@ return array(
                 ],
             ],
         ],
-
-        //todo remove ?
-        'connection' => [
-            'orm_default' => [
-                'driver_class' => OCI8::class,
-            ],
-        ],
     ],
 
     'service_manager' => [

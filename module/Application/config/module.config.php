@@ -304,6 +304,7 @@ return array(
             '062_uploader' => "/js/jquery.fileupload.js",
             '063_uploader' => "/js/unicaen.uploader.widget.js",
             '070_clipboard' => "/js/clipboard.min.js",
+            '099_chartjs'   => "/js/Chart.bundle.js",
         ],
         'inline_scripts' => [
             '070_bootstrap-select' => '/vendor/bootstrap-select-1.13.18/js/bootstrap-select.min.js',

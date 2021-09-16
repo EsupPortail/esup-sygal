@@ -42,14 +42,14 @@ class FormationService {
         return $formation;
     }
 
-    /** (todo ...)
+    /**
      * @param Formation $formation
      * @return Formation
      */
     public function historise(Formation $formation) : Formation
     {
         try {
-            $formation->setHistoDestruction(new DateTime());
+            $formation->historiser();
             $this->getEntityManager()->flush($formation);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Formation]",0, $e);
@@ -64,8 +64,7 @@ class FormationService {
     public function restore(Formation $formation) : Formation
     {
         try {
-            $formation->setHistoDestructeur(null);
-            $formation->setHistoDestruction(null);
+            $formation->dehistoriser();
             $this->getEntityManager()->flush($formation);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Formation]",0, $e);

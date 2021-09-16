@@ -42,35 +42,34 @@ class InscriptionService {
         return $seance;
     }
 
-    /** (todo ...)
-     * @param Inscription $seance
+    /**
+     * @param Inscription $inscription
      * @return Inscription
      */
-    public function historise(Inscription $seance) : Inscription
+    public function historise(Inscription $inscription) : Inscription
     {
         try {
-            $seance->setHistoDestruction(new DateTime());
-            $this->getEntityManager()->flush($seance);
+            $inscription->historiser();
+            $this->getEntityManager()->flush($inscription);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Inscription]",0, $e);
         }
-        return $seance;
+        return $inscription;
     }
 
     /**
-     * @param Inscription $seance
+     * @param Inscription $inscription
      * @return Inscription
      */
-    public function restore(Inscription $seance) : Inscription
+    public function restore(Inscription $inscription) : Inscription
     {
         try {
-            $seance->setHistoDestructeur(null);
-            $seance->setHistoDestruction(null);
-            $this->getEntityManager()->flush($seance);
+            $inscription->dehistoriser();
+            $this->getEntityManager()->flush($inscription);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Inscription]",0, $e);
         }
-        return $seance;
+        return $inscription;
     }
 
     /**
