@@ -76,7 +76,7 @@ class SessionForm extends Form {
             ],
         ]);
         //responsable
-        $responsable = new SearchAndSelect('responsable', ['label' => "Responsable du module de formation :"]);
+        $responsable = new SearchAndSelect('responsable', ['label' => "Responsable de la formation :"]);
         $responsable
             ->setAutocompleteSource($this->urlResponsable)
             ->setSelectionRequired(true)

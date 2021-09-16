@@ -7,6 +7,7 @@
  */
 
 use Application\Entity\Db\These;
+use Application\Entity\Db\TheseAnneeUniv;
 use Formation\Entity\Db\Inscription;
 
 $actionListePrincipale = (!isset($options['action-liste-principale']) OR $options['action-liste-principale'] !== false);
@@ -16,13 +17,24 @@ $actionSupprimer = (!isset($options['action-supprimer']) OR $options['action-sup
 
 $doctorant = $inscription->getDoctorant();
 $session = $inscription->getSession();
+//todo trouver solution pour récupèrer la bonne thèse dans le cas des thèses multiples
+
+/** @var These $these */
+$these = current($doctorant->getTheses());
+//todo faire fonction pour le calcul dans l'entité
+$annee = ((int) "2021");
+$inscriptions = array_filter($these->getAnneesUnivInscription()->toArray(), function (TheseAnneeUniv $a) use ($annee) { return $a->getAnneeUniv() <= $annee; });
+
 ?>
 
 <li>
     <?php
 
-    echo $doctorant->getIndividu()->getNomComplet();
-    foreach ($doctorant->getTheses() as $these) {
+    echo $doctorant->getIndividu()->getNomComplet(); ?>
+    <?php if ($inscription->estHistorise()) : ?>
+    <span class="historisee"></span>
+    <?php endif; ?>
+    <?php foreach ($doctorant->getTheses() as $these) {
         if ($these->getEtatThese() === These::ETAT_EN_COURS) {
             echo "<br/>";
             echo $this->site($these->getEtablissement());
@@ -30,6 +42,8 @@ $session = $inscription->getSession();
             echo $this->site($these->getEcoleDoctorale());
             echo " - ";
             echo $this->site($these->getUniteRecherche());
+            echo " - ";
+            echo "D" . count($inscriptions);
         }
     }
     ?>

@@ -1,17 +1,15 @@
 <?php
 
-namespace Formation\Form\EnqueteQuestion;
+namespace Formation\Form\EnqueteCategorie;
 
 use Formation\Entity\Db\EnqueteCategorie;
-use Formation\Entity\Db\EnqueteQuestion;
-use Formation\Service\EnqueteCategorie\EnqueteCategorieServiceAwareTrait;
 use Zend\Hydrator\HydratorInterface;
 
-class EnqueteQuestionHydrator implements HydratorInterface {
-    use EnqueteCategorieServiceAwareTrait;
+class EnqueteCategorieHydrator implements HydratorInterface {
+
 
     /**
-     * @param EnqueteQuestion $object
+     * @param EnqueteCategorie $object
      * @return array
      */
     public function extract($object)
@@ -19,7 +17,6 @@ class EnqueteQuestionHydrator implements HydratorInterface {
         $data = [
             'libelle' => $object->getLibelle(),
             'description' => $object->getDescription(),
-            'categorie' => ($object->getCategorie())?$object->getCategorie()->getId():null,
             'ordre' => $object->getOrdre(),
         ];
         return $data;
@@ -27,20 +24,17 @@ class EnqueteQuestionHydrator implements HydratorInterface {
 
     /**
      * @param array $data
-     * @param EnqueteQuestion $object
-     * @return EnqueteQuestion
+     * @param EnqueteCategorie $object
+     * @return EnqueteCategorie
      */
     public function hydrate(array $data, $object)
     {
         $libelle = (isset($data['libelle']) AND trim($data['libelle']) !== '')?trim($data['libelle']):null;
         $description = (isset($data['description']) AND trim($data['description']) !== '')?trim($data['description']):null;
-        /** @var EnqueteCategorie|null $categorie */
-        $categorie = (isset($data['categorie']))?$this->getEnqueteCategorieService()->getRepository()->find($data['categorie']):null;
         $ordre = (isset($data['ordre']))?trim($data['ordre']):null;
 
         $object->setLibelle($libelle);
         $object->setDescription($description);
-        $object->setCategorie($categorie);
         $object->setOrdre($ordre);
 
         return $object;

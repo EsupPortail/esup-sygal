@@ -4,6 +4,7 @@ namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Doctorant;
+use Formation\Entity\Db\EnqueteReponse;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -36,10 +37,17 @@ class IndexController extends AbstractController
             $preparations = array_filter($sessions, function(Session $a) { return $a->getEtat()->getCode() === Session::ETAT_PREPARATION;});
             /** @var Inscription[] $inscription */
             $inscriptions = $this->getEntityManager()->getRepository(Inscription::class)->findInscriptionsByDoctorant($doctorant);
+            /** @var EnqueteReponse[] $reponses */
+            $reponses = $this->getEntityManager()->getRepository(EnqueteReponse::class)->findEnqueteReponseByDoctorant($doctorant);
+            $resultats = [];
+            foreach ($reponses as $reponse) {
+                if ($reponse->estNonHistorise()) $resultats[$reponse->getInscription()->getId()][] = $reponse;
+            }
         } else {
             $ouvertes = [];
             $preparations = [];
             $inscriptions = [];
+            $resultats = [];
         }
 
         return new ViewModel([
@@ -47,6 +55,7 @@ class IndexController extends AbstractController
             'ouvertes' => $ouvertes,
             'preparations' => $preparations,
             'inscriptions' => $inscriptions,
+            'resultats' => $resultats,
         ]);
     }
 

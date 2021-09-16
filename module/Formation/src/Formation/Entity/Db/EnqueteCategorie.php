@@ -2,23 +2,23 @@
 
 namespace Formation\Entity\Db;
 
+use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class EnqueteQuestion implements HistoriqueAwareInterface {
+class EnqueteCategorie implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
     /** @var int */
     private $id;
-    /** @var string */
+    /** @var string|null */
     private $libelle;
     /** @var string|null */
     private $description;
     /** @var int|null */
     private $ordre;
-
-    /** @var EnqueteCategorie|null */
-    private $categorie;
+    /** @var Collection (EnqueteQuestion) */
+    private $questions;
 
     /**
      * @return int
@@ -37,10 +37,10 @@ class EnqueteQuestion implements HistoriqueAwareInterface {
     }
 
     /**
-     * @param string $libelle
-     * @return EnqueteQuestion
+     * @param string|null $libelle
+     * @return EnqueteCategorie
      */
-    public function setLibelle(string $libelle): EnqueteQuestion
+    public function setLibelle(?string $libelle): EnqueteCategorie
     {
         $this->libelle = $libelle;
         return $this;
@@ -56,9 +56,9 @@ class EnqueteQuestion implements HistoriqueAwareInterface {
 
     /**
      * @param string|null $description
-     * @return EnqueteQuestion
+     * @return EnqueteCategorie
      */
-    public function setDescription(?string $description): EnqueteQuestion
+    public function setDescription(?string $description): EnqueteCategorie
     {
         $this->description = $description;
         return $this;
@@ -74,29 +74,19 @@ class EnqueteQuestion implements HistoriqueAwareInterface {
 
     /**
      * @param int|null $ordre
-     * @return EnqueteQuestion
+     * @return EnqueteCategorie
      */
-    public function setOrdre(?int $ordre): EnqueteQuestion
+    public function setOrdre(?int $ordre): EnqueteCategorie
     {
         $this->ordre = $ordre;
         return $this;
     }
 
     /**
-     * @return EnqueteCategorie|null
+     * @return Collection
      */
-    public function getCategorie(): ?EnqueteCategorie
+    public function getQuestions(): Collection
     {
-        return $this->categorie;
-    }
-
-    /**
-     * @param EnqueteCategorie|null $categorie
-     * @return EnqueteQuestion
-     */
-    public function setCategorie(?EnqueteCategorie $categorie): EnqueteQuestion
-    {
-        $this->categorie = $categorie;
-        return $this;
+        return $this->questions;
     }
 }

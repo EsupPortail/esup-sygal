@@ -62,7 +62,7 @@ return [
                     'controller' => SessionController::class,
                     'action' => [
                         'historiser',
-                        'supprimer',
+                        'restaurer',
                     ],
                     'privileges' => [
                         SessionPrivileges::SESSION_HISTORISER,

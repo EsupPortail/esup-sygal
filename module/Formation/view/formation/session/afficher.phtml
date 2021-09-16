@@ -3,6 +3,7 @@
 use Formation\Entity\Db\Formateur;use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
+use Formation\Provider\Privilege\FormationPrivileges;
 use Formation\Provider\Privilege\InscriptionPrivileges;
 use Formation\Provider\Privilege\SeancePrivileges;
 use Formation\Provider\Privilege\SessionPrivileges;
@@ -13,7 +14,7 @@ use Formation\Provider\Privilege\SessionPrivileges;
  * @var array $presences
  */
 
-$module = $session->getFormation();
+$formation = $session->getFormation();
 /** @var Seance[] $seances */
 $seances = $session->getSeances()->toArray();
 usort($seances, function(Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
@@ -22,9 +23,12 @@ usort($seances, function(Seance $a, Seance $b) { return $a->getDebut() > $b->get
 $formateurs = $session->getFormateurs()->toArray();
 usort($formateurs, function (Formateur $a, Formateur $b) { return $a->getIndividu()->getNomComplet() > $b->getIndividu()->getNomComplet();});
 
-$pageTitle = 'Affichage de la Session : ' . $module->getLibelle() . ' #'.$session->getIndex();
+$pageTitle = 'Affichage de la Session : ' . $formation->getLibelle() . ' #'.$session->getIndex();
 $this->headTitle($pageTitle);
 
+$canAfficherFormation   = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_AFFICHER));
+
+$canIndexSession        = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_INDEX));
 $canModifierSession     = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_MODIFIER));
 $canHistoriserSession   = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_HISTORISER));
 $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_SUPPRIMER));
@@ -57,10 +61,18 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     <div class="col-md-8">
         <dl class="dl-horizontal">
     <dt> Module </dt>
-    <dd> <?php echo $module->getLibelle(); ?> </dd>
-    <?php if ($module->getDescription()) : ?>
+    <dd>
+        <?php if ($formation->getModule() !== null) : ?>
+            <?php echo $formation->getModule()->getLibelle(); ?>
+        <?php else : ?>
+            <i> Aucun module associé à la formation</i>
+        <?php endif; ?>
+    </dd>
+    <dt> Formation </dt>
+    <dd> <?php echo $formation->getLibelle(); ?> </dd>
+    <?php if ($formation->getDescription()) : ?>
         <dt> Description du module </dt>
-        <dd> <?php echo $module->getDescription(); ?> </dd>
+        <dd> <?php echo $formation->getDescription(); ?> </dd>
     <?php endif ?>
     <?php if ($session->getDescription()) : ?>
         <dt> Description de la session </dt>
@@ -93,25 +105,53 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
 </dl>
     </div>
     <div class="pull-right">
+        <?php if ($canIndexSession) : ?>
+            <?php /** @see \Formation\Controller\SessionController::indexAction() */?>
+            <a class="btn btn-primary action"
+               href="<?php echo $this->url('formation/session', [], [], true); ?>"
+            >
+                <span class="glyphicon glyphicon-chevron-up"></span>
+                Index des sessions
+            </a>
+            <br/>
+            <br/>
+        <?php endif; ?>
+        <div class="pull-right">
+            <?php if ($canAfficherFormation) : ?>
+                <?php /** @see \Formation\Controller\FormationController::afficherAction() */?>
+                <a class="btn btn-primary action"
+                   href="<?php echo $this->url('formation/formation/afficher', ['formation' => $formation->getId() ], [], true); ?>"
+                >
+                    <span class="glyphicon glyphicon-share-alt"></span>
+                    Accéder à la formation
+                </a>
+                <br/>
+                <br/>
+            <?php endif; ?>
         <?php if ($canModifierSession) : ?>
             <?php /** @see \Formation\Controller\SessionController::modifierAction() */?>
-            <a class="btn btn-primary ajax-modal" data-event="modification"
+            <a class="btn btn-primary action ajax-modal" data-event="modification"
                href="<?php echo $this->url('formation/session/modifier', ['session' => $session->getId()], [], true); ?>"
             >
                 <span class="glyphicon glyphicon-pencil"></span>
                 Modifier les informations
             </a>
+            <br/>
+            <br/>
             <?php /** @see \Formation\Controller\SessionController::changerEtatAction() */?>
-            <a class="btn btn-primary ajax-modal" data-event="modification"
+            <a class="btn btn-primary action ajax-modal" data-event="modification"
                href="<?php echo $this->url('formation/session/changer-etat', ['session' => $session->getId()], [], true); ?>"
             >
                 <span class="glyphicon glyphicon-adjust"></span>
                 Changer l'état
             </a>
+            <br/>
+            <br/>
         <?php endif; ?>
     </div>
 </div>
 
+<!-- FORMATEUR ##################################################################################################### -->
 <div class="row">
     <div class="col-md-6">
         <h2> Formateur </h2>
@@ -119,7 +159,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     <div class="pull-right">
         <?php /** @see \Formation\Controller\FormateurController::ajouterAction() */ ?>
         <a href="<?php echo $this->url('formation/formateur/ajouter', ['session' => $session->getId()], [] , true); ?>"
-           class="btn btn-primary ajax-modal" data-event="modification">
+           class="btn btn-primary action ajax-modal" data-event="modification">
             <span class="glyphicon glyphicon-plus"></span>
             Ajouter un·e formateur·trice
         </a>
@@ -141,6 +181,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
 <?php endforeach; ?>
 </ul>
 
+<!-- SEANCE ######################################################################################################## -->
 <div class="row">
     <div class="col-md-6">
         <h2> Séances </h2>
@@ -148,13 +189,13 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     <div class="pull-right">
         <?php /** @see \Formation\Controller\SeanceController::ajouterAction() */ ?>
         <a href="<?php echo $this->url('formation/seance/ajouter', ['session' => $session->getId()], [] , true); ?>"
-           class="btn btn-primary ajax-modal" data-event="modification">
+           class="btn btn-primary action ajax-modal" data-event="modification">
             <span class="glyphicon glyphicon-plus"></span>
             Ajouter une séance
         </a>
         <?php /** @see \Formation\Controller\SessionController::genererEmargementsAction() */ ?>
         <a href="<?php echo $this->url('formation/session/generer-emargements', ['session' => $session->getId()], [] , true); ?>" target="_blank"
-           class="btn btn-primary">
+           class="btn btn-primary action">
             <span class="glyphicon glyphicon-list"></span>
             Générer les émargements
         </a>
@@ -175,7 +216,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     <tbody>
     <?php foreach ($seances as $seance) : ?>
         <tr>
-            <td> <?php echo $seance->getLieu(); ?> </td>
+            <td <?php if($seance->estHistorise()) echo " class='historisee' "; ?> > <?php echo $seance->getLieu(); ?> </td>
             <td> <?php echo $seance->getDebut()->format('d/m/y'); ?> </td>
             <td> <?php echo $seance->getDebut()->format('H:i'); ?> </td>
             <td> <?php echo $seance->getFin()->format('H:i'); ?> </td>
@@ -231,27 +272,27 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
 </table>
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-4">
         <h2> Inscriptions et listes </h2>
     </div>
     <div class="pull-right">
         <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
         <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId()], [] , true); ?>"
-           class="btn btn-primary ajax-modal" data-event="modification">
+           class="btn btn-primary action ajax-modal" data-event="modification">
             <span class="glyphicon glyphicon-pencil"></span>
             Inscrit un·e doctorant·e
         </a>
 
         <?php /** @see \Formation\Controller\SessionController::classerInscriptionsAction() */ ?>
         <a href="<?php echo $this->url('formation/session/classer-inscriptions', ['session' => $session->getId()], [] , true); ?>"
-           class="btn btn-primary">
+           class="btn btn-primary action">
             <span class="glyphicon glyphicon-indent-left"></span>
             Classer les inscrits
         </a>
 
         <?php /** @see \Formation\Controller\SessionController::declasserInscriptionsAction() */ ?>
         <a href="<?php echo $this->url('formation/session/declasser-inscriptions', ['session' => $session->getId()], [] , true); ?>"
-           class="btn btn-primary">
+           class="btn btn-primary action">
             <span class="glyphicon glyphicon-indent-right"></span>
             Déclasser les inscrits
         </a>
@@ -318,4 +359,9 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     });
 </script>
 
+<style>
+    a.btn.action {
+        width:25rem;
+    }
+</style>
 

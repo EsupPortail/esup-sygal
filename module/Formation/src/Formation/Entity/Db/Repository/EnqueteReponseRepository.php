@@ -2,6 +2,7 @@
 
 namespace Formation\Entity\Db\Repository;
 
+use Application\Entity\Db\Doctorant;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Formation\Entity\Db\EnqueteReponse;
@@ -48,6 +49,20 @@ class EnqueteReponseRepository extends EntityRepository
         $qb = $this->createQB('enquetereponse')
             ->andWhere('enquetereponse.inscription  = :inscription')
             ->setParameter('inscription', $inscription)
+        ;
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
+     * @param Doctorant $doctorant
+     * @return EnqueteReponse[]
+     */
+    public function findEnqueteReponseByDoctorant(Doctorant $doctorant) : array
+    {
+        $qb = $this->createQB('enquetereponse')
+            ->andWhere('inscription.doctorant  = :doctorant')
+            ->setParameter('doctorant', $doctorant)
         ;
         $result = $qb->getQuery()->getResult();
         return $result;

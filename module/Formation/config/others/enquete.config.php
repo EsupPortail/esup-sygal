@@ -5,6 +5,10 @@ namespace Formation;
 
 use Formation\Controller\EnqueteController;
 use Formation\Controller\EnqueteControllerFactory;
+use Formation\Form\EnqueteCategorie\EnqueteCategorieForm;
+use Formation\Form\EnqueteCategorie\EnqueteCategorieFormFactory;
+use Formation\Form\EnqueteCategorie\EnqueteCategorieHydrator;
+use Formation\Form\EnqueteCategorie\EnqueteCategorieHydratorFactory;
 use Formation\Form\EnqueteQuestion\EnqueteQuestionForm;
 use Formation\Form\EnqueteQuestion\EnqueteQuestionFormFactory;
 use Formation\Form\EnqueteQuestion\EnqueteQuestionHydrator;
@@ -14,6 +18,8 @@ use Formation\Form\EnqueteReponse\EnqueteReponseFormFactory;
 use Formation\Form\EnqueteReponse\EnqueteReponseHydrator;
 use Formation\Form\EnqueteReponse\EnqueteReponseHydratorFactory;
 use Formation\Provider\Privilege\EnquetePrivileges;
+use Formation\Service\EnqueteCategorie\EnqueteCategorieService;
+use Formation\Service\EnqueteCategorie\EnqueteCategorieServiceFactory;
 use Formation\Service\EnqueteQuestion\EnqueteQuestionService;
 use Formation\Service\EnqueteQuestion\EnqueteQuestionServiceFactory;
 use Formation\Service\EnqueteReponse\EnqueteReponseService;
@@ -38,6 +44,7 @@ return [
                 [
                     'controller' => EnqueteController::class,
                     'action' => [
+                        'ajouter-categorie',
                         'ajouter-question',
                     ],
                     'privileges' => [
@@ -47,6 +54,7 @@ return [
                 [
                     'controller' => EnqueteController::class,
                     'action' => [
+                        'modifier-categorie',
                         'modifier-question',
                     ],
                     'privileges' => [
@@ -56,6 +64,8 @@ return [
                 [
                     'controller' => EnqueteController::class,
                     'action' => [
+                        'historiser-categorie',
+                        'restaurer-categorie',
                         'historiser-question',
                         'restaurer-question',
                     ],
@@ -66,6 +76,7 @@ return [
                 [
                     'controller' => EnqueteController::class,
                     'action' => [
+                        'supprimer-categorie',
                         'supprimer-question',
                     ],
                     'privileges' => [
@@ -209,6 +220,72 @@ return [
                                     ],
                                 ],
                             ],
+                            'categorie' => [
+                                'type'  => Literal::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/categorie',
+                                    'defaults' => [
+                                    ],
+                                ],
+                                'child_routes' => [
+                                    'ajouter' => [
+                                        'type'  => Literal::class,
+                                        'may_terminate' => true,
+                                        'options' => [
+                                            'route'    => '/ajouter',
+                                            'defaults' => [
+                                                'controller' => EnqueteController::class,
+                                                'action'     => 'ajouter-categorie',
+                                            ],
+                                        ],
+                                    ],
+                                    'modifier' => [
+                                        'type'  => Segment::class,
+                                        'may_terminate' => true,
+                                        'options' => [
+                                            'route'    => '/modifier/:categorie',
+                                            'defaults' => [
+                                                'controller' => EnqueteController::class,
+                                                'action'     => 'modifier-categorie',
+                                            ],
+                                        ],
+                                    ],
+                                    'historiser' => [
+                                        'type'  => Segment::class,
+                                        'may_terminate' => true,
+                                        'options' => [
+                                            'route'    => '/historiser/:categorie',
+                                            'defaults' => [
+                                                'controller' => EnqueteController::class,
+                                                'action'     => 'historiser-categorie',
+                                            ],
+                                        ],
+                                    ],
+                                    'restaurer' => [
+                                        'type'  => Segment::class,
+                                        'may_terminate' => true,
+                                        'options' => [
+                                            'route'    => '/restaurer/:categorie',
+                                            'defaults' => [
+                                                'controller' => EnqueteController::class,
+                                                'action'     => 'restaurer-categorie',
+                                            ],
+                                        ],
+                                    ],
+                                    'supprimer' => [
+                                        'type'  => Segment::class,
+                                        'may_terminate' => true,
+                                        'options' => [
+                                            'route'    => '/supprimer/:categorie',
+                                            'defaults' => [
+                                                'controller' => EnqueteController::class,
+                                                'action'     => 'supprimer-categorie',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
                             'repondre-questions' => [
                                 'type'  => Segment::class,
                                 'may_terminate' => true,
@@ -229,6 +306,7 @@ return [
 
     'service_manager' => [
         'factories' => [
+            EnqueteCategorieService::class => EnqueteCategorieServiceFactory::class,
             EnqueteQuestionService::class => EnqueteQuestionServiceFactory::class,
             EnqueteReponseService::class => EnqueteReponseServiceFactory::class,
         ],
@@ -240,12 +318,14 @@ return [
     ],
     'form_elements' => [
         'factories' => [
+            EnqueteCategorieForm::class =>EnqueteCategorieFormFactory::class,
             EnqueteQuestionForm::class => EnqueteQuestionFormFactory::class,
             EnqueteReponseForm::class => EnqueteReponseFormFactory::class,
         ],
     ],
     'hydrators' => [
         'factories' => [
+            EnqueteCategorieHydrator::class => EnqueteCategorieHydratorFactory::class,
             EnqueteQuestionHydrator::class => EnqueteQuestionHydratorFactory::class,
             EnqueteReponseHydrator::class => EnqueteReponseHydratorFactory::class,
         ],

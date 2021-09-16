@@ -4,6 +4,7 @@ use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
 use Formation\Provider\Privilege\FormationPrivileges;
+use Formation\Provider\Privilege\ModulePrivileges;
 use Formation\Provider\Privilege\SessionPrivileges;
 
 /**
@@ -13,6 +14,8 @@ use Formation\Provider\Privilege\SessionPrivileges;
 
 $pageTitle = 'Affichage de la formation : ' . $formation->getLibelle();
 $this->headTitle($pageTitle);
+
+$canAfficherModule      = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_AFFICHER));
 
 $canIndexFormation      = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_INDEX));
 $canModifierFormation   = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_MODIFIER));
@@ -98,6 +101,17 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
             </a>
             <br/>
             <br/>
+            <?php if ($canAfficherModule AND $formation->getModule() !== null) : ?>
+                <?php /** @see \Formation\Controller\ModuleController::afficherAction() */?>
+                <a class="btn btn-primary action"
+                   href="<?php echo $this->url('formation/module/afficher', ['module' => $formation->getModule()->getId() ], [], true); ?>"
+                >
+                    <span class="glyphicon glyphicon-share-alt"></span>
+                    Accéder au module
+                </a>
+                <br/>
+                <br/>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
     <div class="pull-right">

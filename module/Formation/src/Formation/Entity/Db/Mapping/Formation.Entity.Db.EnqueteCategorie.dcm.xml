@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="Formation\Entity\Db\EnqueteQuestion"
-            table="FORMATION_ENQUETE_QUESTION"
-            repository-class="Formation\Entity\Db\Repository\EnqueteQuestionRepository">
+    <entity name="Formation\Entity\Db\EnqueteCategorie"
+            table="FORMATION_ENQUETE_CATEGORIE"
+            repository-class="Formation\Entity\Db\Repository\EnqueteCategorieRepository">
 
         <id name="id" type="integer" column="ID">
             <generator strategy="SEQUENCE"/>
-            <sequence-generator sequence-name="ENQUETE_QUESTION_ID_SEQ"/>
+            <sequence-generator sequence-name="ENQUETE_CATEGORIE_ID_SEQ"/>
         </id>
 
         <field name="libelle"             type="string"       length="1024"       column="LIBELLE"          nullable="false"/>
         <field name="description"         type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
         <field name="ordre"               type="integer"                          column="ORDRE"      nullable="true"/>
 
-        <many-to-one field="categorie" target-entity="Formation\Entity\Db\EnqueteCategorie">
-            <join-columns>
-                <join-column name="categorie_id" referenced-column-name="ID"/>
-            </join-columns>
-        </many-to-one>
+        <one-to-many field="questions" target-entity="Formation\Entity\Db\EnqueteQuestion" mapped-by="categorie"/>
 
         <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
