@@ -22,6 +22,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var string       $modifierPersopassUrl
  * @var bool         $estDoctorant
  * @var string       $modifierCorrecAutorUrl
+ * @var string       $accorderSursisCorrecUrl
  * @var string       $nextStepUrl
  * @var string       $mailContact
  * @var string       $etatMailContact
@@ -385,22 +386,29 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             <!------------------------------- Corrections attendues --------------------------------->
             <?php
             $titre = "Corrections attendues";
-            $message = "Non.";
+            $reponse = "Non.";
+            $message = null;
             $class = null;
 
+            $validationsDesCorrectionsEnAttente = [1]; //////////////////////
+
             if ($these->isCorrectionAutorisee()) {
-                $dateButoirDepassee = $these->getDateButoirDepotVersionCorrigeeDepassee() && ! empty($validationsDesCorrectionsEnAttente);
+                $dateButoirDepassee =
+                    $these->isDateButoirDepotVersionCorrigeeDepassee() &&
+                    ! empty($validationsDesCorrectionsEnAttente);
 
                 if ($these->getCorrectionAutoriseeEstFacultative()) {
                     $class = "text-warning";
+                    $reponse = "Oui, facultatives.";
                     $message = $dateButoirDepassee ?
-                        "Trop tard, le délai pour corrections facultatives est écoulé : la version déposée avant soutenance constitue désormais la version de référence." :
-                        "Oui, facultatives.";
+                        "<strong>Trop tard, le délai pour corrections facultatives est écoulé : la version déposée avant soutenance constitue désormais la version de référence.</strong>" :
+                        null;
                 } elseif ($these->getCorrectionAutoriseeEstObligatoire()) {
                     $class = "text-danger";
+                    $reponse = "Oui, obligatoires.";
                     $message = $dateButoirDepassee ?
-                        "Trop tard, le délai pour corrections obligatoires est écoulé : ni l’attestation de réussite ni le diplôme ne peuvent désormais être délivrés." :
-                        "Oui, obligatoires.";
+                        "<strong>Trop tard, le délai pour corrections obligatoires est écoulé : ni l’attestation de réussite ni le diplôme ne peuvent désormais être délivrés.</strong>" :
+                        null;
                 }
                 if (is_array($validationsDesCorrectionsEnAttente) && empty($validationsDesCorrectionsEnAttente)) {
                     $titre = "Corrections";
@@ -411,15 +419,42 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             ?>
             <dt class="<?php echo $class ?>"><?php echo $titre ?></dt>
             <dd class="<?php echo $class ?>">
-                <?php echo $message ?> <br>
-                <?php if ($canEditForcageCorrectionAutorisee): ?>
-                    <?php if ($these->isCorrectionAutoriseeForcee()): ?>
-                        <em>Cette valeur est forcée.</em>
+                <p>
+                    <?php echo $reponse ?>
+                    <?php if ($canEditForcageCorrectionAutorisee): ?>
+                        <?php if ($these->isCorrectionAutoriseeForcee()): ?>
+                            <em>Cette valeur est forcée.</em>
+                        <?php endif ?>
+                        <a href="<?php echo $modifierCorrecAutorUrl ?>" class="btn btn-xs btn-info ajax-modal"
+                           data-event="event-correction-autorisee-forcee-modified"
+                           title="Forçage du témoin de corrections attendues"
+                        >Forçage</a>
                     <?php endif ?>
-                    <a href="<?php echo $modifierCorrecAutorUrl ?>" class="btn btn-xs btn-info ajax-modal"
-                       data-event="event-correction-autorisee-forcee-modified"
-                       title="Forçage du témoin de corrections attendues"
-                    >Forçage</a>
+                </p>
+                <?php if ($these->isCorrectionAutorisee()): ?>
+                    <?php if ($dateSoutenance = $these->getDateSoutenance()): ?>
+                        <p>
+                            Date butoir :
+                            <?php if ($these->getDateButoirDepotVersionCorrigeeAvecSursis()): ?>
+                                <?php echo $these->getDateButoirDepotVersionCorrigeeAvecSursisToString() ?> (sursis inclus)
+                            <?php else: ?>
+                                <abbr title="<?php echo $these->getDelaiDepotVersionCorrigeeToString() ?> après la date de soutenance">
+                                    <?php echo $these->getDateButoirDepotVersionCorrigeeFromDateSoutenanceToString($dateSoutenance) ?>
+                                </abbr>
+                            <?php endif ?>
+                            <?php if ($this->isAllowed($these, ThesePrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS)): ?>
+                                <a href="<?php echo $accorderSursisCorrecUrl ?>" class="btn btn-xs btn-info ajax-modal"
+                                   data-event="event-sursis-correction-modified"
+                                   title="Accorder un sursis"
+                                >Accorder un sursis</a>
+                            <?php endif ?>
+                        </p>
+                    <?php endif ?>
+                <?php endif ?>
+                <?php if ($message): ?>
+                    <p>
+                        <?php echo $message ?>
+                    </p>
                 <?php endif ?>
             </dd>
 
@@ -446,6 +481,10 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             window.location.reload();
         });
         body.one("event-correction-autorisee-forcee-modified", function (event) {
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+        body.one("event-sursis-correction-modified", function (event) {
             event.div.modal('hide'); // ferme la fenêtre modale
             window.location.reload();
         });

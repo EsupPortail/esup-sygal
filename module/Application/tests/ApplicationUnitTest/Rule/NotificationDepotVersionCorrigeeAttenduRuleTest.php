@@ -111,7 +111,7 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
     {
         $theseProphecy = $this->theseProphecy();
         $theseProphecy->getCorrectionAutorisee()->willReturn($correctionAutorisee);
-        $theseProphecy->getDateButoirDepotVersionCorrigee()->willReturn($dateButoir);
+        $theseProphecy->getDateButoirDepotVersionCorrigeeFromDateSoutenance($theseProphecy->getDateSoutenance())->willReturn($dateButoir);
         $these = $theseProphecy->reveal();
 
         return $these;

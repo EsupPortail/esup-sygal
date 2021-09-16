@@ -2,8 +2,11 @@
 
 namespace Application\Entity\Db;
 
+use Application\Constants;
 use Application\Filter\TitreApogeeFilter;
 use Assert\Assertion;
+use BadMethodCallException;
+use DateInterval;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -62,7 +65,12 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     ];
 
     const CORRECTION_OBLIGATOIRE_INTERVAL = 'P3M';
+    const CORRECTION_OBLIGATOIRE_INTERVAL_TO_STRING = '3 mois';
     const CORRECTION_FACULTATIVE_INTERVAL = 'P2M';
+    const CORRECTION_FACULTATIVE_INTERVAL_TO_STRING = '2 mois';
+
+    const CORRECTION_SURSIS_INTERVAL = 'P7D';
+    const CORRECTION_SURSIS_INTERVAL_TO_STRING = '1 semaine';
 
     const CORRECTION_AUTORISEE_FORCAGE_NON = null; // pas de forçage
     const CORRECTION_AUTORISEE_FORCAGE_AUCUNE = 'aucune'; // aucune correction autorisée
@@ -155,6 +163,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @var string
      */
     private $correctionAutoriseeForcee;
+
+    /**
+     * @var DateTime
+     */
+    private $dateButoirDepotVersionCorrigeeAvecSursis = null;
 
     /**
      * @var string
@@ -420,7 +433,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @return DateTime
+     * @return DateTime|null
      */
     public function getDateSoutenance()
     {
@@ -596,7 +609,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @param bool $prendreEnCompteLeForcage Faut-il prendre en compte le forçage éventuel ?
      * @return bool
      */
-    public function isCorrectionAutorisee($prendreEnCompteLeForcage = true)
+    public function isCorrectionAutorisee(bool $prendreEnCompteLeForcage = true): bool
     {
         return (bool) $this->getCorrectionAutorisee($prendreEnCompteLeForcage);
     }
@@ -606,7 +619,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      *
      * @return bool
      */
-    public function isCorrectionAutoriseeForcee()
+    public function isCorrectionAutoriseeForcee(): bool
     {
         return $this->getCorrectionAutoriseeForcee() !== null;
     }
@@ -620,7 +633,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      *
      * @see These::getCorrectionAutoriseeForcee()
      */
-    public function getCorrectionAutorisee($prendreEnCompteLeForcage = true)
+    public function getCorrectionAutorisee(bool $prendreEnCompteLeForcage = true): ?string
     {
         if ($prendreEnCompteLeForcage === false) {
             return $this->correctionAutorisee;
@@ -717,6 +730,43 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
         $this->correctionAutoriseeForcee = $correctionAutoriseeForcee;
 
+        return $this;
+    }
+
+    /**
+     * @return null|DateTime
+     */
+    public function getDateButoirDepotVersionCorrigeeAvecSursis(): ?DateTime
+    {
+        return $this->dateButoirDepotVersionCorrigeeAvecSursis;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateButoirDepotVersionCorrigeeAvecSursisToString(): string
+    {
+        return $this->dateButoirDepotVersionCorrigeeAvecSursis ?
+            $this->dateButoirDepotVersionCorrigeeAvecSursis->format(Constants::DATE_FORMAT) :
+            '';
+    }
+
+    /**
+     * @param \DateTime $date
+     * @return self
+     */
+    public function setDateButoirDepotVersionCorrigeeAvecSursis(DateTime $date): self
+    {
+        $this->dateButoirDepotVersionCorrigeeAvecSursis = $date;
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function unsetDateButoirDepotVersionCorrigeeAvecSursis(): self
+    {
+        $this->dateButoirDepotVersionCorrigeeAvecSursis = null;
         return $this;
     }
 
@@ -1476,116 +1526,32 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         return null;
     }
 
-    /**
-     * @return DateTime|null
-     */
-    public function getDateNotificationDepotVersionCorrigeeAttendu()
+
+
+
+
+    public function getDateButoirDepotVersionCorrigeeFromDateSoutenance(DateTime $dateSoutenance): DateTime
     {
-        switch ($this->getCorrectionAutorisee()) {
-            case self::CORRECTION_AUTORISEE_OBLIGATOIRE:
-                $dateButoir = $this->getDateButoirDepotVersionCorrigee();
-                if ($dateButoir !== null) {
-                    return $dateButoir->sub(new \DateInterval('P1M')); // date butoir - 1 mois
-                } else {
-                    return null;
-                }
-            case self::CORRECTION_AUTORISEE_FACULTATIVE:
-                return null;
-            default:
-                return null;
-        }
-    }
-
-    /**
-     * @param DateTime $dateDerniereNotif
-     * @return DateTime|null
-     */
-    public function getDateProchaineNotificationDepotVersionCorrigeeAttendu(DateTime $dateDerniereNotif = null)
-    {
-        $now = (new DateTime())->setTime(0, 0, 0);
-
-        // La 1ere notification se fait immédiatement
-        if ($dateDerniereNotif === null) {
-            return $now;
-        }
-
-        $dateButoir = $this->getDateButoirDepotVersionCorrigee();
-
-        switch ($this->getCorrectionAutorisee()) {
-            case self::CORRECTION_AUTORISEE_OBLIGATOIRE:
-                if ($dateButoir !== null) {
-                    $dateProchaineNotif = $dateButoir->sub(new \DateInterval('P1M')); // Date butoir - 1 mois
-                }
-                else {
-                    $dateProchaineNotif = null;
-                }
-                break;
-            case self::CORRECTION_AUTORISEE_FACULTATIVE:
-                $dateProchaineNotif = null;
-                break;
-            default:
-                $dateProchaineNotif = null;
-                break;
-        }
-
-        // Pas de date de prochaine notification !
-        if ($dateProchaineNotif === null) {
-            return null;
-        }
-
-        $dateProchaineNotif->setTime(0, 0, 0);
-
-        // La date de prochaine notif est passée: pas de notif.
-        if ($dateProchaineNotif < $now) {
-            return null;
-        }
-        // La date de prochaine notif égale la date de dernière notif: les notifications sont terminées.
-        if ($dateProchaineNotif == $dateDerniereNotif) {
-            return null;
-        }
-
-        return $dateProchaineNotif;
-    }
-
-    /**
-     * @return DateTime|null
-     */
-    public function getDateButoirDepotVersionCorrigee()
-    {
-        if ($this->getDateSoutenance() === null) {
-            return null;
-        }
         if ($this->getCorrectionAutorisee() === null) {
-            return null;
+            throw new BadMethodCallException("Appel de " . __METHOD__ . " illogique car aucune correction attendue");
         }
 
         $intervalSpec = $this->getDelaiDepotVersionCorrigeeInterval();
 
-        $date = clone $this->getDateSoutenance();
+        $date = clone $dateSoutenance;
         $date
-            ->add(new \DateInterval($intervalSpec))
+            ->add(new DateInterval($intervalSpec))
             ->setTime(0, 0, 0);
 
         return $date;
     }
 
-    /**
-     * @return bool
-     */
-    public function getDateButoirDepotVersionCorrigeeDepassee()
+    public function getDateButoirDepotVersionCorrigeeFromDateSoutenanceToString(DateTime $dateSoutenance): string
     {
-        $dateButoir = $this->getDateButoirDepotVersionCorrigee();
-
-        if ($dateButoir === null) {
-            return false;
-        }
-
-        $today = new \DateTime('today');
-
-        return $today > $dateButoir;
+        return $this->getDateButoirDepotVersionCorrigeeFromDateSoutenance($dateSoutenance)->format(Constants::DATE_FORMAT);
     }
 
-    public function getDelaiDepotVersionCorrigeeInterval()
+    public function getDelaiDepotVersionCorrigeeInterval(): string
     {
         switch ($val = $this->getCorrectionAutorisee()) {
             case self::CORRECTION_AUTORISEE_OBLIGATOIRE:
@@ -1597,16 +1563,93 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         }
     }
 
-    public function getDelaiDepotVersionCorrigeeToString()
+    public function getDelaiDepotVersionCorrigeeToString(): string
     {
         switch ($spec = $this->getDelaiDepotVersionCorrigeeInterval()) {
             case self::CORRECTION_OBLIGATOIRE_INTERVAL:
-                return '3 mois';
+                return static::CORRECTION_OBLIGATOIRE_INTERVAL_TO_STRING;
             case self::CORRECTION_FACULTATIVE_INTERVAL:
-                return '2 mois';
+                return static::CORRECTION_FACULTATIVE_INTERVAL_TO_STRING;
             default:
                 throw new RuntimeException("Interval rencontré non prévu: " . $spec);
         }
+    }
+
+    /**
+     * Détermine si la date butoir de dépôt de la verison corrigée est dépassée ou non.
+     *
+     * NB : Synthèse de
+     * {@see isDateButoirDepotVersionCorrigeeFromDateSoutenanceDepassee()} et
+     * {@see isDateButoirDepotVersionCorrigeeAvecSursisDepassee()}
+     *
+     * @return bool
+     */
+    public function isDateButoirDepotVersionCorrigeeDepassee(): bool
+    {
+        $dateButoirFromSoutenanceDepassee =
+            $this->dateSoutenance &&
+            $this->isDateButoirDepotVersionCorrigeeFromDateSoutenanceDepassee($this->dateSoutenance);
+        if (! $dateButoirFromSoutenanceDepassee) {
+            return false;
+        }
+
+        if ($this->dateButoirDepotVersionCorrigeeAvecSursis !== null) {
+            return $this->isDateButoirDepotVersionCorrigeeAvecSursisDepassee();
+        }
+
+        return true;
+    }
+
+    /**
+     * Détermine si la date butoir de dépôt de la verison corrigée DEDUITE DE LA DATE DE SOUTENANCE est dépassée ou non.
+     *
+     * NB : La date de soutenance est demandée en argument pour bien marquer le fait qu'une date de soutenance non null
+     * est requise.
+     *
+     * @param \DateTime $dateSoutenance
+     * @return bool
+     */
+    public function isDateButoirDepotVersionCorrigeeFromDateSoutenanceDepassee(DateTime $dateSoutenance): bool
+    {
+        $dateButoir = $this->getDateButoirDepotVersionCorrigeeFromDateSoutenance($dateSoutenance);
+        $today = new \DateTime('today');
+
+        return $today > $dateButoir;
+    }
+
+    /**
+     * Détermine si la date butoir de dépôt de la verison corrigée AVEC SURSIS UNQUEMENT est dépassée ou non.
+     *
+     * @return bool
+     */
+    public function isDateButoirDepotVersionCorrigeeAvecSursisDepassee(): bool
+    {
+        if ($this->dateButoirDepotVersionCorrigeeAvecSursis === null) {
+            throw new BadMethodCallException("Appel de " . __METHOD__ . " illogique car aucun sursis n'a été accordé");
+        }
+
+        $today = new \DateTime('today');
+
+        return $today > $this->dateButoirDepotVersionCorrigeeAvecSursis;
+    }
+
+    /**
+     * Applique à la date spécifiée le sursis (délai) de dépôt de la version corrigée.
+     *
+     * @return DateTime
+     */
+    public function computeDateButoirDepotVersionCorrigeeAvecSursis(): DateTime
+    {
+        if ($this->dateSoutenance === null) {
+            throw new BadMethodCallException("Appel de " . __METHOD__ . " illogique car la date de soutenance est inconnue");
+        }
+
+        $today = new \DateTime('today');
+        $date = $this->dateSoutenance < $today ? $today : clone $this->dateSoutenance;
+
+        return $date
+            ->add(new DateInterval(self::CORRECTION_SURSIS_INTERVAL))
+            ->setTime(0, 0);
     }
 
     /**
