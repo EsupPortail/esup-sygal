@@ -137,16 +137,18 @@ blockquote {
     font-size: 100%;
     padding-left: 10px; }
 
-div.jumbotron p,
-div.jumbotron ul li {
+div.jumbotron p, div.jumbotron ul li {
   font-size: 120%; }
-
-div.jumbotron p.connected-as {
+div.jumbotron .connected-as {
   color: #a94442;
   font-size: 24px;
   font-weight: 400; }
-  div.jumbotron p.connected-as span.role {
+  div.jumbotron .connected-as span.role {
     font-weight: 600; }
+div.jumbotron .connected-as:nth-of-type(1) {
+  margin-bottom: 0; }
+div.jumbotron .connected-as:nth-of-type(2) {
+  font-size: 16px; }
 
 p.appname-subtitle {
   margin-top: -25px;

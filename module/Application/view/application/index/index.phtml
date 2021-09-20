@@ -1,7 +1,8 @@
 <?php
 /**
  * @var PhpRenderer $this
- * @var Role        $role Rôle courant
+ * @var Role        $role Rôle courant de l'utilisateur
+ * @var Role[]      $roles Rôles que possèdent l'utilisateur
  * @var bool        $estDoctorant
  * @var array       $offre
  * @var Information[]       $informations
@@ -74,6 +75,12 @@ echo $this->messenger()
                     <?php echo $this->translate("Vous êtes connecté·e en tant que"); ?>
                     &laquo; <span class="role"><?php echo ($role)?:"utilisateur authentifié"; ?></span> &raquo;.
                 </p>
+                <?php if (count($roles) > 1): ?>
+                    <p class="connected-as">
+                        Cliquez sur votre nom dans le bandeau supérieur de la page pour visualiser les
+                        rôles que vous pouvez endosser puis sélectionnez celui qui vous amène...
+                    </p>
+                <?php endif ?>
                 <ul class="roadmap pagination">
                     <li>
                         <a class="roadmap-step-link " href="<?php echo $this->url('these') ?>">

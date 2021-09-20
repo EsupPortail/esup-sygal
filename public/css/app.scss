@@ -201,12 +201,11 @@ blockquote {
   }
 }
 
-div.jumbotron p,
-div.jumbotron ul li {
-  font-size: 120%;
-}
 div.jumbotron {
-  p.connected-as {
+  p, ul li {
+    font-size: 120%;
+  }
+  .connected-as {
     color: #a94442;
     font-size: 24px;
     font-weight: 400;
@@ -214,6 +213,12 @@ div.jumbotron {
     span.role {
       font-weight: 600;
     }
+  }
+  .connected-as:nth-of-type(1) {
+    margin-bottom: 0;
+  }
+  .connected-as:nth-of-type(2) {
+    font-size: 16px;
   }
 }
 

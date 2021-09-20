@@ -7,6 +7,7 @@ Journal des modifications
 - Modèle de page de couverture de thèse personnalisable.
 - Substitution possible du favicon.
 - Possibilité d'accorder un sursis pour le dépôt de la verison corrigée de la thèse.
+- Page d'accueil : laïus en cas d'utilisateur ayant plusieurs rôles.
 - [FIX] Bloquage de la signature multiple de l'engagement d'impartilité
 - [FIX] Bloquage de la validation multiple des propositions lors de la validation acteur
 - [FIX] Correction du tri des thèses par titre (plantage) et par date de soutenance (inopérant)
