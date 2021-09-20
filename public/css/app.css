@@ -640,8 +640,13 @@ span.sas-highlight {
     margin: 0 0 0 8px; }
 
 /********** à déplacer... ************/
+input[type="checkbox"], input[type="radio"] {
+  margin-top: 0; }
+
+.user-profile-select-form .radio {
+  margin: 0; }
 .user-profile-select-form label > input[type=radio] {
-  margin-top: -6px; }
+  margin-top: -4px; }
 
 .user-usurpation-form {
   padding-top: 1em; }
