@@ -8,25 +8,17 @@ use Application\Entity\Db\Repository\IndividuRepository;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
-use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use InvalidArgumentException;
-use UnicaenApp\Entity\UserInterface;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenLdap\Entity\People;
 use Zend\Mvc\Controller\AbstractActionController;
 
 class IndividuService extends BaseService
 {
-    use UtilisateurServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
-
-    /**
-     * @var Utilisateur
-     */
-    protected $appPseudoUtilisateur;
 
     /**
      * @return IndividuRepository
@@ -77,12 +69,12 @@ class IndividuService extends BaseService
     /**
      * @param UserWrapper $userWrapper
      * @param Etablissement $etablissement
-     * @param \Application\Entity\Db\Utilisateur|null $utilisateur Auteur éventuel de la création
+     * @param \Application\Entity\Db\Utilisateur $utilisateur Auteur de la création
      * @return Individu
      */
     public function createIndividuFromUserWrapperAndEtab(UserWrapper $userWrapper,
                                                          Etablissement $etablissement,
-                                                         Utilisateur $utilisateur = null): ?Individu
+                                                         Utilisateur $utilisateur): ?Individu
     {
         $supannId = $userWrapper->getSupannId();
         if (! $supannId) {
@@ -99,7 +91,7 @@ class IndividuService extends BaseService
         $entity->setCivilite($userWrapper->getCivilite());
         $entity->setEmail($userWrapper->getEmail());
         $entity->setSourceCode($sourceCode);
-        $entity->setHistoCreateur($utilisateur ?: $this->getAppPseudoUtilisateur());
+        $entity->setHistoCreateur($utilisateur);
 
         try {
             $this->getEntityManager()->persist($entity);
@@ -120,30 +112,18 @@ class IndividuService extends BaseService
      */
     public function updateIndividuSourceCodeFromEtab(Individu $entity,
                                                      Etablissement $etablissement,
-                                                     Utilisateur $modificateur = null)
+                                                     Utilisateur $modificateur)
     {
         $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($entity->getSupannId(), $etablissement);
 
         $entity->setSourceCode($sourceCode);
-        $entity->setHistoModificateur($modificateur ?: $this->getAppPseudoUtilisateur());
+        $entity->setHistoModificateur($modificateur);
 
         try {
             $this->getEntityManager()->flush($entity);
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Impossible d'enregistrer l'Individu", null, $e);
         }
-    }
-
-    /**
-     * @return Utilisateur|UserInterface
-     */
-    private function getAppPseudoUtilisateur()
-    {
-        if ($this->appPseudoUtilisateur === null) {
-            $this->appPseudoUtilisateur = $this->utilisateurService->fetchAppPseudoUtilisateur();
-        }
-
-        return $this->appPseudoUtilisateur;
     }
 
     public function existIndividuUtilisateurByEmail($email) {
