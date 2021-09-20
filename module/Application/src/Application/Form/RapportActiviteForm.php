@@ -8,6 +8,21 @@ use Zend\Form\Element\Radio;
 
 class RapportActiviteForm extends RapportForm
 {
+    protected $estFinalValueOptions = [
+        '0' => "Rapport d'activité annuel",
+        '1' => "Rapport d'activité de fin de thèse",
+    ];
+
+    /**
+     * @param string[] $estFinalValueOptions
+     * @return self
+     */
+    public function setEstFinalValueOptions(array $estFinalValueOptions): self
+    {
+        $this->estFinalValueOptions = $estFinalValueOptions;
+        return $this;
+    }
+
     /**
      * @inheritDoc
      */
@@ -20,10 +35,7 @@ class RapportActiviteForm extends RapportForm
             'type' => Radio::class,
             'options' => [
                 'label' => false,
-                'value_options' => [
-                    '0' => "Rapport d'activité annuel",
-                    '1' => "Rapport d'activité de fin de thèse",
-                ],
+                'value_options' => $this->estFinalValueOptions,
             ],
             'attributes' => [
                 'id' => 'estFinal',
@@ -31,6 +43,16 @@ class RapportActiviteForm extends RapportForm
         ]);
 
         $this->bind(new Rapport());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function prepare()
+    {
+        $this->get('estFinal')->setValueOptions($this->estFinalValueOptions);
+
+        return parent::prepare();
     }
 
     /**

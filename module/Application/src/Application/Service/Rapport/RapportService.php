@@ -2,11 +2,9 @@
 
 namespace Application\Service\Rapport;
 
-use Application\Entity\AnneeUniv;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\These;
-use Application\Entity\Db\TheseAnneeUniv;
 use Application\Entity\Db\TypeRapport;
 use Application\Filter\NomFichierRapportFormatter;
 use Application\Service\BaseService;
@@ -75,28 +73,6 @@ class RapportService extends BaseService
         }
 
         return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @param TheseAnneeUniv[]|\Application\Entity\AnneeUniv[] $anneesUnivs
-     * @param Rapport[] $rapportsExistants
-     * @return TheseAnneeUniv[]
-     */
-    public function computeAvailableTheseAnneeUniv(array $anneesUnivs, array $rapportsExistants): array
-    {
-        $rapportsExistantsAnneesUnivs = array_filter(array_map(function (Rapport $rapport) {
-            return $rapport->getAnneeUniv();
-        }, $rapportsExistants));
-
-        return array_filter($anneesUnivs, function($anneeUniv) use ($rapportsExistantsAnneesUnivs) {
-            if ($anneeUniv instanceof TheseAnneeUniv) {
-                return !in_array($anneeUniv->getAnneeUniv(), $rapportsExistantsAnneesUnivs);
-            } elseif ($anneeUniv instanceof AnneeUniv) {
-                return !in_array($anneeUniv->getPremiereAnnee(), $rapportsExistantsAnneesUnivs);
-            } else {
-                return false;
-            }
-        });
     }
 
     /**

@@ -16,6 +16,7 @@ Journal des modifications
 - Templatisation de la notification de confirmation d'adresse électronique
 - [FIX] Correction de l'envoi multiple de notification vers le président de jury lors du dépôt d'une version corrigée.
 - Modification de l'assertion ouvrant la validation de l'UR
+- [FIX] Impossibilité de déposer un rapport d'activité de fin de thèse en plus d'un rapport annuel.
 
 3.0.0 (oracle => postgres)
 -----
