@@ -44,7 +44,7 @@ class ValidationPageDeCouvertureNotification extends Notification
     {
         /** @var Individu[] $individusSansMail */
         $individusSansMail = [];
-        $to = $this->these->getDoctorant()->getIndividu()->getEmail();
+        $to = $this->these->getDoctorant()->getEmail();
         $cc = $this->these->getDirecteursTheseEmails($individusSansMail);
 
         $infoMessage = sprintf(

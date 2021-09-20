@@ -35,7 +35,7 @@ class ResultatTheseAdmisNotification extends Notification
      */
     public function prepare()
     {
-        $to = $this->these->getDoctorant()->getEmailPro() ?: $this->these->getDoctorant()->getEmail();
+        $to = $this->these->getDoctorant()->getEmail();
 
         $this->emailDoctorantAbsent = false;
         if (! $to) {

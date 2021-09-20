@@ -286,6 +286,7 @@ class TheseController extends AbstractController
             'estDoctorant'              => (bool)$this->userContextService->getSelectedRoleDoctorant(),
             'modifierPersopassUrl'      => $urlModification,
             'modifierCorrecAutorUrl'    => $this->urlThese()->modifierCorrecAutoriseeForceeUrl($these),
+            'accorderSursisCorrecUrl'   => $this->urlThese()->accorderSursisCorrecUrl($these),
             'nextStepUrl'               => $this->urlWorkflow()->nextStepBox($these, null, [
                 WfEtape::PSEUDO_ETAPE_FINALE,
             ]),
@@ -628,6 +629,32 @@ class TheseController extends AbstractController
         ]));
 
         return $form;
+    }
+
+    /**
+     * Accord d'un sursis pour le dépôt de la version corrigée.
+     *
+     * @return \Zend\View\Model\ViewModel
+     */
+    public function accorderSursisCorrectionAction(): ViewModel
+    {
+        $result = $this->confirm()->execute();
+
+        $these = $this->requestedThese();
+        $dateButoirDepotVersionCorrigeeAvecSursis = $these->computeDateButoirDepotVersionCorrigeeAvecSursis();
+
+        // si un tableau est retourné par le plugin Confirm, l'opération a été confirmée
+        if (is_array($result)) {
+            $this->theseService->updateSursisDateButoirDepotVersionCorrigee($these, $dateButoirDepotVersionCorrigeeAvecSursis);
+        }
+
+        $viewModel = $this->confirm()->getViewModel();
+        $viewModel->setVariables([
+            'title'   => "Sursis",
+            'date' => $dateButoirDepotVersionCorrigeeAvecSursis,
+        ]);
+
+        return $viewModel;
     }
 
     public function modifierRdvBuAction()

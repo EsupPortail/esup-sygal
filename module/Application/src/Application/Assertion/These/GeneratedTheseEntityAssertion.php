@@ -9,7 +9,7 @@ namespace Application\Assertion\These;
  * /home/gauthierb/workspace/sygal/data/assertions/TheseEntityAssertion.csv.
  *
  * @author Application\Assertion\Generator\AssertionGenerator
- * @date 28/01/2021 16:35:30
+ * @date 16/09/2021 10:06:15
  */
 abstract class GeneratedTheseEntityAssertion
 {
@@ -504,31 +504,56 @@ abstract class GeneratedTheseEntityAssertion
             return true;
         }
 
-        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */) {
+        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS) {
         //--------------------------------------------------------------------------------------
             /* line 75 */
             $this->linesTrace[] = '/* line 75 */';
+            if (! $this->isCorrectionAttendue() /* test 7 */) {
+                $this->failureMessage = "Aucune correction n'est attendue pour cette thèse";
+                return false;
+            }
+            /* line 76 */
+            $this->linesTrace[] = '/* line 76 */';
+            if (! $this->isDateButoirDepotVersionCorrigeeDepassee() /* test 8 */) {
+                $this->failureMessage = "La date butoir pour le dépôt de la version corrigée n’est pas dépassée (%s).";
+                return false;
+            }
+            /* line 77 */
+            $this->linesTrace[] = '/* line 77 */';
+            if ($this->isExisteValidationDepotVersionCorrigee() /* test 17 */) {
+                $this->failureMessage = "Le dépôt de la version corrigée a été validé par le doctorant.";
+                return false;
+            }
+            /* line 78 */
+            $this->linesTrace[] = '/* line 78 */';
+            return true;
+        }
+
+        if ($privilege === \Application\Provider\Privilege\ThesePrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */) {
+        //--------------------------------------------------------------------------------------
+            /* line 79 */
+            $this->linesTrace[] = '/* line 79 */';
             return true;
         }
 
         if ($privilege === \Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE /* évite UnexpectedPrivilegeException */) {
         //--------------------------------------------------------------------------------------
-            /* line 76 */
-            $this->linesTrace[] = '/* line 76 */';
+            /* line 80 */
+            $this->linesTrace[] = '/* line 80 */';
             return true;
         }
 
         if ($privilege === \Application\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT) {
         //--------------------------------------------------------------------------------------
-            /* line 77 */
-            $this->linesTrace[] = '/* line 77 */';
+            /* line 81 */
+            $this->linesTrace[] = '/* line 81 */';
             if ($this->isRoleDoctorantSelected() /* test 1 */ && 
                 ! $this->isUtilisateurEstAuteurDeLaThese() /* test 22 */) {
                 $this->failureMessage = "Vous ne pouvez pas visualiser l’adresse de contact car vous n’êtes pas l’auteur de la thèse";
                 return false;
             }
-            /* line 78 */
-            $this->linesTrace[] = '/* line 78 */';
+            /* line 82 */
+            $this->linesTrace[] = '/* line 82 */';
             return true;
         }
 
@@ -646,7 +671,7 @@ line;enabled;privilege;isRoleDoctorantSelected;;isStructureDuRoleRespectee;;isTh
 17;1;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE;;;;;;;;1:1;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée est dépassée (%s).
 18;1;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE;;;;;;;;;;;;;;;;1:1;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé par au moins un directeur.
 19;1;\Application\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-20;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;;;1:0;;;;;;;;;;;;;;;;;;;;;;0;La thèse doit être à l'état 'Soutenue' pour permettre cette cette opération.
+20;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;;;1:0;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
 21;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;;;;1:0;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
 22;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;;;;;;;;;;;1:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
 23;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
@@ -701,10 +726,14 @@ line;enabled;privilege;isRoleDoctorantSelected;;isStructureDuRoleRespectee;;isTh
 72;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;;;;;1:1;;;;;;;;;;;;;;;;;;;;;0;Opération impossible dès lors qu’une version corrigée est attendue.
 73;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;;;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la bibliothèque universitaire a validé.
 74;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-75;1;\Application\Provider\Privilege\ThesePrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-76;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-77;1;\Application\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT;1:1;;;;;;;;;;;;;;;;;;;;;2:0;;;;;;0;Vous ne pouvez pas visualiser l’adresse de contact car vous n’êtes pas l’auteur de la thèse
-78;1;\Application\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+75;1;\Application\Provider\Privilege\ThesePrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;;;;1:0;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
+76;1;\Application\Provider\Privilege\ThesePrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;;;;;1:0;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée n’est pas dépassée (%s).
+77;1;\Application\Provider\Privilege\ThesePrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;;;;;;;;;;;;;;1:1;;;;;;;;;;;0;Le dépôt de la version corrigée a été validé par le doctorant.
+78;1;\Application\Provider\Privilege\ThesePrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+79;1;\Application\Provider\Privilege\ThesePrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+80;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+81;1;\Application\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT;1:1;;;;;;;;;;;;;;;;;;;;;2:0;;;;;;0;Vous ne pouvez pas visualiser l’adresse de contact car vous n’êtes pas l’auteur de la thèse
+82;1;\Application\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
 EOT;
     }
 

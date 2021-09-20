@@ -44,17 +44,18 @@ echo $this->messenger()
 
     <div id="content" class="jumbotron col-xs-12 col-md-10">
 
-        <h1 class="page-header app-name"><?php echo $this->appInfos()->nom ?></h1>
-
-<!--        <p class="appname-subtitle">-->
-<!--            <strong>--><?php //echo $subtitle ?><!--</strong>-->
-<!--        </p>-->
-
-        <p>
-            <?php echo $appName ?> est une application permettant la gestion dématérialisée
-            de l’ensemble des étapes du parcours doctoral en Normandie. Il offre également aux différents acteurs du parcours
-            doctoral (établissements, écoles doctorales) une visibilité sur les thèses en cours ou passées.
-        </p>
+        <div class="row">
+            <div class="col-md-5">
+                <h1 class="page-header app-name"><?php echo $this->appInfos()->nom ?></h1>
+            </div>
+            <div class="col-md-7">
+                <p class="lead">
+                    <?php echo $appName ?> est une application permettant la gestion dématérialisée
+                    de l’ensemble des étapes du parcours doctoral en Normandie. Il offre également aux différents acteurs du parcours
+                    doctoral (établissements, écoles doctorales) une visibilité sur les thèses en cours ou passées.
+                </p>
+            </div>
+        </div>
 
         <?php if (!$this->identity()): ?>
             <p class="text-danger">
