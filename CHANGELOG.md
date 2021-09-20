@@ -8,6 +8,7 @@ Journal des modifications
 - Substitution possible du favicon.
 - Possibilité d'accorder un sursis pour le dépôt de la verison corrigée de la thèse.
 - [FIX] Bloquage de la signature multiple de l'engagement d'impartilité
+- [FIX] Bloquage de la validation multiple des propositions lors de la validation acteur
 - [FIX] Correction du tri des thèses par titre (plantage) et par date de soutenance (inopérant)
 - Ajout des gardes pour les actions de la page de presoutenance (au cas où l'accés est donnée aux acteurs directs)
 - [FIX] Changement du sujet associé à la validation finale de la proposition de soutenance
