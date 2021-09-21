@@ -42,6 +42,48 @@ h2.modal-title {
 .modal-footer .btn {
   padding: 4px 8px; }
 
+.panel .panel-heading {
+  text-transform: uppercase;
+  font-weight: 400; }
+
+.panel-info {
+  border-color: #009ce4; }
+  .panel-info > .panel-heading {
+    color: white;
+    background-color: #009ce4;
+    border-color: #009ce4; }
+
+.panel-success {
+  border-color: #2EA662; }
+  .panel-success > .panel-heading {
+    color: white;
+    background-color: #2EA662;
+    border-color: #2EA662; }
+
+.panel-danger {
+  border-color: #d23544; }
+  .panel-danger > .panel-heading {
+    color: white;
+    background-color: #d23544;
+    border-color: #d23544; }
+
+.panel-warning {
+  border-color: #f1732d; }
+  .panel-warning > .panel-heading {
+    color: white;
+    background-color: #f1732d;
+    border-color: #f1732d; }
+
+.panel.panel-md {
+  font-size: 90%; }
+  .panel.panel-md .panel-heading,
+  .panel.panel-md .panel-body {
+    padding: 6px 10px; }
+
+.panel.panel-sm .panel-heading, .panel.panel-sm .panel-body {
+  font-size: 80%;
+  padding: 4px 8px; }
+
 .panel.box {
   margin-bottom: 10px; }
   .panel.box .panel-heading {
@@ -68,52 +110,6 @@ h2.modal-title {
 
 .panel.box.roadmap-next-step {
   width: 50%; }
-
-.panel .panel-heading {
-  text-transform: uppercase;
-  font-weight: 400; }
-
-.panel-info {
-  border-color: #009ce4; }
-
-.panel-info > .panel-heading {
-  color: white;
-  background-color: #009ce4;
-  border-color: #009ce4; }
-
-.panel-success {
-  border-color: #2EA662; }
-
-.panel-success > .panel-heading {
-  color: white;
-  background-color: #2EA662;
-  border-color: #2EA662; }
-
-.panel-danger {
-  border-color: #d23544; }
-
-.panel-danger > .panel-heading {
-  color: white;
-  background-color: #d23544;
-  border-color: #d23544; }
-
-.panel-warning {
-  border-color: #f1732d; }
-
-.panel-warning > .panel-heading {
-  color: white;
-  background-color: #f1732d;
-  border-color: #f1732d; }
-
-.panel.panel-md {
-  font-size: 90%; }
-  .panel.panel-md .panel-heading,
-  .panel.panel-md .panel-body {
-    padding: 6px 10px; }
-
-.panel.panel-sm .panel-heading, .panel.panel-sm .panel-body {
-  font-size: 80%;
-  padding: 4px 8px; }
 
 ul.validation, ul.validation-attendue {
   padding-left: 0;

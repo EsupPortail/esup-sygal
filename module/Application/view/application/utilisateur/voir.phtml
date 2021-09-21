@@ -23,6 +23,7 @@ use UnicaenAuthToken\Entity\Db\UserToken;
  * @var UserToken[] $tokens
  * @var Role[] $roles
  * @var Role[] $rolesAffectes
+ * @var Role[] $rolesAffectesAuto
  * @var Individu $individu
  * @var Etablissement[] $etablissements
  * @var EcoleDoctorale[] $ecoles
@@ -189,39 +190,63 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
 
         <div class="panel-body">
 
-            <div class="col-md-4">
-                <dl>
-                    <dt>
-                        Rôles affectés
-                    </dt>
-                    <dd>
-                        <?php echo generateRoleAffecte($individu, $roles, $rolesAffectes, $canModifier) ?>
-                    </dd>
-                </dl>
+            <div class="row">
+                <div class="col-md-5">
+                    <h3>Rôles attribués automatiquement
+                        <span class="fas fa-info-circle" data-toggle="tooltip" data-placement="right"
+                              title="Ce sont les rôles attribués automatiquement à l'individu par l'application
+                              lors de sa connexion, selon les données disponibles le concernant (ex: acteur d'une thèse,
+                              auteur d'une thèse, etc.)"></span></h3>
+                    <?php if (!empty($rolesAffectesAuto)): ?>
+                        <ul>
+                        <?php foreach ($rolesAffectesAuto as $role): ?>
+                            <li><?php echo $role ?></li>
+                        <?php endforeach ?>
+                        </ul>
+                    <?php else: ?>
+                        <p>Aucun.</p>
+                    <?php endif ?>
+                </div>
             </div>
 
-            <div class="col-md-8">
+            <hr>
 
-                <dl>
-                    <dt> Rôles non liés à une structure</dt>
-                    <dd>
-                        <?php echo generateRoleStatique($individu, $roles, $rolesAffectes, $canModifier) ?>
-                    </dd>
-                    <dt> Rôles liés aux établissements</dt>
-                    <dd>
-                        <?php echo generateRoleEtablissement($individu, $roles, $rolesAffectes, $etablissements, $canModifier) ?>
-                    </dd>
-                    <dt> Rôles liés aux écoles doctorales</dt>
-                    <dd>
-                        <?php echo generateRoleEcole($individu, $roles, $rolesAffectes, $ecoles, $canModifier) ?>
-                    </dd>
-                    <dt> Rôles liés aux unités de recherche</dt>
-                    <dd>
-                        <?php echo generateRoleUnite($individu, $roles, $rolesAffectes, $unites, $canModifier) ?>
-                    </dd>
-                </dl>
+            <div class="row">
+                <div class="col-md-5">
+                    <h3>Rôles attribués manuellement
+                        <span class="fas fa-info-circle" data-toggle="tooltip" data-placement="right"
+                              title="Ce sont les rôles attribués à l'individu manuellement parmi les rôles disponibles
+                              dans la liste ci-contre."></span></h3>
+                        <?php if (!empty($rolesAffectes)): ?>
+                            <?php echo generateRolesAffectes($individu, $roles, $rolesAffectes, $canModifier) ?>
+                        <?php else: ?>
+                            <p>Aucun.</p>
+                        <?php endif ?>
+                </div>
+                <div class="col-md-6">
+                    <h3>Rôles attribuables manuellement</h3>
+                    <dl>
+                        <dt> Rôles non liés à une structure</dt>
+                        <dd>
+                            <?php echo generatesRoleStatiques($individu, $roles, $rolesAffectes, $canModifier) ?>
+                        </dd>
+                        <dt> Rôles liés aux établissements</dt>
+                        <dd>
+                            <?php echo generateRolesEtablissements($individu, $roles, $rolesAffectes, $etablissements, $canModifier) ?>
+                        </dd>
+                        <dt> Rôles liés aux écoles doctorales</dt>
+                        <dd>
+                            <?php echo generateRolesEcoles($individu, $roles, $rolesAffectes, $ecoles, $canModifier) ?>
+                        </dd>
+                        <dt> Rôles liés aux unités de recherche</dt>
+                        <dd>
+                            <?php echo generateRolesUnites($individu, $roles, $rolesAffectes, $unites, $canModifier) ?>
+                        </dd>
+                    </dl>
+                </div>
 
             </div>
+
         </div>
     </div>
 
@@ -237,9 +262,8 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
  */
 function generateSelect($structures, $id, $roles = null)
 {
-    $texte = '<div class="form-group">';
+    $texte = '<div class="form-group" style="margin-bottom: 0">';
     $texte .= '<select class="form-control selectpicker" data-live-search="true" id="' . $id . '">';
-    $texte .= '<option value=""></option>';
 
     $structuresValides = [];
     if ($roles === null) {
@@ -254,10 +278,17 @@ function generateSelect($structures, $id, $roles = null)
             }
         }
     }
+
+    $typeStructure = current($structuresValides) ?
+        current($structuresValides)->getStructure()->getTypeStructure()->getLibelle() :
+        "structure";
+
+    $texte .= '<option value="">Sélectionnez un(e) ' . $typeStructure . '...</option>';
+
     foreach ($structuresValides as $structure) {
         $texte .= '<option value="' . $structure->getStructure()->getId() . '">';
         $texte .= $structure->getStructure()->getLibelle();
-        $texte .= ' (<span class="badge ecole">' . $structure->getSigle() . '</span>' . ') ';
+        $texte .= ' (' . $structure->getSigle() . ')';
         $texte .= '</option>';
     }
     $texte .= "</select>";
@@ -273,7 +304,7 @@ function generateSelect($structures, $id, $roles = null)
  * @param Boolean $canModifier
  * @return string
  */
-function generateRoleAffecte($individu, $roles, $rolesAffectes, $canModifier = false)
+function generateRolesAffectes($individu, $roles, $rolesAffectes, $canModifier = false)
 {
     $texte = "";
     $VH = new RoleHelper();
@@ -281,10 +312,10 @@ function generateRoleAffecte($individu, $roles, $rolesAffectes, $canModifier = f
         $texte .= '<div id="affecte_' . $role->getId() . '"';
         if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) === false) $texte .= ' style="display:none;" ';
         $texte .= '>';
-        if ($canModifier) {
-            $texte .= '<span class="remove-role glyphicon glyphicon-remove text-danger" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
-        }
         $texte .= $VH->render($role);
+        if ($canModifier) {
+            $texte .= '<span class="remove-role glyphicon glyphicon-remove text-danger" title="Retirer ce rôle" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+        }
         $texte .= '</div>';
     }
     return $texte;
@@ -296,7 +327,7 @@ function generateRoleAffecte($individu, $roles, $rolesAffectes, $canModifier = f
  * @param Role[] $rolesAffectes
  * @return string
  */
-function generateRoleStatique($individu, $roles, $rolesAffectes, $canModifier = false)
+function generatesRoleStatiques($individu, $roles, $rolesAffectes, $canModifier = false)
 {
     $texte = "";
     foreach ($roles as $role) {
@@ -304,10 +335,10 @@ function generateRoleStatique($individu, $roles, $rolesAffectes, $canModifier = 
             $texte .= '<div id="disponible_' . $role->getId() . '"';
             if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
             $texte .= '>';
-            if ($canModifier) {
-                $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
-            }
             $texte .= $role->getRoleId();
+            if ($canModifier) {
+                $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" title="Attribuer ce rôle" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+            }
             $texte .= '</div>';
         }
     }
@@ -321,7 +352,7 @@ function generateRoleStatique($individu, $roles, $rolesAffectes, $canModifier = 
  * @param Etablissement[] $etablissements
  * @return string
  */
-function generateRoleEtablissement($individu, $roles, $rolesAffectes, $etablissements, $canModifier = false)
+function generateRolesEtablissements($individu, $roles, $rolesAffectes, $etablissements, $canModifier = false)
 {
     $texte = "";
     $texte .= generateSelect($etablissements, "etablissements", $roles);
@@ -337,10 +368,10 @@ function generateRoleEtablissement($individu, $roles, $rolesAffectes, $etablisse
                 $texte .= '<div id="disponible_' . $role->getId() . '"';
                 if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
                 $texte .= '>';
-                if ($canModifier) {
-                    $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
-                }
                 $texte .= $role->getRoleId();
+                if ($canModifier) {
+                    $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" title="Attribuer ce rôle" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+                }
                 $texte .= '</div>';
             }
             $texte .= '</div>';
@@ -356,7 +387,7 @@ function generateRoleEtablissement($individu, $roles, $rolesAffectes, $etablisse
  * @param EcoleDoctorale[] $ecoles
  * @return string
  */
-function generateRoleEcole($individu, $roles, $rolesAffectes, $ecoles, $canModifier = false)
+function generateRolesEcoles($individu, $roles, $rolesAffectes, $ecoles, $canModifier = false)
 {
     $texte = "";
     $texte .= generateSelect($ecoles, "ecoles");
@@ -372,11 +403,11 @@ function generateRoleEcole($individu, $roles, $rolesAffectes, $ecoles, $canModif
                 $texte .= '<div id="disponible_' . $role->getId() . '"';
                 if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
                 $texte .= '>';
-                if ($canModifier) {
-                    $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
-                }
                 $texte .= $role->getLibelle();
-                $texte .= '<span class="badge ecole">' . $role->getStructure()->getSigle() . '</span>';
+                $texte .= $role->getStructure()->getSigle();
+                if ($canModifier) {
+                    $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" title="Attribuer ce rôle" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+                }
                 $texte .= '</div>';
             }
             $texte .= '</div>';
@@ -392,7 +423,7 @@ function generateRoleEcole($individu, $roles, $rolesAffectes, $ecoles, $canModif
  * @param UniteRecherche[] $unites
  * @return string
  */
-function generateRoleUnite($individu, $roles, $rolesAffectes, $unites, $canModifier = false)
+function generateRolesUnites($individu, $roles, $rolesAffectes, $unites, $canModifier = false)
 {
     $texte = "";
 
@@ -409,10 +440,10 @@ function generateRoleUnite($individu, $roles, $rolesAffectes, $unites, $canModif
                 $texte .= '<div id="disponible_' . $role->getId() . '"';
                 if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
                 $texte .= '>';
-                if ($canModifier) {
-                    $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
-                }
                 $texte .= $role->getRoleId();
+                if ($canModifier) {
+                    $texte .= '<span class="add-role glyphicon glyphicon-plus text-success" title="Attribuer ce rôle" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+                }
                 $texte .= '</div>';
             }
             $texte .= '</div>';
@@ -500,10 +531,14 @@ function generateRoleUnite($individu, $roles, $rolesAffectes, $unites, $canModif
     });
 </script>
 <style>
+    .remove-role,
+    .add-role {
+        margin-left: 5px;
+    }
+
     .remove-role:hover {
         cursor: pointer;
     }
-
     .add-role:hover {
         cursor: pointer;
     }
