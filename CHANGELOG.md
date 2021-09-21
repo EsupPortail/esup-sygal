@@ -14,6 +14,7 @@ Journal des modifications
 - [FIX] Changement du sujet associé à la validation finale de la proposition de soutenance
 - Templatisation de la notification de confirmation d'adresse électronique
 - [FIX] Correction de l'envoi multiple de notification vers le président de jury lors du dépôt d'une version corrigée.
+- Modification de l'assertion ouvrant la validation de l'UR
 
 3.0.0 (oracle => postgres)
 -----
