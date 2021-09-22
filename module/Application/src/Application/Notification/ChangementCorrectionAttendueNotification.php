@@ -6,7 +6,7 @@ use Application\Entity\Db\Interfaces\TheseAwareTrait;
 use Notification\Notification;
 use UnicaenApp\Exception\LogicException;
 
-class CorrectionAttendueUpdatedNotification extends Notification
+class ChangementCorrectionAttendueNotification extends Notification
 {
     use TheseAwareTrait;
 
@@ -28,7 +28,7 @@ class CorrectionAttendueUpdatedNotification extends Notification
             $directeursTheseEnCopie = true;
         }
 
-        $to = $this->these->getDoctorant()->getEmailPro() ?: $this->these->getDoctorant()->getEmail();
+        $to = $this->these->getDoctorant()->getEmail();
 
         $cc = null;
         if ($directeursTheseEnCopie) {

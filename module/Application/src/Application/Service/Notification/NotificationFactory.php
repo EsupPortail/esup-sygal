@@ -188,14 +188,14 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
     }
 
     /**
-     * Notifie que le retraitement automatique du fichier PDF est terminé.
+     * Notifie que la fusion de la page de couverture avec la thèse PDF est terminée.
      *
      * @param string $destinataires Emails séparés par une virgule
      * @param These $these
      * @param string $outputFilePath Chemin vers le fichier stocké en local
      * @return Notification
      */
-    public function createNotificationFusionFini($destinataires, $these, $outputFilePath)
+    public function createNotificationFusionFini(string $destinataires, These $these, string $outputFilePath): Notification
     {
         $to = array_map('trim', explode(',', $destinataires));
 

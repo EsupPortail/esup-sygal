@@ -2,6 +2,7 @@
 
 namespace Application\Service\FichierThese;
 
+use Application\Command\Exception\TimedOutCommandException;
 use Application\Command\MergeCommand;
 use Application\Command\ShellScriptRunner;
 use Application\Command\TruncateAndMergeCommand;
@@ -20,20 +21,18 @@ use Application\Service\FichierThese\Exception\DepotImpossibleException;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;
 use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
-use Application\Service\These\PageDeGarde\PageDeCouverturePdfExporter;
+use Application\Service\PageDeCouverture\PageDeCouverturePdfExporterAwareTrait;
 use Application\Service\ValiditeFichier\ValiditeFichierServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Validator\Exception\CinesErrorException;
 use Application\Validator\FichierCinesValidator;
 use Doctrine\ORM\OptimisticLockException;
-use Application\Command\Exception\TimedOutCommandException;
 use Retraitement\Service\RetraitementServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Exporter\Pdf;
 use UnicaenApp\Util;
 use Zend\Http\Response;
-use Zend\View\Renderer\PhpRenderer;
 
 class FichierTheseService extends BaseService
 {
@@ -44,19 +43,7 @@ class FichierTheseService extends BaseService
     use RetraitementServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use NotifierServiceAwareTrait;
-
-    /**
-     * @var PhpRenderer
-     */
-    private $renderer;
-
-    /**
-     * @param PhpRenderer $renderer
-     */
-    public function setRenderer(PhpRenderer $renderer)
-    {
-        $this->renderer = $renderer;
-    }
+    use PageDeCouverturePdfExporterAwareTrait;
 
     /**
      * @return FichierTheseRepository
@@ -438,21 +425,19 @@ class FichierTheseService extends BaseService
 
     /**
      * @param PdcData     $pdcData
-     * @param PhpRenderer $renderer
      * @param string      $filepath
      * @param boolean     $recto
      */
-    public function generatePageDeCouverture(PdcData $pdcData, PhpRenderer $renderer, $filepath = null, $recto = true)
+    public function generatePageDeCouverture(PdcData $pdcData, $filepath = null, $recto = true)
     {
-        $exporter = new PageDeCouverturePdfExporter($renderer, 'A4');
-        $exporter->setVars([
+        $this->pageDeCouverturePdfExporter->setVars([
             'informations' => $pdcData,
             'recto/verso' => $recto,
         ]);
         if ($filepath !== null) {
-            $exporter->export($filepath, Pdf::DESTINATION_FILE);
+            $this->pageDeCouverturePdfExporter->export($filepath, Pdf::DESTINATION_FILE);
         } else {
-            $exporter->export('export.pdf');
+            $this->pageDeCouverturePdfExporter->export('export.pdf');
             exit;
         }
     }
@@ -552,7 +537,7 @@ class FichierTheseService extends BaseService
     {
         // generation de la couverture
         $filename = "sygal_couverture_" . $these->getId() . "_" . uniqid() . ".pdf";
-        $this->generatePageDeCouverture($pdcData, $this->renderer, $filename, !$removeFirstPage);
+        $this->generatePageDeCouverture($pdcData, $filename, !$removeFirstPage);
 
         // recuperation de la bonne version du manuscript
         $manuscritFichier = current($this->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF, $versionFichier));

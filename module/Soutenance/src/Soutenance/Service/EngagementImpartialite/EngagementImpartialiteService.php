@@ -103,7 +103,7 @@ class EngagementImpartialiteService {
         try {
             $validation = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs engagements d'impartialité ont été signé par le membre [".$individu->__toString()."].", $e);
+            throw new RuntimeException("Plusieurs engagements d'impartialité ont été signé par le membre [".$individu->__toString()."].", 0, $e);
         }
         return $validation;
     }
@@ -121,7 +121,7 @@ class EngagementImpartialiteService {
         try {
             $validation = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs refus engagements d'impartialité ont été signé par le membre [".$individu->__toString()."].", $e);
+            throw new RuntimeException("Plusieurs refus engagements d'impartialité ont été signé par le membre [".$individu->__toString()."].", 0,  $e);
         }
         return $validation;
     }

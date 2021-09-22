@@ -6,6 +6,7 @@ use Application\Constants;
 use Application\Entity\Db\These;
 use DateInterval;
 use DateTime;
+use DomainException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareTrait;
 
@@ -59,6 +60,13 @@ class NotificationDepotVersionCorrigeeAttenduRule implements RuleInterface
      */
     public function setThese($these)
     {
+        if ($these->getCorrectionAutorisee() === null) {
+            throw new DomainException("Thèse spécifiée invalide car aucune correction attendue");
+        }
+        if ($these->getDateSoutenance() === null) {
+            throw new DomainException("Thèse spécifiée invalide car date de soutenance inconnue");
+        }
+
         $this->these = $these;
 
         return $this;
@@ -82,17 +90,9 @@ class NotificationDepotVersionCorrigeeAttenduRule implements RuleInterface
     /**
      * @return static
      */
-    public function execute()
+    public function execute(): self
     {
-        $dateButoir = $this->these->getDateButoirDepotVersionCorrigee();
-
-        if ($dateButoir === null) {
-            $this->dateProchaineNotif = null;
-            $this->estPremiereNotif = $this->dateDerniereNotif === null;
-            $this->addMessage("Non applicable, date butoir indéterminée (date de soutenance inconnue ou correction non attendue).");
-            return $this;
-        }
-
+        $dateButoir = $this->these->getDateButoirDepotVersionCorrigeeFromDateSoutenance($this->these->getDateSoutenance());
         $dateButoir->setTime(0, 0, 0);
 
         // si la date butoir est dépassée, pas de notif

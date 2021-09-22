@@ -4,6 +4,7 @@ namespace Application\Service\Doctorant;
 
 use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\DoctorantCompl;
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\DoctorantRepository;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
@@ -61,14 +62,10 @@ class DoctorantService extends BaseService
      * @param UserWrapper $user
      * @return Doctorant|null
      */
-    public function findOneByUserWrapper(UserWrapper $user)
+    public function findOneByUserWrapper(UserWrapper $user): ?Doctorant
     {
         if ($individu = $user->getIndividu()) {
-            try {
-                return $this->getRepository()->findOneByIndividu($individu);
-            } catch (NonUniqueResultException $e) {
-                throw new RuntimeException("Anomalie: Plusieurs doctorants pour un individu ont été trouvés");
-            }
+            return $this->getRepository()->findOneByIndividu($individu);
         }
 
         $id = $user->getSupannId();

@@ -75,6 +75,7 @@ class IndexController extends AbstractController
 
         $vm = new ViewModel([
             'role' => $this->userContextService->getSelectedIdentityRole(),
+            'roles' => $this->userContextService->getSelectableIdentityRoles(),
             'estDoctorant' => (bool) $this->userContextService->getIdentityDoctorant(),
             'url' => $this->actualiteService->isActif() ? $this->actualiteService->getUrl() : null,
             'offre' => $this->actualiteService->isOffre() ? $this->getEcoleDoctoraleService()->getOffre() : null,

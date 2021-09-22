@@ -260,7 +260,7 @@ return [
 //                        'label' => 'Guide d\'utilisation',
 //                        'route' => 'informations/afficher',
 //                        'params' => ['id' => 162],
-//                        'title' => "Guide d'utilisation de l'application SyGAL",
+//                        'title' => "Guide d'utilisation de l'application",
 //                    ],
 //                ],
 //            ],

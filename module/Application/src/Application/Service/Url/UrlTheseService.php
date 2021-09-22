@@ -242,6 +242,13 @@ class UrlTheseService extends UrlService
         );
     }
 
+    public function accorderSursisCorrecUrl(These $these)
+    {
+        return $this->fromRoute('these/accorder-sursis-correction',
+            ['these' => $this->idify($these)]
+        );
+    }
+
     public function modifierMetadonneesUrl(These $these)
     {
         return $this->fromRoute('these/modifier-description',

@@ -109,7 +109,7 @@ body.production .navbar-inverse .navbar-nav .active a {
 
 .navbar > .container .navbar-brand {
   width: 120px;
-  background-image: url("/css/SyGAL_logo_Blanc03.png");
+  background-image: url("/css/ESUPSyGAL_logo_Blanc03.png");
   background-repeat: no-repeat;
   background-size: 85%;
   background-position: center 8px;
@@ -154,7 +154,7 @@ body.production .navbar-inverse .navbar-nav .dropdown-menu > li.active a:hover {
 
 h1.app-name {
   font-size: 130px;
-  background-image: url("/css/SyGAL_logo_Bleu02.png");
+  background-image: url("/css/ESUPSyGAL_logo_Bleu02.png");
   background-repeat: no-repeat;
   background-size: contain;
   background-position: right top;
