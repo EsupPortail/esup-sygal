@@ -3,7 +3,7 @@
 use Application\Navigation\NavigationFactoryFactory;
 use Retraitement\Filter\Command\MinesCommand;
 
-define(APPLICATION_DIR, __DIR__ . '/../..');
+define('APPLICATION_DIR', __DIR__ . '/../..');
 
 return [
     'translator' => [
