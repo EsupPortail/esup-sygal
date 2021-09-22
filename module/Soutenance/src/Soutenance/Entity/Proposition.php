@@ -7,10 +7,11 @@ use DateInterval;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
+use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 
-class Proposition {
+class Proposition implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
     /** @var int */

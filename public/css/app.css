@@ -42,6 +42,48 @@ h2.modal-title {
 .modal-footer .btn {
   padding: 4px 8px; }
 
+.panel .panel-heading {
+  text-transform: uppercase;
+  font-weight: 400; }
+
+.panel-info {
+  border-color: #009ce4; }
+  .panel-info > .panel-heading {
+    color: white;
+    background-color: #009ce4;
+    border-color: #009ce4; }
+
+.panel-success {
+  border-color: #2EA662; }
+  .panel-success > .panel-heading {
+    color: white;
+    background-color: #2EA662;
+    border-color: #2EA662; }
+
+.panel-danger {
+  border-color: #d23544; }
+  .panel-danger > .panel-heading {
+    color: white;
+    background-color: #d23544;
+    border-color: #d23544; }
+
+.panel-warning {
+  border-color: #f1732d; }
+  .panel-warning > .panel-heading {
+    color: white;
+    background-color: #f1732d;
+    border-color: #f1732d; }
+
+.panel.panel-md {
+  font-size: 90%; }
+  .panel.panel-md .panel-heading,
+  .panel.panel-md .panel-body {
+    padding: 6px 10px; }
+
+.panel.panel-sm .panel-heading, .panel.panel-sm .panel-body {
+  font-size: 80%;
+  padding: 4px 8px; }
+
 .panel.box {
   margin-bottom: 10px; }
   .panel.box .panel-heading {
@@ -69,52 +111,6 @@ h2.modal-title {
 .panel.box.roadmap-next-step {
   width: 50%; }
 
-.panel .panel-heading {
-  text-transform: uppercase;
-  font-weight: 400; }
-
-.panel-info {
-  border-color: #009ce4; }
-
-.panel-info > .panel-heading {
-  color: white;
-  background-color: #009ce4;
-  border-color: #009ce4; }
-
-.panel-success {
-  border-color: #2EA662; }
-
-.panel-success > .panel-heading {
-  color: white;
-  background-color: #2EA662;
-  border-color: #2EA662; }
-
-.panel-danger {
-  border-color: #d23544; }
-
-.panel-danger > .panel-heading {
-  color: white;
-  background-color: #d23544;
-  border-color: #d23544; }
-
-.panel-warning {
-  border-color: #f1732d; }
-
-.panel-warning > .panel-heading {
-  color: white;
-  background-color: #f1732d;
-  border-color: #f1732d; }
-
-.panel.panel-md {
-  font-size: 90%; }
-  .panel.panel-md .panel-heading,
-  .panel.panel-md .panel-body {
-    padding: 6px 10px; }
-
-.panel.panel-sm .panel-heading, .panel.panel-sm .panel-body {
-  font-size: 80%;
-  padding: 4px 8px; }
-
 ul.validation, ul.validation-attendue {
   padding-left: 0;
   list-style-type: none; }
@@ -137,16 +133,18 @@ blockquote {
     font-size: 100%;
     padding-left: 10px; }
 
-div.jumbotron p,
-div.jumbotron ul li {
+div.jumbotron p, div.jumbotron ul li {
   font-size: 120%; }
-
-div.jumbotron p.connected-as {
+div.jumbotron .connected-as {
   color: #a94442;
   font-size: 24px;
   font-weight: 400; }
-  div.jumbotron p.connected-as span.role {
+  div.jumbotron .connected-as span.role {
     font-weight: 600; }
+div.jumbotron .connected-as:nth-of-type(1) {
+  margin-bottom: 0; }
+div.jumbotron .connected-as:nth-of-type(2) {
+  font-size: 16px; }
 
 p.appname-subtitle {
   margin-top: -25px;
@@ -548,9 +546,9 @@ ul.menu-secondaire li a.version-initiale.correction-effectuee-O {
 ul.menu-actualites {
   margin-top: 2em; }
   ul.menu-actualites li:first-child {
-    padding-top: 10px; }
+    padding-top: 7px; }
   ul.menu-actualites li {
-    padding: 0 1em 10px; }
+    padding: 0 0 10px; }
     ul.menu-actualites li span.label {
       padding: 1px 2px;
       font-size: 70%;
@@ -638,8 +636,13 @@ span.sas-highlight {
     margin: 0 0 0 8px; }
 
 /********** à déplacer... ************/
+input[type="checkbox"], input[type="radio"] {
+  margin-top: 0; }
+
+.user-profile-select-form .radio {
+  margin: 0; }
 .user-profile-select-form label > input[type=radio] {
-  margin-top: -6px; }
+  margin-top: -4px; }
 
 .user-usurpation-form {
   padding-top: 1em; }

@@ -21,7 +21,7 @@ $urlRetour = $this->url('soutenance/proposition', ['these' => $validation->getTh
     Bonjour,
 </p>
 <p>
-    Ceci est un mail envoyé automatiquement par l'application SyGAL.
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.
 </p>
 
 <p>
@@ -29,7 +29,7 @@ $urlRetour = $this->url('soutenance/proposition', ['these' => $validation->getTh
 </p>
 
 <p>
-    Pour consulter cette proposition, connectez-vous à SyGAL et visualisez la proposition de soutenance en utilisant le lien suivant : <a href="<?php echo $urlRetour; ?>">proposition de soutenance</a>.
+    Pour consulter cette proposition, connectez-vous à <?php echo $this->appInfos()->nom ?> et visualisez la proposition de soutenance en utilisant le lien suivant : <a href="<?php echo $urlRetour; ?>">proposition de soutenance</a>.
 </p>
 
 <p>

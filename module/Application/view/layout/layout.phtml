@@ -23,9 +23,9 @@ $identity = $this->zfcUserIdentity();
         <?php echo $this->headTitle($this->appInfos()->nom)->setSeparator(' - ')->setAutoEscape(false) ?>
 
         <!-- Links -->
-        <?php echo $this->headLink(array(
+        <?php echo $this->headLink([
             'rel'  => 'shortcut icon',
-            'href' => '//www.unicaen.fr/favicon.ico')) ?>
+            'href' => $this->basePath('favicon.png')]) ?>
         
         <!-- Scripts -->
         <?php echo $this->headScript(); ?>

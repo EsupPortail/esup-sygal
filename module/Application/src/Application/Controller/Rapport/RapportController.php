@@ -74,6 +74,21 @@ abstract class RapportController extends AbstractController
     protected $form;
 
     /**
+     * @var Rapport[]
+     */
+    protected $rapportsTeleverses = [];
+
+    /**
+     * @var \Application\Entity\Db\These
+     */
+    protected $these;
+
+    /**
+     * @var \Application\Entity\AnneeUniv
+     */
+    protected $anneeUnivCourante;
+
+    /**
      * @param RapportForm $form
      */
     public function setForm(RapportForm $form)
@@ -92,22 +107,17 @@ abstract class RapportController extends AbstractController
             return $result;
         }
 
-        $these = $this->requestedThese();
-        $rapports = $this->rapportService->findRapportsForThese($these, $this->typeRapport);
-        //$allAnneesUnivs = $these->getAnneesUnivInscription()->toArray();
-        $allAnneesUnivs = [$this->theseAnneeUnivService->anneeUnivCourante()];
-        $anneesUnivs = $this->rapportService->computeAvailableTheseAnneeUniv(
-            $allAnneesUnivs,
-            $rapports
-        );
-        $this->form->setAnneesUnivs($anneesUnivs);
-        $tousLesRapportsTeleverses = empty($anneesUnivs);
+        $this->anneeUnivCourante = $this->theseAnneeUnivService->anneeUnivCourante();
+        $this->these = $this->requestedThese();
+        $this->loadRapportsTeleverses();
+
+        $this->initForm();
 
         return new ViewModel([
-            'rapports' => $rapports,
-            'these' => $these,
+            'rapports' => $this->rapportsTeleverses,
+            'these' => $this->these,
             'form' => $this->form,
-            'tousLesRapportsTeleverses' => $tousLesRapportsTeleverses,
+            'isTeleversementPossible' => $this->isTeleversementPossible(),
 
             'typeValidation' => $this->typeValidation,
             'routeName' => $this->routeName,
@@ -127,6 +137,21 @@ abstract class RapportController extends AbstractController
             'privilege_DEVALIDER_TOUT' => $this->privilege_DEVALIDER_TOUT,
             'privilege_DEVALIDER_SIEN' => $this->privilege_DEVALIDER_SIEN,
         ]);
+    }
+
+    protected function loadRapportsTeleverses()
+    {
+        $this->rapportsTeleverses = $this->rapportService->findRapportsForThese($this->these, $this->typeRapport);
+    }
+
+    protected function isTeleversementPossible(): bool
+    {
+        return true;
+    }
+
+    protected function initForm()
+    {
+        $this->form->setAnneesUnivs([$this->anneeUnivCourante]);
     }
 
     /**

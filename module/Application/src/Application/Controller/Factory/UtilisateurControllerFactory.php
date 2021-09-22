@@ -6,6 +6,7 @@ use Application\Controller\UtilisateurController;
 use Application\Form\CreationUtilisateurForm;
 use Application\Form\InitCompteForm;
 use Application\Service\Acteur\ActeurService;
+use Application\Service\Doctorant\DoctorantService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Individu\IndividuServiceLocateTrait;
@@ -49,6 +50,7 @@ class UtilisateurControllerFactory
          * @var UserService $userService
          * @var UtilisateurSearchService $utilisateurSearchService
          * @var UserInterface $mapper
+         * @var DoctorantService $doctorantService
          */
         $acteurService = $container->get(ActeurService::class);
         $roleService = $container->get('RoleService');
@@ -64,6 +66,7 @@ class UtilisateurControllerFactory
         $userService = $container->get('unicaen-auth_user_service');
         $utilisateurSearchService = $container->get(UtilisateurSearchService::class);
         $userMapper = $container->get('zfcuser_user_mapper');
+        $doctorantService = $container->get(DoctorantService::class);
 
         /**
          * @var InitCompteForm $initCompteForm
@@ -105,6 +108,7 @@ class UtilisateurControllerFactory
         $controller->setAuthModuleOptions($authModuleOptions);
         $controller->setSearchService($utilisateurSearchService);
         $controller->setUserMapper($userMapper);
+        $controller->setDoctorantService($doctorantService);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper

@@ -31,8 +31,10 @@ use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Assert\Assertion;
+use DateTime;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Soutenance\Entity\Proposition;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
@@ -135,7 +137,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
      * @param These  $these
      * @param string|null $forcage
      */
-    public function updateCorrectionAutoriseeForcee(These $these, $forcage = null)
+    public function updateCorrectionAutoriseeForcee(These $these, string $forcage = null)
     {
         if ($forcage !== null) {
             Assertion::inArray($forcage, [
@@ -147,9 +149,14 @@ class TheseService extends BaseService implements ListenerAggregateInterface
 
         $these->setCorrectionAutoriseeForcee($forcage);
 
+        // s'il n'y a plus de correction attendue, effacement du sursis éventuel
+        if (! $these->getCorrectionAutorisee()) {
+            $these->unsetDateButoirDepotVersionCorrigeeAvecSursis();
+        }
+
         try {
             $this->entityManager->flush($these);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
         }
     }
@@ -696,7 +703,7 @@ EOS;
                 $username = ($individu->getNomUsuel() ?: $individu->getNomPatronymique()) . "_" . $president->getId();
                 $user = $this->utilisateurService->createFromIndividu($individu, $username, 'none');
                 $token = $this->userService->updateUserPasswordResetToken($user);
-                $this->getNotifierService()->triggerInitialisationCompte($user);
+                $this->getNotifierService()->triggerInitialisationCompte($user, $token);
                 $this->getNotifierService()->triggerValidationDepotTheseCorrigee($these);
                 return ['success', "Création de compte initialisée et notification des corrections faite à <strong>" . $email . "</strong>"];
             } else {
@@ -745,5 +752,22 @@ EOS;
             if ($directeur->getIndividu() === $individu) return true;
         }
         return false;
+    }
+
+    /**
+     * Fixe la date butoir de dépôt de la version corrigée de la thèse spécifiée.
+     *
+     * @param \Application\Entity\Db\These $these
+     * @param \DateTime|null $dateButoirDepotVersionCorrigeeAvecSursis
+     */
+    public function updateSursisDateButoirDepotVersionCorrigee(These $these, DateTime $dateButoirDepotVersionCorrigeeAvecSursis = null)
+    {
+        $these->setDateButoirDepotVersionCorrigeeAvecSursis($dateButoirDepotVersionCorrigeeAvecSursis);
+
+        try {
+            $this->entityManager->flush($these);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement du sursis", null, $e);
+        }
     }
 }

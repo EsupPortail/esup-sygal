@@ -21,7 +21,7 @@ $justification = true;
     Bonjour,
 </p>
 <p>
-    Ceci est un mail envoyé automatiquement par l'application SyGAL.
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.
 </p>
 
 <p>
@@ -39,7 +39,7 @@ $justification = true;
     </tr>
 </table>
 
-<p> Pour examiner cette proposition et statuer sur celle-ci merci de vous rendre dans l'application SyGAL :
+<p> Pour examiner cette proposition et statuer sur celle-ci merci de vous rendre dans l'application <?php echo $this->appInfos()->nom ?> :
     <a href="<?php echo $urlRetour;?>"> proposition de soutenance.</a> </p>
 
 <?php if ($justification) : ?>

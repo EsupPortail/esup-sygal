@@ -14,6 +14,7 @@ use Application\RouteMatch;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
 use BjyAuthorize\Exception\UnAuthorizedException;
+use UnicaenApp\Controller\Plugin\AppInfos;
 use UnicaenApp\Controller\Plugin\ConfirmPlugin;
 use UnicaenApp\Controller\Plugin\Mail;
 use UnicaenApp\Exception\RuntimeException;
@@ -37,6 +38,7 @@ use ZfcUser\Controller\Plugin\ZfcUserAuthentication;
  * @method Mail mail()
  * @method ConfirmPlugin confirm()
  * @method FlashMessenger flashMessenger()
+ * @method AppInfos appInfos()
  */
 class AbstractController extends AbstractActionController
     implements UserContextServiceAwareInterface
