@@ -177,7 +177,7 @@ class NotifierSoutenanceService extends NotifierService
      * @param Validation $validation
      * @see Application/view/soutenance/notification/validation-acteur.phtml
      */
-    public function triggerValidationProposition($these, $validation)
+    public function triggerValidationProposition(These $these, Validation $validation)
     {
         $emails = $this->fetchEmailActeursDirects($these);
 
@@ -193,6 +193,7 @@ class NotifierSoutenanceService extends NotifierService
                 ->setTemplatePath('soutenance/notification/validation-acteur')
                 ->setTemplateVariables([
                     'validation' => $validation,
+                    'these' => $these,
                 ]);
             $this->trigger($notif);
         }
