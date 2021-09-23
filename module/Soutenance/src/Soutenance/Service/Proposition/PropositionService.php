@@ -428,7 +428,7 @@ class PropositionService {
         $validations[Role::CODE_DOCTORANT] = [];
         foreach ($doctorants as $doctorant) {
             $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these,TypeValidation::CODE_PROPOSITION_SOUTENANCE, $doctorant->getIndividu());
-            if ($validation) $validations[Role::CODE_DOCTORANT][] = current($validation);
+            if ($validation) $validations[Role::CODE_DOCTORANT][] = $validation;
         }
 
 
@@ -437,7 +437,7 @@ class PropositionService {
         $validations[Role::CODE_DIRECTEUR_THESE] = [];
         foreach ($directeurs as $directeur) {
             $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these,TypeValidation::CODE_PROPOSITION_SOUTENANCE, $directeur->getIndividu());
-            if ($validation) $validations[Role::CODE_DIRECTEUR_THESE][] = current($validation);
+            if ($validation) $validations[Role::CODE_DIRECTEUR_THESE][] = $validation;
         }
 
         /** Recuperation de la validation du codirecteur de thèse */
@@ -445,7 +445,7 @@ class PropositionService {
         $validations[Role::CODE_CODIRECTEUR_THESE] = [];
         foreach ($codirecteurs as $codirecteur) {
             $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these,TypeValidation::CODE_PROPOSITION_SOUTENANCE, $codirecteur->getIndividu());
-            if ($validation) $validations[Role::CODE_CODIRECTEUR_THESE][] = current($validation);
+            if ($validation) $validations[Role::CODE_CODIRECTEUR_THESE][] = $validation;
         }
 
         /** Recuperation de la validation de l'unite de recherche */
