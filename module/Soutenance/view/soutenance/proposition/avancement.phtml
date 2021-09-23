@@ -108,7 +108,7 @@ $this->headTitle('Avancement de la soutenance');
             </strong>
             <br/>
             <?php echo getBadge($rapporteur->getActeur() !== null); ?>
-            Association avec SyGAL <br/>
+            Association avec <?php echo $this->appInfos()->nom ?> <br/>
 
             <?php
                 $validation = [];

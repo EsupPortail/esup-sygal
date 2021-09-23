@@ -112,7 +112,10 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
                     $createIndividu = true;
                 } else {
                     // s'il existe dans l'établissement inconnu, on le "déplace" dans l'établissement de connexion
-                    $this->individuService->updateIndividuSourceCodeFromEtab($individu, $etablissement);
+                    $this->individuService->updateIndividuSourceCodeFromEtab(
+                        $individu,
+                        $etablissement,
+                        $this->utilisateurService->fetchAppPseudoUtilisateur());
                 }
             }
         }
@@ -120,7 +123,10 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
         // création de l'Individu si besoin et si possible
         if ($createIndividu) {
             if ($userWrapper->getSupannId()) {
-                $individu = $this->individuService->createIndividuFromUserWrapperAndEtab($userWrapper, $etablissement);
+                $individu = $this->individuService->createIndividuFromUserWrapperAndEtab(
+                    $userWrapper,
+                    $etablissement,
+                    $this->utilisateurService->fetchAppPseudoUtilisateur());
             }
         }
 

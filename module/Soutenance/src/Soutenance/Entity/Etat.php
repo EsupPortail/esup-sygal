@@ -2,9 +2,10 @@
 
 namespace Soutenance\Entity;
 
+use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class Etat {
+class Etat implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
     const EN_COURS = 'EN_COURS';

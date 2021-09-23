@@ -31,6 +31,7 @@ class ThesePrivileges extends Privileges
      */
     const THESE_CONSULTATION_FICHE                  = 'these-consultation-fiche';
     const THESE_SAISIE_CORREC_AUTORISEE_FORCEE      = 'these-saisie-correc-autorisee-forcee';
+    const THESE_CORREC_AUTORISEE_ACCORDER_SURSIS    = 'these-accorder-sursis-correction';
 
     /**
      * Page de couverture

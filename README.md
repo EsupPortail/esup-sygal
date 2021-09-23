@@ -1,4 +1,4 @@
-# Application SyGAL
+# Application ESUP-SyGAL
 
 SYstème de Gestion et d'Accompagement doctoraL
 

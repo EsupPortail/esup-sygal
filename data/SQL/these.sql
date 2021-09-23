@@ -76,21 +76,11 @@ where d.id in (
 
 
 
--- Procédure de rattachement à une thèse destination de tout ce qui est rattaché à une thèse source
--- NB: les rattachements de la thèse source ne sont pas supprimés.
-CREATE PROCEDURE from_these_to_these (these_id_src NUMERIC, these_id_dst NUMERIC) AS
-    BEGIN
-        --update ACTEUR           set these_id = these_id_dst where these_id = these_id_src;
-        update DIFFUSION        set these_id = these_id_dst where these_id = these_id_src;
-        update FICHIER          set these_id = these_id_dst where these_id = these_id_src;
-        update METADONNEE_THESE set these_id = these_id_dst where these_id = these_id_src;
-        update RDV_BU           set these_id = these_id_dst where these_id = these_id_src;
-        update VALIDATION       set these_id = these_id_dst where these_id = these_id_src;
-    END;
-/
-
--- just do it!
--- BEGIN
---     from_these_to_these(27779, 28317);
--- END;
--- /
+-- Rattachement à une thèse destination de tout ce qui est rattaché à une thèse source
+update rapport          set these_id = 49033 where these_id = 28284;
+update attestation      set these_id = 49033 where these_id = 28284;
+update DIFFUSION        set these_id = 49033 where these_id = 28284;
+update fichier_these    set these_id = 49033 where these_id = 28284;
+update METADONNEE_THESE set these_id = 49033 where these_id = 28284;
+update RDV_BU           set these_id = 49033 where these_id = 28284;
+update VALIDATION       set these_id = 49033 where these_id = 28284;

@@ -219,21 +219,56 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     }
 
     /**
-     * Get email
+     * Retourne l'adresse mail la plus susceptible d'être "fiable" parmi toutes celles disponibles.
      *
-     * @return string
+     * @return string|null
      */
-    public function getEmail()
+    public function getEmailBestOf(): ?string
+    {
+        return $this->getEmailContact() ?: $this->getEmail() ?: $this->getEmailUtilisateur();
+    }
+
+    /**
+     * Retourne l'adresse mail importée pour cet individu.
+     *
+     * **Conseil : voir aussi {@see getEmailBestOf()}.**
+     *
+     * @return string|null
+     */
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
     /**
-     * Retourne l'adresse mail de l'éventuel (permier) utilisateur correspondant à cet individu.
+     * Retourne l'adresse mail de contact, renseignée par le doctorant lui-même.
      *
-     * @return string
+     * **Conseil : voir aussi {@see getEmailBestOf()}.**
+     *
+     * @return string|null
      */
-    public function getEmailUtilisateur()
+    public function getEmailContact(): ?string
+    {
+        if (! $this->mailsConfirmations->isEmpty())
+        {
+            /** @var MailConfirmation $mailConfirmation */
+            foreach ($this->mailsConfirmations as $mailConfirmation) {
+                if ($mailConfirmation->getEtat() === MailConfirmation::CONFIRMER) {
+                    return $mailConfirmation->getEmail();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Retourne l'adresse mail de l'éventuel (premier) utilisateur correspondant à cet individu.
+     *
+     * **Conseil : voir aussi {@see getEmailBestOf()}.**
+     *
+     * @return string|null
+     */
+    public function getEmailUtilisateur(): ?string
     {
         foreach ($this->getUtilisateurs() as $utilisateur) {
             if ($email = $utilisateur->getEmail()) {
@@ -552,21 +587,6 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
         $this->roles->removeElement($role);
 
         return $this;
-    }
-
-    /** @return string */
-    public function getMailContact()
-    {
-        if (! $this->mailsConfirmations->isEmpty())
-        {
-            /** @var MailConfirmation $mailConfirmation */
-            foreach ($this->mailsConfirmations as $mailConfirmation) {
-                if ($mailConfirmation->getEtat() === MailConfirmation::CONFIRMER) {
-                    return $mailConfirmation->getEmail();
-                }
-            }
-        }
-        return null;
     }
 
     /**

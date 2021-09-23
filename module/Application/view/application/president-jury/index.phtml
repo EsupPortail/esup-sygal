@@ -133,7 +133,7 @@ $canNotifierPresident     = $this->isAllowed(PresidentJuryPrivileges::getResourc
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
      <p>
-         Dans le tableau ci-dessous vous retrouvez la liste des président de jury remonté dans SyGAL pour les thèses en attente de correction.
+         Dans le tableau ci-dessous vous retrouvez la liste des président de jury remonté dans <?php echo $this->appInfos()->nom ?> pour les thèses en attente de correction.
      </p>
 
     <p>
@@ -197,6 +197,7 @@ $canNotifierPresident     = $this->isAllowed(PresidentJuryPrivileges::getResourc
 
                                     <!--  // Si aucun membre de  soutenance on peut ajouter un membre factisse pour porter l'information ne remontant pas du SI -->
                                     <?php if ($president->getMembre() === null) : ?>
+                                        <?php /** @see \Application\Controller\PresidentJuryController::ajouterMailAction() */ ?>
                                         <a href="<?php echo $this->url('president-jury/ajouter-mail', ['president' => $president->getId()], [], true); ?>"
                                            class="ajax-modal" data-event="modification"
                                            title="Ajout d'un email pour le président du jury"
@@ -206,6 +207,7 @@ $canNotifierPresident     = $this->isAllowed(PresidentJuryPrivileges::getResourc
 
                                         <!-- // Si membre factisse alors on peut le supprimer pour eventuellement le modifier -->
                                         <?php if ($president->getMembre()->getProposition()->getId() === 0) : ?>
+                                            <?php /** @see \Application\Controller\PresidentJuryController::supprimerMailAction() */ ?>
                                             <a href="<?php echo $this->url('president-jury/supprimer-mail', ['president' => $president->getId()], [], true); ?>"
                                                title="Suppression de l'email ajouté manuellement pour le président du jury"
                                             >
@@ -222,6 +224,7 @@ $canNotifierPresident     = $this->isAllowed(PresidentJuryPrivileges::getResourc
 
                             <?php if ($canNotifierPresident) : ?>
                                 <?php if (($president->getIndividu() AND $president->getIndividu()->getEmail()) OR ($president->getMembre() AND $president->getMembre()->getEmail())) : ?>
+                                    <?php /** @see \Application\Controller\PresidentJuryController::notifierCorrectionAction() */ ?>
                                     <a href="<?php echo $this->url('president-jury/notifier-correction', ['president' => $president->getId()], [], true); ?>"
                                        title="Création du compte & notification du président du jury"
                                     >

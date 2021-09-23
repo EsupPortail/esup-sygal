@@ -3,9 +3,10 @@
 namespace Soutenance\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class Qualite
+class Qualite implements HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;
 

@@ -11,9 +11,8 @@ use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\VersionFichier\VersionFichierService;
-use Zend\EventManager\EventManager;
-use Zend\View\Renderer\PhpRenderer;
 use Interop\Container\ContainerInterface;
+use Zend\EventManager\EventManager;
 use Zend\Router\Http\TreeRouteStack;
 
 class FichierTheseControllerFactory
@@ -24,7 +23,7 @@ class FichierTheseControllerFactory
      * @param ContainerInterface $container
      * @return FichierTheseController
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): FichierTheseController
     {
         /** @var TreeRouteStack $httpRouter */
         $httpRouter = $container->get('HttpRouter');
@@ -50,9 +49,6 @@ class FichierTheseControllerFactory
         $eventRouterReplacer = new EventRouterReplacer($httpRouter, $cliConfig);
         $eventManager = $container->get('EventManager');
 
-        /* @var $renderer PhpRenderer */
-        $renderer = $container->get('ViewRenderer');
-
         $controller = new FichierTheseController();
         $controller->setTheseService($theseService);
         $controller->setFichierTheseService($fichierTheseService);
@@ -62,7 +58,6 @@ class FichierTheseControllerFactory
         $controller->setIndividuService($individuService);
         $controller->setValidationService($validationService);
         $controller->setEventRouterReplacer($eventRouterReplacer);
-        $controller->setRenderer($renderer);
         $controller->setEventManager($eventManager);
 
         $theseService->attach($eventManager);
