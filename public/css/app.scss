@@ -1099,9 +1099,13 @@ span.badge {
 span.badge.EN_COURS {
     background: $infoColor;
   }
-span.badge.VALIDEE {
+span.badge.VALIDEE,
+span.badge.badge-success
+{
     background: $successColor;
   }
-span.badge.REJETEE {
+span.badge.REJETEE,
+span.badge.badge-error
+{
     background: $dangerColor;
 }

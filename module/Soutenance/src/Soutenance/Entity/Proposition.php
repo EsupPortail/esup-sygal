@@ -2,6 +2,7 @@
 
 namespace Soutenance\Entity;
 
+use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use DateInterval;
 use DateTime;
@@ -350,6 +351,11 @@ class Proposition implements HistoriqueAwareInterface {
         return $this->justificatifs->toArray();
     }
 
+    /**
+     * @param string $nature
+     * @param null $membre
+     * @return Justificatif|null
+     */
     public function getJustificatif($nature, $membre = null) {
         /** @var Justificatif $justificatif */
         foreach ($this->justificatifs as $justificatif) {
