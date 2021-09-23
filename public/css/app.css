@@ -711,10 +711,12 @@ span.badge {
 span.badge.EN_COURS {
   background: #009ce4; }
 
-span.badge.VALIDEE {
+span.badge.VALIDEE,
+span.badge.badge-success {
   background: #2EA662; }
 
-span.badge.REJETEE {
+span.badge.REJETEE,
+span.badge.badge-error {
   background: #d23544; }
 
 /*# sourceMappingURL=app.css.map */
