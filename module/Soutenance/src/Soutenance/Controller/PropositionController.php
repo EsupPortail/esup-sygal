@@ -232,7 +232,7 @@ class PropositionController extends AbstractController
                 } else {
                     $this->getMembreService()->create($membre);
                 }
-                $this->getPropositionService()->annulerValidations($proposition);
+                if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($proposition);
             }
         }
 
@@ -251,7 +251,7 @@ class PropositionController extends AbstractController
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         if ($membre) {
-            $this->getPropositionService()->annulerValidations($membre->getProposition());
+            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($membre->getProposition());
             $this->getMembreService()->delete($membre);
         }
 
