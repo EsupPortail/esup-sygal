@@ -262,8 +262,19 @@ class JustificatifService {
                     'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_JUSTIFICATIF_ETRANGER, $membre),
                 ];
             }
+
+
         }
 
+
+        $listes = $proposition->getJustificatifs();
+        $listes = array_filter($listes, function (Justificatif $a) { return $a->getFichier()->getFichier()->getNature()->getCode() === NatureFichier::CODE_AUTRES_JUSTIFICATIFS;});
+        foreach ($listes as $element) {
+            $justificatifs[] = [
+                'type' => NatureFichier::CODE_AUTRES_JUSTIFICATIFS,
+                'justificatif' => $element,
+            ];
+        }
         return $justificatifs;
     }
 
