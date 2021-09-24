@@ -60,7 +60,7 @@ return [
                     'historique' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'    => '/historique/:co-encadrant',
+                            'route'    => '/historique[/:co-encadrant]',
                             'defaults' => [
                                 'controller'    => CoEncadrantController::class,
                                 'action'        => 'historique',
