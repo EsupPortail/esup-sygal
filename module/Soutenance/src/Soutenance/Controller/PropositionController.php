@@ -10,6 +10,7 @@ use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Parametre;
 use Soutenance\Entity\Proposition;
@@ -406,6 +407,10 @@ class PropositionController extends AbstractController
                 $this->getValidationService()->validateValidationBDD($these, $individu);
                 $this->getNotifierSoutenanceService()->triggerNotificationPropositionValidee($these);
                 $this->getNotifierSoutenanceService()->triggerNotificationPresoutenance($these);
+
+                $proposition = $this->getPropositionService()->findByThese($these);
+                $proposition->setEtat($this->getPropositionService()->getPropositionEtatByCode(Etat::ETABLISSEMENT));
+                $this->getPropositionService()->update($proposition);
                 break;
             default :
                 throw new RuntimeException("Le role [" . $role->getCode() . "] ne peut pas valider cette proposition.");
