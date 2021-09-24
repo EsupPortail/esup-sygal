@@ -43,11 +43,13 @@ class CoEncadrantService {
     }
 
     /**
-     * @param int $id
-     * @return Acteur
+     * @param int|null $id
+     * @return Acteur|null
      */
-    public function getCoEncadrant(int $id)
+    public function getCoEncadrant(?int $id) : ?Acteur
     {
+        if ($id === null) return null;
+
         $qb = $this->createQueryBuilder()
             ->andWhere('acteur.id = :id')
             ->setParameter('id', $id)
