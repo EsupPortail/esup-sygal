@@ -267,9 +267,9 @@ class PresoutenanceController extends AbstractController
         $membre->setActeur(null);
         $this->getMembreService()->update($membre);
 
-        $validations = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these, TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $acteur->getIndividu());
-        if (!empty($validations)) {
-            $this->getValidationService()->unsignEngagementImpartialite(current($validations));
+        $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these, TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $acteur->getIndividu());
+        if ($validation !== null) {
+            $this->getValidationService()->unsignEngagementImpartialite($validation);
         }
 
         $utilisateur = $this->utilisateurService->getRepository()->findByUsername($username);

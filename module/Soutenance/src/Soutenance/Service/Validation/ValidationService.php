@@ -93,7 +93,7 @@ class ValidationService
      * @param These $these
      * @return Validation
      */
-    public function validatePropositionSoutenance($these)
+    public function validatePropositionSoutenance(These $these) : Validation
     {
         // l'individu sera enregistré dans la validation pour faire le lien entre Utilisateur et Individu.
         $individu = $this->userContextService->getIdentityIndividu();
