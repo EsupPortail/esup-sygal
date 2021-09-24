@@ -185,7 +185,7 @@ class PropositionService {
             ->addSelect('structure_ed')->leftJoin('ecole.structure', 'structure_ed')
             ->addSelect('etablissement')->leftJoin('these.etablissement', 'etablissement')
             ->addSelect('structure_etab')->leftJoin('etablissement.structure', 'structure_etab')
-            ->addSelect('membre')->join('proposition.membres', 'membre')
+            ->addSelect('membre')->leftJoin('proposition.membres', 'membre')
             ->addSelect('qualite')->leftJoin('membre.qualite', 'qualite')
             ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
             ->addSelect('justificatif')->leftJoin('proposition.justificatifs', 'justificatif')
@@ -233,6 +233,9 @@ class PropositionService {
             ->andWhere("proposition.these = :these")
             ->setParameter("these", $these)
         ;
+//        $qb = $this->getEntityManager()->getRepository(Proposition::class)->createQueryBuilder('proposition')
+//            ->andWhere("proposition.these = :these")
+//            ->setParameter("these", $these);
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
