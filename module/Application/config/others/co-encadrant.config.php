@@ -134,13 +134,13 @@ return [
                                 'resource' => PrivilegeController::getResourceId(CoEncadrantController::class, 'index'),
 
                                 'order'    => 300,
-                                'pages' => [
-                                    'historique' => [
-                                        'label'    => 'Historique',
-                                        'route'    => 'co-encadrant/historique',
-                                        'resource' => PrivilegeController::getResourceId(CoEncadrantController::class, 'historique'),
-                                    ],
-                                ],
+//                                'pages' => [
+//                                    'historique' => [
+//                                        'label'    => 'Historique',
+//                                        'route'    => 'co-encadrant/historique',
+//                                        'resource' => PrivilegeController::getResourceId(CoEncadrantController::class, 'historique'),
+//                                    ],
+//                                ],
                             ],
                         ],
                     ],
