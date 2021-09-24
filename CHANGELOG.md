@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+3.0.2
+-----
+- Ajout d'une valeur d'état aux soutenances "Validée par l'établissement" post validation d'une soutenance par la présidence de l'établissement
+
 3.0.1
 -----
 - Renommage de l'application en ESUP-SyGAL.
