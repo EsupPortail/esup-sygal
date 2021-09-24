@@ -403,7 +403,7 @@ $.widget("unicaen.widgetImageLoader", {
 
         //create image to preload:
         var image = new Image();
-        $(image).load(function (response, status, xhr) {
+        $(image).on('load', function (response, status) {
             if (status === 'error') {
                 image = null;
             }
@@ -439,6 +439,18 @@ $(function () {
         sanitize: false,
     });
     $('[data-bs-toggle="tooltip"]').tooltip();
+
+    // le plugin bootstrap-confirmation n'est pas compatible avec Bootstrap 5 donc on l'a remplacé par ça !
+    $('[data-toggle="confirmationx"]').each(function () {
+        $(this).on("click", function () {
+            $(this).addClass("loading");
+            const ok = confirm($(this).data('message') || "Êtes-vous sûr·e ?");
+            if (!ok) {
+                $(this).removeClass("loading");
+            }
+            return ok;
+        });
+    });
 });
 
 // /**

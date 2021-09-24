@@ -307,7 +307,6 @@ return array(
         'inline_scripts' => [
             '070_bootstrap-select' => '/vendor/bootstrap-select-1.14.0-beta2/js/bootstrap-select.min.js',
             '070_bootstrap-select-fr' => '/vendor/bootstrap-select-1.14.0-beta2/js/i18n/defaults-fr_FR.js',
-//            '081_bootstrap-confirmation' => '/vendor/bootstrap-confirmation.js',
         ],
         'stylesheets'           => [
             '050_bootstrap-theme' => false,

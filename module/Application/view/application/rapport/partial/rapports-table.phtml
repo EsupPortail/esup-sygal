@@ -239,7 +239,8 @@ $acteursFormatterCodirecteurs->asSeparated()
                         <a href="<?php echo $this->url($routeName . '/devalider', ['rapportValidation' => $rapportValidation->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
                            class="btn btn-danger"
                            title="Dévalider ce rapport ?"
-                           data-toggle="confirmation">Dévalider</span></a>
+                           data-toggle="confirmationx"
+                           data-message="Êtes-vous sûr·e de vouloir dévalider ?">Dévalider</span></a>
                     <?php endif ?>
                 <?php else: ?>
                     <p>Non validé</p>
@@ -248,7 +249,8 @@ $acteursFormatterCodirecteurs->asSeparated()
                         <a href="<?php echo $this->url($routeName . '/valider', ['rapport' => $rapport->getId(), 'typeValidation' => $typeValidation->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
                            class="btn btn-success"
                            title="Valider ce rapport ?"
-                           data-toggle="confirmation">Valider</span></a>
+                           data-toggle="confirmationx"
+                           data-message="Êtes-vous sûr·e de vouloir valider ce rapport ?">Valider</span></a>
                     <?php endif ?>
                 <?php endif ?>
             </td>
@@ -258,23 +260,11 @@ $acteursFormatterCodirecteurs->asSeparated()
                 <?php if ($canDel): ?>
                     <a href="<?php echo $this->url($routeName . '/supprimer', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
                        title="Supprimer ce rapport ?"
-                       data-toggle="confirmation"><span class="icon icon-delete iconly"></span></a>
+                       data-toggle="confirmationx"
+                       data-message="Êtes-vous sûr·e de vouloir supprimer ce rapport ?"><span class="icon icon-delete iconly"></span></a>
                 <?php endif; ?>
             </td>
         </tr>
     <?php endforeach; ?>
     </tbody>
 </table>
-
-
-<script>
-    $(function() {
-        $('[data-toggle=confirmation]').confirmation({
-            rootSelector: '[data-toggle=confirmation]',
-            container: 'body',
-            title: "Êtes-vous sûr(e) ?",
-            btnOkLabel: "Oui",
-            btnCancelLabel: "Non",
-        });
-    });
-</script>

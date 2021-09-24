@@ -45,7 +45,7 @@ uasort($pagesNiv1, $sorterByOrder);
             if ($access) :
                 ?>
                 <li class="nav-item dropdown <?php if ($page->isActive(true)) echo ' nav-item active' ?>">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="<?php echo $page->getHref() ?>" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-bs-toggle="dropdown" href="<?php echo $page->getHref() ?>" aria-expanded="false">
                         <?php if ($page->get("icon") != ""): ?>
                             <span class="icon">
                                 <i class="<?php echo $page->get("icon"); ?>"></i>
@@ -54,7 +54,7 @@ uasort($pagesNiv1, $sorterByOrder);
                         <?php echo $this->escapeHtml($this->translate($page->getLabel(), $this->navigation($container)->getTranslatorTextDomain())); ?>
 <!--                        <b class="caret"></b>-->
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <?php
                         // tri des pages de niveau 2 par 'order'
                         $pagesNiv2 = $page->getPages();
@@ -63,7 +63,7 @@ uasort($pagesNiv1, $sorterByOrder);
                         <?php foreach ($pagesNiv2 as $child): ?>
                             <?php if (!$this->navigation()->accept($child)) continue; ?>
                             <?php if ($child->get("dropdown-header") === true): ?>
-                                <a class="dropdown-item">
+                                <li class="dropdown-item">
                                     <?php if ($child->get("icon") != ""): ?>
                                         <span class="icon">
                                             <i class="<?php echo $child->get("icon"); ?>"></i>
@@ -72,31 +72,33 @@ uasort($pagesNiv1, $sorterByOrder);
                                         <div class="dropdown-divider <?php echo $child->getClass() ?>"></div>
                                     <?php endif; ?>
                                     <?php echo $this->escapeHtml($this->translate($child->getLabel(), $this->navigation($container)->getTranslatorTextDomain())); ?>
-                                </a>
+                                </li>
                                 <?php
                                 continue;
                             endif;
                             ?>
                             <?php if ($child->get("separator") === true): ?>
-                                <div class="dropdown-divider"></div>
+                                <li class="dropdown-divider"></li>
                                 <?php
                                 continue;
                             endif;
                             ?>
-                            <a class="dropdown-item <?php if ($child->isActive()) echo 'active' ?>"
-                                href="<?php echo $child->getHref() ?>"
-                                <?php if ($child->getTarget() != ""): ?>
-                                    target="<?php echo $child->getTarget(); ?>"
-                                <?php endif; ?>>
-                                <?php if ($child->get("icon") != ""): ?>
-                                    <span class="icon">
-                                        <i class="<?php echo $child->get("icon"); ?>"></i>
-                                    </span>
-                                <?php endif; ?>
-                                <?php echo $this->escapeHtml($this->translate($child->getLabel(), $this->navigation($container)->getTranslatorTextDomain())); ?>
-                            </a>
+                            <li>
+                                <a class="dropdown-item <?php if ($child->isActive()) echo 'active' ?>"
+                                    href="<?php echo $child->getHref() ?>"
+                                    <?php if ($child->getTarget() != ""): ?>
+                                        target="<?php echo $child->getTarget(); ?>"
+                                    <?php endif; ?>>
+                                    <?php if ($child->get("icon") != ""): ?>
+                                        <span class="icon">
+                                            <i class="<?php echo $child->get("icon"); ?>"></i>
+                                        </span>
+                                    <?php endif; ?>
+                                    <?php echo $this->escapeHtml($this->translate($child->getLabel(), $this->navigation($container)->getTranslatorTextDomain())); ?>
+                                </a>
+                            </li>
                         <?php endforeach ?>
-                    </div>
+                    </ul>
                 </li>
             <?php endif; ?>
         <?php endif ?>

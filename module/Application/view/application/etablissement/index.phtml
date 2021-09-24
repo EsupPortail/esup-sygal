@@ -24,7 +24,7 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
 
 <h1 class="page-header first">
     <?php echo $this->translate("Établissements") ?>
-    <span class="badge badge-secondary">
+    <span class="badge bg-secondary">
         <?php echo count($etablissementsSygal) + count($etablissementsExternes); ?>
     </span>
 </h1>
@@ -43,7 +43,7 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
 
 <h2>
     Établissements participant à <?php echo $appName ?>
-    <span class="badge badge-secondary">
+    <span class="badge bg-secondary">
         <?php echo count($etablissementsSygal); ?>
     </span>
 </h2>
@@ -73,7 +73,7 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
                     <a href="<?php echo $this->url('etablissement/information', ['structure' => $etablissement->getStructure()->getId()], [], true); ?>">
                         <?php echo $etablissement->getLibelle(); ?>
                         <?php if ($etablissement->getStructure()->estFermee()) : ?>
-                            &nbsp;<span class="badge badge-danger">Structure fermée</span>
+                            &nbsp;<span class="badge bg-danger">Structure fermée</span>
                         <?php endif; ?>
                     </a>
                     <?php if ($etablissement->estMembre()): ?>
@@ -125,7 +125,7 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
 
 <h2>
     Autres établissements
-    <span class="badge badge-secondary">
+    <span class="badge bg-secondary">
         <?php echo count($etablissementsExternes); ?>
     </span>
 </h2>

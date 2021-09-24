@@ -60,7 +60,7 @@ $canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceI
                             class="dropdown-item complete"
                             <?php /** @see \Soutenance\Controller\PropositionController::propositionAction() */ ?>
                             href="<?php echo $this->url('soutenance/proposition', ['these' => $theseLink->getId()], [], true); ?>">
-                            <span class="badge badge-secondary"><?php echo $theseLink->getDoctorant(); ?></span>
+                            <span class="badge bg-secondary"><?php echo $theseLink->getDoctorant(); ?></span>
                             <?php
                                  echo $this->partial('application/these/partial/titre', ['these' => $theseLink, 'useTitreThese' => true, 'length' => 120, 'description' => false])
                             ?>
@@ -90,7 +90,7 @@ $canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceI
                             class="dropdown-item complete"
                             <?php /** @see \Soutenance\Controller\PropositionController::avancementAction() */ ?>
                             href="<?php echo $this->url('soutenance/avancement', ['these' => $theseLink->getId()], [], true); ?>">
-                            <span class="badge badge-secondary"><?php echo $theseLink->getDoctorant(); ?></span>
+                            <span class="badge bg-secondary"><?php echo $theseLink->getDoctorant(); ?></span>
                             <?php
                             echo $this->partial('application/these/partial/titre', ['these' => $theseLink, 'useTitreThese' => true, 'length' => 120, 'description' => false])
                             ?>

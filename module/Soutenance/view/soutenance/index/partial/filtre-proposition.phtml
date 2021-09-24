@@ -24,7 +24,7 @@ use Soutenance\Entity\Etat;
     <div class="card-body">
         <form class='form-inline' method="get" action="">
                 <div class="form-group">
-                <label for="etablissement">Établissement d'inscription : </label>
+                <label for="etablissement" class="form-label">Établissement d'inscription : </label>
                 <select id="etablissement" name="etablissement" class="selectpicker" data-live-search="true">
                     <option value="">Tous les établissements </option>
                     <?php foreach ($etablissements as $etablissement) : ?>
@@ -35,7 +35,7 @@ use Soutenance\Entity\Etat;
                 </select>
                 </div>
                 <div class="form-group">
-                    <label for="ecoledoctorale">École doctorale : </label>
+                    <label for="ecoledoctorale" class="form-label">École doctorale : </label>
                     <select id="ecoledoctorale" name="ecoledoctorale" class="selectpicker" data-live-search="true">
                         <option value="">Toutes les écoles doctorales </option>
                         <?php foreach ($ecoles as $ecole) : ?>
@@ -47,7 +47,7 @@ use Soutenance\Entity\Etat;
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="uniterecherche">Unité de recherche : </label>
+                    <label for="uniterecherche" class="form-label">Unité de recherche : </label>
                     <select id="uniterecherche" name="uniterecherche" class="selectpicker" data-live-search="true">
                         <option value="">Toutes les unités de recherche </option>
                         <?php foreach ($unites as $unite) : ?>
@@ -59,7 +59,7 @@ use Soutenance\Entity\Etat;
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="etat">Etat : </label>
+                    <label for="etat" class="form-label">Etat : </label>
                     <select id="etat" name="etat" class="selectpicker" data-live-search="true">
                         <option value="">Tous les etats </option>
                         <?php foreach ($etats as $etat) : ?>

@@ -21,7 +21,7 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
 
 <h1 class="page-header first">
     <?php echo $this->translate("Écoles doctorales") ?>
-    <span class="badge badge-secondary"><?php echo count($ecoles); ?></span>
+    <span class="badge bg-secondary"><?php echo count($ecoles); ?></span>
 </h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
@@ -61,7 +61,7 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
                     <a href="<?php echo $this->url('ecole-doctorale/information', ['structure' => $ecole->getStructure()->getId()], [], true); ?>">
                         <?php echo $ecole->getLibelle(); ?>
                         <?php if ($ecole->getStructure()->estFermee()) : ?>
-                            &nbsp;<span class="badge badge-danger">Structure fermée</span>
+                            &nbsp;<span class="badge bg-danger">Structure fermée</span>
                         <?php endif; ?>
                     </a>
                 </td>

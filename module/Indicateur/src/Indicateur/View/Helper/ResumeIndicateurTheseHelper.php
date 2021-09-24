@@ -22,7 +22,7 @@ class ResumeIndicateurTheseHelper extends AbstractHelper
             $html .= '<div class="card-header">';
                 $html .= '<span class="fas fa-book"></span> &nbsp; ';
                 $html .= $indicateur->getLibelle();
-                $html .= ' <span class="badge badge-secondary">' . count($data) . '</span>';
+                $html .= ' <span class="badge bg-secondary">' . count($data) . '</span>';
             $html .= '</div>';
             $html .= '<div class="card-body">';
                 $html .= '<table class="table table-extra-condensed">';
