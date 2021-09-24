@@ -323,10 +323,11 @@ class PropositionController extends AbstractController
         }
 
         $vm = new ViewModel();
-        $vm->setTemplate('soutenance/default/default-form');
+        $vm->setTemplate('soutenance/proposition/confidentialite');
         $vm->setVariables([
             'title' => 'Renseignement des informations relatives à la confidentialité',
             'form' => $form,
+            'these' => $these,
         ]);
         return $vm;
     }
