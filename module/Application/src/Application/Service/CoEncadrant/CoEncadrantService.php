@@ -63,9 +63,9 @@ class CoEncadrantService {
     /**
      * @param AbstractActionController $controller
      * @param string $param
-     * @return Acteur
+     * @return ?Acteur
      */
-    public function getRequestedCoEncadrant(AbstractActionController $controller, string $param = 'co-encadrant')
+    public function getRequestedCoEncadrant(AbstractActionController $controller, string $param = 'co-encadrant') : ?Acteur
     {
         $id = $controller->params()->fromRoute($param);
         $result = $this->getCoEncadrant($id);
