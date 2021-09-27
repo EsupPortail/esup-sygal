@@ -3,6 +3,7 @@
 namespace Formation\Entity\Db\Repository;
 
 use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\These;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -118,4 +119,72 @@ class SessionRepository extends EntityRepository
         return $result;
     }
 
+    /**
+     * @param Individu $individu
+     * @return array
+     */
+    public function findSessionsPasseesByFormateur(Individu $individu) : array
+    {
+        $etats = [ Etat::CODE_CLOTURER ];
+
+        $qb = $this->createQB('session')
+            ->leftJoin('session.formateurs', 'formateur')
+            ->leftJoin('session.formateurs', 'aformateur')->addSelect('aformateur')
+            ->andWhere('formateur.individu = :individu')
+            ->setParameter('individu', $individu)
+            ->andWhere('session.etat in (:etats)')
+            ->andWhere('session.histoDestruction IS NULL')
+            ->andWhere('formateur.histoDestruction IS NULL')
+            ->setParameter('etats', $etats)
+            ->orderBy('session.id', 'ASC')
+        ;
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
+     * @param Individu $individu
+     * @return array
+     */
+    public function findSessionsCourantesByFormateur(Individu $individu) : array
+    {
+        $etats = [ Etat::CODE_FERME ];
+
+        $qb = $this->createQB('session')
+            ->leftJoin('session.formateurs', 'formateur')
+            ->leftJoin('session.formateurs', 'aformateur')->addSelect('aformateur')
+            ->andWhere('formateur.individu = :individu')
+            ->setParameter('individu', $individu)
+            ->andWhere('session.etat in (:etats)')
+            ->andWhere('session.histoDestruction IS NULL')
+            ->andWhere('formateur.histoDestruction IS NULL')
+            ->setParameter('etats', $etats)
+            ->orderBy('session.id', 'ASC')
+        ;
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
+     * @param Individu $individu
+     * @return array
+     */
+    public function findSessionsFuturesByFormateur(Individu $individu) : array
+    {
+        $etats = [ Etat::CODE_OUVERTE, Etat::CODE_PREPARATION ];
+
+        $qb = $this->createQB('session')
+            ->leftJoin('session.formateurs', 'formateur')
+            ->leftJoin('session.formateurs', 'aformateur')->addSelect('aformateur')
+            ->andWhere('formateur.individu = :individu')
+            ->setParameter('individu', $individu)
+            ->andWhere('session.etat in (:etats)')
+            ->andWhere('session.histoDestruction IS NULL')
+            ->andWhere('formateur.histoDestruction IS NULL')
+            ->setParameter('etats', $etats)
+            ->orderBy('session.id', 'ASC')
+        ;
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
 }

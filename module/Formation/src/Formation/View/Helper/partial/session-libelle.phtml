@@ -1,0 +1,27 @@
+<?php
+
+use Formation\Entity\Db\Formateur;
+use Formation\Entity\Db\Seance;
+use Formation\Entity\Db\Session;
+
+/**
+ * @see \Formation\View\Helper\SessionLibelleViewHelper
+ * @var Session $session
+ * @var array $options
+ */
+
+?>
+
+<?php echo $session->getFormation()->getLibelle(); ?>
+<?php if ($options["index"]??false) : ?>
+    #<?php echo $session->getIndex(); ?>
+<?php endif; ?>
+<?php if ($options["module"]??false) : ?>
+    <br/>
+    <?php $module = $session->getFormation()->getModule(); ?>
+    <?php if ($module !== null) : ?>
+        <?php echo $module->getLibelle(); ?>
+    <?php else : ?>
+        <i>Aucun module</i>
+    <?php endif; ?>
+<?php endif; ?>

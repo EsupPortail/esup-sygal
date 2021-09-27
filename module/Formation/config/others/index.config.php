@@ -31,6 +31,15 @@ return [
                         IndexPrivileges::INDEX_DOCTORANT,
                     ],
                 ],
+                [
+                    'controller' => IndexController::class,
+                    'action' => [
+                        'index-formateur',
+                    ],
+                    'privileges' => [
+                        IndexPrivileges::INDEX_FORMATEUR,
+                    ],
+                ],
             ],
         ],
     ],
@@ -49,6 +58,12 @@ return [
                         'label'    => 'Mes formations',
                         'route'    => 'formation/index-doctorant',
                         'resource' => PrivilegeController::getResourceId(IndexController::class, 'index-doctorant') ,
+                        'order'    => 9999,
+                    ],
+                    'formation-formateur' => [
+                        'label'    => 'Mes formations',
+                        'route'    => 'formation/index-formateur',
+                        'resource' => PrivilegeController::getResourceId(IndexController::class, 'index-formateur') ,
                         'order'    => 9999,
                     ],
                 ],
@@ -77,6 +92,17 @@ return [
                             'defaults' => [
                                 'controller' => IndexController::class,
                                 'action'     => 'index-doctorant',
+                            ],
+                        ],
+                    ],
+                    'index-formateur' => [
+                        'type'  => Segment::class,
+                        'may_terminate' => true,
+                        'options' => [
+                            'route'    => '/index-formateur[/:formateur]',
+                            'defaults' => [
+                                'controller' => IndexController::class,
+                                'action'     => 'index-formateur',
                             ],
                         ],
                     ],

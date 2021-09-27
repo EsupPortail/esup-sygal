@@ -4,6 +4,7 @@ namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Individu;
 use Formation\Entity\Db\EnqueteReponse;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
@@ -56,6 +57,34 @@ class IndexController extends AbstractController
             'preparations' => $preparations,
             'inscriptions' => $inscriptions,
             'resultats' => $resultats,
+        ]);
+    }
+
+    public function indexFormateurAction()
+    {
+        /** @var Individu $individu */
+        $individuId = $this->params()->fromRoute('formateur');
+        if ($individuId !== null) {
+            $individu = $this->getEntityManager()->getRepository(Individu::class)->find($individuId);
+        } else {
+            $individu = null;
+        }
+
+        if($individu) {
+            $passees    = $this->getEntityManager()->getRepository(Session::class)->findSessionsPasseesByFormateur($individu);
+            $courantes  = $this->getEntityManager()->getRepository(Session::class)->findSessionsCourantesByFormateur($individu);
+            $futures    = $this->getEntityManager()->getRepository(Session::class)->findSessionsFuturesByFormateur($individu);
+        } else {
+            $passees = [];
+            $courantes = [];
+            $futures = [];
+        }
+
+        return new ViewModel([
+            'individu' => $individu,
+            'passees' => $passees,
+            'courantes' => $courantes,
+            'futures' => $futures,
         ]);
     }
 

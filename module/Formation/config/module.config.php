@@ -12,6 +12,8 @@ use Formation\View\Helper\EtatViewHelper;
 use Formation\View\Helper\FormateursViewHelper;
 use Formation\View\Helper\ModaliteViewHelper;
 use Formation\View\Helper\SeancesViewHelper;
+use Formation\View\Helper\SessionInscriptionViewHelper;
+use Formation\View\Helper\SessionLibelleViewHelper;
 use Formation\View\Helper\SiteViewHelper;
 use Formation\View\Helper\TypeViewHelper;
 use Soutenance\Controller\AvisController;
@@ -88,6 +90,8 @@ return array(
             'etat' => EtatViewHelper::class,
             'seances' => SeancesViewHelper::class,
             'formateurs' => FormateursViewHelper::class,
+            'sessionInscription' => SessionInscriptionViewHelper::class,
+            'sessionLibelle' => SessionLibelleViewHelper::class,
         ]
     ],
 

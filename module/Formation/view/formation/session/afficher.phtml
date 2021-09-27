@@ -157,12 +157,14 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
         <h2> Formateur </h2>
     </div>
     <div class="pull-right">
-        <?php /** @see \Formation\Controller\FormateurController::ajouterAction() */ ?>
-        <a href="<?php echo $this->url('formation/formateur/ajouter', ['session' => $session->getId()], [] , true); ?>"
-           class="btn btn-primary action ajax-modal" data-event="modification">
-            <span class="glyphicon glyphicon-plus"></span>
-            Ajouter un·e formateur·trice
-        </a>
+        <?php if ($canModifierSession) : ?>
+            <?php /** @see \Formation\Controller\FormateurController::ajouterAction() */ ?>
+            <a href="<?php echo $this->url('formation/formateur/ajouter', ['session' => $session->getId()], [] , true); ?>"
+               class="btn btn-primary action ajax-modal" data-event="modification">
+                <span class="glyphicon glyphicon-plus"></span>
+                Ajouter un·e formateur·trice
+            </a>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -170,13 +172,15 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
 <?php foreach ($formateurs as $formateur) : ?>
     <li>
         <?php echo $formateur->getIndividu()->getNomComplet(); ?>
-        <?php /** @see \Formation\Controller\FormateurController::retirerAction() */ ?>
-        <a href="<?php echo $this->url('formation/formateur/retirer', ['formateur' => $formateur->getId()], [] , true); ?>"
-           title="Retirer le·a formateur·trice" data-toggle="tooltip" data-html="true"
-           class="ajax-modal" data-event="modification"
-        >
-            <span class="glyphicon glyphicon-remove"></span>
-        </a>
+        <?php if ($canModifierSession) : ?>
+            <?php /** @see \Formation\Controller\FormateurController::retirerAction() */ ?>
+            <a href="<?php echo $this->url('formation/formateur/retirer', ['formateur' => $formateur->getId()], [] , true); ?>"
+               title="Retirer le·a formateur·trice" data-toggle="tooltip" data-html="true"
+               class="ajax-modal" data-event="modification"
+            >
+                <span class="glyphicon glyphicon-remove"></span>
+            </a>
+        <?php endif ;?>
     </li>
 <?php endforeach; ?>
 </ul>
@@ -187,18 +191,22 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
         <h2> Séances </h2>
     </div>
     <div class="pull-right">
-        <?php /** @see \Formation\Controller\SeanceController::ajouterAction() */ ?>
-        <a href="<?php echo $this->url('formation/seance/ajouter', ['session' => $session->getId()], [] , true); ?>"
-           class="btn btn-primary action ajax-modal" data-event="modification">
-            <span class="glyphicon glyphicon-plus"></span>
-            Ajouter une séance
-        </a>
-        <?php /** @see \Formation\Controller\SessionController::genererEmargementsAction() */ ?>
-        <a href="<?php echo $this->url('formation/session/generer-emargements', ['session' => $session->getId()], [] , true); ?>" target="_blank"
-           class="btn btn-primary action">
-            <span class="glyphicon glyphicon-list"></span>
-            Générer les émargements
-        </a>
+        <?php if ($canModifierSession) : ?>
+            <?php /** @see \Formation\Controller\SeanceController::ajouterAction() */ ?>
+            <a href="<?php echo $this->url('formation/seance/ajouter', ['session' => $session->getId()], [] , true); ?>"
+               class="btn btn-primary action ajax-modal" data-event="modification">
+                <span class="glyphicon glyphicon-plus"></span>
+                Ajouter une séance
+            </a>
+        <?php endif; ?>
+        <?php if ($canEmargementSeance) : ?>
+            <?php /** @see \Formation\Controller\SessionController::genererEmargementsAction() */ ?>
+            <a href="<?php echo $this->url('formation/session/generer-emargements', ['session' => $session->getId()], [] , true); ?>" target="_blank"
+               class="btn btn-primary action">
+                <span class="glyphicon glyphicon-list"></span>
+                Générer les émargements
+            </a>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -276,26 +284,28 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
         <h2> Inscriptions et listes </h2>
     </div>
     <div class="pull-right">
-        <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
-        <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId()], [] , true); ?>"
-           class="btn btn-primary action ajax-modal" data-event="modification">
-            <span class="glyphicon glyphicon-pencil"></span>
-            Inscrit un·e doctorant·e
-        </a>
+        <?php if ($canModifierInscription) : ?>
+            <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
+            <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId()], [] , true); ?>"
+               class="btn btn-primary action ajax-modal" data-event="modification">
+                <span class="glyphicon glyphicon-pencil"></span>
+                Inscrit un·e doctorant·e
+            </a>
 
-        <?php /** @see \Formation\Controller\SessionController::classerInscriptionsAction() */ ?>
-        <a href="<?php echo $this->url('formation/session/classer-inscriptions', ['session' => $session->getId()], [] , true); ?>"
-           class="btn btn-primary action">
-            <span class="glyphicon glyphicon-indent-left"></span>
-            Classer les inscrits
-        </a>
+            <?php /** @see \Formation\Controller\SessionController::classerInscriptionsAction() */ ?>
+            <a href="<?php echo $this->url('formation/session/classer-inscriptions', ['session' => $session->getId()], [] , true); ?>"
+               class="btn btn-primary action">
+                <span class="glyphicon glyphicon-indent-left"></span>
+                Classer les inscrits
+            </a>
 
-        <?php /** @see \Formation\Controller\SessionController::declasserInscriptionsAction() */ ?>
-        <a href="<?php echo $this->url('formation/session/declasser-inscriptions', ['session' => $session->getId()], [] , true); ?>"
-           class="btn btn-primary action">
-            <span class="glyphicon glyphicon-indent-right"></span>
-            Déclasser les inscrits
-        </a>
+            <?php /** @see \Formation\Controller\SessionController::declasserInscriptionsAction() */ ?>
+            <a href="<?php echo $this->url('formation/session/declasser-inscriptions', ['session' => $session->getId()], [] , true); ?>"
+               class="btn btn-primary action">
+                <span class="glyphicon glyphicon-indent-right"></span>
+                Déclasser les inscrits
+            </a>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -310,7 +320,12 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
 
         <ul>
         <?php foreach ($listeNonClassee as $inscrit) : ?>
-            <?php echo $this->inscription($inscrit, []); ?>
+            <?php echo $this->inscription($inscrit, [
+                    'action-liste-principale' => $canModifierInscription,
+                    'action-liste-complementaire' => $canModifierInscription,
+                    'action-historiser' => $canModifierInscription,
+                    'action-supprimer' => $canModifierInscription,
+            ]); ?>
             <?php endforeach; ?>
         </ul>
 
@@ -325,7 +340,12 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
 
         <ul>
         <?php foreach ($listePrincipale as $inscription) : ?>
-            <?php echo $this->inscription($inscription, ['action-liste-principale' => false]); ?>
+            <?php echo $this->inscription($inscription, [
+                    'action-liste-principale' => false,
+                    'action-liste-complementaire' => $canModifierInscription,
+                    'action-historiser' => $canModifierInscription,
+                    'action-supprimer' => $canModifierInscription,
+                ]); ?>
         <?php endforeach; ?>
         </ul>
     </div>
@@ -340,7 +360,12 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
 
         <ul>
             <?php foreach ($listeComplementaire as $inscription) : ?>
-                <?php echo $this->inscription($inscription, ['action-liste-complementaire' => false]); ?>
+                <?php echo $this->inscription($inscription, [
+                        'action-liste-principale' => $canModifierInscription,
+                        'action-liste-complementaire' => false,
+                        'action-historiser' => $canModifierInscription,
+                        'action-supprimer' => $canModifierInscription,
+                ]); ?>
             <?php endforeach; ?>
         </ul>
     </div>
