@@ -136,7 +136,7 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
     <div class="pull-right">
         <?php if ($canAjouterSession) : ?>
             <?php /** @see \Formation\Controller\SessionController::ajouterAction() */ ?>
-            <a href="<?php echo $this->url('formation/session/ajouter', ['module' => $formation->getId()], [], true); ?>"
+            <a href="<?php echo $this->url('formation/session/ajouter', ['formation' => $formation->getId()], [], true); ?>"
                class="btn btn-primary action ajax-modal" data-event="modification"
                title="Ajouter une session"
                data-toggle="tooltip" data-html="true">
