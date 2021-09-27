@@ -140,7 +140,7 @@ return [
                                 'type'  => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/ajouter/:module',
+                                    'route'    => '/ajouter/:formation',
                                     'defaults' => [
                                         'controller' => SessionController::class,
                                         'action'     => 'ajouter',
