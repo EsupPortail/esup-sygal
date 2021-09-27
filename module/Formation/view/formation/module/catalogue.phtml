@@ -5,6 +5,9 @@
  * @var array $catalogue
  */
 
+use Formation\Entity\Db\Formation;
+use Formation\Entity\Db\Session;
+
 ?>
 
 <h1 class="page-header">
@@ -12,24 +15,84 @@
 </h1>
 
 <?php foreach ($catalogue as $key => $element) : ?>
-    <span class="module">
-        <?php if ($element["module"] !== null) : ?>
-            <?php echo $element["module"]->getLibelle(); ?>
-        <?php else : ?>
-            Formations non liées à un module
-        <?php endif ; ?>
-    </span>
+        <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th class="module" colspan="4">
+                    <?php if ($element["module"] !== null) : ?>
+                        <?php echo $element["module"]->getLibelle(); ?>
+                    <?php else : ?>
+                        Formations non liées à un module
+                    <?php endif ; ?>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
     <?php if (empty($element['formations'])) : ?>
-        <span style="display:block; margin-left: 3rem; margin-bottom: 1rem;">
-            Aucune formation
-        </span>
+        <tr><td colspan="4" class="vide">Aucune formation</td></tr>
     <?php else : ?>
-        <ul>
-            <?php foreach ($element['formations'] as $formation) : ?>
-                <li>
-                    <?php echo $formation->getLibelle(); ?>
-                </li>
-            <?php endforeach; ?>
-        </ul>
+        <?php /** @var Formation $formation */ ?>
+        <?php foreach ($element['formations'] as $formation) : ?>
+        <tr>
+            <td class="libelle">
+                <?php echo $formation->getLibelle(); ?>
+            </td>
+            <td class="site">
+                    <?php echo $this->site($formation); ?>
+            </td>
+            <td class="responsable">
+                <?php if ($formation->getResponsable() !== null) : ?>
+                    <?php echo $formation->getResponsable()->getNomComplet(); ?>
+                <?php else : ?>
+                    N.C.
+                <?php endif; ?>
+            </td>
+            <td>
+                <ul>
+                <?php /** @var Session $session */ ?>
+                <?php foreach ($formation->getSessions() as $session) : ?>
+                    <li>
+                        <?php if ($session->getDateDebut() AND $session->getDateFin()) : ?>
+                            <?php echo $session->getDateDebut()->format('d/m/Y à H:i'); ?> &rightarrow; <?php echo $session->getDateFin()->format('d/m/Y à H:i'); ?>
+                        <?php else : ?>
+                            À déterminer
+                        <?php endif; ?>
+                        <br/>
+                        <strong>Modalité :</strong> <?php echo $this->modalite($session); ?>
+                        <?php if ($session->getDateDebut() AND $session->getDateFin()) : ?>
+                            <br/>
+                            <strong>Durée :</strong> <?php echo $session->getDuree(); ?> h.
+                        <?php endif; ?>
+                    </li>
+                <?php endforeach; ?>
+                </ul>
+            </td>
+        </tr>
+        <?php endforeach; ?>
     <?php endif; ?>
+        </tbody>
+        </table>
 <?php endforeach; ?>
+
+
+<style>
+    th.module {
+        background: cornflowerblue;
+        font-size: large;
+    }
+
+    tr.vide {
+        font-style: italic;
+        color:gray;
+    }
+
+    td.libelle {
+        width:45rem;
+    }
+    td.site {
+        width:10rem;
+    }
+    td.responsable {
+        width:15rem;
+    }
+</style>
