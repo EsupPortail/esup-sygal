@@ -77,7 +77,7 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                         par <?php echo $distanciel->getHistoCreateur()->getDisplayName(); ?>.
                     </div>
                     <?php if ($canModifier) : ?>
-                        <div class="float-right" style="margin-right: 1rem;">
+                        <div class="float-end" style="margin-right: 1rem;">
                             <a      <?php /** @see \Soutenance\Controller\InterventionController::togglePresidentDistancielAction() */?>
                                     href="<?php echo $this->url('soutenance/intervention/toggle-president-distanciel', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action">
                                 <span class="icon icon-minus"></span> Président en distanciel
@@ -138,7 +138,7 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                         Vous pouvez déclarer ici que le président du jury examinera la soutenance en distanciel.
                     </div>
                     <?php if ($canModifier) : ?>
-                    <div class="float-right" style="margin-right: 1rem;">
+                    <div class="float-end" style="margin-right: 1rem;">
                         <a      <?php /** @see \Soutenance\Controller\InterventionController::togglePresidentDistancielAction() */?>
                                 href="<?php echo $this->url('soutenance/intervention/toggle-president-distanciel', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action">
                             <span class="icon icon-plus"></span> Président en distanciel

@@ -67,7 +67,7 @@ $this->headTitle($this->translate($title));
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
 
 <!-- Formulaire de filtrage -->
-<div class="float-left">
+<div class="float-start">
     <?php $loadFiltersUrl = $this->url($routeName . '/recherche/filters', [], ['query' => $this->queryParams()], true); ?>
     <div id="filters" data-url="<?php echo $loadFiltersUrl ?>" style="min-height: 160px">
         <!-- Contenu chargé en AJAX -->

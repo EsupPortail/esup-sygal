@@ -530,7 +530,7 @@ function installCheckboxes(targetElements, checkboxName, initiallyChecked)
                 .attr("type", "checkbox")
                 .attr("name", checkboxName + "[]")
                 .attr('value', $(element).data("id"))
-                .attr("class", "check-" + checkboxName)
+                .attr("class", "form-check-input check-" + checkboxName)
                 .prop('checked', initiallyChecked ? true : false)
         );
     });

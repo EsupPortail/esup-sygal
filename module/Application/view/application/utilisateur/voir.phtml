@@ -52,7 +52,7 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
             <div class="card-header bg-info">
                 <h2 class="first">
                     <?php echo $this->translate("Utilisateur") ?>
-                    <div class="float-right">
+                    <div class="float-end">
                         <?php
                         // bouton d'usurpation d'identité
                         $userUsurpationHelper = $this->plugin('userUsurpation');
@@ -93,7 +93,7 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
                 <div class="card-header <?php echo $individu->estHistorise() ? 'bg-danger' : 'bg-info' ?>">
                     <h2 class="first">
                         <?php echo $this->translate("Individu lié") ?> <?php echo $individu->estHistorise() ? 'SUPPRIMÉ' : '' ?>
-                        <div class="float-right">
+                        <div class="float-end">
                             <?php
                             //// bouton d'usurpation d'identité
                             //$individuUsurpationHelper = $this->plugin('individuUsurpation');
@@ -159,7 +159,7 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
     <div class="card-header bg-info">
         <h2 class="first">
             <?php echo $this->translate("Jeton d'authentification") ?>
-            <div class="float-right">
+            <div class="float-end">
                 <br>
                 <?php echo $this->partial('unicaen-auth-token/token/partial/add-button', [
                     'route' => 'utilisateur/ajouter-token',
@@ -193,7 +193,7 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
             <div class="row">
                 <div class="col-md-5">
                     <h3>Rôles attribués automatiquement
-                        <span class="fas fa-info-circle" data-toggle="tooltip" data-placement="right"
+                        <span class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="right"
                               title="Ce sont les rôles attribués automatiquement à l'individu par l'application
                               lors de sa connexion, selon les données disponibles le concernant (ex: acteur d'une thèse,
                               auteur d'une thèse, etc.)"></span></h3>
@@ -214,7 +214,7 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
             <div class="row">
                 <div class="col-md-5">
                     <h3>Rôles attribués manuellement
-                        <span class="fas fa-info-circle" data-toggle="tooltip" data-placement="right"
+                        <span class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="right"
                               title="Ce sont les rôles attribués à l'individu manuellement parmi les rôles disponibles
                               dans la liste ci-contre."></span></h3>
                         <?php if (!empty($rolesAffectes)): ?>

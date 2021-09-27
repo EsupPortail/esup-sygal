@@ -185,7 +185,7 @@ $these = $proposition->getThese();
                     </div>
                 <?php endif; ?>
             </div>
-            <div class="col-md-4 float-right">
+            <div class="col-md-4 float-end">
                 <?php if ($canModifier): ?>
                     <a  <?php /** @see \Soutenance\Controller\PropositionController::modifierMembreAction(); */ ?>
                         href="<?php echo $this->url('soutenance/proposition/modifier-membre', ['these' => $these->getId()], [], true); ?>"

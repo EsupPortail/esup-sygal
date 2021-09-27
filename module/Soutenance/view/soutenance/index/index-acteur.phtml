@@ -49,7 +49,7 @@ $canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceI
 </p>
 
     <?php if ($canProposer && $theses !== []) : ?>
-        <div class="btn-group float-right action">
+        <div class="btn-group float-end action">
             <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="icon icon-edit"></span>
                 Consulter les propositions
@@ -79,7 +79,7 @@ $canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceI
 </p>
 
     <?php if ($canVisualiser && $theses !== []) : ?>
-        <div class="btn-group float-right action">
+        <div class="btn-group float-end action">
             <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="icon icon-voir"></span>
                 Voir les validations <span class="caret"></span>

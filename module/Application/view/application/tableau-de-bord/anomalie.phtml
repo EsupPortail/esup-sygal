@@ -22,13 +22,13 @@ foreach ($anomaliesTables as $anomaliesTable) $all += count($anomaliesTable);
 </h1>
 
 <!-- Formulaire de filtrage -->
-<div class="float-left">
+<div class="float-start">
     <?php echo $this->partial('partial/form-filtrage', ['etablissements' => $etablissements]) ?>
 </div>
 
 
 
-<div class="float-right">
+<div class="float-end">
 <?php
     $nombreAnomalies = count($anomaliesTables);
     switch($nombreAnomalies) {

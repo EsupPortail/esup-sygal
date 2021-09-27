@@ -33,7 +33,7 @@ use Zend\Paginator\Paginator;
             <?php
             $form = $uploader->getForm();
             $form->setAjaxMode(false);
-            $form->get('submit')->setAttribute('class', 'float-right');
+            $form->get('submit')->setAttribute('class', 'float-end');
             echo $uploader->renderForm();
             ?>
         </div>

@@ -27,15 +27,15 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 </h1>
 
 
-<div class="float-left">
+<div class="float-start">
     <?php echo $this->partial('partial/form-filtrage') ?>
 </div>
 <form method="post" action="<?php echo $url ?>">
-    <div class="float-right">
+    <div class="float-end">
         &nbsp;
         <input type='submit' class='btn btn-secondary btn-sm' value='Filtrer'/>
     </div>
-    <div class="float-right">
+    <div class="float-end">
         <?php
         $sas = new SearchAndSelect('individu');
         $sas->setLabel($this->translate("Filtrage selon un doctorant :"));
@@ -47,7 +47,7 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 
 </form>
 
-<!--<div class="float-right">-->
+<!--<div class="float-end">-->
 <!--    --><?php //echo $this->partial('partial/form-recherche', ['text' => $text]) ?>
 <!--</div>-->
 

@@ -28,7 +28,7 @@ class StructureSubstitHelper extends AbstractHelper
 
         $texte .= '<div class="card-body">';
 
-        $texte .= '<div class="float-left">';
+        $texte .= '<div class="float-start">';
         $texte .= '<input type="hidden" id="source" name="sourceIds[]" value="' . $structurestructureConcrete->getStructure()->getId() . '" />';
         $texte .= '<table>';
         $texte .= '<tr>';
@@ -56,7 +56,7 @@ class StructureSubstitHelper extends AbstractHelper
         $texte .= '</button>';
         $texte .= '</div>';
 
-        $texte .= '<div id="logo-div" class="float-right ">';
+        $texte .= '<div id="logo-div" class="float-end ">';
         if ($structurestructureConcrete->getCheminLogo() !== null)
             $texte .= '<input champ="logo" id="logo_' . $structurestructureConcrete->getSigle() . '" type="radio" name="logo" /> &nbsp; ';
         $texte .= '<img class="current" style="max-width: 125px; max-height: 125px; border: 1px solid black; background-color: white;" src="data:image/png;base64,' . base64_encode($logoContent) . '"/>';
@@ -84,7 +84,7 @@ class StructureSubstitHelper extends AbstractHelper
         $texte .= '    </div>';
 
         $texte .= '    <div class="card-body">';
-        $texte .= "<div id='logo-div' class='float-right'>";
+        $texte .= "<div id='logo-div' class='float-end'>";
         $texte .= "<input type='hidden' name='cible[cheminLogo]' id='logo' value='" . $structure->getCheminLogo() . "'/>";
         $texte .= "<img id='logo_tmp' style='max-width: 125px; max-height: 125px; border: 1px solid black; background-color: white;' src='data:image/png;base64," . base64_encode($logoContent) . "'/>";
         $texte .= "</div>";

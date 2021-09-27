@@ -165,7 +165,7 @@ $canMaj = $this->isAllowed(Privileges::getResourceId(Privileges::IMPORT_MAJ));
             var div = this.element.find('.import-panel#' + table + ' .card-body');
 
             div.show();
-            div.append('<div class="alert alert-' + type + ' alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + text + '</div>');
+            div.append('<div class="alert alert-' + type + ' alert-dismissible" role="alert"><button type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + text + '</div>');
         },
 
         clearMsgs: function (table)

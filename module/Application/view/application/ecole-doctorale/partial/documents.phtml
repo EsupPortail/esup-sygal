@@ -14,7 +14,7 @@ use Application\Entity\Db\StructureDocument;
     <div class="col-md-8">
         <h2> Documents liés à la structure  </h2>
     </div>
-    <div class="float-right">
+    <div class="float-end">
         <br/>
         <a      <?php /** @see \Application\Controller\StructureController::televerserDocumentAction() */?>
             href="<?php echo $this->url('structure/televerser-document', ['structure' => $structure->getId()], [], true); ?>"

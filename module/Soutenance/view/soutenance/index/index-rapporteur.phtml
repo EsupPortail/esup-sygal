@@ -125,7 +125,7 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
     <div class="card-body">
         <?php if ($engagement !== null) : ?>
             Vous avez signé l'engagement pour la thèse de <?php echo $these->getDoctorant(); ?>.
-            <div class="card float-right">
+            <div class="card float-end">
                 <div class="card-header bg-secondary">
                     Signature de l'engagment d'impartialité
                 </div>
@@ -143,7 +143,7 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
             <a
                     <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::engagementImpartialiteAction() */?>
                     href="<?php echo $this->url('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
-               class="btn btn-primary float-right"
+               class="btn btn-primary float-end"
             >
                 <span class="icon icon-edit"></span>
 <!--                Signer / Sign-->
@@ -167,7 +167,7 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
                 <a
                     <?php /** @see \Application\Controller\TheseController::fusionAction() */ ?>
                     href="<?php echo $this->url("these/fusion", ["these" => $these->getId()], [], true); ?>"
-                   class="btn btn-primary float-right"
+                   class="btn btn-primary float-end"
                 >
                     <span class="icon icon-download"></span>
                     Télécharger la thèse / Downloading manuscrit
@@ -190,7 +190,7 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
             <?php if ($avis !== null) : ?>
                 Vous avez rendu votre avis de soutenance pour la thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>.
 
-                <div class="col-md-5 float-right">
+                <div class="col-md-5 float-end">
                     <div class="card">
                         <div class="card-header <?php echo ($avis->getAvis() === 'Favorable')?"bg-success":"bg-danger"; ?>">
                             Avis de soutenance : <strong><?php echo $avis->getAvis(); ?></strong>
@@ -232,7 +232,7 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
                 <a
                     <?php /** @see \Soutenance\Controller\AvisController::indexAction() */ ?>
                     href="<?php echo $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true); ?>"
-                   class="btn btn-primary float-right"
+                   class="btn btn-primary float-end"
                 >
                     <span class="icon icon-edit"></span>
                     Rendre l'avis de soutenance / Give our report

@@ -55,7 +55,7 @@ $these = $proposition->getThese();
             </div>
 
             <div class="col-md-4">
-                <div class="float-right">
+                <div class="float-end">
                     <?php if ($canModifier) : ?>
                         <a  <?php /**  @see \Soutenance\Controller\PropositionController::modifierDateLieuAction() */ ?>
                             href="<?php echo $this->url('soutenance/proposition/modifier-date-lieu', ['these' => $these->getId()], [], true); ?>"

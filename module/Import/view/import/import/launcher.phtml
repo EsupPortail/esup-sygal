@@ -15,11 +15,11 @@ function generateDiv($tableName, $class) {
     $texte .= '<div class="card '.$class.'">';
     $texte .= '    <div class="card-header"> '.$tableName.' </div>';
     $texte .= '    <div class="card-body">';
-    $texte .= '        <div id="control-'.$tableName.'" class="float-left">';
+    $texte .= '        <div id="control-'.$tableName.'" class="float-start">';
     $texte .= '            <img id="'.$tableName.'" src="css/grey.png"/>';
     $texte .= '            <button class="btn btn-info" service="'.$tableName.'">Lancer ! </button>';
     $texte .= '        </div>';
-    $texte .= '        <div id="info-'.$tableName.'" class="float-right"></div>';
+    $texte .= '        <div id="info-'.$tableName.'" class="float-end"></div>';
     $texte .= '    </div>';
     $texte .= '</div>';
     return $texte;

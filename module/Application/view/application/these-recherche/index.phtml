@@ -43,7 +43,7 @@ $acteursFormatterCodirecteurs->asSeparated()
 
 
 <!-- Formulaire de filtrage -->
-<div class="float-left">
+<div class="float-start">
     <?php $loadFiltersUrl = $this->url($filtersRoute, [], ['query' => $this->queryParams()], true); ?>
     <div class="filters" id="these-filters" data-url="<?php echo $loadFiltersUrl ?>">
         <!-- Contenu chargé en AJAX -->

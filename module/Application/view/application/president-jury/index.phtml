@@ -43,7 +43,7 @@ function afficherUtilisateur(Acteur $a) {
         if ($title !== "") $title .= "<hr/><br/>";
         $title .= $utilisateur->getUsername() . " - " . $utilisateur->getEmail();
     }
-    return "<span style='color:darkgreen;' class='icon icon-ok' title='".$title."' data-bs-toggle='tooltip' data-html='true'></span>";
+    return "<span style='color:darkgreen;' class='icon icon-ok' title='".$title."' data-bs-toggle='tooltip' data-bs-html='true'></span>";
 }
 
 function afficherMailIndividu(Acteur $a) {
