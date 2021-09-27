@@ -49,12 +49,26 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
     <tbody>
     <?php foreach ($formations as $formation) : ?>
         <tr>
+
             <td <?php if ($formation->estHistorise()) echo " class='historise' "; ?> >
+                <span class="typage">Formation :</span>
                 <?php echo $formation->getLibelle(); ?>
                 <?php if ($formation->getDescription() !== null AND trim($formation->getDescription()) !== null) : ?>
                     <span class="glyphicon glyphicon-info-sign"
                           title="<?php echo $formation->getDescription(); ?>" data-toggle="tooltip" data-html="true"
                     ></span>
+                <?php endif; ?>
+                <br>
+                <span class="typage">Module :</span>
+                <?php if ($formation->getModule()) : ?>
+                    <?php echo $formation->getModule()->getLibelle(); ?>
+                    <?php if ($formation->getModule()->getDescription() !== null AND trim($formation->getModule()->getDescription()) !== null) : ?>
+                        <span class="glyphicon glyphicon-info-sign"
+                              title="<?php echo $formation->getModule()->getDescription(); ?>" data-toggle="tooltip" data-html="true"
+                        ></span>
+                    <?php endif; ?>
+                <?php else : ?>
+                    <i>Aucun module de spécifié</i>
                 <?php endif; ?>
             </td>
             <td> <?php echo $this->site($formation); ?> </td>
@@ -132,6 +146,11 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
 </script>
 
 <style>
+    span.typage {
+        display: inline-block;
+        width: 8rem;
+        font-weight: 500;
+    }
     a.btn.action {
         width:25rem;
     }
