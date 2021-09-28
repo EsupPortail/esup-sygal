@@ -8,6 +8,7 @@ body {
   padding-bottom: 100px; }
 
 a {
+  color: #337ab7;
   text-decoration: none; }
 
 h1 {
@@ -24,6 +25,30 @@ h4 {
 
 th {
   font-weight: 450; }
+
+.text-success {
+  color: #3c763d !important; }
+
+.text-info {
+  color: #31708f !important; }
+
+.text-warning {
+  color: #F1732D !important; }
+
+.text-danger {
+  color: #a94442 !important; }
+
+.bg-success {
+  background-color: #2EA662 !important; }
+
+.bg-info {
+  background-color: #009CE4 !important; }
+
+.bg-warning {
+  background-color: #F1732D !important; }
+
+.bg-danger {
+  background-color: #d9534f !important; }
 
 .popover,
 .popover-title {
@@ -142,15 +167,28 @@ h1.app-name {
   padding-top: 0.3rem;
   padding-bottom: 0.4rem; }
 
-#sidebar {
-  background-color: #e9ecef;
-  border-color: #004980; }
-  #sidebar .nav-link {
+#sidebar .nav {
+  padding: .5rem 0;
+  margin: 0;
+  color: #212529;
+  text-align: left;
+  list-style: none;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: .25rem; }
+  #sidebar .nav .nav-link {
     color: #333;
     padding: .25rem 0.75rem; }
-  #sidebar .active .nav-link {
+  #sidebar .nav .active .nav-link {
     background-color: #004980;
     border-color: #004980;
     color: white; }
+  #sidebar .nav .divider {
+    padding: 0;
+    height: 0;
+    margin: .5rem 0;
+    overflow: hidden;
+    border-top: 1px solid rgba(0, 0, 0, 0.15); }
 
 /*# sourceMappingURL=charte.css.map */

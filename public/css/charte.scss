@@ -17,6 +17,7 @@ body {
 }
 
 a {
+  color: #337ab7;
   text-decoration: none;
 }
 
@@ -35,6 +36,32 @@ h4 {
 
 th {
   font-weight: 450;
+}
+
+.text-success {
+  color:#3c763d !important;
+}
+.text-info {
+  color:#31708f !important;
+}
+.text-warning {
+  color:#F1732D !important;
+}
+.text-danger {
+  color: #a94442 !important;
+}
+
+.bg-success {
+  background-color:#2EA662 !important;
+}
+.bg-info {
+  background-color:#009CE4 !important;
+}
+.bg-warning {
+  background-color:#F1732D !important;
+}
+.bg-danger {
+  background-color: #d9534f !important;
 }
 
 .popover,
@@ -139,10 +166,6 @@ h1.app-name {
 
 
 
-#navbar,
-#sidebar {
-}
-
 #navbar {
   font-size: $fontSize * 1.1;
   height: $navbarHeight;
@@ -197,16 +220,33 @@ h1.app-name {
 }
 
 #sidebar {
-  background-color: $sidebarBackgroundColor;
-  border-color: $sidebarBackgroundColorActive;
+  .nav {
+    padding: .5rem 0;
+    margin: 0;
+    color: #212529;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, .15);
+    border-radius: .25rem;
 
-  .nav-link {
-    color: $fontColor;
-    padding: .25rem 0.75rem;
-  }
-  .active .nav-link {
-    background-color: $navbarBackgroundColorActive;
-    border-color: $navbarBackgroundColorActive;
-    color: white;
+    .nav-link {
+      color: $fontColor;
+      padding: .25rem 0.75rem;
+    }
+    .active .nav-link {
+      background-color: $navbarBackgroundColorActive;
+      border-color: $navbarBackgroundColorActive;
+      color: white;
+    }
+
+    .divider {
+      padding: 0;
+      height: 0;
+      margin: .5rem 0;
+      overflow: hidden;
+      border-top: 1px solid rgba(0,0,0,.15);
+    }
   }
 }

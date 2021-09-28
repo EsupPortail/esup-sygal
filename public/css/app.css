@@ -70,7 +70,6 @@ h2.modal-title {
   width: 50%; }
 
 .card .card-header {
-  text-transform: uppercase;
   font-weight: 400; }
 
 .card-header.bg-info {
@@ -175,7 +174,7 @@ span.ballot-box {
 .nav .fab {
   margin-right: 3px; }
 
-div#sidebar {
+#sidebar {
   margin-bottom: 30px; }
 
 div#contenu-principal {
@@ -494,11 +493,6 @@ ul.roadmap.pagination {
       vertical-align: text-bottom; }
 
 /************* Menu *************/
-.nav li > span.divider {
-  display: block;
-  height: 4px;
-  border-top: solid 4px #e1e1e1; }
-
 #menu-informations,
 #menu-actualites,
 #menu-offretheses {
@@ -527,12 +521,6 @@ ul.roadmap.pagination {
     #menu-actualites .nav-item .nav-link,
     #menu-offretheses .nav-item .nav-link {
       padding: 0.3rem 0.3rem; }
-    #menu-informations .nav-item span.divider,
-    #menu-actualites .nav-item span.divider,
-    #menu-offretheses .nav-item span.divider {
-      display: block;
-      height: 3px;
-      border-top: solid 3px #e1e1e1; }
 
 #menu-actualites .nav-item .badge {
   font-size: 70%;
@@ -664,10 +652,11 @@ span.sas-highlight {
   margin-right: 0.2rem;
   margin-top: -3px; }
 
-.user-usurpation-form {
+.user-usurpation-form .user-usurpation-submit {
+  margin-top: 0; }
+
+.popover-body .user-usurpation-form {
   padding-top: 1em; }
-  .user-usurpation-form .user-usurpation-submit {
-    margin-top: 0; }
 
 .user-usurpation-stop-btn {
   padding-top: 1em; }

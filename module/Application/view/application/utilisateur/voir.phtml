@@ -102,7 +102,6 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
                             //$individuUsurpationHelper->setIndividu($individu);
                             //echo $individuUsurpationHelper();
                             ?>
-                            <br/>
                             <a href="<?php echo $this->url('utilisateur/delier-individu', ['utilisateur' => $utilisateur->getId()], [], true);?>" class="btn btn-danger">Délier de l'utilisateur</a>
                         </div>
                     </h2>
@@ -110,25 +109,25 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
 
                 <div class="card-body">
                     <dl class="row">
-                        <dt>Id</dt>
-                        <dd><?php echo $individu->getId() ?></dd>
-                        <dt>État civil</dt>
-                        <dd><?php echo $individu->getNomComplet(true, true, true) ?></dd>
-                        <dt>Date de naissance</dt>
-                        <dd><?php echo $individu->getDateNaissanceToString() ?></dd>
-                        <dt>Supann Id</dt>
-                        <dd><?php echo $individu->getSupannId() ?></dd>
-                        <dt>Email de contact</dt>
-                        <dd><?php echo $individu->getEmailContact() ?></dd>
-                        <dt>Source code</dt>
-                        <dd><code><?php echo $individu->getSourceCode() ?></code></dd>
-                        <dt>Source</dt>
-                        <dd><?php echo $individu->getSource() ?></dd>
-                        <dt>Dernière modification</dt>
-                        <dd><?php echo $individu->getHistoModification()->format('d/m/Y H:i:s') ?></dd>
+                        <dt class="col-md-5">Id</dt>
+                        <dd class="col-md-5"><?php echo $individu->getId() ?></dd>
+                        <dt class="col-md-5">État civil</dt>
+                        <dd class="col-md-5"><?php echo $individu->getNomComplet(true, true, true) ?></dd>
+                        <dt class="col-md-5">Date de naissance</dt>
+                        <dd class="col-md-5"><?php echo $individu->getDateNaissanceToString() ?: "?" ?></dd>
+                        <dt class="col-md-5">Supann Id</dt>
+                        <dd class="col-md-5"><?php echo $individu->getSupannId() ?: "?" ?></dd>
+                        <dt class="col-md-5">Email de contact</dt>
+                        <dd class="col-md-5"><?php echo $individu->getEmailContact() ?: "?" ?></dd>
+                        <dt class="col-md-5">Source code</dt>
+                        <dd class="col-md-5"><code><?php echo $individu->getSourceCode() ?></code></dd>
+                        <dt class="col-md-5">Source</dt>
+                        <dd class="col-md-5"><?php echo $individu->getSource() ?></dd>
+                        <dt class="col-md-5">Dernière modification</dt>
+                        <dd class="col-md-5"><?php echo $individu->getHistoModification()->format('d/m/Y H:i:s') ?></dd>
                         <?php if ($individu->estHistorise()): ?>
-                            <dt class="text-danger">Historisé le</dt>
-                            <dd class="text-danger"><?php echo $individu->getHistoCreation()->format('d/m/Y H:i:s') ?></dd>
+                            <dt class="col-md-5 text-danger">Historisé le</dt>
+                            <dd class="col-md-5 text-danger"><?php echo $individu->getHistoCreation()->format('d/m/Y H:i:s') ?></dd>
                         <?php endif ?>
                     </dl>
 
@@ -160,7 +159,6 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
         <h2 class="first">
             <?php echo $this->translate("Jeton d'authentification") ?>
             <div class="float-end">
-                <br>
                 <?php echo $this->partial('unicaen-auth-token/token/partial/add-button', [
                     'route' => 'utilisateur/ajouter-token',
                     'redirect' => $redirect,

@@ -112,7 +112,6 @@ h2.modal-title {
 }
 
 .card .card-header {
-  text-transform: uppercase;
   font-weight: 400;
 }
 .card-header.bg-info  {
@@ -288,7 +287,7 @@ span.ballot-box {
     margin-right: 3px;
   }
 }
-div#sidebar {
+#sidebar {
   margin-bottom: 30px;
 }
 
@@ -798,16 +797,6 @@ ul.roadmap.pagination {
 
 /************* Menu *************/
 
-.nav {
-  li > span.divider {
-    display: block;
-    height: 4px;
-    border-top: solid 4px #e1e1e1;
-    //margin: 5px 0 5px;
-  }
-}
-
-
 #menu-informations,
 #menu-actualites,
 #menu-offretheses {
@@ -836,11 +825,11 @@ ul.roadmap.pagination {
       padding: 0.3rem 0.3rem;
     }
 
-    span.divider {
-      display: block;
-      height: 3px;
-      border-top: solid 3px #e1e1e1;
-    }
+    //span.divider {
+    //  display: block;
+    //  height: 3px;
+    //  border-top: solid 3px #e1e1e1;
+    //}
   }
 }
 
@@ -1045,7 +1034,6 @@ span.sas-highlight {
   margin-top: -3px;
 }
 .user-usurpation-form {
-  padding-top: 1em;
   .form-group {
     // ENLEVÉ CAR PERTURBE LE PADDING BOTTOM DU POPOVER
     //float: left;
@@ -1053,6 +1041,11 @@ span.sas-highlight {
   }
   .user-usurpation-submit {
     margin-top: 0;
+  }
+}
+.popover-body {
+  .user-usurpation-form {
+    padding-top: 1em;
   }
 }
 .user-usurpation-stop-btn {

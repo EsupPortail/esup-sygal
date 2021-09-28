@@ -35,7 +35,7 @@ function afficherUtilisateur(Acteur $a) {
     $utilisateurs = $a->getIndividu()->getUtilisateurs();
 
     if (empty($utilisateurs)) {
-        return "<span style='color:darkred;' class='icon icon-delete iconly'></span>";
+        return "<span style='color:darkred;' class='icon icon-ko iconly'></span>";
     }
 
     $title = "";
@@ -53,7 +53,7 @@ function afficherMailIndividu(Acteur $a) {
                     $a->getIndividu()->getEmail() ."'
                     data-bs-toggle='tooltip' data-bs-html='true'></span>";
     }
-    return "<span class='icon icon-delete iconly' style='color:darkred;' title='Pas d email lié à l individu'></span>";
+    return "<span class='icon icon-ko iconly' style='color:darkred;' title='Pas d email lié à l individu'></span>";
 }
 
 function afficherMailMembre(Acteur $a) {
@@ -63,7 +63,7 @@ function afficherMailMembre(Acteur $a) {
                 $a->getMembre()->getEmail().'" 
                 data-bs-toggle="tooltip" data-bs-html="true"></span>';
     }
-    return '<span class="icon icon-delete iconly" style="color:darkred;" title="Pas d email lié à un membre de soutenance"></span>';
+    return '<span class="icon icon-ko iconly" style="color:darkred;" title="Pas d email lié à un membre de soutenance"></span>';
 }
 
 function afficherThese(Acteur $a, $renderer) {
@@ -99,7 +99,7 @@ function afficherCorrectionEffectuees(Acteur $a) {
     $correction = $these->getValidations('DEPOT_THESE_CORRIGEE')->toArray();
 
     if (empty($correction)) {
-        return "<span class='icon icon-delete iconly' style='color:darkred;'></span>";
+        return "<span class='icon icon-ko iconly' style='color:darkred;'></span>";
     }
 
     return "<span class='icon icon-ok' style='color:darkgreen;'></span>";
