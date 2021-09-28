@@ -666,9 +666,6 @@ span.sas-highlight {
 
 .user-usurpation-form {
   padding-top: 1em; }
-  .user-usurpation-form .form-group {
-    float: left;
-    margin-right: 5px; }
   .user-usurpation-form .user-usurpation-submit {
     margin-top: 0; }
 
@@ -727,9 +724,6 @@ span.sas-highlight {
 .valide {
   font-weight: 600;
   color: #2EA662; }
-
-span.badge {
-  font-weight: bold; }
 
 span.badge.EN_COURS {
   background: #009ce4; }

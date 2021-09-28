@@ -7,6 +7,9 @@ body {
   padding-top: 60px;
   padding-bottom: 100px; }
 
+a {
+  text-decoration: none; }
+
 h1 {
   font-size: 29.25px; }
 
@@ -125,7 +128,7 @@ h1.app-name {
     padding-left: 0.25rem;
     padding-right: 0.25rem; }
   #navbar .nav-item.active .nav-link {
-    background-color: #004980; }
+    font-weight: bold; }
   #navbar .dropdown-item {
     padding: 0.2rem 1rem; }
   #navbar .dropdown-item.active {

@@ -1,11 +1,11 @@
 ```bash
 
-cd app              && git remote set-url origin git@git:/lib/unicaen/app           ; cd ..
-cd auth             && git remote set-url origin git@git:/lib/unicaen/auth          ; cd ..
-cd auth-token       && git remote set-url origin git@git:/lib/unicaen/auth-token    ; cd ..
-cd code             && git remote set-url origin git@git:/lib/unicaen/code          ; cd ..
-cd db-import        && git remote set-url origin git@git:/lib/unicaen/db-import     ; cd ..
-cd faq              && git remote set-url origin git@git:/lib/unicaen/faq           ; cd ..
+cd app              && git remote set-url origin git@git.unicaen.fr:/lib/unicaen/app           ; cd ..
+cd auth             && git remote set-url origin git@git.unicaen.fr:/lib/unicaen/auth          ; cd ..
+cd auth-token       && git remote set-url origin git@git.unicaen.fr:/lib/unicaen/auth-token    ; cd ..
+cd code             && git remote set-url origin git@git.unicaen.fr:/lib/unicaen/code          ; cd ..
+cd db-import        && git remote set-url origin git@git.unicaen.fr:/lib/unicaen/db-import     ; cd ..
+cd faq              && git remote set-url origin git@git.unicaen.fr:/lib/unicaen/faq           ; cd ..
 
 ```
 
@@ -77,10 +77,10 @@ cd auth-token       && git add . && git checkout -b bootstrap5_migration && git 
 cd code             && git add . && git checkout -b bootstrap5_migration && git push --set-upstream origin bootstrap5_migration ; cd ..
 cd faq              && git add . && git checkout -b bootstrap5_migration && git push --set-upstream origin bootstrap5_migration ; cd ..
 
-cd app        && echo && echo "========= $PWD =========" && git add . && git commit -m "WIP bootstrap 4 => 5" && git push ; cd .. ; \
-cd auth       && echo && echo "========= $PWD =========" && git add . && git commit -m "WIP bootstrap 4 => 5" && git push ; cd .. ; \
-cd auth-token && echo && echo "========= $PWD =========" && git add . && git commit -m "WIP bootstrap 4 => 5" && git push ; cd .. ; \
-cd code       && echo && echo "========= $PWD =========" && git add . && git commit -m "WIP bootstrap 4 => 5" && git push ; cd .. ; \
-cd faq        && echo && echo "========= $PWD =========" && git add . && git commit -m "WIP bootstrap 4 => 5" && git push ; cd ..
+cd app        && echo && echo "========= $PWD =========" && git add . && git commit -m "WIP bootstrap 4 => 5" ; git push ; cd .. ; \
+cd auth       && echo && echo "========= $PWD =========" && git add . && git commit -m "WIP bootstrap 4 => 5" ; git push ; cd .. ; \
+cd auth-token && echo && echo "========= $PWD =========" && git add . && git commit -m "WIP bootstrap 4 => 5" ; git push ; cd .. ; \
+cd code       && echo && echo "========= $PWD =========" && git add . && git commit -m "WIP bootstrap 4 => 5" ; git push ; cd .. ; \
+cd faq        && echo && echo "========= $PWD =========" && git add . && git commit -m "WIP bootstrap 4 => 5" ; git push ; cd ..
 
 ```

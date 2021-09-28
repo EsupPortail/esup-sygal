@@ -1047,8 +1047,9 @@ span.sas-highlight {
 .user-usurpation-form {
   padding-top: 1em;
   .form-group {
-    float: left;
-    margin-right: 5px;
+    // ENLEVÉ CAR PERTURBE LE PADDING BOTTOM DU POPOVER
+    //float: left;
+    //margin-right: 5px;
   }
   .user-usurpation-submit {
     margin-top: 0;
@@ -1128,10 +1129,6 @@ span.sas-highlight {
 .valide {
   font-weight: 600;
   color: $successColor;
-}
-
-span.badge {
-  font-weight: bold;
 }
 
 span.badge.EN_COURS {
