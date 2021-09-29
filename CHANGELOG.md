@@ -5,6 +5,7 @@ Journal des modifications
 -----
 - Ajout d'une valeur d'état aux soutenances "Validée par l'établissement" post validation d'une soutenance par la présidence de l'établissement
 - [FIX] Plus de demande de justificatif pour la confidentialité si la demande est faite en amont de la soutenance
+- [FIX] La notif de validation de la version corrigée par le Président du jury faisait mention à tort du Directeur de thèse.
 
 3.0.1
 -----
