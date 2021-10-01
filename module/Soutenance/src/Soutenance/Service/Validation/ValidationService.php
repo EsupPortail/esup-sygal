@@ -93,21 +93,24 @@ class ValidationService
      * @param These $these
      * @return Validation
      */
-    public function validatePropositionSoutenance($these)
+    public function validatePropositionSoutenance(These $these) : Validation
     {
         // l'individu sera enregistré dans la validation pour faire le lien entre Utilisateur et Individu.
         $individu = $this->userContextService->getIdentityIndividu();
+        $v = $this->getRepository()->findValidationByTheseAndCodeAndIndividu($these, TypeValidation::CODE_PROPOSITION_SOUTENANCE, $individu);
 
-        $v = new Validation(
-            $this->getTypeValidation(TypeValidation::CODE_PROPOSITION_SOUTENANCE),
-            $these,
-            $individu);
+        if ($v === null) {
+            $v = new Validation(
+                $this->getTypeValidation(TypeValidation::CODE_PROPOSITION_SOUTENANCE),
+                $these,
+                $individu);
 
-        $this->entityManager->persist($v);
-        try {
-            $this->entityManager->flush($v);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Erreur lors de l'enregistrement de la validation en bdd", null, $e);
+            $this->entityManager->persist($v);
+            try {
+                $this->entityManager->flush($v);
+            } catch (OptimisticLockException $e) {
+                throw new RuntimeException("Erreur lors de l'enregistrement de la validation en bdd", null, $e);
+            }
         }
 
         return $v;

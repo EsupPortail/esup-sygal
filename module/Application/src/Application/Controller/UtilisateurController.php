@@ -2,6 +2,7 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\Utilisateur;
@@ -12,6 +13,7 @@ use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
+use Application\Service\Doctorant\DoctorantServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
@@ -59,6 +61,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use SourceCodeStringHelperAwareTrait;
     use UserServiceAwareTrait;
     use TokenServiceAwareTrait;
+    use DoctorantServiceAwareTrait;
 
     use InitCompteFormAwareTrait;
 
@@ -144,9 +147,10 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         /** @var Utilisateur $utilisateur */
         $utilisateur = $this->utilisateurService->getRepository()->find($id);
 
-        $rolesAffectes = [];
+        $rolesAffectes = $rolesAffectesAuto = [];
         if ($individu = $utilisateur->getIndividu()) {
             $rolesAffectes = $individu->getRoles();
+            $rolesAffectesAuto = $this->collectRolesDynamiquesForIndividu($individu);
         }
 
         $roles = $this->roleService->findAllRoles();
@@ -167,12 +171,44 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             'tokens' => $userTokens,
             'roles' => $roles,
             'rolesAffectes' => $rolesAffectes,
+            'rolesAffectesAuto' => $rolesAffectesAuto,
             'etablissements' => $etablissements,
             'ecoles' => $ecoles,
             'unites' => $unites,
             'redirect' => $this->url()->fromRoute(null, [], [], true),
         ]);
 
+    }
+
+    /**
+     * @param \Application\Entity\Db\Individu $individu
+     * @return \Application\Entity\Db\Role[]
+     */
+    private function collectRolesDynamiquesForIndividu(Individu $individu): array
+    {
+        $roles = [];
+
+        // rôles d'acteur
+        $acteurs = $this->acteurService->getRepository()->findActeursByIndividu($individu);
+        if ($acteurs) {
+            $acteursDirecteurThese = $this->acteurService->filterActeursDirecteurThese($acteurs);
+            $acteursCoDirecteurThese = $this->acteurService->filterActeursCoDirecteurThese($acteurs);
+            $acteursPresidentJury = $this->acteurService->filterActeursPresidentJury($acteurs);
+            $acteursRapporteurJury = $this->acteurService->filterActeursRapporteurJury($acteurs);
+            $roles = array_merge($roles, array_map(
+                function (Acteur $a) {
+                    return $a->getRole();
+                },
+                array_merge($acteursDirecteurThese, $acteursCoDirecteurThese, $acteursPresidentJury, $acteursRapporteurJury)
+            ));
+        }
+
+        $doctorant = $this->doctorantService->getRepository()->findOneByIndividu($individu);
+        if ($doctorant) {
+            $roles[] = $this->roleService->getRepository()->findRoleDoctorantForEtab($doctorant->getEtablissement());
+        }
+
+        return array_unique($roles);
     }
 
     /**

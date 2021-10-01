@@ -30,14 +30,14 @@ if ($version->estVersionCorrigee() && ! $resaisirAutorisationDiffusionVersionCor
 }
 ?>
 
-<div class="box panel panel-info">
+<div class="box card">
 
-    <div class="panel-heading">
+    <div class="card-header bg-info">
         <h2 class="first">Autorisation de diffusion
             <?php if ($diffusion && $diffusion->estCreationAuto()): ?><span>(Rappel)</span><?php endif ?></h2>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
         <?php if ($hasFichierThese): ?>
 
             <!-------------------------------------- Questionnaire --------------------------------------->
@@ -45,14 +45,14 @@ if ($version->estVersionCorrigee() && ! $resaisirAutorisationDiffusionVersionCor
                 <?php echo $this->partial('application/these/partial/diffusion') ?>
                 <?php if ($canEdit): ?>
                     <p><a href="<?php echo $modifierDiffusionUrl ?>"
-                          class="btn btn-default zajax-modal"
-                          data-event="event-diffusion-modified"><span class="glyphicon glyphicon-pencil"></span> Modifier</a></p>
+                          class="btn btn-secondary zajax-modal"
+                          data-event="event-diffusion-modified"><span class="icon icon-edit"></span> Modifier</a></p>
                 <?php endif ?>
             <?php else: ?>
                 <?php if ($canEdit): ?>
                     <p><a href="<?php echo $modifierDiffusionUrl ?>"
                           class="btn btn-primary zajax-modal"
-                          data-event="event-diffusion-modified"><span class="glyphicon glyphicon-pencil"></span> Compléter</a></p>
+                          data-event="event-diffusion-modified"><span class="icon icon-edit"></span> Compléter</a></p>
                 <?php endif ?>
             <?php endif ?>
 
@@ -62,7 +62,7 @@ if ($version->estVersionCorrigee() && ! $resaisirAutorisationDiffusionVersionCor
 
                 <h2>Convention de mise en ligne</h2>
                 <p><a href="<?php echo $exporterConventionMelUrl ?>" target="_blank"
-                      class="btn btn-primary"><span class="glyphicon glyphicon-export"></span>
+                      class="btn btn-primary"><span class="icon icon-export"></span>
                         Éditer la convention de mise en ligne</a></p>
             <?php endif ?>
 

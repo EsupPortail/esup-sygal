@@ -158,17 +158,9 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
         return $this->these->getValidation(TypeValidation::CODE_DEPOT_THESE_CORRIGEE) !== null;
     }
 
-    protected function isDateButoirDepotVersionCorrigeeDepassee()
+    protected function isDateButoirDepotVersionCorrigeeDepassee(): bool
     {
-        // il y a une date butoir pour déposer la version corrigée et valider son dépôt
-        $dateButoir = $this->these->getDateButoirDepotVersionCorrigee();
-        if ($dateButoir !== null) {
-            $now = new \DateTime('today'); // The time is set to 00:00:00
-
-            return $now > $dateButoir;
-        }
-
-        return false;
+        return $this->these->isDateButoirDepotVersionCorrigeeDepassee();
     }
 
     protected function isUtilisateurEstAuteurDeLaThese()

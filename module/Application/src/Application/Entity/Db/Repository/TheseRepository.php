@@ -35,11 +35,9 @@ class TheseRepository extends DefaultEntityRepository
             ->andWhereCorrectionAutorisee()
             ->andWhere('t.dateSoutenance is not null');
 
-        $theses = array_filter($qb->getQuery()->getResult(), function (These $these) {
-            return $these->getDateButoirDepotVersionCorrigeeDepassee();
+        return array_filter($qb->getQuery()->getResult(), function (These $these) {
+            return $these->isDateButoirDepotVersionCorrigeeDepassee();
         });
-
-        return $theses;
     }
 
     /**

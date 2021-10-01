@@ -1,4 +1,4 @@
-# Installation de SyGAL
+# Installation de ESUP-SyGAL
 
 
 

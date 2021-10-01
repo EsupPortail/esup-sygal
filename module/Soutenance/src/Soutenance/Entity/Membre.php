@@ -5,10 +5,11 @@ namespace Soutenance\Entity;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
+use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 
-class Membre {
+class Membre implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
     const MEMBRE_JURY        = 'Membre';
@@ -292,7 +293,7 @@ class Membre {
         return $this;
     }
 
-    public function isMembre() {
+    public function estMembre() {
         switch ($this->getRole()) {
             case Membre::RAPPORTEUR_JURY :
             case Membre::RAPPORTEUR_VISIO :

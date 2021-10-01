@@ -68,7 +68,7 @@ class InformationForm extends Form implements InputFilterProviderInterface {
             'options' => [
                 'label' => 'Contenu : ',
                 'label_attributes' => [
-                    'class' => 'control-label',
+                    'class' => 'col-form-label',
                 ],
             ],
             'attributes' => [

@@ -47,6 +47,7 @@ class TheseRechercheController extends AbstractController implements SearchContr
     {
         $text = $this->params()->fromQuery('text');
 
+        /** @see TheseSearchService */
         $result = $this->searchIfRequired ? $this->searchIfRequested() : $this->search();
         if ($result instanceof Response) {
             return $result;

@@ -23,7 +23,7 @@ $this->headTitle($this->translate("Statistiques"));
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <h1 class="page-header first"><?php echo $this->translate("Statistiques") ?> <span
-            class="badge"><?php echo count($theses) . " thèses"?></span></h1>
+            class="badge bg-secondary"><?php echo count($theses) . " thèses"?></span></h1>
 
     <div id="selector">
         <form id="selection" method="get" action="">
@@ -58,7 +58,7 @@ $this->headTitle($this->translate("Statistiques"));
 
 <script>
     $(document).ready(function() {
-        $("input[type='radio']").change(function() {
+        $("input[type='radio']").on("change", function() {
             $('select#structure_id').find('option').remove();
 
             switch($(this).attr("value")) {
@@ -254,8 +254,8 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
         }
     }
 </script>
-<div class="box panel panel-info">
-    <div class="panel-heading">
+<div class="box card">
+    <div class="card-header bg-info">
         <h2 class="first">
             Évolution du nombre d'inscriptions en thèses et du nombre de soutenances
         </h2>
@@ -295,8 +295,8 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
         }
     }
 </script>
-<div class="box panel panel-info">
-    <div class="panel-heading">
+<div class="box card">
+    <div class="card-header bg-info">
         <h2 class="first">
             Évolution de la durée des thèses
         </h2>
@@ -359,8 +359,8 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
         }
     }
 </script>
-<div class="box panel panel-info" style="height: 550px;">
-    <div class="panel-heading">
+<div class="box card" style="height: 550px;">
+    <div class="card-header bg-info">
         <h2 class="first">
             Répartition des inscriptions entre <?php echo $start; ?> et <?php echo $end; ?>
         </h2>
@@ -370,8 +370,8 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
 
 </div>
 
-<div class="box panel panel-info" style="height: 550px;">
-    <div class="panel-heading">
+<div class="box card" style="height: 550px;">
+    <div class="card-header bg-info">
     <h2> Statistiques sur la parité </h2>
     </div>
 
@@ -466,8 +466,8 @@ $effectifParPays = generateEffectifParPays($effectifsInscription, $start, $end);
         }
     }
 </script>
-<div class="box panel panel-info" style="height: 550px;">
-    <div class="panel-heading">
+<div class="box card" style="height: 550px;">
+    <div class="card-header bg-info">
         <h2 class="first">
             Provenance des doctorants inscrits entre <?php echo $start; ?> et <?php echo $end; ?>
         </h2>

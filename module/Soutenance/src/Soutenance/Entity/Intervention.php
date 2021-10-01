@@ -3,9 +3,10 @@
 namespace Soutenance\Entity;
 
 use Application\Entity\Db\These;
+use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class Intervention {
+class Intervention implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
     const TYPE_DISTANCIEL = 1;

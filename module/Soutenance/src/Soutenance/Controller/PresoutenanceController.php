@@ -5,17 +5,22 @@ namespace Soutenance\Controller;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Profil;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\Source;
 use Application\Entity\Db\TypeValidation;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
+use Doctrine\ORM\OptimisticLockException;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
@@ -60,6 +65,7 @@ class PresoutenanceController extends AbstractController
     use FichierServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
     use TokenServiceAwareTrait;
+    use SourceServiceAwareTrait;
 
     use DateRenduRapportFormAwareTrait;
     use AdresseSoutenanceFormAwareTrait;
@@ -229,7 +235,7 @@ class PresoutenanceController extends AbstractController
 
             $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
             $url = $this->url()->fromRoute('zfcuser/login', ['type'=> 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $acteur->getRole()->getRoleId()], 'force_canonical' => true], true );
-            $this->getNotifierSoutenanceService()->triggerConnexionRapporteur($these, $user, $url);
+            $this->getNotifierSoutenanceService()->triggerConnexionRapporteur($proposition, $user, $url);
         }
 
 
@@ -237,7 +243,7 @@ class PresoutenanceController extends AbstractController
 //                $this->getNotifierSoutenanceService()->triggerInitialisationCompte($these, $user, $url);
 
         return new ViewModel([
-            'title' => "Association de " . $membre->getDenomination() . " à un acteur SyGAL",
+            'title' => "Association de " . $membre->getDenomination() . " à un acteur " . $this->appInfos()->getNom(),
             'acteurs' => $acteurs_libres,
             'membre' => $membre,
             'these' => $these,
@@ -261,9 +267,9 @@ class PresoutenanceController extends AbstractController
         $membre->setActeur(null);
         $this->getMembreService()->update($membre);
 
-        $validations = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these, TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $acteur->getIndividu());
-        if (!empty($validations)) {
-            $this->getValidationService()->unsignEngagementImpartialite(current($validations));
+        $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these, TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $acteur->getIndividu());
+        if ($validation !== null) {
+            $this->getValidationService()->unsignEngagementImpartialite($validation);
         }
 
         $utilisateur = $this->utilisateurService->getRepository()->findByUsername($username);
@@ -548,7 +554,7 @@ class PresoutenanceController extends AbstractController
         //membres
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
-            if ($membre->isMembre()) {
+            if ($membre->estMembre()) {
                 $email = ($membre->getIndividu() and $membre->getIndividu()->getEmail()) ? $membre->getIndividu()->getEmail() : $membre->getEmail();
                 /** @see PresoutenanceController::convocationMembreAction() */
                 $url = $this->url()->fromRoute('soutenance/presoutenance/convocation-membre', ['proposition' => $proposition->getId(), 'membre' => $membre->getId()], ['force_canonical' => true], true);
@@ -582,5 +588,108 @@ class PresoutenanceController extends AbstractController
         if ($acteur === null) throw new LogicException("La génération du username est basée sur l'Individu qui est mamquant.");
         $nomusuel = strtolower($acteur->getIndividu()->getNomUsuel());
         return ($nomusuel . "_" . $membre->getId());
+    }
+
+    public function genererSimulationAction()
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+        $membres = $proposition->getMembres();
+
+        /** @var Role $rapporteur */
+        /** @var Role $membreJury */
+        $rapporteur = $this->getRoleService()->getRepository()->findOneBy(['code' => 'R', 'structure' => $these->getEtablissement()->getStructure()]);
+        $membreJury = $this->getRoleService()->getRepository()->findOneBy(['code' => 'M', 'structure' => $these->getEtablissement()->getStructure()]);
+
+        /** @var Source $sygal */
+        $sygal = $this->sourceService->getRepository()->findOneBy(['code' => 'SYGAL::sygal']);
+
+        /** @var Membre $membre */
+        foreach($membres as $membre) {
+            /** @var Individu $individu */
+            $source_code_individu = 'SyGAL_Simulation_' . $membre->getId();
+            $individu = $this->getIndividuService()->getRepository()->findOneBy(['sourceCode' => $source_code_individu]);
+            if ($individu === null) {
+                $individu = new Individu();
+                $individu->setPrenom($membre->getPrenom());
+                $individu->setNomUsuel($membre->getNom());
+                $individu->setEmail($membre->getEmail());
+                $individu->setSource($sygal);
+                $individu->setSourceCode($source_code_individu);
+                $this->getIndividuService()->getEntityManager()->persist($individu);
+                $this->getIndividuService()->getEntityManager()->flush($individu);
+            }
+
+            if ($membre->estRapporteur()) {
+                /** @var Acteur $acteur */
+                $source_code_acteur = 'SyGAL_Simulation_Rapporteur_' . $membre->getId();
+                $acteur = $this->getActeurService()->getRepository()->findOneBy(['sourceCode' => $source_code_acteur]);
+
+                if ($acteur === null) {
+                    $acteur = new Acteur();
+                    $acteur->setRole($rapporteur);
+                    $acteur->setIndividu($individu);
+                    $acteur->setThese($these);
+                    $acteur->setSource($sygal);
+                    $acteur->setSourceCode($source_code_acteur);
+                    $this->getActeurService()->getEntityManager()->persist($acteur);
+                    $this->getActeurService()->getEntityManager()->flush($acteur);
+                }
+            }
+
+            if ($membre->estMembre()) {
+                /** @var Acteur $acteur */
+                $source_code_acteur = 'SyGAL_Simulation_Membre_' . $membre->getId();
+                $acteur = $this->getActeurService()->getRepository()->findOneBy(['sourceCode' => $source_code_acteur]);
+
+                if ($acteur === null) {
+                    $acteur = new Acteur();
+                    $acteur->setRole($membreJury);
+                    $acteur->setIndividu($individu);
+                    $acteur->setThese($these);
+                    $acteur->setSource($sygal);
+                    $acteur->setSourceCode($source_code_acteur);
+                    $this->getActeurService()->getEntityManager()->persist($acteur);
+                    $this->getActeurService()->getEntityManager()->flush($acteur);
+                }
+            }
+        }
+
+        return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+    }
+
+    public function nettoyerSimulationAction()
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+        $membres = $proposition->getMembres();
+
+        foreach ($membres as $membre) {
+            /** @var Acteur $acteur */
+            $source_code_acteur = 'SyGAL_Simulation_Rapporteur_' . $membre->getId();
+            $acteur = $this->getActeurService()->getRepository()->findOneBy(['sourceCode' => $source_code_acteur]);
+            if ($acteur !== null) {
+                $this->getActeurService()->getEntityManager()->remove($acteur);
+                $this->getActeurService()->getEntityManager()->flush($acteur);
+            }
+
+            /** @var Acteur $acteur */
+            $source_code_acteur = 'SyGAL_Simulation_Membre_' . $membre->getId();
+            $acteur = $this->getActeurService()->getRepository()->findOneBy(['sourceCode' => $source_code_acteur]);
+            if ($acteur !== null) {
+                $this->getActeurService()->getEntityManager()->remove($acteur);
+                $this->getActeurService()->getEntityManager()->flush($acteur);
+            }
+
+            /** @var Individu $source_code_individu */
+            $source_code_individu = 'SyGAL_Simulation_' . $membre->getId();
+            $individu = $this->getIndividuService()->getRepository()->findOneBy(['sourceCode' => $source_code_individu]);
+            if ($individu !== null) {
+                $this->getActeurService()->getEntityManager()->remove($individu);
+                $this->getActeurService()->getEntityManager()->flush($individu);
+            }
+        }
+
+        return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 }

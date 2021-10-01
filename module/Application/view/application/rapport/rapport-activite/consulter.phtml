@@ -14,7 +14,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var These $these
  * @var Rapport[] $rapports
  * @var RapportActiviteForm $form
- * @var bool $tousLesRapportsTeleverses
+ * @var bool $isTeleversementPossible
  * @var TypeValidation $typeValidation
  *
  * @see \Application\Controller\Rapport\RapportActiviteController::consulterAction()
@@ -35,7 +35,7 @@ $privilege_DEVALIDER_SIEN = RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN;
 $form->prepare();
 $rapportProto = (new Rapport())->setThese($these);
 $canAdd = $this->isAllowed($rapportProto, $privilege_TELEVERSER_TOUT) || $this->isAllowed($rapportProto, $privilege_TELEVERSER_SIEN);
-if ($tousLesRapportsTeleverses) {
+if (!$isTeleversementPossible) {
     $canAdd = false;
 }
 ?>
@@ -63,7 +63,7 @@ if ($tousLesRapportsTeleverses) {
     <li>
         <strong>Vous devez rédiger un rapport d'activité de fin de thèse</strong> au moment de votre soutenance.
         Dans ce cas, les données indiquées doivent couvrir l'ensemble de la thèse. Il doit être
-        <strong>déposé ci-dessous dans l’application SyGAL au maximum 1 mois avant votre date de soutenance.</strong>
+        <strong>déposé ci-dessous dans l’application <?php echo $this->appInfos()->nom ?> au maximum 1 mois avant votre date de soutenance.</strong>
         Son dépôt conditionne votre autorisation de soutenance.
         <a href="<?php echo $this->url('fichier/telecharger-permanent', ['idPermanent' => 'RAPPORT_ACTIVITE_FINTHESE']) ?>"
         >Cliquez ici pour télécharger le document.</a>
@@ -106,7 +106,7 @@ if ($tousLesRapportsTeleverses) {
 
         <?php else: ?>
 
-            Aucun.
+            <p>Aucun.</p>
 
         <?php endif; ?>
 
@@ -116,24 +116,13 @@ if ($tousLesRapportsTeleverses) {
 <div class="row">
     <div class="col-md-offset-1 col-md-8">
 
-<!--        --><?php //if ($tousLesRapportsTeleverses): ?>
-<!--            <div class="row">-->
-<!--                <div class="col-md-6 text-success">-->
-<!--                    <p>-->
-<!--                        <span class="glyphicon glyphicon-info-sign"></span>-->
-<!--                        Toutes les années universitaires d'inscription du doctorant ont fait l'objet d'un téléversement de rapport.-->
-<!--                    </p>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        --><?php //endif ?>
-
         <?php $ajouterFormVisible = !empty($form->getMessages()); ?>
         <div id="ajouterDiv">
             <div class="row">
                 <div class="col-md-4">
                     <a href="#" id="ajouterBtn" class="btn btn-primary <?php echo $canAdd ? '' : 'disabled' ?>"
                        style="display: <?php echo !$ajouterFormVisible ? 'inherit' : 'none' ?>">
-                        <span class="glyphicon glyphicon-plus"></span> Téléverser un rapport</a>
+                        <span class="icon icon-plus"></span> Téléverser un rapport</a>
                 </div>
             </div>
 
@@ -188,13 +177,6 @@ if ($tousLesRapportsTeleverses) {
             $ajouterForm.hide();
             $ajouterBtn.show();
             return false;
-        });
-        $('[data-toggle=confirmation]').confirmation({
-            rootSelector: '[data-toggle=confirmation]',
-            container: 'body',
-            title: "Êtes-vous sûr(e) ?",
-            btnOkLabel: "Oui",
-            btnCancelLabel: "Non",
         });
     });
 </script>

@@ -13,7 +13,7 @@ use Application\Entity\Db\NatureFichier;
 
 <form method="post" action="<?php echo $action; ?>">
     <div class="form-group">
-        <label for="nature">Nature du fichier : </label>
+        <label for="nature" class="form-label">Nature du fichier : </label>
         <select class="form-control" id="nature" name="nature">
             <?php foreach ($natures as $nature) : ?>
                 <option value="<?php echo $nature->getId(); ?>"> <?php echo $nature->getLibelle(); ?> </option>
@@ -22,7 +22,7 @@ use Application\Entity\Db\NatureFichier;
     </div>
 
     <div class="form-group">
-        <label for="etablissement">Établissement lié : </label>
+        <label for="etablissement" class="form-label">Établissement lié : </label>
         <select class="form-control" id="etablissement" name="etablissement">
             <option> Aucun </option>
             <?php foreach ($etablissements as $etablissement) : ?>

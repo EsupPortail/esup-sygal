@@ -22,6 +22,7 @@
         <field name="libelleUniteRecherche" type="string" column="LIB_UNIT_RECH" length="200" nullable="true"/>
         <field name="correctionAutorisee" type="string" column="CORREC_AUTORISEE" nullable="true"/>
         <field name="correctionAutoriseeForcee" type="string" column="CORREC_AUTORISEE_FORCEE" nullable="true"/>
+        <field name="dateButoirDepotVersionCorrigeeAvecSursis" type="datetime" column="correc_date_butoir_avec_sursis" nullable="true"/>
         <field name="correctionEffectuee" type="string" column="CORREC_EFFECTUEE" nullable="true"/>
         <field name="libelleEtabCotutelle" type="string" column="LIB_ETAB_COTUT" nullable="true"/>
         <field name="libellePaysCotutelle" type="string" column="LIB_PAYS_COTUT" nullable="true"/>

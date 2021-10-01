@@ -22,11 +22,11 @@ $canValidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_DEPOT_T
 $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR);
 ?>
 
-<div class="panel panel-info box">
-    <div class="panel-heading">
+<div class="card box">
+    <div class="card-header bg-info">
         <h2 class="first"><?php echo $typeValidation ?></h2>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
 
         <?php if ($validation): ?>
             <ul class="validation">
@@ -38,7 +38,7 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_DEPOT
             <?php if ($canUnvalidate): ?>
                 <a href="<?php echo $devaliderUrl ?>"
                    class="btn btn-danger ajax-modal"
-                   data-event="event-validation-depot-these-corrigee"><span class="glyphicon glyphicon-trash"></span> Annuler la validation</a>
+                   data-event="event-validation-depot-these-corrigee"><span class="icon icon-delete"></span> Annuler la validation</a>
             <?php endif ?>
         <?php else: ?>
             <ul class="validation-attendue">
@@ -49,7 +49,7 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_DEPOT
             <?php if ($canValidate): ?>
                 <a href="<?php echo $validerUrl ?>"
                    class="btn btn-success ajax-modal"
-                   data-event="event-validation-depot-these-corrigee"><span class="glyphicon glyphicon-thumbs-up"></span> Valider</a>
+                   data-event="event-validation-depot-these-corrigee"><span class="fas fa-thumbs-up"></span> Valider</a>
             <?php endif ?>
         <?php endif ?>
 

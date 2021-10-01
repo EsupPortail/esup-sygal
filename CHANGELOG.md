@@ -1,12 +1,31 @@
 Journal des modifications
 =========================
 
+3.0.1
+-----
+- Renommage de l'application en ESUP-SyGAL.
+- Modèle de page de couverture de thèse personnalisable.
+- Substitution possible du favicon.
+- Possibilité d'accorder un sursis pour le dépôt de la verison corrigée de la thèse.
+- Page d'accueil : laïus en cas d'utilisateur ayant plusieurs rôles.
+- Page Utilisateur : affichage aussi des rôles attribués automatiquement.
+- Templatisation de la notification de confirmation d'adresse électronique
+- Ajout des gardes pour les actions de la page de presoutenance (au cas où l'accés est donnée aux acteurs directs)
+- [FIX] Bloquage de la signature multiple de l'engagement d'impartilité
+- [FIX] Bloquage de la validation multiple des propositions lors de la validation acteur
+- [FIX] Correction du tri des thèses par titre (plantage) et par date de soutenance (inopérant)
+- [FIX] Changement du sujet associé à la validation finale de la proposition de soutenance
+- [FIX] Correction de l'envoi multiple de notification vers le président de jury lors du dépôt d'une version corrigée.
+- Modification de l'assertion ouvrant la validation de l'UR
+- [FIX] Impossibilité de déposer un rapport d'activité de fin de thèse en plus d'un rapport annuel.
+
 3.0.0 (oracle => postgres)
 -----
 - Base de données : abandon d'Oracle et passage à PostgreSQL.
   *Attention : aucun script SQL universel de migration d'une base Oracle existante vers une base PostgreSQL n'est fourni 
   avec cette version. Si vous êtes déjà utilisateur de SyGAL en production, prenez contact avec les développeurs de 
   SyGAL pour réaliser une telle migration.*
+- Ajout de bouton pour simuler les remontés des SI pour le jeury de thèse
 - [FIX] Meilleure gestion d'erreur en cas de demande d'usurpation d'un individu n'ayant pas de compte utilisateur.
 
 2.2.3

@@ -74,7 +74,11 @@ line;enabled;privilege;isRoleDoctorantSelected;;isStructureDuRoleRespectee;;isTh
 72;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;;;;;1:1;;;;;;;;;;;;;;;;;;;;;0;Opération impossible dès lors qu’une version corrigée est attendue.
 73;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;;;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la bibliothèque universitaire a validé.
 74;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_VERSION_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-75;1;\Application\Provider\Privilege\ThesePrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-76;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
-77;1;\Application\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT;1:1;;;;;;;;;;;;;;;;;;;;;2:0;;;;;;0;Vous ne pouvez pas visualiser l’adresse de contact car vous n’êtes pas l’auteur de la thèse
-78;1;\Application\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+75;1;\Application\Provider\Privilege\ThesePrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;;;;1:0;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
+76;1;\Application\Provider\Privilege\ThesePrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;;;;;1:0;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée n’est pas dépassée (%s).
+77;1;\Application\Provider\Privilege\ThesePrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;;;;;;;;;;;;;;1:1;;;;;;;;;;;0;Le dépôt de la version corrigée a été validé par le doctorant.
+78;1;\Application\Provider\Privilege\ThesePrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+79;1;\Application\Provider\Privilege\ThesePrivileges::THESE_TELECHARGEMENT_FICHIER /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+80;1;\Application\Provider\Privilege\ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE /* évite UnexpectedPrivilegeException */;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;
+81;1;\Application\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT;1:1;;;;;;;;;;;;;;;;;;;;;2:0;;;;;;0;Vous ne pouvez pas visualiser l’adresse de contact car vous n’êtes pas l’auteur de la thèse
+82;1;\Application\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT;;;;;;;;;;;;;;;;;;;;;;;;;;;;1;

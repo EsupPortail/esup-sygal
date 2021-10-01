@@ -32,6 +32,8 @@ use Application\Service\Acteur\ActeurServiceFactory;
 use Application\Service\Financement\FinancementService;
 use Application\Service\Financement\FinancementServiceFactory;
 use Application\Service\Message\DiffusionMessages;
+use Application\Service\PageDeCouverture\PageDeCouverturePdfExporter;
+use Application\Service\PageDeCouverture\PageDeCouverturePdfExporterFactory;
 use Application\Service\ServiceAwareInitializer;
 use Application\Service\These\Factory\TheseObserverServiceFactory;
 use Application\Service\These\Factory\TheseSearchServiceFactory;
@@ -70,6 +72,7 @@ return [
                         //
                         'privileges' => [
                             ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE,
+                            ThesePrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS,
                             ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE,
                             ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE,
                             ThesePrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE,
@@ -236,6 +239,16 @@ return [
                     ],
                     'privileges' => [
                         ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE,
+                    ],
+                    'assertion' => 'Assertion\\These',
+                ],
+                [
+                    'controller' => 'Application\Controller\These',
+                    'action' => [
+                        'accorder-sursis-correction',
+                    ],
+                    'privileges' => [
+                        ThesePrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS,
                     ],
                     'assertion' => 'Assertion\\These',
                 ],
@@ -749,6 +762,7 @@ return [
                                 'these' => '\d+',
                             ],
                             'defaults' => [
+                                /** @see TheseController::accorderSursisCorrectionAction() */
                                 'controller' => 'Application\Controller\These',
                                 'action' => 'validation-these-corrigee',
                             ],
@@ -764,6 +778,19 @@ return [
                             'defaults' => [
                                 'controller' => 'Application\Controller\These',
                                 'action' => 'modifier-correction-autorisee-forcee',
+                            ],
+                        ],
+                    ],
+                    'accorder-sursis-correction' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route' => '/accorder-sursis-correction/:these',
+                            'constraints' => [
+                                'these' => '\d+',
+                            ],
+                            'defaults' => [
+                                'controller' => 'Application\Controller\These',
+                                'action' => 'accorder-sursis-correction',
                             ],
                         ],
                     ],
@@ -930,7 +957,7 @@ return [
                                 'paramsInject' => [
                                     'these',
                                 ],
-                                'icon' => 'glyphicon glyphicon-info-sign',
+                                'icon' => 'fas fa-info-circle',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-identite'),
                                 'etape' => null,
                                 'visible' => 'Assertion\\These',
@@ -1017,7 +1044,7 @@ return [
                                             'these',
                                         ],
                                         'class' => 'roadmap',
-                                        'icon' => 'glyphicon glyphicon-road',
+                                        'icon' => 'fas fa-road',
                                         'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'roadmap'),
                                         'etape' => null,
                                         'visible' => 'Assertion\\These',
@@ -1029,7 +1056,7 @@ return [
                                         'paramsInject' => [
                                             'these',
                                         ],
-                                        'icon' => 'glyphicon glyphicon-warning-sign',
+                                        'icon' => 'fas fa-exclamation-triangle',
                                         'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'modifier-rdv-bu'),
                                         'etape' => null,
                                         'visible' => 'Assertion\\These',
@@ -1042,7 +1069,7 @@ return [
                                         'paramsInject' => [
                                             'these',
                                         ],
-                                        'icon' => 'glyphicon glyphicon-duplicate',
+                                        'icon' => 'fas fa-copy',
                                         'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-fichiers'),
                                         'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
                                         'visible' => 'Assertion\\These',
@@ -1066,7 +1093,7 @@ return [
                                             'these',
                                         ],
                                         'class' => 'version-initiale correction-attendue-{correctionAutorisee}',
-                                        'icon' => 'glyphicon glyphicon-picture',
+                                        'icon' => 'fas fa-image',
                                         'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'validation-page-de-couverture'),
                                         //'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
                                         //'visible' => 'Assertion\\These',
@@ -1093,7 +1120,7 @@ return [
                                             'these',
                                         ],
                                         'class' => 'version-initiale correction-attendue-{correctionAutorisee} correction-effectuee-{correctionEffectuee}',
-                                        'icon' => 'glyphicon glyphicon-list-alt',
+                                        'icon' => 'fas fa-file-alt',
                                         'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-description'),
                                         'etape' => WfEtape::CODE_SIGNALEMENT_THESE,
                                         'visible' => 'Assertion\\These',
@@ -1106,7 +1133,7 @@ return [
                                             'these',
                                         ],
                                         'class' => 'version-initiale correction-attendue-{correctionAutorisee} correction-effectuee-{correctionEffectuee}',
-                                        'icon' => 'glyphicon glyphicon-folder-open',
+                                        'icon' => 'fas fa-folder-open',
                                         'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-archivage'),
                                         'etape' => WfEtape::CODE_ARCHIVABILITE_VERSION_ORIGINALE,
                                         'visible' => 'Assertion\\These',
@@ -1119,7 +1146,7 @@ return [
                                             'these',
                                         ],
                                         'class' => 'version-initiale correction-attendue-{correctionAutorisee} correction-effectuee-{correctionEffectuee}',
-                                        'icon' => 'glyphicon glyphicon-calendar',
+                                        'icon' => 'fas fa-calendar',
                                         'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-rdv-bu'),
                                         'etape' => WfEtape::CODE_RDV_BU_SAISIE_DOCTORANT,
                                         'visible' => 'Assertion\\These',
@@ -1141,7 +1168,7 @@ return [
                                         'paramsInject' => [
                                             'these',
                                         ],
-                                        'icon' => 'glyphicon glyphicon-duplicate',
+                                        'icon' => 'fas fa-copy',
                                         'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-fichiers'),
                                         'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE_CORRIGEE,
                                         'visible' => 'Assertion\\These',
@@ -1153,7 +1180,7 @@ return [
                                         'paramsInject' => [
                                             'these',
                                         ],
-                                        'icon' => 'glyphicon glyphicon-folder-open',
+                                        'icon' => 'fas fa-folder-open',
                                         'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'detail-archivage'),
                                         'etape' => WfEtape::CODE_ARCHIVABILITE_VERSION_ORIGINALE_CORRIGEE,
                                         'visible' => 'Assertion\\These',
@@ -1165,7 +1192,7 @@ return [
                                         'paramsInject' => [
                                             'these',
                                         ],
-                                        'icon' => 'glyphicon glyphicon-calendar',
+                                        'icon' => 'fas fa-calendar',
                                         'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'validation-these-corrigee'),
                                         'etape' => WfEtape::CODE_DEPOT_VERSION_CORRIGEE_VALIDATION_DOCTORANT,
                                         'visible' => 'Assertion\\These',
@@ -1197,7 +1224,7 @@ return [
                                         'paramsInject' => [
                                             'these',
                                         ],
-                                        'icon' => 'glyphicon glyphicon-book',
+                                        'icon' => 'fas fa-book',
                                         'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'depot-papier-final'),
                                         'etape' => WfEtape::CODE_REMISE_EXEMPLAIRE_PAPIER_THESE_CORRIGEE,
                                         'visible' => 'Assertion\\These',
@@ -1307,6 +1334,7 @@ return [
             'TheseObserverService' => TheseObserverServiceFactory::class,
             FinancementService::class => FinancementServiceFactory::class,
             TheseAnneeUnivService::class => TheseAnneeUnivServiceFactory::class,
+            PageDeCouverturePdfExporter::class => PageDeCouverturePdfExporterFactory::class,
         ],
         'aliases' => [
             TheseService::class => 'TheseService',

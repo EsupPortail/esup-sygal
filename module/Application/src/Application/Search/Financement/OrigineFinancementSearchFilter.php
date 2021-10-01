@@ -23,7 +23,7 @@ class OrigineFinancementSearchFilter extends SelectSearchFilter
     static public function newInstance(): self
     {
         $instance = new self(
-            "Origine<br>financement",
+            "Orig. financ.",
             self::NAME,
             ['liveSearch' => true]
         );

@@ -172,29 +172,13 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     }
 
     /**
-     * Set email
+     * Retourne l'adresse mail de ce doctorant.
      *
-     * @param string $email
-     *
-     * @return self
-     * @deprecated Passe par getIndividu() toi-même !
+     * @return string|null
      */
-    public function setEmail($email)
+    public function getEmail(): ?string
     {
-        $this->getIndividu()->setEmail($email);
-
-        return $this;
-    }
-
-    /**
-     * Get email
-     *
-     * @return string
-     * @deprecated Passe par getIndividu() toi-même !
-     */
-    public function getEmail()
-    {
-        return $this->getIndividu()->getEmail();
+        return $this->getEmailPro() ?: $this->getIndividu()->getEmailBestOf();
     }
 
     /**
@@ -440,8 +424,11 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
      * Convenient method for $this->getComplement()->getEmailPro()
      *
      * @return null|string
+     *
+     * @deprecated Il faudrait abandonner la table DOCTORANT_COMPL car elle n'est plus alimentée mais elle contient
+     *             les adresses mails des doctorants ayant déposé jusqu'en 2018.
      */
-    public function getEmailPro()
+    public function getEmailPro(): ?string
     {
         if (!($complement = $this->getComplement())) {
             return null;

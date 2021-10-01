@@ -2,9 +2,10 @@
 
 namespace Soutenance\Entity;
 
+use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class QualiteLibelleSupplementaire {
+class QualiteLibelleSupplementaire implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
     /** @var integer */

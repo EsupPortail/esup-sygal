@@ -147,6 +147,7 @@ class TheseSearchService extends SearchService
             $this->createSorterNumeroEtudiant(),
             $this->createSorterDoctorant(),
             $this->createSorterDatePremiereInscription()->setDirection(Sortable::DESC)->setIsDefault(),
+            $this->createSorterDateSoutenance(),
         ]);
     }
 
@@ -194,7 +195,7 @@ class TheseSearchService extends SearchService
 
             case self::SORTER_NAME_titre:
                 // trim et suppression des guillemets
-                $orderBy = "TRIM(REPLACE($name, CHR(34), ''))"; // CHR(34) <=> "
+                $orderBy = "TRIM(REPLACE(these.$name, CHR(34), ''))"; // CHR(34) <=> "
                 $qb->addOrderBy($orderBy, $direction);
                 break;
 
@@ -480,7 +481,7 @@ EOS;
     private function createFilterAnneeUnivInscription(): SelectSearchFilter
     {
         $filter = new SelectSearchFilter(
-            "Année univ.<br>d'inscr.",
+            "An. univ. inscr.",
             self::NAME_anneeUnivInscription
         );
         $filter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
@@ -505,7 +506,7 @@ EOS;
     private function createFilterAnneeUniv1ereInscription(): SelectSearchFilter
     {
         $filter = new SelectSearchFilter(
-            "Année univ.<br>1ère inscr.",
+            "An. univ. 1ère inscr.",
             self::NAME_anneeUniv1ereInscription
         );
         $filter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
@@ -530,7 +531,7 @@ EOS;
     private function createFilterAnneeCivile1ereInscription(): SelectSearchFilter
     {
         $filter = new SelectSearchFilter(
-            "Année civile<br>1ère inscr.",
+            "An. civile 1ère inscr.",
             self::NAME_anneeCivile1ereInscription
         );
         $filter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
@@ -619,6 +620,19 @@ EOS;
         $sorter = new SearchSorter(
             "",
             TheseSorter::NAME_datePremiereInscription
+        );
+        $sorter->setQueryBuilderApplier([$this, 'applySorterToQueryBuilder']);
+        return $sorter;
+    }
+
+    /**
+     * @return SearchSorter
+     */
+    private function createSorterDateSoutenance(): SearchSorter
+    {
+        $sorter = new SearchSorter(
+            "",
+            TheseSorter::NAME_dateSoutenance
         );
         $sorter->setQueryBuilderApplier([$this, 'applySorterToQueryBuilder']);
         return $sorter;

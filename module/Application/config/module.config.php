@@ -299,22 +299,21 @@ return array(
     ],
     'public_files' => [
         'head_scripts' => [
-            '060_uploader' => "/js/jquery.ui.widget.js",
-            '061_uploader' => "/js/jquery.iframe-transport.js",
-            '062_uploader' => "/js/jquery.fileupload.js",
-            '063_uploader' => "/js/unicaen.uploader.widget.js",
-            '070_clipboard' => "/js/clipboard.min.js",
+            '060_uploader' => "/vendor/jquery.ui.widget.js",
+            '061_uploader' => "/vendor/jquery.iframe-transport.js",
+            '062_uploader' => "/vendor/jquery.fileupload.js",
+            '063_uploader' => "/vendor/unicaen.uploader.widget.js",
         ],
         'inline_scripts' => [
-            '070_bootstrap-select' => '/vendor/bootstrap-select-1.13.18/js/bootstrap-select.min.js',
-            '070_bootstrap-select-fr' => '/vendor/bootstrap-select-1.13.18/js/i18n/defaults-fr_FR.js',
-            '081_bootstrap-confirmation' => '/vendor/bootstrap-confirmation.min.js',
+            '070_bootstrap-select' => '/vendor/bootstrap-select-1.14.0-beta2/js/bootstrap-select.min.js',
+            '070_bootstrap-select-fr' => '/vendor/bootstrap-select-1.14.0-beta2/js/i18n/defaults-fr_FR.js',
         ],
         'stylesheets'           => [
             '050_bootstrap-theme' => false,
             '100_charte' => '/css/charte.css',
-            '200_fa' => '/fontawesome-free-5.12.0-web/css/all.min.css',
-            '300_bs' => '/vendor/bootstrap-select-1.13.18/css/bootstrap-select.min.css',
+            '200_fa' => '/vendor/fontawesome-free-5.12.0-web/css/all.min.css',
+            '300_bs' => '/vendor/bootstrap-select-1.14.0-beta2/css/bootstrap-select.min.css',
+            '400_faa' => '/vendor/font-awesome-animation.min.css',
         ],
         'printable_stylesheets' => [
         ],

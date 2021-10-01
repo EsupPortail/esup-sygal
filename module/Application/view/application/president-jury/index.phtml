@@ -24,7 +24,7 @@ function afficherActeur(Acteur $a) {
     }
     $title .= "</table>";
 
-    $texte  = "<span title='".$title."' data-toggle='tooltip' data-html='true'>";
+    $texte  = "<span title='".$title."' data-bs-toggle='tooltip' data-html='true'>";
     $texte .= $a->getIndividu()->getNomComplet();
     $texte .= "</span>";
     return $texte;
@@ -35,7 +35,7 @@ function afficherUtilisateur(Acteur $a) {
     $utilisateurs = $a->getIndividu()->getUtilisateurs();
 
     if (empty($utilisateurs)) {
-        return "<span style='color:darkred;' class='glyphicon glyphicon-remove'></span>";
+        return "<span style='color:darkred;' class='icon icon-ko iconly'></span>";
     }
 
     $title = "";
@@ -43,27 +43,27 @@ function afficherUtilisateur(Acteur $a) {
         if ($title !== "") $title .= "<hr/><br/>";
         $title .= $utilisateur->getUsername() . " - " . $utilisateur->getEmail();
     }
-    return "<span style='color:darkgreen;' class='glyphicon glyphicon-ok' title='".$title."' data-toggle='tooltip' data-html='true'></span>";
+    return "<span style='color:darkgreen;' class='icon icon-ok' title='".$title."' data-bs-toggle='tooltip' data-bs-html='true'></span>";
 }
 
 function afficherMailIndividu(Acteur $a) {
     if ($a->getIndividu() !== null AND $a->getIndividu()->getEmail() !== null) {
-        return "<span class='glyphicon glyphicon-ok' style='color:darkgreen;' 
+        return "<span class='icon icon-ok' style='color:darkgreen;' 
                     title='IndividuId:". $a->getIndividu()->getId(). "<br/>".
                     $a->getIndividu()->getEmail() ."'
-                    data-toggle='tooltip' data-html='true'></span>";
+                    data-bs-toggle='tooltip' data-bs-html='true'></span>";
     }
-    return "<span class='glyphicon glyphicon-remove' style='color:darkred;' title='Pas d email lié à l individu'></span>";
+    return "<span class='icon icon-ko iconly' style='color:darkred;' title='Pas d email lié à l individu'></span>";
 }
 
 function afficherMailMembre(Acteur $a) {
     if ($a->getMembre() !== null AND $a->getMembre()->getEmail() !== null) {
-        return '<span class="glyphicon glyphicon-ok" style = "color:darkgreen;"
+        return '<span class="icon icon-ok" style = "color:darkgreen;"
                 title = "PropositionId: '. $a->getMembre()->getProposition()->getId() . '<br/>' .
                 $a->getMembre()->getEmail().'" 
-                data-toggle="tooltip" data-html="true"></span>';
+                data-bs-toggle="tooltip" data-bs-html="true"></span>';
     }
-    return '<span class="glyphicon glyphicon-remove" style="color:darkred;" title="Pas d email lié à un membre de soutenance"></span>';
+    return '<span class="icon icon-ko iconly" style="color:darkred;" title="Pas d email lié à un membre de soutenance"></span>';
 }
 
 function afficherThese(Acteur $a, $renderer) {
@@ -73,7 +73,7 @@ function afficherThese(Acteur $a, $renderer) {
     $titreCourt = (substr(html_entity_decode($titre),0,40)) . " ...";
 
     $texte  = "<a href='".$renderer->url('these/identite', ['these' => $these->getId()], [], true)."' ";
-    $texte .= "title='".htmlentities($titre)."' data-toggle='tooltip' data-html='true' ";
+    $texte .= "title='".htmlentities($titre)."' data-bs-toggle='tooltip' data-bs-html='true' ";
     $texte .= " >" . $titreCourt . "</a>";
     return $texte;
 }
@@ -99,10 +99,10 @@ function afficherCorrectionEffectuees(Acteur $a) {
     $correction = $these->getValidations('DEPOT_THESE_CORRIGEE')->toArray();
 
     if (empty($correction)) {
-        return "<span class='glyphicon glyphicon-remove' style='color:darkred;'></span>";
+        return "<span class='icon icon-ko iconly' style='color:darkred;'></span>";
     }
 
-    return "<span class='glyphicon glyphicon-ok' style='color:darkgreen;'></span>";
+    return "<span class='icon icon-ok' style='color:darkgreen;'></span>";
 }
 
 function afficherValidations(Acteur $a) {
@@ -133,7 +133,7 @@ $canNotifierPresident     = $this->isAllowed(PresidentJuryPrivileges::getResourc
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
      <p>
-         Dans le tableau ci-dessous vous retrouvez la liste des président de jury remonté dans SyGAL pour les thèses en attente de correction.
+         Dans le tableau ci-dessous vous retrouvez la liste des président de jury remonté dans <?php echo $this->appInfos()->nom ?> pour les thèses en attente de correction.
      </p>
 
     <p>
@@ -153,15 +153,15 @@ $canNotifierPresident     = $this->isAllowed(PresidentJuryPrivileges::getResourc
     <p>
         Les actions associées sont :
         <ul>
-            <li> <span class="glyphicon glyphicon-plus"></span> ajouter manuellement un mail pour pouvoir créer un compte ;</li>
-            <li> <span class="glyphicon glyphicon-trash"></span> supprimer le mail renseigné manuellement; </li>
-            <li> <span class="glyphicon glyphicon-send"></span> création d'un compte (si nécessaire) puis notification du président.</li>
+            <li> <span class="icon icon-plus"></span> ajouter manuellement un mail pour pouvoir créer un compte ;</li>
+            <li> <span class="icon icon-delete"></span> supprimer le mail renseigné manuellement; </li>
+            <li> <span class="icon icon-notify"></span> création d'un compte (si nécessaire) puis notification du président.</li>
         </ul>
     </p>
 
 
 <div class="main">
-    <table id="president-jury" class="table table-condensed" >
+    <table id="president-jury" class="table table-sm" >
         <thead>
             <tr>
                 <th> Dénomination du président </th>
@@ -197,38 +197,41 @@ $canNotifierPresident     = $this->isAllowed(PresidentJuryPrivileges::getResourc
 
                                     <!--  // Si aucun membre de  soutenance on peut ajouter un membre factisse pour porter l'information ne remontant pas du SI -->
                                     <?php if ($president->getMembre() === null) : ?>
+                                        <?php /** @see \Application\Controller\PresidentJuryController::ajouterMailAction() */ ?>
                                         <a href="<?php echo $this->url('president-jury/ajouter-mail', ['president' => $president->getId()], [], true); ?>"
                                            class="ajax-modal" data-event="modification"
                                            title="Ajout d'un email pour le président du jury"
                                         >
-                                            <span class="glyphicon glyphicon-plus"></span> </a>
+                                            <span class="icon icon-plus"></span> </a>
                                     <?php else :?>
 
                                         <!-- // Si membre factisse alors on peut le supprimer pour eventuellement le modifier -->
                                         <?php if ($president->getMembre()->getProposition()->getId() === 0) : ?>
+                                            <?php /** @see \Application\Controller\PresidentJuryController::supprimerMailAction() */ ?>
                                             <a href="<?php echo $this->url('president-jury/supprimer-mail', ['president' => $president->getId()], [], true); ?>"
                                                title="Suppression de l'email ajouté manuellement pour le président du jury"
                                             >
-                                                <span class="glyphicon glyphicon-trash"></span> </a>
+                                                <span class="icon icon-delete iconly"></span> </a>
                                         <?php else : ?>
-                                            <span class="glyphicon glyphicon-plus" style="color:white;"></span>
+                                            <span class="icon icon-plus" style="color:white;"></span>
                                         <?php endif;?>
 
                                     <?php endif;?>
                                 <?php else:?>
-                                    <span class="glyphicon glyphicon-plus" style="color:white;"></span>
+                                    <span class="icon icon-plus" style="color:white;"></span>
                                 <?php endif;?>
                             <?php endif; ?>
 
                             <?php if ($canNotifierPresident) : ?>
                                 <?php if (($president->getIndividu() AND $president->getIndividu()->getEmail()) OR ($president->getMembre() AND $president->getMembre()->getEmail())) : ?>
+                                    <?php /** @see \Application\Controller\PresidentJuryController::notifierCorrectionAction() */ ?>
                                     <a href="<?php echo $this->url('president-jury/notifier-correction', ['president' => $president->getId()], [], true); ?>"
                                        title="Création du compte & notification du président du jury"
                                     >
-                                        <span class="glyphicon glyphicon-send"></span>
+                                        <span class="icon icon-notify"></span>
                                     </a>
                                 <?php else : ?>
-                                    <span class="glyphicon glyphicon-send" style="color:white;"></span>
+                                    <span class="icon icon-notify" style="color:white;"></span>
                                 <?php endif; ?>
                             <?php endif; ?>
                         <?php endif; ?>

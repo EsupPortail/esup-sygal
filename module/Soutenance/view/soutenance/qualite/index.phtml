@@ -27,7 +27,7 @@ $canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges
    class="ajax-modal btn btn-primary"
    data-event="edition-qualite"
    href="<?php echo $this->url('qualite/editer', [], [], true); ?>">
-        <span class="glyphicon glyphicon-plus"></span>
+        <span class="icon icon-plus"></span>
         Ajouter une qualité
 </a>
 
@@ -66,33 +66,33 @@ $canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges
                         <?php if ($canEdit) : ?>
                             <a <?php /** @see \Soutenance\Controller\QualiteController::retirerLibelleSupplementaireAction() */ ?>
                                href="<?php echo $this->url('qualite/retirer-libelle-supplementaire', ['libelle' => $sup->getId()], [], true); ?>">
-                            <span class="glyphicon glyphicon-minus" title="Retirer le libellé supplémentaire"></span></a>
+                            <span class="icon icon-minus" title="Retirer le libellé supplémentaire"></span></a>
                         <?php endif; ?>
                     <?php endforeach;?>
                     </div>
             </td>
             <td>
                 <?php if ($qualite->isHDR()): ?>
-                    <span class="glyphicon glyphicon-ok text-success"></span>
+                    <span class="icon icon-ok text-success"></span>
                     <?php $hasVisio = true; ?>
                 <?php else: ?>
-                    <span class="glyphicon glyphicon-remove text-danger"></span>
+                    <span class="icon icon-delete iconly text-danger"></span>
                 <?php endif; ?>
             </td>
             <td>
                 <?php if ($qualite->isEmeritat()): ?>
-                    <span class="glyphicon glyphicon-ok text-success"></span>
+                    <span class="icon icon-ok text-success"></span>
                     <?php $hasVisio = true; ?>
                 <?php else: ?>
-                    <span class="glyphicon glyphicon-remove text-danger"></span>
+                    <span class="icon icon-delete iconly text-danger"></span>
                 <?php endif; ?>
             </td>
             <td>
                 <?php if ($qualite->getJustificatif() === 'O'): ?>
-                    <span class="glyphicon glyphicon-ok text-success"></span>
+                    <span class="icon icon-ok iconly text-success"></span>
                     <?php $hasVisio = true; ?>
                 <?php else: ?>
-                    <span class="glyphicon glyphicon-remove text-danger"></span>
+                    <span class="icon icon-delete iconly text-danger"></span>
                 <?php endif; ?>
             </td>
             <td>
@@ -102,7 +102,7 @@ $canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges
                         class="ajax-modal"
                        data-event="edition-qualite"
                        href="<?php echo $this->url('qualite/editer', ['qualite' => $qualite->getId()], [], true); ?>">
-                        <span class="glyphicon glyphicon-pencil"></span>
+                        <span class="icon icon-edit iconly"></span>
                     </a>
                 <?php endif; ?>
                 <?php if($canEdit): ?>
@@ -110,14 +110,14 @@ $canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges
                         class="ajax-modal"
                         data-event="edition-qualite"
                         href="<?php echo $this->url('qualite/ajouter-libelle-supplementaire', ['qualite' => $qualite->getId()], [], true); ?>">
-                        <span class="glyphicon glyphicon-plus" title="Ajouter un libellé supplémentaire"></span>
+                        <span class="icon icon-plus iconly" title="Ajouter un libellé supplémentaire"></span>
                     </a>
                 <?php endif; ?>
                 <?php if($canDelete): ?>
                     <a
                         <?php /** @see \Soutenance\Controller\QualiteController::effacerAction() */ ?>
                         href="<?php echo $this->url('qualite/effacer', ['qualite' => $qualite->getId()], [], true); ?>">
-                        <span class="glyphicon glyphicon-trash"></span>
+                        <span class="icon icon-delete iconly"></span>
                     </a>
                 <?php endif; ?>
             </td>
@@ -142,7 +142,7 @@ $canDelete = $this->isAllowed(QualitePrivileges::getResourceId(QualitePrivileges
     });
 
     $(function() {
-        $("div.toggle").click(function event() {
+        $("div.toggle").on("click", function event() {
             let id = $(this).attr('id');
             $("div#d" + id).toggle();
         });

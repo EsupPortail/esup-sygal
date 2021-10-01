@@ -133,7 +133,7 @@ class ActeursFormatter extends AbstractFilter {
         $acteurs = array_map([$this, 'htmlifyActeur'], $acteurs);
         $helper = new HtmlList();
         $helper->setView(new PhpRenderer());
-        $results = $helper($acteurs, $ordered = false, $attribs = false, $escape = false);
+        $results = $helper($acteurs, $ordered = false, ['class' => 'row'], $escape = false);
         return $results;
     }
 

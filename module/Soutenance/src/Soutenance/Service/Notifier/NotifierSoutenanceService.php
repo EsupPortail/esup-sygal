@@ -177,7 +177,7 @@ class NotifierSoutenanceService extends NotifierService
      * @param Validation $validation
      * @see Application/view/soutenance/notification/validation-acteur.phtml
      */
-    public function triggerValidationProposition($these, $validation)
+    public function triggerValidationProposition(These $these, Validation $validation)
     {
         $emails = $this->fetchEmailActeursDirects($these);
 
@@ -193,6 +193,7 @@ class NotifierSoutenanceService extends NotifierService
                 ->setTemplatePath('soutenance/notification/validation-acteur')
                 ->setTemplateVariables([
                     'validation' => $validation,
+                    'these' => $these,
                 ]);
             $this->trigger($notif);
         }
@@ -280,7 +281,7 @@ class NotifierSoutenanceService extends NotifierService
         if (!empty($emails)) {
             $notif = new Notification();
             $notif
-                ->setSubject("Demande de validation d'une proposition de soutenance")
+                ->setSubject("Validation de proposition de soutenance de ".$these->getDoctorant()->getIndividu()->getNomComplet())
                 ->setTo($emails)
                 ->setTemplatePath('soutenance/notification/validation-soutenance')
                 ->setTemplateVariables([
@@ -325,7 +326,7 @@ class NotifierSoutenanceService extends NotifierService
         if (!empty($emails)) {
             $notif = new Notification();
             $notif
-                ->setSubject("Votre proposistion de soutenance a été réfusé")
+                ->setSubject("Votre proposition de soutenance a été réfusée")
                 ->setTo($emails)
                 ->setTemplatePath('soutenance/notification/refus')
                 ->setTemplateVariables([
@@ -431,7 +432,7 @@ class NotifierSoutenanceService extends NotifierService
         if ($email) {
             $notif = new Notification();
             $notif
-                ->setSubject("Annulation de l'engagement d'impartialité de la thèse de " . $these->getDoctorant()->getIndividu())
+                ->setSubject("Annulation de la signature de l'engagement d'impartialité de la thèse de " . $these->getDoctorant()->getIndividu())
                 ->setTo($email)
                 ->setTemplatePath('soutenance/notification/engagement-impartialite-annulation')
                 ->setTemplateVariables([
@@ -617,6 +618,8 @@ class NotifierSoutenanceService extends NotifierService
      * @param These $these
      * @param Utilisateur $utilisateur
      * @param string $url
+     *
+     * @deprecated Pas utilisée !
      */
     public function triggerInitialisationCompte($these, $utilisateur, $url)
     {
@@ -630,7 +633,7 @@ class NotifierSoutenanceService extends NotifierService
         if (!empty($email)) {
             $notif = new Notification();
             $notif
-                ->setSubject("Initialisation de votre compte SyGAL pour la these de " . $these->getDoctorant()->getIndividu()->getNomComplet())
+                ->setSubject("Initialisation de votre compte pour la these de " . $these->getDoctorant()->getIndividu()->getNomComplet())
                 ->setTo($email)
                 ->setTemplatePath('soutenance/notification/init-compte')
                 ->setTemplateVariables([
@@ -643,11 +646,11 @@ class NotifierSoutenanceService extends NotifierService
     }
 
     /**
-     * @param These $these
+     * @param Proposition $proposition
      * @param Utilisateur $user
      * @param string $url
      */
-    public function triggerConnexionRapporteur(These $these, Utilisateur $user, string $url)
+    public function triggerConnexionRapporteur(Proposition $proposition, Utilisateur $user, string $url)
     {
         $email = $user->getEmail();
         if ($email === null) throw new LogicException("Aucun email de fourni !");
@@ -655,11 +658,12 @@ class NotifierSoutenanceService extends NotifierService
         if (!empty($email)) {
             $notif = new Notification();
             $notif
-                ->setSubject("Connexion à SyGAL en tant que rapporteur de la thèse de " . $these->getDoctorant()->getIndividu()->getNomComplet())
+                ->setSubject("Connexion en tant que rapporteur de la thèse de " . $proposition->getThese()->getDoctorant()->getIndividu()->getNomComplet())
                 ->setTo($email)
                 ->setTemplatePath('soutenance/notification/connexion-rapporteur')
                 ->setTemplateVariables([
-                    'these' => $these,
+                    'proposition' => $proposition,
+                    'these' => $proposition->getThese(),
                     'username' => $user->getUsername(),
                     'url' => $url,
                 ]);

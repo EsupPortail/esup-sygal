@@ -25,7 +25,7 @@ class AnneeRapportActiviteSearchFilter extends SelectSearchFilter
     static public function newInstance(): self
     {
         return new self(
-            "Année du<br>rapport",
+            "Année du rapport",
             self::NAME
         );
     }
@@ -60,7 +60,7 @@ class AnneeRapportActiviteSearchFilter extends SelectSearchFilter
     public function createSorter(): SearchSorter
     {
         $sorter = new SearchSorter(
-            "Année du<br>rapport",
+            "Année du rapport",
             self::NAME
         );
 

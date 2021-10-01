@@ -13,13 +13,13 @@ $these = $proposition->getThese();
 ?>
 
 <div id="BOXDIV_JURY">
-<div class="box panel <?php echo ($indicateurs["valide"])?'panel-success':'panel-danger'; ?>">
-    <div class="panel-heading">
+<div class="box card">
+    <div class="card-header <?php echo ($indicateurs["valide"])?'bg-success':'bg-danger'; ?>">
         <h2>
             Composition du jury
         </h2>
     </div>
-    <div class="panel-body">
+    <div class="row card-body">
 
         <div class="col-md-4">
             <h5>
@@ -39,9 +39,9 @@ $these = $proposition->getThese();
             <h5>
                 Nombre de membres
                 <?php if ($indicateurs["membre"]["valide"]):?>
-                    <span class="badge badge-success"> Valide </span>
+                    <span class="badge bg-success"> Valide </span>
                 <?php else: ?>
-                    <span class="badge badge-error"> Non valide </span>
+                    <span class="badge bg-error"> Non valide </span>
                 <?php endif; ?>
             </h5>
 
@@ -56,9 +56,9 @@ $these = $proposition->getThese();
             <h5>
                 Nombre de rapporteurs
                 <?php if ($indicateurs["rapporteur"]["valide"]):?>
-                    <span class="badge badge-success"> Valide </span>
+                    <span class="badge bg-success"> Valide </span>
                 <?php else: ?>
-                    <span class="badge badge-error"> Non valide </span>
+                    <span class="badge bg-error"> Non valide </span>
                 <?php endif; ?>
             </h5>
             <div class="progress">
@@ -72,16 +72,14 @@ $these = $proposition->getThese();
             <h5>
                 Nombre de rang A
                 <?php if ($indicateurs["rang A"]["valide"]):?>
-                    <span class="badge badge-success"> Valide </span>
+                    <span class="badge bg-success"> Valide </span>
                 <?php else: ?>
-                    <span class="badge badge-error"> Non valide </span>
+                    <span class="badge bg-error"> Non valide </span>
                 <?php endif; ?>
             </h5>
             <div class="progress">
-                <div class="progress">
-                    <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["rang A"]["Ratio"]*100; ?>%; <?php if ($indicateurs["rang A"]["valide"] !== true) echo "background-color:darkred;"; ?>">
-                        <?php echo $indicateurs["rang A"]["Nombre"]; ?>
-                    </div>
+                <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["rang A"]["Ratio"]*100; ?>%; <?php if ($indicateurs["rang A"]["valide"] !== true) echo "background-color:darkred;"; ?>">
+                    <?php echo $indicateurs["rang A"]["Nombre"]; ?>
                 </div>
             </div>
         </div>
@@ -90,9 +88,9 @@ $these = $proposition->getThese();
             <h5>
                 Nombre d'extérieurs
                 <?php if ($indicateurs["exterieur"]["valide"]):?>
-                    <span class="badge badge-success"> Valide </span>
+                    <span class="badge bg-success"> Valide </span>
                 <?php else: ?>
-                    <span class="badge badge-error"> Non valide </span>
+                    <span class="badge bg-error"> Non valide </span>
                 <?php endif; ?>
             </h5>
             <div class="progress">
@@ -132,24 +130,24 @@ $these = $proposition->getThese();
                     <td> <?php echo ($membre->getGenre()==='F')?"Madame":"Monsieur"; ?> </td>
                     <td> <?php echo $membre->getPrenom(); ?> </td>
                     <td> <?php echo $membre->getNom(); ?> </td>
-                    <td> <?php echo ($membre->getEmail() !== null)?$membre->getEmail():"<strong><span class='text-danger'><span class='glyphicon glyphicon-warning-sign'></span> AUCUN MAIL</span></strong>"; ?> </td>
+                    <td> <?php echo ($membre->getEmail() !== null)?$membre->getEmail():"<strong><span class='text-danger'><span class='fas fa-exclamation-triangle'></span> AUCUN MAIL</span></strong>"; ?> </td>
                     <td> <?php echo ($membre->getQualite())?$membre->getQualite()->getLibelle():"Non définie"; ?> </td>
                     <td> <?php echo $membre->getRang(); ?> </td>
                     <td>
                         <?php if ($membre->isExterieur()): ?>
-                            <span class="glyphicon glyphicon-ok text-success"></span>
+                            <span class="icon icon-ok iconly text-success"></span>
                         <?php else: ?>
-                            <span class="glyphicon glyphicon-remove text-danger"></span>
+                            <span class="icon icon-ko iconly text-danger"></span>
                         <?php endif; ?>
                     </td>
                     <td> <?php echo $membre->getEtablissement(); ?> </td>
                     <td> <?php echo $membre->getRole(); ?> </td>
                     <td>
                         <?php if ($membre->isVisio()): ?>
-                            <span class="glyphicon glyphicon-ok text-success"></span>
+                            <span class="icon icon-ok iconly text-success"></span>
                             <?php $hasVisio = true; ?>
                         <?php else: ?>
-                            <span class="glyphicon glyphicon-remove text-danger"></span>
+                            <span class="icon icon-ko iconly text-danger"></span>
                         <?php endif; ?>
                     </td>
                     <?php if ($canModifier): ?>
@@ -159,11 +157,11 @@ $these = $proposition->getThese();
                                 href="<?php echo $this->url('soutenance/proposition/modifier-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>"
                                 class="ajax-modal"
                                 data-event="edition-membre">
-                                <span class="glyphicon glyphicon-pencil"></span>
+                                <span class="icon icon-edit iconly"></span>
                             </a>
                             <a  <?php /** @see \Soutenance\Controller\PropositionController::effacerMembreAction(); */ ?>
                                 href="<?php echo $this->url('soutenance/proposition/effacer-membre', ['these' => $these->getId(), 'membre' => $membre->getId()], [] ,true); ?>">
-                                <span class="glyphicon glyphicon-trash"></span>
+                                <span class="icon icon-delete iconly"></span>
                             </a>
 
                     </td>
@@ -178,20 +176,20 @@ $these = $proposition->getThese();
             <div class="col-md-7">
                 <?php if ($hasVisio) : ?>
                     <div class="alert alert-warning">
-                        <span class="glyphicon glyphicon-warning-sign"></span>
+                        <span class="fas fa-exclamation-triangle"></span>
                         Les membres du jury participant à la soutenance en visioconférence doivent au préalable remplir la demande
                         de délégation de signature suivante :
                         <a href="<?php echo $FORMULAIRE_DELEGUATION; ?>">formulaire de demande de délégation</a>.
                     </div>
                 <?php endif; ?>
             </div>
-            <div class="col-md-4 pull-right">
+            <div class="col-md-4 float-end">
                 <?php if ($canModifier): ?>
                     <a  <?php /** @see \Soutenance\Controller\PropositionController::modifierMembreAction(); */ ?>
                         href="<?php echo $this->url('soutenance/proposition/modifier-membre', ['these' => $these->getId()], [], true); ?>"
                         class="btn btn-primary action ajax-modal"
                         data-event="edition-membre">
-                        <span class="glyphicon glyphicon-plus"></span> Ajouter un membre de jury
+                        <span class="icon icon-plus"></span> Ajouter un membre de jury
                     </a>
                 <?php endif; ?>
             </div>
