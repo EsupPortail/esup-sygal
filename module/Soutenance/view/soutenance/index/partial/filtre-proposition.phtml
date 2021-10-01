@@ -23,7 +23,8 @@ use Soutenance\Entity\Etat;
     </div>
     <div class="card-body">
         <form class='form-inline' method="get" action="">
-                <div class="form-group">
+            <div class="row">
+                <div class="col-md-3">
                 <label for="etablissement" class="form-label">Établissement d'inscription : </label>
                 <select id="etablissement" name="etablissement" class="selectpicker" data-live-search="true">
                     <option value="">Tous les établissements </option>
@@ -34,7 +35,7 @@ use Soutenance\Entity\Etat;
                     <?php endforeach; ?>
                 </select>
                 </div>
-                <div class="form-group">
+                <div class="col-md-3">
                     <label for="ecoledoctorale" class="form-label">École doctorale : </label>
                     <select id="ecoledoctorale" name="ecoledoctorale" class="selectpicker" data-live-search="true">
                         <option value="">Toutes les écoles doctorales </option>
@@ -46,7 +47,7 @@ use Soutenance\Entity\Etat;
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="col-md-3">
                     <label for="uniterecherche" class="form-label">Unité de recherche : </label>
                     <select id="uniterecherche" name="uniterecherche" class="selectpicker" data-live-search="true">
                         <option value="">Toutes les unités de recherche </option>
@@ -58,7 +59,7 @@ use Soutenance\Entity\Etat;
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="col-md-3">
                     <label for="etat" class="form-label">Etat : </label>
                     <select id="etat" name="etat" class="selectpicker" data-live-search="true">
                         <option value="">Tous les etats </option>
@@ -67,22 +68,17 @@ use Soutenance\Entity\Etat;
                                 <?php echo $etat->getLibelle(); ?>
                             </option>
                         <?php endforeach; ?>
-
                     </select>
                 </div>
-            <div class="form-inline">
-
-                <button class="btn btn-primary action">
-                    Appliquer
-                </button>
-
-                <span id="RAZ" class="btn btn-primary action">
-                    RAZ
-                </span>
-
             </div>
-
-    </form>
+            <br/>
+            <button class="btn btn-primary action">
+                Appliquer
+            </button>
+            <span id="RAZ" class="btn btn-primary action">
+                RAZ
+            </span>
+        </form>
     </div>
 </div>
 

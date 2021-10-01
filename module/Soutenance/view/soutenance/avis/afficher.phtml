@@ -90,7 +90,7 @@ $canAnnuler = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoute
 </div>
 
 <?php if ($avis !== null AND $avis->estNonHistorise()): ?>
-    <div class="box card">
+    <div class="box card" style="margin: 1rem 0;">
         <div class="card-header bg-success">
             <h2 class="first"> Et ensuite ? </h2>
         </div>
@@ -102,20 +102,21 @@ $canAnnuler = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoute
     </div>
 <?php endif; ?>
 
-<div class="row">
+<div>
 <?php if ($canAnnuler) : ?>
+    <div class="float-end">
+        <a href="<?php echo $this->url('soutenance/index-rapporteur', ['these' => $these->getId()], [], true); ?>"
+           class="btn btn-primary float-end" style="margin-left: 1rem;">
+                Retour à l'index rapporteur
+        </a>
+    </div>
     <a
         <?php /** @see \Soutenance\Controller\AvisController::annulerAction() */ ?>
             href="<?php echo $this->url('soutenance/avis-soutenance/annuler', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [] , true); ?>"
-            class="btn btn-danger">
+            class="btn btn-danger float-end">
         <span class="icon icon-delete"></span>
         Annuler l'avis de soutance
-    </a>
+    </a> &nbsp;&nbsp;
 <?php endif; ?>
-<div class="float-end">
-    <a href="<?php echo $this->url('soutenance/index-rapporteur', ['these' => $these->getId()], [], true); ?>"
-       class="btn btn-primary action">
-        Retour à l'index rapporteur
-    </a>
-</div>
+
 </div>

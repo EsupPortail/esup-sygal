@@ -78,10 +78,8 @@ $these = $proposition->getThese();
                 <?php endif; ?>
             </h5>
             <div class="progress">
-                <div class="progress">
-                    <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["rang A"]["Ratio"]*100; ?>%; <?php if ($indicateurs["rang A"]["valide"] !== true) echo "background-color:darkred;"; ?>">
-                        <?php echo $indicateurs["rang A"]["Nombre"]; ?>
-                    </div>
+                <div class="progress-bar progress-bar-info" style="width:<?php echo $indicateurs["rang A"]["Ratio"]*100; ?>%; <?php if ($indicateurs["rang A"]["valide"] !== true) echo "background-color:darkred;"; ?>">
+                    <?php echo $indicateurs["rang A"]["Nombre"]; ?>
                 </div>
             </div>
         </div>

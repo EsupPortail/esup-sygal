@@ -190,6 +190,7 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
             <?php if ($avis !== null) : ?>
                 Vous avez rendu votre avis de soutenance pour la thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>.
 
+            <div>
                 <div class="col-md-5 float-end">
                     <div class="card">
                         <div class="card-header <?php echo ($avis->getAvis() === 'Favorable')?"bg-success":"bg-danger"; ?>">
@@ -219,16 +220,19 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
                     <a
                         <?php /** @see \Soutenance\Controller\AvisController::annulerAction() */ ?>
                         href="<?php echo $this->url('soutenance/avis-soutenance/annuler', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [] , true); ?>"
-                        class="btn btn-danger">
+                        class="btn btn-danger" style="margin-top: 1rem;">
                         <span class="icon icon-delete"></span>
                         Annuler l'avis de soutance
                     </a>
+                    </div>
                 </div>
+            </div>
             <?php else : ?>
                 Afin de valider la soutenance de thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>, vous devez rendre votre
                 avis de soutenance et votre prérapport de soutenance.
 
             <?php if ($canAnnuler) : ?>
+            <div>
                 <a
                     <?php /** @see \Soutenance\Controller\AvisController::indexAction() */ ?>
                     href="<?php echo $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], [], true); ?>"
@@ -237,6 +241,7 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
                     <span class="icon icon-edit"></span>
                     Rendre l'avis de soutenance / Give our report
                 </a>
+            </div>
             <?php endif; ?>
 
             <?php endif; ?>

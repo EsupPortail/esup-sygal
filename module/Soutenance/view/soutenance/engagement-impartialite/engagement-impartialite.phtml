@@ -137,7 +137,7 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
     <div class="col-md-8">
         <!-- affichage -->
         <?php if ($validation): ?>
-        <div class="card">
+        <div class="card" style="margin-bottom: 1rem;">
             <div class="card-header
             <?php  if ($validation && $validation->getTypeValidation()->getCode() === TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE): ?>
                 bg-success
@@ -183,9 +183,13 @@ $this->headTitle("Engagement d'impartialité portant sur la thèse de ".$doctora
 </div>
 <?php endif; ?>
 
-<div class="float-end">
-<a href="<?php echo $this->url('soutenance/index-rapporteur', ['these' => $these->getId()], [], true); ?>"
-   class="btn btn-primary action">
-   Retour à l'index rapporteur
-</a>
+<div class="row">
+    <div>
+        <a href="<?php echo $this->url('soutenance/index-rapporteur', ['these' => $these->getId()], [], true); ?>"
+           class="btn btn-primary float-end">
+           Retour à l'index rapporteur
+        </a>
+    </div>
 </div>
+
+
