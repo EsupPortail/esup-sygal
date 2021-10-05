@@ -140,7 +140,7 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
             <a
                 <?php /** @see UtilisateurController::lierIndividuAction() */?>
                 href="<?php echo $this->url('utilisateur/lier-individu', ['utilisateur' => $utilisateur->getId()], [], true); ?>"
-                class="btn btn-primary action ajax-modal" data-event="zmodification"
+                class="btn btn-primary ajax-modal" data-event="zmodification"
             >
                 <span class="fas fa-link"></span>
                 Lier à un individu <?php echo $this->appInfos()->nom ?>

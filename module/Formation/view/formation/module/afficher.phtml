@@ -14,7 +14,7 @@ use Formation\Provider\Privilege\ModulePrivileges;
 $pageTitle = 'Affichage du module : ' . $module->getLibelle();
 $this->headTitle($pageTitle);
 
-$canIndexModule      = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_INDEX));
+$canIndexModule      = false && $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_INDEX));
 $canModifierModule      = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_MODIFIER));
 
 $canAfficherFormation     = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_AFFICHER));
@@ -28,71 +28,59 @@ usort($formations, function(Formation $a, Formation $b) { return $a->getLibelle(
     <?php echo $pageTitle; ?>
 </h1>
 
-<div class="row">
-    <div class="col-md-8">
+<h2> Informations sur le module </h2>
+<dl>
+    <dt> Libellé </dt>
+    <dd>
+        <?php echo $module->getLibelle(); ?>
+    </dd>
+    <?php if ($module->getDescription()) : ?>
+        <dt> Description du module </dt>
+        <dd> <?php echo $module->getDescription(); ?> </dd>
+    <?php endif ?>
+    <?php if ($module->getLien()) : ?>
+        <dt> Lien vers la fiche </dt>
+        <dd> <a href="<?php echo $module->getLien(); ?>" target="_blank"><?php echo $module->getLien(); ?></a> </dd>
+    <?php endif ?>
+</dl>
 
-        <h2> Informations sur le module </h2>
-
-        <dl class="dl-horizontal">
-            <dt> Libellé </dt>
-            <dd>
-                <?php echo $module->getLibelle(); ?>
-            </dd>
-            <?php if ($module->getDescription()) : ?>
-                <dt> Description du module </dt>
-                <dd> <?php echo $module->getDescription(); ?> </dd>
-            <?php endif ?>
-            <?php if ($module->getLien()) : ?>
-                <dt> Lien vers la fiche </dt>
-                <dd> <a href="<?php echo $module->getLien(); ?>" target="_blank"><?php echo $module->getLien(); ?></a> </dd>
-            <?php endif ?>
-        </dl>
-    </div>
-    <div class="pull-right">
-        <?php if ($canIndexModule) : ?>
-            <?php /** @see \Formation\Controller\FormationController::indexAction() */?>
-            <a class="btn btn-primary action"
-               href="<?php echo $this->url('formation/module', [], [], true); ?>"
-            >
-                <span class="glyphicon glyphicon-chevron-up"></span>
-                Retour à la liste des modules
-            </a>
-            <br/>
-            <br/>
-        <?php endif; ?>
-        <?php if ($canModifierModule) : ?>
-            <?php /** @see \Formation\Controller\FormationController::modifierAction() */?>
-            <a class="btn btn-primary action ajax-modal" data-event="modification"
-               href="<?php echo $this->url('formation/module/modifier', ['module' => $module->getId()], [], true); ?>"
-            >
-                <span class="glyphicon glyphicon-pencil"></span>
-                Modifier les informations
-            </a>
-            <br/>
-            <br/>
-        <?php endif; ?>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-8">
-        <h2>
-            Liste des formations associées au module
-            <span class="badge"><?php echo count($formations); ?></span>
-        </h2>
-    </div>
-    <div class="pull-right">
-        <a
-            <?php /** @see \Formation\Controller\FormationController::ajouterAction() */ ?>
-                href="<?php echo $this->url('formation/formation/ajouter', ['module' => $module->getId()], [], true); ?>"
-                class="btn btn-primary action ajax-modal" data-event="modification">
-            <span class="glyphicon glyphicon-plus"></span>
-            Ajouter une formation
+<div>
+    <?php if ($canIndexModule) : ?>
+        <?php /** @see \Formation\Controller\FormationController::indexAction() */?>
+        <a class="action"
+           href="<?php echo $this->url('formation/module', [], [], true); ?>"
+        >
+            <span class="icon icon-retour"></span>
+            Retour à la liste des modules
         </a>
-    </div>
+    <?php endif; ?>
+    <?php if ($canModifierModule) : ?>
+        <?php /** @see \Formation\Controller\FormationController::modifierAction() */?>
+        <a class="btn btn-primary ajax-modal" data-event="modification"
+           href="<?php echo $this->url('formation/module/modifier', ['module' => $module->getId()], [], true); ?>"
+        >
+            <span class="icon icon-editer"></span>
+            Modifier les informations
+        </a>
+    <?php endif; ?>
 </div>
 
-<table class="table table-condensed">
+<h2>
+    Liste des formations associées au module
+    <span class="badge bg-info"><?php echo count($formations); ?></span>
+</h2>
+
+<div>
+    <a
+        <?php /** @see \Formation\Controller\FormationController::ajouterAction() */ ?>
+            href="<?php echo $this->url('formation/formation/ajouter', ['module' => $module->getId()], [], true); ?>"
+            class="btn btn-primary ajax-modal" data-event="modification">
+        <span class="icon icon-ajouter"></span>
+        Ajouter une formation
+    </a>
+</div>
+
+<table class="table table-condensed table-hover">
     <thead>
     <tr>
         <th>Libelle</th>
@@ -119,7 +107,7 @@ usort($formations, function(Formation $a, Formation $b) { return $a->getLibelle(
                 <?php if ($canAfficherFormation) : ?>
                     <?php /** @see \Formation\Controller\FormateurController::afficherAction() */ ?>
                     <a href="<?php echo $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true); ?>">
-                        <span class="glyphicon glyphicon-eye-open"></span>
+                        <span class="icon icon-voir"></span>
                     </a>
                 <?php endif; ?>
             </td>
@@ -136,11 +124,5 @@ usort($formations, function(Formation $a, Formation $b) { return $a->getLibelle(
         });
     });
 </script>
-
-<style>
-    a.btn.action {
-        width:25rem;
-    }
-</style>
 
 

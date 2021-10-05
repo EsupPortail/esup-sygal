@@ -7,19 +7,19 @@
 
 ?>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <span class="glyphicon glyphicon-filter"></span>
+<div class="card bg-default">
+    <div class="card-header">
+        <span class="icon icon-filter"></span>
         Filtre des formations
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <form id="filter" method="get" action="">
 
             <div class="row">
                 <!-- Site ------------------------------------------------------------------------------------------------->
                 <div class="col-md-4">
-                    <label for="site">Site :</label>
-                    <select name="site" id="site" class="selectpicker" data-live-search="true">
+                    <label class="form-label" for="site">Site :</label>
+                    <select name="site" id="site" class="form-control selectpicker" data-live-search="true">
                         <option value=""> Tous les sites </option>
                         <?php foreach ($listings['sites'] as $site_) : ?>
                             <option value="<?php echo $site_->getCode(); ?>"
@@ -30,11 +30,9 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
-
-                <!-- structure -------------------------------------------------------------------------------------------->
                 <div class="col-md-4">
-                    <label for="structure">Structures :</label>
-                    <select name="structure" id="structure" class="selectpicker" data-live-search="true">
+                    <label class="form-label" for="structure">Structures :</label>
+                    <select name="structure" id="structure" class="form-control selectpicker" data-live-search="true">
                         <option value=""> Tous les structures </option>
                         <?php foreach ($listings['structures'] as $structure_) : ?>
                             <option value="<?php echo $structure_->getId(); ?>"
@@ -45,22 +43,13 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
-            </div>
-
-            <br/>
-
-            <div class="row">
-
-                <!-- libelle du module ------------------------------------------------------------------------------------>
                 <div class="col-md-4">
-                    <label for="libelle">Libellé : </label>
-                    <input type="text" name="libelle" id="libelle" <?php if ($filtres['libelle'] !== null AND $filtres['libelle'] !== '') echo " value='".$filtres['libelle']."' "; ?>/>
+                    <label class="form-label" for="libelle">Libellé : </label>
+                    <input class="form-control" type="text" name="libelle" id="libelle" <?php if ($filtres['libelle'] !== null AND $filtres['libelle'] !== '') echo " value='".$filtres['libelle']."' "; ?>/>
                 </div>
-
-                <!-- Responsable ------------------------------------------------------------------------------------------>
                 <div class="col-md-4">
-                    <label for="responsable">Responsable :</label>
-                    <select name="responsable" id="responsable" class="selectpicker" data-live-search="true">
+                    <label class="form-label" for="responsable">Responsable :</label>
+                    <select name="responsable" id="responsable" class="form-control selectpicker" data-live-search="true">
                         <option value=""> Tous les responsables </option>
                         <?php foreach ($listings['responsables'] as $responsable_) : ?>
                             <option value="<?php echo $responsable_->getId(); ?>"
@@ -71,47 +60,29 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
-
-                <!-- modalité --------------------------------------------------------------------------------------------->
                 <div class="col-md-4">
-                    <label for="modalite">Modalité :</label>
-                    <select name="modalite" id="modalite" class="selectpicker" data-live-search="true">
+                    <label class="form-label" for="modalite">Modalité :</label>
+                    <select name="modalite" id="modalite" class="form-control selectpicker" data-live-search="true">
                         <option value=""> Tous les modalités </option>
                         <option value="P" <?php if ("P" == $filtres['modalite']) echo " selected "; ?>> Présentielle </option>
                         <option value="D" <?php if ("D" == $filtres['modalite']) echo " selected "; ?>> Distancielle </option>
                     </select>
                 </div>
-            </div>
 
-            <br/>
-
-            <div class="row">
-                <div class="pull-right">
+                <div>
                     <button type="button" id="filter" class="btn btn-primary filter-action">
-                        <span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Filtrer
+                        <span class="icon icon-filter" aria-hidden="true"></span> Filtrer
                     </button>
                     <button type="button" id="reset" class="btn btn-primary filter-action">
-                        <span class="glyphicon glyphicon-erase" aria-hidden="true"></span> R.A.Z.
+                        <span class="icon icon-delete" aria-hidden="true"></span> R.A.Z.
                     </button>
                 </div>
-            </div>
 
+            </div>
         </form>
 
     </div>
 </div>
-
-
-<style>
-    .filter-action {
-        width: 25rem;
-        margin: 0 1rem;
-    }
-
-    form#filter label {
-        width: 10rem;
-    }
-</style>
 
 <script>
     $('button#reset').click(function (e) {

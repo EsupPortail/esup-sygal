@@ -79,7 +79,7 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                     <?php if ($canModifier) : ?>
                         <div class="float-end" style="margin-right: 1rem;">
                             <a      <?php /** @see \Soutenance\Controller\InterventionController::togglePresidentDistancielAction() */?>
-                                    href="<?php echo $this->url('soutenance/intervention/toggle-president-distanciel', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action">
+                                    href="<?php echo $this->url('soutenance/intervention/toggle-president-distanciel', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary">
                                 <span class="icon icon-minus"></span> Président en distanciel
                             </a>
                         </div>
@@ -140,7 +140,7 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                     <?php if ($canModifier) : ?>
                     <div class="float-end" style="margin-right: 1rem;">
                         <a      <?php /** @see \Soutenance\Controller\InterventionController::togglePresidentDistancielAction() */?>
-                                href="<?php echo $this->url('soutenance/intervention/toggle-president-distanciel', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action">
+                                href="<?php echo $this->url('soutenance/intervention/toggle-president-distanciel', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary">
                             <span class="icon icon-plus"></span> Président en distanciel
                         </a>
                     </div>

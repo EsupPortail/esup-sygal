@@ -50,7 +50,7 @@ $these = $proposition->getThese();
                 <?php if ($canModifier) : ?>
                     <a <?php /** @see \Soutenance\Controller\PropositionController::labelEuropeenAction(); */ ?>
                        href="<?php echo $this->url('soutenance/proposition/label-europeen', ['these' => $these->getId()], [], true); ?>"
-                       class="btn btn-primary action ajax-modal"
+                       class="btn btn-primary ajax-modal"
                        data-event="edition-informations"
                     >
                         <span class="icon icon-plus"></span>
@@ -94,7 +94,7 @@ $these = $proposition->getThese();
             <?php if ($canModifier) : ?>
                 <a <?php /** @see \Soutenance\Controller\PropositionController::anglaisAction(); */ ?>
                    href="<?php echo $this->url('soutenance/proposition/anglais', ['these' => $these->getId()], [], true); ?>"
-                   class="btn btn-primary action ajax-modal"
+                   class="btn btn-primary ajax-modal"
                    data-event="edition-informations"
                 >
                     <span class="icon icon-plus"></span>
@@ -129,7 +129,7 @@ $these = $proposition->getThese();
             <?php if ($canModifier) : ?>
                 <a <?php /** @see \Soutenance\Controller\PropositionController::confidentialiteAction(); */ ?>
                    href="<?php echo $this->url('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true); ?>"
-                   class="btn btn-primary action ajax-modal"
+                   class="btn btn-primary ajax-modal"
                    data-event="edition-informations"
                 >
                     <span class="icon icon-plus"></span>
@@ -157,7 +157,7 @@ $these = $proposition->getThese();
             <?php if ($canModifier) : ?>
                 <a <?php /** @see \Soutenance\Controller\PropositionController::changementTitreAction(); */ ?>
                    href="<?php echo $this->url('soutenance/proposition/changement-titre', ['these' => $these->getId()], [], true); ?>"
-                   class="btn btn-primary action ajax-modal"
+                   class="btn btn-primary ajax-modal"
                    data-event="edition-informations"
                 >
                     <span class="icon icon-plus"></span>

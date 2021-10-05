@@ -59,32 +59,32 @@ $canSupprimerInscription       = $this->isAllowed(InscriptionPrivileges::getReso
                     <a href="<?php echo $this->url('formation/session/afficher', ['session' => $inscription->getSession()->getId()], [], true); ?>"
                        title="Accéder à la session associée" data-toggle="tooltip" data-html="true"
                     >
-                        <span class="glyphicon glyphicon-list-alt"></span>
+                        <span class="icon icon-lister"></span>
                     </a>
                 <?php endif; ?>
-                <?php if ($canHistoriser) : ?>
+                <?php if ($canHistoriserInscription) : ?>
                     <?php if ($inscription->estNonHistorise()) : ?>
                         <?php /** @see \Formation\Controller\InscriptionController::historiserAction() */ ?>
                         <a href="<?php echo $this->url('formation/inscription/historiser', ['inscription' => $inscription->getId()], [], true); ?>"
                            title="Historiser l'inscription" data-toggle="tooltip" data-html="true"
                         >
-                            <span class="glyphicon glyphicon-trash"></span>
+                            <span class="icon icon-supprimer"></span>
                         </a>
                     <?php else : ?>
                         <?php /** @see \Formation\Controller\InscriptionController::restaurerAction() */ ?>
                         <a href="<?php echo $this->url('formation/inscription/restaurer', ['inscription' => $inscription->getId()], [], true); ?>"
                            title="Restaurer l'inscription" data-toggle="tooltip" data-html="true"
                         >
-                            <span class="glyphicon glyphicon-leaf"></span>
+                            <span class="icon icon-restaurer"></span>
                         </a>
                     <?php endif; ?>
                 <?php endif; ?>
-                <?php if ($canSupprimer) : ?>
+                <?php if ($canSupprimerInscription) : ?>
                     <?php /** @see \Formation\Controller\InscriptionController::supprimerAction() */?>
                     <a href="<?php echo $this->url('formation/inscription/supprimer',['inscription' => $inscription->getId()], [], true); ?>"
                        class="ajax-modal" data-event="modification"
                        title="Suppression de l'inscription de <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?>" data-toggle="tooltip" data-html="true">
-                        <span class="glyphicon glyphicon-remove"></span>
+                        <span class="icon icon-detruire"></span>
                     </a>
                 <?php endif; ?>
             </td>

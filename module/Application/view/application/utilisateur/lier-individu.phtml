@@ -143,7 +143,7 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 
         <a
                 href="<?php echo $this->url('utilisateur/lier-individu', ['utilisateur' => $utilisateur->getId(), 'individu' => $individu->getId()], [], true); ?>"
-                class="btn btn-primary action"
+                class="btn btn-primary"
         >
             Lier l'individu
         </a>
@@ -159,7 +159,7 @@ use UnicaenApp\Form\Element\SearchAndSelect;
         echo $this->formControlGroup($sas, 'formSearchAndSelect');
         ?>
 
-        <input type="submit" class="btn btn-primary action" value="Examiner l'individu">
+        <input type="submit" class="btn btn-primary" value="Examiner l'individu">
     </form>
     <?php endif; ?>
 <?php endif; ?>

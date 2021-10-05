@@ -121,7 +121,7 @@ $canModifierEtablissement = $this->isAllowed(StructurePrivileges::getResourceId(
 
         <?php if($canModifierEtablissement): ?>
             <a href="<?php echo $this->url('etablissement/modifier', ['structure'=> $etablissement->getStructure()->getId()], [], true); ?>"
-               class="btn btn-primary action"
+               class="btn btn-primary"
             >
                 <span class="icon icon-edit"></span> Modifier l'établissement
             </a>

@@ -56,30 +56,32 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
 <?php else : ?>
 
 <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active">
+    <li role="presentation" class="nav-item active">
         <a href="#a_venir"
            role="tab"
            aria-controls="a_venir"
            data-toggle="tab"
-
+           class="nav-link"
         >
             Formations à venir
         </a>
     </li>
-    <li role="presentation">
+    <li role="presentation" class="nav-item">
         <a href="#inscription"
            role="tab"
            aria-controls="inscription"
            data-toggle="tab"
+           class="nav-link"
         >
             Mes inscriptions en cours
         </a>
     </li>
-    <li role="presentation">
+    <li role="presentation" class="nav-item">
         <a href="#formation"
            role="tab"
            aria-controls="formation"
            data-toggle="tab"
+           class="nav-link"
         >
             Mes formations suivies
         </a>
@@ -140,15 +142,15 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
                                 <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
                                 <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId(), 'doctorant' => $doctorant->getId()], ['query' => ['retour' => $this->url('formation/index-doctorant', [], [], true)]], true); ?>"
                                 >
-                            <span class="glyphicon glyphicon-plus"
+                            <span class="icon icon-ajouter"
                                   title="M'inscrire" data-toggle="tooltip" data-html="true"
                             ></span></a>
                             <?php endif; ?>
                         <?php else: ?>
                             <?php if ($inscrit) : ?>
-                                <span class="glyphicon glyphicon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
+                                <span class="icon icon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
                             <?php else : ?>
-                                <span class="glyphicon glyphicon-info-sign" title="Les inscriptions ne sont pas ouvertes"></span>
+                                <span class="icon icon-information" title="Les inscriptions ne sont pas ouvertes"></span>
                             <?php endif; ?>
                         <?php endif; ?>
                     </td>
@@ -209,15 +211,15 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
                                 <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
                                 <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId(), 'doctorant' => $doctorant->getId()], ['query' => ['retour' => $this->url('formation/index-doctorant', [], [], true)]], true); ?>"
                                 >
-                            <span class="glyphicon glyphicon-plus"
+                            <span class="icon icon-ajouter"
                                   title="M'inscrire" data-toggle="tooltip" data-html="true"
                             ></span></a>
                             <?php endif; ?>
                         <?php else: ?>
                             <?php if ($inscrit) : ?>
-                                <span class="glyphicon glyphicon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
+                                <span class="icon icon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
                             <?php else : ?>
-                                <span class="glyphicon glyphicon-info-sign" title="Les inscriptions ne sont pas ouvertes"></span>
+                                <span class="icon icon-information" title="Les inscriptions ne sont pas ouvertes"></span>
                             <?php endif; ?>
                         <?php endif; ?>
                     </td>
@@ -274,7 +276,7 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
                             <a href="<?php echo $this->url('formation/inscription/supprimer', ['inscription' => $inscription->getId()], [], true); ?>"
                                class="ajax-modal" data-event="modification"
                             >
-                        <span class="glyphicon glyphicon-remove"
+                        <span class="icon icon-supprimer"
                               title="Annuler mon inscription" data-toggle="tooltip" data-html="true"
                         ></span></a>
                         <?php endif; ?>
@@ -344,14 +346,14 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
                         <?php if ($canRepondreEnquete) : ?>
                             <?php /** @see \Formation\Controller\EnqueteController::repondreQuestionsAction() */?>
                             <a href="<?php echo $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true); ?>">
-                        <span class="glyphicon glyphicon-edit"
+                        <span class="icon icon-editer"
                               title="Compléter l'enquête" data-toggle="tooltip" data-html="true"
                         ></span></a>
                         <?php endif; ?>
                         <?php if (isset($resultats[$inscription->getId()]) AND $canAttestationInscription) : ?>
                             <?php /** @see \Formation\Controller\InscriptionController::genererAttestationAction() */?>
                             <a href="<?php echo $this->url('formation/inscription/generer-attestation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
-                        <span class="glyphicon glyphicon-check"
+                        <span class="icon icon-ok"
                               title="Télécharger l'attestation" data-toggle="tooltip" data-html="true"
                         ></span></a>
                         <?php endif; ?>

@@ -37,7 +37,7 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                 <li>
                     <?php echo $categorie->getLibelle(); ?>
                     <?php if ($categorie->getDescription() !== null) : ?>
-                        <span class="glyphicon glyphicon-info-sign" title="<?php echo $categorie->getDescription(); ?>"
+                        <span class="icon icon-information" title="<?php echo $categorie->getDescription(); ?>"
                               data-toggle="tooltip" data-html="true" ></span>
                     <?php endif; ?>
                     <?php if ($categorie->estHistorise()) : ?>
@@ -49,19 +49,19 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                         <a href="<?php echo $this->url('formation/enquete/categorie/modifier', ['categorie' => $categorie->getId()], [], true); ?>"
                            class="ajax-modal" data-event="modification"
                         >
-                            <span class="glyphicon glyphicon-pencil"></span></a>
+                            <span class="icon icon-editer"></span></a>
                     <?php endif; ?>
                     <?php if ($canHistoriserQuestion) : ?>
                         <?php if ($categorie->estNonHistorise()) : ?>
                             <?php /** @see \Formation\Controller\EnqueteController::historiserCategorieAction() */?>
                             <a href="<?php echo $this->url('formation/enquete/categorie/historiser', ['categorie' => $categorie->getId()], [], true); ?>"
                             >
-                                <span class="glyphicon glyphicon-trash"></span></a>
+                                <span class="icon icon-supprimer"></span></a>
                         <?php else : ?>
                             <?php /** @see \Formation\Controller\EnqueteController::restaurerCategorieAction() */?>
                             <a href="<?php echo $this->url('formation/enquete/categorie/restaurer', ['categorie' => $categorie->getId()], [], true); ?>"
                             >
-                                <span class="glyphicon glyphicon-leaf"></span></a>
+                                <span class="icon icon-restaurer"></span></a>
                         <?php endif; ?>
                     <?php endif; ?>
                     <?php if ($canSupprimerQuestion) : ?>
@@ -69,7 +69,7 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                         <a href="<?php echo $this->url('formation/enquete/categorie/supprimer', ['categorie' => $categorie->getId()], [], true); ?>"
                            class="ajax-modal" data-event="modification"
                         >
-                            <span class="glyphicon glyphicon-remove"></span></a>
+                            <span class="icon icon-detruire"></span></a>
                     <?php endif; ?>
 
                     <ul>
@@ -85,7 +85,7 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                                         <span class="historisee"></span>
                                     <?php endif; ?>
                                 <?php if ($question->getDescription()) : ?>
-                                    <span class="glyphicon glyphicon-info-sign"
+                                    <span class="icon icon-information"
                                           title="<?php echo $question->getDescription(); ?>" data-toggle="tooltip" data-html="true"
                                     ></span>
                                 <?php endif; ?>
@@ -94,19 +94,19 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                                     <a href="<?php echo $this->url('formation/enquete/question/modifier', ['question' => $question->getId()], [], true); ?>"
                                        class="ajax-modal" data-event="modification"
                                     >
-                                        <span class="glyphicon glyphicon-pencil"></span></a>
+                                        <span class="icon icon-editer"></span></a>
                                 <?php endif; ?>
                                 <?php if ($canHistoriserQuestion) : ?>
                                     <?php if ($question->estNonHistorise()) : ?>
                                         <?php /** @see \Formation\Controller\EnqueteController::historiserQuestionAction() */?>
                                         <a href="<?php echo $this->url('formation/enquete/question/historiser', ['question' => $question->getId()], [], true); ?>"
                                         >
-                                            <span class="glyphicon glyphicon-trash"></span></a>
+                                            <span class="icon icon-supprimer"></span></a>
                                     <?php else : ?>
                                         <?php /** @see \Formation\Controller\EnqueteController::restaurerQuestionAction() */?>
                                         <a href="<?php echo $this->url('formation/enquete/question/restaurer', ['question' => $question->getId()], [], true); ?>"
                                         >
-                                            <span class="glyphicon glyphicon-leaf"></span></a>
+                                            <span class="icon icon-restaurer"></span></a>
                                     <?php endif; ?>
                                 <?php endif; ?>
                                 <?php if ($canSupprimerQuestion) : ?>
@@ -114,7 +114,7 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                                     <a href="<?php echo $this->url('formation/enquete/question/supprimer', ['question' => $question->getId()], [], true); ?>"
                                        class="ajax-modal" data-event="modification"
                                     >
-                                        <span class="glyphicon glyphicon-remove"></span></a>
+                                        <span class="icon icon-detruire"></span></a>
                                 <?php endif; ?>
                             </li>
                         <?php endforeach; ?>
@@ -131,7 +131,7 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                             <span class="historisee"></span>
                         <?php endif; ?>
                         <?php if ($question->getDescription()) : ?>
-                            <span class="glyphicon glyphicon-info-sign"
+                            <span class="icon icon-information"
                                   title="<?php echo $question->getDescription(); ?>" data-toggle="tooltip" data-html="true"
                             ></span>
                         <?php endif; ?>
@@ -140,19 +140,19 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                             <a href="<?php echo $this->url('formation/enquete/question/modifier', ['question' => $question->getId()], [], true); ?>"
                                class="ajax-modal" data-event="modification"
                             >
-                                <span class="glyphicon glyphicon-pencil"></span></a>
+                                <span class="icon icon-editer"></span></a>
                         <?php endif; ?>
                         <?php if ($canHistoriserQuestion) : ?>
                             <?php if ($question->estNonHistorise()) : ?>
                                 <?php /** @see \Formation\Controller\EnqueteController::historiserQuestionAction() */?>
                                 <a href="<?php echo $this->url('formation/enquete/question/historiser', ['question' => $question->getId()], [], true); ?>"
                                 >
-                                    <span class="glyphicon glyphicon-trash"></span></a>
+                                    <span class="icon icon-supprimer"></span></a>
                             <?php else : ?>
                                 <?php /** @see \Formation\Controller\EnqueteController::restaurerQuestionAction() */?>
                                 <a href="<?php echo $this->url('formation/enquete/question/restaurer', ['question' => $question->getId()], [], true); ?>"
                                 >
-                                    <span class="glyphicon glyphicon-leaf"></span></a>
+                                    <span class="icon icon-restaurer"></span></a>
                             <?php endif; ?>
                         <?php endif; ?>
                         <?php if ($canSupprimerQuestion) : ?>
@@ -160,7 +160,7 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                             <a href="<?php echo $this->url('formation/enquete/question/supprimer', ['question' => $question->getId()], [], true); ?>"
                                class="ajax-modal" data-event="modification"
                             >
-                                <span class="glyphicon glyphicon-remove"></span></a>
+                                <span class="icon icon-detruire"></span></a>
                         <?php endif; ?>
                     </li>
                 <?php endforeach; ?>
@@ -183,7 +183,7 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
             <a href="<?php echo $this->url('formation/enquete/categorie/ajouter', [], [], true); ?>"
                class="btn btn-primary ajax-modal action" data-event="modification"
             >
-                <span class="glyphicon glyphicon-plus"></span>
+                <span class="icon icon-ajouter"></span>
                 Ajouter une catégorie
             </a>
             <br>
@@ -192,7 +192,7 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
             <a href="<?php echo $this->url('formation/enquete/question/ajouter', [], [], true); ?>"
                class="btn btn-primary ajax-modal action" data-event="modification"
             >
-                <span class="glyphicon glyphicon-plus"></span>
+                <span class="icon icon-ajouter"></span>
                 Ajouter une question
             </a>
             <br/>

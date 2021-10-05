@@ -567,8 +567,6 @@ div.filters {
       button.dropdown-toggle {
         padding: 3px 4px 3px 4px;
         height: 20px;
-        background-color: #eee;
-        border-color: darkgray;
       }
       .input-group {
         .input-group-text {
@@ -735,6 +733,15 @@ form.form-retraiter {
 form {
   input[type='submit'] {
     margin-top: 20px;
+  }
+  button.dropdown-toggle {
+    border-color: darkgray;
+    background: white;
+
+    &:focus,
+    &:hover {
+      @extend button.dropdown-toggle;
+    }
   }
 }
 
@@ -1132,4 +1139,9 @@ span.badge.VALIDEE {
   }
 span.badge.REJETEE {
     background: $dangerColor;
+}
+
+//en attendant
+div.buttons {
+  margin: 1.5rem 0;
 }

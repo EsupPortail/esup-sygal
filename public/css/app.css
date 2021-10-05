@@ -344,9 +344,7 @@ div.filters form {
     padding: 3px 7px; }
   div.filters form button.dropdown-toggle {
     padding: 3px 4px 3px 4px;
-    height: 20px;
-    background-color: #eee;
-    border-color: darkgray; }
+    height: 20px; }
   div.filters form .input-group .input-group-text {
     padding: 2px 4px; }
   div.filters form label {
@@ -452,6 +450,9 @@ form.form-retraiter {
     max-width: 1470px; } }
 form input[type='submit'] {
   margin-top: 20px; }
+form button.dropdown-toggle, form button.dropdown-toggle:focus, form button.dropdown-toggle:hover {
+  border-color: darkgray;
+  background: white; }
 
 /******** Boutons ***********/
 .btn-info {
@@ -722,5 +723,8 @@ span.badge.VALIDEE {
 
 span.badge.REJETEE {
   background: #d23544; }
+
+div.buttons {
+  margin: 1.5rem 0; }
 
 /*# sourceMappingURL=app.css.map */

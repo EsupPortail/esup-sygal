@@ -21,7 +21,7 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
 
 <?php echo $this->partial('partial/filtre', [ 'filtres' => $filtres, 'listings' => $listings ]); ?>
 
-<table class="table table-condensed">
+<table class="table table-condensed table-hover">
     <thead>
     <tr>
 <!--        <th>Identifiant</th>-->
@@ -64,7 +64,7 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
 <!--                   class="ajax-modal" data-event="modification"-->
 <!--                   title="Ajout d'une séance pour la session de formation #--><?php //echo $session->getId(); ?><!--"-->
 <!--                   data-toggle="tooltip" data-html="true">-->
-<!--                    <span class="glyphicon glyphicon-plus"></span>-->
+<!--                    <span class="icon icon-ajouter"></span>-->
 <!--                </a>-->
                     <ul>
                         <?php /** @var Seance $seance */ ?>
@@ -80,24 +80,24 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
 <!--                            <a href="--><?php //echo $this->url('formation/seance/modifier',['seance' => $seance->getId()], [], true); ?><!--"-->
 <!--                               class="ajax-modal" data-event="modification"-->
 <!--                               title="Modification de la séance #--><?php //echo $seance->getId(); ?><!--" data-toggle="tooltip" data-html="true">-->
-<!--                                <span class="glyphicon glyphicon-pencil"></span>-->
+<!--                                <span class="icon icon-editer"></span>-->
 <!--                            </a>-->
 <!--                            --><?php //if ($seance->estNonHistorise()) : ?>
 <!--                                <a href="--><?php //echo $this->url('formation/seance/historiser',['seance' => $seance->getId()], ['query' => ['retour' => $this->url('formation/session',[],[],true)]], true); ?><!--"-->
 <!--                                   title="Historisation de la séance #--><?php //echo $seance->getId(); ?><!--" data-toggle="tooltip" data-html="true">-->
-<!--                                    <span class="glyphicon glyphicon-trash"></span>-->
+<!--                                    <span class="icon icon-supprimer"></span>-->
 <!--                                </a>-->
 <!--                            --><?php //else : ?>
 <!--                                <a href="--><?php //echo $this->url('formation/seance/restaurer',['seance' => $seance->getId()], ['query' => ['retour' => $this->url('formation/session',[],[],true)]], true); ?><!--"-->
 <!--                                   title="Restauration de la séance #--><?php //echo $seance->getId(); ?><!--" data-toggle="tooltip" data-html="true">-->
-<!--                                    <span class="glyphicon glyphicon-leaf"></span>-->
+<!--                                    <span class="icon icon-restaurer"></span>-->
 <!--                                </a>-->
 <!--                            --><?php //endif; ?>
 <!--                            --><?php ///** @see \Formation\Controller\SeanceController::supprimerAction() */?>
 <!--                            <a href="--><?php //echo $this->url('formation/seance/supprimer',['seance' => $seance->getId()], [], true); ?><!--"-->
 <!--                               class="ajax-modal" data-event="modification"-->
 <!--                               title="Suppression de la séance #--><?php //echo $seance->getId(); ?><!--" data-toggle="tooltip" data-html="true">-->
-<!--                                <span class="glyphicon glyphicon-remove"></span>-->
+<!--                                <span class="icon icon-detruire"></span>-->
 <!--                            </a>-->
                         </li>
                         <?php endforeach; ?>
@@ -112,7 +112,7 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                 <?php if ($canAfficherSession) : ?>
                     <?php /** @see \Formation\Controller\SessionController::afficherAction() */ ?>
                     <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>">
-                        <span class="glyphicon glyphicon-eye-open"
+                        <span class="icon icon-voir"
                           title="Examiner la session"
                           data-toggle="tooltip" data-html="true">
                         </span>
@@ -124,14 +124,14 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                         <a href="<?php echo $this->url('formation/session/historiser', ['session' => $session->getId()], [], true); ?>"
                            title="Historiser la session"
                            data-toggle="tooltip" data-html="true">
-                            <span class="glyphicon glyphicon-trash"></span>
+                            <span class="icon icon-supprimer"></span>
                         </a>
                     <?php else : ?>
                         <?php /** @see \Formation\Controller\SessionController::restaurerAction() */ ?>
                         <a href="<?php echo $this->url('formation/session/restaurer', ['session' => $session->getId()], [], true); ?>"
                            title="Restaurer la session"
                            data-toggle="tooltip" data-html="true">
-                            <span class="glyphicon glyphicon-leaf"></span>
+                            <span class="icon icon-restaurer"></span>
                         </a>
                     <?php endif; ?>
                 <?php endif; ?>
@@ -141,7 +141,7 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                        class="ajax-modal" data-event="modification"
                        title="Supprimer la session"
                        data-toggle="tooltip" data-html="true">
-                        <span class="glyphicon glyphicon-remove"></span>
+                        <span class="icon icon-detruire"></span>
                     </a>
                 <?php endif; ?>
             </td>

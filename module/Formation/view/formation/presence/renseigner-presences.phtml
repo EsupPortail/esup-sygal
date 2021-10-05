@@ -52,17 +52,17 @@ $this->headTitle($titrePage);
                     </div>
                     <div style="float:right;" style="padding-right: 1rem;">
                         <?php if ($canPresenceModifier) : ?>
-                            <span class="all_toggle glyphicon glyphicon-ok" id="on_<?php echo $inscription->getId(); ?>"           data-toggle="tooltip" data-html="true" title="Passer à présent toutes les journées de <span class='highlight agent'><?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?></span>"></span>
-                            <span class="all_toggle glyphicon glyphicon-remove" id="off_<?php echo $inscription->getId(); ?>"    data-toggle="tooltip" data-html="true" title="Passer à absent toutes les journées de <span class='highlight agent'><?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?></span>"></span>
+                            <span class="all_toggle icon icon-ok" id="on_<?php echo $inscription->getId(); ?>"           data-toggle="tooltip" data-html="true" title="Passer à présent toutes les journées de <span class='highlight agent'><?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?></span>"></span>
+                            <span class="all_toggle icon icon-ko" id="off_<?php echo $inscription->getId(); ?>"    data-toggle="tooltip" data-html="true" title="Passer à absent toutes les journées de <span class='highlight agent'><?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?></span>"></span>
                         <?php endif; ?>
                     </div>
             </td>
             <?php foreach ($seances as $seance) : ?>
                 <td class="reponse <?php if ($canPresenceModifier) echo "toggle"; ?>" id="<?php echo $seance->getId(); ?>_<?php echo $inscription->getId(); ?>">
                     <?php if ($presences[$seance->getId()][$inscription->getId()] && $presences[$seance->getId()][$inscription->getId()]->isPresent()) : ?>
-                        <span class="glyphicon glyphicon-ok" style="color:darkgreen;" title="Présent"></span>
+                        <span class="icon icon-ok" style="color:darkgreen;" title="Présent"></span>
                     <?php else : ?>
-                        <span class="glyphicon glyphicon-remove" style="color:darkred;" title="Non présent"></span>
+                        <span class="icon icon-ko" style="color:darkred;" title="Non présent"></span>
                     <?php endif; ?>
                 </td>
             <?php endforeach; ?>
@@ -144,8 +144,8 @@ $this->headTitle($titrePage);
                         // console.log(retour);
                         // console.log(id);
                         let texte;
-                        if (retour == 1) texte = "<span class='glyphicon glyphicon-ok' style='color:darkgreen;'></span>";
-                        else texte = "<span class='glyphicon glyphicon-remove' style='color:darkred;'></span>";
+                        if (retour == 1) texte = "<span class='icon icon-ok' style='color:darkgreen;'></span>";
+                        else texte = "<span class='icon icon-ko' style='color:darkred;'></span>";
                         document.getElementById(id).innerHTML = texte;
                     }
             });
@@ -179,8 +179,8 @@ $this->headTitle($titrePage);
                         $.each(seances, function(index, journee) {
                             // console.log(inscrit);
                             // console.log(journee);
-                            if (mode == 'on') texte = "<span class='glyphicon glyphicon-ok' style='color:darkgreen;'></span>";
-                            else texte = "<span class='glyphicon glyphicon-remove' style='color:darkred;'></span>";
+                            if (mode == 'on') texte = "<span class='icon icon-ok' style='color:darkgreen;'></span>";
+                            else texte = "<span class='icon icon-ko' style='color:darkred;'></span>";
                             document.getElementById(journee + "_" + inscrit).innerHTML = texte;
                         });
                     }

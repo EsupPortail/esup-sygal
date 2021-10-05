@@ -26,12 +26,11 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
     <a
         <?php /** @see \Formation\Controller\FormationController::ajouterAction() */ ?>
         href="<?php echo $this->url('formation/formation/ajouter', [], [], true); ?>"
-        class="btn btn-primary action ajax-modal" data-event="modification">
-        <span class="glyphicon glyphicon-plus"></span>
+        class="btn btn-primary ajax-modal" data-event="modification">
+        <span class="icon icon-ajouter"></span>
         Ajouter une formation
     </a>
 <?php endif; ?>
-
 
 <table class="table table-condensed table-hover">
     <thead>
@@ -49,12 +48,11 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
     <tbody>
     <?php foreach ($formations as $formation) : ?>
         <tr>
-
             <td <?php if ($formation->estHistorise()) echo " class='historise' "; ?> >
                 <span class="typage">Formation :</span>
                 <?php echo $formation->getLibelle(); ?>
                 <?php if ($formation->getDescription() !== null AND trim($formation->getDescription()) !== null) : ?>
-                    <span class="glyphicon glyphicon-info-sign"
+                    <span class="icon icon-information"
                           title="<?php echo $formation->getDescription(); ?>" data-toggle="tooltip" data-html="true"
                     ></span>
                 <?php endif; ?>
@@ -63,7 +61,7 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
                 <?php if ($formation->getModule()) : ?>
                     <?php echo $formation->getModule()->getLibelle(); ?>
                     <?php if ($formation->getModule()->getDescription() !== null AND trim($formation->getModule()->getDescription()) !== null) : ?>
-                        <span class="glyphicon glyphicon-info-sign"
+                        <span class="icon icon-information"
                               title="<?php echo $formation->getModule()->getDescription(); ?>" data-toggle="tooltip" data-html="true"
                         ></span>
                     <?php endif; ?>
@@ -97,7 +95,7 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
                     <a href="<?php echo $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true); ?>"
                        title="afficher la formation #<?php echo $formation->getId(); ?>"
                        data-toggle="tooltip" data-html="true">
-                        <span class="glyphicon glyphicon-eye-open"></span>
+                        <span class="icon icon-voir"></span>
                     </a>
                 <?php endif; ?>
                 <?php if ($canHistoriserFormation) : ?>
@@ -106,14 +104,14 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
                         <a href="<?php echo $this->url('formation/formation/historiser', ['formation' => $formation->getId()], [], true); ?>"
                            title="Historiser la formation #<?php echo $formation->getId(); ?>"
                            data-toggle="tooltip" data-html="true">
-                            <span class="glyphicon glyphicon-trash"></span>
+                            <span class="icon icon-supprimer"></span>
                         </a>
                     <?php else : ?>
                         <?php /** @see \Formation\Controller\FormationController::restaurerAction() */ ?>
                         <a href="<?php echo $this->url('formation/formation/restaurer', ['formation' => $formation->getId()], [], true); ?>"
                            title="Restaurer la formation #<?php echo $formation->getId(); ?>"
                            data-toggle="tooltip" data-html="true">
-                            <span class="glyphicon glyphicon-leaf"></span>
+                            <span class="icon icon-restaurer"></span>
                         </a>
                     <?php endif; ?>
                 <?php endif; ?>
@@ -123,7 +121,7 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
                     <a href="<?php echo $this->url('formation/formation/supprimer',['formation' => $formation->getId()], [], true); ?>"
                        class="ajax-modal" data-event="modification"
                        title="Suppression de la formation #<?php echo $formation->getId(); ?>" data-toggle="tooltip" data-html="true">
-                        <span class="glyphicon glyphicon-remove"></span>
+                        <span class="icon icon-detruire"></span>
                     </a>
                 <?php endif; ?>
             </td>
@@ -144,14 +142,3 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
 
     });
 </script>
-
-<style>
-    span.typage {
-        display: inline-block;
-        width: 8rem;
-        font-weight: 500;
-    }
-    a.btn.action {
-        width:25rem;
-    }
-</style>

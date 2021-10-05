@@ -113,7 +113,7 @@ use Application\Entity\Db\Utilisateur;
             <?php else: ?>
                 <a  <?php /** @see \Application\Controller\UtilisateurController::resetPasswordAction() */ ?>
                     href="<?php echo $this->url('utilisateur/reset-password', ['individu' => $individu->getId()], [], true); ?>"
-                    class="btn btn-primary action"
+                    class="btn btn-primary"
                 >
                     <span class="icon icon-refresh"></span>
                     Reinitialiser le mot de passe

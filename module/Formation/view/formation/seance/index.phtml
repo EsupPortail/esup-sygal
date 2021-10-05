@@ -50,7 +50,7 @@ $canAfficherSession     = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                     <a href="<?php echo $this->url('formation/session/afficher', ['session' => $seance->getSession()->getId()], [], true); ?>"
                        title="Accéder à la session associée" data-toggle="tooltip" data-html="true"
                     >
-                    <span class="glyphicon glyphicon-list-alt"></span>
+                    <span class="icon icon-lister-alt"></span>
                     </a>
                 <?php endif; ?>
                 <?php if ($canHistoriserSeance) : ?>
@@ -59,14 +59,14 @@ $canAfficherSession     = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                         <a href="<?php echo $this->url('formation/seance/historiser', ['seance' => $seance->getId()], [], true); ?>"
                            title="Historiser la seance" data-toggle="tooltip" data-html="true"
                         >
-                            <span class="glyphicon glyphicon-trash"></span>
+                            <span class="icon icon-supprimer"></span>
                         </a>
                     <?php else : ?>
                         <?php /** @see \Formation\Controller\SeanceController::restaurerAction() */ ?>
                         <a href="<?php echo $this->url('formation/seance/restaurer', ['seance' => $seance->getId()], [], true); ?>"
                            title="Restaurer la seance" data-toggle="tooltip" data-html="true"
                         >
-                            <span class="glyphicon glyphicon-leaf"></span>
+                            <span class="icon icon-restaurer"></span>
                         </a>
                     <?php endif; ?>
                 <?php endif; ?>
@@ -75,7 +75,7 @@ $canAfficherSession     = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                     <a href="<?php echo $this->url('formation/seance/supprimer',['seance' => $seance->getId()], [], true); ?>"
                        class="ajax-modal" data-event="modification"
                        title="Suppression de la seance #<?php echo $seance->getId(); ?>" data-toggle="tooltip" data-html="true">
-                        <span class="glyphicon glyphicon-remove"></span>
+                        <span class="icon icon-detruire"></span>
                     </a>
                 <?php endif; ?>
             </td>

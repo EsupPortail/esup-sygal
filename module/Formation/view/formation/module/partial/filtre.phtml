@@ -7,52 +7,33 @@
 
 ?>
 
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <span class="glyphicon glyphicon-filter"></span>
+<div class="card bg-default">
+    <div class="card-header">
+        <span class="icon icon-filter"></span>
         Filtre des formations
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <form id="filter" method="get" action="">
 
             <div class="row">
                 <!-- libelle du module ------------------------------------------------------------------------------------>
                 <div class="col-md-4">
-                    <label for="libelle">Libellé : </label>
-                    <input type="text" name="libelle" id="libelle" <?php if ($filtres['libelle'] !== null AND $filtres['libelle'] !== '') echo " value='".$filtres['libelle']."' "; ?>/>
+                    <label class="form-label" for="libelle">Libellé : </label>
+                    <input class="form-control" type="text" name="libelle" id="libelle" <?php if ($filtres['libelle'] !== null AND $filtres['libelle'] !== '') echo " value='".$filtres['libelle']."' "; ?>/>
                 </div>
-            </div>
 
-            <br/>
-
-            <div class="row">
-                <div class="pull-right">
-                    <button type="button" id="filter" class="btn btn-primary filter-action">
-                        <span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Filtrer
+                <div>
+                    <button type="button" id="filter" class="btn btn-primary">
+                        <span class="icon icon-filter" aria-hidden="true"></span> Filtrer
                     </button>
-                    <button type="button" id="reset" class="btn btn-primary filter-action">
-                        <span class="glyphicon glyphicon-erase" aria-hidden="true"></span> R.A.Z.
+                    <button type="button" id="reset" class="btn btn-primary">
+                        <span class="icon icon-delete" aria-hidden="true"></span> R.A.Z.
                     </button>
                 </div>
             </div>
-
         </form>
-
     </div>
 </div>
-
-
-<style>
-    .filter-action {
-        width: 25rem;
-        margin: 0 1rem;
-    }
-
-    form#filter label {
-        width: 10rem;
-    }
-</style>
 
 <script>
     $('button#reset').click(function (e) {

@@ -24,7 +24,7 @@ Exemple de configuration dans `config/autoload/xxxx.local.php` :
              * Description facultative de ce mode d'authentification qui apparaîtra sur la page de connexion.
              */
             'description' =>
-                "<p><span class='glyphicon glyphicon-info-sign'></span> Cliquez sur le bouton ci-dessous pour accéder à l'authentification via la fédération d'identité.</p>" .
+                "<p><span class='icon icon-information'></span> Cliquez sur le bouton ci-dessous pour accéder à l'authentification via la fédération d'identité.</p>" .
                 "<p><strong>Attention !</strong> Si vous possédez à la fois un compte Étudiant et un compte Personnel, vous devrez utiliser " .
                 "votre compte <em>Étudiant</em> pour vous authentifier...</p>",
                 

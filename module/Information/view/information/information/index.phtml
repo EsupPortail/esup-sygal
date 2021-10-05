@@ -27,7 +27,7 @@ $canFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivilege
 </h1>
 
 <a href="<?php echo $this->url('informations/ajouter', [], [], true); ?>"
-   class="btn btn-primary action"
+   class="btn btn-primary"
 >
     <span class="icon icon-plus"></span>
     Ajouter une page d'information
@@ -35,7 +35,7 @@ $canFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivilege
 
 <?php if ($canFichier) : ?>
     <a href="<?php echo $this->url('informations/fichiers', [], [], true); ?>"
-       class="btn btn-primary action"
+       class="btn btn-primary"
     >
         <span class="fas fa-folder-open "></span>
         Gestion des fichiers

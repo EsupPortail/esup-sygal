@@ -102,7 +102,7 @@ $these = $proposition->getThese();
             <?php if ($canSursis) : ?>
                 <div class="col-md-6" >
                     <?php /** @see \Soutenance\Controller\PropositionController::toggleSursisAction() */ ?>
-                    <a href="<?php echo $this->url('soutenance/proposition/sursis', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action float-end">
+                    <a href="<?php echo $this->url('soutenance/proposition/sursis', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary float-end">
                         <?php if (!$proposition->hasSursis()) : ?>
                             <span class="icon icon-plus-sign"></span>
                             Accorder un sursis

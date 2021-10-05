@@ -34,30 +34,32 @@ $canSessionVoir = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivi
 <?php else : ?>
 
 <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active">
+    <li role="presentation" class="nav-item active">
         <a href="#courantes"
            role="tab"
            aria-controls="courantes"
            data-toggle="tab"
-
+           class="nav-link"
         >
             Formations en cours
         </a>
     </li>
-    <li role="presentation">
+    <li role="presentation" class="nav-item">
         <a href="#passees"
            role="tab"
            aria-controls="passees"
            data-toggle="tab"
+           class="nav-link"
         >
             Mes inscriptions passées
         </a>
     </li>
-    <li role="presentation">
+    <li role="presentation" class="nav-item">
         <a href="#futures"
            role="tab"
            aria-controls="futures"
            data-toggle="tab"
+           class="nav-link"
         >
             Mes formations à venir
         </a>
@@ -101,7 +103,7 @@ $canSessionVoir = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivi
                         <?php if ($canSessionVoir) : ?>
                         <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>"
                            title="Accéder à la session" data-toggle="tooltip" data-html="true"
-                        ><span class="glyphicon glyphicon-eye-open"></span></a>
+                        ><span class="icon icon-voir"></span></a>
                         <?php endif; ?>
                     </td>
                 </tr>
@@ -141,7 +143,7 @@ $canSessionVoir = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivi
                         <?php if ($canSessionVoir) : ?>
                             <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>"
                                title="Accéder à la session" data-toggle="tooltip" data-html="true"
-                            ><span class="glyphicon glyphicon-eye-open"></span></a>
+                            ><span class="icon icon-voir"></span></a>
                         <?php endif; ?>
                     </td>
                 </tr>
@@ -181,7 +183,7 @@ $canSessionVoir = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivi
                         <?php if ($canSessionVoir) : ?>
                             <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>"
                                title="Accéder à la session" data-toggle="tooltip" data-html="true"
-                            ><span class="glyphicon glyphicon-eye-open"></span></a>
+                            ><span class="icon icon-voir"></span></a>
                         <?php endif; ?>
                     </td>
                 </tr>

@@ -78,11 +78,11 @@ $inscriptions = array_filter($these->getAnneesUnivInscription()->toArray(), func
             <?php if ($inscription->estNonHistorise()) : ?>
                 <?php /** @see \Formation\Controller\InscriptionController::historiserAction() */ ?>
                 <a href="<?php echo $this->url('formation/inscription/historiser', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>">
-                    <span class="glyphicon glyphicon-trash"></span></a>
+                    <span class="icon icon-supprimer"></span></a>
             <?php else : ?>
                 <?php /** @see \Formation\Controller\InscriptionController::restaurerAction() */ ?>
                 <a href="<?php echo $this->url('formation/inscription/restaurer', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>">
-                    <span class="glyphicon glyphicon-leaf"></span></a>
+                    <span class="icon icon-restaurer"></span></a>
             <?php endif; ?>
         <?php endif; ?>
         <?php if ($actionSupprimer) : ?>
@@ -90,7 +90,7 @@ $inscriptions = array_filter($these->getAnneesUnivInscription()->toArray(), func
             <a href="<?php echo $this->url('formation/inscription/supprimer', ['inscription' => $inscription->getId()], [], true); ?>"
                class="ajax-modal" data-event="modification"
             >
-                <span class="glyphicon glyphicon-remove"></span></a>
+                <span class="icon icon-detruire"></span></a>
         <?php endif; ?>
     <?php endif; ?>
 </li>

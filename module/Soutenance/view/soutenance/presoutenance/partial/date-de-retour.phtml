@@ -33,7 +33,7 @@ $canEditDateRenduRapport = $this->isAllowed($these, PresoutenancePrivileges::PRE
             <div class="float-end">
                 <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::dateRenduRapportAction() */ ?>
                     href="<?php echo $this->url('soutenance/presoutenance/date-rendu-rapport', ['these' => $these->getId()], [] , true); ?>"
-                    class="btn btn-primary action ajax-modal"
+                    class="btn btn-primary ajax-modal"
                     data-event="modification-date-rendu-rapport"
                 >
                     <span class="icon icon-edit"></span> Modifier

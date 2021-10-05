@@ -206,7 +206,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                 <a
                         <?php /** @see \Soutenance\Controller\PresoutenanceController::modifierAdresseAction() */ ?>
                         href="<?php echo $this->url('soutenance/presoutenance/modifier-adresse', ['these' => $these->getId()], [] ,true); ?>"
-                        class="btn btn-primary action ajax-modal" data-event="modification-adresse">
+                        class="btn btn-primary ajax-modal" data-event="modification-adresse">
                     <span class="icon icon-edit"></span>
                     Modifier l'adresse
                 </a>
@@ -221,7 +221,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                  <?php if ($canGenererDocument) : ?>
                         <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::procesVerbalSoutenanceAction() */ ?>
                                 href="<?php echo $this->url('soutenance/presoutenance/proces-verbal-soutenance', ['these' => $these->getId()], [], true); ?>"
-                                class="btn btn-primary action"
+                                class="btn btn-primary"
                                 target="_blank"
                         >
                             <span class="fas fa-list-alt"></span>Générer le procès verbal
@@ -229,7 +229,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
 
                         <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::avisSoutenanceAction() */ ?>
                                 href="<?php echo $this->url('soutenance/presoutenance/avis-soutenance', ['these' => $these->getId()], [], true); ?>"
-                                class="btn btn-primary action"
+                                class="btn btn-primary"
                                 target="_blank"
                         >
                             <span class="fas fa-list-alt"></span>Générer l'avis de soutenance
@@ -237,7 +237,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
 
                         <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::convocationsAction() */ ?>
                                 href="<?php echo $this->url('soutenance/presoutenance/convocations', ['these' => $these->getId()], [], true); ?>"
-                                class="btn btn-primary action"
+                                class="btn btn-primary"
                                 target="_blank"
                         >
                             <span class="fas fa-list-alt"></span>Générer les convocations
