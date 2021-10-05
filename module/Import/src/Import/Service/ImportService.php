@@ -279,25 +279,26 @@ class ImportService
          */
         $quotifier = function($v) { return "'$v'"; };
         $sqlFilterIndividu = sprintf("SOURCE_CODE IN (%s)", implode(', ', array_map($quotifier, $sourceCodeIndividus)));
-        $this->synchroService->addService('these',
+        $serviceNameSuffix = '-' . $these->getEtablissement()->getCode();
+        $this->synchroService->addService('these' . $serviceNameSuffix,
             ['sql_filter' => "SOURCE_CODE = '$sourceCodeThese'"]
         );
-        $this->synchroService->addService('doctorant',
+        $this->synchroService->addService('doctorant' . $serviceNameSuffix,
             ['sql_filter' => "SOURCE_CODE = '$sourceCodeDoctorant'"]
         );
-        $this->synchroService->addService('individu',
+        $this->synchroService->addService('individu' . $serviceNameSuffix,
             ['sql_filter' => "SOURCE_CODE = '$sourceCodeIndividu'"]
         );
-        $this->synchroService->addService('acteur',
+        $this->synchroService->addService('acteur' . $serviceNameSuffix,
             ['sql_filter' => "THESE_ID = '$theseId'"]
         );
-        $this->synchroService->addService('individu',
+        $this->synchroService->addService('individu' . $serviceNameSuffix,
             ['sql_filter' => $sqlFilterIndividu]
         );
-        $this->synchroService->addService('ecole-doctorale',
+        $this->synchroService->addService('ecole-doctorale' . $serviceNameSuffix,
             ['sql_filter' => "SOURCE_CODE = '$sourceCodeEcoleDoct'"]
         );
-        $this->synchroService->addService('unite-recherche',
+        $this->synchroService->addService('unite-recherche' . $serviceNameSuffix,
             ['sql_filter' => "SOURCE_CODE = '$sourceCodeUniteRech'"]
         );
         $this->synchroService->synchronize();
