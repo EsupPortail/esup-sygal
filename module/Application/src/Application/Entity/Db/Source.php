@@ -2,105 +2,17 @@
 
 namespace Application\Entity\Db;
 
+use UnicaenDbImport\Entity\Db\AbstractSource;
+
 /**
  * Source
  */
-class Source extends \UnicaenDbImport\Entity\Db\Source
+class Source extends AbstractSource
 {
-    /**
-     * @var string
-     */
-    protected $code;
-
-    /**
-     * @var boolean
-     */
-    protected $importable;
-
-    /**
-     * @var string
-     */
-    protected $libelle;
-
-    /**
-     * @var int
-     */
-    protected $id;
-
     /**
      * @var Etablissement
      */
     protected $etablissement;
-
-    /**
-     * Set code
-     *
-     * @param string $code
-     */
-    public function setCode(string $code)
-    {
-        $this->code = $code;
-    }
-
-    /**
-     * Get code
-     *
-     * @return string
-     */
-    public function getCode(): string
-    {
-        return $this->code;
-    }
-
-    /**
-     * Set importable
-     *
-     * @param boolean $importable
-     */
-    public function setImportable(bool $importable)
-    {
-        $this->importable = $importable;
-    }
-
-    /**
-     * Get importable
-     *
-     * @return boolean
-     */
-    public function getImportable(): bool
-    {
-        return $this->importable;
-    }
-
-    /**
-     * Set libelle
-     *
-     * @param string $libelle
-     */
-    public function setLibelle(string $libelle)
-    {
-        $this->libelle = $libelle;
-    }
-
-    /**
-     * Get libelle
-     *
-     * @return string
-     */
-    public function getLibelle(): string
-    {
-        return $this->libelle;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId(): int
-    {
-        return $this->id;
-    }
 
     /**
      * @return Etablissement|null
@@ -108,16 +20,6 @@ class Source extends \UnicaenDbImport\Entity\Db\Source
     public function getEtablissement(): ?Etablissement
     {
         return $this->etablissement;
-    }
-
-    /**
-     * Retourne la représentation littérale de cet objet.
-     *
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return $this->getLibelle();
     }
 
     /**
