@@ -484,7 +484,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         if ($these->getEtablissement()) $pdcData->setEtablissement($these->getEtablissement()->getLibelle());
         if ($these->getEcoleDoctorale()) $pdcData->setEtablissement($these->getEtablissement()->getLibelle());
         if ($these->getDoctorant()) {
-            $pdcData->setDoctorant($these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true, true, true));
+            $pdcData->setDoctorant(strtoupper($these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true, true, true)));
         }
         if ($these->getDateSoutenance()) $pdcData->setDate($these->getDateSoutenance()->format("d/m/Y"));
 
@@ -561,7 +561,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         /** @var Acteur $acteur */
         foreach ($acteursEnCouverture as $acteur) {
             $acteurData = new MembreData();
-            $acteurData->setDenomination($acteur->getIndividu()->getNomComplet(true, false, false, true, true));
+            $acteurData->setDenomination(strtoupper($acteur->getIndividu()->getNomComplet(true, false, false, true, true)));
             $acteurData->setQualite($acteur->getQualite());
 
             $estMembre = !empty(array_filter($jury, function (Acteur $a) use ($acteur) {return $a->getIndividu() === $acteur->getIndividu();}));
@@ -584,10 +584,10 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         /** Directeurs de thèses */
         $nomination = [];
         foreach ($directeurs as $directeur) {
-            $nomination[] = $directeur->getIndividu()->getNomComplet(false, false, false, true, true);
+            $nomination[] = strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true, true));
         }
         foreach ($codirecteurs as $directeur) {
-            $nomination[] = $directeur->getIndividu()->getNomComplet(false, false, false, true, true);
+            $nomination[] = strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true, true));
         }
         $pdcData->setListing(implode(" et ", $nomination) . ", ");
         if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());
