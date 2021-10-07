@@ -50,7 +50,15 @@ $these = $proposition->getThese();
                         <?php endif; ?>
                     </li>
                     <li>
-                        <?php echo $these->getEcoleDoctorale()->getLibelle(); ?>  (École doctorale) <br/>
+                        <?php if ($these->getEcoleDoctorale()) : ?>
+                            <?php echo $these->getEcoleDoctorale()->getLibelle(); ?>  (École Doctorale) <br/>
+                        <?php else: ?>
+                            <strong style="color:darkred;">
+                                Aucune
+                                (École Doctorale)
+                            </strong>
+                            <br/>
+                        <?php endif; ?>
                         <?php if ($validations[Role::CODE_RESP_ED]) : ?>
                             <?php $validation = current($validations[Role::CODE_RESP_ED]); ?>
                             <span class="badge badge-success"> Validée</span>

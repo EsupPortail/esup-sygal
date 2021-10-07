@@ -20,6 +20,7 @@ echo $this->formControlGroup($form->get('nom'));
 echo $this->formControlGroup($form->get('email'));
 echo $this->formControlGroup($form->get('qualite'));
 echo $this->formControlGroup($form->get('etablissement'));
+echo $this->formControlGroup($form->get('adresse'));
 
 if ($these->getEtablissement()->estComue()) {
     /** @var Element $element */
