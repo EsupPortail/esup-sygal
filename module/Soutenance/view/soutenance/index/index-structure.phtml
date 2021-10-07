@@ -138,9 +138,7 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
                         <?php endif; ?>
                     </td>
                     <td>
-                        <span class="badge <?php echo $proposition->getEtat()->getCode(); ?>">
-                            <?php echo $proposition->getEtat()->getLibelle(); ?>
-                        </span>
+                        <?php echo $this->etatSoutenance()->render($proposition->getEtat()); ?>
                     </td>
                     <td>
                         <a
