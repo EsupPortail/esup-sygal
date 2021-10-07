@@ -174,9 +174,9 @@ class JustificatifService {
     /**
      * @param AbstractActionController $controller
      * @param string $paramName
-     * @return Justificatif
+     * @return Justificatif|null
      */
-    public function getRequestedJustificatif($controller, $paramName = 'justificatif')
+    public function getRequestedJustificatif(AbstractActionController $controller, string $paramName = 'justificatif') : ?Justificatif
     {
         $id = $controller->params()->fromRoute($paramName);
         $justificatif = $this->getJustificatif($id);

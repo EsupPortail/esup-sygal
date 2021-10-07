@@ -32,7 +32,7 @@ class ExportController extends AbstractController
             'Date de naissance'                     => function ($variables) { return $variables['doctorant']->getIndividu()->getDateNaissance(); },
             'Nationalité'                           => function ($variables) { return $variables['doctorant']->getIndividu()->getNationalite(); },
             'Adresse électronique'                  => function ($variables) { return $variables['doctorant']->getIndividu()->getEmail(); },
-            'Adresse électronique personnelle'      => function ($variables) { return $variables['doctorant']->getIndividu()->getMailContact(); },
+            'Adresse électronique personnelle'      => function ($variables) { return $variables['doctorant']->getEmail(); },
             'Numéro étudiant'                       => function ($variables) { return $this->sourceCodeStringHelper->removePrefixFrom($variables['doctorant']->getSourceCode()); },
             'I.N.E.'                                => function ($variables) { return $variables['doctorant']->getIne(); },
             //These

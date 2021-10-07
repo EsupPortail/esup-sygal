@@ -9,6 +9,7 @@ class Etat implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
     const EN_COURS = 'EN_COURS';
+    const ETABLISSEMENT = 'ETABLISSEMENT';
     const VALIDEE = 'VALIDEE';
     const REJETEE = 'REJETEE';
 
