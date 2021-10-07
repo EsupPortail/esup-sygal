@@ -134,6 +134,10 @@ class CoEncadrantController extends AbstractActionController {
     public function historiqueAction()
     {
         $coencadrant = $this->getCoEncadrantService()->getRequestedCoEncadrant($this);
+        if ($coencadrant === null) {
+            return $this->redirect()->toRoute('co-encadrant', [], [], true);
+        }
+
         $theses = $this->getTheseService()->getRepository()->fetchThesesByCoEncadrant($coencadrant->getIndividu());
 
         $encours = []; $closes = [];

@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+3.0.2
+-----
+- [FIX] Correction du plantage lors du réimport ponctuel d'une thèse. 
+
 3.0.1
 -----
 - Renommage de l'application en ESUP-SyGAL.
