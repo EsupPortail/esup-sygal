@@ -30,7 +30,9 @@ $justification = true;
 </p>
 <?php if($proposition->getRenduRapport()) : ?>
     <p>
-        <u>Rappel : </u> le rapport est attendu pour le <?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?>.
+        <u>Rappel : </u>
+        Le rapport est attendu pour le <?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?>.
+        Au delà de cette date, vous ne pourrez plus rendre votre rapport.
     </p>
 <?php endif;?>
 <p>
@@ -52,6 +54,7 @@ $justification = true;
 <?php if($proposition->getRenduRapport()) : ?>
     <p>
         Keep in mind that your report must be uploaded before <?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?>.
+        After the deadline, you won't be able to upload your report.
     </p>
 <?php endif;?>
 est regards,
