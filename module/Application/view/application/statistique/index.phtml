@@ -8,11 +8,15 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Structure;
 
 /**
+ * @see \Application\Controller\StatistiqueController::indexAction()
  * @var PhpRenderer $this
  * @var These[]     $theses
  * @var EcoleDoctorale[]     $ecoles
  * @var UniteRecherche[]     $unites
  * @var Etablissement[] $etablissements
+ *
+ * @var string $type
+ * @var Structure $structure
  */
 
 
@@ -24,6 +28,12 @@ $this->headTitle($this->translate("Statistiques"));
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <h1 class="page-header first"><?php echo $this->translate("Statistiques") ?> <span
             class="badge"><?php echo count($theses) . " thèses"?></span></h1>
+
+<?php if ($type !== null) : ?>
+ Sélection courante : [<?php echo $type; ?>] <?php echo ($structure)?$structure->getLibelle():"Pas de structure"; ?>
+<?php else : ?>
+    Aucune sélection
+<?php endif; ?>
 
     <div id="selector">
         <form id="selection" method="get" action="">
@@ -480,6 +490,7 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code = [];
     $code["AFGHAN(E)"] = "Afghanistan";
     $code["ALGERIEN(NE)"] = "Algeria";
+    $code["ALGÉRIEN(NE)"] = "Algeria";
     $code["ALLEMAND(E)"] = "Germany";
     $code["AMERICAIN(E)"] = "United States";
     $code["ANDORRAN(NE)"] = "Andorra";
@@ -495,12 +506,15 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["BELGE"] = "Belgium";
     $code["BENGALI(E)"] = "Bengladesh";
     $code["BENINOIS(E)"] = "Benin";
+    $code["BÉNINOIS(E)"] = "Benin";
     $code["BOLIVIEN(NE)"] = "Bolivia";
     $code["BOSNIAQUE"] = "Bosnia";
     $code["BRESILIEN(NE)"] = "Brazil";
+    $code["BRÉSILIEN(NE)"] = "Brazil";
     $code["BRITANNIQUE"] = "United Kingdom";
     $code["BULGARE"] = "Bulgaria";
     $code["BURKINABE"] = "Burkina Faso";
+    $code["BURKINABEEN(NE)"] = "Burkina Faso";
     $code["BURUNDAIS(E)"] = "Burundi";
     $code["CAMBODGIEN(NE)"] = "Combodia";
     $code["CAMEROUNAIS(E)"] = "Cameroon";
@@ -514,6 +528,7 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["COMORIEN(NE)"] = "Comoros";
     $code["CONGOLAIS(E)"] = "Congo";
     $code["COSTARICIEN(NE)"] = "Costa Rica";
+    $code["COSTARICAIN(E)"] = "Costa Rica";
     $code["CROATE"] = "Croatia";
     $code["CUBAIN(E)"] = "Cuba";
     $code["DANOIS(E)"] = "Denmark";
@@ -522,10 +537,13 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["EGYPTIEN(NE)"] = "Egypt";
     $code["EL SALVADOR"] = "El Salvador";
     $code["EL SALVADORIEN(NE)"] = "El Salvador";
+    $code["EMIRATIS(IE)"] = "United Arab Emirates";
     $code["EQUATORIEN(NE)"] = "Equatorial Guinea";
     $code["ESPAGNOL(E)"] = "Spain";
+    $code["ETRANGER"] = "";
     $code["FINLANDAIS(E)"] = "Finland";
     $code["FRANCAIS(E)"] = "France";
+    $code["FRANÇAIS(E)"] = "France";
     $code["GABONAIS(E)"] = "Gabon";
     $code["GEORGIEN(NE)"] = "Georgia";
     $code["GHANEEN(NE)"] = "Ghana";
@@ -536,6 +554,7 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["HONGROIS(E)"] = "Hungary";
     $code["INDIEN(NE)"] = "India";
     $code["INDONESIEN(NE)"] = "Indonesia";
+    $code["INDONÉSIEN(NE)"] = "Indonesia";
     $code["IRAKIEN(NE)"] = "Iraq";
     $code["IRANIEN(NE)"] = "Iran";
     $code["IRLANDAIS(E)"] = "Ireland";
@@ -546,6 +565,7 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["JAPONAIS(E)"] = "Japan";
     $code["JORDANIEN(NE)"] = "Jordan";
     $code["KAZAKH"] = "Kazakhstan";
+    $code["KAZAKH(E)"] = "Kazakhstan";
     $code["KENYAN(NE)"] = "Kenya";
     $code["KOWEITIEN(NE)"] = "Kuwait";
     $code["LAOTIEN(NE)"] = "Laos";
@@ -555,6 +575,8 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["LITHUANIEN(NE)"] = "Lithuania";
     $code["LUXEMBOURGEOIS(E)"] = "Luxembourg";
     $code["MALAIS(E)"] = "Malaysia";
+    $code["MALAISIEN(E)"] = "Malaysia";
+    $code["MALAISIEN(NE)"] = "Malaysia";
     $code["MALAWIEN(NE)"] = "Malawi";
     $code["MALGACHE"] = "Madagascar";
     $code["MALIEN(NE)"] = "Mali";
@@ -572,6 +594,7 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["NICARAGUAIS(E)"] = "Nicaragua";
     $code["NIGERIEN(NE)"] = "Nigeria";
     $code["NIGERIAN(E)"] = "Nigeria";
+    $code["NIGÉRIEN(NE)"] = "Nigeria";
     $code["NORVEGIEN(NE)"] = "Norway";
     $code["OUGANDAIS(E)"] = "Uganda";
     $code["PAKISTANAIS(E)"] = "Pakistan";
@@ -588,9 +611,12 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["RUSSE"] = "Russia";
     $code["SAOUDIEN(NE)"] = "Saudi Arabia";
     $code["SENEGALAIS(E)"] = "Senegal";
+    $code["SÉNÉGALAIS(E)"] = "Senegal";
+    $code["SALVADORIEN(NE)"] = "El Salvador";
     $code["SERBE"] = "Serbia";
     $code["SLOVAQUE"] = "Slovakia";
     $code["SOUDANAIS(E)"] = "Sudan";
+    $code["SRI LANKAIS(E)"] = "Sri Lanka";
     $code["SUD COREEN(NE)"] = "Korea, Republic of";
     $code["SUEDOIS(E)"] = "Sweden";
     $code["SUISSE"] = "Switzerland";
@@ -598,9 +624,11 @@ function generateEffectifParPays($effectifsInscription, $start , $end) {
     $code["TCHADIEN(NE)"] = "Chad";
     $code["TCHEQUE"] = "Czechia";
     $code["THAILANDAIS(E)"] = "Thailand";
+    $code["THAÏLANDAIS(E)"] = "Thailand";
     $code["TOGOLAIS(E)"] = "Togo";
     $code["TUNISIEN(NE)"] = "Tunisia";
     $code["TURC (TURQUE)"] = "Turkey";
+    $code["TURC(QUE)"] = "Turkey";
     $code["UKRAINIEN(NE)"] = "Ukraine";
     $code["EMIRATS ARABES UNIS"] = "United Arab Emirates";
     $code["VENEZUELIEN(NE)"] = "Venezuela";
