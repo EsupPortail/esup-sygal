@@ -25,11 +25,11 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
 ?>
 
 
-<div class="box panel panel-info">
-    <div class="panel-heading">
+<div class="box card">
+    <div class="card-header bg-info">
         <h2> Avis de soutenance</h2>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <p class="lead">
             Avant de pouvoir déclencher la procédure de soutenance il est nécessaire d'attendre le retour des avis de soutenance des rapporteurs.
         </p>
@@ -74,12 +74,12 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                                 $avi = $avis[$acteur->getIndividu()->getId()];
                                 if ($avi->getAvis() === 'Favorable') : ?>
                                     <span class="text-success">
-                                            <span class="glyphicon glyphicon-ok"></span>
+                                            <span class="icon icon-ok"></span>
                                             Favorable
                                         </span>
                                 <?php else: ?>
                                     <span class="text-danger" title="<?php echo $avi->getMotif(); ?>">
-                                            <span class="glyphicon glyphicon-remove"></span>
+                                            <span class="icon icon-ko"></span>
                                             Défavorable
                                         </span>
                                 <?php endif; ?>
@@ -90,9 +90,9 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                             <?php endif; ?>
                         <?php else: ?>
                             <span class="text-danger">
-                                <span class="glyphicon glyphicon-warning-sign"></span>
+                                <span class="fas fa-exclamation-triangle"></span>
                                 <i> N'est pas un individu <?php echo $this->appInfos()->nom ?></i>
-                                <span class="glyphicon glyphicon-warning-sign"></span>
+                                <span class="fas fa-exclamation-triangle"></span>
                             </span>
                         <?php endif; ?>
                     </td>
@@ -118,21 +118,21 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                             <?php if ($canNotifierAvisSoutenance && isset($engagements[$rapporteur->getIndividu()->getId()]) && !isset($avis[$acteur->getIndividu()->getId()])) : ?>
                                 <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::notifierDemandeAvisSoutenanceAction() */ ?>
                                     href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-avis-soutenance', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
-                                    <span class="glyphicon glyphicon-send"      title="Notifier le rapporteur '<?php echo $rapporteur->getEmail(); ?>'"></span>
+                                    <span class="icon icon-notify"      title="Notifier le rapporteur '<?php echo $rapporteur->getEmail(); ?>'"></span>
                                 </a>
                             <?php else: ?>
-                                <span class="glyphicon glyphicon-send" title="Notifier le rapporteur" style="color:lightgray;" ></span>
+                                <span class="icon icon-notify" title="Notifier le rapporteur" style="color:lightgray;" ></span>
                             <?php endif; ?>
 
                             <?php if ($canRevoquerAvisSoutenance && $avi !== null) : ?>
                                 <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::revoquerAvisSoutenanceAction(); */ ?>
                                     href="<?php echo $this->url('soutenance/presoutenance/revoquer-avis-soutenance', ['these' => $these->getId(), 'avis' => $avi->getId()], [], true); ?>">
-                                    <span class="glyphicon glyphicon-remove"
+                                    <span class="icon icon-delete iconly"
                                           title="Révoquer l'avis de soutenance">
                                     </span>
                                 </a>
                             <?php else: ?>
-                                <span class="glyphicon glyphicon-remove"
+                                <span class="icon icon-delete iconly"
                                       title="Révoquer l'avis de soutenance"
                                       style="color:lightgray;">
                                 </span>
@@ -152,23 +152,23 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                         class="btn btn-info <?php echo ($tousLesEngagements)?'':'disabled'; ?>"
                         href="<?php echo $this->url('soutenance/presoutenance/notifier-demande-avis-soutenance', ['these' => $these->getId()], [], true); ?>"
                     >
-                        <span class="glyphicon glyphicon-send"></span> Envoyer des demandes d'avis de soutenance
+                        <span class="icon icon-notify"></span> Envoyer des demandes d'avis de soutenance
                     </a>
                 <?php endif; ?>
             </div>
 
             <div class="col-md-8">
                 <?php if ($tousLesAvis) : ?>
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
-                            <span class="glyphicon glyphicon-check"></span>
+                    <div class="card">
+                        <div class="card-header bg-success">
+                            <span class="icon icon-ok"></span>
                             Tous les rapports et avis ont été fournis.
                         </div>
                     </div>
                 <?php else : ?>
-                    <div class="panel panel-warning">
-                        <div class="panel-heading">
-                            <span class="glyphicon glyphicon-warning-sign"></span>
+                    <div class="card">
+                        <div class="card-header bg-warning">
+                            <span class="fas fa-exclamation-triangle"></span>
                             Tous les rapports et avis n'ont pas été founis.
                         </div>
                     </div>

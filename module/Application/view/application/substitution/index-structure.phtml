@@ -31,17 +31,17 @@ $canEdit =  $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionP
 ?>
 
 <?php if ($canView): ?>
-    <div class="box panel panel-info">
-        <div class="panel-heading">
+    <div class="box card">
+        <div class="card-header bg-info">
             <h2>
                 <?php echo $libelle; ?>
-                <span class="badge">
+                <span class="badge bg-secondary">
                     <?php echo count($structures); ?>
                 </span>
             </h2>
 
         </div>
-        <div class="panel-body">
+        <div class="card-body">
 
             <?php if($canEdit): ?>
                 <p>
@@ -51,7 +51,7 @@ $canEdit =  $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionP
                         class="zajax-modal"
                     >
                         <button class="btn btn-primary">
-                            <span class="glyphicon glyphicon-plus"></span>
+                            <span class="icon icon-plus"></span>
                             Créer une structure de substitution
                         </button>
                     </a>
@@ -77,14 +77,14 @@ $canEdit =  $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionP
                                     href="<?php echo $this->url('substitution-modifier', ['cible' => $structure->getId()], [], true); ?>"
                                     class="zajax-modal"
                                 >
-                                    <span class="glyphicon glyphicon-pencil"></span>
+                                    <span class="icon icon-edit"></span>
                                 </a>
                                 &nbsp;
                                 <?php if ($canEdit): ?>
                                         <span id="detruire"
                                               ref="<?php echo $structure->getId(); ?>"
                                               type="<?php echo $type; ?>"
-                                              class="text-danger glyphicon glyphicon-remove"
+                                              class="text-danger icon icon-delete iconly"
 
                                         ></span>
                                 <?php endif; ?>

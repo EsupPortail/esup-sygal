@@ -39,13 +39,13 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNamespace('PageDeCouverture/*'); ?>
 
-<div class="box panel panel-info">
-    <div class="panel-heading">
+<div class="box card">
+    <div class="card-header bg-info">
         <h2 class="first">
             <?php echo $this->translate("Visualisation"); ?>
         </h2>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <p>
             En cliquant sur le bouton ci-dessous, vous visualiserez la page de couverture que l'application est
             en mesure de générer automatiquement en l'état actuel des informations dont elle dispose.
@@ -54,7 +54,7 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
             <a class="btn btn-info ajax-modal"
                href="<?php echo $apercevoirPdcUrl ?>"
                title="Cliquez pour afficher un aperçu de la page de couverture"
-            ><span class="glyphicon glyphicon-eye-open"></span> Visualiser la page de couverture</a>
+            ><span class="icon icon-voir"></span> Visualiser la page de couverture</a>
         </p>
     </div>
 </div>
@@ -64,13 +64,13 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
 ?>
 
 <?php if (!empty($problemes)): ?>
-    <div class="box panel panel-warning">
-        <div class="panel-heading">
+    <div class="box card">
+        <div class="card-header bg-warning">
             <h2 class="first">
                 Données manquantes pour la génération de la page de couverture
             </h2>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
             Liste des informations manquantes :
             <ul>
             <?php foreach ($problemes as $probleme): ?>
@@ -83,22 +83,22 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
 
 <!-- La mise à jour des données peut être faite tant que la page de couverture n'est pas validée -->
 <?php if ($canRefreshThese && !$validation): ?>
-    <div class="box panel panel-info">
-        <div class="panel-heading">
+    <div class="box card">
+        <div class="card-header bg-info">
             <h2 class="first">
                 Mise à jour des données relatives à la thèse
             </h2>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
             <p>
                 Cliquez sur ce bouton pour importer tout de suite à partir de <?php echo $these->getSource() ?>
                 les informations nécessaires à la génération de la page de couverture :
             </p>
             <p>
-                <a class="btn btn-default btn-sm"
+                <a class="btn btn-secondary btn-sm"
                    id="refresh-these-button"
                    href="<?php echo $refreshTheseUrl ?>"
-                ><span class="glyphicon glyphicon-import"></span> <strong>Mettre à jour</strong> la thèse à partir de
+                ><span class="icon icon-import"></span> <strong>Mettre à jour</strong> la thèse à partir de
                     <?php echo $these->getSource() ?></a>
             </p>
             <p class="small">
@@ -110,20 +110,20 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
 
 
 <?php if ($validation || $canValidate || $canUnvalidate): ?>
-<div class="box panel panel-info">
-    <div class="panel-heading">
+<div class="box card">
+    <div class="card-header bg-info">
         <h2 class="first">
             <?php echo $this->translate("Validation"); ?>
         </h2>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <?php if ($validation): ?>
             <?php echo $this->validation($validation) ?>
             <?php if ($canUnvalidate): ?>
                 <a href="<?php echo $devaliderUrl ?>"
                    class="btn btn-danger ajax-modal"
                    data-event="event-page-de-couverture-validated-or-not"><span
-                            class="glyphicon glyphicon-trash"></span>
+                            class="icon icon-delete"></span>
                     Annuler la validation la page de couverture</a>
             <?php endif ?>
         <?php else: ?>
@@ -136,7 +136,7 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
                     <a href="<?php echo $validerUrl ?>"
                        class="btn btn-success ajax-modal"
                        data-event="event-page-de-couverture-validated-or-not"><span
-                                class="glyphicon glyphicon-thumbs-up"></span> Valider la page de couverture</a>
+                                class="fas fa-thumbs-up"></span> Valider la page de couverture</a>
                 </p>
                 <p>
                     Une fois la page de couverture validée, le doctorant aura la main pour procéder au dépôt de sa thèse.
@@ -162,7 +162,7 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_
 
 <script>
     $(function () {
-        $("#refresh-these-button").click(function() {
+        $("#refresh-these-button").on("click", function() {
             $(this).css('min-width', $(this).width()).data("loading-text", "Patientez, svp...").button('loading');
             $("body").addClass("wait");
         });

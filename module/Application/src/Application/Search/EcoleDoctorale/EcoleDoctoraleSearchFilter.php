@@ -25,7 +25,7 @@ class EcoleDoctoraleSearchFilter extends SelectSearchFilter
     static public function newInstance(): self
     {
         $instance = new self(
-            "École doctorale",
+            "École doct.",
             self::NAME,
             ['liveSearch' => true]
         );

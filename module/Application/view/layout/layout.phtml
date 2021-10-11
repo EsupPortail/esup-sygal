@@ -3,11 +3,10 @@ use Application\View\Renderer\PhpRenderer;
 use Zend\View\Helper\Navigation as NavigationHelper;
 
 /**
- * @var PhpRenderer         $this
- * @var NavigationHelper    $navigationHelper
+ * @var PhpRenderer      $this
+ * @var NavigationHelper $navigationHelper
  */
-$navigationHelper = $this->navigation();
-$identity = $this->zfcUserIdentity();
+$navigationHelper = $this->navigation('navigation');
 ?>
 
 <?php echo $this->doctype(); ?>
@@ -15,7 +14,7 @@ $identity = $this->zfcUserIdentity();
     <head>
         <!-- Meta -->
         <meta charset="utf-8">
-        <?php echo $this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1.0')
+        <?php echo $this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1, shrink-to-fit=no')
                                     ->appendName('description', '')
                                     ->appendHttpEquiv("X-UA-Compatible", "IE=edge,chrome=1") ?>
 
@@ -29,48 +28,28 @@ $identity = $this->zfcUserIdentity();
         
         <!-- Scripts -->
         <?php echo $this->headScript(); ?>
-        
-        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-        <!--[if lt IE 9]>
-          <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-          <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-        <![endif]-->
     </head>
     
     <body class="<?php echo getenv('APPLICATION_ENV') ?: 'development' ?>">
 
-
-        <!--[if lt IE 7]>
-            <p class="chromeframe">Vous utilisez un navigateur internet hors d'âge. Veuillez le mettre à jour, svp.</p>
-        <![endif]-->
-        <div id="navbar" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".bs-navbar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <?php echo $this->appLink($this->appInfos()->nom) ?>
-                </div>
-                <div class="navbar-collapse bs-navbar-collapse collapse">
+        <nav id="navbar" class="navbar navbar-dark fixed-top navbar-expand-lg" role="navigation">
+            <div class="container-fluid">
+                <?php echo $this->appLink($this->appInfos()->nom) ?>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipalNavbar" aria-controls="menuPrincipalNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="menuPrincipalNavbar">
                     <?php echo $navigationHelper
                         ->menu('navigation')
-                        ->setUlClass('nav navbar-nav')
+                        ->setUlClass('navbar-nav me-auto')
                         ->setPartial('layout/menu-principal.phtml'); ?>
-                    <p class="navbar-text navbar-right">
+                    <div class="navbar-text ">
                         <?php echo $this->appConnection(); ?>
-                    </p>
-<!--                    <p class="navbar-text navbar-right">-->
-<!--                        --><?php
-//                            //echo $this->languageSelector();
-//                        ?>
-<!--                    </p>-->
-                </div><!--/.nav-collapse -->
+                    </div>
+                    <!--<p class="navbar-text navbar-right"><?php /*echo $this->languageSelector(); */?></p>-->
+                </div>
             </div>
-        </div>
+        </nav>
 
         <div class="container ">
             <?php
@@ -83,10 +62,12 @@ $identity = $this->zfcUserIdentity();
             $menuSecondaireHelper = $navigationHelper->menuSecondaire('navigation');
             if ($menuSecondaire = (string) $menuSecondaireHelper): ?>
                 <div class="row">
-                    <div id="sidebar" class="col-xs-12 col-md-2" role="navigation">
-                        <?php echo $menuSecondaire; ?>
+                    <div class="col-12 col-md-2">
+                        <nav id="sidebar" role="navigation">
+                            <?php echo $menuSecondaire; ?>
+                        </nav>
                     </div>
-                    <div id="content" class="col-xs-12 col-md-10">
+                    <div id="content" class="col-12 col-md-10">
                         <?php echo $this->content; ?>
                     </div>
                 </div>
@@ -95,7 +76,7 @@ $identity = $this->zfcUserIdentity();
             <?php endif; ?>
         </div>
 
-        <nav id="footer" class="navbar navbar-default navbar-fixed-bottom">
+        <nav id="footer" class="navbar navbar-fixed-bottom">
             <div class="container">
                 <?php echo $navigationHelper->menuPiedDePage('navigation'); ?>
             </div>

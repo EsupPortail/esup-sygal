@@ -65,8 +65,8 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
 
     <?php if ($proposition->getNouveauTitre() !== null) : ?>
 <!--    --><?php //$modificationFaite = ($proposition->getNouveauTitre() === $these->getTitre()); ?>
-<!--    <div class="box panel --><?php //echo (!$modificationFaite)?"panel-danger":"panel-success"; ?><!--">-->
-<!--        <div class="panel-heading">-->
+<!--    <div class="box card --><!--">-->
+<!--        <div class="card-header <?php //echo (!$modificationFaite)?"bg-danger":"bg-success"; ?>">-->
 <!--            <h2>-->
 <!--                --><?php //if ($modificationFaite) : ?>
 <!--                    Le titre a été modifiée et la saisie dans la source a été faite-->
@@ -75,13 +75,13 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
 <!--                --><?php //endif; ?>
 <!--            </h2>-->
 <!--        </div>-->
-    <div class="box panel panel-warning">
-        <div class=" panel-heading">
+    <div class="box card">
+        <div class=" card-header bg-warning">
             <h2>
             Une modification de titre a été proposée
             </h2>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
             <?php echo $proposition->getNouveauTitre(); ?>
         </div>
     </div>
@@ -96,11 +96,11 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     <!-- ENGAGEMENT IMPARTIALITE------------------------------------------------------------------------------------------->
     <?php echo $this->partial('soutenance/presoutenance/partial/engagement-impartialite'); ?>
 
-    <div class="box panel panel-info">
-        <div class="panel-heading">
+    <div class="box card">
+        <div class="card-header bg-info">
             <h2>Validation de la page de couverture</h2>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
             <?php
                 $ok_rapporteurs = false;
                 $tousLesRapporteurs = true;
@@ -123,7 +123,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                         <div class="col-md-8">
                             Vous pouvez maintenant valider la page de couverture.
                         </div>
-                        <div class="pull-right" style="margin-right: 2rem;">
+                        <div class="float-end" style="margin-right: 2rem;">
                             <a
                                     <?php /** @see \Application\Controller\TheseController::validationPageDeCouvertureAction() */ ?>
                                     href="<?php echo $this->url('these/validation-page-de-couverture', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary">
@@ -148,7 +148,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                 <a href="<?php echo $this->url('soutenance/presoutenance/feu-vert', ['these' => $these->getId()], [], true); ?>"
                     class="btn btn-success action"
                 >
-                    <span class="glyphicon glyphicon-thumbs-up"></span>
+                    <span class="fas fa-thumbs-up"></span>
                     Donner le feu vert
                 </a>
             <?php endif; ?>
@@ -163,7 +163,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
             <a href="<?php echo $this->url('soutenance/presoutenance/stopper-demarche', ['these' => $these->getId()], [], true); ?>"
                class="btn btn-danger action"
             >
-                <span class="glyphicon glyphicon-thumbs-down"></span>
+                <span class="fas fa-thumbs-down"></span>
                 Stopper les démarches
             </a>
         <?php endif; ?>
@@ -180,11 +180,11 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
 
     <br/><br/>
 
-    <div class="panel panel-info box">
-        <div class="panel-heading">
+    <div class="card box">
+        <div class="card-header bg-info">
             <h2>Génération des documents associés à la soutenance</h2>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
 
             <div class="row">
             <div class="col-md-8">
@@ -199,7 +199,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
             <?php endif; ?>
             </div>
 
-            <div class="pull-right">
+            <div class="float-end">
                 <br/>
                 <br/>
                 <?php if ($canModifierAdresse) : ?>
@@ -207,7 +207,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                         <?php /** @see \Soutenance\Controller\PresoutenanceController::modifierAdresseAction() */ ?>
                         href="<?php echo $this->url('soutenance/presoutenance/modifier-adresse', ['these' => $these->getId()], [] ,true); ?>"
                         class="btn btn-primary action ajax-modal" data-event="modification-adresse">
-                    <span class="glyphicon glyphicon-pencil"></span>
+                    <span class="icon icon-edit"></span>
                     Modifier l'adresse
                 </a>
                 <?php endif; ?>
@@ -224,7 +224,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                                 class="btn btn-primary action"
                                 target="_blank"
                         >
-                            <span class="glyphicon glyphicon-list-alt"></span>Générer le procès verbal
+                            <span class="fas fa-list-alt"></span>Générer le procès verbal
                         </a>
 
                         <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::avisSoutenanceAction() */ ?>
@@ -232,7 +232,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                                 class="btn btn-primary action"
                                 target="_blank"
                         >
-                            <span class="glyphicon glyphicon-list-alt"></span>Générer l'avis de soutenance
+                            <span class="fas fa-list-alt"></span>Générer l'avis de soutenance
                         </a>
 
                         <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::convocationsAction() */ ?>
@@ -240,13 +240,13 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                                 class="btn btn-primary action"
                                 target="_blank"
                         >
-                            <span class="glyphicon glyphicon-list-alt"></span>Générer les convocations
+                            <span class="fas fa-list-alt"></span>Générer les convocations
                         </a>
                         <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::envoyerConvocationAction() */ ?>
                                 href="<?php echo $this->url('soutenance/presoutenance/envoyer-convocation', ['these' => $these->getId()], [], true); ?>"
                                 class="btn btn-info action"
                         >
-                            <span class="glyphicon glyphicon-send"></span>Envoyer les convocations
+                            <span class="icon icon-notify"></span>Envoyer les convocations
                         </a>
                 <?php endif; ?>
             </p>

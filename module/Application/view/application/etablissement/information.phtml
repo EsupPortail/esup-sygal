@@ -30,31 +30,34 @@ $canModifierEtablissement = $this->isAllowed(StructurePrivileges::getResourceId(
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
 <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active">
-        <a href="#informations"
+    <li role="presentation" class="active nav-item">
+        <a class="nav-link"
+           href="#informations"
            role="tab"
            aria-controls="informations"
-           data-toggle="tab"
+           data-bs-toggle="tab"
 
         >
             Informations générales
         </a>
     </li>
-    <li role="presentation">
-        <a href="#membres"
+    <li role="presentation" class="nav-item">
+        <a class="nav-link"
+           href="#membres"
            role="tab"
            aria-controls="membres"
-           data-toggle="tab"
+           data-bs-toggle="tab"
         >
             Rôles et membres
         </a>
     </li>
     <?php if ($etablissement->estInscription()) : ?>
-    <li role="documents">
-        <a href="#documents"
+    <li role="documents" class="nav-item">
+        <a class="nav-link"
+           href="#documents"
            role="tab"
            aria-controls="documents"
-           data-toggle="tab"
+           data-bs-toggle="tab"
         >
             Documents
         </a>
@@ -93,18 +96,18 @@ $canModifierEtablissement = $this->isAllowed(StructurePrivileges::getResourceId(
                 <dl>
                     <dt> Statut : </dt>     <dd>
                         <?php if ($etablissement->estMembre()): ?>
-                            <span class="label label-primary">Membre</span>
+                            <span class="badge bg-primary">Membre</span>
                         <?php endif ?>
                         <?php if ($etablissement->estAssocie()): ?>
-                            <span class="label label-info">Associé</span>
+                            <span class="badge bg-info">Associé</span>
                         <?php endif ?>
                         <?php if ($etablissement->estInscription()): ?>
-                            <span class="label label-warning">Inscription</span>
+                            <span class="badge bg-warning">Inscription</span>
                         <?php endif ?>
                         <?php if ($etablissement->getStructure()->estFermee()) : ?>
-                            <span class="label" style="background-color:darkred">Structure fermée</span>
+                            <span class="badge bg-secondary" style="background-color:darkred">Structure fermée</span>
                         <?php else : ?>
-                            <span class="label" style="background-color:darkgreen">Structure ouverte</span>
+                            <span class="badge bg-secondary" style="background-color:darkgreen">Structure ouverte</span>
                         <?php endif; ?>
                     </dd>
                     <dt>Logo :</dt>
@@ -120,7 +123,7 @@ $canModifierEtablissement = $this->isAllowed(StructurePrivileges::getResourceId(
             <a href="<?php echo $this->url('etablissement/modifier', ['structure'=> $etablissement->getStructure()->getId()], [], true); ?>"
                class="btn btn-primary action"
             >
-                <span class="glyphicon glyphicon-pencil"></span> Modifier l'établissement
+                <span class="icon icon-edit"></span> Modifier l'établissement
             </a>
         <?php endif; ?>
     </div>
@@ -135,7 +138,7 @@ $canModifierEtablissement = $this->isAllowed(StructurePrivileges::getResourceId(
             <div class="col-md-4">
                 <h3>
                     <?php echo $roleId; ?>
-                    <span class="badge"><?php echo $count; ?></span>
+                    <span class="badge bg-secondary"><?php echo $count; ?></span>
                 </h3>
 
                 <ul>
@@ -157,7 +160,7 @@ $canModifierEtablissement = $this->isAllowed(StructurePrivileges::getResourceId(
                         ['id' => $etablissement->getStructure()->getId(), 'type' => TypeStructure::CODE_ETABLISSEMENT], [], true);?>"
                     class="btn btn-warning"
             >
-                <span class="glyphicon glyphicon-refresh"></span>
+                <span class="icon icon-refresh"></span>
                 Générer rôles par défaut
             </a>
         <?php endif; ?>
@@ -189,7 +192,7 @@ $canModifierEtablissement = $this->isAllowed(StructurePrivileges::getResourceId(
 
         $('a[aria-controls=' + name + ']').tab('show');
 
-        $('.nav-tabs a').click(function (e) {
+        $('.nav-tabs a').on("click", function (e) {
             // No e.preventDefault() here
             $(this).tab('show');
         });

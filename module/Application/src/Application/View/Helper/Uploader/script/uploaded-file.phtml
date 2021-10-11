@@ -8,12 +8,12 @@ $file    = sprintf("%s (<abbr title=\"%s octets\">%s</abbr>)", $fichier->getNom(
     <!-- lien de téléchargement du fichier -->
     <a class="download-file" href="<?php echo $this->url ?>"
        title="<?php echo $this->translate("Télécharger le fichier déposé");?> '<?php echo $fichier->getNom() ?>'"
-    ><span class="glyphicon glyphicon-file"></span> <span class="filename"><?php echo $file ?></span></a>
+    ><span class="icon icon-file"></span> <span class="filename"><?php echo $file ?></span></a>
         
 <?php else: ?>
     
     <!-- nom du fichier -->
-    <span class="glyphicon glyphicon-file"></span> <?php echo $file ?>
+    <span class="icon icon-file"></span> <?php echo $file ?>
 
 <?php endif ?>
 

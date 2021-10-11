@@ -40,9 +40,9 @@ class ValidationViewHelper extends AbstractHelper
                 . ' par ' . $auteur,
         ];
 
-        $html = "<dl class=\"validation dl-horizontal\">\n";
+        $html = "<dl class=\"validation row\">\n";
         foreach ($vars as $key => $value) {
-            $html .= "\t<dt>$key :</dt><dd>$value</dd>\n";
+            $html .= "\t<dt class=\"col-md-4\">$key :</dt><dd class=\"col-md-6\">$value</dd>\n";
         }
         $html .= "</dl>";
 

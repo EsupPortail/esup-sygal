@@ -25,25 +25,15 @@ echo $this->messenger()
 
 <div class="row">
 
-    <div id="sidebar" class="col-xs-12 col-md-2" role="navigation">
-            <?php
-//               echo $this->navigation()->menu('Zend\Navigation\Information')
-//                  ->setUlClass('nav nav-pills nav-stacked menu-information')
-//                  ->setMinDepth(1)
-//                  ->setMaxDepth(1)
-//                  ->render();
-            ?>
-
+    <div class="col-12 col-md-2">
             <?php echo $this->partial('application/index/partial/informations', ['informations' => $informations]) ?>
-
             <?php echo $this->actualite()->render() ?>
-
             <?php if($offre) : ?>
                 <?php echo $this->partial('application/index/partial/sujet-de-these', ['offre' => $offre]) ?>
             <?php endif; ?>
     </div>
 
-    <div id="content" class="jumbotron col-xs-12 col-md-10">
+    <div id="content" class="jumbotron col-12 col-md-10">
 
         <div class="row">
             <div class="col-md-5">
@@ -84,7 +74,7 @@ echo $this->messenger()
                 <ul class="roadmap pagination">
                     <li>
                         <a class="roadmap-step-link " href="<?php echo $this->url('these') ?>">
-                            <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                            <span class="fas fa-arrow-alt-circle-right"></span>
                             <?php echo $this->translate("Accès aux thèses..."); ?>
                         </a>
                     </li>

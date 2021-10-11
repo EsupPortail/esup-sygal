@@ -24,16 +24,16 @@ EOS;
 
 <form method="post" action="<?php echo $urlRechercher ?>" class="search-form these form-inline">
     <div class="form-group">
-        <label class="sr-only" for="search-input">Recherche d'une thèse (code, titre de la thèse ; code, nom, prénom de l'auteur) :</label>
+        <label class="form-label visually-hidden" for="search-input">Recherche d'une thèse (code, titre de la thèse ; code, nom, prénom de l'auteur) :</label>
         <div class="input-group">
-            <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+            <div class="input-text"><span class="icon icon-search"></span></div>
             <input type="search"
                    value="<?php echo $text; ?>"
                    name="text"
                    class="form-control"
                    id="search-input"
                    placeholder="<?php echo $this->translate("Entrez 2 caractères au moins...");?>"
-                   data-content="<?php echo htmlspecialchars(
+                   data-bs-content="<?php echo htmlspecialchars(
                            "<div class=\"these-search-input-help\">".
                            $inputTitle .
                            "</div>"
@@ -42,15 +42,15 @@ EOS;
         </div>
     </div>
     <button type="button"
-            class="btn btn-default"
+            class="btn btn-secondary"
             onclick="$('form.these input').val('')"
             title="<?php echo $this->translate("Vider");?>" >
-        <span class="glyphicon glyphicon-erase"></span>
+        <span class="icon icon-delete iconly"></span>
     </button>
     <button type="submit" class="btn btn-primary">
         <?php echo $this->translate("Rechercher"); ?>
     </button>
-<!--    <p class="help-block">Recherche sur le titre, le code national de l'école doctorale, l'unité de recherche de la thèse, le numéro étudiant, le nom, le prénom de l'auteur.</p>-->
+<!--    <p class="form-text">Recherche sur le titre, le code national de l'école doctorale, l'unité de recherche de la thèse, le numéro étudiant, le nom, le prénom de l'auteur.</p>-->
 </form>
 
 <script>

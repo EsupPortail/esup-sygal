@@ -50,7 +50,7 @@ class LanguageSelectorHelper extends AbstractHelper
         }
         $content .= "</ul>";
 
-        $to_display  = "<a class='navbar-link' data-placement='bottom' data-toggle='popover' data-html='true'  id='".$id."' title='".$title."' data-content='".$content."' >";
+        $to_display  = "<a class='navbar-link' data-bs-placement='bottom' data-bs-toggle='popover' data-bs-html='true'  id='".$id."' title='".$title."' data-bs-content='".$content."' >";
         $flag  = $this->flagPath.\Locale::getDefault().".png";
         $to_display .= "<img src=\"".$this->getView()->basePath($flag)."\" style=\"width:40px;\"/>";
         $to_display .= "</a>";

@@ -166,11 +166,11 @@ class Sortable extends AbstractHelper
         switch ($this->currentDirection) {
             case self::ASC:
                 $title = "Trié(e)s par ordre croissant";
-                $class = 'glyphicon glyphicon-sort-by-attributes';
+                $class = 'fas fa-sort-alpha-down';
                 break;
             case self::DESC:
                 $title = "Trié(e)s par ordre décroissant";
-                $class = 'glyphicon glyphicon-sort-by-attributes-alt';
+                $class = 'fas fa-sort-alpha-up';
                 break;
             default:
                 $title = 'Non trié(s)';

@@ -64,63 +64,66 @@ h2.modal-title {
   }
 }
 
-.panel {
-  .panel-heading {
-    text-transform: uppercase;
-    font-weight: 400;
+.card.box {
+  margin-bottom: 10px;
+
+  .card-header {
+    padding: 5px 10px;
+    h2 {
+      font-size: 150%;
+      margin: 0;
+    }
+    .icon {
+      margin-right: 5px;
+    }
   }
+  .card-body {
+    h2 {
+      font: {
+        size: 150%;
+      }
+    }
+    h3 {
+      font: {
+        size: 120%;
+        weight: bold;
+      }
+      //border-bottom: #ddd dotted 1px;
+    }
+    h3:nth-of-type(1) {
+      margin-top: 0;
+    }
+    h1.first, h2.first, h3.first, h4.first {
+      margin-top: 0;
+    }
+
+    div.messenger.alert {
+      width: 33%;
+      min-width: 350px;
+      margin: {
+        top: 15px;
+        left: 0;
+      }
+    }
+  }
+}
+.card.box.roadmap-next-step {
+  width: 50%;
 }
 
-.panel-info {
-  border-color: $infoColor;
-  > .panel-heading {
-    color: white;
-    background-color: $infoColor;
-    border-color: $infoColor;
-  }
+.card .card-header {
+  font-weight: 400;
+}
+.card-header.bg-info  {
+  color: white;
+}
+.card-header.bg-success  {
+  color: white;
+}
+.card-header.bg-danger {
+  color: white;
 }
 
-.panel-success {
-  border-color: $successColor;
-  > .panel-heading {
-    color: white;
-    background-color: $successColor;
-    border-color: $successColor;
-  }
-}
-
-.panel-danger {
-  border-color: $dangerColor;
-  > .panel-heading {
-    color: white;
-    background-color: $dangerColor;
-    border-color: $dangerColor;
-  }
-}
-
-.panel-warning {
-  border-color: $warningColor;
-  > .panel-heading {
-    color: white;
-    background-color: $warningColor;
-    border-color: $warningColor;
-  }
-}
-
-.panel.panel-md {
-  font-size: 90%;
-  .panel-heading,
-  .panel-body {
-    padding: 6px 10px;
-  }
-}
-
-.panel.panel-sm {
-  .panel-heading, .panel-body {
-    font-size: 80%;
-    padding: 4px 8px;
-  }
-}
 
 .panel.box {
   margin-bottom: 10px;
@@ -277,14 +280,14 @@ span.ballot-box {
 }
 
 .nav {
-  .glyphicon,
+  .icon,
   .fa,
   .fas,
   .fab {
     margin-right: 3px;
   }
 }
-div#sidebar {
+#sidebar {
   margin-bottom: 30px;
 }
 
@@ -346,16 +349,13 @@ span.sortable-icon {
   font-size: 75%;
 }
 
-p.help-block {
+// NB : .help-block a disparu dans Bootstrap 4, .form-text doit être utilisé à la place.
+form .form-text {
   font-size: 80%;
 }
-p.help-block.help-block-before {
-  margin-top: -5px;
-  margin-bottom: 5px;
-  display: inline-block;
-}
-p.help-block.help-block-after {
-  margin-top: 2px;
+
+.form-label {
+  margin-bottom: .25rem;
 }
 
 a.toggle-details:hover, a.toggle-details:focus {
@@ -475,7 +475,7 @@ input[type="checkbox"] {
 }
 
 .alert {
-  .glyphicon {
+  .icon {
     float: left;
     padding-right: 6px;
   }
@@ -535,11 +535,11 @@ div.filters {
       }
     }
   }
-  .panel-heading {
+  .card-header {
     padding: 5px 10px;
   }
-  .panel-body {
-    background-color: #f5f5f5;
+  .card-body {
+    background-color: white;
   }
   span.filter {
     padding-right: 5px;
@@ -554,38 +554,39 @@ div.filters {
 
   form {
     padding: 10px;
-    .form-group {
-      margin-right: 4px;
-      vertical-align: bottom;
-      font-size: $filterFontSize;
-      ul.dropdown-menu {
+    //.form-group {
+      * {
         font-size: $filterFontSize;
+        line-height: 1.15;
+      }
+      //display: block;
+      //margin-right: 1em;
+      //margin-bottom: 5px;
+      //vertical-align: middle;
+      ul.dropdown-menu {
         a {
           padding: 3px 7px;
         }
       }
-      .dropdown-toggle {
-        font-size: $filterFontSize;
+      button.dropdown-toggle {
         padding: 3px 4px 3px 4px;
-        height: 24px;
+        height: 20px;
+        background-color: #eee;
+        border-color: darkgray;
       }
       .input-group {
-        div {
-          //padding: 3px 6px;
+        .input-group-text {
+          padding: 2px 4px;
         }
       }
-    }
+    //}
     label {
       display: block;
       margin-bottom: 3px;
-      line-height: 95%;
     }
-    .filter-option, #search-input {
-      font-size: $filterFontSize;
-    }
-    .input-group-addon.filter {
-      padding: 2px;
-    }
+    //.input-group-append.filter {
+    //  padding: 2px;
+    //}
     .bootstrap-select {
       height: 22px;
     }
@@ -696,6 +697,9 @@ form.form-retraiter {
 }
 
 @media (min-width: 768px) {
+  .modal-dialog {
+    max-width: 720px;
+  }
   .dl-horizontal.dl-horizontal-md {
     dt {
       width: 200px;
@@ -716,19 +720,19 @@ form.form-retraiter {
 
 @media (min-width: 1100px) {
   .modal-dialog {
-    width: 1000px;
+    max-width: 1000px;
   }
 }
 
 @media (min-width: 1250px) {
   .container {
-    width: 1220px;
+    max-width: 1220px;
   }
 }
 
 @media (min-width: 1500px) {
   .container {
-    width: 1470px;
+    max-width: 1470px;
   }
 }
 
@@ -739,12 +743,6 @@ form {
 }
 
 /******** Boutons ***********/
-
-.btn {
-  span.glyphicon {
-    margin-right: 5px;
-  }
-}
 
 .btn-info {
   background-color: $infoColor;
@@ -779,8 +777,8 @@ form {
 /******** Feuille de route ********/
 
 table.roadmap {
-  .glyphicon.glyphicon-check,
-  .glyphicon.glyphicon-unchecked {
+  .fas.fa-check-circle,
+  .fas.fa-times-circle {
     font-size: 110%;
     margin-right: 5px;
   }
@@ -791,7 +789,7 @@ ul.roadmap.pagination {
   li {
     font-size: 20px !important;
     a.roadmap-step-link {
-      .glyphicon {
+      .fas {
         margin-right: 8px;
         font-size: 120%;
         vertical-align: text-bottom;
@@ -803,32 +801,74 @@ ul.roadmap.pagination {
 
 /************* Menu *************/
 
-li > span.divider {
-  display: block;
-  height: 4px;
-  border-top: solid 4px #e1e1e1;
-  //margin: 5px 0 5px;
+.navbar-dark .navbar-nav .nav-link {
+  color: rgba(255,255,255, 0.9);
 }
 
-ul.menu-secondaire,
-ul.menu-information,
-ul.menu-actualites {
-  background: #f5f5f5;
-  //border-radius: 4px;
-  padding: 2px;
-  //box-shadow: 1px 1px 6px;
+#menu-informations,
+#menu-actualites,
+#menu-offretheses {
+  margin-bottom: 1rem;
 
-  li {
+  .card-header {
+    padding: .5rem 1rem;
+
+    p {
+      margin-bottom: 0;
+    }
+  }
+
+  .card-body {
+    background: white;
+  }
+
+  .nav {
+    padding: 0.5rem;
+  }
+
+  .nav-item {
     margin-top: 0;
 
-    span.divider {
-      display: block;
-      height: 3px;
-      border-top: solid 3px #e1e1e1;
-      //margin: 5px 0 5px;
+    .nav-link {
+      padding: 0.3rem 0.3rem;
+    }
+
+    //span.divider {
+    //  display: block;
+    //  height: 3px;
+    //  border-top: solid 3px #e1e1e1;
+    //}
+  }
+}
+
+#menu-actualites {
+  .nav-item {
+    .badge {
+      font-size: 70%;
+      vertical-align: bottom;
+      margin-right: 3px;
+    }
+    h2 {
+      font-weight: 300;
+      font-size: 90%;
+      margin: 0;
+      line-height: 120%;
+    }
+    .nav-link {
+      padding-left: 0;
+    }
+    .date-actualites {
+      font-size: 70%;
+    }
+    .fa {
+      font-size: 60%;
+      vertical-align: super;
     }
   }
 }
+
+
+
 ul.menu-secondaire {
   li {
     a.roadmap {
@@ -994,26 +1034,26 @@ span.sas-highlight {
 
 /********** à déplacer... ************/
 
-input[type="checkbox"], input[type="radio"] {
-  margin-top: 0;
+.user-profile-select-form label {
+  margin-bottom: 0;
 }
-
-.user-profile-select-form {
-  .radio {
-    margin: 0;
-  }
-  label > input[type=radio] {
-    margin-top: -4px;
-  }
+.user-profile-select-form label > input[type="radio"] {
+  margin-right: 0.2rem;
+  margin-top: -3px;
 }
 .user-usurpation-form {
-  padding-top: 1em;
   .form-group {
-    float: left;
-    margin-right: 5px;
+    // ENLEVÉ CAR PERTURBE LE PADDING BOTTOM DU POPOVER
+    //float: left;
+    //margin-right: 5px;
   }
   .user-usurpation-submit {
     margin-top: 0;
+  }
+}
+.popover-body {
+  .user-usurpation-form {
+    padding-top: 1em;
   }
 }
 .user-usurpation-stop-btn {
@@ -1090,10 +1130,6 @@ input[type="checkbox"], input[type="radio"] {
 .valide {
   font-weight: 600;
   color: $successColor;
-}
-
-span.badge {
-  font-weight: bold;
 }
 
 span.badge.EN_COURS {
