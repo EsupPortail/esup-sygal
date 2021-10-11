@@ -1,6 +1,11 @@
 Journal des modifications
 =========================
 
+3.0.4
+-----
+- Proposition de soutenance : l'adresse de l'établissement de chaque membre du jury est désormais demandée au doctorant.
+- [FIX] Durée de conservation en session des données d'authentification (màj unicaen/app et auth).
+
 3.0.3
 -----
 - Ajout d'une valeur d'état aux soutenances "Validée par l'établissement" post validation d'une soutenance par la présidence de l'établissement
