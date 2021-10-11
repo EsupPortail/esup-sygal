@@ -3723,11 +3723,11 @@
         },
         {
             "name": "unicaen/app",
-            "version": "3.1.21",
+            "version": "3.1.23",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/app.git",
-                "reference": "b69862178b06c74c539fec7f68d6dd019aa092dc"
+                "reference": "7519056f1286a54efadbad87b26506a7e2651ba8"
             },
             "require": {
                 "beberlei/assert": "^2.9",
@@ -3782,15 +3782,15 @@
                 ]
             },
             "description": "Module de base des applications unicaen",
-            "time": "2021-09-22T13:50:41+00:00"
+            "time": "2021-10-11T12:58:54+00:00"
         },
         {
             "name": "unicaen/auth",
-            "version": "3.2.5",
+            "version": "3.2.8",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/auth.git",
-                "reference": "44707588de3f61d141b85202b00ad4c852743c07"
+                "reference": "e11ddc3cb0f3bac88e68c713200a8da3d91a3c5c"
             },
             "require": {
                 "jasig/phpcas": "^1.3",
@@ -3812,7 +3812,7 @@
                 ]
             },
             "description": "Module d'authentification pour les applications Unicaen",
-            "time": "2021-09-06T07:34:30+00:00"
+            "time": "2021-10-11T08:40:36+00:00"
         },
         {
             "name": "unicaen/auth-token",
