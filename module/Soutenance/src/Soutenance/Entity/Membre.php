@@ -35,6 +35,8 @@ class Membre implements HistoriqueAwareInterface {
     /** @var string */
     private $etablissement;
     /** @var string */
+    private $adresse;
+    /** @var string */
     private $exterieur;
     /** @var string */
     private $role;
@@ -161,7 +163,7 @@ class Membre implements HistoriqueAwareInterface {
     /**
      * @return string
      */
-    public function getEtablissement()
+    public function getEtablissement(): ?string
     {
         return $this->etablissement;
     }
@@ -170,7 +172,7 @@ class Membre implements HistoriqueAwareInterface {
      * @param string $etablissement
      * @return Membre
      */
-    public function setEtablissement($etablissement)
+    public function setEtablissement(string $etablissement) : Membre
     {
         $this->etablissement = $etablissement;
         return $this;
@@ -179,7 +181,27 @@ class Membre implements HistoriqueAwareInterface {
     /**
      * @return string
      */
-    public function getExterieur()
+    public function getAdresse(): ?string
+    {
+        return $this->adresse;
+    }
+
+    /**
+     * @param string $adresse
+     * @return Membre
+     */
+    public function setAdresse(string $adresse): Membre
+    {
+        $this->adresse = $adresse;
+        return $this;
+    }
+
+
+
+    /**
+     * @return string
+     */
+    public function getExterieur() : ?string
     {
         return $this->exterieur;
     }
@@ -188,7 +210,7 @@ class Membre implements HistoriqueAwareInterface {
      * @param string $exterieur
      * @return Membre
      */
-    public function setExterieur($exterieur)
+    public function setExterieur(string $exterieur) : Membre
     {
         $this->exterieur = $exterieur;
         return $this;

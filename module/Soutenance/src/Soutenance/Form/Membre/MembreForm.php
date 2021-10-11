@@ -6,11 +6,13 @@ use Soutenance\Entity\Membre;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\Filter\StringToLower;
+use Zend\Form\Element;
 use Zend\Form\Element\Email;
 use Zend\Form\Element\Radio;
 use Zend\Form\Element\Select;
 use Zend\Form\Element\Submit;
 use Zend\Form\Element\Text;
+use Zend\Form\Element\Textarea;
 use Zend\Form\Form;
 use Zend\InputFilter\Factory;
 use Zend\Validator\EmailAddress;
@@ -73,6 +75,10 @@ class MembreForm extends Form {
                 ->setLabel("Université, établissement d'enseignement ou entreprise :")
         );
         $this->add(
+            (new Textarea('adresse'))
+                ->setLabel("Adresse postale complète de la structure renseignée ci-dessus :")
+        );
+        $this->add(
             (new Radio('exterieur'))
                 ->setLabel("Le membre est extérieur (non membre d'un établissement de la COMUE et non membre de l'unité de recherche de la thèse) :")
                 ->setValueOptions([ 'oui' => 'Oui', 'non' => 'Non'])
@@ -127,6 +133,10 @@ class MembreForm extends Form {
             ],
             'etablissement' => [
                 'name' => 'etablissement',
+                'required' => true,
+            ],
+            'adresse' => [
+                'name' => 'adresse',
                 'required' => true,
             ],
             'exterieur' => [

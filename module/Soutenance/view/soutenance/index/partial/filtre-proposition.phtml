@@ -64,7 +64,9 @@ use Soutenance\Entity\Etat;
                     <select id="etat" name="etat" class="selectpicker" data-live-search="true">
                         <option value="">Tous les etats </option>
                         <?php foreach ($etats as $etat) : ?>
-                            <option value="<?php echo $etat->getId(); ?>" <?php if ($etat->getId() == $etatId) echo " selected "; ?>>
+                            <option value="<?php echo $etat->getId(); ?>" <?php if ($etat->getId() == $etatId) echo " selected "; ?>
+                                    data-content='<?php echo $this->etatSoutenance()->render($etat); ?>'
+                            >
                                 <?php echo $etat->getLibelle(); ?>
                             </option>
                         <?php endforeach; ?>

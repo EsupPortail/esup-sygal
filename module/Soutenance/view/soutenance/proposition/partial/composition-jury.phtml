@@ -140,7 +140,10 @@ $these = $proposition->getThese();
                             <span class="icon icon-non iconly text-danger"></span>
                         <?php endif; ?>
                     </td>
-                    <td> <?php echo $membre->getEtablissement(); ?> </td>
+                    <td>
+                        <?php echo $membre->getEtablissement(); ?> <br/>
+                        <?php echo ($membre->getAdresse())??"N.C."; ?>
+                    </td>
                     <td> <?php echo $membre->getRole(); ?> </td>
                     <td>
                         <?php if ($membre->isVisio()): ?>

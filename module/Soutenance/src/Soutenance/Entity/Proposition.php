@@ -2,15 +2,11 @@
 
 namespace Soutenance\Entity;
 
-use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
-use DateInterval;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
-use Exception;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenApp\Exception\RuntimeException;
 
 class Proposition implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;

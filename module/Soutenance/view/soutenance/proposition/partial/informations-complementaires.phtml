@@ -114,13 +114,20 @@ $these = $proposition->getThese();
         <div class="col-md-8">
             <dl>
                 <dt> Confidentialité de la thèse</dt>
-                <?php if($proposition->getConfidentialite()): ?>
-                    <dd> Date de fin de confidentialité : <?php echo $proposition->getConfidentialite()->format("d/m/Y"); ?> </dd>
+                <?php if ($these->getDateFinConfidentialite() !== null): ?>
+                    Thèse confidentiel jusqu'au <?php echo $these->getDateFinConfidentialite()->format('d/m/Y'); ?>
                     <?php if($proposition->isHuitClos()): ?>
                         <dd> Soutenance en huis clos </dd>
                     <?php endif; ?>
-                <?php else : ?>
-                    <dd> Thèse non confidentielle </dd>
+                <?php else: ?>
+                    <?php if($proposition->getConfidentialite()): ?>
+                        <dd> Date de fin de confidentialité : <?php echo $proposition->getConfidentialite()->format("d/m/Y"); ?> </dd>
+                        <?php if($proposition->isHuitClos()): ?>
+                            <dd> Soutenance en huis clos </dd>
+                        <?php endif; ?>
+                    <?php else : ?>
+                        <dd> Thèse non confidentielle </dd>
+                    <?php endif; ?>
                 <?php endif; ?>
             </dl>
         </div>
@@ -133,7 +140,7 @@ $these = $proposition->getThese();
                    data-event="edition-informations"
                 >
                     <span class="icon icon-plus"></span>
-                    Renseigner une confidentialité
+                    Renseigner une confidentialité et huis clos
                 </a>
             <?php endif; ?>
 

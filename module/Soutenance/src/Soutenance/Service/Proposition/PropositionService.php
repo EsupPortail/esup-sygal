@@ -233,6 +233,9 @@ class PropositionService {
             ->andWhere("proposition.these = :these")
             ->setParameter("these", $these)
         ;
+//        $qb = $this->getEntityManager()->getRepository(Proposition::class)->createQueryBuilder('proposition')
+//            ->andWhere("proposition.these = :these")
+//            ->setParameter("these", $these);
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {

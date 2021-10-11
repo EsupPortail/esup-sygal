@@ -65,11 +65,11 @@
             "mkdir -p data/cache && chmod -R 777 data/cache && rm -rf data/cache/*",
             "mkdir -p data/DoctrineModule/cache && chmod -R 777 data/DoctrineModule/cache && rm -rf data/DoctrineModule/cache/*",
             "mkdir -p data/DoctrineORMModule/Proxy && chmod -R 777 data/DoctrineORMModule/Proxy && rm -rf data/DoctrineORMModule/Proxy/*",
-            "vendor/bin/doctrine-module orm:clear-cache:query &",
-            "vendor/bin/doctrine-module orm:clear-cache:metadata &",
-            "vendor/bin/doctrine-module orm:clear-cache:result &",
-            "vendor/bin/doctrine-module orm:generate-proxies &",
-            "vendor/bin/zf-development-mode disable &"
+            "vendor/bin/doctrine-module orm:clear-cache:query",
+            "vendor/bin/doctrine-module orm:clear-cache:metadata",
+            "vendor/bin/doctrine-module orm:clear-cache:result",
+            "vendor/bin/doctrine-module orm:generate-proxies",
+            "vendor/bin/zf-development-mode disable"
         ]
     }
 }
