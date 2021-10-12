@@ -3,7 +3,7 @@
 namespace Application\Service\Utilisateur;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class UtilisateurSearchServiceFactory implements FactoryInterface
 {

@@ -4,8 +4,8 @@ namespace Application\View\Helper\FilterPanel;
 
 use Application\View\Helper\FiltersPanel\FiltersPanelHelper;
 use Application\View\Renderer\PhpRenderer;
-use Zend\View\Helper\AbstractHelper;
-use Zend\View\Resolver\TemplatePathStack;
+use Laminas\View\Helper\AbstractHelper;
+use Laminas\View\Resolver\TemplatePathStack;
 
 /**
  * Class FilterPanelHelper

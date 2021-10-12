@@ -2,9 +2,9 @@
 
 namespace Information\Form;
 
-use Zend\Form\Element\File;
-use Zend\Form\Element\Submit;
-use Zend\Form\Form;
+use Laminas\Form\Element\File;
+use Laminas\Form\Element\Submit;
+use Laminas\Form\Form;
 
 class FichierForm extends Form {
 

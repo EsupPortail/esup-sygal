@@ -75,10 +75,10 @@ echo $messenger->addMessagesFromFlashMessenger();
 
 /**
  * @param $structuresConcretes
- * @param \Zend\View\Renderer\PhpRenderer $renderer
+ * @param \Laminas\View\Renderer\PhpRenderer $renderer
  * @return string
  */
-function generateSelect($structuresConcretes, \Zend\View\Renderer\PhpRenderer $renderer) {
+function generateSelect($structuresConcretes, \Laminas\View\Renderer\PhpRenderer $renderer) {
     $texte  = "";
     $texte .= "<select name='nouveau' class='selectpicker' data-live-search='true'>";
     foreach ($structuresConcretes as $structuresConcrete) {

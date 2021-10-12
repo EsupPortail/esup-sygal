@@ -12,8 +12,8 @@ use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
-use Zend\Http\Request;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\View\Model\ViewModel;
 
 class JustificatifController extends AbstractController {
     use FichierTheseServiceAwareTrait;

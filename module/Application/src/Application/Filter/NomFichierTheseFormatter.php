@@ -3,7 +3,7 @@
 namespace Application\Filter;
 
 use Application\Entity\Db\FichierThese;
-use Zend\Filter\Exception;
+use Laminas\Filter\Exception;
 
 /**
  * Filtre générateur du nom de fichier lié à une thèse.

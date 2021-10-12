@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManager;
 use Formation\Form\Seance\SeanceForm;
 use Formation\Service\Seance\SeanceService;
 use Interop\Container\ContainerInterface;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\View\Renderer\PhpRenderer;
 
 class SeanceControllerFactory {
 

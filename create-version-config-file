@@ -13,7 +13,7 @@
 
 require 'vendor/autoload.php';
 
-use Zend\Config\Writer\PhpArray;
+use Laminas\Config\Writer\PhpArray;
 
 const DEFAULT_FILE_PATH = 'config/autoload/auto.version.local.php';
 const ARG_VERSION_NUMBER = '--number';

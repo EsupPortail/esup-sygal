@@ -12,7 +12,7 @@ use Application\Service\Individu\IndividuService;
 use Application\Service\These\TheseService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Interop\Container\ContainerInterface;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\View\Renderer\PhpRenderer;
 
 class CoEncadrantControllerFactory {
 

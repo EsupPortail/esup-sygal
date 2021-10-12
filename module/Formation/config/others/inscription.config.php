@@ -9,8 +9,8 @@ use Formation\Service\Inscription\InscriptionService;
 use Formation\Service\Inscription\InscriptionServiceFactory;
 use Formation\View\Helper\InscriptionViewHelper;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 
 return [
     'bjyauthorize' => [

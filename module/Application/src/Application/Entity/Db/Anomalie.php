@@ -5,8 +5,8 @@ namespace Application\Entity\Db;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
-use Zend\Form\Annotation;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Form\Annotation;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * --- Class Anomalie ---

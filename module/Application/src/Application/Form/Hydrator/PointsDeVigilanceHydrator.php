@@ -5,7 +5,7 @@ namespace Application\Form\Hydrator;
 use Application\Entity\Db\RdvBu;
 use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class PointsDeVigilanceHydrator implements HydratorInterface, EntityManagerAwareInterface
 {

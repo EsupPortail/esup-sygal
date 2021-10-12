@@ -4,7 +4,7 @@ namespace Application\Acl;
 
 use Application\Entity\Db\These;
 use Application\Entity\Db\WfEtape;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * Class WfEtapeResource

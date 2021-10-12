@@ -3,7 +3,7 @@
 use Application\Controller\Factory\StatistiqueControllerFactory;
 use Indicateur\Provider\Privilege\IndicateurPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Router\Http\Literal;
+use Laminas\Router\Http\Literal;
 
 return [
     'bjyauthorize'    => [

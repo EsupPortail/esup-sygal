@@ -16,7 +16,7 @@ use InvalidArgumentException;
 use UnicaenApp\Entity\UserInterface;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenLdap\Entity\People;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class IndividuService extends BaseService
 {

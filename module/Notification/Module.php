@@ -2,8 +2,8 @@
 
 namespace Notification;
 
-use Zend\Mvc\ModuleRouteListener;
-use Zend\Mvc\MvcEvent;
+use Laminas\Mvc\ModuleRouteListener;
+use Laminas\Mvc\MvcEvent;
 
 class Module
 {
@@ -24,7 +24,7 @@ class Module
     public function getAutoloaderConfig()
     {
         return [
-            'Zend\Loader\StandardAutoloader' => [
+            'Laminas\Loader\StandardAutoloader' => [
                 'namespaces' => [
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                 ],

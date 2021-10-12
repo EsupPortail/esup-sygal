@@ -3,8 +3,8 @@
 namespace StepStar\Service\Soap;
 
 use Traversable;
-use Zend\Soap\Client;
-use Zend\Stdlib\ArrayUtils;
+use Laminas\Soap\Client;
+use Laminas\Stdlib\ArrayUtils;
 
 /**
  * Client SOAP capable d'appeler le Web Service DepotTEF de l'ABES.

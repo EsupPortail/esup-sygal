@@ -3,7 +3,7 @@
 namespace Application\Controller\Plugin;
 
 use Application\Entity\Db\These;
-use Zend\Mvc\Controller\Plugin\Url as UrlPlugin;
+use Laminas\Mvc\Controller\Plugin\Url as UrlPlugin;
 
 /**
  * Created by PhpStorm.

@@ -8,10 +8,10 @@ use Application\Search\SearchServiceInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use DomainException;
-use Zend\Http\Response;
-use Zend\Mvc\Controller\AbstractController;
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
-use Zend\Paginator\Adapter\ArrayAdapter;
+use Laminas\Http\Response;
+use Laminas\Mvc\Controller\AbstractController;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Paginator\Adapter\ArrayAdapter;
 
 /**
  * Class SearchControllerPlugin
@@ -62,7 +62,7 @@ class SearchControllerPlugin extends AbstractPlugin
     /**
      * - Si les 'query params' de la requête courante contiennent la clé 'search', cette méthode se comporte
      * comme {@see self::search()}.
-     * - Sinon, elle retourne un {@see ZendPaginator} vide.
+     * - Sinon, elle retourne un {@see LaminasPaginator} vide.
      *
      * Cela est utile pour ne lancer une recherche que lorsque l'utilisateur a cliqué sur le bouton "Rechercher"
      * du formulaire de recherche.

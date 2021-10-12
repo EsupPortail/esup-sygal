@@ -1,9 +1,9 @@
 <?php
 namespace Indicateur;
 
-use Zend\Mvc\ModuleRouteListener;
-use Zend\Mvc\MvcEvent;
-use Zend\Config\Factory as ConfigFactory;
+use Laminas\Mvc\ModuleRouteListener;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Config\Factory as ConfigFactory;
 
 class Module
 {
@@ -25,7 +25,7 @@ class Module
     public function getAutoloaderConfig()
     {
         return array(
-            'Zend\Loader\StandardAutoloader' => array(
+            'Laminas\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                 ),

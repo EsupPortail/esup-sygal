@@ -12,8 +12,8 @@ use Formation\Provider\Privilege\ModulePrivileges;
 use Formation\Service\Module\ModuleService;
 use Formation\Service\Module\ModuleServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 
 return [
     'bjyauthorize' => [

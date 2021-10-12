@@ -9,7 +9,7 @@ use Formation\Entity\Db\Module;
 use Formation\Form\Formation\FormationFormAwareTrait;
 use Formation\Service\Formation\FormationServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class FormationController extends AbstractController
 {

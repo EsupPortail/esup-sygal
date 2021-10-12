@@ -12,10 +12,10 @@ use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Form\Element\Date;
 use UnicaenApp\Message\MessageServiceAwareInterface;
 use UnicaenApp\Message\MessageServiceAwareTrait;
-use Zend\Form\Form;
-use Zend\Form\FormInterface;
-use Zend\InputFilter\InputFilterProviderInterface;
-use Zend\Validator\Callback;
+use Laminas\Form\Form;
+use Laminas\Form\FormInterface;
+use Laminas\InputFilter\InputFilterProviderInterface;
+use Laminas\Validator\Callback;
 
 class DiffusionTheseForm extends Form
     implements InputFilterProviderInterface, MessageServiceAwareInterface, FichierTheseServiceAwareInterface
@@ -278,7 +278,7 @@ class DiffusionTheseForm extends Form
 
     /**
      * Should return an array specification compatible with
-     * {@link Zend\InputFilter\Factory::createInputFilter()}.
+     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
      *
      * @return array
      */

@@ -3,13 +3,13 @@
 namespace Application;
 
 use UnicaenApp\Exception\LogicException;
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\ListenerAggregateInterface;
-use Zend\EventManager\ListenerAggregateTrait;
-use Zend\Http\PhpEnvironment\Request;
-use Zend\Http\Request as HttpRequest;
-use Zend\Http\Response as HttpResponse;
-use Zend\Mvc\MvcEvent;
+use Laminas\EventManager\EventManagerInterface;
+use Laminas\EventManager\ListenerAggregateInterface;
+use Laminas\EventManager\ListenerAggregateTrait;
+use Laminas\Http\PhpEnvironment\Request;
+use Laminas\Http\Request as HttpRequest;
+use Laminas\Http\Response as HttpResponse;
+use Laminas\Mvc\MvcEvent;
 
 /**
  * Composant permettant de détourner (deflect) une requête lorsque sa route correspond à un motif donné.

@@ -1,7 +1,7 @@
 <?php
 
-use Zend\Navigation\AbstractContainer;
-use Zend\Navigation\Page\AbstractPage;
+use Laminas\Navigation\AbstractContainer;
+use Laminas\Navigation\Page\AbstractPage;
 
 // Pointeur sur la première page du conteneur
 $this->container->rewind();
@@ -17,7 +17,7 @@ uasort($pagesNiv1, $sorterByOrder);
 <ul class="<?php echo $this->navigation()->menu()->getUlClass(); ?>">
     <?php foreach ($pagesNiv1 as $page): ?>
         <?php if (!$this->navigation()->accept($page)) continue; ?>
-        <?php /* @var $page Zend\Navigation\Page\Mvc */ ?>
+        <?php /* @var $page Laminas\Navigation\Page\Mvc */ ?>
         <?php $hasChildren = $page->hasPages() ?>
         <?php if (!$hasChildren): ?>
             <li<?php if ($page->isActive()) echo ' class="active"' ?>>

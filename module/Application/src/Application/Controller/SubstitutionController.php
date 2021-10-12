@@ -12,7 +12,7 @@ use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class SubstitutionController extends AbstractController
 {

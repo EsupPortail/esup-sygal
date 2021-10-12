@@ -10,7 +10,7 @@ use Soutenance\Provider\Privilege\QualitePrivileges;
 use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Parametre\ParametreServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Router\Http\Literal;
+use Laminas\Router\Http\Literal;
 
 return array(
     'bjyauthorize' => [

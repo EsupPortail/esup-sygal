@@ -5,7 +5,7 @@ namespace Formation\Form\EnqueteQuestion;
 use Formation\Entity\Db\EnqueteCategorie;
 use Formation\Entity\Db\EnqueteQuestion;
 use Formation\Service\EnqueteCategorie\EnqueteCategorieServiceAwareTrait;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class EnqueteQuestionHydrator implements HydratorInterface {
     use EnqueteCategorieServiceAwareTrait;

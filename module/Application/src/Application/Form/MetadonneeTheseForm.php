@@ -4,8 +4,8 @@ namespace Application\Form;
 
 use Application\Entity\Db\MetadonneeThese;
 use Application\Filter\MotsClesFilter;
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\Form;
+use Laminas\InputFilter\InputFilterProviderInterface;
 
 /**
  * Created by PhpStorm.
@@ -161,7 +161,7 @@ class MetadonneeTheseForm extends Form implements InputFilterProviderInterface
 
     /**
      * Should return an array specification compatible with
-     * {@link Zend\InputFilter\Factory::createInputFilter()}.
+     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
      *
      * @return array
      */

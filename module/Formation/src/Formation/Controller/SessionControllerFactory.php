@@ -10,7 +10,7 @@ use Formation\Service\Inscription\InscriptionService;
 use Formation\Service\Notification\NotificationService;
 use Formation\Service\Session\SessionService;
 use Interop\Container\ContainerInterface;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\View\Renderer\PhpRenderer;
 
 class SessionControllerFactory {
 

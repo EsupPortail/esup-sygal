@@ -12,7 +12,7 @@ use Formation\Entity\Db\Interfaces\HasTypeInterface;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Session;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class SessionRepository extends EntityRepository
 {

@@ -13,8 +13,8 @@ use Formation\Provider\Privilege\SeancePrivileges;
 use Formation\Service\Seance\SeanceService;
 use Formation\Service\Seance\SeanceServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 
 return [
     'bjyauthorize' => [

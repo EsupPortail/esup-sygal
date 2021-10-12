@@ -5,7 +5,7 @@ namespace StepStar\Service\Zip;
 use Application\Service\Fichier\FichierService;
 use Application\Service\These\TheseService;
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class ZipServiceFactory implements FactoryInterface
 {

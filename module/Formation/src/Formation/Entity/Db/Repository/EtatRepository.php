@@ -5,7 +5,7 @@ namespace Formation\Entity\Db\Repository;
 use Doctrine\ORM\EntityRepository;
 use Formation\Entity\Db\Etat;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class EtatRepository extends EntityRepository
 {

@@ -12,8 +12,8 @@ use Application\Service\Profil\ProfilService;
 use Application\Service\Profil\ProfilServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Privilege\Privileges;
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 
 return [
     'bjyauthorize' => [

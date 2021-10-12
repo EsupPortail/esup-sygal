@@ -5,8 +5,8 @@ namespace Application\View\Helper\FiltersPanel;
 use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\View\Renderer\PhpRenderer;
-use Zend\View\Helper\AbstractHelper;
-use Zend\View\Resolver\TemplatePathStack;
+use Laminas\View\Helper\AbstractHelper;
+use Laminas\View\Resolver\TemplatePathStack;
 
 class FiltersPanelHelper extends AbstractHelper
 {

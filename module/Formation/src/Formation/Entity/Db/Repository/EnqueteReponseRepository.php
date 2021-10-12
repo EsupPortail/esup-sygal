@@ -8,7 +8,7 @@ use Doctrine\ORM\QueryBuilder;
 use Formation\Entity\Db\EnqueteReponse;
 use Formation\Entity\Db\Inscription;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class EnqueteReponseRepository extends EntityRepository
 {

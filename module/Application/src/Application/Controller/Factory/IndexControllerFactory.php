@@ -10,7 +10,7 @@ use Application\Service\These\TheseService;
 use Application\Service\Variable\VariableService;
 use Information\Service\InformationService;
 use Interop\Container\ContainerInterface;
-use Zend\Authentication\AuthenticationServiceInterface;
+use Laminas\Authentication\AuthenticationServiceInterface;
 
 class IndexControllerFactory
 {
@@ -55,7 +55,7 @@ class IndexControllerFactory
         $controller->setVariableService($variableService);
 
         /** @var AuthenticationServiceInterface $authenticationService */
-        $authenticationService = $container->get('Zend\\Authentication\\AuthenticationService');
+        $authenticationService = $container->get('Laminas\\Authentication\\AuthenticationService');
         $controller->setAuthenticationService($authenticationService);
 
         /** @var ActualiteService $actualiteService */

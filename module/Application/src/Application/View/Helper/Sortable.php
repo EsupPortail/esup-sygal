@@ -2,9 +2,9 @@
 
 namespace Application\View\Helper;
 
-use Zend\Http\Request;
-use Zend\Uri\Http;
-use Zend\View\Helper\AbstractHelper;
+use Laminas\Http\Request;
+use Laminas\Uri\Http;
+use Laminas\View\Helper\AbstractHelper;
 
 /**
  * Aide de vue générant une URL contenant les query parameters 'sort' et 'direction'

@@ -17,7 +17,7 @@ use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Notification\Notification;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 /**
  * Class ValidationController

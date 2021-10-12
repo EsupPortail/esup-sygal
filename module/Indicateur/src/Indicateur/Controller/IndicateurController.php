@@ -19,9 +19,9 @@ use Indicateur\Model\Indicateur;
 use Indicateur\Service\IndicateurServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\View\Model\CsvModel;
-use Zend\Http\Request;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
 
 class IndicateurController extends AbstractActionController {
     use IndividuServiceAwareTrait;

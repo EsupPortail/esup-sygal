@@ -11,10 +11,10 @@ use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\VersionFichier\VersionFichierService;
-use Zend\EventManager\EventManager;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\EventManager\EventManager;
+use Laminas\View\Renderer\PhpRenderer;
 use Interop\Container\ContainerInterface;
-use Zend\Router\Http\TreeRouteStack;
+use Laminas\Router\Http\TreeRouteStack;
 
 class FichierTheseControllerFactory
 {

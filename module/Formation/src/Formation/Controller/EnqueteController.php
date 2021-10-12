@@ -15,7 +15,7 @@ use Formation\Service\EnqueteCategorie\EnqueteCategorieServiceAwareTrait;
 use Formation\Service\EnqueteQuestion\EnqueteQuestionServiceAwareTrait;
 use Formation\Service\EnqueteReponse\EnqueteReponseServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class EnqueteController extends AbstractController {
     use EntityManagerAwareTrait;

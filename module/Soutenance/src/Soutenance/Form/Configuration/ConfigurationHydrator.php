@@ -2,7 +2,7 @@
 
 namespace Soutenance\Form\Configuration;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class ConfigurationHydrator implements HydratorInterface {
 

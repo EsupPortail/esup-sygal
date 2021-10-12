@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\TransferException;
 use Import\Service\CallService;
 use stdClass;
-use Zend\Http\Response;
+use Laminas\Http\Response;
 use Exception;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
@@ -14,7 +14,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
 use UnicaenApp\Exception\RuntimeException;
 use Import\Exception\CallException;
-use Zend\Log\LoggerInterface;
+use Laminas\Log\LoggerInterface;
 
 class CallServiceTest extends \PHPUnit_Framework_TestCase
 {

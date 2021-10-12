@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use stdClass;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Log\LoggerAwareTrait;
+use Laminas\Log\LoggerAwareTrait;
 
 /**
  * Service dédié la persistance des données retournées par le Web Service.

@@ -9,7 +9,7 @@ use Formation\Entity\Db\EnqueteReponse;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class IndexController extends AbstractController
 {

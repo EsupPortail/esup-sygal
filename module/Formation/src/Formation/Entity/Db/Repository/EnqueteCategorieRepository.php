@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Formation\Entity\Db\EnqueteCategorie;
 use Formation\Entity\Db\EnqueteQuestion;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class EnqueteCategorieRepository extends EntityRepository
 {

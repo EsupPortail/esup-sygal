@@ -3,7 +3,7 @@
 namespace Soutenance\Form\LabelEuropeen;
 
 use Soutenance\Entity\Proposition;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class LabelEuropeenHydrator implements HydratorInterface
 {

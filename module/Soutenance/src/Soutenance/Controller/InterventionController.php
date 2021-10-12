@@ -12,7 +12,7 @@ use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class InterventionController extends AbstractController {
     use EntityManagerAwareTrait;

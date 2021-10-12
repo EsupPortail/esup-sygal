@@ -4,12 +4,12 @@ namespace Application\Controller\Plugin\Uploader;
 
 use UnicaenApp\Filter\BytesFormatter;
 use UnicaenApp\Util;
-use Zend\Form\Element\Csrf;
-use Zend\Form\Element\Hidden;
-use Zend\Form\Form;
-use Zend\InputFilter\FileInput;
-use Zend\InputFilter\InputFilter;
-use Zend\Validator\File\Size as FileSizeValidator;
+use Laminas\Form\Element\Csrf;
+use Laminas\Form\Element\Hidden;
+use Laminas\Form\Form;
+use Laminas\InputFilter\FileInput;
+use Laminas\InputFilter\InputFilter;
+use Laminas\Validator\File\Size as FileSizeValidator;
 
 /**
  * Formulaire de dépôt de fichier.
@@ -94,7 +94,7 @@ class UploadForm extends Form
      * Permet d'ajouter un élément au formulaire sans pour autant avoir à fournir le script de rendu du formulaire.
      * Exemple: un champ caché.
      *
-     * @param array|\Traversable|\Zend\Form\ElementInterface $elementOrFieldset
+     * @param array|\Traversable|\Laminas\Form\ElementInterface $elementOrFieldset
      * @param array                                          $flags
      * @return $this
      */

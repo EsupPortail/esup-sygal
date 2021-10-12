@@ -6,7 +6,7 @@ use Application\Entity\Db\Etablissement;
 use Application\Service\AnomalieServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class TableauDeBordController extends AbstractController
 {

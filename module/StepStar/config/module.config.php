@@ -19,7 +19,7 @@ use StepStar\Service\Xslt\XsltServiceFactory;
 use StepStar\Service\Zip\ZipService;
 use StepStar\Service\Zip\ZipServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Mvc\Console\Router\Simple;
+use Laminas\Mvc\Console\Router\Simple;
 
 return [
     'step_star' => [

@@ -5,7 +5,7 @@ namespace Formation\Service\Notification;
 use Application\Service\Notification\NotificationFactory;
 use Interop\Container\ContainerInterface;
 use Notification\Service\NotifierServiceFactory;
-use Zend\View\Helper\Url as UrlHelper;
+use Laminas\View\Helper\Url as UrlHelper;
 
 class NotificationServiceFactory extends NotifierServiceFactory
 {

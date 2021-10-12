@@ -29,7 +29,7 @@ use Import\Service\Traits\SynchroServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 use Webmozart\Assert\Assert;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 /**
  * @author Unicaen

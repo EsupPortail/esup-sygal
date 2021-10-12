@@ -11,7 +11,7 @@ use Formation\Entity\Db\Presence;
 use Formation\Service\Inscription\InscriptionService;
 use Formation\Service\Presence\PresenceService;
 use Interop\Container\ContainerInterface;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\View\Renderer\PhpRenderer;
 
 class InscriptionControllerFactory {
 
