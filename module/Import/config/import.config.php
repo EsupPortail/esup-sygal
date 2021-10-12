@@ -45,7 +45,8 @@ return [
             'orm_default'        => [
                 'class'   => MappingDriverChain::class,
                 'drivers' => [
-                    'UnicaenDbImport\Entity\Db' => 'orm_default_xml_driver', // remplacement du mapping
+                    'UnicaenDbImport\Entity\Db\ImportObserv' => 'orm_default_xml_driver', // remplacement du mapping
+                    'UnicaenDbImport\Entity\Db\ImportObservResult' => 'orm_default_xml_driver', // idem
                     'Import\Model' => 'orm_default_xml_driver',
                 ],
             ],

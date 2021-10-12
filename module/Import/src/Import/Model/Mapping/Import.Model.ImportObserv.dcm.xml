@@ -7,16 +7,5 @@
 
         <id name="id" type="integer" column="ID"/>
 
-        <field name="code" type="string" column="CODE" nullable="false"/>
-        <field name="tableName" type="string" column="TABLE_NAME" nullable="false"/>
-        <field name="columnName" type="string" column="COLUMN_NAME" nullable="false"/>
-        <field name="operation" type="string" column="OPERATION" nullable="false"/>
-        <field name="toValue" type="string" column="TO_VALUE" nullable="true"/>
-        <field name="description" type="string" column="DESCRIPTION" nullable="false"/>
-        <field name="enabled" type="boolean" column="ENABLED"/>
-        <field name="filter" column="FILTER"/>
-
-<!--        <one-to-many target-entity="Application\Entity\Db\ImportObservEtab" mapped-by="importObserv" field="importObservEtab"/>-->
-
     </entity>
 </doctrine-mapping>

@@ -8292,7 +8292,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/auth.git",
-                "reference": "e51d730bba975bcd43cdd85ed8976960a8e704b0"
+                "reference": "806db90dcd700c0de99f20c7741ab09c61085acc"
             },
             "require": {
                 "jasig/phpcas": "^1.3",

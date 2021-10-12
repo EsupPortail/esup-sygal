@@ -166,7 +166,7 @@ h1.app-name {
   #navbar .dropdown-divider {
     margin: .25rem 0; }
   #navbar .navbar-text {
-    line-height: 0.85; }
+    line-height: 1; }
 
 #breadcrumb ol.breadcrumb {
   padding-top: 0.3rem;

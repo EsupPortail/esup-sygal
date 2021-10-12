@@ -4,18 +4,35 @@ namespace Import\Model;
 
 use Application\Entity\Db\These;
 use DateTime;
+use UnicaenDbImport\Entity\Db\AbstractImportObserv;
 
 class ImportObservResult extends \UnicaenDbImport\Entity\Db\ImportObservResult
 {
     /**
      * @var DateTime
      */
-    protected $dateNotif;
+    protected $dateLimiteNotif;
 
     /**
-     * @var DateTime
+     * @var ImportObserv
      */
-    protected $dateLimiteNotif;
+    protected $importObserv;
+
+    /**
+     * @param ImportObserv $importObserv
+     */
+    public function setImportObserv(AbstractImportObserv $importObserv)
+    {
+        $this->importObserv = $importObserv;
+    }
+
+    /**
+     * @return ImportObserv
+     */
+    public function getImportObserv(): AbstractImportObserv
+    {
+        return $this->importObserv;
+    }
 
     /**
      * @return string
@@ -49,24 +66,6 @@ class ImportObservResult extends \UnicaenDbImport\Entity\Db\ImportObservResult
             default:
                 return $this->getResultat();
         }
-    }
-
-    /**
-     * @return DateTime|null
-     */
-    public function getDateNotif(): ?DateTime
-    {
-        return $this->dateNotif;
-    }
-
-    /**
-     * @param DateTime|null $dateNotif
-     * @return self
-     */
-    public function setDateNotif(?DateTime $dateNotif = null): self
-    {
-        $this->dateNotif = $dateNotif;
-        return $this;
     }
 
     /**

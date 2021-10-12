@@ -36,10 +36,10 @@ echo $this->messenger()
     <div id="content" class="jumbotron col-12 col-md-10">
 
         <div class="row">
-            <div class="col-md-5">
+            <div class="col-md-5 p-2">
                 <h1 class="page-header app-name"><?php echo $this->appInfos()->nom ?></h1>
             </div>
-            <div class="col-md-7">
+            <div class="col-md-7 p-2">
                 <p class="lead">
                     <?php echo $appName ?> est une application permettant la gestion dématérialisée
                     de l’ensemble des étapes du parcours doctoral en Normandie. Il offre également aux différents acteurs du parcours
@@ -48,42 +48,52 @@ echo $this->messenger()
             </div>
         </div>
 
-        <?php if (!$this->identity()): ?>
-            <p class="text-danger">
-                <strong>
-                    <?php echo $this->translate("Vous n'êtes pas connecté-e."); ?>
-                </strong>
-            </p>
-            <p>
-                <a class="btn btn-success btn-lg" href="<?php echo $this->url('zfcuser/login') ?>">
-                    <?php echo $this->translate('Connectez-vous...') ?>
-                </a>
-            </p>
-        <?php else: ?>
-            <?php if (!$estDoctorant): ?>
-                <p class="connected-as">
-                    <?php echo $this->translate("Vous êtes connecté·e en tant que"); ?>
-                    &laquo; <span class="role"><?php echo ($role)?:"utilisateur authentifié"; ?></span> &raquo;.
-                </p>
-                <?php if (count($roles) > 1): ?>
-                    <p class="connected-as">
-                        Cliquez sur votre nom dans le bandeau supérieur de la page pour visualiser les
-                        rôles que vous pouvez endosser puis sélectionnez celui qui vous amène...
-                    </p>
-                <?php endif ?>
-                <ul class="roadmap pagination">
-                    <li>
-                        <a class="roadmap-step-link " href="<?php echo $this->url('these') ?>">
-                            <span class="fas fa-arrow-alt-circle-right"></span>
-                            <?php echo $this->translate("Accès aux thèses..."); ?>
-                        </a>
-                    </li>
-                </ul>
-            <?php endif ?>
-            <hr>
-        <?php endif ?>
+        <hr>
 
-        <?php echo $this->content ?>
+        <div class="row">
+
+            <div class="col-11 p-2">
+
+                <?php if (!$this->identity()): ?>
+                    <p class="text-danger">
+                        <strong>
+                            <?php echo $this->translate("Vous n'êtes pas connecté-e."); ?>
+                        </strong>
+                    </p>
+                    <p>
+                        <a class="btn btn-success btn-lg" href="<?php echo $this->url('zfcuser/login') ?>">
+                            <?php echo $this->translate('Connectez-vous...') ?>
+                        </a>
+                    </p>
+                <?php else: ?>
+                    <?php if (!$estDoctorant): ?>
+                        <p class="connected-as">
+                            <?php echo $this->translate("Vous êtes connecté·e en tant que"); ?>
+                            &laquo; <span class="role"><?php echo ($role)?:"utilisateur authentifié"; ?></span> &raquo;.
+                        </p>
+                        <?php if (count($roles) > 1): ?>
+                            <p class="connected-as">
+                                Cliquez sur votre nom dans le bandeau supérieur de la page pour visualiser les
+                                rôles que vous pouvez endosser puis sélectionnez celui qui vous amène...
+                            </p>
+                        <?php endif ?>
+                        <ul class="roadmap pagination">
+                            <li>
+                                <a class="roadmap-step-link " href="<?php echo $this->url('these') ?>">
+                                    <span class="fas fa-arrow-alt-circle-right"></span>
+                                    <?php echo $this->translate("Accès aux thèses..."); ?>
+                                </a>
+                            </li>
+                        </ul>
+                    <?php endif ?>
+                    <hr>
+                <?php endif ?>
+
+                <?php echo $this->content ?>
+
+            </div>
+
+        </div>
 
     </div>
 
