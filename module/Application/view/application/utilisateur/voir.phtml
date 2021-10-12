@@ -160,7 +160,6 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges:
             <?php echo $this->translate("Jeton d'authentification") ?>
             <div class="float-end">
                 <?php echo $this->partial('unicaen-auth-token/token/partial/add-button', [
-                    'route' => 'utilisateur/ajouter-token',
                     'redirect' => $redirect,
                     'user' => $utilisateur->getId(),
                 ]) ?>
