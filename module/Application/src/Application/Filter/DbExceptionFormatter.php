@@ -4,7 +4,7 @@ namespace Application\Filter;
 
 use Doctrine\DBAL\DBALException;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Filter\AbstractFilter;
+use Laminas\Filter\AbstractFilter;
 
 /**
  * Filtre traducteur de message d'erreur rencontrée par une base de données.

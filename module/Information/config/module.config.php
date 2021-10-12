@@ -19,9 +19,9 @@ use Information\Service\InformationLangue\InformationLangueServiceFactory;
 use Information\Service\InformationService;
 use Information\Service\InformationServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
-use Zend\Navigation\Service\NavigationAbstractServiceFactory;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
+use Laminas\Navigation\Service\NavigationAbstractServiceFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 

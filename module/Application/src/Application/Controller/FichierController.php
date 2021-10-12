@@ -13,8 +13,8 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 
 
 class FichierController extends AbstractController
@@ -54,7 +54,7 @@ class FichierController extends AbstractController
             $qb->addOrderBy($sortProp, $dir);
         }
 
-        $paginator = new \Zend\Paginator\Paginator(new DoctrinePaginator(new Paginator($qb, true)));
+        $paginator = new \Laminas\Paginator\Paginator(new DoctrinePaginator(new Paginator($qb, true)));
         $paginator
             ->setPageRange(20)
             ->setItemCountPerPage((int)$maxi)

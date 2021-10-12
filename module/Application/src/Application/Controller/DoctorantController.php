@@ -10,9 +10,9 @@ use Application\Service\Doctorant\DoctorantServiceAwareTrait;
 use Application\Service\MailConfirmationService;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use UnicaenAuth\Authentication\Adapter\Ldap as LdapAuthAdapter;
-use Zend\Form\Form;
-use Zend\InputFilter\Factory;
-use Zend\View\Model\ViewModel;
+use Laminas\Form\Form;
+use Laminas\InputFilter\Factory;
+use Laminas\View\Model\ViewModel;
 
 class DoctorantController extends AbstractController
 {

@@ -3,7 +3,7 @@
 namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\CreationUtilisateurInfos;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class CreationUtilisateurFromIndividuHydrator implements HydratorInterface
 {

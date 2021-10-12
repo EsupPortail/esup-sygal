@@ -5,7 +5,7 @@ namespace Application\Form\Validator;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Validator\AbstractValidator;
+use Laminas\Validator\AbstractValidator;
 
 class NewEmailValidator extends AbstractValidator {
 

@@ -10,7 +10,7 @@ use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Authentication\Storage\ChainEvent as StorageChainEvent;
 use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Event\UserAuthenticatedEvent;
-use Zend\Authentication\Exception\ExceptionInterface;
+use Laminas\Authentication\Exception\ExceptionInterface;
 
 /**
  * @author Unicaen

@@ -5,8 +5,8 @@ namespace Application\Controller\Traits;
 use Application\Entity\Db\StructureConcreteInterface;
 use Application\Service\Structure\StructureService;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
-use Zend\Mvc\Controller\Plugin\Params;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Laminas\Mvc\Controller\Plugin\Params;
 
 /**
  * Trait LogoAwareControllerTrait

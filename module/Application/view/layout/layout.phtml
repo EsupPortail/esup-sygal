@@ -1,6 +1,6 @@
 <?php
 use Application\View\Renderer\PhpRenderer;
-use Zend\View\Helper\Navigation as NavigationHelper;
+use Laminas\View\Helper\Navigation as NavigationHelper;
 
 /**
  * @var PhpRenderer      $this
@@ -54,7 +54,7 @@ $navigationHelper = $this->navigation('navigation');
         <div class="container ">
             <?php
             echo $navigationHelper->filAriane('navigation')->setRenderInvisible(false)->render() ?:
-                 $this->navigation()->filAriane('Zend\Navigation\Information')->setRenderInvisible(false)->render() ?>
+                 $this->navigation()->filAriane('Laminas\Navigation\Information')->setRenderInvisible(false)->render() ?>
         </div>
         
         <div id="contenu-principal" class="container">

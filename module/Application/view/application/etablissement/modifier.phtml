@@ -42,7 +42,7 @@ $fcg = $this->formControlGroup();
         <?php echo $fcg($form->get('estFerme')) ?>
     <div id="logo-div">
         <?php
-        /** @var \Zend\Form\Element\File $logoFile */
+        /** @var \Laminas\Form\Element\File $logoFile */
         $logoFile = $form->get('cheminLogo');
         echo $this->formLabel($logoFile);
         ?>

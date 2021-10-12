@@ -6,8 +6,8 @@ use Application\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\VersionFichier;
-use Zend\Filter\Exception\RuntimeException;
-use Zend\Filter\FilterInterface;
+use Laminas\Filter\Exception\RuntimeException;
+use Laminas\Filter\FilterInterface;
 
 /**
  * Retourne l'id ou le code d'une instance d'entité.

@@ -4,7 +4,7 @@ namespace Application\Controller\Plugin;
 
 use Application\Entity\Db\Fichier;
 use Application\Filter\IdifyFilterAwareTrait;
-use Zend\Mvc\Controller\Plugin\Url as UrlPlugin;
+use Laminas\Mvc\Controller\Plugin\Url as UrlPlugin;
 
 class UrlFichier extends UrlPlugin
 {

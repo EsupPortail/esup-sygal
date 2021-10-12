@@ -4,7 +4,7 @@ namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\Profil;
 use Application\Service\Structure\StructureServiceAwareTrait;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class ProfilHydrator implements HydratorInterface
 {

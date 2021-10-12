@@ -3,9 +3,9 @@
 namespace Soutenance\View\Helper;
 
 use Soutenance\Entity\Etat;
-use Zend\Form\View\Helper\AbstractHelper;
-use Zend\View\Renderer\PhpRenderer;
-use Zend\View\Resolver\TemplatePathStack;
+use Laminas\Form\View\Helper\AbstractHelper;
+use Laminas\View\Renderer\PhpRenderer;
+use Laminas\View\Resolver\TemplatePathStack;
 
 class EtatViewHelper extends AbstractHelper
 {

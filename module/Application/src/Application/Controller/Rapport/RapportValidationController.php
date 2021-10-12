@@ -11,7 +11,7 @@ use Application\Service\RapportValidation\RapportValidationServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Doctrine\ORM\NoResultException;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Http\Response;
+use Laminas\Http\Response;
 
 class RapportValidationController extends AbstractController
 {

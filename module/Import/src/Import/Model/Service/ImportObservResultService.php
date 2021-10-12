@@ -13,7 +13,7 @@ use Application\Service\Variable\VariableServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
 use Notification\Notification;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Log\LoggerAwareTrait;
+use Laminas\Log\LoggerAwareTrait;
 
 /**
  * @author Unicaen

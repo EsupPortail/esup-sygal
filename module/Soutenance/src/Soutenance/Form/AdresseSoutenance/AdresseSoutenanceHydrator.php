@@ -3,7 +3,7 @@
 namespace Soutenance\Form\AdresseSoutenance;
 
 use Soutenance\Entity\Proposition;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class AdresseSoutenanceHydrator implements HydratorInterface {
 

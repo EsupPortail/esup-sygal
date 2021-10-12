@@ -2,10 +2,10 @@
 
 namespace Application;
 
-use Zend\Mvc\MvcEvent;
-use Zend\Router\Http\TreeRouteStack;
-use Zend\Router\RouteStackInterface;
-use Zend\Uri\Http as HttpUri;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Router\Http\TreeRouteStack;
+use Laminas\Router\RouteStackInterface;
+use Laminas\Uri\Http as HttpUri;
 
 class EventRouterReplacer
 {

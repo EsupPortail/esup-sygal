@@ -28,7 +28,7 @@ use Application\SourceCodeStringHelper;
 use Doctrine\ORM\EntityManager;
 use Import\Service\ImportService;
 use Interop\Container\ContainerInterface;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\View\Renderer\PhpRenderer;
 
 class TheseControllerFactory
 {

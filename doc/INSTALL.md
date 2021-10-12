@@ -104,12 +104,12 @@ git checkout --force 3.0.0 && bash install.sh
 Pour commencer, placez l'application en mode "développement" afin d'activer l'affichage détaillé des futures erreurs 
 rencontrées. Pour cela placez-vous dans le répertoire des sources de l'application puis lancez la commande suivante :
 ```bash
-vendor/bin/zf-development-mode enable
+vendor/bin/laminas-development-mode enable
 ```
 
 Lorsque l'application sera sur un serveur de production, il faudra penser à désactiver le mode "développement" :
 ```bash
-vendor/bin/zf-development-mode disable
+vendor/bin/laminas-development-mode disable
 ```
 
 

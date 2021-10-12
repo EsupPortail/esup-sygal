@@ -7,9 +7,9 @@ use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Variable\VariableService;
 use Interop\Container\ContainerInterface;
 use UnicaenApp\Options\ModuleOptions;
-use Zend\Mvc\Console\View\ViewManager as ConsoleViewManager;
-use Zend\Mvc\View\Http\ViewManager as HttpViewManager;
-use Zend\View\Helper\Url as UrlHelper;
+use Laminas\Mvc\Console\View\ViewManager as ConsoleViewManager;
+use Laminas\Mvc\View\Http\ViewManager as HttpViewManager;
+use Laminas\View\Helper\Url as UrlHelper;
 
 /**
  * @author Unicaen

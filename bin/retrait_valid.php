@@ -2,7 +2,7 @@
 
 use Application\Validator\FichierCinesValidator;
 use Retraitement\RetraitValid;
-use Zend\Console;
+use Laminas\Console;
 
 $appRoot = realpath(__DIR__ . '/..');
 

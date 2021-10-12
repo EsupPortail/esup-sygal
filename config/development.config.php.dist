@@ -3,7 +3,7 @@
 return [
     // Development time modules
     'modules' => [
-        'ZendDeveloperTools',
+        'Laminas\DeveloperTools',
         'UnicaenCode',
         'UnicaenTest',
     ],

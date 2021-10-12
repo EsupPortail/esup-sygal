@@ -7,7 +7,7 @@ use Soutenance\Form\QualiteEdition\QualiteEditionForm;
 use Soutenance\Form\QualiteLibelleSupplementaire\QualiteLibelleSupplementaireForm;
 use Soutenance\Service\Qualite\QualiteService;
 use Soutenance\Service\QualiteLibelleSupplementaire\QualiteLibelleSupplementaireService;
-use Zend\Mvc\Controller\ControllerManager;
+use Laminas\Mvc\Controller\ControllerManager;
 
 class QualiteControllerFactory
 {

@@ -24,8 +24,8 @@ use Application\Service\Variable\VariableServiceAwareTrait;
 use Import\Model\ImportObservResult;
 use Notification\Notification;
 use UnicaenApp\Exception\LogicException;
-use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
-use Zend\View\Helper\Url as UrlHelper;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Laminas\View\Helper\Url as UrlHelper;
 
 /**
  * Service d'envoi de notifications par mail.

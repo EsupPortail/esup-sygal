@@ -3,7 +3,7 @@
 namespace Application\View\Helper;
 
 use Application\View\Renderer\PhpRenderer;
-use Zend\View\Helper\AbstractHelper as ZFAbstractHelper;
+use Laminas\View\Helper\AbstractHelper as ZFAbstractHelper;
 
 abstract class AbstractHelper extends ZFAbstractHelper
 {

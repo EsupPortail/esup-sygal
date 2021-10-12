@@ -18,9 +18,9 @@ use UnicaenApp\Controller\Plugin\AppInfos;
 use UnicaenApp\Controller\Plugin\ConfirmPlugin;
 use UnicaenApp\Controller\Plugin\Mail;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Http\Request as HttpRequest;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Laminas\Http\Request as HttpRequest;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use ZfcUser\Controller\Plugin\ZfcUserAuthentication;
 
 /**

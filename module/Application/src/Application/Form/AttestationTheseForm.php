@@ -4,8 +4,8 @@ namespace Application\Form;
 
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\These;
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\Form;
+use Laminas\InputFilter\InputFilterProviderInterface;
 
 class AttestationTheseForm extends Form implements InputFilterProviderInterface
 {

@@ -14,8 +14,8 @@ use Application\Service\ListeDiffusion\Handler\ListeDiffusionHandlerFactory;
 use Application\Service\ListeDiffusion\Plugin\Structure\ListeDiffusionUniteRecherchePlugin;
 use Application\Service\ListeDiffusion\Plugin\Structure\ListeDiffusionUniteRecherchePluginFactory;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [

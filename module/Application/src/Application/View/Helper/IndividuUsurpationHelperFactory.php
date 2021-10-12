@@ -5,11 +5,11 @@ namespace Application\View\Helper;
 use Interop\Container\ContainerInterface;
 use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\UserContext;
-use Zend\Form\Element\Hidden;
-use Zend\Form\Element\Submit;
-use Zend\Form\Form;
-use Zend\View\Helper\Url;
-use Zend\View\HelperPluginManager;
+use Laminas\Form\Element\Hidden;
+use Laminas\Form\Element\Submit;
+use Laminas\Form\Form;
+use Laminas\View\Helper\Url;
+use Laminas\View\HelperPluginManager;
 
 class IndividuUsurpationHelperFactory
 {

@@ -7,8 +7,8 @@ use Application\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\StructureDocument\StructureDocumentServiceAwareTrait;
-use Zend\Http\Response;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
 
 class EcoleDoctoraleController extends StructureConcreteController
 {

@@ -12,7 +12,7 @@ use Application\Service\StructureDocument\StructureDocumentServiceFactory;
 use Application\View\Helper\StructureSubstitHelper;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Segment;
 
 return [
 
