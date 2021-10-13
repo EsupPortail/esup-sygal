@@ -611,7 +611,7 @@ class StructureService extends BaseService
             ->leftJoin('structure.structuresSubstituees', 'substitutionFrom')
             ->leftJoin('structure.structureSubstituante', 'substitutionTo')
             ->andWhere('substitutionFrom.id IS NULL')
-            ->andWhere('substitutionTo.id IS NULL OR pasHistorise(substitutionTo) != 1')
+            ->andWhere('substitutionTo.id IS NULL OR substitutionTo.histoDestruction is not null')
             ->orderBy('structure.libelle')
         ;
 
@@ -659,7 +659,7 @@ class StructureService extends BaseService
             ->join('structureConcrete.structure', 'structure')
             ->leftJoin('structure.structureSubstituante', 'substitutionTo')
             ->leftJoin('structure.structuresSubstituees', 'substitutionFrom')
-            ->andWhere('substitutionTo.id IS NULL OR pasHistorise(substitutionTo) != 1');
+            ->andWhere('substitutionTo.id IS NULL OR substitutionTo.histoDestruction is not null');
         if ($order) {
             $qb->orderBy(' structure.' . $order);
         }

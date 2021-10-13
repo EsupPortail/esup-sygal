@@ -168,7 +168,7 @@ class AvisService {
     public function getAvisByThese(These $these)
     {
         $qb =$this->createQueryBuilder()
-            ->andWhere('1 = pasHistorise(avis)')
+            ->andWhere('avis.histoDestruction is null')
             ->andWhere('proposition.these = :these')
             ->setParameter('these', $these)
         ;
@@ -190,7 +190,7 @@ class AvisService {
     {
         if ($membre === null OR $membre->getActeur() === null) return null;
         $qb = $this->createQueryBuilder()
-            ->andWhere('1 = pasHistorise(avis)')
+            ->andWhere('avis.histoDestruction is null')
             ->andWhere('avis.membre = :membre')
             ->setParameter('membre', $membre);
 

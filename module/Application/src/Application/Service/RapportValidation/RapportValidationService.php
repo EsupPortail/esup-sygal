@@ -64,7 +64,7 @@ class RapportValidationService extends BaseService
         $qb = $this->getRepository()->createQueryBuilder('v')
             ->join('v.type', 't', Join::WITH, 't = :type')->setParameter('type', $this->typeValidation)
             ->join('v.rapport', 'r', Join::WITH, 'r = :rapport')->setParameter('r', $rapport)
-            ->andWhere('pasHistorise(v) = 1');
+            ->andWhere('v.histoDestruction is null');
         try {
             /** @var RapportValidation $rapportValidation */
             $rapportValidation = $qb->getQuery()->getOneOrNullResult();
