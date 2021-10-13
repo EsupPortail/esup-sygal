@@ -52,7 +52,7 @@ class UtilisateurSearchService extends SearchService
         // filtre "est lié à un individu supprimé"
         $individuSupprFilter = new CheckboxSearchFilter("Lié à un<br>individu supprimé", 'individu_suppr');
         $individuSupprFilter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb) {
-            $qb->andWhere('pasHistorise(i) = 0');
+            $qb->andWhere('i.histoDestruction is not null');
         });
         $this->addFilter($individuSupprFilter);
 

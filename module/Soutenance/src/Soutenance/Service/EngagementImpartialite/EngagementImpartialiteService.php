@@ -64,7 +64,7 @@ class EngagementImpartialiteService {
     {
         $qb = $this->getValidationService()->getEntityManager()->getRepository(Validation::class)->createQueryBuilder('validation')
             ->addSelect('type')->join('validation.typeValidation', 'type')
-            ->andWhere('1 = pasHistorise(validation)')
+            ->andWhere('validation.histoDestruction is null')
             ->andWhere('type.code = :codeEngagement')
             ->andWhere('validation.these = :these')
             ->andWhere('validation.individu = :individu')

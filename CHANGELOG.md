@@ -3,6 +3,7 @@ Journal des modifications
 
 3.0.4
 -----
+- Amélioration des temps de réponse des requêtes SQL en abandonnant pasHistorise().
 - Proposition de soutenance : l'adresse de l'établissement de chaque membre du jury est désormais demandée au doctorant.
 - [FIX] Durée de conservation en session des données d'authentification (màj unicaen/app et auth).
 

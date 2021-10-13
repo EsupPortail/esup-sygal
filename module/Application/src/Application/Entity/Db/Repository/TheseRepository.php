@@ -139,7 +139,7 @@ class TheseRepository extends DefaultEntityRepository
             ->andWhere('i = :individu')
             ->setParameter('individu', $individu)
             ->andWhereEtatIn($etats)
-            ->andWhere('1 = pasHistorise(t)')
+            ->andWhere('t.histoDestruction is null')
             ->orderBy('t.datePremiereInscription', 'ASC')
         ;
 
@@ -180,7 +180,7 @@ class TheseRepository extends DefaultEntityRepository
             ->andWhereEtatIn($etats)
             ->andWhere('a.individu = :individu')
             ->setParameter('individu', $individu)
-            ->andWhere('1 = pasHistorise(t)')
+            ->andWhere('t.histoDestruction is null')
             ->orderBy('t.datePremiereInscription', 'ASC')
         ;
 
@@ -200,7 +200,7 @@ class TheseRepository extends DefaultEntityRepository
             ->setParameter('coencadrant', Role::CODE_CO_ENCADRANT)
             ->andWhere('a.individu = :individu')
             ->setParameter('individu', $individu)
-            ->andWhere('1 = pasHistorise(t)')
+            ->andWhere('t.histoDestruction is null')
             ->orderBy('t.datePremiereInscription', 'ASC')
         ;
 

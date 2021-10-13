@@ -239,7 +239,7 @@ class TheseSearchService extends SearchService
             ->addSelect('f')->leftJoin('these.financements', 'f')
             ->addSelect('fi')->leftJoin('these.fichierTheses', 'fi')
             ->addSelect('ta')->leftJoin('these.titreAcces', 'ta')
-            ->andWhere('1 = pasHistorise(these)');
+            ->andWhere('these.histoDestruction is null');
 
         return $qb;
     }

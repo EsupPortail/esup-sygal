@@ -28,7 +28,7 @@ class ActeurRepository extends DefaultEntityRepository
             ->addSelect('r')
             ->join('a.individu', 'i', Join::WITH, 'i.sourceCode = :sourceCode')
             ->join('a.role', 'r')
-            ->andWhere('pasHistorise(a) = 1')
+            ->andWhere('a.histoDestruction is null')
             ->setParameter('sourceCode', $sourceCodeIndividu);
 
         return $qb->getQuery()->getResult();
@@ -102,7 +102,7 @@ class ActeurRepository extends DefaultEntityRepository
             ->setParameter('code', $code)
             ->andWhere('acteur.these = :these')
             ->setParameter('these', $these)
-            ->andWhere('1 = pasHistorise(acteur)');
+            ->andWhere('acteur.histoDestruction is null');
 
         $result = $qb->getQuery()->getResult();
         return $result;
@@ -122,7 +122,7 @@ class ActeurRepository extends DefaultEntityRepository
             ->setParameter('codirecteur', Role::CODE_CODIRECTEUR_THESE)
             ->andWhere('acteur.these = :these')
             ->setParameter('these', $these)
-            ->andWhere('1 = pasHistorise(acteur)');
+            ->andWhere('acteur.histoDestruction is null');
 
         $result = $qb->getQuery()->getResult();
         return $result;
@@ -137,7 +137,7 @@ class ActeurRepository extends DefaultEntityRepository
     {
         $qb = $this->createQueryBuilder('acteur')
             ->addSelect('these')->join('acteur.these', 'these')
-            ->andWhere('1 =  pasHistorise(acteur)')
+            ->andWhere('acteur.histoDestruction is null')
             ->andWhere('acteur.individu = :individu')
             ->setParameter('individu', $individu)
             ->orderBy('these.id', 'ASC');
@@ -168,7 +168,7 @@ class ActeurRepository extends DefaultEntityRepository
             ->join('a.these', 't', Join::WITH, 't.etatThese = :etat')->setParameter('etat', $etatThese)
             ->join('t.ecoleDoctorale', 'ed')
             ->join('ed.structure', 's')
-            ->andWhere('1 =  pasHistorise(a)')
+            ->andWhere('a.histoDestruction is null')
             ->addOrderBy('i.nomUsuel')
             ->addOrderBy('i.prenom1');
 
@@ -203,7 +203,7 @@ class ActeurRepository extends DefaultEntityRepository
             ->join('a.these', 't', Join::WITH, 't.etatThese = :etat')->setParameter('etat', $etatThese)
             ->join('t.ecoleDoctorale', 'ed')
             ->join('ed.structure', 's')
-            ->andWhere('1 =  pasHistorise(a)')
+            ->andWhere('a.histoDestruction is null')
             ->addOrderBy('i.nomUsuel')
             ->addOrderBy('i.prenom1');
 
@@ -238,9 +238,9 @@ class ActeurRepository extends DefaultEntityRepository
             ->addSelect('t')->join('t.these', 't')
             ->andWhere('a.complement = :president')
             ->setParameter('president', 'Président du jury')
-            ->andWhere('1 =  pasHistorise(a)')
-            ->andWhere('1 =  pasHistorise(i)')
-            ->andWhere('1 =  pasHistorise(t)');
+            ->andWhere('a.histoDestruction is null')
+            ->andWhere('i.histoDestruction is null')
+            ->andWhere('t.histoDestruction is null');
 
         $result = $qb->getQuery()->getResult();
         return $result;
@@ -259,9 +259,9 @@ class ActeurRepository extends DefaultEntityRepository
             ->setParameter('president', Role::CODE_PRESIDENT_JURY)
             ->addSelect('u')->leftJoin('i.utilisateurs', 'u')
             ->andWhere("t.correctionAutorisee is not null or t.correctionAutoriseeForcee is not null")
-            ->andWhere('1 =  pasHistorise(a)')
-            ->andWhere('1 =  pasHistorise(i)')
-            ->andWhere('1 =  pasHistorise(t)')
+            ->andWhere('a.histoDestruction is null')
+            ->andWhere('i.histoDestruction is null')
+            ->andWhere('t.histoDestruction is null')
             ->orderBy('t.dateSoutenance', 'DESC')
             //->orderBy('t.id', 'ASC')
         ;
@@ -269,28 +269,4 @@ class ActeurRepository extends DefaultEntityRepository
         $result = $qb->getQuery()->getResult();
         return $result;
     }
-
-//    /**
-//     * @return Acteur[]
-//     */
-//    public function fetchPresidentDuJuryTheseAvecCorrectionSansUtilisateur()
-//    {
-//        $qb = $this->createQueryBuilder('a')
-//            ->addSelect('i')->join('a.individu', 'i')
-//            ->addSelect('t')->join('a.these', 't')
-//            ->addSelect('u')->join('i.utilisateurs', 'u')
-//            ->andWhere('a.libelleRoleComplement = :president')
-//            ->setParameter('president', 'Président du jury')
-//            ->andWhere('t.correctionAutorisee IS NOT NULL')
-//            ->andWhere('1 =  pasHistorise(a)')
-//            ->andWhere('1 =  pasHistorise(i)')
-//            ->andWhere('1 =  pasHistorise(t)')
-//            ->groupBy('a')
-//            ->having('count(u) = 0')
-//        ;
-//
-//        $result = $qb->getQuery()->getResult();
-//        return $result;
-//    }
-
 }
