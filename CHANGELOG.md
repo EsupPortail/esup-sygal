@@ -1,6 +1,12 @@
 Journal des modifications
 =========================
 
+3.1
+---
+- Migration vers Laminas (back-end).
+- Migration vers Bootstrap 5 (front-end).
+- Réorganisation des infos affcihées à propos de la connexion dans le menu principal.
+
 3.0.4
 -----
 - Proposition de soutenance : l'adresse de l'établissement de chaque membre du jury est désormais demandée au doctorant.
