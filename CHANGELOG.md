@@ -1,6 +1,13 @@
 Journal des modifications
 =========================
 
+3.0.5
+-----
+- Notification à propos de la validation de la page de couverture : correction de texte.
+- Script de lancement de l'import run-import.sh : utilisation de flock pour éviter 2 lancements en parallèle.
+- Téléchargement de la version initiale/corrigée imprimable : intitulé de titre plus précis sur la version concernée.
+- [FIX] Correction du sujet erroné du mail envoyé lorsque l'ajout de la page de couverture est terminé.
+
 3.0.4
 -----
 - Amélioration des temps de réponse des requêtes SQL en abandonnant pasHistorise().
