@@ -3,7 +3,7 @@
 namespace Soutenance\Form\QualiteLibelleSupplementaire;
 
 use Soutenance\Entity\QualiteLibelleSupplementaire;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class QualiteLibelleSupplementaireHydrator implements HydratorInterface {
 

@@ -32,7 +32,7 @@ use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Exporter\Pdf;
 use UnicaenApp\Util;
-use Zend\Http\Response;
+use Laminas\Http\Response;
 
 class FichierTheseService extends BaseService
 {

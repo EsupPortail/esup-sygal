@@ -2,8 +2,8 @@
 
 namespace Soutenance\Form\AdresseSoutenance;
 
-use Zend\Form\Element\Submit;
-use Zend\Form\Form;
+use Laminas\Form\Element\Submit;
+use Laminas\Form\Form;
 
 class AdresseSoutenanceForm extends Form
 {
@@ -15,11 +15,11 @@ class AdresseSoutenanceForm extends Form
             'options' => [
                 'label' => 'Adresse exacte de la soutenance : ',
                 'label_attributes' => [
-                    'class' => 'control-label',
+                    'class' => 'form-label',
                 ],
             ],
             'attributes' => [
-                'class' => 'form-control motif',
+                'class' => 'motif',
             ]
         ]);
 

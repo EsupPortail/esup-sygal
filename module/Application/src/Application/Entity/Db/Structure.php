@@ -9,7 +9,7 @@ use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * Structure

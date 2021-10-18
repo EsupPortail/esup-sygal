@@ -15,7 +15,7 @@ use Application\SourceCodeStringHelperAwareTrait;
 use DateTime;
 use Doctrine\ORM\ORMException;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class ActeurService extends BaseService
 {

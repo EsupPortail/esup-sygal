@@ -27,9 +27,9 @@ $canMaj = $this->isAllowed(Privileges::getResourceId(Privileges::IMPORT_MAJ));
 
         ?>
         <div class="col-md-6">
-            <div class="panel panel-default import-panel" id="<?php echo $table ?>">
-                <div class="panel-heading"><strong><?php echo $tableLabel ?></strong></div>
-                <table class="table table-condensed import-table" id="<?php echo $table ?>">
+            <div class="card import-panel" id="<?php echo $table ?>">
+                <div class="card-header bg-secondary"><strong><?php echo $tableLabel ?></strong></div>
+                <table class="table table-sm import-table" id="<?php echo $table ?>">
                     <tr>
                         <td style="width:20%">Nouveau</td>
                         <td style="width:30%" class="action <?php echo Query::ACTION_INSERT ?>"></td>
@@ -45,21 +45,21 @@ $canMaj = $this->isAllowed(Privileges::getResourceId(Privileges::IMPORT_MAJ));
                         <td style="width:30%" class="action <?php echo Query::ACTION_UNDELETE ?>"></td>
                     </tr>
                 </table>
-                <div class="panel-body">
+                <div class="card-body">
 
                 </div>
-                <div class="panel-footer">
-                    <button type="button" class="btn btn-default btn-refresh" data-id="<?php echo $table ?>"><span
-                                class="glyphicon glyphicon-refresh"></span> Recharger
+                <div class="card-footer">
+                    <button type="button" class="btn btn-secondary btn-refresh" data-id="<?php echo $table ?>"><span
+                                class="icon icon-refresh"></span> Recharger
                     </button>
                     <?php if ($canMaj): ?>
                         <?php if (in_array($table, $mviews)): ?>
                             <button type="button" class="btn btn-info btn-vuemat" data-id="<?php echo $table ?>"><span
-                                        class="glyphicon glyphicon-list"></span> MAJ vue matérialisée
+                                        class="fas fa-list"></span> MAJ vue matérialisée
                             </button>
                         <?php endif; ?>
                         <button type="button" class="btn btn-warning btn-actu" data-id="<?php echo $table ?>"><span
-                                    class="glyphicon glyphicon-import"></span> Synchroniser
+                                    class="icon icon-import"></span> Synchroniser
                         </button>
                     <?php endif; ?>
                 </div>
@@ -72,7 +72,7 @@ $canMaj = $this->isAllowed(Privileges::getResourceId(Privileges::IMPORT_MAJ));
 </div>
 <style>
 
-    .differentiel .import-panel .panel-body {
+    .differentiel .import-panel .card-body {
         max-height: 12.5em;
         overflow: auto;
     }
@@ -122,17 +122,17 @@ $canMaj = $this->isAllowed(Privileges::getResourceId(Privileges::IMPORT_MAJ));
                     if (action == undefined || action == 'all' || action == 'vue-materialisee' || action == actions[i]) {
                         var chiffre = data.chiffres[actions[i]];
                         if (chiffre > 0) {
-                            chiffre += ' <button class="btn btn-xs btn-primary btn-details" title="Voir le détail" data-action="' + actions[i] + '"><span class="glyphicon glyphicon-search"></span></button>';
+                            chiffre += ' <button class="btn btn-sm btn-primary btn-details" title="Voir le détail" data-action="' + actions[i] + '"><span class="icon icon-search"></span></button>';
                             if (that.element.data('can-maj')) {
-                                chiffre += ' <button class="btn btn-xs btn-warning btn-sync-action" title="Synchroniser" data-action="' + actions[i] + '"><span class="glyphicon glyphicon-import"></span></button>';
+                                chiffre += ' <button class="btn btn-sm btn-warning btn-sync-action" title="Synchroniser" data-action="' + actions[i] + '"><span class="icon icon-import"></span></button>';
                             }
                         }
                         that.element.find(sel + actions[i]).html(chiffre);
-                        that.element.find(sel + actions[i] + ' .btn-details').click(function ()
+                        that.element.find(sel + actions[i] + ' .btn-details').on("click", function ()
                         {
                             that.showDetails(tableName, $(this).data('action'));
                         });
-                        that.element.find(sel + actions[i] + ' .btn-sync-action').click(function ()
+                        that.element.find(sel + actions[i] + ' .btn-sync-action').on("click", function ()
                         {
                             that.reloadTable(tableName, $(this).data('action'));
                         });
@@ -162,21 +162,21 @@ $canMaj = $this->isAllowed(Privileges::getResourceId(Privileges::IMPORT_MAJ));
         {
             if (text == '') return;
 
-            var div = this.element.find('.import-panel#' + table + ' .panel-body');
+            var div = this.element.find('.import-panel#' + table + ' .card-body');
 
             div.show();
-            div.append('<div class="alert alert-' + type + ' alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + text + '</div>');
+            div.append('<div class="alert alert-' + type + ' alert-dismissible" role="alert"><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' + text + '</div>');
         },
 
         clearMsgs: function (table)
         {
             var div;
             if (table) {
-                div = this.element.find('.import-panel#' + table + ' .panel-body');
+                div = this.element.find('.import-panel#' + table + ' .card-body');
                 div.html('');
                 div.hide();
             } else {
-                div = this.element.find('.import-panel .panel-body');
+                div = this.element.find('.import-panel .card-body');
                 div.html('');
                 div.hide();
             }
@@ -191,7 +191,7 @@ $canMaj = $this->isAllowed(Privileges::getResourceId(Privileges::IMPORT_MAJ));
             var params = {
                 action: action
             };
-            var div = this.element.find('.import-panel#' + table + ' .panel-body');
+            var div = this.element.find('.import-panel#' + table + ' .card-body');
 
             div.show();
             div.html('Chargement en cours... <div class="loading"></div>');
@@ -222,17 +222,17 @@ $canMaj = $this->isAllowed(Privileges::getResourceId(Privileges::IMPORT_MAJ));
         {
             var that = this;
 
-            this.element.find('.btn-vuemat').click(function ()
+            this.element.find('.btn-vuemat').on("click", function ()
             {
                 that.reloadTable($(this).data('id'), 'vue-materialisee');
             });
 
-            this.element.find('.btn-refresh').click(function ()
+            this.element.find('.btn-refresh').on("click", function ()
             {
                 that.reloadTable($(this).data('id'));
             });
 
-            this.element.find('.btn-actu').click(function ()
+            this.element.find('.btn-actu').on("click", function ()
             {
                 that.reloadTable($(this).data('id'), 'all');
             });

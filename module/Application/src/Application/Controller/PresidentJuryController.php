@@ -9,9 +9,9 @@ use Application\Service\These\TheseServiceAwareTrait;
 use DateInterval;
 use DateTime;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Mvc\Plugin\FlashMessenger\FlashMessenger;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Laminas\View\Model\ViewModel;
 
 /** @method FlashMessenger flashMessenger() **/
 

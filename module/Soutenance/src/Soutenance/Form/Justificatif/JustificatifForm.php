@@ -4,11 +4,11 @@ namespace Soutenance\Form\Justificatif;
 
 use Application\Entity\Db\NatureFichier;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
-use Zend\Form\Element\Button;
-use Zend\Form\Element\File;
-use Zend\Form\Element\Select;
-use Zend\Form\Form;
-use Zend\InputFilter\Factory;
+use Laminas\Form\Element\Button;
+use Laminas\Form\Element\File;
+use Laminas\Form\Element\Select;
+use Laminas\Form\Form;
+use Laminas\InputFilter\Factory;
 
 class JustificatifForm extends Form {
     use PropositionServiceAwareTrait;

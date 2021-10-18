@@ -25,7 +25,7 @@ class EtablissementSearchFilter extends SelectSearchFilter
     static public function newInstance(): self
     {
         return new self(
-            "Établissement<br>d'inscr.",
+            "Étab. d'inscr.",
             self::NAME
         );
     }

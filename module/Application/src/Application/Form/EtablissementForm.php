@@ -3,13 +3,13 @@
 namespace Application\Form;
 
 use Application\Entity\Db\Etablissement;
-use Zend\Form\Element\Checkbox;
-use Zend\Form\Element\File;
-use Zend\Form\Element\Hidden;
-use Zend\Form\Element\Submit;
-use Zend\Form\Element\Text;
-use Zend\Form\Form;
-use Zend\InputFilter\Factory;
+use Laminas\Form\Element\Checkbox;
+use Laminas\Form\Element\File;
+use Laminas\Form\Element\Hidden;
+use Laminas\Form\Element\Submit;
+use Laminas\Form\Element\Text;
+use Laminas\Form\Form;
+use Laminas\InputFilter\Factory;
 
 class EtablissementForm extends Form
 {

@@ -4,7 +4,7 @@ namespace Application\Validator;
 
 use Application\Command\ValidationFichierCinesCommand;
 use Application\Validator\Exception\CinesErrorException;
-use Zend\Validator\AbstractValidator;
+use Laminas\Validator\AbstractValidator;
 
 class FichierCinesValidator extends AbstractValidator
 {

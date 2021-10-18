@@ -2,7 +2,7 @@
 
 namespace Application\Filter;
 
-use Zend\Filter\AbstractFilter;
+use Laminas\Filter\AbstractFilter;
 
 class AnneeUnivFormatter extends AbstractFilter
 {

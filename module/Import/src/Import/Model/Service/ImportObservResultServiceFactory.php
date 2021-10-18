@@ -9,10 +9,10 @@ use Doctrine\ORM\EntityManager;
 use Import\Model\Service\ImportObservResultService;
 use Interop\Container\ContainerInterface;
 use UnicaenDbImport\Config\Config;
-use Zend\Console\Request as ConsoleRequest;
-use Zend\Log\Logger;
-use Zend\Log\Writer\Noop;
-use Zend\Log\Writer\Stream;
+use Laminas\Console\Request as ConsoleRequest;
+use Laminas\Log\Logger;
+use Laminas\Log\Writer\Noop;
+use Laminas\Log\Writer\Stream;
 
 class ImportObservResultServiceFactory
 {

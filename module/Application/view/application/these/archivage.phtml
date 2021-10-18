@@ -34,12 +34,12 @@ $pageDepotThese = $this->navigation('navigation')->getContainer()->findOneBy('id
     <small><?php echo $this->partial('application/these/partial/titre') ?></small>
 </h1>
 
-<div class="box panel panel-info">
-    <div class="panel-heading">
+<div class="box card">
+    <div class="card-header bg-info">
         <?php $heading = $estVersionCorrigee ? "Thèse corrigée au format PDF" : "Thèse au format PDF" ?>
         <h2 class="first"><?php echo $heading ?></h2>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <?php if ($fichierThese): ?>
             <p>
                 Voici la <?php echo lcfirst($heading) ?> que vous avez téléversée :
@@ -132,7 +132,6 @@ $pageDepotThese = $this->navigation('navigation')->getContainer()->findOneBy('id
         };
         var refreshingNextStep = function(done, effect) {
             return function() {
-                console.log("refreshingNextStep");
                 $("#nextStepDiv").addClass("loading").refresh(null, function () {
                     $(this).removeClass("loading").show();
                     if (done) done();

@@ -4,7 +4,7 @@ namespace Information\Form;
 
 use Information\Entity\Db\Information;
 use Information\Service\InformationLangue\InformationLangueerviceAwareTrait;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class InformationHydrator implements HydratorInterface
 {

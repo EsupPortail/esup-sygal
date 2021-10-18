@@ -14,5 +14,5 @@ class MenuSecondaire extends AbstractMenu
     protected $minDepth = 2;
     protected $renderParents = false;
     protected $onlyActiveBranch = true;
-    protected $ulClass = 'nav nav-pills nav-stacked menu-secondaire';
+    protected $ulClass = 'nav flex-column menu-secondaire';
 }

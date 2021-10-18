@@ -1,8 +1,8 @@
 <?php
 
-use Zend\Session\Storage\SessionArrayStorage;
-use Zend\Session\Validator\HttpUserAgent;
-use Zend\Session\Validator\RemoteAddr;
+use Laminas\Session\Storage\SessionArrayStorage;
+use Laminas\Session\Validator\HttpUserAgent;
+use Laminas\Session\Validator\RemoteAddr;
 
 return [
     'unicaen-app' => [
@@ -80,10 +80,9 @@ return [
     // Session configuration.
     //
     'session_config' => [
-        // Durée de vie du cookie de session : 24h.
-        'cookie_lifetime' => 60*60*24,
-        // Session data will be stored on server maximum for 30 days.
-        'gc_maxlifetime'     => 60*60*24*30,
+        'name' => md5('ESUP-SyGAL'),
+        'cookie_lifetime' => 60*60*2,
+        'gc_maxlifetime' => 60*60*2,
     ],
     //
     // Session manager configuration.

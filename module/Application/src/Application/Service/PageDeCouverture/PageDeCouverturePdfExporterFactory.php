@@ -3,7 +3,7 @@
 namespace Application\Service\PageDeCouverture;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class PageDeCouverturePdfExporterFactory implements FactoryInterface
 {
@@ -14,7 +14,7 @@ class PageDeCouverturePdfExporterFactory implements FactoryInterface
     {
         $config = $container->get('Config');
 
-        /** @var \Zend\View\Renderer\PhpRenderer $renderer */
+        /** @var \Laminas\View\Renderer\PhpRenderer $renderer */
         $renderer = $container->get('ViewRenderer');
 
         $pdcConfig = $config['sygal']['page_de_couverture'];

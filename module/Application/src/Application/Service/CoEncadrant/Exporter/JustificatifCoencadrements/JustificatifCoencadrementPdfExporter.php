@@ -3,8 +3,8 @@
 namespace Application\Service\CoEncadrant\Exporter\JustificatifCoencadrements;
 
 use UnicaenApp\Exporter\Pdf as PdfExporter;
-use Zend\View\Renderer\PhpRenderer;
-use Zend\View\Resolver\TemplatePathStack;
+use Laminas\View\Renderer\PhpRenderer;
+use Laminas\View\Resolver\TemplatePathStack;
 
 class JustificatifCoencadrementPdfExporter extends PdfExporter
 {

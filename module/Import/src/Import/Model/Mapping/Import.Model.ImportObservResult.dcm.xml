@@ -9,12 +9,6 @@
 
         <id name="id" type="integer" column="ID"/>
 
-        <field name="dateCreation" type="datetime" column="DATE_CREATION"/>
-        <field name="sourceCode" column="SOURCE_CODE"/>
-        <field name="resultat" column="RESULTAT"/>
-        <field name="dateNotif" type="datetime" column="DATE_NOTIF"/>
-        <field name="dateLimiteNotif" type="datetime" column="DATE_LIMITE_NOTIF"/>
-
         <many-to-one field="importObserv" target-entity="Import\Model\ImportObserv">
             <join-columns>
                 <join-column name="IMPORT_OBSERV_ID" referenced-column-name="ID"/>

@@ -5,7 +5,7 @@ namespace Application\View\Helper;
 use Application\Entity\Db\Financement;
 use Application\Filter\FinancementFormatter;
 
-class FinancementFormatterHelper extends \Zend\View\Helper\AbstractHelper
+class FinancementFormatterHelper extends \Laminas\View\Helper\AbstractHelper
 {
     /**
      * @var FinancementFormatter

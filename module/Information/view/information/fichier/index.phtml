@@ -34,7 +34,7 @@ $canFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivilege
 <?php endif; ?>
 
 
-<table class="table table-condensed">
+<table class="table table-sm">
     <thead>
         <tr>
             <th> Fichier </th>
@@ -62,7 +62,7 @@ $canFichier = $this->isAllowed(FichierPrivileges::getResourceId(FichierPrivilege
                 <td>
                     <?php if ($canFichier) : ?>
                         <a href="<?php echo $this->url("informations/fichiers/supprimer", ['id' => $fichier->getId()], [], true); ?>">
-                            <span class="glyphicon glyphicon-remove"></span>
+                            <span class="icon icon-delete iconly"></span>
                         </a>
                     <?php endif; ?>
                 </td>

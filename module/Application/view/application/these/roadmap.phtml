@@ -23,7 +23,7 @@ $wfStepHelper = $wfHelper->current();
 <?php if ($wfStepHelper->step() === null): ?>
     <?php if (in_array($these->getEtatThese(), [These::ETAT_EN_COURS, These::ETAT_SOUTENUE])): ?>
         <div class="box roadmap-next-step">
-            <p class="lead"><!--<span class="glyphicon glyphicon-thumbs-up"></span>--> Dépôt validé.</p>
+            <p class="lead"><!--<span class="fas fa-thumbs-up"></span>--> Dépôt validé.</p>
         </div>
     <?php endif ?>
 <?php endif ?>

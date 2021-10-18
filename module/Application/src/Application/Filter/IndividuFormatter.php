@@ -3,9 +3,9 @@
 namespace Application\Filter;
 
 use Application\Entity\Db\Individu;
-use Zend\View\Helper\HtmlList;
-use Zend\Filter\AbstractFilter;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\View\Helper\HtmlList;
+use Laminas\Filter\AbstractFilter;
+use Laminas\View\Renderer\PhpRenderer;
 
 class IndividuFormatter extends AbstractFilter {
 

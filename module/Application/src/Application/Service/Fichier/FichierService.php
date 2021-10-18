@@ -15,7 +15,7 @@ use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Doctrine\ORM\EntityRepository;
 use Exception;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Filter\FilterInterface;
+use Laminas\Filter\FilterInterface;
 use ZipArchive;
 
 class FichierService extends BaseService

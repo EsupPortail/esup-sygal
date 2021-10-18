@@ -5,9 +5,9 @@ namespace Information\Controller;
 use Information\Entity\Db\Information;
 use Information\Form\InformationForm;
 use Information\Service\InformationServiceAwareTrait;
-use Zend\Http\Request;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
 
 class InformationController extends AbstractActionController {
     use InformationServiceAwareTrait;

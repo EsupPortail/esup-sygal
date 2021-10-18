@@ -10,7 +10,7 @@ use Exception;
 use Soutenance\Entity\QualiteLibelleSupplementaire;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class QualiteLibelleSupplementaireService {
     use EntityManagerAwareTrait;

@@ -4,9 +4,9 @@ namespace Application\Search\Controller;
 
 use Application\Search\Filter\SearchFilter;
 use Application\Search\SearchServiceInterface;
-use Zend\Http\Response;
-use Zend\Paginator\Paginator as ZendPaginator;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\Paginator\Paginator as LaminasPaginator;
+use Laminas\View\Model\ViewModel;
 
 interface SearchControllerInterface
 {
@@ -27,7 +27,7 @@ interface SearchControllerInterface
     public function filtersAction(): ViewModel;
 
     /**
-     * @return Response|ZendPaginator
+     * @return Response|LaminasPaginator
      */
     public function search();
 

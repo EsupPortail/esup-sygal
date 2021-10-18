@@ -30,13 +30,13 @@ $this->headTitle('Avancement de la soutenance');
     <a href="<?php echo $this->url('soutenance', ['these' => $these->getId()], [], true); ?>"
        class="btn btn-primary action"
     >
-        <span class="glyphicon glyphicon-menu-up"></span>
+        <span class="fas fa-chevron-up"></span>
         Accueil du module de soutenance
     </a>
     <a href="<?php echo $this->url('soutenance/proposition', ['these' => $these->getId()], [], true); ?>"
        class="btn btn-primary action"
     >
-        <span class="glyphicon glyphicon-pencil"></span>
+        <span class="icon icon-edit"></span>
         Page de la proposition
     </a>
 
@@ -45,17 +45,17 @@ $this->headTitle('Avancement de la soutenance');
 
     <?php if ($proposition !== null) : ?>
 
-        <dl class="dl-horizontal">
-            <dt> Lieu et date </dt>
-            <dd>
+        <dl class="row">
+            <dt class="col-md-5"> Lieu et date </dt>
+            <dd class="col-md-5">
                 <?php echo validite($proposition->getDate() !== null AND $proposition->getLieu() !== null); ?>
             </dd>
-            <dt> Jury de thèse </dt>
-            <dd>
+            <dt class="col-md-5"> Jury de thèse </dt>
+            <dd class="col-md-5">
                 <?php echo validite($jury); ?>
             </dd>
-            <dt> Justificatifs </dt>
-            <dd>
+            <dt class="col-md-5"> Justificatifs </dt>
+            <dd class="col-md-5">
                 <?php echo validite($justificatif); ?>
             </dd>
         </dl>
@@ -131,9 +131,9 @@ $this->headTitle('Avancement de la soutenance');
     <div class="col-md-12">
     <h3> Validations des étapes initiales </h3>
 
-        <dl class="dl-horizontal">
-            <dt> Page de couverture </dt>
-            <dd>
+        <dl class="row">
+            <dt class="col-md-5"> Page de couverture </dt>
+            <dd class="col-md-5">
                 <?php
                     if($validationPDC === null OR empty($validationPDC))  {
                         echo '<span class="badge default"> En Attente </span>';
@@ -142,8 +142,8 @@ $this->headTitle('Avancement de la soutenance');
                     }
                 ?>
             </dd>
-            <dt> Feu vert </dt>
-            <dd>
+            <dt class="col-md-5"> Feu vert </dt>
+            <dd class="col-md-5">
                 <?php
                 switch($proposition->getEtat()->getCode()) {
                     case Etat::VALIDEE :

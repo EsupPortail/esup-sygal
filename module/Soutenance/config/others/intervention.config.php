@@ -11,7 +11,7 @@ use Soutenance\Service\Intervention\InterventionService;
 use Soutenance\Service\Intervention\InterventionServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Segment;
 
 return [
     'bjyauthorize' => [

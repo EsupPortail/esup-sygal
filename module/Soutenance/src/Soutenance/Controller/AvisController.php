@@ -14,8 +14,8 @@ use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
-use Zend\Http\Request;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\View\Model\ViewModel;
 
 class AvisController extends AbstractController
 {

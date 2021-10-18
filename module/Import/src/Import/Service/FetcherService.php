@@ -12,8 +12,8 @@ use Import\Service\Traits\CallServiceAwareTrait;
 use Import\Service\Traits\DbServiceAwareTrait;
 use stdClass;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Log\LoggerAwareTrait;
-use Zend\Log\LoggerInterface;
+use Laminas\Log\LoggerAwareTrait;
+use Laminas\Log\LoggerInterface;
 
 /**
  * Service réalisant :

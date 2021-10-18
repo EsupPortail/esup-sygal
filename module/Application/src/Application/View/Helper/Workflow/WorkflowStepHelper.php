@@ -77,7 +77,7 @@ class WorkflowStepHelper extends AbstractHelper
 
         $tpl = <<<EOS
 <a class="roadmap-step-link %s" href="%s" title="Cliquez pour accéder à cette étape"
-    ><span class="glyphicon glyphicon-circle-arrow-right"></span>%s</a>
+    ><span class="fas fa-arrow-alt-circle-right"></span>%s</a>
 EOS;
         return sprintf($tpl,
             $class,

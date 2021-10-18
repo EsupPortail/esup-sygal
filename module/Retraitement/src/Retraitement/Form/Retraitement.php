@@ -1,9 +1,9 @@
 <?php
 
 namespace Retraitement\Form;
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilterAwareInterface;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\Form;
+use Laminas\InputFilter\InputFilterAwareInterface;
+use Laminas\InputFilter\InputFilterProviderInterface;
 
 /**
  * Created by PhpStorm.
@@ -50,7 +50,7 @@ class Retraitement extends Form implements InputFilterProviderInterface  {
 
     /**
      * Should return an array specification compatible with
-     * {@link Zend\InputFilter\Factory::createInputFilter()}.
+     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
      *
      * @return array
      */

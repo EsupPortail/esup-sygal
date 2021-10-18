@@ -10,31 +10,31 @@ $pages = [
         'label'   => 'Synchronisation',
         'visible' => $this->isAllowed(Privileges::getResourceId(Privileges::IMPORT_ECARTS)),
         'popover' => false,
-        'icon'    => 'glyphicon glyphicon-import',
+        'icon'    => 'icon icon-import',
     ],
     'tbl'   => [
         'url'     => $this->url('import', ['action' => 'tableau-bord']),
         'label'   => 'Branchement',
         'visible' => $this->isAllowed(Privileges::getResourceId(Privileges::IMPORT_TBL)),
         'popover' => false,
-        'icon'    => 'glyphicon glyphicon-list',
+        'icon'    => 'fas fa-list',
     ],
     'majvp' => [
         'url'     => $this->url('import', ['action' => 'update-views-and-packages']),
         'label'   => 'Mise à jour des vues et procédures d\'import',
         'visible' => $this->isAllowed(Privileges::getResourceId(Privileges::IMPORT_VUES_PROCEDURES)),
         'popover' => false,
-        'icon'    => 'glyphicon glyphicon-wrench',
+        'icon'    => 'fas fa-wrench',
     ],
 ];
 
 ?>
-<nav class="navbar navbar-default">
+<nav class="navbar">
     <div class="container-fluid">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+            <button type="button" class="navbar-toggle collapsed" data-bs-toggle="collapse"
                     data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Menu Import</span>
+                <span class="visually-hidden">Menu Import</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -50,7 +50,7 @@ $pages = [
                         $lip = [];
                         $ap  = [
                             'href' => $params['url'],
-                            'data-placement' => 'bottom',
+                            'data-bs-placement' => 'bottom',
                         ];
 
                         if ($page == $active) {

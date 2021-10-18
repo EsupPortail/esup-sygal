@@ -3,9 +3,9 @@
 namespace Application\Filter;
 
 use Application\Entity\Db\Acteur;
-use Zend\View\Helper\HtmlList;
-use Zend\Filter\AbstractFilter;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\View\Helper\HtmlList;
+use Laminas\Filter\AbstractFilter;
+use Laminas\View\Renderer\PhpRenderer;
 
 /** --- Class ActeursFormatteur ---
  * @var bool $asUl                      returned data type as unordered list (html)
@@ -133,7 +133,7 @@ class ActeursFormatter extends AbstractFilter {
         $acteurs = array_map([$this, 'htmlifyActeur'], $acteurs);
         $helper = new HtmlList();
         $helper->setView(new PhpRenderer());
-        $results = $helper($acteurs, $ordered = false, $attribs = false, $escape = false);
+        $results = $helper($acteurs, $ordered = false, ['class' => 'row'], $escape = false);
         return $results;
     }
 

@@ -17,7 +17,7 @@ use Application\Service\Message\DiffusionMessages;
 
 <?php if ($diffusion->getConfidentielle()): ?>
 <div class="row">
-    <div class="col-xs-6">
+    <div class="col-6">
         <div class="alert alert-md alert-danger">
             <?php echo sprintf("La thèse est confidentielle jusqu'au %s.", $diffusion->getDateFinConfidentialiteToString()) ?>
         </div>

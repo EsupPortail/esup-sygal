@@ -12,7 +12,7 @@ use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Authentication\Storage\ChainableStorage;
 use UnicaenAuth\Authentication\Storage\ChainEvent;
-use Zend\Authentication\Exception\ExceptionInterface;
+use Laminas\Authentication\Exception\ExceptionInterface;
 
 /**
  * Ajout de données utiles concernant l'utilisateur authentifié.

@@ -14,13 +14,13 @@ $these = $proposition->getThese();
 ?>
 
 <div id="BOXDIV_INFORMATIONS">
-<div class="box panel panel-info">
-    <div class="panel-heading">
+<div class="box card">
+    <div class="card-header bg-info">
         <h2>
             Informations sur la thèse et la soutenance
         </h2>
     </div>
-    <div class="panel-body">
+    <div class="row card-body">
 
             <div class="col-md-8">
                 <dl>
@@ -53,14 +53,14 @@ $these = $proposition->getThese();
                        class="btn btn-primary action ajax-modal"
                        data-event="edition-informations"
                     >
-                        <span class="glyphicon glyphicon-plus"></span>
+                        <span class="icon icon-plus"></span>
                         Renseigner un label européen
                     </a>
                 <?php endif; ?>
 
                 <?php if($proposition->isLabelEuropeen()): ?>
                     <div class="alert alert-warning">
-                        <span class="glyphicon glyphicon-warning-sign"> </span>
+                        <span class="fas fa-exclamation-triangle"> </span>
                         Afin de réaliser la demande de label européen, vous devez remplir le formulaire de demande suivant :
                         <a href="<?php echo $FORMULAIRE_DEMANDE_LABEL; ?>">formulaire de demande de label européen</a>.
                     </div>
@@ -97,14 +97,14 @@ $these = $proposition->getThese();
                    class="btn btn-primary action ajax-modal"
                    data-event="edition-informations"
                 >
-                    <span class="glyphicon glyphicon-plus"></span>
+                    <span class="icon icon-plus"></span>
                     Renseigner thèse en anglais
                 </a>
             <?php endif; ?>
 
 <!--            --><?php //if($proposition->isManuscritAnglais() || $proposition->isSoutenanceAnglais()): ?>
 <!--                <div class="alert alert-warning">-->
-<!--                    <span class="glyphicon glyphicon-warning-sign"> </span>-->
+<!--                    <span class="icon icon-warning"> </span>-->
 <!--                    Afin de réaliser la demande de rédaction ou de soutenance en anglais vous devez motiver votre demande via la demande suivante :-->
 <!--                    <a href="--><?php //echo $FORMULAIRE_DEMANDE_ANGLAIS; ?><!--">demande de redaction ou de soutenance en anglais</a>.-->
 <!--                </div>-->
@@ -139,14 +139,14 @@ $these = $proposition->getThese();
                    class="btn btn-primary action ajax-modal"
                    data-event="edition-informations"
                 >
-                    <span class="glyphicon glyphicon-plus"></span>
+                    <span class="icon icon-plus"></span>
                     Renseigner une confidentialité et huis clos
                 </a>
             <?php endif; ?>
 
             <?php if($proposition->getConfidentialite()): ?>
                 <div class="alert alert-warning">
-                    <span class="glyphicon glyphicon-warning-sign"> </span>
+                    <span class="fas fa-exclamation-triangle"> </span>
                     Afin de réaliser de demande de confidentialité un accord doit au préalable être rempli :
                     <a href="<?php echo $FORMULAIRE_DEMANDE_CONFIDENTIALITE; ?>">demande d'accord de confidentialité</a>.
                 </div>
@@ -167,7 +167,7 @@ $these = $proposition->getThese();
                    class="btn btn-primary action ajax-modal"
                    data-event="edition-informations"
                 >
-                    <span class="glyphicon glyphicon-plus"></span>
+                    <span class="icon icon-plus"></span>
                     Modifier le titre de la thèse
                 </a>
             <?php endif; ?>

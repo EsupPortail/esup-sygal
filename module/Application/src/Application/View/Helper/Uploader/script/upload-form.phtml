@@ -6,9 +6,9 @@
 
 <?php
 
-use Zend\Form\Element\File;
-use Zend\Form\Element\Submit;
-use Zend\Form\ElementInterface;
+use Laminas\Form\Element\File;
+use Laminas\Form\Element\Submit;
+use Laminas\Form\ElementInterface;
 
 if ($this->url): ?>
 
@@ -17,7 +17,7 @@ if ($this->url): ?>
 
     /** @var File $fileElement */
     $fileElement = $this->form->get('files')
-        ->setAttribute('class', "choose-file uploader-submitable pull-left ")
+        ->setAttribute('class', "choose-file uploader-submitable float-start ")
         ->setAttribute('data-url', $this->url);
 
     // indication de la taille maximum autorisée par fichier déposé
@@ -56,7 +56,7 @@ if ($this->url): ?>
         $submit = $this->form->get('submit');
         ?>
         <button class="upload-file <?php echo $submit->getAttribute('class') ?>" data-loading-text="Patientez...">
-            <span class="glyphicon glyphicon-upload"></span> <?php echo $submit->getLabel() ?>
+            <span class="icon icon-upload"></span> <?php echo $submit->getLabel() ?>
         </button>
     <?php endif ?>
 

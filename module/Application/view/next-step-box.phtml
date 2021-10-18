@@ -27,11 +27,11 @@ if (!empty($except)) {
 <?php if ($wfStepHelper->isStepAtteignable()): ?>
 
     <?php if (in_array($these->getEtatThese(), [These::ETAT_EN_COURS, These::ETAT_SOUTENUE])): ?>
-        <div class="box panel panel-success roadmap-next-step">
-            <div class="panel-heading">
+        <div class="box card roadmap-next-step">
+            <div class="card-header bg-success">
                 <h2 class="first">Et ensuite ?</h2>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 <nav aria-label="Etape suivante">
                     <ul class="roadmap pagination">
                         <?php if ($message): ?>
@@ -48,11 +48,11 @@ if (!empty($except)) {
 <?php elseif ($wfStepHelper->step() === null): ?>
 
     <?php if (in_array($these->getEtatThese(), [These::ETAT_EN_COURS, These::ETAT_SOUTENUE])): ?>
-        <div class="box panel panel-success roadmap-next-step">
-            <div class="panel-heading">
+        <div class="box card roadmap-next-step">
+            <div class="card-header bg-success">
                 <h2 class="first">Et ensuite ?</h2>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 <p class="lead">
                     <?php if ($message): ?>
                         <?php echo $message ?>

@@ -22,7 +22,7 @@ use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
 use UnicaenAuth\Service\User as UserService;
 use UnicaenAuthToken\Service\TokenService;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\View\Renderer\PhpRenderer;
 
 class PresoutenanceControllerFactory
 {

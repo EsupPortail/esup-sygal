@@ -3,7 +3,7 @@
 namespace Application\Assertion;
 
 use UnicaenAuth\Provider\Privilege\Privileges;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * Class AbstractAssertion

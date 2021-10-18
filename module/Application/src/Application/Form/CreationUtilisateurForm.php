@@ -5,15 +5,15 @@ namespace Application\Form;
 use Application\Entity\Db\Individu;
 use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\PasswordValidator;
-use Zend\Form\Element\Checkbox;
-use Zend\Form\Element\Hidden;
-use Zend\Form\Element\Password;
-use Zend\Form\Element\Radio;
-use Zend\Form\Element\Submit;
-use Zend\Form\Element\Text;
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilterProviderInterface;
-use Zend\Validator\Identical;
+use Laminas\Form\Element\Checkbox;
+use Laminas\Form\Element\Hidden;
+use Laminas\Form\Element\Password;
+use Laminas\Form\Element\Radio;
+use Laminas\Form\Element\Submit;
+use Laminas\Form\Element\Text;
+use Laminas\Form\Form;
+use Laminas\InputFilter\InputFilterProviderInterface;
+use Laminas\Validator\Identical;
 
 class CreationUtilisateurForm extends Form implements InputFilterProviderInterface
 {
@@ -49,7 +49,7 @@ class CreationUtilisateurForm extends Form implements InputFilterProviderInterfa
         );
         $this->add(
             (new Checkbox('individu'))
-                ->setLabel("Création d'individu pour cet utilisateur <br/> <span class='text-danger'><span class='glyphicon glyphicon-warning-sign'></span> Ne pas cocher si pour lier à un individu existant</span>")
+                ->setLabel("Création d'individu pour cet utilisateur <br/> <span class='text-danger'><span class='fas fa-exclamation-triangle'></span> Ne pas cocher si pour lier à un individu existant</span>")
         );
         $this->add((new Submit('submit'))
             ->setValue("Enregistrer")

@@ -24,8 +24,8 @@ use Application\Service\Utilisateur\UtilisateurServiceFactory;
 use Application\View\Helper\IndividuUsurpationHelperFactory;
 use Application\View\Helper\RoleHelper;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
