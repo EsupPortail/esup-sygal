@@ -194,6 +194,7 @@ class PropositionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->update($request, $form, $proposition);
+            $this->getPropositionService()->initialisationDateRetour($proposition);
             if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($proposition);
         }
 

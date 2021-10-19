@@ -10,6 +10,7 @@ Journal des modifications
 - [FIX] Meilleure remontée à l'utilisateur des erreurs rencontrées lors du dépôt de la thèse.
 - [FIX] Log de la ligne de commande de retraitement de fichier : la notification peut avoir plusieurs destinataires.
 - [FIX] Ligne de commande de test d'archivabilité : injection nécessaire du créateur.
+- Adaptation de la date limite de rendu des pré-rapports de soutenance lors du changement de la date de soutenance dans le dossier
 
 3.0.4
 -----
