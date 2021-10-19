@@ -7,6 +7,7 @@ Journal des modifications
 - Script de lancement de l'import run-import.sh : utilisation de flock pour éviter 2 lancements en parallèle.
 - Téléchargement de la version initiale/corrigée imprimable : intitulé de titre plus précis sur la version concernée.
 - [FIX] Correction du sujet erroné du mail envoyé lorsque l'ajout de la page de couverture est terminé.
+- [FIX] Meilleure remontée à l'utilisateur des erreurs rencontrées lors du dépôt de la thèse.
 
 3.0.4
 -----
