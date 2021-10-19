@@ -12,6 +12,7 @@ Journal des modifications
 - [FIX] Ligne de commande de test d'archivabilité : injection nécessaire du créateur.
 - Adaptation de la date limite de rendu des pré-rapports de soutenance lors du changement de la date de soutenance dans le dossier
 - [FIX] Correction affichage de la date de rendu dans le mail envoyé aux rapporteurs
+- Ajout des événements pour la tracabilité de certaines actions du module soutenance
 
 3.0.4
 -----

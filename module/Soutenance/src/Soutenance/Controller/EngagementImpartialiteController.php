@@ -5,8 +5,10 @@ namespace Soutenance\Controller;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Validation;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
+use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Membre;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
+use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
@@ -20,6 +22,7 @@ use Zend\View\Model\ViewModel;
 class EngagementImpartialiteController extends AbstractController
 {
     use ActeurServiceAwareTrait;
+    use EvenementServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
@@ -60,6 +63,7 @@ class EngagementImpartialiteController extends AbstractController
             }
         }
 
+        $this->getEvenementService()->ajouterEvenement($proposition, Evenement::EVENEMENT_ENGAGEMENT);
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 

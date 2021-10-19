@@ -6,6 +6,7 @@ use Application\Entity\Db\Doctorant;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
+use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
@@ -25,6 +26,7 @@ use Soutenance\Provider\Privilege\PropositionPrivileges;
  * @var array $justificatifs,
  * @var boolean $justificatifsOk,
  * @var boolean $validationActeur
+ * @var Evenement[] $signatures
  *
  * @var $FORMULAIRE_DELOCALISATION
  * @var $FORMULAIRE_DELEGUATION
@@ -125,6 +127,7 @@ $this->headTitle("Proposition de soutenance");
         'validations' => $validations,
         'canStructureValider' => $canStructureValider,
         'canPresidence' => $canPresidence,
+        'signatures' => $signatures,
     ]); ?>
 
 <?php

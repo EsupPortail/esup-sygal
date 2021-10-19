@@ -23,11 +23,13 @@ use DateInterval;
 use Doctrine\ORM\OptimisticLockException;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
+use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Membre;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceFormAwareTrait;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportFormAwareTrait;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
+use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Exporter\AvisSoutenance\AvisSoutenancePdfExporter;
 use Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter;
 use Soutenance\Service\Exporter\ProcesVerbal\ProcesVerbalSoutenancePdfExporter;
@@ -49,6 +51,7 @@ use Zend\View\Renderer\PhpRenderer;
 
 class PresoutenanceController extends AbstractController
 {
+    use EvenementServiceAwareTrait;
     use TheseServiceAwareTrait;
     use MembreServiceAwareTrait;
     use IndividuServiceAwareTrait;
@@ -110,6 +113,9 @@ class PresoutenanceController extends AbstractController
             'urlFichierThese' => $this->urlFichierThese(),
             'validationBDD' => $validationBDD,
             'validationPDC' => $validationPDC,
+
+            'evenementsEngagement' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_ENGAGEMENT),
+            'evenementsPrerapport' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_PRERAPPORT),
 
             'deadline' => $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur(),
         ]);
@@ -300,6 +306,7 @@ class PresoutenanceController extends AbstractController
             $this->getNotifierSoutenanceService()->triggerDemandeAvisSoutenance($these, $proposition, $rapporteur);
         }
 
+        $this->getEvenementService()->ajouterEvenement($proposition, Evenement::EVENEMENT_PRERAPPORT);
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
