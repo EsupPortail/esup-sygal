@@ -29,7 +29,7 @@ $justification = true;
     et ainsi pouvoir rendre votre avis de pré-soutenance, vous pouvez utiliser l'adresse suivante : <a href="<?php echo $url; ?>"><?php echo $url;?> </a>.
 </p>
 <p>
-    Vous avez jusqu'au <?php $proposition->getRenduRapport()->format('d/m/Y'); ?> pour effectuer ce dépôt.
+    Vous avez jusqu'au <?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?> pour effectuer ce dépôt.
 </p>
 <p>
     Cordialement,
@@ -45,7 +45,7 @@ $justification = true;
     web-based application for submitting your report, you can use the following link : <a href="<?php echo $url; ?>"><?php echo $url;?> </a>.
 </p>
 <p>
-    You have until the <?php $proposition->getRenduRapport()->format('d/m/Y'); ?> to upload your report.
+    You have until the <?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?> to upload your report.
 </p>
 <p>
     Best regards,
