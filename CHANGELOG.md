@@ -9,6 +9,7 @@ Journal des modifications
 - [FIX] Correction du sujet erroné du mail envoyé lorsque l'ajout de la page de couverture est terminé.
 - [FIX] Meilleure remontée à l'utilisateur des erreurs rencontrées lors du dépôt de la thèse.
 - [FIX] Log de la ligne de commande de retraitement de fichier : la notification peut avoir plusieurs destinataires.
+- [FIX] Ligne de commande de test d'archivabilité : injection nécessaire du créateur.
 
 3.0.4
 -----
