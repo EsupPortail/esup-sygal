@@ -1,7 +1,7 @@
 <?php
 
 use Application\Navigation\NavigationFactoryFactory;
-use Retraitement\Filter\Command\MinesCommand;
+use Retraitement\Filter\Command\RetraitementShellCommandMines;
 
 define('APPLICATION_DIR', __DIR__ . '/../..');
 
@@ -35,7 +35,7 @@ return [
         'retraitement' => [
             // Commande utilisée pour retraiter les fichiers PDF, et ses options.
             'command' => [
-                'class' => MinesCommand::class,
+                'class' => RetraitementShellCommandMines::class,
                 'options' => [
                     'pdftk_path' => 'pdftk',
                     'gs_path'    => 'gs',

@@ -2,8 +2,9 @@
 
 namespace Application\Service\Structure;
 
-use Application\Command\ConvertCommand;
+use Application\Command\ConvertShellCommand;
 use Application\Command\Exception\TimedOutCommandException;
+use Application\Command\ShellCommandRunner;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Structure;
@@ -878,26 +879,26 @@ class StructureService extends BaseService
         $this->fileService->createWritableDirectory($logoDir);
 
         $logoFilepath = $this->fileService->computeLogoFilePathForStructure($structure);
-        /** ANCIENNE METHODE  */
-//        $ok = rename($uploadedFilePath, $logoFilepath);
-//        if (! $ok) {
-//            throw new RuntimeException("Impossible de renommer le fichier logo sur le disque.");
-//        }
-        $command = new ConvertCommand();
-        $errorFilePath = null;
-        $command->generate($logoFilepath, ['logo' => $uploadedFilePath], $errorFilePath);
-        try {
-            $command->checkResources();
-            $command->execute();
 
-            $success = ($command->getReturnCode() === 0);
-            if (!$success) {
-                throw new RuntimeException(sprintf(
-                    "La commande %s a échoué (code retour = %s), voici le résultat d'exécution : %s",
+        $command = new ConvertShellCommand();
+        $command->setOutputFilePath($logoFilepath);
+        $command->setInputFilePath($uploadedFilePath);
+        $command->generateCommandLine();
+
+        $runner = new ShellCommandRunner();
+        $runner->setCommand($command);
+        try {
+            $result = $runner->runCommand();
+
+            if (!$result->isSuccessfull()) {
+                $message = sprintf("La commande '%s' a échoué (code retour = %s). ",
                     $command->getName(),
-                    $command->getReturnCode(),
-                    implode(PHP_EOL, $command->getResult())
-                ));
+                    $result->getReturnCode()
+                );
+                if ($output = $result->getOutput()) {
+                    $message .= "Voici le log d'exécution : " . implode(PHP_EOL, $output);
+                }
+                throw new RuntimeException($message);
             }
         } catch (TimedOutCommandException $toce) {
             // n'arrive jamais car aucun timeout n'a été transmis à ConvertCommand

@@ -2,10 +2,9 @@
 
 namespace Retraitement\Filter\Command;
 
-use Application\Command\AbstractCommand;
 use UnicaenApp\Exception\RuntimeException;
 
-class MinesCommand extends AbstractCommand
+class RetraitementShellCommandMines extends RetraitementShellCommand
 {
     const DEFAULT_COMPATIBILITY_LEVEL = '1.4';
 
@@ -14,7 +13,7 @@ class MinesCommand extends AbstractCommand
         'compatibility_level' => '1.4',
     ];
 
-    public function getName()
+    public function getName(): string
     {
         return 'mines';
     }
@@ -22,7 +21,7 @@ class MinesCommand extends AbstractCommand
     /**
      * @throws RuntimeException En cas de ressources ou pré-requis manquants
      */
-    public function checkResources()
+    public function checkRequirements()
     {
         $gs = $this->options['gs_path'];
 
@@ -34,12 +33,12 @@ class MinesCommand extends AbstractCommand
         }
     }
 
-    public function generate($outputFilePath, $inputFilePath, &$errorFilePath = null)
+    public function generateCommandLine()
     {
         $gs = $this->options['gs_path'];
         $level = $this->options['compatibility_level'];
 
-        $errorFilePath  = substr($outputFilePath, 0, strlen($outputFilePath) - 4) . '_' . $this->getName() . '_error' . '.txt';
+        $errorFilePath  = substr($this->outputFilePath, 0, strlen($this->outputFilePath) - 4) . '_' . $this->getName() . '_error' . '.txt';
 
         $this->commandLine = <<<EOS
 $gs -sDEVICE=pdfwrite\
@@ -49,10 +48,8 @@ $gs -sDEVICE=pdfwrite\
    -dNOPAUSE\
    -dQUIET\
    -dBATCH\
-   -sOutputFile="$outputFilePath"\
-   "$inputFilePath" 2>> "$errorFilePath"
+   -sOutputFile="$this->outputFilePath"\
+   "$this->inputFilePath" 2>> "$errorFilePath"
 EOS;
-
-        return $this->commandLine;
     }
 }

@@ -6,13 +6,14 @@ Journal des modifications
 - Notification à propos de la validation de la page de couverture : correction de texte.
 - Script de lancement de l'import run-import.sh : utilisation de flock pour éviter 2 lancements en parallèle.
 - Téléchargement de la version initiale/corrigée imprimable : intitulé de titre plus précis sur la version concernée.
+- Adaptation de la date limite de rendu des pré-rapports de soutenance lors du changement de la date de soutenance dans le dossier
+- Ajout des événements pour la tracabilité de certaines actions du module soutenance
+- Utilisation de qpdf (+ rapide que gs et + respectueux des metadata que pdftk) pour la concaténation ou l'amputation PDF.
 - [FIX] Correction du sujet erroné du mail envoyé lorsque l'ajout de la page de couverture est terminé.
 - [FIX] Meilleure remontée à l'utilisateur des erreurs rencontrées lors du dépôt de la thèse.
 - [FIX] Log de la ligne de commande de retraitement de fichier : la notification peut avoir plusieurs destinataires.
 - [FIX] Ligne de commande de test d'archivabilité : injection nécessaire du créateur.
-- Adaptation de la date limite de rendu des pré-rapports de soutenance lors du changement de la date de soutenance dans le dossier
 - [FIX] Correction affichage de la date de rendu dans le mail envoyé aux rapporteurs
-- Ajout des événements pour la tracabilité de certaines actions du module soutenance
 
 3.0.4
 -----
