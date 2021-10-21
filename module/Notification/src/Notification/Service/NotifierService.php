@@ -3,8 +3,11 @@
 namespace Notification\Service;
 
 use DateTime;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Notification\Entity\NotifMail;
 use Notification\Entity\Service\NotifEntityServiceAwareTrait;
+use Notification\Exception\NotificationException;
 use Notification\MessageContainer;
 use Notification\Notification;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -75,6 +78,7 @@ class NotifierService
 
     /**
      * @param Notification $notification
+     * @throws \Notification\Exception\NotificationException
      */
     public function trigger(Notification $notification)
     {
@@ -92,6 +96,7 @@ class NotifierService
 
     /**
      * @param Notification $notification
+     * @throws \Notification\Exception\NotificationException
      */
     protected function sendNotification(Notification $notification)
     {
@@ -110,14 +115,21 @@ class NotifierService
 //        $body = htmlentities($body);
         $nMail->setBody($body);
         $nMail->setSentOn(new DateTime());
-        $this->getEntityManager()->persist($nMail);
-        $this->getEntityManager()->flush($nMail);
+        try {
+            $this->entityManager->persist($nMail);
+            $this->entityManager->flush($nMail);
+        } catch (ORMException $e) {
+            throw new NotificationException("Erreur rencontrée lors de l'enregistrement dans NotifMail", null, $e);
+        }
 
-        $message = $this->mailerService->send($email);
+        try {
+            $message = $this->mailerService->send($email);
+        } catch (\Exception $e) {
+            throw new NotificationException("Erreur rencontrée lors de l'envoi de la notification", null, $e);
+        }
 
         $sendDate = $this->extractDateFromMessage($message) ?: new \DateTime();
         $notification->setSendDate($sendDate);
-
     }
 
     /**

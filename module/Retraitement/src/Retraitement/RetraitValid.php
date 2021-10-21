@@ -2,11 +2,10 @@
 
 namespace Retraitement;
 
-use Application\Validator\Exception\CinesErrorException;
+use Application\Command\ShellCommandRunner;
 use Application\Validator\FichierCinesValidator;
-use Retraitement\Filter\Command\CinesCommand;
-use Application\Command\CommandInterface;
-use Retraitement\Filter\Command\MinesCommand;
+use Retraitement\Filter\Command\RetraitementShellCommandCines;
+use Retraitement\Filter\Command\RetraitementShellCommandMines;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Filter\BytesFormatter;
 
@@ -274,9 +273,11 @@ class RetraitValid
         echo "  - Retraitement $commandName... ";
 
         $start = microtime(true);
-        $commandLine = $command->generate($outputFilePath, $inputFilePath, $errorFilePath);
-        $command->execute();
-        $returnCode = $command->getReturnCode();
+        $command->generateCommandLine($outputFilePath, $inputFilePath, $errorFilePath);
+        $commandLine = $command->getCommandLine();
+        $runner = new ShellCommandRunner();
+        $runner->setCommand($command);
+        $result = $runner->runCommand();
         $duration = round(microtime(true) - $start, 2);
 
         echo sprintf("(%s secondes) : ", $duration);
@@ -287,10 +288,8 @@ class RetraitValid
             unlink($errorFilePath);
         }
 
-        $success = ($returnCode === 0);
-
         $error = null;
-        if (!$success) {
+        if (!$result->isSuccessfull()) {
             $error = "La commande de retraitement suivante a renvoyé une erreur: " . $commandLine . PHP_EOL .
                 "Faites ceci pour en savoir plus: cat \"$errorFilePath\"";
         }
@@ -371,20 +370,20 @@ class RetraitValid
 
     /**
      * @param string $name
-     * @return \Application\Command\CommandInterface
+     * @return \Application\Command\ShellCommandInterface
      */
     private function getRetraitementCommand($name)
     {
         switch ($name) {
             /*********************************** cines ****************************************/
             case self::COMMAND_CINES:
-                $command = new CinesCommand();
+                $command = new RetraitementShellCommandCines();
                 return $command;
                 break;
 
             /*********************************** mines ****************************************/
             case self::COMMAND_MINES:
-                $command = new MinesCommand();
+                $command = new RetraitementShellCommandMines();
                 return $command;
                 break;
         }

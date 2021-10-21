@@ -5,11 +5,14 @@
  * @var These $these
  * @var Membre[] $rapporteurs
  * @var Validation[] $engagements
+ *
+ * @var Evenement[] $evenementsEngagement
  */
 
 use Application\Constants;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
+use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
@@ -150,6 +153,17 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
                        class="btn btn-info <?php echo ($tousLesRapporteurs)?'':'disabled'; ?>">
                         <span class="glyphicon glyphicon-send"></span> Envoyer les notifications aux rapporteurs
                     </a>
+                <?php endif; ?>
+
+                <br/>
+
+                <?php if ($evenementsEngagement !== null AND !empty($evenementsEngagement)) : ?>
+                    Notification de la demande d'engagement &nbsp;:&nbsp;
+                    <ul>
+                        <?php foreach ($evenementsEngagement as $evenementEngagement) : ?>
+                            <li> Faite le <?php echo $evenementEngagement->getDate()->format('d/m/Y à H:i:s'); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
                 <?php endif; ?>
             </div>
 

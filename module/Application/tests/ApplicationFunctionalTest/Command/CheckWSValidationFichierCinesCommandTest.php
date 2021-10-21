@@ -3,7 +3,7 @@
 namespace ApplicationFunctionalTest\Command;
 
 use Application\Command\CheckWSValidationFichierCinesCommand;
-use Application\Command\ShellScriptRunner;
+use Application\Command\ShellCommandRunner;
 
 class CheckWSValidationFichierCinesCommandTest extends \PHPUnit_Framework_TestCase
 {
@@ -11,7 +11,8 @@ class CheckWSValidationFichierCinesCommandTest extends \PHPUnit_Framework_TestCa
     {
         $scriptPath = $this->createFakeScriptFile();
 
-        $scriptRunner = new ShellScriptRunner($scriptPath);
+        $scriptRunner = new ShellCommandRunner();
+        $scriptRunner->setScriptFilePath($scriptPath);
         $command = new CheckWSValidationFichierCinesCommand($scriptRunner);
         try {
             $command->execute();
@@ -29,8 +30,8 @@ class CheckWSValidationFichierCinesCommandTest extends \PHPUnit_Framework_TestCa
      */
     public function test_throws_exception_when_response_contains_error()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ShellScriptRunner $scriptRunner */
-        $scriptRunner = $this->createShellScriptRunnerMock();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ShellCommandRunner $scriptRunner */
+        $scriptRunner = $this->createShellCommandRunnerMock();
         $scriptRunner
             ->method('run')
             ->willReturn("RESPONSE: UNKNOWN - ERROR: /bin/nc does does not exist|Response=ms;1000;5000;0");
@@ -44,8 +45,8 @@ class CheckWSValidationFichierCinesCommandTest extends \PHPUnit_Framework_TestCa
      */
     public function test_throws_exception_when_response_format_is_not_correct()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ShellScriptRunner $scriptRunner */
-        $scriptRunner = $this->createShellScriptRunnerMock();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ShellCommandRunner $scriptRunner */
+        $scriptRunner = $this->createShellCommandRunnerMock();
         $scriptRunner
             ->method('run')
             ->willReturn("RAIPONCE: OK - 893 ms|Response=893ms;1000;5000;0");
@@ -55,8 +56,8 @@ class CheckWSValidationFichierCinesCommandTest extends \PHPUnit_Framework_TestCa
 
     public function test_can_extract_values_from_response()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ShellScriptRunner $scriptRunner */
-        $scriptRunner = $this->createShellScriptRunnerMock();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ShellCommandRunner $scriptRunner */
+        $scriptRunner = $this->createShellCommandRunnerMock();
         $scriptRunner
             ->method('run')
             ->willReturn($response = "RESPONSE: OK - 893 ms|Response=893ms;1000;5000;0");
@@ -70,14 +71,14 @@ class CheckWSValidationFichierCinesCommandTest extends \PHPUnit_Framework_TestCa
 
     public function test_real_sample_pdf_file_exists()
     {
-        $scriptRunner = new ShellScriptRunner($this->realScriptPath());
+        $scriptRunner = new ShellCommandRunner();
+        $scriptRunner->setScriptFilePath($this->realScriptPath());
         $this->assertFileIsReadable($scriptRunner->getScriptDirPath() . '/sample.pdf');
     }
 
     public function test_real_web_service_boolean_status_response()
     {
-        $scriptRunner = new ShellScriptRunner($this->realScriptPath());
-        $command = new CheckWSValidationFichierCinesCommand($scriptRunner);
+        $command = new CheckWSValidationFichierCinesCommand($this->realScriptPath());
         $command->execute();
 
         $worstAcceptableStatus = CheckWSValidationFichierCinesCommand::STATUS_WARNING;
@@ -88,13 +89,13 @@ class CheckWSValidationFichierCinesCommandTest extends \PHPUnit_Framework_TestCa
                 $worstAcceptableStatus, $command->getStatusResult(), $command->getDurationResult()));
     }
 
-    private function createShellScriptRunnerMock()
+    private function createShellCommandRunnerMock()
     {
         $scriptPath = $this->createFakeScriptFile();
         $this->createFakeSampleFile();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ShellScriptRunner $scriptRunner */
-        $scriptRunner = $this->getMockBuilder(ShellScriptRunner::class)
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ShellCommandRunner $scriptRunner */
+        $scriptRunner = $this->getMockBuilder(ShellCommandRunner::class)
             ->setConstructorArgs([$scriptPath])
             ->setMethods(['run'])
             ->getMock();

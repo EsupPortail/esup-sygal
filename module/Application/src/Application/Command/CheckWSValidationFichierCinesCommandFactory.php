@@ -16,6 +16,6 @@ class CheckWSValidationFichierCinesCommandFactory
 
         $scriptPath = $config['sygal']['archivabilite']['check_ws_script_path'];
 
-        return new CheckWSValidationFichierCinesCommand(new ShellScriptRunner($scriptPath));
+        return new CheckWSValidationFichierCinesCommand($scriptPath);
     }
 }

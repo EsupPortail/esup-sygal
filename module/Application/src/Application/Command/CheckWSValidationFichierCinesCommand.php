@@ -5,6 +5,9 @@ namespace Application\Command;
 use InvalidArgumentException;
 use UnicaenApp\Exception\RuntimeException;
 
+/**
+ * TODO : si encore utilisée, transformer cette classe en ShellCommand (ex: TestArchivabiliteShellCommand).
+ */
 class CheckWSValidationFichierCinesCommand
 {
     const URL = 'https://facile.cines.fr/xml';
@@ -32,11 +35,10 @@ class CheckWSValidationFichierCinesCommand
         self::STATUS_CRITICAL => 2,
     ];
 
-
     /**
-     * @var ShellScriptRunner
+     * @var string
      */
-    protected $scriptRunner;
+    protected $scriptFilePath;
 
     /**
      * @var string
@@ -49,13 +51,11 @@ class CheckWSValidationFichierCinesCommand
     protected $resultMatches;
 
     /**
-     * ValidationFichierCinesCommand constructor.
-     *
-     * @param ShellScriptRunner $scriptRunner
+     * @param string $scriptFilePath
      */
-    public function __construct(ShellScriptRunner $scriptRunner)
+    public function __construct(string $scriptFilePath)
     {
-        $this->scriptRunner = $scriptRunner;
+        $this->scriptFilePath = $scriptFilePath;
     }
 
     /**
@@ -64,16 +64,20 @@ class CheckWSValidationFichierCinesCommand
     public function execute()
     {
         $args = sprintf("-w 1000 -c 5000 -u %s", self::URL);
+        $command = sprintf("sh %s %s", $this->scriptFilePath, $args);
 
+        $runner = new ShellCommandRunner();
+        $runner->setCommandAsString($command);
         $this->checkPrerequisites();
-        echo sprintf("Lancement de la commande: %s\n", $this->scriptRunner->getCommandToString($args));
-        $this->result = $this->scriptRunner->run($args);
+        echo sprintf("Lancement de la commande: %s\n", $command);
+        $result = $runner->runCommand();
+        $this->result = implode(PHP_EOL, $result->getOutput());
         $this->parseResult();
     }
 
     private function checkPrerequisites()
     {
-        $dir = $this->scriptRunner->getScriptDirPath();
+        $dir = dirname($this->scriptFilePath);
         $samplePdfFilePath = $dir . '/sample.pdf';
 
         if (! is_readable($samplePdfFilePath)) {

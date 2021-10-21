@@ -5,6 +5,7 @@ namespace Soutenance\Controller;
 use Application\Service\Acteur\ActeurService;
 use Interop\Container\ContainerInterface;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
+use Soutenance\Service\Evenement\EvenementService;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
 use Soutenance\Service\Proposition\PropositionService;
@@ -19,12 +20,14 @@ class EngagementImpartialiteControllerFactory
     {
         /**
          * @var ActeurService $acteurService
+         * @var EvenementService $evenementService
          * @var PropositionService $propositionService
          * @var MembreService $membreService
          * @var NotifierSoutenanceService $notifierService
          * @var EngagementImpartialiteService $engagementImpartialiteService
          */
         $acteurService                  = $container->get(ActeurService::class);
+        $evenementService               = $container->get(EvenementService::class);
         $propositionService             = $container->get(PropositionService::class);
         $membreService                  = $container->get(MembreService::class);
         $notifierService                = $container->get(NotifierSoutenanceService::class);
@@ -33,6 +36,7 @@ class EngagementImpartialiteControllerFactory
         /** @var EngagementImpartialiteController $controller */
         $controller = new EngagementImpartialiteController();
         $controller->setActeurService($acteurService);
+        $controller->setEvenementService($evenementService);
         $controller->setPropositionService($propositionService);
         $controller->setMembreService($membreService);
         $controller->setNotifierSoutenanceService($notifierService);

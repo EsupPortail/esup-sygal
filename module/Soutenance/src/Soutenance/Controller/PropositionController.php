@@ -10,6 +10,7 @@ use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Parametre;
@@ -22,6 +23,7 @@ use Soutenance\Form\LabelEuropeen\LabelEuropeenFormAwareTrait;
 use Soutenance\Form\Membre\MembreFromAwareTrait;
 use Soutenance\Form\Refus\RefusFormAwareTrait;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
@@ -40,6 +42,7 @@ use Zend\View\Renderer\PhpRenderer;
 class PropositionController extends AbstractController
 {
     use ActeurServiceAwareTrait;
+    use EvenementServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
     use PropositionServiceAwareTrait;
@@ -111,6 +114,7 @@ class PropositionController extends AbstractController
             'isOk' => $isOk,
             'justificatifs' => $justificatifs,
             'justificatifsOk' => $justificatifsOk,
+            'signatures' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_SIGNATURE),
 
             'FORMULAIRE_DELOCALISATION' => $parametres[Parametre::CODE_FORMULAIRE_DELOCALISATION],
             'FORMULAIRE_DELEGUATION' => $parametres[Parametre::CODE_FORMULAIRE_DELEGUATION],
@@ -194,6 +198,7 @@ class PropositionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->update($request, $form, $proposition);
+            $this->getPropositionService()->initialisationDateRetour($proposition);
             if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($proposition);
         }
 
@@ -456,6 +461,8 @@ class PropositionController extends AbstractController
 
         $codirecteurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE);
 
+
+        $this->getEvenementService()->ajouterEvenement($proposition, Evenement::EVENEMENT_SIGNATURE);
 
         $exporter = new SiganturePresidentPdfExporter($this->renderer, 'A4');
         $exporter->setVars([

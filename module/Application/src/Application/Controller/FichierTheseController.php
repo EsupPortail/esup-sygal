@@ -23,6 +23,7 @@ use Application\View\Helper\Sortable;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
+use Notification\Exception\NotificationException;
 use UnicaenApp\Exception\RuntimeException;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Form\Element\Hidden;
@@ -267,7 +268,16 @@ class FichierTheseController extends AbstractController
             // todo: déplacer ceci dans un service écoutant l'événement "fichier de thèse téléversé" déclenché ci-dessus
             if ($nature->estThesePdf()) {
                 $notif = $this->notifierService->getNotificationFactory()->createNotificationForTheseTeleversee($these, $version);
-                $this->notifierService->trigger($notif);
+                try {
+                    $this->notifierService->trigger($notif);
+                } catch (NotificationException $e) {
+                    return new JsonModel([
+                        'errors' => array_filter([
+                            $e->getMessage(),
+                            $e->getPrevious() ? $e->getPrevious()->getMessage() : null,
+                        ])
+                    ]);
+                }
             }
 
             // si un rapport de soutenance est déposé, on notifie de BdD
@@ -277,7 +287,16 @@ class FichierTheseController extends AbstractController
                 $notif
                     ->setSubject("Dépôt du rapport de soutenance")
                     ->setTemplatePath('application/these/mail/notif-depot-rapport-soutenance');
-                $this->notifierService->trigger($notif);
+                try {
+                    $this->notifierService->trigger($notif);
+                } catch (NotificationException $e) {
+                    return new JsonModel([
+                        'errors' => array_filter([
+                            $e->getMessage(),
+                            $e->getPrevious() ? $e->getPrevious()->getMessage() : null,
+                        ])
+                    ]);
+                }
             }
         }
 
