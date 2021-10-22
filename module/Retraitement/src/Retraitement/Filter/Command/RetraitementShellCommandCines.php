@@ -2,7 +2,7 @@
 
 namespace Retraitement\Filter\Command;
 
-use Application\Command\AbstractCommand;
+use Application\Command\Exception\ShellCommandException;
 use UnicaenApp\Exception\RuntimeException;
 
 /**
@@ -14,7 +14,7 @@ use UnicaenApp\Exception\RuntimeException;
  *
  * @package Retraitement\Filter\Command
  */
-class CinesCommand extends \Application\Command\AbstractCommand
+class RetraitementShellCommandCines extends RetraitementShellCommand
 {
     protected $options = [
         'pdftk_path' => 'pdftk',
@@ -22,7 +22,7 @@ class CinesCommand extends \Application\Command\AbstractCommand
         'gs_args' => null, // ex: '-dPDFACompatibilityPolicy=1'
     ];
 
-    public function getName()
+    public function getName(): string
     {
         return 'cines';
     }
@@ -35,21 +35,16 @@ class CinesCommand extends \Application\Command\AbstractCommand
      *   -dSAFER n'est pas utilisé pour ne plus avoir d'erreurs du genre
      *      Substituting font Helvetica-Bold for Arial-BoldMT.
      *          **** Error reading a content stream. The page may be incomplete.
-     *
-     * @param      $outputFilePath
-     * @param      $inputFilePath
-     * @param null $errorOutput
-     * @return string
      */
-    public function generate($outputFilePath, $inputFilePath, &$errorOutput = null)
+    public function generateCommandLine()
     {
         $dir = __DIR__;
 
-        $errorFilePath  = substr($outputFilePath, 0, strlen($outputFilePath) - 4) . '_' . $this->getName() . '_error' . '.txt';
+        $errorFilePath  = substr($this->outputFilePath, 0, strlen($this->outputFilePath) - 4) . '_' . $this->getName() . '_error' . '.txt';
 
         $pdftk = $this->options['pdftk_path'];
         $gs = $this->options['gs_path'];
-        $gsArgs = isset($this->options['gs_args']) ? $this->options['gs_args'] : '';
+        $gsArgs = $this->options['gs_args'] ?? '';
 
         $metadataFilePath = sys_get_temp_dir() . '/' . uniqid('metadata_') . '.txt';
         $tempOutputFilePath = sys_get_temp_dir() . '/' . uniqid('output_') . '.pdf';
@@ -57,7 +52,7 @@ class CinesCommand extends \Application\Command\AbstractCommand
         $this->commandLine = <<<EOS
 cd $dir\
 &&\
-$pdftk "$inputFilePath" dump_data output "$metadataFilePath" 2> "$errorFilePath"\
+$pdftk "$this->inputFilePath" dump_data output "$metadataFilePath" 2> "$errorFilePath"\
 &&\
 $gs -P\
    -dBATCH\
@@ -72,27 +67,18 @@ $gs -P\
    -sOutputFile="$tempOutputFilePath"\
    $gsArgs\
    PDFA_def.ps\
-   "$inputFilePath" 2>> "$errorFilePath"\
+   "$this->inputFilePath" 2>> "$errorFilePath"\
 &&\
-$pdftk "$tempOutputFilePath" update_info "$metadataFilePath" output "$outputFilePath" 2>> "$errorFilePath"\
+$pdftk "$tempOutputFilePath" update_info "$metadataFilePath" output "$this->outputFilePath" 2>> "$errorFilePath"\
 &&\
 rm "$tempOutputFilePath" "$metadataFilePath" 
 EOS;
-
-        return $this->commandLine;
-    }
-
-    public function execute()
-    {
-        $this->checkResources();
-
-        return parent::execute();
     }
 
     /**
-     * @throws RuntimeException En cas de ressources ou pré-requis manquants
+     * @throws \Application\Command\Exception\ShellCommandException En cas de ressources ou prérequis manquants
      */
-    public function checkResources()
+    public function checkRequirements()
     {
         $dir = __DIR__;
 
@@ -104,13 +90,13 @@ EOS;
         foreach ($filenames as $filename) {
             $filepath = $dir . '/' . $filename;
             if (!file_exists($filepath)) {
-                throw new RuntimeException(sprintf(
+                throw new ShellCommandException(sprintf(
                     "Le fichier %s requis doit se trouver dans le même répertoire que la commande %s, à savoir %s.",
                     $filename, $this->getName(), $dir
                 ));
             }
             if (!is_readable($filepath)) {
-                throw new RuntimeException(sprintf("Le fichier %s requis n'est pas lisible.", $filepath));
+                throw new ShellCommandException(sprintf("Le fichier %s requis n'est pas lisible.", $filepath));
             }
         }
     }

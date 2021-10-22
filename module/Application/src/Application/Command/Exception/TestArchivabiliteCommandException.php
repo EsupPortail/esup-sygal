@@ -4,7 +4,7 @@ namespace Application\Command\Exception;
 
 use UnicaenApp\Exception\RuntimeException;
 
-class CommandExecutionException extends RuntimeException
+class TestArchivabiliteCommandException extends RuntimeException
 {
     static public function unknown()
     {

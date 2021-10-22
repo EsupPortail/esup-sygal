@@ -252,10 +252,10 @@ class RapportSearchService extends SearchService
         $filterValue = $filter->getValue();
         if ($filterValue === 'oui') {
             $qb
-                ->join("$alias.rapportValidations", 'v_filter', Join::WITH, 'pasHistorise(v_filter) = 1');
+                ->join("$alias.rapportValidations", 'v_filter', Join::WITH, 'v_filter.histoDestruction is null');
         } elseif ($filterValue === 'non') {
             $qb
-                ->leftJoin("$alias.rapportValidations", 'v_filter', Join::WITH, 'pasHistorise(v_filter) = 1')
+                ->leftJoin("$alias.rapportValidations", 'v_filter', Join::WITH, 'v_filter.histoDestruction is null')
                 ->andWhere('v_filter is null');
         }
     }
@@ -372,7 +372,7 @@ class RapportSearchService extends SearchService
             function (SearchSorter $sorter, QueryBuilder $qb, $alias = 'ra') {
                 $direction = $sorter->getDirection();
                     $qb
-                        ->leftJoin("$alias.rapportValidations", 'v_sort', Join::WITH, 'pasHistorise(v) = 1')
+                        ->leftJoin("$alias.rapportValidations", 'v_sort', Join::WITH, 'v.histoDestruction is null')
                         ->addOrderBy("v_sort.histoCreation", $direction);
             }
         );

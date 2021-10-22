@@ -100,7 +100,7 @@ class ValidationService extends BaseService
         $qb = $this->getRepository()->createQueryBuilder('v')
             ->andWhere('tv.code = :tvcode')
             ->andWhere('v.these = :these')
-            ->andWhere('pasHistorise(v) = 1')
+            ->andWhere('v.histoDestruction is null')
             ->setParameter('these', $these)
             ->setParameter('tvcode', TypeValidation::CODE_RDV_BU);
         /** @var Validation $v */

@@ -115,7 +115,7 @@ class IndexController extends AbstractController
             $destinataires = $notifier;
             $notif = $this->notifierService->getNotificationFactory()->createNotificationForRetraitementFini($destinataires, $fichierTheseRetraite, $validite);
             $this->notifierService->trigger($notif);
-            echo "Destinataires du courriel envoyé: " . $notif->getTo();
+            echo "Destinataires du courriel envoyé: " . implode(",",$notif->getTo());
             echo PHP_EOL;
         }
 

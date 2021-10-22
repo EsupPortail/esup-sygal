@@ -83,8 +83,8 @@ class CoEncadrantService {
     {
         $qb = $this->createQueryBuilder()
             ->addSelect('these')->join('acteur.these', 'these')
-            ->andWhere('1 = pasHistorise(these)')
-            ->andWhere('1 = pasHistorise(acteur)')
+            ->andWhere('these.histoDestruction is null')
+            ->andWhere('acteur.histoDestruction is null')
         ;
 
         $structureOk = false;

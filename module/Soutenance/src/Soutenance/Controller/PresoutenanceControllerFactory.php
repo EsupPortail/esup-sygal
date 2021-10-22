@@ -15,6 +15,7 @@ use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceForm;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
+use Soutenance\Service\Evenement\EvenementService;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
 use Soutenance\Service\Parametre\ParametreService;
@@ -35,6 +36,7 @@ class PresoutenanceControllerFactory
         /**
          * @var PropositionService $propositionService
          * @var AvisService $avisService
+         * @var EvenementService $evenementService
          * @var MembreService $membreService
          * @var TheseService $theseService
          * @var IndividuService $individuService
@@ -51,6 +53,7 @@ class PresoutenanceControllerFactory
          * @var TokenService $tokenService
          * @var SourceService $sourceService
          */
+        $evenementService = $container->get(EvenementService::class);
         $propositionService = $container->get(PropositionService::class);
         $membreService = $container->get(MembreService::class);
         $theseService = $container->get('TheseService');
@@ -81,6 +84,7 @@ class PresoutenanceControllerFactory
 
         /** @var PresoutenanceController $controller */
         $controller = new PresoutenanceController();
+        $controller->setEvenementService($evenementService);
         $controller->setPropositionService($propositionService);
         $controller->setMembreService($membreService);
         $controller->setTheseService($theseService);

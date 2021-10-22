@@ -2,7 +2,9 @@
 
 namespace Application\Validator;
 
-use Application\Command\ValidationFichierCinesCommand;
+use Application\Command\ShellCommandRunner;
+use Application\Command\TestArchivabiliteShellCommandResult;
+use Application\Command\TestArchivabiliteShellCommand;
 use Application\Validator\Exception\CinesErrorException;
 use Laminas\Validator\AbstractValidator;
 
@@ -18,9 +20,14 @@ class FichierCinesValidator extends AbstractValidator
     );
 
     /**
-     * @var ValidationFichierCinesCommand
+     * @var TestArchivabiliteShellCommand
      */
-    protected $command;
+    protected $shellCommand;
+
+    /**
+     * @var \Application\Command\TestArchivabiliteShellCommandResult
+     */
+    private $commandResult;
 
     /**
      * FichierCinesValidator constructor.
@@ -34,31 +41,37 @@ class FichierCinesValidator extends AbstractValidator
     }
 
     /**
-     * @param ValidationFichierCinesCommand $command
+     * @param TestArchivabiliteShellCommand $shellCommand
      * @return $this
      */
-    public function setCommand(ValidationFichierCinesCommand $command)
+    public function setShellCommand(TestArchivabiliteShellCommand $shellCommand): self
     {
-        $this->command = $command;
+        $this->shellCommand = $shellCommand;
 
         return $this;
     }
 
     /**
-     * @param string $filepath Chemin vers le fichier sur le disque
+     * @param string $value Chemin vers le fichier sur le disque
      * @return bool
      * @throws CinesErrorException
      */
-    public function isValid($filepath): bool
+    public function isValid($value): bool
     {
+        $filepath = $value;
         $maxExecutionTime = $this->getOption('maxtime');
 
-        $this->command->execute($filepath, null, $maxExecutionTime);
+        /** @var TestArchivabiliteShellCommand $command */
+        $this->shellCommand->setInputFilePath($filepath);
+        $this->shellCommand->setMaxExecutionTime($maxExecutionTime);
+        $this->shellCommand->generateCommandLine();
+        $runner = new ShellCommandRunner();
+        $runner->setCommand($this->shellCommand);
+        $this->commandResult = $runner->runCommand();
+        $result = $this->commandResult->getArrayResult();
 
-        $result = $this->command->getArrayResult();
-
-        if (false === $result[ValidationFichierCinesCommand::XML_TAG_ARCHIVABLE]) {
-            $this->error(self::INVALID, $result[ValidationFichierCinesCommand::XML_TAG_MESSAGE] ?: null);
+        if (false === $result[TestArchivabiliteShellCommandResult::XML_TAG_ARCHIVABLE]) {
+            $this->error(self::INVALID, $result[TestArchivabiliteShellCommandResult::XML_TAG_MESSAGE] ?: null);
             return false;
         }
 
@@ -68,16 +81,16 @@ class FichierCinesValidator extends AbstractValidator
     /**
      * @return array
      */
-    public function getArrayResult()
+    public function getArrayResult(): array
     {
-        return $this->command->getArrayResult();
+        return $this->commandResult->getArrayResult();
     }
 
     /**
      * @return string
      */
-    public function getResult()
+    public function getResult(): string
     {
-        return $this->command->getResult();
+        return $this->commandResult->getResult();
     }
 }

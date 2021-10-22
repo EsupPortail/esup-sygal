@@ -88,7 +88,7 @@ class ActeurService extends BaseService
         $qb = $this->getEntityManager()->getRepository(Acteur::class)->createQueryBuilder('acteur')
             ->addSelect('these')->join('acteur.these', 'these')
             ->addSelect('role')->join('acteur.role', 'role')
-            ->andWhere('1 = pasHistorise(acteur)')
+            ->andWhere('acteur.histoDestruction is null')
             ->andWhere('these.etatThese = :encours')
             ->andWhere('acteur.individu = :individu')
             ->andWhere('role.code = :rapporteurJury OR role.code = :rapprteurAbsent')

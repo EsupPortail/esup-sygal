@@ -12,6 +12,7 @@ use Soutenance\Form\DateLieu\DateLieuForm;
 use Soutenance\Form\LabelEuropeen\LabelEuropeenForm;
 use Soutenance\Form\Membre\MembreForm;
 use Soutenance\Form\Refus\RefusForm;
+use Soutenance\Service\Evenement\EvenementService;
 use Soutenance\Service\Justificatif\JustificatifService;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
@@ -31,6 +32,7 @@ class PropositionControllerFactory
     {
         /**
          * @var ActeurService $acteurService
+         * @var EvenementService $evenementService
          * @var MembreService $membreService
          * @var NotifierSoutenanceService $notificationSoutenanceService
          * @var PropositionService $propositionService
@@ -40,6 +42,7 @@ class PropositionControllerFactory
          * @var ParametreService $parametreService
          */
         $acteurService = $container->get(ActeurService::class);
+        $evenementService = $container->get(EvenementService::class);
         $membreService = $container->get(MembreService::class);
         $notificationSoutenanceService = $container->get(NotifierSoutenanceService::class);
         $propositionService = $container->get(PropositionService::class);
@@ -71,6 +74,7 @@ class PropositionControllerFactory
         $controller = new PropositionController();
 
         $controller->setActeurService($acteurService);
+        $controller->setEvenementService($evenementService);
         $controller->setMembreService($membreService);
         $controller->setNotifierSoutenanceService($notificationSoutenanceService);
         $controller->setPropositionService($propositionService);

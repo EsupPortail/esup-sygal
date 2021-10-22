@@ -201,7 +201,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
 
         $notif = $this->createNotification();
         $notif
-            ->setSubject("Retraitement terminé")
+            ->setSubject("Ajout de la page de couverture terminé")
             ->setTo($to)
             ->setTemplatePath('application/these/mail/notif-fusion-fini')
             ->setTemplateVariables([

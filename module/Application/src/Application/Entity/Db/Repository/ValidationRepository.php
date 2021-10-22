@@ -27,7 +27,7 @@ class ValidationRepository extends DefaultEntityRepository
         $qb = $this->createQueryBuilder('v')
             ->where('t = :these')
             ->andWhere('tv.code = :code')
-            ->andWhere('1 = pasHistorise(v)')
+            ->andWhere('v.histoDestruction is null')
             ->setParameter('these', $these)
             ->setParameter('code', $code);
 
@@ -46,7 +46,7 @@ class ValidationRepository extends DefaultEntityRepository
             ->where('tv.code = :code')
             ->andWhere('v.individu = :individu')
             ->andWhere('v.these = :these')
-            ->andWhere('1 = pasHistorise(v)')
+            ->andWhere('v.histoDestruction is null')
             ->setParameter('code', $code)
             ->setParameter('individu', $individu)
             ->setParameter('these', $these)
@@ -63,7 +63,7 @@ class ValidationRepository extends DefaultEntityRepository
     {
         $qb = $this->createQueryBuilder('v')
             ->where('t = :these')
-            ->andWhere('1 = pasHistorise(v)')
+            ->andWhere('v.histoDestruction is null')
             ->setParameter('these', $these)
         ;
         return $qb->getQuery()->getResult();

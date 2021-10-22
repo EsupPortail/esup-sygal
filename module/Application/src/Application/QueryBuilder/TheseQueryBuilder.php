@@ -22,7 +22,7 @@ class TheseQueryBuilder extends DefaultQueryBuilder
         $this
             ->addSelect("th")
             ->join("$this->rootAlias.doctorant", "th")
-            ->andWhere('1 = pasHistorise(th)')
+            ->andWhere('th.histoDestruction is null')
         ;
 
         return $this;

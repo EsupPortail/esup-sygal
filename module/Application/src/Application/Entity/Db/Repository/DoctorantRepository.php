@@ -25,7 +25,7 @@ class DoctorantRepository extends DefaultEntityRepository
             ->addSelect('i')
             ->join('t.individu', 'i')
             ->where('t.sourceCode = :sourceCode')
-            ->andWhere('1 = pasHistorise(t)')
+            ->andWhere('t.histoDestruction is null')
             ->setParameter('sourceCode', $sourceCode);
 
         return $qb->getQuery()->getOneOrNullResult();
@@ -66,7 +66,7 @@ class DoctorantRepository extends DefaultEntityRepository
             ->join('d.theses', 't', Join::WITH, 't.etatThese = :etat')->setParameter('etat', $etatThese)
             ->join('t.ecoleDoctorale', 'ed')
             ->join('ed.structure', 's')
-            ->andWhere('1 = pasHistorise(d)')
+            ->andWhere('d.histoDestruction is null')
             ->addOrderBy('i.nomUsuel')
             ->addOrderBy('i.prenom1')
         ;

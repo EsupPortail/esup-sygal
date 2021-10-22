@@ -1579,7 +1579,7 @@ class TheseController extends AbstractController
         $these          = $this->requestedThese();
         $corrigee       = $this->params()->fromRoute("corrigee");
         $versionName    = $this->params()->fromRoute("version");
-        $removal        = $this->params()->fromRoute("removal");
+        $removal        = (bool) $this->params()->fromRoute("removal");
 
         $versionFichier = null;
         if ($versionName !== null) {

@@ -2,7 +2,7 @@
 
 namespace Retraitement\Service;
 
-use Application\Command\CommandInterface;
+use Application\Command\ShellCommandInterface;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Exception\InvalidArgumentException;
 
@@ -23,7 +23,7 @@ class RetraitementServiceFactory
 
     /**
      * @param ContainerInterface $container
-     * @return CommandInterface
+     * @return ShellCommandInterface
      */
     private function createCommand(ContainerInterface $container)
     {
@@ -37,7 +37,7 @@ class RetraitementServiceFactory
             throw new InvalidArgumentException("La classe spécifiée dans l'option de 'config sygal.retraitement.command.class' n'existe pas");
         }
 
-        /** @var CommandInterface $command */
+        /** @var ShellCommandInterface $command */
         $command = new $commandClass;
 
         if (isset($config['sygal']['retraitement']['command']['options'])) {

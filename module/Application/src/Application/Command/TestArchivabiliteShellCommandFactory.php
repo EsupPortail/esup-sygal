@@ -5,9 +5,9 @@ namespace Application\Command;
 use Interop\Container\ContainerInterface;
 use Webmozart\Assert\Assert;
 
-class ValidationFichierCinesCommandFactory
+class TestArchivabiliteShellCommandFactory
 {
-    public function __invoke(ContainerInterface $container): ValidationFichierCinesCommand
+    public function __invoke(ContainerInterface $container): TestArchivabiliteShellCommand
     {
         $config = $container->get('config');
 
@@ -18,6 +18,6 @@ class ValidationFichierCinesCommandFactory
         Assert::keyExists($options, 'script_path', "La clé %s est introuvable dans la config 'archivabilite'");
         $scriptPath = $config['sygal']['archivabilite']['script_path'];
 
-        return new ValidationFichierCinesCommand($scriptPath, $options);
+        return new TestArchivabiliteShellCommand($scriptPath, $options);
     }
 }

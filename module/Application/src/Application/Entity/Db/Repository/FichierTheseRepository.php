@@ -78,7 +78,7 @@ class FichierTheseRepository extends DefaultEntityRepository
         $qb->andWhere("ft.these = :these");
         $qb->setParameter("these", $these);
 
-        $qb->andWhere("1 = pasHistorise(f)");
+        $qb->andWhere("f.histoDestruction is null");
 
         $qb->addOrderBy('f.histoModification', 'ASC');
 

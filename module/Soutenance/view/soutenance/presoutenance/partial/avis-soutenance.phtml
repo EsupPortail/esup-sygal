@@ -6,6 +6,8 @@
  * @var Membre[] $rapporteurs
  * @var Validation[] $engagements
  * @var Avis[] $avis
+ *
+ * @var Evenement[] $evenementsPrerapport
 
  */
 
@@ -13,6 +15,7 @@ use Application\Constants;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Soutenance\Entity\Avis;
+use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
@@ -154,6 +157,15 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                     >
                         <span class="icon icon-notify"></span> Envoyer des demandes d'avis de soutenance
                     </a>
+                <?php endif; ?>
+
+                <?php if ($evenementsPrerapport !== null AND !empty($evenementsPrerapport)) : ?>
+                    Notification de la demande des pré-rapports &nbsp;:&nbsp;
+                    <ul>
+                        <?php foreach ($evenementsPrerapport as $evenementPrerapport) : ?>
+                            <li> Faite le <?php echo $evenementPrerapport->getDate()->format('d/m/Y à H:i:s'); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
                 <?php endif; ?>
             </div>
 

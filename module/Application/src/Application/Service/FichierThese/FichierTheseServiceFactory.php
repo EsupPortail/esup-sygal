@@ -2,7 +2,6 @@
 
 namespace Application\Service\FichierThese;
 
-use Application\Command\ValidationFichierCinesCommand;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Fichier\FichierService;
 use Application\Service\File\FileService;
@@ -60,15 +59,14 @@ class FichierTheseServiceFactory
         return $service;
     }
 
-    private function createFichierCinesValidator(ContainerInterface $container)
+    private function createFichierCinesValidator(ContainerInterface $container): FichierCinesValidator
     {
-        /** @var ValidationFichierCinesCommand $command */
+        /** @var \Application\Command\TestArchivabiliteShellCommand $command */
         $command = $container->get('ValidationFichierCinesCommand');
 
         $validator = new FichierCinesValidator();
-        $validator->setCommand($command);
+        $validator->setShellCommand($command);
 
         return $validator;
     }
-
 }

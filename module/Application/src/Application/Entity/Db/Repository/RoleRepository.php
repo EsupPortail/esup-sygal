@@ -126,7 +126,7 @@ class RoleRepository extends DefaultEntityRepository
             ->setParameter('structure', $etablissement->getStructure())
             ->andWhere('r.code = :code')
             ->setParameter('code', $code)
-            ->andWhere('1 = pasHistorise(r)')
+            ->andWhere('r.histoDestruction is null')
         ;
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
