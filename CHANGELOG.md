@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+3.0.6
+-----
+- [FIX] Non affichage des justificatifs historisés dans la proposition de soutenance
+
 3.0.5
 -----
 - Notification à propos de la validation de la page de couverture : correction de texte.
