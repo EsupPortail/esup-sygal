@@ -7,6 +7,10 @@ Journal des modifications
 - Migration vers Bootstrap 5 (front-end).
 - Réorganisation des infos affcihées à propos de la connexion dans le menu principal.
 
+3.0.6
+-----
+- [FIX] Non affichage des justificatifs historisés dans la proposition de soutenance
+
 3.0.5
 -----
 - Notification à propos de la validation de la page de couverture : correction de texte.
