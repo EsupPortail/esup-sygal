@@ -8,6 +8,7 @@ use Application\Entity\Db\Repository\IndividuRepository;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
+use Application\Service\Source\SourceServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -18,6 +19,7 @@ use Laminas\Mvc\Controller\AbstractActionController;
 
 class IndividuService extends BaseService
 {
+    use SourceServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
 
     /**
@@ -81,6 +83,11 @@ class IndividuService extends BaseService
             throw new InvalidArgumentException("Impossible de créer un individu si son supannId est vide.");
         }
 
+        $source = $this->sourceService->getRepository()->findOneBy(['etablissement' => $etablissement]);
+        if ($source === null) {
+            $source = $this->sourceService->fetchApplicationSource();
+        }
+
         $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($supannId, $etablissement);
 
         $entity = new Individu();
@@ -90,6 +97,7 @@ class IndividuService extends BaseService
         $entity->setPrenom($userWrapper->getPrenom());
         $entity->setCivilite($userWrapper->getCivilite());
         $entity->setEmail($userWrapper->getEmail());
+        $entity->setSource($source);
         $entity->setSourceCode($sourceCode);
         $entity->setHistoCreateur($utilisateur);
 
