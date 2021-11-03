@@ -6,6 +6,7 @@ Journal des modifications
 - Migration vers Laminas (back-end).
 - Migration vers Bootstrap 5 (front-end).
 - Réorganisation des infos affcihées à propos de la connexion dans le menu principal.
+- [FIX] Activation de la mise en cache de la config lorsque le mode development est désactivé.
 
 3.0.6
 -----

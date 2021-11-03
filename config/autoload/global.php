@@ -62,11 +62,6 @@ return [
         //'cc' => [],
         //'bcc' => [],
     ],
-    'module_listener_options' => [
-        'config_cache_key'         => 'app_config',
-        'module_map_cache_key'     => 'module_map',
-        'cache_dir'                => 'data/config/',
-    ],
     'doctrine' => [
         'configuration' => [
             'orm_default' => [
