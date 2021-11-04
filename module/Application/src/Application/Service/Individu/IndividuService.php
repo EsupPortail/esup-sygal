@@ -6,20 +6,15 @@ use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\IndividuRepository;
 use Application\Entity\Db\Utilisateur;
-use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
-use Application\Service\Source\SourceServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
-use InvalidArgumentException;
+use Laminas\Mvc\Controller\AbstractActionController;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenLdap\Entity\People;
-use Laminas\Mvc\Controller\AbstractActionController;
 
 class IndividuService extends BaseService
 {
-    use SourceServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
 
     /**
@@ -62,49 +57,6 @@ class IndividuService extends BaseService
         try {
             $this->getEntityManager()->flush($entity);
         } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Impossible d'enregistrer l'Individu", null, $e);
-        }
-
-        return $entity;
-    }
-
-    /**
-     * @param UserWrapper $userWrapper
-     * @param Etablissement $etablissement
-     * @param \Application\Entity\Db\Utilisateur $utilisateur Auteur de la création
-     * @return Individu
-     */
-    public function createIndividuFromUserWrapperAndEtab(UserWrapper $userWrapper,
-                                                         Etablissement $etablissement,
-                                                         Utilisateur $utilisateur): ?Individu
-    {
-        $supannId = $userWrapper->getSupannId();
-        if (! $supannId) {
-            throw new InvalidArgumentException("Impossible de créer un individu si son supannId est vide.");
-        }
-
-        $source = $this->sourceService->getRepository()->findOneBy(['etablissement' => $etablissement]);
-        if ($source === null) {
-            $source = $this->sourceService->fetchApplicationSource();
-        }
-
-        $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($supannId, $etablissement);
-
-        $entity = new Individu();
-        $entity->setSupannId($supannId);
-        $entity->setNomUsuel($userWrapper->getNom() ?: "X"); // NB: le nom est obligatoire mais pas forcément disponible
-        $entity->setNomPatronymique($userWrapper->getNom());
-        $entity->setPrenom($userWrapper->getPrenom());
-        $entity->setCivilite($userWrapper->getCivilite());
-        $entity->setEmail($userWrapper->getEmail());
-        $entity->setSource($source);
-        $entity->setSourceCode($sourceCode);
-        $entity->setHistoCreateur($utilisateur);
-
-        try {
-            $this->getEntityManager()->persist($entity);
-            $this->getEntityManager()->flush($entity);
-        } catch (ORMException $e) {
             throw new RuntimeException("Impossible d'enregistrer l'Individu", null, $e);
         }
 

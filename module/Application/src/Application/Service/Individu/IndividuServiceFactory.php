@@ -2,21 +2,14 @@
 
 namespace Application\Service\Individu;
 
-use Application\Service\Source\SourceService;
 use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
 
 class IndividuServiceFactory
 {
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): IndividuService
     {
         $service = new IndividuService();
-
-        /**
-         * @var \Application\Service\Source\SourceService $sourceService
-         */
-        $sourceService = $container->get(SourceService::class);
-        $service->setSourceService($sourceService);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper

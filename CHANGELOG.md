@@ -6,7 +6,7 @@ Journal des modifications
 - Migration vers Laminas (back-end).
 - Migration vers Bootstrap 5 (front-end).
 - Réorganisation des infos affcihées à propos de la connexion dans le menu principal.
-- Création d'utilisateur/individu à la connexion : tentative de déterminer la source correcte de l'individu à partir de son établissement.
+- Cas de la connexion d'un utilisateur sans possibilité de trouver d'individu associé : plus de création automatique d'individu car peut bloquer un import ultétieur.
 - [FIX] Activation de la mise en cache de la config lorsque le mode development est désactivé.
 
 3.0.6

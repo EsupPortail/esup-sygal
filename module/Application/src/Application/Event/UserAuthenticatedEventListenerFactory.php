@@ -4,6 +4,7 @@ namespace Application\Event;
 
 use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Individu\IndividuServiceLocateTrait;
+use Application\Service\Source\SourceService;
 use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurServiceLocateTrait;
 use Interop\Container\ContainerInterface;
@@ -26,6 +27,12 @@ class UserAuthenticatedEventListenerFactory
         $listener->setIndividuService($individuService);
         $listener->setEtablissementService($etablissementService);
         $listener->setUtilisateurService($this->locateUtilisateurService($container));
+
+        /**
+         * @var \Application\Service\Source\SourceService $sourceService
+         */
+        $sourceService = $container->get(SourceService::class);
+        $listener->setSourceService($sourceService);
 
         return $listener;
     }

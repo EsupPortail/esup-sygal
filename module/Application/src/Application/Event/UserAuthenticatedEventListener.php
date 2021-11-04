@@ -8,6 +8,7 @@ use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactory;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
+use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use UnicaenAuth\Event\Listener\AuthenticatedUserSavedAbstractListener;
 use UnicaenAuth\Event\UserAuthenticatedEvent;
@@ -17,6 +18,7 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
     use IndividuServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
+    use SourceServiceAwareTrait;
 
     /**
      * Méthode appelée juste avant que l'entité utilisateur soit persistée.
@@ -81,7 +83,6 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
      */
     private function processIndividu(UserWrapper $userWrapper): ?Individu
     {
-        $createIndividu = false;
         $etablissementInconnu = $this->etablissementService->getRepository()->fetchEtablissementInconnu();
 
         // recherche de l'établissement de connexion l'utilisateur : à partir du domaine de l'EPPN, ex: 'unicaen.fr'
@@ -93,13 +94,8 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
         if ($etablissement === null) {
             // si aucun établissement ne correspond au domaine, on essaie l'établissement "inconnu"...
 
-            // recherche de l'Individu correspondant à l'utilisateur, peut-être rattaché à l'établissement inconnu?
+            // recherche de l'Individu correspondant à l'utilisateur, peut-être rattaché à l'établissement inconnu ?
             $individu = $this->individuService->getRepository()->findOneByUserWrapperAndEtab($userWrapper, $etablissementInconnu);
-            if ($individu === null) {
-                // si l'individu n'est pas trouvé dans l'établissement inconnu, il y sera ajouté.
-                $createIndividu = true;
-                $etablissement = $etablissementInconnu;
-            }
         } else {
             // recherche de l'Individu dans l'établissement de connexion existant
             $individu = $this->individuService->getRepository()->findOneByUserWrapperAndEtab($userWrapper, $etablissement);
@@ -107,26 +103,13 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
             if ($individu === null) {
                 // si l'individu n'est pas trouvé dans l'établissement de connexion, recherche dans l'établissement inconnu
                 $individu = $this->individuService->getRepository()->findOneByUserWrapperAndEtab($userWrapper, $etablissementInconnu);
-                if ($individu === null) {
-                    // si l'individu n'est pas trouvé non plus dans l'établissement inconnu, il sera ajouté dans l'établissement de connexion.
-                    $createIndividu = true;
-                } else {
+                if ($individu !== null) {
                     // s'il existe dans l'établissement inconnu, on le "déplace" dans l'établissement de connexion
                     $this->individuService->updateIndividuSourceCodeFromEtab(
                         $individu,
                         $etablissement,
                         $this->utilisateurService->fetchAppPseudoUtilisateur());
                 }
-            }
-        }
-
-        // création de l'Individu si besoin et si possible
-        if ($createIndividu) {
-            if ($userWrapper->getSupannId()) {
-                $individu = $this->individuService->createIndividuFromUserWrapperAndEtab(
-                    $userWrapper,
-                    $etablissement,
-                    $this->utilisateurService->fetchAppPseudoUtilisateur());
             }
         }
 
