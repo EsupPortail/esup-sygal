@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+3.0.7
+----- 
+- Nouveau critère de bloquage des soutenances basé sur la validité des rapporteurs.
+
 3.0.6
 -----
 - [FIX] Non affichage des justificatifs historisés dans la proposition de soutenance

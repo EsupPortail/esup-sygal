@@ -330,6 +330,15 @@ class PropositionService {
 
         $indicateurs = [];
 
+        /** Bad rapporteur */
+        $indicateurs["bad-rapporteur"]["Nombre"] = 0;
+        foreach ($proposition->getMembres() as $membre) {
+            if ($membre->estRapporteur() AND $membre->getQualite()->getRang() === 'B' AND $membre->getQualite()->getHdr() !== 'O') {
+                $indicateurs["bad-rapporteur"]["Nombre"]++;
+            }
+        }
+        $indicateurs["bad-rapporteur"]["valide"] = ($indicateurs["bad-rapporteur"]["Nombre"] === 0);
+
         /**  Il faut essayer de maintenir la parité Homme/Femme*/
         $ratioFemme = ($nbMembre)?$nbFemme / $nbMembre:0;
         $ratioHomme = ($nbMembre)?(1 - $ratioFemme):0;
@@ -377,7 +386,7 @@ class PropositionService {
         }
 
         $valide = $indicateurs["parité"]["valide"] && $indicateurs["membre"]["valide"] && $indicateurs["rapporteur"]["valide"]
-            && $indicateurs["rang A"]["valide"] && $indicateurs["exterieur"]["valide"];
+            && $indicateurs["rang A"]["valide"] && $indicateurs["exterieur"]["valide"] && $indicateurs["bad-rapporteur"]["valide"] ;
 
         $indicateurs["valide"] = $valide;
 
