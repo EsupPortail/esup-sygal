@@ -4,6 +4,7 @@ Journal des modifications
 3.0.7
 ----- 
 - Nouveau critère de bloquage des soutenances basé sur la validité des rapporteurs.
+- Retrait de la mention qualité absente sur le justificatif de co-encadrement 
 
 3.0.6
 -----
