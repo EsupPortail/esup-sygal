@@ -663,10 +663,12 @@ class PropositionService {
             $renduRapport = $proposition->getDate();
             $deadline = $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur();
             $renduRapport = $renduRapport->sub(new DateInterval('P'. $deadline.'D'));
+
+            $date = DateTime::createFromFormat('d/m/Y H:i:s', $renduRapport->format('d/m/Y') . " 23:59:59");
         } catch (Exception $e) {
             throw new RuntimeException("Un problème a été rencontré lors du calcul de la date de rendu des rapport.");
         }
-        $proposition->setRenduRapport($renduRapport);
+        $proposition->setRenduRapport($date);
         $this->update($proposition);
     }
 }

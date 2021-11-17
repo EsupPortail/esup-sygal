@@ -9,9 +9,10 @@ use Soutenance\Entity\Proposition;
  * @var These $these
  * @var Proposition $proposition
  * @var Membre $membre
+ * @var string $url
  */
 
-$url = $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], ['force_canonical'=>true], true);
+//$url = $this->url('soutenance/avis-soutenance', ['these' => $these->getId(), 'rapporteur' => $membre->getId()], ['force_canonical'=>true], true);
 
 $justification = true;
 ?>
@@ -22,8 +23,11 @@ $justification = true;
     Bonjour,
 </p>
 <p>
-    Vous pouvez commencer à examiner les travaux thèse de <strong><?php echo $these->getDoctorant()->getNomComplet(); ?></strong>, ayant pour titre <strong><?php echo $these->getTitre(); ?></strong>.
-    Par la suite, vous devez établir un rapport incluant votre avis sur la soutenance et votre signature au moins 14 jours avant la date de soutenance, puis le déposer sur la plateforme <?php echo $this->appInfos()->nom ?> à l’adresse suivante : <a href="<?php echo $url; ?>">dépôt de l'avis de soutenance</a>.
+    Vous pouvez commencer à examiner les travaux thèse de <strong><?php echo $these->getDoctorant()->getNomComplet(); ?></strong>,
+    ayant pour titre <strong><?php echo $these->getTitre(); ?></strong>.
+    Par la suite, vous devez établir un rapport incluant votre avis sur la soutenance et votre signature au moins 14 jours
+    avant la date de soutenance, puis le déposer sur la plateforme <?php echo $this->appInfos()->nom ?> à l’adresse
+    suivante : <strong><a href="<?php echo $url; ?>">Accéder à votre tableau de bord SyGAL</a></strong>.
 </p>
 <p>
     Si votre avis est négatif, pourriez-vous indiquer brièvement les raisons de ce choix puis déposer votre rapport.
@@ -45,8 +49,10 @@ $justification = true;
     Dear Mrs/Mr,
 </p>
 <p>
-    Since you have signed the "impartiality commitment", you can start the evaluation of the PhD thesis presented by <strong><?php echo $these->getDoctorant()->getNomComplet(); ?></strong>, entitled <strong><?php echo $these->getTitre(); ?></strong>.
-    Then, you must give your opinion about the PhD thesis and upload your signed PhD report at least 14 days before the date of the PhD defense at : <a href="<?php echo $url; ?>">upload of your report</a>.
+    Since you have signed the "impartiality commitment", you can start the evaluation of the PhD thesis presented by
+    <strong><?php echo $these->getDoctorant()->getNomComplet(); ?></strong>, entitled <strong><?php echo $these->getTitre(); ?></strong>.
+    Then, you must give your opinion about the PhD thesis and upload your signed PhD report at least 14 days before the
+    date of the PhD defense at : <strong><a href="<?php echo $url; ?>">Access your SyGAL dashboard</a></strong>.
 </p>
 <p>
     In case of a negative opinion, please indicate briefly the main reasons for the rejection and upload your signed PhD report.
