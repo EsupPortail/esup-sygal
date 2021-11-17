@@ -1,6 +1,13 @@
 Journal des modifications
 =========================
 
+3.0.7
+----- 
+- Nouveau critère de bloquage des soutenances basé sur la validité des rapporteurs.
+- Retrait de la mention qualité absente sur le justificatif de co-encadrement 
+- Ajustement de la date/heure de rendu des rapports 
+- Modification du lien dans les mails vers les rapporteurs (description complète : token, role, redirect)
+
 3.0.6
 -----
 - [FIX] Non affichage des justificatifs historisés dans la proposition de soutenance

@@ -330,6 +330,15 @@ class PropositionService {
 
         $indicateurs = [];
 
+        /** Bad rapporteur */
+        $indicateurs["bad-rapporteur"]["Nombre"] = 0;
+        foreach ($proposition->getMembres() as $membre) {
+            if ($membre->estRapporteur() AND $membre->getQualite()->getRang() === 'B' AND $membre->getQualite()->getHdr() !== 'O') {
+                $indicateurs["bad-rapporteur"]["Nombre"]++;
+            }
+        }
+        $indicateurs["bad-rapporteur"]["valide"] = ($indicateurs["bad-rapporteur"]["Nombre"] === 0);
+
         /**  Il faut essayer de maintenir la parité Homme/Femme*/
         $ratioFemme = ($nbMembre)?$nbFemme / $nbMembre:0;
         $ratioHomme = ($nbMembre)?(1 - $ratioFemme):0;
@@ -377,7 +386,7 @@ class PropositionService {
         }
 
         $valide = $indicateurs["parité"]["valide"] && $indicateurs["membre"]["valide"] && $indicateurs["rapporteur"]["valide"]
-            && $indicateurs["rang A"]["valide"] && $indicateurs["exterieur"]["valide"];
+            && $indicateurs["rang A"]["valide"] && $indicateurs["exterieur"]["valide"] && $indicateurs["bad-rapporteur"]["valide"] ;
 
         $indicateurs["valide"] = $valide;
 
@@ -654,10 +663,12 @@ class PropositionService {
             $renduRapport = $proposition->getDate();
             $deadline = $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur();
             $renduRapport = $renduRapport->sub(new DateInterval('P'. $deadline.'D'));
+
+            $date = DateTime::createFromFormat('d/m/Y H:i:s', $renduRapport->format('d/m/Y') . " 23:59:59");
         } catch (Exception $e) {
             throw new RuntimeException("Un problème a été rencontré lors du calcul de la date de rendu des rapport.");
         }
-        $proposition->setRenduRapport($renduRapport);
+        $proposition->setRenduRapport($date);
         $this->update($proposition);
     }
 }
