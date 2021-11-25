@@ -484,7 +484,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         if ($these->getEtablissement()) $pdcData->setEtablissement($these->getEtablissement()->getLibelle());
         if ($these->getEcoleDoctorale()) $pdcData->setEtablissement($these->getEtablissement()->getLibelle());
         if ($these->getDoctorant()) {
-            $pdcData->setDoctorant(strtoupper($these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true, true, true)));
+            $pdcData->setDoctorant(strtoupper($these->getDoctorant()->getIndividu()->getNomComplet(false, true, false, true, true, false)));
         }
         if ($these->getDateSoutenance()) $pdcData->setDate($these->getDateSoutenance()->format("d/m/Y"));
 
