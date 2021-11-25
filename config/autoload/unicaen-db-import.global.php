@@ -317,10 +317,23 @@ function generateConfigSynchros(array $etabs): array
     $synchros = [];
     foreach ($etabs as $etab) {
         foreach (CONFIG_SYNCHROS as $array) {
-            $array['name'] = $array['name'] . '-' .  $etab;                                 // ex : "individu-UCN"
+            $array['name'] = generateSynchroName($array['name'], $etab);                    // ex : "individu-UCN"
             $array['destination']['where'] = sprintf("d.source_code like '%s::%%'", $etab); // ex : "d.source_code like 'UCN::%'"
             $synchros[] = $array;
         }
     }
     return $synchros;
 }
+
+/**
+ * Génère le nom complet d'une synchro.
+ *
+ * @param string $serviceName Nom du service, ex : 'individu'
+ * @param string $codeEtablissement Code établissement, ex : 'UCN'
+ * @return string
+ */
+function generateSynchroName(string $serviceName, string $codeEtablissement): string
+{
+    return $serviceName . '-' .  $codeEtablissement;
+}
+

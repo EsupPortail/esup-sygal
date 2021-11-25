@@ -8,6 +8,7 @@ Journal des modifications
 - Réorganisation des infos affcihées à propos de la connexion dans le menu principal.
 - Cas de la connexion d'un utilisateur sans possibilité de trouver d'individu associé : plus de création automatique d'individu car peut bloquer un import ultétieur.
 - [FIX] Activation de la mise en cache de la config lorsque le mode development est désactivé.
+- [FIX] Lancement de la synchro des thèses pour prendre en compte la création/modification/suppression de substitution de structures.
 
 3.0.6
 -----
