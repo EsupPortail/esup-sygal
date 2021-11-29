@@ -543,7 +543,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         /** associée */
         $pdcData->setAssocie(false);
         /** @var Acteur $directeur */
-        foreach ($directeurs as $directeur) {
+        foreach (array_merge($directeurs, $codirecteurs) as $directeur) {
             if (!$directeur->getEtablissement()) {
                 throw new RuntimeException("Anomalie: le directeur de thèse '{$directeur}' n'a pas d'établissement.");
             }
@@ -553,6 +553,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
                 $pdcData->setLibelleAssocie($directeur->getEtablissement()->getLibelle());
             }
         }
+
 
         $acteursEnCouverture = array_merge($rapporteurs, $directeurs, $codirecteurs, $president, $membres);
         usort($acteursEnCouverture, Acteur::getComparisonFunction());
