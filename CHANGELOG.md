@@ -1,6 +1,11 @@
 Journal des modifications
 =========================
 
+3.0.8
+-----
+- Changement pour récupération des logos sur la page de couvertures (les co-directions sont maintenant utilisée)
+- [FIX] Retrait de l'appel à un css inexistant
+
 3.0.7
 ----- 
 - Nouveau critère de bloquage des soutenances basé sur la validité des rapporteurs.
