@@ -9,6 +9,7 @@ use Application\Entity\Db\Validation;
 use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Privilege\JustificatifPrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 
 /**
@@ -36,7 +37,7 @@ use Soutenance\Provider\Privilege\PropositionPrivileges;
  */
 
 $canModifier = ($this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER) OR $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION));
-$canModifierJustificatif = ($this->isAllowed($these, PropositionPrivileges::PROPOSITION_VISUALISER) AND $proposition->getEtat() === Etat::EN_COURS);
+$canModifierJustificatif = ($this->isAllowed($these, JustificatifPrivileges::JUSTIFICATIF_AJOUTER));
 
 $this->headTitle("Proposition de soutenance");
 ?>
@@ -99,7 +100,7 @@ $this->headTitle("Proposition de soutenance");
 
 <div id="VALIDATION"></div>
 <?php
-    $canValiderActeur = $isOk && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR);
+    $canValiderActeur = $isOk && ($justificatifsOk !== false) && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR);
     $canSursis = $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_SURSIS));
 
     echo $this->partial('partial/validations-acteurs', [

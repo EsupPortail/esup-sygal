@@ -27,7 +27,7 @@ use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 
 
 $tousLesAvis = count($rapporteurs) === count($avis) ;
-$canFeuVert = $this->isAllowed(PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU));
+$canFeuVert = ($justificatifsOk === true AND $this->isAllowed(PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU)));
 $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->getIndividu());
 $canModifierAdresse = $canFeuVert;
 $canGenererDocument = $canFeuVert;
@@ -83,8 +83,8 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
         </div>
     <?php endif; ?>
 
-    <?php if ($justificatifsOk === false) : ?>
-        <div class="box panel panel-warning">
+    <?php if ($justificatifsOk !== true) : ?>
+        <div class="box panel <?php echo ($justificatifsOk === null)?'panel-warning':'panel-danger'; ?>">
             <div class=" panel-heading">
                 <h2>
                     Des justificatifs sont manquants
