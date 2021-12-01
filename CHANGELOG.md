@@ -4,6 +4,7 @@ Journal des modifications
 3.0.8
 -----
 - Changement pour récupération des logos sur la page de couvertures (les co-directions sont maintenant utilisée)
+- Le manque de justificatifs de soutenances n'est plus bloquant il s'agit plus que d'un warning 
 - [FIX] Retrait de l'appel à un css inexistant
 
 3.0.7

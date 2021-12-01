@@ -33,6 +33,7 @@ use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Exporter\AvisSoutenance\AvisSoutenancePdfExporter;
 use Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter;
 use Soutenance\Service\Exporter\ProcesVerbal\ProcesVerbalSoutenancePdfExporter;
+use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
@@ -66,6 +67,7 @@ class PresoutenanceController extends AbstractController
     use ParametreServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;
     use FichierServiceAwareTrait;
+    use JustificatifServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
     use TokenServiceAwareTrait;
     use SourceServiceAwareTrait;
@@ -95,6 +97,10 @@ class PresoutenanceController extends AbstractController
         $renduRapport = $proposition->getRenduRapport();
         if (!$renduRapport) $this->getPropositionService()->initialisationDateRetour($proposition);
 
+        /** Justificatifs attendus ---------------------------------------------------------------------------------- */
+        $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition);
+        $justificatifsOk = $this->getJustificatifService()->isJustificatifsOk($proposition, $justificatifs);
+
         /** ==> clef: Membre->getActeur()->getIndividu()->getId() <== */
         $engagements = $this->getEngagementImpartialiteService()->getEngagmentsImpartialiteByThese($these);
         $avis = $this->getAvisService()->getAvisByThese($these);
@@ -113,6 +119,8 @@ class PresoutenanceController extends AbstractController
             'urlFichierThese' => $this->urlFichierThese(),
             'validationBDD' => $validationBDD,
             'validationPDC' => $validationPDC,
+            'justificatifsOk' => $justificatifsOk,
+            'justificatifs' => $justificatifs,
 
             'evenementsEngagement' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_ENGAGEMENT),
             'evenementsPrerapport' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_PRERAPPORT),
