@@ -35,9 +35,8 @@ use Soutenance\Provider\Privilege\PropositionPrivileges;
  * @var $FORMULAIRE_DEMANDE_CONFIDENTIALITE
  */
 
-$a = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER);
-$b = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION);
 $canModifier = ($this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER) OR $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION));
+$canModifierJustificatif = ($this->isAllowed($these, PropositionPrivileges::PROPOSITION_VISUALISER) AND $proposition->getEtat() === Etat::EN_COURS);
 
 $this->headTitle("Proposition de soutenance");
 ?>
@@ -90,7 +89,7 @@ $this->headTitle("Proposition de soutenance");
 <div id="JUSTIFICATIF"></div>
 <?php echo $this->partial('partial/fichiers', [
         'proposition' => $proposition,
-        'canModifier' => $canModifier,
+        'canModifier' => $canModifierJustificatif,
         'justificatifs' => $justificatifs,
         'justificatifsOk' => $justificatifsOk,
         'urlFichierThese' => $urlFichierThese,
