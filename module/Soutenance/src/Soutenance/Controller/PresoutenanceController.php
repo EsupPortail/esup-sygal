@@ -85,7 +85,7 @@ class PresoutenanceController extends AbstractController
         $this->renderer = $renderer;
     }
 
-    public function presoutenanceAction()
+    public function presoutenanceAction() : ViewModel
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
@@ -121,7 +121,7 @@ class PresoutenanceController extends AbstractController
         ]);
     }
 
-    public function dateRenduRapportAction()
+    public function dateRenduRapportAction() : ViewModel
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
@@ -244,10 +244,6 @@ class PresoutenanceController extends AbstractController
             $this->getNotifierSoutenanceService()->triggerConnexionRapporteur($proposition, $user, $url);
         }
 
-
-//                $url = $this->url()->fromRoute('utilisateur/init-compte', ['token' => $user->getPasswordResetToken()], ['force_canonical' => true], true);
-//                $this->getNotifierSoutenanceService()->triggerInitialisationCompte($these, $user, $url);
-
         return new ViewModel([
             'title' => "Association de " . $membre->getDenomination() . " à un acteur " . $this->appInfos()->getNom(),
             'acteurs' => $acteurs_libres,
@@ -303,7 +299,21 @@ class PresoutenanceController extends AbstractController
         }
 
         foreach ($rapporteurs as $rapporteur) {
-            $this->getNotifierSoutenanceService()->triggerDemandeAvisSoutenance($these, $proposition, $rapporteur);
+            $utilisateurs = $rapporteur->getActeur()->getIndividu()->getUtilisateurs();
+            $token = null;
+            foreach ($utilisateurs as $utilisateur) {
+                $token = $this->tokenService->findUserTokenByUserId($utilisateur->getId());
+                if (! $token->isExpired()) break;
+            }
+
+            if ($token !== null) {
+                $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
+                $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $rapporteur->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
+            } else {
+                $url = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
+            }
+
+            $this->getNotifierSoutenanceService()->triggerDemandeAvisSoutenance($these, $proposition, $rapporteur, $url);
         }
 
         $this->getEvenementService()->ajouterEvenement($proposition, Evenement::EVENEMENT_PRERAPPORT);

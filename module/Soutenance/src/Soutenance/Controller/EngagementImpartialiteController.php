@@ -12,6 +12,7 @@ use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
+use UnicaenAuthToken\Service\TokenServiceAwareTrait;
 use Laminas\View\Model\ViewModel;
 
 /**
@@ -27,6 +28,7 @@ class EngagementImpartialiteController extends AbstractController
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
     use PropositionServiceAwareTrait;
+    use TokenServiceAwareTrait;
 
     public function engagementImpartialiteAction()
     {
@@ -59,7 +61,22 @@ class EngagementImpartialiteController extends AbstractController
         foreach ($proposition->getMembres() as $membre) {
             if ($membre->getActeur() and $membre->estRapporteur()) {
                 $validation = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($these, $membre);
-                if (!$validation) $this->getNotifierSoutenanceService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre);
+                if (!$validation) {
+                    $utilisateurs = $membre->getActeur()->getIndividu()->getUtilisateurs();
+                    $token = null;
+                    foreach ($utilisateurs as $utilisateur) {
+                        $token = $this->tokenService->findUserTokenByUserId($utilisateur->getId());
+                        if (! $token->isExpired()) break;
+                    }
+
+                    if ($token !== null) {
+                        $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
+                        $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $membre->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
+                    } else {
+                        $url = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
+                    }
+                    $this->getNotifierSoutenanceService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre, $url);
+                }
             }
         }
 
@@ -74,7 +91,20 @@ class EngagementImpartialiteController extends AbstractController
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         if ($membre->getActeur()) {
-            $this->getNotifierSoutenanceService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre);
+            $utilisateurs = $membre->getActeur()->getIndividu()->getUtilisateurs();
+            $token = null;
+            foreach ($utilisateurs as $utilisateur) {
+                $token = $this->tokenService->findUserTokenByUserId($utilisateur->getId());
+                if (! $token->isExpired()) break;
+            }
+
+            if ($token !== null) {
+                $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
+                $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $membre->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
+            } else {
+                $url = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
+            }
+            $this->getNotifierSoutenanceService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre, $url);
         }
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);

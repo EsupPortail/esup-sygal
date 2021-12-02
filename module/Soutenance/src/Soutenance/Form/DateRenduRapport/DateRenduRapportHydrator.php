@@ -15,7 +15,7 @@ class DateRenduRapportHydrator implements HydratorInterface
      */
     public function hydrate(array $data, $proposition) {
 
-        $date = DateTime::createFromFormat("d/m/Y", $data['date']);
+        $date = DateTime::createFromFormat("d/m/Y H:i:s", $data['date']. " 23:59:59");
         $proposition->setRenduRapport($date);
 
         return $proposition;

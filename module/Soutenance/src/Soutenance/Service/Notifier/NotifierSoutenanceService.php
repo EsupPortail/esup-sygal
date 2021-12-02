@@ -345,8 +345,9 @@ class NotifierSoutenanceService extends NotifierService
      * @param These $these
      * @param Proposition $proposition
      * @param Membre $membre
+     * @param string $url
      */
-    public function triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre)
+    public function triggerDemandeSignatureEngagementImpartialite(These $these, Proposition $proposition, Membre $membre, string $url)
     {
         $email = $membre->getEmail();
 
@@ -360,6 +361,7 @@ class NotifierSoutenanceService extends NotifierService
                     'these' => $these,
                     'proposition' => $proposition,
                     'membre' => $membre,
+                    'url' => $url,
                 ]);
             $this->trigger($notif);
         }
@@ -448,8 +450,9 @@ class NotifierSoutenanceService extends NotifierService
      * @param These $these
      * @param Proposition $proposition
      * @param Membre $rapporteur
+     * @param string $url
      */
-    public function triggerDemandeAvisSoutenance($these, $proposition, $rapporteur)
+    public function triggerDemandeAvisSoutenance(These $these, Proposition $proposition, Membre $rapporteur, string $url)
     {
         $email = $rapporteur->getEmail();
 
@@ -463,6 +466,7 @@ class NotifierSoutenanceService extends NotifierService
                     'these' => $these,
                     'proposition' => $proposition,
                     'membre' => $rapporteur,
+                    'url' => $url,
                 ]);
             $this->trigger($notif);
         }

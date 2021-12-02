@@ -484,7 +484,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         if ($these->getEtablissement()) $pdcData->setEtablissement($these->getEtablissement()->getLibelle());
         if ($these->getEcoleDoctorale()) $pdcData->setEtablissement($these->getEtablissement()->getLibelle());
         if ($these->getDoctorant()) {
-            $pdcData->setDoctorant(strtoupper($these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true, true, true)));
+            $pdcData->setDoctorant(strtoupper($these->getDoctorant()->getIndividu()->getNomComplet(false, true, false, true, true, false)));
         }
         if ($these->getDateSoutenance()) $pdcData->setDate($these->getDateSoutenance()->format("d/m/Y"));
 
@@ -543,7 +543,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         /** associée */
         $pdcData->setAssocie(false);
         /** @var Acteur $directeur */
-        foreach ($directeurs as $directeur) {
+        foreach (array_merge($directeurs, $codirecteurs) as $directeur) {
             if (!$directeur->getEtablissement()) {
                 throw new RuntimeException("Anomalie: le directeur de thèse '{$directeur}' n'a pas d'établissement.");
             }
@@ -553,6 +553,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
                 $pdcData->setLibelleAssocie($directeur->getEtablissement()->getLibelle());
             }
         }
+
 
         $acteursEnCouverture = array_merge($rapporteurs, $directeurs, $codirecteurs, $president, $membres);
         usort($acteursEnCouverture, Acteur::getComparisonFunction());

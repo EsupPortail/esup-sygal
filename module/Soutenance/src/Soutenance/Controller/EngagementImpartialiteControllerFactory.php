@@ -9,6 +9,8 @@ use Soutenance\Service\Evenement\EvenementService;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
 use Soutenance\Service\Proposition\PropositionService;
+use UnicaenAuthToken\Service\TokenService;
+use UnicaenAuthToken\Service\TokenServiceAwareTrait;
 
 class EngagementImpartialiteControllerFactory
 {
@@ -25,6 +27,7 @@ class EngagementImpartialiteControllerFactory
          * @var MembreService $membreService
          * @var NotifierSoutenanceService $notifierService
          * @var EngagementImpartialiteService $engagementImpartialiteService
+         * @var TokenService $tokenService
          */
         $acteurService                  = $container->get(ActeurService::class);
         $evenementService               = $container->get(EvenementService::class);
@@ -32,6 +35,7 @@ class EngagementImpartialiteControllerFactory
         $membreService                  = $container->get(MembreService::class);
         $notifierService                = $container->get(NotifierSoutenanceService::class);
         $engagementImpartialiteService  = $container->get(EngagementImpartialiteService::class);
+        $tokenService                   = $container->get(TokenService::class);
 
         /** @var EngagementImpartialiteController $controller */
         $controller = new EngagementImpartialiteController();
@@ -41,6 +45,7 @@ class EngagementImpartialiteControllerFactory
         $controller->setMembreService($membreService);
         $controller->setNotifierSoutenanceService($notifierService);
         $controller->setEngagementImpartialiteService($engagementImpartialiteService);
+        $controller->setTokenService($tokenService);
 
         return $controller;
     }
