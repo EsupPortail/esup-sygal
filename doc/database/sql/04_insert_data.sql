@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 9.6.11
--- Dumped by pg_dump version 13.3 (Ubuntu 13.3-1.pgdg20.04+1)
+-- Dumped by pg_dump version 14.1 (Ubuntu 14.1-2.pgdg20.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -17,7 +17,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Data for Name: categorie_privilege; Type: TABLE DATA; Schema: public; Owner: ad_sygal
+-- Data for Name: categorie_privilege; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
 INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (3100, 'financement', 'Financement', 5);
@@ -49,7 +49,7 @@ INSERT INTO public.categorie_privilege (id, code, libelle, ordre) VALUES (3102, 
 
 
 --
--- Data for Name: domaine_scientifique; Type: TABLE DATA; Schema: public; Owner: ad_sygal
+-- Data for Name: domaine_scientifique; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
 INSERT INTO public.domaine_scientifique (id, libelle) VALUES (1, 'Mathématiques et leurs interactions');
@@ -65,7 +65,7 @@ INSERT INTO public.domaine_scientifique (id, libelle) VALUES (10, 'Sciences agro
 
 
 --
--- Data for Name: import_observ; Type: TABLE DATA; Schema: public; Owner: ad_sygal
+-- Data for Name: import_observ; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
 INSERT INTO public.import_observ (id, code, table_name, column_name, operation, to_value, description, enabled, filter) VALUES (6, 'RESULTAT_PASSE_A_ADMIS', 'THESE', 'RESULTAT', 'UPDATE', '1', 'Le résultat de la thèse passe à 1 (admis)', true, 'ETABLISSEMENT_ID IN (SELECT ID FROM ETABLISSEMENT WHERE SOURCE_CODE = ''UCN'')');
@@ -74,7 +74,7 @@ INSERT INTO public.import_observ (id, code, table_name, column_name, operation, 
 
 
 --
--- Data for Name: information_langue; Type: TABLE DATA; Schema: public; Owner: ad_sygal
+-- Data for Name: information_langue; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
 INSERT INTO public.information_langue (id, libelle, drapeau) VALUES ('FR', 'Français', 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MDAiIGhlaWdodD0iNjAwIj48cmVjdCB3aWR0aD0iOTAwIiBoZWlnaHQ9IjYwMCIgZmlsbD0iI0VEMjkzOSIvPjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSIjZmZmIi8+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiMwMDIzOTUiLz48L3N2Zz4K');
@@ -82,7 +82,7 @@ INSERT INTO public.information_langue (id, libelle, drapeau) VALUES ('EN', 'Engl
 
 
 --
--- Data for Name: nature_fichier; Type: TABLE DATA; Schema: public; Owner: ad_sygal
+-- Data for Name: nature_fichier; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
 INSERT INTO public.nature_fichier (id, code, libelle) VALUES (1, 'THESE_PDF', 'Thèse au format PDF');
@@ -110,7 +110,7 @@ INSERT INTO public.nature_fichier (id, code, libelle) VALUES (41, 'RAPPORT_ACTIV
 
 
 --
--- Data for Name: notif; Type: TABLE DATA; Schema: public; Owner: ad_sygal
+-- Data for Name: notif; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
 INSERT INTO public.notif (id, code, description, recipients, template, enabled) VALUES (21, 'notif-depot-these', 'Notification lorsqu''un fichier de thèse est téléversé', NULL, '<p>
@@ -129,7 +129,7 @@ INSERT INTO public.notif (id, code, description, recipients, template, enabled) 
 
 
 --
--- Data for Name: privilege; Type: TABLE DATA; Schema: public; Owner: ad_sygal
+-- Data for Name: privilege; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (601, 101, 'proposition-modification_gestion', 'Modification d''une proposition de soutenance pour gestion', 1000);
@@ -292,10 +292,11 @@ INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (37
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (38, 19, 'modification-toutes-structures', 'Modification de toutes les substitutions ', 400);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (39, 19, 'modification-sa-structure', 'Modification de la substitution de sa structure', 500);
 INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (662, 101, 'simuler_remontees', 'Simulation des remontées du jury du SI', 1000);
+INSERT INTO public.privilege (id, categorie_id, code, libelle, ordre) VALUES (682, 3, 'accorder-sursis-correction', 'Accorder un sursis pour le téléversement de la version corrigée', 3047);
 
 
 --
--- Data for Name: type_structure; Type: TABLE DATA; Schema: public; Owner: ad_sygal
+-- Data for Name: type_structure; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
 INSERT INTO public.type_structure (id, code, libelle) VALUES (1, 'etablissement', 'Établissement');
@@ -304,11 +305,9 @@ INSERT INTO public.type_structure (id, code, libelle) VALUES (3, 'unite-recherch
 
 
 --
--- Data for Name: profil; Type: TABLE DATA; Schema: public; Owner: ad_sygal
+-- Data for Name: profil; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
-INSERT INTO public.profil (id, libelle, role_id, structure_type, description, ordre) VALUES (1, 'Unité de recherche', 'UR', 3, NULL, 40);
-INSERT INTO public.profil (id, libelle, role_id, structure_type, description, ordre) VALUES (2, 'École doctorale', 'ED', 2, NULL, 30);
 INSERT INTO public.profil (id, libelle, role_id, structure_type, description, ordre) VALUES (3, 'Administrateur', 'ADMIN', 1, NULL, 1000);
 INSERT INTO public.profil (id, libelle, role_id, structure_type, description, ordre) VALUES (4, 'Bureau des doctorats', 'BDD', 1, NULL, 20);
 INSERT INTO public.profil (id, libelle, role_id, structure_type, description, ordre) VALUES (5, 'Bibliothèque universitaire', 'BU', 1, NULL, 10);
@@ -323,10 +322,14 @@ INSERT INTO public.profil (id, libelle, role_id, structure_type, description, or
 INSERT INTO public.profil (id, libelle, role_id, structure_type, description, ordre) VALUES (12, 'Membre', 'M', NULL, NULL, 1000);
 INSERT INTO public.profil (id, libelle, role_id, structure_type, description, ordre) VALUES (61, 'Doctorant sans dépôt', 'NODEPOT', NULL, 'Rôle de doctorant temporaire', 1000);
 INSERT INTO public.profil (id, libelle, role_id, structure_type, description, ordre) VALUES (21, 'Observatoire', 'OBSERVATOIRE', NULL, NULL, 1000);
+INSERT INTO public.profil (id, libelle, role_id, structure_type, description, ordre) VALUES (64, 'Gestionnaire Unité de recherche', 'GEST_UR', 3, NULL, 40);
+INSERT INTO public.profil (id, libelle, role_id, structure_type, description, ordre) VALUES (65, 'Gestionnaire École doctorale', 'GEST_ED', 2, NULL, 30);
+INSERT INTO public.profil (id, libelle, role_id, structure_type, description, ordre) VALUES (1, 'Responsable Unité de recherche', 'RESP_UR', 3, NULL, 40);
+INSERT INTO public.profil (id, libelle, role_id, structure_type, description, ordre) VALUES (2, 'Responsable École doctorale', 'RESP_ED', 2, NULL, 30);
 
 
 --
--- Data for Name: profil_privilege; Type: TABLE DATA; Schema: public; Owner: ad_sygal
+-- Data for Name: profil_privilege; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (35, 1);
@@ -763,7 +766,6 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (502, 7);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (503, 7);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (504, 7);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (510, 7);
-INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (512, 7);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (513, 7);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (520, 7);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (521, 7);
@@ -906,10 +908,86 @@ INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (82, 41);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (409, 41);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (661, 6);
 INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (662, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (512, 7);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (35, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (47, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (81, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (82, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (160, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (177, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (270, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (271, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (381, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (404, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (405, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (408, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (409, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (421, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (422, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (502, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (505, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (510, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (512, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (513, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (520, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (523, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (535, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (537, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (539, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (541, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (542, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (544, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (562, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (564, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (566, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (568, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (569, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (571, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (573, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (575, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (577, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (579, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (580, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (582, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (584, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (586, 65);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (35, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (47, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (81, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (82, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (160, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (177, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (270, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (271, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (381, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (404, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (405, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (408, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (409, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (421, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (422, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (502, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (506, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (510, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (512, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (513, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (520, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (523, 64);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (503, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (503, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (485, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (486, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (487, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (682, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (682, 6);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (367, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (368, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (661, 4);
+INSERT INTO public.profil_privilege (privilege_id, profil_id) VALUES (409, 11);
 
 
 --
--- Data for Name: soutenance_configuration; Type: TABLE DATA; Schema: public; Owner: ad_sygal
+-- Data for Name: soutenance_configuration; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
 INSERT INTO public.soutenance_configuration (id, code, libelle, valeur) VALUES (1, 'AVIS_DEADLINE', 'Nombre de jours avant soutenance pour le retour des rapports', '14');
@@ -927,13 +1005,13 @@ INSERT INTO public.soutenance_configuration (id, code, libelle, valeur) VALUES (
 INSERT INTO public.soutenance_configuration (id, code, libelle, valeur) VALUES (13, 'FORMULAIRE_DELOCALISATION', 'Formulaire de demande de délocalisation de la soutenance', 'https://sygal.normandie-univ.fr/fichier/telecharger/permanent/DEMANDE_DELOCALISATION_SOUTENANCE');
 INSERT INTO public.soutenance_configuration (id, code, libelle, valeur) VALUES (14, 'FORMULAIRE_DELEGUATION', 'Formulaire de demande de déléguation de signature', 'https://sygal.normandie-univ.fr/fichier/telecharger/permanent/DEMANDE_DELEGATION_SIGNATURE');
 INSERT INTO public.soutenance_configuration (id, code, libelle, valeur) VALUES (15, 'FORMULAIRE_LABEL_EUROPEEN', 'Formulaire de demande de label européen', 'https://sygal.normandie-univ.fr/fichier/telecharger/permanent/DEMANDE_LABEL_EUROPEEN');
-INSERT INTO public.soutenance_configuration (id, code, libelle, valeur) VALUES (17, 'FORMULAIRE_CONFIDENTIALITE', 'Formulaire de de mande de confidentialité', 'https://sygal-test.normandie-univ.fr/fichier/telecharger/permanent/DEMANDE_DE_CONFIDENTIALITE');
 INSERT INTO public.soutenance_configuration (id, code, libelle, valeur) VALUES (18, 'PERIODE_INTERVENTION_DIRECTEUR', 'Période autorisant les directeurs à intervenir', '21');
 INSERT INTO public.soutenance_configuration (id, code, libelle, valeur) VALUES (16, 'FORMULAIRE_THESE_ANGLAIS', 'Formulaire de demande de rédaction en anglais', '');
+INSERT INTO public.soutenance_configuration (id, code, libelle, valeur) VALUES (17, 'FORMULAIRE_CONFIDENTIALITE', 'Formulaire de de mande de confidentialité', 'https://sygal.normandie-univ.fr/fichier/telecharger/permanent/DEMANDE_DE_CONFIDENTIALITE');
 
 
 --
--- Data for Name: soutenance_etat; Type: TABLE DATA; Schema: public; Owner: ad_sygal
+-- Data for Name: soutenance_etat; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
 INSERT INTO public.soutenance_etat (id, code, libelle, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id) VALUES (1, 'EN_COURS', 'En cours d''examen', '2020-09-21 10:50:03', 1, '2020-09-21 10:50:03', 1, NULL, NULL);
@@ -942,30 +1020,49 @@ INSERT INTO public.soutenance_etat (id, code, libelle, histo_creation, histo_cre
 
 
 --
--- Data for Name: soutenance_qualite; Type: TABLE DATA; Schema: public; Owner: ad_sygal
+-- Data for Name: soutenance_qualite; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (7, 'Professeur émerite', 'A', 'O', 'O', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (8, 'Chargé de Recherche (HDR)', 'B', 'O', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N');
 INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (9, 'Ingénieur de Recherche ', 'B', 'N', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (10, 'Ingénieur de Recherche (HDR)', 'B', 'O', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (11, 'Ingénieur d''Etude ', 'B', 'N', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (0, 'Qualité inconnue', 'B', 'N', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (12, 'Autre', 'B', 'N', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (1, 'Professeur des universités', 'A', 'O', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N');
 INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (2, 'Directeur de recherche', 'A', 'O', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N');
 INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (4, 'Maître de conférences', 'B', 'N', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N');
 INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (5, 'Chargé de recherche', 'B', 'N', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (6, 'Maître de conférences (HDR)', 'B', 'O', 'N', '2020-09-21 11:05:34', 1, '2020-09-21 11:05:34', 1, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (16, 'Vétérinaire', 'B', 'N', 'N', '2021-04-28 09:17:37', 1446, '2021-04-28 09:17:37', 1446, NULL, NULL, 'N');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (34, 'Membre étranger de rang A', 'A', 'N', 'N', '2021-05-28 15:22:14', 1446, '2021-05-28 15:22:14', 1446, NULL, NULL, 'O');
 INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (35, 'Membre étranger de rang B', 'B', 'N', 'N', '2021-05-28 15:22:37', 1446, '2021-05-28 15:22:37', 1446, NULL, NULL, 'O');
-INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (54, 'Chercheur HDR', 'A', 'O', 'N', '2021-07-07 09:07:44', 1461, '2021-07-07 09:07:44', 1461, NULL, NULL, 'O');
 INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (74, 'Professeur des universités-praticien hospitalier ', 'A', 'O', 'N', '2021-07-12 13:43:02', 1446, '2021-07-12 13:43:02', 1446, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (134, 'Professeur (dans un établissement à l''étranger)', 'A', 'O', 'N', '2021-10-27 11:19:13', 1461, '2021-10-27 16:39:19', 1446, NULL, NULL, 'O');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (454, 'Membre étranger de rang B HDR', 'B', 'N', 'N', '2021-11-16 16:59:01', 1446, '2021-11-16 16:59:01', 1446, NULL, NULL, 'O');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (34, 'Membre étranger de rang A', 'A', 'O', 'N', '2021-05-28 15:22:14', 1446, '2021-10-27 11:14:29', 1461, NULL, NULL, 'O');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (1, 'Professeur des universités (université Française)', 'A', 'O', 'N', '2020-09-21 11:05:34', 1, '2021-10-27 11:15:18', 1461, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (12, 'Chercheur', 'B', 'N', 'N', '2020-09-21 11:05:34', 1, '2021-10-27 11:24:15', 1461, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (11, 'Ingénieur d''Etudes ', 'B', 'N', 'N', '2020-09-21 11:05:34', 1, '2021-10-27 11:32:56', 1461, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (94, 'Maître de Conférences - Praticien Hospitalier', 'B', 'N', 'N', '2021-10-07 15:25:14', 1446, '2021-10-27 11:33:53', 1461, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (16, 'Adjoint administratif', 'B', 'N', 'N', '2021-04-28 09:17:37', 1446, '2021-10-27 11:37:48', 1461, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (174, 'Assistant ingénieur', 'B', 'N', 'N', '2021-10-27 11:38:52', 1461, '2021-10-27 11:38:52', 1461, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (194, 'Associate Professor', 'B', 'N', 'N', '2021-10-27 11:39:18', 1461, '2021-10-27 11:39:18', 1461, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (214, 'Assistant professor', 'B', 'N', 'N', '2021-10-27 11:39:46', 1461, '2021-10-27 11:39:46', 1461, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (254, 'Cadre de recherche', 'B', 'N', 'N', '2021-10-27 11:41:03', 1461, '2021-10-27 11:41:03', 1461, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (274, 'Chef d''entreprise', 'B', 'N', 'N', '2021-10-27 11:41:25', 1461, '2021-10-27 11:41:25', 1461, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (294, 'Directeur', 'B', 'N', 'N', '2021-10-27 11:42:01', 1461, '2021-10-27 11:42:01', 1461, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (314, 'Docteur', 'B', 'N', 'N', '2021-10-27 11:42:26', 1461, '2021-10-27 11:42:26', 1461, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (354, 'Maître assistant', 'B', 'N', 'N', '2021-10-27 11:43:39', 1461, '2021-10-27 11:43:39', 1461, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (374, 'Médecin', 'B', 'N', 'N', '2021-10-27 11:44:01', 1461, '2021-10-27 11:44:01', 1461, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (394, ' Praticien Hospitalier', 'B', 'N', 'N', '2021-10-27 11:44:33', 1461, '2021-10-27 11:44:33', 1461, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (414, 'Senior lecturer', 'B', 'N', 'N', '2021-10-27 11:45:13', 1461, '2021-10-27 11:45:36', 1461, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (234, 'Chargé d''enseignement', 'B', 'N', 'N', '2021-10-27 11:40:14', 1461, '2021-10-27 11:45:58', 1461, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (434, 'Docent', 'B', 'N', 'N', '2021-10-27 11:50:36', 1461, '2021-10-27 11:50:36', 1461, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (114, 'Directeur de recherche émérite', 'A', 'O', 'O', '2021-10-27 11:17:13', 1461, '2021-10-27 16:36:56', 1446, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (7, 'Professeur des universités émerite', 'A', 'O', 'O', '2020-09-21 11:05:34', 1, '2021-10-27 16:37:08', 1446, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (8, 'Chargé de Recherche HDR', 'B', 'O', 'N', '2020-09-21 11:05:34', 1, '2021-10-27 16:37:17', 1446, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (54, 'Chercheur HDR', 'B', 'O', 'N', '2021-07-07 09:07:44', 1461, '2021-10-27 16:37:24', 1446, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (334, 'Docteur HDR', 'B', 'O', 'N', '2021-10-27 11:42:48', 1461, '2021-10-27 16:37:33', 1446, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (154, 'Ingenieur d''études HDR', 'B', 'O', 'N', '2021-10-27 11:32:23', 1461, '2021-10-27 16:37:41', 1446, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (10, 'Ingénieur de Recherche HDR', 'B', 'O', 'N', '2020-09-21 11:05:34', 1, '2021-10-27 16:37:54', 1446, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (6, 'Maître de conférences HDR', 'B', 'O', 'N', '2020-09-21 11:05:34', 1, '2021-10-27 16:38:07', 1446, NULL, NULL, 'N');
+INSERT INTO public.soutenance_qualite (id, libelle, rang, hdr, emeritat, histo_creation, histo_createur_id, histo_modification, histo_modificateur_id, histo_destruction, histo_destructeur_id, justificatif) VALUES (0, 'Maître de Conférences HDR - Praticien Hospitalier', 'B', 'O', 'N', '2021-10-27 16:38:18', 1446, '2021-10-27 16:38:18', 1446, NULL, NULL, 'N');
 
 
 --
--- Data for Name: type_rapport; Type: TABLE DATA; Schema: public; Owner: ad_sygal
+-- Data for Name: type_rapport; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
 INSERT INTO public.type_rapport (id, code, libelle_court, libelle_long) VALUES (1, 'RAPPORT_ACTIVITE', 'Activité', 'Rapport d''activité');
@@ -974,7 +1071,7 @@ INSERT INTO public.type_rapport (id, code, libelle_court, libelle_long) VALUES (
 
 
 --
--- Data for Name: type_validation; Type: TABLE DATA; Schema: public; Owner: ad_sygal
+-- Data for Name: type_validation; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
 INSERT INTO public.type_validation (id, code, libelle) VALUES (1, 'RDV_BU', 'Validation suite au rendez-vous avec le doctorant');
@@ -995,7 +1092,7 @@ INSERT INTO public.type_validation (id, code, libelle) VALUES (15, 'RAPPORT_MIPA
 
 
 --
--- Data for Name: version_fichier; Type: TABLE DATA; Schema: public; Owner: ad_sygal
+-- Data for Name: version_fichier; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
 INSERT INTO public.version_fichier (id, code, libelle) VALUES (1, 'VA', 'Version d''archivage');
@@ -1007,7 +1104,7 @@ INSERT INTO public.version_fichier (id, code, libelle) VALUES (6, 'VOC', 'Versio
 
 
 --
--- Data for Name: wf_etape; Type: TABLE DATA; Schema: public; Owner: ad_sygal
+-- Data for Name: wf_etape; Type: TABLE DATA; Schema: public; Owner: :dbuser
 --
 
 INSERT INTO public.wf_etape (id, code, ordre, chemin, obligatoire, route, libelle_acteur, libelle_autres, desc_non_franchie, desc_sans_objectif) VALUES (1, 'DEPOT_VERSION_ORIGINALE', 10, 1, true, 'these/depot', 'Téléversement de la thèse', 'Téléversement de la thèse', 'Téléversement de la thèse non effectué', NULL);

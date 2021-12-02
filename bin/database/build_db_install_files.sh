@@ -135,8 +135,9 @@ mkdir -p $OUTPUT_DIR/sql
 #
 # db and user
 #
-OUTPUT_FILE=$OUTPUT_DIR/sql/01_$NAME_CREATE_DB_USER.sql
+OUTPUT_FILE=$OUTPUT_DIR/sql/admin/01_$NAME_CREATE_DB_USER.sql
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_CREATE_DB_USER.template.sql
+mkdir $OUTPUT_DIR/sql/admin
 cp $SRC_SCRIPT $OUTPUT_FILE
 injectConfParamsInScript $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
@@ -145,7 +146,7 @@ echo "> $OUTPUT_FILE"
 # schema objects
 #
 OUTPUT_FILE=$OUTPUT_DIR/sql/02_$NAME_CREATE_SCHEMA.sql
-pg_dump --section=pre-data --schema-only --exclude-table 'MV_INDICATEUR*' >$OUTPUT_FILE
+pg_dump --section=pre-data --schema-only --exclude-table 'MV_INDICATEUR*' --exclude-table '*_SAV' >$OUTPUT_FILE
 replacePgDatabaseAndUserInScript $OUTPUT_FILE
 #prepareScript $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
@@ -206,3 +207,5 @@ OUTPUT_FILE=$OUTPUT_DIR/sql/09_$NAME_CREATE_FIXTURE.sql.dist
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_CREATE_FIXTURE.template.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
+
+echo 'Terminé.'

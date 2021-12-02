@@ -3,12 +3,12 @@
 --
 
 --
--- Sources de données SyGAL.
+-- Sources de données ESUP-SyGAL.
 --
 delete from source where code = 'SYGAL::sygal'
 ;
 insert into source (id, code, libelle, importable)
-values (1, 'SYGAL::sygal', 'SyGAL', false)
+values (1, 'SYGAL::sygal', 'ESUP-SyGAL', false)
 ;
 
 --
@@ -17,7 +17,7 @@ values (1, 'SYGAL::sygal', 'SyGAL', false)
 delete from utilisateur where username = 'sygal-app'
 ;
 insert into utilisateur (id, username, display_name, password)
-values (1, 'sygal-app', 'Application SyGAL', 'ldap')
+values (1, 'sygal-app', 'Application ESUP-SyGAL', 'ldap')
 ;
 
 --
