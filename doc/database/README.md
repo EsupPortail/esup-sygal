@@ -1,7 +1,7 @@
-Création d'une base de données PostgreSQL pour SyGAL
-====================================================
+Création d'une base de données pour ESUP-SyGAL
+==============================================
 
-Les fichiers fournis permettant de créer une base de données PostgreSQL pour SyGAL sont :
+Les fichiers fournis permettant de créer une base de données pour ESUP-SyGAL sont :
 
 - d'une part, le fichier de config et le script bash de construction :
     - [`build_db_files.conf.dist`](build_db_files.conf.dist) (à adpater puis à renommer en `.conf`)
@@ -55,7 +55,7 @@ Une fois le script bash exécuté, vous devriez vous retrouver avec 3 scripts SQ
 À présent, tout est prêt pour lancer la création de la base de données.
 
 
-## Création de la base de données `sygal` et de l'utilisateur `ad_sygal`
+## Création de la base de données `:dbname` et de l'utilisateur `:dbuser`
 
 - Lancer le script [`01_create_db_user.sql`](sql/01_create_db_user.sql) *en étant connecté en tant que 
   super-utilisateur*, exemple :
@@ -70,7 +70,7 @@ PGPASSWORD=admin \
 psql -f sql/01_create_db_user.sql
 ```
 
-Ce 1er script SQL crée la base de données `sygal` et l'utilisateur `ad_sygal`. 
+Ce 1er script SQL crée la base de données `:dbname` et l'utilisateur `:dbuser`. 
 
 **Attention, l'utilisateur est créé avec un mot de passe par défaut** donc vous devez le modifier en faisant un 
 truc du genre :
@@ -80,13 +80,13 @@ PGPORT=5432 \
 PGDATABASE=postgres \
 PGUSER=postgres \
 PGPASSWORD=admin \
-psql -c "alter user ad_sygal with encrypted password 'VRAI_MOT_DE_PASSE'"
+psql -c "alter user :dbuser with encrypted password 'VRAI_MOT_DE_PASSE'"
 ```
 
 
 ## Création des objets et insertion des données de fonctionnement
 
-*Les scripts suivants doivent être lancés en étant connecté à la base `sygal` avec le user `ad_sygal`
+*Les scripts suivants doivent être lancés en étant connecté à la base `:dbname` avec le user `:dbuser`
 créés à l'étape précédente (et non plus avec l'utilisateur `postgres`).*
 
 Pour cela, exportez les variables d'environnement PostgreSQL comme suit :
@@ -95,8 +95,8 @@ export \
 ON_ERROR_STOP=1 \
 PGHOST=localhost \
 PGPORT=5432 \
-PGDATABASE=sygal \
-PGUSER=ad_sygal \
+PGDATABASE=:dbname \
+PGUSER=:dbuser \
 PGPASSWORD=VRAI_MOT_DE_PASSE
 ```
 

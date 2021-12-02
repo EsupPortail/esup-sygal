@@ -52,7 +52,13 @@ La façon de procéder pour créer une base de données à partir des fichiers g
 
 ## Mise à jour éventuelle de la doc
 
-Copier les fichiers générés vers le répertoire contenant la documentation :
+Diff avec la doc actuelle, exemple :
+
+```bash
+meld /tmp/build/ ../../doc/database/
+```
+
+Copier les fichiers générés vers le répertoire contenant la documentation, exemple :
 
 ```bash
 cp -r /tmp/build/* ../../doc/database/

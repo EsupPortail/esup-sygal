@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 9.6.11
--- Dumped by pg_dump version 13.3 (Ubuntu 13.3-1.pgdg20.04+1)
+-- Dumped by pg_dump version 14.1 (Ubuntu 14.1-2.pgdg20.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -31,7 +31,7 @@ COMMENT ON EXTENSION unaccent IS 'text search dictionary that removes accents';
 
 
 --
--- Name: comprise_entre(timestamp without time zone, timestamp without time zone, timestamp without time zone, numeric); Type: FUNCTION; Schema: public; Owner: ad_sygal
+-- Name: comprise_entre(timestamp without time zone, timestamp without time zone, timestamp without time zone, numeric); Type: FUNCTION; Schema: public; Owner: :dbuser
 --
 
 CREATE FUNCTION public.comprise_entre(date_debut timestamp without time zone, date_fin timestamp without time zone, date_obs timestamp without time zone DEFAULT NULL::timestamp without time zone, inclusif numeric DEFAULT 0) RETURNS numeric
@@ -69,30 +69,36 @@ END;
 $$;
 
 
-ALTER FUNCTION public.comprise_entre(date_debut timestamp without time zone, date_fin timestamp without time zone, date_obs timestamp without time zone, inclusif numeric) OWNER TO ad_sygal;
+ALTER FUNCTION public.comprise_entre(date_debut timestamp without time zone, date_fin timestamp without time zone, date_obs timestamp without time zone, inclusif numeric) OWNER TO :dbuser;
 
 --
--- Name: individu_haystack(text, text, text, text, text); Type: FUNCTION; Schema: public; Owner: ad_sygal
+-- Name: individu_haystack(text, text, text, text, text); Type: FUNCTION; Schema: public; Owner: :dbuser
 --
 
 CREATE FUNCTION public.individu_haystack(nom_usuel text, nom_patronymique text, prenom1 text, email text, source_code text) RETURNS character varying
     LANGUAGE plpgsql STABLE SECURITY DEFINER
     AS $$
 BEGIN
-    return trim(both str_reduce(
-                NOM_USUEL || ' ' || PRENOM1 || ' ' || NOM_PATRONYMIQUE || ' ' || PRENOM1 || ' ' ||
-                PRENOM1 || ' ' || NOM_USUEL || ' ' || PRENOM1 || ' ' || NOM_PATRONYMIQUE || ' ' ||
-                EMAIL || ' ' ||
-                SOURCE_CODE
+    return trim(str_reduce(
+                                                                                    coalesce(NOM_USUEL, '') || ' ' ||
+                                                                                    coalesce(PRENOM1, '') || ' ' ||
+                                                                                    coalesce(NOM_PATRONYMIQUE, '') || ' ' ||
+                                                                                    coalesce(PRENOM1, '') || ' ' ||
+                                                                                    coalesce(PRENOM1, '') || ' ' ||
+                                                                                    coalesce(NOM_USUEL, '') || ' ' ||
+                                                                                    coalesce(PRENOM1, '') || ' ' ||
+                                                                                    coalesce(NOM_PATRONYMIQUE, '') || ' ' ||
+                                                                                    coalesce(EMAIL, '') || ' ' ||
+                                                                                    coalesce(SOURCE_CODE, '')
         ));
 END;
 $$;
 
 
-ALTER FUNCTION public.individu_haystack(nom_usuel text, nom_patronymique text, prenom1 text, email text, source_code text) OWNER TO ad_sygal;
+ALTER FUNCTION public.individu_haystack(nom_usuel text, nom_patronymique text, prenom1 text, email text, source_code text) OWNER TO :dbuser;
 
 --
--- Name: str_reduce(text); Type: FUNCTION; Schema: public; Owner: ad_sygal
+-- Name: str_reduce(text); Type: FUNCTION; Schema: public; Owner: :dbuser
 --
 
 CREATE FUNCTION public.str_reduce(str text) RETURNS text
@@ -106,10 +112,10 @@ END;
 $$;
 
 
-ALTER FUNCTION public.str_reduce(str text) OWNER TO ad_sygal;
+ALTER FUNCTION public.str_reduce(str text) OWNER TO :dbuser;
 
 --
--- Name: trigger_fct_individu_rech_update(); Type: FUNCTION; Schema: public; Owner: ad_sygal
+-- Name: trigger_fct_individu_rech_update(); Type: FUNCTION; Schema: public; Owner: :dbuser
 --
 
 CREATE FUNCTION public.trigger_fct_individu_rech_update() RETURNS trigger
@@ -139,12 +145,12 @@ END
 $$;
 
 
-ALTER FUNCTION public.trigger_fct_individu_rech_update() OWNER TO ad_sygal;
+ALTER FUNCTION public.trigger_fct_individu_rech_update() OWNER TO :dbuser;
 
 SET default_tablespace = '';
 
 --
--- Name: acteur; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: acteur; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.acteur (
@@ -166,10 +172,10 @@ CREATE TABLE public.acteur (
 );
 
 
-ALTER TABLE public.acteur OWNER TO ad_sygal;
+ALTER TABLE public.acteur OWNER TO :dbuser;
 
 --
--- Name: acteur_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: acteur_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.acteur_id_seq
@@ -180,10 +186,10 @@ CREATE SEQUENCE public.acteur_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.acteur_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.acteur_id_seq OWNER TO :dbuser;
 
 --
--- Name: api_log; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: api_log; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.api_log (
@@ -198,17 +204,17 @@ CREATE TABLE public.api_log (
 );
 
 
-ALTER TABLE public.api_log OWNER TO ad_sygal;
+ALTER TABLE public.api_log OWNER TO :dbuser;
 
 --
--- Name: TABLE api_log; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: TABLE api_log; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON TABLE public.api_log IS 'Logs des appels aux API des établissements.';
 
 
 --
--- Name: api_log_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: api_log_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.api_log_id_seq
@@ -219,10 +225,10 @@ CREATE SEQUENCE public.api_log_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.api_log_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.api_log_id_seq OWNER TO :dbuser;
 
 --
--- Name: attestation; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: attestation; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.attestation (
@@ -241,10 +247,10 @@ CREATE TABLE public.attestation (
 );
 
 
-ALTER TABLE public.attestation OWNER TO ad_sygal;
+ALTER TABLE public.attestation OWNER TO :dbuser;
 
 --
--- Name: attestation_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: attestation_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.attestation_id_seq
@@ -255,10 +261,10 @@ CREATE SEQUENCE public.attestation_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.attestation_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.attestation_id_seq OWNER TO :dbuser;
 
 --
--- Name: categorie_privilege; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: categorie_privilege; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.categorie_privilege (
@@ -269,10 +275,10 @@ CREATE TABLE public.categorie_privilege (
 );
 
 
-ALTER TABLE public.categorie_privilege OWNER TO ad_sygal;
+ALTER TABLE public.categorie_privilege OWNER TO :dbuser;
 
 --
--- Name: categorie_privilege_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: categorie_privilege_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.categorie_privilege_id_seq
@@ -283,10 +289,10 @@ CREATE SEQUENCE public.categorie_privilege_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.categorie_privilege_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.categorie_privilege_id_seq OWNER TO :dbuser;
 
 --
--- Name: diffusion; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: diffusion; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.diffusion (
@@ -313,45 +319,45 @@ CREATE TABLE public.diffusion (
 );
 
 
-ALTER TABLE public.diffusion OWNER TO ad_sygal;
+ALTER TABLE public.diffusion OWNER TO :dbuser;
 
 --
--- Name: COLUMN diffusion.droit_auteur_ok; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: COLUMN diffusion.droit_auteur_ok; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON COLUMN public.diffusion.droit_auteur_ok IS 'Je garantis que tous les documents de la version mise en ligne sont libres de droits ou que j''ai acquis les droits afférents pour la reproduction et la représentation sur tous supports';
 
 
 --
--- Name: COLUMN diffusion.autoris_mel; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: COLUMN diffusion.autoris_mel; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON COLUMN public.diffusion.autoris_mel IS 'J''autorise la mise en ligne de la version de diffusion de la thèse sur Internet';
 
 
 --
--- Name: COLUMN diffusion.autoris_embargo_duree; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: COLUMN diffusion.autoris_embargo_duree; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON COLUMN public.diffusion.autoris_embargo_duree IS 'Durée de l''embargo éventuel';
 
 
 --
--- Name: COLUMN diffusion.certif_charte_diff; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: COLUMN diffusion.certif_charte_diff; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON COLUMN public.diffusion.certif_charte_diff IS 'En cochant cette case, je certifie avoir pris connaissance de la charte de diffusion des thèses en vigueur à la date de signature de la convention de mise en ligne';
 
 
 --
--- Name: COLUMN diffusion.confident; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: COLUMN diffusion.confident; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON COLUMN public.diffusion.confident IS 'La thèse est-elle confidentielle ?';
 
 
 --
--- Name: diffusion_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: diffusion_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.diffusion_id_seq
@@ -362,10 +368,10 @@ CREATE SEQUENCE public.diffusion_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.diffusion_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.diffusion_id_seq OWNER TO :dbuser;
 
 --
--- Name: doctorant; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: doctorant; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.doctorant (
@@ -384,17 +390,17 @@ CREATE TABLE public.doctorant (
 );
 
 
-ALTER TABLE public.doctorant OWNER TO ad_sygal;
+ALTER TABLE public.doctorant OWNER TO :dbuser;
 
 --
--- Name: TABLE doctorant; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: TABLE doctorant; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON TABLE public.doctorant IS 'Doctorant par établissement.';
 
 
 --
--- Name: doctorant_compl; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: doctorant_compl; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.doctorant_compl (
@@ -411,10 +417,10 @@ CREATE TABLE public.doctorant_compl (
 );
 
 
-ALTER TABLE public.doctorant_compl OWNER TO ad_sygal;
+ALTER TABLE public.doctorant_compl OWNER TO :dbuser;
 
 --
--- Name: doctorant_compl_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: doctorant_compl_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.doctorant_compl_id_seq
@@ -425,10 +431,10 @@ CREATE SEQUENCE public.doctorant_compl_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.doctorant_compl_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.doctorant_compl_id_seq OWNER TO :dbuser;
 
 --
--- Name: doctorant_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: doctorant_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.doctorant_id_seq
@@ -439,10 +445,10 @@ CREATE SEQUENCE public.doctorant_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.doctorant_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.doctorant_id_seq OWNER TO :dbuser;
 
 --
--- Name: domaine_scientifique; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: domaine_scientifique; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.domaine_scientifique (
@@ -451,10 +457,10 @@ CREATE TABLE public.domaine_scientifique (
 );
 
 
-ALTER TABLE public.domaine_scientifique OWNER TO ad_sygal;
+ALTER TABLE public.domaine_scientifique OWNER TO :dbuser;
 
 --
--- Name: domaine_scientifique_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: domaine_scientifique_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.domaine_scientifique_id_seq
@@ -465,10 +471,10 @@ CREATE SEQUENCE public.domaine_scientifique_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.domaine_scientifique_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.domaine_scientifique_id_seq OWNER TO :dbuser;
 
 --
--- Name: ecole_doct; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: ecole_doct; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.ecole_doct (
@@ -487,10 +493,10 @@ CREATE TABLE public.ecole_doct (
 );
 
 
-ALTER TABLE public.ecole_doct OWNER TO ad_sygal;
+ALTER TABLE public.ecole_doct OWNER TO :dbuser;
 
 --
--- Name: ecole_doct_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: ecole_doct_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.ecole_doct_id_seq
@@ -501,10 +507,10 @@ CREATE SEQUENCE public.ecole_doct_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.ecole_doct_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.ecole_doct_id_seq OWNER TO :dbuser;
 
 --
--- Name: etablissement; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: etablissement; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.etablissement (
@@ -528,17 +534,17 @@ CREATE TABLE public.etablissement (
 );
 
 
-ALTER TABLE public.etablissement OWNER TO ad_sygal;
+ALTER TABLE public.etablissement OWNER TO :dbuser;
 
 --
--- Name: COLUMN etablissement.domaine; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: COLUMN etablissement.domaine; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON COLUMN public.etablissement.domaine IS 'Domaine DNS de l''établissement tel que présent dans l''EPPN Shibboleth, ex: unicaen.fr.';
 
 
 --
--- Name: etablissement_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: etablissement_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.etablissement_id_seq
@@ -549,10 +555,10 @@ CREATE SEQUENCE public.etablissement_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.etablissement_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.etablissement_id_seq OWNER TO :dbuser;
 
 --
--- Name: etablissement_rattach; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: etablissement_rattach; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.etablissement_rattach (
@@ -562,10 +568,10 @@ CREATE TABLE public.etablissement_rattach (
 );
 
 
-ALTER TABLE public.etablissement_rattach OWNER TO ad_sygal;
+ALTER TABLE public.etablissement_rattach OWNER TO :dbuser;
 
 --
--- Name: etablissement_rattach_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: etablissement_rattach_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.etablissement_rattach_id_seq
@@ -576,10 +582,10 @@ CREATE SEQUENCE public.etablissement_rattach_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.etablissement_rattach_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.etablissement_rattach_id_seq OWNER TO :dbuser;
 
 --
--- Name: faq; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: faq; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.faq (
@@ -590,10 +596,10 @@ CREATE TABLE public.faq (
 );
 
 
-ALTER TABLE public.faq OWNER TO ad_sygal;
+ALTER TABLE public.faq OWNER TO :dbuser;
 
 --
--- Name: faq_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: faq_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.faq_id_seq
@@ -604,10 +610,10 @@ CREATE SEQUENCE public.faq_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.faq_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.faq_id_seq OWNER TO :dbuser;
 
 --
--- Name: fichier; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: fichier; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.fichier (
@@ -630,10 +636,10 @@ CREATE TABLE public.fichier (
 );
 
 
-ALTER TABLE public.fichier OWNER TO ad_sygal;
+ALTER TABLE public.fichier OWNER TO :dbuser;
 
 --
--- Name: fichier_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: fichier_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.fichier_id_seq
@@ -644,10 +650,10 @@ CREATE SEQUENCE public.fichier_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.fichier_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.fichier_id_seq OWNER TO :dbuser;
 
 --
--- Name: fichier_these; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: fichier_these; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.fichier_these (
@@ -662,10 +668,10 @@ CREATE TABLE public.fichier_these (
 );
 
 
-ALTER TABLE public.fichier_these OWNER TO ad_sygal;
+ALTER TABLE public.fichier_these OWNER TO :dbuser;
 
 --
--- Name: fichier_these_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: fichier_these_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.fichier_these_id_seq
@@ -676,10 +682,10 @@ CREATE SEQUENCE public.fichier_these_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.fichier_these_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.fichier_these_id_seq OWNER TO :dbuser;
 
 --
--- Name: financement; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: financement; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.financement (
@@ -704,10 +710,10 @@ CREATE TABLE public.financement (
 );
 
 
-ALTER TABLE public.financement OWNER TO ad_sygal;
+ALTER TABLE public.financement OWNER TO :dbuser;
 
 --
--- Name: financement_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: financement_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.financement_id_seq
@@ -718,10 +724,10 @@ CREATE SEQUENCE public.financement_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.financement_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.financement_id_seq OWNER TO :dbuser;
 
 --
--- Name: harp_to_octo; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: harp_to_octo; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.harp_to_octo (
@@ -730,10 +736,10 @@ CREATE TABLE public.harp_to_octo (
 );
 
 
-ALTER TABLE public.harp_to_octo OWNER TO ad_sygal;
+ALTER TABLE public.harp_to_octo OWNER TO :dbuser;
 
 --
--- Name: import_log; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: import_log; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.import_log (
@@ -742,14 +748,37 @@ CREATE TABLE public.import_log (
     success boolean NOT NULL,
     log text NOT NULL,
     started_on timestamp without time zone NOT NULL,
-    ended_on timestamp without time zone NOT NULL
+    ended_on timestamp without time zone NOT NULL,
+    import_hash character varying(64),
+    id bigint NOT NULL
 );
 
 
-ALTER TABLE public.import_log OWNER TO ad_sygal;
+ALTER TABLE public.import_log OWNER TO :dbuser;
 
 --
--- Name: import_notif; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: import_log_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.import_log_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.import_log_id_seq OWNER TO :dbuser;
+
+--
+-- Name: import_log_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.import_log_id_seq OWNED BY public.import_log.id;
+
+
+--
+-- Name: import_notif; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.import_notif (
@@ -763,10 +792,10 @@ CREATE TABLE public.import_notif (
 );
 
 
-ALTER TABLE public.import_notif OWNER TO ad_sygal;
+ALTER TABLE public.import_notif OWNER TO :dbuser;
 
 --
--- Name: import_notif_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: import_notif_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.import_notif_id_seq
@@ -777,10 +806,10 @@ CREATE SEQUENCE public.import_notif_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.import_notif_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.import_notif_id_seq OWNER TO :dbuser;
 
 --
--- Name: import_obs_notif; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: import_obs_notif; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.import_obs_notif (
@@ -790,10 +819,10 @@ CREATE TABLE public.import_obs_notif (
 );
 
 
-ALTER TABLE public.import_obs_notif OWNER TO ad_sygal;
+ALTER TABLE public.import_obs_notif OWNER TO :dbuser;
 
 --
--- Name: import_obs_result_notif; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: import_obs_result_notif; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.import_obs_result_notif (
@@ -803,10 +832,10 @@ CREATE TABLE public.import_obs_result_notif (
 );
 
 
-ALTER TABLE public.import_obs_result_notif OWNER TO ad_sygal;
+ALTER TABLE public.import_obs_result_notif OWNER TO :dbuser;
 
 --
--- Name: import_observ; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: import_observ; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.import_observ (
@@ -822,10 +851,10 @@ CREATE TABLE public.import_observ (
 );
 
 
-ALTER TABLE public.import_observ OWNER TO ad_sygal;
+ALTER TABLE public.import_observ OWNER TO :dbuser;
 
 --
--- Name: import_observ_etab_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: import_observ_etab_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.import_observ_etab_id_seq
@@ -836,10 +865,10 @@ CREATE SEQUENCE public.import_observ_etab_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.import_observ_etab_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.import_observ_etab_id_seq OWNER TO :dbuser;
 
 --
--- Name: import_observ_etab_resu_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: import_observ_etab_resu_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.import_observ_etab_resu_id_seq
@@ -850,10 +879,10 @@ CREATE SEQUENCE public.import_observ_etab_resu_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.import_observ_etab_resu_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.import_observ_etab_resu_id_seq OWNER TO :dbuser;
 
 --
--- Name: import_observ_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: import_observ_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.import_observ_id_seq
@@ -864,10 +893,10 @@ CREATE SEQUENCE public.import_observ_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.import_observ_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.import_observ_id_seq OWNER TO :dbuser;
 
 --
--- Name: import_observ_result; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: import_observ_result; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.import_observ_result (
@@ -882,10 +911,10 @@ CREATE TABLE public.import_observ_result (
 );
 
 
-ALTER TABLE public.import_observ_result OWNER TO ad_sygal;
+ALTER TABLE public.import_observ_result OWNER TO :dbuser;
 
 --
--- Name: import_observ_result_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: import_observ_result_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.import_observ_result_id_seq
@@ -896,10 +925,10 @@ CREATE SEQUENCE public.import_observ_result_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.import_observ_result_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.import_observ_result_id_seq OWNER TO :dbuser;
 
 --
--- Name: indicateur; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: indicateur; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.indicateur (
@@ -913,10 +942,10 @@ CREATE TABLE public.indicateur (
 );
 
 
-ALTER TABLE public.indicateur OWNER TO ad_sygal;
+ALTER TABLE public.indicateur OWNER TO :dbuser;
 
 --
--- Name: indicateur_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: indicateur_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.indicateur_id_seq
@@ -927,10 +956,10 @@ CREATE SEQUENCE public.indicateur_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.indicateur_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.indicateur_id_seq OWNER TO :dbuser;
 
 --
--- Name: individu; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: individu; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.individu (
@@ -959,10 +988,10 @@ CREATE TABLE public.individu (
 );
 
 
-ALTER TABLE public.individu OWNER TO ad_sygal;
+ALTER TABLE public.individu OWNER TO :dbuser;
 
 --
--- Name: individu_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: individu_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.individu_id_seq
@@ -973,10 +1002,10 @@ CREATE SEQUENCE public.individu_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.individu_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.individu_id_seq OWNER TO :dbuser;
 
 --
--- Name: individu_rech; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: individu_rech; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.individu_rech (
@@ -985,10 +1014,10 @@ CREATE TABLE public.individu_rech (
 );
 
 
-ALTER TABLE public.individu_rech OWNER TO ad_sygal;
+ALTER TABLE public.individu_rech OWNER TO :dbuser;
 
 --
--- Name: individu_role; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: individu_role; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.individu_role (
@@ -998,17 +1027,17 @@ CREATE TABLE public.individu_role (
 );
 
 
-ALTER TABLE public.individu_role OWNER TO ad_sygal;
+ALTER TABLE public.individu_role OWNER TO :dbuser;
 
 --
--- Name: TABLE individu_role; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: TABLE individu_role; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON TABLE public.individu_role IS 'Attributions à des individus de rôles sans lien avec une thèse en particulier, ex: bureau des doctorats.';
 
 
 --
--- Name: individu_role_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: individu_role_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.individu_role_id_seq
@@ -1019,41 +1048,10 @@ CREATE SEQUENCE public.individu_role_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.individu_role_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.individu_role_id_seq OWNER TO :dbuser;
 
 --
--- Name: individu_sav; Type: TABLE; Schema: public; Owner: ad_sygal
---
-
-CREATE TABLE public.individu_sav (
-    id bigint NOT NULL,
-    type character varying(32),
-    civilite character varying(5),
-    nom_usuel character varying(60) NOT NULL,
-    nom_patronymique character varying(60),
-    prenom1 character varying(60) NOT NULL,
-    prenom2 character varying(60),
-    prenom3 character varying(60),
-    email character varying(255),
-    date_naissance timestamp without time zone,
-    nationalite character varying(128),
-    source_code character varying(64) NOT NULL,
-    source_id bigint NOT NULL,
-    histo_createur_id bigint NOT NULL,
-    histo_creation timestamp without time zone NOT NULL,
-    histo_modificateur_id bigint,
-    histo_modification timestamp without time zone,
-    histo_destructeur_id bigint,
-    histo_destruction timestamp without time zone,
-    supann_id character varying(30),
-    etablissement_id bigint
-);
-
-
-ALTER TABLE public.individu_sav OWNER TO ad_sygal;
-
---
--- Name: information; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: information; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.information (
@@ -1072,10 +1070,10 @@ CREATE TABLE public.information (
 );
 
 
-ALTER TABLE public.information OWNER TO ad_sygal;
+ALTER TABLE public.information OWNER TO :dbuser;
 
 --
--- Name: information_fichier_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: information_fichier_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.information_fichier_id_seq
@@ -1086,25 +1084,10 @@ CREATE SEQUENCE public.information_fichier_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.information_fichier_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.information_fichier_id_seq OWNER TO :dbuser;
 
 --
--- Name: information_fichier_sav; Type: TABLE; Schema: public; Owner: ad_sygal
---
-
-CREATE TABLE public.information_fichier_sav (
-    id bigint NOT NULL,
-    nom character varying(256) NOT NULL,
-    createur bigint,
-    creation timestamp without time zone,
-    filename character varying(256) DEFAULT 'none-given'::character varying NOT NULL
-);
-
-
-ALTER TABLE public.information_fichier_sav OWNER TO ad_sygal;
-
---
--- Name: information_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: information_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.information_id_seq
@@ -1115,10 +1098,10 @@ CREATE SEQUENCE public.information_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.information_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.information_id_seq OWNER TO :dbuser;
 
 --
--- Name: information_langue; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: information_langue; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.information_langue (
@@ -1128,10 +1111,10 @@ CREATE TABLE public.information_langue (
 );
 
 
-ALTER TABLE public.information_langue OWNER TO ad_sygal;
+ALTER TABLE public.information_langue OWNER TO :dbuser;
 
 --
--- Name: liste_diff; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: liste_diff; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.liste_diff (
@@ -1147,10 +1130,10 @@ CREATE TABLE public.liste_diff (
 );
 
 
-ALTER TABLE public.liste_diff OWNER TO ad_sygal;
+ALTER TABLE public.liste_diff OWNER TO :dbuser;
 
 --
--- Name: liste_diff_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: liste_diff_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.liste_diff_id_seq
@@ -1161,10 +1144,10 @@ CREATE SEQUENCE public.liste_diff_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.liste_diff_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.liste_diff_id_seq OWNER TO :dbuser;
 
 --
--- Name: mail_confirmation; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: mail_confirmation; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.mail_confirmation (
@@ -1176,10 +1159,10 @@ CREATE TABLE public.mail_confirmation (
 );
 
 
-ALTER TABLE public.mail_confirmation OWNER TO ad_sygal;
+ALTER TABLE public.mail_confirmation OWNER TO :dbuser;
 
 --
--- Name: mail_confirmation_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: mail_confirmation_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.mail_confirmation_id_seq
@@ -1190,10 +1173,10 @@ CREATE SEQUENCE public.mail_confirmation_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.mail_confirmation_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.mail_confirmation_id_seq OWNER TO :dbuser;
 
 --
--- Name: metadonnee_these; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: metadonnee_these; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.metadonnee_these (
@@ -1210,10 +1193,10 @@ CREATE TABLE public.metadonnee_these (
 );
 
 
-ALTER TABLE public.metadonnee_these OWNER TO ad_sygal;
+ALTER TABLE public.metadonnee_these OWNER TO :dbuser;
 
 --
--- Name: metadonnee_these_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: metadonnee_these_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.metadonnee_these_id_seq
@@ -1224,10 +1207,10 @@ CREATE SEQUENCE public.metadonnee_these_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.metadonnee_these_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.metadonnee_these_id_seq OWNER TO :dbuser;
 
 --
--- Name: these; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: these; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.these (
@@ -1264,21 +1247,22 @@ CREATE TABLE public.these (
     correc_autorisee_forcee character varying(30),
     date_abandon timestamp without time zone,
     date_transfert timestamp without time zone,
-    correc_effectuee character varying(30) DEFAULT 'null'::character varying
+    correc_effectuee character varying(30) DEFAULT 'null'::character varying,
+    correc_date_butoir_avec_sursis date
 );
 
 
-ALTER TABLE public.these OWNER TO ad_sygal;
+ALTER TABLE public.these OWNER TO :dbuser;
 
 --
--- Name: TABLE these; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: TABLE these; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON TABLE public.these IS 'Thèses par établissement.';
 
 
 --
--- Name: these_annee_univ; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: these_annee_univ; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.these_annee_univ (
@@ -1296,10 +1280,10 @@ CREATE TABLE public.these_annee_univ (
 );
 
 
-ALTER TABLE public.these_annee_univ OWNER TO ad_sygal;
+ALTER TABLE public.these_annee_univ OWNER TO :dbuser;
 
 --
--- Name: type_validation; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: type_validation; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.type_validation (
@@ -1309,10 +1293,10 @@ CREATE TABLE public.type_validation (
 );
 
 
-ALTER TABLE public.type_validation OWNER TO ad_sygal;
+ALTER TABLE public.type_validation OWNER TO :dbuser;
 
 --
--- Name: validation; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: validation; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.validation (
@@ -1329,10 +1313,10 @@ CREATE TABLE public.validation (
 );
 
 
-ALTER TABLE public.validation OWNER TO ad_sygal;
+ALTER TABLE public.validation OWNER TO :dbuser;
 
 --
--- Name: nature_fichier; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: nature_fichier; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.nature_fichier (
@@ -1342,10 +1326,10 @@ CREATE TABLE public.nature_fichier (
 );
 
 
-ALTER TABLE public.nature_fichier OWNER TO ad_sygal;
+ALTER TABLE public.nature_fichier OWNER TO :dbuser;
 
 --
--- Name: structure; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: structure; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.structure (
@@ -1373,10 +1357,10 @@ CREATE TABLE public.structure (
 );
 
 
-ALTER TABLE public.structure OWNER TO ad_sygal;
+ALTER TABLE public.structure OWNER TO :dbuser;
 
 --
--- Name: unite_rech; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: unite_rech; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.unite_rech (
@@ -1396,10 +1380,29 @@ CREATE TABLE public.unite_rech (
 );
 
 
-ALTER TABLE public.unite_rech OWNER TO ad_sygal;
+ALTER TABLE public.unite_rech OWNER TO :dbuser;
 
 --
--- Name: role; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: structure_substit; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.structure_substit (
+    id bigint NOT NULL,
+    from_structure_id bigint NOT NULL,
+    to_structure_id bigint NOT NULL,
+    histo_creation timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
+    histo_modification timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
+    histo_destruction timestamp without time zone,
+    histo_createur_id bigint,
+    histo_modificateur_id bigint,
+    histo_destructeur_id bigint
+);
+
+
+ALTER TABLE public.structure_substit OWNER TO :dbuser;
+
+--
+-- Name: role; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.role (
@@ -1425,17 +1428,17 @@ CREATE TABLE public.role (
 );
 
 
-ALTER TABLE public.role OWNER TO ad_sygal;
+ALTER TABLE public.role OWNER TO :dbuser;
 
 --
--- Name: COLUMN role.ordre_affichage; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: COLUMN role.ordre_affichage; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON COLUMN public.role.ordre_affichage IS 'Chaîne de caractères utilisée pour trier les rôles ; l''astuce consiste à concaténer cette valeur aux autres critères de tri.';
 
 
 --
--- Name: mv_recherche_these; Type: MATERIALIZED VIEW; Schema: public; Owner: ad_sygal
+-- Name: mv_recherche_these; Type: MATERIALIZED VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE MATERIALIZED VIEW public.mv_recherche_these AS
@@ -1465,10 +1468,10 @@ CREATE MATERIALIZED VIEW public.mv_recherche_these AS
   WITH NO DATA;
 
 
-ALTER TABLE public.mv_recherche_these OWNER TO ad_sygal;
+ALTER TABLE public.mv_recherche_these OWNER TO :dbuser;
 
 --
--- Name: nature_fichier_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: nature_fichier_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.nature_fichier_id_seq
@@ -1479,10 +1482,10 @@ CREATE SEQUENCE public.nature_fichier_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.nature_fichier_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.nature_fichier_id_seq OWNER TO :dbuser;
 
 --
--- Name: notif; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: notif; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.notif (
@@ -1495,10 +1498,10 @@ CREATE TABLE public.notif (
 );
 
 
-ALTER TABLE public.notif OWNER TO ad_sygal;
+ALTER TABLE public.notif OWNER TO :dbuser;
 
 --
--- Name: notif_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: notif_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.notif_id_seq
@@ -1509,10 +1512,10 @@ CREATE SEQUENCE public.notif_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.notif_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.notif_id_seq OWNER TO :dbuser;
 
 --
--- Name: notif_mail; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: notif_mail; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.notif_mail (
@@ -1525,10 +1528,10 @@ CREATE TABLE public.notif_mail (
 );
 
 
-ALTER TABLE public.notif_mail OWNER TO ad_sygal;
+ALTER TABLE public.notif_mail OWNER TO :dbuser;
 
 --
--- Name: notif_mail_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: notif_mail_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.notif_mail_id_seq
@@ -1539,10 +1542,10 @@ CREATE SEQUENCE public.notif_mail_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.notif_mail_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.notif_mail_id_seq OWNER TO :dbuser;
 
 --
--- Name: notif_result; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: notif_result; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.notif_result (
@@ -1555,10 +1558,10 @@ CREATE TABLE public.notif_result (
 );
 
 
-ALTER TABLE public.notif_result OWNER TO ad_sygal;
+ALTER TABLE public.notif_result OWNER TO :dbuser;
 
 --
--- Name: notif_result_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: notif_result_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.notif_result_id_seq
@@ -1569,10 +1572,10 @@ CREATE SEQUENCE public.notif_result_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.notif_result_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.notif_result_id_seq OWNER TO :dbuser;
 
 --
--- Name: origine_financement; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: origine_financement; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.origine_financement (
@@ -1592,10 +1595,10 @@ CREATE TABLE public.origine_financement (
 );
 
 
-ALTER TABLE public.origine_financement OWNER TO ad_sygal;
+ALTER TABLE public.origine_financement OWNER TO :dbuser;
 
 --
--- Name: origine_financement_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: origine_financement_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.origine_financement_id_seq
@@ -1606,10 +1609,10 @@ CREATE SEQUENCE public.origine_financement_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.origine_financement_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.origine_financement_id_seq OWNER TO :dbuser;
 
 --
--- Name: parametre; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: parametre; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.parametre (
@@ -1619,10 +1622,10 @@ CREATE TABLE public.parametre (
 );
 
 
-ALTER TABLE public.parametre OWNER TO ad_sygal;
+ALTER TABLE public.parametre OWNER TO :dbuser;
 
 --
--- Name: privilege; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: privilege; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.privilege (
@@ -1634,10 +1637,10 @@ CREATE TABLE public.privilege (
 );
 
 
-ALTER TABLE public.privilege OWNER TO ad_sygal;
+ALTER TABLE public.privilege OWNER TO :dbuser;
 
 --
--- Name: privilege_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: privilege_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.privilege_id_seq
@@ -1648,10 +1651,10 @@ CREATE SEQUENCE public.privilege_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.privilege_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.privilege_id_seq OWNER TO :dbuser;
 
 --
--- Name: profil; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: profil; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.profil (
@@ -1664,10 +1667,10 @@ CREATE TABLE public.profil (
 );
 
 
-ALTER TABLE public.profil OWNER TO ad_sygal;
+ALTER TABLE public.profil OWNER TO :dbuser;
 
 --
--- Name: profil_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: profil_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.profil_id_seq
@@ -1678,10 +1681,10 @@ CREATE SEQUENCE public.profil_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.profil_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.profil_id_seq OWNER TO :dbuser;
 
 --
--- Name: profil_privilege; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: profil_privilege; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.profil_privilege (
@@ -1690,10 +1693,10 @@ CREATE TABLE public.profil_privilege (
 );
 
 
-ALTER TABLE public.profil_privilege OWNER TO ad_sygal;
+ALTER TABLE public.profil_privilege OWNER TO :dbuser;
 
 --
--- Name: profil_to_role; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: profil_to_role; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.profil_to_role (
@@ -1702,10 +1705,10 @@ CREATE TABLE public.profil_to_role (
 );
 
 
-ALTER TABLE public.profil_to_role OWNER TO ad_sygal;
+ALTER TABLE public.profil_to_role OWNER TO :dbuser;
 
 --
--- Name: rapport; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: rapport; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.rapport (
@@ -1724,10 +1727,10 @@ CREATE TABLE public.rapport (
 );
 
 
-ALTER TABLE public.rapport OWNER TO ad_sygal;
+ALTER TABLE public.rapport OWNER TO :dbuser;
 
 --
--- Name: rapport_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: rapport_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.rapport_id_seq
@@ -1738,10 +1741,10 @@ CREATE SEQUENCE public.rapport_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.rapport_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.rapport_id_seq OWNER TO :dbuser;
 
 --
--- Name: rapport_validation; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: rapport_validation; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.rapport_validation (
@@ -1758,10 +1761,10 @@ CREATE TABLE public.rapport_validation (
 );
 
 
-ALTER TABLE public.rapport_validation OWNER TO ad_sygal;
+ALTER TABLE public.rapport_validation OWNER TO :dbuser;
 
 --
--- Name: rapport_validation_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: rapport_validation_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.rapport_validation_id_seq
@@ -1772,10 +1775,10 @@ CREATE SEQUENCE public.rapport_validation_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.rapport_validation_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.rapport_validation_id_seq OWNER TO :dbuser;
 
 --
--- Name: rdv_bu; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: rdv_bu; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.rdv_bu (
@@ -1797,31 +1800,31 @@ CREATE TABLE public.rdv_bu (
 );
 
 
-ALTER TABLE public.rdv_bu OWNER TO ad_sygal;
+ALTER TABLE public.rdv_bu OWNER TO :dbuser;
 
 --
--- Name: COLUMN rdv_bu.convention_mel_signee; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: COLUMN rdv_bu.convention_mel_signee; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON COLUMN public.rdv_bu.convention_mel_signee IS 'Convention de mise en ligne signée ?';
 
 
 --
--- Name: COLUMN rdv_bu.exempl_papier_fourni; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: COLUMN rdv_bu.exempl_papier_fourni; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON COLUMN public.rdv_bu.exempl_papier_fourni IS 'Exemplaire papier remis ?';
 
 
 --
--- Name: COLUMN rdv_bu.version_archivable_fournie; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: COLUMN rdv_bu.version_archivable_fournie; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON COLUMN public.rdv_bu.version_archivable_fournie IS 'Témoin indiquant si une version archivable de la thèse existe';
 
 
 --
--- Name: rdv_bu_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: rdv_bu_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.rdv_bu_id_seq
@@ -1832,10 +1835,10 @@ CREATE SEQUENCE public.rdv_bu_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.rdv_bu_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.rdv_bu_id_seq OWNER TO :dbuser;
 
 --
--- Name: role_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: role_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.role_id_seq
@@ -1846,10 +1849,10 @@ CREATE SEQUENCE public.role_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.role_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.role_id_seq OWNER TO :dbuser;
 
 --
--- Name: role_privilege; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: role_privilege; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.role_privilege (
@@ -1858,10 +1861,10 @@ CREATE TABLE public.role_privilege (
 );
 
 
-ALTER TABLE public.role_privilege OWNER TO ad_sygal;
+ALTER TABLE public.role_privilege OWNER TO :dbuser;
 
 --
--- Name: source; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: source; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.source (
@@ -1873,17 +1876,17 @@ CREATE TABLE public.source (
 );
 
 
-ALTER TABLE public.source OWNER TO ad_sygal;
+ALTER TABLE public.source OWNER TO :dbuser;
 
 --
--- Name: TABLE source; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: TABLE source; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON TABLE public.source IS 'Sources de données, importables ou non, ex: Apogée, Physalis.';
 
 
 --
--- Name: soutenance_avis; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: soutenance_avis; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.soutenance_avis (
@@ -1903,10 +1906,10 @@ CREATE TABLE public.soutenance_avis (
 );
 
 
-ALTER TABLE public.soutenance_avis OWNER TO ad_sygal;
+ALTER TABLE public.soutenance_avis OWNER TO :dbuser;
 
 --
--- Name: soutenance_avis_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: soutenance_avis_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.soutenance_avis_id_seq
@@ -1917,10 +1920,10 @@ CREATE SEQUENCE public.soutenance_avis_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.soutenance_avis_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.soutenance_avis_id_seq OWNER TO :dbuser;
 
 --
--- Name: soutenance_configuration; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: soutenance_configuration; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.soutenance_configuration (
@@ -1931,10 +1934,10 @@ CREATE TABLE public.soutenance_configuration (
 );
 
 
-ALTER TABLE public.soutenance_configuration OWNER TO ad_sygal;
+ALTER TABLE public.soutenance_configuration OWNER TO :dbuser;
 
 --
--- Name: soutenance_etat; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: soutenance_etat; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.soutenance_etat (
@@ -1950,10 +1953,10 @@ CREATE TABLE public.soutenance_etat (
 );
 
 
-ALTER TABLE public.soutenance_etat OWNER TO ad_sygal;
+ALTER TABLE public.soutenance_etat OWNER TO :dbuser;
 
 --
--- Name: soutenance_etat_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: soutenance_etat_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.soutenance_etat_id_seq
@@ -1964,10 +1967,45 @@ CREATE SEQUENCE public.soutenance_etat_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.soutenance_etat_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.soutenance_etat_id_seq OWNER TO :dbuser;
 
 --
--- Name: soutenance_intervention; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: soutenance_evenement; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.soutenance_evenement (
+    id integer NOT NULL,
+    proposition_id integer NOT NULL,
+    type_id integer NOT NULL,
+    date_event timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.soutenance_evenement OWNER TO :dbuser;
+
+--
+-- Name: soutenance_evenement_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.soutenance_evenement_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.soutenance_evenement_id_seq OWNER TO :dbuser;
+
+--
+-- Name: soutenance_evenement_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.soutenance_evenement_id_seq OWNED BY public.soutenance_evenement.id;
+
+
+--
+-- Name: soutenance_intervention; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.soutenance_intervention (
@@ -1983,10 +2021,10 @@ CREATE TABLE public.soutenance_intervention (
 );
 
 
-ALTER TABLE public.soutenance_intervention OWNER TO ad_sygal;
+ALTER TABLE public.soutenance_intervention OWNER TO :dbuser;
 
 --
--- Name: soutenance_intervention_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: soutenance_intervention_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.soutenance_intervention_id_seq
@@ -1997,10 +2035,10 @@ CREATE SEQUENCE public.soutenance_intervention_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.soutenance_intervention_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.soutenance_intervention_id_seq OWNER TO :dbuser;
 
 --
--- Name: soutenance_justificatif; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: soutenance_justificatif; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.soutenance_justificatif (
@@ -2017,10 +2055,10 @@ CREATE TABLE public.soutenance_justificatif (
 );
 
 
-ALTER TABLE public.soutenance_justificatif OWNER TO ad_sygal;
+ALTER TABLE public.soutenance_justificatif OWNER TO :dbuser;
 
 --
--- Name: soutenance_justificatif_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: soutenance_justificatif_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.soutenance_justificatif_id_seq
@@ -2031,10 +2069,10 @@ CREATE SEQUENCE public.soutenance_justificatif_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.soutenance_justificatif_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.soutenance_justificatif_id_seq OWNER TO :dbuser;
 
 --
--- Name: soutenance_membre; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: soutenance_membre; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.soutenance_membre (
@@ -2056,14 +2094,15 @@ CREATE TABLE public.soutenance_membre (
     histo_modificateur_id bigint NOT NULL,
     histo_destruction timestamp without time zone,
     histo_destructeur_id bigint,
-    clef character varying(64)
+    clef character varying(64),
+    adresse text
 );
 
 
-ALTER TABLE public.soutenance_membre OWNER TO ad_sygal;
+ALTER TABLE public.soutenance_membre OWNER TO :dbuser;
 
 --
--- Name: soutenance_membre_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: soutenance_membre_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.soutenance_membre_id_seq
@@ -2074,10 +2113,10 @@ CREATE SEQUENCE public.soutenance_membre_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.soutenance_membre_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.soutenance_membre_id_seq OWNER TO :dbuser;
 
 --
--- Name: soutenance_proposition; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: soutenance_proposition; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.soutenance_proposition (
@@ -2105,10 +2144,10 @@ CREATE TABLE public.soutenance_proposition (
 );
 
 
-ALTER TABLE public.soutenance_proposition OWNER TO ad_sygal;
+ALTER TABLE public.soutenance_proposition OWNER TO :dbuser;
 
 --
--- Name: soutenance_proposition_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: soutenance_proposition_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.soutenance_proposition_id_seq
@@ -2119,10 +2158,10 @@ CREATE SEQUENCE public.soutenance_proposition_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.soutenance_proposition_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.soutenance_proposition_id_seq OWNER TO :dbuser;
 
 --
--- Name: soutenance_qualite; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: soutenance_qualite; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.soutenance_qualite (
@@ -2141,10 +2180,10 @@ CREATE TABLE public.soutenance_qualite (
 );
 
 
-ALTER TABLE public.soutenance_qualite OWNER TO ad_sygal;
+ALTER TABLE public.soutenance_qualite OWNER TO :dbuser;
 
 --
--- Name: soutenance_qualite_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: soutenance_qualite_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.soutenance_qualite_id_seq
@@ -2155,10 +2194,10 @@ CREATE SEQUENCE public.soutenance_qualite_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.soutenance_qualite_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.soutenance_qualite_id_seq OWNER TO :dbuser;
 
 --
--- Name: soutenance_qualite_sup; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: soutenance_qualite_sup; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.soutenance_qualite_sup (
@@ -2174,10 +2213,10 @@ CREATE TABLE public.soutenance_qualite_sup (
 );
 
 
-ALTER TABLE public.soutenance_qualite_sup OWNER TO ad_sygal;
+ALTER TABLE public.soutenance_qualite_sup OWNER TO :dbuser;
 
 --
--- Name: soutenance_qualite_sup_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: soutenance_qualite_sup_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.soutenance_qualite_sup_id_seq
@@ -2188,29 +2227,10 @@ CREATE SEQUENCE public.soutenance_qualite_sup_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.soutenance_qualite_sup_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.soutenance_qualite_sup_id_seq OWNER TO :dbuser;
 
 --
--- Name: structure_substit; Type: TABLE; Schema: public; Owner: ad_sygal
---
-
-CREATE TABLE public.structure_substit (
-    id bigint NOT NULL,
-    from_structure_id bigint NOT NULL,
-    to_structure_id bigint NOT NULL,
-    histo_creation timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
-    histo_modification timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
-    histo_destruction timestamp without time zone,
-    histo_createur_id bigint,
-    histo_modificateur_id bigint,
-    histo_destructeur_id bigint
-);
-
-
-ALTER TABLE public.structure_substit OWNER TO ad_sygal;
-
---
--- Name: tmp_acteur; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: tmp_acteur; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.tmp_acteur (
@@ -2233,10 +2253,10 @@ CREATE TABLE public.tmp_acteur (
 );
 
 
-ALTER TABLE public.tmp_acteur OWNER TO ad_sygal;
+ALTER TABLE public.tmp_acteur OWNER TO :dbuser;
 
 --
--- Name: src_acteur; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: src_acteur; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.src_acteur AS
@@ -2297,10 +2317,10 @@ UNION ALL
      LEFT JOIN public.etablissement etab_substit ON ((etab_substit.structure_id = ss_ed.to_structure_id)));
 
 
-ALTER TABLE public.src_acteur OWNER TO ad_sygal;
+ALTER TABLE public.src_acteur OWNER TO :dbuser;
 
 --
--- Name: tmp_doctorant; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: tmp_doctorant; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.tmp_doctorant (
@@ -2315,10 +2335,10 @@ CREATE TABLE public.tmp_doctorant (
 );
 
 
-ALTER TABLE public.tmp_doctorant OWNER TO ad_sygal;
+ALTER TABLE public.tmp_doctorant OWNER TO :dbuser;
 
 --
--- Name: src_doctorant; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: src_doctorant; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.src_doctorant AS
@@ -2335,10 +2355,10 @@ CREATE VIEW public.src_doctorant AS
      JOIN public.individu i ON (((i.source_code)::text = (tmp.individu_id)::text)));
 
 
-ALTER TABLE public.src_doctorant OWNER TO ad_sygal;
+ALTER TABLE public.src_doctorant OWNER TO :dbuser;
 
 --
--- Name: tmp_ecole_doct; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: tmp_ecole_doct; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.tmp_ecole_doct (
@@ -2352,10 +2372,10 @@ CREATE TABLE public.tmp_ecole_doct (
 );
 
 
-ALTER TABLE public.tmp_ecole_doct OWNER TO ad_sygal;
+ALTER TABLE public.tmp_ecole_doct OWNER TO :dbuser;
 
 --
--- Name: src_ecole_doct; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: src_ecole_doct; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.src_ecole_doct AS
@@ -2368,10 +2388,10 @@ CREATE VIEW public.src_ecole_doct AS
      JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)));
 
 
-ALTER TABLE public.src_ecole_doct OWNER TO ad_sygal;
+ALTER TABLE public.src_ecole_doct OWNER TO :dbuser;
 
 --
--- Name: tmp_etablissement; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: tmp_etablissement; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.tmp_etablissement (
@@ -2385,10 +2405,10 @@ CREATE TABLE public.tmp_etablissement (
 );
 
 
-ALTER TABLE public.tmp_etablissement OWNER TO ad_sygal;
+ALTER TABLE public.tmp_etablissement OWNER TO :dbuser;
 
 --
--- Name: src_etablissement; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: src_etablissement; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.src_etablissement AS
@@ -2402,10 +2422,10 @@ CREATE VIEW public.src_etablissement AS
      JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)));
 
 
-ALTER TABLE public.src_etablissement OWNER TO ad_sygal;
+ALTER TABLE public.src_etablissement OWNER TO :dbuser;
 
 --
--- Name: tmp_financement; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: tmp_financement; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.tmp_financement (
@@ -2427,10 +2447,10 @@ CREATE TABLE public.tmp_financement (
 );
 
 
-ALTER TABLE public.tmp_financement OWNER TO ad_sygal;
+ALTER TABLE public.tmp_financement OWNER TO :dbuser;
 
 --
--- Name: src_financement; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: src_financement; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.src_financement AS
@@ -2452,10 +2472,10 @@ CREATE VIEW public.src_financement AS
      JOIN public.origine_financement ofi ON (((ofi.source_code)::text = (tmp.origine_financement_id)::text)));
 
 
-ALTER TABLE public.src_financement OWNER TO ad_sygal;
+ALTER TABLE public.src_financement OWNER TO :dbuser;
 
 --
--- Name: tmp_individu; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: tmp_individu; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.tmp_individu (
@@ -2479,10 +2499,10 @@ CREATE TABLE public.tmp_individu (
 );
 
 
-ALTER TABLE public.tmp_individu OWNER TO ad_sygal;
+ALTER TABLE public.tmp_individu OWNER TO :dbuser;
 
 --
--- Name: src_individu; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: src_individu; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.src_individu AS
@@ -2504,10 +2524,10 @@ CREATE VIEW public.src_individu AS
      JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)));
 
 
-ALTER TABLE public.src_individu OWNER TO ad_sygal;
+ALTER TABLE public.src_individu OWNER TO :dbuser;
 
 --
--- Name: tmp_origine_financement; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: tmp_origine_financement; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.tmp_origine_financement (
@@ -2523,10 +2543,10 @@ CREATE TABLE public.tmp_origine_financement (
 );
 
 
-ALTER TABLE public.tmp_origine_financement OWNER TO ad_sygal;
+ALTER TABLE public.tmp_origine_financement OWNER TO :dbuser;
 
 --
--- Name: src_origine_financement; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: src_origine_financement; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.src_origine_financement AS
@@ -2540,10 +2560,10 @@ CREATE VIEW public.src_origine_financement AS
      JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)));
 
 
-ALTER TABLE public.src_origine_financement OWNER TO ad_sygal;
+ALTER TABLE public.src_origine_financement OWNER TO :dbuser;
 
 --
--- Name: tmp_role; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: tmp_role; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.tmp_role (
@@ -2558,10 +2578,10 @@ CREATE TABLE public.tmp_role (
 );
 
 
-ALTER TABLE public.tmp_role OWNER TO ad_sygal;
+ALTER TABLE public.tmp_role OWNER TO :dbuser;
 
 --
--- Name: src_role; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: src_role; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.src_role AS
@@ -2571,7 +2591,7 @@ CREATE VIEW public.src_role AS
     tmp.lib_roj AS libelle,
     tmp.id AS code,
     (((tmp.lib_roj)::text || ' '::text) || (s.code)::text) AS role_id,
-    1 AS these_dep,
+    true AS these_dep,
     s.id AS structure_id,
     NULL::bigint AS type_structure_dependant_id
    FROM (((public.tmp_role tmp
@@ -2580,10 +2600,10 @@ CREATE VIEW public.src_role AS
      JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)));
 
 
-ALTER TABLE public.src_role OWNER TO ad_sygal;
+ALTER TABLE public.src_role OWNER TO :dbuser;
 
 --
--- Name: tmp_structure; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: tmp_structure; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.tmp_structure (
@@ -2602,10 +2622,10 @@ CREATE TABLE public.tmp_structure (
 );
 
 
-ALTER TABLE public.tmp_structure OWNER TO ad_sygal;
+ALTER TABLE public.tmp_structure OWNER TO :dbuser;
 
 --
--- Name: type_structure; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: type_structure; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.type_structure (
@@ -2615,10 +2635,10 @@ CREATE TABLE public.type_structure (
 );
 
 
-ALTER TABLE public.type_structure OWNER TO ad_sygal;
+ALTER TABLE public.type_structure OWNER TO :dbuser;
 
 --
--- Name: src_structure; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: src_structure; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.src_structure AS
@@ -2634,10 +2654,10 @@ CREATE VIEW public.src_structure AS
      JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)));
 
 
-ALTER TABLE public.src_structure OWNER TO ad_sygal;
+ALTER TABLE public.src_structure OWNER TO :dbuser;
 
 --
--- Name: tmp_these; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: tmp_these; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.tmp_these (
@@ -2671,10 +2691,10 @@ CREATE TABLE public.tmp_these (
 );
 
 
-ALTER TABLE public.tmp_these OWNER TO ad_sygal;
+ALTER TABLE public.tmp_these OWNER TO :dbuser;
 
 --
--- Name: src_these; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: src_these; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.src_these AS
@@ -2715,10 +2735,10 @@ CREATE VIEW public.src_these AS
      LEFT JOIN public.unite_rech ur_substit ON ((ur_substit.structure_id = ss_ur.to_structure_id)));
 
 
-ALTER TABLE public.src_these OWNER TO ad_sygal;
+ALTER TABLE public.src_these OWNER TO :dbuser;
 
 --
--- Name: tmp_these_annee_univ; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: tmp_these_annee_univ; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.tmp_these_annee_univ (
@@ -2733,10 +2753,10 @@ CREATE TABLE public.tmp_these_annee_univ (
 );
 
 
-ALTER TABLE public.tmp_these_annee_univ OWNER TO ad_sygal;
+ALTER TABLE public.tmp_these_annee_univ OWNER TO :dbuser;
 
 --
--- Name: src_these_annee_univ; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: src_these_annee_univ; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.src_these_annee_univ AS
@@ -2752,10 +2772,10 @@ CREATE VIEW public.src_these_annee_univ AS
      JOIN public.these t ON (((t.source_code)::text = (tmp.these_id)::text)));
 
 
-ALTER TABLE public.src_these_annee_univ OWNER TO ad_sygal;
+ALTER TABLE public.src_these_annee_univ OWNER TO :dbuser;
 
 --
--- Name: tmp_titre_acces; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: tmp_titre_acces; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.tmp_titre_acces (
@@ -2775,10 +2795,10 @@ CREATE TABLE public.tmp_titre_acces (
 );
 
 
-ALTER TABLE public.tmp_titre_acces OWNER TO ad_sygal;
+ALTER TABLE public.tmp_titre_acces OWNER TO :dbuser;
 
 --
--- Name: src_titre_acces; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: src_titre_acces; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.src_titre_acces AS
@@ -2799,10 +2819,10 @@ CREATE VIEW public.src_titre_acces AS
      JOIN public.these t ON (((t.source_code)::text = (tmp.these_id)::text)));
 
 
-ALTER TABLE public.src_titre_acces OWNER TO ad_sygal;
+ALTER TABLE public.src_titre_acces OWNER TO :dbuser;
 
 --
--- Name: tmp_unite_rech; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: tmp_unite_rech; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.tmp_unite_rech (
@@ -2816,10 +2836,10 @@ CREATE TABLE public.tmp_unite_rech (
 );
 
 
-ALTER TABLE public.tmp_unite_rech OWNER TO ad_sygal;
+ALTER TABLE public.tmp_unite_rech OWNER TO :dbuser;
 
 --
--- Name: src_unite_rech; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: src_unite_rech; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.src_unite_rech AS
@@ -2832,10 +2852,10 @@ CREATE VIEW public.src_unite_rech AS
      JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)));
 
 
-ALTER TABLE public.src_unite_rech OWNER TO ad_sygal;
+ALTER TABLE public.src_unite_rech OWNER TO :dbuser;
 
 --
--- Name: tmp_variable; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: tmp_variable; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.tmp_variable (
@@ -2853,10 +2873,10 @@ CREATE TABLE public.tmp_variable (
 );
 
 
-ALTER TABLE public.tmp_variable OWNER TO ad_sygal;
+ALTER TABLE public.tmp_variable OWNER TO :dbuser;
 
 --
--- Name: src_variable; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: src_variable; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.src_variable AS
@@ -2875,10 +2895,10 @@ CREATE VIEW public.src_variable AS
      JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)));
 
 
-ALTER TABLE public.src_variable OWNER TO ad_sygal;
+ALTER TABLE public.src_variable OWNER TO :dbuser;
 
 --
--- Name: structure_document; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: structure_document; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.structure_document (
@@ -2896,10 +2916,10 @@ CREATE TABLE public.structure_document (
 );
 
 
-ALTER TABLE public.structure_document OWNER TO ad_sygal;
+ALTER TABLE public.structure_document OWNER TO :dbuser;
 
 --
--- Name: structure_document_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: structure_document_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.structure_document_id_seq
@@ -2910,10 +2930,10 @@ CREATE SEQUENCE public.structure_document_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.structure_document_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.structure_document_id_seq OWNER TO :dbuser;
 
 --
--- Name: structure_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: structure_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.structure_id_seq
@@ -2924,10 +2944,10 @@ CREATE SEQUENCE public.structure_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.structure_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.structure_id_seq OWNER TO :dbuser;
 
 --
--- Name: structure_substit_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: structure_substit_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.structure_substit_id_seq
@@ -2938,10 +2958,10 @@ CREATE SEQUENCE public.structure_substit_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.structure_substit_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.structure_substit_id_seq OWNER TO :dbuser;
 
 --
--- Name: sync_log; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: sync_log; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.sync_log (
@@ -2953,10 +2973,10 @@ CREATE TABLE public.sync_log (
 );
 
 
-ALTER TABLE public.sync_log OWNER TO ad_sygal;
+ALTER TABLE public.sync_log OWNER TO :dbuser;
 
 --
--- Name: sync_log_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: sync_log_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.sync_log_id_seq
@@ -2967,10 +2987,10 @@ CREATE SEQUENCE public.sync_log_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.sync_log_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.sync_log_id_seq OWNER TO :dbuser;
 
 --
--- Name: synchro_log; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: synchro_log; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.synchro_log (
@@ -2984,10 +3004,10 @@ CREATE TABLE public.synchro_log (
 );
 
 
-ALTER TABLE public.synchro_log OWNER TO ad_sygal;
+ALTER TABLE public.synchro_log OWNER TO :dbuser;
 
 --
--- Name: synchro_log_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: synchro_log_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.synchro_log_id_seq
@@ -2998,10 +3018,10 @@ CREATE SEQUENCE public.synchro_log_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.synchro_log_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.synchro_log_id_seq OWNER TO :dbuser;
 
 --
--- Name: these_annee_univ_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: these_annee_univ_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.these_annee_univ_id_seq
@@ -3012,10 +3032,10 @@ CREATE SEQUENCE public.these_annee_univ_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.these_annee_univ_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.these_annee_univ_id_seq OWNER TO :dbuser;
 
 --
--- Name: these_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: these_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.these_id_seq
@@ -3026,10 +3046,10 @@ CREATE SEQUENCE public.these_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.these_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.these_id_seq OWNER TO :dbuser;
 
 --
--- Name: titre_acces; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: titre_acces; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.titre_acces (
@@ -3052,10 +3072,10 @@ CREATE TABLE public.titre_acces (
 );
 
 
-ALTER TABLE public.titre_acces OWNER TO ad_sygal;
+ALTER TABLE public.titre_acces OWNER TO :dbuser;
 
 --
--- Name: titre_acces_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: titre_acces_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.titre_acces_id_seq
@@ -3066,10 +3086,10 @@ CREATE SEQUENCE public.titre_acces_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.titre_acces_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.titre_acces_id_seq OWNER TO :dbuser;
 
 --
--- Name: type_rapport; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: type_rapport; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.type_rapport (
@@ -3080,10 +3100,10 @@ CREATE TABLE public.type_rapport (
 );
 
 
-ALTER TABLE public.type_rapport OWNER TO ad_sygal;
+ALTER TABLE public.type_rapport OWNER TO :dbuser;
 
 --
--- Name: type_validation_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: type_validation_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.type_validation_id_seq
@@ -3094,10 +3114,10 @@ CREATE SEQUENCE public.type_validation_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.type_validation_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.type_validation_id_seq OWNER TO :dbuser;
 
 --
--- Name: unite_domaine_linker; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: unite_domaine_linker; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.unite_domaine_linker (
@@ -3106,10 +3126,10 @@ CREATE TABLE public.unite_domaine_linker (
 );
 
 
-ALTER TABLE public.unite_domaine_linker OWNER TO ad_sygal;
+ALTER TABLE public.unite_domaine_linker OWNER TO :dbuser;
 
 --
--- Name: unite_rech_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: unite_rech_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.unite_rech_id_seq
@@ -3120,10 +3140,10 @@ CREATE SEQUENCE public.unite_rech_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.unite_rech_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.unite_rech_id_seq OWNER TO :dbuser;
 
 --
--- Name: user_token; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: user_token; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.user_token (
@@ -3140,73 +3160,73 @@ CREATE TABLE public.user_token (
 );
 
 
-ALTER TABLE public.user_token OWNER TO ad_sygal;
+ALTER TABLE public.user_token OWNER TO :dbuser;
 
 --
--- Name: TABLE user_token; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: TABLE user_token; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON TABLE public.user_token IS 'Jetons d''authentification utilisateur';
 
 
 --
--- Name: COLUMN user_token.user_id; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: COLUMN user_token.user_id; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON COLUMN public.user_token.user_id IS 'Identifiant unique de l''utilisateur';
 
 
 --
--- Name: COLUMN user_token.token; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: COLUMN user_token.token; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON COLUMN public.user_token.token IS 'Le jeton !';
 
 
 --
--- Name: COLUMN user_token.action; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: COLUMN user_token.action; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON COLUMN public.user_token.action IS 'Spécification de l''action précise autorisée, le cas échéant';
 
 
 --
--- Name: COLUMN user_token.actions_count; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: COLUMN user_token.actions_count; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON COLUMN public.user_token.actions_count IS 'Nombre d''utilisation du jeton';
 
 
 --
--- Name: COLUMN user_token.actions_max_count; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: COLUMN user_token.actions_max_count; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON COLUMN public.user_token.actions_max_count IS 'Nombre maximum d''utilisations du jeton autorisée (0 = pas de limite)';
 
 
 --
--- Name: COLUMN user_token.created_on; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: COLUMN user_token.created_on; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON COLUMN public.user_token.created_on IS 'Date de création du jeton';
 
 
 --
--- Name: COLUMN user_token.expired_on; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: COLUMN user_token.expired_on; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON COLUMN public.user_token.expired_on IS 'Date d''expiration du jeton';
 
 
 --
--- Name: COLUMN user_token.last_used_on; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: COLUMN user_token.last_used_on; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON COLUMN public.user_token.last_used_on IS 'Date de dernière utilisation du jeton';
 
 
 --
--- Name: user_token_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: user_token_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.user_token_id_seq
@@ -3217,10 +3237,10 @@ CREATE SEQUENCE public.user_token_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.user_token_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.user_token_id_seq OWNER TO :dbuser;
 
 --
--- Name: utilisateur; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: utilisateur; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.utilisateur (
@@ -3237,17 +3257,17 @@ CREATE TABLE public.utilisateur (
 );
 
 
-ALTER TABLE public.utilisateur OWNER TO ad_sygal;
+ALTER TABLE public.utilisateur OWNER TO :dbuser;
 
 --
--- Name: TABLE utilisateur; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: TABLE utilisateur; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON TABLE public.utilisateur IS 'Comptes utilisateurs s''étant déjà connecté à l''application + comptes avec mot de passe local.';
 
 
 --
--- Name: utilisateur_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: utilisateur_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.utilisateur_id_seq
@@ -3258,10 +3278,10 @@ CREATE SEQUENCE public.utilisateur_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.utilisateur_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.utilisateur_id_seq OWNER TO :dbuser;
 
 --
--- Name: v_diff_acteur; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_diff_acteur; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_diff_acteur AS
@@ -3340,10 +3360,10 @@ CREATE VIEW public.v_diff_acteur AS
   WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((((diff.u_individu_id + diff.u_these_id) + diff.u_role_id) + diff.u_acteur_etablissement_id) + diff.u_qualite) + diff.u_lib_role_compl))));
 
 
-ALTER TABLE public.v_diff_acteur OWNER TO ad_sygal;
+ALTER TABLE public.v_diff_acteur OWNER TO :dbuser;
 
 --
--- Name: v_diff_doctorant; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_diff_doctorant; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_diff_doctorant AS
@@ -3395,10 +3415,10 @@ CREATE VIEW public.v_diff_doctorant AS
   WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((diff.u_ine + diff.u_individu_id) + diff.u_etablissement_id))));
 
 
-ALTER TABLE public.v_diff_doctorant OWNER TO ad_sygal;
+ALTER TABLE public.v_diff_doctorant OWNER TO :dbuser;
 
 --
--- Name: v_diff_ecole_doct; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_diff_ecole_doct; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_diff_ecole_doct AS
@@ -3432,10 +3452,10 @@ CREATE VIEW public.v_diff_ecole_doct AS
   WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < diff.u_structure_id)));
 
 
-ALTER TABLE public.v_diff_ecole_doct OWNER TO ad_sygal;
+ALTER TABLE public.v_diff_ecole_doct OWNER TO :dbuser;
 
 --
--- Name: v_diff_etablissement; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_diff_etablissement; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_diff_etablissement AS
@@ -3478,10 +3498,10 @@ CREATE VIEW public.v_diff_etablissement AS
   WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (diff.u_code + diff.u_structure_id))));
 
 
-ALTER TABLE public.v_diff_etablissement OWNER TO ad_sygal;
+ALTER TABLE public.v_diff_etablissement OWNER TO :dbuser;
 
 --
--- Name: v_diff_financement; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_diff_financement; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_diff_financement AS
@@ -3587,10 +3607,10 @@ CREATE VIEW public.v_diff_financement AS
   WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((((diff.u_these_id + diff.u_annee) + diff.u_origine_financement_id) + diff.u_complement_financement) + diff.u_quotite_financement) + diff.u_date_debut) + diff.u_date_fin) + diff.u_code_type_financement) + diff.u_libelle_type_financement))));
 
 
-ALTER TABLE public.v_diff_financement OWNER TO ad_sygal;
+ALTER TABLE public.v_diff_financement OWNER TO :dbuser;
 
 --
--- Name: v_diff_individu; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_diff_individu; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_diff_individu AS
@@ -3714,10 +3734,10 @@ CREATE VIEW public.v_diff_individu AS
   WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((((((diff.u_type + diff.u_supann_id) + diff.u_civilite) + diff.u_nom_usuel) + diff.u_nom_patronymique) + diff.u_prenom1) + diff.u_prenom2) + diff.u_prenom3) + diff.u_email) + diff.u_date_naissance) + diff.u_nationalite))));
 
 
-ALTER TABLE public.v_diff_individu OWNER TO ad_sygal;
+ALTER TABLE public.v_diff_individu OWNER TO :dbuser;
 
 --
--- Name: v_diff_origine_financement; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_diff_origine_financement; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_diff_origine_financement AS
@@ -3769,10 +3789,92 @@ CREATE VIEW public.v_diff_origine_financement AS
   WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((diff.u_code + diff.u_libelle_court) + diff.u_libelle_long))));
 
 
-ALTER TABLE public.v_diff_origine_financement OWNER TO ad_sygal;
+ALTER TABLE public.v_diff_origine_financement OWNER TO :dbuser;
 
 --
--- Name: v_diff_structure; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_diff_role; Type: VIEW; Schema: public; Owner: :dbuser
+--
+
+CREATE VIEW public.v_diff_role AS
+ WITH diff AS (
+         SELECT COALESCE(s.source_code, d.source_code) AS source_code,
+            COALESCE(s.source_id, d.source_id) AS source_id,
+                CASE
+                    WHEN ((s.source_code IS NOT NULL) AND (d.source_code IS NULL)) THEN 'insert'::text
+                    WHEN ((s.source_code IS NOT NULL) AND (d.source_code IS NOT NULL) AND ((d.histo_destruction IS NULL) OR (d.histo_destruction > ('now'::text)::timestamp(0) without time zone))) THEN 'update'::text
+                    WHEN ((s.source_code IS NOT NULL) AND (d.source_code IS NOT NULL) AND ((d.histo_destruction IS NOT NULL) AND (d.histo_destruction <= ('now'::text)::timestamp(0) without time zone))) THEN 'undelete'::text
+                    WHEN ((s.source_code IS NULL) AND (d.source_code IS NOT NULL) AND ((d.histo_destruction IS NULL) OR (d.histo_destruction > ('now'::text)::timestamp(0) without time zone))) THEN 'delete'::text
+                    ELSE NULL::text
+                END AS operation,
+                CASE
+                    WHEN (((d.libelle)::text <> (s.libelle)::text) OR ((d.libelle IS NULL) AND (s.libelle IS NOT NULL)) OR ((d.libelle IS NOT NULL) AND (s.libelle IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_libelle,
+                CASE
+                    WHEN (((d.code)::text <> (s.code)::text) OR ((d.code IS NULL) AND (s.code IS NOT NULL)) OR ((d.code IS NOT NULL) AND (s.code IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_code,
+                CASE
+                    WHEN (((d.role_id)::text <> s.role_id) OR ((d.role_id IS NULL) AND (s.role_id IS NOT NULL)) OR ((d.role_id IS NOT NULL) AND (s.role_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_role_id,
+                CASE
+                    WHEN ((d.these_dep <> s.these_dep) OR ((d.these_dep IS NULL) AND (s.these_dep IS NOT NULL)) OR ((d.these_dep IS NOT NULL) AND (s.these_dep IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_these_dep,
+                CASE
+                    WHEN ((d.structure_id <> s.structure_id) OR ((d.structure_id IS NULL) AND (s.structure_id IS NOT NULL)) OR ((d.structure_id IS NOT NULL) AND (s.structure_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_structure_id,
+                CASE
+                    WHEN ((d.type_structure_dependant_id <> s.type_structure_dependant_id) OR ((d.type_structure_dependant_id IS NULL) AND (s.type_structure_dependant_id IS NOT NULL)) OR ((d.type_structure_dependant_id IS NOT NULL) AND (s.type_structure_dependant_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_type_structure_dependant_id,
+            s.libelle AS s_libelle,
+            s.code AS s_code,
+            s.role_id AS s_role_id,
+            s.these_dep AS s_these_dep,
+            s.structure_id AS s_structure_id,
+            s.type_structure_dependant_id AS s_type_structure_dependant_id,
+            d.libelle AS d_libelle,
+            d.code AS d_code,
+            d.role_id AS d_role_id,
+            d.these_dep AS d_these_dep,
+            d.structure_id AS d_structure_id,
+            d.type_structure_dependant_id AS d_type_structure_dependant_id
+           FROM ((public.role d
+             JOIN public.source src ON (((src.id = d.source_id) AND (src.importable = true))))
+             FULL JOIN public.src_role s ON (((s.source_id = d.source_id) AND ((s.source_code)::text = (d.source_code)::text))))
+        )
+ SELECT diff.source_code,
+    diff.source_id,
+    diff.operation,
+    diff.u_libelle,
+    diff.u_code,
+    diff.u_role_id,
+    diff.u_these_dep,
+    diff.u_structure_id,
+    diff.u_type_structure_dependant_id,
+    diff.s_libelle,
+    diff.s_code,
+    diff.s_role_id,
+    diff.s_these_dep,
+    diff.s_structure_id,
+    diff.s_type_structure_dependant_id,
+    diff.d_libelle,
+    diff.d_code,
+    diff.d_role_id,
+    diff.d_these_dep,
+    diff.d_structure_id,
+    diff.d_type_structure_dependant_id
+   FROM diff
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((((diff.u_libelle + diff.u_code) + diff.u_role_id) + diff.u_these_dep) + diff.u_structure_id) + diff.u_type_structure_dependant_id))));
+
+
+ALTER TABLE public.v_diff_role OWNER TO :dbuser;
+
+--
+-- Name: v_diff_structure; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_diff_structure AS
@@ -3833,10 +3935,10 @@ CREATE VIEW public.v_diff_structure AS
   WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((diff.u_code + diff.u_type_structure_id) + diff.u_sigle) + diff.u_libelle))));
 
 
-ALTER TABLE public.v_diff_structure OWNER TO ad_sygal;
+ALTER TABLE public.v_diff_structure OWNER TO :dbuser;
 
 --
--- Name: v_diff_these; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_diff_these; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_diff_these AS
@@ -4050,10 +4152,10 @@ CREATE VIEW public.v_diff_these AS
   WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((((((((((((((((diff.u_etablissement_id + diff.u_doctorant_id) + diff.u_ecole_doct_id) + diff.u_unite_rech_id) + diff.u_titre) + diff.u_etat_these) + diff.u_resultat) + diff.u_lib_disc) + diff.u_date_prem_insc) + diff.u_date_prev_soutenance) + diff.u_date_soutenance) + diff.u_date_fin_confid) + diff.u_lib_etab_cotut) + diff.u_lib_pays_cotut) + diff.u_correc_autorisee) + diff.u_correc_effectuee) + diff.u_soutenance_autoris) + diff.u_date_autoris_soutenance) + diff.u_tem_avenant_cotut) + diff.u_date_abandon) + diff.u_date_transfert))));
 
 
-ALTER TABLE public.v_diff_these OWNER TO ad_sygal;
+ALTER TABLE public.v_diff_these OWNER TO :dbuser;
 
 --
--- Name: v_diff_these_annee_univ; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_diff_these_annee_univ; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_diff_these_annee_univ AS
@@ -4096,10 +4198,10 @@ CREATE VIEW public.v_diff_these_annee_univ AS
   WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (diff.u_these_id + diff.u_annee_univ))));
 
 
-ALTER TABLE public.v_diff_these_annee_univ OWNER TO ad_sygal;
+ALTER TABLE public.v_diff_these_annee_univ OWNER TO :dbuser;
 
 --
--- Name: v_diff_titre_acces; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_diff_titre_acces; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_diff_titre_acces AS
@@ -4187,10 +4289,10 @@ CREATE VIEW public.v_diff_titre_acces AS
   WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((diff.u_these_id + diff.u_titre_acces_interne_externe) + diff.u_libelle_titre_acces) + diff.u_type_etb_titre_acces) + diff.u_libelle_etb_titre_acces) + diff.u_code_dept_titre_acces) + diff.u_code_pays_titre_acces))));
 
 
-ALTER TABLE public.v_diff_titre_acces OWNER TO ad_sygal;
+ALTER TABLE public.v_diff_titre_acces OWNER TO :dbuser;
 
 --
--- Name: v_diff_unite_rech; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_diff_unite_rech; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_diff_unite_rech AS
@@ -4224,10 +4326,10 @@ CREATE VIEW public.v_diff_unite_rech AS
   WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < diff.u_structure_id)));
 
 
-ALTER TABLE public.v_diff_unite_rech OWNER TO ad_sygal;
+ALTER TABLE public.v_diff_unite_rech OWNER TO :dbuser;
 
 --
--- Name: variable; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: variable; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.variable (
@@ -4249,17 +4351,17 @@ CREATE TABLE public.variable (
 );
 
 
-ALTER TABLE public.variable OWNER TO ad_sygal;
+ALTER TABLE public.variable OWNER TO :dbuser;
 
 --
--- Name: TABLE variable; Type: COMMENT; Schema: public; Owner: ad_sygal
+-- Name: TABLE variable; Type: COMMENT; Schema: public; Owner: :dbuser
 --
 
 COMMENT ON TABLE public.variable IS 'Variables d''environnement concernant un établissement, ex: nom de l''établissement, nom du président, etc.';
 
 
 --
--- Name: v_diff_variable; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_diff_variable; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_diff_variable AS
@@ -4338,10 +4440,10 @@ CREATE VIEW public.v_diff_variable AS
   WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((((diff.u_etablissement_id + diff.u_code) + diff.u_description) + diff.u_valeur) + diff.u_date_deb_validite) + diff.u_date_fin_validite))));
 
 
-ALTER TABLE public.v_diff_variable OWNER TO ad_sygal;
+ALTER TABLE public.v_diff_variable OWNER TO :dbuser;
 
 --
--- Name: validite_fichier; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: validite_fichier; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.validite_fichier (
@@ -4359,10 +4461,10 @@ CREATE TABLE public.validite_fichier (
 );
 
 
-ALTER TABLE public.validite_fichier OWNER TO ad_sygal;
+ALTER TABLE public.validite_fichier OWNER TO :dbuser;
 
 --
--- Name: version_fichier; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: version_fichier; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.version_fichier (
@@ -4372,10 +4474,10 @@ CREATE TABLE public.version_fichier (
 );
 
 
-ALTER TABLE public.version_fichier OWNER TO ad_sygal;
+ALTER TABLE public.version_fichier OWNER TO :dbuser;
 
 --
--- Name: v_situ_archivab_va; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_archivab_va; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_archivab_va AS
@@ -4389,10 +4491,10 @@ CREATE VIEW public.v_situ_archivab_va AS
   WHERE ((ft.est_annexe = false) AND (ft.est_expurge = false));
 
 
-ALTER TABLE public.v_situ_archivab_va OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_archivab_va OWNER TO :dbuser;
 
 --
--- Name: v_situ_archivab_vac; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_archivab_vac; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_archivab_vac AS
@@ -4406,10 +4508,10 @@ CREATE VIEW public.v_situ_archivab_vac AS
   WHERE ((ft.est_annexe = false) AND (ft.est_expurge = false));
 
 
-ALTER TABLE public.v_situ_archivab_vac OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_archivab_vac OWNER TO :dbuser;
 
 --
--- Name: v_situ_archivab_vo; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_archivab_vo; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_archivab_vo AS
@@ -4422,10 +4524,10 @@ CREATE VIEW public.v_situ_archivab_vo AS
   WHERE ((ft.est_annexe = false) AND (ft.est_expurge = false));
 
 
-ALTER TABLE public.v_situ_archivab_vo OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_archivab_vo OWNER TO :dbuser;
 
 --
--- Name: v_situ_archivab_voc; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_archivab_voc; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_archivab_voc AS
@@ -4438,10 +4540,10 @@ CREATE VIEW public.v_situ_archivab_voc AS
   WHERE ((ft.est_annexe = false) AND (ft.est_expurge = false));
 
 
-ALTER TABLE public.v_situ_archivab_voc OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_archivab_voc OWNER TO :dbuser;
 
 --
--- Name: v_situ_attestations; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_attestations; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_attestations AS
@@ -4451,10 +4553,10 @@ CREATE VIEW public.v_situ_attestations AS
   WHERE ((a.version_corrigee = false) AND (a.histo_destructeur_id IS NULL));
 
 
-ALTER TABLE public.v_situ_attestations OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_attestations OWNER TO :dbuser;
 
 --
--- Name: v_situ_attestations_voc; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_attestations_voc; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_attestations_voc AS
@@ -4467,10 +4569,10 @@ CREATE VIEW public.v_situ_attestations_voc AS
   WHERE ((a.version_corrigee = true) AND (a.histo_destructeur_id IS NULL));
 
 
-ALTER TABLE public.v_situ_attestations_voc OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_attestations_voc OWNER TO :dbuser;
 
 --
--- Name: v_situ_autoris_diff_these; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_autoris_diff_these; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_autoris_diff_these AS
@@ -4480,10 +4582,10 @@ CREATE VIEW public.v_situ_autoris_diff_these AS
   WHERE ((d.version_corrigee = false) AND (d.histo_destructeur_id IS NULL));
 
 
-ALTER TABLE public.v_situ_autoris_diff_these OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_autoris_diff_these OWNER TO :dbuser;
 
 --
--- Name: v_situ_autoris_diff_these_voc; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_autoris_diff_these_voc; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_autoris_diff_these_voc AS
@@ -4496,10 +4598,10 @@ CREATE VIEW public.v_situ_autoris_diff_these_voc AS
   WHERE ((d.version_corrigee = true) AND (d.histo_destructeur_id IS NULL));
 
 
-ALTER TABLE public.v_situ_autoris_diff_these_voc OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_autoris_diff_these_voc OWNER TO :dbuser;
 
 --
--- Name: v_situ_depot_pv_sout; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_depot_pv_sout; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_depot_pv_sout AS
@@ -4510,10 +4612,10 @@ CREATE VIEW public.v_situ_depot_pv_sout AS
      JOIN public.nature_fichier nf ON (((f.nature_id = nf.id) AND ((nf.code)::text = 'PV_SOUTENANCE'::text))));
 
 
-ALTER TABLE public.v_situ_depot_pv_sout OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_depot_pv_sout OWNER TO :dbuser;
 
 --
--- Name: v_situ_depot_rapport_sout; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_depot_rapport_sout; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_depot_rapport_sout AS
@@ -4524,10 +4626,10 @@ CREATE VIEW public.v_situ_depot_rapport_sout AS
      JOIN public.nature_fichier nf ON (((f.nature_id = nf.id) AND ((nf.code)::text = 'RAPPORT_SOUTENANCE'::text))));
 
 
-ALTER TABLE public.v_situ_depot_rapport_sout OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_depot_rapport_sout OWNER TO :dbuser;
 
 --
--- Name: v_situ_depot_va; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_depot_va; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_depot_va AS
@@ -4540,10 +4642,10 @@ CREATE VIEW public.v_situ_depot_va AS
   WHERE ((ft.est_annexe = false) AND (ft.est_expurge = false));
 
 
-ALTER TABLE public.v_situ_depot_va OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_depot_va OWNER TO :dbuser;
 
 --
--- Name: v_situ_depot_vac; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_depot_vac; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_depot_vac AS
@@ -4556,10 +4658,10 @@ CREATE VIEW public.v_situ_depot_vac AS
   WHERE ((ft.est_annexe = false) AND (ft.est_expurge = false));
 
 
-ALTER TABLE public.v_situ_depot_vac OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_depot_vac OWNER TO :dbuser;
 
 --
--- Name: v_situ_depot_vc_valid_doct; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_depot_vc_valid_doct; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_depot_vc_valid_doct AS
@@ -4573,10 +4675,10 @@ CREATE VIEW public.v_situ_depot_vc_valid_doct AS
   WHERE (v.histo_destructeur_id IS NULL);
 
 
-ALTER TABLE public.v_situ_depot_vc_valid_doct OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_depot_vc_valid_doct OWNER TO :dbuser;
 
 --
--- Name: v_situ_depot_vc_valid_pres; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_depot_vc_valid_pres; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_depot_vc_valid_pres AS
@@ -4609,10 +4711,10 @@ CREATE VIEW public.v_situ_depot_vc_valid_pres AS
      LEFT JOIN validations_dt_existantes vdte ON (((vdte.these_id = va.these_id) AND (vdte.type_validation_id = va.type_validation_id))));
 
 
-ALTER TABLE public.v_situ_depot_vc_valid_pres OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_depot_vc_valid_pres OWNER TO :dbuser;
 
 --
--- Name: v_situ_depot_vc_valid_pres_new; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_depot_vc_valid_pres_new; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_depot_vc_valid_pres_new AS
@@ -4651,10 +4753,10 @@ CREATE VIEW public.v_situ_depot_vc_valid_pres_new AS
      LEFT JOIN public.validation v ON (((v.these_id = va.these_id) AND (v.individu_id = va.individu_id) AND (v.histo_destructeur_id IS NULL) AND (v.type_validation_id = va.type_validation_id))));
 
 
-ALTER TABLE public.v_situ_depot_vc_valid_pres_new OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_depot_vc_valid_pres_new OWNER TO :dbuser;
 
 --
--- Name: v_situ_depot_vo; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_depot_vo; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_depot_vo AS
@@ -4667,10 +4769,10 @@ CREATE VIEW public.v_situ_depot_vo AS
   WHERE ((ft.est_annexe = false) AND (ft.est_expurge = false) AND (ft.retraitement IS NULL));
 
 
-ALTER TABLE public.v_situ_depot_vo OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_depot_vo OWNER TO :dbuser;
 
 --
--- Name: v_situ_depot_voc; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_depot_voc; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_depot_voc AS
@@ -4683,10 +4785,10 @@ CREATE VIEW public.v_situ_depot_voc AS
   WHERE ((ft.est_annexe = false) AND (ft.est_expurge = false) AND (ft.retraitement IS NULL));
 
 
-ALTER TABLE public.v_situ_depot_voc OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_depot_voc OWNER TO :dbuser;
 
 --
--- Name: v_situ_rdv_bu_saisie_doct; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_rdv_bu_saisie_doct; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_rdv_bu_saisie_doct AS
@@ -4698,10 +4800,10 @@ CREATE VIEW public.v_situ_rdv_bu_saisie_doct AS
    FROM public.rdv_bu r;
 
 
-ALTER TABLE public.v_situ_rdv_bu_saisie_doct OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_rdv_bu_saisie_doct OWNER TO :dbuser;
 
 --
--- Name: v_situ_rdv_bu_validation_bu; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_rdv_bu_validation_bu; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_rdv_bu_validation_bu AS
@@ -4715,10 +4817,10 @@ CREATE VIEW public.v_situ_rdv_bu_validation_bu AS
   WHERE (v.histo_destructeur_id IS NULL);
 
 
-ALTER TABLE public.v_situ_rdv_bu_validation_bu OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_rdv_bu_validation_bu OWNER TO :dbuser;
 
 --
--- Name: v_situ_signalement_these; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_signalement_these; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_signalement_these AS
@@ -4727,10 +4829,10 @@ CREATE VIEW public.v_situ_signalement_these AS
    FROM public.metadonnee_these d;
 
 
-ALTER TABLE public.v_situ_signalement_these OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_signalement_these OWNER TO :dbuser;
 
 --
--- Name: v_situ_validation_page_couv; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_validation_page_couv; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_validation_page_couv AS
@@ -4744,10 +4846,10 @@ CREATE VIEW public.v_situ_validation_page_couv AS
   WHERE (v.histo_destructeur_id IS NULL);
 
 
-ALTER TABLE public.v_situ_validation_page_couv OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_validation_page_couv OWNER TO :dbuser;
 
 --
--- Name: v_situ_verif_va; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_verif_va; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_verif_va AS
@@ -4759,10 +4861,10 @@ CREATE VIEW public.v_situ_verif_va AS
   WHERE ((ft.est_annexe = false) AND (ft.est_expurge = false));
 
 
-ALTER TABLE public.v_situ_verif_va OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_verif_va OWNER TO :dbuser;
 
 --
--- Name: v_situ_verif_vac; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_verif_vac; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_verif_vac AS
@@ -4774,10 +4876,10 @@ CREATE VIEW public.v_situ_verif_vac AS
   WHERE ((ft.est_annexe = false) AND (ft.est_expurge = false));
 
 
-ALTER TABLE public.v_situ_verif_vac OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_verif_vac OWNER TO :dbuser;
 
 --
--- Name: v_situ_version_papier_corrigee; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_situ_version_papier_corrigee; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_situ_version_papier_corrigee AS
@@ -4788,10 +4890,10 @@ CREATE VIEW public.v_situ_version_papier_corrigee AS
   WHERE ((tv.code)::text = 'VERSION_PAPIER_CORRIGEE'::text);
 
 
-ALTER TABLE public.v_situ_version_papier_corrigee OWNER TO ad_sygal;
+ALTER TABLE public.v_situ_version_papier_corrigee OWNER TO :dbuser;
 
 --
--- Name: v_these_annee_univ_first; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_these_annee_univ_first; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_these_annee_univ_first AS
@@ -4814,10 +4916,10 @@ CREATE VIEW public.v_these_annee_univ_first AS
      JOIN firsts fi ON (((au.source_code)::text = (fi.source_code)::text)));
 
 
-ALTER TABLE public.v_these_annee_univ_first OWNER TO ad_sygal;
+ALTER TABLE public.v_these_annee_univ_first OWNER TO :dbuser;
 
 --
--- Name: v_tmp_anomalie; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_tmp_anomalie; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_tmp_anomalie AS
@@ -5527,10 +5629,10 @@ CREATE VIEW public.v_tmp_anomalie AS
    FROM ds;
 
 
-ALTER TABLE public.v_tmp_anomalie OWNER TO ad_sygal;
+ALTER TABLE public.v_tmp_anomalie OWNER TO :dbuser;
 
 --
--- Name: wf_etape; Type: TABLE; Schema: public; Owner: ad_sygal
+-- Name: wf_etape; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
 CREATE TABLE public.wf_etape (
@@ -5547,10 +5649,10 @@ CREATE TABLE public.wf_etape (
 );
 
 
-ALTER TABLE public.wf_etape OWNER TO ad_sygal;
+ALTER TABLE public.wf_etape OWNER TO :dbuser;
 
 --
--- Name: v_wf_etape_pertin; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_wf_etape_pertin; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_wf_etape_pertin AS
@@ -5763,10 +5865,10 @@ CREATE VIEW public.v_wf_etape_pertin AS
                   WHERE ((d.these_id = t.id) AND (d.version_corrigee = true) AND (d.autoris_mel = ANY (ARRAY[0, 1]))))))) alias38;
 
 
-ALTER TABLE public.v_wf_etape_pertin OWNER TO ad_sygal;
+ALTER TABLE public.v_wf_etape_pertin OWNER TO :dbuser;
 
 --
--- Name: v_workflow; Type: VIEW; Schema: public; Owner: ad_sygal
+-- Name: v_workflow; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.v_workflow AS
@@ -6157,10 +6259,10 @@ CREATE VIEW public.v_workflow AS
      JOIN public.v_wf_etape_pertin v ON ((((t.these_id)::numeric = v.these_id) AND ((t.etape_id)::numeric = v.etape_id))));
 
 
-ALTER TABLE public.v_workflow OWNER TO ad_sygal;
+ALTER TABLE public.v_workflow OWNER TO :dbuser;
 
 --
--- Name: validation_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: validation_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.validation_id_seq
@@ -6171,10 +6273,10 @@ CREATE SEQUENCE public.validation_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.validation_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.validation_id_seq OWNER TO :dbuser;
 
 --
--- Name: validite_fichier_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: validite_fichier_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.validite_fichier_id_seq
@@ -6185,10 +6287,10 @@ CREATE SEQUENCE public.validite_fichier_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.validite_fichier_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.validite_fichier_id_seq OWNER TO :dbuser;
 
 --
--- Name: variable_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: variable_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.variable_id_seq
@@ -6199,10 +6301,10 @@ CREATE SEQUENCE public.variable_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.variable_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.variable_id_seq OWNER TO :dbuser;
 
 --
--- Name: wf_etape_id_seq; Type: SEQUENCE; Schema: public; Owner: ad_sygal
+-- Name: wf_etape_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
 --
 
 CREATE SEQUENCE public.wf_etape_id_seq
@@ -6213,7 +6315,21 @@ CREATE SEQUENCE public.wf_etape_id_seq
     CACHE 20;
 
 
-ALTER TABLE public.wf_etape_id_seq OWNER TO ad_sygal;
+ALTER TABLE public.wf_etape_id_seq OWNER TO :dbuser;
+
+--
+-- Name: import_log id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.import_log ALTER COLUMN id SET DEFAULT nextval('public.import_log_id_seq'::regclass);
+
+
+--
+-- Name: soutenance_evenement id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.soutenance_evenement ALTER COLUMN id SET DEFAULT nextval('public.soutenance_evenement_id_seq'::regclass);
+
 
 --
 -- PostgreSQL database dump complete
