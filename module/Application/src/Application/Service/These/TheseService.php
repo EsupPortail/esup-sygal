@@ -544,16 +544,17 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         $pdcData->setAssocie(false);
         /** @var Acteur $directeur */
         foreach (array_merge($directeurs, $codirecteurs) as $directeur) {
-            if (!$directeur->getEtablissement()) {
-                throw new RuntimeException("Anomalie: le directeur de thèse '{$directeur}' n'a pas d'établissement.");
-            }
-            if ($directeur->getEtablissement()->estAssocie()) {
-                $pdcData->setAssocie(true);
-                $pdcData->setLogoAssocie($this->fileService->computeLogoFilePathForStructure($directeur->getEtablissement()));
-                $pdcData->setLibelleAssocie($directeur->getEtablissement()->getLibelle());
+            if ($directeur->getEtablissement()) {
+//                if (!$directeur->getEtablissement()) {
+//                    throw new RuntimeException("Anomalie: le directeur de thèse '{$directeur}' n'a pas d'établissement.");
+//                }
+                if ($directeur->getEtablissement()->estAssocie()) {
+                    $pdcData->setAssocie(true);
+                    $pdcData->setLogoAssocie($this->fileService->computeLogoFilePathForStructure($directeur->getEtablissement()));
+                    $pdcData->setLibelleAssocie($directeur->getEtablissement()->getLibelle());
+                }
             }
         }
-
 
         $acteursEnCouverture = array_merge($rapporteurs, $directeurs, $codirecteurs, $president, $membres);
         usort($acteursEnCouverture, Acteur::getComparisonFunction());
