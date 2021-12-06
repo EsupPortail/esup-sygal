@@ -36,7 +36,7 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Soutenance\Entity\Proposition;
-use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
+use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
@@ -61,7 +61,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
     use FileServiceAwareTrait;
     use AuthorizeServiceAwareTrait;
     use ActeurServiceAwareTrait;
-    use PropositionServiceAwareTrait;
+    use MembreServiceAwareTrait;
 
     /**
      * Resaisir l'autorisation de diffusion ? Sinon celle saisie au 1er dépôt est reprise/dupliquée.
@@ -123,7 +123,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
     /**
      * @return TheseRepository
      */
-    public function getRepository()
+    public function getRepository() : TheseRepository
     {
         /** @var TheseRepository $repo */
         $repo = $this->entityManager->getRepository(These::class);
@@ -461,7 +461,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
      * @param These $these
      * @return PdcData
      */
-    public function fetchInformationsPageDeCouverture(These $these)
+    public function fetchInformationsPageDeCouverture(These $these) : PdcData
     {
         $pdcData = new PdcData();
         $propositions = $these->getPropositions()->toArray();
@@ -472,7 +472,6 @@ class TheseService extends BaseService implements ListenerAggregateInterface
             $mois = (int) $these->getDateSoutenance()->format('m');
             $annee = (int) $these->getDateSoutenance()->format('Y');
 
-            $anneeUniversitaire = null;
             if ($mois > 9)  $anneeUniversitaire = $annee . "/" . ($annee + 1);
             else            $anneeUniversitaire = ($annee - 1) . "/" . $annee;
             $pdcData->setAnneeUniversitaire($anneeUniversitaire);
@@ -545,9 +544,6 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         /** @var Acteur $directeur */
         foreach (array_merge($directeurs, $codirecteurs) as $directeur) {
             if ($directeur->getEtablissement()) {
-//                if (!$directeur->getEtablissement()) {
-//                    throw new RuntimeException("Anomalie: le directeur de thèse '{$directeur}' n'a pas d'établissement.");
-//                }
                 if ($directeur->getEtablissement()->estAssocie()) {
                     $pdcData->setAssocie(true);
                     $pdcData->setLogoAssocie($this->fileService->computeLogoFilePathForStructure($directeur->getEtablissement()));
@@ -562,12 +558,17 @@ class TheseService extends BaseService implements ListenerAggregateInterface
 
         /** @var Acteur $acteur */
         foreach ($acteursEnCouverture as $acteur) {
+            $individu = $acteur->getIndividu();
+
+            $acteursLies = array_filter($these->getActeurs()->toArray(), function (Acteur $a) use ($individu) { return $a->getIndividu() === $individu;});
+
             $acteurData = new MembreData();
             $acteurData->setDenomination(strtoupper($acteur->getIndividu()->getNomComplet(true, false, false, true, true)));
             $acteurData->setQualite($acteur->getQualite());
 
             $estMembre = !empty(array_filter($jury, function (Acteur $a) use ($acteur) {return $a->getIndividu() === $acteur->getIndividu();}));
 
+            /** GESTION DES RÔLES SPÉCIAUX ****************************************************************************/
             if (!$acteur->estPresidentJury()) {
                 $acteurData->setRole($acteur->getRole()->getLibelle());
 
@@ -578,7 +579,27 @@ class TheseService extends BaseService implements ListenerAggregateInterface
             } else {
                 $acteurData->setRole(Role::LIBELLE_PRESIDENT);
             }
-            if ($acteur->getEtablissement()) $acteurData->setEtablissement($acteur->getEtablissement()->getStructure()->getLibelle());
+
+            foreach ($acteursLies as $acteurLie) {
+                if ($acteurLie->estCoEncadrant()) {
+                    if ($acteur->getIndividu()->estUneFemme()) $acteurData->setRole($acteurData->getRole() . "<br/> Co-encadrante");
+                    else $acteurData->setRole($acteurData->getRole() . "<br/> Co-encadrant");
+                    break;
+                }
+            }
+
+            /** GESTION DES ETABLISSEMENTS ****************************************************************************/
+            if ($acteur->getEtablissement()) {
+                $acteurData->setEtablissement($acteur->getEtablissement()->getStructure()->getLibelle());
+            } else {
+                foreach ($acteursLies as $acteurLie) {
+                    $membre = $this->getMembreService()->getMembreByActeur($acteurLie);
+                    if ($membre) {
+                        $acteurData->setEtablissement($membre->getEtablissement());
+                        break;
+                    }
+                }
+            }
 
             if ($estMembre) $pdcData->addActeurEnCouverture($acteurData);
         }

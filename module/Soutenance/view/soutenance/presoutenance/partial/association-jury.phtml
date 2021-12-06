@@ -66,22 +66,20 @@ $canAssocierMembreIndividu              = $this->isAllowed($these, Presoutenance
                     <td>    <?php echo ($membre->getActeur())?$membre->getActeur()->getId() .' '. $membre->getIndividu()->getNomComplet():''; ?>                  </td>
                     <td>
                         <?php if($canAssocierMembreIndividu): ?>
-                            <?php if ($membre->estRapporteur()) : ?>
-                                <?php if (! $membre->getActeur()): ?>
-                                    <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::associerJuryAction() */ ?>
-                                        href="<?php echo $this->url('soutenance/presoutenance/associer-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
-                                        class="ajax-modal"
-                                        data-event="modification-date-rendu-rapport"
-                                    >
-                                        <span class="glyphicon glyphicon-link" title="Associer un individu à un membre de jury"></span>
-                                    </a>
-                                <?php else: ?>
-                                    <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::deassocierJuryAction() */ ?>
-                                        href="<?php echo $this->url('soutenance/presoutenance/deassocier-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
-                                    >
-                                        <span class="glyphicon glyphicon-remove" title="Casser l'association d'un individu à un membre de jury"></span>
-                                    </a>
-                                <?php endif; ?>
+                            <?php if (! $membre->getActeur()): ?>
+                                <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::associerJuryAction() */ ?>
+                                    href="<?php echo $this->url('soutenance/presoutenance/associer-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
+                                    class="ajax-modal"
+                                    data-event="modification-date-rendu-rapport"
+                                >
+                                    <span class="glyphicon glyphicon-link" title="Associer un individu à un membre de jury"></span>
+                                </a>
+                            <?php else: ?>
+                                <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::deassocierJuryAction() */ ?>
+                                    href="<?php echo $this->url('soutenance/presoutenance/deassocier-jury', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
+                                >
+                                    <span class="glyphicon glyphicon-remove" title="Casser l'association d'un individu à un membre de jury"></span>
+                                </a>
                             <?php endif; ?>
                         <?php endif; ?>
                     </td>

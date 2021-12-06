@@ -7,6 +7,8 @@ Journal des modifications
 - Le manque de justificatifs de soutenances n'est plus bloquant il s'agit plus que d'un warning 
 - [FIX] Retrait de l'appel à un css inexistant
 - Filtrage des soutenances sans date dans la vue des soutenances pour les structures.
+- Ajout des mentions Co-encadrant/Co-encadrante sur la page de couverture
+- Complétion des données pour la page de couverture depuis le dossier de soutenance en cas de manque
 
 3.0.7
 ----- 
