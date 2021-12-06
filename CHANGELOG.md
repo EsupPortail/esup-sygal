@@ -9,6 +9,7 @@ Journal des modifications
 - Filtrage des soutenances sans date dans la vue des soutenances pour les structures.
 - Ajout des mentions Co-encadrant/Co-encadrante sur la page de couverture
 - Complétion des données pour la page de couverture depuis le dossier de soutenance en cas de manque
+- Ajout de la memtion de la date limite de rendu dans 
 
 3.0.7
 ----- 
