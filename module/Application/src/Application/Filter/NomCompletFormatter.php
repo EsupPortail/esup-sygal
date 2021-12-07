@@ -131,7 +131,11 @@ class NomCompletFormatter extends AbstractFilter
         if (! $this->patroPlutotQueUsuel) {
             if ($this->avecNomPatro && $nomPatro !== $nomUsuel) {
                 if ($this->court) {
-                    $result .= "-$nomPatro";
+                    $result = "";
+                    if ($this->avecCivilite) $result .= "$civilite";
+                    if ($this->prenomDabord) $result .= " $prenom";
+                    $result .= " $nomPatro-$nomUsuel";
+                    if (!$this->prenomDabord) $result .= " $prenom";
                 } else {
                     $result .= ", née $nomPatro";
                 }
