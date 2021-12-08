@@ -5,8 +5,11 @@ namespace Application;
 use Application\Event\UserAuthenticatedEventListener;
 use Application\Event\UserRoleSelectedEventListener;
 use Application\View\Helper\Navigation\MenuSecondaire;
+use UnicaenAuth\Authentication\Adapter\Ldap;
+use Zend\Authentication\Result;
 use Zend\Config\Factory as ConfigFactory;
 use Zend\Console\Adapter\AdapterInterface as Console;
+use Zend\EventManager\Event;
 use Zend\Http\Request as HttpRequest;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
@@ -66,6 +69,42 @@ class Module
         /* @var $nvh Navigation */
         $nvh = $vhm->get('Zend\View\Helper\Navigation');
         $nvh->getPluginManager()->setInvokableClass('menuSecondaire', MenuSecondaire::class);
+
+        $eventManager->getSharedManager()->attach(
+            "*",
+            Ldap::LDAP_AUTHENTIFICATION_FAIL,
+            [$this, "onLdapError"],
+            100
+        );
+    }
+
+    public function onLdapError(Event $event)
+    {
+        /** @var \Zend\Authentication\Result $result */
+        $result = $event->getParam('result');
+        $code = $result ? $result->getCode() : Result::FAILURE;
+        $username = $event->getParam('username');
+
+        $messages = [];
+        switch ($code) {
+            case Result::FAILURE_IDENTITY_NOT_FOUND:
+                $messages[] = "Identifiant de connexion inconnu : '$username'.";
+                break;
+            case Result::FAILURE_CREDENTIAL_INVALID:
+                $messages[] = "Mot de passe incorrect pour l'identifiant de connexion '$username'.";
+                break;
+            case Result::FAILURE:
+            default:
+                $messages[] = "Erreur rencontrée lors de l'authentification : ";
+                break;
+        }
+        if ($details = (array) $event->getParam('messages')) {
+            $messages = array_merge($messages, $details);
+        } else {
+            $messages[] = "Aucun détail supplémentaire.";
+        }
+        $error = "[SyGAL LDAP AUTH] " . implode(PHP_EOL, $messages);
+        error_log($error);
     }
 
     public function getConfig()
