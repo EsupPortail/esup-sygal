@@ -14,6 +14,7 @@ use Application\Entity\Db\Variable;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use DateTime;
 use Notification\Notification;
@@ -34,6 +35,7 @@ class NotifierSoutenanceService extends NotifierService
     use RoleServiceAwareTrait;
     use VariableServiceAwareTrait;
     use TheseServiceAwareTrait;
+    use UtilisateurServiceAwareTrait;
 
     /**
      * @var UrlHelper
@@ -69,11 +71,23 @@ class NotifierSoutenanceService extends NotifierService
         $emails = [];
         foreach ($individuRoles as $individuRole) {
             $individu = $individuRole->getIndividu();
-            if ($individu->getEmail() !== null) {
-                if ($individu->getEtablissement() === $these->getEtablissement()) {
-                    $emails[] = $individu->getEmail();
+            if ($individu->getEtablissement() === $these->getEtablissement()) {
+                if ($individu->getEmail() !== null) {
+                    {
+                        $emails[] = $individu->getEmail();
+                        $allEmails[] = $individu->getEmail();
+                    }
+
+                } else {
+                    $utilisateurs = $this->getUtilisateurService()->getRepository()->findByIndividu($individu);
+                    foreach ($utilisateurs as $utilisateur) {
+                        if ($utilisateur->getEmail()) {
+                            $emails[] = $utilisateur->getEmail();
+                            $allEmails[] = $utilisateur->getEmail();
+                            break;
+                        }
+                    }
                 }
-                $allEmails[] = $individu->getEmail();
             }
         }
         if (! empty($emails)) return $emails;
@@ -84,7 +98,7 @@ class NotifierSoutenanceService extends NotifierService
      * @param These $these
      * @return array
      */
-    protected function fetchEmailEcoleDoctorale(These $these)
+    protected function fetchEmailEcoleDoctorale(These $these) : array
     {
         /** @var IndividuRole[] $individuRoles */
         $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
