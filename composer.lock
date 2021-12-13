@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f0ead10f7c5c518783aad301f65ee894",
+    "content-hash": "5b8b879682519d8c03acc4125e53b298",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -3816,11 +3816,11 @@
         },
         {
             "name": "unicaen/auth-token",
-            "version": "dev-master",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/auth-token.git",
-                "reference": "e8b733e301532699881dc816999b7a5f935f0648"
+                "reference": "f30302097a28a4b7b0d1137c0a5c24e66b59a72d"
             },
             "require": {
                 "ramsey/uuid": "^3.7",
@@ -3840,7 +3840,7 @@
                 ]
             },
             "description": "Authentification à l'aide d'un token",
-            "time": "2021-07-06T10:19:08+00:00"
+            "time": "2021-10-08T08:27:50+00:00"
         },
         {
             "name": "unicaen/bjy-authorize",
@@ -8944,9 +8944,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "unicaen/auth-token": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
@@ -8964,5 +8962,5 @@
         "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "1.1.0"
 }
