@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+3.0.9
+-----
+- Dépôt des rapports d'activité, CSI, mi-parcours : possibilité de sélectionner l'année univ précédente.
+
 3.0.7
 ----- 
 - Nouveau critère de bloquage des soutenances basé sur la validité des rapporteurs.
