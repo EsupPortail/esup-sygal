@@ -10,6 +10,7 @@ Journal des modifications
 - Ajout des mentions Co-encadrant/Co-encadrante sur la page de couverture
 - Complétion des données pour la page de couverture depuis le dossier de soutenance en cas de manque
 - Ajout de la memtion de la date limite de rendu dans le tableau de bord des rapporteurs
+- Completion des mails avec la table des utilisateurs pour les notifications
 
 3.0.7
 ----- 
