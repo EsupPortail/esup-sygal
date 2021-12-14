@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+3.0.10
+-----
+- Ajout de la mention "La réservation du lieu de soutenance n'est pas faite automatiquement et reste à votre charge"
+
 3.0.8
 -----
 - Changement pour récupération des logos sur la page de couvertures (les co-directions sont maintenant utilisée)
