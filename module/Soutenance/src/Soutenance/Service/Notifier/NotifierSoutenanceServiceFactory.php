@@ -6,6 +6,7 @@ use Application\Service\Acteur\ActeurService;
 use Application\Service\Notification\NotificationFactory;
 use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
+use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Variable\VariableService;
 use Interop\Container\ContainerInterface;
 use Notification\Service\NotifierServiceFactory;
@@ -34,12 +35,14 @@ class NotifierSoutenanceServiceFactory extends NotifierServiceFactory
          * @var RoleService $roleService
          * @var VariableService $variableService
          * @var TheseService $theseService
+         * @var UtilisateurService $utilisateurService
          */
         $acteurService = $container->get(ActeurService::class);
         $membreService = $container->get(MembreService::class);
         $roleService = $container->get('RoleService');
         $variableService = $container->get('VariableService');
         $theseService = $container->get('TheseService');
+        $utilisateurService = $container->get('UtilisateurService');
 
         /** @var HttpViewManager|ConsoleViewManager $vm */
         $vm = $container->get('ViewManager');
@@ -57,6 +60,7 @@ class NotifierSoutenanceServiceFactory extends NotifierServiceFactory
         $service->setRoleService($roleService);
         $service->setVariableService($variableService);
         $service->setTheseService($theseService);
+        $service->setUtilisateurService($utilisateurService);
 
         return $service;
     }

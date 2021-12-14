@@ -33,6 +33,7 @@ use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Exporter\AvisSoutenance\AvisSoutenancePdfExporter;
 use Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter;
 use Soutenance\Service\Exporter\ProcesVerbal\ProcesVerbalSoutenancePdfExporter;
+use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
@@ -66,6 +67,7 @@ class PresoutenanceController extends AbstractController
     use ParametreServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;
     use FichierServiceAwareTrait;
+    use JustificatifServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
     use TokenServiceAwareTrait;
     use SourceServiceAwareTrait;
@@ -95,6 +97,10 @@ class PresoutenanceController extends AbstractController
         $renduRapport = $proposition->getRenduRapport();
         if (!$renduRapport) $this->getPropositionService()->initialisationDateRetour($proposition);
 
+        /** Justificatifs attendus ---------------------------------------------------------------------------------- */
+        $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition);
+        $justificatifsOk = $this->getJustificatifService()->isJustificatifsOk($proposition, $justificatifs);
+
         /** ==> clef: Membre->getActeur()->getIndividu()->getId() <== */
         $engagements = $this->getEngagementImpartialiteService()->getEngagmentsImpartialiteByThese($these);
         $avis = $this->getAvisService()->getAvisByThese($these);
@@ -113,6 +119,8 @@ class PresoutenanceController extends AbstractController
             'urlFichierThese' => $this->urlFichierThese(),
             'validationBDD' => $validationBDD,
             'validationPDC' => $validationPDC,
+            'justificatifsOk' => $justificatifsOk,
+            'justificatifs' => $justificatifs,
 
             'evenementsEngagement' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_ENGAGEMENT),
             'evenementsPrerapport' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_PRERAPPORT),
@@ -169,6 +177,7 @@ class PresoutenanceController extends AbstractController
          *  - qu'un Membre du jury     est Membre du jury.
          */
         $acteurs = $this->getActeurService()->getRepository()->findActeurByThese($these);
+        $acteurs = array_filter($acteurs, function (Acteur $a) { return $a->estNonHistorise();});
         switch ($membre->getRole()) {
             case Membre::RAPPORTEUR_JURY :
             case Membre::RAPPORTEUR_VISIO :
@@ -220,28 +229,31 @@ class PresoutenanceController extends AbstractController
             $membre->setActeur($acteur);
             $this->getMembreService()->update($membre);
             //creation de l'utilisateur
-            $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu);
-            $user = null;
-            if (empty($utilisateurs)) {
-                $user = $this->utilisateurService->createFromIndividu($individu, $this->generateUsername($membre), 'none');
-                $user->setEmail($membre->getEmail());
-                $this->userService->updateUserPasswordResetToken($user);
 
-            } else {
-                $user = $utilisateurs[0];
+            if ($membre->estRapporteur()) {
+                $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu);
+                $user = null;
+                if (empty($utilisateurs)) {
+                    $user = $this->utilisateurService->createFromIndividu($individu, $this->generateUsername($membre), 'none');
+                    $user->setEmail($membre->getEmail());
+                    $this->userService->updateUserPasswordResetToken($user);
+
+                } else {
+                    $user = $utilisateurs[0];
+                }
+
+                $token = $this->tokenService->createUserToken($proposition->getDate());
+                $token->setUser($user);
+                try {
+                    $this->tokenService->saveUserToken($token);
+                } catch (TokenServiceException $e) {
+                    throw new RuntimeException("Un problème est survenu lors de la création du token", 0, $e);
+                }
+
+                $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
+                $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $acteur->getRole()->getRoleId()], 'force_canonical' => true], true);
+                $this->getNotifierSoutenanceService()->triggerConnexionRapporteur($proposition, $user, $url);
             }
-
-            $token = $this->tokenService->createUserToken($proposition->getDate());
-            $token->setUser($user);
-            try {
-                $this->tokenService->saveUserToken($token);
-            } catch (TokenServiceException $e) {
-                throw new RuntimeException("Un problème est survenu lors de la création du token", 0,$e);
-            }
-
-            $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
-            $url = $this->url()->fromRoute('zfcuser/login', ['type'=> 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $acteur->getRole()->getRoleId()], 'force_canonical' => true], true );
-            $this->getNotifierSoutenanceService()->triggerConnexionRapporteur($proposition, $user, $url);
         }
 
         return new ViewModel([

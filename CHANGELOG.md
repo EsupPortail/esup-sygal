@@ -1,6 +1,17 @@
 Journal des modifications
 =========================
 
+3.0.8
+-----
+- Changement pour récupération des logos sur la page de couvertures (les co-directions sont maintenant utilisée)
+- Le manque de justificatifs de soutenances n'est plus bloquant il s'agit plus que d'un warning 
+- [FIX] Retrait de l'appel à un css inexistant
+- Filtrage des soutenances sans date dans la vue des soutenances pour les structures.
+- Ajout des mentions Co-encadrant/Co-encadrante sur la page de couverture
+- Complétion des données pour la page de couverture depuis le dossier de soutenance en cas de manque
+- Ajout de la memtion de la date limite de rendu dans le tableau de bord des rapporteurs
+- Completion des mails avec la table des utilisateurs pour les notifications
+
 3.0.7
 ----- 
 - Nouveau critère de bloquage des soutenances basé sur la validité des rapporteurs.

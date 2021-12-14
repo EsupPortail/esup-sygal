@@ -92,21 +92,21 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwa
      *
      * @return bool
      */
-    public function estDirecteur()
+    public function estDirecteur() : bool
     {
         return in_array($this->getRole()->getCode(), [
                 Role::CODE_DIRECTEUR_THESE,
             ]
         );
     }
-    public function estCodirecteur()
+    public function estCodirecteur() : bool
     {
         return in_array($this->getRole()->getCode(), [
                 Role::CODE_CODIRECTEUR_THESE,
             ]
         );
     }
-    public function estCoEncadrant()
+    public function estCoEncadrant() : bool
     {
         return in_array($this->getRole()->getCode(), [
                 Role::CODE_CO_ENCADRANT,
@@ -119,7 +119,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwa
      *
      * @return bool
      */
-    public function estRapporteur()
+    public function estRapporteur() : bool
     {
         return $this->getRole()->getCode() === Role::CODE_RAPPORTEUR_JURY;
     }
@@ -129,7 +129,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwa
      *
      * @return bool
      */
-    public function estRapporteurAbsent()
+    public function estRapporteurAbsent() : bool
     {
         return $this->getRole()->getCode() === Role::CODE_RAPPORTEUR_ABSENT;
     }
@@ -139,7 +139,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwa
      *
      * @return bool
      */
-    public function estPresidentJury()
+    public function estPresidentJury() : bool
     {
         return ($this->getRole()->getCode() === Role::CODE_PRESIDENT_JURY);
     }
@@ -149,7 +149,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwa
      *
      * @return bool
      */
-    public function estMembreDuJury()
+    public function estMembreDuJury() : bool
     {
         return $this->getRole()->getCode() === Role::CODE_MEMBRE_JURY;
     }

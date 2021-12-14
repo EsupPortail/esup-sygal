@@ -7,7 +7,8 @@
  * @var Validation $validationPDC
  * @var Validation[] $engagements
  * @var Avis[] $avis
- *
+ * @var bool $justificatifsOk
+ * @var array $justificatifs
  * @var Evenement[] $evenementsEngagement
  * @var Evenement[] $evenementsPrerapport
 
@@ -21,11 +22,12 @@ use Application\Filter\TitreApogeeFilter;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Evenement;
+use Soutenance\Entity\Membre;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 
 
 $tousLesAvis = count($rapporteurs) === count($avis) ;
-$canFeuVert = $this->isAllowed(PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU));
+$canFeuVert = ($justificatifsOk === true AND $this->isAllowed(PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU)));
 $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->getIndividu());
 $canModifierAdresse = $canFeuVert;
 $canGenererDocument = $canFeuVert;
@@ -69,27 +71,47 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     <?php endif; ?>
 
     <?php if ($proposition->getNouveauTitre() !== null) : ?>
-<!--    --><?php //$modificationFaite = ($proposition->getNouveauTitre() === $these->getTitre()); ?>
-<!--    <div class="box panel --><?php //echo (!$modificationFaite)?"panel-danger":"panel-success"; ?><!--">-->
-<!--        <div class="panel-heading">-->
-<!--            <h2>-->
-<!--                --><?php //if ($modificationFaite) : ?>
-<!--                    Le titre a été modifiée et la saisie dans la source a été faite-->
-<!--                --><?php //else : ?>
-<!--                    Le titre a été modifiée et la saisie dans la source n'a pas été faite-->
-<!--                --><?php //endif; ?>
-<!--            </h2>-->
-<!--        </div>-->
-    <div class="box panel panel-warning">
-        <div class=" panel-heading">
-            <h2>
-            Une modification de titre a été proposée
-            </h2>
+        <div class="box panel panel-warning">
+            <div class=" panel-heading">
+                <h2>
+                Une modification de titre a été proposée
+                </h2>
+            </div>
+            <div class="panel-body">
+                <?php echo $proposition->getNouveauTitre(); ?>
+            </div>
         </div>
-        <div class="panel-body">
-            <?php echo $proposition->getNouveauTitre(); ?>
+    <?php endif; ?>
+
+    <?php if ($justificatifsOk !== true) : ?>
+        <div class="box panel <?php echo ($justificatifsOk === null)?'panel-warning':'panel-danger'; ?>">
+            <div class=" panel-heading">
+                <h2>
+                    Des justificatifs sont manquants
+                </h2>
+            </div>
+            <div class="panel-body">
+                    <span class="glyphicon glyphicon-warning-sign"></span>
+                    Liste des justificatifs manquants :
+                <ul>
+                    <?php foreach ($justificatifs as $justificatif) : ?>
+                        <?php if($justificatif['justificatif'] === null) : ?>
+                            <li>
+                                <?php echo $justificatif['type'] ?>
+                                <?php if (isset($justificatif['membre'])) : ?>
+                                    -
+                                    <?php
+                                    /** @var Membre $membre */
+                                    $membre = $justificatif['membre'];
+                                    echo $membre->getDenomination();
+                                    ?>
+                                <?php endif; ?>
+                            </li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
         </div>
-    </div>
     <?php endif; ?>
 
     <!-- DATE DE RENDU DE RAPPORT ----------------------------------------------------------------------------------------->
