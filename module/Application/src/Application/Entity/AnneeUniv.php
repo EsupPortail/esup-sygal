@@ -3,6 +3,7 @@
 namespace Application\Entity;
 
 use Application\Filter\AnneeUnivFormatter;
+use DateInterval;
 use DateTime;
 
 class AnneeUniv
@@ -33,14 +34,74 @@ class AnneeUniv
     protected $formatter;
 
     /**
+     * @var self[]
+     */
+    static protected $instances = [];
+
+    /**
+     * Constructeur non public.
+     */
+    protected function __construct()
+    {
+        $this->formatter = new AnneeUnivFormatter();
+    }
+
+    /**
+     * Construit une instance correspondant à l'année universitaire dont la 1ere année est spécifiée.
+     *
+     * @param int $premiereAnnee Ex : 2021 pour l'année universitaire 2021/2022
+     * @return \Application\Entity\AnneeUniv
+     */
+    static public function fromPremiereAnnee(int $premiereAnnee): AnneeUniv
+    {
+        if (array_key_exists($premiereAnnee, static::$instances)) {
+            return static::$instances[$premiereAnnee];
+        }
+
+        $inst = new static();
+        $inst->setPremiereAnnee($premiereAnnee);
+
+        return static::$instances[$premiereAnnee] = $inst;
+    }
+
+    /**
      * Construit une instance correspondant à l'année universitaire de la date est spécifiée,
      * ou à l'année universitaire courante.
      */
-    public function __construct(DateTime $date = null)
+    static public function fromDate(DateTime $date): AnneeUniv
     {
-        $this->formatter = new AnneeUnivFormatter();
+        $premiereAnnee = (new AnneeUniv)->computePremiereAnneeFromDate($date);
 
-        $this->setPremiereAnnee($this->computePremiereAnneeFromDate($date ?: new DateTime()));
+        return static::fromPremiereAnnee($premiereAnnee);
+    }
+
+    /**
+     * Retourne une instance correspondant à l'année universitaire courante.
+     *
+     * @return \Application\Entity\AnneeUniv
+     */
+    static public function courante(): AnneeUniv
+    {
+        return static::fromDate(new DateTime());
+    }
+
+    /**
+     * Retourne une instance correspondant à l'année universitaire précédent celle en cours.
+     *
+     * @return \Application\Entity\AnneeUniv
+     */
+    static public function precedente(): AnneeUniv
+    {
+        return static::fromDate((new DateTime())->sub(new DateInterval('P1Y')));
+    }
+
+    /**
+     * @param string $separator
+     * @return string
+     */
+    public function toString(string $separator = '/'): string
+    {
+        return $this->formatter->filter($this->premiereAnnee, $separator);
     }
 
     /**
@@ -48,7 +109,7 @@ class AnneeUniv
      */
     public function __toString(): string
     {
-        return $this->formatter->filter($this->premiereAnnee);
+        return $this->toString();
     }
 
     /**

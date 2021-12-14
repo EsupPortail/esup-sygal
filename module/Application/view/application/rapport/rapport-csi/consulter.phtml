@@ -14,7 +14,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var These $these
  * @var Rapport[] $rapports
  * @var RapportCsiForm $form
- * @var bool $tousLesRapportsTeleverses
+ * @var bool $isTeleversementPossible
  * @var TypeValidation $typeValidation
  *
  * @see \Application\Controller\Rapport\RapportCsiController::consulterAction()
@@ -31,7 +31,7 @@ $privilege_TELECHARGER_SIEN = RapportPrivileges::RAPPORT_CSI_TELECHARGER_SIEN;
 $form->prepare();
 $rapportProto = (new Rapport())->setThese($these);
 $canAdd = $this->isAllowed($rapportProto, $privilege_TELEVERSER_TOUT) || $this->isAllowed($rapportProto, $privilege_TELEVERSER_SIEN);
-if ($tousLesRapportsTeleverses) {
+if (!$isTeleversementPossible) {
     $canAdd = false;
 }
 ?>

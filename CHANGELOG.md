@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+3.0.9
+-----
+- Dépôt des rapports d'activité, CSI, mi-parcours : possibilité de sélectionner l'année univ précédente.
+
 3.0.8
 -----
 - Changement pour récupération des logos sur la page de couvertures (les co-directions sont maintenant utilisée)

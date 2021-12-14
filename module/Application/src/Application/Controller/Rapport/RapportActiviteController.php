@@ -2,6 +2,7 @@
 
 namespace Application\Controller\Rapport;
 
+use Application\Entity\AnneeUniv;
 use Application\Entity\Db\Rapport;
 use Application\Provider\Privilege\RapportPrivileges;
 
@@ -33,10 +34,20 @@ class RapportActiviteController extends RapportController
      */
     protected $rapportsTeleversesFintheses = [];
 
+    /**
+     * @var array [int => bool]
+     */
+    protected $canTeleverserRapportAnnuel;
 
-    protected function loadRapportsTeleverses()
+    /**
+     * @var array [int => bool]
+     */
+    protected $canTeleverserRapportFinthese;
+
+
+    protected function fetchRapportsTeleverses()
     {
-        parent::loadRapportsTeleverses();
+        parent::fetchRapportsTeleverses();
 
         $this->rapportsTeleversesAnnuels = array_filter($this->rapportsTeleverses, function(Rapport $rapport) {
             return $rapport->estFinal() === false;
@@ -44,31 +55,95 @@ class RapportActiviteController extends RapportController
         $this->rapportsTeleversesFintheses = array_filter($this->rapportsTeleverses, function(Rapport $rapport) {
             return $rapport->estFinal() === true;
         });
+
+        $this->canTeleverserRapportAnnuel = [];
+        foreach ($this->anneesUnivs as $anneeUniv) {
+            $this->canTeleverserRapportAnnuel[$anneeUniv->getPremiereAnnee()] =
+                $this->canTeleverserRapportAnnuelForAnneeUniv($anneeUniv);
+        }
+        $this->canTeleverserRapportFinthese = [];
+        foreach ($this->anneesUnivs as $anneeUniv) {
+            $this->canTeleverserRapportFinthese[$anneeUniv->getPremiereAnnee()] =
+                $this->canTeleverserRapportFintheseForAnneeUniv($anneeUniv);
+        }
+    }
+
+    protected function isTeleversementPossible(): bool
+    {
+        return
+            count(array_filter($this->canTeleverserRapportAnnuel)) > 0 ||
+            count(array_filter($this->canTeleverserRapportFinthese)) > 0;
+    }
+
+    protected function getAnneesPrises(): array
+    {
+        return array_keys(
+            array_intersect_key(
+                array_filter($this->canTeleverserRapportAnnuel, function(bool $can) { return $can === false; }),
+                array_filter($this->canTeleverserRapportFinthese, function(bool $can) { return $can === false; })
+            )
+        );
+    }
+
+    protected function canTeleverserRapport(Rapport $rapport): bool
+    {
+        if ($rapport->estFinal()) {
+            return $this->canTeleverserRapportFintheseForAnneeUniv($rapport->getAnneeUniv());
+        } else {
+            return $this->canTeleverserRapportAnnuelForAnneeUniv($rapport->getAnneeUniv());
+        }
     }
 
     protected function canTeleverserRapportAnnuel(): bool
     {
         // Peut être téléversé : 1 rapport annuel par année universitaire.
 
-        $rapportsSurAnneeCourante = array_filter($this->rapportsTeleversesAnnuels, function(Rapport $rapport) {
-            return $rapport->getAnneeUniv() === $this->anneeUnivCourante->getPremiereAnnee();
-        });
+        foreach ($this->anneesUnivs as $anneeUniv) {
+            $rapportsTeleverses = array_filter(
+                $this->rapportsTeleversesAnnuels,
+                $this->rapportService->getFilterRapportsByAnneeUniv($anneeUniv)
+            );
+            if (empty($rapportsTeleverses)) {
+                return true;
+            }
+        }
 
-        return count($rapportsSurAnneeCourante) === 0;
+        return false;
+    }
+
+    protected function canTeleverserRapportAnnuelForAnneeUniv(AnneeUniv $anneeUniv): bool
+    {
+        // Peut être téléversé : 1 rapport annuel.
+
+        $rapportsTeleverses = array_filter(
+            $this->rapportsTeleversesAnnuels,
+            $this->rapportService->getFilterRapportsByAnneeUniv($anneeUniv)
+        );
+
+        return empty($rapportsTeleverses);
     }
 
     protected function canTeleverserRapportFinthese(): bool
     {
-        // Peut être téléversé : 1 rapport de fin de thèse, toutes années univ confondues.
+        // Dépôt d'1 rapport de fin de thèse maxi toutes années univ confondues.
 
         return count($this->rapportsTeleversesFintheses) === 0;
     }
 
-    protected function isTeleversementPossible(): bool
+    protected function canTeleverserRapportFintheseForAnneeUniv(AnneeUniv $anneeUniv): bool
     {
-        return
-            $this->canTeleverserRapportAnnuel() ||
-            $this->canTeleverserRapportFinthese();
+        // Dépôt d'un rapport de fin de thèse seulement sur la dernière année univ.
+
+        if ($anneeUniv !== $this->getAnneeUnivMax()) {
+            return false;
+        }
+
+        $rapportsTeleverses = array_filter(
+            $this->rapportsTeleversesFintheses,
+            $this->rapportService->getFilterRapportsByAnneeUniv($anneeUniv)
+        );
+
+        return empty($rapportsTeleverses);
     }
 
     protected function initForm()

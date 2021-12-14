@@ -2,6 +2,7 @@
 
 namespace Application\Service\Rapport;
 
+use Application\Entity\AnneeUniv;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\These;
@@ -15,6 +16,7 @@ use Application\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\RapportValidation\RapportValidationServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
+use Closure;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Expr\Join;
@@ -142,7 +144,7 @@ class RapportService extends BaseService
      * @param bool $cacheable
      * @return array
      */
-    public function findDistinctAnnees(TypeRapport $typeRapport, $cacheable = false): array
+    public function findDistinctAnnees(TypeRapport $typeRapport, bool $cacheable = false): array
     {
         $qb = $this->getRepository()->createQueryBuilder('ra');
         $qb
@@ -159,6 +161,35 @@ class RapportService extends BaseService
     }
 
     /**
+     * @param \Application\Entity\Db\These $these
+     * @param TypeRapport $typeRapport
+     * @param bool $cacheable
+     * @return Rapport[] [int => Rapport[]]
+     */
+    public function findRapportsParAnneesForThese(These $these, TypeRapport $typeRapport, bool $cacheable = false): array
+    {
+        $qb = $this->getRepository()->createQueryBuilder('ra');
+        $qb
+            ->join('ra.these', 't', Join::WITH, 't = :these')->setParameter('these', $these)
+            ->join('ra.typeRapport', 'tr', Join::WITH, 'tr = :type')->setParameter('type', $typeRapport)
+            ->orderBy("ra.anneeUniv", 'desc');
+
+        /** @var Rapport $rapports */
+        $rapports = $qb->setCacheable($cacheable)->getQuery()->getArrayResult();
+
+        $rapportsParAnnees = [];
+        foreach ($rapports as $rapport) {
+            $anneeUniv = $rapport['anneeUniv'];
+            if (!array_key_exists($anneeUniv, $rapportsParAnnees)) {
+                $rapportsParAnnees[$anneeUniv] = [];
+            }
+            $rapportsParAnnees[$anneeUniv][] = $rapport;
+        }
+
+        return $rapportsParAnnees;
+    }
+
+    /**
      * @param string $typeRapportCode
      * @return TypeRapport
      */
@@ -170,5 +201,16 @@ class RapportService extends BaseService
         $type = $qb->findOneBy(['code' => $typeRapportCode]);
 
         return $type;
+    }
+
+    /**
+     * @param \Application\Entity\AnneeUniv $anneeUniv
+     * @return \Closure
+     */
+    public function getFilterRapportsByAnneeUniv(AnneeUniv $anneeUniv): Closure
+    {
+        return function (Rapport $rapport) use ($anneeUniv) {
+            return $rapport->getAnneeUniv() === $anneeUniv;
+        };
     }
 }
