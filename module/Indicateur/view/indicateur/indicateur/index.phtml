@@ -17,6 +17,7 @@ use Application\Entity\Db\These;use Indicateur\Model\Indicateur;
  *
  * @var Indicateur[] $indicateurs
  * @var Indicateur[] $resultats
+ * @var string $erreurs
  */
 
 $appName = $this->appInfos()->nom;
@@ -38,30 +39,44 @@ $appName = $this->appInfos()->nom;
 </div>
 
 <br/>
+<?php if ($erreurs !== null AND $erreurs !== "") : ?>
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+            Des erreurs liés aux indicateurs
+        </div>
+        <div class="panel-body">
+            <?php echo $erreurs; ?>
+        </div>
+    </div>
+<?php endif;?>
+<br/>
 
 <?php foreach ($resultats as $id => $resultat) : ?>
 
-    <?php
-        // rustine dégueulasse pour corriger problème d'ordre TODO fix it!
-        $indicateur = null;
-        foreach ($indicateurs as $tmp) {
-            if($tmp->getId() === $id) {
-                $indicateur = $tmp;
-                break;
+    <?php if ($resultat !== null) : ?>
+        <?php
+            // rustine dégueulasse pour corriger problème d'ordre TODO fix it!
+            $indicateur = null;
+            foreach ($indicateurs as $tmp) {
+                if($tmp->getId() === $id) {
+                    $indicateur = $tmp;
+                    break;
+                }
             }
-        }
-    ?>
+        ?>
 
-    <?php if($indicateur): ?>
-        <?php if ($indicateur->getDisplayAs() === Indicateur::THESE) : ?>
-            <?php echo $this->resumeIndicateurThese()->render($indicateur, $resultat); ?>
+        <?php if($indicateur): ?>
+            <?php if ($indicateur->getDisplayAs() === Indicateur::THESE) : ?>
+                <?php echo $this->resumeIndicateurThese()->render($indicateur, $resultat); ?>
+            <?php endif; ?>
+            <?php if ($indicateur->getDisplayAs() === Indicateur::INDIVIDU) : ?>
+                <?php echo $this->resumeIndicateurIndividu()->render($indicateur, $resultat); ?>
+            <?php endif; ?>
+            <?php if ($indicateur->getDisplayAs() === Indicateur::STRUCTURE) : ?>
+                <?php echo $this->resumeIndicateurStructure()->render($indicateur, $resultat); ?>
+            <?php endif; ?>
         <?php endif; ?>
-        <?php if ($indicateur->getDisplayAs() === Indicateur::INDIVIDU) : ?>
-            <?php echo $this->resumeIndicateurIndividu()->render($indicateur, $resultat); ?>
-        <?php endif; ?>
-        <?php if ($indicateur->getDisplayAs() === Indicateur::STRUCTURE) : ?>
-            <?php echo $this->resumeIndicateurStructure()->render($indicateur, $resultat); ?>
-        <?php endif; ?>
+
     <?php endif; ?>
 <?php endforeach; ?>
 
