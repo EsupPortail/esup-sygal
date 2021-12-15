@@ -22,6 +22,10 @@ class RapportPrivileges extends Privileges
     const RAPPORT_ACTIVITE_VALIDER_SIEN = 'rapport-activite-valider-sien';
     const RAPPORT_ACTIVITE_DEVALIDER_TOUT = 'rapport-activite-devalider-tout';
     const RAPPORT_ACTIVITE_DEVALIDER_SIEN = 'rapport-activite-devalider-sien';
+    const RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT = 'rapport-activite-ajouter-avis-tout';
+    const RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN = 'rapport-activite-ajouter-avis-sien';
+    const RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT = 'rapport-activite-supprimer-avis-tout';
+    const RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN = 'rapport-activite-supprimer-avis-sien';
 
     // catégorie = 'rapport-csi'
     const RAPPORT_CSI_LISTER_TOUT = 'rapport-csi-lister-tout';

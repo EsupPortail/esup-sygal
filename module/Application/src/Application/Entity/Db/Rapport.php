@@ -50,6 +50,11 @@ class Rapport implements ResourceInterface, HistoriqueAwareInterface
     private $rapportValidations;
 
     /**
+     * @var Collection|\Application\Entity\Db\RapportAvis[]
+     */
+    private $rapportAvis;
+
+    /**
      * Rapport constructor.
      * @param TypeRapport|null $typeRapport
      */
@@ -57,6 +62,7 @@ class Rapport implements ResourceInterface, HistoriqueAwareInterface
     {
         $this->typeRapport = $typeRapport;
         $this->rapportValidations = new ArrayCollection();
+        $this->rapportAvis = new ArrayCollection();
     }
 
     /**
@@ -66,7 +72,7 @@ class Rapport implements ResourceInterface, HistoriqueAwareInterface
      */
     public function __toString()
     {
-        return (string) $this->fichier;
+        return $this->fichier->getNom();
     }
 
     /**
@@ -264,6 +270,40 @@ class Rapport implements ResourceInterface, HistoriqueAwareInterface
     public function removeRapportValidation(RapportValidation $validation): self
     {
         $this->rapportValidations->removeElement($validation);
+
+        return $this;
+    }
+
+    /**
+     * @return \Application\Entity\Db\RapportAvis|null
+     */
+    public function getRapportAvis(): ?RapportAvis
+    {
+        $rapportsAvis = $this->rapportAvis->filter(function(RapportAvis $rapportAvis) {
+            return $rapportAvis->estNonHistorise();
+        });
+
+        return $rapportsAvis->first() ?: null;
+    }
+
+    /**
+     * @param \Application\Entity\Db\RapportAvis $rapportAvis
+     * @return self
+     */
+    public function addRapportAvis(RapportAvis $rapportAvis): self
+    {
+        $this->rapportAvis->add($rapportAvis);
+
+        return $this;
+    }
+
+    /**
+     * @param \Application\Entity\Db\RapportAvis $rapportAvis
+     * @return self
+     */
+    public function removeRapportAvis(RapportAvis $rapportAvis): self
+    {
+        $this->rapportAvis->removeElement($rapportAvis);
 
         return $this;
     }

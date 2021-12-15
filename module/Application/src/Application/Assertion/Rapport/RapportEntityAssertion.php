@@ -45,6 +45,10 @@ class RapportEntityAssertion implements EntityAssertionInterface
             case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
             case RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT:
             case RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN:
+            case RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT:
+            case RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN:
+            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT:
+            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN:
 
             case RapportPrivileges::RAPPORT_CSI_TELEVERSER_TOUT:
             case RapportPrivileges::RAPPORT_CSI_TELEVERSER_SIEN:
@@ -66,6 +70,10 @@ class RapportEntityAssertion implements EntityAssertionInterface
             case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
             case RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT:
             case RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN:
+            case RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT:
+            case RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN:
+            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT:
+            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN:
 
             case RapportPrivileges::RAPPORT_CSI_TELEVERSER_SIEN:
             case RapportPrivileges::RAPPORT_CSI_SUPPRIMER_SIEN:
@@ -82,6 +90,10 @@ class RapportEntityAssertion implements EntityAssertionInterface
             case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN:
             case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT:
             case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
+            case RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT:
+            case RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN:
+            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT:
+            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN:
 
             case RapportPrivileges::RAPPORT_CSI_SUPPRIMER_TOUT:
             case RapportPrivileges::RAPPORT_CSI_SUPPRIMER_SIEN:
@@ -89,6 +101,14 @@ class RapportEntityAssertion implements EntityAssertionInterface
             case RapportPrivileges::RAPPORT_MIPARCOURS_SUPPRIMER_TOUT:
             case RapportPrivileges::RAPPORT_MIPARCOURS_SUPPRIMER_SIEN:
                 $this->assertAucuneValidation();
+        }
+
+        switch ($privilege) {
+            case RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT:
+            case RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN:
+            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT:
+            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN:
+                $this->assertRapportFinDeThese();
         }
 
         return true;
@@ -132,6 +152,14 @@ class RapportEntityAssertion implements EntityAssertionInterface
         $this->assertTrue(
             $this->rapport->getRapportValidation() === null,
             "Le rapport ne doit pas avoir été validé"
+        );
+    }
+
+    private function assertRapportFinDeThese()
+    {
+        $this->assertTrue(
+            $this->rapport->getTypeRapport()->estRapportActivite() && $this->rapport->estFinal(),
+            "Le rapport doit être un rapport d'activité de fin de thèse"
         );
     }
 }
