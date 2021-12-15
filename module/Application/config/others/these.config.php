@@ -939,7 +939,7 @@ return [
                      * Navigation pour LA thèse "sélectionnée".
                      */
                     // DEPTH = 1
-                    'these_selectionnee' => [
+                    ApplicationNavigationFactory::THESE_SELECTIONNEE_PAGE_ID => [
                         'label' => 'Thèse sélectionnée',
                         'route' => 'these/identite',
                         'withtarget' => true,

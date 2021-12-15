@@ -61,7 +61,7 @@ return array(
                      * Navigation pour LA thèse courante.
                      */
                     // DEPTH = 1
-                    'these_selectionnee' => [
+                    ApplicationNavigationFactory::THESE_SELECTIONNEE_PAGE_ID => [
                         'pages' => [
                             // DEPTH = 2
                             'soutenance' => [

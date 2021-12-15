@@ -2,6 +2,7 @@
 
 namespace Soutenance;
 
+use Application\Navigation\ApplicationNavigationFactory;
 use Soutenance\Assertion\InterventionAssertion;
 use Soutenance\Assertion\InterventionAssertionFactory;
 use Soutenance\Controller\InterventionController;
@@ -71,7 +72,7 @@ return [
                      * Navigation pour LA thèse courante.
                      */
                     // DEPTH = 1
-                    'these_selectionnee' => [
+                    ApplicationNavigationFactory::THESE_SELECTIONNEE_PAGE_ID => [
                         'pages' => [
                             // DEPTH = 2
                             'soutenance' => [
