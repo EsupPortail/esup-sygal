@@ -16,9 +16,9 @@ return [
         'page_de_couverture' => [
             'template' => [
                 // template .phtml
-                'phtml_file_path' => APPLICATION_DIR . '/module/Application/src/Application/Service/PageDeCouverture/pagedecouverture.phtml',
+                'phtml_file_path' => APPLICATION_DIR . '/module/Application/view/application/these/page-de-couverture/pagedecouverture.phtml',
                 // feuille de styles
-                'css_file_path' => APPLICATION_DIR . '/module/Application/src/Application/Service/PageDeCouverture/pagedecouverture.css',
+                'css_file_path' => APPLICATION_DIR . '/module/Application/view/application/these/page-de-couverture/pagedecouverture.css',
             ],
         ],
         // Options pour le test d'archivabilité

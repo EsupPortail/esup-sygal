@@ -16,7 +16,7 @@ class PageDeCouverturePdfExporter extends PdfExporter
     /**
      * @var string
      */
-    private $cssFilePath = __DIR__ . '/page-unicaen.css';
+    private $cssFilePath = __DIR__ . '/pagedecouverture.css';
 
     /**
      * @var array
