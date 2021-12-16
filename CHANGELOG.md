@@ -5,6 +5,7 @@ Journal des modifications
 -----
 - Ajout de la mention "La réservation du lieu de soutenance n'est pas faite automatiquement et reste à votre charge"
 - Meilleure gestion des tokens des membres d'une soutenance
+- Déclaration tardive de visoconférence ajouté aux interventions de soutenance 
 
 3.0.8
 -----

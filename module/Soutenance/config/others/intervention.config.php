@@ -54,6 +54,8 @@ return [
                     'controller' => InterventionController::class,
                     'action' => [
                         'toggle-president-distanciel',
+                        'ajouter-visioconference-tardive',
+                        'supprimer-visioconference-tardive',
                     ],
                     'privileges' => InterventionPrivileges::INTERVENTION_MODIFIER,
                 ],
@@ -126,6 +128,26 @@ return [
                                     'route' => '/toggle-president-distanciel',
                                     'defaults' => [
                                         'action' => 'toggle-president-distanciel',
+                                    ],
+                                ],
+                            ],
+                            'ajouter-visioconference-tardive' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/ajouter-visioconference-tardive',
+                                    'defaults' => [
+                                        'action' => 'ajouter-visioconference-tardive',
+                                    ],
+                                ],
+                            ],
+                            'supprimer-visioconference-tardive' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/supprimer-visioconference-tardive/:intervention',
+                                    'defaults' => [
+                                        'action' => 'supprimer-visioconference-tardive',
                                     ],
                                 ],
                             ],
