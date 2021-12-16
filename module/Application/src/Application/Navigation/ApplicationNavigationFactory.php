@@ -107,7 +107,7 @@ class ApplicationNavigationFactory extends NavigationFactory
         // Rôle Doctorant : génération d'une page "Ma thèse" pour chaque thèse du doctorant
         if ($protoPage = $page['pages'][$key = self::MA_THESE_PAGE_ID] ?? null) {
             if ($this->doctorant !== null) {
-                $theses = $this->theseService->getRepository()->findThesesByDoctorant($this->doctorant, [These::ETAT_EN_COURS]);
+                $theses = $this->theseService->getRepository()->findThesesByDoctorant($this->doctorant, [These::ETAT_EN_COURS, These::ETAT_SOUTENUE]);
                 /////////////////////////////////// LOUVRY Isabelle 33383 : 2 thèses E et S
                 $newPages = $this->createPagesMaThese($protoPage, $theses);
                 $page['pages'] = array_merge($page['pages'], $newPages);
