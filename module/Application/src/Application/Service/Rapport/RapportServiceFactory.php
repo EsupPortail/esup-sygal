@@ -7,6 +7,7 @@ use Application\Service\Fichier\FichierService;
 use Application\Service\File\FileService;
 use Application\Service\NatureFichier\NatureFichierService;
 use Application\Service\Notification\NotifierService;
+use Application\Service\PageDeCouverture\PageDeCouverturePdfExporter;
 use Application\Service\RapportValidation\RapportValidationService;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
 use Application\Service\VersionFichier\VersionFichierService;
@@ -44,6 +45,7 @@ class RapportServiceFactory implements FactoryInterface
         $notifierService = $container->get(NotifierService::class);
         $natureFichierService = $container->get('NatureFichierService');
         $rapportValidationService = $container->get(RapportValidationService::class);
+        $pdcPdfExporter = $this->createPageDeCouverturePdfExporter($container);
 
         $service = new RapportService();
 
@@ -54,7 +56,26 @@ class RapportServiceFactory implements FactoryInterface
         $service->setNotifierService($notifierService);
         $service->setNatureFichierService($natureFichierService);
         $service->setRapportValidationService($rapportValidationService);
+        $service->setPageDeCouverturePdfExporter($pdcPdfExporter);
 
         return $service;
+    }
+
+    private function createPageDeCouverturePdfExporter(ContainerInterface $container): PageDeCouverturePdfExporter
+    {
+        $config = $container->get('Config');
+
+        $pdcConfig = $config['sygal']['rapport']['page_de_couverture'];
+        $templateConfig = $pdcConfig['template'];
+        $templateFilePath = $templateConfig['phtml_file_path'];
+        $cssFilePath = $templateConfig['css_file_path'];
+
+        /** @var PageDeCouverturePdfExporter $pdcPdfExporter */
+        $pdcPdfExporter = $container->get(PageDeCouverturePdfExporter::class);
+        $pdcPdfExporter
+            ->setTemplateFilePath($templateFilePath)
+            ->setCssFilePath($cssFilePath);
+
+        return $pdcPdfExporter;
     }
 }

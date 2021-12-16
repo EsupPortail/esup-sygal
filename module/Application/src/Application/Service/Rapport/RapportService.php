@@ -2,6 +2,9 @@
 
 namespace Application\Service\Rapport;
 
+use Application\Command\Exception\TimedOutCommandException;
+use Application\Command\Pdf\PdfMergeShellCommandQpdf;
+use Application\Command\ShellCommandRunnerTrait;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\These;
@@ -10,9 +13,11 @@ use Application\Filter\NomFichierRapportFormatter;
 use Application\Service\BaseService;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\FichierThese\PdcData;
 use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
+use Application\Service\PageDeCouverture\PageDeCouverturePdfExporterAwareTrait;
 use Application\Service\RapportValidation\RapportValidationServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
@@ -20,6 +25,7 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Exception;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Exporter\Pdf;
 
 class RapportService extends BaseService
 {
@@ -30,6 +36,8 @@ class RapportService extends BaseService
     use NotifierServiceAwareTrait;
     use NatureFichierServiceAwareTrait;
     use RapportValidationServiceAwareTrait;
+    use PageDeCouverturePdfExporterAwareTrait;
+    use ShellCommandRunnerTrait;
 
     /**
      * @param int $id
@@ -170,5 +178,65 @@ class RapportService extends BaseService
         $type = $qb->findOneBy(['code' => $typeRapportCode]);
 
         return $type;
+    }
+
+    /**
+     * Générer une page de couverture et l'ajouter au rapport spécifié.
+     *
+     * @param \Application\Entity\Db\Rapport $rapport
+     * @param PdcData $data
+     * @return string
+     */
+    public function ajouterPdc(Rapport $rapport, PdcData $data): string
+    {
+        // generation de la page de couverture
+        $pdcFilePath = tempnam(sys_get_temp_dir(), 'sygal_rapport_pdc_') . '.pdf';
+        $this->generatePageDeCouverture($rapport, $data, $pdcFilePath);
+
+        $outputFilePath = tempnam(sys_get_temp_dir(), 'sygal_fusion_rapport_pdc_') . '.pdf';
+        $command = $this->createCommandForAjoutPdc($rapport, $pdcFilePath, $outputFilePath);
+        try {
+            $this->runShellCommand($command);
+        } catch (TimedOutCommandException $e) {
+            // sans timeout, cette exception n'est pas lancée.
+        }
+
+        return $outputFilePath;
+    }
+
+    /**
+     * @param \Application\Entity\Db\Rapport $rapport
+     * @param string $pdcFilePath
+     * @param string $outputFilePath
+     * @return PdfMergeShellCommandQpdf
+     */
+    private function createCommandForAjoutPdc(Rapport $rapport, string $pdcFilePath, string $outputFilePath): PdfMergeShellCommandQpdf
+    {
+        $rapportFilePath = $this->fichierService->computeDestinationFilePathForFichier($rapport->getFichier());
+        if (!is_readable($rapportFilePath)) {
+            throw new RuntimeException(
+                "Le fichier suivant n'existe pas ou n'est pas accessible sur le serveur : " . $rapportFilePath);
+        }
+
+        $command = new PdfMergeShellCommandQpdf();
+        $command->setInputFilesPaths([
+            'couverture' => $pdcFilePath,
+            'rapport' => $rapportFilePath,
+        ]);
+        $command->setOutputFilePath($outputFilePath);
+        $command->generateCommandLine();
+
+        return $command;
+    }
+
+    /**
+     * @param \Application\Entity\Db\Rapport $rapport
+     * @param PdcData $data
+     * @param string $filepath
+     */
+    public function generatePageDeCouverture(Rapport $rapport, PdcData $data, string $filepath)
+    {
+        $this->pageDeCouverturePdfExporter->setVars(['rapport' => $rapport, 'data' => $data]);
+        $this->pageDeCouverturePdfExporter->export($filepath, Pdf::DESTINATION_FILE);
     }
 }

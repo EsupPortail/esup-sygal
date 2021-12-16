@@ -59,6 +59,7 @@ class PageDeCouverturePdfExporter extends PdfExporter
 
     public function export($filename = null, $destination = self::DESTINATION_BROWSER, $memoryLimit = null)
     {
+        $filename = basename($filename);
         $templateDirPath = dirname($this->templateFilePath);
         $templateFileName = basename($this->templateFilePath);
 

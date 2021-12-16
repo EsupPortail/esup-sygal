@@ -125,7 +125,7 @@ class Rapport implements ResourceInterface, HistoriqueAwareInterface
      */
     public function getEstFinalToString(): string
     {
-        return $this->estFinal ? 'Fin' : 'Annuel';
+        return $this->estFinal ? 'Fin de thèse' : 'Annuel';
     }
 
     /**

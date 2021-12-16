@@ -84,4 +84,19 @@ class RapportActiviteController extends RapportController
         }
         $this->form->setEstFinalValueOptions($estFinalValueOptions);
     }
+
+    public function telechargerAction()
+    {
+        $rapport = $this->requestedRapport();
+
+        // s'il s'agit d'un rapport d'activité validé, on ajoute une page de couverture
+        if ($rapport->getRapportValidation() !== null) {
+            $pdcData = $this->theseService->fetchInformationsPageDeCouverture($rapport->getThese());
+            $outputFilePath = $this->rapportService->ajouterPdc($rapport, $pdcData);
+            $this->fileService->downloadFile($outputFilePath);
+            exit;
+        }
+
+        return parent::telechargerAction();
+    }
 }

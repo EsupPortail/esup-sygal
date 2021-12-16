@@ -24,6 +24,16 @@ return [
             'resaisir_autorisation_diffusion' => false,
             'resaisir_attestations' => false,
         ],
+        'rapport' => [
+            'page_de_couverture' => [
+                'template' => [
+                    // template .phtml
+                    'phtml_file_path' => APPLICATION_DIR . '/module/Application/view/application/rapport/page-de-couverture/pagedecouverture.phtml',
+                    // feuille de styles
+                    'css_file_path' => APPLICATION_DIR . '/module/Application/view/application/rapport/page-de-couverture/pagedecouverture.css',
+                ],
+            ],
+        ],
     ],
 
     'actualite' => [
