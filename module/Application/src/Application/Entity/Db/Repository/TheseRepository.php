@@ -2,7 +2,7 @@
 
 namespace Application\Entity\Db\Repository;
 
-use Application\Entity\Db\Doctorant;
+use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;

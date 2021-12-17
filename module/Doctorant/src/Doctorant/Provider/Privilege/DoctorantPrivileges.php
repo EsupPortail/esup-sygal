@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Provider\Privilege;
+namespace Doctorant\Provider\Privilege;
 
 use UnicaenAuth\Provider\Privilege\Privileges;
 

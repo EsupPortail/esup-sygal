@@ -1,22 +1,19 @@
 <?php
 
-namespace Application\Controller;
+namespace Doctorant\Controller;
 
-use Application\Entity\Db\Doctorant;
+use Application\Controller\AbstractController;
 use Application\Entity\Db\MailConfirmation;
 use Application\Form\MailConfirmationForm;
 use Application\RouteMatch;
-use Application\Service\Doctorant\DoctorantServiceAwareTrait;
 use Application\Service\MailConfirmationService;
-use Application\Service\Variable\VariableServiceAwareTrait;
+use Doctorant\Entity\Db\Doctorant;
+use Doctorant\Service\DoctorantServiceAwareTrait;
 use UnicaenAuth\Authentication\Adapter\Ldap as LdapAuthAdapter;
-use Zend\Form\Form;
-use Zend\InputFilter\Factory;
 use Zend\View\Model\ViewModel;
 
 class DoctorantController extends AbstractController
 {
-    use VariableServiceAwareTrait;
     use DoctorantServiceAwareTrait;
 
     /** @var MailConfirmationService $mailConfirmationService */
@@ -49,13 +46,8 @@ class DoctorantController extends AbstractController
     }
 
     /**
-     * @param LdapAuthAdapter $ldapAuthAdapter
+     * @return \Zend\Http\Response|\Zend\View\Model\ViewModel
      */
-    public function setLdapAuthAdapter(LdapAuthAdapter $ldapAuthAdapter)
-    {
-        $this->ldapAuthAdapter = $ldapAuthAdapter;
-    }
-
     public function modifierPersopassAction()
     {
         $doctorant = $this->requestDoctorant();
@@ -64,7 +56,7 @@ class DoctorantController extends AbstractController
             $viewmodel = new ViewModel([
                 'email' => $mailConfirmation->getEmail(),
             ]);
-            $viewmodel->setTemplate('application/doctorant/demande-ok');
+            $viewmodel->setTemplate('doctorant/doctorant/demande-ok');
             return $viewmodel;
         }
 
@@ -78,7 +70,7 @@ class DoctorantController extends AbstractController
                 'doctorant' => $doctorant,
                 'email' => $mailConfirmation->getEmail(),
             ]);
-            $viewmodel->setTemplate('application/doctorant/demande-encours');
+            $viewmodel->setTemplate('doctorant/doctorant/demande-encours');
             return $viewmodel;
         }
 
@@ -117,91 +109,9 @@ class DoctorantController extends AbstractController
     }
 
     /**
-     * @param string $identity
-     * @param string $credential
-     * @return array ['identity' => login, 'mail' => email] si la validation a réussie, [] sinon
+     * @return Doctorant|null
      */
-    private function validatePersopass($identity, $credential)
-    {
-        /** @var LdapAuthAdapter $authAdapter */
-        $authAdapter = $this->ldapAuthAdapter;
-
-        $success = $authAdapter->authenticateUsername($identity, $credential);
-        if (! $success) {
-            return [];
-        }
-
-        $usernames = LdapAuthAdapter::extractUsernamesUsurpation($identity);
-        if (count($usernames) === 2) {
-            list (, $identity) = $usernames;
-        }
-
-        $result = $authAdapter->getLdapAuthAdapter()->getLdap()->searchEntries("(supannAliasLogin=$identity)");
-        $entry = current($result);
-
-        $mail = null;
-        if (!empty($entry['mail'])) {
-            $mail = current($tmp = (array) $entry['mail']);
-        }
-
-        return [
-            'identity' => $identity,
-            'mail'     => $mail,
-        ];
-    }
-
-    /**
-     * @return Form
-     */
-    private function getModifierPersopassForm()
-    {
-        $form = new Form();
-        $form->add([
-            'type'       => 'Text',
-            'name'       => 'identity',
-            'options'    => [
-                'label' => 'Identifiant',
-            ],
-            'attributes' => [
-                'title' => "",
-            ],
-        ]);
-        $form->add([
-            'type'       => 'Password',
-            'name'       => 'credential',
-            'options'    => [
-                'label' => 'Mot de passe',
-            ],
-            'attributes' => [
-                'title' => "",
-            ],
-        ]);
-        $form->add([
-            'name'       => 'submit',
-            'type'       => 'Submit',
-            'attributes' => [
-                'value' => 'Valider',
-                'class' => 'btn btn-primary',
-            ],
-        ]);
-        $form->setInputFilter((new Factory())->createInputFilter([
-            'identity' => [
-                'name' => 'identity',
-                'required' => true,
-            ],
-            'credential' => [
-                'name' => 'credential',
-                'required' => true,
-            ],
-        ]));
-
-        return $form;
-    }
-
-    /**
-     * @return Doctorant
-     */
-    private function requestDoctorant()
+    private function requestDoctorant(): ?Doctorant
     {
         /** @var RouteMatch $routeMatch */
         $routeMatch = $this->getEvent()->getRouteMatch();

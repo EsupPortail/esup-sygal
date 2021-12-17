@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Entity\Db;
+namespace Doctorant\Entity\Db;
 
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;

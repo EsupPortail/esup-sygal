@@ -3,7 +3,7 @@
 namespace Application\Service\ListeDiffusion\Handler;
 
 use Application\Service\Acteur\ActeurService;
-use Application\Service\Doctorant\DoctorantService;
+use Doctorant\Service\DoctorantService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\ListeDiffusion\Handler;

@@ -3,7 +3,7 @@
 namespace Application\Provider;
 
 use Application\Service\Acteur\ActeurService;
-use Application\Service\Doctorant\DoctorantService;
+use Doctorant\Service\DoctorantService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Role\RoleService;

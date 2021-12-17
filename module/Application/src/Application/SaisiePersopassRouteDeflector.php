@@ -2,7 +2,7 @@
 
 namespace Application;
 
-use Application\Entity\Db\Doctorant;
+use Doctorant\Entity\Db\Doctorant;
 use Application\Service\MailConfirmationService;
 use Application\Service\UserContextService;
 

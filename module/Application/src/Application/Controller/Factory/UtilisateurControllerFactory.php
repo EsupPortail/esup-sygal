@@ -6,7 +6,7 @@ use Application\Controller\UtilisateurController;
 use Application\Form\CreationUtilisateurForm;
 use Application\Form\InitCompteForm;
 use Application\Service\Acteur\ActeurService;
-use Application\Service\Doctorant\DoctorantService;
+use Doctorant\Service\DoctorantService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Individu\IndividuServiceLocateTrait;

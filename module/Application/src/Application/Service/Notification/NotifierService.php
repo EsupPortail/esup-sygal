@@ -306,7 +306,8 @@ class NotifierService extends \Notification\Service\NotifierService
      * Notification pour confirmation d'une adresse mail.
      *
      * @param MailConfirmation $mailConfirmation
-     * @param string           $confirm
+     * @param string $confirm
+     * @throws \Notification\Exception\NotificationException
      */
     public function triggerMailConfirmation(MailConfirmation $mailConfirmation, string $confirm)
     {
@@ -314,7 +315,7 @@ class NotifierService extends \Notification\Service\NotifierService
         $notif
             ->setSubject("Confirmation de votre adresse électronique")
             ->setTo($mailConfirmation->getEmail())
-            ->setTemplatePath('application/doctorant/demande-confirmation-mail')
+            ->setTemplatePath('doctorant/doctorant/demande-confirmation-mail')
             ->setTemplateVariables([
                 'destinataire' => $mailConfirmation->getIndividu()->getNomUsuel(),
                 'confirm'      => $confirm,

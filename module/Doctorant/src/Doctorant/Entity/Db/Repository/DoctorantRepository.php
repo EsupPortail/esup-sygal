@@ -1,8 +1,9 @@
 <?php
 
-namespace Application\Entity\Db\Repository;
+namespace Doctorant\Entity\Db\Repository;
 
-use Application\Entity\Db\Doctorant;
+use Application\Entity\Db\Repository\DefaultEntityRepository;
+use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;

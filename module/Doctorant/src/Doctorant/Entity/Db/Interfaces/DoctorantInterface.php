@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Entity\Db\Interfaces;
+namespace Doctorant\Entity\Db\Interfaces;
 
 /**
  * Interface spécifiant les accesseurs utiles pour obtenir des informations

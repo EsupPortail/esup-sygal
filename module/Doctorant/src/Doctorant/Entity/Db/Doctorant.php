@@ -1,8 +1,10 @@
 <?php
 
-namespace Application\Entity\Db;
+namespace Doctorant\Entity\Db;
 
-use Application\Entity\Db\Interfaces\DoctorantInterface;
+use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Individu;
+use Doctorant\Entity\Db\Interfaces\DoctorantInterface;
 use Application\Entity\Db\Interfaces\IndividuAwareInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -31,7 +33,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     protected $sourceCode;
 
     /**
-     * @var Individu
+     * @var \Application\Entity\Db\Individu
      */
     private $individu;
 
@@ -46,7 +48,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     private $theses;
 
     /**
-     * @var Etablissement
+     * @var \Application\Entity\Db\Etablissement
      */
     protected $etablissement;
 
@@ -56,7 +58,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     private $ine;
 
     /**
-     * @return Etablissement
+     * @return \Application\Entity\Db\Etablissement
      */
     public function getEtablissement()
     {
@@ -64,7 +66,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     }
 
     /**
-     * @param Etablissement $etablissement
+     * @param \Application\Entity\Db\Etablissement $etablissement
      */
     public function setEtablissement(Etablissement $etablissement)
     {
@@ -355,7 +357,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     }
 
     /**
-     * @return Individu
+     * @return \Application\Entity\Db\Individu
      */
     public function getIndividu()
     {
@@ -363,7 +365,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     }
 
     /**
-     * @param Individu $individu
+     * @param \Application\Entity\Db\Individu|null $individu
      * @return Doctorant
      */
     public function setIndividu(Individu $individu = null)
@@ -399,7 +401,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     }
 
     /**
-     * @return These[]
+     * @return \Application\Entity\Db\These[]
      */
     public function getTheses()
     {
@@ -459,7 +461,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
 
     /**
      * @param string $ine
-     * @return Individu
+     * @return self
      */
     public function setIne($ine)
     {

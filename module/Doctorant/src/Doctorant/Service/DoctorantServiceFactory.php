@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Service\Doctorant;
+namespace Doctorant\Service;
 
 use Application\Service\Etablissement\EtablissementService;
 use Application\SourceCodeStringHelper;

@@ -1,16 +1,14 @@
 <?php
 
-namespace Application\Service\Doctorant;
+namespace Doctorant\Service;
 
-use Application\Entity\Db\Doctorant;
-use Application\Entity\Db\DoctorantCompl;
-use Application\Entity\Db\Individu;
-use Application\Entity\Db\Repository\DoctorantRepository;
-use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
+use Doctorant\Entity\Db\Doctorant;
+use Doctorant\Entity\Db\DoctorantCompl;
+use Doctorant\Entity\Db\Repository\DoctorantRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use UnicaenApp\Exception\RuntimeException;
 

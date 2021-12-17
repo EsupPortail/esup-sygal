@@ -3,7 +3,7 @@
 namespace Application\Assertion\These;
 
 use Application\Assertion\ControllerAssertion;
-use Application\Entity\Db\Doctorant;
+use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\These;
 use Application\Service\UserContextServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;

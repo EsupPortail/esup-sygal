@@ -3,7 +3,7 @@
 namespace Soutenance\Service\Notifier;
 
 use Application\Controller\Plugin\UrlFichierThese;
-use Application\Entity\Db\Doctorant;
+use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
