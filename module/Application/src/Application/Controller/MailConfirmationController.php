@@ -8,6 +8,8 @@ use Application\Form\MailConfirmationForm;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotifierServiceAwareTrait;
+use Notification\Exception\NotificationException;
+use UnicaenApp\Exception\RuntimeException;
 use Zend\View\Model\ViewModel;
 
 class MailConfirmationController extends AbstractController {
@@ -51,11 +53,11 @@ class MailConfirmationController extends AbstractController {
 
             if ($id !== null) {
                 //edition d'une demande existante
-                $mailConfirmation = $this->mailConfirmationService->getDemandeById($id);
+                $mailConfirmation = $this->mailConfirmationService->fetchMailConfirmationById($id);
             } else {
                 //nouvelle demande
                 $mailConfirmation = new MailConfirmation();
-                $mailConfirmation->setEtat(MailConfirmation::ENVOYER);
+                $mailConfirmation->setEtat(MailConfirmation::ENVOYE);
                 $data = $request->getPost();
 
                 if (isset($data['idIndividu'])) {
@@ -92,33 +94,49 @@ class MailConfirmationController extends AbstractController {
 
         return new ViewModel([
               'form' => $form,
-              'encours' => $this->mailConfirmationService->getDemandeEnCours(),
-              'confirmees' => $this->mailConfirmationService->getDemandeConfirmees(),
+              'encours' => $this->mailConfirmationService->fetchMailConfirmationsEnvoyes(),
+              'confirmees' => $this->mailConfirmationService->fetchMailConfirmationConfirmes(),
         ]);
     }
 
     public function envoieAction()
     {
         $id = $this->params()->fromRoute('id');
-        //$this->mailConfirmationService->generateCode($id);
+
         /** @var MailConfirmation $mailConfirmation */
-        $mailConfirmation = $this->mailConfirmationService->getDemandeById($id);
+        $mailConfirmation = $this->mailConfirmationService->fetchMailConfirmationById($id);
 
-        $appName = $this->appInfos()->getNom();
+        $confirmUrl = $this->url()->fromRoute(
+            'mail-confirmation-reception',
+            ['id' => $mailConfirmation->getId(), 'code' => $mailConfirmation->getCode()],
+            ['force_canonical' => true] ,
+            true
+        );
+        try {
+            $this->notifierService->triggerMailConfirmation($mailConfirmation, $confirmUrl);
+        } catch (NotificationException $e) {
+            throw new RuntimeException("Erreur lors de l'envoi de la notification", null, $e);
+        }
 
-        $confirm = $this->url()->fromRoute('mail-confirmation-reception', ['id' => $mailConfirmation->getId(), 'code' => $mailConfirmation->getCode()], ['force_canonical' => true] , true);
-        $this->notifierService->triggerMailConfirmation($mailConfirmation, $confirm);
+        return $this->redirect()->toRoute('mail-confirmation-envoye', [], [], true);
+    }
 
-        return $this->redirect()->toRoute("home");
-        /** Branchement du mail mais peut être echanger avec une vue classique en
-         * décommentant le code si dessous*/
+    public function envoyeAction()
+    {
+        $id = $this->params()->fromRoute('id');
+
+        /** @var MailConfirmation $mailConfirmation */
+        $mailConfirmation = $this->mailConfirmationService->fetchMailConfirmationById($id);
+
+        return new ViewModel([
+            'email' => $mailConfirmation->getEmail(),
+        ]);
     }
 
     /**
      * @return ViewModel
-     * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function receptionAction()
+    public function receptionAction(): ViewModel
     {
         /**
          * @var int $id
@@ -126,10 +144,11 @@ class MailConfirmationController extends AbstractController {
          */
         $id   = $this->params()->fromRoute('id');
         $code = $this->params()->fromRoute('code');
-        $mailConfirmation = $this->mailConfirmationService->getDemandeById($id);
+        $mailConfirmation = $this->mailConfirmationService->fetchMailConfirmationById($id);
 
-        if (! $mailConfirmation->isConfirmer() && $mailConfirmation->getCode() === $code) {
-            $this->mailConfirmationService->confirmEmail($id);
+        if (! $mailConfirmation->estConfirme() && $mailConfirmation->getCode() === $code) {
+            $this->mailConfirmationService->confirmEmail($mailConfirmation);
+            $this->mailConfirmationService->purgeForIndividu($mailConfirmation->getIndividu());
         }
 
         return new ViewModel([

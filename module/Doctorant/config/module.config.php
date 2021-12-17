@@ -40,7 +40,8 @@ return [
                 [
                     'controller' => 'Application\Controller\Doctorant',
                     'action' => [
-                        'modifier-persopass',
+                        'email-contact',
+                        'modifier-email-contact',
                     ],
                     'privileges' => DoctorantPrivileges::DOCTORANT_MODIFICATION_PERSOPASS,
 //                    'assertion'  => 'Assertion\\These',
@@ -48,7 +49,7 @@ return [
                 [
                     'controller' => 'Application\Controller\Doctorant',
                     'action' => [
-                        'donneesPerso',
+                        'consentement',
                     ],
                     'privileges' => DoctorantPrivileges::DOCTORANT_MODIFICATION_PERSOPASS,
 //                    'assertion'  => 'Assertion\\These',
@@ -71,28 +72,40 @@ return [
                 ],
                 'may_terminate' => false,
                 'child_routes' => [
-                    'modifier-persopass' => [
-                        'type' => 'Segment',
+                    'email-contact' => [
+                        'type' => 'Literal',
                         'options' => [
-                            'route' => '/modifier-persopass[/:back]',
+                            'route' => '/email-contact',
                             'defaults' => [
                                 /**
-                                 * @see \Doctorant\Controller\DoctorantController::modifierPersopassAction()
+                                 * @see \Doctorant\Controller\DoctorantController::emailContactAction()
                                  */
-                                'action' => 'modifier-persopass',
+                                'action' => 'email-contact',
+                            ],
+                        ],
+                    ],
+                    'modifier-email-contact' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route' => '/modifier-email-contact[/:back]',
+                            'defaults' => [
+                                /**
+                                 * @see \Doctorant\Controller\DoctorantController::modifierEmailContactAction()
+                                 */
+                                'action' => 'modifier-email-contact',
                                 'back' => 0
                             ],
                         ],
                     ],
-                    'donnees-perso' => [
+                    'consentement' => [
                         'type' => 'Literal',
                         'options' => [
-                            'route' => '/donnees-perso',
+                            'route' => '/consentement',
                             'defaults' => [
                                 /**
-                                 * @see \Doctorant\Controller\DoctorantController::domodifierPersopassAction()
+                                 * @see \Doctorant\Controller\DoctorantController::consentementAction()
                                  */
-                                'action' => 'donnees-perso',
+                                'action' => 'consentement',
                             ],
                         ],
                     ],
@@ -112,11 +125,17 @@ return [
                     ApplicationNavigationFactory::MES_DONNEES_PAGE_ID => [
                         'order' => -150,
                         'label' => 'Mes données',
-                        'route' => 'doctorant/donnees-perso',
-                        'params' => [
-                            'doctorant' => 0,
+                        'route' => 'doctorant/email-contact',
+                        //'resource' => PrivilegeController::getResourceId('Doctorant\Controller\Doctorant', 'donnees-perso'),
+                        'pages' => [
+                            'email-contact' => [
+                                'label' => 'Email de contact',
+                                'route' => 'doctorant/email-contact',
+                                'icon' => 'glyphicon glyphicon-envelope',
+                                //'resource' => PrivilegeController::getResourceId('Doctorant\Controller\Doctorant', 'modifier-email-contact'),
+                                //'visible' => 'Assertion\\These',
+                            ],
                         ],
-//                        'resource' => PrivilegeController::getResourceId('Application\Controller\Doctorant', 'donnees-perso'),
                     ],
                 ],
             ],

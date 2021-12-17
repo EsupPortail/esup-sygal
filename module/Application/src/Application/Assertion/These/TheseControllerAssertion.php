@@ -71,7 +71,7 @@ class TheseControllerAssertion extends ControllerAssertion
         }
 
         switch (true) {
-            case $this->actionIs(self::DOCTORANT_CONTROLLER, 'modifier-persopass'):
+            case $this->actionIs(self::DOCTORANT_CONTROLLER, 'modifier-email-contact'):
                 return $this->doctorant && $this->doctorant->getId() === $identityDoctorant->getId();
                 break;
         }

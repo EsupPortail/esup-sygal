@@ -24,6 +24,7 @@ class ApplicationNavigationFactory extends NavigationFactory
     use TheseServiceAwareTrait;
 
     const THESE_SELECTIONNEE_PAGE_ID = 'THESE_SELECTIONNEE';
+    const MES_DONNEES_PAGE_ID = 'MES_DONNEES';
     const MA_THESE_PAGE_ID = 'MA_THESE';
     const MES_THESES_PAGE_ID = 'MES_THESES';
     const NOS_THESES_PAGE_ID = 'NOS_THESES';
@@ -101,6 +102,19 @@ class ApplicationNavigationFactory extends NavigationFactory
      */
     protected function handleDynamicPage(array &$page)
     {
+        /**
+         * Mes données
+         */
+        // Rôle Doctorant : génération d'une page "Mes données"
+        if ($protoPage = $page['pages'][$key = self::MES_DONNEES_PAGE_ID] ?? null) {
+            if ($this->doctorant !== null) {
+                $this->setParamInPage($page, 'doctorant', $this->doctorant->getId());
+                $page['visible'] = true;
+            } else {
+                unset($page['pages'][$key]);
+            }
+        }
+
         /**
          * Ma thèse
          */

@@ -2,93 +2,90 @@
 
 namespace Application\Service;
 
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
-use Doctrine\ORM\QueryBuilder;
-use UnicaenApp\Controller\Plugin\Mail;
+use Ramsey\Uuid\Uuid;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
-class MailConfirmationService {
+class MailConfirmationService
+{
     use EntityManagerAwareTrait;
 
-
-    public function getDemandeById($id)
+    public function fetchMailConfirmationById($id): ?MailConfirmation
     {
-        $mailConfirmation = $this->getEntityManager()->getRepository(MailConfirmation::class)->findOneBy(["id"=>$id]);
+        /** @var MailConfirmation $mailConfirmation */
+        $mailConfirmation = $this->getEntityManager()->getRepository(MailConfirmation::class)
+            ->findOneBy(["id" => $id]);
+
         return $mailConfirmation;
     }
-
-    public function getDemandeEnCoursByIndividu($individu)
-    {
-        $mailConfirmation = $this->getEntityManager()->getRepository(MailConfirmation::class)->findOneBy(["individu"=>$individu, "etat" => MailConfirmation::ENVOYER]);
-        return $mailConfirmation;
-    }
-
 
     /**
+     * Retourne la demande la plus récente de la part de l'individu spécifié.
+     *
      * @param $individu
      * @return null|MailConfirmation
      */
-    public function getDemandeConfirmeeByIndividu($individu)
+    public function fetchMailConfirmationsForIndividu($individu): ?MailConfirmation
     {
-        /** @var MailConfirmation $mailConfirmation */
-        $mailConfirmation = $this->getEntityManager()->getRepository(MailConfirmation::class)->findOneBy(["individu"=>$individu, "etat" => MailConfirmation::CONFIRMER]);
-        return $mailConfirmation;
+        /** @var MailConfirmation[] $mailConfirmations */
+        $mailConfirmations = $this->getEntityManager()->getRepository(MailConfirmation::class)
+            ->findBy(["individu" => $individu], ['id' => 'desc']);
+
+        return $mailConfirmations ? current($mailConfirmations) : null;
     }
 
     /**
-     * @return MailConfirmation[] $confirmations
+     * @return MailConfirmation[]
      */
-    public function getDemandeEnCours()
+    public function fetchMailConfirmationsEnvoyes(): array
     {
-        /** @var QueryBuilder $qb */
         $qb = $this->entityManager->getRepository(MailConfirmation::class)->createQueryBuilder("mc")
             ->andWhere("mc.etat = :etat")->setParameter("etat", 'E');
-        $confirmations = $qb->getQuery()->execute();
 
-        return $confirmations;
+        return $qb->getQuery()->execute();
     }
 
     /**
-     * @return MailConfirmation[] $confirmations
+     * @return MailConfirmation[]
      */
-    public function getDemandeConfirmees()
+    public function fetchMailConfirmationConfirmes(): array
     {
-        /** @var QueryBuilder $qb */
         $qb = $this->entityManager->getRepository(MailConfirmation::class)->createQueryBuilder("mc")
             ->andWhere("mc.etat = :etat")->setParameter("etat", 'C');
-        $confirmations = $qb->getQuery()->execute();
 
-        return $confirmations;
+        return $qb->getQuery()->execute();
     }
 
     /**
      * @param int $id
      * @return MailConfirmation
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\OptimisticLockException|\Doctrine\ORM\ORMException
      */
-    public function swapEtat($id)
+    public function swapEtat($id): MailConfirmation
     {
-        /** @var MailConfirmation $mailConfirmation */
-        $mailConfirmation = $this->getDemandeById($id);
+        $mailConfirmation = $this->fetchMailConfirmationById($id);
+
         if ($mailConfirmation !== null) {
-            if ($mailConfirmation->getEtat() === MailConfirmation::ENVOYER) {
-                $mailConfirmation->setEtat(MailConfirmation::CONFIRMER);
+            if ($mailConfirmation->getEtat() === MailConfirmation::ENVOYE) {
+                $mailConfirmation->setEtat(MailConfirmation::CONFIRME);
             } else {
-                $mailConfirmation->setEtat(MailConfirmation::ENVOYER);
+                $mailConfirmation->setEtat(MailConfirmation::ENVOYE);
             }
             $this->getEntityManager()->flush($mailConfirmation);
         }
+
         return $mailConfirmation;
     }
 
     /**
      * @param $id
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\OptimisticLockException|\Doctrine\ORM\ORMException
      */
     public function remove($id)
     {
-        /** @var MailConfirmation $mailConfirmation */
-        $mailConfirmation = $this->getDemandeById($id);
+        $mailConfirmation = $this->fetchMailConfirmationById($id);
+
         if ($mailConfirmation !== null) {
             $this->getEntityManager()->remove($mailConfirmation);
             $this->getEntityManager()->flush();
@@ -96,49 +93,58 @@ class MailConfirmationService {
     }
 
     /**
-     * @param $id
+     * Supprime toutes les demandes en cours.
+     *
+     * @param \Application\Entity\Db\Individu $individu
+     * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function confirmEmail($id)
+    public function purgeForIndividu(Individu $individu)
     {
-         /** @var MailConfirmation $mailConfirmation */
-        $mailConfirmation = $this->getDemandeById($id);
-        $mailConfirmation->setEtat(MailConfirmation::CONFIRMER);
-        $this->getEntityManager()->flush($mailConfirmation);
+        $qb = $this->entityManager->getRepository(MailConfirmation::class)->createQueryBuilder('mc')
+            ->delete(null, 'mc')
+            ->where('mc.individu = :individu')->setParameter('individu', $individu)
+            ->andWhere('mc.etat = :etat')->setParameter('etat', MailConfirmation::ENVOYE);
 
+        $qb->getQuery()->execute();
+
+        $this->entityManager->flush();
     }
 
-    public function generateCode($id) {
+    /**
+     * @param \Application\Entity\Db\MailConfirmation $mailConfirmation
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function confirmEmail(MailConfirmation $mailConfirmation)
+    {
+        $mailConfirmation->setEtat(MailConfirmation::CONFIRME);
 
-        $code ="";
+        $this->getEntityManager()->flush($mailConfirmation);
+    }
 
-        //do {
-            for ($groupe = 0; $groupe < 4; $groupe++) {
-                if ($groupe !== 0) $code .= "-";
-                for ($lettre = 0; $lettre < 4; $lettre++) {
-                    $l = "";
-                    $casse = rand(1, 2);
-                    if ($casse === 1) {
-                        $l = chr(rand(97, 122));
-                    } else {
-                        $l = chr(rand(65, 90));
-                    }
-                    $code .= $l;
-                }
+    public function generateCode($id): string
+    {
+        $code = Uuid::uuid4()->toString();
 
-            }
-        //} while (false);
-        $mailConfirmation = $this->getDemandeById($id);
+        $mailConfirmation = $this->fetchMailConfirmationById($id);
         $mailConfirmation->setCode($code);
         $this->getEntityManager()->flush($mailConfirmation);
 
         return $code;
     }
 
-    public function save($mailConfirmation)
+    public function save(MailConfirmation $mailConfirmation)
     {
         $this->entityManager->persist($mailConfirmation);
         $this->entityManager->flush($mailConfirmation);
+
         return $mailConfirmation->getId();
+    }
+
+    public function delete(MailConfirmation $mailConfirmation)
+    {
+        $this->entityManager->remove($mailConfirmation);
+        $this->entityManager->flush($mailConfirmation);
     }
 }

@@ -8,6 +8,7 @@ use Application\Form\MailConfirmationForm;
 use Application\RouteMatch;
 use Application\Service\MailConfirmationService;
 use Doctorant\Entity\Db\Doctorant;
+use Doctorant\Form\ConsentementForm;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use UnicaenAuth\Authentication\Adapter\Ldap as LdapAuthAdapter;
 use Zend\View\Model\ViewModel;
@@ -30,6 +31,11 @@ class DoctorantController extends AbstractController
     private $ldapAuthAdapter;
 
     /**
+     * @var \Doctorant\Form\ConsentementForm
+     */
+    private $donneesPersoForm;
+
+    /**
      * @param MailConfirmationService $mailConfirmationService
      */
     public function setMailConfirmationService(MailConfirmationService $mailConfirmationService)
@@ -45,67 +51,117 @@ class DoctorantController extends AbstractController
         $this->mailConfirmationForm = $mailConfirmationForm;
     }
 
+    public function setDonneesPersoForm(ConsentementForm $donneesPersoForm)
+    {
+        $this->donneesPersoForm = $donneesPersoForm;
+    }
+
+    /**
+     * @return \Zend\View\Model\ViewModel
+     */
+    public function emailContactAction(): ViewModel
+    {
+        $doctorant = $this->requestDoctorant();
+
+        // Si on a une demande en attente
+        $mailConfirmation = $this->mailConfirmationService->fetchMailConfirmationsForIndividu($doctorant->getIndividu());
+        if ($mailConfirmation && $mailConfirmation->estEnvoye()) {
+            return $this->changementEmailContactEnCours($doctorant, $mailConfirmation);
+        }
+
+        $mailConfirmation = $this->mailConfirmationService->fetchMailConfirmationsForIndividu($doctorant->getIndividu());
+
+        return new ViewModel([
+            'doctorant' => $doctorant,
+            'mailConfirmation' => $mailConfirmation,
+        ]);
+    }
+
     /**
      * @return \Zend\Http\Response|\Zend\View\Model\ViewModel
      */
-    public function modifierPersopassAction()
+    public function modifierEmailContactAction()
     {
         $doctorant = $this->requestDoctorant();
-        $mailConfirmation = $this->mailConfirmationService->getDemandeConfirmeeByIndividu($doctorant->getIndividu());
-        if ($mailConfirmation !== null) {
-            $viewmodel = new ViewModel([
-                'email' => $mailConfirmation->getEmail(),
-            ]);
-            $viewmodel->setTemplate('doctorant/doctorant/demande-ok');
-            return $viewmodel;
+        $force = (bool) $this->params()->fromQuery('force', false);
+
+        // Si on a déjà une demande confirmée...
+        $mailConfirmation = $this->mailConfirmationService->fetchMailConfirmationsForIndividu($doctorant->getIndividu());
+        if ($mailConfirmation && $mailConfirmation->estConfirme() && !$force) {
+            return $this->changementEmailContactConfirme($mailConfirmation);
         }
 
-        $mailConfirmation = $this->mailConfirmationService->getDemandeEnCoursByIndividu($doctorant->getIndividu());
-
-        //Si on a déjà une demande en attente
-        $back = $this->params()->fromRoute('back');
-
-        if ($mailConfirmation !== null && ($back == 0 || $back === null)) {
-            $viewmodel = new ViewModel([
-                'doctorant' => $doctorant,
-                'email' => $mailConfirmation->getEmail(),
-            ]);
-            $viewmodel->setTemplate('doctorant/doctorant/demande-encours');
-            return $viewmodel;
+        // Si on a déjà une demande en attente...
+        $mailConfirmation = $this->mailConfirmationService->fetchMailConfirmationsForIndividu($doctorant->getIndividu());
+        if ($mailConfirmation && $mailConfirmation->estEnvoye() && !$force) {
+            return $this->changementEmailContactEnCours($doctorant, $mailConfirmation);
         }
 
-        if ($mailConfirmation === null) {
-            $mailConfirmation = new MailConfirmation();
-            $mailConfirmation->setIndividu($doctorant->getIndividu());
-            $mailConfirmation->setEtat(MailConfirmation::ENVOYER);
-        }
+        $mailConfirmation = new MailConfirmation();
+        $mailConfirmation->setIndividu($doctorant->getIndividu());
+        $mailConfirmation->setEtat(MailConfirmation::ENVOYE);
+
         $request = $this->getRequest();
         if ($request->isPost()) {
-
             $data = $request->getPost();
             $email = $data['email'];
             if (filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
                 $mailConfirmation->setEmail($email);
                 $id = $this->mailConfirmationService->save($mailConfirmation);
                 $this->mailConfirmationService->generateCode($id);
+
                 return $this->redirect()->toRoute('mail-confirmation-envoie', ['id' => $id], [], true);
             } else {
-                $this->flashMessenger()->addErrorMessage("L'adresse électronique fournie <strong>".$email."</strong> est non valide.");
+                $this->flashMessenger()->addErrorMessage("L'adresse électronique fournie n'est pas valide : " . $email);
             }
         }
 
-        $form = $this->mailConfirmationForm;
-        $form->setAttribute('action', $this->url()->fromRoute('doctorant/modifier-persopass', [], [], true));
-
-        $form->bind($mailConfirmation);
+        $this->mailConfirmationForm->setAttribute('action',
+            $this->url()->fromRoute('doctorant/modifier-email-contact', [], ['query' => ['force' => (int)$force]], true));
+        $this->mailConfirmationForm->bind($mailConfirmation);
 
         return new ViewModel([
             'doctorant' => $doctorant,
-            'form' => $form,
+            'form' => $this->mailConfirmationForm,
             'title' => "Saisie de l'adresse électronique de contact",
-            //'detournement' => (bool) $this->params('detournement'),
-            //'emailBdD' => $variable->getValeur(),
         ]);
+    }
+
+    /**
+     * @param \Application\Entity\Db\MailConfirmation $mailConfirmation
+     * @return \Zend\View\Model\ViewModel
+     */
+    public function changementEmailContactConfirme(MailConfirmation $mailConfirmation): ViewModel
+    {
+        $viewmodel = new ViewModel([
+            'email' => $mailConfirmation->getEmail(),
+        ]);
+
+        $viewmodel->setTemplate('doctorant/doctorant/demande-ok');
+
+        return $viewmodel;
+    }
+
+    /**
+     * @param \Doctorant\Entity\Db\Doctorant $doctorant
+     * @param \Application\Entity\Db\MailConfirmation $mailConfirmation
+     * @return \Zend\View\Model\ViewModel
+     */
+    public function changementEmailContactEnCours(Doctorant $doctorant, MailConfirmation $mailConfirmation): ViewModel
+    {
+        $viewmodel = new ViewModel([
+            'doctorant' => $doctorant,
+            'email' => $mailConfirmation->getEmail(),
+        ]);
+        $viewmodel->setTemplate('doctorant/doctorant/demande-encours');
+
+        return $viewmodel;
+    }
+
+    public function consentementAction()
+    {
+        $doctorant = $this->requestDoctorant();
+
     }
 
     /**

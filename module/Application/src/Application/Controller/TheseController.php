@@ -242,26 +242,20 @@ class TheseController extends AbstractController
             $validationsDesCorrectionsEnAttente = $this->validationService->getValidationsAttenduesPourCorrectionThese($these);
         }
 
-        /**
-         * @var Individu $individu
-         * @var MailConfirmation $enCours
-         * @var MailConfirmation $confirmee
-         */
         $individu = $these->getDoctorant()->getIndividu();
-        $enCours = $this->mailConfirmationService->getDemandeEnCoursByIndividu($individu);
-        $confirmee = $this->mailConfirmationService->getDemandeConfirmeeByIndividu($individu);
+        $mailConfirmation = $this->mailConfirmationService->fetchMailConfirmationsForIndividu($individu);
 
         $mailContact = null;
         $etatMailContact = null;
 
         switch(true) {
-            case($enCours !== null) :
-                $mailContact = $enCours->getEmail();
-                $etatMailContact = MailConfirmation::ENVOYER;
+            case($mailConfirmation && $mailConfirmation->estEnvoye()) :
+                $mailContact = $mailConfirmation->getEmail();
+                $etatMailContact = MailConfirmation::ENVOYE;
                 break;
-            case($confirmee !== null) :
-                $mailContact = $confirmee->getEmail();
-                $etatMailContact = MailConfirmation::CONFIRMER;
+            case($mailConfirmation && $mailConfirmation->estConfirme()) :
+                $mailContact = $mailConfirmation->getEmail();
+                $etatMailContact = MailConfirmation::CONFIRME;
                 break;
         }
 
@@ -278,7 +272,7 @@ class TheseController extends AbstractController
         }
 
         //TODO JP remplacer dans modifierPersopassUrl();
-        $urlModification = $this->url()->fromRoute('doctorant/modifier-persopass',['back' => 1, 'doctorant' => $these->getDoctorant()->getId()], [], true);
+        $urlModification = $this->url()->fromRoute('doctorant/modifier-email-contact',['back' => 1, 'doctorant' => $these->getDoctorant()->getId()], [], true);
 
         $view = new ViewModel([
             'these'                     => $these,

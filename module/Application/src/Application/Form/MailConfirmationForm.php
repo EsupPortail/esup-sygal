@@ -22,12 +22,12 @@ class MailConfirmationForm extends Form {
         $this->add(new Hidden('idIndividu'));
         $this->add((
         new Text('individu'))
-            ->setLabel("Individu :")
+            ->setLabel("Votre identité :")
             ->setAttribute('readonly','readonly')
         );
         $this->add((
         new Text('email'))
-            ->setLabel("Adresse électronique :")
+            ->setLabel("Votre adresse électronique :")
         );
         $this->add((
          new Submit('enregistrer'))

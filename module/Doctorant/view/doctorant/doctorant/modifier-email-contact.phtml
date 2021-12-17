@@ -11,6 +11,8 @@ use Zend\Form\Form;
  * @var string $title
  * @var bool   $detournement Indique s'il s'agit d'un détournement de requête pour saisie du persopass
  * @var string $emailBdD
+ *
+ * @see \Doctorant\Controller\DoctorantController::modifierEmailContactAction()
  */
 
 $appName = $this->appInfos()->nom;
@@ -23,10 +25,9 @@ $appName = $this->appInfos()->nom;
 <div class="container">
     <div class="col-md-8">
         <p class="lead">
-            Avant de continer, merci de saisir une adresse mail de contact.
+            Merci de saisir une adresse mail de contact.
             Cette adresse sera utilisée par <?php echo $appName ?> pour vous communiquer les informations importantes associées à votre
             thèse.
-            <!--Cette adresse peut aussi être utilisée afin de vous identifier à SyGAL.-->
         </p>
         <p class="alert alert-info">
             <strong>NB: </strong>

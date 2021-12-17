@@ -4,6 +4,7 @@ namespace Doctorant\Controller;
 
 use Application\Form\MailConfirmationForm;
 use Application\Service\MailConfirmationService;
+use Doctorant\Form\ConsentementForm;
 use Doctorant\Service\DoctorantService;
 use Interop\Container\ContainerInterface;
 
@@ -31,6 +32,7 @@ class DoctorantControllerFactory
         $controller->setDoctorantService($doctorantService);
         $controller->setMailConfirmationService($mailConfirmationService);
         $controller->setMailConfirmationForm($mailConfirmationForm);
+        $controller->setDonneesPersoForm(new ConsentementForm());
 
         return $controller;
     }

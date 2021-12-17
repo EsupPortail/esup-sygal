@@ -1,3 +1,10 @@
-<h1 class="page-header"> Adresse électronique de contact</h1>
+<?php
+use UnicaenApp\View\Helper\Messenger;
+?>
 
-<?php echo $this->messenger()->setMessage("Votre adresse électronique de contact est confirmée, merci.", \UnicaenApp\View\Helper\Messenger::SUCCESS);
+<h1 class="page-header">Modification de votre adresse électronique de contact</h1>
+
+<?php echo $this->messenger()->setMessage(
+    "Votre adresse électronique de contact est confirmée.",
+    Messenger::SUCCESS
+);
