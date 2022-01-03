@@ -1,6 +1,19 @@
 Journal des modifications
 =========================
 
+3.0.10
+-----
+- Ajout de la mention "La réservation du lieu de soutenance n'est pas faite automatiquement et reste à votre charge"
+- Meilleure gestion des tokens des membres d'une soutenance
+- Déclaration tardive de visoconférence ajouté aux interventions de soutenance
+- Avis sur rapport d'activité de fin de thèse
+- Ajout (au moment de leur téléchargement) d'une page de couverture aux rapports d'activité validés
+- Navigation : pas besoin de page 'Thèse sélectionnée' s'il y a une page 'Ma thèse'
+- Notification à l'issue de la validation de la PDC : ajout de la BU en copie du mail
+- Suppression des paramètres 'cookie_lifetime'et 'gc_maxlifetime' de la config de l'appliccation
+- Refactorisation : extraction d'un nouveau module 'Doctorant' à partir du module 'Application'
+- [FIX] Création du menu 'Ma thèse' même si la thèse est soutenue
+
 3.0.9
 -----
 - Dépôt des rapports d'activité, CSI, mi-parcours : possibilité de sélectionner l'année univ précédente.

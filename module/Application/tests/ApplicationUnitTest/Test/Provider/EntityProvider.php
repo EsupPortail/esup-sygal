@@ -2,7 +2,7 @@
 
 namespace ApplicationUnitTest\Test\Provider;
 
-use Application\Entity\Db\Doctorant;
+use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\Individu;

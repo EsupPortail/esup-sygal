@@ -13,7 +13,7 @@ $appName = $this->appInfos()->nom;
 
 <h1 class="page-header"> Adresse électronique de contact</h1>
 
-<?php if ($mailConfirmation->isConfirmer()): ?>
+<?php if ($mailConfirmation->estConfirme()): ?>
     <p>
         <?php
         $message = sprintf("Votre adresse électronique <strong>%s</strong> est maintenant confirmée, merci.", $mailConfirmation->getEmail());

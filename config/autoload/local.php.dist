@@ -8,9 +8,9 @@ return [
         'page_de_couverture' => [
             'template' => [
                 // template .phtml
-                'phtml_file_path' => APPLICATION_DIR . '/module/Application/src/Application/Service/PageDeCouverture/pagedecouverture.phtml',
+                'phtml_file_path' => APPLICATION_DIR . '/module/Application/view/application/these/page-de-couverture/pagedecouverture.phtml',
                 // feuille de styles
-                'css_file_path' => APPLICATION_DIR . '/module/Application/src/Application/Service/PageDeCouverture/pagedecouverture.css',
+                'css_file_path' => APPLICATION_DIR . '/module/Application/view/application/these/page-de-couverture/pagedecouverture.css',
             ],
         ],
         'archivabilite' => [
@@ -23,6 +23,16 @@ return [
         'depot_version_corrigee' => [
             'resaisir_autorisation_diffusion' => false,
             'resaisir_attestations' => false,
+        ],
+        'rapport' => [
+            'page_de_couverture' => [
+                'template' => [
+                    // template .phtml
+                    'phtml_file_path' => APPLICATION_DIR . '/module/Application/view/application/rapport/page-de-couverture/pagedecouverture.phtml',
+                    // feuille de styles
+                    'css_file_path' => APPLICATION_DIR . '/module/Application/view/application/rapport/page-de-couverture/pagedecouverture.css',
+                ],
+            ],
         ],
     ],
 

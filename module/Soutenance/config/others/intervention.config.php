@@ -2,6 +2,7 @@
 
 namespace Soutenance;
 
+use Application\Navigation\ApplicationNavigationFactory;
 use Soutenance\Assertion\InterventionAssertion;
 use Soutenance\Assertion\InterventionAssertionFactory;
 use Soutenance\Controller\InterventionController;
@@ -54,6 +55,8 @@ return [
                     'controller' => InterventionController::class,
                     'action' => [
                         'toggle-president-distanciel',
+                        'ajouter-visioconference-tardive',
+                        'supprimer-visioconference-tardive',
                     ],
                     'privileges' => InterventionPrivileges::INTERVENTION_MODIFIER,
                 ],
@@ -69,7 +72,7 @@ return [
                      * Navigation pour LA thèse courante.
                      */
                     // DEPTH = 1
-                    'these_selectionnee' => [
+                    ApplicationNavigationFactory::THESE_SELECTIONNEE_PAGE_ID => [
                         'pages' => [
                             // DEPTH = 2
                             'soutenance' => [
@@ -126,6 +129,26 @@ return [
                                     'route' => '/toggle-president-distanciel',
                                     'defaults' => [
                                         'action' => 'toggle-president-distanciel',
+                                    ],
+                                ],
+                            ],
+                            'ajouter-visioconference-tardive' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/ajouter-visioconference-tardive',
+                                    'defaults' => [
+                                        'action' => 'ajouter-visioconference-tardive',
+                                    ],
+                                ],
+                            ],
+                            'supprimer-visioconference-tardive' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/supprimer-visioconference-tardive/:intervention',
+                                    'defaults' => [
+                                        'action' => 'supprimer-visioconference-tardive',
                                     ],
                                 ],
                             ],

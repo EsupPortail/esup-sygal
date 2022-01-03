@@ -16,9 +16,9 @@ return [
         'page_de_couverture' => [
             'template' => [
                 // template .phtml
-                'phtml_file_path' => APPLICATION_DIR . '/module/Application/src/Application/Service/PageDeCouverture/pagedecouverture.phtml',
+                'phtml_file_path' => APPLICATION_DIR . '/module/Application/view/application/these/page-de-couverture/pagedecouverture.phtml',
                 // feuille de styles
-                'css_file_path' => APPLICATION_DIR . '/module/Application/src/Application/Service/PageDeCouverture/pagedecouverture.css',
+                'css_file_path' => APPLICATION_DIR . '/module/Application/view/application/these/page-de-couverture/pagedecouverture.css',
             ],
         ],
         // Options pour le test d'archivabilité
@@ -52,6 +52,18 @@ return [
             'resaisir_autorisation_diffusion' => true,
             // Resaisir les attestations ? Sinon celles saisies au 1er dépôt sont reprises/dupliquées.
             'resaisir_attestations' => true,
+        ],
+        // Options concernant les rapports (activité, CSI, mi-parcours)
+        'rapport' => [
+            // Page de couverture des rapports d'activité déposés
+            'page_de_couverture' => [
+                'template' => [
+                    // template .phtml
+                    'phtml_file_path' => APPLICATION_DIR . '/module/Application/view/application/rapport/page-de-couverture/pagedecouverture.phtml',
+                    // feuille de styles
+                    'css_file_path' => APPLICATION_DIR . '/module/Application/view/application/rapport/page-de-couverture/pagedecouverture.css',
+                ],
+            ],
         ],
     ],
     // Options pour le service de notification par mail

@@ -37,6 +37,7 @@ $modules = [
     'Soutenance',
     'Notification',
     'Information',
+    'Doctorant',
 //    'StepStar',
     'Application',
 ];

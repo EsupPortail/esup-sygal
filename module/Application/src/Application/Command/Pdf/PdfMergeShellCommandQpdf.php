@@ -28,7 +28,7 @@ class PdfMergeShellCommandQpdf extends MergeShellCommand
     {
         // Commande de fusion (cf. https://qpdf.sourceforge.io/files/qpdf-manual.html#ref.page-selection)
         $command = $this->executable .
-            sprintf(' %s --pages %s -- %s',
+            sprintf(' %s --pages . %s -- %s',
                 array_shift($this->inputFilesPaths),
                 implode(' ', $this->inputFilesPaths),
                 $this->outputFilePath

@@ -6,12 +6,14 @@ use Application\Entity\DateTimeAwareTrait;
 use Application\Entity\Db\These;
 use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
 use Soutenance\Entity\Intervention;
 use UnicaenApp\Entity\UserInterface;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use Zend\Mvc\Controller\AbstractActionController;
 
 class InterventionService
 {
@@ -176,6 +178,31 @@ class InterventionService
             ->orderby('intervention.histoCreation', 'DESC');
         $result = $qb->getQuery()->getResult();
         return $result;
+    }
+
+    /**
+     * @param int|null $id
+     * @return Intervention|null
+     */
+    public function getIntervention(?int $id) : ?Intervention
+    {
+        $qb = $this->createQueryBuilder()
+            ->andWhere('intervention.id = :id')
+            ->setParameter('id', $id);
+
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Plusieurs Intervention partagent le même id [".$id."].", null ,$e);
+        }
+        return $result;
+    }
+
+    public function getRequestedIntervention(AbstractActionController $controller, string $param = "intervention") : ?Intervention
+    {
+        $id = $controller->params()->fromRoute($param);
+        $intervention = $this->getIntervention($id);
+        return $intervention;
     }
 
 }

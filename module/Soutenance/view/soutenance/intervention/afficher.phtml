@@ -1,5 +1,6 @@
 <?php
 
+use Application\Controller\Plugin\UrlFichierThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Soutenance\Entity\Intervention;
@@ -11,10 +12,12 @@ use Soutenance\Provider\Privilege\InterventionPrivileges;
  * @see \Soutenance\Controller\InterventionController::afficherAction()
  * @var These $these
  * @var Intervention $distanciel
+ * @var Intervention[]|null $visios
  * @var Proposition $proposition
+ * @var Membre[] $membres
  * @var array $justificatifs
- * @var string $urlFichierThese;
  * @var string $FORMULAIRE_DELEGUATION
+ * @var UrlFichierThese $urlFichierThese
  */
 
 $this->headTitle("Intervention sur la soutenance de thèse de " . $these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true));
@@ -48,6 +51,17 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
         </p>
     </div>
 <?php else : ?>
+
+    <?php /** LIEN VERS LE FORMULAIRE DOC **************************************************************/ ?>
+    <div class="alert alert-info">
+        Vous pouvez télécharger les formulaires de délégation grâce au lien suivant :
+        <strong><u>
+                <a href="<?php echo $FORMULAIRE_DELEGUATION; ?>">
+                    formulaire de demande de délégation
+                </a>
+            </u></strong>.
+    </div>
+
     <?php
     $classe_distanciel = 'panel-warning';
     if ($distanciel !== null) {
@@ -118,17 +132,6 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                     </ul>
                 </div>
 
-                <br/>
-
-                <?php /** LIEN VERS LE FORMULAIRE DOC **************************************************************/ ?>
-                <div class="alert alert-info">
-                    Vous pouvez télécharger les formulaires de délégation grâce au lien suivant :
-                    <strong><u>
-                    <a href="<?php echo $FORMULAIRE_DELEGUATION; ?>">
-                        formulaire de demande de délégation
-                    </a>
-                    </u></strong>.
-                </div>
 
             <?php else: ?>
 
@@ -151,6 +154,62 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                     <span class="glyphicon glyphicon-warning-sign"></span> Si le Président du jury est en distanciel tous les membres du jury devront remplir une délégation de signature.
                 </div>
             <?php endif; ?>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Déclaration tardive de membre en visio-conférence
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <?php if ($visios === null or empty($visios)) : ?>
+                        Aucune déclaration de visoconférence tardive
+                    <?php else : ?>
+                        Liste des déclaration tardive d'un membre en visio-conférence :
+                        <ul>
+                        <?php foreach ($visios as $visio) : ?>
+                            <li>
+                                <?php echo $membres[$visio->getComplement()]->getDenomination(); ?>
+                                <?php
+                                    $justificatif = null;
+                                    foreach ($justificatifs as $justificatif_) {
+                                        if ($justificatif_['type'] === NatureFichier::CODE_DELEGUATION_SIGNATURE AND $justificatif_['membre'] === $membres[$visio->getComplement()]) {
+                                            $justificatif = $justificatif_;
+                                            break;
+                                        }
+                                    }
+                                ?>
+
+                                <?php if ($justificatif !== null) : ?>
+                                    <?php echo $this->justificatif()->render($justificatif['justificatif'], $urlFichierThese, ['court' => true]); ?>
+                                <?php else : ?>
+                                    (<span class="text-danger">justificatif manquant</span>)
+                                <?php endif; ?>
+
+                                <?php if ($canModifier) : ?>
+                                    <?php /** @see \Soutenance\Controller\InterventionController::supprimerVisioconferenceTardiveAction() */ ?>
+                                    <a href="<?php echo $this->url('soutenance/intervention/supprimer-visioconference-tardive', ['these' => $these->getId(), 'intervention' => $visio->getId()], [], true); ?>">
+                                        <span class="icon icon-supprimer">Supprimer la déclaration</span>
+                                    </a>
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-3">
+                    <?php if ($canModifier) : ?>
+                        <?php /** @see \Soutenance\Controller\InterventionController::ajouterVisioconferenceTardiveAction() */ ?>
+                        <a href="<?php echo $this->url('soutenance/intervention/ajouter-visioconference-tardive', ['these' => $these->getId()],[], true); ?>" class="btn btn-primary action ajax-modal" data-event="modification">
+                            <span class="icon icon-ajouter"></span>
+                            Ajout d'une déclaration
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
     </div>
 <?php endif; ?>

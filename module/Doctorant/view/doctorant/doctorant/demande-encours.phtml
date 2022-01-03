@@ -1,0 +1,33 @@
+<?php
+
+use Doctorant\Entity\Db\Doctorant;
+use UnicaenApp\View\Helper\Messenger;
+
+/**
+ * @var string $email
+ * @var Doctorant $doctorant
+ */
+
+$appName = $this->appInfos()->nom;
+?>
+
+<h1 class="page-header">Demande de changement de votre adresse électronique de contact</h1>
+
+<div class="messenger alert alert-danger ">
+    <p>
+        <span class="glyphicon glyphicon-exclamation-sign"></span>
+        Vous avez fait une demande de modification d'adresse électronique de contact et <br>
+        un mail vous a été envoyé à l'adresse <strong><?php echo $email ?></strong>.
+    </p>
+    <p>
+        Veuillez confirmer votre nouvelle adresse en cliquant sur le lien figurant dans ce mail, svp.
+    </p>
+</div>
+
+<p>
+    Pour refaire une demande de modification d'adresse électronique de contact,
+    veuillez cliquer sur le bouton ci-dessous.
+</p>
+
+<a href="<?php echo $this->url('doctorant/modifier-email-contact', ['back' => true, 'doctorant' => $doctorant->getId()], ['query' => ['force' => 1]], true) ?>"
+   class="btn btn-info">Nouvelle demande</a>

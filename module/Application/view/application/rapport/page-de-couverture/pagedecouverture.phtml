@@ -1,0 +1,145 @@
+<?php
+
+use Application\Service\FichierThese\PdcData;
+use Application\Service\These\TheseService;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var \Application\Entity\Db\Rapport $rapport
+ * @var PdcData $data
+ *
+ * @see TheseService::fetchInformationsPageDeCouverture() pour la génération de $data
+ */
+?>
+
+<!-- SECTION DU LOGO DE LA COMUE -------------------------------------------------------------------------------------->
+<div style="text-align: center; margin-bottom: 30px;">
+    <div class='logo-comue'>
+        <?php if ($data->getLogoCOMUE() !== null): ?>
+            <img src="<?php echo $data->getLogoCOMUE() ?>"/>
+        <?php else: ?>
+            <span style='background-color:red;'> COMUE ou logo de la COMUE non renseigné. </span>
+        <?php endif; ?>
+    </div>
+</div>
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+<div class='bandeau-these'>
+    <?php echo mb_strtoupper($rapport->getTypeRapportToString()) ?>
+</div>
+
+<div class='bandeau-titre'>
+    <?php echo $rapport->getFichier()->getNom() ?>
+</div>
+
+<div class='infos-doctorant'>
+    <?php $validation = $rapport->getRapportValidation() ?>
+    Déposé le <?php echo ($rapport->getHistoModification() ?: $rapport->getHistoCreation())->format('d/m/Y H:i') ?>
+    <br>
+    <br>
+    Validé par <?php echo $validation->getHistoCreateur() ?> le <?php echo $validation->getHistoCreation()->format('d/m/Y H:i') ?>
+</div>
+
+<br>
+<br>
+<br>
+
+<div class='bandeau-these'>
+    Thèse
+</div>
+
+<div class='infos-diplome'>
+    <span class='larger-infos'>Pour obtenir le diplôme de doctorat </span>
+    <br/>
+
+    Spécialité
+    <?php if ($data->getSpecialite() !== null): ?>
+        <?php echo $data->getSpecialite(); ?>
+    <?php else: ?>
+        <span style='background-color:red;'> non renseignée </span>
+    <?php endif; ?>
+    <br/>
+
+    Préparée au sein de
+    <?php if ($data->getEtablissement() !== null): ?>
+        l'<?php echo $data->getEtablissement(); ?>
+    <?php else: ?>
+        <span style='background-color:red;'> non renseigné </span>
+    <?php endif; ?>
+    <!--    --><?php //if ($data->isAssocie()): ?>
+    <!--     et de l'--><?php //echo $data->getLibelleAssocie(); ?>
+    <!--    --><?php //endif; ?>
+    <br/>
+
+    <?php if ($data->isCotutuelle()): ?>
+        En cotutelle
+        <?php if ($data->getCotutuellePays() !== null): ?>
+            internationale
+        <?php endif; ?>
+        avec
+        <?php echo $data->getCotutuelleLibelle(); ?>
+        <?php if ($data->getCotutuellePays() !== null): ?>
+            , <?php echo ($data->getCotutuellePays()); ?>
+        <?php endif; ?>
+    <?php endif; ?>
+</div>
+
+
+<div class='bandeau-titre'>
+    <?php if ($data->getTitre() !== null): ?>
+        <?php echo $data->getTitre(); ?>
+    <?php else: ?>
+        <span style='background-color:red;'> Aucun titre </span>
+    <?php endif; ?>
+    <br/>
+</div>
+
+<div class='infos-doctorant' style=''>
+    <!--Présentée et soutenue par <br/>-->
+    <?php if ($data->getDoctorant() !== null): ?>
+        <?php echo $data->getDoctorant(); ?>
+    <?php else: ?>
+        <span style='background-color:red;'> Aucun doctorant </span>
+    <?php endif; ?>
+</div>
+
+
+<!-- SECTION DES LOGOS EN BAS DE PAGE --------------------------------------------------------------------------------->
+<div class="logos">
+    <table style="border:none;" class="logos">
+        <tr>
+            <td>
+                <?php if ($data->getLogoEtablissement()): ?>
+                    <img class="logo_small" src="<?php echo $data->getLogoEtablissement() ?>"/>
+                <?php else: ?>
+                    <span style='background-color:red;'> Établissement d'inscription ou logo d'établissement non renseigné. </span>
+                <?php endif; ?>
+            </td>
+            <?php if ($data->isAssocie()): ?>
+                <td>
+                    <?php if ($data->getLogoAssocie()): ?>
+                        <img class="logo_small" src="<?php echo $data->getLogoAssocie() ?>"/>
+                    <?php else: ?>
+                        <span style='background-color:red;'> Établissement associé ou logo d'établissement non renseigné. </span>
+                    <?php endif; ?>
+                </td>
+            <?php endif; ?>
+            <td>
+                <?php if ($data->getLogoEcoleDoctorale()): ?>
+                    <img class="logo_small" src="<?php echo $data->getLogoEcoleDoctorale() ?>"/>
+                <?php else: ?>
+                    <span style='background-color:red;'> École doctorale ou logo d'école doctorale non renseigné </span>
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php if ($data->getLogoUniteRecherche()): ?>
+                    <img class="logo_small" src="<?php echo $data->getLogoUniteRecherche() ?>"/>
+                <?php else: ?>
+                    <span style='background-color:red;'> Unité de recherche ou logo d'unité de recherche non renseigné </span>
+                <?php endif; ?>
+            </td>
+        </tr>
+    </table>
+</div>
+<!-- --------------------------------------------------------------------------------------------------------------- -->

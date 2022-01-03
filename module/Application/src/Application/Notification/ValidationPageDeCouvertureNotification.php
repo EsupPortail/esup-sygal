@@ -19,10 +19,26 @@ class ValidationPageDeCouvertureNotification extends Notification
     private $action;
 
     /**
+     * @var string
+     */
+    private $emailBu;
+
+    /**
+     * @param string $emailBu
+     * @return self
+     */
+    public function setEmailBu(string $emailBu): self
+    {
+        $this->emailBu = $emailBu;
+
+        return $this;
+    }
+
+    /**
      * @param string $action
      * @return self
      */
-    public function setAction($action)
+    public function setAction(string $action): self
     {
         if (!in_array($action, $actions = [self::ACTION_VALIDER, self::ACTION_DEVALIDER])) {
             throw new LogicException(sprintf(
@@ -38,19 +54,26 @@ class ValidationPageDeCouvertureNotification extends Notification
     }
 
     /**
-     * @return static
+     * @return self
      */
-    public function prepare()
+    public function prepare(): self
     {
         /** @var Individu[] $individusSansMail */
         $individusSansMail = [];
+        $emailsDirecteurs = $this->these->getDirecteursTheseEmails($individusSansMail);
+
         $to = $this->these->getDoctorant()->getEmail();
-        $cc = $this->these->getDirecteursTheseEmails($individusSansMail);
+        $cc = array_merge(
+            $emailsDirecteurs,
+            [$this->emailBu => $this->emailBu]
+        );
 
         $infoMessage = sprintf(
-            "Un mail de notification vient d'être envoyé au doctorant avec le(s) directeur(s) de thèse en copie (%s)",
+            "Un mail de notification vient d'être envoyé au doctorant (%s), avec copie à la direction de thèse (%s) " .
+            "et à %s",
             $to,
-            implode(',', $cc)
+            implode(',', $emailsDirecteurs),
+            $this->emailBu
         );
 
         $errorMessage = null;

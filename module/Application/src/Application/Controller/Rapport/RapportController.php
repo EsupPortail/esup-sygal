@@ -13,6 +13,7 @@ use Application\Filter\IdifyFilter;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Form\Rapport\RapportForm;
 use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Rapport\RapportServiceAwareTrait;
@@ -29,6 +30,7 @@ use Zend\View\Model\ViewModel;
 abstract class RapportController extends AbstractController
 {
     use TheseServiceAwareTrait;
+    use FileServiceAwareTrait;
     use FichierServiceAwareTrait;
     use RapportServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
@@ -303,7 +305,7 @@ abstract class RapportController extends AbstractController
     /**
      * @return Rapport
      */
-    private function requestedRapport(): Rapport
+    protected function requestedRapport(): Rapport
     {
         $id = $this->params()->fromRoute('rapport') ?: $this->params()->fromQuery('rapport');
         try {

@@ -13,7 +13,7 @@ use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
-use Application\Service\Doctorant\DoctorantServiceAwareTrait;
+use Doctorant\Service\DoctorantServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;

@@ -2,9 +2,9 @@
 
 namespace Application;
 
-use Application\Entity\Db\Doctorant;
 use Application\Service\MailConfirmationService;
 use Application\Service\UserContextService;
+use Doctorant\Entity\Db\Doctorant;
 
 /**
  * Class SaisiePersopassRouteDeflector
@@ -15,26 +15,24 @@ class SaisiePersopassRouteDeflector extends RouteDeflector
 {
     protected $doctorant;
 
-    protected function isActivated()
+    protected function isActivated(): bool
     {
-        /** @var Doctorant $doctorant */
         $doctorant = $this->getDoctorant();
-        if (!$doctorant) return false;
+        if (!$doctorant) {
+            return false;
+        }
 
         /** @var MailConfirmationService $mailConfirmationService */
         $mailConfirmationService = $this->event->getApplication()->getServiceManager()->get('MailConfirmationService');
-        $confirmedEmail = $mailConfirmationService->getDemandeConfirmeeByIndividu($doctorant->getIndividu());
-        if ($confirmedEmail) return false;
+        $mailConfirmation = $mailConfirmationService->fetchMailConfirmationsForIndividu($doctorant->getIndividu());
+        if ($mailConfirmation && $mailConfirmation->estConfirme()) {
+            return false;
+        }
 
         return true;
-
-        //Code de Sodoct commenté pour mémoire
-//        $hasPersoPass = $this->getDoctorant()->getPersopass();
-//        if (!$hasPersoPass) return false;
-//        return $this->getDoctorant() && ! $this->getDoctorant()->getPersopass();
     }
 
-    protected function prepareRedirectArgument()
+    protected function prepareRedirectArgument(): self
     {
         // injection du paramètre doctorant dans la route
         $this->redirect['params']['doctorant'] = $this->getDoctorant()->getId();
@@ -43,9 +41,9 @@ class SaisiePersopassRouteDeflector extends RouteDeflector
     }
 
     /**
-     * @return Doctorant
+     * @return Doctorant|null
      */
-    protected function getDoctorant()
+    protected function getDoctorant(): ?Doctorant
     {
         if ($this->doctorant !== null) {
             return $this->doctorant;

@@ -23,6 +23,7 @@
     </many-to-one>
 
     <one-to-many field="rapportValidations" target-entity="Application\Entity\Db\RapportValidation" mapped-by="rapport"/>
+    <one-to-many field="rapportAvis" target-entity="Application\Entity\Db\RapportAvis" mapped-by="rapport"/>
 
     <field name="histoCreation" type="datetime" column="HISTO_CREATION"/>
     <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>

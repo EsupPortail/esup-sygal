@@ -1,0 +1,26 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @see \Application\Service\Notification\NotifierService::triggerMailConfirmation()
+ * @var PhpRenderer $this
+ * @var string $confirmUrl
+ */
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.
+</p>
+<p>
+    Pour finaliser l'enregistrement de votre email de contact, veuillez confirmer votre demande en cliquant
+    sur le lien suivant :<br>
+    <a href="<?php echo $confirmUrl; ?>"><?php echo $confirmUrl; ?></a>.
+</p>
+<p>
+    Une fois confirmé, cet email sera utilisé par l'application <?php echo $this->appInfos()->nom ?> pour vous
+    envoyer les notifications.
+</p>

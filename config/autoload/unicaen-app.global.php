@@ -81,8 +81,6 @@ return [
     //
     'session_config' => [
         'name' => md5('ESUP-SyGAL'),
-        'cookie_lifetime' => 60*60*2,
-        'gc_maxlifetime' => 60*60*2,
     ],
     //
     // Session manager configuration.

@@ -5,7 +5,7 @@ namespace ApplicationUnitTest\Test\Asset;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
-use Application\Entity\Db\Doctorant;
+use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
 use Import\Model\ImportObserv;
