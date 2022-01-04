@@ -4,8 +4,8 @@ namespace Application\Entity\Db;
 
 class MailConfirmation {
 
-    const ENVOYER = 'E';
-    const CONFIRMER = 'C';
+    const ENVOYE = 'E';
+    const CONFIRME = 'C';
 
     /** @var int $id */
     private $id;
@@ -99,18 +99,16 @@ class MailConfirmation {
     /**
      * @return boolean
      */
-    public function isEnvoyer()
+    public function estConfirme(): bool
     {
-        return $this->etat === MailConfirmation::ENVOYER;
+        return $this->etat === MailConfirmation::CONFIRME;
     }
 
     /**
      * @return boolean
      */
-    public function isConfirmer()
+    public function estEnvoye(): bool
     {
-        return $this->etat === MailConfirmation::CONFIRMER;
+        return $this->etat === MailConfirmation::ENVOYE;
     }
-
-
 }

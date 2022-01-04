@@ -42,9 +42,13 @@ $these = $proposition->getThese();
                             <strong>Heure de la soutenance non communiquée </strong>
                         <?php endif; ?>
                     </dd>
-                    <dt> Lieu de la Soutenance </dt>
+                    <dt> Lieu de la soutenance</dt>
                     <dd>
                         <?php if ($proposition->getLieu() !== null) : ?>
+                        <div class="alert alert-warning">
+                            <span class="glyphicon glyphicon-warning-sign"> </span>
+                            La réservation du lieu de soutenance n'est pas faite automatiquement et <strong>reste à votre charge</strong>.
+                        </div>
                             <?php echo $proposition->getLieu(); ?>
                         <?php else : ?>
                             <strong>Lieu de la soutenance non communiqué </strong>

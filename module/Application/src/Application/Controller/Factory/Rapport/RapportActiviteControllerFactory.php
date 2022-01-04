@@ -8,6 +8,7 @@ use Application\Entity\Db\TypeValidation;
 use Application\Form\Rapport\RapportForm;
 use Application\Form\RapportActiviteForm;
 use Application\Service\Fichier\FichierService;
+use Application\Service\File\FileService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Rapport\RapportService;
@@ -29,6 +30,7 @@ class RapportActiviteControllerFactory
     {
         /**
          * @var TheseService          $theseService
+         * @var FileService           $fileService
          * @var FichierService        $fichierService
          * @var RapportService        $rapportService
          * @var VersionFichierService $versionFichierService
@@ -38,6 +40,7 @@ class RapportActiviteControllerFactory
          * @var RapportForm           $rapportForm
          */
         $theseService = $container->get('TheseService');
+        $fileService = $container->get(FileService::class);
         $fichierService = $container->get(FichierService::class);
         $rapportService = $container->get(RapportService::class);
         $versionFichierService = $container->get('VersionFichierService');
@@ -52,6 +55,7 @@ class RapportActiviteControllerFactory
         $controller = new RapportActiviteController();
         $controller->setTheseService($theseService);
         $controller->setRapportService($rapportService);
+        $controller->setFileService($fileService);
         $controller->setFichierService($fichierService);
         $controller->setVersionFichierService($versionFichierService);
         $controller->setNotifierService($notificationService);

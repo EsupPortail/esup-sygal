@@ -3,7 +3,7 @@
 namespace Application\Filter;
 
 use Application\Entity\Db\Individu;
-use Application\Entity\Db\Interfaces\DoctorantInterface;
+use Doctorant\Entity\Db\Interfaces\DoctorantInterface;
 use Zend\Filter\AbstractFilter;
 use UnicaenApp\Entity\Ldap\People;
 use Application\Entity\Db\Utilisateur;

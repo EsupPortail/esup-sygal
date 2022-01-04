@@ -47,11 +47,15 @@ class IndicateurService {
     }
 
     public function fetch($id) {
-        $sql = "SELECT * FROM MV_INDICATEUR_".$id;
 
-        $query = $this->getEntityManager()->getConnection()->prepare($sql);
-        $query->execute();
-        return $query->fetchAll();
+        try {
+            $sql = "SELECT * FROM MV_INDICATEUR_" . $id;
+            $query = $this->getEntityManager()->getConnection()->prepare($sql);
+            $query->execute();
+            return $query->fetchAll();
+        } catch(\Exception $e) {
+            throw new RuntimeException("Erreur lors de la récupération de l'indiciateur #".$id, 0, $e);
+        }
     }
 
     /**

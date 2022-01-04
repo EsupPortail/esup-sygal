@@ -7,6 +7,7 @@ use Application\Command\MergeShellCommand;
 use Application\Command\Pdf\AjoutPdcShellCommandQpdf;
 use Application\Command\Pdf\RetraitementShellCommand;
 use Application\Command\ShellCommandRunner;
+use Application\Command\ShellCommandRunnerTrait;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\NatureFichier;
@@ -45,6 +46,7 @@ class FichierTheseService extends BaseService
     use EtablissementServiceAwareTrait;
     use NotifierServiceAwareTrait;
     use PageDeCouverturePdfExporterAwareTrait;
+    use ShellCommandRunnerTrait;
 
     /**
      * @return FichierTheseRepository
@@ -486,35 +488,8 @@ class FichierTheseService extends BaseService
     public function fusionnerPdcEtThese(These $these, PdcData $pdcData, $versionFichier, $removeFirstPage = false, $timeout = null): string
     {
         $outputFilePath = $this->generateOutputFilePathForMerge($these);
-
         $command = $this->createCommandForPdcMerge($these, $pdcData, $versionFichier, $removeFirstPage, $outputFilePath);
-
-        $runner = new ShellCommandRunner();
-        $runner->setCommand($command);
-        try {
-            if ($timeout) {
-                $result = $runner->runCommandWithTimeout($timeout);
-            } else {
-                $result = $runner->runCommand();
-            }
-
-            if (!$result->isSuccessfull()) {
-                $message = sprintf("La commande '%s' a échoué (code retour = %s). ",
-                    $command->getName(),
-                    $result->getReturnCode()
-                );
-                if ($output = $result->getOutput()) {
-                    $message .= "Voici le log d'exécution : " . implode(PHP_EOL, $output);
-                }
-                throw new RuntimeException($message);
-            }
-        }
-        catch (RuntimeException $rte) {
-            throw new RuntimeException(
-                "Une erreur est survenue lors de l'exécution de la commande " . $command->getName(),
-                0,
-                $rte);
-        }
+        $this->runShellCommand($command, $timeout);
 
         return $outputFilePath;
     }

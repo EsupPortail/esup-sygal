@@ -3,6 +3,7 @@
 namespace Application\Controller\Rapport;
 
 use Application\Controller\AbstractController;
+use Application\Entity\AnneeUniv;
 use Application\Entity\Db\Interfaces\TypeRapportAwareTrait;
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
 use Application\Entity\Db\Rapport;
@@ -12,10 +13,12 @@ use Application\Filter\IdifyFilter;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Form\Rapport\RapportForm;
 use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Rapport\RapportServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
@@ -27,6 +30,7 @@ use Zend\View\Model\ViewModel;
 abstract class RapportController extends AbstractController
 {
     use TheseServiceAwareTrait;
+    use FileServiceAwareTrait;
     use FichierServiceAwareTrait;
     use RapportServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
@@ -84,9 +88,24 @@ abstract class RapportController extends AbstractController
     protected $these;
 
     /**
-     * @var \Application\Entity\AnneeUniv
+     * Années univ proposables.
+     *
+     * @var \Application\Entity\AnneeUniv[]
      */
-    protected $anneeUnivCourante;
+    protected $anneesUnivs;
+
+    /**
+     * @inheritDoc
+     */
+    public function setTheseAnneeUnivService(TheseAnneeUnivService $service)
+    {
+        $this->theseAnneeUnivService = $service;
+
+        $this->anneesUnivs = [
+            $this->theseAnneeUnivService->anneeUnivCourante(),
+            $this->theseAnneeUnivService->anneeUnivPrecedente(),
+        ];
+    }
 
     /**
      * @param RapportForm $form
@@ -97,21 +116,30 @@ abstract class RapportController extends AbstractController
     }
 
     /**
+     * @return AnneeUniv
+     */
+    protected function getAnneeUnivMax(): AnneeUniv
+    {
+        $annees = array_map(function(AnneeUniv $anneeUniv) {
+            return $anneeUniv->getPremiereAnnee();
+        }, $this->anneesUnivs);
+
+        return AnneeUniv::fromPremiereAnnee(max($annees));
+    }
+
+    /**
      * @return Response|ViewModel
      */
     public function consulterAction()
     {
+        $this->these = $this->requestedThese();
+        $this->fetchRapportsTeleverses();
+
         // gestion d'une éventuelle requête POST d'ajout d'un rapport
         $result = $this->ajouterAction();
         if ($result instanceof Response) {
             return $result;
         }
-
-        $this->anneeUnivCourante = $this->theseAnneeUnivService->anneeUnivCourante();
-        $this->these = $this->requestedThese();
-        $this->loadRapportsTeleverses();
-
-        $this->initForm();
 
         return new ViewModel([
             'rapports' => $this->rapportsTeleverses,
@@ -139,19 +167,44 @@ abstract class RapportController extends AbstractController
         ]);
     }
 
-    protected function loadRapportsTeleverses()
+    protected function fetchRapportsTeleverses()
     {
         $this->rapportsTeleverses = $this->rapportService->findRapportsForThese($this->these, $this->typeRapport);
     }
 
     protected function isTeleversementPossible(): bool
     {
-        return true;
+        return count($this->getAnneesUnivsDisponibles()) > 0;
     }
 
     protected function initForm()
     {
-        $this->form->setAnneesUnivs([$this->anneeUnivCourante]);
+        $this->form->setAnneesUnivs($this->getAnneesUnivsDisponibles());
+    }
+
+    /**
+     * @return int[]
+     */
+    protected function getAnneesPrises(): array
+    {
+        $rapportsParAnnees = $this->rapportService->findRapportsParAnneesForThese($this->these, $this->typeRapport);
+
+        // Comportement par défaut :
+        // si un rapport est déposé pour une année univ, cette dernière ne peut plus faire l'objet d'un dépôt.
+        return array_keys($rapportsParAnnees);
+    }
+
+    /**
+     * @return AnneeUniv[]
+     */
+    protected function getAnneesUnivsDisponibles(): array
+    {
+        $anneesPrises = $this->getAnneesPrises();
+
+        return array_filter($this->anneesUnivs, function(AnneeUniv $annee) use ($anneesPrises) {
+            $utilisee = in_array($annee->getPremiereAnnee(), $anneesPrises);
+            return !$utilisee;
+        });
     }
 
     /**
@@ -159,7 +212,9 @@ abstract class RapportController extends AbstractController
      */
     public function ajouterAction()
     {
-        $these = $this->requestedThese();
+        $this->these = $this->requestedThese();
+
+        $this->initForm();
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -173,27 +228,34 @@ abstract class RapportController extends AbstractController
                 /** @var Rapport $rapport */
                 $rapport = $this->form->getData();
                 $rapport->setTypeRapport($this->typeRapport);
-                $rapport->setThese($these);
-                $this->rapportService->saveRapport($rapport, $uploadData);
+                $rapport->setThese($this->these);
+                if ($this->canTeleverserRapport($rapport)) {
+                    $this->rapportService->saveRapport($rapport, $uploadData);
 
-                // déclenchement d'un événement "rapport téléversé"
-                $this->events->trigger(
-                    $this->rapportTeleverseEventName,
-                    $rapport, [
+                    // déclenchement d'un événement "rapport téléversé"
+                    $this->events->trigger(
+                        $this->rapportTeleverseEventName,
+                        $rapport, [
 
-                    ]
-                );
+                        ]
+                    );
 
-                $this->flashMessenger()->addSuccessMessage(sprintf(
-                    "Rapport téléversé avec succès sous le nom suivant :<br>'%s'.",
-                    $rapport->getFichier()->getNom()
-                ));
+                    $this->flashMessenger()->addSuccessMessage(sprintf(
+                        "Rapport téléversé avec succès sous le nom suivant :<br>'%s'.",
+                        $rapport->getFichier()->getNom()
+                    ));
+                }
 
-                return $this->redirect()->toRoute($this->routeName . '/consulter', ['these' => IdifyFilter::id($these)]);
+                return $this->redirect()->toRoute($this->routeName . '/consulter', ['these' => IdifyFilter::id($this->these)]);
             }
         }
 
         return false; // pas de vue pour cette action
+    }
+
+    protected function canTeleverserRapport(Rapport $rapport): bool
+    {
+        return $this->isTeleversementPossible();
     }
 
     /**
@@ -243,7 +305,7 @@ abstract class RapportController extends AbstractController
     /**
      * @return Rapport
      */
-    private function requestedRapport(): Rapport
+    protected function requestedRapport(): Rapport
     {
         $id = $this->params()->fromRoute('rapport') ?: $this->params()->fromQuery('rapport');
         try {

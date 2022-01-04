@@ -59,7 +59,7 @@
             </join-columns>
         </many-to-one>
 
-        <many-to-one field="doctorant" target-entity="Application\Entity\Db\Doctorant">
+        <many-to-one field="doctorant" target-entity="Doctorant\Entity\Db\Doctorant">
             <join-columns>
                 <join-column name="DOCTORANT_ID" referenced-column-name="ID"/>
             </join-columns>

@@ -2,7 +2,7 @@
 
 namespace Application\Authentication\Storage;
 
-use Application\Service\Doctorant\DoctorantService;
+use Doctorant\Service\DoctorantService;
 use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Utilisateur\UtilisateurService;
 use Interop\Container\ContainerInterface;

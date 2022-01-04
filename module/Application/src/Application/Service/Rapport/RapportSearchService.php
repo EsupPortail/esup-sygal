@@ -43,6 +43,7 @@ class RapportSearchService extends SearchService
     const NAME_nom_directeur = 'nom_directeur';
     const NAME_type = 'type';
     const NAME_validation = 'est_valide';
+    const NAME_avis = 'avis';
 
     /**
      * @var EtablissementSearchFilter

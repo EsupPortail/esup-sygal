@@ -253,7 +253,7 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
         {
             /** @var MailConfirmation $mailConfirmation */
             foreach ($this->mailsConfirmations as $mailConfirmation) {
-                if ($mailConfirmation->getEtat() === MailConfirmation::CONFIRMER) {
+                if ($mailConfirmation->getEtat() === MailConfirmation::CONFIRME) {
                     return $mailConfirmation->getEmail();
                 }
             }

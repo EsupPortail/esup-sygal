@@ -2,6 +2,8 @@
 
 namespace Application\Entity\Db;
 
+use Application\Entity\AnneeUniv;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
@@ -50,13 +52,20 @@ class Rapport implements ResourceInterface, HistoriqueAwareInterface
     private $rapportValidations;
 
     /**
+     * @var Collection|\Application\Entity\Db\RapportAvis[]
+     */
+    private $rapportAvis;
+
+    /**
      * Rapport constructor.
      * @param TypeRapport|null $typeRapport
      */
     public function __construct(TypeRapport $typeRapport = null)
     {
         $this->typeRapport = $typeRapport;
+        $this->anneeUniv = (int) (new DateTime('today'))->format('Y');
         $this->rapportValidations = new ArrayCollection();
+        $this->rapportAvis = new ArrayCollection();
     }
 
     /**
@@ -66,7 +75,7 @@ class Rapport implements ResourceInterface, HistoriqueAwareInterface
      */
     public function __toString()
     {
-        return (string) $this->fichier;
+        return $this->fichier->getNom();
     }
 
     /**
@@ -80,28 +89,23 @@ class Rapport implements ResourceInterface, HistoriqueAwareInterface
     }
 
     /**
-     * @return int
+     * @return AnneeUniv
      */
-    public function getAnneeUniv()
+    public function getAnneeUniv(): AnneeUniv
     {
-        return $this->anneeUniv;
+        return AnneeUniv::fromPremiereAnnee($this->anneeUniv);
     }
 
     /**
-     * @param string $separator
-     * @return string
-     */
-    public function getAnneeUnivToString($separator = '/')
-    {
-        return $this->anneeUniv . $separator . ($this->anneeUniv + 1);
-    }
-
-    /**
-     * @param int $anneeUniv
+     * @param int|AnneeUniv $anneeUniv
      * @return self
      */
-    public function setAnneeUniv($anneeUniv)
+    public function setAnneeUniv($anneeUniv): self
     {
+        if ($anneeUniv instanceof AnneeUniv) {
+            $anneeUniv = $anneeUniv->getPremiereAnnee();
+        }
+
         $this->anneeUniv = $anneeUniv;
         return $this;
     }
@@ -119,7 +123,7 @@ class Rapport implements ResourceInterface, HistoriqueAwareInterface
      */
     public function getEstFinalToString(): string
     {
-        return $this->estFinal ? 'Fin' : 'Annuel';
+        return $this->estFinal ? 'Fin de thèse' : 'Annuel';
     }
 
     /**
@@ -264,6 +268,40 @@ class Rapport implements ResourceInterface, HistoriqueAwareInterface
     public function removeRapportValidation(RapportValidation $validation): self
     {
         $this->rapportValidations->removeElement($validation);
+
+        return $this;
+    }
+
+    /**
+     * @return \Application\Entity\Db\RapportAvis|null
+     */
+    public function getRapportAvis(): ?RapportAvis
+    {
+        $rapportsAvis = $this->rapportAvis->filter(function(RapportAvis $rapportAvis) {
+            return $rapportAvis->estNonHistorise();
+        });
+
+        return $rapportsAvis->first() ?: null;
+    }
+
+    /**
+     * @param \Application\Entity\Db\RapportAvis $rapportAvis
+     * @return self
+     */
+    public function addRapportAvis(RapportAvis $rapportAvis): self
+    {
+        $this->rapportAvis->add($rapportAvis);
+
+        return $this;
+    }
+
+    /**
+     * @param \Application\Entity\Db\RapportAvis $rapportAvis
+     * @return self
+     */
+    public function removeRapportAvis(RapportAvis $rapportAvis): self
+    {
+        $this->rapportAvis->removeElement($rapportAvis);
 
         return $this;
     }

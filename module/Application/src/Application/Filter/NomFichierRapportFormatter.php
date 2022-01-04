@@ -45,7 +45,7 @@ class NomFichierRapportFormatter extends AbstractNomFichierFormatter
         $parts['ed'] = 'ED' . $ed;
         $parts['nomDoctorant'] = $this->normalizedString($doctorant->getIndividu()->getNomUsuel());
         $parts['prenomDoctorant'] = ucfirst(mb_strtolower($this->normalizedString($doctorant->getIndividu()->getPrenom())));
-        $parts['date'] = $this->rapport->getAnneeUnivToString('-');
+        $parts['date'] = $this->rapport->getAnneeUniv()->toString('-');
         $parts['id'] = $fichier->getShortUuid(); // on inclue un id unique au cas où il y ait plusieurs fichiers de même nom déposés
 
         $name = implode($this->separator, $parts);

@@ -53,18 +53,25 @@ class IndicateurController extends AbstractActionController {
         $resultats = [];
 
         $indicateurs = $this->getIndicateurService()->findAll();
+        $erreurs = '';
 
         foreach ($indicateurs as $indicateur) {
             $id = $indicateur->getId();
 
             if ($indicateur->isActif()) {
-                $resultats[$indicateur->getId()] = $this->getIndicateurService()->fetch($indicateur->getId());
+                $resultats[$indicateur->getId()] = null;
+                try {
+                    $resultats[$indicateur->getId()] = $this->getIndicateurService()->fetch($indicateur->getId());
+                } catch (RuntimeException $e) {
+                    $erreurs .= "Problème de récupération de l'indicateur #".$indicateur->getId() . "<br/>";
+                }
             }
         }
 
         return new ViewModel([
                 'indicateurs' => $indicateurs,
                 'resultats'   => $resultats,
+                'erreurs' => $erreurs,
             ]
         );
     }

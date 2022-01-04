@@ -4,7 +4,7 @@ namespace Application\Controller;
 
 use Application\Controller\Plugin\Uploader\UploaderPlugin;
 use Application\Controller\Plugin\Url\UrlThesePlugin;
-use Application\Controller\Plugin\UrlDoctorant;
+use Doctorant\Controller\Plugin\UrlDoctorant;
 use Application\Controller\Plugin\UrlFichier;
 use Application\Controller\Plugin\UrlFichierThese;
 use Application\Controller\Plugin\UrlWorkflow;

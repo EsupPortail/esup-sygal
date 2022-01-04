@@ -16,7 +16,7 @@ class PageDeCouverturePdfExporter extends PdfExporter
     /**
      * @var string
      */
-    private $cssFilePath = __DIR__ . '/page-unicaen.css';
+    private $cssFilePath = __DIR__ . '/pagedecouverture.css';
 
     /**
      * @var array
@@ -59,6 +59,7 @@ class PageDeCouverturePdfExporter extends PdfExporter
 
     public function export($filename = null, $destination = self::DESTINATION_BROWSER, $memoryLimit = null)
     {
+        $filename = basename($filename);
         $templateDirPath = dirname($this->templateFilePath);
         $templateFileName = basename($this->templateFilePath);
 

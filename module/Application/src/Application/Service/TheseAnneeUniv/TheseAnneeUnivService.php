@@ -49,11 +49,22 @@ class TheseAnneeUnivService extends BaseService
     }
 
     /**
-     * @return AnneeUniv
+     * Retourne l'année universitaire courante.
      *
+     * @return AnneeUniv
      */
     public function anneeUnivCourante(): AnneeUniv
     {
-        return new AnneeUniv();
+        return AnneeUniv::courante();
+    }
+
+    /**
+     * Retourne l'année universitaire précédent celle en cours.
+     *
+     * @return AnneeUniv
+     */
+    public function anneeUnivPrecedente(): AnneeUniv
+    {
+        return AnneeUniv::precedente();
     }
 }

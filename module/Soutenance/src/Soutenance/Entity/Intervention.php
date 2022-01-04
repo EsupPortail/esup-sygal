@@ -10,6 +10,7 @@ class Intervention implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
     const TYPE_DISTANCIEL = 1;
+    const TYPE_VISIO_TARDIVE = 2;
 
     /** @var int */
     private $id;
@@ -17,6 +18,8 @@ class Intervention implements HistoriqueAwareInterface {
     private $these;
     /** @var int */
     private $type;
+    /** @var string */
+    private $complement;
 
     /**
      * @return int
@@ -59,6 +62,24 @@ class Intervention implements HistoriqueAwareInterface {
     public function setType(int $type): Intervention
     {
         $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getComplement(): ?string
+    {
+        return $this->complement;
+    }
+
+    /**
+     * @param string $complement
+     * @return Intervention
+     */
+    public function setComplement(string $complement): Intervention
+    {
+        $this->complement = $complement;
         return $this;
     }
 
