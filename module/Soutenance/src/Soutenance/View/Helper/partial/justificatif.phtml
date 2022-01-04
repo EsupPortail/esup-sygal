@@ -1,12 +1,14 @@
 <?php
 
 /**
+ * @see \Soutenance\View\Helper\JustificatifViewHelper
  * @var Justificatif $justificatif
  * @var UrlFichierThese $urlFichierThese
  * @var array $options
  */
 
 use Application\Controller\Plugin\UrlFichierThese;
+use Application\Entity\Db\NatureFichier;
 use Soutenance\Entity\Justificatif;
 
 $these = $justificatif->getProposition()->getThese();
@@ -29,6 +31,9 @@ $membre = $justificatif->getMembre();
         $label .= "<span class='glyphicon glyphicon-user'></span>";
         $label .= $membre->getDenomination();
         $label .= "</strong>";
+    }
+    if ($justificatif->getFichier()->getFichier()->getNature()->getCode() === NatureFichier::CODE_AUTRES_JUSTIFICATIFS) {
+        $label .= "'".$justificatif->getFichier()->getFichier()->getNomOriginal()."'";
     }
 ?>
 

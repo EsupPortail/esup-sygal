@@ -15,14 +15,17 @@ class ConfidentialiteHydrator implements HydratorInterface
      */
     public function hydrate(array $data, $proposition) {
 
-        if ($data['date']) {
+        $date = null;
+        $huisclos = false;
+        if ($data['date'] and $proposition->getThese()->getDateFinConfidentialite() === null) {
             $date = DateTime::createFromFormat("Y-m-d", $data['date']);
-            $proposition->setConfidentialite($date);
-            $proposition->setHuitClos($data['huitclos']);
-        } else {
-            $proposition->setConfidentialite(null);
-            $proposition->setHuitClos(false);
         }
+        if ($data['date'] OR $proposition->getThese()->getDateFinConfidentialite() !== null) {
+            $huisclos = $data['huitclos']??false;
+        }
+
+        $proposition->setConfidentialite($date);
+        $proposition->setHuitClos($huisclos);
 
         return $proposition;
     }

@@ -8,7 +8,7 @@ return [
     'unicaen-app' => [
         // Informations concernant l'application.
         'app_infos' => [
-            'nom'     => "SyGAL",
+            'nom'     => "ESUP-SyGAL",
             'desc'    => "SYstème de Gestion et d'Accompagnement doctoraL",
             'version' => '?', // surchargée dans un autre fichier de config (ex: 'config/autoload/auto.version.local.php')
             'date'    => '?', // idem
@@ -80,10 +80,9 @@ return [
     // Session configuration.
     //
     'session_config' => [
-        // Durée de vie du cookie de session : 24h.
-        'cookie_lifetime' => 60*60*24,
-        // Session data will be stored on server maximum for 30 days.
-        'gc_maxlifetime'     => 60*60*24*30,
+        'name' => md5('ESUP-SyGAL'),
+        'cookie_lifetime' => 60*60*2,
+        'gc_maxlifetime' => 60*60*2,
     ],
     //
     // Session manager configuration.

@@ -7,6 +7,11 @@
  * @var Validation $validationPDC
  * @var Validation[] $engagements
  * @var Avis[] $avis
+ * @var bool $justificatifsOk
+ * @var array $justificatifs
+ * @var Evenement[] $evenementsEngagement
+ * @var Evenement[] $evenementsPrerapport
+
  *
  * @see Soutenance\Controller\PresoutenanceController::presoutenanceAction()
  */
@@ -16,11 +21,19 @@ use Application\Entity\Db\Validation;
 use Application\Filter\TitreApogeeFilter;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
+use Soutenance\Entity\Evenement;
+use Soutenance\Entity\Membre;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 
+
 $tousLesAvis = count($rapporteurs) === count($avis) ;
-$canFeuVert = $this->isAllowed(PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU));
+$canFeuVert = ($justificatifsOk === true AND $this->isAllowed(PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_ASSOCIATION_MEMBRE_INDIVIDU)));
 $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->getIndividu());
+$canModifierAdresse = $canFeuVert;
+$canGenererDocument = $canFeuVert;
+
+$canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_SIMULER_REMONTEES));
+
 ?>
 
 <h1 class="page-header">
@@ -41,28 +54,64 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
 
 <?php else: ?>
 
+    <?php if ($canSimulerRemonter) : ?>
+        <div>
+            <?php /** @see \Soutenance\Controller\PresoutenanceController::genererSimulationAction() */ ?>
+            <a href="<?php echo $this->url('soutenance/presoutenance/generer-simulation', ['these' => $these->getId()], [], true); ?>" class="btn btn-warning action">
+                Simulation de la remonter SI
+            </a>
+
+            <?php /** @see \Soutenance\Controller\PresoutenanceController::nettoyerSimulationAction() */ ?>
+            <a href="<?php echo $this->url('soutenance/presoutenance/nettoyer-simulation', ['these' => $these->getId()], [], true); ?>" class="btn btn-warning action">
+                Nettoyer simulation
+            </a>
+            <br/>
+            <br/>
+        </div>
+    <?php endif; ?>
+
     <?php if ($proposition->getNouveauTitre() !== null) : ?>
-<!--    --><?php //$modificationFaite = ($proposition->getNouveauTitre() === $these->getTitre()); ?>
-<!--    <div class="box panel --><?php //echo (!$modificationFaite)?"panel-danger":"panel-success"; ?><!--">-->
-<!--        <div class="panel-heading">-->
-<!--            <h2>-->
-<!--                --><?php //if ($modificationFaite) : ?>
-<!--                    Le titre a été modifiée et la saisie dans la source a été faite-->
-<!--                --><?php //else : ?>
-<!--                    Le titre a été modifiée et la saisie dans la source n'a pas été faite-->
-<!--                --><?php //endif; ?>
-<!--            </h2>-->
-<!--        </div>-->
-    <div class="box panel panel-warning">
-        <div class=" panel-heading">
-            <h2>
-            Une modification de titre a été proposée
-            </h2>
+        <div class="box panel panel-warning">
+            <div class=" panel-heading">
+                <h2>
+                Une modification de titre a été proposée
+                </h2>
+            </div>
+            <div class="panel-body">
+                <?php echo $proposition->getNouveauTitre(); ?>
+            </div>
         </div>
-        <div class="panel-body">
-            <?php echo $proposition->getNouveauTitre(); ?>
+    <?php endif; ?>
+
+    <?php if ($justificatifsOk !== true) : ?>
+        <div class="box panel <?php echo ($justificatifsOk === null)?'panel-warning':'panel-danger'; ?>">
+            <div class=" panel-heading">
+                <h2>
+                    Des justificatifs sont manquants
+                </h2>
+            </div>
+            <div class="panel-body">
+                    <span class="glyphicon glyphicon-warning-sign"></span>
+                    Liste des justificatifs manquants :
+                <ul>
+                    <?php foreach ($justificatifs as $justificatif) : ?>
+                        <?php if($justificatif['justificatif'] === null) : ?>
+                            <li>
+                                <?php echo $justificatif['type'] ?>
+                                <?php if (isset($justificatif['membre'])) : ?>
+                                    -
+                                    <?php
+                                    /** @var Membre $membre */
+                                    $membre = $justificatif['membre'];
+                                    echo $membre->getDenomination();
+                                    ?>
+                                <?php endif; ?>
+                            </li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
         </div>
-    </div>
     <?php endif; ?>
 
     <!-- DATE DE RENDU DE RAPPORT ----------------------------------------------------------------------------------------->
@@ -180,6 +229,7 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
             <div class="pull-right">
                 <br/>
                 <br/>
+                <?php if ($canModifierAdresse) : ?>
                 <a
                         <?php /** @see \Soutenance\Controller\PresoutenanceController::modifierAdresseAction() */ ?>
                         href="<?php echo $this->url('soutenance/presoutenance/modifier-adresse', ['these' => $these->getId()], [] ,true); ?>"
@@ -187,41 +237,45 @@ $this->headTitle('Préparation de la soutenance de '.$these->getDoctorant()->get
                     <span class="glyphicon glyphicon-pencil"></span>
                     Modifier l'adresse
                 </a>
+                <?php endif; ?>
+
             </div>
             </div>
 
                 <br/><br/>
 
             <p>
-                <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::procesVerbalSoutenanceAction() */ ?>
-                        href="<?php echo $this->url('soutenance/presoutenance/proces-verbal-soutenance', ['these' => $these->getId()], [], true); ?>"
-                        class="btn btn-primary action"
-                        target="_blank"
-                >
-                    <span class="glyphicon glyphicon-list-alt"></span>Générer le procès verbal
-                </a>
+                 <?php if ($canGenererDocument) : ?>
+                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::procesVerbalSoutenanceAction() */ ?>
+                                href="<?php echo $this->url('soutenance/presoutenance/proces-verbal-soutenance', ['these' => $these->getId()], [], true); ?>"
+                                class="btn btn-primary action"
+                                target="_blank"
+                        >
+                            <span class="glyphicon glyphicon-list-alt"></span>Générer le procès verbal
+                        </a>
 
-                <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::avisSoutenanceAction() */ ?>
-                        href="<?php echo $this->url('soutenance/presoutenance/avis-soutenance', ['these' => $these->getId()], [], true); ?>"
-                        class="btn btn-primary action"
-                        target="_blank"
-                >
-                    <span class="glyphicon glyphicon-list-alt"></span>Générer l'avis de soutenance
-                </a>
+                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::avisSoutenanceAction() */ ?>
+                                href="<?php echo $this->url('soutenance/presoutenance/avis-soutenance', ['these' => $these->getId()], [], true); ?>"
+                                class="btn btn-primary action"
+                                target="_blank"
+                        >
+                            <span class="glyphicon glyphicon-list-alt"></span>Générer l'avis de soutenance
+                        </a>
 
-                <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::convocationsAction() */ ?>
-                        href="<?php echo $this->url('soutenance/presoutenance/convocations', ['these' => $these->getId()], [], true); ?>"
-                        class="btn btn-primary action"
-                        target="_blank"
-                >
-                    <span class="glyphicon glyphicon-list-alt"></span>Générer les convocations
-                </a>
-                <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::envoyerConvocationAction() */ ?>
-                        href="<?php echo $this->url('soutenance/presoutenance/envoyer-convocation', ['these' => $these->getId()], [], true); ?>"
-                        class="btn btn-info action"
-                >
-                    <span class="glyphicon glyphicon-send"></span>Envoyer les convocations
-                </a>
+                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::convocationsAction() */ ?>
+                                href="<?php echo $this->url('soutenance/presoutenance/convocations', ['these' => $these->getId()], [], true); ?>"
+                                class="btn btn-primary action"
+                                target="_blank"
+                        >
+                            <span class="glyphicon glyphicon-list-alt"></span>Générer les convocations
+                        </a>
+                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::envoyerConvocationAction() */ ?>
+                                href="<?php echo $this->url('soutenance/presoutenance/envoyer-convocation', ['these' => $these->getId()], [], true); ?>"
+                                class="btn btn-info action"
+                        >
+                            <span class="glyphicon glyphicon-send"></span>Envoyer les convocations
+                        </a>
+                <?php endif; ?>
             </p>
         </div>
     </div>

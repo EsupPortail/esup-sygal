@@ -119,13 +119,6 @@ return [
                 [
                     'controller' => PropositionController::class,
                     'action' => [
-                        'avancement',
-                    ],
-                    'privileges' => PropositionPrivileges::PROPOSITION_VISUALISER,
-                ],
-                [
-                    'controller' => PropositionController::class,
-                    'action' => [
                         'toggle-sursis',
                         'suppression',
                     ],
@@ -141,17 +134,6 @@ return [
         'routes' => [
             'soutenance' => [
                 'child_routes' => [
-                    'avancement' => [
-                        'type' => Segment::class,
-                        'may_terminate' => true,
-                        'options' => [
-                            'route' => '/avancement',
-                            'defaults' => [
-                                'controller' => PropositionController::class,
-                                'action' => 'avancement',
-                            ],
-                        ],
-                    ],
                     'proposition' => [
                         'type' => Segment::class,
                         'may_terminate' => true,

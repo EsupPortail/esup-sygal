@@ -31,10 +31,12 @@ use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Assert\Assertion;
+use DateTime;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Soutenance\Entity\Proposition;
-use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
+use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
@@ -59,7 +61,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
     use FileServiceAwareTrait;
     use AuthorizeServiceAwareTrait;
     use ActeurServiceAwareTrait;
-    use PropositionServiceAwareTrait;
+    use MembreServiceAwareTrait;
 
     /**
      * Resaisir l'autorisation de diffusion ? Sinon celle saisie au 1er dépôt est reprise/dupliquée.
@@ -121,7 +123,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
     /**
      * @return TheseRepository
      */
-    public function getRepository()
+    public function getRepository() : TheseRepository
     {
         /** @var TheseRepository $repo */
         $repo = $this->entityManager->getRepository(These::class);
@@ -135,7 +137,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
      * @param These  $these
      * @param string|null $forcage
      */
-    public function updateCorrectionAutoriseeForcee(These $these, $forcage = null)
+    public function updateCorrectionAutoriseeForcee(These $these, string $forcage = null)
     {
         if ($forcage !== null) {
             Assertion::inArray($forcage, [
@@ -147,9 +149,14 @@ class TheseService extends BaseService implements ListenerAggregateInterface
 
         $these->setCorrectionAutoriseeForcee($forcage);
 
+        // s'il n'y a plus de correction attendue, effacement du sursis éventuel
+        if (! $these->getCorrectionAutorisee()) {
+            $these->unsetDateButoirDepotVersionCorrigeeAvecSursis();
+        }
+
         try {
             $this->entityManager->flush($these);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
         }
     }
@@ -454,7 +461,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
      * @param These $these
      * @return PdcData
      */
-    public function fetchInformationsPageDeCouverture(These $these)
+    public function fetchInformationsPageDeCouverture(These $these) : PdcData
     {
         $pdcData = new PdcData();
         $propositions = $these->getPropositions()->toArray();
@@ -465,7 +472,6 @@ class TheseService extends BaseService implements ListenerAggregateInterface
             $mois = (int) $these->getDateSoutenance()->format('m');
             $annee = (int) $these->getDateSoutenance()->format('Y');
 
-            $anneeUniversitaire = null;
             if ($mois > 9)  $anneeUniversitaire = $annee . "/" . ($annee + 1);
             else            $anneeUniversitaire = ($annee - 1) . "/" . $annee;
             $pdcData->setAnneeUniversitaire($anneeUniversitaire);
@@ -477,7 +483,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         if ($these->getEtablissement()) $pdcData->setEtablissement($these->getEtablissement()->getLibelle());
         if ($these->getEcoleDoctorale()) $pdcData->setEtablissement($these->getEtablissement()->getLibelle());
         if ($these->getDoctorant()) {
-            $pdcData->setDoctorant($these->getDoctorant()->getIndividu()->getNomComplet(false, false, false, true, true, true));
+            $pdcData->setDoctorant(strtoupper($these->getDoctorant()->getIndividu()->getNomComplet(false, true, false, true, true, false)));
         }
         if ($these->getDateSoutenance()) $pdcData->setDate($these->getDateSoutenance()->format("d/m/Y"));
 
@@ -536,14 +542,13 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         /** associée */
         $pdcData->setAssocie(false);
         /** @var Acteur $directeur */
-        foreach ($directeurs as $directeur) {
-            if (!$directeur->getEtablissement()) {
-                throw new RuntimeException("Anomalie: le directeur de thèse '{$directeur}' n'a pas d'établissement.");
-            }
-            if ($directeur->getEtablissement()->estAssocie()) {
-                $pdcData->setAssocie(true);
-                $pdcData->setLogoAssocie($this->fileService->computeLogoFilePathForStructure($directeur->getEtablissement()));
-                $pdcData->setLibelleAssocie($directeur->getEtablissement()->getLibelle());
+        foreach (array_merge($directeurs, $codirecteurs) as $directeur) {
+            if ($directeur->getEtablissement()) {
+                if ($directeur->getEtablissement()->estAssocie()) {
+                    $pdcData->setAssocie(true);
+                    $pdcData->setLogoAssocie($this->fileService->computeLogoFilePathForStructure($directeur->getEtablissement()));
+                    $pdcData->setLibelleAssocie($directeur->getEtablissement()->getLibelle());
+                }
             }
         }
 
@@ -553,12 +558,17 @@ class TheseService extends BaseService implements ListenerAggregateInterface
 
         /** @var Acteur $acteur */
         foreach ($acteursEnCouverture as $acteur) {
+            $individu = $acteur->getIndividu();
+
+            $acteursLies = array_filter($these->getActeurs()->toArray(), function (Acteur $a) use ($individu) { return $a->getIndividu() === $individu;});
+
             $acteurData = new MembreData();
-            $acteurData->setDenomination($acteur->getIndividu()->getNomComplet(true, false, false, true, true));
+            $acteurData->setDenomination(strtoupper($acteur->getIndividu()->getNomComplet(true, false, false, true, true)));
             $acteurData->setQualite($acteur->getQualite());
 
             $estMembre = !empty(array_filter($jury, function (Acteur $a) use ($acteur) {return $a->getIndividu() === $acteur->getIndividu();}));
 
+            /** GESTION DES RÔLES SPÉCIAUX ****************************************************************************/
             if (!$acteur->estPresidentJury()) {
                 $acteurData->setRole($acteur->getRole()->getLibelle());
 
@@ -569,7 +579,27 @@ class TheseService extends BaseService implements ListenerAggregateInterface
             } else {
                 $acteurData->setRole(Role::LIBELLE_PRESIDENT);
             }
-            if ($acteur->getEtablissement()) $acteurData->setEtablissement($acteur->getEtablissement()->getStructure()->getLibelle());
+
+            foreach ($acteursLies as $acteurLie) {
+                if ($acteurLie->estCoEncadrant()) {
+                    if ($acteur->getIndividu()->estUneFemme()) $acteurData->setRole($acteurData->getRole() . "<br/> Co-encadrante");
+                    else $acteurData->setRole($acteurData->getRole() . "<br/> Co-encadrant");
+                    break;
+                }
+            }
+
+            /** GESTION DES ETABLISSEMENTS ****************************************************************************/
+            if ($acteur->getEtablissement()) {
+                $acteurData->setEtablissement($acteur->getEtablissement()->getStructure()->getLibelle());
+            } else {
+                foreach ($acteursLies as $acteurLie) {
+                    $membre = $this->getMembreService()->getMembreByActeur($acteurLie);
+                    if ($membre) {
+                        $acteurData->setEtablissement($membre->getEtablissement());
+                        break;
+                    }
+                }
+            }
 
             if ($estMembre) $pdcData->addActeurEnCouverture($acteurData);
         }
@@ -577,10 +607,10 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         /** Directeurs de thèses */
         $nomination = [];
         foreach ($directeurs as $directeur) {
-            $nomination[] = $directeur->getIndividu()->getNomComplet(false, false, false, true, true);
+            $nomination[] = strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true, true));
         }
         foreach ($codirecteurs as $directeur) {
-            $nomination[] = $directeur->getIndividu()->getNomComplet(false, false, false, true, true);
+            $nomination[] = strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true, true));
         }
         $pdcData->setListing(implode(" et ", $nomination) . ", ");
         if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());
@@ -696,7 +726,7 @@ EOS;
                 $username = ($individu->getNomUsuel() ?: $individu->getNomPatronymique()) . "_" . $president->getId();
                 $user = $this->utilisateurService->createFromIndividu($individu, $username, 'none');
                 $token = $this->userService->updateUserPasswordResetToken($user);
-                $this->getNotifierService()->triggerInitialisationCompte($user);
+                $this->getNotifierService()->triggerInitialisationCompte($user, $token);
                 $this->getNotifierService()->triggerValidationDepotTheseCorrigee($these);
                 return ['success', "Création de compte initialisée et notification des corrections faite à <strong>" . $email . "</strong>"];
             } else {
@@ -745,5 +775,22 @@ EOS;
             if ($directeur->getIndividu() === $individu) return true;
         }
         return false;
+    }
+
+    /**
+     * Fixe la date butoir de dépôt de la version corrigée de la thèse spécifiée.
+     *
+     * @param \Application\Entity\Db\These $these
+     * @param \DateTime|null $dateButoirDepotVersionCorrigeeAvecSursis
+     */
+    public function updateSursisDateButoirDepotVersionCorrigee(These $these, DateTime $dateButoirDepotVersionCorrigeeAvecSursis = null)
+    {
+        $these->setDateButoirDepotVersionCorrigeeAvecSursis($dateButoirDepotVersionCorrigeeAvecSursis);
+
+        try {
+            $this->entityManager->flush($these);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement du sursis", null, $e);
+        }
     }
 }

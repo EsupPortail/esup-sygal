@@ -147,6 +147,7 @@ class TheseSearchService extends SearchService
             $this->createSorterNumeroEtudiant(),
             $this->createSorterDoctorant(),
             $this->createSorterDatePremiereInscription()->setDirection(Sortable::DESC)->setIsDefault(),
+            $this->createSorterDateSoutenance(),
         ]);
     }
 
@@ -194,7 +195,7 @@ class TheseSearchService extends SearchService
 
             case self::SORTER_NAME_titre:
                 // trim et suppression des guillemets
-                $orderBy = "TRIM(REPLACE($name, CHR(34), ''))"; // CHR(34) <=> "
+                $orderBy = "TRIM(REPLACE(these.$name, CHR(34), ''))"; // CHR(34) <=> "
                 $qb->addOrderBy($orderBy, $direction);
                 break;
 
@@ -238,7 +239,7 @@ class TheseSearchService extends SearchService
             ->addSelect('f')->leftJoin('these.financements', 'f')
             ->addSelect('fi')->leftJoin('these.fichierTheses', 'fi')
             ->addSelect('ta')->leftJoin('these.titreAcces', 'ta')
-            ->andWhere('1 = pasHistorise(these)');
+            ->andWhere('these.histoDestruction is null');
 
         return $qb;
     }
@@ -619,6 +620,19 @@ EOS;
         $sorter = new SearchSorter(
             "",
             TheseSorter::NAME_datePremiereInscription
+        );
+        $sorter->setQueryBuilderApplier([$this, 'applySorterToQueryBuilder']);
+        return $sorter;
+    }
+
+    /**
+     * @return SearchSorter
+     */
+    private function createSorterDateSoutenance(): SearchSorter
+    {
+        $sorter = new SearchSorter(
+            "",
+            TheseSorter::NAME_dateSoutenance
         );
         $sorter->setQueryBuilderApplier([$this, 'applySorterToQueryBuilder']);
         return $sorter;

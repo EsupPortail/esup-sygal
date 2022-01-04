@@ -1,0 +1,22 @@
+<?php
+/**
+ * @see \Soutenance\Controller\PropositionController::confidentialiteAction()
+ * @var ConfidentialiteForm $form
+ * @var These $these
+ */
+
+use Application\Entity\Db\These;
+use Soutenance\Form\Confidentialite\ConfidentialiteForm;
+
+?>
+
+<?php
+    echo $this->form()->openTag($form);
+    if ($these->getDateFinConfidentialite() === null) {
+        echo $this->formControlGroup()->render($form->get('date'));
+    }
+    echo $this->formControlGroup()->render($form->get('huitclos'));
+    echo $this->formControlGroup()->render($form->get('submit'));
+    echo $this->form()->closeTag();
+?>
+

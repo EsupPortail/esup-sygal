@@ -26,10 +26,10 @@ $justification = true;
 <p>
     Vous venez d'être désigné comme rapporteur pour la thèse de <strong><?php echo $doctorant; ?></strong> intitulée
     <strong><?php echo $titre; ?></strong>. Afin de pouvoir vous connecter à l'application <strong> <?php echo $this->appInfos()->nom; ?> </strong>
-    et ainsi pouvoir rendre votre avis de pré-soutenance, vous pouvez utiliser l'adresse suivante : <a href="<?php echo $url; ?>"><?php echo $url;?> </a>.
+    et ainsi pouvoir rendre votre avis de pré-soutenance, vous pouvez utiliser l'adresse suivante : <strong><a href="<?php echo $url; ?>">Accéder à votre tableau de bord SyGAL</a></strong>.
 </p>
 <p>
-    Vous avez jusqu'au <?php $proposition->getRenduRapport()->format('d/m/Y'); ?> pour effectuer ce dépôt.
+    Vous avez jusqu'au <?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?> pour effectuer ce dépôt.
 </p>
 <p>
     Cordialement,
@@ -42,10 +42,10 @@ $justification = true;
 <p>
     You have been appointed as an external referee for the PhD thesis presented by <strong><?php echo $doctorant; ?></strong> entitled
     <strong><?php echo $titre; ?></strong>. In order to have access to the <strong> <?php echo $this->appInfos()->nom; ?> </strong>
-    web-based application for submitting your report, you can use the following link : <a href="<?php echo $url; ?>"><?php echo $url;?> </a>.
+    web-based application for submitting your report, you can use the following link : <strong><a href="<?php echo $url; ?>"> Access your SyGAL dashbord</a></strong>.
 </p>
 <p>
-    You have until the <?php $proposition->getRenduRapport()->format('d/m/Y'); ?> to upload your report.
+    You have until the <?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?> to upload your report.
 </p>
 <p>
     Best regards,
@@ -54,7 +54,7 @@ $justification = true;
 
 <?php if ($justification) : ?>
     <p>
-        Vous recevez ce mail, car votre rôle dans la soutenance de thèse de <?php echo $doctorant; ?> nécessite un compte SyGAL.
+        Vous recevez ce mail, car votre rôle dans la soutenance de thèse de <?php echo $doctorant; ?> nécessite un compte <?php echo $this->appInfos()->nom ?>.
     </p>
 <?php endif; ?>
 

@@ -6,10 +6,11 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Soutenance\Entity\Evenement;
+use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Parametre;
 use Soutenance\Entity\Proposition;
@@ -21,6 +22,7 @@ use Soutenance\Form\LabelEuropeen\LabelEuropeenFormAwareTrait;
 use Soutenance\Form\Membre\MembreFromAwareTrait;
 use Soutenance\Form\Refus\RefusFormAwareTrait;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
@@ -39,6 +41,7 @@ use Zend\View\Renderer\PhpRenderer;
 class PropositionController extends AbstractController
 {
     use ActeurServiceAwareTrait;
+    use EvenementServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
     use PropositionServiceAwareTrait;
@@ -110,6 +113,7 @@ class PropositionController extends AbstractController
             'isOk' => $isOk,
             'justificatifs' => $justificatifs,
             'justificatifsOk' => $justificatifsOk,
+            'signatures' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_SIGNATURE),
 
             'FORMULAIRE_DELOCALISATION' => $parametres[Parametre::CODE_FORMULAIRE_DELOCALISATION],
             'FORMULAIRE_DELEGUATION' => $parametres[Parametre::CODE_FORMULAIRE_DELEGUATION],
@@ -193,6 +197,7 @@ class PropositionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->update($request, $form, $proposition);
+            $this->getPropositionService()->initialisationDateRetour($proposition);
             if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($proposition);
         }
 
@@ -232,7 +237,7 @@ class PropositionController extends AbstractController
                 } else {
                     $this->getMembreService()->create($membre);
                 }
-                $this->getPropositionService()->annulerValidations($proposition);
+                if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($proposition);
             }
         }
 
@@ -251,7 +256,7 @@ class PropositionController extends AbstractController
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         if ($membre) {
-            $this->getPropositionService()->annulerValidations($membre->getProposition());
+            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($membre->getProposition());
             $this->getMembreService()->delete($membre);
         }
 
@@ -322,10 +327,11 @@ class PropositionController extends AbstractController
         }
 
         $vm = new ViewModel();
-        $vm->setTemplate('soutenance/default/default-form');
+        $vm->setTemplate('soutenance/proposition/confidentialite');
         $vm->setVariables([
             'title' => 'Renseignement des informations relatives à la confidentialité',
             'form' => $form,
+            'these' => $these,
         ]);
         return $vm;
     }
@@ -406,6 +412,10 @@ class PropositionController extends AbstractController
                 $this->getValidationService()->validateValidationBDD($these, $individu);
                 $this->getNotifierSoutenanceService()->triggerNotificationPropositionValidee($these);
                 $this->getNotifierSoutenanceService()->triggerNotificationPresoutenance($these);
+
+                $proposition = $this->getPropositionService()->findByThese($these);
+                $proposition->setEtat($this->getPropositionService()->getPropositionEtatByCode(Etat::ETABLISSEMENT));
+                $this->getPropositionService()->update($proposition);
                 break;
             default :
                 throw new RuntimeException("Le role [" . $role->getCode() . "] ne peut pas valider cette proposition.");
@@ -451,6 +461,8 @@ class PropositionController extends AbstractController
         $codirecteurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE);
 
 
+        $this->getEvenementService()->ajouterEvenement($proposition, Evenement::EVENEMENT_SIGNATURE);
+
         $exporter = new SiganturePresidentPdfExporter($this->renderer, 'A4');
         $exporter->setVars([
             'proposition' => $proposition,
@@ -461,33 +473,6 @@ class PropositionController extends AbstractController
         ]);
         $exporter->export('Document_pour_signature_-_'.$these->getId().'_-_'.str_replace(' ','_',$these->getDoctorant()->getIndividu()->getNomComplet()).'.pdf');
         exit;
-    }
-
-    public function avancementAction()
-    {
-        $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
-
-        $directeurs = $this->getActeurService()->getRepository()->findEncadrementThese($these);
-
-        /** @var Membre[] $rapporteurs */
-        $rapporteurs = ($proposition) ? $proposition->getRapporteurs() : [];
-
-        /** Justificatifs attendus ---------------------------------------------------------------------------------- */
-        $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition);
-
-        $validationPDC = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
-
-        return new ViewModel([
-            'these' => $these,
-            'proposition' => $proposition,
-            'jury' => $this->getPropositionService()->juryOk($proposition),
-            'justificatif' => $this->getJustificatifService()->isJustificatifsOk($proposition, $justificatifs),
-            'validations' => ($proposition) ? $this->getPropositionService()->getValidationSoutenance($these) : [],
-            'directeurs' => $directeurs,
-            'rapporteurs' => $rapporteurs,
-            'validationPDC' => $validationPDC,
-        ]);
     }
 
     public function toggleSursisAction()

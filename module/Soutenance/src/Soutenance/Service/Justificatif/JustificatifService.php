@@ -174,9 +174,9 @@ class JustificatifService {
     /**
      * @param AbstractActionController $controller
      * @param string $paramName
-     * @return Justificatif
+     * @return Justificatif|null
      */
-    public function getRequestedJustificatif($controller, $paramName = 'justificatif')
+    public function getRequestedJustificatif(AbstractActionController $controller, string $paramName = 'justificatif') : ?Justificatif
     {
         $id = $controller->params()->fromRoute($paramName);
         $justificatif = $this->getJustificatif($id);
@@ -262,18 +262,31 @@ class JustificatifService {
                     'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_JUSTIFICATIF_ETRANGER, $membre),
                 ];
             }
+
+
         }
 
+
+        $listes = $proposition->getJustificatifs();
+        $listes = array_filter($listes, function (Justificatif $a) { return $a->getFichier()->getFichier()->getNature()->getCode() === NatureFichier::CODE_AUTRES_JUSTIFICATIFS;});
+        foreach ($listes as $element) {
+            $justificatifs[] = [
+                'type' => NatureFichier::CODE_AUTRES_JUSTIFICATIFS,
+                'justificatif' => $element,
+            ];
+        }
         return $justificatifs;
     }
 
     /**
      * @param Proposition $proposition
      * @param array $justificatifs
-     * @return boolean
+     * @return boolean|null
      */
-    public function isJustificatifsOk($proposition, $justificatifs = [])
+    public function isJustificatifsOk(Proposition $proposition, array $justificatifs = []) : ?bool
     {
+        $non_bloquant = ['DELEGUATION_SIGNATURE', 'DEMANDE_LABEL_EUROPEEN'];
+
         if ($justificatifs === []) {
             $justificatifs = $this->generateListeJustificatif($proposition);
         }
@@ -281,8 +294,12 @@ class JustificatifService {
         $justificatifsOk = true;
         foreach ($justificatifs as $justificatif) {
             if ($justificatif['justificatif'] === null) {
-                $justificatifsOk = false;
-                break;
+                if (array_search($justificatif['type'], $non_bloquant) === false) {
+                    $justificatifsOk = false;
+                    break;
+                } else {
+                    $justificatifsOk = null;
+                }
             }
         }
         return $justificatifsOk;

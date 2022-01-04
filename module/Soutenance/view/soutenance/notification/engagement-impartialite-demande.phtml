@@ -9,9 +9,10 @@ use Soutenance\Entity\Proposition;
  * @var These $these
  * @var Proposition $proposition
  * @var Membre $membre
+ * @var string $url
  */
 
-$urlRetour = $this->url('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], ['force_canonical'=>true], true);
+//$urlRetour = $this->url('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], ['force_canonical'=>true], true);
 
 $justification = true;
 ?>
@@ -23,7 +24,7 @@ $justification = true;
 <p>
     Afin de pouvoir devenir rapporteur de la thèse de <strong><?php echo $these->getDoctorant()->getIndividu(); ?></strong> intitulée
     <strong><?php echo $these->getTitre(); ?></strong>, il est nécessaire de signer électroniquement l'engagement d'impartialité dans
-    l'application SyGAL : <a href="<?php echo $urlRetour; ?>">engagement d'impartialité</a>.
+    l'application <?php echo $this->appInfos()->nom ?> : <strong><a href="<?php echo $url; ?>">Accéder à votre table de bord SyGAL</a></strong>.
 </p>
 <p>
     Vous accéderez ainsi à une page "index de la soutenance" listant les membres du jury.
@@ -41,7 +42,7 @@ $justification = true;
 </p>
 <p>
     Before being officially registered as an external referee for the PhD thesis presented by <strong><?php echo $these->getDoctorant()->getIndividu(); ?></strong> entitled
-    <strong><?php echo $these->getTitre(); ?></strong>, you have to sign the "impartiality commitment" available at  <a href="<?php echo $urlRetour; ?>">impartiality commitment</a>.
+    <strong><?php echo $these->getTitre(); ?></strong>, you have to sign the "impartiality commitment" available in your dashborad : <strong><a href="<?php echo $url; ?>">Access your SyGAL dashboard</a></strong>.
 </p>
 <p>
     You will then be connected to a web page entitled "index of the PhD defense" listing the PhD jury members.

@@ -3,8 +3,8 @@
 --
 
 -- Databases
-create database {DBNAME} with ENCODING = 'UTF-8';
+create database :dbname with ENCODING = 'UTF-8';
 -- Users
-create user {DBUSER} with encrypted password 'MOT_DE_PASSE_PAR_DEFAUT' NOSUPERUSER NOCREATEDB;
+create user :dbuser with encrypted password :dbpassword NOSUPERUSER NOCREATEDB;
 -- Grants
-grant all privileges on database {DBNAME} to {DBUSER};
+grant all privileges on database :dbname to :dbuser;

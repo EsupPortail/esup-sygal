@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 9.6.11
--- Dumped by pg_dump version 13.3 (Ubuntu 13.3-1.pgdg20.04+1)
+-- Dumped by pg_dump version 14.1 (Ubuntu 14.1-2.pgdg20.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -19,7 +19,7 @@ SET row_security = off;
 SET default_tablespace = '';
 
 --
--- Name: acteur acteur_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: acteur acteur_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.acteur
@@ -27,7 +27,7 @@ ALTER TABLE ONLY public.acteur
 
 
 --
--- Name: api_log api_log_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: api_log api_log_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.api_log
@@ -35,7 +35,7 @@ ALTER TABLE ONLY public.api_log
 
 
 --
--- Name: attestation attestation_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: attestation attestation_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.attestation
@@ -43,7 +43,7 @@ ALTER TABLE ONLY public.attestation
 
 
 --
--- Name: categorie_privilege categorie_privilege_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: categorie_privilege categorie_privilege_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.categorie_privilege
@@ -51,7 +51,7 @@ ALTER TABLE ONLY public.categorie_privilege
 
 
 --
--- Name: diffusion diffusion_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: diffusion diffusion_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.diffusion
@@ -59,7 +59,7 @@ ALTER TABLE ONLY public.diffusion
 
 
 --
--- Name: doctorant_compl doctorant_compl_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: doctorant_compl doctorant_compl_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.doctorant_compl
@@ -67,7 +67,7 @@ ALTER TABLE ONLY public.doctorant_compl
 
 
 --
--- Name: doctorant doctorant_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: doctorant doctorant_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.doctorant
@@ -75,7 +75,7 @@ ALTER TABLE ONLY public.doctorant
 
 
 --
--- Name: domaine_scientifique domaine_scientifique_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: domaine_scientifique domaine_scientifique_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.domaine_scientifique
@@ -83,7 +83,7 @@ ALTER TABLE ONLY public.domaine_scientifique
 
 
 --
--- Name: ecole_doct ecole_doct_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: ecole_doct ecole_doct_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.ecole_doct
@@ -91,7 +91,7 @@ ALTER TABLE ONLY public.ecole_doct
 
 
 --
--- Name: etablissement etablissement_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: etablissement etablissement_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.etablissement
@@ -99,7 +99,7 @@ ALTER TABLE ONLY public.etablissement
 
 
 --
--- Name: etablissement_rattach etablissement_rattach_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: etablissement_rattach etablissement_rattach_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.etablissement_rattach
@@ -107,7 +107,7 @@ ALTER TABLE ONLY public.etablissement_rattach
 
 
 --
--- Name: faq faq_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: faq faq_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.faq
@@ -115,7 +115,7 @@ ALTER TABLE ONLY public.faq
 
 
 --
--- Name: fichier fichier_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: fichier fichier_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.fichier
@@ -123,7 +123,7 @@ ALTER TABLE ONLY public.fichier
 
 
 --
--- Name: fichier_these fichier_these_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: fichier_these fichier_these_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.fichier_these
@@ -131,7 +131,7 @@ ALTER TABLE ONLY public.fichier_these
 
 
 --
--- Name: financement financement_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: financement financement_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.financement
@@ -139,7 +139,15 @@ ALTER TABLE ONLY public.financement
 
 
 --
--- Name: import_notif import_notif_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: import_log import_log_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.import_log
+    ADD CONSTRAINT import_log_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: import_notif import_notif_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.import_notif
@@ -147,7 +155,7 @@ ALTER TABLE ONLY public.import_notif
 
 
 --
--- Name: import_notif import_notif_table_name_column_name_operation_key; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: import_notif import_notif_table_name_column_name_operation_key; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.import_notif
@@ -155,7 +163,7 @@ ALTER TABLE ONLY public.import_notif
 
 
 --
--- Name: import_obs_notif import_obs_notif_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: import_obs_notif import_obs_notif_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.import_obs_notif
@@ -163,7 +171,7 @@ ALTER TABLE ONLY public.import_obs_notif
 
 
 --
--- Name: import_obs_result_notif import_obs_result_notif_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: import_obs_result_notif import_obs_result_notif_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.import_obs_result_notif
@@ -171,7 +179,7 @@ ALTER TABLE ONLY public.import_obs_result_notif
 
 
 --
--- Name: import_observ import_observ_code_key; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: import_observ import_observ_code_key; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.import_observ
@@ -179,7 +187,7 @@ ALTER TABLE ONLY public.import_observ
 
 
 --
--- Name: import_observ import_observ_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: import_observ import_observ_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.import_observ
@@ -187,7 +195,7 @@ ALTER TABLE ONLY public.import_observ
 
 
 --
--- Name: import_observ_result import_observ_result_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: import_observ_result import_observ_result_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.import_observ_result
@@ -195,7 +203,7 @@ ALTER TABLE ONLY public.import_observ_result
 
 
 --
--- Name: import_observ import_observ_table_name_column_name_operation_to_value_key; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: import_observ import_observ_table_name_column_name_operation_to_value_key; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.import_observ
@@ -203,7 +211,7 @@ ALTER TABLE ONLY public.import_observ
 
 
 --
--- Name: indicateur indicateur_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: indicateur indicateur_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.indicateur
@@ -211,7 +219,7 @@ ALTER TABLE ONLY public.indicateur
 
 
 --
--- Name: individu individu_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: individu individu_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.individu
@@ -219,7 +227,7 @@ ALTER TABLE ONLY public.individu
 
 
 --
--- Name: individu_rech individu_rech_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: individu_rech individu_rech_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.individu_rech
@@ -227,7 +235,7 @@ ALTER TABLE ONLY public.individu_rech
 
 
 --
--- Name: individu_role individu_role_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: individu_role individu_role_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.individu_role
@@ -235,7 +243,7 @@ ALTER TABLE ONLY public.individu_role
 
 
 --
--- Name: information_fichier_sav information_fichier_sav_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: information_fichier_sav information_fichier_sav_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.information_fichier_sav
@@ -243,7 +251,7 @@ ALTER TABLE ONLY public.information_fichier_sav
 
 
 --
--- Name: information_langue information_langue_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: information_langue information_langue_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.information_langue
@@ -251,7 +259,7 @@ ALTER TABLE ONLY public.information_langue
 
 
 --
--- Name: information information_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: information information_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.information
@@ -259,7 +267,7 @@ ALTER TABLE ONLY public.information
 
 
 --
--- Name: liste_diff liste_diff_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: liste_diff liste_diff_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.liste_diff
@@ -267,7 +275,7 @@ ALTER TABLE ONLY public.liste_diff
 
 
 --
--- Name: mail_confirmation mail_confirmation_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: mail_confirmation mail_confirmation_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.mail_confirmation
@@ -275,7 +283,7 @@ ALTER TABLE ONLY public.mail_confirmation
 
 
 --
--- Name: metadonnee_these metadonnee_these_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: metadonnee_these metadonnee_these_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.metadonnee_these
@@ -283,7 +291,7 @@ ALTER TABLE ONLY public.metadonnee_these
 
 
 --
--- Name: nature_fichier nature_fichier_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: nature_fichier nature_fichier_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.nature_fichier
@@ -291,7 +299,7 @@ ALTER TABLE ONLY public.nature_fichier
 
 
 --
--- Name: notif notif_code_key; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: notif notif_code_key; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.notif
@@ -299,7 +307,7 @@ ALTER TABLE ONLY public.notif
 
 
 --
--- Name: notif_mail notif_mail_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: notif_mail notif_mail_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.notif_mail
@@ -307,7 +315,7 @@ ALTER TABLE ONLY public.notif_mail
 
 
 --
--- Name: notif notif_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: notif notif_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.notif
@@ -315,7 +323,7 @@ ALTER TABLE ONLY public.notif
 
 
 --
--- Name: notif_result notif_result_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: notif_result notif_result_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.notif_result
@@ -323,7 +331,7 @@ ALTER TABLE ONLY public.notif_result
 
 
 --
--- Name: origine_financement origine_financement_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: origine_financement origine_financement_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.origine_financement
@@ -331,7 +339,7 @@ ALTER TABLE ONLY public.origine_financement
 
 
 --
--- Name: parametre parametre_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: parametre parametre_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.parametre
@@ -339,7 +347,7 @@ ALTER TABLE ONLY public.parametre
 
 
 --
--- Name: privilege privilege_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: privilege privilege_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.privilege
@@ -347,7 +355,7 @@ ALTER TABLE ONLY public.privilege
 
 
 --
--- Name: profil profil_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: profil profil_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.profil
@@ -355,7 +363,7 @@ ALTER TABLE ONLY public.profil
 
 
 --
--- Name: profil_privilege profil_privilege_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: profil_privilege profil_privilege_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.profil_privilege
@@ -363,7 +371,7 @@ ALTER TABLE ONLY public.profil_privilege
 
 
 --
--- Name: profil_to_role profil_to_role_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: profil_to_role profil_to_role_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.profil_to_role
@@ -371,7 +379,7 @@ ALTER TABLE ONLY public.profil_to_role
 
 
 --
--- Name: rapport rapport_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: rapport rapport_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.rapport
@@ -379,7 +387,7 @@ ALTER TABLE ONLY public.rapport
 
 
 --
--- Name: rapport_validation rapport_validation_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: rapport_validation rapport_validation_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.rapport_validation
@@ -387,7 +395,7 @@ ALTER TABLE ONLY public.rapport_validation
 
 
 --
--- Name: rdv_bu rdv_bu_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: rdv_bu rdv_bu_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.rdv_bu
@@ -395,7 +403,7 @@ ALTER TABLE ONLY public.rdv_bu
 
 
 --
--- Name: role role_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: role role_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.role
@@ -403,7 +411,7 @@ ALTER TABLE ONLY public.role
 
 
 --
--- Name: role_privilege role_privilege_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: role_privilege role_privilege_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.role_privilege
@@ -411,7 +419,7 @@ ALTER TABLE ONLY public.role_privilege
 
 
 --
--- Name: source source_code_key; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: source source_code_key; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.source
@@ -419,7 +427,7 @@ ALTER TABLE ONLY public.source
 
 
 --
--- Name: source source_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: source source_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.source
@@ -427,7 +435,7 @@ ALTER TABLE ONLY public.source
 
 
 --
--- Name: soutenance_configuration soutenance_configuration_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_configuration soutenance_configuration_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_configuration
@@ -435,7 +443,7 @@ ALTER TABLE ONLY public.soutenance_configuration
 
 
 --
--- Name: soutenance_etat soutenance_etat_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_etat soutenance_etat_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_etat
@@ -443,7 +451,15 @@ ALTER TABLE ONLY public.soutenance_etat
 
 
 --
--- Name: soutenance_intervention soutenance_intervention_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_evenement soutenance_evenement_pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.soutenance_evenement
+    ADD CONSTRAINT soutenance_evenement_pk PRIMARY KEY (id);
+
+
+--
+-- Name: soutenance_intervention soutenance_intervention_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_intervention
@@ -451,7 +467,7 @@ ALTER TABLE ONLY public.soutenance_intervention
 
 
 --
--- Name: soutenance_justificatif soutenance_justificatif_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_justificatif soutenance_justificatif_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_justificatif
@@ -459,7 +475,7 @@ ALTER TABLE ONLY public.soutenance_justificatif
 
 
 --
--- Name: soutenance_membre soutenance_membre_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_membre soutenance_membre_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_membre
@@ -467,7 +483,7 @@ ALTER TABLE ONLY public.soutenance_membre
 
 
 --
--- Name: soutenance_proposition soutenance_proposition_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_proposition soutenance_proposition_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_proposition
@@ -475,7 +491,7 @@ ALTER TABLE ONLY public.soutenance_proposition
 
 
 --
--- Name: soutenance_qualite soutenance_qualite_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_qualite soutenance_qualite_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_qualite
@@ -483,7 +499,7 @@ ALTER TABLE ONLY public.soutenance_qualite
 
 
 --
--- Name: soutenance_qualite_sup soutenance_qualite_sup_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_qualite_sup soutenance_qualite_sup_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_qualite_sup
@@ -491,7 +507,7 @@ ALTER TABLE ONLY public.soutenance_qualite_sup
 
 
 --
--- Name: structure_document structure_document_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure_document structure_document_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure_document
@@ -499,7 +515,7 @@ ALTER TABLE ONLY public.structure_document
 
 
 --
--- Name: structure structure_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure structure_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure
@@ -507,7 +523,7 @@ ALTER TABLE ONLY public.structure
 
 
 --
--- Name: structure_substit structure_substit_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure_substit structure_substit_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure_substit
@@ -515,7 +531,7 @@ ALTER TABLE ONLY public.structure_substit
 
 
 --
--- Name: sync_log sync_log_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: sync_log sync_log_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.sync_log
@@ -523,7 +539,7 @@ ALTER TABLE ONLY public.sync_log
 
 
 --
--- Name: synchro_log synchro_log_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: synchro_log synchro_log_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.synchro_log
@@ -531,7 +547,7 @@ ALTER TABLE ONLY public.synchro_log
 
 
 --
--- Name: these_annee_univ these_annee_univ_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: these_annee_univ these_annee_univ_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.these_annee_univ
@@ -539,7 +555,7 @@ ALTER TABLE ONLY public.these_annee_univ
 
 
 --
--- Name: these these_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: these these_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.these
@@ -547,7 +563,7 @@ ALTER TABLE ONLY public.these
 
 
 --
--- Name: titre_acces titre_acces_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: titre_acces titre_acces_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.titre_acces
@@ -555,7 +571,7 @@ ALTER TABLE ONLY public.titre_acces
 
 
 --
--- Name: type_rapport type_rapport_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: type_rapport type_rapport_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.type_rapport
@@ -563,7 +579,7 @@ ALTER TABLE ONLY public.type_rapport
 
 
 --
--- Name: type_structure type_structure_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: type_structure type_structure_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.type_structure
@@ -571,7 +587,7 @@ ALTER TABLE ONLY public.type_structure
 
 
 --
--- Name: type_validation type_validation_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: type_validation type_validation_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.type_validation
@@ -579,7 +595,7 @@ ALTER TABLE ONLY public.type_validation
 
 
 --
--- Name: unite_domaine_linker unite_domaine_linker_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: unite_domaine_linker unite_domaine_linker_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.unite_domaine_linker
@@ -587,7 +603,7 @@ ALTER TABLE ONLY public.unite_domaine_linker
 
 
 --
--- Name: unite_rech unite_rech_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: unite_rech unite_rech_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.unite_rech
@@ -595,7 +611,7 @@ ALTER TABLE ONLY public.unite_rech
 
 
 --
--- Name: user_token user_token_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: user_token user_token_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.user_token
@@ -603,7 +619,7 @@ ALTER TABLE ONLY public.user_token
 
 
 --
--- Name: utilisateur utilisateur_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: utilisateur utilisateur_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.utilisateur
@@ -611,7 +627,7 @@ ALTER TABLE ONLY public.utilisateur
 
 
 --
--- Name: utilisateur utilisateur_username_key; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: utilisateur utilisateur_username_key; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.utilisateur
@@ -619,7 +635,7 @@ ALTER TABLE ONLY public.utilisateur
 
 
 --
--- Name: validation validation_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: validation validation_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.validation
@@ -627,7 +643,7 @@ ALTER TABLE ONLY public.validation
 
 
 --
--- Name: validite_fichier validite_fichier_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: validite_fichier validite_fichier_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.validite_fichier
@@ -635,7 +651,7 @@ ALTER TABLE ONLY public.validite_fichier
 
 
 --
--- Name: variable variable_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: variable variable_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.variable
@@ -643,7 +659,7 @@ ALTER TABLE ONLY public.variable
 
 
 --
--- Name: version_fichier version_fichier_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: version_fichier version_fichier_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.version_fichier
@@ -651,7 +667,7 @@ ALTER TABLE ONLY public.version_fichier
 
 
 --
--- Name: wf_etape wf_etape_code_key; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: wf_etape wf_etape_code_key; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.wf_etape
@@ -659,7 +675,7 @@ ALTER TABLE ONLY public.wf_etape
 
 
 --
--- Name: wf_etape wf_etape_ordre_key; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: wf_etape wf_etape_ordre_key; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.wf_etape
@@ -667,7 +683,7 @@ ALTER TABLE ONLY public.wf_etape
 
 
 --
--- Name: wf_etape wf_etape_pkey; Type: CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: wf_etape wf_etape_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.wf_etape
@@ -675,1267 +691,1309 @@ ALTER TABLE ONLY public.wf_etape
 
 
 --
--- Name: acteur_acteur_etab_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: acteur_acteur_etab_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX acteur_acteur_etab_id_idx ON public.acteur USING btree (acteur_etablissement_id);
 
 
 --
--- Name: acteur_doctorant_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: acteur_doctorant_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX acteur_doctorant_id_idx ON public.these USING btree (doctorant_id);
 
 
 --
--- Name: acteur_ecole_doct_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: acteur_ecole_doct_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX acteur_ecole_doct_id_idx ON public.these USING btree (ecole_doct_id);
 
 
 --
--- Name: acteur_etablissement_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: acteur_etablissement_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX acteur_etablissement_id_idx ON public.these USING btree (etablissement_id);
 
 
 --
--- Name: acteur_histo_destruct_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: acteur_histo_destruct_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX acteur_histo_destruct_id_idx ON public.acteur USING btree (histo_destructeur_id);
 
 
 --
--- Name: acteur_histo_modif_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: acteur_histo_modif_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX acteur_histo_modif_id_idx ON public.acteur USING btree (histo_modificateur_id);
 
 
 --
--- Name: acteur_individu_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: acteur_individu_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX acteur_individu_id_idx ON public.acteur USING btree (individu_id);
 
 
 --
--- Name: acteur_role_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: acteur_role_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX acteur_role_id_idx ON public.acteur USING btree (role_id);
 
 
 --
--- Name: acteur_source_code_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: acteur_source_code_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX acteur_source_code_uniq ON public.acteur USING btree (source_code);
 
 
 --
--- Name: acteur_source_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: acteur_source_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX acteur_source_id_idx ON public.acteur USING btree (source_id);
 
 
 --
--- Name: acteur_these_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: acteur_these_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX acteur_these_id_idx ON public.acteur USING btree (these_id);
 
 
 --
--- Name: acteur_unite_rech_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: acteur_unite_rech_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX acteur_unite_rech_id_idx ON public.these USING btree (unite_rech_id);
 
 
 --
--- Name: attestation_hc_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: attestation_hc_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX attestation_hc_idx ON public.attestation USING btree (histo_createur_id);
 
 
 --
--- Name: attestation_hd_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: attestation_hd_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX attestation_hd_idx ON public.attestation USING btree (histo_destructeur_id);
 
 
 --
--- Name: attestation_hm_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: attestation_hm_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX attestation_hm_idx ON public.attestation USING btree (histo_modificateur_id);
 
 
 --
--- Name: attestation_these_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: attestation_these_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX attestation_these_idx ON public.attestation USING btree (these_id);
 
 
 --
--- Name: categorie_privilege_unique; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: categorie_privilege_unique; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX categorie_privilege_unique ON public.categorie_privilege USING btree (code);
 
 
 --
--- Name: configuration_code_uindex; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: configuration_code_uindex; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX configuration_code_uindex ON public.soutenance_configuration USING btree (code);
 
 
 --
--- Name: diffusion_hc_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: diffusion_hc_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX diffusion_hc_idx ON public.diffusion USING btree (histo_createur_id);
 
 
 --
--- Name: diffusion_hd_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: diffusion_hd_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX diffusion_hd_idx ON public.diffusion USING btree (histo_destructeur_id);
 
 
 --
--- Name: diffusion_hm_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: diffusion_hm_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX diffusion_hm_idx ON public.diffusion USING btree (histo_modificateur_id);
 
 
 --
--- Name: diffusion_these_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: diffusion_these_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX diffusion_these_idx ON public.diffusion USING btree (these_id);
 
 
 --
--- Name: doctorant_compl_doctorant_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: doctorant_compl_doctorant_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX doctorant_compl_doctorant_idx ON public.doctorant_compl USING btree (doctorant_id);
 
 
 --
--- Name: doctorant_compl_hc_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: doctorant_compl_hc_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX doctorant_compl_hc_idx ON public.doctorant_compl USING btree (histo_createur_id);
 
 
 --
--- Name: doctorant_compl_hd_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: doctorant_compl_hd_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX doctorant_compl_hd_idx ON public.doctorant_compl USING btree (histo_destructeur_id);
 
 
 --
--- Name: doctorant_compl_hm_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: doctorant_compl_hm_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX doctorant_compl_hm_idx ON public.doctorant_compl USING btree (histo_modificateur_id);
 
 
 --
--- Name: doctorant_compl_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: doctorant_compl_un_1; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE UNIQUE INDEX doctorant_compl_un ON public.doctorant_compl USING btree (persopass, histo_destruction);
+CREATE UNIQUE INDEX doctorant_compl_un_1 ON public.doctorant_compl USING btree (persopass, histo_destruction) WHERE (histo_destruction IS NOT NULL);
 
 
 --
--- Name: doctorant_etablissement_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: doctorant_compl_un_2; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX doctorant_compl_un_2 ON public.doctorant_compl USING btree (persopass) WHERE (histo_destruction IS NULL);
+
+
+--
+-- Name: doctorant_etablissement_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX doctorant_etablissement_idx ON public.doctorant USING btree (etablissement_id);
 
 
 --
--- Name: doctorant_hcfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: doctorant_hcfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX doctorant_hcfk_idx ON public.doctorant USING btree (histo_createur_id);
 
 
 --
--- Name: doctorant_hdfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: doctorant_hdfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX doctorant_hdfk_idx ON public.doctorant USING btree (histo_destructeur_id);
 
 
 --
--- Name: doctorant_hmfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: doctorant_hmfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX doctorant_hmfk_idx ON public.doctorant USING btree (histo_modificateur_id);
 
 
 --
--- Name: doctorant_individu_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: doctorant_individu_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX doctorant_individu_idx ON public.doctorant USING btree (individu_id);
 
 
 --
--- Name: doctorant_source_code_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: doctorant_source_code_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX doctorant_source_code_uniq ON public.doctorant USING btree (source_code);
 
 
 --
--- Name: doctorant_src_id_index; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: doctorant_src_id_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX doctorant_src_id_index ON public.doctorant USING btree (source_id);
 
 
 --
--- Name: ecole_doct_hc_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: ecole_doct_hc_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX ecole_doct_hc_idx ON public.ecole_doct USING btree (histo_createur_id);
 
 
 --
--- Name: ecole_doct_hd_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: ecole_doct_hd_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX ecole_doct_hd_idx ON public.ecole_doct USING btree (histo_destructeur_id);
 
 
 --
--- Name: ecole_doct_hm_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: ecole_doct_hm_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX ecole_doct_hm_idx ON public.ecole_doct USING btree (histo_modificateur_id);
 
 
 --
--- Name: ecole_doct_source_code_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: ecole_doct_source_code_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX ecole_doct_source_code_un ON public.ecole_doct USING btree (source_code);
 
 
 --
--- Name: ecole_doct_source_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: ecole_doct_source_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX ecole_doct_source_idx ON public.ecole_doct USING btree (source_id);
 
 
 --
--- Name: ecole_doct_struct_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: ecole_doct_struct_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX ecole_doct_struct_id_idx ON public.ecole_doct USING btree (structure_id);
 
 
 --
--- Name: etablissement_domaine_uindex; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: etablissement_domaine_uindex; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX etablissement_domaine_uindex ON public.etablissement USING btree (domaine);
 
 
 --
--- Name: etablissement_struct_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: etablissement_struct_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX etablissement_struct_id_idx ON public.etablissement USING btree (structure_id);
 
 
 --
--- Name: fichier_hcfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: fichier_hcfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX fichier_hcfk_idx ON public.fichier USING btree (histo_createur_id);
 
 
 --
--- Name: fichier_hdfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: fichier_hdfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX fichier_hdfk_idx ON public.fichier USING btree (histo_destructeur_id);
 
 
 --
--- Name: fichier_hmfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: fichier_hmfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX fichier_hmfk_idx ON public.fichier USING btree (histo_modificateur_id);
 
 
 --
--- Name: fichier_nature_id_index; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: fichier_nature_id_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX fichier_nature_id_index ON public.fichier USING btree (nature_id);
 
 
 --
--- Name: fichier_permanent_id_uindex; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: fichier_permanent_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX fichier_permanent_id_uindex ON public.fichier USING btree (permanent_id);
 
 
 --
--- Name: fichier_these_fich_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: fichier_these_fich_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX fichier_these_fich_id_idx ON public.fichier_these USING btree (fichier_id);
 
 
 --
--- Name: fichier_these_these_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: fichier_these_these_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX fichier_these_these_id_idx ON public.fichier_these USING btree (these_id);
 
 
 --
--- Name: fichier_uuid_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: fichier_uuid_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX fichier_uuid_un ON public.fichier USING btree (uuid);
 
 
 --
--- Name: fichier_version_fk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: fichier_version_fk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX fichier_version_fk_idx ON public.fichier USING btree (version_fichier_id);
 
 
 --
--- Name: financement_source_code_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: financement_source_code_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX financement_source_code_un ON public.financement USING btree (source_code);
 
 
 --
--- Name: import_notif_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: import_notif_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX import_notif_un ON public.import_notif USING btree (table_name, column_name, operation);
 
 
 --
--- Name: import_obs_notif_io_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: import_obs_notif_io_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX import_obs_notif_io_idx ON public.import_obs_notif USING btree (import_observ_id);
 
 
 --
--- Name: import_obs_notif_ior_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: import_obs_notif_ior_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX import_obs_notif_ior_idx ON public.import_obs_result_notif USING btree (import_observ_result_id);
 
 
 --
--- Name: import_obs_notif_n_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: import_obs_notif_n_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX import_obs_notif_n_idx ON public.import_obs_notif USING btree (notif_id);
 
 
 --
--- Name: import_obs_notif_nr_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: import_obs_notif_nr_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX import_obs_notif_nr_idx ON public.import_obs_result_notif USING btree (notif_result_id);
 
 
 --
--- Name: import_observ_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: import_observ_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX import_observ_un ON public.import_observ USING btree (table_name, column_name, operation, to_value);
 
 
 --
--- Name: individu_hcfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: individu_hcfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX individu_hcfk_idx ON public.individu USING btree (histo_createur_id);
 
 
 --
--- Name: individu_hdfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: individu_hdfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX individu_hdfk_idx ON public.individu USING btree (histo_destructeur_id);
 
 
 --
--- Name: individu_hmfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: individu_hmfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX individu_hmfk_idx ON public.individu USING btree (histo_modificateur_id);
 
 
 --
--- Name: individu_role_individu_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: individu_role_individu_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX individu_role_individu_idx ON public.individu_role USING btree (individu_id);
 
 
 --
--- Name: individu_role_role_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: individu_role_role_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX individu_role_role_idx ON public.individu_role USING btree (role_id);
 
 
 --
--- Name: individu_role_unique; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: individu_role_unique; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX individu_role_unique ON public.individu_role USING btree (individu_id, role_id);
 
 
 --
--- Name: individu_source_code_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: individu_source_code_uindex; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE UNIQUE INDEX individu_source_code_uniq ON public.individu USING btree (source_code, histo_destruction);
+CREATE UNIQUE INDEX individu_source_code_uindex ON public.individu USING btree (source_code);
 
 
 --
--- Name: individu_src_id_index; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: individu_source_code_uniq_1; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX individu_source_code_uniq_1 ON public.individu USING btree (source_code, histo_destruction) WHERE (histo_destruction IS NOT NULL);
+
+
+--
+-- Name: individu_source_code_uniq_2; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX individu_source_code_uniq_2 ON public.individu USING btree (source_code) WHERE (histo_destruction IS NULL);
+
+
+--
+-- Name: individu_src_id_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX individu_src_id_index ON public.individu USING btree (source_id);
 
 
 --
--- Name: information_filename_uindex; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: information_filename_uindex; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX information_filename_uindex ON public.information_fichier_sav USING btree (filename);
 
 
 --
--- Name: liste_diff_adresse_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: liste_diff_adresse_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX liste_diff_adresse_un ON public.liste_diff USING btree (adresse);
 
 
 --
--- Name: mail_confirmation_code_uindex; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: mail_confirmation_code_uindex; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX mail_confirmation_code_uindex ON public.mail_confirmation USING btree (code);
 
 
 --
--- Name: metadonnee_these_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: metadonnee_these_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX metadonnee_these_uniq ON public.metadonnee_these USING btree (these_id);
 
 
 --
--- Name: nature_fichier_code_uindex; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: nature_fichier_code_uindex; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX nature_fichier_code_uindex ON public.nature_fichier USING btree (code);
 
 
 --
--- Name: notif_result_notif_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: notif_result_notif_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX notif_result_notif_idx ON public.notif_result USING btree (notif_id);
 
 
 --
--- Name: origine_fin_source_code_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: origine_fin_source_code_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX origine_fin_source_code_un ON public.origine_financement USING btree (source_code);
 
 
 --
--- Name: privilege_categ_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: privilege_categ_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX privilege_categ_idx ON public.privilege USING btree (categorie_id);
 
 
 --
--- Name: privilege_unique; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: privilege_unique; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX privilege_unique ON public.privilege USING btree (categorie_id, code);
 
 
 --
--- Name: profil_role_id_uindex; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: profil_role_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX profil_role_id_uindex ON public.profil USING btree (role_id);
 
 
 --
--- Name: rapport_validation_hcfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: rapport_validation_hcfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX rapport_validation_hcfk_idx ON public.rapport_validation USING btree (histo_createur_id);
 
 
 --
--- Name: rapport_validation_hdfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: rapport_validation_hdfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX rapport_validation_hdfk_idx ON public.rapport_validation USING btree (histo_destructeur_id);
 
 
 --
--- Name: rapport_validation_hmfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: rapport_validation_hmfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX rapport_validation_hmfk_idx ON public.rapport_validation USING btree (histo_modificateur_id);
 
 
 --
--- Name: rapport_validation_indiv_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: rapport_validation_indiv_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX rapport_validation_indiv_idx ON public.rapport_validation USING btree (individu_id);
 
 
 --
--- Name: rapport_validation_rapport_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: rapport_validation_rapport_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX rapport_validation_rapport_idx ON public.rapport_validation USING btree (rapport_id);
 
 
 --
--- Name: rapport_validation_type_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: rapport_validation_type_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX rapport_validation_type_idx ON public.rapport_validation USING btree (type_validation_id);
 
 
 --
--- Name: rapport_validation_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: rapport_validation_un_1; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE UNIQUE INDEX rapport_validation_un ON public.rapport_validation USING btree (type_validation_id, rapport_id, histo_destruction, individu_id);
+CREATE UNIQUE INDEX rapport_validation_un_1 ON public.rapport_validation USING btree (type_validation_id, rapport_id, individu_id, histo_destruction) WHERE (histo_destruction IS NOT NULL);
 
 
 --
--- Name: rdv_bu_hc_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: rapport_validation_un_2; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX rapport_validation_un_2 ON public.rapport_validation USING btree (type_validation_id, rapport_id, individu_id) WHERE (histo_destruction IS NULL);
+
+
+--
+-- Name: rdv_bu_hc_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX rdv_bu_hc_idx ON public.rdv_bu USING btree (histo_createur_id);
 
 
 --
--- Name: rdv_bu_hd_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: rdv_bu_hd_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX rdv_bu_hd_idx ON public.rdv_bu USING btree (histo_destructeur_id);
 
 
 --
--- Name: rdv_bu_hm_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: rdv_bu_hm_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX rdv_bu_hm_idx ON public.rdv_bu USING btree (histo_modificateur_id);
 
 
 --
--- Name: rdv_bu_these_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: rdv_bu_these_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX rdv_bu_these_idx ON public.rdv_bu USING btree (these_id);
 
 
 --
--- Name: role_privilege_privilege_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: role_privilege_privilege_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX role_privilege_privilege_idx ON public.role_privilege USING btree (privilege_id);
 
 
 --
--- Name: role_privilege_role_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: role_privilege_role_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX role_privilege_role_idx ON public.role_privilege USING btree (role_id);
 
 
 --
--- Name: role_source_code_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: role_source_code_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX role_source_code_un ON public.role USING btree (source_code);
 
 
 --
--- Name: role_structure_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: role_structure_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX role_structure_id_idx ON public.role USING btree (structure_id);
 
 
 --
--- Name: role_type_structure_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: role_type_structure_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX role_type_structure_id_idx ON public.role USING btree (type_structure_dependant_id);
 
 
 --
--- Name: source_code_unique; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: source_code_unique; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX source_code_unique ON public.etablissement USING btree (source_code);
 
 
 --
--- Name: str_substit_str_to_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: soutenance_evenement_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX soutenance_evenement_id_uindex ON public.soutenance_evenement USING btree (id);
+
+
+--
+-- Name: str_substit_str_to_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX str_substit_str_to_idx ON public.structure_substit USING btree (to_structure_id);
 
 
 --
--- Name: str_substit_unique; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: str_substit_unique; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX str_substit_unique ON public.structure_substit USING btree (from_structure_id);
 
 
 --
--- Name: structure_source_code_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: structure_source_code_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX structure_source_code_un ON public.structure USING btree (source_code);
 
 
 --
--- Name: structure_type_str_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: structure_type_str_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX structure_type_str_id_idx ON public.structure USING btree (type_structure_id);
 
 
 --
--- Name: these_an_univ_source_code_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: these_an_univ_source_code_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX these_an_univ_source_code_un ON public.these_annee_univ USING btree (source_code);
 
 
 --
--- Name: these_annee_univ_these_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: these_annee_univ_these_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX these_annee_univ_these_id_idx ON public.these_annee_univ USING btree (these_id);
 
 
 --
--- Name: these_etat_index; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: these_etat_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX these_etat_index ON public.these USING btree (etat_these);
 
 
 --
--- Name: these_hcfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: these_hcfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX these_hcfk_idx ON public.these USING btree (histo_createur_id);
 
 
 --
--- Name: these_hdfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: these_hdfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX these_hdfk_idx ON public.these USING btree (histo_destructeur_id);
 
 
 --
--- Name: these_hmfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: these_hmfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX these_hmfk_idx ON public.these USING btree (histo_modificateur_id);
 
 
 --
--- Name: these_source_code_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: these_source_code_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX these_source_code_uniq ON public.these USING btree (source_code);
 
 
 --
--- Name: these_src_id_index; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: these_src_id_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX these_src_id_index ON public.these USING btree (source_id);
 
 
 --
--- Name: these_titre_index; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: these_titre_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX these_titre_index ON public.these USING btree (titre);
 
 
 --
--- Name: titre_acces_source_code_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: titre_acces_source_code_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX titre_acces_source_code_un ON public.titre_acces USING btree (source_code);
 
 
 --
--- Name: titre_acces_these_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: titre_acces_these_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX titre_acces_these_id_idx ON public.titre_acces USING btree (these_id);
 
 
 --
--- Name: tmp_acteur_source_code_index; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_acteur_source_code_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_acteur_source_code_index ON public.tmp_acteur USING btree (source_code);
 
 
 --
--- Name: tmp_acteur_source_id_index; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_acteur_source_id_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_acteur_source_id_index ON public.tmp_acteur USING btree (source_id);
 
 
 --
--- Name: tmp_acteur_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_acteur_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX tmp_acteur_uniq ON public.tmp_acteur USING btree (id, etablissement_id);
 
 
 --
--- Name: tmp_doctorant_source_code_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_doctorant_source_code_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_doctorant_source_code_idx ON public.tmp_doctorant USING btree (source_code);
 
 
 --
--- Name: tmp_doctorant_source_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_doctorant_source_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_doctorant_source_id_idx ON public.tmp_doctorant USING btree (source_id);
 
 
 --
--- Name: tmp_doctorant_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_doctorant_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX tmp_doctorant_uniq ON public.tmp_doctorant USING btree (id, etablissement_id);
 
 
 --
--- Name: tmp_ecole_doct_source_code_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_ecole_doct_source_code_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_ecole_doct_source_code_idx ON public.tmp_ecole_doct USING btree (source_code);
 
 
 --
--- Name: tmp_ecole_doct_source_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_ecole_doct_source_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_ecole_doct_source_id_idx ON public.tmp_ecole_doct USING btree (source_id);
 
 
 --
--- Name: tmp_ecole_doct_struct_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_ecole_doct_struct_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_ecole_doct_struct_id_idx ON public.tmp_ecole_doct USING btree (structure_id);
 
 
 --
--- Name: tmp_ecole_doct_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_ecole_doct_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX tmp_ecole_doct_uniq ON public.tmp_ecole_doct USING btree (id, structure_id);
 
 
 --
--- Name: tmp_etab_source_code_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_etab_source_code_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_etab_source_code_idx ON public.tmp_etablissement USING btree (source_code);
 
 
 --
--- Name: tmp_etab_source_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_etab_source_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_etab_source_id_idx ON public.tmp_etablissement USING btree (source_id);
 
 
 --
--- Name: tmp_etab_struct_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_etab_struct_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_etab_struct_id_idx ON public.tmp_etablissement USING btree (structure_id);
 
 
 --
--- Name: tmp_etab_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_etab_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX tmp_etab_uniq ON public.tmp_etablissement USING btree (id, structure_id);
 
 
 --
--- Name: tmp_financement_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_financement_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX tmp_financement_uniq ON public.tmp_financement USING btree (id, etablissement_id);
 
 
 --
--- Name: tmp_individu_source_code_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_individu_source_code_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_individu_source_code_idx ON public.tmp_individu USING btree (source_code);
 
 
 --
--- Name: tmp_individu_source_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_individu_source_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_individu_source_id_idx ON public.tmp_individu USING btree (source_id);
 
 
 --
--- Name: tmp_individu_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_individu_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX tmp_individu_uniq ON public.tmp_individu USING btree (id, etablissement_id);
 
 
 --
--- Name: tmp_origine_financement_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_origine_financement_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX tmp_origine_financement_uniq ON public.tmp_origine_financement USING btree (id, etablissement_id);
 
 
 --
--- Name: tmp_role_source_code_index; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_role_source_code_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_role_source_code_index ON public.tmp_role USING btree (source_code);
 
 
 --
--- Name: tmp_role_source_id_index; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_role_source_id_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_role_source_id_index ON public.tmp_role USING btree (source_id);
 
 
 --
--- Name: tmp_role_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_role_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX tmp_role_uniq ON public.tmp_role USING btree (id, etablissement_id);
 
 
 --
--- Name: tmp_structure_source_code_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_structure_source_code_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_structure_source_code_idx ON public.tmp_structure USING btree (source_code);
 
 
 --
--- Name: tmp_structure_source_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_structure_source_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_structure_source_id_idx ON public.tmp_structure USING btree (source_id);
 
 
 --
--- Name: tmp_structure_type_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_structure_type_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_structure_type_id_idx ON public.tmp_structure USING btree (type_structure_id);
 
 
 --
--- Name: tmp_these_annee_u_src_cod_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_these_annee_u_src_cod_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_these_annee_u_src_cod_idx ON public.tmp_these_annee_univ USING btree (source_code);
 
 
 --
--- Name: tmp_these_annee_u_src_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_these_annee_u_src_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_these_annee_u_src_id_idx ON public.tmp_these_annee_univ USING btree (source_id);
 
 
 --
--- Name: tmp_these_annee_u_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_these_annee_u_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX tmp_these_annee_u_uniq ON public.tmp_these_annee_univ USING btree (id, etablissement_id);
 
 
 --
--- Name: tmp_these_source_code_index; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_these_source_code_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_these_source_code_index ON public.tmp_these USING btree (source_code);
 
 
 --
--- Name: tmp_these_source_id_index; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_these_source_id_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_these_source_id_index ON public.tmp_these USING btree (source_id);
 
 
 --
--- Name: tmp_these_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_these_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX tmp_these_uniq ON public.tmp_these USING btree (id, etablissement_id);
 
 
 --
--- Name: tmp_titre_acces_source_cod_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_titre_acces_source_cod_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_titre_acces_source_cod_idx ON public.tmp_titre_acces USING btree (source_code);
 
 
 --
--- Name: tmp_titre_acces_source_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_titre_acces_source_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_titre_acces_source_id_idx ON public.tmp_titre_acces USING btree (source_id);
 
 
 --
--- Name: tmp_titre_acces_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_titre_acces_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX tmp_titre_acces_uniq ON public.tmp_titre_acces USING btree (id, etablissement_id);
 
 
 --
--- Name: tmp_unite_rech_source_code_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_unite_rech_source_code_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_unite_rech_source_code_idx ON public.tmp_unite_rech USING btree (source_code);
 
 
 --
--- Name: tmp_unite_rech_source_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_unite_rech_source_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_unite_rech_source_id_idx ON public.tmp_unite_rech USING btree (source_id);
 
 
 --
--- Name: tmp_unite_rech_struct_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_unite_rech_struct_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_unite_rech_struct_id_idx ON public.tmp_unite_rech USING btree (structure_id);
 
 
 --
--- Name: tmp_unite_rech_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_unite_rech_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX tmp_unite_rech_uniq ON public.tmp_unite_rech USING btree (id, structure_id);
 
 
 --
--- Name: tmp_variable_source_code_index; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_variable_source_code_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_variable_source_code_index ON public.tmp_variable USING btree (source_code);
 
 
 --
--- Name: tmp_variable_source_id_index; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_variable_source_id_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX tmp_variable_source_id_index ON public.tmp_variable USING btree (source_id);
 
 
 --
--- Name: tmp_variable_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: tmp_variable_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX tmp_variable_uniq ON public.tmp_variable USING btree (id, etablissement_id);
 
 
 --
--- Name: type_rapport_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: type_rapport_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX type_rapport_un ON public.type_rapport USING btree (code);
 
 
 --
--- Name: type_structure_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: type_structure_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX type_structure_un ON public.type_structure USING btree (code);
 
 
 --
--- Name: type_validation_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: type_validation_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX type_validation_un ON public.type_validation USING btree (code);
 
 
 --
--- Name: unite_rech_hc_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: unite_rech_hc_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX unite_rech_hc_idx ON public.unite_rech USING btree (histo_createur_id);
 
 
 --
--- Name: unite_rech_hd_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: unite_rech_hd_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX unite_rech_hd_idx ON public.unite_rech USING btree (histo_destructeur_id);
 
 
 --
--- Name: unite_rech_hm_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: unite_rech_hm_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX unite_rech_hm_idx ON public.unite_rech USING btree (histo_modificateur_id);
 
 
 --
--- Name: unite_rech_source_code_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: unite_rech_source_code_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX unite_rech_source_code_un ON public.unite_rech USING btree (source_code);
 
 
 --
--- Name: unite_rech_source_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: unite_rech_source_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX unite_rech_source_idx ON public.unite_rech USING btree (source_id);
 
 
 --
--- Name: unite_rech_struct_id_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: unite_rech_struct_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX unite_rech_struct_id_idx ON public.unite_rech USING btree (structure_id);
 
 
 --
--- Name: user_token_user_action_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: user_token_user_action_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX user_token_user_action_un ON public.user_token USING btree (user_id, action);
 
 
 --
--- Name: utilis_password_reset_token_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: utilis_password_reset_token_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX utilis_password_reset_token_un ON public.utilisateur USING btree (password_reset_token);
 
 
 --
--- Name: validation_hcfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: validation_hcfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX validation_hcfk_idx ON public.validation USING btree (histo_createur_id);
 
 
 --
--- Name: validation_hdfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: validation_hdfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX validation_hdfk_idx ON public.validation USING btree (histo_destructeur_id);
 
 
 --
--- Name: validation_hmfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: validation_hmfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX validation_hmfk_idx ON public.validation USING btree (histo_modificateur_id);
 
 
 --
--- Name: validation_individu_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: validation_individu_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX validation_individu_idx ON public.validation USING btree (individu_id);
 
 
 --
--- Name: validation_these_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: validation_these_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX validation_these_idx ON public.validation USING btree (these_id);
 
 
 --
--- Name: validation_type_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: validation_type_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX validation_type_idx ON public.validation USING btree (type_validation_id);
 
 
 --
--- Name: validation_un; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: validation_un_1; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE UNIQUE INDEX validation_un ON public.validation USING btree (type_validation_id, these_id, histo_destruction, individu_id);
+CREATE UNIQUE INDEX validation_un_1 ON public.validation USING btree (type_validation_id, these_id, individu_id, histo_destruction) WHERE (histo_destruction IS NOT NULL);
 
 
 --
--- Name: validite_fichier_fichier_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: validation_un_2; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX validation_un_2 ON public.validation USING btree (type_validation_id, these_id, individu_id) WHERE (histo_destruction IS NULL);
+
+
+--
+-- Name: validite_fichier_fichier_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX validite_fichier_fichier_idx ON public.validite_fichier USING btree (fichier_id);
 
 
 --
--- Name: validite_fichier_hcfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: validite_fichier_hcfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX validite_fichier_hcfk_idx ON public.validite_fichier USING btree (histo_createur_id);
 
 
 --
--- Name: validite_fichier_hdfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: validite_fichier_hdfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX validite_fichier_hdfk_idx ON public.validite_fichier USING btree (histo_destructeur_id);
 
 
 --
--- Name: validite_fichier_hmfk_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: validite_fichier_hmfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX validite_fichier_hmfk_idx ON public.validite_fichier USING btree (histo_modificateur_id);
 
 
 --
--- Name: variable_code_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: variable_code_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX variable_code_uniq ON public.variable USING btree (code, etablissement_id);
 
 
 --
--- Name: variable_etablissement_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: variable_etablissement_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX variable_etablissement_idx ON public.variable USING btree (etablissement_id);
 
 
 --
--- Name: variable_hc_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: variable_hc_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX variable_hc_idx ON public.variable USING btree (histo_createur_id);
 
 
 --
--- Name: variable_hd_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: variable_hd_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX variable_hd_idx ON public.variable USING btree (histo_destructeur_id);
 
 
 --
--- Name: variable_hm_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: variable_hm_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX variable_hm_idx ON public.variable USING btree (histo_modificateur_id);
 
 
 --
--- Name: variable_source_code_uniq; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: variable_source_code_uniq; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX variable_source_code_uniq ON public.variable USING btree (source_code);
 
 
 --
--- Name: variable_source_idx; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: variable_source_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE INDEX variable_source_idx ON public.variable USING btree (source_id);
 
 
 --
--- Name: version_fichier_uniq_code; Type: INDEX; Schema: public; Owner: ad_sygal
+-- Name: version_fichier_uniq_code; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
 CREATE UNIQUE INDEX version_fichier_uniq_code ON public.version_fichier USING btree (code);
 
 
 --
--- Name: individu individu_rech_update; Type: TRIGGER; Schema: public; Owner: ad_sygal
+-- Name: individu individu_rech_update; Type: TRIGGER; Schema: public; Owner: :dbuser
 --
 
 CREATE TRIGGER individu_rech_update AFTER INSERT OR DELETE OR UPDATE ON public.individu FOR EACH ROW EXECUTE PROCEDURE public.trigger_fct_individu_rech_update();
 
 
 --
--- Name: acteur acteur_etab_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: acteur acteur_etab_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.acteur
@@ -1943,7 +2001,7 @@ ALTER TABLE ONLY public.acteur
 
 
 --
--- Name: acteur acteur_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: acteur acteur_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.acteur
@@ -1951,7 +2009,7 @@ ALTER TABLE ONLY public.acteur
 
 
 --
--- Name: acteur acteur_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: acteur acteur_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.acteur
@@ -1959,7 +2017,7 @@ ALTER TABLE ONLY public.acteur
 
 
 --
--- Name: acteur acteur_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: acteur acteur_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.acteur
@@ -1967,7 +2025,7 @@ ALTER TABLE ONLY public.acteur
 
 
 --
--- Name: acteur acteur_indiv_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: acteur acteur_indiv_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.acteur
@@ -1975,7 +2033,7 @@ ALTER TABLE ONLY public.acteur
 
 
 --
--- Name: acteur acteur_role_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: acteur acteur_role_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.acteur
@@ -1983,7 +2041,7 @@ ALTER TABLE ONLY public.acteur
 
 
 --
--- Name: acteur acteur_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: acteur acteur_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.acteur
@@ -1991,7 +2049,7 @@ ALTER TABLE ONLY public.acteur
 
 
 --
--- Name: acteur acteur_these_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: acteur acteur_these_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.acteur
@@ -1999,7 +2057,7 @@ ALTER TABLE ONLY public.acteur
 
 
 --
--- Name: attestation attestation_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: attestation attestation_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.attestation
@@ -2007,7 +2065,7 @@ ALTER TABLE ONLY public.attestation
 
 
 --
--- Name: attestation attestation_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: attestation attestation_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.attestation
@@ -2015,7 +2073,7 @@ ALTER TABLE ONLY public.attestation
 
 
 --
--- Name: attestation attestation_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: attestation attestation_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.attestation
@@ -2023,7 +2081,7 @@ ALTER TABLE ONLY public.attestation
 
 
 --
--- Name: attestation attestation_these_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: attestation attestation_these_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.attestation
@@ -2031,7 +2089,7 @@ ALTER TABLE ONLY public.attestation
 
 
 --
--- Name: soutenance_avis avis_destructeur_id; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_avis avis_destructeur_id; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_avis
@@ -2039,7 +2097,7 @@ ALTER TABLE ONLY public.soutenance_avis
 
 
 --
--- Name: soutenance_avis avis_fichier_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_avis avis_fichier_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_avis
@@ -2047,7 +2105,7 @@ ALTER TABLE ONLY public.soutenance_avis
 
 
 --
--- Name: soutenance_avis avis_membre_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_avis avis_membre_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_avis
@@ -2055,7 +2113,7 @@ ALTER TABLE ONLY public.soutenance_avis
 
 
 --
--- Name: soutenance_avis avis_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_avis avis_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_avis
@@ -2063,7 +2121,7 @@ ALTER TABLE ONLY public.soutenance_avis
 
 
 --
--- Name: soutenance_avis avis_proposition_id; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_avis avis_proposition_id; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_avis
@@ -2071,7 +2129,7 @@ ALTER TABLE ONLY public.soutenance_avis
 
 
 --
--- Name: soutenance_avis avis_validation_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_avis avis_validation_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_avis
@@ -2079,7 +2137,7 @@ ALTER TABLE ONLY public.soutenance_avis
 
 
 --
--- Name: diffusion diffusion_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: diffusion diffusion_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.diffusion
@@ -2087,7 +2145,7 @@ ALTER TABLE ONLY public.diffusion
 
 
 --
--- Name: diffusion diffusion_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: diffusion diffusion_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.diffusion
@@ -2095,7 +2153,7 @@ ALTER TABLE ONLY public.diffusion
 
 
 --
--- Name: diffusion diffusion_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: diffusion diffusion_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.diffusion
@@ -2103,7 +2161,7 @@ ALTER TABLE ONLY public.diffusion
 
 
 --
--- Name: doctorant_compl doctorant_compl_doctorant_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: doctorant_compl doctorant_compl_doctorant_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.doctorant_compl
@@ -2111,7 +2169,7 @@ ALTER TABLE ONLY public.doctorant_compl
 
 
 --
--- Name: doctorant doctorant_etab_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: doctorant doctorant_etab_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.doctorant
@@ -2119,7 +2177,7 @@ ALTER TABLE ONLY public.doctorant
 
 
 --
--- Name: doctorant doctorant_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: doctorant doctorant_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.doctorant
@@ -2127,7 +2185,7 @@ ALTER TABLE ONLY public.doctorant
 
 
 --
--- Name: doctorant doctorant_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: doctorant doctorant_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.doctorant
@@ -2135,7 +2193,7 @@ ALTER TABLE ONLY public.doctorant
 
 
 --
--- Name: doctorant doctorant_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: doctorant doctorant_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.doctorant
@@ -2143,7 +2201,7 @@ ALTER TABLE ONLY public.doctorant
 
 
 --
--- Name: doctorant doctorant_indiv_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: doctorant doctorant_indiv_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.doctorant
@@ -2151,7 +2209,7 @@ ALTER TABLE ONLY public.doctorant
 
 
 --
--- Name: doctorant doctorant_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: doctorant doctorant_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.doctorant
@@ -2159,7 +2217,7 @@ ALTER TABLE ONLY public.doctorant
 
 
 --
--- Name: ecole_doct ecole_doct_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: ecole_doct ecole_doct_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.ecole_doct
@@ -2167,7 +2225,7 @@ ALTER TABLE ONLY public.ecole_doct
 
 
 --
--- Name: ecole_doct ecole_doct_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: ecole_doct ecole_doct_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.ecole_doct
@@ -2175,7 +2233,7 @@ ALTER TABLE ONLY public.ecole_doct
 
 
 --
--- Name: ecole_doct ecole_doct_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: ecole_doct ecole_doct_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.ecole_doct
@@ -2183,7 +2241,7 @@ ALTER TABLE ONLY public.ecole_doct
 
 
 --
--- Name: ecole_doct ecole_doct_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: ecole_doct ecole_doct_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.ecole_doct
@@ -2191,7 +2249,7 @@ ALTER TABLE ONLY public.ecole_doct
 
 
 --
--- Name: ecole_doct ecole_doct_struct_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: ecole_doct ecole_doct_struct_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.ecole_doct
@@ -2199,7 +2257,7 @@ ALTER TABLE ONLY public.ecole_doct
 
 
 --
--- Name: etablissement etab_struct_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: etablissement etab_struct_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.etablissement
@@ -2207,7 +2265,7 @@ ALTER TABLE ONLY public.etablissement
 
 
 --
--- Name: etablissement etab_util_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: etablissement etab_util_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.etablissement
@@ -2215,7 +2273,7 @@ ALTER TABLE ONLY public.etablissement
 
 
 --
--- Name: etablissement etab_util_destructeur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: etablissement etab_util_destructeur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.etablissement
@@ -2223,7 +2281,7 @@ ALTER TABLE ONLY public.etablissement
 
 
 --
--- Name: etablissement etab_util_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: etablissement etab_util_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.etablissement
@@ -2231,7 +2289,7 @@ ALTER TABLE ONLY public.etablissement
 
 
 --
--- Name: etablissement etablissement_fichier_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: etablissement etablissement_fichier_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.etablissement
@@ -2239,7 +2297,7 @@ ALTER TABLE ONLY public.etablissement
 
 
 --
--- Name: etablissement etablissement_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: etablissement etablissement_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.etablissement
@@ -2247,7 +2305,7 @@ ALTER TABLE ONLY public.etablissement
 
 
 --
--- Name: fichier fichier_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: fichier fichier_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.fichier
@@ -2255,7 +2313,7 @@ ALTER TABLE ONLY public.fichier
 
 
 --
--- Name: fichier fichier_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: fichier fichier_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.fichier
@@ -2263,7 +2321,7 @@ ALTER TABLE ONLY public.fichier
 
 
 --
--- Name: fichier fichier_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: fichier fichier_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.fichier
@@ -2271,7 +2329,7 @@ ALTER TABLE ONLY public.fichier
 
 
 --
--- Name: fichier fichier_nature_fic_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: fichier fichier_nature_fic_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.fichier
@@ -2279,7 +2337,7 @@ ALTER TABLE ONLY public.fichier
 
 
 --
--- Name: fichier_these fichier_these_fichier_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: fichier_these fichier_these_fichier_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.fichier_these
@@ -2287,7 +2345,7 @@ ALTER TABLE ONLY public.fichier_these
 
 
 --
--- Name: fichier_these fichier_these_these_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: fichier_these fichier_these_these_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.fichier_these
@@ -2295,7 +2353,7 @@ ALTER TABLE ONLY public.fichier_these
 
 
 --
--- Name: fichier fichier_version_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: fichier fichier_version_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.fichier
@@ -2303,7 +2361,7 @@ ALTER TABLE ONLY public.fichier
 
 
 --
--- Name: financement financement_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: financement financement_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.financement
@@ -2311,7 +2369,7 @@ ALTER TABLE ONLY public.financement
 
 
 --
--- Name: financement financement_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: financement financement_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.financement
@@ -2319,7 +2377,7 @@ ALTER TABLE ONLY public.financement
 
 
 --
--- Name: financement financement_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: financement financement_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.financement
@@ -2327,7 +2385,7 @@ ALTER TABLE ONLY public.financement
 
 
 --
--- Name: financement financement_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: financement financement_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.financement
@@ -2335,7 +2393,7 @@ ALTER TABLE ONLY public.financement
 
 
 --
--- Name: import_observ_result import_observ_result_ioe_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: import_observ_result import_observ_result_ioe_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.import_observ_result
@@ -2343,7 +2401,7 @@ ALTER TABLE ONLY public.import_observ_result
 
 
 --
--- Name: individu individu_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: individu individu_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.individu
@@ -2351,7 +2409,7 @@ ALTER TABLE ONLY public.individu
 
 
 --
--- Name: individu individu_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: individu individu_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.individu
@@ -2359,7 +2417,7 @@ ALTER TABLE ONLY public.individu
 
 
 --
--- Name: individu individu_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: individu individu_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.individu
@@ -2367,7 +2425,7 @@ ALTER TABLE ONLY public.individu
 
 
 --
--- Name: individu_role individu_role_ind_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: individu_role individu_role_ind_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.individu_role
@@ -2375,7 +2433,7 @@ ALTER TABLE ONLY public.individu_role
 
 
 --
--- Name: individu_role individu_role_role_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: individu_role individu_role_role_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.individu_role
@@ -2383,7 +2441,7 @@ ALTER TABLE ONLY public.individu_role
 
 
 --
--- Name: individu individu_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: individu individu_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.individu
@@ -2391,7 +2449,7 @@ ALTER TABLE ONLY public.individu
 
 
 --
--- Name: information information_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: information information_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.information
@@ -2399,7 +2457,7 @@ ALTER TABLE ONLY public.information
 
 
 --
--- Name: information information_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: information information_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.information
@@ -2407,7 +2465,7 @@ ALTER TABLE ONLY public.information
 
 
 --
--- Name: information information_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: information information_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.information
@@ -2415,7 +2473,7 @@ ALTER TABLE ONLY public.information
 
 
 --
--- Name: information information_langue_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: information information_langue_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.information
@@ -2423,7 +2481,7 @@ ALTER TABLE ONLY public.information
 
 
 --
--- Name: import_obs_notif iond__io_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: import_obs_notif iond__io_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.import_obs_notif
@@ -2431,7 +2489,7 @@ ALTER TABLE ONLY public.import_obs_notif
 
 
 --
--- Name: import_obs_notif iond__n_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: import_obs_notif iond__n_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.import_obs_notif
@@ -2439,7 +2497,7 @@ ALTER TABLE ONLY public.import_obs_notif
 
 
 --
--- Name: import_obs_result_notif iornr__nr_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: import_obs_result_notif iornr__nr_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.import_obs_result_notif
@@ -2447,7 +2505,7 @@ ALTER TABLE ONLY public.import_obs_result_notif
 
 
 --
--- Name: soutenance_justificatif justificatif_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_justificatif justificatif_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_justificatif
@@ -2455,7 +2513,7 @@ ALTER TABLE ONLY public.soutenance_justificatif
 
 
 --
--- Name: soutenance_justificatif justificatif_destructeur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_justificatif justificatif_destructeur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_justificatif
@@ -2463,7 +2521,7 @@ ALTER TABLE ONLY public.soutenance_justificatif
 
 
 --
--- Name: soutenance_justificatif justificatif_fichier_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_justificatif justificatif_fichier_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_justificatif
@@ -2471,7 +2529,7 @@ ALTER TABLE ONLY public.soutenance_justificatif
 
 
 --
--- Name: soutenance_justificatif justificatif_membre_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_justificatif justificatif_membre_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_justificatif
@@ -2479,7 +2537,7 @@ ALTER TABLE ONLY public.soutenance_justificatif
 
 
 --
--- Name: soutenance_justificatif justificatif_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_justificatif justificatif_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_justificatif
@@ -2487,7 +2545,7 @@ ALTER TABLE ONLY public.soutenance_justificatif
 
 
 --
--- Name: soutenance_justificatif justificatif_proposition_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_justificatif justificatif_proposition_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_justificatif
@@ -2495,7 +2553,7 @@ ALTER TABLE ONLY public.soutenance_justificatif
 
 
 --
--- Name: liste_diff liste_diff_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: liste_diff liste_diff_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.liste_diff
@@ -2503,7 +2561,7 @@ ALTER TABLE ONLY public.liste_diff
 
 
 --
--- Name: liste_diff liste_diff_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: liste_diff liste_diff_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.liste_diff
@@ -2511,7 +2569,7 @@ ALTER TABLE ONLY public.liste_diff
 
 
 --
--- Name: liste_diff liste_diff_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: liste_diff liste_diff_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.liste_diff
@@ -2519,7 +2577,7 @@ ALTER TABLE ONLY public.liste_diff
 
 
 --
--- Name: mail_confirmation mailconfirmation_individuid_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: mail_confirmation mailconfirmation_individuid_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.mail_confirmation
@@ -2527,7 +2585,7 @@ ALTER TABLE ONLY public.mail_confirmation
 
 
 --
--- Name: soutenance_membre membre_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_membre membre_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_membre
@@ -2535,7 +2593,7 @@ ALTER TABLE ONLY public.soutenance_membre
 
 
 --
--- Name: soutenance_membre membre_destructeur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_membre membre_destructeur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_membre
@@ -2543,7 +2601,7 @@ ALTER TABLE ONLY public.soutenance_membre
 
 
 --
--- Name: soutenance_membre membre_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_membre membre_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_membre
@@ -2551,7 +2609,7 @@ ALTER TABLE ONLY public.soutenance_membre
 
 
 --
--- Name: soutenance_membre membre_proposition_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_membre membre_proposition_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_membre
@@ -2559,7 +2617,7 @@ ALTER TABLE ONLY public.soutenance_membre
 
 
 --
--- Name: soutenance_membre membre_qualite_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_membre membre_qualite_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_membre
@@ -2567,7 +2625,7 @@ ALTER TABLE ONLY public.soutenance_membre
 
 
 --
--- Name: metadonnee_these metadonnee_these_these_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: metadonnee_these metadonnee_these_these_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.metadonnee_these
@@ -2575,7 +2633,7 @@ ALTER TABLE ONLY public.metadonnee_these
 
 
 --
--- Name: diffusion mise_en_ligne_these_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: diffusion mise_en_ligne_these_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.diffusion
@@ -2583,7 +2641,7 @@ ALTER TABLE ONLY public.diffusion
 
 
 --
--- Name: notif_result notif_result__notif_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: notif_result notif_result__notif_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.notif_result
@@ -2591,7 +2649,7 @@ ALTER TABLE ONLY public.notif_result
 
 
 --
--- Name: origine_financement origine_financement_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: origine_financement origine_financement_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.origine_financement
@@ -2599,7 +2657,7 @@ ALTER TABLE ONLY public.origine_financement
 
 
 --
--- Name: origine_financement origine_financement_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: origine_financement origine_financement_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.origine_financement
@@ -2607,7 +2665,7 @@ ALTER TABLE ONLY public.origine_financement
 
 
 --
--- Name: origine_financement origine_financement_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: origine_financement origine_financement_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.origine_financement
@@ -2615,7 +2673,7 @@ ALTER TABLE ONLY public.origine_financement
 
 
 --
--- Name: origine_financement origine_financement_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: origine_financement origine_financement_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.origine_financement
@@ -2623,7 +2681,7 @@ ALTER TABLE ONLY public.origine_financement
 
 
 --
--- Name: profil_privilege profil_privilege_profil_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: profil_privilege profil_privilege_profil_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.profil_privilege
@@ -2631,7 +2689,7 @@ ALTER TABLE ONLY public.profil_privilege
 
 
 --
--- Name: profil_to_role profil_to_role_profil_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: profil_to_role profil_to_role_profil_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.profil_to_role
@@ -2639,7 +2697,7 @@ ALTER TABLE ONLY public.profil_to_role
 
 
 --
--- Name: profil_to_role profil_to_role_role_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: profil_to_role profil_to_role_role_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.profil_to_role
@@ -2647,7 +2705,7 @@ ALTER TABLE ONLY public.profil_to_role
 
 
 --
--- Name: soutenance_proposition proposition_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_proposition proposition_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_proposition
@@ -2655,7 +2713,7 @@ ALTER TABLE ONLY public.soutenance_proposition
 
 
 --
--- Name: soutenance_proposition proposition_destructeur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_proposition proposition_destructeur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_proposition
@@ -2663,7 +2721,7 @@ ALTER TABLE ONLY public.soutenance_proposition
 
 
 --
--- Name: soutenance_proposition proposition_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_proposition proposition_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_proposition
@@ -2671,7 +2729,7 @@ ALTER TABLE ONLY public.soutenance_proposition
 
 
 --
--- Name: soutenance_proposition proposition_these_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_proposition proposition_these_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_proposition
@@ -2679,7 +2737,7 @@ ALTER TABLE ONLY public.soutenance_proposition
 
 
 --
--- Name: rapport rapport_annuel_fichier_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: rapport rapport_annuel_fichier_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.rapport
@@ -2687,7 +2745,7 @@ ALTER TABLE ONLY public.rapport
 
 
 --
--- Name: rapport rapport_annuel_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: rapport rapport_annuel_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.rapport
@@ -2695,7 +2753,7 @@ ALTER TABLE ONLY public.rapport
 
 
 --
--- Name: rapport rapport_annuel_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: rapport rapport_annuel_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.rapport
@@ -2703,7 +2761,7 @@ ALTER TABLE ONLY public.rapport
 
 
 --
--- Name: rapport rapport_annuel_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: rapport rapport_annuel_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.rapport
@@ -2711,7 +2769,7 @@ ALTER TABLE ONLY public.rapport
 
 
 --
--- Name: rapport rapport_annuel_these_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: rapport rapport_annuel_these_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.rapport
@@ -2719,7 +2777,7 @@ ALTER TABLE ONLY public.rapport
 
 
 --
--- Name: rapport rapport_annuel_type_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: rapport rapport_annuel_type_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.rapport
@@ -2727,7 +2785,7 @@ ALTER TABLE ONLY public.rapport
 
 
 --
--- Name: rapport_validation rapport_validation_indiv_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: rapport_validation rapport_validation_indiv_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.rapport_validation
@@ -2735,7 +2793,7 @@ ALTER TABLE ONLY public.rapport_validation
 
 
 --
--- Name: rapport_validation rapport_validation_rapport_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: rapport_validation rapport_validation_rapport_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.rapport_validation
@@ -2743,7 +2801,7 @@ ALTER TABLE ONLY public.rapport_validation
 
 
 --
--- Name: rapport_validation rapport_validation_type_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: rapport_validation rapport_validation_type_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.rapport_validation
@@ -2751,7 +2809,7 @@ ALTER TABLE ONLY public.rapport_validation
 
 
 --
--- Name: etablissement_rattach rattachement_etab_id; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: etablissement_rattach rattachement_etab_id; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.etablissement_rattach
@@ -2759,7 +2817,7 @@ ALTER TABLE ONLY public.etablissement_rattach
 
 
 --
--- Name: etablissement_rattach rattachement_unite_id; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: etablissement_rattach rattachement_unite_id; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.etablissement_rattach
@@ -2767,7 +2825,7 @@ ALTER TABLE ONLY public.etablissement_rattach
 
 
 --
--- Name: rdv_bu rdv_bu_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: rdv_bu rdv_bu_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.rdv_bu
@@ -2775,7 +2833,7 @@ ALTER TABLE ONLY public.rdv_bu
 
 
 --
--- Name: rdv_bu rdv_bu_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: rdv_bu rdv_bu_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.rdv_bu
@@ -2783,7 +2841,7 @@ ALTER TABLE ONLY public.rdv_bu
 
 
 --
--- Name: rdv_bu rdv_bu_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: rdv_bu rdv_bu_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.rdv_bu
@@ -2791,7 +2849,7 @@ ALTER TABLE ONLY public.rdv_bu
 
 
 --
--- Name: rdv_bu rdv_bu_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: rdv_bu rdv_bu_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.rdv_bu
@@ -2799,7 +2857,7 @@ ALTER TABLE ONLY public.rdv_bu
 
 
 --
--- Name: role role_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: role role_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.role
@@ -2807,7 +2865,7 @@ ALTER TABLE ONLY public.role
 
 
 --
--- Name: role role_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: role role_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.role
@@ -2815,7 +2873,7 @@ ALTER TABLE ONLY public.role
 
 
 --
--- Name: role role_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: role role_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.role
@@ -2823,7 +2881,7 @@ ALTER TABLE ONLY public.role
 
 
 --
--- Name: profil_privilege role_priv_mod_priv_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: profil_privilege role_priv_mod_priv_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.profil_privilege
@@ -2831,7 +2889,7 @@ ALTER TABLE ONLY public.profil_privilege
 
 
 --
--- Name: role_privilege role_privilege_priv_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: role_privilege role_privilege_priv_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.role_privilege
@@ -2839,7 +2897,7 @@ ALTER TABLE ONLY public.role_privilege
 
 
 --
--- Name: role_privilege role_privilege_role_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: role_privilege role_privilege_role_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.role_privilege
@@ -2847,7 +2905,7 @@ ALTER TABLE ONLY public.role_privilege
 
 
 --
--- Name: role role_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: role role_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.role
@@ -2855,7 +2913,7 @@ ALTER TABLE ONLY public.role
 
 
 --
--- Name: role role_structure_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: role role_structure_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.role
@@ -2863,7 +2921,7 @@ ALTER TABLE ONLY public.role
 
 
 --
--- Name: role role_type_struct_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: role role_type_struct_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.role
@@ -2871,7 +2929,7 @@ ALTER TABLE ONLY public.role
 
 
 --
--- Name: profil rolemodele_structuretype_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: profil rolemodele_structuretype_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.profil
@@ -2879,7 +2937,7 @@ ALTER TABLE ONLY public.profil
 
 
 --
--- Name: structure_document sd_etablissement_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure_document sd_etablissement_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure_document
@@ -2887,7 +2945,7 @@ ALTER TABLE ONLY public.structure_document
 
 
 --
--- Name: structure_document sd_fichier_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure_document sd_fichier_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure_document
@@ -2895,7 +2953,7 @@ ALTER TABLE ONLY public.structure_document
 
 
 --
--- Name: structure_document sd_nature_fichier_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure_document sd_nature_fichier_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure_document
@@ -2903,7 +2961,7 @@ ALTER TABLE ONLY public.structure_document
 
 
 --
--- Name: structure_document sd_structure_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure_document sd_structure_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure_document
@@ -2911,7 +2969,7 @@ ALTER TABLE ONLY public.structure_document
 
 
 --
--- Name: structure_document sd_utilisateur_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure_document sd_utilisateur_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure_document
@@ -2919,7 +2977,7 @@ ALTER TABLE ONLY public.structure_document
 
 
 --
--- Name: structure_document sd_utilisateur_id_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure_document sd_utilisateur_id_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure_document
@@ -2927,7 +2985,7 @@ ALTER TABLE ONLY public.structure_document
 
 
 --
--- Name: structure_document sd_utilisateur_id_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure_document sd_utilisateur_id_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure_document
@@ -2935,7 +2993,7 @@ ALTER TABLE ONLY public.structure_document
 
 
 --
--- Name: soutenance_intervention sintervention_these_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_intervention sintervention_these_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_intervention
@@ -2943,7 +3001,7 @@ ALTER TABLE ONLY public.soutenance_intervention
 
 
 --
--- Name: soutenance_intervention sintervention_userc_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_intervention sintervention_userc_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_intervention
@@ -2951,7 +3009,7 @@ ALTER TABLE ONLY public.soutenance_intervention
 
 
 --
--- Name: soutenance_intervention sintervention_userd_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_intervention sintervention_userd_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_intervention
@@ -2959,7 +3017,7 @@ ALTER TABLE ONLY public.soutenance_intervention
 
 
 --
--- Name: soutenance_intervention sintervention_userm_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_intervention sintervention_userm_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_intervention
@@ -2967,7 +3025,7 @@ ALTER TABLE ONLY public.soutenance_intervention
 
 
 --
--- Name: source source_etablissement_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: source source_etablissement_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.source
@@ -2975,7 +3033,7 @@ ALTER TABLE ONLY public.source
 
 
 --
--- Name: soutenance_membre soutemembre_acteur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_membre soutemembre_acteur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_membre
@@ -2983,7 +3041,7 @@ ALTER TABLE ONLY public.soutenance_membre
 
 
 --
--- Name: soutenance_proposition soutenance_etat_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_proposition soutenance_etat_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_proposition
@@ -2991,7 +3049,15 @@ ALTER TABLE ONLY public.soutenance_proposition
 
 
 --
--- Name: soutenance_qualite_sup sqs_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_evenement soutenance_evenement_soutenance_proposition_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.soutenance_evenement
+    ADD CONSTRAINT soutenance_evenement_soutenance_proposition_id_fk FOREIGN KEY (proposition_id) REFERENCES public.soutenance_proposition(id) ON DELETE CASCADE;
+
+
+--
+-- Name: soutenance_qualite_sup sqs_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_qualite_sup
@@ -2999,7 +3065,7 @@ ALTER TABLE ONLY public.soutenance_qualite_sup
 
 
 --
--- Name: soutenance_qualite_sup sqs_destructeur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_qualite_sup sqs_destructeur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_qualite_sup
@@ -3007,7 +3073,7 @@ ALTER TABLE ONLY public.soutenance_qualite_sup
 
 
 --
--- Name: soutenance_qualite_sup sqs_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_qualite_sup sqs_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_qualite_sup
@@ -3015,7 +3081,7 @@ ALTER TABLE ONLY public.soutenance_qualite_sup
 
 
 --
--- Name: soutenance_qualite_sup sqs_qualite_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_qualite_sup sqs_qualite_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_qualite_sup
@@ -3023,7 +3089,7 @@ ALTER TABLE ONLY public.soutenance_qualite_sup
 
 
 --
--- Name: soutenance_qualite squalite_utilisateur_id_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_qualite squalite_utilisateur_id_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_qualite
@@ -3031,7 +3097,7 @@ ALTER TABLE ONLY public.soutenance_qualite
 
 
 --
--- Name: soutenance_qualite squalite_utilisateur_id_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_qualite squalite_utilisateur_id_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_qualite
@@ -3039,7 +3105,7 @@ ALTER TABLE ONLY public.soutenance_qualite
 
 
 --
--- Name: soutenance_qualite squalite_utilisateur_id_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: soutenance_qualite squalite_utilisateur_id_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_qualite
@@ -3047,7 +3113,7 @@ ALTER TABLE ONLY public.soutenance_qualite
 
 
 --
--- Name: structure_substit str_substit_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure_substit str_substit_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure_substit
@@ -3055,7 +3121,7 @@ ALTER TABLE ONLY public.structure_substit
 
 
 --
--- Name: structure_substit str_substit_destructeur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure_substit str_substit_destructeur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure_substit
@@ -3063,7 +3129,7 @@ ALTER TABLE ONLY public.structure_substit
 
 
 --
--- Name: structure_substit str_substit_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure_substit str_substit_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure_substit
@@ -3071,7 +3137,7 @@ ALTER TABLE ONLY public.structure_substit
 
 
 --
--- Name: structure_substit str_substit_str_from_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure_substit str_substit_str_from_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure_substit
@@ -3079,7 +3145,7 @@ ALTER TABLE ONLY public.structure_substit
 
 
 --
--- Name: structure_substit str_substit_str_to_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure_substit str_substit_str_to_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure_substit
@@ -3087,7 +3153,7 @@ ALTER TABLE ONLY public.structure_substit
 
 
 --
--- Name: structure structure_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure structure_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure
@@ -3095,7 +3161,7 @@ ALTER TABLE ONLY public.structure
 
 
 --
--- Name: structure structure_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure structure_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure
@@ -3103,7 +3169,7 @@ ALTER TABLE ONLY public.structure
 
 
 --
--- Name: structure structure_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure structure_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure
@@ -3111,7 +3177,7 @@ ALTER TABLE ONLY public.structure
 
 
 --
--- Name: structure structure_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure structure_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure
@@ -3119,7 +3185,7 @@ ALTER TABLE ONLY public.structure
 
 
 --
--- Name: structure structure_type_structure_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: structure structure_type_structure_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure
@@ -3127,7 +3193,7 @@ ALTER TABLE ONLY public.structure
 
 
 --
--- Name: privilege sys_c006123; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: privilege sys_c006123; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.privilege
@@ -3135,7 +3201,7 @@ ALTER TABLE ONLY public.privilege
 
 
 --
--- Name: doctorant_compl thesard_compl_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: doctorant_compl thesard_compl_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.doctorant_compl
@@ -3143,7 +3209,7 @@ ALTER TABLE ONLY public.doctorant_compl
 
 
 --
--- Name: doctorant_compl thesard_compl_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: doctorant_compl thesard_compl_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.doctorant_compl
@@ -3151,7 +3217,7 @@ ALTER TABLE ONLY public.doctorant_compl
 
 
 --
--- Name: doctorant_compl thesard_compl_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: doctorant_compl thesard_compl_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.doctorant_compl
@@ -3159,7 +3225,7 @@ ALTER TABLE ONLY public.doctorant_compl
 
 
 --
--- Name: these_annee_univ these_annee_univ_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: these_annee_univ these_annee_univ_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.these_annee_univ
@@ -3167,7 +3233,7 @@ ALTER TABLE ONLY public.these_annee_univ
 
 
 --
--- Name: these_annee_univ these_annee_univ_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: these_annee_univ these_annee_univ_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.these_annee_univ
@@ -3175,7 +3241,7 @@ ALTER TABLE ONLY public.these_annee_univ
 
 
 --
--- Name: these_annee_univ these_annee_univ_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: these_annee_univ these_annee_univ_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.these_annee_univ
@@ -3183,7 +3249,7 @@ ALTER TABLE ONLY public.these_annee_univ
 
 
 --
--- Name: these_annee_univ these_annee_univ_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: these_annee_univ these_annee_univ_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.these_annee_univ
@@ -3191,7 +3257,7 @@ ALTER TABLE ONLY public.these_annee_univ
 
 
 --
--- Name: these_annee_univ these_annee_univ_these_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: these_annee_univ these_annee_univ_these_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.these_annee_univ
@@ -3199,7 +3265,7 @@ ALTER TABLE ONLY public.these_annee_univ
 
 
 --
--- Name: these these_doctorant_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: these these_doctorant_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.these
@@ -3207,7 +3273,7 @@ ALTER TABLE ONLY public.these
 
 
 --
--- Name: these these_ecole_doct_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: these these_ecole_doct_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.these
@@ -3215,7 +3281,7 @@ ALTER TABLE ONLY public.these
 
 
 --
--- Name: these these_etab_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: these these_etab_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.these
@@ -3223,7 +3289,7 @@ ALTER TABLE ONLY public.these
 
 
 --
--- Name: these these_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: these these_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.these
@@ -3231,7 +3297,7 @@ ALTER TABLE ONLY public.these
 
 
 --
--- Name: these these_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: these these_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.these
@@ -3239,7 +3305,7 @@ ALTER TABLE ONLY public.these
 
 
 --
--- Name: these these_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: these these_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.these
@@ -3247,7 +3313,7 @@ ALTER TABLE ONLY public.these
 
 
 --
--- Name: these these_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: these these_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.these
@@ -3255,7 +3321,7 @@ ALTER TABLE ONLY public.these
 
 
 --
--- Name: these these_unite_rech_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: these these_unite_rech_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.these
@@ -3263,7 +3329,7 @@ ALTER TABLE ONLY public.these
 
 
 --
--- Name: titre_acces titre_acces_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: titre_acces titre_acces_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.titre_acces
@@ -3271,7 +3337,7 @@ ALTER TABLE ONLY public.titre_acces
 
 
 --
--- Name: titre_acces titre_acces_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: titre_acces titre_acces_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.titre_acces
@@ -3279,7 +3345,7 @@ ALTER TABLE ONLY public.titre_acces
 
 
 --
--- Name: titre_acces titre_acces_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: titre_acces titre_acces_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.titre_acces
@@ -3287,7 +3353,7 @@ ALTER TABLE ONLY public.titre_acces
 
 
 --
--- Name: titre_acces titre_acces_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: titre_acces titre_acces_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.titre_acces
@@ -3295,7 +3361,7 @@ ALTER TABLE ONLY public.titre_acces
 
 
 --
--- Name: titre_acces titre_acces_these_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: titre_acces titre_acces_these_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.titre_acces
@@ -3303,7 +3369,7 @@ ALTER TABLE ONLY public.titre_acces
 
 
 --
--- Name: unite_rech unite_rech_compl_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: unite_rech unite_rech_compl_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.unite_rech
@@ -3311,7 +3377,7 @@ ALTER TABLE ONLY public.unite_rech
 
 
 --
--- Name: unite_rech unite_rech_compl_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: unite_rech unite_rech_compl_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.unite_rech
@@ -3319,7 +3385,7 @@ ALTER TABLE ONLY public.unite_rech
 
 
 --
--- Name: unite_rech unite_rech_compl_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: unite_rech unite_rech_compl_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.unite_rech
@@ -3327,7 +3393,7 @@ ALTER TABLE ONLY public.unite_rech
 
 
 --
--- Name: unite_rech unite_rech_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: unite_rech unite_rech_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.unite_rech
@@ -3335,7 +3401,7 @@ ALTER TABLE ONLY public.unite_rech
 
 
 --
--- Name: unite_rech unite_rech_struct_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: unite_rech unite_rech_struct_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.unite_rech
@@ -3343,7 +3409,7 @@ ALTER TABLE ONLY public.unite_rech
 
 
 --
--- Name: utilisateur utilisateur_individu_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: utilisateur utilisateur_individu_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.utilisateur
@@ -3351,7 +3417,7 @@ ALTER TABLE ONLY public.utilisateur
 
 
 --
--- Name: validation validation_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: validation validation_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.validation
@@ -3359,7 +3425,7 @@ ALTER TABLE ONLY public.validation
 
 
 --
--- Name: validation validation_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: validation validation_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.validation
@@ -3367,7 +3433,7 @@ ALTER TABLE ONLY public.validation
 
 
 --
--- Name: validation validation_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: validation validation_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.validation
@@ -3375,7 +3441,7 @@ ALTER TABLE ONLY public.validation
 
 
 --
--- Name: validation validation_individu_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: validation validation_individu_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.validation
@@ -3383,7 +3449,7 @@ ALTER TABLE ONLY public.validation
 
 
 --
--- Name: validation validation_these_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: validation validation_these_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.validation
@@ -3391,7 +3457,7 @@ ALTER TABLE ONLY public.validation
 
 
 --
--- Name: validation validation_type_validation_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: validation validation_type_validation_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.validation
@@ -3399,7 +3465,7 @@ ALTER TABLE ONLY public.validation
 
 
 --
--- Name: validite_fichier validite_fichier_ffk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: validite_fichier validite_fichier_ffk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.validite_fichier
@@ -3407,7 +3473,7 @@ ALTER TABLE ONLY public.validite_fichier
 
 
 --
--- Name: validite_fichier validite_fichier_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: validite_fichier validite_fichier_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.validite_fichier
@@ -3415,7 +3481,7 @@ ALTER TABLE ONLY public.validite_fichier
 
 
 --
--- Name: validite_fichier validite_fichier_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: validite_fichier validite_fichier_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.validite_fichier
@@ -3423,7 +3489,7 @@ ALTER TABLE ONLY public.validite_fichier
 
 
 --
--- Name: validite_fichier validite_fichier_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: validite_fichier validite_fichier_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.validite_fichier
@@ -3431,7 +3497,7 @@ ALTER TABLE ONLY public.validite_fichier
 
 
 --
--- Name: variable variable_etab_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: variable variable_etab_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.variable
@@ -3439,7 +3505,7 @@ ALTER TABLE ONLY public.variable
 
 
 --
--- Name: variable variable_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: variable variable_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.variable
@@ -3447,7 +3513,7 @@ ALTER TABLE ONLY public.variable
 
 
 --
--- Name: variable variable_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: variable variable_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.variable
@@ -3455,7 +3521,7 @@ ALTER TABLE ONLY public.variable
 
 
 --
--- Name: variable variable_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: variable variable_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.variable
@@ -3463,7 +3529,7 @@ ALTER TABLE ONLY public.variable
 
 
 --
--- Name: variable variable_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: ad_sygal
+-- Name: variable variable_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.variable

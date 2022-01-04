@@ -26,7 +26,7 @@ class UtilisateurService extends BaseService
     use UserServiceAwareTrait;
 
     const SQL_CREATE_APP_USER =
-        "INSERT INTO UTILISATEUR (ID, USERNAME, EMAIL, DISPLAY_NAME, PASSWORD) VALUES (1, 'sygal-app', 'noreply@mail.fr', 'Application SyGAL', 'ldap');";
+        "INSERT INTO UTILISATEUR (ID, USERNAME, EMAIL, DISPLAY_NAME, PASSWORD) VALUES (1, 'sygal-app', 'noreply@mail.fr', 'Application ESUP-SyGAL', 'ldap');";
 
     /**
      * @return UtilisateurRepository
@@ -283,7 +283,7 @@ class UtilisateurService extends BaseService
      * @param string $param
      * @return Utilisateur|null
      */
-    public function getRequestedUtilisateur(AbstractActionController $controller, string $param = "user") : ?Utilisateur
+    public function getRequestedUtilisateur(AbstractActionController $controller, string $param = "utilisateur") : ?Utilisateur
     {
         $id = $controller->params()->fromRoute($param);
         /** @var Utilisateur $result */

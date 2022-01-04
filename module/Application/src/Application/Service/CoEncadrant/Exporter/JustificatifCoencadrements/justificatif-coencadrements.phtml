@@ -121,7 +121,7 @@ use Application\View\Renderer\PhpRenderer;
 
 <p>
     Ce document certifie que <?php echo $coencadrant->getIndividu()->getPrenom1(); ?> <?php echo $coencadrant->getIndividu()->getNomUsuel(); ?>,
-    actuellement <?php echo ($coencadrant->getQualite() !== " ")?$coencadrant->getQualite():"<span style='color:darkred;'>qualité manquante</span>"; ?> à
+    actuellement <?php echo ($coencadrant->getQualite() !== " ")?$coencadrant->getQualite():""; ?> à
     <?php echo ($coencadrant->getEtablissement())?$coencadrant->getEtablissement()->getLibelle():"<span style='color:darkred;'>établissement manquant</span>"; ?>,
     a assuré la fonction de co-encadrant sur pour les thèses suivantes :
 </p>

@@ -28,6 +28,18 @@ APP_DIR=$(cd ${CURR_DIR}/.. && pwd)
 echo "Répertoire courant : $CURR_DIR"
 echo "Répertoire de l'appli : $APP_DIR"
 
+# Avorte si le script est déjà en cours d'exécution (avec les mêmes arguments)
+LOCK_FILE=/run/$(basename $0)_${ETAB}_${SERVICE}.lock
+echo "Lock file : $LOCK_FILE"
+exec 200>$LOCK_FILE
+flock -n 200
+if [ $? -eq 1 ]; then
+  echo "Script $(realpath $0) déjà en cours d'exécution ($LOCK_FILE). Stop !"
+  exit 1
+fi
+
+echo
+
 function run() {
   service=$1
   (
@@ -64,3 +76,7 @@ fi
 
 # Refresh de la vue matérialisée utilisée pour la recherche des thèses
 /usr/bin/php ${APP_DIR}/public/index.php run-sql-query --sql="refresh materialized view MV_RECHERCHE_THESE;"
+
+# Vidage du cache de résultat Doctrine
+#rm -rf ${APP_DIR}/data/DoctrineModule/cache/*
+${APP_DIR}/vendor/bin/doctrine-module orm:clear-cache:result

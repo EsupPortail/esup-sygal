@@ -5,7 +5,7 @@
  */
 
 use Application\Command\CheckWSValidationFichierCinesCommandFactory;
-use Application\Command\ValidationFichierCinesCommandFactory;
+use Application\Command\TestArchivabiliteShellCommandFactory;
 use Application\Controller\Factory\FichierControllerFactory;
 use Application\Controller\Plugin\UrlFichier;
 use Application\Provider\Privilege\FichierPrivileges;
@@ -177,7 +177,7 @@ return [
             FileService::class => FileServiceFactory::class,
             FichierService::class => FichierServiceFactory::class,
             FichierTheseService::class => FichierTheseServiceFactory::class,
-            'ValidationFichierCinesCommand' => ValidationFichierCinesCommandFactory::class,
+            'ValidationFichierCinesCommand' => TestArchivabiliteShellCommandFactory::class,
             'CheckWSValidationFichierCinesCommand' => CheckWSValidationFichierCinesCommandFactory::class,
         ],
         'aliases' => [

@@ -5,10 +5,11 @@ namespace Soutenance\Entity;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
+use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 
-class Membre {
+class Membre implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
     const MEMBRE_JURY        = 'Membre';
@@ -33,6 +34,8 @@ class Membre {
 
     /** @var string */
     private $etablissement;
+    /** @var string */
+    private $adresse;
     /** @var string */
     private $exterieur;
     /** @var string */
@@ -160,7 +163,7 @@ class Membre {
     /**
      * @return string
      */
-    public function getEtablissement()
+    public function getEtablissement(): ?string
     {
         return $this->etablissement;
     }
@@ -169,7 +172,7 @@ class Membre {
      * @param string $etablissement
      * @return Membre
      */
-    public function setEtablissement($etablissement)
+    public function setEtablissement(string $etablissement) : Membre
     {
         $this->etablissement = $etablissement;
         return $this;
@@ -178,7 +181,27 @@ class Membre {
     /**
      * @return string
      */
-    public function getExterieur()
+    public function getAdresse(): ?string
+    {
+        return $this->adresse;
+    }
+
+    /**
+     * @param string $adresse
+     * @return Membre
+     */
+    public function setAdresse(string $adresse): Membre
+    {
+        $this->adresse = $adresse;
+        return $this;
+    }
+
+
+
+    /**
+     * @return string
+     */
+    public function getExterieur() : ?string
     {
         return $this->exterieur;
     }
@@ -187,7 +210,7 @@ class Membre {
      * @param string $exterieur
      * @return Membre
      */
-    public function setExterieur($exterieur)
+    public function setExterieur(string $exterieur) : Membre
     {
         $this->exterieur = $exterieur;
         return $this;
@@ -292,7 +315,7 @@ class Membre {
         return $this;
     }
 
-    public function isMembre() {
+    public function estMembre() {
         switch ($this->getRole()) {
             case Membre::RAPPORTEUR_JURY :
             case Membre::RAPPORTEUR_VISIO :

@@ -12,6 +12,7 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Soutenance\Entity\Membre;
+use Soutenance\Entity\Proposition;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
@@ -141,6 +142,8 @@ class IndexController extends AbstractController
         if ($ecoleDoctoraleId != '') $propositions = array_filter($propositions, function($proposition) use ($ecoleDoctoraleId) { return $proposition->getThese()->getEcoleDoctorale()->getId() == $ecoleDoctoraleId; });
         if ($uniteRechercheId != '') $propositions = array_filter($propositions, function($proposition) use ($uniteRechercheId) { return $proposition->getThese()->getUniteRecherche()->getId() == $uniteRechercheId; });
         if ($etatId != '') $propositions = array_filter($propositions, function($proposition) use ($etatId) { return $proposition->getEtat()->getId() == $etatId; });
+
+        $propositions = array_filter($propositions, function ($proposition) { return $proposition->getDate(); });
 
         return new ViewModel([
             'propositions' => $propositions,

@@ -1,0 +1,38 @@
+<?php
+
+use Soutenance\Entity\Etat;
+
+/**
+ * @see \Soutenance\View\Helper\EtatViewHelper
+ * @var Etat|null $etat
+ * @var array $options
+ */
+
+?>
+
+<?php if ($etat === null) : ?>
+
+        Pas d'état
+    </span>
+<?php else : ?>
+    <span class="badge <?php echo $etat->getCode(); ?>">
+        <?php echo $etat->getLibelle(); ?>
+    </span>
+<?php endif; ?>
+
+
+<style>
+    span.badge.<?php echo Etat::VALIDEE; ?> {
+        background: green;
+    }
+    span.badge.<?php echo Etat::REJETEE; ?> {
+        background: darkred;
+    }
+    span.badge.<?php echo Etat::EN_COURS; ?> {
+        background: teal;
+    }
+    span.badge.<?php echo Etat::ETABLISSEMENT; ?> {
+        background: dodgerblue;
+    }
+</style>
+

@@ -3,8 +3,8 @@
 --
 
 -- Databases
-create database sygal with ENCODING = 'UTF-8';
+create database :dbname with ENCODING = 'UTF-8';
 -- Users
-create user ad_sygal with encrypted password 'MOT_DE_PASSE_PAR_DEFAUT' NOSUPERUSER NOCREATEDB;
+create user :dbuser with encrypted password :dbpassword NOSUPERUSER NOCREATEDB;
 -- Grants
-grant all privileges on database sygal to ad_sygal;
+grant all privileges on database :dbname to :dbuser;

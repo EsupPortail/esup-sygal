@@ -1,12 +1,84 @@
 Journal des modifications
 =========================
 
+3.0.8
+-----
+- Changement pour récupération des logos sur la page de couvertures (les co-directions sont maintenant utilisée)
+- Le manque de justificatifs de soutenances n'est plus bloquant il s'agit plus que d'un warning 
+- [FIX] Retrait de l'appel à un css inexistant
+- Filtrage des soutenances sans date dans la vue des soutenances pour les structures.
+- Ajout des mentions Co-encadrant/Co-encadrante sur la page de couverture
+- Complétion des données pour la page de couverture depuis le dossier de soutenance en cas de manque
+- Ajout de la memtion de la date limite de rendu dans le tableau de bord des rapporteurs
+- Completion des mails avec la table des utilisateurs pour les notifications
+
+3.0.7
+----- 
+- Nouveau critère de bloquage des soutenances basé sur la validité des rapporteurs.
+- Retrait de la mention qualité absente sur le justificatif de co-encadrement 
+- Ajustement de la date/heure de rendu des rapports 
+- Modification du lien dans les mails vers les rapporteurs (description complète : token, role, redirect)
+
+3.0.6
+-----
+- [FIX] Non affichage des justificatifs historisés dans la proposition de soutenance
+
+3.0.5
+-----
+- Notification à propos de la validation de la page de couverture : correction de texte.
+- Script de lancement de l'import run-import.sh : utilisation de flock pour éviter 2 lancements en parallèle.
+- Téléchargement de la version initiale/corrigée imprimable : intitulé de titre plus précis sur la version concernée.
+- Adaptation de la date limite de rendu des pré-rapports de soutenance lors du changement de la date de soutenance dans le dossier
+- Ajout des événements pour la tracabilité de certaines actions du module soutenance
+- Utilisation de qpdf (+ rapide que gs et + respectueux des metadata que pdftk) pour la concaténation ou l'amputation PDF.
+- [FIX] Correction du sujet erroné du mail envoyé lorsque l'ajout de la page de couverture est terminé.
+- [FIX] Meilleure remontée à l'utilisateur des erreurs rencontrées lors du dépôt de la thèse.
+- [FIX] Log de la ligne de commande de retraitement de fichier : la notification peut avoir plusieurs destinataires.
+- [FIX] Ligne de commande de test d'archivabilité : injection nécessaire du créateur.
+- [FIX] Correction affichage de la date de rendu dans le mail envoyé aux rapporteurs
+
+3.0.4
+-----
+- Amélioration des temps de réponse des requêtes SQL en abandonnant pasHistorise().
+- Proposition de soutenance : l'adresse de l'établissement de chaque membre du jury est désormais demandée au doctorant.
+- [FIX] Durée de conservation en session des données d'authentification (màj unicaen/app et auth).
+
+3.0.3
+-----
+- Ajout d'une valeur d'état aux soutenances "Validée par l'établissement" post validation d'une soutenance par la présidence de l'établissement
+- [FIX] Plus de demande de justificatif pour la confidentialité si la demande est faite en amont de la soutenance
+- [FIX] La notif de validation de la version corrigée par le Président du jury faisait mention à tort du Directeur de thèse.
+- [FIX] Plantage de l'export CSV des thèses à cause d'un appel de méthode erroné (getMailContact).
+
+3.0.2
+-----
+- [FIX] Correction du plantage lors du réimport ponctuel d'une thèse.
+
+3.0.1
+-----
+- Renommage de l'application en ESUP-SyGAL.
+- Modèle de page de couverture de thèse personnalisable.
+- Substitution possible du favicon.
+- Possibilité d'accorder un sursis pour le dépôt de la verison corrigée de la thèse.
+- Page d'accueil : laïus en cas d'utilisateur ayant plusieurs rôles.
+- Page Utilisateur : affichage aussi des rôles attribués automatiquement.
+- Templatisation de la notification de confirmation d'adresse électronique
+- Ajout des gardes pour les actions de la page de presoutenance (au cas où l'accés est donnée aux acteurs directs)
+- [FIX] Bloquage de la signature multiple de l'engagement d'impartilité
+- [FIX] Bloquage de la validation multiple des propositions lors de la validation acteur
+- [FIX] Correction du tri des thèses par titre (plantage) et par date de soutenance (inopérant)
+- [FIX] Changement du sujet associé à la validation finale de la proposition de soutenance
+- [FIX] Correction de l'envoi multiple de notification vers le président de jury lors du dépôt d'une version corrigée.
+- Modification de l'assertion ouvrant la validation de l'UR
+- [FIX] Impossibilité de déposer un rapport d'activité de fin de thèse en plus d'un rapport annuel.
+
 3.0.0 (oracle => postgres)
 -----
 - Base de données : abandon d'Oracle et passage à PostgreSQL.
   *Attention : aucun script SQL universel de migration d'une base Oracle existante vers une base PostgreSQL n'est fourni 
   avec cette version. Si vous êtes déjà utilisateur de SyGAL en production, prenez contact avec les développeurs de 
   SyGAL pour réaliser une telle migration.*
+- Ajout de bouton pour simuler les remontés des SI pour le jeury de thèse
 - [FIX] Meilleure gestion d'erreur en cas de demande d'usurpation d'un individu n'ayant pas de compte utilisateur.
 
 2.2.3

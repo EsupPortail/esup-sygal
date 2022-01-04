@@ -2,9 +2,11 @@
 
 namespace Application\Service\FichierThese;
 
-use Application\Command\MergeCommand;
-use Application\Command\ShellScriptRunner;
-use Application\Command\TruncateAndMergeCommand;
+use Application\Command\Exception\TimedOutCommandException;
+use Application\Command\MergeShellCommand;
+use Application\Command\Pdf\AjoutPdcShellCommandQpdf;
+use Application\Command\Pdf\RetraitementShellCommand;
+use Application\Command\ShellCommandRunner;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\NatureFichier;
@@ -20,20 +22,18 @@ use Application\Service\FichierThese\Exception\DepotImpossibleException;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;
 use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
-use Application\Service\These\PageDeGarde\PageDeCouverturePdfExporter;
+use Application\Service\PageDeCouverture\PageDeCouverturePdfExporterAwareTrait;
 use Application\Service\ValiditeFichier\ValiditeFichierServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Validator\Exception\CinesErrorException;
 use Application\Validator\FichierCinesValidator;
 use Doctrine\ORM\OptimisticLockException;
-use Application\Command\Exception\TimedOutCommandException;
 use Retraitement\Service\RetraitementServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Exporter\Pdf;
 use UnicaenApp\Util;
 use Zend\Http\Response;
-use Zend\View\Renderer\PhpRenderer;
 
 class FichierTheseService extends BaseService
 {
@@ -44,19 +44,7 @@ class FichierTheseService extends BaseService
     use RetraitementServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use NotifierServiceAwareTrait;
-
-    /**
-     * @var PhpRenderer
-     */
-    private $renderer;
-
-    /**
-     * @param PhpRenderer $renderer
-     */
-    public function setRenderer(PhpRenderer $renderer)
-    {
-        $this->renderer = $renderer;
-    }
+    use PageDeCouverturePdfExporterAwareTrait;
 
     /**
      * @return FichierTheseRepository
@@ -353,12 +341,14 @@ class FichierTheseService extends BaseService
         }
 
         // lancement du script de retraitement en tâche de fond
-        $scriptPath = APPLICATION_DIR . '/bin/fichier-retraiter.sh';
         $destinataires = $newFichierThese->getFichier()->getHistoModificateur()->getEmail();
-        $args = sprintf('--tester-archivabilite --notifier="%s" %s', $destinataires, $fichierThese->getId());
-        $runner = new ShellScriptRunner($scriptPath);
-        $runner->setAsync();
-        $runner->run($args);
+        $command = new RetraitementShellCommand();
+        $command->setDestinataires($destinataires);
+        $command->setFichierThese($fichierThese);
+        $command->generateCommandLine();
+        $runner = new ShellCommandRunner();
+        $runner->setCommand($command);
+        $runner->runCommandInBackground();
         // /var/www/html/sygal/bin/fichier-retraiter.sh --tester-archivabilite --notifier="bertrand.gauthier@unicaen.fr" 25f8f498-23d0-44a0-b1b7-f889720ec4f8
     }
 
@@ -438,21 +428,19 @@ class FichierTheseService extends BaseService
 
     /**
      * @param PdcData     $pdcData
-     * @param PhpRenderer $renderer
      * @param string      $filepath
      * @param boolean     $recto
      */
-    public function generatePageDeCouverture(PdcData $pdcData, PhpRenderer $renderer, $filepath = null, $recto = true)
+    public function generatePageDeCouverture(PdcData $pdcData, $filepath = null, $recto = true)
     {
-        $exporter = new PageDeCouverturePdfExporter($renderer, 'A4');
-        $exporter->setVars([
+        $this->pageDeCouverturePdfExporter->setVars([
             'informations' => $pdcData,
             'recto/verso' => $recto,
         ]);
         if ($filepath !== null) {
-            $exporter->export($filepath, Pdf::DESTINATION_FILE);
+            $this->pageDeCouverturePdfExporter->export($filepath, Pdf::DESTINATION_FILE);
         } else {
-            $exporter->export('export.pdf');
+            $this->pageDeCouverturePdfExporter->export('export.pdf');
             exit;
         }
     }
@@ -491,31 +479,34 @@ class FichierTheseService extends BaseService
      * @param PdcData $pdcData
      * @param string  $versionFichier
      * @param bool    $removeFirstPage
-     * @param int     $timeout
+     * @param string  $timeout
      * @return string
      * @throws TimedOutCommandException
      */
-    public function fusionnerPdcEtThese(These $these, PdcData $pdcData, $versionFichier, $removeFirstPage = false, $timeout = 0)
+    public function fusionnerPdcEtThese(These $these, PdcData $pdcData, $versionFichier, $removeFirstPage = false, $timeout = null): string
     {
         $outputFilePath = $this->generateOutputFilePathForMerge($these);
 
         $command = $this->createCommandForPdcMerge($these, $pdcData, $versionFichier, $removeFirstPage, $outputFilePath);
 
-        if ($timeout) {
-            $command->setOption('timeout', $timeout);
-        }
+        $runner = new ShellCommandRunner();
+        $runner->setCommand($command);
         try {
-            $command->checkResources();
-            $command->execute();
+            if ($timeout) {
+                $result = $runner->runCommandWithTimeout($timeout);
+            } else {
+                $result = $runner->runCommand();
+            }
 
-            $success = ($command->getReturnCode() === 0);
-            if (!$success) {
-                throw new RuntimeException(sprintf(
-                    "La commande %s a échoué (code retour = %s), voici le résultat d'exécution : %s",
+            if (!$result->isSuccessfull()) {
+                $message = sprintf("La commande '%s' a échoué (code retour = %s). ",
                     $command->getName(),
-                    $command->getReturnCode(),
-                    implode(PHP_EOL, $command->getResult())
-                ));
+                    $result->getReturnCode()
+                );
+                if ($output = $result->getOutput()) {
+                    $message .= "Voici le log d'exécution : " . implode(PHP_EOL, $output);
+                }
+                throw new RuntimeException($message);
             }
         }
         catch (RuntimeException $rte) {
@@ -528,16 +519,15 @@ class FichierTheseService extends BaseService
         return $outputFilePath;
     }
 
-    private function generateOutputFilePathForMerge(These $these)
+    private function generateOutputFilePathForMerge(These $these): string
     {
-        $outputFilePath = sprintf("sygal_fusion_%s-%s-%s.pdf",
+        $outputFilePath = uniqid(sprintf("sygal_fusion_%s-%s-%s_",
             $these->getId(),
             $these->getDoctorant()->getIndividu()->getNomUsuel(),
             $these->getDoctorant()->getIndividu()->getPrenom()
-        );
-        $outputFilePath = sys_get_temp_dir() . '/' . Util::reduce($outputFilePath);
+        )) . '.pdf';
 
-        return $outputFilePath;
+        return sys_get_temp_dir() . '/' . Util::reduce($outputFilePath);
     }
 
     /**
@@ -546,13 +536,13 @@ class FichierTheseService extends BaseService
      * @param string  $versionFichier
      * @param bool    $removeFirstPage
      * @param string  $outputFilePath
-     * @return MergeCommand|TruncateAndMergeCommand
+     * @return MergeShellCommand
      */
     private function createCommandForPdcMerge(These $these, PdcData $pdcData, $versionFichier, $removeFirstPage, $outputFilePath)
     {
         // generation de la couverture
         $filename = "sygal_couverture_" . $these->getId() . "_" . uniqid() . ".pdf";
-        $this->generatePageDeCouverture($pdcData, $this->renderer, $filename, !$removeFirstPage);
+        $this->generatePageDeCouverture($pdcData, $filename, !$removeFirstPage);
 
         // recuperation de la bonne version du manuscript
         $manuscritFichier = current($this->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF, $versionFichier));
@@ -563,20 +553,15 @@ class FichierTheseService extends BaseService
                 "Le fichier suivant n'existe pas ou n'est pas accessible sur le serveur : " . $manuscritChemin);
         }
 
-        $inputFiles = [
+//        $command = new \Application\Command\Pdf\AjoutPdcShellCommandGs();
+        $command = new AjoutPdcShellCommandQpdf();
+        $command->setSupprimer1erePageDuManuscrit($removeFirstPage); // avec retrait de la 1ere page si necessaire
+        $command->setInputFilesPaths([
             'couverture' => sys_get_temp_dir() . '/' . $filename,
-            'manuscrit' => $manuscritChemin
-        ];
-
-        // retrait de la premier page si necessaire
-        if ($removeFirstPage) {
-            $command = new TruncateAndMergeCommand();
-        } else {
-            $command = new MergeCommand();
-        }
-
-        $command->generate($outputFilePath, $inputFiles, $errorFilePath);
-        //unlink($inputFiles['couverture']);
+            'manuscrit' => $manuscritChemin,
+        ]);
+        $command->setOutputFilePath($outputFilePath);
+        $command->generateCommandLine();
 
         return $command;
     }
@@ -594,9 +579,9 @@ class FichierTheseService extends BaseService
         }
 
         // lancement en tâche de fond
-        $runner = new ShellScriptRunner($scriptPath, 'bash');
-        $runner->setAsync();
-        $runner->run($args);
+        $runner = new ShellCommandRunner();
+        $runner->setCommandAsString('bash ' . $scriptPath . ' ' . $args);
+        $runner->runCommandInBackground();
     }
 
     public function updateConformiteFichierTheseRetraitee(These $these, $conforme = null)

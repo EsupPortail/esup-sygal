@@ -25,6 +25,7 @@
         </many-to-one>
 
         <field name="etablissement"     type="string"       length="128"        column="ETABLISSEMENT"  nullable="false"/>
+        <field name="adresse"           type="string"       length="4096"       column="ADRESSE"        nullable="false"/>
         <field name="exterieur"         type="string"       length="3"          column="EXTERIEUR"      nullable="false"/>
         <field name="role"              type="string"       length="64"         column="ROLE_ID"        nullable="false"/>
         <field name="visio"             type="boolean"                          column="VISIO"          nullable="false"/>

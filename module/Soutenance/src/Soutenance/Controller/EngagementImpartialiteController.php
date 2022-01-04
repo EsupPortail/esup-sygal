@@ -5,11 +5,14 @@ namespace Soutenance\Controller;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Validation;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
+use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Membre;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
+use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
+use UnicaenAuthToken\Service\TokenServiceAwareTrait;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -20,10 +23,12 @@ use Zend\View\Model\ViewModel;
 class EngagementImpartialiteController extends AbstractController
 {
     use ActeurServiceAwareTrait;
+    use EvenementServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
     use PropositionServiceAwareTrait;
+    use TokenServiceAwareTrait;
 
     public function engagementImpartialiteAction()
     {
@@ -55,11 +60,28 @@ class EngagementImpartialiteController extends AbstractController
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
             if ($membre->getActeur() and $membre->estRapporteur()) {
+
                 $validation = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($these, $membre);
-                if (!$validation) $this->getNotifierSoutenanceService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre);
+                if (!$validation) {
+                    $utilisateurs = $membre->getActeur()->getIndividu()->getUtilisateurs();
+                    $token = null;
+                    foreach ($utilisateurs as $utilisateur) {
+                        $token = $this->tokenService->findUserTokenByUserId($utilisateur->getId());
+                        if (! $token->isExpired()) break;
+                    }
+
+                    if ($token !== null) {
+                        $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
+                        $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $membre->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
+                    } else {
+                        $url = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
+                    }
+                    $this->getNotifierSoutenanceService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre, $url);
+                }
             }
         }
 
+        $this->getEvenementService()->ajouterEvenement($proposition, Evenement::EVENEMENT_ENGAGEMENT);
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
@@ -70,7 +92,20 @@ class EngagementImpartialiteController extends AbstractController
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         if ($membre->getActeur()) {
-            $this->getNotifierSoutenanceService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre);
+            $utilisateurs = $membre->getActeur()->getIndividu()->getUtilisateurs();
+            $token = null;
+            foreach ($utilisateurs as $utilisateur) {
+                $token = $this->tokenService->findUserTokenByUserId($utilisateur->getId());
+                if (! $token->isExpired()) break;
+            }
+
+            if ($token !== null) {
+                $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
+                $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $membre->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
+            } else {
+                $url = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
+            }
+            $this->getNotifierSoutenanceService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre, $url);
         }
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
@@ -82,9 +117,12 @@ class EngagementImpartialiteController extends AbstractController
         $proposition = $this->getPropositionService()->findByThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
-        $this->getEngagementImpartialiteService()->create($membre, $these);
-        $this->getNotifierSoutenanceService()->triggerSignatureEngagementImpartialite($these, $proposition, $membre);
-        $this->getNotifierSoutenanceService()->triggerDemandeAvisSoutenance($these, $proposition, $membre);
+        $signature = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($these, $membre);
+        if ($signature === null) {
+            $this->getEngagementImpartialiteService()->create($membre, $these);
+            $this->getNotifierSoutenanceService()->triggerSignatureEngagementImpartialite($these, $proposition, $membre);
+            $this->getNotifierSoutenanceService()->triggerDemandeAvisSoutenance($these, $proposition, $membre);
+        }
 
         $this->redirect()->toRoute('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);
     }

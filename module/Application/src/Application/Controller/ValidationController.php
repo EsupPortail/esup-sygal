@@ -259,7 +259,7 @@ class ValidationController extends AbstractController
                         ->setTemplatePath('application/notification/mail/notif-validation-correction-these')
                         ->setTemplateVariables([
                             'these' => $these,
-                            'role' => $this->roleService->getRepository()->findOneBy(['code' => Role::CODE_DIRECTEUR_THESE]),
+                            'role' => $this->roleService->getRepository()->findOneBy(['code' => Role::CODE_PRESIDENT_JURY]),
                             'url' => $this->url()->fromRoute('these/depot', ['these' => $these->getId()], ['force_canonical' => true]),
                         ]);
                     // notification du BDD

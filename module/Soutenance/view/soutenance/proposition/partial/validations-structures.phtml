@@ -4,10 +4,12 @@
  * @var Validation[][] $validations
  * @var boolean $canStructureValider
  * @var boolean $canPresidence
+ * @var Evenement[] $signatures
  */
 
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Validation;
+use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Proposition;
 
 $these = $proposition->getThese();
@@ -50,7 +52,15 @@ $these = $proposition->getThese();
                         <?php endif; ?>
                     </li>
                     <li>
-                        <?php echo $these->getEcoleDoctorale()->getLibelle(); ?>  (École doctorale) <br/>
+                        <?php if ($these->getEcoleDoctorale()) : ?>
+                            <?php echo $these->getEcoleDoctorale()->getLibelle(); ?>  (École Doctorale) <br/>
+                        <?php else: ?>
+                            <strong style="color:darkred;">
+                                Aucune
+                                (École Doctorale)
+                            </strong>
+                            <br/>
+                        <?php endif; ?>
                         <?php if ($validations[Role::CODE_RESP_ED]) : ?>
                             <?php $validation = current($validations[Role::CODE_RESP_ED]); ?>
                             <span class="badge badge-success"> Validée</span>
@@ -88,6 +98,16 @@ $these = $proposition->getThese();
                         </a>
                     </p>
                 <?php endif; ?>
+
+                <?php if ($signatures !== null AND !empty($signatures)) : ?>
+                    Génération du document pour signature&nbsp;:&nbsp;
+                    <ul>
+                    <?php foreach ($signatures as $signature) : ?>
+                        <li> Faite le <?php echo $signature->getDate()->format('d/m/Y à H:i:s'); ?></li>
+                    <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+
                 <?php if ($canStructureValider): ?>
                     <p>
                         <a <?php /** @see \Soutenance\Controller\PropositionController::validerStructureAction(); */ ?>

@@ -3,7 +3,8 @@
 namespace Retraitement\Service;
 
 use Application\Command\Exception\TimedOutCommandException;
-use Application\Command\CommandInterface;
+use Application\Command\ShellCommandRunner;
+use Retraitement\Filter\Command\RetraitementShellCommand;
 use RuntimeException;
 
 class RetraitementService
@@ -11,23 +12,23 @@ class RetraitementService
     /**
      * RetraitementService constructor.
      *
-     * @param CommandInterface $command
+     * @param RetraitementShellCommand $command
      */
-    public function __construct(CommandInterface $command)
+    public function __construct(RetraitementShellCommand $command)
     {
         $this->setCommand($command);
     }
 
     /**
-     * @var CommandInterface
+     * @var RetraitementShellCommand
      */
     private $command;
 
     /**
-     * @param CommandInterface $command
+     * @param RetraitementShellCommand $command
      * @return self
      */
-    public function setCommand(CommandInterface $command)
+    public function setCommand(RetraitementShellCommand $command): self
     {
         $this->command = $command;
 
@@ -39,27 +40,33 @@ class RetraitementService
      *
      * @param string $inputFilePath Chemin du fichier à retraiter
      * @param string $outputFilePath Chemin du fichier retraité généré
-     * @param string  $timeout Timeout à appliquer au lancement du script de retraitement.
+     * @param string|null $timeout Timeout à appliquer au lancement du script de retraitement.
      * @throws TimedOutCommandException Le timout d'exécution a été atteint
      */
-    private function retraiterFichierByPath($inputFilePath, $outputFilePath, $timeout = null)
+    private function retraiterFichierByPath(string $inputFilePath, string $outputFilePath, string $timeout = null)
     {
-        $this->command->generate($outputFilePath, $inputFilePath, $errorFilePath);
-        if ($timeout) {
-            $this->command->setOption('timeout', $timeout);
-        }
-        try {
-            $this->command->checkResources();
-            $this->command->execute();
+        $this->command->setOutputFilePath($outputFilePath);
+        $this->command->setInputFilePath($inputFilePath);
+        $this->command->generateCommandLine();
 
-            $success = ($this->command->getReturnCode() === 0);
-            if (!$success) {
-                throw new RuntimeException(sprintf(
-                    "La commande %s a échoué (code retour = %s), voici le résultat d'exécution : %s",
+        $runner = new ShellCommandRunner();
+        $runner->setCommand($this->command);
+        try {
+            if ($timeout) {
+                $result = $runner->runCommandWithTimeout($timeout);
+            } else {
+                $result = $runner->runCommand();
+            }
+
+            if (!$result->isSuccessfull()) {
+                $message = sprintf("La commande '%s' a échoué (code retour = %s). ",
                     $this->command->getName(),
-                    $this->command->getReturnCode(),
-                    implode(PHP_EOL, $this->command->getResult())
-                ));
+                    $result->getReturnCode()
+                );
+                if ($output = $result->getOutput()) {
+                    $message .= "Voici le log d'exécution : " . implode(PHP_EOL, $output);
+                }
+                throw new RuntimeException($message);
             }
         }
         catch (RuntimeException $rte) {
@@ -75,10 +82,10 @@ class RetraitementService
      *
      * @param string $inputFilePath Chemin sur le disque vers le fichier à retraiter
      * @param string $outputFilePath Chemin du fichier retraité généré
-     * @param string $timeout  Timeout à appliquer au lancement du script de retraitement.
+     * @param string|null $timeout  Timeout à appliquer au lancement du script de retraitement.
      * @throws TimedOutCommandException Le timout a été atteint
      */
-    public function retraiterFichier($inputFilePath, $outputFilePath, $timeout = null)
+    public function retraiterFichier(string $inputFilePath, string $outputFilePath, string $timeout = null)
     {
         $this->retraiterFichierByPath($inputFilePath, $outputFilePath, $timeout);
     }

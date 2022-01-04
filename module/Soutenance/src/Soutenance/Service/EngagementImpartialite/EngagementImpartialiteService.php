@@ -64,7 +64,7 @@ class EngagementImpartialiteService {
     {
         $qb = $this->getValidationService()->getEntityManager()->getRepository(Validation::class)->createQueryBuilder('validation')
             ->addSelect('type')->join('validation.typeValidation', 'type')
-            ->andWhere('1 = pasHistorise(validation)')
+            ->andWhere('validation.histoDestruction is null')
             ->andWhere('type.code = :codeEngagement')
             ->andWhere('validation.these = :these')
             ->andWhere('validation.individu = :individu')
@@ -103,7 +103,7 @@ class EngagementImpartialiteService {
         try {
             $validation = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs engagements d'impartialité ont été signé par le membre [".$individu->__toString()."].", $e);
+            throw new RuntimeException("Plusieurs engagements d'impartialité ont été signé par le membre [".$individu->__toString()."].", 0, $e);
         }
         return $validation;
     }
@@ -121,7 +121,7 @@ class EngagementImpartialiteService {
         try {
             $validation = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs refus engagements d'impartialité ont été signé par le membre [".$individu->__toString()."].", $e);
+            throw new RuntimeException("Plusieurs refus engagements d'impartialité ont été signé par le membre [".$individu->__toString()."].", 0,  $e);
         }
         return $validation;
     }

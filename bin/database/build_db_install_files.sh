@@ -145,7 +145,7 @@ echo "> $OUTPUT_FILE"
 # schema objects
 #
 OUTPUT_FILE=$OUTPUT_DIR/sql/02_$NAME_CREATE_SCHEMA.sql
-pg_dump --section=pre-data --schema-only --exclude-table 'MV_INDICATEUR*' >$OUTPUT_FILE
+pg_dump --section=pre-data --schema-only --exclude-table 'MV_INDICATEUR*' --exclude-table '*_SAV' >$OUTPUT_FILE
 replacePgDatabaseAndUserInScript $OUTPUT_FILE
 #prepareScript $OUTPUT_FILE
 echo "> $OUTPUT_FILE"

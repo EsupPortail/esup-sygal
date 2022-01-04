@@ -140,12 +140,25 @@ class PropositionAssertion implements  AssertionInterface {
             case PropositionPrivileges::PROPOSITION_VALIDER_UR:
                 switch ($role) {
                     case Role::CODE_RESP_UR :
+
+                        $validationsArray = [];
+                        $validationsArray[$these->getDoctorant()->getIndividu()->getId()] = [];
+                        /** @var Acteur $directeur */
+                        foreach ($these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE) as $directeur) $validationsArray[$directeur->getIndividu()->getId()] = [];
+                        foreach ($these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE) as $directeur) $validationsArray[$directeur->getIndividu()->getId()] = [];
                         $validations_ACTEUR = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PROPOSITION_SOUTENANCE, $these);
+                        foreach ($validations_ACTEUR as $validation) {
+                            $validationsArray[$validation->getIndividu()->getId()][] = $validation;
+                        }
+                        $ok = true;
+                        foreach ($validationsArray as $id => $validations) {
+                            if (empty($validations)) {
+                                $ok = false;
+                                break;
+                            }
+                        }
                         $validations_UNITE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
-                        $nbDirs = count($these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE));
-                        $nbCoDirs = count($these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE));
-                        $nbActeur = 1 + $nbDirs + $nbCoDirs;
-                        return !$validations_UNITE && count($validations_ACTEUR) === $nbActeur && $structure === $these->getUniteRecherche()->getStructure();
+                        return !$validations_UNITE && $ok && $structure === $these->getUniteRecherche()->getStructure();
                     default:
                         return false;
                 }

@@ -35,7 +35,8 @@ class ValiditeFichierService extends BaseService
         $entity
             ->setFichier($fichierThese->getFichier())
             ->setMessage($validiteResult['message'])
-            ->setLog($validiteResult['resultat']);
+            ->setLog($validiteResult['resultat'])
+            ->setHistoCreateur($fichierThese->getThese()->getHistoCreateur()); // indispensable en mode CLI
 
         $fichierThese->getFichier()->addValidite($entity);
 

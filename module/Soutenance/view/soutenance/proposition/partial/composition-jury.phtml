@@ -102,6 +102,22 @@ $these = $proposition->getThese();
             </div>
         </div>
 
+        <div class="col-md-4">
+            <h5>
+                Statut de rapporteurs non valide
+                <?php if ($indicateurs["bad-rapporteur"]["valide"]):?>
+                    <span class="badge badge-success"> Valide </span>
+                <?php else: ?>
+                    <span class="badge badge-error"> Non valide </span>
+                <?php endif; ?>
+            </h5>
+            <div class="progress">
+                <div class="progress-bar progress-bar-danger" style="width:<?php echo $indicateurs["bad-rapporteur"]["Nombre"]/(max(1,$indicateurs["rapporteur"]["Nombre"]))*100; ?>%; ">
+                    <?php echo $indicateurs["bad-rapporteur"]["Nombre"]; ?>
+                </div>
+            </div>
+        </div>
+
         <table class="table table-extra-condensed">
             <thead>
             <tr>
@@ -128,7 +144,7 @@ $these = $proposition->getThese();
                 usort($membres, function (Membre $a, Membre $b) { return $a->getNom() . " " . $a->getPrenom() > $b->getNom() . " " . $b->getPrenom();});
             ?>
             <?php foreach($membres as $membre): ?>
-                <tr>
+                <tr <?php if ($membre->estRapporteur() AND $membre->getQualite()->getRang() === 'B' AND $membre->getQualite()->getHdr() !== 'O') echo " style='background:lightsalmon;' "; ?>>
                     <td> <?php echo ($membre->getGenre()==='F')?"Madame":"Monsieur"; ?> </td>
                     <td> <?php echo $membre->getPrenom(); ?> </td>
                     <td> <?php echo $membre->getNom(); ?> </td>
@@ -142,7 +158,10 @@ $these = $proposition->getThese();
                             <span class="glyphicon glyphicon-remove text-danger"></span>
                         <?php endif; ?>
                     </td>
-                    <td> <?php echo $membre->getEtablissement(); ?> </td>
+                    <td>
+                        <?php echo $membre->getEtablissement(); ?> <br/>
+                        <?php echo ($membre->getAdresse())??"N.C."; ?>
+                    </td>
                     <td> <?php echo $membre->getRole(); ?> </td>
                     <td>
                         <?php if ($membre->isVisio()): ?>

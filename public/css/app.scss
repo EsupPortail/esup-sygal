@@ -64,6 +64,64 @@ h2.modal-title {
   }
 }
 
+.panel {
+  .panel-heading {
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+}
+
+.panel-info {
+  border-color: $infoColor;
+  > .panel-heading {
+    color: white;
+    background-color: $infoColor;
+    border-color: $infoColor;
+  }
+}
+
+.panel-success {
+  border-color: $successColor;
+  > .panel-heading {
+    color: white;
+    background-color: $successColor;
+    border-color: $successColor;
+  }
+}
+
+.panel-danger {
+  border-color: $dangerColor;
+  > .panel-heading {
+    color: white;
+    background-color: $dangerColor;
+    border-color: $dangerColor;
+  }
+}
+
+.panel-warning {
+  border-color: $warningColor;
+  > .panel-heading {
+    color: white;
+    background-color: $warningColor;
+    border-color: $warningColor;
+  }
+}
+
+.panel.panel-md {
+  font-size: 90%;
+  .panel-heading,
+  .panel-body {
+    padding: 6px 10px;
+  }
+}
+
+.panel.panel-sm {
+  .panel-heading, .panel-body {
+    font-size: 80%;
+    padding: 4px 8px;
+  }
+}
+
 .panel.box {
   margin-bottom: 10px;
 
@@ -111,62 +169,6 @@ h2.modal-title {
   width: 50%;
 }
 
-.panel .panel-heading {
-  text-transform: uppercase;
-  font-weight: 400;
-}
-
-.panel-info {
-  border-color: $infoColor;
-}
-.panel-info > .panel-heading {
-  color: white;
-  background-color: $infoColor;
-  border-color: $infoColor;
-}
-
-.panel-success {
-  border-color: $successColor;
-}
-.panel-success > .panel-heading {
-  color: white;
-  background-color: $successColor;
-  border-color: $successColor;
-}
-
-.panel-danger {
-  border-color: $dangerColor;
-}
-.panel-danger > .panel-heading {
-  color: white;
-  background-color: $dangerColor;
-  border-color: $dangerColor;
-}
-
-.panel-warning {
-  border-color: $warningColor;
-}
-.panel-warning > .panel-heading {
-  color: white;
-  background-color: $warningColor;
-  border-color: $warningColor;
-}
-
-
-.panel.panel-md {
-  font-size: 90%;
-  .panel-heading,
-  .panel-body {
-    padding: 6px 10px;
-  }
-}
-
-.panel.panel-sm {
-  .panel-heading, .panel-body {
-    font-size: 80%;
-    padding: 4px 8px;
-  }
-}
 
 ul.validation, ul.validation-attendue {
   padding-left: 0;
@@ -201,12 +203,11 @@ blockquote {
   }
 }
 
-div.jumbotron p,
-div.jumbotron ul li {
-  font-size: 120%;
-}
 div.jumbotron {
-  p.connected-as {
+  p, ul li {
+    font-size: 120%;
+  }
+  .connected-as {
     color: #a94442;
     font-size: 24px;
     font-weight: 400;
@@ -214,6 +215,12 @@ div.jumbotron {
     span.role {
       font-weight: 600;
     }
+  }
+  .connected-as:nth-of-type(1) {
+    margin-bottom: 0;
+  }
+  .connected-as:nth-of-type(2) {
+    font-size: 16px;
   }
 }
 
@@ -849,10 +856,10 @@ ul.menu-secondaire {
 ul.menu-actualites {
   margin-top: 2em;
   li:first-child {
-    padding-top: 10px;
+    padding-top: 7px;
   }
   li {
-    padding: 0 1em 10px;
+    padding: 0 0 10px;
     span.label {
       padding: 1px 2px;
       font-size: 70%;
@@ -987,8 +994,17 @@ span.sas-highlight {
 
 /********** à déplacer... ************/
 
-.user-profile-select-form label > input[type=radio] {
-  margin-top: -6px;
+input[type="checkbox"], input[type="radio"] {
+  margin-top: 0;
+}
+
+.user-profile-select-form {
+  .radio {
+    margin: 0;
+  }
+  label > input[type=radio] {
+    margin-top: -4px;
+  }
 }
 .user-usurpation-form {
   padding-top: 1em;
@@ -1083,9 +1099,13 @@ span.badge {
 span.badge.EN_COURS {
     background: $infoColor;
   }
-span.badge.VALIDEE {
+span.badge.VALIDEE,
+span.badge.badge-success
+{
     background: $successColor;
   }
-span.badge.REJETEE {
+span.badge.REJETEE,
+span.badge.badge-error
+{
     background: $dangerColor;
 }

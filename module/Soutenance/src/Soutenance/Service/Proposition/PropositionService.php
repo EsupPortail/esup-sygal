@@ -185,12 +185,12 @@ class PropositionService {
             ->addSelect('structure_ed')->leftJoin('ecole.structure', 'structure_ed')
             ->addSelect('etablissement')->leftJoin('these.etablissement', 'etablissement')
             ->addSelect('structure_etab')->leftJoin('etablissement.structure', 'structure_etab')
-            ->addSelect('membre')->join('proposition.membres', 'membre')
+            ->addSelect('membre')->leftJoin('proposition.membres', 'membre')
             ->addSelect('qualite')->leftJoin('membre.qualite', 'qualite')
             ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
             ->addSelect('justificatif')->leftJoin('proposition.justificatifs', 'justificatif')
             ->addSelect('avis')->leftJoin('proposition.avis', 'avis')
-            ->andWhere('1 = pasHistorise(proposition)')
+            ->andWhere('proposition.histoDestruction is null')
             //->addSelect('validation')->leftJoin('proposition.validations', 'validation')
         ;
         return $qb;
@@ -233,6 +233,9 @@ class PropositionService {
             ->andWhere("proposition.these = :these")
             ->setParameter("these", $these)
         ;
+//        $qb = $this->getEntityManager()->getRepository(Proposition::class)->createQueryBuilder('proposition')
+//            ->andWhere("proposition.these = :these")
+//            ->setParameter("these", $these);
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
@@ -327,6 +330,15 @@ class PropositionService {
 
         $indicateurs = [];
 
+        /** Bad rapporteur */
+        $indicateurs["bad-rapporteur"]["Nombre"] = 0;
+        foreach ($proposition->getMembres() as $membre) {
+            if ($membre->estRapporteur() AND $membre->getQualite()->getRang() === 'B' AND $membre->getQualite()->getHdr() !== 'O') {
+                $indicateurs["bad-rapporteur"]["Nombre"]++;
+            }
+        }
+        $indicateurs["bad-rapporteur"]["valide"] = ($indicateurs["bad-rapporteur"]["Nombre"] === 0);
+
         /**  Il faut essayer de maintenir la parité Homme/Femme*/
         $ratioFemme = ($nbMembre)?$nbFemme / $nbMembre:0;
         $ratioHomme = ($nbMembre)?(1 - $ratioFemme):0;
@@ -374,7 +386,7 @@ class PropositionService {
         }
 
         $valide = $indicateurs["parité"]["valide"] && $indicateurs["membre"]["valide"] && $indicateurs["rapporteur"]["valide"]
-            && $indicateurs["rang A"]["valide"] && $indicateurs["exterieur"]["valide"];
+            && $indicateurs["rang A"]["valide"] && $indicateurs["exterieur"]["valide"] && $indicateurs["bad-rapporteur"]["valide"] ;
 
         $indicateurs["valide"] = $valide;
 
@@ -428,7 +440,7 @@ class PropositionService {
         $validations[Role::CODE_DOCTORANT] = [];
         foreach ($doctorants as $doctorant) {
             $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these,TypeValidation::CODE_PROPOSITION_SOUTENANCE, $doctorant->getIndividu());
-            if ($validation) $validations[Role::CODE_DOCTORANT][] = current($validation);
+            if ($validation) $validations[Role::CODE_DOCTORANT][] = $validation;
         }
 
 
@@ -437,7 +449,7 @@ class PropositionService {
         $validations[Role::CODE_DIRECTEUR_THESE] = [];
         foreach ($directeurs as $directeur) {
             $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these,TypeValidation::CODE_PROPOSITION_SOUTENANCE, $directeur->getIndividu());
-            if ($validation) $validations[Role::CODE_DIRECTEUR_THESE][] = current($validation);
+            if ($validation) $validations[Role::CODE_DIRECTEUR_THESE][] = $validation;
         }
 
         /** Recuperation de la validation du codirecteur de thèse */
@@ -445,7 +457,7 @@ class PropositionService {
         $validations[Role::CODE_CODIRECTEUR_THESE] = [];
         foreach ($codirecteurs as $codirecteur) {
             $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these,TypeValidation::CODE_PROPOSITION_SOUTENANCE, $codirecteur->getIndividu());
-            if ($validation) $validations[Role::CODE_CODIRECTEUR_THESE][] = current($validation);
+            if ($validation) $validations[Role::CODE_CODIRECTEUR_THESE][] = $validation;
         }
 
         /** Recuperation de la validation de l'unite de recherche */
@@ -651,10 +663,12 @@ class PropositionService {
             $renduRapport = $proposition->getDate();
             $deadline = $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur();
             $renduRapport = $renduRapport->sub(new DateInterval('P'. $deadline.'D'));
+
+            $date = DateTime::createFromFormat('d/m/Y H:i:s', $renduRapport->format('d/m/Y') . " 23:59:59");
         } catch (Exception $e) {
             throw new RuntimeException("Un problème a été rencontré lors du calcul de la date de rendu des rapport.");
         }
-        $proposition->setRenduRapport($renduRapport);
+        $proposition->setRenduRapport($date);
         $this->update($proposition);
     }
 }

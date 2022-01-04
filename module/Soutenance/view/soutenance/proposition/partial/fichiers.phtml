@@ -22,11 +22,18 @@ foreach ($proposition->getMembres() as $membre) {
 }
 ?>
 
-<div class="box panel <?php echo ($justificatifsOk)?"panel-success":"panel-danger";?>">
+<div class="box panel
+<?php
+    if ($justificatifsOk === null)  echo " panel-warning";
+    if ($justificatifsOk === true)  echo " panel-success";
+    if ($justificatifsOk === false) echo " panel-danger";
+?>
+">
     <div class="panel-heading">
         <h2> Fichiers associés à la proposition</h2>
     </div>
     <div class="panel-body">
+
 
         <?php if ($canModifier) : ?>
             <a href="<?php echo $this->url('soutenance/justificatif/ajouter-justificatif', ['these' => $these->getId()], [], true); ?>"
@@ -74,7 +81,9 @@ foreach ($proposition->getMembres() as $membre) {
         ?>
 
         <?php foreach ($typesJustificatif as $code => $label): ?>
-            <?php $liste = array_filter($justificatifs, function($j) use ($code) {return ($j["type"] === $code AND $j["justificatif"] !== null);}); ?>
+            <?php
+                $liste = array_filter($justificatifs, function($j) use ($code) {
+                    return ($j["type"] === $code AND $j["justificatif"] !== null) AND $j["justificatif"]->estNonHistorise();}); ?>
             <?php if (!empty($liste)) : ?>
             <h4>
                 <?php echo $label; ?>

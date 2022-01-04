@@ -8,12 +8,14 @@ class AndWhereHistorise extends AndWhereExpr
      * AndWhereHistorise constructor.
      *
      * @param string $alias
-     * @param bool   $historise
+     * @param bool $historise
      */
-    public function __construct($alias, $historise = true)
+    public function __construct($alias, bool $historise = true)
     {
         parent::__construct($alias);
 
-        $this->where = sprintf("%s = pasHistorise(%s)", $historise ? 0 : 1, $this->alias);
+        $this->where =
+            sprintf("%s.histoDestruction is ", $this->alias) .
+            ($historise ? 'not null' : 'null');
     }
 }

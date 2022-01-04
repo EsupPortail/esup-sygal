@@ -32,6 +32,8 @@ use Application\Service\Acteur\ActeurServiceFactory;
 use Application\Service\Financement\FinancementService;
 use Application\Service\Financement\FinancementServiceFactory;
 use Application\Service\Message\DiffusionMessages;
+use Application\Service\PageDeCouverture\PageDeCouverturePdfExporter;
+use Application\Service\PageDeCouverture\PageDeCouverturePdfExporterFactory;
 use Application\Service\ServiceAwareInitializer;
 use Application\Service\These\Factory\TheseObserverServiceFactory;
 use Application\Service\These\Factory\TheseSearchServiceFactory;
@@ -70,6 +72,7 @@ return [
                         //
                         'privileges' => [
                             ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE,
+                            ThesePrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS,
                             ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE,
                             ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_CORRIGEE,
                             ThesePrivileges::THESE_SAISIE_ATTESTATIONS_VERSION_INITIALE,
@@ -236,6 +239,16 @@ return [
                     ],
                     'privileges' => [
                         ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE,
+                    ],
+                    'assertion' => 'Assertion\\These',
+                ],
+                [
+                    'controller' => 'Application\Controller\These',
+                    'action' => [
+                        'accorder-sursis-correction',
+                    ],
+                    'privileges' => [
+                        ThesePrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS,
                     ],
                     'assertion' => 'Assertion\\These',
                 ],
@@ -749,6 +762,7 @@ return [
                                 'these' => '\d+',
                             ],
                             'defaults' => [
+                                /** @see TheseController::accorderSursisCorrectionAction() */
                                 'controller' => 'Application\Controller\These',
                                 'action' => 'validation-these-corrigee',
                             ],
@@ -764,6 +778,19 @@ return [
                             'defaults' => [
                                 'controller' => 'Application\Controller\These',
                                 'action' => 'modifier-correction-autorisee-forcee',
+                            ],
+                        ],
+                    ],
+                    'accorder-sursis-correction' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route' => '/accorder-sursis-correction/:these',
+                            'constraints' => [
+                                'these' => '\d+',
+                            ],
+                            'defaults' => [
+                                'controller' => 'Application\Controller\These',
+                                'action' => 'accorder-sursis-correction',
                             ],
                         ],
                     ],
@@ -1307,6 +1334,7 @@ return [
             'TheseObserverService' => TheseObserverServiceFactory::class,
             FinancementService::class => FinancementServiceFactory::class,
             TheseAnneeUnivService::class => TheseAnneeUnivServiceFactory::class,
+            PageDeCouverturePdfExporter::class => PageDeCouverturePdfExporterFactory::class,
         ],
         'aliases' => [
             TheseService::class => 'TheseService',

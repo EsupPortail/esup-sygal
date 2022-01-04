@@ -2,11 +2,11 @@
 
 namespace Application\Service\FichierThese;
 
-use Application\Command\ValidationFichierCinesCommand;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Fichier\FichierService;
 use Application\Service\File\FileService;
 use Application\Service\Notification\NotifierService;
+use Application\Service\PageDeCouverture\PageDeCouverturePdfExporter;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
 use Application\Service\VersionFichier\VersionFichierService;
 use Application\Validator\FichierCinesValidator;
@@ -19,9 +19,9 @@ class FichierTheseServiceFactory
      * Create service
      *
      * @param ContainerInterface $container
-     * @return mixed
+     * @return \Application\Service\FichierThese\FichierTheseService
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): FichierTheseService
     {
         $fichierCinesValidator = $this->createFichierCinesValidator($container);
 
@@ -33,7 +33,7 @@ class FichierTheseServiceFactory
          * @var RetraitementService $retraitementService
          * @var EtablissementService $etablissementService
          * @var NotifierService $notifierService
-         * @var \Zend\View\Renderer\PhpRenderer $renderer
+         * @var PageDeCouverturePdfExporter $pdcPdfExporter
          */
         $fichierService = $container->get(FichierService::class);
         $fileService = $container->get(FileService::class);
@@ -42,7 +42,7 @@ class FichierTheseServiceFactory
         $retraitementService = $container->get('RetraitementService');
         $etablissementService = $container->get('EtablissementService');
         $notifierService = $container->get(NotifierService::class);
-        $renderer = $container->get('ViewRenderer');
+        $pdcPdfExporter = $container->get(PageDeCouverturePdfExporter::class);
 
         $service = new FichierTheseService();
 
@@ -54,20 +54,19 @@ class FichierTheseServiceFactory
         $service->setRetraitementService($retraitementService);
         $service->setEtablissementService($etablissementService);
         $service->setNotifierService($notifierService);
-        $service->setRenderer($renderer);
+        $service->setPageDeCouverturePdfExporter($pdcPdfExporter);
 
         return $service;
     }
 
-    private function createFichierCinesValidator(ContainerInterface $container)
+    private function createFichierCinesValidator(ContainerInterface $container): FichierCinesValidator
     {
-        /** @var ValidationFichierCinesCommand $command */
+        /** @var \Application\Command\TestArchivabiliteShellCommand $command */
         $command = $container->get('ValidationFichierCinesCommand');
 
         $validator = new FichierCinesValidator();
-        $validator->setCommand($command);
+        $validator->setShellCommand($command);
 
         return $validator;
     }
-
 }

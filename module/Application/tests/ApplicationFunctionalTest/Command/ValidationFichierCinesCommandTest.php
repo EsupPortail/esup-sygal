@@ -2,8 +2,6 @@
 
 namespace ApplicationFunctionalTest\Command;
 
-use Application\Command\ValidationFichierCinesCommand;
-
 //class ValidationFichierCinesCommandTest extends \PHPUnit_Framework_TestCase
 //{
 //    public function test_real_web_service_call_max_time()
