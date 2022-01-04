@@ -11,7 +11,7 @@ class QualiteLibelleSupplementaireHydrator implements HydratorInterface {
      * @param QualiteLibelleSupplementaire $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         $data = [
             'qualite' => $object->getQualite()->getLibelle(),

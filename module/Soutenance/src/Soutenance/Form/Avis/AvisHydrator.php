@@ -11,7 +11,7 @@ class AvisHydrator implements HydratorInterface {
      * @param Avis $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         $data = [
             'avis' => $object->getAvis(),

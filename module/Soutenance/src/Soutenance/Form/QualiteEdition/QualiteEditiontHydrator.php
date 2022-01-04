@@ -27,7 +27,7 @@ class QualiteEditiontHydrator implements HydratorInterface
      * @param Qualite $qualite
      * @return array
      */
-    public function extract($qualite) {
+    public function extract($qualite): array {
 
         $data = [];
         $data['libelle']         = $qualite->getLibelle();

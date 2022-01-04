@@ -23,7 +23,7 @@ class LabelEuropeenHydrator implements HydratorInterface
      * @param Proposition $proposition
      * @return array
      */
-    public function extract($proposition) {
+    public function extract($proposition): array {
 
         $data = [
             'label' => $proposition->isLabelEuropeen(),

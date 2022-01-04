@@ -3,7 +3,7 @@
 namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\Diffusion;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
@@ -17,7 +17,7 @@ class DiffusionHydrator extends DoctrineObject implements EntityManagerAwareInte
      * @param  Diffusion $diffusion
      * @return array
      */
-    public function extract($diffusion)
+    public function extract($diffusion): array
     {
         $data = parent::extract($diffusion);
 
