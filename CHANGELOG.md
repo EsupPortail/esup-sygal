@@ -10,6 +10,34 @@ Journal des modifications
 - [FIX] Activation de la mise en cache de la config lorsque le mode development est désactivé.
 - [FIX] Lancement de la synchro des thèses pour prendre en compte la création/modification/suppression de substitution de structures.
 
+3.0.10
+-----
+- Ajout de la mention "La réservation du lieu de soutenance n'est pas faite automatiquement et reste à votre charge"
+- Meilleure gestion des tokens des membres d'une soutenance
+- Déclaration tardive de visoconférence ajouté aux interventions de soutenance
+- Avis sur rapport d'activité de fin de thèse
+- Ajout (au moment de leur téléchargement) d'une page de couverture aux rapports d'activité validés
+- Navigation : pas besoin de page 'Thèse sélectionnée' s'il y a une page 'Ma thèse'
+- Notification à l'issue de la validation de la PDC : ajout de la BU en copie du mail
+- Suppression des paramètres 'cookie_lifetime'et 'gc_maxlifetime' de la config de l'appliccation
+- Refactorisation : extraction d'un nouveau module 'Doctorant' à partir du module 'Application'
+- [FIX] Création du menu 'Ma thèse' même si la thèse est soutenue
+
+3.0.9
+-----
+- Dépôt des rapports d'activité, CSI, mi-parcours : possibilité de sélectionner l'année univ précédente.
+
+3.0.8
+-----
+- Changement pour récupération des logos sur la page de couvertures (les co-directions sont maintenant utilisée)
+- Le manque de justificatifs de soutenances n'est plus bloquant il s'agit plus que d'un warning 
+- [FIX] Retrait de l'appel à un css inexistant
+- Filtrage des soutenances sans date dans la vue des soutenances pour les structures.
+- Ajout des mentions Co-encadrant/Co-encadrante sur la page de couverture
+- Complétion des données pour la page de couverture depuis le dossier de soutenance en cas de manque
+- Ajout de la memtion de la date limite de rendu dans le tableau de bord des rapporteurs
+- Completion des mails avec la table des utilisateurs pour les notifications
+
 3.0.7
 ----- 
 - Nouveau critère de bloquage des soutenances basé sur la validité des rapporteurs.

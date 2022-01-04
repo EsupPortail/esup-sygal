@@ -76,3 +76,7 @@ fi
 
 # Refresh de la vue matérialisée utilisée pour la recherche des thèses
 /usr/bin/php ${APP_DIR}/public/index.php run-sql-query --sql="refresh materialized view MV_RECHERCHE_THESE;"
+
+# Vidage du cache de résultat Doctrine
+#rm -rf ${APP_DIR}/data/DoctrineModule/cache/*
+${APP_DIR}/vendor/bin/doctrine-module orm:clear-cache:result

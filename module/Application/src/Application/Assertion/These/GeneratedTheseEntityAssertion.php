@@ -543,7 +543,7 @@ abstract class GeneratedTheseEntityAssertion
             return true;
         }
 
-        if ($privilege === \Application\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT) {
+        if ($privilege === \Doctorant\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT) {
         //--------------------------------------------------------------------------------------
             /* line 81 */
             $this->linesTrace[] = '/* line 81 */';

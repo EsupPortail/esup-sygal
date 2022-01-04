@@ -38,6 +38,7 @@ return [
         'Soutenance',
         'Notification',
         'Information',
+        'Doctorant',
         //'StepStar',
         'Application',
     ],

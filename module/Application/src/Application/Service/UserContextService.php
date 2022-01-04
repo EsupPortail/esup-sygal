@@ -3,7 +3,7 @@
 namespace Application\Service;
 
 use Application\Authentication\Storage\AppStorage;
-use Application\Entity\Db\Doctorant;
+use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;

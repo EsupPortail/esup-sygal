@@ -4,11 +4,9 @@ namespace Soutenance\Service\Justificatif;
 
 use Application\Entity\Db\NatureFichier;
 use Application\Service\UserContextServiceAwareTrait;
-use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
-use Exception;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -29,18 +27,6 @@ class JustificatifService {
     public function create(Justificatif $justificatif) : Justificatif
     {
         try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-        } catch(Exception $e) {
-            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
-        }
-
-        $justificatif->setHistoCreateur($user);
-        $justificatif->setHistoCreation($date);
-        $justificatif->setHistoModificateur($user);
-        $justificatif->setHistoModification($date);
-
-        try {
             $this->getEntityManager()->persist($justificatif);
             $this->getEntityManager()->flush($justificatif);
         } catch (ORMException $e) {
@@ -56,16 +42,6 @@ class JustificatifService {
     public function update(Justificatif $justificatif) : Justificatif
     {
         try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-        } catch(Exception $e) {
-            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
-        }
-
-        $justificatif->setHistoModificateur($user);
-        $justificatif->setHistoModification($date);
-
-        try {
             $this->getEntityManager()->flush($justificatif);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survenue lors de l'enregistrement en BDD.", $e);
@@ -80,18 +56,7 @@ class JustificatifService {
     public function historise(Justificatif $justificatif) : Justificatif
     {
         try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-        } catch(Exception $e) {
-            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
-        }
-
-        $justificatif->setHistoModificateur($user);
-        $justificatif->setHistoModification($date);
-        $justificatif->setHistoDestructeur($user);
-        $justificatif->setHistoDestruction($date);
-
-        try {
+            $justificatif->historiser();
             $this->getEntityManager()->flush($justificatif);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survenue lors de l'enregistrement en BDD.", $e);
@@ -106,18 +71,7 @@ class JustificatifService {
     public function restore(Justificatif $justificatif) : Justificatif
     {
         try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-        } catch(Exception $e) {
-            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
-        }
-
-        $justificatif->setHistoModificateur($user);
-        $justificatif->setHistoModification($date);
-        $justificatif->setHistoDestructeur(null);
-        $justificatif->setHistoDestruction(null);
-
-        try {
+            $justificatif->dehistoriser();
             $this->getEntityManager()->flush($justificatif);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survenue lors de l'enregistrement en BDD.", $e);
@@ -281,10 +235,12 @@ class JustificatifService {
     /**
      * @param Proposition $proposition
      * @param array $justificatifs
-     * @return boolean
+     * @return boolean|null
      */
-    public function isJustificatifsOk($proposition, $justificatifs = [])
+    public function isJustificatifsOk(Proposition $proposition, array $justificatifs = []) : ?bool
     {
+        $non_bloquant = ['DELEGUATION_SIGNATURE', 'DEMANDE_LABEL_EUROPEEN'];
+
         if ($justificatifs === []) {
             $justificatifs = $this->generateListeJustificatif($proposition);
         }
@@ -292,8 +248,12 @@ class JustificatifService {
         $justificatifsOk = true;
         foreach ($justificatifs as $justificatif) {
             if ($justificatif['justificatif'] === null) {
-                $justificatifsOk = false;
-                break;
+                if (array_search($justificatif['type'], $non_bloquant) === false) {
+                    $justificatifsOk = false;
+                    break;
+                } else {
+                    $justificatifsOk = null;
+                }
             }
         }
         return $justificatifsOk;

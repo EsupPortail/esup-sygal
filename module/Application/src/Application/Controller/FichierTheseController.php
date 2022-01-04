@@ -10,6 +10,7 @@ use Application\Entity\Db\VersionFichier;
 use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\RouteMatch;
+use Application\Service\Fichier\Exception\FichierServiceException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\FichierThese\Exception\DepotImpossibleException;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;
@@ -171,7 +172,11 @@ class FichierTheseController extends AbstractController
         }
 
         // injection préalable du contenu du fichier pour pouvoir utiliser le plugin Uploader
-        $contenuFichier = $this->fichierService->fetchContenuFichier($fichier);
+        try {
+            $contenuFichier = $this->fichierService->fetchContenuFichier($fichier);
+        } catch (FichierServiceException $e) {
+            throw new RuntimeException("Impossible d'obtenir le contenu du fichier", null, $e);
+        }
         $fichier->setContenuFichierData($contenuFichier);
 
         // Envoi du fichier au client (navigateur)

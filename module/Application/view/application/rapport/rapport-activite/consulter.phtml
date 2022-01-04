@@ -31,6 +31,10 @@ $privilege_VALIDER_TOUT = RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT;
 $privilege_VALIDER_SIEN = RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN;
 $privilege_DEVALIDER_TOUT = RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT;
 $privilege_DEVALIDER_SIEN = RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN;
+$privilege_AJOUTER_AVIS_TOUT = RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT;
+$privilege_AJOUTER_AVIS_SIEN = RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN;
+$privilege_SUPPRIMER_AVIS_TOUT = RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT;
+$privilege_SUPPRIMER_AVIS_SIEN = RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN;
 
 $form->prepare();
 $rapportProto = (new Rapport())->setThese($these);
@@ -75,7 +79,7 @@ if (!$isTeleversementPossible) {
 </ul>
 
 <div class="row">
-    <div class="col-md-11">
+    <div class="col-md-12">
 
         <h2>Rapports téléversés</h2>
 
@@ -95,6 +99,10 @@ if (!$isTeleversementPossible) {
                 'privilege_VALIDER_SIEN' => $privilege_VALIDER_SIEN,
                 'privilege_DEVALIDER_TOUT' => $privilege_DEVALIDER_TOUT,
                 'privilege_DEVALIDER_SIEN' => $privilege_DEVALIDER_SIEN,
+                'privilege_AJOUTER_AVIS_TOUT' => $privilege_AJOUTER_AVIS_TOUT,
+                'privilege_AJOUTER_AVIS_SIEN' => $privilege_AJOUTER_AVIS_SIEN,
+                'privilege_SUPPRIMER_AVIS_TOUT' => $privilege_SUPPRIMER_AVIS_TOUT,
+                'privilege_SUPPRIMER_AVIS_SIEN' => $privilege_SUPPRIMER_AVIS_SIEN,
                 'displayEtablissement' => false,
                 'displayType' => true,
                 'displayDoctorant' => false,
@@ -102,6 +110,7 @@ if (!$isTeleversementPossible) {
                 'displayEcoleDoctorale' => false,
                 'displayUniteRecherche' => false,
                 'displayValidation' => true,
+                'displayAvis' => true,
             ]) ?>
 
         <?php else: ?>

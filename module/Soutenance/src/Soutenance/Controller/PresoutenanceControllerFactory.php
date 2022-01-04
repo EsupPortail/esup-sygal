@@ -16,6 +16,7 @@ use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
 use Soutenance\Service\Evenement\EvenementService;
+use Soutenance\Service\Justificatif\JustificatifService;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
 use Soutenance\Service\Parametre\ParametreService;
@@ -52,6 +53,7 @@ class PresoutenanceControllerFactory
          * @var StructureDocumentService $structureDocumentService
          * @var TokenService $tokenService
          * @var SourceService $sourceService
+         * @var JustificatifService $justificatifService
          */
         $evenementService = $container->get(EvenementService::class);
         $propositionService = $container->get(PropositionService::class);
@@ -71,6 +73,7 @@ class PresoutenanceControllerFactory
         $structureDocumentService = $container->get(StructureDocumentService::class);
         $tokenService = $container->get(TokenService::class);
         $sourceService = $container->get(SourceService::class);
+        $justificatifService = $container->get(JustificatifService::class);
 
         /**
          * @var DateRenduRapportForm $dateRenduRapportForm
@@ -102,6 +105,7 @@ class PresoutenanceControllerFactory
         $controller->setFichierService($fichierService);
         $controller->setStructureDocumentService($structureDocumentService);
         $controller->setTokenService($tokenService);
+        $controller->setJustificatifService($justificatifService);
 
         $controller->setDateRenduRapportForm($dateRenduRapportForm);
         $controller->setAdresseSoutenanceForm($adresseSoutenanceForm);

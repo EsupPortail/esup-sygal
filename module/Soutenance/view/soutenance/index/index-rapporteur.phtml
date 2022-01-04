@@ -228,9 +228,16 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
                 </div>
             </div>
             <?php else : ?>
-                Afin de valider la soutenance de thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>, vous devez rendre votre
-                avis de soutenance et votre prérapport de soutenance.
-
+                <p>
+                    Afin de valider la soutenance de thèse de <?php echo $these->getDoctorant()->getIndividu(); ?>, vous devez rendre votre
+                    avis de soutenance et votre prérapport de soutenance.
+                </p>
+                <p>
+                    <span <?php if ((new DateTime()) > $proposition->getRenduRapport()) echo 'style="color:darkred;"'; ?> >
+                        <span class="glyphicon glyphicon-warning-sign"></span>
+                        Attention, la date limite de rendu des pré-rapports est le <strong><?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?></strong>.
+                    </span>
+                </p>
             <?php if ($canAnnuler) : ?>
             <div>
                 <a

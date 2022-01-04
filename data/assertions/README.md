@@ -84,7 +84,7 @@ concerné : le prédicat `isRoleDoctorantSelected` est testé en 1er, puis `isUt
 Voici le PHP que ces 2 lignes généreraient dans la classe d'assertion :
 
  ```php
-if ($privilege === \Application\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT) {
+if ($privilege === \Doctorant\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT) {
         //--------------------------------------------------------------------------------------
             /* line 10 */
             $this->linesTrace[] = '/* line 10 */';

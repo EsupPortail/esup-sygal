@@ -3,7 +3,7 @@
 namespace Application\Assertion\These;
 
 use Application\Assertion\ControllerAssertion;
-use Application\Entity\Db\Doctorant;
+use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\These;
 use Application\Service\UserContextServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
@@ -71,7 +71,7 @@ class TheseControllerAssertion extends ControllerAssertion
         }
 
         switch (true) {
-            case $this->actionIs(self::DOCTORANT_CONTROLLER, 'modifier-persopass'):
+            case $this->actionIs(self::DOCTORANT_CONTROLLER, 'modifier-email-contact'):
                 return $this->doctorant && $this->doctorant->getId() === $identityDoctorant->getId();
                 break;
         }

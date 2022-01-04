@@ -33,7 +33,7 @@ class ValidationController extends AbstractController
     use VariableServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
 
-    public function pageDeCouvertureAction()
+    public function pageDeCouvertureAction(): ViewModel
     {
         $these = $this->requestedThese();
         $result = $this->confirm()->execute();
@@ -41,23 +41,16 @@ class ValidationController extends AbstractController
 
         // si un tableau est retourné par le plugin, l'opération a été confirmée
         if (is_array($result)) {
-            $notification = new ValidationPageDeCouvertureNotification();
-            $notification->setThese($these);
-            $notification->setAction($action);
-
             if ($action === 'valider') {
                 $this->validationService->validatePageDeCouverture($these);
                 $successMessage = "Validation de la page de couverture enregistrée avec succès.";
 
                 // notification
-                $this->notifierService->trigger($notification);
+                $this->notifierService->triggerValidationPageDeCouvertureNotification($these, $action);
             }
             elseif ($action === 'devalider') {
                 $this->validationService->unvalidatePageDeCouverture($these);
                 $successMessage ="Validation de la page de couverture annulée avec succès.";
-
-                // notification
-//                $this->notifierService->trigger($notification);
             }
             else {
                 throw new RuntimeException("Action inattendue!");

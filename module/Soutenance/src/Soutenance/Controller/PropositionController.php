@@ -6,7 +6,6 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
@@ -474,33 +473,6 @@ class PropositionController extends AbstractController
         ]);
         $exporter->export('Document_pour_signature_-_'.$these->getId().'_-_'.str_replace(' ','_',$these->getDoctorant()->getIndividu()->getNomComplet()).'.pdf');
         exit;
-    }
-
-    public function avancementAction()
-    {
-        $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
-
-        $directeurs = $this->getActeurService()->getRepository()->findEncadrementThese($these);
-
-        /** @var Membre[] $rapporteurs */
-        $rapporteurs = ($proposition) ? $proposition->getRapporteurs() : [];
-
-        /** Justificatifs attendus ---------------------------------------------------------------------------------- */
-        $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition);
-
-        $validationPDC = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
-
-        return new ViewModel([
-            'these' => $these,
-            'proposition' => $proposition,
-            'jury' => $this->getPropositionService()->juryOk($proposition),
-            'justificatif' => $this->getJustificatifService()->isJustificatifsOk($proposition, $justificatifs),
-            'validations' => ($proposition) ? $this->getPropositionService()->getValidationSoutenance($these) : [],
-            'directeurs' => $directeurs,
-            'rapporteurs' => $rapporteurs,
-            'validationPDC' => $validationPDC,
-        ]);
     }
 
     public function toggleSursisAction()

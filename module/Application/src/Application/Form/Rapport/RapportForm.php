@@ -17,6 +17,7 @@ use Laminas\Validator\File\Extension;
 use Laminas\Validator\File\MimeType;
 use Laminas\Validator\File\Size;
 use Laminas\Validator\File\UploadFile;
+use Laminas\Validator\InArray;
 use Laminas\Validator\NotEmpty;
 
 abstract class RapportForm extends Form implements InputFilterProviderInterface
@@ -35,6 +36,20 @@ abstract class RapportForm extends Form implements InputFilterProviderInterface
         $this->anneesUnivs = $anneesUnivs;
 
         return $this;
+    }
+
+    protected function getAnneesUnivsAsOptions(): array
+    {
+        $anneesUnivs = [];
+        foreach ($this->anneesUnivs as $anneeUniv) {
+            if ($anneeUniv instanceof TheseAnneeUniv) {
+                $anneesUnivs[$anneeUniv->getAnneeUniv()] = $anneeUniv->getAnneeUnivToString();
+            } elseif ($anneeUniv instanceof AnneeUniv) {
+                $anneesUnivs[$anneeUniv->getPremiereAnnee()] = (string) $anneeUniv;
+            }
+        }
+
+        return $anneesUnivs;
     }
 
     /**
@@ -104,14 +119,8 @@ abstract class RapportForm extends Form implements InputFilterProviderInterface
 
     protected function prepareAnneeUnivSelect()
     {
-        $anneesUnivs = [];
-        foreach ($this->anneesUnivs as $anneeUniv) {
-            if ($anneeUniv instanceof TheseAnneeUniv) {
-                $anneesUnivs[$anneeUniv->getAnneeUniv()] = $anneeUniv->getAnneeUnivToString();
-            } elseif ($anneeUniv instanceof AnneeUniv) {
-                $anneesUnivs[$anneeUniv->getPremiereAnnee()] = (string) $anneeUniv;
-            }
-        }
+        $anneesUnivs = $this->getAnneesUnivsAsOptions();
+
         /** @var Select $anneeUnivSelect */
         $anneeUnivSelect = $this->get('anneeUniv');
         $anneeUnivSelect->setValueOptions($anneesUnivs);
@@ -141,6 +150,15 @@ abstract class RapportForm extends Form implements InputFilterProviderInterface
                         'options' => [
                             'messages' => [
                                 NotEmpty::IS_EMPTY => "Veuillez indiquer l'année universitaire concernée.",
+                            ],
+                        ],
+                    ],
+                    [
+                        'name' => InArray::class,
+                        'options' => [
+                            'haystack' => array_keys($this->getAnneesUnivsAsOptions()),
+                            'messages' => [
+                                InArray::NOT_IN_ARRAY => "L'année universitaire n'est pas dans la liste proposée.",
                             ],
                         ],
                     ],

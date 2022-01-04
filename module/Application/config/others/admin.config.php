@@ -73,6 +73,7 @@ return [
                     'action'     => [
                         'index',
                         'envoie',
+                        'envoye',
                         'reception',
                         'swap',
                         'remove'
@@ -83,6 +84,7 @@ return [
                     'controller' => MailConfirmationController::class,
                     'action'     => [
                         'envoie',
+                        'envoye',
                         'reception',
                     ],
                     'privileges' => ThesePrivileges::THESE_CONSULTATION_FICHE,
@@ -176,7 +178,6 @@ return [
                     ],
                 ],
             ],
-
             'mail-confirmation-envoie' => [
                 'type' => Segment::class,
                 'options' => [
@@ -184,6 +185,16 @@ return [
                     'defaults' =>[
                         'controller' => MailConfirmationController::class,
                         'action' => 'envoie',
+                    ],
+                ],
+            ],
+            'mail-confirmation-envoye' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/mail-confirmation-envoye/:id',
+                    'defaults' =>[
+                        'controller' => MailConfirmationController::class,
+                        'action' => 'envoye',
                     ],
                 ],
             ],

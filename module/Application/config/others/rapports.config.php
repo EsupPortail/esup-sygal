@@ -5,6 +5,7 @@ namespace Application;
 use Application\Assertion\Rapport\RapportAssertion;
 use Application\Controller\Factory\Rapport\RapportActiviteControllerFactory;
 use Application\Controller\Factory\Rapport\RapportActiviteRechercheControllerFactory;
+use Application\Controller\Factory\Rapport\RapportAvisControllerFactory;
 use Application\Controller\Factory\Rapport\RapportCsiControllerFactory;
 use Application\Controller\Factory\Rapport\RapportCsiRechercheControllerFactory;
 use Application\Controller\Factory\Rapport\RapportMiparcoursControllerFactory;
@@ -12,19 +13,24 @@ use Application\Controller\Factory\Rapport\RapportMiparcoursRechercheControllerF
 use Application\Controller\Factory\Rapport\RapportValidationControllerFactory;
 use Application\Controller\Rapport\RapportActiviteController;
 use Application\Controller\Rapport\RapportActiviteRechercheController;
+use Application\Controller\Rapport\RapportAvisController;
 use Application\Controller\Rapport\RapportCsiController;
 use Application\Controller\Rapport\RapportCsiRechercheController;
 use Application\Controller\Rapport\RapportMiparcoursController;
 use Application\Controller\Rapport\RapportMiparcoursRechercheController;
 use Application\Controller\Rapport\RapportValidationController;
 use Application\Form\Factory\RapportActiviteFormFactory;
+use Application\Form\Factory\RapportAvisFormFactory;
 use Application\Form\Factory\RapportCsiFormFactory;
 use Application\Form\Factory\RapportMiparcoursFormFactory;
+use Application\Form\Rapport\RapportAvisForm;
 use Application\Form\RapportActiviteForm;
 use Application\Form\RapportCsiForm;
 use Application\Form\RapportMiparcoursForm;
 use Application\Provider\Privilege\RapportPrivileges;
 use Application\Search\Controller\SearchControllerPluginFactory;
+use Application\Service\Rapport\Avis\RapportAvisService;
+use Application\Service\Rapport\Avis\RapportAvisServiceFactory;
 use Application\Service\Rapport\RapportSearchService;
 use Application\Service\Rapport\RapportSearchServiceFactory;
 use Application\Service\Rapport\RapportService;
@@ -59,6 +65,10 @@ return [
                             RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN,
                             RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT,
                             RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN,
+                            RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT,
+                            RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN,
+                            RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT,
+                            RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN,
 
                             RapportPrivileges::RAPPORT_CSI_LISTER_TOUT,
                             RapportPrivileges::RAPPORT_CSI_LISTER_SIEN,
@@ -172,6 +182,29 @@ return [
                     'privileges' => [
                         RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT,
                         RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN,
+                    ],
+                    'assertion' => 'Assertion\\Rapport',
+                ],
+                [
+                    'controller' => RapportAvisController::class,
+                    'action'     => [
+                        'ajouter',
+                        'modifier',
+                    ],
+                    'privileges' => [
+                        RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT,
+                        RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN,
+                    ],
+                    'assertion' => 'Assertion\\Rapport',
+                ],
+                [
+                    'controller' => RapportAvisController::class,
+                    'action'     => [
+                        'supprimer',
+                    ],
+                    'privileges' => [
+                        RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT,
+                        RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN,
                     ],
                     'assertion' => 'Assertion\\Rapport',
                 ],
@@ -437,6 +470,57 @@ return [
                                 'controller' => RapportValidationController::class,
                                 'action' => 'devalider',
                                 /* @see RapportValidationController::devaliderAction() */
+                            ],
+                        ],
+                    ],
+                    'avis' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route' => '/avis',
+                            'defaults' => [
+                                'controller' => RapportAvisController::class,
+                            ],
+                        ],
+                        'may_terminate' => false,
+                        'child_routes' => [
+                            'ajouter' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route' => '/ajouter/:rapport',
+                                    'constraints' => [
+                                        'rapport' => '\d+',
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'ajouter',
+                                        /* @see RapportAvisController::ajouterAction() */
+                                    ],
+                                ],
+                            ],
+                            'modifier' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route' => '/modifier/:rapportAvis',
+                                    'constraints' => [
+                                        'rapportAvis' => '\d+',
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'modifier',
+                                        /* @see RapportAvisController::modifierAction() */
+                                    ],
+                                ],
+                            ],
+                            'supprimer' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route' => '/supprimer/:rapportAvis',
+                                    'constraints' => [
+                                        'rapportAvis' => '\d+',
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'supprimer',
+                                        /* @see RapportAvisController::supprimerAction() */
+                                    ],
+                                ],
                             ],
                         ],
                     ],
@@ -718,6 +802,7 @@ return [
             RapportService::class => RapportServiceFactory::class,
             RapportSearchService::class => RapportSearchServiceFactory::class,
             RapportValidationService::class => RapportValidationServiceFactory::class,
+            RapportAvisService::class => RapportAvisServiceFactory::class,
         ],
     ],
     'controllers' => [
@@ -728,7 +813,8 @@ return [
             RapportCsiRechercheController::class => RapportCsiRechercheControllerFactory::class,
             RapportMiparcoursController::class => RapportMiparcoursControllerFactory::class,
             RapportMiparcoursRechercheController::class => RapportMiparcoursRechercheControllerFactory::class,
-            RapportValidationController::class => RapportValidationControllerFactory::class
+            RapportValidationController::class => RapportValidationControllerFactory::class,
+            RapportAvisController::class => RapportAvisControllerFactory::class,
         ],
     ],
     'controller_plugins' => [
@@ -741,6 +827,7 @@ return [
             RapportActiviteForm::class => RapportActiviteFormFactory::class,
             RapportCsiForm::class => RapportCsiFormFactory::class,
             RapportMiparcoursForm::class => RapportMiparcoursFormFactory::class,
+            RapportAvisForm::class => RapportAvisFormFactory::class,
         ],
     ],
 ];

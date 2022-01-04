@@ -33,7 +33,6 @@ class FichierTheseServiceFactory
          * @var RetraitementService $retraitementService
          * @var EtablissementService $etablissementService
          * @var NotifierService $notifierService
-         * @var PageDeCouverturePdfExporter $pdcPdfExporter
          */
         $fichierService = $container->get(FichierService::class);
         $fileService = $container->get(FileService::class);
@@ -42,7 +41,7 @@ class FichierTheseServiceFactory
         $retraitementService = $container->get('RetraitementService');
         $etablissementService = $container->get('EtablissementService');
         $notifierService = $container->get(NotifierService::class);
-        $pdcPdfExporter = $container->get(PageDeCouverturePdfExporter::class);
+        $pdcPdfExporter = $this->createPageDeCouverturePdfExporter($container);
 
         $service = new FichierTheseService();
 
@@ -57,6 +56,24 @@ class FichierTheseServiceFactory
         $service->setPageDeCouverturePdfExporter($pdcPdfExporter);
 
         return $service;
+    }
+
+    private function createPageDeCouverturePdfExporter(ContainerInterface $container): PageDeCouverturePdfExporter
+    {
+        $config = $container->get('Config');
+
+        $pdcConfig = $config['sygal']['page_de_couverture'];
+        $templateConfig = $pdcConfig['template'];
+        $templateFilePath = $templateConfig['phtml_file_path'];
+        $cssFilePath = $templateConfig['css_file_path'];
+
+        /** @var PageDeCouverturePdfExporter $pdcPdfExporter */
+        $pdcPdfExporter = $container->get(PageDeCouverturePdfExporter::class);
+        $pdcPdfExporter
+            ->setTemplateFilePath($templateFilePath)
+            ->setCssFilePath($cssFilePath);
+
+        return $pdcPdfExporter;
     }
 
     private function createFichierCinesValidator(ContainerInterface $container): FichierCinesValidator

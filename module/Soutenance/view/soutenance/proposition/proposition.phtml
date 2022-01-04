@@ -2,13 +2,14 @@
 
 use Application\Controller\Plugin\UrlFichierThese;
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\Doctorant;
+use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Privilege\JustificatifPrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 
 /**
@@ -35,9 +36,8 @@ use Soutenance\Provider\Privilege\PropositionPrivileges;
  * @var $FORMULAIRE_DEMANDE_CONFIDENTIALITE
  */
 
-$a = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER);
-$b = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION);
 $canModifier = ($this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER) OR $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION));
+$canModifierJustificatif = ($this->isAllowed($these, JustificatifPrivileges::JUSTIFICATIF_AJOUTER));
 
 $this->headTitle("Proposition de soutenance");
 ?>
@@ -90,7 +90,7 @@ $this->headTitle("Proposition de soutenance");
 <div id="JUSTIFICATIF"></div>
 <?php echo $this->partial('partial/fichiers', [
         'proposition' => $proposition,
-        'canModifier' => $canModifier,
+        'canModifier' => $canModifierJustificatif,
         'justificatifs' => $justificatifs,
         'justificatifsOk' => $justificatifsOk,
         'urlFichierThese' => $urlFichierThese,
@@ -100,7 +100,7 @@ $this->headTitle("Proposition de soutenance");
 
 <div id="VALIDATION"></div>
 <?php
-    $canValiderActeur = $isOk && $justificatifsOk && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR);
+    $canValiderActeur = $isOk && ($justificatifsOk !== false) && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR);
     $canSursis = $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_SURSIS));
 
     echo $this->partial('partial/validations-acteurs', [
@@ -175,7 +175,6 @@ $this->headTitle("Proposition de soutenance");
                         },
                     success:
                         function(retour){
-                            let texte = "ok";
                             $("div#BOXDIV_DATE_LIEU").html(retour);
                         }
                 });

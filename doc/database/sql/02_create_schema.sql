@@ -748,7 +748,9 @@ CREATE TABLE public.import_log (
     success boolean NOT NULL,
     log text NOT NULL,
     started_on timestamp without time zone NOT NULL,
-    ended_on timestamp without time zone NOT NULL
+    ended_on timestamp without time zone NOT NULL,
+    import_hash character varying(64),
+    id bigint NOT NULL
 );
 
 

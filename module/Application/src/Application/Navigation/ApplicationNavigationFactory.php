@@ -2,7 +2,7 @@
 
 namespace Application\Navigation;
 
-use Application\Entity\Db\Doctorant;
+use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
@@ -23,6 +23,8 @@ class ApplicationNavigationFactory extends NavigationFactory
     use UserContextServiceAwareTrait;
     use TheseServiceAwareTrait;
 
+    const THESE_SELECTIONNEE_PAGE_ID = 'THESE_SELECTIONNEE';
+    const MES_DONNEES_PAGE_ID = 'MES_DONNEES';
     const MA_THESE_PAGE_ID = 'MA_THESE';
     const MES_THESES_PAGE_ID = 'MES_THESES';
     const NOS_THESES_PAGE_ID = 'NOS_THESES';
@@ -41,6 +43,11 @@ class ApplicationNavigationFactory extends NavigationFactory
      * @var Individu|null
      */
     private $individu;
+
+    /**
+     * @var bool
+     */
+    private $pageMaTheseCreated = false;
 
     /**
      * @inheritDoc
@@ -96,16 +103,32 @@ class ApplicationNavigationFactory extends NavigationFactory
     protected function handleDynamicPage(array &$page)
     {
         /**
+         * Mes données
+         */
+        // Rôle Doctorant : génération d'une page "Mes données"
+        if ($protoPage = $page['pages'][$key = self::MES_DONNEES_PAGE_ID] ?? null) {
+            if ($this->doctorant !== null) {
+                $this->setParamInPage($page, 'doctorant', $this->doctorant->getId());
+                $page['visible'] = true;
+            } else {
+                unset($page['pages'][$key]);
+            }
+        }
+
+        /**
          * Ma thèse
          */
         // Rôle Doctorant : génération d'une page "Ma thèse" pour chaque thèse du doctorant
         if ($protoPage = $page['pages'][$key = self::MA_THESE_PAGE_ID] ?? null) {
             if ($this->doctorant !== null) {
-                $theses = $this->theseService->getRepository()->findThesesByDoctorant($this->doctorant, [These::ETAT_EN_COURS]);
+                $theses = $this->theseService->getRepository()->findThesesByDoctorant($this->doctorant, [These::ETAT_EN_COURS, These::ETAT_SOUTENUE]);
                 /////////////////////////////////// LOUVRY Isabelle 33383 : 2 thèses E et S
                 $newPages = $this->createPagesMaThese($protoPage, $theses);
                 $page['pages'] = array_merge($page['pages'], $newPages);
                 $page['visible'] = true;
+
+                // si une page 'Ma thèse' est présente, la page 'Thèse sélectionnée' qui fait doublon sera supprimée
+                $this->pageMaTheseCreated = true;
             }
             unset($page['pages'][$key]);
         }
@@ -133,6 +156,16 @@ class ApplicationNavigationFactory extends NavigationFactory
                 $newPages = $this->createPageNosTheses($protoPage, $this->role);
                 $page['pages'][$key]['pages'] = $newPages;
             } else {
+                unset($page['pages'][$key]);
+            }
+        }
+
+        /**
+         * Thèse sélectionnée
+         */
+        if ($page['pages'][$key = self::THESE_SELECTIONNEE_PAGE_ID] ?? null) {
+            if ($this->pageMaTheseCreated) {
+                // si une page 'Ma thèse' est présente, la page 'Thèse sélectionnée' qui fait doublon est supprimée
                 unset($page['pages'][$key]);
             }
         }

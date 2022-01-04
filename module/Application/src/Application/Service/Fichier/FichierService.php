@@ -8,6 +8,7 @@ use Application\Entity\Db\VersionFichier;
 use Application\Filter\AbstractNomFichierFormatter;
 use Application\Filter\NomFichierFormatter;
 use Application\Service\BaseService;
+use Application\Service\Fichier\Exception\FichierServiceException;
 use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Application\Service\ValiditeFichier\ValiditeFichierServiceAwareTrait;
@@ -177,7 +178,7 @@ class FichierService extends BaseService
      *
      * @param Fichier[] $fichiers
      */
-    public function supprimerFichiers(array $fichiers)
+    public function supprimerFichiers(array $fichiers, bool $throwExceptionOnFileError = false)
     {
         $filePaths = [];
         $this->entityManager->beginTransaction();
@@ -202,12 +203,12 @@ class FichierService extends BaseService
         // suppression des fichiers physiques sur le disque
         $notDeletedFiles = [];
         foreach ($filePaths as $filePath) {
-            $success = unlink($filePath);
+            $success = file_exists($filePath) && unlink($filePath);
             if ($success === false) {
                 $notDeletedFiles[] = $filePath;
             }
         }
-        if ($notDeletedFiles) {
+        if ($throwExceptionOnFileError && $notDeletedFiles) {
             throw new RuntimeException(
                 "Les fichiers suivants n'ont pas pu être supprimés sur le disque : " . implode(', ', $notDeletedFiles));
         }
@@ -218,19 +219,18 @@ class FichierService extends BaseService
      *
      * @param Fichier $fichier
      * @return string
+     * @throws \Application\Service\Fichier\Exception\FichierServiceException
      */
-    public function fetchContenuFichier(Fichier $fichier)
+    public function fetchContenuFichier(Fichier $fichier): string
     {
         $filePath = $this->computeDestinationFilePathForFichier($fichier);
 
         if (!is_readable($filePath)) {
-            throw new RuntimeException(
+            throw new FichierServiceException(
                 "Le fichier suivant n'existe pas ou n'est pas accessible sur le serveur : " . $filePath);
         }
 
-        $contenuFichier = file_get_contents($filePath);
-
-        return $contenuFichier;
+        return file_get_contents($filePath);
     }
 
     /**

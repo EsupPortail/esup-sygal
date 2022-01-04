@@ -4,7 +4,6 @@ namespace Application;
 
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Filter\ActeursFormatter;
 use Application\Filter\IdifyFilter;
@@ -30,6 +29,10 @@ use Application\View\Renderer\PhpRenderer;
  * @var string $privilege_VALIDER_SIEN
  * @var string $privilege_DEVALIDER_TOUT
  * @var string $privilege_DEVALIDER_SIEN
+ * @var string $privilege_AJOUTER_AVIS_TOUT
+ * @var string $privilege_AJOUTER_AVIS_SIEN
+ * @var string $privilege_SUPPRIMER_AVIS_TOUT
+ * @var string $privilege_SUPPRIMER_AVIS_SIEN
  *
  * @var bool $displayEtablissement
  * @var bool $displayType
@@ -38,6 +41,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var bool $displayEcoleDoctorale
  * @var bool $displayUniteRecherche
  * @var bool $displayValidation
+ * @var bool $displayAvis
  *
  * @var string $returnUrl
  *
@@ -123,6 +127,15 @@ $acteursFormatterCodirecteurs->asSeparated()
             Document
         </th>
 
+        <?php if ($displayAvis): ?>
+            <th>
+                <a href="<?php echo $s = $this->sortable(RapportSearchService::NAME_avis); ?>"
+                   title="<?php echo $this->translate("Avis"); ?>">
+                    <?php echo $this->translate("Avis"); ?>
+                </a> <?php echo $s->icon() ?>
+            </th>
+        <?php endif ?>
+
         <?php if ($displayValidation): ?>
         <th>
             <a href="<?php echo $s = $this->sortable(RapportSearchService::NAME_validation); ?>"
@@ -142,6 +155,7 @@ $acteursFormatterCodirecteurs->asSeparated()
             <?php
             $these = $rapport->getThese();
             $rapportValidation = $rapport->getRapportValidation();
+            $rapportAvis = $rapport->getRapportAvis();
             $classRapport = $rapportValidation !== null ? 'valide' : '';
             $canDel = $this->isAllowed($rapport, $privilege_SUPPRIMER_TOUT) || $this->isAllowed($rapport, $privilege_SUPPRIMER_SIEN);
             $canDl = $this->isAllowed($rapport, $privilege_TELECHARGER_TOUT) || $this->isAllowed($rapport, $privilege_TELECHARGER_SIEN);
@@ -162,7 +176,7 @@ $acteursFormatterCodirecteurs->asSeparated()
             <?php endif ?>
 
             <td>
-                <?php echo $rapport->getAnneeUnivToString() ?>
+                <?php echo $rapport->getAnneeUniv() ?>
             </td>
 
             <?php if ($displayDoctorant): ?>
@@ -225,12 +239,49 @@ $acteursFormatterCodirecteurs->asSeparated()
                 <?php endif; ?>
             </td>
 
+            <?php if ($displayAvis): ?>
+                <td>
+                    <?php
+                    $returnUrl = $returnUrl ?: $this->url($routeName . '/consulter', ['these' => $these->getId()]);
+                    $canAjouterAvis = $this->isAllowed($rapport, $privilege_AJOUTER_AVIS_TOUT) || $this->isAllowed($rapport, $privilege_AJOUTER_AVIS_SIEN);
+                    $canModifierAvis = $canAjouterAvis;
+                    ?>
+                    <?php if ($rapportAvis !== null): ?>
+                        <p>
+                            <span class="fas fa-thumbs-<?php echo $rapportAvis->getAvisAsBoolean() ? 'up' :'down' ?>"></span>
+                            <abbr title="Commentaires : <?php echo $rapportAvis->getCommentaires() ?>"><strong><?php echo $rapportAvis->getAvis() ?></strong></abbr> <br>
+                            <span class="text-sm"><?php echo $rapportAvis->getHistoModificateur() ?: $rapportAvis->getHistoCreateur() ?><br>
+                            <?php echo ($rapportAvis->getHistoModification() ?: $rapportAvis->getHistoCreation())->format('d/m/Y H:i') ?></span>
+                        </p>
+                        <?php $canSupprimerAvis = $this->isAllowed($rapport, $privilege_SUPPRIMER_AVIS_TOUT) || $this->isAllowed($rapport, $privilege_SUPPRIMER_AVIS_SIEN) ?>
+                        <?php if ($canModifierAvis): ?>
+                            <a href="<?php echo $this->url($routeName . '/avis/modifier', ['rapportAvis' => $rapportAvis->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
+                               class="btn btn-warning"
+                               title="Modifier cet avis ?"
+                               data-toggle="confirmation">Modifier l'avis</span></a>
+                        <?php endif ?>
+                        <?php if ($canSupprimerAvis): ?>
+                            <a href="<?php echo $this->url($routeName . '/avis/supprimer', ['rapportAvis' => $rapportAvis->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
+                               class="btn btn-danger"
+                               title="Supprimer cet avis ?"
+                               data-toggle="confirmation">Supprimer l'avis</span></a>
+                        <?php endif ?>
+                    <?php else: ?>
+                        <?php if ($canAjouterAvis): ?>
+                            <p>Aucun</p>
+                            <a href="<?php echo $this->url($routeName . '/avis/ajouter', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
+                               class="btn btn-secondary">Nouvel avis</span></a>
+                        <?php endif ?>
+                    <?php endif ?>
+                </td>
+            <?php endif; ?>
+
             <?php if ($displayValidation): ?>
             <td class="<?php echo $classRapport ?>">
                 <?php $returnUrl = $returnUrl ?: $this->url($routeName . '/consulter', ['these' => $these->getId()]) ?>
                 <?php if ($rapportValidation !== null): ?>
                     <p>
-                        <span class="fas fa-thumbs-up"></span> <strong>Validé</strong> <br>
+                        <span class="icon icon-ok"></span> <strong>Validé</strong> <br>
                         <span class="text-sm"><?php echo $rapportValidation->getHistoCreateur() ?><br>
                             <?php echo $rapportValidation->getHistoCreation()->format('d/m/Y H:i') ?></span>
                     </p>

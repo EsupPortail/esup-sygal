@@ -5,7 +5,7 @@ namespace Application\Assertion\These;
 use Application\Assertion\Exception\FailedAssertionException;
 use Application\Assertion\Interfaces\EntityAssertionInterface;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
-use Application\Entity\Db\Doctorant;
+use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;

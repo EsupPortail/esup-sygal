@@ -2,7 +2,7 @@
 
 namespace Application\QueryBuilder;
 
-use Application\Entity\Db\Doctorant;
+use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\These;
 use Application\QueryBuilder\Expr\AndWhereDoctorantIs;
 use Doctrine\ORM\Query\Expr\Join;

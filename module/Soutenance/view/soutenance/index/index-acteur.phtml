@@ -85,17 +85,17 @@ $canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceI
                 Voir les validations <span class="caret"></span>
             </button>
             <div class="dropdown-menu">
-                <?php foreach($theses as $theseLink) : ?>
-                        <a
-                            class="dropdown-item complete"
-                            <?php /** @see \Soutenance\Controller\PropositionController::avancementAction() */ ?>
-                            href="<?php echo $this->url('soutenance/avancement', ['these' => $theseLink->getId()], [], true); ?>">
-                            <span class="badge bg-secondary"><?php echo $theseLink->getDoctorant(); ?></span>
-                            <?php
-                            echo $this->partial('application/these/partial/titre', ['these' => $theseLink, 'useTitreThese' => true, 'length' => 120, 'description' => false])
-                            ?>
-                        </a>
-                <?php endforeach; ?>
+<!--                --><?php //foreach($theses as $theseLink) : ?>
+<!--                        <a-->
+<!--                            class="dropdown-item complete"-->
+<!--                            --><?php ///** @see \Soutenance\Controller\PropositionController::avancementAction() */ ?>
+<!--                            href="--><?php //echo $this->url('soutenance/avancement', ['these' => $theseLink->getId()], [], true); ?><!--">-->
+<!--                            <span class="badge bg-secondary">--><?php //echo $theseLink->getDoctorant(); ?><!--</span>-->
+<!--                            --><?php
+//                            echo $this->partial('application/these/partial/titre', ['these' => $theseLink, 'useTitreThese' => true, 'length' => 120, 'description' => false])
+//                            ?>
+<!--                        </a>-->
+<!--                --><?php //endforeach; ?>
             </div>
         </div>
     <?php endif; ?>

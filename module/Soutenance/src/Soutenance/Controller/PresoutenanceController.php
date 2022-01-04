@@ -20,7 +20,6 @@ use Application\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
-use Doctrine\ORM\OptimisticLockException;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Evenement;
@@ -33,16 +32,17 @@ use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Exporter\AvisSoutenance\AvisSoutenancePdfExporter;
 use Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter;
 use Soutenance\Service\Exporter\ProcesVerbal\ProcesVerbalSoutenancePdfExporter;
+use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
-use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
 use UnicaenAuthToken\Service\TokenServiceException;
+use Laminas\Http\Response;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
@@ -66,6 +66,7 @@ class PresoutenanceController extends AbstractController
     use ParametreServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;
     use FichierServiceAwareTrait;
+    use JustificatifServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
     use TokenServiceAwareTrait;
     use SourceServiceAwareTrait;
@@ -73,7 +74,6 @@ class PresoutenanceController extends AbstractController
     use DateRenduRapportFormAwareTrait;
     use AdresseSoutenanceFormAwareTrait;
 
-    /** TODO rendererAwareTrait ??? */
     /** @var PhpRenderer */
     private $renderer;
 
@@ -95,6 +95,10 @@ class PresoutenanceController extends AbstractController
         $renduRapport = $proposition->getRenduRapport();
         if (!$renduRapport) $this->getPropositionService()->initialisationDateRetour($proposition);
 
+        /** Justificatifs attendus ---------------------------------------------------------------------------------- */
+        $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition);
+        $justificatifsOk = $this->getJustificatifService()->isJustificatifsOk($proposition, $justificatifs);
+
         /** ==> clef: Membre->getActeur()->getIndividu()->getId() <== */
         $engagements = $this->getEngagementImpartialiteService()->getEngagmentsImpartialiteByThese($these);
         $avis = $this->getAvisService()->getAvisByThese($these);
@@ -113,6 +117,8 @@ class PresoutenanceController extends AbstractController
             'urlFichierThese' => $this->urlFichierThese(),
             'validationBDD' => $validationBDD,
             'validationPDC' => $validationPDC,
+            'justificatifsOk' => $justificatifsOk,
+            'justificatifs' => $justificatifs,
 
             'evenementsEngagement' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_ENGAGEMENT),
             'evenementsPrerapport' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_PRERAPPORT),
@@ -153,7 +159,7 @@ class PresoutenanceController extends AbstractController
      * Puis on affecte les rôles rapporteurs et membres
      * QUID :: Président ...
      */
-    public function associerJuryAction()
+    public function associerJuryAction() : ViewModel
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
@@ -169,6 +175,7 @@ class PresoutenanceController extends AbstractController
          *  - qu'un Membre du jury     est Membre du jury.
          */
         $acteurs = $this->getActeurService()->getRepository()->findActeurByThese($these);
+        $acteurs = array_filter($acteurs, function (Acteur $a) { return $a->estNonHistorise();});
         switch ($membre->getRole()) {
             case Membre::RAPPORTEUR_JURY :
             case Membre::RAPPORTEUR_VISIO :
@@ -220,28 +227,21 @@ class PresoutenanceController extends AbstractController
             $membre->setActeur($acteur);
             $this->getMembreService()->update($membre);
             //creation de l'utilisateur
-            $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu);
-            $user = null;
-            if (empty($utilisateurs)) {
-                $user = $this->utilisateurService->createFromIndividu($individu, $this->generateUsername($membre), 'none');
-                $user->setEmail($membre->getEmail());
-                $this->userService->updateUserPasswordResetToken($user);
 
-            } else {
-                $user = $utilisateurs[0];
+            if ($membre->estRapporteur()) {
+                $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu);
+                $user = null;
+                if (empty($utilisateurs)) {
+                    $user = $this->utilisateurService->createFromIndividu($individu, $this->getMembreService()->generateUsername($membre), 'none');
+                    $user->setEmail($membre->getEmail());
+                    $this->userService->updateUserPasswordResetToken($user);
+                }
+
+                $token = $this->getMembreService()->retrieveOrCreateToken($membre);
+                $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
+                $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $acteur->getRole()->getRoleId()], 'force_canonical' => true], true);
+                $this->getNotifierSoutenanceService()->triggerConnexionRapporteur($proposition, $user, $url);
             }
-
-            $token = $this->tokenService->createUserToken($proposition->getDate());
-            $token->setUser($user);
-            try {
-                $this->tokenService->saveUserToken($token);
-            } catch (TokenServiceException $e) {
-                throw new RuntimeException("Un problème est survenu lors de la création du token", 0,$e);
-            }
-
-            $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
-            $url = $this->url()->fromRoute('zfcuser/login', ['type'=> 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $acteur->getRole()->getRoleId()], 'force_canonical' => true], true );
-            $this->getNotifierSoutenanceService()->triggerConnexionRapporteur($proposition, $user, $url);
         }
 
         return new ViewModel([
@@ -252,7 +252,7 @@ class PresoutenanceController extends AbstractController
         ]);
     }
 
-    public function deassocierJuryAction()
+    public function deassocierJuryAction() : Response
     {
         $these = $this->requestedThese();
         $membre = $this->getMembreService()->getRequestedMembre($this);
@@ -265,7 +265,7 @@ class PresoutenanceController extends AbstractController
         if (!$acteur) throw new RuntimeException("Aucun acteur à deassocier !");
 
         //retrait dans membre de soutenance
-        $username = $this->generateUsername($membre);
+        $username = $this->getMembreService()->generateUsername($membre);
         $membre->setActeur(null);
         $this->getMembreService()->update($membre);
 
@@ -284,7 +284,7 @@ class PresoutenanceController extends AbstractController
      * Envoi des demandes d'avis de soutenance
      * /!\ si un membre est fourni alors seulement envoyé à celui-ci sinon à tous les rapporteurs
      */
-    public function notifierDemandeAvisSoutenanceAction()
+    public function notifierDemandeAvisSoutenanceAction() : Response
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
@@ -299,20 +299,9 @@ class PresoutenanceController extends AbstractController
         }
 
         foreach ($rapporteurs as $rapporteur) {
-            $utilisateurs = $rapporteur->getActeur()->getIndividu()->getUtilisateurs();
-            $token = null;
-            foreach ($utilisateurs as $utilisateur) {
-                $token = $this->tokenService->findUserTokenByUserId($utilisateur->getId());
-                if (! $token->isExpired()) break;
-            }
-
-            if ($token !== null) {
-                $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
-                $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $rapporteur->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
-            } else {
-                $url = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
-            }
-
+            $token = $this->getMembreService()->retrieveOrCreateToken($rapporteur);
+            $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
+            $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $rapporteur->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
             $this->getNotifierSoutenanceService()->triggerDemandeAvisSoutenance($these, $proposition, $rapporteur, $url);
         }
 
@@ -320,17 +309,17 @@ class PresoutenanceController extends AbstractController
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
-    public function revoquerAvisSoutenanceAction()
+    public function revoquerAvisSoutenanceAction() : Response
     {
         $idAvis = $this->params()->fromRoute('avis');
         $avis = $this->getAvisService()->getAvis($idAvis);
 
         $this->getAvisService()->historiser($avis);
 
-        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $avis->getThese()->getId()], [], true);
+        return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $avis->getThese()->getId()], [], true);
     }
 
-    public function feuVertAction()
+    public function feuVertAction() : Response
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
@@ -346,10 +335,10 @@ class PresoutenanceController extends AbstractController
             //->setNamespace('presoutenance')
             ->addSuccessMessage("Notifications d'accord de soutenance envoyées");
 
-        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+        return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
-    public function stopperDemarcheAction()
+    public function stopperDemarcheAction() : Response
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
@@ -363,10 +352,10 @@ class PresoutenanceController extends AbstractController
             //->setNamespace('presoutenance')
             ->addSuccessMessage("Notifications d'arrêt des démarches de soutenance soutenance envoyées");
 
-        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+        return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
-    public function modifierAdresseAction()
+    public function modifierAdresseAction() : ViewModel
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
@@ -433,9 +422,8 @@ class PresoutenanceController extends AbstractController
      * @param Etablissement $etablissement
      * @return string
      */
-    private function getVille(Etablissement $etablissement)
+    private function getVille(Etablissement $etablissement) : string
     {
-        $ville = null;
         switch ($etablissement->getSigle()) {
             case "UCN" :
                 $ville = "Caen";
@@ -537,7 +525,7 @@ class PresoutenanceController extends AbstractController
         exit;
     }
 
-    public function envoyerConvocationAction()
+    public function envoyerConvocationAction() : Response
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
@@ -578,7 +566,7 @@ class PresoutenanceController extends AbstractController
                 $this->getNotifierSoutenanceService()->triggerEnvoiConvocationMembre($membre, $proposition, $dateValidation, $email, $url, $avisArray);
             }
         }
-        $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+        return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
     /** Route console ... */
@@ -594,20 +582,7 @@ class PresoutenanceController extends AbstractController
         exit();
     }
 
-    /**
-     * Fonction calculant le nom du rapporteur : NOMUSUEL_MEMBREID
-     * @param Membre $membre
-     * @return string
-     */
-    private function generateUsername(Membre $membre) : string
-    {
-        $acteur = $membre->getActeur();
-        if ($acteur === null) throw new LogicException("La génération du username est basée sur l'Individu qui est mamquant.");
-        $nomusuel = strtolower($acteur->getIndividu()->getNomUsuel());
-        return ($nomusuel . "_" . $membre->getId());
-    }
-
-    public function genererSimulationAction()
+    public function genererSimulationAction() : Response
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
@@ -675,7 +650,7 @@ class PresoutenanceController extends AbstractController
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
-    public function nettoyerSimulationAction()
+    public function nettoyerSimulationAction() : Response
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);

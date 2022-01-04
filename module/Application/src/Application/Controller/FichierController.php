@@ -6,6 +6,7 @@ use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
 use Application\Provider\Privilege\FichierPrivileges;
 use Application\RouteMatch;
+use Application\Service\Fichier\Exception\FichierServiceException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use BjyAuthorize\Exception\UnAuthorizedException;
@@ -91,7 +92,11 @@ class FichierController extends AbstractController
         $fichier = $this->requestFichier();
 
         // injection préalable du contenu du fichier pour pouvoir utiliser le plugin Uploader
-        $contenuFichier = $this->fichierService->fetchContenuFichier($fichier);
+        try {
+            $contenuFichier = $this->fichierService->fetchContenuFichier($fichier);
+        } catch (FichierServiceException $e) {
+            throw new RuntimeException("Impossible d'obtenir le contenu du fichier", null, $e);
+        }
         $fichier->setContenuFichierData($contenuFichier);
 
         $this->uploader()->download($fichier);
@@ -103,11 +108,15 @@ class FichierController extends AbstractController
         /** @var Fichier|null $fichier */
         $fichier = $this->fichierService->getRepository()->findOneBy(['idPermanent' => $idPermanent]);
         if( $fichier === null) {
-            throw new RuntimeException("Fichier introuvable");
+            throw new RuntimeException("Fichier introuvable en base de données");
         }
 
         // injection préalable du contenu du fichier pour pouvoir utiliser le plugin Uploader
-        $contenuFichier = $this->fichierService->fetchContenuFichier($fichier);
+        try {
+            $contenuFichier = $this->fichierService->fetchContenuFichier($fichier);
+        } catch (FichierServiceException $e) {
+            throw new RuntimeException("Impossible d'obtenir le contenu du fichier", null, $e);
+        }
         $fichier->setContenuFichierData($contenuFichier);
 
         $this->uploader()->download($fichier);

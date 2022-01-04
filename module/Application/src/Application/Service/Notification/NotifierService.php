@@ -10,10 +10,11 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Variable;
 use Application\Notification\ChangementCorrectionAttendueNotification;
+use Application\Notification\ChangementsResultatsThesesNotification;
 use Application\Notification\PasDeMailPresidentJury;
 use Application\Notification\ResultatTheseAdmisNotification;
-use Application\Notification\ChangementsResultatsThesesNotification;
 use Application\Notification\ValidationDepotTheseCorrigeeNotification;
+use Application\Notification\ValidationPageDeCouvertureNotification;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -46,6 +47,23 @@ class NotifierService extends \Notification\Service\NotifierService
      * @var UrlHelper
      */
     protected $urlHelper;
+
+    /**
+     * Notification à l'issue de la validation de la page de couverture.
+     *
+     * @param \Application\Entity\Db\These $these
+     * @param string $action
+     * @throws \Notification\Exception\NotificationException
+     */
+    public function triggerValidationPageDeCouvertureNotification(These $these, string $action)
+    {
+        $notification = new ValidationPageDeCouvertureNotification();
+        $notification->setThese($these);
+        $notification->setAction($action);
+        $notification->setEmailBu($this->fetchEmailBu($these));
+
+        $this->trigger($notification);
+    }
 
     /**
      * Notification concernant la validation à l'issue du RDV BU.
@@ -288,19 +306,21 @@ class NotifierService extends \Notification\Service\NotifierService
      * Notification pour confirmation d'une adresse mail.
      *
      * @param MailConfirmation $mailConfirmation
-     * @param string           $confirm
+     * @param string $confirmUrl
+     * @throws \Notification\Exception\NotificationException
      */
-    public function triggerMailConfirmation(MailConfirmation $mailConfirmation, string $confirm)
+    public function triggerMailConfirmation(MailConfirmation $mailConfirmation, string $confirmUrl)
     {
         $notif = new Notification();
         $notif
             ->setSubject("Confirmation de votre adresse électronique")
             ->setTo($mailConfirmation->getEmail())
-            ->setTemplatePath('application/doctorant/demande-confirmation-mail')
+            ->setTemplatePath('doctorant/mail/demande-confirmation-mail')
             ->setTemplateVariables([
                 'destinataire' => $mailConfirmation->getIndividu()->getNomUsuel(),
-                'confirm'      => $confirm,
+                'confirmUrl' => $confirmUrl,
             ]);
+
         $this->trigger($notif);
     }
 

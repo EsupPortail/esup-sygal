@@ -16,7 +16,7 @@ Notifications envoyées par l'application
         'NOTIF_ATTENT_VALID_CORREC' => APPLICATION_DIR . '/module/Application/view/application/notification/mail/notif-validation-depot-these-corrigee.phtml'
         'NOTIF_MAIL_INCONNU_PRES_JURY' => APPLICATION_DIR . '/module/Application/view/application/notification/mail/notif-pas-de-mail-president-jury.phtml'
         'NOTIF_VALID_CORREC' => APPLICATION_DIR . '/module/Application/view/application/notification/mail/notif-validation-correction-these.phtml'
-        'NOTIF_DEMAND_CONFIRM_MAIL' => APPLICATION_DIR . '/module/Application/view/application/doctorant/demande-confirmation-mail.phtml'
+        'NOTIF_DEMAND_CONFIRM_MAIL' => APPLICATION_DIR . '/module/Doctorant/view/doctorant/mail/demande-confirmation-mail.phtml'
         'NOTIF_CHANG_ROLE' => APPLICATION_DIR . '/module/Application/view/application/utilisateur/changement-role.phtml'
         'NOTIF_CREA_COMPTE_LOCAL' => APPLICATION_DIR . '/module/Application/view/application/utilisateur/mail/init-compte.phtml'
         'NOTIF_REINIT_MOT_PASSE' => APPLICATION_DIR . '/module/Application/view/application/utilisateur/mail/reinit-compte.phtml'
@@ -200,7 +200,7 @@ Module Dépôt
 - Code :
   - NOTIF_DEMAND_CONFIRM_MAIL
 - Template :
-  - module/Application/view/application/doctorant/demande-confirmation-mail.phtml
+  - module/Doctorant/view/doctorant/mail/demande-confirmation-mail.phtml
 
 ### Modification dans vos rôles
 - Quand :

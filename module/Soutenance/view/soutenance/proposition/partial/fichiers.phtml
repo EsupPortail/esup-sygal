@@ -22,7 +22,13 @@ foreach ($proposition->getMembres() as $membre) {
 }
 ?>
 
-<div class="box card">
+<div class="box card
+<?php
+if ($justificatifsOk === null)  echo " bg-warning";
+if ($justificatifsOk === true)  echo " bg-success";
+if ($justificatifsOk === false) echo " bg-danger";
+?>
+">
     <div class="card-header <?php echo ($justificatifsOk)?"bg-success":"bg-danger";?>">
         <h2> Fichiers associés à la proposition</h2>
     </div>

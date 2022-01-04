@@ -10,7 +10,7 @@ use Application\Entity\Db\Validation;
 use Application\Filter\ActeursFormatter;
 use Application\Filter\FinancementFormatter;
 use Application\Provider\Privilege\CoEncadrantPrivileges;
-use Application\Provider\Privilege\DoctorantPrivileges;
+use Doctorant\Provider\Privilege\DoctorantPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\View\Helper\IndividuUsurpationHelper;
@@ -121,7 +121,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                         echo "(Non renseigné) ";
                     } else {
                         echo $mailContact;
-                        if ($etatMailContact === MailConfirmation::ENVOYER) {
+                        if ($etatMailContact === MailConfirmation::ENVOYE) {
                             echo " (en attente) ";
                         }
                     }

@@ -3,15 +3,15 @@
 namespace Soutenance\Service\Membre;
 
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\Etablissement;
 use Application\Service\UserContextServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
+use LogicException;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -19,12 +19,17 @@ use Soutenance\Entity\Qualite;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use UnicaenAuthToken\Entity\Db\AbstractUserToken;
+use UnicaenAuthToken\Service\TokenServiceAwareTrait;
+use UnicaenAuthToken\Service\TokenServiceException;
 use Laminas\Mvc\Controller\AbstractActionController;
 
 class MembreService {
     use EntityManagerAwareTrait;
     use QualiteServiceAwareTrait;
+    use TokenServiceAwareTrait;
     use UserContextServiceAwareTrait;
+    use UtilisateurServiceAwareTrait;
 
     /** GESTION DES ENTITES *******************************************************************************************/
 
@@ -32,24 +37,12 @@ class MembreService {
      * @param Membre $membre
      * @return Membre
      */
-    public function create($membre)
+    public function create(Membre $membre) : Membre
     {
-        try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-        } catch(Exception $e) {
-            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
-        }
-
-        $membre->setHistoCreateur($user);
-        $membre->setHistoCreation($date);
-        $membre->setHistoModificateur($user);
-        $membre->setHistoModification($date);
-
         try {
             $this->getEntityManager()->persist($membre);
             $this->getEntityManager()->flush($membre);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Une erreur s'est produite lors de l'enregistrement d'un membre de jury !");
         }
         return $membre;
@@ -57,45 +50,26 @@ class MembreService {
 
     /**
      * @param Membre $membre
+     * @return Membre
      */
-    public function update($membre) {
-
-        try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-        } catch(Exception $e) {
-            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
-        }
-
-        $membre->setHistoModificateur($user);
-        $membre->setHistoModification($date);
-
+    public function update(Membre $membre) : Membre
+    {
         try {
             $this->getEntityManager()->flush($membre);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Une erreur s'est produite lors de la mise à jour d'un membre de jury !");
         }
+        return $membre;
     }
 
     /**
      * @param Membre $membre
      * @return Membre
      */
-    public function historise($membre)
+    public function historise(Membre $membre) : Membre
     {
         try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-        } catch(Exception $e) {
-            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
-        }
-
-        $membre->setHistoModificateur($user);
-        $membre->setHistoModification($date);
-        $membre->setHistoDestructeur($user);
-        $membre->setHistoDestruction($date);
-
-        try {
+            $membre->historiser();
             $this->getEntityManager()->flush($membre);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survenue lors de l'enregistrement en BDD.", $e);
@@ -107,21 +81,10 @@ class MembreService {
      * @param Membre $membre
      * @return Membre
      */
-    public function restore($membre)
+    public function restore(Membre $membre) : Membre
     {
         try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-        } catch(Exception $e) {
-            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
-        }
-
-        $membre->setHistoModificateur($user);
-        $membre->setHistoModification($date);
-        $membre->setHistoDestructeur(null);
-        $membre->setHistoDestruction(null);
-
-        try {
+            $membre->dehistoriser();
             $this->getEntityManager()->flush($membre);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survenue lors de l'enregistrement en BDD.", $e);
@@ -131,14 +94,17 @@ class MembreService {
 
     /**
      * @param Membre $membre
+     * @return Membre
      */
-    public function delete($membre) {
-        $this->getEntityManager()->remove($membre);
+    public function delete(Membre $membre) : Membre
+    {
         try {
+            $this->getEntityManager()->remove($membre);
             $this->getEntityManager()->flush();
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Une erreur s'est produite lors de l'effacement d'un membre de jury !");
         }
+        return $membre;
     }
 
     /** REQUETES ******************************************************************************************************/
@@ -146,21 +112,23 @@ class MembreService {
     /**
      * @return QueryBuilder
      */
-    public function createQueryBuilder()
+    public function createQueryBuilder() : QueryBuilder
     {
         $qb = $this->getEntityManager()->getRepository(Membre::class)->createQueryBuilder("membre")
             ->addSelect('proposition')->join('membre.proposition', 'proposition')
             ->addSelect('qualite')->join('membre.qualite', 'qualite')
             ->addSelect('acteur')->leftJoin('membre.acteur', 'acteur')
+            ->addSelect('individu')->leftJoin('acteur.individu', 'individu')
             ;
         return $qb;
     }
 
     /**
-     * @param int $id
-     * @return Membre
+     * @param int|null $id
+     * @return Membre|null
      */
-    public function find($id) {
+    public function find(?int $id) : ?Membre
+    {
         $qb = $this->createQueryBuilder()
             ->andWhere("membre.id = :id")
             ->setParameter("id", $id)
@@ -178,7 +146,7 @@ class MembreService {
      * @param string $paramName
      * @return Membre
      */
-    public function getRequestedMembre($controller, $paramName = 'membre')
+    public function getRequestedMembre(AbstractActionController $controller, string  $paramName = 'membre') : ?Membre
     {
         $id = $controller->params()->fromRoute($paramName);
         $membre = $this->find($id);
@@ -187,33 +155,9 @@ class MembreService {
 
     /**
      * @param Proposition $proposition
-     * @param Acteur $acteur
-     */
-    public function createMembre($proposition, $acteur) {
-        //Qualité par défaut
-        $inconnue = $this->getQualiteService()->getQualite(Qualite::ID_INCONNUE);
-
-        $membre = new Membre();
-        $membre->setProposition($proposition);
-        $membre->setPrenom($acteur->getIndividu()->getPrenom());
-        $membre->setNom($acteur->getIndividu()->getNomUsuel());
-        $membre->setGenre(($acteur->getIndividu()->estUneFemme())?"F":"H");
-        $qualite = $this->getQualiteService()->getQualiteByLibelle($acteur->getQualite());
-        $membre->setQualite(($qualite)?$qualite:$inconnue);
-        $membre->setEtablissement(($acteur->getEtablissement())?$acteur->getEtablissement()->getLibelle():"Etablissement inconnu");
-        $membre->setRole(Membre::MEMBRE_JURY);
-        $membre->setExterieur("non");
-        $membre->setEmail($acteur->getIndividu()->getEmail());
-        $membre->setActeur($acteur);
-        $membre->setVisio(false);
-        $this->create($membre);
-    }
-
-    /**
-     * @param Proposition $proposition
      * @return Membre[]
      */
-    public function getRapporteursByProposition($proposition)
+    public function getRapporteursByProposition(Proposition $proposition) : array
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('membre.proposition = :proposition')
@@ -233,7 +177,7 @@ class MembreService {
      * @param DateInterval $interval
      * @return array
      */
-    public function getRapporteursEnRetard(DateInterval $interval)
+    public function getRapporteursEnRetard(DateInterval $interval) : array
     {
         try {
             $date = new DateTime();
@@ -266,7 +210,8 @@ class MembreService {
      * @param Acteur $acteur
      * @return Membre
      */
-    public function getMembreByActeur(Acteur $acteur) {
+    public function getMembreByActeur(Acteur $acteur) : Membre
+    {
         $qb = $this->createQueryBuilder()
             ->andWhere('membre.acteur = :acteur')
             ->setParameter('acteur', $acteur)
@@ -280,7 +225,39 @@ class MembreService {
         return $result;
     }
 
-    public function createDummyMembre()
+    /** FACADE ********************************************************************************************************/
+    /**
+     * @param Proposition $proposition
+     * @param Acteur $acteur
+     * @return Membre
+     */
+    public function createMembre(Proposition $proposition, Acteur $acteur) : Membre
+    {
+        //Qualité par défaut
+        $inconnue = $this->getQualiteService()->getQualite(Qualite::ID_INCONNUE);
+
+        $membre = new Membre();
+        $membre->setProposition($proposition);
+        $membre->setPrenom($acteur->getIndividu()->getPrenom());
+        $membre->setNom($acteur->getIndividu()->getNomUsuel());
+        $membre->setGenre(($acteur->getIndividu()->estUneFemme())?"F":"H");
+        $qualite = $this->getQualiteService()->getQualiteByLibelle($acteur->getQualite());
+        $membre->setQualite(($qualite !== null)?$qualite:$inconnue);
+        $membre->setEtablissement(($acteur->getEtablissement())?$acteur->getEtablissement()->getLibelle():"Etablissement inconnu");
+        $membre->setRole(Membre::MEMBRE_JURY);
+        $membre->setExterieur("non");
+        $membre->setEmail($acteur->getIndividu()->getEmail());
+        $membre->setActeur($acteur);
+        $membre->setVisio(false);
+        $this->create($membre);
+
+        return $membre;
+    }
+
+    /**
+     * @return Membre
+     */
+    public function createDummyMembre() : Membre
     {
         /** @var Proposition $proposition : la proposition est une porposition bidon  */
         $proposition = $this->getEntityManager()->getRepository(Proposition::class)->find(0);
@@ -295,5 +272,55 @@ class MembreService {
         $membre->setRole(Membre::MEMBRE_JURY);
         $membre->setVisio(false);
         return $membre;
+    }
+
+    public function generateUsername(Membre $membre) : string
+    {
+        $acteur = $membre->getActeur();
+        if ($acteur === null) throw new LogicException("La génération du username est basée sur l'Individu qui est mamquant.");
+        $nomusuel = strtolower($acteur->getIndividu()->getNomUsuel());
+        return ($nomusuel . "_" . $membre->getId());
+    }
+
+    /** GESTION DES TOKENS ********************************************************************************************/
+
+    public function retrieveToken(Membre $membre) : ?AbstractUserToken
+    {
+        $individu = $membre->getActeur()->getIndividu();
+        $utilisateurs = $individu->getUtilisateurs();
+
+        foreach ($utilisateurs as $utilisateur) {
+            $token = $this->tokenService->findUserTokenByUserId($utilisateur->getId());
+            if ($token !== null AND ! $token->isExpired()) return $token;
+        }
+
+        return null;
+    }
+
+    public function createToken(Membre $membre) : AbstractUserToken
+    {
+        $username = $this->generateUsername($membre);
+        $utilisateur = $this->getUtilisateurService()->getRepository()->findByUsername($username);
+        if ($utilisateur === null) throw new LogicException("Aucun utilisateur n'est correctement déclaré pour le membre [username:".$username."]");
+
+        try {
+            $userToken = $this->tokenService->createUserToken();
+            $userToken->setUser($utilisateur);
+            $userToken->setExpiredOn($membre->getProposition()->getDate());
+            $this->tokenService->saveUserToken($userToken);
+        } catch (TokenServiceException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de la création du jeton", null, $e);
+        }
+
+        return $userToken;
+    }
+
+    public function retrieveOrCreateToken(Membre $membre) : AbstractUserToken
+    {
+        $token = $this->retrieveToken($membre);
+        if ($token !== null) return $token;
+
+        $token = $this->createToken($membre);
+        return $token;
     }
 }

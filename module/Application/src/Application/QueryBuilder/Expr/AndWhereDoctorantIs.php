@@ -2,7 +2,7 @@
 
 namespace Application\QueryBuilder\Expr;
 
-use Application\Entity\Db\Doctorant;
+use Doctorant\Entity\Db\Doctorant;
 
 /**
  * Class AndWhereDoctorantIs

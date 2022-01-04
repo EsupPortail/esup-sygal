@@ -2,11 +2,11 @@
 
 namespace Application\Authentication\Storage;
 
-use Application\Entity\Db\Doctorant;
+use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactory;
-use Application\Service\Doctorant\DoctorantServiceAwareTrait;
+use Doctorant\Service\DoctorantServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;

@@ -61,7 +61,7 @@ class TypeRapport
      */
     public function __toString()
     {
-        return $this->getLibelleCourt();
+        return $this->getLibelleLong();
     }
 
     /**

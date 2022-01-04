@@ -13,6 +13,7 @@ use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
 use Interop\Container\ContainerInterface;
+use Soutenance\Service\Membre\MembreService;
 use UnicaenAuth\Service\AuthorizeService;
 use UnicaenAuth\Service\User as UserService;
 use Webmozart\Assert\Assert;
@@ -30,6 +31,7 @@ class TheseServiceFactory
         /**
          * @var ActeurService       $acteurService
          * @var ValidationService   $validationService
+         * @var MembreService       $membreService
          * @var NotifierService     $notifierService
          * @var FichierTheseService $fichierTheseService
          * @var VariableService     $variableService
@@ -40,6 +42,7 @@ class TheseServiceFactory
          */
         $acteurService = $container->get(ActeurService::class);
         $validationService = $container->get('ValidationService');
+        $membreService = $container->get(MembreService::class);
         $notifierService = $container->get(NotifierService::class);
         $fichierTheseService = $container->get('FichierTheseService');
         $variableService = $container->get('VariableService');
@@ -57,6 +60,7 @@ class TheseServiceFactory
         $service = new TheseService();
         $service->setActeurService($acteurService);
         $service->setValidationService($validationService);
+        $service->setMembreService($membreService);
         $service->setNotifierService($notifierService);
         $service->setFichierTheseService($fichierTheseService);
         $service->setVariableService($variableService);

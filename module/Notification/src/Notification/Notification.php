@@ -274,9 +274,17 @@ class Notification
     }
 
     /**
+     * @return mixed
+     */
+    public function getTemplateVariable(string $name)
+    {
+        return $this->templateVariables[$name] ?? null;
+    }
+
+    /**
      * @return array
      */
-    public function getTemplateVariables()
+    public function getTemplateVariables(): array
     {
         return $this->templateVariables;
     }
@@ -285,7 +293,7 @@ class Notification
      * @param array $templateVariables
      * @return static
      */
-    public function setTemplateVariables(array $templateVariables = [])
+    public function setTemplateVariables(array $templateVariables = []): Notification
     {
         $this->templateVariables = array_merge($this->templateVariables, $templateVariables);
 
