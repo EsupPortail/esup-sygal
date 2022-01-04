@@ -2,7 +2,7 @@
 
 namespace Formation\Entity\Db\Repository;
 
-use Application\Entity\Db\Doctorant;
+use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\These;
 use Doctrine\ORM\EntityRepository;

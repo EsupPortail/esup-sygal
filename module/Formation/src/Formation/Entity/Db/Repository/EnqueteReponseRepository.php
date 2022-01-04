@@ -2,7 +2,7 @@
 
 namespace Formation\Entity\Db\Repository;
 
-use Application\Entity\Db\Doctorant;
+use Doctorant\Entity\Db\Doctorant;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Formation\Entity\Db\EnqueteReponse;

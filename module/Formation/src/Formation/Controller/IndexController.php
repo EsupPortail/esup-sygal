@@ -3,7 +3,7 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\Doctorant;
+use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Formation\Entity\Db\EnqueteReponse;
 use Formation\Entity\Db\Inscription;
