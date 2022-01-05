@@ -208,9 +208,9 @@ class MembreService {
 
     /**
      * @param Acteur $acteur
-     * @return Membre
+     * @return Membre|null
      */
-    public function getMembreByActeur(Acteur $acteur) : Membre
+    public function getMembreByActeur(Acteur $acteur) : ?Membre
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('membre.acteur = :acteur')
