@@ -79,6 +79,7 @@ class IndexController extends AbstractController
             'estDoctorant' => (bool) $this->userContextService->getIdentityDoctorant(),
             'url' => $this->actualiteService->isActif() ? $this->actualiteService->getUrl() : null,
             'offre' => $this->actualiteService->isOffre() ? $this->getEcoleDoctoraleService()->getOffre() : null,
+            'ecoles' => $this->getEcoleDoctoraleService()->getRepository()->findAll(true),
             'informations' => $this->informationService->getInformations(true),
         ]);
 

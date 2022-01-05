@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @var EcoleDoctorale[] $ecoles
+ **/
+
+use Application\Entity\Db\EcoleDoctorale;
+
+
+?>
+
+<br/>
+<ul class="nav nav-pills nav-stacked menu-secondaire" style="padding: 1rem;">
+    <strong>Soutenances à venir</strong>
+
+        <?php foreach ($ecoles as $ecole) : ?>
+            <li>
+                <a href="<?php echo $this->url('soutenances-par-ecole-doctorale', ['ecole' => $ecole->getId()], [], true); ?>"><?php echo $ecole->getSigle(); ?></a>
+            </li>
+        <?php endforeach; ?>
+</ul>

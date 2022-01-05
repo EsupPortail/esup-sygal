@@ -1,6 +1,11 @@
 Journal des modifications
 =========================
 
+3.0.11
+-----
+- [FIX] Changement de signatures de fonctions pour une meilleure compatibilité
+- Ajout de la liste des soutenances à venir dans l'index de l'application
+
 3.0.10
 -----
 - Ajout de la mention "La réservation du lieu de soutenance n'est pas faite automatiquement et reste à votre charge"

@@ -1,13 +1,16 @@
 <?php
 /**
+ * @see \Application\Controller\IndexController::indexAction()
  * @var PhpRenderer $this
  * @var Role        $role Rôle courant de l'utilisateur
  * @var Role[]      $roles Rôles que possèdent l'utilisateur
+ * @var EcoleDoctorale[] $ecoles
  * @var bool        $estDoctorant
  * @var array       $offre
  * @var Information[]       $informations
  */
 
+use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Role;
 use Application\View\Renderer\PhpRenderer;
 use Information\Entity\Db\Information;
@@ -41,6 +44,9 @@ echo $this->messenger()
             <?php if($offre) : ?>
                 <?php echo $this->partial('application/index/partial/sujet-de-these', ['offre' => $offre]) ?>
             <?php endif; ?>
+
+            <?php echo $this->partial('application/index/partial/soutenances', ['ecoles' => $ecoles]) ?>
+
     </div>
 
     <div id="content" class="jumbotron col-xs-12 col-md-10">
