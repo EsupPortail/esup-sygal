@@ -3,6 +3,7 @@ Journal des modifications
 
 3.0.11
 -----
+- [FIX] Passage à unicaen/auth 3.2.11 pour affichage correct du rôle lorsqu'on endosse/sélectionne un rôle lié à une structure substituée.
 - [FIX] Changement de signatures de fonctions pour une meilleure compatibilité
 - Ajout de la liste des soutenances à venir dans l'index de l'application
 
