@@ -3786,11 +3786,11 @@
         },
         {
             "name": "unicaen/auth",
-            "version": "3.2.8",
+            "version": "3.2.11",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/auth.git",
-                "reference": "e11ddc3cb0f3bac88e68c713200a8da3d91a3c5c"
+                "reference": "5f2c422600c94277b2eb3d89c2ff21704c8a6dcc"
             },
             "require": {
                 "jasig/phpcas": "^1.3",
@@ -3812,7 +3812,7 @@
                 ]
             },
             "description": "Module d'authentification pour les applications Unicaen",
-            "time": "2021-10-11T08:40:36+00:00"
+            "time": "2022-01-05T14:49:29+00:00"
         },
         {
             "name": "unicaen/auth-token",
