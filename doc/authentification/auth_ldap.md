@@ -4,7 +4,7 @@ Authentification auprès d'un annuaire LDAP
 Exemple de configuration dans `config/autoload/xxxx.local.php` :
 
 ```php
-    'domain-auth' => [
+    'unicaen-auth' => [
         //...
         /**
          * Configuration de l'authentification locale (compte LDAP établissement, ou compte BDD application).
@@ -33,7 +33,7 @@ Exemple de configuration dans `config/autoload/xxxx.local.php` :
 
 En cas d'activation du mode d'authentification LDAP, la connexion à l'annuaire LDAP *avec un compte admin* ainsi
 que certains paramètres de fonctionnement doivent être configurés dans `config/autoload/xxxx.secret.local.php` 
-sous la clé `'domain-app'`, exemple :
+sous la clé `'unicaen-app'`, exemple :
 
 ```php
     'unicaen-app' => [
