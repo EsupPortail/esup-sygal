@@ -8,7 +8,8 @@
  * @var Avis[] $avis
  *
  * @var Evenement[] $evenementsPrerapport
-
+ * @var bool $tousLesEngagements
+ * @var bool $tousLesAvis
  */
 
 use Application\Constants;
@@ -23,8 +24,6 @@ use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 $canNotifierAvisSoutenance = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoutenancePrivileges::AVIS_NOTIFIER));
 $canRevoquerAvisSoutenance = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoutenancePrivileges::AVIS_ANNULER));
 
-$tousLesEngagements = count($rapporteurs) === count($engagements) ;
-$tousLesAvis = count($rapporteurs) === count($avis) ;
 ?>
 
 

@@ -7,6 +7,8 @@
  * @var Validation[] $engagements
  *
  * @var Evenement[] $evenementsEngagement
+ * @var bool $tousLesEngagements
+ * @var bool $tousLesAvis
  */
 
 use Application\Constants;
@@ -24,7 +26,6 @@ foreach ($rapporteurs as $rapporteur) {
         break;
     }
 }
-$tousLesEngagements = count($rapporteurs) === count($engagements) ;
 
 $canNotifierEngagementImpartialite      = $this->isAllowed($these, EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_NOTIFIER);
 $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_ANNULER);
