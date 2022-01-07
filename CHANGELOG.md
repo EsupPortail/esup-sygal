@@ -7,6 +7,7 @@ Journal des modifications
 - [FIX] Changement de signatures de fonctions pour une meilleure compatibilité
 - Ajout de la liste des soutenances à venir dans l'index de l'application
 - [FIX] Changement du comptage des engagements et des avis dans le cas de rapporteurs historisés mais ayant déjà rendu quelque chose
+- [FIX] Le menu 'Mes thèses' inclut désormais les thèses soutenues (indispensable pour le profil Président du jury).
 
 3.0.10
 -----
