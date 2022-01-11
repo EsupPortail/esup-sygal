@@ -7,7 +7,7 @@ Journal des modifications
 - [FIX] Changement de signatures de fonctions pour une meilleure compatibilité
 - Ajout de la liste des soutenances à venir dans l'index de l'application
 - [FIX] Changement du comptage des engagements et des avis dans le cas de rapporteurs historisés mais ayant déjà rendu quelque chose
-
+- [FIX] Utilisation de l'état ETABLISSEMENT pour le feu vert des soutenances plutôt que VALIDE
 3.0.10
 -----
 - Ajout de la mention "La réservation du lieu de soutenance n'est pas faite automatiquement et reste à votre charge"

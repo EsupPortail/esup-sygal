@@ -200,7 +200,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     <?php echo $this->partial('soutenance/presoutenance/partial/avis-soutenance'); ?>
 
     <!-- FEU VERT --------------------------------------------------------------------------------------------------------->
-    <?php if($proposition->getEtat()->getCode() === Etat::EN_COURS) :?>
+    <?php if($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) :?>
             <?php if ($tousLesAvis) : ?>
             <?php if ($canFeuVert) : ?>
                 <?php /** @see \Soutenance\Controller\PresoutenanceController::feuVertAction() */ ?>
