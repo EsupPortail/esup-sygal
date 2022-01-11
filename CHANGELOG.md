@@ -5,7 +5,7 @@ Journal des modifications
 -----
 - [FIX] Passage à unicaen/auth 3.2.11 pour affichage correct du rôle lorsqu'on endosse/sélectionne un rôle lié à une structure substituée.
 - [FIX] Changement de signatures de fonctions pour une meilleure compatibilité
-- Ajout de la liste des soutenances à venir dans l'index de l'application
+- Ajout de la liste des soutenances à venir dans l'index de l'application + lien vers la fiche de la these
 - [FIX] Changement du comptage des engagements et des avis dans le cas de rapporteurs historisés mais ayant déjà rendu quelque chose
 - [FIX] Le menu 'Mes thèses' inclut désormais les thèses soutenues (indispensable pour le profil Président du jury).
 - [FIX] Utilisation de l'état ETABLISSEMENT pour le feu vert des soutenances plutôt que VALIDE

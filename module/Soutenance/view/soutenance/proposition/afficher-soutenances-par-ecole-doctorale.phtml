@@ -24,7 +24,12 @@ $count = count($soutenances);
     <ul>
     <?php foreach ($soutenances as $soutenance) : ?>
         <li>
-            <strong><?php echo $soutenance->getThese()->getTitre(); ?></strong> - <?php echo $soutenance->getThese()->getDoctorant()->getIndividu()->getNomComplet(); ?> <br/>
+            <strong>
+                <a href="<?php echo $this->url('these/identite', [ 'these' => $soutenance->getThese()->getId() ], [], true); ?>">
+                    <?php echo $soutenance->getThese()->getTitre(); ?>
+                </a>
+            </strong>
+                - <?php echo $soutenance->getThese()->getDoctorant()->getIndividu()->getNomComplet(); ?> <br/>
             <u>Date de soutenance :</u> <?php echo $soutenance->getDate()->format("d/m/Y à H:i"); ?> <br/>
             <u>Lieu de soutenance :</u> <?php echo $soutenance->getLieu(); ?>
 
