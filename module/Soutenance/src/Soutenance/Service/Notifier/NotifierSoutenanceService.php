@@ -235,7 +235,7 @@ class NotifierSoutenanceService extends NotifierService
     public function triggerNotificationUniteRechercheProposition(These $these)
     {
         $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
-        $panic = $this->hasEmailsByEtablissement($individuRoles, $these);
+        $panic = !($this->hasEmailsByEtablissement($individuRoles, $these));
         $emails = $this->fetchEmailsByEtablissement($individuRoles, $these);
         //$emails = $this->fetchEmailUniteRecherche($these);
 
@@ -262,7 +262,7 @@ class NotifierSoutenanceService extends NotifierService
     public function triggerNotificationEcoleDoctoraleProposition(These $these)
     {
         $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
-        $panic = $this->hasEmailsByEtablissement($individuRoles, $these);
+        $panic = !($this->hasEmailsByEtablissement($individuRoles, $these));
         $emails = $this->fetchEmailsByEtablissement($individuRoles, $these);
         //$emails = $this->fetchEmailEcoleDoctorale($these);
 
