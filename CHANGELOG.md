@@ -11,6 +11,7 @@ Journal des modifications
 - [FIX] Utilisation de l'état ETABLISSEMENT pour le feu vert des soutenances plutôt que VALIDE
 - Ajout d'une mention de l'envoi à tous les responsables de structure lorsque aucun responsable de site n'a été trouvé.
 - Ajout du rapport technique dans les documents de la présoutenance (s'il y a au moins une visio de déclarée)
+- [FIX] QPDF peut retourner 3 en cas de warnings non bloquants : on ajoute --warning-exit-0 pour retourner 0 même en cas de warnings.
 
 3.0.10
 -----
