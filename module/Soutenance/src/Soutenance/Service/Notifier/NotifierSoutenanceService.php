@@ -2,7 +2,6 @@
 
 namespace Soutenance\Service\Notifier;
 
-use Application\Controller\Plugin\UrlFichierThese;
 use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
@@ -17,6 +16,7 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use DateTime;
+use Notification\Exception\NotificationException;
 use Notification\Notification;
 use Notification\Service\NotifierService;
 use Soutenance\Entity\Avis;
@@ -47,17 +47,31 @@ class NotifierSoutenanceService extends NotifierService
         $this->urlHelper = $urlHelper;
     }
 
-
-
     /**
      * @param These $these
      * @return string
      */
-    protected function fetchEmailBdd(These $these)
+    protected function fetchEmailBdd(These $these) : string
     {
         $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
         return $variable->getValeur();
 
+    }
+
+    /**
+     * @param IndividuRole[] $individuRoles
+     * @param These $these
+     * @return bool
+     */
+    protected function hasEmailsByEtablissement(array $individuRoles, These $these) : bool
+    {
+        foreach ($individuRoles as $individuRole) {
+            $individu = $individuRole->getIndividu();
+            if ($individu->getEtablissement() === $these->getEtablissement()) {
+                if ($individu->getEmail() !== null) return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -96,7 +110,7 @@ class NotifierSoutenanceService extends NotifierService
 
     /**
      * @param These $these
-     * @return array
+     * @return string[]
      */
     protected function fetchEmailEcoleDoctorale(These $these) : array
     {
@@ -109,7 +123,7 @@ class NotifierSoutenanceService extends NotifierService
      * @param These $these
      * @return string[]
      */
-    protected function fetchEmailUniteRecherche(These $these)
+    protected function fetchEmailUniteRecherche(These $these) : array
     {
         /** @var IndividuRole[] $individuRoles */
         $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
@@ -120,7 +134,7 @@ class NotifierSoutenanceService extends NotifierService
      * @param These $these
      * @return string[]
      */
-    protected function fetchEmailMaisonDuDoctorat(These $these)
+    protected function fetchEmailMaisonDuDoctorat(These $these) : array
     {
         /** @var IndividuRole[] $individuRoles */
         $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEtablissement()->getStructure());
@@ -132,7 +146,7 @@ class NotifierSoutenanceService extends NotifierService
      * @param These $these
      * @return string[]
      */
-    protected function fetchEmailEncadrants(These $these)
+    protected function fetchEmailEncadrants(These $these) : array
     {
         $emails = [];
         $encadrants = $this->getActeurService()->getRepository()->findEncadrementThese($these);
@@ -151,7 +165,7 @@ class NotifierSoutenanceService extends NotifierService
      * @param These $these
      * @return array
      */
-    protected function fetchEmailActeursDirects(These $these)
+    protected function fetchEmailActeursDirects(These $these) : array
     {
         $emails = [];
         $emails[] = $these->getDoctorant()->getIndividu()->getEmail();
@@ -216,10 +230,14 @@ class NotifierSoutenanceService extends NotifierService
     /**
      * @param These $these
      * @see Application/view/soutenance/notification/validation-structure.phtml
+     * @throws NotificationException
      */
-    public function triggerNotificationUniteRechercheProposition($these)
+    public function triggerNotificationUniteRechercheProposition(These $these)
     {
-        $emails = $this->fetchEmailUniteRecherche($these);
+        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
+        $panic = $this->hasEmailsByEtablissement($individuRoles, $these);
+        $emails = $this->fetchEmailsByEtablissement($individuRoles, $these);
+        //$emails = $this->fetchEmailUniteRecherche($these);
 
         if (!empty($emails)) {
             $notif = new Notification();
@@ -230,6 +248,7 @@ class NotifierSoutenanceService extends NotifierService
                 ->setTemplateVariables([
                     'these' => $these,
                     'type' => 'unité de recherche',
+                    'panic' => $panic,
                 ]);
             $this->trigger($notif);
         }
@@ -238,10 +257,14 @@ class NotifierSoutenanceService extends NotifierService
     /**
      * @param These $these
      * @see Application/view/soutenance/notification/validation-structure.phtml
+     * @throws NotificationException
      */
-    public function triggerNotificationEcoleDoctoraleProposition($these)
+    public function triggerNotificationEcoleDoctoraleProposition(These $these)
     {
-        $emails = $this->fetchEmailEcoleDoctorale($these);
+        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
+        $panic = $this->hasEmailsByEtablissement($individuRoles, $these);
+        $emails = $this->fetchEmailsByEtablissement($individuRoles, $these);
+        //$emails = $this->fetchEmailEcoleDoctorale($these);
 
         if (!empty($emails)) {
             $notif = new Notification();
@@ -252,6 +275,7 @@ class NotifierSoutenanceService extends NotifierService
                 ->setTemplateVariables([
                     'these' => $these,
                     'type' => 'école doctorale',
+                    'panic' => $panic,
                 ]);
             $this->trigger($notif);
         }
@@ -260,8 +284,9 @@ class NotifierSoutenanceService extends NotifierService
     /**
      * @param These $these
      * @see Application/view/soutenance/notification/validation-structure.phtml
+     * @throws NotificationException
      */
-    public function triggerNotificationBureauDesDoctoratsProposition($these)
+    public function triggerNotificationBureauDesDoctoratsProposition(These $these)
     {
         $email = $this->fetchEmailMaisonDuDoctorat($these);
 
@@ -274,13 +299,14 @@ class NotifierSoutenanceService extends NotifierService
                 ->setTemplateVariables([
                     'these' => $these,
                     'type' => 'maison du doctorat',
+                    'panic' => false,
                 ]);
             $this->trigger($notif);
         }
     }
 
     /** @param These $these */
-    public function triggerNotificationPropositionValidee($these)
+    public function triggerNotificationPropositionValidee(These $these)
     {
         $emailsBDD = $this->fetchEmailMaisonDuDoctorat($these);
         $emailsED = $this->fetchEmailEcoleDoctorale($these);

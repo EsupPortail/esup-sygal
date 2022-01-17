@@ -9,6 +9,7 @@ Journal des modifications
 - [FIX] Changement du comptage des engagements et des avis dans le cas de rapporteurs historisés mais ayant déjà rendu quelque chose
 - [FIX] Le menu 'Mes thèses' inclut désormais les thèses soutenues (indispensable pour le profil Président du jury).
 - [FIX] Utilisation de l'état ETABLISSEMENT pour le feu vert des soutenances plutôt que VALIDE
+- Ajout d'une mention de l'envoi à tous les responsables de structure lorsque aucun responsable de site n'a été trouvé. 
 
 3.0.10
 -----

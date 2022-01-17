@@ -10,6 +10,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var PhpRenderer $this
  * @var These $these
  * @var string $type
+ * @var bool $panic
  */
 
 $urlRetour = $this->url('soutenance/proposition', ['these' => $these->getId()], ['force_canonical'=>true], true);
@@ -60,4 +61,12 @@ $justification = true;
         <li> vous êtes un&middot;e gestionnaire du bureau des doctorat de l'établissement d'inscription du doctorant.</li>
     <?php endif; ?>
 </ol>
+
+    <?php if ($panic) : ?>
+        <p>
+            <strong>Aucun responsable de site n'a pu être trouvé pour le site '<?php echo $these->getEtablissement()->getLibelle(); ?>'</strong>.
+            Par conséquent tous les responsables de la structure ont été notifiés.
+        </p>
+    <?php endif; ?>
+
 <?php endif; ?>
