@@ -294,7 +294,18 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                             <span class="glyphicon glyphicon-list-alt"></span>Générer l'avis de soutenance
                         </a>
 
-                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::convocationsAction() */ ?>
+                    <?php if ($proposition->hasVisio()) : ?>
+                     <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::rapportTechniqueAction() */ ?>
+                             href="<?php echo $this->url('soutenance/presoutenance/rapport-technique', ['these' => $these->getId()], [], true); ?>"
+                             class="btn btn-primary action"
+                             target="_blank"
+                     >
+                         <span class="glyphicon glyphicon-list-alt"></span>Générer le rapport technique
+                     </a>
+                    <?php endif; ?>
+
+
+                     <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::convocationsAction() */ ?>
                                 href="<?php echo $this->url('soutenance/presoutenance/convocations', ['these' => $these->getId()], [], true); ?>"
                                 class="btn btn-primary action"
                                 target="_blank"
