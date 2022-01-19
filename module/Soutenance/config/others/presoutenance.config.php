@@ -180,7 +180,7 @@ return [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route' => '/avis-soutenance',
+                                    'route' => '/rapport-technique',
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
                                         'action' => 'rapport-technique',

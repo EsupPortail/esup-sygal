@@ -11,6 +11,8 @@ Journal des modifications
 - [FIX] Utilisation de l'état ETABLISSEMENT pour le feu vert des soutenances plutôt que VALIDE
 - Ajout d'une mention de l'envoi à tous les responsables de structure lorsque aucun responsable de site n'a été trouvé.
 - Ajout du rapport technique dans les documents de la présoutenance (s'il y a au moins une visio de déclarée)
+- Modification des conditions d'affichage des documents de présoutenance pour le cas des soutenances rejetées
+- Modification du template d'avis de soutenance.
 
 3.0.10
 -----
