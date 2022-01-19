@@ -52,13 +52,13 @@ return [
                         'label'    => 'Formations',
                         'route'    => 'formation',
                         'resource' => PrivilegeController::getResourceId(IndexController::class, 'index') ,
-                        'order'    => 9998,
+                        'order'    => 9997,
                     ],
                     'formation-doctorant' => [
                         'label'    => 'Mes formations',
                         'route'    => 'formation/index-doctorant',
                         'resource' => PrivilegeController::getResourceId(IndexController::class, 'index-doctorant') ,
-                        'order'    => 9999,
+                        'order'    => 9998,
                     ],
                     'formation-formateur' => [
                         'label'    => 'Mes formations',

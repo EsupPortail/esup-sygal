@@ -3,15 +3,13 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
-use Application\Service\Doctorant\DoctorantServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
-use Formation\Entity\Db\Etat;
+use Doctorant\Entity\Db\Doctorant;
+use Doctorant\Service\DoctorantServiceAwareTrait;
 use Formation\Entity\Db\Inscription;
-use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Session;
 use Formation\Service\Exporter\Attestation\AttestationExporter;
 use Formation\Service\Exporter\Convocation\ConvocationExporter;

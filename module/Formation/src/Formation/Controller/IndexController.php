@@ -15,13 +15,12 @@ class IndexController extends AbstractController
 {
     use EntityManagerAwareTrait;
 
-
-    public function indexAction()
+    public function indexAction() : ViewModel
     {
         return new ViewModel();
     }
 
-    public function indexDoctorantAction()
+    public function indexDoctorantAction() : ViewModel
     {
         /** @var Doctorant $doctorant */
         $doctorantId = $this->params()->fromRoute('doctorant');
@@ -60,14 +59,15 @@ class IndexController extends AbstractController
         ]);
     }
 
-    public function indexFormateurAction()
+    public function indexFormateurAction() : ViewModel
     {
         /** @var Individu $individu */
         $individuId = $this->params()->fromRoute('formateur');
         if ($individuId !== null) {
             $individu = $this->getEntityManager()->getRepository(Individu::class)->find($individuId);
         } else {
-            $individu = null;
+            $user = $this->userContextService->getIdentityDb();
+            $individu = ($user)?$user->getIndividu():null;
         }
 
         if($individu) {

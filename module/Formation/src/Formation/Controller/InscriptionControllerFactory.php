@@ -2,12 +2,11 @@
 
 namespace Formation\Controller;
 
-use Application\Service\Doctorant\DoctorantService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\File\FileService;
 use Application\Service\Individu\IndividuService;
+use Doctorant\Service\DoctorantService;
 use Doctrine\ORM\EntityManager;
-use Formation\Entity\Db\Presence;
 use Formation\Service\Inscription\InscriptionService;
 use Formation\Service\Presence\PresenceService;
 use Interop\Container\ContainerInterface;
@@ -19,7 +18,7 @@ class InscriptionControllerFactory {
      * @param ContainerInterface $container
      * @return InscriptionController
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container) : InscriptionController
     {
         /**
          * @var EntityManager $entityManager
