@@ -298,14 +298,7 @@ class MembreService {
 
         /** @var AbstractUser[] $utilisateurs */
         $utilisateurs = $individu->getUtilisateurs();
-        $utilisateurs = array_filter($utilisateurs, function (AbstractUser $u) { return $u->getPassword() === 'none';});
-        if (count($utilisateurs) !== 1 ) {
-            $message = "Plusieurs utilisateurs locaux ont été trouvé pour " . $individu->getNomComplet() . " :";
-            foreach ($utilisateurs as $utilisateur) $message .= " " . $utilisateur->getUsername() ."#". $utilisateur->getId();
-            throw new RuntimeException($message);
-        }
-
-        return $utilisateurs[0];
+        return (empty($utilisateurs))?null:$utilisateurs[0];
     }
 
     /** GESTION DES TOKENS ********************************************************************************************/
@@ -326,10 +319,6 @@ class MembreService {
     public function createToken(Membre $membre) : AbstractUserToken
     {
         $utilisateur = $this->getUtilisateur($membre);
-        if ($utilisateur === null) {
-            $username = $this->generateUsername($membre);
-            $utilisateur = $this->getUtilisateurService()->getRepository()->findByUsername($username);
-        }
         if ($utilisateur === null) throw new LogicException("Aucun utilisateur n'est correctement déclaré pour le membre [username:".$username."]");
 
         try {
