@@ -27,6 +27,7 @@ Journal des modifications
 - Suppression des paramètres 'cookie_lifetime'et 'gc_maxlifetime' de la config de l'appliccation
 - Refactorisation : extraction d'un nouveau module 'Doctorant' à partir du module 'Application'
 - [FIX] Création du menu 'Ma thèse' même si la thèse est soutenue
+- [FIX] Correction du comportement lorsque qu'un rapporteur d'une thèse précédente est de nouveau rapporteur d'auntre autre thèse
 
 3.0.9
 -----
