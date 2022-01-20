@@ -264,7 +264,6 @@ class PresoutenanceController extends AbstractController
         if (!$acteur) throw new RuntimeException("Aucun acteur à deassocier !");
 
         //retrait dans membre de soutenance
-        $username = $this->getMembreService()->generateUsername($membre);
         $membre->setActeur(null);
         $this->getMembreService()->update($membre);
 
@@ -273,7 +272,7 @@ class PresoutenanceController extends AbstractController
             $this->getValidationService()->unsignEngagementImpartialite($validation);
         }
 
-        $utilisateur = $this->utilisateurService->getRepository()->findByUsername($username);
+        $utilisateur = $this->getMembreService()->getUtilisateur($membre);
         if ($utilisateur) $this->utilisateurService->supprimerUtilisateur($utilisateur);
 
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);

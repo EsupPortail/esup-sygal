@@ -14,6 +14,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenAuth\Entity\Db\AbstractUser;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use UnicaenLdap\Entity\People;
 use Zend\Crypt\Password\Bcrypt;
@@ -243,9 +244,9 @@ class UtilisateurService extends BaseService
 
     /**
      * Fonction utilisée lors de la déassociation d'un utilisateur/individu et un membre d'un jury de thèse
-     * @param Utilisateur $utilisateur
+     * @param AbstractUser $utilisateur
      */
-    public function supprimerUtilisateur(Utilisateur $utilisateur) {
+    public function supprimerUtilisateur(AbstractUser $utilisateur) {
         try {
             $this->getEntityManager()->remove($utilisateur);
             $this->getEntityManager()->flush($utilisateur);
