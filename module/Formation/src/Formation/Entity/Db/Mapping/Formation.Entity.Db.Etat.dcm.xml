@@ -11,6 +11,7 @@
         <field name="description"          type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
         <field name="icone"                type="string"       length="1024"       column="ICONE"            nullable="true"/>
         <field name="couleur"              type="string"       length="1024"       column="COULEUR"          nullable="true"/>
+        <field name="ordre"                type="integer"                          column="ORDRE"            nullable="true"/>
 
     </entity>
 </doctrine-mapping>

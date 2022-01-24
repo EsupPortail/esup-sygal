@@ -20,6 +20,8 @@ class Etat {
     private $icone;
     /** @var string|null */
     private $couleur;
+    /** @var int|null */
+    private $ordre;
 
     /**
      * @return string
@@ -61,4 +63,11 @@ class Etat {
         return $this->couleur;
     }
 
+    /**
+     * @return int|null
+     */
+    public function getOrdre(): ?int
+    {
+        return $this->ordre;
+    }
 }

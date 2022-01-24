@@ -10,6 +10,8 @@ use Formation\Entity\Db\Session;
  */
 
 $current = ($session->getEtat())?$session->getEtat()->getCode():null;
+
+usort($etats, function (Etat $a, Etat $b) { return $a->getOrdre() > $b->getOrdre();});
 ?>
 
 <form method="post" action="<?php echo $this->url("formation/session/changer-etat",['session' => $session->getId()],[], true); ?>">
@@ -17,7 +19,9 @@ $current = ($session->getEtat())?$session->getEtat()->getCode():null;
     <select id="etat" name="etat" class="selectpicker">
         <option>Selectionner un état</option>
         <?php foreach ($etats as $etat) : ?>
-            <option value="<?php echo $etat->getCode(); ?>" <?php if ($current===$etat->getCode()) echo " selected "; ?>>
+            <option value="<?php echo $etat->getCode(); ?>" <?php if ($current===$etat->getCode()) echo " selected "; ?>
+                    data-content="<span class='badge' style='background:<?php echo $etat->getCouleur(); ?>'><span class='<?php echo $etat->getIcone(); ?>'></span></span> &nbsp; <?php echo $etat->getLibelle(); ?>"
+            >
                 <?php echo $etat->getLibelle(); ?>
             </option>
         <?php endforeach; ?>
