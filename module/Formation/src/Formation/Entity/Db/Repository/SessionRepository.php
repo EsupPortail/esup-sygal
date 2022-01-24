@@ -26,8 +26,9 @@ class SessionRepository extends EntityRepository
     public function getRequestedSession(AbstractActionController $controller, string $param = 'session') : ?Session
     {
         $id = $controller->params()->fromRoute($param);
+        $session = null;
         /** @var Session|null $session */
-        $session = $this->find($id);
+        if ($id !== null) $session = $this->find($id);
         return $session;
     }
 

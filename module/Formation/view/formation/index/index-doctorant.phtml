@@ -28,13 +28,13 @@ foreach ($inscriptions as $inscription) {
     if ($nbSeance > 0 AND $inscription->getSession()->estTerminee()) {
         $terminees[] = $inscription;
     } else {
-        $encours[] = $inscription;
+        if ($inscription->estNonHistorise()) $encours[] = $inscription;
     }
 }
 $terminees = array_filter($terminees, function (Inscription $a) { return $a->getListe() === Inscription::LISTE_PRINCIPALE; });
 
 $canAjouterInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_AJOUTER));
-$canSupprimerInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_SUPPRIMER));
+$canSupprimerInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_HISTORISER));
 $canConvocationInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_CONVOCATION));
 $canRepondreEnquete = $this->isAllowed(EnquetePrivileges::getResourceId(EnquetePrivileges::ENQUETE_REPONSE_REPONDRE));
 $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_ATTESTATION));
@@ -270,8 +270,8 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
                     </td>
                     <td>
                         <?php if ($canSupprimerInscription) : ?>
-                            <?php /** @see \Formation\Controller\InscriptionController::supprimerAction() */ ?>
-                            <a href="<?php echo $this->url('formation/inscription/supprimer', ['inscription' => $inscription->getId()], [], true); ?>"
+                            <?php /** @see \Formation\Controller\InscriptionController::desinscriptionAction() */ ?>
+                            <a href="<?php echo $this->url('formation/inscription/desinscription', ['inscription' => $inscription->getId()], [], true); ?>"
                                class="ajax-modal" data-event="modification"
                             >
                         <span class="glyphicon glyphicon-remove"

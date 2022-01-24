@@ -4,6 +4,8 @@
  * @var string $title
  * @var string $text
  * @var string $action
+ * @var bool $justificationOui
+ * @var bool $justificationNon
  */
 
 ?>
@@ -12,15 +14,22 @@
 <?php echo $text; ?>
 </p>
 
-<table>
-    <tr><td>
+
+<table width="100%">
+    <tr><td width="50%">
 <form method="post" action="<?php echo $action; ?>">
     <input type="hidden" name="reponse" value="oui">
+    <?php if ($justificationOui === true) : ?>
+        <textarea id="justification-oui" name="justification-oui" style="width: 95%;" placeholder="Merci de justifier"></textarea><br/>
+    <?php endif; ?>
     <input type="submit" name="reponse" class="btn btn-success action" value="Oui, je suis sûr&middot;e">
 </form>
-        </td><td>
+        </td><td width="50%">
 <form method="post" action="<?php echo $action; ?>">
     <input type="hidden" name="reponse" value="non">
+    <?php if ($justificationNon === true) : ?>
+        <textarea id="justification-non" name="justification-non"  style="width: 95%;" placeholder="Merci de justifier"></textarea><br/>
+    <?php endif; ?>
     <input type="submit" id="non" name="reponse" class="btn btn-danger action"  value="Non, je ne veux pas">
 </form>
         </td></tr>

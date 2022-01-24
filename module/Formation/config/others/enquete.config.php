@@ -142,10 +142,10 @@ return [
                         ],
                         'child_routes' => [
                             'resultat' => [
-                                'type'  => Literal::class,
+                                'type'  => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/resultat',
+                                    'route'    => '/resultat[/:session]',
                                     'defaults' => [
                                         'controller' => EnqueteController::class,
                                         'action'     => 'afficher-resultats',

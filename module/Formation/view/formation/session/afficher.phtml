@@ -3,6 +3,7 @@
 use Formation\Entity\Db\Formateur;use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
+use Formation\Provider\Privilege\EnquetePrivileges;
 use Formation\Provider\Privilege\FormationPrivileges;
 use Formation\Provider\Privilege\InscriptionPrivileges;
 use Formation\Provider\Privilege\SeancePrivileges;
@@ -32,6 +33,8 @@ $canIndexSession        = $this->isAllowed(SessionPrivileges::getResourceId(Sess
 $canModifierSession     = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_MODIFIER));
 $canHistoriserSession   = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_HISTORISER));
 $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_SUPPRIMER));
+
+$canResultatEnquete    = $this->isAllowed(EnquetePrivileges::getResourceId(EnquetePrivileges::ENQUETE_REPONSE_RESULTAT));
 
 $canModifierSeance      = $this->isAllowed(SeancePrivileges::getResourceId(SeancePrivileges::SEANCE_MODIFIER));
 $canHistoriserSeance    = $this->isAllowed(SeancePrivileges::getResourceId(SeancePrivileges::SEANCE_HISTORISER));
@@ -144,6 +147,19 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
             >
                 <span class="glyphicon glyphicon-adjust"></span>
                 Changer l'état
+            </a>
+            <br/>
+            <br/>
+        <?php endif; ?>
+
+        <?php if ($canResultatEnquete) : ?>
+            <?php /** @see \Formation\Controller\EnqueteController::afficherResultatsAction() */?>
+            <a class="btn btn-primary action"
+               href="<?php echo $this->url('formation/enquete/resultat', ['session' => $session->getId()], [], true); ?>"
+               target="_blank"
+            >
+                <span class="glyphicon glyphicon-stats"></span>
+                Résultats de l'enquète
             </a>
             <br/>
             <br/>

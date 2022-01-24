@@ -29,6 +29,7 @@ return [
                     'controller' => InscriptionController::class,
                     'action' => [
                         'ajouter',
+                        'desinscription',
                     ],
                     'privileges' => [
                         InscriptionPrivileges::INSCRIPTION_AJOUTER,
@@ -161,6 +162,17 @@ return [
                                     'defaults' => [
                                         'controller' => InscriptionController::class,
                                         'action'     => 'supprimer',
+                                    ],
+                                ],
+                            ],
+                            'desinscription' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/desinscription/:inscription',
+                                    'defaults' => [
+                                        'controller' => InscriptionController::class,
+                                        'action'     => 'desinscription',
                                     ],
                                 ],
                             ],

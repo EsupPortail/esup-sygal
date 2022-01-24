@@ -16,6 +16,7 @@ use Formation\Service\Exporter\Convocation\ConvocationExporter;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
 use Formation\Service\Presence\PresenceServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use Zend\Http\Response;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
 
@@ -40,7 +41,7 @@ class InscriptionController extends AbstractController
         $this->renderer = $renderer;
     }
 
-    public function indexAction()
+    public function indexAction() : ViewModel
     {
         $filtres = [
             'session' => $this->params()->fromQuery('session'),
@@ -105,7 +106,7 @@ class InscriptionController extends AbstractController
         ]);
     }
 
-    public function historiserAction()
+    public function historiserAction() : Response
     {
         /** @var Inscription $inscription */
         $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
@@ -117,7 +118,7 @@ class InscriptionController extends AbstractController
         return $this->redirect()->toRoute('formation/inscription',[],[], true);
     }
 
-    public function restaurerAction()
+    public function restaurerAction() : Response
     {
         /** @var Inscription $inscription */
         $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
@@ -129,7 +130,7 @@ class InscriptionController extends AbstractController
         return $this->redirect()->toRoute('formation/inscription',[],[], true);
     }
 
-    public function supprimerAction()
+    public function supprimerAction() : ViewModel
     {
         /** @var Inscription|null $inscription */
         $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
@@ -193,7 +194,7 @@ class InscriptionController extends AbstractController
         return $this->redirect()->toRoute('formation/inscription',[],[], true);
     }
 
-    public function retirerListeAction()
+    public function retirerListeAction() : Response
     {
         /** @var Inscription|null $inscription */
         $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
@@ -250,4 +251,36 @@ class InscriptionController extends AbstractController
         ]);
         $export->export('SYGAL_attestation_' . $session->getId() . "_" . $inscription->getId() . ".pdf");
     }
+
+    /** INSCRIPTION ET DESINSCRIPTION POUR LE DOCTORANT */
+
+    public function desinscriptionAction() : ViewModel
+    {
+        /** @var Inscription|null $inscription */
+        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $raison = ($data['justification-oui'] AND trim($data['justification-oui']) !== '')? trim($data['justification-oui']) : null;
+            $inscription->setListe(null);
+            $inscription->setDescription($inscription->getDescription() . " <br/> ". (($raison)?$raison:"Aucune justification"));
+            $this->getInscriptionService()->historise($inscription);
+        }
+
+        $vm = new ViewModel();
+        if ($inscription !== null) {
+            $vm->setTemplate('formation/default/confirmation');
+            $vm->setVariables([
+                'title' => "Desinscription de la formation " . $inscription->getSession()->getFormation()->getLibelle(),
+                'text' => "La déinscription est définitive. Êtes-vous sûr&middot;e de vouloir continuer ?",
+                'action' => $this->url()->fromRoute('formation/inscription/desinscription', ["inscription" => $inscription->getId()], [], true),
+                'justificationOui' => true,
+            ]);
+        }
+        return $vm;
+
+
+    }
+
 }

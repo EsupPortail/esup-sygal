@@ -8,12 +8,14 @@ use Formation\Entity\Db\EnqueteCategorie;
 use Formation\Entity\Db\EnqueteQuestion;
 use Formation\Entity\Db\EnqueteReponse;
 use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Session;
 use Formation\Form\EnqueteCategorie\EnqueteCategorieFormAwareTrait;
 use Formation\Form\EnqueteQuestion\EnqueteQuestionFormAwareTrait;
 use Formation\Form\EnqueteReponse\EnqueteReponseFormAwareTrait;
 use Formation\Service\EnqueteCategorie\EnqueteCategorieServiceAwareTrait;
 use Formation\Service\EnqueteQuestion\EnqueteQuestionServiceAwareTrait;
 use Formation\Service\EnqueteReponse\EnqueteReponseServiceAwareTrait;
+use Formation\Service\Session\SessionServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\View\Model\ViewModel;
 
@@ -22,6 +24,7 @@ class EnqueteController extends AbstractController {
     use EnqueteCategorieServiceAwareTrait;
     use EnqueteQuestionServiceAwareTrait;
     use EnqueteReponseServiceAwareTrait;
+    use SessionServiceAwareTrait;
     use EnqueteCategorieFormAwareTrait;
     use EnqueteQuestionFormAwareTrait;
     use EnqueteReponseFormAwareTrait;
@@ -30,12 +33,20 @@ class EnqueteController extends AbstractController {
 
     public function afficherResultatsAction()
     {
+        /**@var Session $session */
+        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
+
         $questions = $this->getEntityManager()->getRepository(EnqueteQuestion::class)->findAll();
         $questions = array_filter($questions, function (EnqueteQuestion $a) { return $a->estNonHistorise();});
         usort($questions, function (EnqueteQuestion $a, EnqueteQuestion $b) { return $a->getOrdre() > $b->getOrdre();});
 
-        //todo exploiter le filtre pour réduire
+
         $reponses = $this->getEntityManager()->getRepository(EnqueteReponse::class)->findAll();
+
+        //todo exploiter le filtre pour réduire
+        if ($session) $reponses = array_filter($reponses, function (EnqueteReponse $r) use ($session) { return $r->getInscription()->getSession() === $session;});
+        //todo fin
+
         $reponses = array_filter($reponses, function (EnqueteReponse $a) { return $a->estNonHistorise();});
         usort($reponses, function (EnqueteReponse $a, EnqueteReponse $b) { return $a->getQuestion()->getId() > $b->getQuestion()->getId();});
 
