@@ -18,10 +18,14 @@ class ModuleRepository extends EntityRepository
      */
     public function getRequestedModule(AbstractActionController $controller, string $param = 'module') : ?Module
     {
+        $module = null;
         $id = $controller->params()->fromRoute($param);
         /** @var Module|null $module */
-        $module = $this->find($id);
+        if ($id) {
+            $module = $this->find($id);
+        }
         return $module;
+
     }
 
     /**

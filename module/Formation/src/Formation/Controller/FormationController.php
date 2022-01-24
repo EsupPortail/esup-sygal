@@ -64,7 +64,7 @@ class FormationController extends AbstractController
         if ($module !== null) $formation->setModule($module);
 
         $form = $this->getFormationForm();
-        $form->setAttribute('action', $this->url()->fromRoute('formation/formation/ajouter', ['module' => $module->getId()], [], true));
+        $form->setAttribute('action', $this->url()->fromRoute('formation/formation/ajouter', ['module' => ($module)?$module->getId():null], [], true));
         $form->bind($formation);
 
         $request = $this->getRequest();

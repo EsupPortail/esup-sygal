@@ -32,7 +32,6 @@ class FormationForm extends Form {
         return $this;
     }
 
-
     public function init()
     {
         //titre
@@ -200,7 +199,7 @@ class FormationForm extends Form {
             'libelle'       => [ 'required' => true, ],
             'description'   => [ 'required' => false, ],
             'lien'          => [ 'required' => false, ],
-            'module'        => [ 'required' => false, ],
+            'module'        => [ 'required' => true, ],
             'site'          => [ 'required' => false, ],
             'responsable'   => [ 'required' => false, ],
             'modalite'      => [ 'required' => false, ],
