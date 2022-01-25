@@ -88,7 +88,7 @@ return [
                                 'label'    => 'Formations',
                                 'route'    => 'formation/formation',
                                 'resource' => PrivilegeController::getResourceId(FormationController::class, 'index') ,
-                                'order'    => 200,
+                                'order'    => 90,
                                 'pages' => [
                                     'afficher' => [
                                         'label'    => "Affichage d'une formation",

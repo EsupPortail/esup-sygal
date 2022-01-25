@@ -7,10 +7,12 @@
  * @var Session[] $preparations
  * @var Inscription[] $inscriptions
  * @var array[] $resultats
+ * @var EnqueteReponse[] $reponses;
  */
 
 
 use Doctorant\Entity\Db\Doctorant;
+use Formation\Entity\Db\EnqueteReponse;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
@@ -278,7 +280,7 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
                               title="Annuler mon inscription" data-toggle="tooltip" data-html="true"
                         ></span></a>
                         <?php endif; ?>
-                        <?php if ($canConvocationInscription) : ?>
+                        <?php if ($canConvocationInscription AND $inscription->getListe() === Inscription::LISTE_PRINCIPALE) : ?>
                             <?php /** @see \Formation\Controller\InscriptionController::genererConvocationAction() */?>
                             <a href="<?php echo $this->url('formation/inscription/generer-convocation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
                         <span class="glyphicon glyphicon-share"
@@ -363,12 +365,6 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
         <?php endif; ?>
     </div>
 </div>
-
-
-
-
-
-
 
 <script>
     $(function() {
