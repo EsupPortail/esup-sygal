@@ -14,6 +14,7 @@ use Formation\Entity\Db\Session;
 use Formation\Service\Exporter\Attestation\AttestationExporter;
 use Formation\Service\Exporter\Convocation\ConvocationExporter;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
+use Formation\Service\Notification\NotificationServiceAwareTrait;
 use Formation\Service\Presence\PresenceServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Zend\Http\Response;
@@ -28,6 +29,7 @@ class InscriptionController extends AbstractController
     use FileServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use InscriptionServiceAwareTrait;
+    use NotificationServiceAwareTrait;
     use PresenceServiceAwareTrait;
 
     /** @var PhpRenderer */
@@ -78,6 +80,9 @@ class InscriptionController extends AbstractController
             $inscription->setDoctorant($doctorant);
             $this->getInscriptionService()->create($inscription);
             $this->flashMessenger()->addSuccessMessage("Inscription à la formation [] faite.");
+
+            $this->getNotificationService()->triggerInscriptionEnregistree($inscription);
+
             $retour=$this->params()->fromQuery('retour');
             if ($retour) return $this->redirect()->toUrl($retour);
             return $this->redirect()->toRoute('formation/session/afficher', ['session' => $session->getId()], [], true);
@@ -166,6 +171,7 @@ class InscriptionController extends AbstractController
         if (count($listePrincipale) < $session->getTailleListePrincipale()) {
             $inscription->setListe(Inscription::LISTE_PRINCIPALE);
             $this->getInscriptionService()->update($inscription);
+            $this->getNotificationService()->triggerInscriptionListePrincipale($inscription);
         } else {
             $this->flashMessenger()->addErrorMessage('La liste principale est déjà complète.');
         }
@@ -186,6 +192,7 @@ class InscriptionController extends AbstractController
         if (count($listePrincipale) < $session->getTailleListeComplementaire()) {
             $inscription->setListe(Inscription::LISTE_COMPLEMENTAIRE);
             $this->getInscriptionService()->update($inscription);
+            $this->getNotificationService()->triggerInscriptionListeComplementaire($inscription);
         } else {
             $this->flashMessenger()->addErrorMessage('La liste complémentaire est déjà complète.');
         }

@@ -209,13 +209,20 @@ class SessionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
+            /** @var Etat $etat */
             $etat = $this->getEntityManager()->getRepository(Etat::class)->find($data["etat"]);
 
             if ($etat !== null) {
                 $session->setEtat($etat);
                 $this->getSessionService()->update($session);
                 //todo ceci est un test ...
-                if ($session->getEtat()->getCode() === Etat::CODE_FERME) $this->getNotificationService()->triggerSessionImminente($session);
+                if ($session->getEtat()->getCode() === Etat::CODE_FERME) {
+                    $this->getNotificationService()->triggerSessionImminente($session);
+                    $this->getNotificationService()->triggerInscriptionEchec($session);
+                }
+                if ($session->getEtat()->getCode() === Etat::CODE_CLOTURER) {
+                    $this->getNotificationService()->triggerSessionTerminee($session);
+                }
             }
         }
 
@@ -249,11 +256,13 @@ class SessionController extends AbstractController
             if ($positionPrincipale < $session->getTailleListePrincipale()) {
                 $inscription->setListe(Inscription::LISTE_PRINCIPALE);
                 $this->getInscriptionService()->update($inscription);
+                $this->getNotificationService()->triggerInscriptionListePrincipale($inscription);
                 $positionPrincipale++;
             } else {
                 if ($positionComplementaire < $session->getTailleListeComplementaire()) {
                     $inscription->setListe(Inscription::LISTE_COMPLEMENTAIRE);
                     $this->getInscriptionService()->update($inscription);
+                    $this->getNotificationService()->triggerInscriptionListeComplementaire($inscription);
                     $positionComplementaire++;
                 }
                 else {

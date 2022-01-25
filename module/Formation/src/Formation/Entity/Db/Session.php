@@ -31,6 +31,9 @@ class Session implements HistoriqueAwareInterface,
     const ETAT_TERMINE          = 'T';
     const ETAT_CLOS_FINAL       = 'C';
 
+    const MODALITE_PRESENTIELLE = 'Présentielle';
+    const MODALITE_DISTANCIELLE = 'Distancielle';
+
     /** @var int */
     private $id;
 

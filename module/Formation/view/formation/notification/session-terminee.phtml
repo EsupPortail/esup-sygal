@@ -4,7 +4,7 @@ use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Seance;
 
 /**
- * @see \Formation\Service\Notification\NotificationService::triggerSessionImminente()
+ * @see \Formation\Service\Notification\NotificationService::triggerSessionTerminee()
  * @var Inscription $inscription
  * @var string $lilbelle
  */
@@ -16,22 +16,25 @@ $seances = array_filter($seances, function (Seance $a) { return $a->estNonHistor
 usort($seances, function (Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
 
 $gestionnaire = ($session->getFormation()->getResponsable())?$session->getFormation()->getResponsable()->getNomComplet():$this->appInfos()->nom;
+$url = $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], ['force-canonical' => true], true);
 ?>
 
 <p>
     Cher&middot;e doctorant&middot;e,
 </p>
 <p>
-    Nous vous rappelons que la formation <?php echo $libelle; ?> à laquelle vous êtes inscrit&middot;e va bientôt débuter.
+    Nous espérons que la formation s’est bien déroulée.
+    Pour l’obtention de l’attestation de <?php echo $session->getDuree(); ?> heures de formation , il est nécessairement de remplir le questionnaire de satisfaction via le lien suivant :
+    <a href="<?php echo $url; ?>"><?php echo $url; ?></a>.
 </p>
 <p>
     Les séances de cette formation se tiendront :
 </p>
 <ul>
     <?php foreach ($seances as $seance) : ?>
-    <li>
-        <?php echo $seance->getDebut()->format("d/m/Y"); ?> de <?php echo $seance->getDebut()->format("H:i"); ?> à <?php echo $seance->getFin()->format("H:i"); ?> - <?php echo $seance->getLieu(); ?>
-    </li>
+        <li>
+            <?php echo $seance->getDebut()->format("d/m/Y"); ?> de <?php echo $seance->getDebut()->format("H:i"); ?> à <?php echo $seance->getFin()->format("H:i"); ?> - <?php echo $seance->getLieu(); ?>
+        </li>
     <?php endforeach; ?>
 </ul>
 <p>

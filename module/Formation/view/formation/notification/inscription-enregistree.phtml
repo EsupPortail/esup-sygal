@@ -1,0 +1,63 @@
+<?php
+
+use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Seance;
+use Formation\Entity\Db\Session;
+
+/**
+ * @see \Formation\Service\Notification\NotificationService::triggerInscriptionEnregistree()
+ * @var Inscription $inscription
+ * @var string $lilbelle
+ */
+
+$session = $inscription->getSession();
+$libelle = $session->getFormation()->getLibelle();
+$date = $session->getDateDebut()->format('d/m/Y');
+$horaire = $session->getDateDebut()->format('H:i');
+$gestionnaire = ($session->getFormation()->getResponsable())?$session->getFormation()->getResponsable()->getNomComplet():$this->appInfos()->nom;
+
+$lieux = [];
+/** @var Seance $seance */
+foreach ($session->getSeances() as $seance) {
+    $lieu = trim($seance->getLieu());
+    if ($lieu !== '') $lieux[$lieu] = $lieu;
+}
+sort($lieux);
+?>
+<p>
+Cher&middot;e doctorant&middot;e,
+</p>
+
+<p>
+Nous avons bien reçu votre demande d’inscription à la formation <?php echo $libelle; ?> le <?php echo $date; ?> de <?php echo $horaire; ?>. <br/>
+</p>
+
+<?php if ($session->getModalite() === Session::MODALITE_PRESENTIELLE) : ?>
+    <p>
+    Pour rappel cette session de formation sera tenu en présentielle dans le&middot;s lieu&middot;x suivant&middot;s :
+    <ul>
+        <?php foreach ($lieux as $lieu) : ?>
+            <li> <?php echo $lieu; ?> </li>
+        <?php endforeach; ?>
+    </ul>
+    </p>
+<?php endif; ?>
+<?php if ($session->getModalite() === Session::MODALITE_DISTANCIELLE) : ?>
+    <p>
+        Pour rappel cette session de formation sera tenu en distancielle vous pouvez utiliser les informations suivantes pour vous connecter :
+    <ul>
+        <?php foreach ($lieux as $lieu) : ?>
+            <li> <?php echo $lieu; ?> </li>
+        <?php endforeach; ?>
+    </ul>
+    </p>
+<?php endif; ?>
+
+<p>
+    Tout doctorant non-inscrit ne pourra pas participer à la formation.
+</p>
+
+<p>
+    Cordialement,<br/>
+    <?php echo $gestionnaire; ?>
+</p>

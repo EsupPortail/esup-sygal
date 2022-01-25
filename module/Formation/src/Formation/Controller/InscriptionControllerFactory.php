@@ -8,6 +8,7 @@ use Application\Service\Individu\IndividuService;
 use Doctorant\Service\DoctorantService;
 use Doctrine\ORM\EntityManager;
 use Formation\Service\Inscription\InscriptionService;
+use Formation\Service\Notification\NotificationService;
 use Formation\Service\Presence\PresenceService;
 use Interop\Container\ContainerInterface;
 use Zend\View\Renderer\PhpRenderer;
@@ -27,6 +28,7 @@ class InscriptionControllerFactory {
          * @var FileService $fileService
          * @var InscriptionService $inscriptionService
          * @var IndividuService $individuService
+         * @var NotificationService $notificationService
          * @var PresenceService $presenceService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
@@ -35,6 +37,7 @@ class InscriptionControllerFactory {
         $fileService = $container->get(FileService::class);
         $individuService = $container->get(IndividuService::class);
         $inscriptionService = $container->get(InscriptionService::class);
+        $notificationService = $container->get(NotificationService::class);
         $presenceService = $container->get(PresenceService::class);
 
         /* @var $renderer PhpRenderer */
@@ -48,6 +51,7 @@ class InscriptionControllerFactory {
         $controller->setFileService($fileService);
         $controller->setIndividuService($individuService);
         $controller->setInscriptionService($inscriptionService);
+        $controller->setNotificationService($notificationService);
         $controller->setPresenceService($presenceService);
         /** forms *****************************************************************************************************/
         /** autres*****************************************************************************************************/

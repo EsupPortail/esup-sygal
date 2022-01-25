@@ -1,0 +1,29 @@
+<?php
+
+use Formation\Entity\Db\Inscription;
+
+/**
+ * @see \Formation\Service\Notification\NotificationService::triggerInscriptionEchec()
+ * @var Inscription $inscription
+ * @var string $lilbelle
+ */
+
+$session = $inscription->getSession();
+$libelle = $session->getFormation()->getLibelle();
+$date = $session->getDateDebut()->format('d/m/Y');
+$horaire = $session->getDateDebut()->format('H:i');
+$gestionnaire = ($session->getFormation()->getResponsable())?$session->getFormation()->getResponsable()->getNomComplet():$this->appInfos()->nom;
+
+?>
+
+<p>
+    Cher&middot;e doctorant&middot;e,
+</p>
+<p>
+    Vous étiez inscrit&middot;e sur liste complémentaire à la formation <?php echo $libelle; ?> le <?php echo $date; ?>  de <?php echo $horaire; ?> .<br/>
+    Cependant, aucune place ne s’étant libérée, nous sommes au regret de vous informer que vous ne pourrez pas participer à la formation.
+</p>
+<p>
+    Cordialement,<br/>
+    <?php echo $gestionnaire; ?>
+</p>
