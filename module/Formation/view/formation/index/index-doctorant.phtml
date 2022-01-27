@@ -27,7 +27,7 @@ foreach ($inscriptions as $inscription) {
     $seances = $inscription->getSession()->getSeances()->toArray();
     $seances = array_filter($seances, function ($a) { return $a->estNonHistorise(); });
     $nbSeance = count($seances);
-    if ($nbSeance > 0 AND $inscription->getSession()->estTerminee()) {
+    if ($nbSeance > 0 /**  AND $inscription->getSession()->estTerminee() **/ AND $inscription->getSession()->getEtat() === Etat::CODE_CLOTURER) {
         $terminees[] = $inscription;
     } else {
         if ($inscription->estNonHistorise()) $encours[] = $inscription;
