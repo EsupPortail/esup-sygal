@@ -88,15 +88,15 @@ class SessionController extends AbstractController
 
     public function ajouterAction()
     {
-        /** @var Formation $module */
-        $module = $this->getEntityManager()->getRepository(Formation::class)->getRequestedModule($this);
+        /** @var Formation $formation */
+        $formation = $this->getEntityManager()->getRepository(Formation::class)->getRequestedFormation($this);
 
         $session = new Session();
-        $session->setFormation($module);
+        $session->setFormation($formation);
         $session = $this->getSessionService()->setValeurParDefaut($session);
 
         $form = $this->getSessionForm();
-        $form->setAttribute('action', $this->url()->fromRoute('formation/session/ajouter', ['module' => $module->getId()], [], true));
+        $form->setAttribute('action', $this->url()->fromRoute('formation/session/ajouter', ['module' => $formation->getId()], [], true));
         $form->bind($session);
 
         $request = $this->getRequest();

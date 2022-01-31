@@ -49,7 +49,7 @@ class FormationController extends AbstractController
     public function afficherAction()
     {
         /** @var Formation|null $formation */
-        $formation = $this->getEntityManager()->getRepository(Formation::class)->getRequestedModule($this);
+        $formation = $this->getEntityManager()->getRepository(Formation::class)->getRequestedFormation($this);
 
         return new ViewModel([
             'formation' => $formation,
@@ -87,7 +87,7 @@ class FormationController extends AbstractController
     public function modifierAction()
     {
         /** @var Formation|null $formation */
-        $formation = $this->getEntityManager()->getRepository(Formation::class)->getRequestedModule($this);
+        $formation = $this->getEntityManager()->getRepository(Formation::class)->getRequestedFormation($this);
 
         $form = $this->getFormationForm();
         $form->setAttribute('action', $this->url()->fromRoute('formation/formation/modifier', [], [], true));
@@ -113,7 +113,7 @@ class FormationController extends AbstractController
     public function historiserAction()
     {
         /** @var Formation|null $formation */
-        $formation = $this->getEntityManager()->getRepository(Formation::class)->getRequestedModule($this);
+        $formation = $this->getEntityManager()->getRepository(Formation::class)->getRequestedFormation($this);
 
         $this->getFormationService()->historise($formation);
 
@@ -128,7 +128,7 @@ class FormationController extends AbstractController
     public function restaurerAction()
     {
         /** @var Formation|null $formation */
-        $formation = $this->getEntityManager()->getRepository(Formation::class)->getRequestedModule($this);
+        $formation = $this->getEntityManager()->getRepository(Formation::class)->getRequestedFormation($this);
 
         $this->getFormationService()->restore($formation);
 
@@ -142,7 +142,7 @@ class FormationController extends AbstractController
     public function supprimerAction()
     {
         /** @var Formation|null $formation */
-        $formation = $this->getEntityManager()->getRepository(Formation::class)->getRequestedModule($this);
+        $formation = $this->getEntityManager()->getRepository(Formation::class)->getRequestedFormation($this);
 
         $request = $this->getRequest();
         if ($request->isPost()) {

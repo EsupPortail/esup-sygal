@@ -17,7 +17,7 @@ class FormationRepository extends EntityRepository
      * @param string $param
      * @return Formation|null
      */
-    public function getRequestedModule(AbstractActionController $controller, string $param = 'formation') : ?Formation
+    public function getRequestedFormation(AbstractActionController $controller, string $param = 'formation') : ?Formation
     {
         $id = $controller->params()->fromRoute($param);
         /** @var Formation|null $formation */

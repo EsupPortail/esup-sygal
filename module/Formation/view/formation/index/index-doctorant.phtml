@@ -27,7 +27,7 @@ foreach ($inscriptions as $inscription) {
     $seances = $inscription->getSession()->getSeances()->toArray();
     $seances = array_filter($seances, function ($a) { return $a->estNonHistorise(); });
     $nbSeance = count($seances);
-    if ($nbSeance > 0 /**  AND $inscription->getSession()->estTerminee() **/ AND $inscription->getSession()->getEtat() === Etat::CODE_CLOTURER) {
+    if ($nbSeance > 0 /**  AND $inscription->getSession()->estTerminee() **/ AND $inscription->getSession()->getEtat()->getCode() === Etat::CODE_CLOTURER) {
         $terminees[] = $inscription;
     } else {
         if ($inscription->estNonHistorise()) $encours[] = $inscription;
@@ -137,21 +137,16 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
                     </td>
                     <td>
                         <?php $inscrit = $session->estInscrit($doctorant); ?>
-                        <?php if ($session->getEtat()->getCode() === Etat::CODE_OUVERTE AND !$inscrit) : ?>
-                            <?php if ($canAjouterInscription) : ?>
-                                <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
-                                <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId(), 'doctorant' => $doctorant->getId()], ['query' => ['retour' => $this->url('formation/index-doctorant', [], [], true)]], true); ?>"
-                                >
+                        <?php if ($canAjouterInscription and !$inscrit) : ?>
+                            <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
+                            <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId(), 'doctorant' => $doctorant->getId()], ['query' => ['retour' => $this->url('formation/index-doctorant', ['doctorant' => $doctorant->getId()], ['fragment' => 'preparation'], true)]], true); ?>"
+                            >
                             <span class="glyphicon glyphicon-plus"
                                   title="M'inscrire" data-toggle="tooltip" data-html="true"
                             ></span></a>
-                            <?php endif; ?>
-                        <?php else: ?>
-                            <?php if ($inscrit) : ?>
+                        <?php endif; ?>
+                        <?php if ($inscrit) : ?>
                                 <span class="glyphicon glyphicon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
-                            <?php else : ?>
-                                <span class="glyphicon glyphicon-info-sign" title="Les inscriptions ne sont pas ouvertes"></span>
-                            <?php endif; ?>
                         <?php endif; ?>
                     </td>
                 </tr>
@@ -206,21 +201,10 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
                     </td>
                     <td>
                         <?php $inscrit = $session->estInscrit($doctorant); ?>
-                        <?php if ($session->getEtat()->getCode() === Etat::CODE_OUVERTE AND !$inscrit) : ?>
-                            <?php if ($canAjouterInscription) : ?>
-                                <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
-                                <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId(), 'doctorant' => $doctorant->getId()], ['query' => ['retour' => $this->url('formation/index-doctorant', [], [], true)]], true); ?>"
-                                >
-                            <span class="glyphicon glyphicon-plus"
-                                  title="M'inscrire" data-toggle="tooltip" data-html="true"
-                            ></span></a>
-                            <?php endif; ?>
-                        <?php else: ?>
-                            <?php if ($inscrit) : ?>
-                                <span class="glyphicon glyphicon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
-                            <?php else : ?>
-                                <span class="glyphicon glyphicon-info-sign" title="Les inscriptions ne sont pas ouvertes"></span>
-                            <?php endif; ?>
+                        <?php if ($inscrit) : ?>
+                            <span class="glyphicon glyphicon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
+                        <?php else : ?>
+                            <span class="glyphicon glyphicon-info-sign" title="Les inscriptions ne sont pas ouvertes"></span>
                         <?php endif; ?>
                     </td>
                 </tr>
@@ -297,8 +281,6 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
         <h2>
             Mes formations suivies
         </h2>
-
-        <h2> Mes formations suivis</h2>
 
         <table class="table table-condensed">
             <thead>
