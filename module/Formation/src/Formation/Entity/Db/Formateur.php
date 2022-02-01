@@ -9,6 +9,8 @@ use UnicaenApp\Entity\HistoriqueAwareTrait;
 class Formateur  implements HistoriqueAwareInterface{
     use HistoriqueAwareTrait;
 
+    const ROLE = 'FORMATEUR';
+
     /** @var int */
     private $id;
     /** @var Individu */

@@ -26,6 +26,9 @@ use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr;
+use Formation\Entity\Db\Formateur;
+use Formation\Entity\Db\Session;
+use Formation\Service\Session\SessionServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenAuth\Entity\Shibboleth\ShibUser;
@@ -62,6 +65,8 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use UserServiceAwareTrait;
     use TokenServiceAwareTrait;
     use DoctorantServiceAwareTrait;
+
+    use SessionServiceAwareTrait;
 
     use InitCompteFormAwareTrait;
 
@@ -206,6 +211,12 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $doctorant = $this->doctorantService->getRepository()->findOneByIndividu($individu);
         if ($doctorant) {
             $roles[] = $this->roleService->getRepository()->findRoleDoctorantForEtab($doctorant->getEtablissement());
+        }
+
+        $sessions = $this->getSessionService()->getEntityManager()->getRepository(Session::class)->findSessionsByFormateur($individu);
+        if (!empty($sessions)) {
+            $formateur = $this->getRoleService()->getRepository()->findByCode(Formateur::ROLE);
+            $roles[] = $formateur;
         }
 
         return array_unique($roles);

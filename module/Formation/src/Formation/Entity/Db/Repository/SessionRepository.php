@@ -124,6 +124,25 @@ class SessionRepository extends EntityRepository
      * @param Individu $individu
      * @return array
      */
+    public function findSessionsByFormateur(Individu $individu) : array
+    {
+        $qb = $this->createQB('session')
+            ->leftJoin('session.formateurs', 'formateur')
+            ->leftJoin('session.formateurs', 'aformateur')->addSelect('aformateur')
+            ->andWhere('formateur.individu = :individu')
+            ->setParameter('individu', $individu)
+            ->andWhere('session.histoDestruction IS NULL')
+            ->andWhere('formateur.histoDestruction IS NULL')
+            ->orderBy('session.id', 'ASC')
+        ;
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
+     * @param Individu $individu
+     * @return array
+     */
     public function findSessionsPasseesByFormateur(Individu $individu) : array
     {
         $etats = [ Etat::CODE_CLOTURER ];

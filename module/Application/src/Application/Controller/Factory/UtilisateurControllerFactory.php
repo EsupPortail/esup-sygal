@@ -19,6 +19,7 @@ use Application\Service\Utilisateur\UtilisateurSearchService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\SourceCodeStringHelper;
 use Doctrine\ORM\EntityManager;
+use Formation\Service\Session\SessionService;
 use Interop\Container\ContainerInterface;
 use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\ShibService;
@@ -51,6 +52,7 @@ class UtilisateurControllerFactory
          * @var UtilisateurSearchService $utilisateurSearchService
          * @var UserInterface $mapper
          * @var DoctorantService $doctorantService
+         * @var SessionService $sessionService
          */
         $acteurService = $container->get(ActeurService::class);
         $roleService = $container->get('RoleService');
@@ -67,6 +69,7 @@ class UtilisateurControllerFactory
         $utilisateurSearchService = $container->get(UtilisateurSearchService::class);
         $userMapper = $container->get('zfcuser_user_mapper');
         $doctorantService = $container->get(DoctorantService::class);
+        $sessionService = $container->get(SessionService::class);
 
         /**
          * @var InitCompteForm $initCompteForm
@@ -109,6 +112,7 @@ class UtilisateurControllerFactory
         $controller->setSearchService($utilisateurSearchService);
         $controller->setUserMapper($userMapper);
         $controller->setDoctorantService($doctorantService);
+        $controller->setSessionService($sessionService);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper

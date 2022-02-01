@@ -25,7 +25,8 @@ return [
         'identity_providers'  => [
             300 => 'UnicaenAuth\Provider\Identity\Basic',   // en 1er
             200 => 'UnicaenAuth\Provider\Identity\Db',      // en 2e
-            100 => 'Application\Provider\IdentityProvider', // en 3e
+            110 => 'Application\Provider\IdentityProvider', // en 3e
+            100 => 'Formation\Provider\IdentityProvider',   // en 4e
         ],
     ],
 
