@@ -30,6 +30,7 @@ use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Exporter\AvisSoutenance\AvisSoutenancePdfExporter;
+use Soutenance\Service\Exporter\RapportTechnique\RapportTechniquePdfExporter;
 use Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter;
 use Soutenance\Service\Exporter\ProcesVerbal\ProcesVerbalSoutenancePdfExporter;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
@@ -397,7 +398,6 @@ class PresoutenanceController extends AbstractController
         exit;
     }
 
-    /** Document pour la signature en présidence */
     public function avisSoutenanceAction()
     {
         $these = $this->requestedThese();
@@ -412,6 +412,20 @@ class PresoutenanceController extends AbstractController
             'informations' => $pdcData,
         ]);
         $exporter->export($these->getId() . '_avis_soutenance.pdf');
+        exit;
+    }
+
+    public function rapportTechniqueAction()
+    {
+        $these = $this->requestedThese();
+        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+
+        $exporter = new RapportTechniquePdfExporter($this->renderer, 'A4');
+        $exporter->setVars([
+            'these' => $these,
+            'informations' => $pdcData,
+        ]);
+        $exporter->export($these->getId() . '_rapport_technique.pdf');
         exit;
     }
 

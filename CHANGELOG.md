@@ -1,6 +1,20 @@
 Journal des modifications
 =========================
 
+3.0.11
+-----
+- [FIX] Passage à unicaen/auth 3.2.11 pour affichage correct du rôle lorsqu'on endosse/sélectionne un rôle lié à une structure substituée.
+- [FIX] Changement de signatures de fonctions pour une meilleure compatibilité
+- Ajout de la liste des soutenances à venir dans l'index de l'application + lien vers la fiche de la these
+- [FIX] Changement du comptage des engagements et des avis dans le cas de rapporteurs historisés mais ayant déjà rendu quelque chose
+- [FIX] Le menu 'Mes thèses' inclut désormais les thèses soutenues (indispensable pour le profil Président du jury).
+- [FIX] Utilisation de l'état ETABLISSEMENT pour le feu vert des soutenances plutôt que VALIDE
+- Ajout d'une mention de l'envoi à tous les responsables de structure lorsque aucun responsable de site n'a été trouvé.
+- Ajout du rapport technique dans les documents de la présoutenance (s'il y a au moins une visio de déclarée)
+- [FIX] QPDF peut retourner 3 en cas de warnings non bloquants : on ajoute --warning-exit-0 pour retourner 0 même en cas de warnings.
+- Modification des conditions d'affichage des documents de présoutenance pour le cas des soutenances rejetées
+- Modification du template d'avis de soutenance.
+
 3.0.10
 -----
 - Ajout de la mention "La réservation du lieu de soutenance n'est pas faite automatiquement et reste à votre charge"
@@ -13,6 +27,7 @@ Journal des modifications
 - Suppression des paramètres 'cookie_lifetime'et 'gc_maxlifetime' de la config de l'appliccation
 - Refactorisation : extraction d'un nouveau module 'Doctorant' à partir du module 'Application'
 - [FIX] Création du menu 'Ma thèse' même si la thèse est soutenue
+- [FIX] Correction du comportement lorsque qu'un rapporteur d'une thèse précédente est de nouveau rapporteur d'auntre autre thèse
 
 3.0.9
 -----

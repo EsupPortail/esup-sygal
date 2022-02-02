@@ -449,4 +449,16 @@ class Proposition implements HistoriqueAwareInterface {
         if ($this->getDate() OR $this->getLieu())  return true;
         return false;
     }
+
+    /**
+     * @return bool
+     */
+    public function hasVisio() : bool
+    {
+        /** @var Membre $membre */
+        foreach ($this->membres as $membre) {
+            if ($membre->isVisio()) return true;
+        }
+        return false;
+    }
 }

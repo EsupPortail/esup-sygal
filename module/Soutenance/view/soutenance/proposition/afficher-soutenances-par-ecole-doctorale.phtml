@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @see \Soutenance\Controller\PropositionController::afficherSoutenancesParEcoleDoctoraleAction()
+ * @var EcoleDoctorale $ecole
+ * @var Proposition[] $soutenances
+ */
+
+use Application\Entity\Db\EcoleDoctorale;
+use Soutenance\Entity\Proposition;
+
+$this->headTitle("Soutenances autorisées pour l'école doctorale [".$ecole->getSigle()."] " . $ecole->getLibelle());
+
+$count = count($soutenances);
+?>
+
+<h1 class="page-header">
+    Soutenances autorisées pour l'école doctorale <br/>
+    [<?php echo $ecole->getSigle(); ?>] <?php echo $ecole->getLibelle(); ?>
+</h1>
+
+<?php if ($count > 0) : ?>
+    <h2>Liste des soutenances à venir <span class="badge"><?php echo $count; ?> </span></h2>
+    <ul>
+    <?php foreach ($soutenances as $soutenance) : ?>
+        <li>
+            <strong>
+                <a href="<?php echo $this->url('these/identite', [ 'these' => $soutenance->getThese()->getId() ], [], true); ?>">
+                    <?php echo $soutenance->getThese()->getTitre(); ?>
+                </a>
+            </strong>
+                - <?php echo $soutenance->getThese()->getDoctorant()->getIndividu()->getNomComplet(); ?> <br/>
+            <u>Date de soutenance :</u> <?php echo $soutenance->getDate()->format("d/m/Y à H:i"); ?> <br/>
+            <u>Lieu de soutenance :</u> <?php echo $soutenance->getLieu(); ?>
+
+        </li><br/>
+    <?php endforeach; ?>
+    </ul>
+<?php else: ?>
+    <p class="lead">Aucune soutenance à venir</p>
+<?php endif; ?>

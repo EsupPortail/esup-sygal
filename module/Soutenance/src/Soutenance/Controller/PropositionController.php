@@ -8,6 +8,7 @@ use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Etat;
@@ -41,6 +42,7 @@ use Zend\View\Renderer\PhpRenderer;
 class PropositionController extends AbstractController
 {
     use ActeurServiceAwareTrait;
+    use EcoleDoctoraleServiceAwareTrait;
     use EvenementServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
@@ -49,6 +51,7 @@ class PropositionController extends AbstractController
     use ValidatationServiceAwareTrait;
     use JustificatifServiceAwareTrait;
     use ParametreServiceAwareTrait;
+
     use DateLieuFormAwareTrait;
     use MembreFromAwareTrait;
     use LabelEuropeenFormAwareTrait;
@@ -518,5 +521,16 @@ class PropositionController extends AbstractController
         }
 
         return $this->redirect()->toRoute('soutenance', [], [], true);
+    }
+
+    public function afficherSoutenancesParEcoleDoctoraleAction() : ViewModel
+    {
+        $ecole = $this->getEcoleDoctoraleService()->getRequestedEcoleDoctorale($this);
+        $soutenances = $this->getPropositionService()->getSoutenancesAutoriseesByEcoleDoctorale($ecole);
+
+        return new ViewModel([
+            'ecole' => $ecole,
+            'soutenances' => $soutenances,
+        ]);
     }
 }
