@@ -4,6 +4,7 @@ Journal des modifications
 3.0.12
 ------
 - Le bouton d'impression du document pour signature du président reste visible même après validation de l'ED.
+- Corrections de typos
 
 3.0.11
 -----
