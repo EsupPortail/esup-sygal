@@ -87,7 +87,7 @@ $these = $proposition->getThese();
                 <?php
                     $validationMDD = null;
                     if ($validations[Role::CODE_BDD]) { $validationMDD = current($validations[Role::CODE_BDD]); }
-                    if ($canPresidence AND $validationMDD === null): ?>
+                    if ($canPresidence /**AND $validationMDD === null*/): ?>
                     <p>
                         <a  <?php /** @see \Soutenance\Controller\PropositionController::signaturePresidenceAction(); */ ?>
                             href="<?php echo $this->url('soutenance/proposition/signature-presidence', ['these' => $these->getId()], true); ?>"

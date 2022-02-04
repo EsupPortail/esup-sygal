@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+3.0.12
+------
+- Le bouton d'impression du document pour signature du président reste visible même après validation de l'ED.
+
 3.0.11
 -----
 - [FIX] Passage à unicaen/auth 3.2.11 pour affichage correct du rôle lorsqu'on endosse/sélectionne un rôle lié à une structure substituée.
