@@ -123,6 +123,8 @@ class PdcData
     /** @var Acteur[] */
     private $codirecteurs;
     /** @var Acteur[] */
+    private $coencadrants;
+    /** @var Acteur[] */
     private $rapporteurs;
     /** @var Acteur[] */
     private $membres;
@@ -426,6 +428,23 @@ class PdcData
         return $this;
     }
 
+    /**
+     * @return Acteur[]
+     */
+    public function getCoencadrants()
+    {
+        return $this->coencadrants;
+    }
+
+    /**
+     * @param Acteur[] $coencadrants
+     * @return PdcData
+     */
+    public function setCoencadrants($coencadrants)
+    {
+        $this->coencadrants = $coencadrants;
+        return $this;
+    }
 
 
     /**
