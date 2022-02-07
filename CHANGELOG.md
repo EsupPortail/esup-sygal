@@ -5,6 +5,7 @@ Journal des modifications
 ------
 - Le bouton d'impression du document pour signature du président reste visible même après validation de l'ED.
 - Corrections de typos
+- [FIX] Vérification du dépôt de l'avis de soutenance avant notification pour rappel
 
 3.0.11
 -----
