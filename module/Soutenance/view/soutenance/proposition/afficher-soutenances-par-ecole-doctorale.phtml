@@ -69,7 +69,14 @@ $count = count($soutenances);
                             <dt>Date de la soutenance</dt>
                             <dd><?php echo $soutenance->getDate()->format("d/m/Y à H:i"); ?></dd>
                             <dt>Lieu de la soutenance</dt>
-                            <dd><?php echo $soutenance->getLieu(); ?></dd>
+                            <dd>
+                                <?php if ($soutenance->getAdresse() !== null) : ?>
+                                    <?php echo $soutenance->getAdresse(); ?>
+                                <?php else : ?>
+                                    <span class="icon icon-information" title="L'adresse présentée est celle saisie par le doctorant et non l'adresse fiabilisée"></span>
+                                    <?php echo $soutenance->getLieu(); ?>
+                                <?php endif; ?>
+                            </dd>
 
                             <dt> Rapporteurs de la thèse</dt>
                             <dd>
