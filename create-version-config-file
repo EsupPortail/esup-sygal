@@ -35,6 +35,7 @@ if ($versionDate === null) {
 if ($configFilepath === null) {
     $configFilepath = DEFAULT_FILE_PATH;
 }
+$configFilepath = realpath($configFilepath);
 
 $config = [
     'unicaen-app' => [
