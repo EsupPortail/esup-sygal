@@ -193,9 +193,9 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     /**
      * Get Code
      *
-     * @return string
+     * @return string|null
      */
-    public function getCode(): string
+    public function getCode(): ?string
     {
 //        if ($this->code !== null) return $this->code;
 //        if ($this->sourceCode !== null) {
