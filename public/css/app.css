@@ -731,4 +731,16 @@ span.badge.REJETEE,
 span.badge.badge-error {
   background: #d23544; }
 
+.livelog-panel {
+  line-height: normal;
+  font-family: monospace;
+  font-size: 9px;
+  border: 2px grey dotted;
+  height: 300px;
+  overflow-y: scroll;
+  overflow-x: scroll;
+  white-space: nowrap;
+  padding: 0.5em;
+  margin-top: 1em; }
+
 /*# sourceMappingURL=app.css.map */

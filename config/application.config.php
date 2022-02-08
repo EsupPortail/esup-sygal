@@ -32,6 +32,7 @@ return [
         'UnicaenLdap',
         'UnicaenDbImport',
         'UnicaenFaq',
+        'UnicaenLivelog',
         'Import',
         'Indicateur',
         'Retraitement',
