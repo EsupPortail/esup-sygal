@@ -7,6 +7,7 @@ use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactory;
+use Application\Entity\UserWrapperFactoryAwareTrait;
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Doctorant\Service\DoctorantServiceAwareTrait;
@@ -37,6 +38,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
     use UtilisateurServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
+    use UserWrapperFactoryAwareTrait;
 
     private $roles;
 
@@ -87,9 +89,8 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
         /** @var array $identity */
         $identity = $this->authenticationService->getIdentity();
 
-        $userWrapperFactory = new UserWrapperFactory();
         try {
-            $this->userWrapper = $userWrapperFactory->createInstanceFromIdentity($identity);
+            $this->userWrapper = $this->userWrapperFactory->createInstanceFromIdentity($identity);
         } catch (\Exception $e) {
             error_log($e->getMessage());
             error_log($e->getTraceAsString());

@@ -3,7 +3,7 @@
 namespace Application\Event;
 
 use UnicaenAuth\Entity\Shibboleth\ShibUser;
-use UnicaenApp\Entity\Ldap\People;
+use UnicaenAuth\Entity\Ldap\People;
 use ZfcUser\Entity\UserInterface;
 
 /**

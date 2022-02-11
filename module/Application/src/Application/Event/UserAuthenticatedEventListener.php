@@ -5,7 +5,7 @@ namespace Application\Event;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
-use Application\Entity\UserWrapperFactory;
+use Application\Entity\UserWrapperFactoryAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
@@ -19,6 +19,7 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
     use EtablissementServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use SourceServiceAwareTrait;
+    use UserWrapperFactoryAwareTrait;
 
     /**
      * Méthode appelée juste avant que l'entité utilisateur soit persistée.
@@ -29,9 +30,8 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
     {
         parent::onUserAuthenticatedPrePersist($e);
 
-        $userWrapperFactory = new UserWrapperFactory();
         try {
-            $userWrapper = $userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
+            $userWrapper = $this->userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
         } catch (\Exception $e) {
             error_log($e->getMessage());
             error_log($e->getTraceAsString());
@@ -54,9 +54,8 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
     {
         parent::onUserAuthenticatedPostPersist($e);
 
-        $userWrapperFactory = new UserWrapperFactory();
         try {
-            $userWrapper = $userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
+            $userWrapper = $this->userWrapperFactory->createInstanceFromUserAuthenticatedEvent($e);
         } catch (\Exception $e) {
             error_log($e->getMessage());
             error_log($e->getTraceAsString());

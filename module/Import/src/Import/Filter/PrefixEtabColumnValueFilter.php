@@ -3,16 +3,35 @@
 namespace Import\Filter;
 
 use Application\Service\Source\SourceServiceAwareTrait;
-use UnicaenDbImport\Domain\Source;
-use UnicaenDbImport\Filter\ColumnValue\ColumnValueFilterInterface;
+use InvalidArgumentException;
+use UnicaenDbImport\Filter\ColumnValue\AbstractColumnValueFilter;
 
 /**
- * Filtre utilisé lors de l'import pour préfixer certaines valeurs de colonnes destination par le code établissement,
+ * Filtre permettant de préfixer une valeur de colonne/attribut par le code établissement,
  * ex : 'UMR6211' devient 'UCN::UMR6211'.
  */
-class PrefixEtabColumnValueFilter implements ColumnValueFilterInterface
+class PrefixEtabColumnValueFilter extends AbstractColumnValueFilter
 {
+    const PARAM_CODE_ETABLISSEMENT = 'code_etablissement';
+
     use SourceServiceAwareTrait;
+
+    /**
+     * @var string[]
+     */
+    protected $columnsToTransform = [
+        'sourceCode',
+        'sourceId',
+        'individuId',
+        'roleId',
+        'theseId',
+        'doctorantId',
+        'structureId',
+        'ecoleDoctId',
+        'uniteRechId',
+        'acteurEtablissementId',
+        'origineFinancementId',
+    ];
 
     /**
      * @var string
@@ -20,16 +39,26 @@ class PrefixEtabColumnValueFilter implements ColumnValueFilterInterface
     protected $codeEtablissement;
 
     /**
-     * @var \UnicaenDbImport\Domain\Source
+     * @inheritDoc
      */
-    protected $source;
+    public function __toString(): string
+    {
+        return "Préfixage par le code établissement des colonnes/attributs suivants : " . PHP_EOL .
+            implode(', ', $this->columnsToTransform);
+    }
 
     /**
      * @inheritDoc
      */
-    public function setSource(Source $source)
+    public function setParams(array $params)
     {
-        $this->source = $source;
+        if (!isset($params[$key = self::PARAM_CODE_ETABLISSEMENT])) {
+            throw new InvalidArgumentException("La clé '$key' doit exister dans les paramètres transmis");
+        }
+
+        $this->codeEtablissement = $params[$key];
+
+        parent::setParams($params);
     }
 
     /**
@@ -41,34 +70,10 @@ class PrefixEtabColumnValueFilter implements ColumnValueFilterInterface
             return null;
         }
 
-        switch ($name) {
-            case 'SOURCE_ID':
-            case 'INDIVIDU_ID':
-            case 'ROLE_ID':
-            case 'THESE_ID':
-            case 'DOCTORANT_ID':
-            case 'STRUCTURE_ID':
-            case 'ECOLE_DOCT_ID':
-            case 'UNITE_RECH_ID':
-            case 'ACTEUR_ETABLISSEMENT_ID':
-            case 'ORIGINE_FINANCEMENT_ID':
-                $value = $this->getCodeEtablissement() . '::' . $value;
-                break;
-            default:
-                break;
+        if (in_array($name, $this->columnsToTransform)) {
+            $value = $this->codeEtablissement . '::' . $value;
         }
 
         return $value;
-    }
-
-    private function getCodeEtablissement(): string
-    {
-        if ($this->codeEtablissement === null) {
-            /** @var \Application\Entity\Db\Source $source */
-            $source = $this->sourceService->getRepository()->findOneBy(['code' => $this->source->getName()]);
-            $this->codeEtablissement = $source->getEtablissement()->getCode();
-        }
-
-        return $this->codeEtablissement;
     }
 }

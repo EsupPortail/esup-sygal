@@ -31,6 +31,7 @@ use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 use Webmozart\Assert\Assert;
 use Laminas\Mvc\Controller\AbstractActionController;
+use function Application\generateNameForEtab;
 
 /**
  * @author Unicaen
@@ -248,7 +249,7 @@ class StructureService extends BaseService
             $etabs[$etab] = $etab;
         }
         foreach ($etabs as $etab) {
-            $this->synchroService->addService(generateSynchroName('these', $etab));
+            $this->synchroService->addService(generateNameForEtab('these-%s', $etab));
         }
 
         $this->synchroService->synchronize();

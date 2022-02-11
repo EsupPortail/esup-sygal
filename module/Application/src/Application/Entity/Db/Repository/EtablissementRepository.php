@@ -135,21 +135,16 @@ class EtablissementRepository extends DefaultEntityRepository
      * Tente de trouver l'établissement auquel appartient un utilisateur.
      *
      * @param UserWrapper $userWrapper Utilisateur
-     * @return Etablissement
+     * @return Etablissement|null
      */
-    public function findOneForUserWrapper(UserWrapper $userWrapper): Etablissement
+    public function findOneForUserWrapper(UserWrapper $userWrapper): ?Etablissement
     {
         $domaine = $userWrapper->getDomainFromEppn() ?: $userWrapper->getDomainFromEmail();
         if (! $domaine) {
             throw new RuntimeException("Cas imprévu: aucun domaine exploitable.");
         }
 
-        $etablissement = $this->findOneByDomaine($domaine);
-        if ($etablissement === null) {
-            throw new RuntimeException("Aucun établissement trouvé pour le domaine " . $domaine);
-        }
-
-        return $etablissement;
+        return $this->findOneByDomaine($domaine);
     }
 
     /**

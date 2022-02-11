@@ -2,17 +2,17 @@
 
 namespace Application\Authentication\Storage;
 
-use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
-use Application\Entity\UserWrapperFactory;
-use Doctorant\Service\DoctorantServiceAwareTrait;
+use Application\Entity\UserWrapperFactoryAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
+use Doctorant\Entity\Db\Doctorant;
+use Doctorant\Service\DoctorantServiceAwareTrait;
+use Laminas\Authentication\Exception\ExceptionInterface;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Authentication\Storage\ChainableStorage;
 use UnicaenAuth\Authentication\Storage\ChainEvent;
-use Laminas\Authentication\Exception\ExceptionInterface;
 
 /**
  * Ajout de données utiles concernant l'utilisateur authentifié.
@@ -28,6 +28,7 @@ class AppStorage implements ChainableStorage
     use UtilisateurServiceAwareTrait;
     use DoctorantServiceAwareTrait;
     use EtablissementServiceAwareTrait;
+    use UserWrapperFactoryAwareTrait;
 
     const KEY_DB_UTILISATEUR = 'db';
     const KEY_DOCTORANT = 'doctorant';
@@ -47,9 +48,8 @@ class AppStorage implements ChainableStorage
      */
     public function read(ChainEvent $e)
     {
-        $userWrapperFactory = new UserWrapperFactory();
         try {
-            $this->userWrapper = $userWrapperFactory->createInstanceFromStorageChainEvent($e);
+            $this->userWrapper = $this->userWrapperFactory->createInstanceFromStorageChainEvent($e);
         } catch (\Exception $e) {
             error_log($e->getMessage());
             error_log($e->getTraceAsString());

@@ -2,6 +2,7 @@
 
 namespace Application\Authentication\Storage;
 
+use Application\Entity\UserWrapperFactory;
 use Doctorant\Service\DoctorantService;
 use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Utilisateur\UtilisateurService;
@@ -14,8 +15,10 @@ class AppStorageFactory
     /**
      * @param ContainerInterface $container
      * @return AppStorage
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): AppStorage
     {
         /** @var UtilisateurService $utilisateurService */
         $utilisateurService = $container->get('UtilisateurService');
@@ -25,10 +28,14 @@ class AppStorageFactory
 
         $etablissementService = $this->locateEtablissementService($container);
 
+        /** @var UserWrapperFactory $userWrapperFactory */
+        $userWrapperFactory = $container->get(UserWrapperFactory::class);
+
         $service = new AppStorage();
         $service->setUtilisateurService($utilisateurService);
         $service->setDoctorantService($doctorantService);
         $service->setEtablissementService($etablissementService);
+        $service->setUserWrapperFactory($userWrapperFactory);
 
         return $service;
     }

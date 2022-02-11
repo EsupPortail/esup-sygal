@@ -9,6 +9,8 @@ use Application\Controller\Plugin\Forward;
 use Application\Controller\Plugin\ForwardFactory;
 use Application\Controller\Plugin\Uploader\UploaderPluginFactory;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
+use Application\Entity\UserWrapperFactory;
+use Application\Entity\UserWrapperFactoryFactory;
 use Application\Event\UserAuthenticatedEventListenerFactory;
 use Application\Event\UserRoleSelectedEventListener;
 use Application\Form\Factory\EcoleDoctoraleFormFactory;
@@ -216,6 +218,7 @@ return array(
             'Sygal\Memcached'                => MemcachedFactory::class,
             'RoleService' => RoleServiceFactory::class,
             SourceCodeStringHelper::class => SourceCodeStringHelperFactory::class,
+            UserWrapperFactory::class => UserWrapperFactoryFactory::class,
         ),
         'abstract_factories' => [
             AssertionAbstractFactory::class,

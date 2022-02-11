@@ -1,12 +1,14 @@
 Journal des modifications
 =========================
 
-3.1
----
+4.0.0
+-----
 - Migration vers Laminas (back-end).
 - Migration vers Bootstrap 5 (front-end).
 - Réorganisation des infos affcihées à propos de la connexion dans le menu principal.
 - Cas de la connexion d'un utilisateur sans possibilité de trouver d'individu associé : plus de création automatique d'individu car peut bloquer un import ultétieur.
+- Amélioration de la page "Contact Assistance" en cas d'établissement indéterminé et/ou d'adresse d'assistance indéterminé ou invalide.
+- [FIX] Plantage de la page "Contact Assistance" en cas de connexion avec un compte local.  
 - [FIX] Activation de la mise en cache de la config lorsque le mode development est désactivé.
 - [FIX] Lancement de la synchro des thèses pour prendre en compte la création/modification/suppression de substitution de structures.
 
