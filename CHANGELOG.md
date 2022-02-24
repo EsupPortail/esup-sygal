@@ -1,6 +1,15 @@
 Journal des modifications
 =========================
 
+3.0.12
+------
+- Le bouton d'impression du document pour signature du président reste visible même après validation de l'ED.
+- Corrections de typos
+- [FIX] Vérification du dépôt de l'avis de soutenance avant notification pour rappel
+- Amélioration de l'affichage des soutenances à venir
+- Retrait des co-encadrants du PV de soutenances
+- [FIX] Résolution du plantage lors du téléchargement d'un rapport (activité, CSI, mi-parcours)
+
 3.0.11
 -----
 - [FIX] Passage à unicaen/auth 3.2.11 pour affichage correct du rôle lorsqu'on endosse/sélectionne un rôle lié à une structure substituée.

@@ -523,6 +523,10 @@ class TheseService extends BaseService implements ListenerAggregateInterface
             return $a->estCodirecteur();
         });
         $pdcData->setCodirecteurs($codirecteurs);
+        $coencadrants = array_filter($acteurs, function (Acteur $a) {
+            return $a->estCoEncadrant();
+        });
+        $pdcData->setCoencadrants($coencadrants);
         $president = array_filter($acteurs, function (Acteur $a) {
             return $a->estPresidentJury();
         });

@@ -238,7 +238,7 @@ use Soutenance\Entity\Proposition;
 
     <?php
           $signataires = $informations->getJury();
-          $signataires = array_diff($signataires, $informations->getDirecteurs(), $informations->getCodirecteurs());
+          $signataires = array_diff($signataires, $informations->getDirecteurs(), $informations->getCodirecteurs(), $informations->getCoencadrants());
           usort($signataires, function(Acteur $a, Acteur $b) { return $a->getIndividu()->getNomComplet() > $b->getIndividu()->getNomComplet(); });
     ?>
 

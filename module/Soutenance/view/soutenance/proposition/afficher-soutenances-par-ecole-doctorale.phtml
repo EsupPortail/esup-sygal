@@ -6,6 +6,7 @@
  * @var Proposition[] $soutenances
  */
 
+use Application\Entity\Db\Acteur;
 use Application\Entity\Db\EcoleDoctorale;
 use Soutenance\Entity\Proposition;
 
@@ -21,21 +22,100 @@ $count = count($soutenances);
 
 <?php if ($count > 0) : ?>
     <h2>Liste des soutenances à venir <span class="badge"><?php echo $count; ?> </span></h2>
-    <ul>
     <?php foreach ($soutenances as $soutenance) : ?>
-        <li>
-            <strong>
-                <a href="<?php echo $this->url('these/identite', [ 'these' => $soutenance->getThese()->getId() ], [], true); ?>">
-                    <?php echo $soutenance->getThese()->getTitre(); ?>
-                </a>
-            </strong>
-                - <?php echo $soutenance->getThese()->getDoctorant()->getIndividu()->getNomComplet(); ?> <br/>
-            <u>Date de soutenance :</u> <?php echo $soutenance->getDate()->format("d/m/Y à H:i"); ?> <br/>
-            <u>Lieu de soutenance :</u> <?php echo $soutenance->getLieu(); ?>
 
-        </li><br/>
+        <?php
+            $acteurs = $soutenance->getThese()->getActeurs()->toArray();
+            $acteurs = array_filter($acteurs, function (Acteur $a) { return $a->estNonHistorise();});
+            usort($acteurs, function (Acteur $a, Acteur $b) { return $a->getIndividu()->getNomComplet() > $b->getIndividu()->getNomComplet();});
+
+            $directeurs = array_filter($acteurs, function (Acteur $a) { return $a->estDirecteur();});
+            $codirecteurs = array_filter($acteurs, function (Acteur $a) { return $a->estCodirecteur();});
+            $coencadrants = array_filter($acteurs, function (Acteur $a) { return $a->estCoEncadrant();});
+
+            $rapporteurs = array_filter($acteurs, function (Acteur $a) { return $a->estRapporteur();});
+            $membres = array_filter($acteurs, function (Acteur $a) { return $a->estMembreDuJury();});
+        ?>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3>
+                <a href="<?php echo $this->url('these/identite', [ 'these' => $soutenance->getThese()->getId() ], [], true); ?>"
+                   title="Accéder aux données de la thèse"
+                >
+                    <span style="color:white;" class="glyphicon glyphicon-link"></span></a>
+                        <?php echo $soutenance->getThese()->getTitre(); ?>
+                </h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-5">
+                        <dl>
+                            <dt> Doctorant&middot;e </dt>
+                            <dd> <?php echo $soutenance->getThese()->getDoctorant()->getIndividu()->getNomComplet(); ?> </dd>
+
+                            <dt> Direction de thèse </dt>
+                            <dd>
+                                <?php foreach ($directeurs as $directeur) : ?>
+                                    <?php echo $directeur->getIndividu()->getNomComplet(); ?> (Directeur&middot;trice de thèse)<br/>
+                                <?php endforeach; ?>
+                                <?php foreach ($codirecteurs as $codirecteur) : ?>
+                                    <?php echo $codirecteur->getIndividu()->getNomComplet(); ?> (Co-directeur&middot;trice de thèse)<br/>
+                                <?php endforeach; ?>
+                                <?php foreach ($coencadrants as $coencadrant) : ?>
+                                    <?php echo $coencadrant->getIndividu()->getNomComplet(); ?> (Co-encadrant&middot;e de thèse)<br/>
+                                <?php endforeach; ?>
+                            </dd>
+
+                            <dt>Date de la soutenance</dt>
+                            <dd><?php echo $soutenance->getDate()->format("d/m/Y à H:i"); ?></dd>
+                            <dt>Lieu de la soutenance</dt>
+                            <dd>
+                                <?php if ($soutenance->getAdresse() !== null) : ?>
+                                    <?php echo $soutenance->getAdresse(); ?>
+                                <?php else : ?>
+                                    <span class="icon icon-information" title="L'adresse présentée est celle saisie par le doctorant et non l'adresse fiabilisée"></span>
+                                    <?php echo $soutenance->getLieu(); ?>
+                                <?php endif; ?>
+                            </dd>
+
+                            <dt> Rapporteurs de la thèse</dt>
+                            <dd>
+                                <?php foreach ($rapporteurs as $rapporteur) : ?>
+                                    <?php echo $rapporteur->getIndividu()->getNomComplet(); ?>
+                                    <?php echo $rapporteur->getQualite(); ?>
+                                    <?php echo $rapporteur->getEtablissement(); ?>
+                                    <br/>
+                                <?php endforeach; ?>
+                            </dd>
+                            <dt> Membres du jurys </dt>
+                            <dd>
+                                <?php foreach ($membres as $membre) : ?>
+                                    <?php echo $membre->getIndividu()->getNomComplet(); ?>,
+                                    <?php echo $membre->getQualite(); ?>,
+                                    <?php echo $membre->getEtablissement(); ?>
+                                    <br/>
+                                <?php endforeach; ?>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-7">
+                        <dl>
+                            <?php $resume = $soutenance->getThese()->getMetadonnee()->getResume(); ?>
+                            <?php if ($resume !== null) : ?>
+                                <dt> Résumé</dt>
+                                <dd> <?php  echo $resume?></dd>
+                            <?php endif; ?>
+                            <?php $abstract = $soutenance->getThese()->getMetadonnee()->getResumeAnglais(); ?>
+                            <?php if ($abstract !== null) : ?>
+                                <dt> Abstract</dt>
+                                <dd> <?php  echo $abstract?></dd>
+                            <?php endif; ?>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
     <?php endforeach; ?>
-    </ul>
 <?php else: ?>
     <p class="lead">Aucune soutenance à venir</p>
 <?php endif; ?>
