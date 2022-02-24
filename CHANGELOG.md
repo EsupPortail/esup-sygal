@@ -8,6 +8,7 @@ Journal des modifications
 - [FIX] Vérification du dépôt de l'avis de soutenance avant notification pour rappel
 - Amélioration de l'affichage des soutenances à venir
 - Retrait des co-encadrants du PV de soutenances
+- [FIX] Résolution du plantage lors du téléchargement d'un rapport (activité, CSI, mi-parcours)
 
 3.0.11
 -----
