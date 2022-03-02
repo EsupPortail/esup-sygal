@@ -200,7 +200,7 @@ const CONFIG_IMPORTS = [
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'TMP_structure_2',
+            'table' => 'tmp_structure',
             'connection' => 'default',
             'source_code_column' => 'source_code',
             'id_sequence' => false,
@@ -228,7 +228,7 @@ const CONFIG_IMPORTS = [
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'TMP_etablissement_2',
+            'table' => 'tmp_etablissement',
             'connection' => 'default',
             'source_code_column' => 'source_code',
             'id_sequence' => false,
@@ -256,7 +256,7 @@ const CONFIG_IMPORTS = [
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'TMP_ecole_doct_2',
+            'table' => 'tmp_ecole_doct',
             'connection' => 'default',
             'source_code_column' => 'source_code',
             'id_sequence' => false,
@@ -284,7 +284,7 @@ const CONFIG_IMPORTS = [
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'TMP_unite_rech_2',
+            'table' => 'tmp_unite_rech',
             'connection' => 'default',
             'source_code_column' => 'source_code',
             'id_sequence' => false,
@@ -322,7 +322,7 @@ const CONFIG_IMPORTS = [
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'TMP_individu_2',
+            'table' => 'tmp_individu',
             'connection' => 'default',
             'source_code_column' => 'source_code',
             'id_sequence' => false,
@@ -351,7 +351,7 @@ const CONFIG_IMPORTS = [
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'TMP_doctorant_2',
+            'table' => 'tmp_doctorant',
             'connection' => 'default',
             'source_code_column' => 'source_code',
             'id_sequence' => false,
@@ -398,7 +398,7 @@ const CONFIG_IMPORTS = [
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'TMP_these_2',
+            'table' => 'tmp_these',
             'connection' => 'default',
             'source_code_column' => 'source_code',
             'id_sequence' => false,
@@ -427,7 +427,7 @@ const CONFIG_IMPORTS = [
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'TMP_these_annee_univ_2',
+            'table' => 'tmp_these_annee_univ',
             'connection' => 'default',
             'source_code_column' => 'source_code',
             'id_sequence' => false,
@@ -456,7 +456,7 @@ const CONFIG_IMPORTS = [
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'TMP_role_2',
+            'table' => 'tmp_role',
             'connection' => 'default',
             'source_code_column' => 'source_code',
             'id_sequence' => false,
@@ -493,7 +493,7 @@ const CONFIG_IMPORTS = [
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'TMP_ACTEUR_2',
+            'table' => 'tmp_acteur',
             'connection' => 'default',
             'source_code_column' => 'source_code',
             'id_sequence' => false,
@@ -523,7 +523,7 @@ const CONFIG_IMPORTS = [
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'TMP_origine_financement_2',
+            'table' => 'tmp_origine_financement',
             'connection' => 'default',
             'source_code_column' => 'source_code',
             'id_sequence' => false,
@@ -559,7 +559,7 @@ const CONFIG_IMPORTS = [
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'TMP_financement_2',
+            'table' => 'tmp_financement',
             'connection' => 'default',
             'source_code_column' => 'source_code',
             'id_sequence' => false,
@@ -593,7 +593,7 @@ const CONFIG_IMPORTS = [
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'TMP_titre_acces_2',
+            'table' => 'tmp_titre_acces',
             'connection' => 'default',
             'source_code_column' => 'source_code',
             'id_sequence' => false,
@@ -625,7 +625,7 @@ const CONFIG_IMPORTS = [
         ],
         'destination' => [
             'name' => 'Application',
-            'table' => 'TMP_variable_2',
+            'table' => 'tmp_variable',
             'connection' => 'default',
             'source_code_column' => 'source_code',
             'id_sequence' => false,
