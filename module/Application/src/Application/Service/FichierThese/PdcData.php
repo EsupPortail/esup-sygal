@@ -701,11 +701,14 @@ class PdcData
     public function getSignataires() : array
     {
         $membres = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getMembres());
+        $rapporteurs = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getRapporteurs());
         $directeurs = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getDirecteurs());
         $codirecteurs = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getCodirecteurs());
         $coencadrants = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getCoencadrants());
 
-        $signataires = array_diff($membres, $directeurs, $codirecteurs, $coencadrants);
+        $signataires = array_diff(array_merge($membres, $rapporteurs), $directeurs, $codirecteurs, $coencadrants);
+        usort($signataires, function(Individu $a, Individu $b) { return $a->getNomComplet() > $b->getNomComplet();});
+
         return $signataires;
     }
 }
