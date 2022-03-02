@@ -698,7 +698,7 @@ class PdcData
      * Les signataires du PV de soutenances sont les membres du jury moins les directeurs, les co-directeurs et les co-encadrants
      * @return Individu[]
      */
-    public function getSigantaires() : array
+    public function getSignataires() : array
     {
         $membres = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getMembres());
         $directeurs = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getDirecteurs());
