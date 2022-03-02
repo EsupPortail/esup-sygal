@@ -1,6 +1,7 @@
 <?php
 
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\Validation;
 use Application\Service\FichierThese\MembreData;use Application\Service\FichierThese\PdcData;
 use Application\View\Renderer\PhpRenderer;
@@ -236,18 +237,12 @@ use Soutenance\Entity\Proposition;
 <p>
     <strong>Noms et signatures des membres du jury</strong>
 
-    <?php
-          $signataires = $informations->getJury();
-          $signataires = array_diff($signataires, $informations->getDirecteurs(), $informations->getCodirecteurs(), $informations->getCoencadrants());
-          usort($signataires, function(Acteur $a, Acteur $b) { return $a->getIndividu()->getNomComplet() > $b->getIndividu()->getNomComplet(); });
-    ?>
-
     <?php $position = 0; ?>
     <table>
 
     <?php
-
-    foreach ($signataires as $membre) :
+    /** @var Individu $signataire */
+    foreach ($informations->getSigantaires() as $signataire) :
     ?>
 
     <?php if ($position % 2 == 0 and $position !== 0) : ?>
@@ -258,7 +253,7 @@ use Soutenance\Entity\Proposition;
     <?php endif; ?>
 
         <td>
-            <?php /** @var Acteur $membre */ echo $membre->getIndividu()->getNomComplet(true, true, false, true); ?>
+            <?php echo $signataire->getNomComplet(true, true, false, true); ?>
             <br/>
             <br/>
             <br/>

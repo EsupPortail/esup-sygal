@@ -3,6 +3,7 @@
 namespace Application\Service\FichierThese;
 
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Individu;
 use DateTime;
 
 class MembreData
@@ -691,5 +692,20 @@ class PdcData
     public function setDateFinConfidentialite($fin)
     {
         $this->dateFinConfidentialite = $fin;
+    }
+
+    /**
+     * Les signataires du PV de soutenances sont les membres du jury moins les directeurs, les co-directeurs et les co-encadrants
+     * @return Individu[]
+     */
+    public function getSigantaires() : array
+    {
+        $membres = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getMembres());
+        $directeurs = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getDirecteurs());
+        $codirecteurs = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getCodirecteurs());
+        $coencadrants = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getCoencadrants());
+
+        $signataires = array_diff($membres, $directeurs, $codirecteurs, $coencadrants);
+        return $signataires;
     }
 }
