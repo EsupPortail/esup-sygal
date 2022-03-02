@@ -46,7 +46,7 @@ class AjoutPdcShellCommandQpdf extends PdfMergeShellCommandQpdf
 
         // Commande de fusion (cf. https://qpdf.sourceforge.io/files/qpdf-manual.html#ref.page-selection)
         $command = $this->executable .
-            sprintf(' %s --pages %s 1-z . %d-z -- %s',
+            sprintf(' --warning-exit-0 %s --pages %s 1-z . %d-z -- %s',
                 $this->manuscritInputFilePath,
                 $this->couvertureInputFilePath,
                 $manuscritFirstPageRangeSpec,

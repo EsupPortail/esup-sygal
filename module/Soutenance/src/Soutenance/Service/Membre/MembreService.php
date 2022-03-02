@@ -19,6 +19,7 @@ use Soutenance\Entity\Qualite;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use UnicaenAuth\Entity\Db\AbstractUser;
 use UnicaenAuthToken\Entity\Db\AbstractUserToken;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
 use UnicaenAuthToken\Service\TokenServiceException;
@@ -208,9 +209,9 @@ class MembreService {
 
     /**
      * @param Acteur $acteur
-     * @return Membre
+     * @return Membre|null
      */
-    public function getMembreByActeur(Acteur $acteur) : Membre
+    public function getMembreByActeur(Acteur $acteur) : ?Membre
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('membre.acteur = :acteur')
@@ -282,6 +283,24 @@ class MembreService {
         return ($nomusuel . "_" . $membre->getId());
     }
 
+    /** RECUPERATION DE L'UTILSATEUR D'UN MEMBRE **********************************************************************/
+
+    /**
+     * @param Membre $membre
+     * @return AbstractUser|null
+     */
+    public function getUtilisateur(Membre $membre) : ?AbstractUser
+    {
+        $acteur = $membre->getActeur();
+        if ($acteur === null) return null;
+        $individu = $acteur->getIndividu();
+        if ($individu === null) return null;
+
+        /** @var AbstractUser[] $utilisateurs */
+        $utilisateurs = $individu->getUtilisateurs();
+        return (empty($utilisateurs))?null:$utilisateurs[0];
+    }
+
     /** GESTION DES TOKENS ********************************************************************************************/
 
     public function retrieveToken(Membre $membre) : ?AbstractUserToken
@@ -299,8 +318,7 @@ class MembreService {
 
     public function createToken(Membre $membre) : AbstractUserToken
     {
-        $username = $this->generateUsername($membre);
-        $utilisateur = $this->getUtilisateurService()->getRepository()->findByUsername($username);
+        $utilisateur = $this->getUtilisateur($membre);
         if ($utilisateur === null) throw new LogicException("Aucun utilisateur n'est correctement déclaré pour le membre [username:".$username."]");
 
         try {

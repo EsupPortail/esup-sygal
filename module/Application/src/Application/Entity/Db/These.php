@@ -8,6 +8,7 @@ use Assert\Assertion;
 use BadMethodCallException;
 use DateInterval;
 use DateTime;
+use Doctorant\Entity\Db\Doctorant;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;

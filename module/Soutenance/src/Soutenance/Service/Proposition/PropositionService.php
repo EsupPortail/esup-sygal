@@ -4,6 +4,7 @@ namespace Soutenance\Service\Proposition;
 
 //TODO faire le repo aussi
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
@@ -601,6 +602,24 @@ class PropositionService {
         return $array;
     }
 
+    /**
+     * @param EcoleDoctorale $ecole
+     * @return array
+     */
+    public function getSoutenancesAutoriseesByEcoleDoctorale(EcoleDoctorale $ecole) : array
+    {
+        $qb = $this->createQueryBuilder()
+            ->andWhere('these.ecoleDoctorale = :ecole')
+            ->andWhere('etat.code = :autorise')
+            ->andWhere('these.dateSoutenance >= :date')
+            ->setParameter('ecole', $ecole)
+            ->setParameter('autorise', Etat::VALIDEE)
+            ->setParameter('date', new DateTime())
+            ->orderBy('these.dateSoutenance', 'ASC')
+        ;
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
     /** PROPOSTITION ETAT  ********************************************************************************************/
 
     /**

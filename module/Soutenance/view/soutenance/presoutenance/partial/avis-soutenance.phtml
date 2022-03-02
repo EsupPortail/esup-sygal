@@ -8,7 +8,8 @@
  * @var Avis[] $avis
  *
  * @var Evenement[] $evenementsPrerapport
-
+ * @var bool $tousLesEngagements
+ * @var bool $tousLesAvis
  */
 
 use Application\Constants;
@@ -181,7 +182,7 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                     <div class="card">
                         <div class="card-header bg-warning">
                             <span class="fas fa-exclamation-triangle"></span>
-                            Tous les rapports et avis n'ont pas été founis.
+                            Tous les rapports et avis n'ont pas été fournis.
                         </div>
                     </div>
                 <?php endif; ?>

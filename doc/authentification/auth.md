@@ -18,8 +18,8 @@ La configuration de l'authentification se trouve dans les fichiers
 `config/autoload/xxxx.local.php` et 
 `config/autoload/xxxx.secret.local.php` sous la clé `'unicaen-auth'`.
 
-> Le mode `db` doit obligatoirement être activé pour garantir que des personnes extérieures à votre SI (ex : rapporteurs)
-puissent accéder à l'application.
+> Le mode `db` doit obligatoirement être activé pour garantir que des personnes extérieures à votre SI et ne faisant
+pas partie de la fédération d'identité Renater puissent accéder à l'application (ex : rapporteurs étrangers).
 
 
 Usurpation d'identité

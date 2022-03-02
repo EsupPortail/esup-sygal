@@ -52,7 +52,9 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_CORRE
                         <?php if (empty($utilisateurs[$i->getId()])) : ?>
                             <?php
                             $message = sprintf(
-                                "Cette personne ne pourra pas utiliser l'application car il manque des informations la concernant dans %s (source code '%s').",
+                                "Cette personne ne possèdent aucune adresse électronique connue par l'application. <br/>
+                                        &nbsp; &nbsp;&nbsp;&nbsp;
+                                        L'école doctorale a été notifiée du souci et va pouvoir associer un compte au Président de jury.",
                                 $validation->getIndividu()->getSource(),
                                 $validation->getIndividu()->getSourceCode());
                             ?>
