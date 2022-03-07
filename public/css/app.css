@@ -501,49 +501,39 @@ ul.roadmap.pagination {
 
 #menu-informations,
 #menu-actualites,
-#menu-offretheses {
+#menu-offretheses,
+#menu-soutenances-a-venir {
   margin-bottom: 1rem; }
   #menu-informations .card-header,
   #menu-actualites .card-header,
-  #menu-offretheses .card-header {
+  #menu-offretheses .card-header,
+  #menu-soutenances-a-venir .card-header {
     padding: .5rem 1rem; }
     #menu-informations .card-header p,
     #menu-actualites .card-header p,
-    #menu-offretheses .card-header p {
+    #menu-offretheses .card-header p,
+    #menu-soutenances-a-venir .card-header p {
       margin-bottom: 0; }
   #menu-informations .card-body,
   #menu-actualites .card-body,
-  #menu-offretheses .card-body {
+  #menu-offretheses .card-body,
+  #menu-soutenances-a-venir .card-body {
     background: white; }
   #menu-informations .nav,
   #menu-actualites .nav,
-  #menu-offretheses .nav {
+  #menu-offretheses .nav,
+  #menu-soutenances-a-venir .nav {
     padding: 0.5rem; }
   #menu-informations .nav-item,
   #menu-actualites .nav-item,
-  #menu-offretheses .nav-item {
+  #menu-offretheses .nav-item,
+  #menu-soutenances-a-venir .nav-item {
     margin-top: 0; }
     #menu-informations .nav-item .nav-link,
     #menu-actualites .nav-item .nav-link,
-    #menu-offretheses .nav-item .nav-link {
+    #menu-offretheses .nav-item .nav-link,
+    #menu-soutenances-a-venir .nav-item .nav-link {
       padding: 0.3rem 0.3rem; }
-
-#menu-actualites .nav-item .badge {
-  font-size: 70%;
-  vertical-align: bottom;
-  margin-right: 3px; }
-#menu-actualites .nav-item h2 {
-  font-weight: 300;
-  font-size: 90%;
-  margin: 0;
-  line-height: 120%; }
-#menu-actualites .nav-item .nav-link {
-  padding-left: 0; }
-#menu-actualites .nav-item .date-actualites {
-  font-size: 70%; }
-#menu-actualites .nav-item .fa {
-  font-size: 60%;
-  vertical-align: super; }
 
 ul.menu-secondaire li a.roadmap {
   font-weight: bold; }
@@ -558,26 +548,22 @@ ul.menu-secondaire li a.version-initiale.correction-attendue-obligatoire,
 ul.menu-secondaire li a.version-initiale.correction-effectuee-O {
   opacity: 0.5; }
 
-ul.menu-actualites {
+#menu-actualites {
   margin-top: 2em; }
-  ul.menu-actualites li:first-child {
+  #menu-actualites li:first-child {
     padding-top: 7px; }
-  ul.menu-actualites li {
+  #menu-actualites .nav-item {
     padding: 0 0 10px; }
-    ul.menu-actualites li span.label {
-      padding: 1px 2px;
-      font-size: 70%;
-      vertical-align: middle;
-      margin-right: 3px; }
-    ul.menu-actualites li h2 {
-      font-weight: lighter;
+    #menu-actualites .nav-item h2 {
+      font-weight: 400;
       font-size: 90%;
       margin: 0;
       line-height: 120%; }
-    ul.menu-actualites li p.date {
+    #menu-actualites .nav-item p.date {
       margin: 0;
-      font-size: 70%; }
-    ul.menu-actualites li .fa {
+      font-size: 75%;
+      color: initial; }
+    #menu-actualites .nav-item .fa {
       font-size: 55%;
       vertical-align: super; }
 

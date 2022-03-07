@@ -807,7 +807,8 @@ ul.roadmap.pagination {
 
 #menu-informations,
 #menu-actualites,
-#menu-offretheses {
+#menu-offretheses,
+#menu-soutenances-a-venir {
   margin-bottom: 1rem;
 
   .card-header {
@@ -841,33 +842,6 @@ ul.roadmap.pagination {
   }
 }
 
-#menu-actualites {
-  .nav-item {
-    .badge {
-      font-size: 70%;
-      vertical-align: bottom;
-      margin-right: 3px;
-    }
-    h2 {
-      font-weight: 300;
-      font-size: 90%;
-      margin: 0;
-      line-height: 120%;
-    }
-    .nav-link {
-      padding-left: 0;
-    }
-    .date-actualites {
-      font-size: 70%;
-    }
-    .fa {
-      font-size: 60%;
-      vertical-align: super;
-    }
-  }
-}
-
-
 
 ul.menu-secondaire {
   li {
@@ -893,28 +867,27 @@ ul.menu-secondaire {
     }
   }
 }
-ul.menu-actualites {
+
+#menu-actualites {
   margin-top: 2em;
   li:first-child {
     padding-top: 7px;
   }
-  li {
+  .nav-item {
     padding: 0 0 10px;
-    span.label {
-      padding: 1px 2px;
-      font-size: 70%;
-      vertical-align: middle;
-      margin-right: 3px;
-    }
     h2 {
-      font-weight: lighter;
+      font-weight: 400;
       font-size: 90%;
       margin: 0;
       line-height: 120%;
     }
+    //.nav-link {
+    //  padding: 0;
+    //}
     p.date {
       margin: 0;
-      font-size: 70%;
+      font-size: 75%;
+      color: initial;
     }
     .fa {
       font-size: 55%;
