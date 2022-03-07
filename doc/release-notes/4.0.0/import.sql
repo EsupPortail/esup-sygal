@@ -1,8 +1,58 @@
 
+insert into categorie_privilege(id, code, libelle)
+select nextval('categorie_privilege_id_seq'), 'unicaen-db-import', 'Module unicaen/db-import';
+
+insert into privilege(id, categorie_id, code, libelle, ordre)
+with d(ordre, code, lib) as (
+    select 10,  'import-lister',                    'Lister les imports'                             union
+    select 20,  'import-consulter',                 'Consulter un import'                            union
+    select 30,  'import-lancer',                    'Lancer un import'                               union
+    select 40,  'synchro-lister',                   'Lister les synchros'                            union
+    select 50,  'synchro-consulter',                'Consulter une synchro'                          union
+    select 60,  'synchro-lancer',                   'Lancer une synchro'                             union
+    select 70,  'log-lister',                       'Lister les logs'                                union
+    select 80,  'log-consulter',                    'Consulter un log'                               union
+    select 90,  'observation-lister',               'Lister les observations'                        union
+    select 100, 'observation-consulter-resultat',   'Consulter les resultats d''une observation'
+)
+select nextval('privilege_id_seq'), cp.id, d.code, d.lib, d.ordre
+from d
+         join categorie_privilege cp on cp.code = 'unicaen-db-import'
+;
+
+alter table import_log add has_problems boolean default false not null;
 alter table import_log add import_hash varchar(64);
 alter table import_log add id bigserial primary key;
 
+drop view if exists v_diff_acteur ;
+drop view if exists v_diff_doctorant ;
+drop view if exists v_diff_ecole_doct ;
+drop view if exists v_diff_etablissement ;
+drop view if exists v_diff_financement ;
+drop view if exists v_diff_individu ;
+drop view if exists v_diff_origine_financement ;
+drop view if exists v_diff_role ;
+drop view if exists v_diff_structure ;
+drop view if exists v_diff_these ;
+drop view if exists v_diff_these_annee_univ ;
+drop view if exists v_diff_titre_acces ;
+drop view if exists v_diff_unite_rech ;
+drop view if exists v_diff_variable ;
 
+drop view src_acteur ;
+drop view src_doctorant ;
+drop view src_ecole_doct ;
+drop view src_etablissement ;
+drop view src_financement ;
+drop view src_individu ;
+drop view src_origine_financement ;
+drop view src_role ;
+drop view src_structure ;
+drop view src_these ;
+drop view src_these_annee_univ ;
+drop view src_titre_acces ;
+drop view src_unite_rech ;
+drop view src_variable ;
 
 drop table tmp_acteur ;
 drop table tmp_doctorant ;
@@ -19,35 +69,20 @@ drop table tmp_titre_acces ;
 drop table tmp_unite_rech ;
 drop table tmp_variable ;
 
-create table tmp_acteur
-(
-    insert_date timestamp default ('now'::text)::timestamp without time zone,
-    id varchar(64),
-    etablissement_id varchar(64) not null,
-    source_id varchar(64) not null,
-    source_code varchar(64) not null,
-    individu_id varchar(64) not null,
-    these_id varchar(64) not null,
-    role_id varchar(64) not null,
-    lib_cps varchar(200),
-    cod_cps varchar(50),
-    cod_roj_compl varchar(50),
-    lib_roj_compl varchar(200),
-    tem_hab_rch_per varchar(1),
-    tem_rap_recu varchar(1),
-    acteur_etablissement_id varchar(64),
-    source_insert_date timestamp default ('now'::text)::timestamp without time zone
-);
-
-create index tmp_acteur_source_code_index
-    on tmp_acteur (source_code);
-
-create index tmp_acteur_source_id_index
-    on tmp_acteur (source_id);
-
-create unique index tmp_acteur_uniq
-    on tmp_acteur (id, etablissement_id);
-
+drop sequence if exists tmp_acteur_id_seq;
+drop sequence if exists tmp_doctorant_id_seq;
+drop sequence if exists tmp_ecole_doct_id_seq;
+drop sequence if exists tmp_etablissement_id_seq;
+drop sequence if exists tmp_financement_id_seq;
+drop sequence if exists tmp_individu_id_seq;
+drop sequence if exists tmp_origine_financement_id_seq;
+drop sequence if exists tmp_role_id_seq;
+drop sequence if exists tmp_structure_id_seq;
+drop sequence if exists tmp_these_id_seq;
+drop sequence if exists tmp_these_annee_univ_id_seq;
+drop sequence if exists tmp_titre_acces_id_seq;
+drop sequence if exists tmp_unite_rech_id_seq;
+drop sequence if exists tmp_variable_id_seq;
 
 
 create table tmp_acteur
@@ -341,47 +376,106 @@ create table tmp_variable
     histo_destructeur_id bigint
 );
 
-create sequence tmp_acteur_id_seq;
+
+create index tmp_acteur_source_code_index on tmp_acteur (source_code);
+create index tmp_acteur_source_id_index on tmp_acteur (source_id);
+create unique index tmp_acteur_unique_index on tmp_acteur (source_id, source_code);
+
+create index tmp_doctorant_source_code_index on tmp_doctorant (source_code);
+create index tmp_doctorant_source_id_index on tmp_doctorant (source_id);
+create unique index tmp_doctorant_unique_index on tmp_doctorant (source_id, source_code);
+
+create index tmp_ecole_doct_source_code_index on tmp_ecole_doct (source_code);
+create index tmp_ecole_doct_source_id_index on tmp_ecole_doct (source_id);
+create unique index tmp_ecole_doct_unique_index on tmp_ecole_doct (source_id, source_code);
+
+create index tmp_etablissement_source_code_index on tmp_etablissement (source_code);
+create index tmp_etablissement_source_id_index on tmp_etablissement (source_id);
+create unique index tmp_etablissement_unique_index on tmp_etablissement (source_id, source_code);
+
+create index tmp_financement_source_code_index on tmp_financement (source_code);
+create index tmp_financement_source_id_index on tmp_financement (source_id);
+create unique index tmp_financement_unique_index on tmp_financement (source_id, source_code);
+
+create index tmp_individu_source_code_index on tmp_individu (source_code);
+create index tmp_individu_source_id_index on tmp_individu (source_id);
+create unique index tmp_individu_unique_index on tmp_individu (source_id, source_code);
+
+create index tmp_origine_financement_source_code_index on tmp_origine_financement (source_code);
+create index tmp_origine_financement_source_id_index on tmp_origine_financement (source_id);
+create unique index tmp_origine_financement_unique_index on tmp_origine_financement (source_id, source_code);
+
+create index tmp_role_source_code_index on tmp_role (source_code);
+create index tmp_role_source_id_index on tmp_role (source_id);
+create unique index tmp_role_unique_index on tmp_role (source_id, source_code);
+
+create index tmp_structure_source_code_index on tmp_structure (source_code);
+create index tmp_structure_source_id_index on tmp_structure (source_id);
+create unique index tmp_structure_unique_index on tmp_structure (source_id, source_code);
+
+create index tmp_these_source_code_index on tmp_these (source_code);
+create index tmp_these_source_id_index on tmp_these (source_id);
+create unique index tmp_these_unique_index on tmp_these (source_id, source_code);
+
+create index tmp_these_annee_univ_source_code_index on tmp_these_annee_univ (source_code);
+create index tmp_these_annee_univ_source_id_index on tmp_these_annee_univ (source_id);
+create unique index tmp_these_annee_univ_unique_index on tmp_these_annee_univ (source_id, source_code);
+
+create index tmp_titre_acces_source_code_index on tmp_titre_acces (source_code);
+create index tmp_titre_acces_source_id_index on tmp_titre_acces (source_id);
+create unique index tmp_titre_acces_unique_index on tmp_titre_acces (source_id, source_code);
+
+create index tmp_unite_rech_source_code_index on tmp_unite_rech (source_code);
+create index tmp_unite_rech_source_id_index on tmp_unite_rech (source_id);
+create unique index tmp_unite_rech_unique_index on tmp_unite_rech (source_id, source_code);
+
+create index tmp_variable_source_code_index on tmp_variable (source_code);
+create index tmp_variable_source_id_index on tmp_variable (source_id);
+create unique index tmp_variable_unique_index on tmp_variable (source_id, source_code);
+
+
+--create sequence tmp_acteur_id_seq;
 alter sequence tmp_acteur_id_seq owned by tmp_acteur.id;
 
-create sequence tmp_doctorant_id_seq;
+--create sequence tmp_doctorant_id_seq;
 alter sequence tmp_doctorant_id_seq owned by tmp_doctorant.id;
 
-create sequence tmp_ecole_doct_id_seq;
+--create sequence tmp_ecole_doct_id_seq;
 alter sequence tmp_ecole_doct_id_seq owned by tmp_ecole_doct.id;
 
-create sequence tmp_etablissement_id_seq;
+--create sequence tmp_etablissement_id_seq;
 alter sequence tmp_etablissement_id_seq owned by tmp_etablissement.id;
 
-create sequence tmp_financement_id_seq;
+--create sequence tmp_financement_id_seq;
 alter sequence tmp_financement_id_seq owned by tmp_financement.id;
 
-create sequence tmp_individu_id_seq;
+--create sequence tmp_individu_id_seq;
 alter sequence tmp_individu_id_seq owned by tmp_individu.id;
 
-create sequence tmp_origine_financement_id_seq;
+--create sequence tmp_origine_financement_id_seq;
 alter sequence tmp_origine_financement_id_seq owned by tmp_origine_financement.id;
 
-create sequence tmp_role_id_seq;
+--create sequence tmp_role_id_seq;
 alter sequence tmp_role_id_seq owned by tmp_role.id;
 
-create sequence tmp_structure_id_seq;
+--create sequence tmp_structure_id_seq;
 alter sequence tmp_structure_id_seq owned by tmp_structure.id;
 
-create sequence tmp_these_id_seq;
+--create sequence tmp_these_id_seq;
 alter sequence tmp_these_id_seq owned by tmp_these.id;
 
-create sequence tmp_these_annee_univ_id_seq;
+--create sequence tmp_these_annee_univ_id_seq;
 alter sequence tmp_these_annee_univ_id_seq owned by tmp_these_annee_univ.id;
 
-create sequence tmp_titre_acces_id_seq;
+--create sequence tmp_titre_acces_id_seq;
 alter sequence tmp_titre_acces_id_seq owned by tmp_titre_acces.id;
 
-create sequence tmp_unite_rech_id_seq;
+--create sequence tmp_unite_rech_id_seq;
 alter sequence tmp_unite_rech_id_seq owned by tmp_unite_rech.id;
 
-create sequence tmp_variable_id_seq;
+--create sequence tmp_variable_id_seq;
 alter sequence tmp_variable_id_seq owned by tmp_variable.id;
+
 
 create view src_acteur(id, source_code, source_id, individu_id, these_id, role_id, acteur_etablissement_id, qualite, lib_role_compl) as
 SELECT NULL::text                         AS id,
@@ -632,4 +726,3 @@ FROM tmp_variable tmp
          JOIN source src ON src.id = tmp.source_id
          JOIN etablissement e ON e.structure_id = src.etablissement_id
          JOIN structure s ON s.id = e.structure_id;
-
