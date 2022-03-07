@@ -10,10 +10,10 @@
 namespace Soutenance\Validator;
 
 use Traversable;
-use Zend\Form\Element\DateTime;
-use Zend\Stdlib\ArrayUtils;
-use Zend\Validator\AbstractValidator;
-use Zend\Validator\Exception\InvalidArgumentException;
+use Laminas\Form\Element\DateTime;
+use Laminas\Stdlib\ArrayUtils;
+use Laminas\Validator\AbstractValidator;
+use Laminas\Validator\Exception\InvalidArgumentException;
 
 class DateLesserThan extends AbstractValidator
 {

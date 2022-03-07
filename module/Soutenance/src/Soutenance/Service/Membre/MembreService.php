@@ -22,7 +22,7 @@ use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenAuthToken\Entity\Db\AbstractUserToken;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
 use UnicaenAuthToken\Service\TokenServiceException;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class MembreService {
     use EntityManagerAwareTrait;

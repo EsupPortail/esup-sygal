@@ -3,10 +3,10 @@
 namespace Import;
 
 use Import\Model\ImportObserv;
-use Zend\Config\Factory as ConfigFactory;
-use Zend\Console\Adapter\AdapterInterface as Console;
-use Zend\Mvc\ModuleRouteListener;
-use Zend\Mvc\MvcEvent;
+use Laminas\Config\Factory as ConfigFactory;
+use Laminas\Console\Adapter\AdapterInterface as Console;
+use Laminas\Mvc\ModuleRouteListener;
+use Laminas\Mvc\MvcEvent;
 
 class Module
 {
@@ -28,7 +28,7 @@ class Module
     public function getAutoloaderConfig()
     {
         return array(
-            'Zend\Loader\StandardAutoloader' => array(
+            'Laminas\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                 ),

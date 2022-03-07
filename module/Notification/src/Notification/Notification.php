@@ -3,7 +3,7 @@
 namespace Notification;
 
 use Notification\Entity\NotifEntity;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 /**
  * Classe représentant une notification.

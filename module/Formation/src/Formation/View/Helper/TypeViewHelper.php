@@ -5,9 +5,9 @@ namespace Formation\View\Helper;
 use Application\View\Renderer\PhpRenderer;
 use Formation\Entity\Db\Interfaces\HasSiteInterface;
 use Formation\Entity\Db\Interfaces\HasTypeInterface;
-use Zend\View\Helper\AbstractHelper;
-use Zend\View\Helper\Partial;
-use Zend\View\Resolver\TemplatePathStack;
+use Laminas\View\Helper\AbstractHelper;
+use Laminas\View\Helper\Partial;
+use Laminas\View\Resolver\TemplatePathStack;
 
 class TypeViewHelper extends AbstractHelper
 {

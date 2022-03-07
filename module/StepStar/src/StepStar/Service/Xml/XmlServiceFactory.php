@@ -4,7 +4,7 @@ namespace StepStar\Service\Xml;
 
 use Interop\Container\ContainerInterface;
 use XMLWriter;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class XmlServiceFactory implements FactoryInterface
 {

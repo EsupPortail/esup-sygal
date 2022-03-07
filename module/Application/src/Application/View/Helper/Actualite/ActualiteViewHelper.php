@@ -3,7 +3,7 @@
 namespace Application\View\Helper\Actualite;
 
 use Application\View\Helper\AbstractHelper;
-use Zend\View\Resolver\TemplatePathStack;
+use Laminas\View\Resolver\TemplatePathStack;
 
 class ActualiteViewHelper extends AbstractHelper
 {

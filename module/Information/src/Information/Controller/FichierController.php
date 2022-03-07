@@ -10,9 +10,9 @@ use Application\Service\Fichier\FichierServiceAwareTrait;
 use Information\Form\FichierForm;
 use Information\Service\InformationFichierServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Http\Request;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
 
 /**
  *

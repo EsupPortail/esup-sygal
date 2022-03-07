@@ -8,7 +8,7 @@ use Import\Controller\ImportObserverController;
 use Import\Model\Service\ImportObservResultService;
 use Interop\Container\ContainerInterface;
 use UnicaenDbImport\Entity\Db\Service\ImportObserv\ImportObservService;
-use Zend\Router\Http\TreeRouteStack;
+use Laminas\Router\Http\TreeRouteStack;
 
 class ImportObserverControllerFactory
 {

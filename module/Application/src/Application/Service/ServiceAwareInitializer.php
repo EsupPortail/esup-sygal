@@ -15,7 +15,7 @@ use Application\Service\VersionFichier\VersionFichierService;
 use Application\Service\Workflow\WorkflowService;
 use Interop\Container\ContainerInterface;
 use Retraitement\Service\RetraitementService;
-use Zend\ServiceManager\Initializer\InitializerInterface;
+use Laminas\ServiceManager\Initializer\InitializerInterface;
 
 class ServiceAwareInitializer implements InitializerInterface
 {

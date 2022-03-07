@@ -8,7 +8,7 @@ use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Psr7;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
-use Zend\Http\Response;
+use Laminas\Http\Response;
 
 class CallException extends RuntimeException
 {

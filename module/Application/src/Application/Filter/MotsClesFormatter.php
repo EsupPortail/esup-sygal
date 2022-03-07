@@ -2,8 +2,8 @@
 
 namespace Application\Filter;
 
-use Zend\Escaper\Escaper;
-use Zend\Filter\AbstractFilter;
+use Laminas\Escaper\Escaper;
+use Laminas\Filter\AbstractFilter;
 
 class MotsClesFormatter extends AbstractFilter
 {

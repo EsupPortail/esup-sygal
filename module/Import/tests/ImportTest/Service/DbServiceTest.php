@@ -15,7 +15,7 @@ use Import\Service\DbService;
 use Import\Service\DbServiceJSONHelper;
 use Import\Service\DbServiceSQLGenerator;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Log\LoggerInterface;
+use Laminas\Log\LoggerInterface;
 
 class DbServiceTest extends \PHPUnit_Framework_TestCase
 {

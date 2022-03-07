@@ -4,9 +4,9 @@ namespace Notification\Service;
 
 use Notification\Notification;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\View\Renderer\PhpRenderer;
-use Zend\View\Resolver\AggregateResolver;
-use Zend\View\Resolver\TemplatePathStack;
+use Laminas\View\Renderer\PhpRenderer;
+use Laminas\View\Resolver\AggregateResolver;
+use Laminas\View\Resolver\TemplatePathStack;
 
 class NotificationRenderingService
 {

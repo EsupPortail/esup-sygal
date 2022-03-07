@@ -9,7 +9,7 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\VersionFichier;
 use Application\Filter\IdifyFilterAwareTrait;
-use Zend\Mvc\Controller\Plugin\Url as UrlPlugin;
+use Laminas\Mvc\Controller\Plugin\Url as UrlPlugin;
 
 class UrlFichierThese extends UrlPlugin
 {

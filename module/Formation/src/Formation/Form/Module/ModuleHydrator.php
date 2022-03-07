@@ -6,7 +6,7 @@ use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Formation\Entity\Db\Formation;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class ModuleHydrator implements HydratorInterface {
     use EtablissementServiceAwareTrait;

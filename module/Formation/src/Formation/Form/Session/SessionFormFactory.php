@@ -5,7 +5,7 @@ namespace Formation\Form\Session;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Structure\StructureService;
 use Interop\Container\ContainerInterface;
-use Zend\View\Helper\Url;
+use Laminas\View\Helper\Url;
 
 class SessionFormFactory {
 

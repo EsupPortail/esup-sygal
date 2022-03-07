@@ -11,7 +11,7 @@ use Formation\Service\Inscription\InscriptionService;
 use Formation\Service\Notification\NotificationService;
 use Formation\Service\Presence\PresenceService;
 use Interop\Container\ContainerInterface;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\View\Renderer\PhpRenderer;
 
 class InscriptionControllerFactory {
 

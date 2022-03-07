@@ -13,7 +13,7 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Interop\Container\ContainerInterface;
 use UnicaenApp\Util;
-use Zend\Router\RouteMatch;
+use Laminas\Router\RouteMatch;
 
 /**
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>

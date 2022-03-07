@@ -3,9 +3,9 @@
 namespace Application\Controller\Plugin\Uploader;
 
 use UnicaenApp\Util;
-use Zend\Http\Request;
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
-use Zend\View\Model\JsonModel;
+use Laminas\Http\Request;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\View\Model\JsonModel;
 
 /**
  * Plugin facilitant le dépôt de fichier.

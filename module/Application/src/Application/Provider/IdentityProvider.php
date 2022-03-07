@@ -20,7 +20,7 @@ use BjyAuthorize\Provider\Identity\ProviderInterface;
 use UnicaenAuth\Acl\NamedRole;
 use UnicaenAuth\Provider\Identity\ChainableProvider;
 use UnicaenAuth\Provider\Identity\ChainEvent;
-use Zend\Authentication\AuthenticationService;
+use Laminas\Authentication\AuthenticationService;
 
 /**
  * Service chargé de fournir tous les rôles que possède l'identité authentifiée.

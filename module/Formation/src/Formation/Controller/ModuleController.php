@@ -8,7 +8,7 @@ use Formation\Entity\Db\Module;
 use Formation\Form\Module\ModuleFormAwareTrait;
 use Formation\Service\Module\ModuleServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class ModuleController extends AbstractController {
     use EntityManagerAwareTrait;

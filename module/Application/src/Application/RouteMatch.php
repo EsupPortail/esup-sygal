@@ -14,7 +14,7 @@ use Application\Entity\Db\Utilisateur;
 use Doctorant\Entity\Db\Doctorant;
 use Doctrine\ORM\EntityRepository;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Router\RouteMatch as BaseRouteMatch;
+use Laminas\Router\RouteMatch as BaseRouteMatch;
 
 /**
  * Ce RouteMatch fournit des accesseurs métiers traduisant en entités ses paramètres éventuels

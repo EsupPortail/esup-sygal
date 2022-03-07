@@ -26,11 +26,11 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use Notification\Exception\NotificationException;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Console\Request as ConsoleRequest;
-use Zend\Form\Element\Hidden;
-use Zend\Http\Response;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\Console\Request as ConsoleRequest;
+use Laminas\Form\Element\Hidden;
+use Laminas\Http\Response;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 
 class FichierTheseController extends AbstractController
 {
@@ -104,7 +104,7 @@ class FichierTheseController extends AbstractController
             $qb->addOrderBy($sortProp, $dir);
         }
 
-        $paginator = new \Zend\Paginator\Paginator(new DoctrinePaginator(new Paginator($qb, true)));
+        $paginator = new \Laminas\Paginator\Paginator(new DoctrinePaginator(new Paginator($qb, true)));
         $paginator
             ->setPageRange(20)
             ->setItemCountPerPage((int)$maxi)
@@ -443,7 +443,7 @@ class FichierTheseController extends AbstractController
         }
         unlink($filepath);
 
-        /** @var \Zend\Http\Response $response */
+        /** @var \Laminas\Http\Response $response */
         $response = $this->getResponse();
 
         return $this->fichierTheseService->createResponseForFileContent($response, $content);

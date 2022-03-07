@@ -4,7 +4,7 @@ namespace Application\Filter;
 
 use Application\Entity\Db\Individu;
 use Doctorant\Entity\Db\Interfaces\DoctorantInterface;
-use Zend\Filter\AbstractFilter;
+use Laminas\Filter\AbstractFilter;
 use UnicaenApp\Entity\Ldap\People;
 use Application\Entity\Db\Utilisateur;
 

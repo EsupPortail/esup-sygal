@@ -6,7 +6,7 @@ use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
 use Notification\Notification;
 use Notification\Service\NotifierService;
-use Zend\View\Helper\Url as UrlHelper;
+use Laminas\View\Helper\Url as UrlHelper;
 
 class NotificationService extends NotifierService
 {

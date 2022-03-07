@@ -4,7 +4,7 @@ namespace Formation\Form\Seance;
 
 use DateTime;
 use Formation\Entity\Db\Seance;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class SeanceHydrator implements HydratorInterface {
 

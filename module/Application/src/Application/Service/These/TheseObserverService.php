@@ -3,7 +3,7 @@
 namespace Application\Service\These;
 
 use Application\Service\Notification\NotifierServiceAwareTrait;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class TheseObserverService
 {

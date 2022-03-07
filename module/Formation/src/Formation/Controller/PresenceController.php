@@ -10,7 +10,7 @@ use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
 use Formation\Service\Presence\PresenceServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class PresenceController extends AbstractController {
     use EntityManagerAwareTrait;

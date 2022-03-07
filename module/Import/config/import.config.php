@@ -4,9 +4,9 @@ use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Import\Controller\ImportController;
 use Import\Service\CallService;
-use Zend\Mvc\Console\Router\Simple;
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
+use Laminas\Mvc\Console\Router\Simple;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -251,8 +251,8 @@ return [
             CallService::class => CallService::class,
         ],
         'abstract_factories' => [
-            'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
-            'Zend\Log\LoggerAbstractServiceFactory',
+            'Laminas\Cache\Service\StorageCacheAbstractServiceFactory',
+            'Laminas\Log\LoggerAbstractServiceFactory',
         ],
         'factories' => [
             Import\Service\ImportService::class  => Import\Service\Factory\ImportServiceFactory::class,

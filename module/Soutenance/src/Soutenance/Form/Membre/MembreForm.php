@@ -5,17 +5,17 @@ namespace Soutenance\Form\Membre;
 use Soutenance\Entity\Membre;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Filter\StringToLower;
-use Zend\Form\Element;
-use Zend\Form\Element\Email;
-use Zend\Form\Element\Radio;
-use Zend\Form\Element\Select;
-use Zend\Form\Element\Submit;
-use Zend\Form\Element\Text;
-use Zend\Form\Element\Textarea;
-use Zend\Form\Form;
-use Zend\InputFilter\Factory;
-use Zend\Validator\EmailAddress;
+use Laminas\Filter\StringToLower;
+use Laminas\Form\Element;
+use Laminas\Form\Element\Email;
+use Laminas\Form\Element\Radio;
+use Laminas\Form\Element\Select;
+use Laminas\Form\Element\Submit;
+use Laminas\Form\Element\Text;
+use Laminas\Form\Element\Textarea;
+use Laminas\Form\Form;
+use Laminas\InputFilter\Factory;
+use Laminas\Validator\EmailAddress;
 
 class MembreForm extends Form {
     use EntityManagerAwareTrait;

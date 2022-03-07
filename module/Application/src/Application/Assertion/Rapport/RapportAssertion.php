@@ -3,7 +3,7 @@
 namespace Application\Assertion\Rapport;
 
 use Application\Assertion\BaseAssertion;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * Class RapportAssertion

@@ -3,7 +3,7 @@
 namespace Application\Filter;
 
 use Application\Entity\Db\MetadonneeThese;
-use Zend\Filter\AbstractFilter;
+use Laminas\Filter\AbstractFilter;
 
 /**
  * Filtre pour stockage des mots-clés de description d'une thèse.

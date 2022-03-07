@@ -25,8 +25,8 @@ use Formation\Service\EnqueteQuestion\EnqueteQuestionServiceFactory;
 use Formation\Service\EnqueteReponse\EnqueteReponseService;
 use Formation\Service\EnqueteReponse\EnqueteReponseServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 
 return [
     'bjyauthorize' => [

@@ -32,10 +32,10 @@ use Soutenance\Service\SignaturePresident\SiganturePresidentPdfExporter;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Db\RoleInterface;
-use Zend\Form\Form;
-use Zend\Http\Request;
-use Zend\View\Model\ViewModel;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\Form\Form;
+use Laminas\Http\Request;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Renderer\PhpRenderer;
 
 /** @method boolean isAllowed($resource, $privilege = null) */
 class PropositionController extends AbstractController

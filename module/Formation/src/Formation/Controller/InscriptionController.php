@@ -17,9 +17,9 @@ use Formation\Service\Inscription\InscriptionServiceAwareTrait;
 use Formation\Service\Notification\NotificationServiceAwareTrait;
 use Formation\Service\Presence\PresenceServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Http\Response;
-use Zend\View\Model\ViewModel;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Renderer\PhpRenderer;
 
 class InscriptionController extends AbstractController
 {

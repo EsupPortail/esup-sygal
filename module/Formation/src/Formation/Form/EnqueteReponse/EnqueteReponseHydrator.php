@@ -7,7 +7,7 @@ use Formation\Entity\Db\EnqueteQuestion;
 use Formation\Entity\Db\EnqueteReponse;
 use Formation\Entity\Db\Inscription;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class EnqueteReponseHydrator implements HydratorInterface {
     use EntityManagerAwareTrait;

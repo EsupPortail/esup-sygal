@@ -9,7 +9,7 @@ use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Formation\Entity\Db\Session;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class SessionHydrator implements HydratorInterface {
     use EtablissementServiceAwareTrait;

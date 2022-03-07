@@ -3,12 +3,12 @@
 namespace Formation\Form\EnqueteQuestion;
 
 use Formation\Service\EnqueteCategorie\EnqueteCategorieServiceAwareTrait;
-use Zend\Form\Element\Button;
-use Zend\Form\Element\Select;
-use Zend\Form\Element\Text;
-use Zend\Form\Element\Textarea;
-use Zend\Form\Form;
-use Zend\InputFilter\Factory;
+use Laminas\Form\Element\Button;
+use Laminas\Form\Element\Select;
+use Laminas\Form\Element\Text;
+use Laminas\Form\Element\Textarea;
+use Laminas\Form\Form;
+use Laminas\InputFilter\Factory;
 
 class EnqueteQuestionForm extends Form {
     use EnqueteCategorieServiceAwareTrait;

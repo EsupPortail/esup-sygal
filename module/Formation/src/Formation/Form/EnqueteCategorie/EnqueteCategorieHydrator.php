@@ -3,7 +3,7 @@
 namespace Formation\Form\EnqueteCategorie;
 
 use Formation\Entity\Db\EnqueteCategorie;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class EnqueteCategorieHydrator implements HydratorInterface {
 

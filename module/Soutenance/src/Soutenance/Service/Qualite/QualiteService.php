@@ -11,7 +11,7 @@ use Exception;
 use Soutenance\Entity\Qualite;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class QualiteService {
     use EntityManagerAwareTrait;

@@ -6,13 +6,13 @@ use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Formation\Service\Module\ModuleServiceAwareTrait;
 use UnicaenApp\Form\Element\SearchAndSelect;
-use Zend\Form\Element\Button;
-use Zend\Form\Element\Number;
-use Zend\Form\Element\Select;
-use Zend\Form\Element\Text;
-use Zend\Form\Element\Textarea;
-use Zend\Form\Form;
-use Zend\InputFilter\Factory;
+use Laminas\Form\Element\Button;
+use Laminas\Form\Element\Number;
+use Laminas\Form\Element\Select;
+use Laminas\Form\Element\Text;
+use Laminas\Form\Element\Textarea;
+use Laminas\Form\Form;
+use Laminas\InputFilter\Factory;
 
 class FormationForm extends Form {
     use EtablissementServiceAwareTrait;

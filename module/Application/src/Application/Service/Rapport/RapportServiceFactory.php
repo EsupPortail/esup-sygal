@@ -13,7 +13,7 @@ use Application\Service\ValiditeFichier\ValiditeFichierService;
 use Application\Service\VersionFichier\VersionFichierService;
 use Interop\Container\ContainerInterface;
 use Retraitement\Service\RetraitementService;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class RapportServiceFactory implements FactoryInterface
 {

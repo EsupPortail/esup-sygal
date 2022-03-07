@@ -13,8 +13,8 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Http\Response;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
 
 /**
  * Class EtablissementController

@@ -11,7 +11,7 @@ use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Segment;
 
 return array(
     'bjyauthorize' => [

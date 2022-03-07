@@ -2,13 +2,13 @@
 
 namespace Soutenance\Form\DateLieu;
 
-use Zend\Form\Element\Button;
-use Zend\Form\Element\DateTime;
-use Zend\Form\Element\Time;
-use Zend\Form\Element\Radio;
-use Zend\Form\Element\Text;
-use Zend\Form\Form;
-use Zend\InputFilter\Factory;
+use Laminas\Form\Element\Button;
+use Laminas\Form\Element\DateTime;
+use Laminas\Form\Element\Time;
+use Laminas\Form\Element\Radio;
+use Laminas\Form\Element\Text;
+use Laminas\Form\Form;
+use Laminas\InputFilter\Factory;
 
 class DateLieuForm extends Form {
 

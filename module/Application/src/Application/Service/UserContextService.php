@@ -16,7 +16,7 @@ use Application\SourceCodeStringHelperAwareTrait;
 use UnicaenApp\Entity\Ldap\People;
 use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Service\UserContext as BaseUserContextService;
-use Zend\Permissions\Acl\Role\RoleInterface;
+use Laminas\Permissions\Acl\Role\RoleInterface;
 
 /**
  * @method Role getSelectedIdentityRole()

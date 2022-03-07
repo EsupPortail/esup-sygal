@@ -4,7 +4,7 @@ namespace Application\Service\PageDeCouverture;
 
 use InvalidArgumentException;
 use UnicaenApp\Exporter\Pdf as PdfExporter;
-use Zend\View\Resolver\TemplatePathStack;
+use Laminas\View\Resolver\TemplatePathStack;
 
 class PageDeCouverturePdfExporter extends PdfExporter
 {

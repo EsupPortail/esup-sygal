@@ -5,9 +5,9 @@ namespace Application\Controller\Plugin;
 use Application\RouteMatch;
 use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Mvc\Controller\Plugin\Forward as ForwardPlugin;
-use Zend\Mvc\Exception\DomainException;
-use Zend\Mvc\InjectApplicationEventInterface;
+use Laminas\Mvc\Controller\Plugin\Forward as ForwardPlugin;
+use Laminas\Mvc\Exception\DomainException;
+use Laminas\Mvc\InjectApplicationEventInterface;
 
 /**
  * Created by PhpStorm.

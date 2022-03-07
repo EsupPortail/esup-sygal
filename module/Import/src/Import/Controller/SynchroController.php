@@ -11,7 +11,7 @@ use Import\Service\SchemaService;
 use Import\Service\Traits\SynchroServiceAwareTrait;
 use Interop\Container\ContainerInterface;
 use UnicaenDbImport\Entity\Db\Service\ImportObserv\ImportObservServiceAwareTrait;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 /**
  *

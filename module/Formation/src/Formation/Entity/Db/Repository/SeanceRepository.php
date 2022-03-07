@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class SeanceRepository extends EntityRepository
 {

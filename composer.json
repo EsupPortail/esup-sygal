@@ -4,42 +4,43 @@
     "repositories": [
         {
             "type": "composer",
-            "url":  "https://gest.unicaen.fr/packagist"
+            "url": "https://gest.unicaen.fr/packagist"
         }
     ],
     "require-dev": {
-        "unicaen/test":                         "^3.0",
-        "zendframework/zend-developer-tools":   "^1.0"
+        "unicaen/test": "^3.0",
+        "laminas/laminas-developer-tools": "^1.0"
     },
     "require": {
-        "ext-curl":                      "*",
-        "ext-dom":                       "*",
-        "ext-fileinfo":                  "*",
-        "ext-gettext":                   "*",
-        "ext-imagick":                   "*",
-        "ext-intl":                      "*",
-        "ext-json":                      "*",
-        "ext-readline":                  "*",
-        "ext-soap":                      "*",
-        "ext-xmlwriter":                 "*",
-        "ext-xsl":                       "*",
-        "ext-zip":                       "*",
-        "beberlei/assert":               "^2.9",
-        "guzzlehttp/guzzle":             "^6.3",
-        "ramsey/uuid":                   "^3.3",
-        "twig/twig":                     "^3.0",
-        "unicaen/app":                   "^3.1",
-        "unicaen/auth":                  "^3.2",
-        "unicaen/auth-token":            "1.0.0",
-        "unicaen/bjy-authorize":         "^3.0",
-        "unicaen/code":                  "^3.0",
-        "unicaen/db-import":             "^3.1",
-        "unicaen/faq":                   "^3.0",
-        "unicaen/ldap":                  "^3.0",
-        "webmozart/assert":              "^1.3",
-        "zendframework/zend-feed":       "^2.12",
-        "zendframework/zend-soap":       "^2.8",
-        "zfcampus/zf-development-mode": "^3.2"
+        "ext-curl": "*",
+        "ext-dom": "*",
+        "ext-fileinfo": "*",
+        "ext-gettext": "*",
+        "ext-imagick": "*",
+        "ext-intl": "*",
+        "ext-json": "*",
+        "ext-readline": "*",
+        "ext-soap": "*",
+        "ext-xmlwriter": "*",
+        "ext-xsl": "*",
+        "ext-zip": "*",
+        "beberlei/assert": "^2.9",
+        "guzzlehttp/guzzle": "^6.3",
+        "ramsey/uuid": "^3.3",
+        "twig/twig": "^3.0",
+        "unicaen/app": "^3.1",
+        "unicaen/auth": "^3.2",
+        "unicaen/auth-token": "1.0.0",
+        "unicaen/bjy-authorize": "^3.0",
+        "unicaen/code": "^3.0",
+        "unicaen/db-import": "^3.1",
+        "unicaen/faq": "^3.0",
+        "unicaen/ldap": "^3.0",
+        "webmozart/assert": "^1.3",
+        "laminas/laminas-feed": "^2.12",
+        "laminas/laminas-soap": "^2.8",
+        "laminas/laminas-development-mode": "^3.2",
+        "laminas/laminas-dependency-plugin": "^2.1"
     },
     "autoload": {
         "psr-0": {
@@ -52,10 +53,10 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "ApplicationUnitTest\\":        "module/Application/tests/ApplicationUnitTest",
-            "ApplicationFunctionalTest\\":  "module/Application/tests/ApplicationFunctionalTest",
-            "RetraitementTest\\":           "module/Retraitement/test/RetraitementTest",
-            "ImportTest\\":                 "module/Import/tests/ImportTest"
+            "ApplicationUnitTest\\": "module/Application/tests/ApplicationUnitTest",
+            "ApplicationFunctionalTest\\": "module/Application/tests/ApplicationFunctionalTest",
+            "RetraitementTest\\": "module/Retraitement/test/RetraitementTest",
+            "ImportTest\\": "module/Import/tests/ImportTest"
         }
     },
     "scripts": {
@@ -69,7 +70,7 @@
             "vendor/bin/doctrine-module orm:clear-cache:metadata",
             "vendor/bin/doctrine-module orm:clear-cache:result",
             "vendor/bin/doctrine-module orm:generate-proxies",
-            "vendor/bin/zf-development-mode disable"
+            "vendor/bin/laminas-development-mode disable"
         ]
     }
 }

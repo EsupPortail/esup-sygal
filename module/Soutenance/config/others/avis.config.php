@@ -14,8 +14,8 @@ use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Avis\AvisServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 
 return array(
     'bjyauthorize' => [

@@ -6,7 +6,7 @@ use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Structure\StructureService;
 use Formation\Service\Module\ModuleService;
 use Interop\Container\ContainerInterface;
-use Zend\View\Helper\Url;
+use Laminas\View\Helper\Url;
 
 class FormationFormFactory {
 

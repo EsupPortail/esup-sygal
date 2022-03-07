@@ -4,9 +4,9 @@ namespace Soutenance\View\Helper;
 
 use Application\Controller\Plugin\UrlFichierThese;
 use Soutenance\Entity\Justificatif;
-use Zend\Form\View\Helper\AbstractHelper;
-use Zend\View\Renderer\PhpRenderer;
-use Zend\View\Resolver\TemplatePathStack;
+use Laminas\Form\View\Helper\AbstractHelper;
+use Laminas\View\Renderer\PhpRenderer;
+use Laminas\View\Resolver\TemplatePathStack;
 
 class JustificatifViewHelper extends AbstractHelper
 {

@@ -2,12 +2,12 @@
 
 namespace Soutenance\Form\Avis;
 
-use Zend\Form\Element\Button;
-use Zend\Form\Element\File;
-use Zend\Form\Element\Radio;
-use Zend\Form\Element\Textarea;
-use Zend\Form\Form;
-use Zend\InputFilter\Factory;
+use Laminas\Form\Element\Button;
+use Laminas\Form\Element\File;
+use Laminas\Form\Element\Radio;
+use Laminas\Form\Element\Textarea;
+use Laminas\Form\Form;
+use Laminas\InputFilter\Factory;
 
 class AvisForm extends Form {
 

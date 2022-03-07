@@ -3,13 +3,13 @@
 namespace Doctorant\Form;
 
 use Application\Entity\Db\Rapport;
-use Zend\Form\Element\Csrf;
-use Zend\Form\Element\Hidden;
-use Zend\Form\Element\Radio;
-use Zend\Form\Element\Submit;
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilterProviderInterface;
-use Zend\Validator\EmailAddress;
+use Laminas\Form\Element\Csrf;
+use Laminas\Form\Element\Hidden;
+use Laminas\Form\Element\Radio;
+use Laminas\Form\Element\Submit;
+use Laminas\Form\Form;
+use Laminas\InputFilter\InputFilterProviderInterface;
+use Laminas\Validator\EmailAddress;
 
 class ConsentementForm extends Form implements InputFilterProviderInterface
 {

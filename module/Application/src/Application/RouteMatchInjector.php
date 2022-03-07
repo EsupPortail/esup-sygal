@@ -14,10 +14,10 @@ use Application\Entity\Db\Utilisateur;
 use Doctorant\Entity\Db\Doctorant;
 use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\ListenerAggregateInterface;
-use Zend\EventManager\ListenerAggregateTrait;
-use Zend\Mvc\MvcEvent;
+use Laminas\EventManager\EventManagerInterface;
+use Laminas\EventManager\ListenerAggregateInterface;
+use Laminas\EventManager\ListenerAggregateTrait;
+use Laminas\Mvc\MvcEvent;
 
 /**
  * Substitue le RouteMatch courant par un autre davantage orienté "métier".
@@ -41,7 +41,7 @@ class RouteMatchInjector implements ListenerAggregateInterface, EntityManagerAwa
      * Recherche de chaque entité spécifiée par son identifiant dans le RouteMatch de la requête courante,
      * et injection de cette entité dans le RouteMatch.
      *
-     * @param \Zend\Mvc\MvcEvent $e
+     * @param \Laminas\Mvc\MvcEvent $e
      */
     public function injectRouteMatch(MvcEvent $e)
     {

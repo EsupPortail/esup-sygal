@@ -13,7 +13,7 @@ use Application\Service\UserContextService;
 use Application\Service\Workflow\WorkflowServiceAwareInterface;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * Class TheseAssertion

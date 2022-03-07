@@ -16,11 +16,11 @@ use Interop\Container\ContainerInterface;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Log\Filter\Priority;
-use Zend\Log\Logger;
-use Zend\Log\Writer\Stream;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\Log\Filter\Priority;
+use Laminas\Log\Logger;
+use Laminas\Log\Writer\Stream;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
 
 class ImportController extends AbstractActionController
 {

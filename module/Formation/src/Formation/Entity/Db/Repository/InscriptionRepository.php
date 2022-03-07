@@ -8,7 +8,7 @@ use Doctrine\ORM\QueryBuilder;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class InscriptionRepository extends EntityRepository
 {

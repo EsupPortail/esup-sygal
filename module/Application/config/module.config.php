@@ -32,7 +32,7 @@ use Doctrine\DBAL\Driver\PDO\PgSQL\Driver as PgSQL;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use UnicaenApp\Controller\ConsoleController;
 use UnicaenApp\Service\EntityManagerAwareInitializer;
-use Zend\Navigation\Navigation;
+use Laminas\Navigation\Navigation;
 
 return array(
     'bjyauthorize' => [
@@ -125,7 +125,7 @@ return array(
                 ],
             ],
             'contact'          => [
-//                'type'     => 'Zend\Router\Http\Literal',
+//                'type'     => 'Laminas\Router\Http\Literal',
                 'options'  => [
 //                    'route'    => '/contact',
                     'defaults' => [

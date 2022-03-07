@@ -14,9 +14,9 @@ use Application\Service\Fichier\FichierServiceException;
 use Application\Service\Rapport\RapportSearchService;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Http\Response;
-use Zend\Paginator\Paginator as ZendPaginator;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\Paginator\Paginator as LaminasPaginator;
+use Laminas\View\Model\ViewModel;
 
 /**
  * @property RapportSearchService $searchService
@@ -79,7 +79,7 @@ abstract class RapportRechercheController extends AbstractController implements 
         if ($result instanceof Response) {
             return $result;
         }
-        /** @var ZendPaginator $paginator */
+        /** @var LaminasPaginator $paginator */
         $paginator = $result;
 
         $model = new ViewModel([
@@ -172,7 +172,7 @@ abstract class RapportRechercheController extends AbstractController implements 
         if ($result instanceof Response) {
             return $result; // théoriquement, on ne devrait pas arriver ici.
         }
-        /** @var ZendPaginator $paginator */
+        /** @var LaminasPaginator $paginator */
         $paginator = $result;
 
         $fichiers = [];

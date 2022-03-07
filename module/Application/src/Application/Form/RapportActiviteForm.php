@@ -4,7 +4,7 @@ namespace Application\Form;
 
 use Application\Entity\Db\Rapport;
 use Application\Form\Rapport\RapportForm;
-use Zend\Form\Element\Radio;
+use Laminas\Form\Element\Radio;
 
 class RapportActiviteForm extends RapportForm
 {

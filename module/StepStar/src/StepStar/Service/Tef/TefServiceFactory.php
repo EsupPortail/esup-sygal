@@ -6,7 +6,7 @@ use Application\Service\These\TheseService;
 use Interop\Container\ContainerInterface;
 use StepStar\Service\Xml\XmlService;
 use StepStar\Service\Xslt\XsltService;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class TefServiceFactory implements FactoryInterface
 {

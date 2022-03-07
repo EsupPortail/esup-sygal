@@ -17,7 +17,7 @@ use Soutenance\View\Helper\EtatViewHelper;
 use Soutenance\View\Helper\JustificatifViewHelper;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Segment;
 
 return [
 

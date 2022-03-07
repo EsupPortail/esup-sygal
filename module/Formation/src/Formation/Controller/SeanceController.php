@@ -12,8 +12,8 @@ use Formation\Service\Exporter\Emargement\EmargementExporter;
 use Formation\Service\Seance\SeanceServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\View\Model\ViewModel;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Renderer\PhpRenderer;
 
 class SeanceController extends AbstractController
 {

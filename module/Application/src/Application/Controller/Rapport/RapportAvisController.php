@@ -15,7 +15,7 @@ use Application\Service\Rapport\Avis\RapportAvisServiceAwareTrait;
 use Application\Service\Rapport\RapportServiceAwareTrait;
 use Doctrine\ORM\NoResultException;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Http\Response;
+use Laminas\Http\Response;
 
 class RapportAvisController extends AbstractController
 {
@@ -51,7 +51,7 @@ class RapportAvisController extends AbstractController
     }
 
     /**
-     * @return array|\Zend\Http\Response
+     * @return array|\Laminas\Http\Response
      */
     public function ajouterAction()
     {

@@ -4,7 +4,7 @@ namespace Retraitement\Service;
 
 use Application\Command\ShellCommandInterface;
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Exception\InvalidArgumentException;
+use Laminas\ServiceManager\Exception\InvalidArgumentException;
 
 class RetraitementServiceFactory
 {
