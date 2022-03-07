@@ -55,6 +55,9 @@ return [
                             PropositionPrivileges::PROPOSITION_VALIDER_UR,
                             PropositionPrivileges::PROPOSITION_VALIDER_BDD,
                             PropositionPrivileges::PROPOSITION_PRESIDENCE,
+
+                            PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VISUALISER,
+                            PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER,
                         ],
                         'resources' => ['These'],
                         'assertion' => PropositionAssertion::class,
@@ -131,8 +134,29 @@ return [
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_SURSIS,
                 ],
-
-
+                [
+                    'controller' => PropositionController::class,
+                    'action' => [
+                        'toggle-sursis',
+                        'suppression',
+                    ],
+                    'privileges' => PropositionPrivileges::PROPOSITION_SURSIS,
+                ],
+                [
+                    'controller' => PropositionController::class,
+                    'action' => [
+                        'declaration-non-plagiat',
+                    ],
+                    'privileges' => PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VISUALISER,
+                ],
+                [
+                    'controller' => PropositionController::class,
+                    'action' => [
+                        'valider-declaration-non-plagiat',
+                        'refuser-declaration-non-plagiat',
+                    ],
+                    'privileges' => PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER,
+                ],
             ],
         ],
     ],
@@ -336,6 +360,41 @@ return [
                                     'defaults' => [
                                         'controller' => PropositionController::class,
                                         'action' => 'signature-presidence',
+                                    ],
+                                ],
+                            ],
+                            'declaration-non-plagiat' => [
+                                'type' => Literal::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/declaration-non-plagiat',
+                                    'defaults' => [
+                                        'controller' => PropositionController::class,
+                                        'action' => 'declaration-non-plagiat',
+                                    ],
+                                ],
+                                'child_routes' => [
+                                    'valider' => [
+                                        'type' => Literal::class,
+                                        'may_terminate' => true,
+                                        'options' => [
+                                            'route' => '/valider',
+                                            'defaults' => [
+                                                'controller' => PropositionController::class,
+                                                'action' => 'valider-declaration-non-plagiat',
+                                            ],
+                                        ],
+                                    ],
+                                    'refuser' => [
+                                        'type' => Literal::class,
+                                        'may_terminate' => true,
+                                        'options' => [
+                                            'route' => '/refuser',
+                                            'defaults' => [
+                                                'controller' => PropositionController::class,
+                                                'action' => 'refuser-declaration-non-plagiat',
+                                            ],
+                                        ],
                                     ],
                                 ],
                             ],
