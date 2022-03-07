@@ -371,7 +371,7 @@ EOS;
 
     private function fetchUnitesRecherches(SelectSearchFilter $filter): array
     {
-        return $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'code', false, true);
+        return $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'code', true, true);
     }
 
     private function fetchOriginesFinancements(SelectSearchFilter $filter): array

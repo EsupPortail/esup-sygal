@@ -662,7 +662,7 @@ class StructureService extends BaseService
             ->leftJoin('structure.structuresSubstituees', 'substitutionFrom')
             ->andWhere('substitutionTo.id IS NULL OR substitutionTo.histoDestruction is not null');
         if ($order) {
-            $qb->orderBy(' structure.' . $order);
+            $qb->orderBy(' structure.estFermee , structure.' . $order);
         }
         else {
             if ($type === TypeStructure::CODE_ECOLE_DOCTORALE || $type === TypeStructure::CODE_UNITE_RECHERCHE) {
