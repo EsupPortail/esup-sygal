@@ -11,9 +11,6 @@ Journal des modifications
 - [FIX] Plantage de la page "Contact Assistance" en cas de connexion avec un compte local.
 - [FIX] Activation de la mise en cache de la config lorsque le mode development est désactivé.
 - [FIX] Lancement de la synchro des thèses pour prendre en compte la création/modification/suppression de substitution de structures.
-
-3.0.13
-------
 - Ajout des unités de recherche fermées dans le filtre des thèses
 - [FIX] correction du bug lié au typage de retour trop strict de l'entité Structure
 - Mise en place de la déclaration de non plagiat dans la proposition de soutenance
