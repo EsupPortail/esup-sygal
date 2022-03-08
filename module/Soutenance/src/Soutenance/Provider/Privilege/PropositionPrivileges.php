@@ -16,4 +16,6 @@ class PropositionPrivileges extends Privileges
     const PROPOSITION_VALIDER_BDD                     = 'soutenance-proposition-validation-bdd';
     const PROPOSITION_PRESIDENCE                      = 'soutenance-proposition-presidence';
     const PROPOSITION_SURSIS                          = 'soutenance-proposition-sursis';
+    const PROPOSITION_DECLARATION_HONNEUR_VALIDER     = 'soutenance-declaration-honneur-valider';
+    const PROPOSITION_DECLARATION_HONNEUR_REVOQUER    = 'soutenance-declaration-honneur-revoquer';
 }

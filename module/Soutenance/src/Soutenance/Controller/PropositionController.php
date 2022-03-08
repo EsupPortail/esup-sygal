@@ -23,6 +23,7 @@ use Soutenance\Form\LabelEuropeen\LabelEuropeenFormAwareTrait;
 use Soutenance\Form\Membre\MembreFromAwareTrait;
 use Soutenance\Form\Refus\RefusFormAwareTrait;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Soutenance\Provider\Validation\TypeValidation;
 use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
@@ -35,6 +36,7 @@ use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Db\RoleInterface;
 use Laminas\Form\Form;
 use Laminas\Http\Request;
+use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
 
@@ -532,5 +534,53 @@ class PropositionController extends AbstractController
             'ecole' => $ecole,
             'soutenances' => $soutenances,
         ]);
+    }
+
+    /** Declaration sur l'honneur *************************************************************************************/
+
+    public function declarationNonPlagiatAction() : ViewModel
+    {
+        $these = $this->requestedThese();
+
+        return new ViewModel([
+            'title' => '«&nbsp;Lutte anti-plagiat : Déclaration sur l’honneur&nbsp;»',
+            'these' => $these,
+            'validation' => null,
+
+            /** @see PropositionController::validerDeclarationNonPlagiatAction() */
+            'urlValider' => $this->url()->fromRoute('soutenance/proposition/declaration-non-plagiat/valider', ['these' => $these->getId()], [], true),
+            /** @see PropositionController::refuserDeclarationNonPlagiatAction() */
+            'urlRefuser' => $this->url()->fromRoute('soutenance/proposition/declaration-non-plagiat/refuser', ['these' => $these->getId()], [], true),
+        ]);
+    }
+
+    public function validerDeclarationNonPlagiatAction() : Response
+    {
+        $these = $this->requestedThese();
+        $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
+        $this->getValidationService()->create(TypeValidation::CODE_VALIDATION_DECLARATION_HONNEUR, $these, $individuUtilisateur);
+
+        return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
+    }
+
+    public function refuserDeclarationNonPlagiatAction() : Response
+    {
+        $these = $this->requestedThese();
+        $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
+        $this->getValidationService()->create(TypeValidation::CODE_REFUS_DECLARATION_HONNEUR, $these, $individuUtilisateur);
+
+        return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
+    }
+
+    public function revoquerDeclarationNonPlagiatAction() : Response
+    {
+        $these = $this->requestedThese();
+
+        $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_DECLARATION_HONNEUR, $these);
+        foreach ($validations as $validation) { $this->getValidationService()->historise($validation); }
+        $refus = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_REFUS_DECLARATION_HONNEUR, $these);
+        foreach ($refus as $refu) { $this->getValidationService()->historise($refu); }
+
+        return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
     }
 }

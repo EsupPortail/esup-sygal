@@ -12,6 +12,13 @@ Journal des modifications
 - [FIX] Activation de la mise en cache de la config lorsque le mode development est désactivé.
 - [FIX] Lancement de la synchro des thèses pour prendre en compte la création/modification/suppression de substitution de structures.
 
+3.0.13
+------
+- Ajout des unités de recherche fermées dans le filtre des thèses
+- [FIX] correction du bug lié au typage de retour trop strict de l'entité Structure
+- Mise en place de la déclaration de non plagiat dans la proposition de soutenance
+- [FIX] Plantage lors de la création/modification/suppression d'une substitution de structure ("Synchro introuvable avec ce nom : these")
+
 3.0.12
 ------
 - Le bouton d'impression du document pour signature du président reste visible même après validation de l'ED.

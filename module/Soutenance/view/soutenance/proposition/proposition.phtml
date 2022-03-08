@@ -11,6 +11,7 @@ use Soutenance\Entity\Etat;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\JustificatifPrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Soutenance\Provider\Validation\TypeValidation;
 
 /**
  * @see \Soutenance\Controller\PropositionController::propositionAction()
@@ -53,7 +54,7 @@ $this->headTitle("Proposition de soutenance");
     Les règles de composition du jury sont rappelées dans la page d'accueil <q>Guide de la thèse</q>.
 </p>
 <div class="alert alert-warning">
-    <span class="fas fa-exclamation-triangle"></span>
+    <span class="icon icon-attention"></span>
     En cas de modifications de la proposition, toutes validations seront annulées et la proposition devra être à nouveau être validée.
 </div>
 
@@ -94,6 +95,13 @@ $this->headTitle("Proposition de soutenance");
         'justificatifs' => $justificatifs,
         'justificatifsOk' => $justificatifsOk,
         'urlFichierThese' => $urlFichierThese,
+]); ?>
+
+<div id="DECLARATION"></div>
+<?php echo $this->partial('partial/declaration-non-plagiat', [
+    'these' => $these,
+    'validation' => $validations[TypeValidation::CODE_VALIDATION_DECLARATION_HONNEUR],
+    'refus' => $validations[TypeValidation::CODE_REFUS_DECLARATION_HONNEUR],
 ]); ?>
 
 <br/><br/>
