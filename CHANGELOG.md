@@ -6,6 +6,7 @@ Journal des modifications
 - Ajout des unités de recherche fermées dans le filtre des thèses
 - [FIX] correction du bug lié au typage de retour trop strict de l'entité Structure 
 - Mise en place de la déclaration de non plagiat dans la proposition de soutenance
+- [FIX] Plantage lors de la création/modification/suppression d'une substitution de structure ("Synchro introuvable avec ce nom : these")
 
 3.0.12
 ------

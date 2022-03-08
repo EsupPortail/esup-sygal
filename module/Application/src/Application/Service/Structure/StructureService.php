@@ -150,8 +150,7 @@ class StructureService extends BaseService
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement des substitutions", null, $e);
         }
 
-        $this->synchroService->addService('these');
-        $this->synchroService->synchronize();
+        $this->runSynchroTheses($structureConcreteCible->getStructure());
 
         return $structureConcreteCible;
     }
@@ -229,7 +228,29 @@ class StructureService extends BaseService
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement des substitutions", null, $e);
         }
 
-        $this->synchroService->addService('these');
+        $this->runSynchroTheses($structureCible);
+    }
+
+    /**
+     * Lance la synchro des thèses pour prendre en compte la substitution de structure.
+     *
+     * @param \Application\Entity\Db\Structure $structureCible
+     */
+    private function runSynchroTheses(Structure $structureCible)
+    {
+        // Les noms de synchros sont déclinés par source/établissement (ex: 'these-UCN') ; on ne retient que
+        // les sources/établissements des structures substituées.
+        $etabs = [];
+        foreach ($structureCible->getStructuresSubstituees() as $structuresSubstituee) {
+            /** @var \Application\Entity\Db\Source $source */
+            $source = $structuresSubstituee->getSource();
+            $etab = $source->getEtablissement()->getCode();
+            $etabs[$etab] = $etab;
+        }
+        foreach ($etabs as $etab) {
+            $this->synchroService->addService(sprintf('these-%s', $etab));
+        }
+
         $this->synchroService->synchronize();
     }
 
@@ -268,8 +289,8 @@ class StructureService extends BaseService
             throw new RuntimeException("Erreur rencontrée lors de la supression des substitutions", null, $e);
         }
 
-        $this->synchroService->addService('these');
-        $this->synchroService->synchronize();
+        $this->runSynchroTheses($structureCible);
+
         return $structureSubstits;
     }
 
