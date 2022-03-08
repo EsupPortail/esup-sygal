@@ -3,7 +3,6 @@
 /**
  * @see \Soutenance\Controller\PropositionController::declarationNonPlagiatAction()
  * @var These $these
- * @var bool $isTheseDoctorant
  * @var Validation $validation
  * @var string $urlValider
  * @var string $urlRefuser
@@ -12,6 +11,7 @@
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Provider\Validation\TypeValidation;
 
 $this->headTitle("Déclaration sur l'honneur de non plagiat");
@@ -42,7 +42,7 @@ if ($ur !== null) {
     $unite = $ur->getLibelle() . " (" . $ur->getSigle() . ")";
 }
 
-
+$canValider = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER);
 
 ?>
 
@@ -75,7 +75,7 @@ if ($ur !== null) {
 
 <div class="row">
     <div class="col-md-4">
-        <?php if ($isTheseDoctorant): ?>
+        <?php if ($canValider): ?>
             <p>
         <span style="text-align: center">
         <a      href="<?php echo $urlValider;  ?>"

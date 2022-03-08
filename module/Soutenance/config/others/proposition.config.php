@@ -56,8 +56,8 @@ return [
                             PropositionPrivileges::PROPOSITION_VALIDER_BDD,
                             PropositionPrivileges::PROPOSITION_PRESIDENCE,
 
-                            PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VISUALISER,
                             PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER,
+                            PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_REVOQUER,
                         ],
                         'resources' => ['These'],
                         'assertion' => PropositionAssertion::class,
@@ -146,16 +146,17 @@ return [
                     'controller' => PropositionController::class,
                     'action' => [
                         'declaration-non-plagiat',
-                    ],
-                    'privileges' => PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VISUALISER,
-                ],
-                [
-                    'controller' => PropositionController::class,
-                    'action' => [
                         'valider-declaration-non-plagiat',
                         'refuser-declaration-non-plagiat',
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER,
+                ],
+                [
+                    'controller' => PropositionController::class,
+                    'action' => [
+                        'revoquer-declaration-non-plagiat',
+                    ],
+                    'privileges' => PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_REVOQUER,
                 ],
             ],
         ],
@@ -393,6 +394,17 @@ return [
                                             'defaults' => [
                                                 'controller' => PropositionController::class,
                                                 'action' => 'refuser-declaration-non-plagiat',
+                                            ],
+                                        ],
+                                    ],
+                                    'revoquer' => [
+                                        'type' => Literal::class,
+                                        'may_terminate' => true,
+                                        'options' => [
+                                            'route' => '/revoquer',
+                                            'defaults' => [
+                                                'controller' => PropositionController::class,
+                                                'action' => 'revoquer-declaration-non-plagiat',
                                             ],
                                         ],
                                     ],
