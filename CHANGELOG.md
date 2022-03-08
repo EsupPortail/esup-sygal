@@ -1,6 +1,12 @@
 Journal des modifications
 =========================
 
+3.0.13
+------
+- Ajout des unités de recherche fermées dans le filtre des thèses
+- [FIX] correction du bug lié au typage de retour trop strict de l'entité Structure 
+- Mise en place de la déclaration de non plagiat dans la proposition de soutenance
+
 3.0.12
 ------
 - Le bouton d'impression du document pour signature du président reste visible même après validation de l'ED.
