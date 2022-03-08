@@ -28,7 +28,7 @@ class CreationUtilisateurFromIndividuHydrator implements HydratorInterface
      * @param CreationUtilisateurInfos $infos
      * @return array
      */
-    public function extract($infos) {
+    public function extract($infos): array {
 
         $data = [];
         $data['civilite']        = $infos->getCivilite();

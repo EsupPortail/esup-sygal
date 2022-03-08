@@ -12,7 +12,7 @@ class SeanceHydrator implements HydratorInterface {
      * @param Seance $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         $data = [
             'date'          => ($object->getDebut() !== null)?$object->getDebut()->format('d/m/Y'):null,

@@ -28,7 +28,7 @@ class PointsDeVigilanceHydrator implements HydratorInterface, EntityManagerAware
      * @param RdvBu $rdvBu
      * @return array
      */
-    public function extract($rdvBu)
+    public function extract($rdvBu): array
     {
         $data['vigilance']  = $rdvBu->getDivers();
 

@@ -13,18 +13,19 @@
        id="<?php echo $name ?>">
 
 <?php if ($enabled): ?>
-    <label for="listes[<?php echo $name ?>]">
+    <label for="listes[<?php echo $name ?>]" class="form-label">
         <input type="checkbox"
                <?php echo $checked ? 'checked' : '' ?>
-               class="liste-checkbox"
+               class="form-check-input liste-checkbox"
                value="1"
                name="listes[<?php echo $name ?>]"
                id="<?php echo $name ?>">
         <?php echo $name ?>
     </label>
 <?php else: ?>
-    <label>
+    <label class="form-label">
         <input type="checkbox"
+               class="form-check-input "
                <?php echo $checked ? 'checked' : '' ?>
                disabled>
     </label>

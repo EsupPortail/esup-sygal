@@ -2,6 +2,7 @@
 
 namespace Application\Service;
 
+use Application\Entity\UserWrapperFactory;
 use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Individu\IndividuService;
 use Application\SourceCodeStringHelper;
@@ -30,11 +31,15 @@ class UserContextServiceFactory
         /** @var ModuleOptions $moduleOptions */
         $moduleOptions = $container->get('unicaen-auth_module_options');
 
+        /** @var UserWrapperFactory $userWrapperFactory */
+        $userWrapperFactory = $container->get(UserWrapperFactory::class);
+
         $service = new UserContextService();
         $service->setIndividuService($individuService);
         $service->setEtablissementService($etablissementService);
         $service->setAuthenticationService($authenticationService);
         $service->setModuleOptions($moduleOptions);
+        $service->setUserWrapperFactory($userWrapperFactory);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper

@@ -6,18 +6,18 @@
 use Application\Entity\Db\These;
 ?>
 
-<div class="panel panel-info these-panel">
+<div class="card these-card">
     <?php if ($this->header): ?>
-    <div class="panel-heading">
+    <div class="card-header bg-info">
         <?php echo $this->header ?>
     </div>
     <?php endif ?>
-    <div class="panel-body">
+    <div class="card-body">
         <h3><?php echo $these->getTitre() ?></h3>
         <ul class="roadmap pagination">
             <li>
                 <?php $url = $this->url('these/identite', ['these' => $these->getId()]) ?>
-                <a class="roadmap-step-link " href="<?php echo $url ?>"><span class="glyphicon glyphicon-circle-arrow-right"></span>Détails...</a>
+                <a class="roadmap-step-link " href="<?php echo $url ?>"><span class="fas fa-arrow-alt-circle-right"></span>Détails...</a>
             </li>
         </ul>
     </div>

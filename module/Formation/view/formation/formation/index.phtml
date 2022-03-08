@@ -17,7 +17,7 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
 
 ?>
 
-<h1> Index des formations </h1>
+<h1> Liste des formations </h1>
 
 <?php echo $this->partial('partial/filtre', [ 'filtres' => $filtres, 'listings' => $listings ]); ?>
 
@@ -26,12 +26,12 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
         <?php /** @see \Formation\Controller\FormationController::ajouterAction() */ ?>
         href="<?php echo $this->url('formation/formation/ajouter', [], [], true); ?>"
         class="btn btn-primary action ajax-modal" data-event="modification">
-        <span class="glyphicon glyphicon-plus"></span>
+        <span class="icon icon-ajouter"></span>
         Ajouter une formation
     </a>
 <?php endif; ?>
 
-<table class="table table-condensed table-hover">
+<table class="table table-sm table-hover">
     <thead>
         <tr>
             <th>Libellé</th>
@@ -52,8 +52,8 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
                 <span class="typage">Formation :</span>
                 <?php echo $formation->getLibelle(); ?>
                 <?php if ($formation->getDescription() !== null AND trim($formation->getDescription()) !== null) : ?>
-                    <span class="glyphicon glyphicon-info-sign"
-                          title="<?php echo $formation->getDescription(); ?>" data-toggle="tooltip" data-html="true"
+                    <span class="icon icon-info"
+                          title="<?php echo $formation->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
                     ></span>
                 <?php endif; ?>
                 <br>
@@ -61,8 +61,8 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
                 <?php if ($formation->getModule()) : ?>
                     <?php echo $formation->getModule()->getLibelle(); ?>
                     <?php if ($formation->getModule()->getDescription() !== null AND trim($formation->getModule()->getDescription()) !== null) : ?>
-                        <span class="glyphicon glyphicon-info-sign"
-                              title="<?php echo $formation->getModule()->getDescription(); ?>" data-toggle="tooltip" data-html="true"
+                        <span class="icon icon-info"
+                              title="<?php echo $formation->getModule()->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
                         ></span>
                     <?php endif; ?>
                 <?php else : ?>
@@ -94,8 +94,8 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
                     <?php /** @see \Formation\Controller\FormationController::afficherAction() */ ?>
                     <a href="<?php echo $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true); ?>"
                        title="afficher la formation #<?php echo $formation->getId(); ?>"
-                       data-toggle="tooltip" data-html="true">
-                        <span class="glyphicon glyphicon-eye-open"></span>
+                       data-bs-toggle="tooltip" data-bs-html="true">
+                        <span class="icon icon-voir"></span>
                     </a>
                 <?php endif; ?>
                 <?php if ($canHistoriserFormation) : ?>
@@ -103,15 +103,15 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
                         <?php /** @see \Formation\Controller\FormationController::historiserAction() */ ?>
                         <a href="<?php echo $this->url('formation/formation/historiser', ['formation' => $formation->getId()], [], true); ?>"
                            title="Historiser la formation #<?php echo $formation->getId(); ?>"
-                           data-toggle="tooltip" data-html="true">
-                            <span class="glyphicon glyphicon-trash"></span>
+                           data-bs-toggle="tooltip" data-bs-html="true">
+                            <span class="icon icon-historiser"></span>
                         </a>
                     <?php else : ?>
                         <?php /** @see \Formation\Controller\FormationController::restaurerAction() */ ?>
                         <a href="<?php echo $this->url('formation/formation/restaurer', ['formation' => $formation->getId()], [], true); ?>"
                            title="Restaurer la formation #<?php echo $formation->getId(); ?>"
-                           data-toggle="tooltip" data-html="true">
-                            <span class="glyphicon glyphicon-leaf"></span>
+                           data-bs-toggle="tooltip" data-bs-html="true">
+                            <span class="icon icon-restaurer"></span>
                         </a>
                     <?php endif; ?>
                 <?php endif; ?>
@@ -120,8 +120,8 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
                     <?php /** @see \Formation\Controller\FormationController::supprimerAction() */?>
                     <a href="<?php echo $this->url('formation/formation/supprimer',['formation' => $formation->getId()], [], true); ?>"
                        class="ajax-modal" data-event="modification"
-                       title="Suppression de la formation #<?php echo $formation->getId(); ?>" data-toggle="tooltip" data-html="true">
-                        <span class="glyphicon glyphicon-remove"></span>
+                       title="Suppression de la formation #<?php echo $formation->getId(); ?>" data-bs-toggle="tooltip" data-bs-html="true">
+                        <span class="icon icon-detruire"></span>
                     </a>
                 <?php endif; ?>
             </td>
@@ -132,7 +132,7 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
 
 <script>
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip({});
+        $('[data-bs-toggle="tooltip"]').tooltip({});
     });
     $(function() {
         $("body").on("modification", function (event) {

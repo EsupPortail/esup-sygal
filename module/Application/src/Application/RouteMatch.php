@@ -29,22 +29,23 @@ class RouteMatch extends BaseRouteMatch
     /**
      * @var array
      */
-    private $entityClassNamesMapping;
+    private $entityClassNamesMapping = [
+        'these' => These::class,
+        'doctorant' => Doctorant::class,
+        'fichier' => Fichier::class,
+        'utilisateur' => Utilisateur::class,
+        'role' => Role::class,
+        'ecoleDoctorale' => EcoleDoctorale::class,
+        'uniteRecherche' => UniteRecherche::class,
+        'etablissement' => Etablissement::class,
+        'structure' => Structure::class,
+        'rapport' => Rapport::class,
+    ];
 
     /**
      * @var array
      */
     private $repositories = [];
-
-    /**
-     * @param array $entityClassNamesMapping
-     * @return self
-     */
-    public function setEntityClassNamesMapping(array $entityClassNamesMapping): self
-    {
-        $this->entityClassNamesMapping = $entityClassNamesMapping;
-        return $this;
-    }
 
     /**
      * @param string $name Nom du paramètre

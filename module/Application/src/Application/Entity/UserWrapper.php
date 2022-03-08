@@ -4,12 +4,11 @@ namespace Application\Entity;
 
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
-use Application\Exception\DomainException;
 use Exception;
-use InvalidArgumentException;
-use UnicaenApp\Entity\Ldap\People as UnicaenAppPeople;
+use UnicaenAuth\Entity\Ldap\People as UnicaenAuthPeople;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenAuth\Entity\Db\AbstractUser;
 use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenLdap\Entity\People as UnicaenLdapPeople;
 use ZfcUser\Entity\UserInterface;
@@ -18,7 +17,7 @@ use ZfcUser\Entity\UserInterface;
  * Wrapper représentant un utilisateur authentifié, permettant de masquer autant que faire se peut
  * les différences entre les classes d'utilisateurs pouvant être rencontrées dans l'appli :
  * - UnicaenLdapPeople
- * - UnicaenAppPeople
+ * - UnicaenAuthPeople
  * - Utilisateur
  * - ShibUser
  *
@@ -27,7 +26,7 @@ use ZfcUser\Entity\UserInterface;
 class UserWrapper implements UserInterface
 {
     /**
-     * @var UnicaenLdapPeople|UnicaenAppPeople|Utilisateur|ShibUser
+     * @var UnicaenLdapPeople|UnicaenAuthPeople|Utilisateur|ShibUser
      */
     private $userData;
 
@@ -37,7 +36,7 @@ class UserWrapper implements UserInterface
     private $individu;
 
     /**
-     * @param Utilisateur|UnicaenAppPeople|ShibUser|UnicaenLdapPeople $userData
+     * @param Utilisateur|UnicaenAuthPeople|ShibUser|UnicaenLdapPeople $userData
      * @return self
      * @throws \Exception
      */
@@ -45,7 +44,7 @@ class UserWrapper implements UserInterface
     {
         switch (true) {
             case $userData instanceof UnicaenLdapPeople:
-            case $userData instanceof UnicaenAppPeople:
+            case $userData instanceof UnicaenAuthPeople:
             case $userData instanceof ShibUser:
             case $userData instanceof Utilisateur:
                 $this->userData = $userData;
@@ -94,9 +93,13 @@ class UserWrapper implements UserInterface
      */
     public function getDomainFromEppn(): ?string
     {
-        $parts = explode('@', $this->getEppn());
+        if ($eppn = $this->getEppn()) {
+            $parts = explode('@', $eppn);
 
-        return $parts[1] ?? null;
+            return $parts[1] ?? null;
+        }
+
+        return null;
     }
 
     /**
@@ -116,22 +119,23 @@ class UserWrapper implements UserInterface
     /**
      * Retourne l'EduPersonPrincipalName (EPPN), si applicable aux données utilisateur courantes.
      *
-     * @return string
+     * @return string|null
      */
-    public function getEppn(): string
+    public function getEppn(): ?string
     {
         switch (true) {
             case $this->userData instanceof UnicaenLdapPeople:
-            case $this->userData instanceof UnicaenAppPeople:
+            case $this->userData instanceof UnicaenAuthPeople:
                 return $this->userData->getEduPersonPrincipalName();
 
             case $this->userData instanceof ShibUser:
                 return $this->userData->getEppn();
 
+            case $this->userData instanceof Utilisateur && $this->userData->getPassword() === AbstractUser::PASSWORD_SHIB:
+                return $this->userData->getUsername();
+
             default:
-                throw new DomainException(
-                    "Pas d'EPPN pour des données d'identité de type " .
-                    is_object($this->userData) ? get_class($this->userData) : gettype($this->userData));
+                return null;
         }
     }
 
@@ -147,7 +151,7 @@ class UserWrapper implements UserInterface
     {
         switch (true) {
             case $this->userData instanceof UnicaenLdapPeople:
-            case $this->userData instanceof UnicaenAppPeople:
+            case $this->userData instanceof UnicaenAuthPeople:
                 $supannId = $this->userData->getSupannEmpId() ?: $this->userData->getSupannEtuId();
                 break;
 
@@ -183,7 +187,7 @@ class UserWrapper implements UserInterface
 
         switch (true) {
             case $this->userData instanceof UnicaenLdapPeople:
-            case $this->userData instanceof UnicaenAppPeople:
+            case $this->userData instanceof UnicaenAuthPeople:
                 return $this->userData->getSn(true);
 
             case $this->userData instanceof Utilisateur:
@@ -210,7 +214,7 @@ class UserWrapper implements UserInterface
 
         switch (true) {
             case $this->userData instanceof UnicaenLdapPeople:
-            case $this->userData instanceof UnicaenAppPeople:
+            case $this->userData instanceof UnicaenAuthPeople:
                 return $this->userData->getGivenName();
 
             case $this->userData instanceof Utilisateur:
@@ -237,7 +241,7 @@ class UserWrapper implements UserInterface
 
         switch (true) {
             case $this->userData instanceof UnicaenLdapPeople:
-            case $this->userData instanceof UnicaenAppPeople:
+            case $this->userData instanceof UnicaenAuthPeople:
                 return $this->userData->getSupannCivilite();
 
             case $this->userData instanceof Utilisateur:
@@ -264,9 +268,7 @@ class UserWrapper implements UserInterface
     {
         switch (true) {
             case $this->userData instanceof UnicaenLdapPeople:
-            case $this->userData instanceof UnicaenAppPeople:
-                return $this->userData->getId();
-
+            case $this->userData instanceof UnicaenAuthPeople:
             case $this->userData instanceof Utilisateur:
             case $this->userData instanceof ShibUser:
                 return $this->userData->getId();
@@ -295,9 +297,9 @@ class UserWrapper implements UserInterface
     {
         switch (true) {
             case $this->userData instanceof UnicaenLdapPeople:
-            case $this->userData instanceof UnicaenAppPeople:
                 return $this->userData->getSupannAliasLogin();
 
+            case $this->userData instanceof UnicaenAuthPeople:
             case $this->userData instanceof Utilisateur:
             case $this->userData instanceof ShibUser:
                 return $this->userData->getUsername();
@@ -326,7 +328,7 @@ class UserWrapper implements UserInterface
     {
         switch (true) {
             case $this->userData instanceof UnicaenLdapPeople:
-            case $this->userData instanceof UnicaenAppPeople:
+            case $this->userData instanceof UnicaenAuthPeople:
                 return $this->userData->getMail();
 
             case $this->userData instanceof Utilisateur:
@@ -357,7 +359,7 @@ class UserWrapper implements UserInterface
     {
         switch (true) {
             case $this->userData instanceof UnicaenLdapPeople:
-            case $this->userData instanceof UnicaenAppPeople:
+            case $this->userData instanceof UnicaenAuthPeople:
                 return $this->userData->getNomComplet(true);
 
             case $this->userData instanceof Utilisateur:
@@ -388,7 +390,7 @@ class UserWrapper implements UserInterface
     {
         switch (true) {
             case $this->userData instanceof UnicaenLdapPeople:
-            case $this->userData instanceof UnicaenAppPeople:
+            case $this->userData instanceof UnicaenAuthPeople:
                 return 'ldap';
 
             case $this->userData instanceof Utilisateur:
@@ -421,7 +423,7 @@ class UserWrapper implements UserInterface
     {
         switch (true) {
             case $this->userData instanceof UnicaenLdapPeople:
-            case $this->userData instanceof UnicaenAppPeople:
+            case $this->userData instanceof UnicaenAuthPeople:
                 $parts = ldap_explode_dn($this->userData->getDn(), 1);
                 $isDeactivated = in_array('deactivated', $parts);
                 return $isDeactivated ? 0 : 1;

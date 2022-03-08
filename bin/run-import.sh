@@ -44,7 +44,7 @@ function run() {
   service=$1
   (
     set -x ;
-    /usr/bin/php ${APP_DIR}/public/index.php import --synchronize=0 --etablissement=${ETAB} --service=${service} && \
+    /usr/bin/php ${APP_DIR}/public/index.php run import  --name=${service}-${ETAB} && \
     /usr/bin/php ${APP_DIR}/public/index.php run synchro --name=${service}-${ETAB}
   )
 }

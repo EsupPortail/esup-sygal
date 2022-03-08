@@ -2,6 +2,7 @@
 
 namespace Application\Provider;
 
+use Application\Entity\UserWrapperFactory;
 use Application\Service\Acteur\ActeurService;
 use Doctorant\Service\DoctorantService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
@@ -47,6 +48,9 @@ class IdentityProviderFactory
 
         $etablissementService = $this->locateEtablissementService($container);
 
+        /** @var UserWrapperFactory $userWrapperFactory */
+        $userWrapperFactory = $container->get(UserWrapperFactory::class);
+
         $service = new IdentityProvider();
         $service->setAuthenticationService($userService->getAuthService());
         $service->setActeurService($acteurService);
@@ -56,6 +60,7 @@ class IdentityProviderFactory
         $service->setRoleService($roleService);
         $service->setUtilisateurService($utilisateurService);
         $service->setEtablissementService($etablissementService);
+        $service->setUserWrapperFactory($userWrapperFactory);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper

@@ -225,7 +225,7 @@ return [
                                 'order'    => 600,
                                 'label'    => 'Pages d\'information',
                                 'route'    => 'informations',
-                                //'icon'     => 'glyphicon glyphicon-send',
+                                //'icon'     => 'icon icon-notifier',
                                 'resource' => InformationPrivileges::getResourceId(InformationPrivileges::INFORMATION_MODIFIER),
                             ],
                         ],
@@ -304,7 +304,7 @@ return [
 
     'public_files' => [
         'inline_scripts' => [
-            '902_' => 'js/tinymce/js/tinymce/tinymce.js',
+            '902_' => 'vendor/tinymce/js/tinymce/tinymce.js',
         ],
     ]
 ];

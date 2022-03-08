@@ -6,10 +6,8 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\UserWrapper;
-use Application\Entity\UserWrapperFactory;
-use Application\Service\Acteur\ActeurService;
+use Application\Entity\UserWrapperFactoryAwareTrait;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
-use Doctorant\Service\DoctorantServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -17,10 +15,10 @@ use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use BjyAuthorize\Provider\Identity\ProviderInterface;
-use UnicaenAuth\Acl\NamedRole;
+use Doctorant\Service\DoctorantServiceAwareTrait;
+use Laminas\Authentication\AuthenticationService;
 use UnicaenAuth\Provider\Identity\ChainableProvider;
 use UnicaenAuth\Provider\Identity\ChainEvent;
-use Laminas\Authentication\AuthenticationService;
 
 /**
  * Service chargé de fournir tous les rôles que possède l'identité authentifiée.
@@ -37,6 +35,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
     use UtilisateurServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
+    use UserWrapperFactoryAwareTrait;
 
     private $roles;
 
@@ -87,9 +86,8 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
         /** @var array $identity */
         $identity = $this->authenticationService->getIdentity();
 
-        $userWrapperFactory = new UserWrapperFactory();
         try {
-            $this->userWrapper = $userWrapperFactory->createInstanceFromIdentity($identity);
+            $this->userWrapper = $this->userWrapperFactory->createInstanceFromIdentity($identity);
         } catch (\Exception $e) {
             error_log($e->getMessage());
             error_log($e->getTraceAsString());

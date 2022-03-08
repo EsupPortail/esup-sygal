@@ -14,10 +14,10 @@ class ModuleHydrator implements HydratorInterface {
     use StructureServiceAwareTrait;
 
     /**
-     * @param Formation $object
+     * @param object|Formation $object
      * @return array
      */
-    public function extract($object)
+    public function extract(object $object) : array
     {
         $data = [
             'libelle' => $object->getLibelle(),

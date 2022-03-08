@@ -56,21 +56,21 @@ $inscriptions = array_filter($these->getAnneesUnivInscription()->toArray(), func
             <a
                 <?php /** @see \Formation\Controller\InscriptionController::passerListePrincipaleAction() */?>
                     href="<?php echo $this->url('formation/inscription/passer-liste-principale', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
-                    title="Passer <?php echo $doctorant->getIndividu()->getNomComplet(); ?> en liste principale" data-toggle="tooltip" data-html="true"
+                    title="Passer <?php echo $doctorant->getIndividu()->getNomComplet(); ?> en liste principale" data-bs-toggle="tooltip" data-bs-html="true"
             >
                 <strong>P</strong></a>
         <?php endif; ?>
         <?php if ($actionListeComplementaire) : ?>
         <a <?php /** @see \Formation\Controller\InscriptionController::passerListeComplementaireAction() */?>
                 href="<?php echo $this->url('formation/inscription/passer-liste-complementaire', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
-                title="Passer <?php echo $doctorant->getIndividu()->getNomComplet(); ?> en liste complémentaire" data-toggle="tooltip" data-html="true"
+                title="Passer <?php echo $doctorant->getIndividu()->getNomComplet(); ?> en liste complémentaire" data-bs-toggle="tooltip" data-bs-html="true"
         >
             <strong>C</strong></a>
         <?php endif; ?>
         <?php if (($actionListePrincipale OR $actionListeComplementaire) AND $inscription->getListe()) : ?>
             <a <?php /** @see \Formation\Controller\InscriptionController::retirerListeAction() */?>
                     href="<?php echo $this->url('formation/inscription/retirer-liste', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
-                    title="Retirer des liste l'inscription de  <?php echo $doctorant->getIndividu()->getNomComplet(); ?>" data-toggle="tooltip" data-html="true"
+                    title="Retirer des liste l'inscription de  <?php echo $doctorant->getIndividu()->getNomComplet(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
             >
                 <strong>∅</strong></a>
         <?php endif; ?>
@@ -78,11 +78,11 @@ $inscriptions = array_filter($these->getAnneesUnivInscription()->toArray(), func
             <?php if ($inscription->estNonHistorise()) : ?>
                 <?php /** @see \Formation\Controller\InscriptionController::historiserAction() */ ?>
                 <a href="<?php echo $this->url('formation/inscription/historiser', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>">
-                    <span class="glyphicon glyphicon-trash"></span></a>
+                    <span class="icon icon-historiser"></span></a>
             <?php else : ?>
                 <?php /** @see \Formation\Controller\InscriptionController::restaurerAction() */ ?>
                 <a href="<?php echo $this->url('formation/inscription/restaurer', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>">
-                    <span class="glyphicon glyphicon-leaf"></span></a>
+                    <span class="icon icon-restaurer"></span></a>
             <?php endif; ?>
         <?php endif; ?>
         <?php if ($actionSupprimer) : ?>
@@ -90,7 +90,7 @@ $inscriptions = array_filter($these->getAnneesUnivInscription()->toArray(), func
             <a href="<?php echo $this->url('formation/inscription/supprimer', ['inscription' => $inscription->getId()], [], true); ?>"
                class="ajax-modal" data-event="modification"
             >
-                <span class="glyphicon glyphicon-remove"></span></a>
+                <span class="icon icon-supprimer"></span></a>
         <?php endif; ?>
     <?php endif; ?>
 </li>

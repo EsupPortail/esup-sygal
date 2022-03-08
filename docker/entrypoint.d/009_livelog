@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+a2enmod proxy_wstunnel
+a2enconf livelog
+
+# Impossible de lancer les sockets ici :
+#   Laminas\ServiceManager\Exception\ServiceNotCreatedException: Service with name "BjyAuthorize\Guards" could not be created.
+#   Reason: An exception occurred in driver: SQLSTATE[08006] [7] FATAL:  le système de bases de données se lance
+#   in /app/vendor/laminas/laminas-servicemanager/src/ServiceManager.php on line 620
+#php /app/public/index.php unicaen-livelog run-sockets --verbose 0

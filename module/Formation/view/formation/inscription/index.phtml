@@ -18,11 +18,11 @@ $canHistoriserInscription      = $this->isAllowed(InscriptionPrivileges::getReso
 $canSupprimerInscription       = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_SUPPRIMER));
 ?>
 
-<h1> Index des inscriptions </h1>
+<h1> Liste des inscriptions </h1>
 
 <?php echo $this->partial('partial/filtre', [ 'filtres' => $filtres, 'listings' => $listings ]); ?>
 
-<table class="table table-condensed">
+<table class="table table-sm">
     <thead>
         <tr>
             <th>Identifiant</th>
@@ -57,25 +57,25 @@ $canSupprimerInscription       = $this->isAllowed(InscriptionPrivileges::getReso
                 <?php if ($canVoirSession AND $inscription->getSession() !== null) : ?>
                     <?php /** @see \Formation\Controller\SessionController::afficherAction() */ ?>
                     <a href="<?php echo $this->url('formation/session/afficher', ['session' => $inscription->getSession()->getId()], [], true); ?>"
-                       title="Accéder à la session associée" data-toggle="tooltip" data-html="true"
+                       title="Accéder à la session associée" data-bs-toggle="tooltip" data-bs-html="true"
                     >
-                        <span class="glyphicon glyphicon-list-alt"></span>
+                        <span class="fas fa-list-alt"></span>
                     </a>
                 <?php endif; ?>
                 <?php if ($canHistoriser) : ?>
                     <?php if ($inscription->estNonHistorise()) : ?>
                         <?php /** @see \Formation\Controller\InscriptionController::historiserAction() */ ?>
                         <a href="<?php echo $this->url('formation/inscription/historiser', ['inscription' => $inscription->getId()], [], true); ?>"
-                           title="Historiser l'inscription" data-toggle="tooltip" data-html="true"
+                           title="Historiser l'inscription" data-bs-toggle="tooltip" data-bs-html="true"
                         >
-                            <span class="glyphicon glyphicon-trash"></span>
+                            <span class="icon icon-historiser"></span>
                         </a>
                     <?php else : ?>
                         <?php /** @see \Formation\Controller\InscriptionController::restaurerAction() */ ?>
                         <a href="<?php echo $this->url('formation/inscription/restaurer', ['inscription' => $inscription->getId()], [], true); ?>"
-                           title="Restaurer l'inscription" data-toggle="tooltip" data-html="true"
+                           title="Restaurer l'inscription" data-bs-toggle="tooltip" data-bs-html="true"
                         >
-                            <span class="glyphicon glyphicon-leaf"></span>
+                            <span class="icon icon-restaurer"></span>
                         </a>
                     <?php endif; ?>
                 <?php endif; ?>
@@ -83,8 +83,8 @@ $canSupprimerInscription       = $this->isAllowed(InscriptionPrivileges::getReso
                     <?php /** @see \Formation\Controller\InscriptionController::supprimerAction() */?>
                     <a href="<?php echo $this->url('formation/inscription/supprimer',['inscription' => $inscription->getId()], [], true); ?>"
                        class="ajax-modal" data-event="modification"
-                       title="Suppression de l'inscription de <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?>" data-toggle="tooltip" data-html="true">
-                        <span class="glyphicon glyphicon-remove"></span>
+                       title="Suppression de l'inscription de <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?>" data-bs-toggle="tooltip" data-bs-html="true">
+                        <span class="icon icon-detruire"></span>
                     </a>
                 <?php endif; ?>
             </td>

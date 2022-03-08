@@ -58,30 +58,32 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
 <?php else : ?>
 
 <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active">
+    <li role="presentation" class="nav-item active">
         <a href="#a_venir"
+           class="nav-link"
            role="tab"
            aria-controls="a_venir"
-           data-toggle="tab"
-
+           data-bs-toggle="tab"
         >
             Formations à venir
         </a>
     </li>
-    <li role="presentation">
+    <li role="presentation" class="nav-item">
         <a href="#inscription"
+           class="nav-link"
            role="tab"
            aria-controls="inscription"
-           data-toggle="tab"
+           data-bs-toggle="tab"
         >
             Mes inscriptions en cours
         </a>
     </li>
-    <li role="presentation">
+    <li role="presentation" class="nav-item">
         <a href="#formation"
+           class="nav-link"
            role="tab"
            aria-controls="formation"
-           data-toggle="tab"
+           data-bs-toggle="tab"
         >
             Mes formations suivies
         </a>
@@ -94,7 +96,7 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
             Formations "Inscriptions ouvertes"
         </h2>
 
-        <table class="table table-condensed">
+        <table class="table table-sm">
             <thead>
             <tr>
                 <th> Module de formation </th>
@@ -141,12 +143,12 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
                             <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
                             <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId(), 'doctorant' => $doctorant->getId()], ['query' => ['retour' => $this->url('formation/index-doctorant', ['doctorant' => $doctorant->getId()], ['fragment' => 'preparation'], true)]], true); ?>"
                             >
-                            <span class="glyphicon glyphicon-plus"
-                                  title="M'inscrire" data-toggle="tooltip" data-html="true"
+                            <span class="icon icon-ajouter"
+                                  title="M'inscrire" data-bs-toggle="tooltip" data-bs-html="true"
                             ></span></a>
                         <?php endif; ?>
                         <?php if ($inscrit) : ?>
-                                <span class="glyphicon glyphicon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
+                                <span class="icon icon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
                         <?php endif; ?>
                     </td>
                 </tr>
@@ -158,7 +160,7 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
             Formations "En prépration"
         </h2>
 
-        <table class="table table-condensed">
+        <table class="table table-sm">
             <thead>
             <tr>
                 <th> Module de formation </th>
@@ -202,9 +204,9 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
                     <td>
                         <?php $inscrit = $session->estInscrit($doctorant); ?>
                         <?php if ($inscrit) : ?>
-                            <span class="glyphicon glyphicon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
+                            <span class="icon icon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
                         <?php else : ?>
-                            <span class="glyphicon glyphicon-info-sign" title="Les inscriptions ne sont pas ouvertes"></span>
+                            <span class="icon icon-info" title="Les inscriptions ne sont pas ouvertes"></span>
                         <?php endif; ?>
                     </td>
                 </tr>
@@ -219,7 +221,7 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
 
         <h2> Mes inscriptions </h2>
 
-        <table class="table table-condensed">
+        <table class="table table-sm">
             <thead>
             <tr>
                 <th> Module de formation </th>
@@ -260,15 +262,15 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
                             <a href="<?php echo $this->url('formation/inscription/desinscription', ['inscription' => $inscription->getId()], [], true); ?>"
                                class="ajax-modal" data-event="modification"
                             >
-                        <span class="glyphicon glyphicon-remove"
-                              title="Annuler mon inscription" data-toggle="tooltip" data-html="true"
+                        <span class="icon icon-detruire"
+                              title="Annuler mon inscription" data-bs-toggle="tooltip" data-bs-html="true"
                         ></span></a>
                         <?php endif; ?>
                         <?php if ($canConvocationInscription AND $inscription->getListe() === Inscription::LISTE_PRINCIPALE) : ?>
                             <?php /** @see \Formation\Controller\InscriptionController::genererConvocationAction() */?>
                             <a href="<?php echo $this->url('formation/inscription/generer-convocation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
-                        <span class="glyphicon glyphicon-share"
-                              title="Télécharger la convocation" data-toggle="tooltip" data-html="true"
+                        <span class="icon icon-share"
+                              title="Télécharger la convocation" data-bs-toggle="tooltip" data-bs-html="true"
                         ></span></a>
                         <?php endif; ?>
                     </td>
@@ -282,7 +284,7 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
             Mes formations suivies
         </h2>
 
-        <table class="table table-condensed">
+        <table class="table table-sm">
             <thead>
             <tr>
                 <th> Module de formation </th>
@@ -328,15 +330,15 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
                         <?php if ($canRepondreEnquete) : ?>
                             <?php /** @see \Formation\Controller\EnqueteController::repondreQuestionsAction() */?>
                             <a href="<?php echo $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true); ?>">
-                        <span class="glyphicon glyphicon-edit"
-                              title="Compléter l'enquête" data-toggle="tooltip" data-html="true"
+                        <span class="icon icon-edit"
+                              title="Compléter l'enquête" data-bs-toggle="tooltip" data-bs-html="true"
                         ></span></a>
                         <?php endif; ?>
                         <?php if (isset($resultats[$inscription->getId()]) AND $canAttestationInscription) : ?>
                             <?php /** @see \Formation\Controller\InscriptionController::genererAttestationAction() */?>
                             <a href="<?php echo $this->url('formation/inscription/generer-attestation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
-                        <span class="glyphicon glyphicon-check"
-                              title="Télécharger l'attestation" data-toggle="tooltip" data-html="true"
+                        <span class="icon icon-check"
+                              title="Télécharger l'attestation" data-bs-toggle="tooltip" data-bs-html="true"
                         ></span></a>
                         <?php endif; ?>
                     </td>

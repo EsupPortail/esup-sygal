@@ -121,7 +121,7 @@ return [
                             'liste-diffusion' => [
                                 'label'    => 'Listes de diffusion',
                                 'route'    => 'liste-diffusion',
-                                'icon'     => 'glyphicon glyphicon-envelope',
+                                'icon'     => 'icon icon-notifier',
                                 'resource' => PrivilegeController::getResourceId(ListeDiffusionController::class, 'index'),
                             ],
                         ],

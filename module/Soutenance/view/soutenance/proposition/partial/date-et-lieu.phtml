@@ -13,15 +13,15 @@ $these = $proposition->getThese();
 ?>
 
 <div id="BOXDIV_DATE_LIEU">
-<div class="box panel <?php echo ($proposition->hasDateEtLieu())?'panel-success':'panel-danger'; ?>" >
+<div class="box card" >
 
-    <div class="panel-heading">
+    <div class="card-header <?php echo ($proposition->hasDateEtLieu())?'bg-success':'bg-danger'; ?>">
         <h2>
             Date et lieu de la soutenance
         </h2>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
 
         <div class="row">
             <div class="col-md-8">
@@ -59,21 +59,21 @@ $these = $proposition->getThese();
             </div>
 
             <div class="col-md-4">
-                <div class="pull-right">
+                <div class="float-end">
                     <?php if ($canModifier) : ?>
                         <a  <?php /**  @see \Soutenance\Controller\PropositionController::modifierDateLieuAction() */ ?>
                             href="<?php echo $this->url('soutenance/proposition/modifier-date-lieu', ['these' => $these->getId()], [], true); ?>"
                             class="btn btn-primary action ajax-modal"
                             data-event="edition-datelieu"
                         >
-                            <span class="glyphicon glyphicon-pencil"></span>
+                            <span class="icon icon-edit"></span>
                             Éditer lieu et date de la soutenance
                         </a>
                     <?php endif; ?>
 
                     <?php if ($proposition->isExterieur()) : ?>
                         <div class="alert alert-warning">
-                            <span class="glyphicon glyphicon-warning-sign"> </span>
+                            <span class="fas fa-exclamation-triangle"> </span>
                             Si la soutenance ne se déroule pas dans les locaux de l'établissement d'inscription alors il est nécessaire de signer une demande de délocalisation&nbsp;:
                             <a href="<?php echo $FORMULAIRE_DELOCALISATION; ?>">
                                 formulaire de demande de délocalisation</a>.

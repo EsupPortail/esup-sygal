@@ -14,6 +14,7 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 /**
  * @method EcoleDoctorale|null findOneBy(array $criteria, array $orderBy = null)
@@ -173,4 +174,18 @@ class EcoleDoctoraleService extends BaseService
             throw new RuntimeException("Erreur lors de l'enregistrement de l'ED", null, $e);
         }
     }
+
+    /**
+     * @param AbstractActionController $controller
+     * @param string $param
+     * @return EcoleDoctorale|null
+     */
+    public function getRequestedEcoleDoctorale(AbstractActionController $controller, string $param='ecole') : ?EcoleDoctorale
+    {
+        $id = $controller->params()->fromRoute($param);
+        /** @var EcoleDoctorale|null $ecole */
+        $ecole = $this->getRepository()->find($id);
+        return $ecole;
+    }
+
 }

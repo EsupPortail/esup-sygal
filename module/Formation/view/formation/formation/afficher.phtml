@@ -39,64 +39,64 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
 
         <h2> Informations sur la formation </h2>
 
-        <dl class="dl-horizontal">
-            <dt> Module </dt>
-            <dd>
+        <dl class="row">
+            <dt class="col-md-3"> Module </dt>
+            <dd class="col-md-9">
                 <?php if($formation->getModule()) : ?>
                     <?php echo $formation->getModule()->getLibelle(); ?>
                 <?php else : ?>
                     <i>Aucun module associé à cette formation</i>
                 <?php endif; ?>
             </dd>
-            <dt> Formation </dt>
-            <dd> <?php echo $formation->getLibelle(); ?> </dd>
+            <dt class="col-md-3"> Formation </dt>
+            <dd class="col-md-9"> <?php echo $formation->getLibelle(); ?> </dd>
             <?php if ($formation->getDescription()) : ?>
-                <dt> Description de la formation </dt>
-                <dd> <?php echo $formation->getDescription(); ?> </dd>
+                <dt class="col-md-3"> Description de la formation </dt>
+                <dd class="col-md-9"> <?php echo $formation->getDescription(); ?> </dd>
             <?php endif ?>
             <?php if ($formation->getLien()) : ?>
-                <dt> Lien vers de la fiche </dt>
-                <dd> <a href="<?php echo $formation->getLien(); ?>" target="_blank"><?php echo $formation->getLien(); ?></a> </dd>
+                <dt class="col-md-3"> Lien vers de la fiche </dt>
+                <dd class="col-md-9"> <a href="<?php echo $formation->getLien(); ?>" target="_blank"><?php echo $formation->getLien(); ?></a> </dd>
             <?php endif ?>
         </dl>
 
         <h2> Valeur par défaut transmises aux sessions </h2>
 
-        <dl class="dl-horizontal">
+        <dl class="row">
             <?php if ($formation->getSite()) : ?>
-                <dt> Site</dt>
-                <dd> <?php echo $this->site($formation); ?> </dd>
+                <dt class="col-md-3"> Site</dt>
+                <dd class="col-md-9"> <?php echo $this->site($formation); ?> </dd>
             <?php endif; ?>
             <?php if ($formation->getResponsable()) : ?>
-                <dt> Responsable</dt>
-                <dd> <?php echo $formation->getResponsable()->getNomComplet(); ?> </dd>
+                <dt class="col-md-3"> Responsable</dt>
+                <dd class="col-md-9"> <?php echo $formation->getResponsable()->getNomComplet(); ?> </dd>
             <?php endif; ?>
             <?php if ($formation->getModalite()) : ?>
-                <dt> Modalité</dt>
-                <dd> <?php echo $this->modalite($formation); ?> </dd>
+                <dt class="col-md-3"> Modalité</dt>
+                <dd class="col-md-9"> <?php echo $this->modalite($formation); ?> </dd>
             <?php endif; ?>
             <?php if ($formation->getType()) : ?>
-                <dt> Type</dt>
-                <dd> <?php echo $this->type($formation); ?> </dd>
+                <dt class="col-md-3"> Type</dt>
+                <dd class="col-md-9"> <?php echo $this->type($formation); ?> </dd>
             <?php endif; ?>
             <?php if ($formation->getTailleListePrincipale()) : ?>
-                <dt> Effectif de la liste principale </dt>
-                <dd> <?php echo $formation->getTailleListePrincipale(); ?> </dd>
+                <dt class="col-md-3"> Effectif de la liste principale </dt>
+                <dd class="col-md-9"> <?php echo $formation->getTailleListePrincipale(); ?> </dd>
             <?php endif; ?>
             <?php if ($formation->getTailleListeComplementaire()) : ?>
-                <dt> Effectif de la liste complémentaire </dt>
-                <dd> <?php echo $formation->getTailleListeComplementaire(); ?> </dd>
+                <dt class="col-md-3"> Effectif de la liste complémentaire </dt>
+                <dd class="col-md-9"> <?php echo $formation->getTailleListeComplementaire(); ?> </dd>
             <?php endif; ?>
         </dl>
     </div>
 
-    <div class="pull-right">
+    <div class="float-end">
         <?php if ($canIndexFormation) : ?>
             <?php /** @see \Formation\Controller\FormationController::indexAction() */?>
             <a class="btn btn-primary action"
                href="<?php echo $this->url('formation/formation', [], [], true); ?>"
             >
-                <span class="glyphicon glyphicon-chevron-up"></span>
+                <span class="icon icon-chevron-up"></span>
                 Retour à la liste des formations
             </a>
             <br/>
@@ -106,7 +106,7 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
                 <a class="btn btn-primary action"
                    href="<?php echo $this->url('formation/module/afficher', ['module' => $formation->getModule()->getId() ], [], true); ?>"
                 >
-                    <span class="glyphicon glyphicon-share-alt"></span>
+                    <span class="fas fa-share-alt"></span>
                     Accéder au module
                 </a>
                 <br/>
@@ -114,13 +114,13 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
             <?php endif; ?>
         <?php endif; ?>
     </div>
-    <div class="pull-right">
+    <div class="float-end">
         <?php if ($canModifierFormation) : ?>
             <?php /** @see \Formation\Controller\FormationController::modifierAction() */?>
             <a class="btn btn-primary action ajax-modal" data-event="modification"
                href="<?php echo $this->url('formation/formation/modifier', ['formation' => $formation->getId()], [], true); ?>"
             >
-                <span class="glyphicon glyphicon-pencil"></span>
+                <span class="icon icon-modifier"></span>
                 Modifier les informations
             </a>
         <br/>
@@ -133,21 +133,21 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
     <div class="col-md-8">
         <h2> Liste des sessions </h2>
     </div>
-    <div class="pull-right">
+    <div class="float-end">
         <?php if ($canAjouterSession) : ?>
             <?php /** @see \Formation\Controller\SessionController::ajouterAction() */ ?>
             <a href="<?php echo $this->url('formation/session/ajouter', ['formation' => $formation->getId()], [], true); ?>"
                class="btn btn-primary action ajax-modal" data-event="modification"
                title="Ajouter une session"
-               data-toggle="tooltip" data-html="true">
-                <span class="glyphicon glyphicon-plus"></span>
+               data-bs-toggle="tooltip" data-bs-html="true">
+                <span class="icon icon-ajouter"></span>
                 Ajouter une session
             </a>
         <?php endif; ?>
     </div>
 </div>
 
-<table class="table table-condensed">
+<table class="table table-sm">
     <thead>
     <tr>
         <th>Index</th>
@@ -196,7 +196,7 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
                 <?php if ($canAfficherSession) : ?>
                     <?php /** @see \Formation\Controller\SessionController::afficherAction() */ ?>
                     <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>">
-                        <span class="glyphicon glyphicon-eye-open"></span>
+                        <span class="icon icon-voir"></span>
                     </a>
                 <?php endif; ?>
                 <?php if ($canHistoriserSession) : ?>
@@ -204,13 +204,13 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
                         <?php /** @see \Formation\Controller\SessionController::historiserAction() */ ?>
                         <a href="<?php echo $this->url('formation/session/historiser', ['session' => $session->getId()], ['query' => ['retour' => $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true)]], true); ?>"
                         >
-                            <span class="glyphicon glyphicon-trash"></span>
+                            <span class="icon icon-historiser"></span>
                         </a>
                     <?php else : ?>
                         <?php /** @see \Formation\Controller\SessionController::restaurerAction() */ ?>
                         <a href="<?php echo $this->url('formation/session/restaurer', ['session' => $session->getId()], ['query' => ['retour' => $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true)]], true); ?>"
                         >
-                            <span class="glyphicon glyphicon-leaf"></span>
+                            <span class="icon icon-restaurer"></span>
                         </a>
                     <?php endif; ?>
                 <?php endif; ?>
@@ -219,8 +219,8 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
                     <a href="<?php echo $this->url('formation/session/supprimer', ['session' => $session->getId()], [], true); ?>"
                        class="ajax-modal" data-event="modification"
                        title="supprimer une session"
-                       data-toggle="tooltip" data-html="true">
-                        <span class="glyphicon glyphicon-remove"></span>
+                       data-bs-toggle="tooltip" data-bs-html="true">
+                        <span class="icon icon-detruire"></span>
                     </a>
                 <?php endif; ?>
 

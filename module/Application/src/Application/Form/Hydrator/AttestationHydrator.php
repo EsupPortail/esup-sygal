@@ -3,7 +3,7 @@
 namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\Attestation;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 
 class AttestationHydrator extends DoctrineObject
 {
@@ -13,7 +13,7 @@ class AttestationHydrator extends DoctrineObject
 //     * @param  Attestation $diffusion
 //     * @return array
 //     */
-//    public function extract($diffusion)
+//    public function extract($diffusion): array
 //    {
 //        $data = parent::extract($diffusion);
 //

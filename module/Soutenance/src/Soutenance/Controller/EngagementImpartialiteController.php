@@ -60,7 +60,6 @@ class EngagementImpartialiteController extends AbstractController
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
             if ($membre->getActeur() and $membre->estRapporteur()) {
-
                 $validation = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($these, $membre);
                 if (!$validation) {
                     $token = $this->getMembreService()->retrieveOrCreateToken($membre);

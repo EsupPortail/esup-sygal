@@ -67,6 +67,13 @@ return [
                 [
                     'controller' => PropositionController::class,
                     'action' => [
+                        'afficher-soutenances-par-ecole-doctorale',
+                    ],
+                    'roles' => [],
+                ],
+                [
+                    'controller' => PropositionController::class,
+                    'action' => [
                         'proposition',
                         'generate-view-date-lieu',
                         'generate-view-jury',
@@ -132,6 +139,17 @@ return [
 
     'router' => [
         'routes' => [
+            'soutenances-par-ecole-doctorale' => [
+                'type' => Segment::class,
+                'may_terminate' => true,
+                'options' => [
+                    'route' => '/soutenances-par-ecole-doctorale/:ecole',
+                    'defaults' => [
+                        'controller' => PropositionController::class,
+                        'action' => 'afficher-soutenances-par-ecole-doctorale',
+                    ],
+                ],
+            ],
             'soutenance' => [
                 'child_routes' => [
                     'proposition' => [

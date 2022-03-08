@@ -74,7 +74,7 @@ class TheseControllerFactory
         $mailConfirmationService = $container->get('MailConfirmationService');
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $notifierService = $container->get(NotifierService::class);
-        $importService = $container->get('ImportService');
+//        $importService = $container->get('ImportService');
         $utilisateurService = $container->get('UtilisateurService');
 
         /**
@@ -113,7 +113,7 @@ class TheseControllerFactory
         $controller->setMailConfirmationService($mailConfirmationService);
         $controller->setEntityManager($entityManager);
         $controller->setNotifierService($notifierService);
-        $controller->setImportService($importService);
+//        $controller->setImportService($importService);
         $controller->setUtilisateurService($utilisateurService);
         $controller->setRdvBuTheseDoctorantForm($rdvBuTheseDoctorantForm);
         $controller->setRdvBuTheseForm($rdvBuTheseForm);

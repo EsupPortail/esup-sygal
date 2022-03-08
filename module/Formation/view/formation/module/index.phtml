@@ -10,7 +10,7 @@ use Formation\Provider\Privilege\ModulePrivileges;
  * @var array $listings
  */
 
-$this->headTitle('Index des modules de formation');
+$this->headTitle('Liste des modules de formation');
 
 
 $canAfficherModule      = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_AFFICHER));
@@ -22,7 +22,7 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
 ?>
 
 <h1 class="page-header">
-    Index des modules de formation
+    Liste des modules de formation
 </h1>
 
 
@@ -34,12 +34,12 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
         <?php /** @see \Formation\Controller\ModuleController::ajouterAction() */ ?>
         href="<?php echo $this->url('formation/module/ajouter', [], [], true); ?>"
         class="btn btn-primary action ajax-modal" data-event="modification">
-        <span class="glyphicon glyphicon-plus"></span>
+        <span class="icon icon-ajouter"></span>
         Ajouter un module
     </a>
 <?php endif; ?>
 
-<table class="table table-condensed table-hover">
+<table class="table table-sm table-hover">
     <thead>
         <tr>
             <th> Libellé </th>
@@ -53,8 +53,8 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
             <td <?php if ($module->estHistorise()) echo " class='historise' "; ?>>
                 <?php echo $module->getLibelle(); ?>
                 <?php if ($module->getDescription() !== null AND trim($module->getDescription()) !== null) : ?>
-                    <span class="glyphicon glyphicon-info-sign"
-                          title="<?php echo $module->getDescription(); ?>" data-toggle="tooltip" data-html="true"
+                    <span class="icon icon-info"
+                          title="<?php echo $module->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
 
                     ></span>
                 <?php endif; ?>
@@ -66,8 +66,8 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
                     <?php /** @see \Formation\Controller\ModuleController::afficherAction() */ ?>
                     <a href="<?php echo $this->url('formation/module/afficher', ['module' => $module->getId()], [], true); ?>"
                        title="afficher le module de formation #<?php echo $module->getId(); ?>"
-                       data-toggle="tooltip" data-html="true">
-                        <span class="glyphicon glyphicon-eye-open"></span>
+                       data-bs-toggle="tooltip" data-bs-html="true">
+                        <span class="icon icon-voir"></span>
                     </a>
                 <?php endif; ?>
                 <?php if ($canHistoriserModule) : ?>
@@ -75,15 +75,15 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
                         <?php /** @see \Formation\Controller\ModuleController::historiserAction() */ ?>
                         <a href="<?php echo $this->url('formation/module/historiser', ['module' => $module->getId()], [], true); ?>"
                            title="Historiser le module de  formation #<?php echo $module->getId(); ?>"
-                           data-toggle="tooltip" data-html="true">
-                            <span class="glyphicon glyphicon-trash"></span>
+                           data-bs-toggle="tooltip" data-bs-html="true">
+                            <span class="icon icon-historiser"></span>
                         </a>
                     <?php else : ?>
                         <?php /** @see \Formation\Controller\ModuleController::restaurerAction() */ ?>
                         <a href="<?php echo $this->url('formation/module/restaurer', ['module' => $module->getId()], [], true); ?>"
                            title="Restaurer le module de  formation #<?php echo $module->getId(); ?>"
-                           data-toggle="tooltip" data-html="true">
-                            <span class="glyphicon glyphicon-leaf"></span>
+                           data-bs-toggle="tooltip" data-bs-html="true">
+                            <span class="icon icon-restaurer"></span>
                         </a>
                     <?php endif; ?>
                 <?php endif; ?>
@@ -92,8 +92,8 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
                     <?php /** @see \Formation\Controller\ModuleController::supprimerAction() */?>
                     <a href="<?php echo $this->url('formation/module/supprimer',['module' => $module->getId()], [], true); ?>"
                        class="ajax-modal" data-event="modification"
-                       title="Suppression du module de formation #<?php echo $module->getId(); ?>" data-toggle="tooltip" data-html="true">
-                        <span class="glyphicon glyphicon-remove"></span>
+                       title="Suppression du module de formation #<?php echo $module->getId(); ?>" data-bs-toggle="tooltip" data-bs-html="true">
+                        <span class="icon icon-detruire"></span>
                     </a>
                 <?php endif; ?>
             </td>
@@ -106,7 +106,7 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
 
 <script>
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip({});
+        $('[data-bs-toggle="tooltip"]').tooltip({});
     });
     $(function() {
         $("body").on("modification", function (event) {

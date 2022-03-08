@@ -25,7 +25,7 @@ class UniteRechercheSearchFilter extends SelectSearchFilter
     static public function newInstance(): self
     {
         $instance = new self(
-            "Unité de recherche",
+            "Unit. rech.",
             self::NAME,
             ['liveSearch' => true]
         );

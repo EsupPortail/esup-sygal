@@ -63,22 +63,22 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
     </div>
 
     <?php
-    $classe_distanciel = 'panel-warning';
+    $classe_distanciel = 'bg-warning';
     if ($distanciel !== null) {
-        $classe_distanciel = 'panel-success';
+        $classe_distanciel = 'bg-success';
         foreach ($proposition->getMembres() as $membre) {
             if (getJustificatif($justificatifs, NatureFichier::CODE_DELEGUATION_SIGNATURE, $membre) === null) {
-                $classe_distanciel = 'panel-danger';
+                $classe_distanciel = 'bg-danger';
                 break;
             }
         }
     }
     ?>
-    <div class="panel <?php echo $classe_distanciel; ?>">
-        <div class="panel-heading">
+    <div class="card">
+        <div class="card-header <?php echo $classe_distanciel; ?>">
             Déclaration du président du jury en distanciel
         </div>
-        <div class="panel-body">
+        <div class="card-body">
 
             <?php if ($distanciel !== null) : ?>
                 <?php /** IL EXISTE UNE DECLARATATION DE DISTANCIEL POUR LE PRESIDENT  *****************************/ ?>
@@ -91,10 +91,10 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                         par <?php echo $distanciel->getHistoCreateur()->getDisplayName(); ?>.
                     </div>
                     <?php if ($canModifier) : ?>
-                        <div class="pull-right" style="margin-right: 1rem;">
+                        <div class="float-end" style="margin-right: 1rem;">
                             <a      <?php /** @see \Soutenance\Controller\InterventionController::togglePresidentDistancielAction() */?>
                                     href="<?php echo $this->url('soutenance/intervention/toggle-president-distanciel', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action">
-                                <span class="glyphicon glyphicon-minus"></span> Président en distanciel
+                                <span class="icon icon-minus"></span> Président en distanciel
                             </a>
                         </div>
                     <?php endif; ?>
@@ -115,15 +115,15 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                                     <a      <?php /** @see \Soutenance\Controller\JustificatifController::retirerAction() */?>
                                             href="<?php echo $this->url("soutenance/justificatif/retirer", ['these' => $these->getId(), "justificatif" => $justificatif->getId()], ["query" => ["retour" => $this->url('soutenance/intervention/afficher', ["these" => $these->getId()], [], true)]], true); ?>"
                                     >
-                                    <span class="glyphicon glyphicon-trash"></span></a>
+                                    <span class="icon icon-delete iconly"></span></a>
                                 <?php endif; ?>
                             <?php else : ?>
                                 <span class="text text-danger">Déléguation de signature manquante pour <strong style="font-variant:small-caps;"><?php echo $membre->getDenomination(); ?></strong></span>
                                 <?php if ($canModifier) : ?>
                                     <a      <?php /** @see \Soutenance\Controller\JustificatifController::ajouterAction() */?>
                                             href="<?php echo $this->url("soutenance/justificatif/ajouter", ['these' => $these->getId(), "proposition" => $proposition->getId(), "nature" => NatureFichier::CODE_DELEGUATION_SIGNATURE, "membre" => $membre->getId()], [], true); ?>"
-                                            class="btn btn-xs btn-primary ajax-modal" data-event='modification' style="margin: 1px;">
-                                    <span class="glyphicon glyphicon-upload"></span> Déposer le justificatif </a>
+                                            class="btn btn-sm btn-primary ajax-modal" data-event='modification' style="margin: 1px;">
+                                    <span class="icon icon-upload"></span> Déposer le justificatif </a>
                                 <?php endif; ?>
                             <?php endif; ?>
 
@@ -141,17 +141,17 @@ $canModifier = $this->isAllowed($these, InterventionPrivileges::INTERVENTION_MOD
                         Vous pouvez déclarer ici que le président du jury examinera la soutenance en distanciel.
                     </div>
                     <?php if ($canModifier) : ?>
-                    <div class="pull-right" style="margin-right: 1rem;">
+                    <div class="float-end" style="margin-right: 1rem;">
                         <a      <?php /** @see \Soutenance\Controller\InterventionController::togglePresidentDistancielAction() */?>
                                 href="<?php echo $this->url('soutenance/intervention/toggle-president-distanciel', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action">
-                            <span class="glyphicon glyphicon-plus"></span> Président en distanciel
+                            <span class="icon icon-plus"></span> Président en distanciel
                         </a>
                     </div>
                     <?php endif; ?>
                 </div>
 
                 <div class="alert alert-warning">
-                    <span class="glyphicon glyphicon-warning-sign"></span> Si le Président du jury est en distanciel tous les membres du jury devront remplir une délégation de signature.
+                    <span class="fas fa-exclamation-triangle"></span> Si le Président du jury est en distanciel tous les membres du jury devront remplir une délégation de signature.
                 </div>
             <?php endif; ?>
         </div>

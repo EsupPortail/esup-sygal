@@ -9,7 +9,7 @@ use Formation\Entity\Db\Etat;
  */
 
 $couleur = "gray";
-$icone = "glyphicon glyphicon-question-sign";
+$icone = "fas fa-question-circle";
 $libelle = "Pas d'état";
 $description = "Pas d'état : État manquant pour cette session de formation";
 
@@ -24,7 +24,7 @@ if ($etat !== null) {
 ?>
 
 <span class="badge" style="background: <?php echo $couleur; ?>"
-      title="<?php echo $description; ?>" data-toggle="tooltip" data-html="true"
+      title="<?php echo $description; ?>" data-bs-toggle="tooltip" data-bs-html="true"
 >
     <span class="<?php echo $icone; ?>"></span>
     <?php echo $libelle; ?>

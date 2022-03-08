@@ -79,6 +79,7 @@ class IndexController extends AbstractController
             'estDoctorant' => (bool) $this->userContextService->getIdentityDoctorant(),
             'url' => $this->actualiteService->isActif() ? $this->actualiteService->getUrl() : null,
             'offre' => $this->actualiteService->isOffre() ? $this->getEcoleDoctoraleService()->getOffre() : null,
+            'ecoles' => $this->getEcoleDoctoraleService()->getRepository()->findAll(true),
             'informations' => $this->informationService->getInformations(true),
         ]);
 
@@ -200,24 +201,27 @@ EOS
 
         $etablissement = $this->findEtablissementUtilisateur($userWrapper);
 
-        $repo = $this->variableService->getRepository();
-        $variable = $repo->findByCodeAndEtab(Variable::CODE_EMAIL_ASSISTANCE, $etablissement);
-        if ($variable === null) {
-            throw new RuntimeException(
-                "Anomalie: aucune adresse d'assistance trouvée dans les Variables pour l'établissement '$etablissement'.");
-        }
+        if ($etablissement !== null) {
+            $repo = $this->variableService->getRepository();
+            $variable = $repo->findByCodeAndEtab(Variable::CODE_EMAIL_ASSISTANCE, $etablissement);
+            if ($variable === null) {
+                throw new RuntimeException(
+                    "Anomalie: aucune adresse d'assistance trouvée dans les Variables pour l'établissement '$etablissement'.");
+            }
 
-        $contact = $variable->getValeur();
+            $contact = $variable->getValeur();
 
-        $v = new EmailAddressValidator();
-        if (!$v->isValid($contact)) {
-            throw new RuntimeException(
-                "Anomalie: l'adresse d'assistance trouvée dans les Variables n'est pas valide: $contact");
+            $v = new EmailAddressValidator();
+            $contactValide = $v->isValid($contact);
+        } else {
+            $contact = null;
+            $contactValide = false;
         }
 
         return [
             'etablissement' => $etablissement,
             'contact' => $contact,
+            'contactValide' => $contactValide,
             'individu' => $this->userContextService->getIdentityIndividu(),
             'utilisateur' => $this->userContextService->getIdentityDb(),
             'role' => $this->userContextService->getSelectedIdentityRole(),
@@ -227,16 +231,15 @@ EOS
 
     /**
      * @param UserWrapper $userWrapper
-     * @return Etablissement
+     * @return Etablissement|null
      */
-    protected function findEtablissementUtilisateur(UserWrapper $userWrapper): Etablissement
+    protected function findEtablissementUtilisateur(UserWrapper $userWrapper): ?Etablissement
     {
         $individu = $this->userContextService->getIdentityDoctorant();
         if ($individu !== null) {
             return $individu->getEtablissement();
         }
 
-        /** @var Role $role */
         $role = $this->userContextService->getSelectedIdentityRole();
         if ($role !== null && $structure = $role->getStructure()) {
             $etablissement =  $this->etablissementService->getRepository()->findByStructureId($structure->getId());

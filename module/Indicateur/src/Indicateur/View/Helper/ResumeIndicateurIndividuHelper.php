@@ -18,13 +18,13 @@ class ResumeIndicateurIndividuHelper extends AbstractHelper
 
         $html  = '';
         $html .= '<div class="col-md-4">';
-        $html .= '<div class="panel panel-'.$indicateur->getClass().'">';
-            $html .= '<div class="panel-heading">';
-            $html .= '<span class="glyphicon glyphicon-user"></span> &nbsp; ';
+        $html .= '<div class="card card-'.$indicateur->getClass().'">';
+            $html .= '<div class="card-header">';
+            $html .= '<span class="icon icon-user iconly"></span> &nbsp; ';
                 $html .= $indicateur->getLibelle();
-                $html .= ' <span class="badge">' . count($data) . '</span>';
+                $html .= ' <span class="badge bg-secondary">' . count($data) . '</span>';
             $html .= '</div>';
-            $html .= '<div class="panel-body">';
+            $html .= '<div class="card-body">';
                 $html .= '<table class="table table-extra-condensed">';
                     $html .= '<thead>';
                         $html .= '<th> Dénomination </th>';
@@ -42,7 +42,7 @@ class ResumeIndicateurIndividuHelper extends AbstractHelper
                     $html .= '</tbody>';
                 $html .= '</table>';
 
-                $html .= '<a href="'. $url .'" class="btn btn-primary"> <span class="glyphicon glyphicon-eye-open"></span> Visualiser les données </a>';
+                $html .= '<a href="'. $url .'" class="btn btn-primary"> <span class="icon icon-voir"></span> Visualiser les données </a>';
 
             $html .= '</div>';
 

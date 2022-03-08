@@ -37,7 +37,7 @@ usort($categories, function (EnqueteCategorie $a, EnqueteCategorie $b) { return 
         <h2>
             <?php echo $categorie->getLibelle(); ?>
             <?php if ($categorie->getDescription()) : ?>
-                <span class="glyphicon glyphicon-info-sign" title="<?php echo $categorie->getDescription(); ?>" data-toggle="tooltip" data-html="true"></span>
+                <span class="icon icon-info" title="<?php echo $categorie->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"></span>
             <?php endif; ?>
         </h2>
 
@@ -45,7 +45,7 @@ usort($categories, function (EnqueteCategorie $a, EnqueteCategorie $b) { return 
         <h3>
             <?php echo $question->getLibelle(); ?>
             <?php if ($question->getDescription()) : ?>
-                <span class="glyphicon glyphicon-info-sign" title="<?php echo $question->getDescription(); ?>" data-toggle="tooltip" data-html="true"></span>
+                <span class="icon icon-info" title="<?php echo $question->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"></span>
             <?php endif; ?>
         </h3>
         <?php if ($select = $form->get("select_".$question->getId())) : ?>
@@ -69,7 +69,7 @@ usort($categories, function (EnqueteCategorie $a, EnqueteCategorie $b) { return 
         <h3>
             <?php echo $question->getLibelle(); ?>
             <?php if ($question->getDescription()) : ?>
-                <span class="glyphicon glyphicon-info-sign" title="<?php echo $question->getDescription(); ?>" data-toggle="tooltip" data-html="true"></span>
+                <span class="icon icon-info" title="<?php echo $question->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"></span>
             <?php endif; ?>
         </h3>
         <?php if ($select = $form->get("select_".$question->getId())) : ?>

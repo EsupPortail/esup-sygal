@@ -13,10 +13,10 @@ class EnqueteReponseHydrator implements HydratorInterface {
     use EntityManagerAwareTrait;
 
     /**
-     * @param ArrayCollection $object
+     * @param object|ArrayCollection $object
      * @return array|void
      */
-    public function extract($object)
+    public function extract(object $object) : array
     {
         $data = [];
         foreach ($object as $item) {

@@ -9,10 +9,10 @@ class EnqueteCategorieHydrator implements HydratorInterface {
 
 
     /**
-     * @param EnqueteCategorie $object
+     * @param object|EnqueteCategorie $object
      * @return array
      */
-    public function extract($object)
+    public function extract(object $object) : array
     {
         $data = [
             'libelle' => $object->getLibelle(),

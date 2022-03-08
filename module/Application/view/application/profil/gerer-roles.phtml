@@ -13,32 +13,32 @@
 </h1>
 
 <a href="<?php echo $this->url('profil', [], [], true); ?>" class="btn btn-info">
-    <span class="glyphicon glyphicon-chevron-left"></span>
+    <span class="fas fa-chevron-left"></span>
     Retour à la gestion des profils
 </a>
 
 <br/>
 <br/>
 
-<div class="panel panel-info">
-    <div class="panel-heading">
+<div class="card">
+    <div class="card-header bg-info">
         Information sur le profil sélectionné
     </div>
-    <div class="panel-body">
-        <dl class="dl-horizontal">
-            <dt> Libellé </dt>
-            <dd> <?php echo $profil->getLibelle(); ?> </dd>
-            <dt> Code </dt>
-            <dd> <?php echo $profil->getRoleCode(); ?> </dd>
-            <dt> Nombre d'affectation</dt>
-            <dd> <?php echo count($profil->getRoles()); ?> </dd>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-md-4"> Libellé </dt>
+            <dd class="col-md-4"> <?php echo $profil->getLibelle(); ?> </dd>
+            <dt class="col-md-4"> Code </dt>
+            <dd class="col-md-4"> <?php echo $profil->getRoleCode(); ?> </dd>
+            <dt class="col-md-4"> Nombre d'affectation</dt>
+            <dd class="col-md-4"> <?php echo count($profil->getRoles()); ?> </dd>
         </dl>
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-6">
-        <table class="table table-condensed">
+        <table class="table table-sm">
             <tr>
                 <th> Libelle du rôle </th>
                 <th> Actions </th>
@@ -50,7 +50,7 @@
                     </td>
                     <td>
                         <a href="<?php echo $this->url('profil/gerer-roles/retirer', ['profil' => $profil->getId(), 'role' => $role->getId()], [], true); ?>">
-                            <span class="glyphicon glyphicon-remove"></span>
+                            <span class="icon icon-delete iconly"></span>
                         </a>
                     </td>
                 </tr>

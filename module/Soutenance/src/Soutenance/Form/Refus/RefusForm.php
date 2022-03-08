@@ -15,11 +15,11 @@ class RefusForm extends Form {
             'options' => [
                 'label' => 'Motif de refus de la proposition: ',
                 'label_attributes' => [
-                    'class' => 'control-label',
+                    'class' => 'form-label',
                 ],
             ],
             'attributes' => [
-                'class' => 'form-control motif',
+                'class' => 'motif',
             ]
         ]);
 

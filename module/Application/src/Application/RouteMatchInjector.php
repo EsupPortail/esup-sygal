@@ -2,16 +2,6 @@
 
 namespace Application;
 
-use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\Fichier;
-use Application\Entity\Db\Rapport;
-use Application\Entity\Db\Role;
-use Application\Entity\Db\Structure;
-use Application\Entity\Db\These;
-use Application\Entity\Db\UniteRecherche;
-use Application\Entity\Db\Utilisateur;
-use Doctorant\Entity\Db\Doctorant;
 use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\EventManager\EventManagerInterface;
@@ -48,19 +38,6 @@ class RouteMatchInjector implements ListenerAggregateInterface, EntityManagerAwa
         $routeMatch = new RouteMatch($e->getRouteMatch()->getParams());
         $routeMatch->setMatchedRouteName($e->getRouteMatch()->getMatchedRouteName());
         $routeMatch->setEntityManager($this->getEntityManager());
-        $routeMatch->setEntityClassNamesMapping([
-            'these' => These::class,
-            'doctorant' => Doctorant::class,
-            'fichier' => Fichier::class,
-            'utilisateur' => Utilisateur::class,
-            'role' => Role::class,
-            'ecoleDoctorale' => EcoleDoctorale::class,
-            'uniteRecherche' => UniteRecherche::class,
-            'etablissement' => Etablissement::class,
-            'structure' => Structure::class,
-            'rapport' => Rapport::class,
-        ]);
-
 
         $e->setRouteMatch($routeMatch);
     }

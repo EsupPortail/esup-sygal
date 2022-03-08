@@ -18,17 +18,17 @@ foreach ($anomaliesTables as $anomaliesTable) $all += count($anomaliesTable);
 
 <h1 class="page-header first">
     <?php echo $this->translate("Anomalies des données"); ?>
-    <span class="badge"><?php echo $all; ?></span>
+    <span class="badge bg-secondary"><?php echo $all; ?></span>
 </h1>
 
 <!-- Formulaire de filtrage -->
-<div class="pull-left">
+<div class="float-start">
     <?php echo $this->partial('partial/form-filtrage', ['etablissements' => $etablissements]) ?>
 </div>
 
 
 
-<div class="pull-right">
+<div class="float-end">
 <?php
     $nombreAnomalies = count($anomaliesTables);
     switch($nombreAnomalies) {
@@ -44,7 +44,7 @@ foreach ($anomaliesTables as $anomaliesTable) $all += count($anomaliesTable);
 <ul>
     <?php
         foreach ($anomaliesTables as $tableName => $anomalies) {
-            echo '<li><a href="#'.$tableName.'"> '.$tableName.'</a> <span class="badge">'.count($anomalies).'</span></li>';
+            echo '<li><a href="#'.$tableName.'"> '.$tableName.'</a> <span class="badge bg-secondary">'.count($anomalies).'</span></li>';
         }
     ?>
 </ul>
@@ -58,7 +58,7 @@ foreach ($anomaliesTables as $anomaliesTable) $all += count($anomaliesTable);
 
     foreach ($anomaliesTables as  $tableName => $anomalies) {
         echo '<a name="'.$tableName.'"></a>';
-        echo '<h2> Anomalies associées à la table ['.$tableName.'] <span class="badge">'.count($anomalies).'</span></h2>';
+        echo '<h2> Anomalies associées à la table ['.$tableName.'] <span class="badge bg-secondary">'.count($anomalies).'</span></h2>';
 
         $anomalieType = [];
         /** @var Anomalie $anomalie */
@@ -67,7 +67,7 @@ foreach ($anomaliesTables as $anomaliesTable) $all += count($anomaliesTable);
         }
 
         echo '<ul>';
-        foreach ($anomalieType as $colonne => $nombre) echo '<li>'.$colonne. ' <span class="badge">'.$nombre.'</span></li>';
+        foreach ($anomalieType as $colonne => $nombre) echo '<li>'.$colonne. ' <span class="badge bg-secondary">'.$nombre.'</span></li>';
         echo '</ul>';
         
         echo '<table class="table table-extra-condensed">';

@@ -25,12 +25,13 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\QueryBuilder;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Import\Service\Traits\SynchroServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 use Webmozart\Assert\Assert;
 use Laminas\Mvc\Controller\AbstractActionController;
+use function Application\generateNameForEtab;
 
 /**
  * @author Unicaen
@@ -150,8 +151,7 @@ class StructureService extends BaseService
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement des substitutions", null, $e);
         }
 
-        $this->synchroService->addService('these');
-        $this->synchroService->synchronize();
+        $this->runSynchroTheses($structureConcreteCible->getStructure());
 
         return $structureConcreteCible;
     }
@@ -229,7 +229,29 @@ class StructureService extends BaseService
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement des substitutions", null, $e);
         }
 
-        $this->synchroService->addService('these');
+        $this->runSynchroTheses($structureCible);
+    }
+
+    /**
+     * Lance la synchro des thèses pour prendre en compte la substitution de structure.
+     *
+     * @param \Application\Entity\Db\Structure $structureCible
+     */
+    private function runSynchroTheses(Structure $structureCible)
+    {
+        // Les noms de synchros sont déclinés par source/établissement (ex: 'these-UCN') ; on ne retient que
+        // les sources/établissements des structures substituées.
+        $etabs = [];
+        foreach ($structureCible->getStructuresSubstituees() as $structuresSubstituee) {
+            /** @var \Application\Entity\Db\Source $source */
+            $source = $structuresSubstituee->getSource();
+            $etab = $source->getEtablissement()->getCode();
+            $etabs[$etab] = $etab;
+        }
+        foreach ($etabs as $etab) {
+            $this->synchroService->addService(generateNameForEtab('these-%s', $etab));
+        }
+
         $this->synchroService->synchronize();
     }
 
@@ -268,8 +290,8 @@ class StructureService extends BaseService
             throw new RuntimeException("Erreur rencontrée lors de la supression des substitutions", null, $e);
         }
 
-        $this->synchroService->addService('these');
-        $this->synchroService->synchronize();
+        $this->runSynchroTheses($structureCible);
+
         return $structureSubstits;
     }
 

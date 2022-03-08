@@ -23,7 +23,7 @@ class ChangementTitreHydrator implements HydratorInterface
      * @param Proposition $proposition
      * @return array
      */
-    public function extract($proposition) {
+    public function extract($proposition): array {
 
         /** @var DateTime $datetime */
         $data['titre']      = ($proposition->getNouveauTitre())?:$proposition->getThese()->getTitre();

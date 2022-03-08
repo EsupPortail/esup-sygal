@@ -1,151 +1,326 @@
-create table FORMATION_ETAT
-(
-    CODE VARCHAR(1) not null constraint FORMATION_ETAT_PK primary key,
-    LIBELLE VARCHAR(1024),
-    DESCRIPTION TEXT,
-    ICONE VARCHAR(1024),
-    COULEUR VARCHAR(1024),
-    ORDRE BIGINT
-);
-
-create table FORMATION_MODULE
-(
-    ID BIGINT not null constraint FORMATION_PK primary key,
-    LIBELLE VARCHAR(1024) not null,
-    DESCRIPTION TEXT,
-    LIEN VARCHAR(1024),
-    SITE_ID BIGINT constraint FORMATION_ETABLISSEMENT_ID_FK references ETABLISSEMENT on delete set null,
-    RESPONSABLE_ID BIGINT constraint FORMATION_INDIVIDU_ID_FK references INDIVIDU on delete set null,
-    MODALITE VARCHAR(1),
-    TYPE VARCHAR(1),
-    TYPE_STRUCTURE_ID BIGINT constraint FORMATION_STRUCTURE_ID_FK references STRUCTURE on delete set null,
-    TAILLE_LISTE_PRINCIPALE BIGINT,
-    TAILLE_LISTE_COMPLEMENTAIRE BIGINT,
-    HISTO_CREATEUR_ID BIGINT not null constraint FORMATION_CREATEUR_FK references UTILISATEUR,
-    HISTO_CREATION TIMESTAMP(6) not null,
-    HISTO_MODIFICATEUR_ID BIGINT constraint FORMATION_MODIFICATEUR_FK  references UTILISATEUR,
-    HISTO_MODIFICATION TIMESTAMP(6),
-    HISTO_DESTRUCTEUR_ID BIGINT  constraint FORMATION_DESTRUCTEUR_FK   references UTILISATEUR,
-    HISTO_DESTRUCTION TIMESTAMP(6)
-);
 create sequence formation_module_id_seq;
-
-create table FORMATION_SESSION
-(
-    ID BIGINT not null constraint FORMATION_INSTANCE_PK primary key,
-    MODULE_ID BIGINT not null constraint SESSION_ID_FK references FORMATION_MODULE on delete cascade,
-    DESCRIPTION TEXT,
-    TAILLE_LISTE_PRINCIPALE BIGINT,
-    TAILLE_LISTE_COMPLEMENTAIRE BIGINT,
-    TYPE_STRUCTURE_ID BIGINT,
-    SITE_ID BIGINT constraint SESSION_SITE_ID_FK references ETABLISSEMENT on delete set null,
-    RESPONSABLE_ID BIGINT constraint SESSION_RESPONSABLE_ID_FK references INDIVIDU on delete set null,
-    MODALITE VARCHAR(1),
-    TYPE VARCHAR(1),
-    ETAT_CODE VARCHAR(1) constraint SESSION_ETAT_CODE_FK references FORMATION_ETAT on delete set null,
-    SESSION_INDEX BIGINT,
-    HISTO_CREATION TIMESTAMP(6) not null,
-    HISTO_CREATEUR_ID BIGINT not null constraint SESSION_CREATEUR_FK references UTILISATEUR,
-    HISTO_MODIFICATION TIMESTAMP(6),
-    HISTO_MODIFICATEUR_ID BIGINT constraint SESSION_MODIFICATEUR_FK  references UTILISATEUR,
-    HISTO_DESTRUCTION TIMESTAMP(6),
-    HISTO_DESTRUCTEUR_ID BIGINT constraint SESSION_DESTRUCTEUR_FK    references UTILISATEUR
-);
 create sequence formation_session_id_seq;
-
-create table FORMATION_SEANCE
-(
-    ID BIGINT not null constraint FORMATION_SEANCE_PK primary key,
-    SESSION_ID BIGINT not null constraint FORMATION_SEANCE_SESSION_FK references FORMATION_SESSION on delete cascade,
-    DEBUT TIMESTAMP(6) not null,
-    FIN TIMESTAMP(6) not null,
-    LIEU VARCHAR(1024),
-    DESCRIPTION TEXT,
-    HISTO_CREATION TIMESTAMP(6) not null,
-    HISTO_CREATEUR_ID BIGINT not null constraint SEANCE_CREATEUR_FK references UTILISATEUR,
-    HISTO_MODIFICATION TIMESTAMP(6),
-    HISTO_MODIFICATEUR_ID BIGINT constraint SEANCE_MODIFICATEUR_FK  references UTILISATEUR,
-    HISTO_DESTRUCTION TIMESTAMP(6),
-    HISTO_DESTRUCTEUR_ID BIGINT constraint SEANCE_DESTRUCTEUR_FK    references UTILISATEUR
-);
 create sequence formation_seance_id_seq;
-
-create table FORMATION_FORMATEUR
-(
-    ID BIGINT not null constraint FORMATION_FORMATEUR_PK primary key,
-    INDIVIDU_ID BIGINT not null constraint FORMATEUR_INDIVIDU_ID_FK references INDIVIDU on delete cascade,
-    SESSION_ID BIGINT not null  constraint FORMATEUR_SESSION_ID_FK  references FORMATION_SESSION on delete cascade,
-    DESCRIPTION TEXT,
-    HISTO_CREATION TIMESTAMP(6) not null,
-    HISTO_CREATEUR_ID BIGINT not null constraint FORMATEUR_CREATEUR_FK references UTILISATEUR,
-    HISTO_MODIFICATION TIMESTAMP(6),
-    HISTO_MODIFICATEUR_ID BIGINT constraint FORMATEUR_MODIFICATEUR_FK  references UTILISATEUR,
-    HISTO_DESTRUCTION TIMESTAMP(6),
-    HISTO_DESTRUCTEUR_ID BIGINT constraint FORMATEUR_DESTRUCTEUR_FK    references UTILISATEUR
-);
 create sequence formation_formateur_id_seq;
-
-create table FORMATION_INSCRIPTION
-(
-    ID BIGINT not null constraint FORMATION_INSCRIPTION_PK primary key,
-    SESSION_ID BIGINT not null constraint FORMATION_SESSION_FK references FORMATION_SESSION on delete cascade,
-    DOCTORANT_ID BIGINT not null constraint INSCRIPTION_DOCTORANT_ID_FK references DOCTORANT on delete cascade,
-    LISTE VARCHAR(1),
-    DESCRIPTION TEXT,
-    HISTO_CREATION TIMESTAMP(6) not null,
-    HISTO_CREATEUR_ID BIGINT not null constraint INSCRIPTION_CREATEUR_FK references UTILISATEUR,
-    HISTO_MODIFICATION TIMESTAMP(6),
-    HISTO_MODIFICATEUR_ID BIGINT constraint INSCRIPTION_MODIFICATEUR_FK  references UTILISATEUR,
-    HISTO_DESTRUCTION TIMESTAMP(6),
-    HISTO_DESTRUCTEUR_ID BIGINT constraint INSCRIPTION_DESTRUCTEUR_FK    references UTILISATEUR
-);
 create sequence formation_inscription_id_seq;
-
-create table FORMATION_PRESENCE
-(
-    ID BIGINT not null constraint FORMATION_PRESENCE_PK primary key,
-    INSCRIPTION_ID BIGINT not null constraint PRESENCE_INSCRIPTION_ID_FK references FORMATION_INSCRIPTION on delete cascade,
-    SEANCE_ID BIGINT not null constraint PRESENCE_SEANCE_ID_FK references FORMATION_SEANCE on delete cascade,
-    TEMOIN VARCHAR(1),
-    DESCRIPTION TEXT,
-    HISTO_CREATION TIMESTAMP(6) not null,
-    HISTO_CREATEUR_ID BIGINT not null constraint PRESENCE_CREATEUR_FK references UTILISATEUR,
-    HISTO_MODIFICATION TIMESTAMP(6),
-    HISTO_MODIFICATEUR_ID BIGINT constraint PRESENCE_MODIFICATEUR_FK  references UTILISATEUR,
-    HISTO_DESTRUCTION TIMESTAMP(6),
-    HISTO_DESTRUCTEUR_ID BIGINT constraint PRESENCE_DESTRUCTEUR_FK    references UTILISATEUR
-);
 create sequence formation_presence_id_seq;
-
-create table FORMATION_ENQUETE_QUESTION
-(
-    ID BIGINT not null constraint FORMATION_ENQUETE_QUESTION_PK primary key,
-    LIBELLE VARCHAR(1024) not null,
-    DESCRIPTION TEXT,
-    ORDRE BIGINT not null,
-    HISTO_CREATION TIMESTAMP(6) not null,
-    HISTO_CREATEUR_ID BIGINT not null constraint QUESTION_CREATEUR_FK references UTILISATEUR,
-    HISTO_MODIFICATION TIMESTAMP(6),
-    HISTO_MODIFICATEUR_ID BIGINT constraint QUESTION_MODIFICATEUR_FK  references UTILISATEUR,
-    HISTO_DESTRUCTION TIMESTAMP(6),
-    HISTO_DESTRUCTEUR_ID BIGINT constraint QUESTION_DESTRUCTEUR_FK    references UTILISATEUR
-);
 create sequence formation_enquete_question_id_seq;
-
-create table FORMATION_ENQUETE_REPONSE
-(
-    ID BIGINT not null constraint FORMATION_ENQUETE_REPONSE_PK primary key,
-    INSCRIPTION_ID BIGINT not null constraint REPONSE_INSCRIPTION_ID_FK references FORMATION_INSCRIPTION on delete cascade,
-    QUESTION_ID BIGINT not null constraint REPONSE_QUESTION_ID_FK references FORMATION_ENQUETE_QUESTION on delete cascade,
-    NIVEAU BIGINT not null,
-    DESCRIPTION TEXT,
-    HISTO_CREATION TIMESTAMP(6) not null,
-    HISTO_CREATEUR_ID BIGINT not null constraint REPONSE_CREATEUR_FK references UTILISATEUR,
-    HISTO_MODIFICATION TIMESTAMP(6),
-    HISTO_MODIFICATEUR_ID BIGINT constraint REPONSE_MODIFICATEUR_FK  references UTILISATEUR,
-    HISTO_DESTRUCTION TIMESTAMP(6),
-    HISTO_DESTRUCTEUR_ID BIGINT constraint REPONSE_DESTRUCTEUR_FK    references UTILISATEUR
-);
 create sequence formation_enquete_reponse_id_seq;
+create sequence formation_module_id_seq1;
+create sequence formation_enquete_categorie_id_seq;
+create sequence formation_formation_id_seq;
 
 
+create table formation_etat
+(
+    code varchar(1) not null
+        constraint formation_etat_pk
+            primary key,
+    libelle varchar(1024),
+    description text,
+    icone varchar(1024),
+    couleur varchar(1024),
+    ordre bigint
+);
+
+create table formation_module
+(
+    histo_destructeur_id integer
+        constraint formation_module_utilisateur_id_fk_3
+            references utilisateur,
+    histo_destruction timestamp,
+    histo_modificateur_id integer
+        constraint formation_module_utilisateur_id_fk_2
+            references utilisateur,
+    histo_modification timestamp,
+    histo_createur_id integer not null
+        constraint formation_module_utilisateur_id_fk
+            references utilisateur,
+    histo_creation timestamp not null,
+    description text,
+    libelle text not null,
+    id integer default nextval('formation_module_id_seq1'::regclass) not null
+        constraint formation_module_pk
+            primary key,
+    lien text
+);
+
+create table formation_formation
+(
+    id bigint not null
+        constraint formation_pk
+            primary key,
+    libelle varchar(1024) not null,
+    description text,
+    lien varchar(1024),
+    site_id bigint
+        constraint formation_etablissement_id_fk
+            references etablissement
+            on delete set null,
+    responsable_id bigint
+        constraint formation_individu_id_fk
+            references individu
+            on delete set null,
+    modalite varchar(1),
+    type varchar(1),
+    type_structure_id bigint
+        constraint formation_structure_id_fk
+            references structure
+            on delete set null,
+    taille_liste_principale bigint,
+    taille_liste_complementaire bigint,
+    histo_createur_id bigint not null
+        constraint formation_createur_fk
+            references utilisateur,
+    histo_creation timestamp(6) not null,
+    histo_modificateur_id bigint
+        constraint formation_modificateur_fk
+            references utilisateur,
+    histo_modification timestamp(6),
+    histo_destructeur_id bigint
+        constraint formation_destructeur_fk
+            references utilisateur,
+    histo_destruction timestamp(6),
+    module_id integer
+        constraint formation_module_id_fk
+            references formation_module
+            on delete set null
+);
+
+create table formation_session
+(
+    id bigint not null
+        constraint formation_instance_pk
+            primary key,
+    formation_id bigint not null
+        constraint session_id_fk
+            references formation_formation
+            on delete cascade,
+    description text,
+    taille_liste_principale bigint,
+    taille_liste_complementaire bigint,
+    type_structure_id bigint,
+    site_id bigint
+        constraint session_site_id_fk
+            references etablissement
+            on delete set null,
+    responsable_id bigint
+        constraint session_responsable_id_fk
+            references individu
+            on delete set null,
+    modalite varchar(1),
+    type varchar(1),
+    etat_code varchar(1)
+        constraint session_etat_code_fk
+            references formation_etat
+            on delete set null,
+    session_index bigint,
+    histo_creation timestamp(6) not null,
+    histo_createur_id bigint not null
+        constraint session_createur_fk
+            references utilisateur,
+    histo_modification timestamp(6),
+    histo_modificateur_id bigint
+        constraint session_modificateur_fk
+            references utilisateur,
+    histo_destruction timestamp(6),
+    histo_destructeur_id bigint
+        constraint session_destructeur_fk
+            references utilisateur
+);
+
+create table formation_seance
+(
+    id bigint not null
+        constraint formation_seance_pk
+            primary key,
+    session_id bigint not null
+        constraint formation_seance_session_fk
+            references formation_session
+            on delete cascade,
+    debut timestamp(6) not null,
+    fin timestamp(6) not null,
+    lieu varchar(1024),
+    description text,
+    histo_creation timestamp(6) not null,
+    histo_createur_id bigint not null
+        constraint seance_createur_fk
+            references utilisateur,
+    histo_modification timestamp(6),
+    histo_modificateur_id bigint
+        constraint seance_modificateur_fk
+            references utilisateur,
+    histo_destruction timestamp(6),
+    histo_destructeur_id bigint
+        constraint seance_destructeur_fk
+            references utilisateur
+);
+
+create table formation_formateur
+(
+    id bigint not null
+        constraint formation_formateur_pk
+            primary key,
+    individu_id bigint not null
+        constraint formateur_individu_id_fk
+            references individu
+            on delete cascade,
+    session_id bigint not null
+        constraint formateur_session_id_fk
+            references formation_session
+            on delete cascade,
+    description text,
+    histo_creation timestamp(6) not null,
+    histo_createur_id bigint not null
+        constraint formateur_createur_fk
+            references utilisateur,
+    histo_modification timestamp(6),
+    histo_modificateur_id bigint
+        constraint formateur_modificateur_fk
+            references utilisateur,
+    histo_destruction timestamp(6),
+    histo_destructeur_id bigint
+        constraint formateur_destructeur_fk
+            references utilisateur
+);
+
+create table formation_inscription
+(
+    id bigint not null
+        constraint formation_inscription_pk
+            primary key,
+    session_id bigint not null
+        constraint formation_session_fk
+            references formation_session
+            on delete cascade,
+    doctorant_id bigint not null
+        constraint inscription_doctorant_id_fk
+            references doctorant
+            on delete cascade,
+    liste varchar(1),
+    description text,
+    histo_creation timestamp(6) not null,
+    histo_createur_id bigint not null
+        constraint inscription_createur_fk
+            references utilisateur,
+    histo_modification timestamp(6),
+    histo_modificateur_id bigint
+        constraint inscription_modificateur_fk
+            references utilisateur,
+    histo_destruction timestamp(6),
+    histo_destructeur_id bigint
+        constraint inscription_destructeur_fk
+            references utilisateur
+);
+
+create table formation_presence
+(
+    id bigint not null
+        constraint formation_presence_pk
+            primary key,
+    inscription_id bigint not null
+        constraint presence_inscription_id_fk
+            references formation_inscription
+            on delete cascade,
+    seance_id bigint not null
+        constraint presence_seance_id_fk
+            references formation_seance
+            on delete cascade,
+    temoin varchar(1),
+    description text,
+    histo_creation timestamp(6) not null,
+    histo_createur_id bigint not null
+        constraint presence_createur_fk
+            references utilisateur,
+    histo_modification timestamp(6),
+    histo_modificateur_id bigint
+        constraint presence_modificateur_fk
+            references utilisateur,
+    histo_destruction timestamp(6),
+    histo_destructeur_id bigint
+        constraint presence_destructeur_fk
+            references utilisateur
+);
+
+create unique index formation_module_id_uindex
+    on formation_module (id);
+
+create table formation_enquete_categorie
+(
+    histo_destructeur_id integer
+        constraint formation_enquete_categorie_utilisateur_id_fk_3
+            references utilisateur,
+    histo_destruction timestamp,
+    histo_modificateur_id integer
+        constraint formation_enquete_categorie_utilisateur_id_fk_2
+            references utilisateur,
+    histo_modification timestamp,
+    histo_createur_id integer not null
+        constraint formation_enquete_categorie_utilisateur_id_fk
+            references utilisateur,
+    histo_creation timestamp not null,
+    ordre integer not null,
+    description text,
+    libelle varchar(1024) not null,
+    id serial
+        constraint formation_enquete_categorie_pk
+            primary key
+);
+
+create table formation_enquete_question
+(
+    id bigint not null
+        constraint formation_enquete_question_pk
+            primary key,
+    libelle varchar(1024) not null,
+    description text,
+    ordre bigint not null,
+    histo_creation timestamp(6) not null,
+    histo_createur_id bigint not null
+        constraint question_createur_fk
+            references utilisateur,
+    histo_modification timestamp(6),
+    histo_modificateur_id bigint
+        constraint question_modificateur_fk
+            references utilisateur,
+    histo_destruction timestamp(6),
+    histo_destructeur_id bigint
+        constraint question_destructeur_fk
+            references utilisateur,
+    categorie_id integer
+        constraint formation_enquete_question_formation_enquete_categorie_id_fk
+            references formation_enquete_categorie
+            on delete set null
+);
+
+create table formation_enquete_reponse
+(
+    id bigint not null
+        constraint formation_enquete_reponse_pk
+            primary key,
+    inscription_id bigint not null
+        constraint reponse_inscription_id_fk
+            references formation_inscription
+            on delete cascade,
+    question_id bigint not null
+        constraint reponse_question_id_fk
+            references formation_enquete_question
+            on delete cascade,
+    niveau bigint not null,
+    description text,
+    histo_creation timestamp(6) not null,
+    histo_createur_id bigint not null
+        constraint reponse_createur_fk
+            references utilisateur,
+    histo_modification timestamp(6),
+    histo_modificateur_id bigint
+        constraint reponse_modificateur_fk
+            references utilisateur,
+    histo_destruction timestamp(6),
+    histo_destructeur_id bigint
+        constraint reponse_destructeur_fk
+            references utilisateur
+);
+
+create unique index formation_enquete_categorie_id_uindex
+    on formation_enquete_categorie (id);

@@ -33,9 +33,9 @@ ICI FILTRE
     <div class="col-md-6">
         <h2> Histogrammes </h2>
     </div>
-    <div class="pull-right">
+    <div class="float-end">
         <span class="btn btn-primary export" id="histogrammes">
-            <span class="glyphicon glyphicon-download"></span>
+            <span class="icon icon-download"></span>
             Exporter les histogrammes
         </span>
     </div>
@@ -57,7 +57,7 @@ ICI FILTRE
                     <?php echo $categorie->getLibelle(); ?> <br/>
                     <?php echo $question->getLibelle(); ?>
                 </h3>
-                <table class="table table-condensed">
+                <table class="table table-sm">
             <thead>
             <tr>
                 <th> Niveaux </th>
@@ -135,7 +135,7 @@ usort($sans, function (EnqueteQuestion $a, EnqueteQuestion $b) { return $a->getO
                 <h3>
                     <?php echo $question->getLibelle(); ?>
                 </h3>
-                <table class="table table-condensed">
+                <table class="table table-sm">
                     <thead>
                     <tr>
                         <th> Niveaux </th>
@@ -207,15 +207,15 @@ usort($sans, function (EnqueteQuestion $a, EnqueteQuestion $b) { return $a->getO
     <div class="col-md-6">
         <h2> Réponses brutes</h2>
     </div>
-    <div class="pull-right">
+    <div class="float-end">
         <span class="btn btn-primary export" id="resultats">
-            <span class="glyphicon glyphicon-download"></span>
+            <span class="icon icon-download"></span>
             Exporter les résultats
         </span>
     </div>
 </div>
 
-<table class="table table-condensed">
+<table class="table table-sm">
     <thead>
     <tr>
         <th> Id. </th>

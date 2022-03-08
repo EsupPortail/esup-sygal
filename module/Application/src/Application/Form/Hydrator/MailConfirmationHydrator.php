@@ -5,7 +5,7 @@ namespace Application\Form\Hydrator;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
 use Application\Service\Individu\IndividuServiceAwareTrait;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 
 class MailConfirmationHydrator extends DoctrineObject
 {
@@ -16,7 +16,7 @@ class MailConfirmationHydrator extends DoctrineObject
      * @param  MailConfirmation $mailConfirmation
      * @return array
      */
-    public function extract($mailConfirmation)
+    public function extract($mailConfirmation): array
     {
         //$data = parent::extract($mailConfirmation);
         $data = [];

@@ -3,6 +3,7 @@
 namespace Soutenance\Controller;
 
 use Application\Service\Acteur\ActeurService;
+use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\UserContextService;
 use Interop\Container\ContainerInterface;
 use Soutenance\Form\Anglais\AnglaisForm;
@@ -28,10 +29,11 @@ class PropositionControllerFactory
      * @param ContainerInterface $container
      * @return PropositionController
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container) : PropositionController
     {
         /**
          * @var ActeurService $acteurService
+         * @var EcoleDoctoraleService $ecoleDoctoraleService
          * @var EvenementService $evenementService
          * @var MembreService $membreService
          * @var NotifierSoutenanceService $notificationSoutenanceService
@@ -42,6 +44,7 @@ class PropositionControllerFactory
          * @var ParametreService $parametreService
          */
         $acteurService = $container->get(ActeurService::class);
+        $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
         $evenementService = $container->get(EvenementService::class);
         $membreService = $container->get(MembreService::class);
         $notificationSoutenanceService = $container->get(NotifierSoutenanceService::class);
@@ -74,6 +77,7 @@ class PropositionControllerFactory
         $controller = new PropositionController();
 
         $controller->setActeurService($acteurService);
+        $controller->setEcoleDoctoraleService($ecoleDoctoraleService);
         $controller->setEvenementService($evenementService);
         $controller->setMembreService($membreService);
         $controller->setNotifierSoutenanceService($notificationSoutenanceService);

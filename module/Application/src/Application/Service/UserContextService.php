@@ -3,6 +3,7 @@
 namespace Application\Service;
 
 use Application\Authentication\Storage\AppStorage;
+use Application\Entity\UserWrapperFactoryAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
@@ -13,7 +14,7 @@ use Application\Entity\UserWrapperFactory;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
-use UnicaenApp\Entity\Ldap\People;
+use UnicaenAuth\Entity\Ldap\People;
 use UnicaenAuth\Entity\Shibboleth\ShibUser;
 use UnicaenAuth\Service\UserContext as BaseUserContextService;
 use Laminas\Permissions\Acl\Role\RoleInterface;
@@ -26,34 +27,7 @@ class UserContextService extends BaseUserContextService
     use IndividuServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
-
-    private $roleAsEntityCache = [];
-
-    /**
-     * @param Role|RoleInterface|string $role
-     * @return Role|null
-     */
-    private function roleAsEntity($role)
-    {
-        if (!$role) {
-            return $role;
-        }
-        if ($role instanceof Role) {
-            return $role;
-        }
-        if ($role instanceof RoleInterface) {
-            $role = $role->getRoleId();
-        }
-        if (isset($this->roleAsEntityCache[$role])) {
-            return $this->roleAsEntityCache[$role];
-        }
-
-        // todo: ce cache me semble bien inutile, $role est toujours le même au sein d'une même requête.
-        $this->roleAsEntityCache[$role] =
-            $this->getEntityManager()->getRepository(Role::class)->findOneBy(['roleId' => $role]);
-
-        return $this->roleAsEntityCache[$role];
-    }
+    use UserWrapperFactoryAwareTrait;
 
     /**
      * Si le rôle sélectionné correspond à celui de doctorant,
@@ -264,9 +238,8 @@ class UserContextService extends BaseUserContextService
             return null;
         }
 
-        $userWrapperFactory = new UserWrapperFactory();
         try {
-            $userWrapper = $userWrapperFactory->createInstanceFromIdentity($this->getIdentity());
+            $userWrapper = $this->userWrapperFactory->createInstanceFromIdentity($this->getIdentity());
         } catch (\Exception $e) {
             error_log($e->getMessage());
             error_log($e->getTraceAsString());

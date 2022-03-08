@@ -3,6 +3,7 @@
 namespace Application\Service\FichierThese;
 
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\Individu;
 use DateTime;
 
 class MembreData
@@ -122,6 +123,8 @@ class PdcData
     private $directeurs;
     /** @var Acteur[] */
     private $codirecteurs;
+    /** @var Acteur[] */
+    private $coencadrants;
     /** @var Acteur[] */
     private $rapporteurs;
     /** @var Acteur[] */
@@ -426,6 +429,23 @@ class PdcData
         return $this;
     }
 
+    /**
+     * @return Acteur[]
+     */
+    public function getCoencadrants()
+    {
+        return $this->coencadrants;
+    }
+
+    /**
+     * @param Acteur[] $coencadrants
+     * @return PdcData
+     */
+    public function setCoencadrants($coencadrants)
+    {
+        $this->coencadrants = $coencadrants;
+        return $this;
+    }
 
 
     /**
@@ -672,5 +692,23 @@ class PdcData
     public function setDateFinConfidentialite($fin)
     {
         $this->dateFinConfidentialite = $fin;
+    }
+
+    /**
+     * Les signataires du PV de soutenances sont les membres du jury moins les directeurs, les co-directeurs et les co-encadrants
+     * @return Individu[]
+     */
+    public function getSignataires() : array
+    {
+        $membres = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getMembres());
+        $rapporteurs = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getRapporteurs());
+        $directeurs = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getDirecteurs());
+        $codirecteurs = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getCodirecteurs());
+        $coencadrants = array_map(function(Acteur $a) { return $a->getIndividu();}, $this->getCoencadrants());
+
+        $signataires = array_diff(array_merge($membres, $rapporteurs), $directeurs, $codirecteurs, $coencadrants);
+        usort($signataires, function(Individu $a, Individu $b) { return $a->getNomComplet() > $b->getNomComplet();});
+
+        return $signataires;
     }
 }

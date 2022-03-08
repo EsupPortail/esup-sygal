@@ -47,11 +47,11 @@ class SynchroService
         foreach ($this->services as $name => $params) {
             $synchro = $this->synchroService->getSynchroByName($name);
             $result = $this->synchroService->runSynchro($synchro);
-            if ($exception = $result->getFailure()) {
+            if ($exception = $result->getFailureException()) {
                 throw new RuntimeException(
                     sprintf("Erreur rencontrée pendant la synchro '%s'", $synchro->getName()),
                     null,
-                    $result->getFailure());
+                    $result->getFailureException());
             }
         }
         $this->executeProcedureCalls([

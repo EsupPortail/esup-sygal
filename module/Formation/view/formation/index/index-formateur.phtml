@@ -34,29 +34,32 @@ $canSessionVoir = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivi
 <?php else : ?>
 
 <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active">
+    <li role="presentation" class="nav-item active">
         <a href="#courantes"
+           class="nav-link"
            role="tab"
            aria-controls="courantes"
-           data-toggle="tab"
+           data-bs-toggle="tab"
         >
             Formations en cours
         </a>
     </li>
-    <li role="presentation">
+    <li role="presentation" class="nav-item">
         <a href="#passees"
+           class="nav-link"
            role="tab"
            aria-controls="passees"
-           data-toggle="tab"
+           data-bs-toggle="tab"
         >
             Mes formations passées
         </a>
     </li>
-    <li role="presentation">
+    <li role="presentation" class="nav-item">
         <a href="#futures"
+           class="nav-link"
            role="tab"
            aria-controls="futures"
-           data-toggle="tab"
+           data-bs-toggle="tab"
         >
             Mes formations à venir
         </a>
@@ -69,7 +72,7 @@ $canSessionVoir = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivi
             Formations en cours
         </h2>
 
-        <table class="table table-condensed">
+        <table class="table table-sm">
             <thead>
             <tr>
                 <th> Module de formation </th>
@@ -99,8 +102,8 @@ $canSessionVoir = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivi
                     <td>
                         <?php if ($canSessionVoir) : ?>
                         <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>"
-                           title="Accéder à la session" data-toggle="tooltip" data-html="true"
-                        ><span class="glyphicon glyphicon-eye-open"></span></a>
+                           title="Accéder à la session" data-bs-toggle="tooltip" data-bs-html="true"
+                        ><span class="icon icon-voir"></span></a>
                         <?php endif; ?>
                     </td>
                 </tr>
@@ -111,7 +114,7 @@ $canSessionVoir = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivi
     <div role="tabpanel" class="tab-pane" id="passees">
         <h2> Mes formations passées </h2>
 
-        <table class="table table-condensed">
+        <table class="table table-sm">
             <thead>
             <tr>
                 <th> Module de formation </th>
@@ -139,8 +142,8 @@ $canSessionVoir = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivi
                     <td>
                         <?php if ($canSessionVoir) : ?>
                             <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>"
-                               title="Accéder à la session" data-toggle="tooltip" data-html="true"
-                            ><span class="glyphicon glyphicon-eye-open"></span></a>
+                               title="Accéder à la session" data-bs-toggle="tooltip" data-bs-html="true"
+                            ><span class="icon icon-voir"></span></a>
                         <?php endif; ?>
                     </td>
                 </tr>
@@ -151,7 +154,7 @@ $canSessionVoir = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivi
     <div role="tabpanel" class="tab-pane" id="futures">
         <h2> Mes formations à venir</h2>
 
-        <table class="table table-condensed">
+        <table class="table table-sm">
             <thead>
             <tr>
                 <th> Module de formation </th>
@@ -179,8 +182,8 @@ $canSessionVoir = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivi
                     <td>
                         <?php if ($canSessionVoir) : ?>
                             <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>"
-                               title="Accéder à la session" data-toggle="tooltip" data-html="true"
-                            ><span class="glyphicon glyphicon-eye-open"></span></a>
+                               title="Accéder à la session" data-bs-toggle="tooltip" data-bs-html="true"
+                            ><span class="icon icon-voir"></span></a>
                         <?php endif; ?>
                     </td>
                 </tr>

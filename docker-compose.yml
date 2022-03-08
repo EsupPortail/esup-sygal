@@ -17,6 +17,8 @@ services:
      - .:/app
      - /tmp:/tmp
      - $HOME/.ssh:/root/.ssh
+     - ./docker/apache/livelog.conf:/etc/apache2/conf-available/livelog.conf
+     - ./docker/entrypoint.d/009_livelog:/entrypoint.d/009_livelog
     working_dir: /app
     networks:
       - sygalnet

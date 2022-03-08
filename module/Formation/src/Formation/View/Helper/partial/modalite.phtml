@@ -27,12 +27,12 @@ use Formation\Entity\Db\Interfaces\HasModaliteInterface;
     ?>
 
     <span class="modalite" title="<?php echo $title; ?>"
-          data-toggle="tooltip" data-html="true">
+          data-bs-toggle="tooltip" data-bs-html="true">
             <?php echo $texte; ?>
     </span>
 <?php else : ?>
     <span class="modalite" title="Aucune modalité de spécifiée"
-          data-toggle="tooltip" data-html="true">
+          data-bs-toggle="tooltip" data-bs-html="true">
         N.C.
     </span>
 <?php endif; ?>

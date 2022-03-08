@@ -22,12 +22,6 @@ use Soutenance\Entity\Proposition;
     body {
         font-size: 9pt;
     }
-
-    span.warning {
-        font-weight: bold;
-        color: darkred;
-    }
-
     img {
         height:2.5cm;
     }
@@ -38,62 +32,30 @@ use Soutenance\Entity\Proposition;
     h2 {
         font-size: large;
     }
+
     table {
         width:100%;
     }
-
-    table.recapitulatif {
-        border:solid 1px black;
-    }
-
-    table.recapitulatif td.head {
-        font-weight: bold;
-        width: 33.3%
-    }
-
     table.composition {
         border-collapse: collapse;
     }
-
     table.composition th{
         border-bottom:solid 2px black;
     }
-
     table.composition td{
         border-bottom:solid 1px gray;
     }
-
     table.composition tbody tr {
         border-bottom: 1px gray solid ;
     }
 
     table.informations {
     }
-
     table.informations td.head {
         width: 50%
     }
-
     table.informations td.info {
         text-align: right;
-    }
-
-    table.validation {
-        border-collapse: collapse;
-    }
-
-    table.validation th{
-        border-bottom:solid 2px black;
-    }
-
-    table.validation td{
-        border-bottom:solid 1px gray;
-        margin: 1rem;
-    }
-
-    span.to-complete {
-        background-color: pink;
-        color: darkred;
     }
 
     div.signature {
@@ -101,7 +63,6 @@ use Soutenance\Entity\Proposition;
         /*top: 80%;*/
         left:500px;
     }
-
 </style>
 <!-- SECTION DU LOGO DE LA COMUE -------------------------------------------------------------------------------------->
 
@@ -142,6 +103,7 @@ use Soutenance\Entity\Proposition;
 </h2>
 
     <br/>
+
 
 <p>
     <strong>
@@ -310,11 +272,46 @@ use Soutenance\Entity\Proposition;
 
 <br/>
 
+    <!-- Avis finale -------------------------------------------------------------------------------------------------->
+
+    <table class='jury'>
+        <tr>
+            <th colspan='3'>
+                Avis de soutenance
+            </th>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <td>
+                &#9744; Avis favorable <br/>
+                &#9744; Avis défavorable <br/>
+            </td>
+            <td style="border:solid black 1px;">
+                <br/>
+                <br/>
+                Motivation en cas d'avis défavorable : <br/>
+                <?php for($i = 0 ; $i < 8 ; $i++) : ?>
+                    <br/>
+                <?php endfor; ?>
+            </td>
+        </tr>
+    </table>
+
+
+    <br/>
+    <br/>
+    <br/>
+
     <!-- Signature ---------------------------------------------------------------------------------------------------->
+
+
+
 
 <table>
     <tr>
-        <td width="50%"></td>
+        <td width="10%"></td>
         <td>
             Fait à ................., le ........................<br/>
             Pour le Président et p.o.<br/>

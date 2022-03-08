@@ -23,7 +23,7 @@ class FormationHydrator implements HydratorInterface {
      * @param Formation $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         $data = [
             'libelle' => $object->getLibelle(),

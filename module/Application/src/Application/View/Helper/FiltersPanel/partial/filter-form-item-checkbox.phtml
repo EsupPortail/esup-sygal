@@ -17,13 +17,13 @@ $isActive = $filter->getValue();
 ?>
 
 <div class="form-group">
-    <label class="sr-only" for="search-input"></label>
+    <label class="form-label sr-only" for="search-input"></label>
     <div class="input-group">
         <input type="checkbox"
                <?php echo $isActive ? 'checked' : '' ?>
                value="1"
                name="<?php echo $filter->getName() ?>"
-               class="form-control filter"
+               class="form-check-input filter"
                id="<?php echo $id = uniqid('checkbox-input-') ?>">
         <label for="<?php echo $filter->getName() ?>"></label>
     </div>

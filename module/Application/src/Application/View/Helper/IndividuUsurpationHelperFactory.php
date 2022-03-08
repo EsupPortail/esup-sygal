@@ -64,7 +64,7 @@ class IndividuUsurpationHelperFactory
         $submit = new Submit('submit');
         $submit->setValue("Usurper");
         $submit->setAttributes([
-            'class' => 'individu-usurpation-submit btn btn-danger btn-xs',
+            'class' => 'individu-usurpation-submit btn btn-danger btn-sm',
             'title' => "Usurper" /*. " l'identité de " . $individu*/,
         ]);
 

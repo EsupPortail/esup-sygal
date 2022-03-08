@@ -49,7 +49,7 @@ class RoadmapHelper extends AbstractHelper implements WorkflowServiceAwareInterf
         foreach ($workflow as $i => $r) {
             $parts[] = sprintf('<tr>%s</tr>', $this->renderRow($r));
         }
-        $html =  sprintf('<table class="roadmap table table-condensed table-hover">%s</table>', implode('', $parts));
+        $html =  sprintf('<table class="roadmap table table-sm table-hover">%s</table>', implode('', $parts));
 
         return $html;
     }
@@ -62,8 +62,8 @@ class RoadmapHelper extends AbstractHelper implements WorkflowServiceAwareInterf
     {
         $e = $r->getEtape();
 
-        $iconChecked = '<span title="Franchie" class="glyphicon glyphicon-check text-success"></span>';
-        $iconUnchecked = '<span title="Non franchie" class="glyphicon glyphicon-unchecked text-muted"></span>';
+        $iconChecked = '<span title="Franchie" class="fas fa-check-circle text-success"></span>';
+        $iconUnchecked = '<span title="Non franchie" class="fas fa-times-circle"></span>';
 
         return sprintf("<td>%s %s %s</td><!--<td>%s/%s</td>-->",
             str_repeat("&nbsp;", ($e->getChemin() - 1) * 7),

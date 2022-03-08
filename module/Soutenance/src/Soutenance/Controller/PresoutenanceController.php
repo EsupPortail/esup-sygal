@@ -30,6 +30,7 @@ use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Exporter\AvisSoutenance\AvisSoutenancePdfExporter;
+use Soutenance\Service\Exporter\RapportTechnique\RapportTechniquePdfExporter;
 use Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter;
 use Soutenance\Service\Exporter\ProcesVerbal\ProcesVerbalSoutenancePdfExporter;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
@@ -41,6 +42,7 @@ use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
+use UnicaenAuthToken\Service\TokenServiceException;
 use Laminas\Http\Response;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\View\Model\ViewModel;
@@ -264,7 +266,6 @@ class PresoutenanceController extends AbstractController
         if (!$acteur) throw new RuntimeException("Aucun acteur à deassocier !");
 
         //retrait dans membre de soutenance
-        $username = $this->getMembreService()->generateUsername($membre);
         $membre->setActeur(null);
         $this->getMembreService()->update($membre);
 
@@ -273,7 +274,7 @@ class PresoutenanceController extends AbstractController
             $this->getValidationService()->unsignEngagementImpartialite($validation);
         }
 
-        $utilisateur = $this->utilisateurService->getRepository()->findByUsername($username);
+        $utilisateur = $this->getMembreService()->getUtilisateur($membre);
         if ($utilisateur) $this->utilisateurService->supprimerUtilisateur($utilisateur);
 
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
@@ -298,10 +299,13 @@ class PresoutenanceController extends AbstractController
         }
 
         foreach ($rapporteurs as $rapporteur) {
-            $token = $this->getMembreService()->retrieveOrCreateToken($rapporteur);
-            $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
-            $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $rapporteur->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
-            $this->getNotifierSoutenanceService()->triggerDemandeAvisSoutenance($these, $proposition, $rapporteur, $url);
+            $hasRapport = ($this->getAvisService()->getAvisByMembre($rapporteur) !== null);
+            if ($hasRapport === false) {
+                $token = $this->getMembreService()->retrieveOrCreateToken($rapporteur);
+                $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
+                $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $rapporteur->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
+                $this->getNotifierSoutenanceService()->triggerDemandeAvisSoutenance($these, $proposition, $rapporteur, $url);
+            }
         }
 
         $this->getEvenementService()->ajouterEvenement($proposition, Evenement::EVENEMENT_PRERAPPORT);
@@ -398,7 +402,6 @@ class PresoutenanceController extends AbstractController
         exit;
     }
 
-    /** Document pour la signature en présidence */
     public function avisSoutenanceAction()
     {
         $these = $this->requestedThese();
@@ -413,6 +416,20 @@ class PresoutenanceController extends AbstractController
             'informations' => $pdcData,
         ]);
         $exporter->export($these->getId() . '_avis_soutenance.pdf');
+        exit;
+    }
+
+    public function rapportTechniqueAction()
+    {
+        $these = $this->requestedThese();
+        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+
+        $exporter = new RapportTechniquePdfExporter($this->renderer, 'A4');
+        $exporter->setVars([
+            'these' => $these,
+            'informations' => $pdcData,
+        ]);
+        $exporter->export($these->getId() . '_rapport_technique.pdf');
         exit;
     }
 

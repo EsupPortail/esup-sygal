@@ -3,7 +3,7 @@
 namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\Etablissement;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 
 class EtablissementHydrator extends DoctrineObject
 {
@@ -13,7 +13,7 @@ class EtablissementHydrator extends DoctrineObject
      * @param  Etablissement $etablissement
      * @return array
      */
-    public function extract($etablissement)
+    public function extract($etablissement): array
     {
         $data = parent::extract($etablissement);
 

@@ -16,9 +16,9 @@ $canAfficherSession     = $this->isAllowed(SessionPrivileges::getResourceId(Sess
 
 ?>
 
-<h1> Index des seances </h1>
+<h1> Liste des seances </h1>
 
-<table class="table table-condensed">
+<table class="table table-sm">
     <thead>
     <tr>
         <th>Identifiant</th>
@@ -48,25 +48,25 @@ $canAfficherSession     = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                 <?php if ($canAfficherSession AND $seance->getSession() !== null) : ?>
                     <?php /** @see \Formation\Controller\SessionController::afficherAction() */ ?>
                     <a href="<?php echo $this->url('formation/session/afficher', ['session' => $seance->getSession()->getId()], [], true); ?>"
-                       title="Accéder à la session associée" data-toggle="tooltip" data-html="true"
+                       title="Accéder à la session associée" data-bs-toggle="tooltip" data-bs-html="true"
                     >
-                    <span class="glyphicon glyphicon-list-alt"></span>
+                    <span class="fas fa-list-alt"></span>
                     </a>
                 <?php endif; ?>
                 <?php if ($canHistoriserSeance) : ?>
                     <?php if ($seance->estNonHistorise()) : ?>
                         <?php /** @see \Formation\Controller\SeanceController::historiserAction() */ ?>
                         <a href="<?php echo $this->url('formation/seance/historiser', ['seance' => $seance->getId()], [], true); ?>"
-                           title="Historiser la seance" data-toggle="tooltip" data-html="true"
+                           title="Historiser la seance" data-bs-toggle="tooltip" data-bs-html="true"
                         >
-                            <span class="glyphicon glyphicon-trash"></span>
+                            <span class="icon icon-historiser"></span>
                         </a>
                     <?php else : ?>
                         <?php /** @see \Formation\Controller\SeanceController::restaurerAction() */ ?>
                         <a href="<?php echo $this->url('formation/seance/restaurer', ['seance' => $seance->getId()], [], true); ?>"
-                           title="Restaurer la seance" data-toggle="tooltip" data-html="true"
+                           title="Restaurer la seance" data-bs-toggle="tooltip" data-bs-html="true"
                         >
-                            <span class="glyphicon glyphicon-leaf"></span>
+                            <span class="icon icon-restaurer"></span>
                         </a>
                     <?php endif; ?>
                 <?php endif; ?>
@@ -74,8 +74,8 @@ $canAfficherSession     = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                     <?php /** @see \Formation\Controller\SeanceController::supprimerAction() */?>
                     <a href="<?php echo $this->url('formation/seance/supprimer',['seance' => $seance->getId()], [], true); ?>"
                        class="ajax-modal" data-event="modification"
-                       title="Suppression de la seance #<?php echo $seance->getId(); ?>" data-toggle="tooltip" data-html="true">
-                        <span class="glyphicon glyphicon-remove"></span>
+                       title="Suppression de la seance #<?php echo $seance->getId(); ?>" data-bs-toggle="tooltip" data-bs-html="true">
+                        <span class="icon icon-detruire"></span>
                     </a>
                 <?php endif; ?>
             </td>

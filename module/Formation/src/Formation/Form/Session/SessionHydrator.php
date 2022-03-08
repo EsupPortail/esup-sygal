@@ -17,10 +17,10 @@ class SessionHydrator implements HydratorInterface {
     use StructureServiceAwareTrait;
 
     /**
-     * @param Session $object
+     * @param object|Session $object
      * @return array
      */
-    public function extract($object)
+    public function extract(object $object) : array
     {
         $data = [
             'libelle' => $object->getFormation()->getLibelle(),

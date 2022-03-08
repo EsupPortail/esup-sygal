@@ -14,7 +14,7 @@ class InformationHydrator implements HydratorInterface
      * @param Information $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return [
             'titre' => $object->getTitre(),

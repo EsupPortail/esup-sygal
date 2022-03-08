@@ -11,10 +11,10 @@ class EnqueteQuestionHydrator implements HydratorInterface {
     use EnqueteCategorieServiceAwareTrait;
 
     /**
-     * @param EnqueteQuestion $object
+     * @param object|EnqueteQuestion $object
      * @return array
      */
-    public function extract($object)
+    public function extract(object $object) : array
     {
         $data = [
             'libelle' => $object->getLibelle(),

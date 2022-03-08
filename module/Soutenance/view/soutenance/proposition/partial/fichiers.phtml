@@ -22,18 +22,17 @@ foreach ($proposition->getMembres() as $membre) {
 }
 ?>
 
-<div class="box panel
+<div class="box card
 <?php
-    if ($justificatifsOk === null)  echo " panel-warning";
-    if ($justificatifsOk === true)  echo " panel-success";
-    if ($justificatifsOk === false) echo " panel-danger";
+if ($justificatifsOk === null)  echo " bg-warning";
+if ($justificatifsOk === true)  echo " bg-success";
+if ($justificatifsOk === false) echo " bg-danger";
 ?>
 ">
-    <div class="panel-heading">
+    <div class="card-header <?php echo ($justificatifsOk)?"bg-success":"bg-danger";?>">
         <h2> Fichiers associés à la proposition</h2>
     </div>
-    <div class="panel-body">
-
+    <div class="card-body">
 
         <?php if ($canModifier) : ?>
             <a href="<?php echo $this->url('soutenance/justificatif/ajouter-justificatif', ['these' => $these->getId()], [], true); ?>"
@@ -43,8 +42,8 @@ foreach ($proposition->getMembres() as $membre) {
         <?php endif; ?>
 
         <?php if ($justificatifsOk === false) : ?>
-            <div class="alert alert-warning pull-right">
-                <span class="glyphicon glyphicon-warning-sign"></span>
+            <div class="alert alert-warning float-end">
+                <span class="fas fa-exclamation-triangle"></span>
                 Liste des justificatifs manquants :
             <ul>
             <?php foreach ($justificatifs as $justificatif) : ?>
@@ -87,7 +86,7 @@ foreach ($proposition->getMembres() as $membre) {
             <?php if (!empty($liste)) : ?>
             <h4>
                 <?php echo $label; ?>
-                <span class="badge"><?php echo count($liste); ?></span>
+                <span class="badge bg-secondary"><?php echo count($liste); ?></span>
             </h4>
                 <ul>
                 <?php /** @var Justificatif $justificatif */
@@ -101,7 +100,7 @@ foreach ($proposition->getMembres() as $membre) {
                                     ['these' => $these->getId(), 'justificatif'=>$justificatif['justificatif']->getId()],
                                     ["query" => ["retour" => $retour]],
                                     true); ?>">
-                                <span style='color:darkred;' class="glyphicon glyphicon-remove" title="Supprimer le justificatif"></span>
+                                <span style='color:darkred;' class="icon icon-delete iconly" title="Supprimer le justificatif"></span>
                             </a>
                         <?php endif; ?>
                     </li>

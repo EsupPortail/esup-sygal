@@ -31,7 +31,7 @@ use Application\View\Renderer\PhpRenderer;
             ($value === '' && (!isset($queryParams[$paramName]) || !isset($queryParams[$paramName]) || $queryParams[$paramName] === ''));
         ?>
         <?php if ($isActive): ?>
-            <span class="label label-info"><?php echo $label ?></span>
+            <span class="badge bg-info"><?php echo $label ?></span>
         <?php else: ?>
             <a href="<?php echo $filterUrl($paramName, $value, $queryParams) ?>"><?php echo $label ?></a>
         <?php endif ?>
