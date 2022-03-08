@@ -24,7 +24,7 @@ function afficherActeur(Acteur $a) {
     }
     $title .= "</table>";
 
-    $texte  = "<span title='".$title."' data-bs-toggle='tooltip' data-html='true'>";
+    $texte  = "<span title='".$title."' data-bs-toggle='tooltip' data-bs-html='true'>";
     $texte .= $a->getIndividu()->getNomComplet();
     $texte .= "</span>";
     return $texte;

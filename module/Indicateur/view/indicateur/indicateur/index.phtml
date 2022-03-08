@@ -40,11 +40,11 @@ $appName = $this->appInfos()->nom;
 
 <br/>
 <?php if ($erreurs !== null AND $erreurs !== "") : ?>
-    <div class="panel panel-danger">
-        <div class="panel-heading">
+    <div class="card bg-danger">
+        <div class="card-header">
             Des erreurs liées aux indicateurs
         </div>
-        <div class="panel-body">
+        <div class="card-body">
             <?php echo $erreurs; ?>
         </div>
     </div>
