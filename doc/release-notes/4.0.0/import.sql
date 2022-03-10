@@ -626,12 +626,12 @@ FROM tmp_role tmp
          JOIN etablissement e ON e.id = src.etablissement_id
          JOIN structure s ON s.id = e.structure_id;
 
-create view src_structure(id, source_code, code, source_id, type_structure_id, sigle, libelle) as
-SELECT NULL::text      AS id,
-       tmp.source_code,
-       tmp.source_code AS code,
-       src.id          AS source_id,
-       ts.id           AS type_structure_id,
+create or replace view src_structure(id, source_code, code, source_id, type_structure_id, sigle, libelle) as
+SELECT NULL::text                                                         AS id,
+        tmp.source_code,
+       ltrim(substr(tmp.source_code, strpos(tmp.source_code, '::')), ':') AS code,
+       src.id                                                             AS source_id,
+       ts.id                                                              AS type_structure_id,
        tmp.sigle,
        tmp.libelle
 FROM tmp_structure tmp
