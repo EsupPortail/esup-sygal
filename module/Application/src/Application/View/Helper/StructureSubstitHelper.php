@@ -16,10 +16,10 @@ class StructureSubstitHelper extends AbstractHelper
 
     /**
      * @param StructureConcreteInterface $structurestructureConcrete
-     * @param string                     $logoContent
+     * @param string|null                     $logoContent
      * @return string
      */
-    public function structureSource(StructureConcreteInterface $structurestructureConcrete, $logoContent)
+    public function structureSource(StructureConcreteInterface $structurestructureConcrete, ?string $logoContent)
     {
         $texte = '<div class="panel panel-info" id="panel_' . $structurestructureConcrete->getId() . '" >';
         $texte .= '<div class="panel-heading">';
@@ -71,10 +71,10 @@ class StructureSubstitHelper extends AbstractHelper
 
     /**
      * @param Structure $structure
-     * @param string    $logoContent
+     * @param string|null    $logoContent
      * @return string
      */
-    function structureCible(Structure $structure, string $logoContent)
+    function structureCible(Structure $structure, ?string $logoContent)
     {
         $texte = "";
         $texte .= '<div class="panel panel-success">';
