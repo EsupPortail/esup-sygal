@@ -4,6 +4,7 @@ Journal des modifications
 4.0.1
 -----
 - [FIX] signature des fonctions de StructureSubstitHelper string => ?string
+- [FIX] les résumés pour la BU se chevauchaient p class='resume pre-scrollable' => p class='pre-scrollable'
 
 3.0.12
 ------
