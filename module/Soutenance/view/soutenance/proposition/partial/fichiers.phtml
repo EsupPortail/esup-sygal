@@ -22,14 +22,16 @@ foreach ($proposition->getMembres() as $membre) {
 }
 ?>
 
-<div class="box panel
+
 <?php
-    if ($justificatifsOk === null)  echo " panel-warning";
-    if ($justificatifsOk === true)  echo " panel-success";
-    if ($justificatifsOk === false) echo " panel-danger";
+    $cssClass = "";
+    if ($justificatifsOk === null)   $cssClass = "panel-warning";
+    if ($justificatifsOk === true)   $cssClass = "panel-success";
+    if ($justificatifsOk === false)  $cssClass = "panel-danger";
 ?>
-">
-    <div class="panel-heading">
+
+<div class="box panel">
+    <div class="panel-heading <?php echo $cssClass; ?>">
         <h2> Fichiers associés à la proposition</h2>
     </div>
     <div class="panel-body">
