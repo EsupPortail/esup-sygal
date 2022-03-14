@@ -115,7 +115,7 @@ if (!$isTeleversementPossible) {
 
         <?php else: ?>
 
-            Aucun.
+            <p>Aucun.</p>
 
         <?php endif; ?>
 
@@ -131,7 +131,7 @@ if (!$isTeleversementPossible) {
                 <div class="col-md-4">
                     <a href="#" id="ajouterBtn" class="btn btn-primary <?php echo $canAdd ? '' : 'disabled' ?>"
                        style="display: <?php echo !$ajouterFormVisible ? 'inherit' : 'none' ?>">
-                        <span class="glyphicon glyphicon-plus"></span> Téléverser un rapport</a>
+                        <span class="icon icon-plus"></span> Téléverser un rapport</a>
                 </div>
             </div>
 
@@ -186,13 +186,6 @@ if (!$isTeleversementPossible) {
             $ajouterForm.hide();
             $ajouterBtn.show();
             return false;
-        });
-        $('[data-toggle=confirmation]').confirmation({
-            rootSelector: '[data-toggle=confirmation]',
-            container: 'body',
-            title: "Êtes-vous sûr(e) ?",
-            btnOkLabel: "Oui",
-            btnCancelLabel: "Non",
         });
     });
 </script>

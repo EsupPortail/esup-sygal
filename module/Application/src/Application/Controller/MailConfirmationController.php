@@ -10,7 +10,7 @@ use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Notification\Exception\NotificationException;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class MailConfirmationController extends AbstractController {
     use NotifierServiceAwareTrait;

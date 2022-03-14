@@ -2,14 +2,14 @@
 
 namespace Application\Form;
 
-use Zend\Form\Element\Button;
-use Zend\Form\Element\Password;
-use Zend\Form\Element\Text;
-use Zend\Form\Form;
-use Zend\InputFilter\Factory;
-use Zend\Validator\Callback;
-use Zend\Validator\Identical;
-use Zend\Validator\Regex;
+use Laminas\Form\Element\Button;
+use Laminas\Form\Element\Password;
+use Laminas\Form\Element\Text;
+use Laminas\Form\Form;
+use Laminas\InputFilter\Factory;
+use Laminas\Validator\Callback;
+use Laminas\Validator\Identical;
+use Laminas\Validator\Regex;
 
 class InitCompteForm extends Form
 {

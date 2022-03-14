@@ -14,21 +14,28 @@ use Information\Entity\Db\InformationLangue;
 
 ?>
 
-    <ul class="nav nav-pills nav-stacked menu-secondaire informations">
-        <?php foreach ($langues as $langue) : ?>
-            <span class="flag langue" id="<?php echo $langue->getId(); ?>">
-            <img src="<?php echo $langue->getDrapeau(); ?>" style="width: 30px;">
-        </span>
-        <?php endforeach; ?>
-
+<div id="menu-informations" class="card">
+    <div class="card-header">
+        <p>Informations</p>
+        <p>
+            <?php foreach ($langues as $langue) : ?>
+                <span class="flag langue" id="<?php echo $langue->getId(); ?>">
+                    <img alt="Drapeau <?php $langue->getLibelle() ?>" src="<?php echo $langue->getDrapeau(); ?>" style="width: 30px;">
+                </span>
+            <?php endforeach; ?>
+        </p>
+    </div>
+    <ul class="card-body nav flex-column">
         <?php foreach ($informations as $information) : ?>
-        <li class="<?php echo $information->getLangue()->getId(); ?>">
-            <a href="<?php echo $this->url('informations/afficher', ['id' => $information->getId()], [], true); ?>">
-            <?php echo $information->getTitre(); ?>
-            </a>
-        </li>
+            <li class="nav-item <?php echo $information->getLangue()->getId(); ?>">
+                <a class="nav-link" href="<?php echo $this->url('informations/afficher', ['id' => $information->getId()], [], true); ?>">
+                    <?php echo $information->getTitre(); ?>
+                </a>
+            </li>
         <?php endforeach; ?>
     </ul>
+</div>
+
 
 <style>
     .selected {
@@ -51,9 +58,9 @@ use Information\Entity\Db\InformationLangue;
 
 <script>
     function showBonneLangue(langue) {
-        $('ul.informations li').hide();
+        $('#menu-informations li').hide();
         $('span.langue').removeClass('selected');
-        $('ul.informations li.' + langue).show();
+        $('#menu-informations li.' + langue).show();
         $('span.langue#' + langue).addClass('selected');
     }
 
@@ -62,8 +69,8 @@ use Information\Entity\Db\InformationLangue;
     $(function() {
         $('span.langue').on('click', function(event) {
             let langue = $(this).attr('id');
-            // $('ul.informations li').hide();
-            // $('ul.informations li.' + langue).show();
+            // $('#menu-informations li').hide();
+            // $('#menu-informations li.' + langue).show();
             showBonneLangue(langue);
         });
     });

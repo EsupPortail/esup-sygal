@@ -6,7 +6,7 @@ use Application\Controller\TheseObserverController;
 use Application\EventRouterReplacer;
 use Application\Service\These\TheseObserverService;
 use Interop\Container\ContainerInterface;
-use Zend\Router\Http\TreeRouteStack;
+use Laminas\Router\Http\TreeRouteStack;
 
 class TheseObserverControllerFactory
 {

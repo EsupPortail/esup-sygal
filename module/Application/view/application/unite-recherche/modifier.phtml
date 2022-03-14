@@ -65,7 +65,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
 
     <div class="col-md-6" id="logo-div">
         <?php
-        /** @var \Zend\Form\Element\File $logoFile */
+        /** @var \Laminas\Form\Element\File $logoFile */
         $logoFile = $form->get('cheminLogo');
         echo $this->formLabel($logoFile);
 
@@ -96,7 +96,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
                                 class="btn btn-danger"
                                 href="<?php echo $this->url('unite-recherche/supprimer-logo', ["structure" => $idUniteRecherche]); ?>"
                         >
-                            <span class="glyphicon glyphicon-trash"></span>
+                            <span class="icon icon-delete"></span>
                             Supprimer le logo
                         </a>
                     <?php endif; ?>
@@ -106,7 +106,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
 
         <div class="alert alert-warning">
             <small>
-                <span class="glyphicon glyphicon-exclamation-sign"></span>
+                <span class="icon icon-warning"></span>
                 Le logo de la structure doit être donné dans un des formats suivant&nbsp;:
                 <ul>
                     <li>.bmp</li>
@@ -152,7 +152,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
                                 href="<?php echo $this->url("unite-recherche/modifier/retirer-etablissement-rattachement", ["structure" => $idUniteRecherche, "etablissement" => $etablissementRattachement->getEtablissement()->getId()], [], true); ?>"
                                 title="Retirer l'établissement de rattachement"
                         >
-                            <span class="glyphicon glyphicon-trash"></span>
+                            <span class="icon icon-delete iconly"></span>
                         </a>
                     </td>
                 </tr>
@@ -196,7 +196,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
                 id="ajout-rattachement"
                 href="<?php echo $this->url("unite-recherche/modifier/ajouter-etablissement-rattachement", ["structure" => $idUniteRecherche, "etablissement" => 0], [], true); ?>"
         >
-            <span class="glyphicon glyphicon-plus"></span>
+            <span class="icon icon-plus"></span>
             Ajouter un établissement de rattachement
         </a>
     </div>
@@ -233,7 +233,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
                                 href="<?php echo $this->url('unite-recherche/modifier/retirer-domaine-scientifique', ["structure" => $idUniteRecherche, 'domaineScientifique' => $domaineScientifique->getId()], [], true); ?>"
                                 title="Retirer le domaine scientifique"
                         >
-                            <span class="glyphicon glyphicon-trash"></span>
+                            <span class="icon icon-delete iconly"></span>
                         </a>
                     </td>
                 </tr>
@@ -277,7 +277,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
         <a class="btn btn-success"
            id="ajout-domaine"
            href="<?php echo $this->url("unite-recherche/modifier/ajouter-domaine-scientifique", ["structure" => $idUniteRecherche, "domaineScientifique" => 0], [], true); ?>">
-            <span class="glyphicon glyphicon-plus"></span>
+            <span class="icon icon-plus"></span>
             Ajouter un domaine scientifique
         </a>
     </div>

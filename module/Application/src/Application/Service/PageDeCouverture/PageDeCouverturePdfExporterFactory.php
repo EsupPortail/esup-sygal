@@ -3,7 +3,7 @@
 namespace Application\Service\PageDeCouverture;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class PageDeCouverturePdfExporterFactory implements FactoryInterface
 {
@@ -12,7 +12,7 @@ class PageDeCouverturePdfExporterFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        /** @var \Zend\View\Renderer\PhpRenderer $renderer */
+        /** @var \Laminas\View\Renderer\PhpRenderer $renderer */
         $renderer = $container->get('ViewRenderer');
 
         return new PageDeCouverturePdfExporter($renderer, 'A4');

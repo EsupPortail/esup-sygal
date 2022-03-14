@@ -13,7 +13,7 @@ use Application\Service\ListeDiffusion\Handler\ListeDiffusionHandlerInterface;
 use Doctrine\ORM\ORMException;
 use InvalidArgumentException;
 use Webmozart\Assert\Assert;
-use Zend\Mvc\Controller\Plugin\Url;
+use Laminas\Mvc\Controller\Plugin\Url;
 
 class ListeDiffusionService extends BaseService
 {

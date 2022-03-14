@@ -19,9 +19,9 @@ use Information\Service\InformationLangue\InformationLangueServiceFactory;
 use Information\Service\InformationService;
 use Information\Service\InformationServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
-use Zend\Navigation\Service\NavigationAbstractServiceFactory;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
+use Laminas\Navigation\Service\NavigationAbstractServiceFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 
@@ -225,7 +225,7 @@ return [
                                 'order'    => 600,
                                 'label'    => 'Pages d\'information',
                                 'route'    => 'informations',
-                                //'icon'     => 'glyphicon glyphicon-send',
+                                //'icon'     => 'icon icon-notifier',
                                 'resource' => InformationPrivileges::getResourceId(InformationPrivileges::INFORMATION_MODIFIER),
                             ],
                         ],
@@ -304,7 +304,7 @@ return [
 
     'public_files' => [
         'inline_scripts' => [
-            '902_' => 'js/tinymce/js/tinymce/tinymce.js',
+            '902_' => 'vendor/tinymce/js/tinymce/tinymce.js',
         ],
     ]
 ];

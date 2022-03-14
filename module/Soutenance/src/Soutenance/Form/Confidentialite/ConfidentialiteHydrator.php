@@ -4,7 +4,7 @@ namespace Soutenance\Form\Confidentialite;
 
 use DateTime;
 use Soutenance\Entity\Proposition;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class ConfidentialiteHydrator implements HydratorInterface
 {
@@ -34,7 +34,7 @@ class ConfidentialiteHydrator implements HydratorInterface
      * @param Proposition $proposition
      * @return array
      */
-    public function extract($proposition) {
+    public function extract($proposition): array {
 
         $data = [];
         $data['date']  = ($proposition->getConfidentialite())?$proposition->getConfidentialite()->format("Y-m-d"):"";

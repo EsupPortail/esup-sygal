@@ -23,10 +23,10 @@ $roleFormatter = function (Role $role) { return sprintf("'%s', id=%s", $role, $r
 
 <?php if ($html): ?>
 
-    <dl class="debug-infos">
+    <dl>
         <dt>Informations techniques utiles :</dt>
         <dd>
-            <dl>
+            <dl class="debug-infos">
                 <?php if ($utilisateur !== null): ?>
                     <dt>Utilisateur :</dt>
                     <dd><?php echo sprintf("username='%s', id=%s", $utilisateur->getUsername(), $utilisateur->getId()) ?></dd>

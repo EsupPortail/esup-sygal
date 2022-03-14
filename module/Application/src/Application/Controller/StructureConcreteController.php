@@ -21,8 +21,8 @@ use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\SourceCodeStringHelperAwareTrait;
 use BjyAuthorize\Exception\UnAuthorizedException;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Http\Response;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
 
 abstract class StructureConcreteController extends AbstractController
 {

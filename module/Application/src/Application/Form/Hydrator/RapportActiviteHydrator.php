@@ -4,7 +4,7 @@ namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\Rapport;
 use Doctrine\ORM\EntityManager;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 
 /**
  * @property EntityManager $objectManager

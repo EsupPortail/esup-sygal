@@ -3,7 +3,7 @@
 namespace Application\Command;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Exception\InvalidArgumentException;
+use Laminas\ServiceManager\Exception\InvalidArgumentException;
 
 class CheckWSValidationFichierCinesCommandFactory
 {

@@ -13,8 +13,8 @@ use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\Service\MailConfirmationServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Privilege\Privileges;
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -254,7 +254,7 @@ return [
                             'test-envoi-mail' => [
                                 'label'    => 'Test envoi mail',
                                 'route'    => 'test-envoi-mail',
-                                'icon'     => 'glyphicon glyphicon-send',
+                                'icon'     => 'icon icon-notifier',
                                 'resource' => PrivilegeController::getResourceId('UnicaenApp\Controller\Application', 'test-envoi-mail'),
                                 'order' => 10000,
                             ],

@@ -2,7 +2,7 @@
 
 namespace Application\Search;
 
-use Zend\Paginator\Paginator;
+use Laminas\Paginator\Paginator;
 
 class SearchResultPaginator extends Paginator
 {

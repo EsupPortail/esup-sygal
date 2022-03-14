@@ -12,8 +12,8 @@ use Application\Service\These\TheseService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\VersionFichier\VersionFichierService;
 use Interop\Container\ContainerInterface;
-use Zend\EventManager\EventManager;
-use Zend\Router\Http\TreeRouteStack;
+use Laminas\EventManager\EventManager;
+use Laminas\Router\Http\TreeRouteStack;
 
 class FichierTheseControllerFactory
 {

@@ -4,7 +4,7 @@ namespace Soutenance\Form\DateRenduRapport;
 
 use DateTime;
 use Soutenance\Entity\Proposition;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class DateRenduRapportHydrator implements HydratorInterface
 {
@@ -25,7 +25,7 @@ class DateRenduRapportHydrator implements HydratorInterface
      * @param Proposition $proposition
      * @return array
      */
-    public function extract($proposition) {
+    public function extract($proposition): array {
 
         $data = [];
         $data['date']       = $proposition->getRenduRapport();

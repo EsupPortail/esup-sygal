@@ -37,7 +37,7 @@ echo $messenger->addMessagesFromFlashMessenger();
 
 <?php if($canEdit): ?>
     <?php echo generateSelect($structuresConcretes, $this); ?>
-    <button name="ajouter" class="btn btn-success"> <span class='glyphicon glyphicon-plus'></span> Ajouter </button>
+    <button name="ajouter" class="btn btn-success"> <span class='icon icon-plus'></span> Ajouter </button>
 <?php endif; ?>
     <a href="<?php echo $this->url('substitution-index', [], [], null); ?>" class="btn btn-primary">Retour à l'index des substitution</a>
 
@@ -75,10 +75,10 @@ echo $messenger->addMessagesFromFlashMessenger();
 
 /**
  * @param $structuresConcretes
- * @param \Zend\View\Renderer\PhpRenderer $renderer
+ * @param \Laminas\View\Renderer\PhpRenderer $renderer
  * @return string
  */
-function generateSelect($structuresConcretes, \Zend\View\Renderer\PhpRenderer $renderer) {
+function generateSelect($structuresConcretes, \Laminas\View\Renderer\PhpRenderer $renderer) {
     $texte  = "";
     $texte .= "<select name='nouveau' class='selectpicker' data-live-search='true'>";
     foreach ($structuresConcretes as $structuresConcrete) {
@@ -127,7 +127,7 @@ function generateSelect($structuresConcretes, \Zend\View\Renderer\PhpRenderer $r
                 var selected = $("select[name='nouveau'] option:selected").val();
                 console.log(selected);
 
-                $(this).parents(".panel").remove();
+                $(this).parents(".card").remove();
                 //remise de l'option
                 $("select[name='nouveau']").append('<option value="'+id+'">'+label+'</option>');
                 var options = $("select[name='nouveau'] option");
@@ -141,7 +141,7 @@ function generateSelect($structuresConcretes, \Zend\View\Renderer\PhpRenderer $r
         });
 
         //ajout d'une structure
-        $("button[name='ajouter']").click(function() {
+        $("button[name='ajouter']").on("click", function() {
             var url = $("select[name='nouveau']").val();
             $.get(url, function (data) {
                 $("div#sources").append(data);

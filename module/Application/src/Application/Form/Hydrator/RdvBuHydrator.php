@@ -8,7 +8,7 @@ use Application\Entity\Db\VersionFichier;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 use UnicaenApp\Exception\RuntimeException;
 
 /**
@@ -31,7 +31,7 @@ class RdvBuHydrator extends DoctrineObject
      * @param  RdvBu $rdvBu
      * @return array
      */
-    public function extract($rdvBu)
+    public function extract($rdvBu): array
     {
         $data = parent::extract($rdvBu);
         $data['versionArchivableFournie'] = $this->existeVersionArchivable($rdvBu);

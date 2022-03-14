@@ -2,9 +2,9 @@
 
 namespace Soutenance\Form\QualiteLibelleSupplementaire;
 
-use Zend\Form\Element\Text;
-use Zend\Form\Form;
-use Zend\InputFilter\Factory;
+use Laminas\Form\Element\Text;
+use Laminas\Form\Form;
+use Laminas\InputFilter\Factory;
 
 class QualiteLibelleSupplementaireForm extends Form {
 

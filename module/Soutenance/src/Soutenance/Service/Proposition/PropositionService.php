@@ -27,6 +27,7 @@ use Exception;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Validation\TypeValidation as TypeValidationSoutenance;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
@@ -34,7 +35,7 @@ use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class PropositionService {
     use EntityManagerAwareTrait;
@@ -480,6 +481,8 @@ class PropositionService {
         $validations['Impartialite'] = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $these);
         $validations['Avis']        = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_AVIS_SOUTENANCE, $these);
 
+        $validations[TypeValidationSoutenance::CODE_VALIDATION_DECLARATION_HONNEUR] = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidationSoutenance::CODE_VALIDATION_DECLARATION_HONNEUR, $these);
+        $validations[TypeValidationSoutenance::CODE_REFUS_DECLARATION_HONNEUR] = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidationSoutenance::CODE_REFUS_DECLARATION_HONNEUR, $these);
 
         return $validations;
     }

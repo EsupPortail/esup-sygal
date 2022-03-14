@@ -1,4 +1,5 @@
 .idea/
+/data/cache/
 /data/DoctrineModule/
 /data/DoctrineORMModule/
 .DS_Store

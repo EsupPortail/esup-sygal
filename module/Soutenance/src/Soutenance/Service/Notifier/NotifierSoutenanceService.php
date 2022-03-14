@@ -26,7 +26,7 @@ use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Db\RoleInterface;
-use Zend\View\Helper\Url as UrlHelper;
+use Laminas\View\Helper\Url as UrlHelper;
 
 class NotifierSoutenanceService extends NotifierService
 {

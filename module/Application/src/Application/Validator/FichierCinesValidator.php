@@ -6,7 +6,7 @@ use Application\Command\ShellCommandRunner;
 use Application\Command\TestArchivabiliteShellCommandResult;
 use Application\Command\TestArchivabiliteShellCommand;
 use Application\Validator\Exception\CinesErrorException;
-use Zend\Validator\AbstractValidator;
+use Laminas\Validator\AbstractValidator;
 
 class FichierCinesValidator extends AbstractValidator
 {

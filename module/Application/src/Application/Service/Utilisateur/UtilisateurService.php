@@ -17,8 +17,8 @@ use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Db\AbstractUser;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use UnicaenLdap\Entity\People;
-use Zend\Crypt\Password\Bcrypt;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Crypt\Password\Bcrypt;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class UtilisateurService extends BaseService
 {

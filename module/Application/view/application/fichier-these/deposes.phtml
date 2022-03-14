@@ -11,7 +11,7 @@ use Application\Controller\Plugin\UrlFichierThese;
 use Application\Entity\Db\FichierThese;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
-use Zend\Paginator\Paginator;
+use Laminas\Paginator\Paginator;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
 
@@ -23,19 +23,19 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 
 <h1 class="page-header">
     <?php echo $this->translate("Fichiers déposés"); ?>
-    <span class="badge"><?php echo $nombreFichiers; ?></span>
+    <span class="badge bg-secondary"><?php echo $nombreFichiers; ?></span>
 </h1>
 
 
-<div class="pull-left">
+<div class="float-start">
     <?php echo $this->partial('partial/form-filtrage') ?>
 </div>
 <form method="post" action="<?php echo $url ?>">
-    <div class="pull-right">
+    <div class="float-end">
         &nbsp;
-        <input type='submit' class='btn btn-default btn-sm' value='Filtrer'/>
+        <input type='submit' class='btn btn-secondary btn-sm' value='Filtrer'/>
     </div>
-    <div class="pull-right">
+    <div class="float-end">
         <?php
         $sas = new SearchAndSelect('individu');
         $sas->setLabel($this->translate("Filtrage selon un doctorant :"));
@@ -47,11 +47,11 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 
 </form>
 
-<!--<div class="pull-right">-->
+<!--<div class="float-end">-->
 <!--    --><?php //echo $this->partial('partial/form-recherche', ['text' => $text]) ?>
 <!--</div>-->
 
-<table class="table table-bordered table-hovered table-condensed">
+<table class="table table-bordered table-hovered table-sm">
     <thead>
     <tr>
         <th><a href="<?php echo $s = $this->sortable('f.nom'); ?>">

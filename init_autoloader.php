@@ -5,6 +5,6 @@ if (! file_exists('vendor/autoload.php')) {
 }
 require_once 'vendor/autoload.php';
 
-if (! class_exists('Zend\Loader\AutoloaderFactory')) {
+if (! class_exists('Laminas\Loader\AutoloaderFactory')) {
     throw new RuntimeException('Unable to load ZF2. Run `php composer.phar install` or define a ZF2_PATH environment variable.');
 }

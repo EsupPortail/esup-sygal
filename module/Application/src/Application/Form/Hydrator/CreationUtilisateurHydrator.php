@@ -5,7 +5,7 @@ namespace Application\Form\Hydrator;
 use Application\Entity\Db\CreationUtilisateurInfos;
 use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class CreationUtilisateurHydrator implements HydratorInterface, EntityManagerAwareInterface
 {
@@ -32,7 +32,7 @@ class CreationUtilisateurHydrator implements HydratorInterface, EntityManagerAwa
      * @param CreationUtilisateurInfos $infos
      * @return array
      */
-    public function extract($infos) {
+    public function extract($infos): array {
 
         $data = [];
         $data['civilite']        = $infos->getCivilite();

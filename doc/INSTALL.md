@@ -53,9 +53,9 @@ Ce script est en quelque sorte l'équivalent du `Dockerfile` traduit en bash.
 son script `Dockerfile.sh` qui est lui aussi l'équivalent du `Dockerfile` de l'image 
 traduit en bash.)
 
-Lancez le script `Dockerfile.sh` ainsi :
+Lancez le script `Dockerfile.sh` avec en argument la version requise de PHP :
 ```bash
-bash Dockerfile.sh 7.3
+bash Dockerfile.sh 7.4
 ```
 
 Ensuite, vérifiez et ajustez si besoin sur votre serveur les fichiers de configs suivants,
@@ -68,7 +68,7 @@ créés ou modifiés par le script `Dockerfile.sh` :
 - ${PHP_CONF_DIR}/cli/conf.d/99-app.ini
 
 NB : Vérifiez dans le script `Dockerfile.sh` que vous venez de lancer mais normalement 
-`APACHE_CONF_DIR=/etc/apache2` et `PHP_CONF_DIR=/etc/php/7.3`.
+`APACHE_CONF_DIR=/etc/apache2` et `PHP_CONF_DIR=/etc/php/7.4`.
 
 La variable `APPLICATION_ENV` déclarée dans la config Apache `${APACHE_CONF_DIR}/sites-available/app-ssl.conf` permet
 de spécifier à l'application PHP dans quel "environnement de fonctionnemant" elle tourne.
@@ -83,7 +83,7 @@ Notamment, lorsque sa valeur est `development`, cela active l'affichage détaill
 
 ### Installation d'une version précise de l'application
 
-Normalement, vous ne devez installer que les versions officielles, c'est à dire les versions taguées, du genre `3.0.0`
+Normalement, vous ne devez installer que les versions officielles, c'est à dire les versions taguées, du genre `4.0.0`
 par exemple.
 
 Placez-vous dans le répertoire des sources de l'application puis lancez les commandes suivantes pour obtenir la liste des
@@ -92,10 +92,10 @@ versions officielles (taguées) :
 git fetch && git fetch --tags && git tag
 ```
 
-Si la version la plus récente est par exemple la `3.0.0`, utilisez les commandes suivantes pour "installer" cette version 
+Si la version la plus récente est par exemple la `4.0.0`, utilisez les commandes suivantes pour "installer" cette version 
 sur votre serveur :
 ```bash
-git checkout --force 3.0.0 && bash install.sh
+git checkout --force 4.0.0 && bash install.sh
 ```
 
 
@@ -104,19 +104,19 @@ git checkout --force 3.0.0 && bash install.sh
 Pour commencer, placez l'application en mode "développement" afin d'activer l'affichage détaillé des futures erreurs 
 rencontrées. Pour cela placez-vous dans le répertoire des sources de l'application puis lancez la commande suivante :
 ```bash
-vendor/bin/zf-development-mode enable
+vendor/bin/laminas-development-mode enable
 ```
 
 Lorsque l'application sera sur un serveur de production, il faudra penser à désactiver le mode "développement" :
 ```bash
-vendor/bin/zf-development-mode disable
+vendor/bin/laminas-development-mode disable
 ```
 
 
 ### Configuration du moteur PHP pour SyGAL
 
 Si vous êtes sur un serveur de PROD, corrigez les lignes suivantes du fichier de config PHP 
-`/etc/php/7.3/fpm/conf.d/90-app.ini` :
+`/etc/php/7.4/fpm/conf.d/90-app.ini` :
 ```
     display_errors = Off
     #...
@@ -185,29 +185,31 @@ Dans la suite, vous adapterez le contenu de ces fichiers à votre situation.
 
 #### Fichier `${APPLICATION_ENV}.secret.local.php`
 
-- Dans la config de connexion au WS suivante, `UCN` doit être remplacé par le code établissement choisi lors
+- Dans la config de connexion au WS, `UCN` doit être remplacé par le code établissement choisi lors
 de la création de votre établissement dans la base de données (dans le script [`08_init.sql`](database/sql/08_init.sql)) :
 
 ```php
-    'import-api' => [
-        'etablissements' => [
-            'UCN' /* <-- code établissement */ => [
-                'url'      => 'https://sygal-import-ws:443', // cf. plus bas
-                'proxy'    => false,
-                'verify'   => false, // si true et faux certif : cURL error 60: SSL certificate problem: self signed certificate
-                'user'     => 'xxx',
-                'password' => 'yyy',
+    'import' => [
+        'connections' => [
+            'sygal-import-ws-UCN' => [ // <<<<<<<<<<<<<< remplacer 'UCN' par votre code établissement
+                'url' => 'https://host.domain.fr',
+                'proxy' => false,
+                'verify' => false, // si true et faux certif : cURL error 60: SSL certificate problem: self signed certificate
+                'user' => 'xxxxxx',
+                'password' => 'yyyyyy',
+                'connect_timeout' => 10,
+            ],
+        ],
 ```
 
-- Idem dans la config des synchros juste après :
+- Idem dans la config des imports/synchros juste après :
 
 ```php
-    'import' => [
-        'synchros' => generateConfigSynchros(['UCN']), /* <-- code établissement */
-    ],
+        'imports' => \Application\generateConfigImportsForEtabs($etabs = ['UCN']), // <<<<<<<<<<<<<< remplacer 'UCN' par votre code établissement
+        'synchros' => \Application\generateConfigSynchrosForEtabs($etabs),
 ```
 
-- Renseignez les infos de connexion à la base de données :
+- Renseignez les infos de connexion à la base de données de l'application :
 
 ```php
     'doctrine' => [

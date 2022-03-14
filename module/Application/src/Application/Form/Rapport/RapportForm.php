@@ -5,20 +5,20 @@ namespace Application\Form\Rapport;
 use Application\Entity\AnneeUniv;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\TheseAnneeUniv;
-use Zend\Form\Element\Csrf;
-use Zend\Form\Element\File;
-use Zend\Form\Element\Hidden;
-use Zend\Form\Element\Select;
-use Zend\Form\Element\Submit;
-use Zend\Form\Form;
-use Zend\InputFilter\FileInput;
-use Zend\InputFilter\InputFilterProviderInterface;
-use Zend\Validator\File\Extension;
-use Zend\Validator\File\MimeType;
-use Zend\Validator\File\Size;
-use Zend\Validator\File\UploadFile;
-use Zend\Validator\InArray;
-use Zend\Validator\NotEmpty;
+use Laminas\Form\Element\Csrf;
+use Laminas\Form\Element\File;
+use Laminas\Form\Element\Hidden;
+use Laminas\Form\Element\Select;
+use Laminas\Form\Element\Submit;
+use Laminas\Form\Form;
+use Laminas\InputFilter\FileInput;
+use Laminas\InputFilter\InputFilterProviderInterface;
+use Laminas\Validator\File\Extension;
+use Laminas\Validator\File\MimeType;
+use Laminas\Validator\File\Size;
+use Laminas\Validator\File\UploadFile;
+use Laminas\Validator\InArray;
+use Laminas\Validator\NotEmpty;
 
 abstract class RapportForm extends Form implements InputFilterProviderInterface
 {
@@ -173,8 +173,8 @@ abstract class RapportForm extends Form implements InputFilterProviderInterface
                         'name' => UploadFile::class,
                         'options' => [
                             'messages' => [
-                                \Zend\Validator\File\UploadFile::FILE_NOT_FOUND => "Veuillez fournir un fichier.",
-                                \Zend\Validator\File\UploadFile::NO_FILE => "Veuillez fournir un fichier.",
+                                \Laminas\Validator\File\UploadFile::FILE_NOT_FOUND => "Veuillez fournir un fichier.",
+                                \Laminas\Validator\File\UploadFile::NO_FILE => "Veuillez fournir un fichier.",
                             ],
                             'break_chain_on_failure' => true,
                         ],

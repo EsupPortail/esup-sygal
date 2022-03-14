@@ -4,7 +4,7 @@ namespace Application\Entity\Db;
 
 use Application\Search\Filter\SearchFilterValueInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 class OrigineFinancement implements ResourceInterface, SearchFilterValueInterface
 {

@@ -3,7 +3,7 @@
 namespace Soutenance\Form\QualiteLibelleSupplementaire;
 
 use Soutenance\Entity\QualiteLibelleSupplementaire;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class QualiteLibelleSupplementaireHydrator implements HydratorInterface {
 
@@ -11,7 +11,7 @@ class QualiteLibelleSupplementaireHydrator implements HydratorInterface {
      * @param QualiteLibelleSupplementaire $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         $data = [
             'qualite' => $object->getQualite()->getLibelle(),

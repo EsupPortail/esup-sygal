@@ -34,13 +34,13 @@ use UnicaenAuth\Service\ShibService;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use UnicaenAuthToken\Controller\TokenController;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
-use Zend\Authentication\AuthenticationService;
-use Zend\EventManager\EventInterface;
-use Zend\Http\Request;
-use Zend\Http\Response;
-use Zend\Paginator\Paginator as ZendPaginator;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\Authentication\AuthenticationService;
+use Laminas\EventManager\EventInterface;
+use Laminas\Http\Request;
+use Laminas\Http\Response;
+use Laminas\Paginator\Paginator as LaminasPaginator;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 
 class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurController implements SearchControllerInterface
 {
@@ -128,7 +128,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         if ($result instanceof Response) {
             return $result;
         }
-        /** @var ZendPaginator $paginator */
+        /** @var LaminasPaginator $paginator */
         $paginator = $result;
 
         return new ViewModel([

@@ -2,9 +2,9 @@
 
 namespace Soutenance\Form\ChangementTitre;
 
-use Zend\Form\Element\Submit;
-use Zend\Form\Element\Textarea;
-use Zend\Form\Form;
+use Laminas\Form\Element\Submit;
+use Laminas\Form\Element\Textarea;
+use Laminas\Form\Form;
 
 class ChangementTitreForm extends Form {
 

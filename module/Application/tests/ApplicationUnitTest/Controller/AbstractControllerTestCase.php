@@ -4,7 +4,7 @@ namespace ApplicationUnitTest\Controller;
 
 use ApplicationUnitTest\Test\Provider\EntityProvider;
 use Doctrine\ORM\EntityManager;
-use Zend\Stdlib\ArrayUtils;
+use Laminas\Stdlib\ArrayUtils;
 
 /**
  * Class AbstractControllerTest

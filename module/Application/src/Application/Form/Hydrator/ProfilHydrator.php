@@ -4,7 +4,7 @@ namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\Profil;
 use Application\Service\Structure\StructureServiceAwareTrait;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class ProfilHydrator implements HydratorInterface
 {
@@ -14,7 +14,7 @@ class ProfilHydrator implements HydratorInterface
      * @param Profil $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return [
             'libelle' => $object->getLibelle(),

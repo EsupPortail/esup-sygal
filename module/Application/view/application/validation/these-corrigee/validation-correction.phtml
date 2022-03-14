@@ -26,11 +26,11 @@ $canValidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_CORRECT
 $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_CORRECTION_THESE_SUPPR);
 ?>
 
-<div class="panel panel-info box">
-    <div class="panel-heading">
+<div class="card box">
+    <div class="card-header bg-info">
         <h2><?php echo $typeValidation ?></h2>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
 
         <?php if (count($validations)): ?>
             <ul class="validation">
@@ -58,10 +58,10 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_CORRE
                                 $validation->getIndividu()->getSource(),
                                 $validation->getIndividu()->getSourceCode());
                             ?>
-                            <p class="text-danger"><small><span class="glyphicon glyphicon-warning-sign"></span> <?php echo $message ?></small></p>
+                            <p class="text-danger"><small><span class="fas fa-exclamation-triangle"></span> <?php echo $message ?></small></p>
                         <?php else: ?>
                             <p class="text-warning"><small>
-                                    <span class="glyphicon glyphicon-info-sign"></span>
+                                    <span class="fas fa-info-circle"></span>
                                     Cet utilisateur utilise un compte local
                             </small></p>
                         <?php endif; ?>
@@ -72,7 +72,7 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_CORRE
                             $validation->getIndividu()->getSource(),
                             $validation->getIndividu()->getSourceCode());
                         ?>
-                        <p class="text-danger"><small><span class="glyphicon glyphicon-warning-sign"></span> <?php echo $message ?></small></p>
+                        <p class="text-danger"><small><span class="fas fa-exclamation-triangle"></span> <?php echo $message ?></small></p>
                     <?php endif ?>
                 </li>
             <?php endforeach ?>
@@ -82,13 +82,13 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_CORRE
         <?php if ($canValidate): ?>
             <a href="<?php echo $validerUrl ?>"
                class="btn btn-success ajax-modal"
-               data-event="event-validation-correction-these"><span class="glyphicon glyphicon-thumbs-up"></span> Valider</a>
+               data-event="event-validation-correction-these"><span class="fas fa-thumbs-up"></span> Valider</a>
         <?php endif ?>
         <?php if ($canUnvalidate): ?>
             <br>
             <a href="<?php echo $devaliderUrl ?>"
                class="btn btn-danger ajax-modal"
-               data-event="event-validation-correction-these"><span class="glyphicon glyphicon-trash"></span> Annuler la validation</a>
+               data-event="event-validation-correction-these"><span class="icon icon-delete"></span> Annuler la validation</a>
         <?php endif ?>
 
         <?php

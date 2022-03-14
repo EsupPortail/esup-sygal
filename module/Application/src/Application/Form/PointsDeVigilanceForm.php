@@ -2,11 +2,11 @@
 
 namespace Application\Form;
 
-use Zend\Form\Form;
-use Zend\Form\Element\Text;
-use Zend\Form\Element\Textarea;
-use Zend\Form\Element\Submit;
-use Zend\InputFilter\Factory;
+use Laminas\Form\Form;
+use Laminas\Form\Element\Text;
+use Laminas\Form\Element\Textarea;
+use Laminas\Form\Element\Submit;
+use Laminas\InputFilter\Factory;
 
 class PointsDeVigilanceForm extends Form
 {

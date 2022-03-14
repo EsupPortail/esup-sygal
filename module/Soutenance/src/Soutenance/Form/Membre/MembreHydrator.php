@@ -4,7 +4,7 @@ namespace Soutenance\Form\Membre;
 
 use Soutenance\Entity\Membre;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class MembreHydrator implements HydratorInterface
 {
@@ -34,7 +34,7 @@ class MembreHydrator implements HydratorInterface
      * @param Membre $membre
      * @return array
      */
-    public function extract($membre) {
+    public function extract($membre): array {
 
         $data = [];
         $data['sexe']               = $membre->getGenre();

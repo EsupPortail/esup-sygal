@@ -2,13 +2,13 @@
 
 namespace Information\Form;
 
-use Zend\Filter\StripTags;
-use Zend\Form\Element\Button;
-use Zend\Form\Element\Radio;
-use Zend\Form\Element\Select;
-use Zend\Form\Element\Text;
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Filter\StripTags;
+use Laminas\Form\Element\Button;
+use Laminas\Form\Element\Radio;
+use Laminas\Form\Element\Select;
+use Laminas\Form\Element\Text;
+use Laminas\Form\Form;
+use Laminas\InputFilter\InputFilterProviderInterface;
 
 class InformationForm extends Form implements InputFilterProviderInterface {
 
@@ -68,7 +68,7 @@ class InformationForm extends Form implements InputFilterProviderInterface {
             'options' => [
                 'label' => 'Contenu : ',
                 'label_attributes' => [
-                    'class' => 'control-label',
+                    'class' => 'col-form-label',
                 ],
             ],
             'attributes' => [
@@ -96,7 +96,7 @@ class InformationForm extends Form implements InputFilterProviderInterface {
 
     /**
      * Should return an array specification compatible with
-     * {@link Zend\InputFilter\Factory::createInputFilter()}.
+     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
      *
      * @return array
      */

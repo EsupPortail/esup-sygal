@@ -3,9 +3,9 @@
 namespace Application\Form\AdresseMail;
 
 use Application\Form\Validator\NewEmailValidator;
-use Zend\Form\Element\Submit;
-use Zend\Form\Element\Text;
-use Zend\Form\Form;
+use Laminas\Form\Element\Submit;
+use Laminas\Form\Element\Text;
+use Laminas\Form\Form;
 
 class AdresseMailForm extends Form {
 
@@ -24,7 +24,7 @@ class AdresseMailForm extends Form {
 
     /**
      * Should return an array specification compatible with
-     * {@link Zend\InputFilter\Factory::createInputFilter()}.
+     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
      *
      * @return array
      */

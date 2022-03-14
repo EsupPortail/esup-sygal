@@ -5,7 +5,7 @@ namespace Application\Service\These\Factory;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseObserverService;
 use Application\Service\These\TheseService;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\ServiceManager\ServiceManager;
 
 class TheseObserverServiceFactory
 {

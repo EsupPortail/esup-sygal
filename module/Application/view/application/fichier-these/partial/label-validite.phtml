@@ -20,12 +20,12 @@ $validiteFichier = $fichier->getFichier()->getValidite();
     $valide = $validiteFichier->getEstValide();
     $label = [null => "Une erreur est survenue lors du test d'archivabilité", true => 'Archivable', false => 'Non archivable'];
     $labelClass = [null => 'warning', true => 'success', false => 'danger'];
-    $iconClass = [null => 'warning-sign', true => 'thumbs-up', false => 'thumbs-down'];
+    $iconClass = [null => 'exclamation-triangle', true => 'thumbs-up', false => 'thumbs-down'];
     $message = str_replace('|', PHP_EOL, $validiteFichier->getMessage());
     ?>
-    <span class="label-validite label label-<?php echo $labelClass[$valide] ?>"
+    <span class="label-validite badge bg-<?php echo $labelClass[$valide] ?>"
           title="Compte-rendu du test: <?php echo htmlspecialchars($message) ?>"><span
-            class="glyphicon glyphicon-<?php echo $iconClass[$valide] ?>"></span> <?php echo $label[$valide] ?></span>
+            class="fas fa-<?php echo $iconClass[$valide] ?>"></span> <?php echo $label[$valide] ?></span>
     <?php if ($validiteFichier->getEstValide() === null): ?>
         <div class="alert alert-danger alert-sm">
             Le test d'archivabilité du fichier a rencontré un problème indépendant de notre volonté. <br>

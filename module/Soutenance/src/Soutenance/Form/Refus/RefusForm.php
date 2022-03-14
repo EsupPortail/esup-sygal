@@ -2,8 +2,8 @@
 
 namespace Soutenance\Form\Refus;
 
-use Zend\Form\Element\Submit;
-use Zend\Form\Form;
+use Laminas\Form\Element\Submit;
+use Laminas\Form\Form;
 
 class RefusForm extends Form {
 
@@ -15,11 +15,11 @@ class RefusForm extends Form {
             'options' => [
                 'label' => 'Motif de refus de la proposition: ',
                 'label_attributes' => [
-                    'class' => 'control-label',
+                    'class' => 'form-label',
                 ],
             ],
             'attributes' => [
-                'class' => 'form-control motif',
+                'class' => 'motif',
             ]
         ]);
 

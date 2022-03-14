@@ -32,11 +32,11 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
 
 ?>
 
-<div class="box panel panel-info">
-    <div class="panel-heading">
+<div class="box card">
+    <div class="card-header bg-info">
         <h2> Engagements d'impartialité</h2>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
 
         <p class="lead">
             Afin de devenir officiellement rapporteur de cette thèse les futurs rapporteurs doivent signer un engagement
@@ -87,16 +87,16 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
                                 <?php endif; ?>
                             <?php else : ?>
                                 <span class="text-danger">
-                                <span class="glyphicon glyphicon-warning-sign"></span>
+                                <span class="fas fa-exclamation-triangle"></span>
                                 <i> Aucun email de trouvé</i>
-                                <span class="glyphicon glyphicon-warning-sign"></span>
+                                <span class="fas fa-exclamation-triangle"></span>
                             </span>
                             <?php endif; ?>
                         <?php else: ?>
                             <span class="text-danger">
-                                <span class="glyphicon glyphicon-warning-sign"></span>
+                                <span class="fas fa-exclamation-triangle"></span>
                                 <i> N'est pas un individu <?php echo $this->appInfos()->nom ?></i>
-                                <span class="glyphicon glyphicon-warning-sign"></span>
+                                <span class="fas fa-exclamation-triangle"></span>
                             </span>
                         <?php endif; ?>
                     </td>
@@ -107,12 +107,12 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
 
                             <?php if($canNotifierEngagementImpartialite) : ?>
                                 <?php if ($engagement) : ?>
-                                    <span class="glyphicon glyphicon-send" title="Notifier le rapporteur" style="color:lightgray;"></span>
+                                    <span class="icon icon-notify" title="Notifier le rapporteur" style="color:lightgray;"></span>
                                 <?php else: ?>
                                     <a
                                         <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::notifierEngagementImpartialiteAction() */ ?>
                                         href="<?php echo $this->url('soutenance/engagement-impartialite/notifier', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
-                                        <span class="glyphicon glyphicon-send" title="Notifier le rapporteur '<?php echo $acteur->getMembre()->getEmail(); ?>'"></span>
+                                        <span class="icon icon-notify" title="Notifier le rapporteur '<?php echo $acteur->getMembre()->getEmail(); ?>'"></span>
                                     </a>
                                 <?php endif; ?>
                             <?php endif; ?>
@@ -121,21 +121,21 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
                                 <?php if ($engagement) : ?>
                                     <a  <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::annulerEngagementImpartialiteAction() */ ?>
                                         href="<?php echo $this->url('soutenance/engagement-impartialite/annuler', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
-                                        <span class="glyphicon glyphicon-remove"    title="Révoquer l'engagement d'impartialité"></span>
+                                        <span class="icon icon-delete iconly"    title="Révoquer l'engagement d'impartialité"></span>
                                     </a>
                                 <?php else: ?>
-                                    <span class="glyphicon glyphicon-remove"  style="color:lightgray;"  title="Révoquer l'engagement d'impartialité"></span>
+                                    <span class="icon icon-delete iconly"  style="color:lightgray;"  title="Révoquer l'engagement d'impartialité"></span>
                                 <?php endif; ?>
                             <?php endif; ?>
 
                         <?php else : ?>
 
                             <?php if($canNotifierEngagementImpartialite) : ?>
-                                <span class="glyphicon glyphicon-send"      style="color:lightgray;" title="Notifier le rapporteur"></span>
+                                <span class="icon icon-notify iconly"      style="color:lightgray;" title="Notifier le rapporteur"></span>
                             <?php endif; ?>
 
                             <?php if($canRevoquerEngagementImpartialite) : ?>
-                                <span class="glyphicon glyphicon-remove"    style="color:lightgray;" title="Révoquer l'engagement d'impartialité"></span>
+                                <span class="icon icon-delete iconly"    style="color:lightgray;" title="Révoquer l'engagement d'impartialité"></span>
                             <?php endif; ?>
 
                         <?php endif; ?>
@@ -152,7 +152,7 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
                         <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::notifierRapporteursEngagementImpartialiteAction() */ ?>
                         href="<?php echo $this->url('soutenance/presoutenance/notifier-engagement-impartialite', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true);?>"
                        class="btn btn-info <?php echo ($tousLesRapporteurs)?'':'disabled'; ?>">
-                        <span class="glyphicon glyphicon-send"></span> Envoyer les notifications aux rapporteurs
+                        <span class="icon icon-notify"></span> Envoyer les notifications aux rapporteurs
                     </a>
                 <?php endif; ?>
 
@@ -170,9 +170,9 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
 
             <div class="col-md-8">
                 <?php if (!$tousLesEngagements) : ?>
-                    <div class="panel panel-warning">
-                        <div class="panel-heading">
-                            <span class="glyphicon glyphicon-warning-sign"></span>
+                    <div class="card">
+                        <div class="card-header bg-warning">
+                            <span class="fas fa-exclamation-triangle"></span>
                             Tous les rapporteurs n'ont pas encore signé leur engagement d'impartialité.
                         </div>
                     </div>

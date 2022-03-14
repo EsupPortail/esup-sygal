@@ -2,11 +2,11 @@
 
 namespace Soutenance\Form\Configuration;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class ConfigurationHydrator implements HydratorInterface {
 
-    public function extract($object)
+    public function extract($object): array
     {
         // TODO: Implement extract() method.
     }

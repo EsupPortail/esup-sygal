@@ -4,7 +4,7 @@ namespace Soutenance\Form\DateLieu;
 
 use DateTime;
 use Soutenance\Entity\Proposition;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class DateLieuHydrator implements HydratorInterface
 {
@@ -27,7 +27,7 @@ class DateLieuHydrator implements HydratorInterface
      * @param Proposition $proposition
      * @return array
      */
-    public function extract($proposition) {
+    public function extract($proposition): array {
 
         /** @var DateTime $datetime */
         $datetime = $proposition->getDate();

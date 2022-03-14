@@ -12,10 +12,10 @@ use DateInterval;
 use DateTime;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
-use Zend\Permissions\Acl\Acl;
-use Zend\Permissions\Acl\Assertion\AssertionInterface;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
-use Zend\Permissions\Acl\Role\RoleInterface;
+use Laminas\Permissions\Acl\Acl;
+use Laminas\Permissions\Acl\Assertion\AssertionInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Role\RoleInterface;
 
 class PropositionAssertion implements  AssertionInterface {
     use UserContextServiceAwareTrait;
@@ -188,6 +188,24 @@ class PropositionAssertion implements  AssertionInterface {
                     case Role::CODE_BDD :
                         return $structure === $theseEtablissementStructure;
                     default:
+                        return false;
+                }
+            case PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER:
+                switch ($role) {
+                    case Role::CODE_DOCTORANT :
+                        $isDoctorant = $doctorant->getId() === $individu->getId();
+                        $dateOk = ($sursis OR ($dateCurrent <= $dateValidationMax));
+                        return ($isDoctorant AND $dateOk);
+                    default:
+                    return false;
+                }
+            case PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_REVOQUER:
+                switch($role) {
+                    case Role::CODE_ADMIN_TECH :
+                        return true;
+                    case Role::CODE_BDD :
+                        return ($these->getEtablissement()->getStructure() === $identityRole->getStructure());
+                    default :
                         return false;
                 }
             default :

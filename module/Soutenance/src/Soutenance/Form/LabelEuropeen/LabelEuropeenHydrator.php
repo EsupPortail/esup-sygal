@@ -3,7 +3,7 @@
 namespace Soutenance\Form\LabelEuropeen;
 
 use Soutenance\Entity\Proposition;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class LabelEuropeenHydrator implements HydratorInterface
 {
@@ -23,7 +23,7 @@ class LabelEuropeenHydrator implements HydratorInterface
      * @param Proposition $proposition
      * @return array
      */
-    public function extract($proposition) {
+    public function extract($proposition): array {
 
         $data = [
             'label' => $proposition->isLabelEuropeen(),

@@ -8,7 +8,7 @@ use Application\Service\Notification\NotifierService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Interop\Container\ContainerInterface;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Router\Http\TreeRouteStack;
+use Laminas\Router\Http\TreeRouteStack;
 
 class IndexControllerFactory
 {

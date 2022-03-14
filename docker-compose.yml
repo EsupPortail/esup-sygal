@@ -2,8 +2,8 @@ version: '3'
 
 services:
   sygal:
-    image: registre.unicaen.fr:5000/sygal-image-php7.3
-    container_name: sygal-container-php7.3
+    image: registre.unicaen.fr:5000/sygal-image-php7.4
+    container_name: sygal-container-php7.4
     environment:
       - http_proxy
       - https_proxy
@@ -17,6 +17,8 @@ services:
      - .:/app
      - /tmp:/tmp
      - $HOME/.ssh:/root/.ssh
+     - ./docker/apache/livelog.conf:/etc/apache2/conf-available/livelog.conf
+     - ./docker/entrypoint.d/009_livelog:/entrypoint.d/009_livelog
     working_dir: /app
     networks:
       - sygalnet
@@ -32,6 +34,9 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
+      SYGAL_DB: sygal
+      SYGAL_USER: ad_sygal
+      SYGAL_PASSWORD: azerty
     ports:
       - 5432:5432
     volumes:

@@ -7,7 +7,6 @@
  * @var boolean $canValiderActeur
  * @var boolean $canSursis
  *
- *
 
  * @var Doctorant $doctorant
  * @var Acteur[] $directeurs
@@ -16,24 +15,28 @@
  *
  */
 
+
 use Application\Entity\Db\Acteur;
 use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Validation;
 use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Validation\TypeValidation;
 
 $these = $proposition->getThese();
 
+$declarationHonneur = !empty($validations[TypeValidation::CODE_VALIDATION_DECLARATION_HONNEUR]);
+$a=1;
 ?>
 
-<div class="box panel panel-info">
-    <div class="panel-heading">
+<div class="box card">
+    <div class="card-header bg-info">
         <h2>
             Validation de la proposition de soutenance
         </h2>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
 
         <div class="row">
             <div class="col-md-6" >
@@ -41,16 +44,22 @@ $these = $proposition->getThese();
                     Liste des validations
                 </h4>
 
-                <ul>
+                <?php if ($declarationHonneur !== true) : ?>
+                    <div class="alert alert-danger">
+                        <span class="glyphicon glyphicon-warning-sign"></span>
+                        La déclaration sur l'honneur de non plagiat doit être validée avant de permettre la validation de la proposition.
+                    </div>
+                <?php else : ?>
+                    <ul>
                     <li>
                         <?php echo $doctorant->getIndividu(); ?>
                         <br/>
                         <?php if ($validations[Role::CODE_DOCTORANT]) : ?>
                             <?php $validation = current($validations[Role::CODE_DOCTORANT]); ?>
-                            <span class="badge badge-success"> Validée</span>
+                            <span class="badge bg-success"> Validée</span>
                             Le <?php echo $validation->getHistoModification()->format('d/m/Y à H:i'); ?>
                         <?php else: ?>
-                            <span class="badge badge-default"> Aucune validation</span>
+                            <span class="badge bg-secondary"> Aucune validation</span>
                         <?php endif; ?>
 
                     </li>
@@ -63,28 +72,29 @@ $these = $proposition->getThese();
                             (<?php echo $directeur->getRole()->getLibelle();?>)
                             <br/>
                             <?php if ($validation) : ?>
-                                <span class="badge badge-success"> Validée</span>
+                                <span class="badge bg-success"> Validée</span>
                                 Le <?php echo $validation->getHistoModification()->format('d/m/Y à H:i'); ?>
                             <?php else: ?>
-                                <span class="badge badge-default"> Aucune validation</span>
+                                <span class="badge bg-secondary"> Aucune validation</span>
                             <?php endif; ?>
                         </li>
                     <?php endforeach; ?>
                 </ul>
+                <?php endif; ?>
             </div>
 
-            <div class="col-md-6 pull-right" >
+            <div class="col-md-6 float-end" >
                 <?php if (! $validationActeur) : ?>
                     <?php if (!$isOk): ?>
-                        <div class="alert alert-warning">
-                            <span class="glyphicon glyphicon-warning-sign"></span>
+                        <div class="alert card-bodywarning">
+                            <span class="fas fa-exclamation-triangle"></span>
                             Pour pouvoir être valider la proposition de soutenance doit être recevable : date et lieu, composition du jury, ...
                         </div>
                     <?php endif; ?>
                     <?php if (!$canValiderActeur) : ?>
                         <?php if (!$proposition->hasSursis()) : ?>
                             <div class="alert alert-warning">
-                                <span class="glyphicon glyphicon-warning-sign"></span>
+                                <span class="fas fa-exclamation-triangle"></span>
                                Il est possible de valider une proposition seulement si le délai de deux mois entre la date de validation et la date de soutenance est respecté.
                             </div>
                         <?php endif; ?>
@@ -93,7 +103,7 @@ $these = $proposition->getThese();
                                 <?php /** @see \Soutenance\Controller\PropositionController::validerActeurAction(); */ ?>
                                 href="<?php echo $this->url('soutenance/proposition/valider', ['these' => $these->getId()], [], true); ?>"
                                 class="btn btn-success action ">
-                                <span class="glyphicon glyphicon-ok"></span> Valider la proposition de soutenance
+                                <span class="icon icon-ok"></span> Valider la proposition de soutenance
                             </a>
                     <?php endif; ?>
                 <?php endif; ?>
@@ -102,12 +112,12 @@ $these = $proposition->getThese();
             <?php if ($canSursis) : ?>
                 <div class="col-md-6" >
                     <?php /** @see \Soutenance\Controller\PropositionController::toggleSursisAction() */ ?>
-                    <a href="<?php echo $this->url('soutenance/proposition/sursis', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action pull-right">
+                    <a href="<?php echo $this->url('soutenance/proposition/sursis', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action float-end">
                         <?php if (!$proposition->hasSursis()) : ?>
-                            <span class="glyphicon glyphicon-plus-sign"></span>
+                            <span class="icon icon-plus-sign"></span>
                             Accorder un sursis
                         <?php else : ?>
-                            <span class="glyphicon glyphicon-minus-sign"></span>
+                            <span class="icon icon-minus"></span>
                             Retirer le sursis
                         <?php endif; ?>
                     </a>

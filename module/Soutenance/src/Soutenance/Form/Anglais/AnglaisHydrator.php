@@ -3,7 +3,7 @@
 namespace Soutenance\Form\Anglais;
 
 use Soutenance\Entity\Proposition;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class AnglaisHydrator implements HydratorInterface
 {
@@ -24,7 +24,7 @@ class AnglaisHydrator implements HydratorInterface
      * @param Proposition $proposition
      * @return array
      */
-    public function extract($proposition) {
+    public function extract($proposition): array {
 
         $data = [
 //            'manuscrit' => $proposition->isManuscritAnglais(),

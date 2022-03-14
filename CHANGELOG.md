@@ -6,6 +6,21 @@ Journal des modifications
 - [FIX] signature des fonctions de StructureSubstitHelper string => ?string
 - [FIX] les résumés pour la BU se chevauchaient p class='resume pre-scrollable' => p class='pre-scrollable'
 
+4.0.0
+-----
+- Migration vers Laminas (back-end PHP).
+- Migration vers Bootstrap 5 (front-end JS & CSS).
+- Réorganisation des infos affichées à propos de la connexion dans le menu principal.
+- Cas de la connexion d'un utilisateur sans possibilité de trouver d'individu associé : plus de création automatique d'individu car peut bloquer un import ultétieur.
+- Amélioration de la page "Contact Assistance" en cas d'établissement indéterminé et/ou d'adresse d'assistance indéterminé ou invalide.
+- [FIX] Plantage de la page "Contact Assistance" en cas de connexion avec un compte local.
+- [FIX] Activation de la mise en cache de la config lorsque le mode development est désactivé.
+- [FIX] Lancement de la synchro des thèses pour prendre en compte la création/modification/suppression de substitution de structures.
+- Ajout des unités de recherche fermées dans le filtre des thèses
+- [FIX] correction du bug lié au typage de retour trop strict de l'entité Structure
+- Mise en place de la déclaration de non plagiat dans la proposition de soutenance
+- [FIX] Plantage lors de la création/modification/suppression d'une substitution de structure ("Synchro introuvable avec ce nom : these")
+
 3.0.12
 ------
 - Le bouton d'impression du document pour signature du président reste visible même après validation de l'ED.
@@ -61,8 +76,8 @@ Journal des modifications
 3.0.7
 ----- 
 - Nouveau critère de bloquage des soutenances basé sur la validité des rapporteurs.
-- Retrait de la mention qualité absente sur le justificatif de co-encadrement 
-- Ajustement de la date/heure de rendu des rapports 
+- Retrait de la mention qualité absente sur le justificatif de co-encadrement
+- Ajustement de la date/heure de rendu des rapports
 - Modification du lien dans les mails vers les rapporteurs (description complète : token, role, redirect)
 
 3.0.6

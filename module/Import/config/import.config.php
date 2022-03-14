@@ -3,10 +3,12 @@
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Import\Controller\ImportController;
+use Import\Filter\PrefixEtabColumnValueFilter;
+use Import\Filter\PrefixEtabColumnValueFilterFactory;
 use Import\Service\CallService;
-use Zend\Mvc\Console\Router\Simple;
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
+use Laminas\Mvc\Console\Router\Simple;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 
 return [
     'bjyauthorize'    => [
@@ -45,7 +47,8 @@ return [
             'orm_default'        => [
                 'class'   => MappingDriverChain::class,
                 'drivers' => [
-                    'UnicaenDbImport\Entity\Db' => 'orm_default_xml_driver', // remplacement du mapping
+                    'UnicaenDbImport\Entity\Db\ImportObserv' => 'orm_default_xml_driver', // remplacement du mapping
+                    'UnicaenDbImport\Entity\Db\ImportObservResult' => 'orm_default_xml_driver', // idem
                     'Import\Model' => 'orm_default_xml_driver',
                 ],
             ],
@@ -251,14 +254,15 @@ return [
             CallService::class => CallService::class,
         ],
         'abstract_factories' => [
-            'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
-            'Zend\Log\LoggerAbstractServiceFactory',
+            'Laminas\Cache\Service\StorageCacheAbstractServiceFactory',
+            'Laminas\Log\LoggerAbstractServiceFactory',
         ],
         'factories' => [
             Import\Service\ImportService::class  => Import\Service\Factory\ImportServiceFactory::class,
             Import\Service\FetcherService::class => Import\Service\Factory\FetcherServiceFactory::class,
             Import\Service\DbService::class      => Import\Service\Factory\DbServiceFactory::class,
             Import\Service\SynchroService::class => Import\Service\Factory\SynchroServiceFactory::class,
+            PrefixEtabColumnValueFilter::class => PrefixEtabColumnValueFilterFactory::class,
         ],
         'aliases' => [
             'ImportService' => Import\Service\ImportService::class,

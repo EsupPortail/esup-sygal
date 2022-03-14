@@ -7,8 +7,8 @@ use Soutenance\Controller\IndexController;
 use Soutenance\Controller\IndexControllerFactory;
 use Soutenance\Provider\Privilege\IndexPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 
 return array(
     'bjyauthorize' => [

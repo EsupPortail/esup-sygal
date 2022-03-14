@@ -7,7 +7,7 @@ use Import\Model\Service\ImportObservResultService;
 use Import\Model\Service\ImportObservResultServiceFactory;
 use Import\Service\SchemaService;
 use UnicaenAuth\Guard\PrivilegeController;
-use Zend\Mvc\Console\Router\Simple;
+use Laminas\Mvc\Console\Router\Simple;
 
 return [
     'bjyauthorize'    => [
@@ -145,8 +145,8 @@ return [
             'UnicaenImport\Service\Schema' => SchemaService::class,
         ],
         'abstract_factories' => [
-            'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
-            'Zend\Log\LoggerAbstractServiceFactory',
+            'Laminas\Cache\Service\StorageCacheAbstractServiceFactory',
+            'Laminas\Log\LoggerAbstractServiceFactory',
         ],
         'factories' => [
             ImportObservResultService::class => ImportObservResultServiceFactory::class,

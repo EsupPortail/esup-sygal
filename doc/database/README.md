@@ -4,19 +4,19 @@ Création d'une base de données pour ESUP-SyGAL
 Les fichiers fournis permettant de créer une base de données pour ESUP-SyGAL sont :
 
 - d'une part, le fichier de config et le script bash de construction :
-    - [`build_db_files.conf.dist`](build_db_files.conf.dist) (à adpater puis à renommer en `.conf`)
+    - [`build_db_files.conf.dist`](build_db_files.conf.dist) (à adpater et à renommer en `.conf`)
     - [`build_db_files.sh`](build_db_files.sh)
     
 - d'autre part, les scripts SQL situés dans le répertoire [`sql/`](sql) :
-    - [`01_create_db_user.sql`](sql/01_create_db_user.sql)
+    - [`admin/01_create_db_user.sql`](sql/admin/01_create_db_user.sql)
     - [`02_create_schema.sql`](sql/02_create_schema.sql)
     - [`03_insert_bootstrap_data.sql`](sql/03_insert_bootstrap_data.sql)
     - [`04_insert_data.sql`](sql/04_insert_data.sql)
     - [`05_prepare_data.sql`](sql/05_prepare_data.sql)
     - [`06_create_constraints.sql`](sql/06_create_constraints.sql)
-    - [`07_create_comue.sql.dist`](sql/07_create_comue.sql.dist) (à "préparer" avec le script) 
-    - [`08_init.sql.dist`](sql/08_init.sql.dist) (idem)
-    - [`09_create_fixture.sql.dist`](sql/09_create_fixture.sql.dist) (idem)
+    - [`07_create_comue.sql.dist`](sql/07_create_comue.sql.dist)
+    - [`08_init.sql.dist`](sql/08_init.sql.dist)
+    - [`09_create_fixture.sql.dist`](sql/09_create_fixture.sql.dist)
     
 
 ## Case départ
@@ -55,55 +55,64 @@ Une fois le script bash exécuté, vous devriez vous retrouver avec 3 scripts SQ
 À présent, tout est prêt pour lancer la création de la base de données.
 
 
-## Création de la base de données `:dbname` et de l'utilisateur `:dbuser`
+## Adresse du serveur de base de données
 
-- Lancer le script [`01_create_db_user.sql`](sql/01_create_db_user.sql) *en étant connecté en tant que 
-  super-utilisateur*, exemple :
+- Adaptez et exportez les 2 variables d'environnement suivantes :
 
 ```bash
-ON_ERROR_STOP=1 \
+export \
 PGHOST=localhost \
-PGPORT=5432 \
-PGDATABASE=postgres \
-PGUSER=postgres \
-PGPASSWORD=admin \
-psql -f sql/01_create_db_user.sql
+PGPORT=5432
 ```
 
-Ce 1er script SQL crée la base de données `:dbname` et l'utilisateur `:dbuser`. 
 
-**Attention, l'utilisateur est créé avec un mot de passe par défaut** donc vous devez le modifier en faisant un 
-truc du genre :
+## Nom de la base de données SyGAL à créer, de l'utilisateur et de son mot de passe
+
+- Adaptez et exportez les 3 variables d'environnement suivantes :
+
 ```bash
-PGHOST=localhost \
-PGPORT=5432 \
+export \
+SYGAL_DB='sygal' \
+SYGAL_USER='ad_sygal' \
+SYGAL_PASSWORD='xxxxxxxxx'
+```
+
+
+## Création de la base de données et de l'utilisateur
+
+- Dans les lignes de commande suivantes, renseignez correctement les variables d'environnement `PG*` permettant 
+  de se connecter au serveur Postgres en tant que super-utilisateur puis lancez-les :
+
+```bash
+export \
+ON_ERROR_STOP=1 \
 PGDATABASE=postgres \
 PGUSER=postgres \
-PGPASSWORD=admin \
-psql -c "alter user :dbuser with encrypted password 'VRAI_MOT_DE_PASSE'"
+PGPASSWORD=admin
+
+psql \
+  -v "dbname=${SYGAL_DB}" \
+  -v "dbuser=${SYGAL_USER}" \
+  -v "dbpassword='${SYGAL_PASSWORD}'" \
+  -f sql/admin/01_create_db_user.sql
 ```
 
 
 ## Création des objets et insertion des données de fonctionnement
 
-*Les scripts suivants doivent être lancés en étant connecté à la base `:dbname` avec le user `:dbuser`
-créés à l'étape précédente (et non plus avec l'utilisateur `postgres`).*
+*Les scripts suivants sont lancés en étant connecté à la base SyGAL avec l'utilisateur SyGAL
+créés à l'étape précédente (et non plus avec le super-utilisateur).*
 
-Pour cela, exportez les variables d'environnement PostgreSQL comme suit :
+- Lancez les lignes de commande suivantes :
+
 ```bash
 export \
 ON_ERROR_STOP=1 \
-PGHOST=localhost \
-PGPORT=5432 \
-PGDATABASE=:dbname \
-PGUSER=:dbuser \
-PGPASSWORD=VRAI_MOT_DE_PASSE
-```
+PGDATABASE=${SYGAL_DB} \
+PGUSER=${SYGAL_USER} \
+PGPASSWORD=${SYGAL_PASSWORD}
 
-Lancez ensuite *dans l'ordre* chacun des scripts suivants :
-
-```bash
-psql -f sql/02_create_schema.sql && \
+psql -v "dbuser=${SYGAL_USER}" -f sql/02_create_schema.sql && \
 psql -f sql/03_insert_bootstrap_data.sql && \
 psql -f sql/04_insert_data.sql && \
 psql -f sql/05_prepare_data.sql && \
@@ -113,8 +122,19 @@ psql -f sql/08_init.sql && \
 psql -f sql/09_create_fixture.sql
 ```
 
-Par précaution, effacez éventuellement les variables d'environnement PostgreSQL :
+Par précaution, effacez éventuellement les variables d'environnement exportées :
 
 ```bash
 unset ON_ERROR_STOP PGHOST PGPORT PGDATABASE PGUSER PGPASSWORD # précaution
+```
+
+## Si besoin
+
+- Suppression de la base de données !!
+
+```bash
+PGDATABASE=postgres \
+PGUSER=postgres \
+PGPASSWORD=admin \
+psql -c "drop database ${SYGAL_DB}"
 ```

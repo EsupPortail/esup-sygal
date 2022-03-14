@@ -3,7 +3,7 @@
 namespace Application\Form\Factory;
 
 use Application\Form\RdvBuTheseDoctorantForm;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Interop\Container\ContainerInterface;
 
 class RdvBuTheseDoctorantFormFactory
@@ -11,7 +11,7 @@ class RdvBuTheseDoctorantFormFactory
     public function __invoke(ContainerInterface $container)
     {
         /** @var DoctrineObject $hydrator */
-        $hydrator = $container->get('HydratorManager')->get('DoctrineModule\Stdlib\Hydrator\DoctrineObject');
+        $hydrator = $container->get('HydratorManager')->get(DoctrineObject::class);
 
         $form = new RdvBuTheseDoctorantForm();
         $form->setHydrator($hydrator);

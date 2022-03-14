@@ -20,15 +20,15 @@ $originaleOuRetraitee = $retraite ? "retraitée" : "";
 
 <?php if ($fichier): ?>
 
-    <div class="panel panel-info box">
+    <div class="card box">
 
-        <div class="panel-heading">
+        <div class="card-header bg-info">
             <?php $heading = $fichier->getFichier()->getVersion()->estVersionCorrigee() ?
                 "Archivabilité de la thèse corrigée $originaleOuRetraitee" : "Archivabilité de la thèse $originaleOuRetraitee"; ?>
             <h2 class="first"><?php echo $heading ?></h2>
         </div>
 
-        <div class="panel-body">
+        <div class="card-body">
 
             <?php if (!$validiteFichier): ?>
 
@@ -42,7 +42,7 @@ $originaleOuRetraitee = $retraite ? "retraitée" : "";
 
                 <?php if ($fichier->isRetraitementAuto()): ?>
                     <p class="text-danger lead">
-                        <span class="glyphicon glyphicon-thumbs-down"></span>
+                        <span class="fas fa-thumbs-down"></span>
                         Thèse retraitée automatiquement par l'application non archivable.
                     </p>
                     <p>
@@ -50,7 +50,7 @@ $originaleOuRetraitee = $retraite ? "retraitée" : "";
                     </p>
                 <?php else: ?>
                     <p class="text-danger lead">
-                        <span class="glyphicon glyphicon-thumbs-down"></span>
+                        <span class="fas fa-thumbs-down"></span>
                         Thèse retraitée par vos soins non archivable.
                     </p>
                     <p>
@@ -66,12 +66,12 @@ $originaleOuRetraitee = $retraite ? "retraitée" : "";
 
                 <?php if ($fichier->isRetraitementAuto()): ?>
                     <p class="text-success lead">
-                        <span class="glyphicon glyphicon-thumbs-up"></span>
+                        <span class="fas fa-thumbs-up"></span>
                         Thèse <?php echo $retraite ? "retraitée" : "" ?> automatiquement archivable
                     </p>
                 <?php else: ?>
                     <p class="text-success lead">
-                        <span class="glyphicon glyphicon-thumbs-up"></span>
+                        <span class="fas fa-thumbs-up"></span>
                         Thèse <?php echo $retraite ? "retraitée" : "" ?> par vos soins archivable
                     </p>
                 <?php endif ?>

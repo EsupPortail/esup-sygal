@@ -12,8 +12,8 @@ use Soutenance\Form\QualiteLibelleSupplementaire\QualiteLibelleSupplementaireFor
 use Soutenance\Provider\Privilege\QualitePrivileges;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use Soutenance\Service\QualiteLibelleSupplementaire\QualiteLibelleSupplementaireServiceAwareTrait;
-use Zend\Http\Request;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\View\Model\ViewModel;
 
 class QualiteController extends AbstractController
 {

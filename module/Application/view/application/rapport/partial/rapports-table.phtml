@@ -248,7 +248,7 @@ $acteursFormatterCodirecteurs->asSeparated()
                     ?>
                     <?php if ($rapportAvis !== null): ?>
                         <p>
-                            <span class="glyphicon glyphicon-thumbs-<?php echo $rapportAvis->getAvisAsBoolean() ? 'up' :'down' ?>"></span>
+                            <span class="fas fa-thumbs-<?php echo $rapportAvis->getAvisAsBoolean() ? 'up' :'down' ?>"></span>
                             <abbr title="Commentaires : <?php echo $rapportAvis->getCommentaires() ?>"><strong><?php echo $rapportAvis->getAvis() ?></strong></abbr> <br>
                             <span class="text-sm"><?php echo $rapportAvis->getHistoModificateur() ?: $rapportAvis->getHistoCreateur() ?><br>
                             <?php echo ($rapportAvis->getHistoModification() ?: $rapportAvis->getHistoCreation())->format('d/m/Y H:i') ?></span>
@@ -258,19 +258,19 @@ $acteursFormatterCodirecteurs->asSeparated()
                             <a href="<?php echo $this->url($routeName . '/avis/modifier', ['rapportAvis' => $rapportAvis->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
                                class="btn btn-warning"
                                title="Modifier cet avis ?"
-                               data-toggle="confirmation">Modifier l'avis</span></a>
+                               data-bs-toggle="confirmation">Modifier l'avis</span></a>
                         <?php endif ?>
                         <?php if ($canSupprimerAvis): ?>
                             <a href="<?php echo $this->url($routeName . '/avis/supprimer', ['rapportAvis' => $rapportAvis->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
                                class="btn btn-danger"
                                title="Supprimer cet avis ?"
-                               data-toggle="confirmation">Supprimer l'avis</span></a>
+                               data-bs-toggle="confirmation">Supprimer l'avis</span></a>
                         <?php endif ?>
                     <?php else: ?>
                         <?php if ($canAjouterAvis): ?>
                             <p>Aucun</p>
                             <a href="<?php echo $this->url($routeName . '/avis/ajouter', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
-                               class="btn btn-default">Nouvel avis</span></a>
+                               class="btn btn-secondary">Nouvel avis</span></a>
                         <?php endif ?>
                     <?php endif ?>
                 </td>
@@ -281,7 +281,7 @@ $acteursFormatterCodirecteurs->asSeparated()
                 <?php $returnUrl = $returnUrl ?: $this->url($routeName . '/consulter', ['these' => $these->getId()]) ?>
                 <?php if ($rapportValidation !== null): ?>
                     <p>
-                        <span class="glyphicon glyphicon-ok-sign"></span> <strong>Validé</strong> <br>
+                        <span class="icon icon-ok"></span> <strong>Validé</strong> <br>
                         <span class="text-sm"><?php echo $rapportValidation->getHistoCreateur() ?><br>
                             <?php echo $rapportValidation->getHistoCreation()->format('d/m/Y H:i') ?></span>
                     </p>
@@ -290,7 +290,8 @@ $acteursFormatterCodirecteurs->asSeparated()
                         <a href="<?php echo $this->url($routeName . '/devalider', ['rapportValidation' => $rapportValidation->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
                            class="btn btn-danger"
                            title="Dévalider ce rapport ?"
-                           data-toggle="confirmation">Dévalider</span></a>
+                           data-bs-toggle="confirmationx"
+                           data-message="Êtes-vous sûr·e de vouloir dévalider ?">Dévalider</span></a>
                     <?php endif ?>
                 <?php else: ?>
                     <p>Non validé</p>
@@ -299,7 +300,8 @@ $acteursFormatterCodirecteurs->asSeparated()
                         <a href="<?php echo $this->url($routeName . '/valider', ['rapport' => $rapport->getId(), 'typeValidation' => $typeValidation->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
                            class="btn btn-success"
                            title="Valider ce rapport ?"
-                           data-toggle="confirmation">Valider</span></a>
+                           data-bs-toggle="confirmationx"
+                           data-message="Êtes-vous sûr·e de vouloir valider ce rapport ?">Valider</span></a>
                     <?php endif ?>
                 <?php endif ?>
             </td>
@@ -309,23 +311,11 @@ $acteursFormatterCodirecteurs->asSeparated()
                 <?php if ($canDel): ?>
                     <a href="<?php echo $this->url($routeName . '/supprimer', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
                        title="Supprimer ce rapport ?"
-                       data-toggle="confirmation"><span class="glyphicon glyphicon-trash"></span></a>
+                       data-bs-toggle="confirmationx"
+                       data-message="Êtes-vous sûr·e de vouloir supprimer ce rapport ?"><span class="icon icon-delete iconly"></span></a>
                 <?php endif; ?>
             </td>
         </tr>
     <?php endforeach; ?>
     </tbody>
 </table>
-
-
-<script>
-    $(function() {
-        $('[data-toggle=confirmation]').confirmation({
-            rootSelector: '[data-toggle=confirmation]',
-            container: 'body',
-            title: "Êtes-vous sûr(e) ?",
-            btnOkLabel: "Oui",
-            btnCancelLabel: "Non",
-        });
-    });
-</script>

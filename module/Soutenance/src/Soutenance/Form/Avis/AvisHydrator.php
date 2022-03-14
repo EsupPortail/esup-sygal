@@ -3,7 +3,7 @@
 namespace Soutenance\Form\Avis;
 
 use Soutenance\Entity\Avis;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class AvisHydrator implements HydratorInterface {
 
@@ -11,7 +11,7 @@ class AvisHydrator implements HydratorInterface {
      * @param Avis $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         $data = [
             'avis' => $object->getAvis(),

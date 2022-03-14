@@ -4,7 +4,7 @@ namespace Application\Filter;
 
 use Application\Entity\Db\Fichier;
 use UnicaenApp\Util;
-use Zend\Filter\AbstractFilter;
+use Laminas\Filter\AbstractFilter;
 
 /**
  * Filtre générateur du nom de fichier.

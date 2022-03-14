@@ -26,7 +26,7 @@ use UnicaenAuth\Service\User as UserService;
 use UnicaenAuth\Service\UserContext;
 use UnicaenAuthToken\Controller\TokenController;
 use UnicaenAuthToken\Service\TokenService;
-use Zend\Authentication\AuthenticationService;
+use Laminas\Authentication\AuthenticationService;
 use ZfcUser\Mapper\UserInterface;
 
 class UtilisateurControllerFactory

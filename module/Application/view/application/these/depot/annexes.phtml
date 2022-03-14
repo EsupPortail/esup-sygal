@@ -7,7 +7,7 @@ use Application\Entity\Db\VersionFichier;
 use Application\Provider\Privilege\FichierPrivileges;
 use Application\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
-use Zend\Form\Element\Hidden;
+use Laminas\Form\Element\Hidden;
 
 /**
  * @var PhpRenderer    $this
@@ -30,7 +30,7 @@ $maxFileCountAutres = 50;
 
 <h3 class=""><?php echo $titre ?></h3>
 
-<p class="help-block">
+<p class="form-text text-muted">
     Vérifiez la liste des formats  acceptés sur le site <a href="https://facile.cines.fr">https://facile.cines.fr</a>.
 </p>
 

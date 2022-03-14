@@ -5,9 +5,9 @@ namespace Application\Filter;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\View\Renderer\PhpRenderer;
-use Zend\Filter\AbstractFilter;
-use Zend\Permissions\Acl\Role\RoleInterface;
-use Zend\View\Helper\HtmlList;
+use Laminas\Filter\AbstractFilter;
+use Laminas\Permissions\Acl\Role\RoleInterface;
+use Laminas\View\Helper\HtmlList;
 
 class RolesUtilisateurFormatter extends AbstractFilter
 {

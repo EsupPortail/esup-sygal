@@ -5,7 +5,7 @@ namespace Application\Assertion\Structure;
 use Application\Assertion\BaseAssertion;
 use Application\Provider\Privilege\StructurePrivileges;
 use Application\Service\UserContextService;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * Class TheseAssertion

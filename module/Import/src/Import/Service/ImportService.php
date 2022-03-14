@@ -16,8 +16,8 @@ use Import\Service\Traits\SynchroServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Log\LoggerAwareTrait;
-use Zend\Log\LoggerInterface;
+use Laminas\Log\LoggerAwareTrait;
+use Laminas\Log\LoggerInterface;
 
 /**
  * Service d'import des données provenant d'un établissement.

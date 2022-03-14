@@ -5,10 +5,10 @@ namespace Application\View\Helper;
 use Application\Entity\Db\Individu;
 use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\View\Helper\UserAbstract;
-use Zend\Form\Form;
-use Zend\Form\View\Helper\Form as FormHelper;
-use Zend\Form\View\Helper\FormElement;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\Form\Form;
+use Laminas\Form\View\Helper\Form as FormHelper;
+use Laminas\Form\View\Helper\FormElement;
+use Laminas\View\Renderer\PhpRenderer;
 
 /**
  * Aide de vue dessinat un bouton permettant d'usurper l'identité d'un individu.

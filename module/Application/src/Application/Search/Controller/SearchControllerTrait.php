@@ -4,10 +4,10 @@ namespace Application\Search\Controller;
 
 use Application\Search\Filter\SearchFilter;
 use DomainException;
-use Zend\Http\Response;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Paginator\Paginator as ZendPaginator;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Paginator\Paginator as LaminasPaginator;
+use Laminas\View\Model\ViewModel;
 
 /**
  * Trait SearchControllerTrait
@@ -27,7 +27,7 @@ trait SearchControllerTrait
     }
 
     /**
-     * @return Response|ZendPaginator
+     * @return Response|LaminasPaginator
      * @see SearchControllerPlugin::searchIfRequested()
      */
     public function searchIfRequested()
@@ -36,7 +36,7 @@ trait SearchControllerTrait
     }
 
     /**
-     * @return Response|ZendPaginator
+     * @return Response|LaminasPaginator
      * @see SearchControllerPlugin::search()
      */
     public function search()

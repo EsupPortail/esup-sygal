@@ -35,14 +35,14 @@ $fcg = $this->formControlGroup();
         <?php echo $fcg($form->get('domaine')) ?>
     </div>
     <div class="col-md-6">
-        <label class="control-label">Étiquettes associées :</label>
+        <label class="form-label col-form-label">Étiquettes associées :</label>
         <?php echo $fcg($form->get('estMembre')) ?>
         <?php echo $fcg($form->get('estAssocie')) ?>
         <?php echo $fcg($form->get('estInscription')) ?>
         <?php echo $fcg($form->get('estFerme')) ?>
     <div id="logo-div">
         <?php
-        /** @var \Zend\Form\Element\File $logoFile */
+        /** @var \Laminas\Form\Element\File $logoFile */
         $logoFile = $form->get('cheminLogo');
         echo $this->formLabel($logoFile);
         ?>
@@ -70,7 +70,7 @@ $fcg = $this->formControlGroup();
                     <br/>
                     <?php if($form->getObject()->getId()): ?>
                     <a id="supprimer-logo" class="btn btn-danger" href="<?php echo $this->url('etablissement/supprimer-logo', ["structure" => $form->getObject()->getStructure()->getId()], [], true); ?>">
-                        <span class="glyphicon glyphicon-trash"></span>
+                        <span class="icon icon-delete"></span>
                         Supprimer le logo
                     </a>
                     <?php endif; ?>
@@ -80,7 +80,7 @@ $fcg = $this->formControlGroup();
 
         <div class="alert alert-warning">
             <small>
-                <span class="glyphicon glyphicon-exclamation-sign"></span>
+                <span class="icon icon-warning"></span>
                 Le logo de la structure doit être donné dans un des formats suivant&nbsp;:
                 <ul>
                     <li>.bmp</li>
@@ -121,7 +121,7 @@ $this->translate("Logo de l'établissement :");
             fr.readAsDataURL( myFile[0] );
         });
 
-        $("button#supprimer-logo").click( function() {
+        $("button#supprimer-logo").on("click",  function() {
            alert("clic");
         });
     });

@@ -3,6 +3,8 @@
  * Fichier de config locale, SANS INFORMATIONS SENSIBLES.
  */
 
+namespace Application;
+
 return [
     'sygal' => [
         'page_de_couverture' => [

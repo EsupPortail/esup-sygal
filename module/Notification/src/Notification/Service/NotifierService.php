@@ -12,7 +12,7 @@ use Notification\MessageContainer;
 use Notification\Notification;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\Service\Mailer\MailerServiceAwareTrait;
-use Zend\Mail\Message;
+use Laminas\Mail\Message;
 
 /**
  * Service d'envoi de notification par mail.
@@ -149,7 +149,7 @@ class NotifierService
 
     /**
      * @param Notification $notification
-     * @return \Zend\Mail\Message
+     * @return \Laminas\Mail\Message
      */
     protected function createMailForNotification(Notification $notification)
     {

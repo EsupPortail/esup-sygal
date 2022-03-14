@@ -27,47 +27,47 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 </script>
 
 <?php else : ?>
-    <div class="box panel panel-info">
-        <div class="panel-heading">
+    <div class="box card">
+        <div class="card-header bg-info">
             <h2 class="first">
                 <?php echo $this->translate("Utilisateur") ?>
             </h2>
         </div>
-        <div class="panel-body">
-            <dl class="dl-horizontal">
-                <dt>Id</dt>
-                <dd><?php echo $utilisateur->getId() ?></dd>
-                <dt>Username</dt>
-                <dd><code><?php echo $utilisateur->getUsername() ?></code></dd>
-                <dt>Email</dt>
-                <dd><?php echo $utilisateur->getEmail() ?></dd>
-                <dt>Display name</dt>
-                <dd><?php echo $utilisateur->getDisplayName() ?></dd>
-                <dt>Password</dt>
-                <dd><?php echo Util::truncatedString($utilisateur->getPassword(), 10) ?></dd>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-md-5">Id</dt>
+                <dd class="col-md-5"><?php echo $utilisateur->getId() ?></dd>
+                <dt class="col-md-5">Username</dt>
+                <dd class="col-md-5"><code><?php echo $utilisateur->getUsername() ?></code></dd>
+                <dt class="col-md-5">Email</dt>
+                <dd class="col-md-5"><?php echo $utilisateur->getEmail() ?></dd>
+                <dt class="col-md-5">Display name</dt>
+                <dd class="col-md-5"><?php echo $utilisateur->getDisplayName() ?></dd>
+                <dt class="col-md-5">Password</dt>
+                <dd class="col-md-5"><?php echo Util::truncatedString($utilisateur->getPassword(), 10) ?></dd>
                 <?php if ($token = $utilisateur->getPasswordResetToken()): ?>
-                    <dt>Password reset token</dt>
-                    <dd><?php echo Util::truncatedString($token, 8) ?></dd>
+                    <dt class="col-md-5">Password reset token</dt>
+                    <dd class="col-md-5"><?php echo Util::truncatedString($token, 8) ?></dd>
                 <?php endif ?>
             </dl>
         </div>
     </div>
 
     <?php if ($individu)  : ?>
-        <div class="box panel panel-info">
-            <div class="panel-heading">
+        <div class="box card">
+            <div class="card-header bg-info">
                 <h2 class="first">
                     <?php echo $this->translate("Utilisateur") ?>
                 </h2>
             </div>
-            <div class="panel-body">
-                <dl class="dl-horizontal">
-                    <dt>Id</dt>
-                    <dd><?php echo $individu->getId() ?></dd>
-                    <dt>Nom complet</dt>
-                    <dd><?php echo $individu->getNomComplet() ?></dd>
-                    <dt>Email</dt>
-                    <dd><?php echo $individu->getEmail() ?></dd>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-md-5">Id</dt>
+                    <dd class="col-md-5"><?php echo $individu->getId() ?></dd>
+                    <dt class="col-md-5">Nom complet</dt>
+                    <dd class="col-md-5"><?php echo $individu->getNomComplet() ?></dd>
+                    <dt class="col-md-5">Email</dt>
+                    <dd class="col-md-5"><?php echo $individu->getEmail() ?></dd>
                 </dl>
 
                 <h2> Rôles statiques associés à l'individu </h2>

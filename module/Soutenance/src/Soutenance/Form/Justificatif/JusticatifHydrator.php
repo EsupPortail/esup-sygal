@@ -6,7 +6,7 @@ use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 /**
  * NB : Fichier est un object "complexe" géré en dehors de l'hydrator directement dans les actions ...
@@ -21,7 +21,7 @@ class JusticatifHydrator implements HydratorInterface {
      * @param Justificatif $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         $data  = [
             'nature' => ($object && $object->getFichier() &&  $object->getFichier()->getFichier()->getNature())? $object->getFichier()->getFichier()->getNature()->getCode(): null,

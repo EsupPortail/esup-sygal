@@ -8,7 +8,7 @@
 
 namespace Application\Form;
 
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 
 interface DoctrineObjectHydratorAwareInterface
 {

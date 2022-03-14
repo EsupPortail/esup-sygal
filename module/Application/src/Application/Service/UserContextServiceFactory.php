@@ -2,12 +2,13 @@
 
 namespace Application\Service;
 
+use Application\Entity\UserWrapperFactory;
 use Application\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Individu\IndividuService;
 use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
 use UnicaenAuth\Options\ModuleOptions;
-use Zend\Authentication\AuthenticationService;
+use Laminas\Authentication\AuthenticationService;
 
 class UserContextServiceFactory
 {
@@ -20,7 +21,7 @@ class UserContextServiceFactory
     public function __invoke(ContainerInterface $container)
     {
         /** @var AuthenticationService $authenticationService */
-        $authenticationService = $container->get('Zend\Authentication\AuthenticationService');
+        $authenticationService = $container->get('Laminas\Authentication\AuthenticationService');
 
         /** @var IndividuService $individuService */
         $individuService = $container->get('IndividuService');
@@ -30,11 +31,15 @@ class UserContextServiceFactory
         /** @var ModuleOptions $moduleOptions */
         $moduleOptions = $container->get('unicaen-auth_module_options');
 
+        /** @var UserWrapperFactory $userWrapperFactory */
+        $userWrapperFactory = $container->get(UserWrapperFactory::class);
+
         $service = new UserContextService();
         $service->setIndividuService($individuService);
         $service->setEtablissementService($etablissementService);
         $service->setAuthenticationService($authenticationService);
         $service->setModuleOptions($moduleOptions);
+        $service->setUserWrapperFactory($userWrapperFactory);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper

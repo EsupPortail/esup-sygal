@@ -5,7 +5,7 @@ namespace Application\Controller\Plugin\Url;
 use Application\Entity\Db\These;
 use Application\Entity\Db\VersionFichier;
 use Application\Service\Url\UrlTheseService;
-use Zend\Mvc\Controller\Plugin\AbstractPlugin;
+use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 
 /**
  * Aide de vue de génération d'URL.

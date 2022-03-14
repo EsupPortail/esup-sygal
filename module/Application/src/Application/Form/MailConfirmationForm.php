@@ -2,12 +2,12 @@
 
 namespace Application\Form;
 
-use Zend\Form\Element\Submit;
-use Zend\Form\Form;
+use Laminas\Form\Element\Submit;
+use Laminas\Form\Form;
 use Application\Entity\Db\MailConfirmation;
-use Zend\Form\Element\Hidden;
-use Zend\Form\Element\Text;
-use Zend\InputFilter\Factory;
+use Laminas\Form\Element\Hidden;
+use Laminas\Form\Element\Text;
+use Laminas\InputFilter\Factory;
 
 class MailConfirmationForm extends Form {
 

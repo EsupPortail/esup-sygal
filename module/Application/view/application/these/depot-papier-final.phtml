@@ -8,7 +8,7 @@
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Application\Provider\Privilege\ValidationPrivileges;
-use Zend\Form\Form;
+use Laminas\Form\Form;
 
 $canEdit = $this->isAllowed($these, ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE);
 $toggleDetails = clone $this->toggleDetails('div-depot-corrige');
@@ -46,7 +46,7 @@ $toggleDetails = clone $this->toggleDetails('div-depot-corrige');
                 //'value' => $these->getId(),
                 'type' => 'hidden',
             ));
-            $this->add((new \Zend\Form\Element\Submit('submit'))
+            $this->add((new \Laminas\Form\Element\Submit('submit'))
                 ->setValue("Validation")
                 ->setAttribute('class', 'btn btn-primary')
             );
@@ -66,13 +66,13 @@ $toggleDetails = clone $this->toggleDetails('div-depot-corrige');
 
     <?php echo $this->messenger()->addMessagesFromFlashMessenger(); ?>
 
-    <div class="box panel panel-<?php echo $validation ? 'success' : 'info' ?>">
+    <div class="box card card-<?php echo $validation ? 'success' : 'info' ?>">
 
-        <div class="panel-heading">
+        <div class="card-header">
             <h2 class="first">Validation de la remise de l'exemplaire papier corrigé </h2>
         </div>
 
-        <div class="panel-body">
+        <div class="card-body">
             <?php
             if ($canEdit) {
                 $form = new VersionFinalForm();

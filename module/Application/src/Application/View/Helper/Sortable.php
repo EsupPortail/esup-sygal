@@ -2,9 +2,9 @@
 
 namespace Application\View\Helper;
 
-use Zend\Http\Request;
-use Zend\Uri\Http;
-use Zend\View\Helper\AbstractHelper;
+use Laminas\Http\Request;
+use Laminas\Uri\Http;
+use Laminas\View\Helper\AbstractHelper;
 
 /**
  * Aide de vue générant une URL contenant les query parameters 'sort' et 'direction'
@@ -166,11 +166,11 @@ class Sortable extends AbstractHelper
         switch ($this->currentDirection) {
             case self::ASC:
                 $title = "Trié(e)s par ordre croissant";
-                $class = 'glyphicon glyphicon-sort-by-attributes';
+                $class = 'fas fa-sort-alpha-down';
                 break;
             case self::DESC:
                 $title = "Trié(e)s par ordre décroissant";
-                $class = 'glyphicon glyphicon-sort-by-attributes-alt';
+                $class = 'fas fa-sort-alpha-up';
                 break;
             default:
                 $title = 'Non trié(s)';

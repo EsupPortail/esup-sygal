@@ -12,6 +12,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var PhpRenderer $this
  * @var Etablissement $etablissement
  * @var string $contact
+ * @var bool $contactValide
  * @var Individu|null $individu
  * @var Utilisateur|null $utilisateur
  * @var Role|null $role
@@ -39,12 +40,19 @@ $mailBody =
 <div class="row">
     <div class="col-md-7">
         <dl>
-            <dt>Adresse d'assistance - <?php echo $etablissement ?></dt>
+            <dt>Adresse d'assistance - <?php echo $etablissement ?: "Établissement indéterminé" ?></dt>
             <dd>
-                <?php
-                ?>
-                <a href="mailto:<?php echo trim($contact) ?>?body=<?php echo urlencode($mailBody) ?>"
-                   title="<?php echo $this->translate("Envoyer un mail à cette adresse") ?>"><?php echo $contact ?></a>
+                <?php if ($contact): ?>
+                    <?php if ($contactValide): ?>
+                        <a href="mailto:<?php echo trim($contact) ?>?body=<?php echo urlencode($mailBody) ?>"
+                           title="<?php echo $this->translate("Envoyer un mail à cette adresse") ?>"><?php echo $contact ?></a>
+                    <?php else: ?>
+                        <?php echo $contact ?>
+                        <span class="icon icon-warning text-danger" title="Adresse non valide !"></span>
+                    <?php endif ?>
+                <?php else: ?>
+                    Indéterminée
+                <?php endif ?>
             </dd>
         </dl>
     </div>

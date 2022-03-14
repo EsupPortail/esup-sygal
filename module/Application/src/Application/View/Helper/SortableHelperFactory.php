@@ -3,7 +3,7 @@
 namespace Application\View\Helper;
 
 use Interop\Container\ContainerInterface;
-use Zend\Http\Request;
+use Laminas\Http\Request;
 
 class SortableHelperFactory
 {

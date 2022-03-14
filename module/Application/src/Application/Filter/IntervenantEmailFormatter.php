@@ -3,7 +3,7 @@
 namespace Application\Filter;
 
 use Application\Entity\Db\Intervenant;
-use Zend\Filter\AbstractFilter;
+use Laminas\Filter\AbstractFilter;
 
 class IntervenantEmailFormatter extends AbstractFilter
 {

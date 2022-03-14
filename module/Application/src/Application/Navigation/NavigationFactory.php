@@ -4,8 +4,8 @@ namespace Application\Navigation;
 
 use Interop\Container\ContainerInterface;
 use LogicException;
-use Zend\Navigation\Service\DefaultNavigationFactory;
-use Zend\Router\RouteMatch;
+use Laminas\Navigation\Service\DefaultNavigationFactory;
+use Laminas\Router\RouteMatch;
 
 /**
  * Factory de navigation prenant en charge :

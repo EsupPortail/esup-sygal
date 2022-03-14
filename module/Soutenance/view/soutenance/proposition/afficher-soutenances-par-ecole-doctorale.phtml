@@ -36,17 +36,17 @@ $count = count($soutenances);
             $rapporteurs = array_filter($acteurs, function (Acteur $a) { return $a->estRapporteur();});
             $membres = array_filter($acteurs, function (Acteur $a) { return $a->estMembreDuJury();});
         ?>
-        <div class="panel panel-info">
-            <div class="panel-heading">
+        <div class="card bg-info">
+            <div class="card-header">
                 <h3>
                 <a href="<?php echo $this->url('these/identite', [ 'these' => $soutenance->getThese()->getId() ], [], true); ?>"
                    title="Accéder aux données de la thèse"
                 >
-                    <span style="color:white;" class="glyphicon glyphicon-link"></span></a>
+                    <span style="color:white;" class="fas fa-link"></span></a>
                         <?php echo $soutenance->getThese()->getTitre(); ?>
                 </h3>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 <div class="row">
                     <div class="col-md-5">
                         <dl>

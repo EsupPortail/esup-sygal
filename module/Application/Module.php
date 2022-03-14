@@ -5,14 +5,14 @@ namespace Application;
 use Application\Event\UserAuthenticatedEventListener;
 use Application\Event\UserRoleSelectedEventListener;
 use Application\View\Helper\Navigation\MenuSecondaire;
-use Zend\Config\Factory as ConfigFactory;
-use Zend\Console\Adapter\AdapterInterface as Console;
-use Zend\Http\Request as HttpRequest;
-use Zend\Mvc\ModuleRouteListener;
-use Zend\Mvc\MvcEvent;
-use Zend\Stdlib\Glob;
-use Zend\View\Helper\Navigation;
-use Zend\View\HelperPluginManager;
+use Laminas\Config\Factory as ConfigFactory;
+use Laminas\Console\Adapter\AdapterInterface as Console;
+use Laminas\Http\Request as HttpRequest;
+use Laminas\Mvc\ModuleRouteListener;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Stdlib\Glob;
+use Laminas\View\Helper\Navigation;
+use Laminas\View\HelperPluginManager;
 
 class Module
 {
@@ -31,7 +31,7 @@ class Module
         });
 
         /* Utilise un layout spécial si on est en AJAX. Valable pour TOUS les modules de l'application */
-        $eventManager->getSharedManager()->attach('Zend\Mvc\Controller\AbstractActionController', 'dispatch',
+        $eventManager->getSharedManager()->attach('Laminas\Mvc\Controller\AbstractActionController', 'dispatch',
             function (MvcEvent $e) {
                 $request = $e->getRequest();
                 if ($request instanceof HttpRequest && $request->isXmlHttpRequest()) {
@@ -64,7 +64,7 @@ class Module
         /* @var $vhm HelperPluginManager */
         $vhm = $sm->get('ViewHelperManager');
         /* @var $nvh Navigation */
-        $nvh = $vhm->get('Zend\View\Helper\Navigation');
+        $nvh = $vhm->get('Laminas\View\Helper\Navigation');
         $nvh->getPluginManager()->setInvokableClass('menuSecondaire', MenuSecondaire::class);
     }
 
@@ -81,7 +81,7 @@ class Module
     public function getAutoloaderConfig()
     {
         return [
-            'Zend\Loader\StandardAutoloader' => [
+            'Laminas\Loader\StandardAutoloader' => [
                 'namespaces' => [
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                 ],

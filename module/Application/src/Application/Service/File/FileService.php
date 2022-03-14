@@ -10,7 +10,7 @@ use Application\Entity\Db\StructureInterface;
 use Application\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Structure;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Http\Response;
+use Laminas\Http\Response;
 
 class FileService
 {

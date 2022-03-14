@@ -4,7 +4,7 @@ namespace Application\View\Helper\Url;
 
 use Application\Entity\Db\These;
 use Application\Service\Url\UrlTheseService;
-use Zend\View\Helper\AbstractHelper;
+use Laminas\View\Helper\AbstractHelper;
 
 /**
  * Aide de vue de génération d'URL.

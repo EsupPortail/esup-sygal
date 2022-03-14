@@ -10,8 +10,8 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
-use Zend\Http\Request;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Request;
+use Laminas\View\Model\ViewModel;
 
 class StatistiqueController extends AbstractController
 {
@@ -28,7 +28,7 @@ class StatistiqueController extends AbstractController
         /** TODO prendre les non substitué **/
         $ecoles = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle');
         $unites = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle');
-        $etablissements = $this->getEtablissementService()->getRepository()->findAllEtablissementsMembres();
+        $etablissements = $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions();
 
         /**
          * Certaines statistiques exploites le genre de la personne et nécessite de récupérer
@@ -46,12 +46,25 @@ class StatistiqueController extends AbstractController
 
         $structureType = $this->params()->fromQuery("structure_type");
         $structureId = $this->params()->fromQuery("structure_id");
+        $structure = null;
+        switch ($structureType) {
+            case "ED" :
+                $structure = $this->getEcoleDoctoraleService()->getRepository()->findOneBy(['id'=>$structureId]);
+                break;
+            case "UR" :
+                $structure = $this->getUniteRechercheService()->getRepository()->findOneBy(['id'=>$structureId]);
+                break;
+            case "ETAB" :
+                $structure = $this->getEtablissementService()->getRepository()->findOneBy(['id'=>$structureId]);
+                break;
+        }
         $qb = $this->decorateWithStructure($qb, $structureType, $structureId);
 
         $dateType = $this->params()->fromQuery("date_type");
         $dateDebut = $this->params()->fromQuery("date_min");
         $dateFin = $this->params()->fromQuery("date_max");
         $qb = $this->decorateWithDate($qb, $dateType, $dateDebut, $dateFin);
+
 
         $theses = $qb->getQuery()->execute();
 
@@ -62,7 +75,9 @@ class StatistiqueController extends AbstractController
             'ecoles' => $ecoles,
             'unites' => $unites,
             'etablissements' => $etablissements,
-//            'structure_id' => $structureId,
+
+            'type' => $structureType,
+            'structure' => $structure,
         ]);
     }
 
@@ -84,8 +99,8 @@ class StatistiqueController extends AbstractController
                     $unite = $this->getUniteRechercheService()->getRepository()->findOneBy(['id'=>$id]);
                     return $qb->andWhere("t.uniteRecherche = :ur")
                                 ->setParameter(":ur", $unite);
-                case "Etab" :
-                    $etablissement = $this->getEtablissementService()->getRepository()->find($id);
+                case "ETAB" :
+                    $etablissement = $this->getEtablissementService()->getRepository()->findOneBy(['id'=>$id]);
                     return $qb->andWhere("t.etablissement = :etab")
                                 ->setParameter("etab", $etablissement);
             }

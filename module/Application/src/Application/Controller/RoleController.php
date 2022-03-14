@@ -4,7 +4,7 @@ namespace Application\Controller;
 
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class RoleController  extends AbstractController {
     use RoleServiceAwareTrait;

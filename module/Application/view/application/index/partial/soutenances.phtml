@@ -6,16 +6,19 @@
 
 use Application\Entity\Db\EcoleDoctorale;
 
-
 ?>
 
-<br/>
-<ul class="nav nav-pills nav-stacked menu-secondaire" style="padding: 1rem;">
-    <strong>Soutenances à venir</strong>
-
+<div id="menu-soutenances-a-venir" class="card">
+    <div class="card-header">
+        Soutenances à venir
+    </div>
+    <ul class="card-body nav flex-column">
         <?php foreach ($ecoles as $ecole) : ?>
-            <li>
-                <a href="<?php echo $this->url('soutenances-par-ecole-doctorale', ['ecole' => $ecole->getId()], [], true); ?>"><?php echo $ecole->getSigle(); ?></a>
+            <li class="nav-item">
+                <a class="nav-link"
+                   href="<?php echo $this->url('soutenances-par-ecole-doctorale', ['ecole' => $ecole->getId()], [], true); ?>"
+                ><?php echo $ecole->getSigle(); ?></a>
             </li>
         <?php endforeach; ?>
-</ul>
+    </ul>
+</div>
