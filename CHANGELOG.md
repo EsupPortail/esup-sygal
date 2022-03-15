@@ -5,8 +5,7 @@ Journal des modifications
 -----
 - [FIX] signature des fonctions de StructureSubstitHelper string => ?string
 - [FIX] les résumés pour la BU se chevauchaient p class='resume pre-scrollable' => p class='pre-scrollable'
-- [FIX] ajustement des css de la page proposition 
-
+- [FIX] ajustement des css de la page proposition
 
 4.0.0
 -----
