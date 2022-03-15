@@ -262,7 +262,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                         <?php echo $proposition->getAdresse(); ?>
                     <?php endif; ?>
                 </div>
-                <div class="pull-right">
+                <div class="float-end">
                     <br/>
                     <br/>
                     <?php if ($canModifierAdresse) : ?>
@@ -270,7 +270,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                             <?php /** @see \Soutenance\Controller\PresoutenanceController::modifierAdresseAction() */ ?>
                             href="<?php echo $this->url('soutenance/presoutenance/modifier-adresse', ['these' => $these->getId()], [] ,true); ?>"
                             class="btn btn-primary action ajax-modal" data-event="modification-adresse">
-                        <span class="glyphicon glyphicon-pencil"></span>
+                        <span class="icon icon-editer"></span>
                         Modifier l'adresse
                     </a>
                     <?php endif; ?>

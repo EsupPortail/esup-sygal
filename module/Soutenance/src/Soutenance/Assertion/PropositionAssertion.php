@@ -190,6 +190,24 @@ class PropositionAssertion implements  AssertionInterface {
                     default:
                         return false;
                 }
+            case PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER:
+                switch ($role) {
+                    case Role::CODE_DOCTORANT :
+                        $isDoctorant = $doctorant->getId() === $individu->getId();
+                        $dateOk = ($sursis OR ($dateCurrent <= $dateValidationMax));
+                        return ($isDoctorant AND $dateOk);
+                    default:
+                    return false;
+                }
+            case PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_REVOQUER:
+                switch($role) {
+                    case Role::CODE_ADMIN_TECH :
+                        return true;
+                    case Role::CODE_BDD :
+                        return ($these->getEtablissement()->getStructure() === $identityRole->getStructure());
+                    default :
+                        return false;
+                }
             default :
                 return false;
         }

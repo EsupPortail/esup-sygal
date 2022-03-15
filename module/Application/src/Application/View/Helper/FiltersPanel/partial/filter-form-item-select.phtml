@@ -21,7 +21,7 @@ $liveSearch = (bool) ($paramAttributes['liveSearch'] ?? false);
         name="<?php echo $paramName ?>"
         data-live-search="<?php echo $liveSearch ? 'true' : 'false' ?>"
         data-width="<?php echo $width ?>"
-        data-html="true"
+        data-bs-html="true"
 >
 
 <?php foreach ($filter->getOptions() as $data): ?>

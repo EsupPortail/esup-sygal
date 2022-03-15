@@ -131,7 +131,7 @@ return [
                             'email-contact' => [
                                 'label' => 'Email de contact',
                                 'route' => 'doctorant/email-contact',
-                                'icon' => 'glyphicon glyphicon-envelope',
+                                'icon' => 'icon icon-notifier',
                                 //'resource' => PrivilegeController::getResourceId('Doctorant\Controller\Doctorant', 'modifier-email-contact'),
                                 //'visible' => 'Assertion\\These',
                             ],

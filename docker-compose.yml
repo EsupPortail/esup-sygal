@@ -34,6 +34,9 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
+      SYGAL_DB: sygal
+      SYGAL_USER: ad_sygal
+      SYGAL_PASSWORD: azerty
     ports:
       - 5432:5432
     volumes:

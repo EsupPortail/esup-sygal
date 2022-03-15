@@ -234,7 +234,7 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
                 </p>
                 <p>
                     <span <?php if ((new DateTime()) > $proposition->getRenduRapport()) echo 'style="color:darkred;"'; ?> >
-                        <span class="glyphicon glyphicon-warning-sign"></span>
+                        <span class="icon icon-attention"></span>
                         Attention, la date limite de rendu des pré-rapports est le <strong><?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?></strong>.
                     </span>
                 </p>
