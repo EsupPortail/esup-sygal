@@ -8,7 +8,6 @@ use Formation\Form\Session\SessionForm;
 use Formation\Form\Session\SessionFormFactory;
 use Formation\Form\Session\SessionHydrator;
 use Formation\Form\Session\SessionHydratorFactory;
-use Formation\Provider\Privilege\IndexPrivileges;
 use Formation\Provider\Privilege\SessionPrivileges;
 use Formation\Service\Session\SessionService;
 use Formation\Service\Session\SessionServiceFactory;

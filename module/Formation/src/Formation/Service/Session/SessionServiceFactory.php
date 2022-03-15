@@ -11,7 +11,7 @@ class SessionServiceFactory {
      * @param ContainerInterface $container
      * @return SessionService
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container) : SessionService
     {
         /**
          * @var EntityManager $entitymanager

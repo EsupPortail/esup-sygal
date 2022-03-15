@@ -262,14 +262,14 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
                             <a href="<?php echo $this->url('formation/inscription/desinscription', ['inscription' => $inscription->getId()], [], true); ?>"
                                class="ajax-modal" data-event="modification"
                             >
-                        <span class="icon icon-detruire"
+                        <span class="icon icon-supprimer"
                               title="Annuler mon inscription" data-bs-toggle="tooltip" data-bs-html="true"
                         ></span></a>
                         <?php endif; ?>
                         <?php if ($canConvocationInscription AND $inscription->getListe() === Inscription::LISTE_PRINCIPALE) : ?>
                             <?php /** @see \Formation\Controller\InscriptionController::genererConvocationAction() */?>
                             <a href="<?php echo $this->url('formation/inscription/generer-convocation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
-                        <span class="icon icon-share"
+                        <span class="icon icon-pdf"
                               title="Télécharger la convocation" data-bs-toggle="tooltip" data-bs-html="true"
                         ></span></a>
                         <?php endif; ?>
@@ -337,7 +337,7 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
                         <?php if (isset($resultats[$inscription->getId()]) AND $canAttestationInscription) : ?>
                             <?php /** @see \Formation\Controller\InscriptionController::genererAttestationAction() */?>
                             <a href="<?php echo $this->url('formation/inscription/generer-attestation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
-                        <span class="icon icon-check"
+                        <span class="icon icon-pdf"
                               title="Télécharger l'attestation" data-bs-toggle="tooltip" data-bs-html="true"
                         ></span></a>
                         <?php endif; ?>
