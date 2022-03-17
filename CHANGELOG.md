@@ -1,6 +1,12 @@
 Journal des modifications
 =========================
 
+4.0.1
+-----
+- [FIX] signature des fonctions de StructureSubstitHelper string => ?string
+- [FIX] les résumés pour la BU se chevauchaient p class='resume pre-scrollable' => p class='pre-scrollable'
+- [FIX] ajustement des css de la page proposition
+
 4.0.0
 -----
 - Migration vers Laminas (back-end PHP).

@@ -16,6 +16,7 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use DateTime;
+use InvalidArgumentException;
 use Notification\Exception\NotificationException;
 use Notification\Notification;
 use Notification\Service\NotifierService;
@@ -251,6 +252,9 @@ class NotifierSoutenanceService extends NotifierService
                     'panic' => $panic,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible pour l'unité de recherche (".__METHOD__."::TheseId#".
+                $these->getId()."|UniteRecherche#".$these->getUniteRecherche()->getId().")" );
         }
     }
 
@@ -278,6 +282,9 @@ class NotifierSoutenanceService extends NotifierService
                     'panic' => $panic,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible pour l'école doctorale (".__METHOD__."::TheseId#".
+                $these->getId()."|EcoleDoctorale#".$these->getEcoleDoctorale()->getId().")" );
         }
     }
 
@@ -302,6 +309,9 @@ class NotifierSoutenanceService extends NotifierService
                     'panic' => false,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible pour l'établissement (".__METHOD__."::TheseId#".
+                $these->getId()."|Etablissement#".$these->getEtablissement()->getId().")" );
         }
     }
 
@@ -328,6 +338,8 @@ class NotifierSoutenanceService extends NotifierService
                     'these' => $these,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
         }
     }
 
@@ -346,6 +358,8 @@ class NotifierSoutenanceService extends NotifierService
                     'these' => $these,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
         }
     }
 
@@ -376,7 +390,10 @@ class NotifierSoutenanceService extends NotifierService
                     'these' => $these,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
         }
+
     }
 
     /** ENGAGEMENT IMPARTIALITE ***************************************************************************************/
@@ -404,7 +421,10 @@ class NotifierSoutenanceService extends NotifierService
                     'url' => $url,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
         }
+
     }
 
     /**
@@ -428,7 +448,10 @@ class NotifierSoutenanceService extends NotifierService
                     'membre' => $membre,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
         }
+
     }
 
     /**
@@ -459,7 +482,10 @@ class NotifierSoutenanceService extends NotifierService
                     'membre' => $membre,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
         }
+
     }
 
     /**
@@ -483,7 +509,10 @@ class NotifierSoutenanceService extends NotifierService
                     'membre' => $membre,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
         }
+
     }
 
     /**
@@ -509,7 +538,10 @@ class NotifierSoutenanceService extends NotifierService
                     'url' => $url,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
         }
+
     }
 
     /**
@@ -529,7 +561,10 @@ class NotifierSoutenanceService extends NotifierService
                     'these' => $these,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
         }
+
     }
 
     /**
@@ -561,7 +596,10 @@ class NotifierSoutenanceService extends NotifierService
                     'url' => $url,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
         }
+
     }
 
     /**
@@ -592,7 +630,10 @@ class NotifierSoutenanceService extends NotifierService
                     'url' => $url,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
         }
+
     }
 
 
@@ -625,7 +666,10 @@ class NotifierSoutenanceService extends NotifierService
                     'avis' => $avis,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
         }
+
     }
 
     /**
@@ -655,7 +699,10 @@ class NotifierSoutenanceService extends NotifierService
                     'proposition' => $proposition,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
         }
+
     }
 
     /**
@@ -686,7 +733,10 @@ class NotifierSoutenanceService extends NotifierService
                     'url' => $url,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
         }
+
     }
 
     /**
@@ -712,7 +762,10 @@ class NotifierSoutenanceService extends NotifierService
                     'url' => $url,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
         }
+
     }
 
     /**
@@ -743,7 +796,10 @@ class NotifierSoutenanceService extends NotifierService
                     'url' => $url,
                 ]);
             $this->trigger($notif);
+        } else {
+            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
         }
+
     }
 
     /**
