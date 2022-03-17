@@ -1,6 +1,11 @@
 Journal des modifications
 =========================
 
+4.0.2
+-----
+- [FIX] Affichage de la bonne adresse électronique institutionnelle sur la fiche thèse 
+- [FIX] Correction de la classe css sur les card de la page des soutenances à venir
+
 4.0.1
 -----
 - [FIX] signature des fonctions de StructureSubstitHelper string => ?string
