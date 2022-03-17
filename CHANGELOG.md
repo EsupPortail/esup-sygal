@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+4.0.3
+-----
+- Corrections et améliorations de la doc d'install suite aux remarques de l'université de Montpellier (merci)
+
 4.0.2
 -----
 - [FIX] Affichage de la bonne adresse électronique institutionnelle sur la fiche thèse 
