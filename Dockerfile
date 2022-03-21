@@ -13,3 +13,5 @@ LABEL maintainer="Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>"
 COPY . /app
 
 WORKDIR /app
+
+RUN composer install
