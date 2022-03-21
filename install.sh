@@ -17,3 +17,6 @@ mkdir -p upload && \
 
 # Composer install
 composer install --no-suggest --prefer-dist --optimize-autoloader
+
+# Désactivation du mode "développement"
+vendor/bin/laminas-development-mode disable

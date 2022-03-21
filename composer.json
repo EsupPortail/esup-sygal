@@ -72,8 +72,7 @@
             "vendor/bin/doctrine-module orm:clear-cache:query",
             "vendor/bin/doctrine-module orm:clear-cache:metadata",
             "vendor/bin/doctrine-module orm:clear-cache:result",
-            "vendor/bin/doctrine-module orm:generate-proxies",
-            "vendor/bin/laminas-development-mode disable"
+            "vendor/bin/doctrine-module orm:generate-proxies"
         ]
     }
 }
