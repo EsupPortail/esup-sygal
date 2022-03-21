@@ -2,7 +2,11 @@ version: '3'
 
 services:
   sygal:
-    image: registre.unicaen.fr:5000/sygal-image-php7.4
+#    image: registre.unicaen.fr:5000/sygal-image-php7.4
+    build:
+      context: .
+      args:
+        - PHP_VERSION=7.4
     container_name: sygal-container-php7.4
     environment:
       - http_proxy
