@@ -47,11 +47,6 @@ class MetadonneeThese
     /**
      * @var string
      */
-    private $motsClesRameau;
-
-    /**
-     * @var string
-     */
     private $resume;
 
     /**
@@ -144,30 +139,6 @@ class MetadonneeThese
         $this->motsClesLibresAnglais = $motsClesLibresAnglais;
 
         return $this;
-    }
-
-    /**
-     * Set motsClesRameau
-     *
-     * @param string $motsClesRameau
-     *
-     * @return MetadonneeThese
-     */
-    public function setMotsClesRameau($motsClesRameau)
-    {
-        $this->motsClesRameau = $motsClesRameau;
-
-        return $this;
-    }
-
-    /**
-     * Get motsClesRameau
-     *
-     * @return string
-     */
-    public function getMotsClesRameau()
-    {
-        return $this->motsClesRameau;
     }
 
     /**

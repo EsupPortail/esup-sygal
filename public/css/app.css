@@ -765,6 +765,9 @@ p.avis-complem {
   .card.validation-rapport-activite p {
     margin-bottom: 0.5rem; }
 
+.icon::before {
+  vertical-align: text-bottom; }
+
 .icon.icon-danger:before {
   content: "\f071"; }
 

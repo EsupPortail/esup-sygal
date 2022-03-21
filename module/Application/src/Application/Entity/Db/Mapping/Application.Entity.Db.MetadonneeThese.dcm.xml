@@ -22,11 +22,6 @@
                 <option name="fixed"/>
             </options>
         </field>
-        <field name="motsClesRameau" type="string" column="MOTS_CLES_RAMEAU" length="256" nullable="true">
-            <options>
-                <option name="fixed"/>
-            </options>
-        </field>
         <field name="resume" type="text" column="RESUME" nullable="false">
             <options>
                 <option name="fixed"/>

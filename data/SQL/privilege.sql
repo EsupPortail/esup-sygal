@@ -1,8 +1,8 @@
 --
 -- Nouvelle catégorie.
 --
-insert into CATEGORIE_PRIVILEGE(ID, CODE, LIBELLE, ORDRE) values (666, 'utilisateur', 'Utilisateur', 5);
-
+insert into CATEGORIE_PRIVILEGE(ID, CODE, LIBELLE, ORDRE)
+    select nextval('categorie_privilege_id_seq'), 'utilisateur', 'Utilisateur', 5;
 
 --
 -- Nouveaux privilèges.

@@ -32,6 +32,7 @@ return [
         'UnicaenAuthToken',
         'UnicaenAvis',
         'UnicaenLdap',
+        'UnicaenDbAnonym',
         'UnicaenDbImport',
         'UnicaenFaq',
         'UnicaenLivelog',
@@ -49,7 +50,7 @@ return [
         'Notification',
         'Information',
         'Doctorant',
-        //'StepStar',
+        'StepStar',
         'Application',
     ],
     'module_listener_options' => [

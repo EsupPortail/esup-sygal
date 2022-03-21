@@ -26,6 +26,13 @@ class Diffusion implements HistoriqueAwareInterface
     const EMBARGO_DUREE_2_ANS = '2 ans';
     const EMBARGO_DUREE_5_ANS = '5 ans';
 
+    const EMBARGO_DUREES_PHP_INTERVALS = [
+        self::EMBARGO_DUREE_6_MOIS => 'P6M',
+        self::EMBARGO_DUREE_1_AN => 'P1Y',
+        self::EMBARGO_DUREE_2_ANS => 'P2Y',
+        self::EMBARGO_DUREE_5_ANS => 'P5Y',
+    ];
+
     const DROIT_AUTEUR_OK_OUI = '1';
     const DROIT_AUTEUR_OK_NON = '0';
 
