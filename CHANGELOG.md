@@ -4,6 +4,7 @@ Journal des modifications
 4.0.3
 -----
 - Corrections et améliorations de la doc d'install suite aux remarques de l'université de Montpellier (merci)
+- [FIX] Correction de l'affichage de la date d'historisation dans Individu lié
 
 4.0.2
 -----
