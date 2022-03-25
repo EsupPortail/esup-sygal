@@ -6,7 +6,6 @@
 
         <id name="id" type="integer" column="ID">
             <generator strategy="SEQUENCE"/>
-            <sequence-generator sequence-name="ENQUETE_CATEGORIE_ID_SEQ"/>
         </id>
 
         <field name="libelle"             type="string"       length="1024"       column="LIBELLE"          nullable="false"/>

@@ -107,7 +107,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     <dd class="col-md-9"> <?php echo count($inscrits); ?></dd>
 </dl>
     </div>
-    <div class="float-end">
+    <div class="col-md-4">
         <?php if ($canIndexSession) : ?>
             <?php /** @see \Formation\Controller\SessionController::indexAction() */?>
             <a class="btn btn-primary action"
@@ -118,8 +118,8 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
             </a>
             <br/>
             <br/>
-        <?php endif; ?>
-        <div class="float-end">
+        <?php endif;?>
+
             <?php if ($canAfficherFormation) : ?>
                 <?php /** @see \Formation\Controller\FormationController::afficherAction() */?>
                 <a class="btn btn-primary action"
@@ -169,10 +169,10 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
 
 <!-- FORMATEUR ##################################################################################################### -->
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-8">
         <h2> Formateur </h2>
     </div>
-    <div class="float-end">
+    <div class="col-md-4">
         <?php if ($canModifierSession) : ?>
             <?php /** @see \Formation\Controller\FormateurController::ajouterAction() */ ?>
             <a href="<?php echo $this->url('formation/formateur/ajouter', ['session' => $session->getId()], [] , true); ?>"
@@ -203,10 +203,10 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
 
 <!-- SEANCE ######################################################################################################## -->
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-8">
         <h2> Séances </h2>
     </div>
-    <div class="float-end">
+    <div class="col-md-4">
         <?php if ($canModifierSession) : ?>
             <?php /** @see \Formation\Controller\SeanceController::ajouterAction() */ ?>
             <a href="<?php echo $this->url('formation/seance/ajouter', ['session' => $session->getId()], [] , true); ?>"
@@ -296,16 +296,16 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
 </table>
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-8">
         <h2> Inscriptions et listes </h2>
     </div>
-    <div class="float-end">
+    <div class="col-md-4">
         <?php if ($canModifierInscription) : ?>
             <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
             <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId()], [] , true); ?>"
                class="btn btn-primary action ajax-modal" data-event="modification">
                 <span class="icon icon-modifier"></span>
-                Inscrit un·e doctorant·e
+                Inscrire un·e doctorant·e
             </a>
 
             <?php /** @see \Formation\Controller\SessionController::classerInscriptionsAction() */ ?>
@@ -403,6 +403,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
 <style>
     a.btn.action {
         width:25rem;
+        margin-bottom: 0.1rem;
     }
 </style>
 

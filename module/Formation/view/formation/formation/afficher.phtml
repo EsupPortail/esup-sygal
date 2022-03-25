@@ -90,7 +90,7 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
         </dl>
     </div>
 
-    <div class="float-end">
+    <div class="col-md-4">
         <?php if ($canIndexFormation) : ?>
             <?php /** @see \Formation\Controller\FormationController::indexAction() */?>
             <a class="btn btn-primary action"
@@ -113,8 +113,7 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
                 <br/>
             <?php endif; ?>
         <?php endif; ?>
-    </div>
-    <div class="float-end">
+
         <?php if ($canModifierFormation) : ?>
             <?php /** @see \Formation\Controller\FormationController::modifierAction() */?>
             <a class="btn btn-primary action ajax-modal" data-event="modification"
@@ -133,7 +132,7 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
     <div class="col-md-8">
         <h2> Liste des sessions </h2>
     </div>
-    <div class="float-end">
+    <div class="col-md-4">
         <?php if ($canAjouterSession) : ?>
             <?php /** @see \Formation\Controller\SessionController::ajouterAction() */ ?>
             <a href="<?php echo $this->url('formation/session/ajouter', ['formation' => $formation->getId()], [], true); ?>"

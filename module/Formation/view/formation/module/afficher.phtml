@@ -48,7 +48,7 @@ usort($formations, function(Formation $a, Formation $b) { return $a->getLibelle(
             <?php endif ?>
         </dl>
     </div>
-    <div class="float-end">
+    <div class="col-md-4">
         <?php if ($canIndexModule) : ?>
             <?php /** @see \Formation\Controller\FormationController::indexAction() */?>
             <a class="btn btn-primary action"
@@ -81,7 +81,7 @@ usort($formations, function(Formation $a, Formation $b) { return $a->getLibelle(
             <span class="badge"><?php echo count($formations); ?></span>
         </h2>
     </div>
-    <div class="float-end">
+    <div class="col-md-4">
         <a
             <?php /** @see \Formation\Controller\FormationController::ajouterAction() */ ?>
                 href="<?php echo $this->url('formation/formation/ajouter', ['module' => $module->getId()], [], true); ?>"
@@ -92,7 +92,7 @@ usort($formations, function(Formation $a, Formation $b) { return $a->getLibelle(
     </div>
 </div>
 
-<table class="table table-sm">
+<table class="table table-sm table-hover">
     <thead>
     <tr>
         <th>Libelle</th>

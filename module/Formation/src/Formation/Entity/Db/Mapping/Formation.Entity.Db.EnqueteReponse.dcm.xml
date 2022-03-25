@@ -6,7 +6,6 @@
 
         <id name="id" type="integer" column="ID">
             <generator strategy="SEQUENCE"/>
-            <sequence-generator sequence-name="ENQUETE_REPONSE_ID_SEQ"/>
         </id>
 
         <many-to-one field="inscription" target-entity="Formation\Entity\Db\Inscription">
