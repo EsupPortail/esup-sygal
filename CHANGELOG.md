@@ -5,6 +5,7 @@ Journal des modifications
 -----
 - Corrections et améliorations de la doc d'install suite aux remarques de l'université de Montpellier (merci)
 - [FIX] Correction de l'affichage de la date d'historisation dans Individu lié
+- [FIX] Correction de la signature de Membre::setEtablissement(?string) qui faisait planter la création de proprosition (lorsqu'aucun établissement n'était fourni)
 
 4.0.2
 -----

@@ -49,7 +49,7 @@ class Membre implements HistoriqueAwareInterface {
     /**
      * @return int
      */
-    public function getId()
+    public function getId() : ?int
     {
         return $this->id;
     }
@@ -140,10 +140,10 @@ class Membre implements HistoriqueAwareInterface {
     }
 
     /**
-     * @param Qualite $qualite
+     * @param Qualite|null $qualite
      * @return Membre
      */
-    public function setQualite($qualite)
+    public function setQualite(?Qualite $qualite) : Membre
     {
         $this->qualite = $qualite;
         return $this;
@@ -169,10 +169,10 @@ class Membre implements HistoriqueAwareInterface {
     }
 
     /**
-     * @param string $etablissement
+     * @param string|null $etablissement
      * @return Membre
      */
-    public function setEtablissement(string $etablissement) : Membre
+    public function setEtablissement(?string $etablissement) : Membre
     {
         $this->etablissement = $etablissement;
         return $this;
