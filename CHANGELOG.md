@@ -6,7 +6,7 @@ Journal des modifications
 - Corrections et améliorations de la doc d'install suite aux remarques de l'université de Montpellier (merci)
 - [FIX] Correction de l'affichage de la date d'historisation dans Individu lié
 - [FIX] Correction de la signature de Membre::setEtablissement(?string) qui faisait planter la création de proprosition (lorsqu'aucun établissement n'était fourni)
-
+- Ajout de l'unité de recherche des acteurs (manuel pour le moment) pour améliorer les pages de couverture
 4.0.2
 -----
 - [FIX] Affichage de la bonne adresse électronique institutionnelle sur la fiche thèse 
