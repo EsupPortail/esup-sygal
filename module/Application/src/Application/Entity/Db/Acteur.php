@@ -20,6 +20,7 @@ use Laminas\Permissions\Acl\Resource\ResourceInterface;
  * @var Role     $role                  Role de l'acteur (p.e. directeur de thèse)
  * @var string   $qualite               la qualité de l'acteur (p.e. chargé de recherche, ...)
  * @var string   $etalissement          l'étabilissement d'attachement de l'acteur (p.e. Université de Caen Normandie,
+ * @var string   $uniteRecherche        l'unité de recherche d'attachement de l'acteur (p.e. GREYC,
  *      ...)
  */
 class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwareInterface
@@ -70,6 +71,13 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwa
      * @var Etablissement
      */
     private $etablissement;
+
+    /**
+     * Etablissement auquel appartient l'individu.
+     *
+     * @var UniteRecherche
+     */
+    private $uniteRecherche;
 
     /**
      * Retourne la fonction de callback à utiliser pour trier une collection d'entités Acteur selon leur rôle.
@@ -302,9 +310,17 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwa
      *
      * @return Etablissement|null
      */
-    public function getEtablissement()
+    public function getEtablissement() : ?Etablissement
     {
         return $this->etablissement;
+    }
+
+    /**
+     * @return UniteRecherche|null
+     */
+    public function getUniteRecherche() : ?UniteRecherche
+    {
+        return $this->uniteRecherche;
     }
 
     /**

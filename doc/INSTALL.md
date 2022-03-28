@@ -10,7 +10,7 @@ Reportez-vous au [README consacré à la création de la base de données](datab
 
 
 
-## Installation 
+## Installation sur un serveur
 
 Pour ce qui est de l'installation du serveur d'application, n'ayant pas à Caen les compétences 
 en déploiement Docker autres que pour le développement, nous documenterons une installation à l'ancienne sur 
@@ -19,7 +19,7 @@ Si vous voulez déployer l'application avec Docker, faites-le à partir du `Dock
 proposer votre contribution pour améliorer cette doc d'install !
 
 
-### Première obtention des sources de l'application
+### Obtention des sources de l'application
 
 *NB : la procédure proposée ici part d'un serveur *Debian Stretch* tout nu et couvre l'installation de tous les packages 
 requis.* Si ce n'était pas le cas, merci de contribuer en le signalant.
@@ -41,21 +41,32 @@ nécessaires.*
 
 ### Configuration du serveur
 
-Sur le serveur, récupérez le dépôt git de l'image Docker de SyGAL puis placez-vous dans le répertoire créé :
+#### Packages, etc.
+
+- Récupérez quelque part sur le serveur l'image Docker "Unicaen" puis placez-vous dans le répertoire créé :
 ```bash
-git clone https://git.unicaen.fr:open-source/docker/sygal-image.git /tmp/sygal-image
-cd /tmp/sygal-image
+UNICAEN_IMAGE_TMP_DIR=/tmp/docker-unicaen-image
+git clone https://git.unicaen.fr/open-source/docker/unicaen-image.git ${UNICAEN_IMAGE_TMP_DIR}
+cd ${UNICAEN_IMAGE_TMP_DIR}
 ```
 
-Jetez un oeil sur le script `Dockerfile.sh`.
-Ce script est en quelque sorte l'équivalent du `Dockerfile` traduit en bash. 
-(Vous y verrez que le dépôt git d'une image Docker Unicaen est cloné pour lancer 
-son script `Dockerfile.sh` qui est lui aussi l'équivalent du `Dockerfile` de l'image 
-traduit en bash.)
-
-Lancez le script `Dockerfile.sh` avec en argument la version requise de PHP :
+- Lancez-y le script `Dockerfile-7.x.sh` conçu pour la version 7.4 de PHP. 
 ```bash
-bash Dockerfile.sh 7.4
+PHP_VERSION=7.4
+bash Dockerfile-7.x.sh ${PHP_VERSION}
+```
+
+- Ensuite, quelque part sur le serveur, récupérez cette fois l'image Docker `sygal-image` puis placez-vous dans 
+le répertoire créé :
+```bash
+SYGAL_IMAGE_TMP_DIR=/tmp/sygal-image
+git clone https://git.unicaen.fr:open-source/docker/sygal-image.git ${SYGAL_IMAGE_TMP_DIR}
+cd ${SYGAL_IMAGE_TMP_DIR}
+```
+
+- Lancez-y le script `Dockerfile.sh` avec en argument la version de PHP choisie précédemment :
+```bash
+bash Dockerfile.sh ${PHP_VERSION}
 ```
 
 Ensuite, vérifiez et ajustez si besoin sur votre serveur les fichiers de configs suivants,
@@ -68,16 +79,32 @@ créés ou modifiés par le script `Dockerfile.sh` :
 - ${PHP_CONF_DIR}/cli/conf.d/99-app.ini
 
 NB : Vérifiez dans le script `Dockerfile.sh` que vous venez de lancer mais normalement 
-`APACHE_CONF_DIR=/etc/apache2` et `PHP_CONF_DIR=/etc/php/7.4`.
+`APACHE_CONF_DIR=/etc/apache2` et `PHP_CONF_DIR=/etc/php/${PHP_VERSION}`.
+
+#### Environnement de fonctionnement
 
 La variable `APPLICATION_ENV` déclarée dans la config Apache `${APACHE_CONF_DIR}/sites-available/app-ssl.conf` permet
-de spécifier à l'application PHP dans quel "environnement de fonctionnemant" elle tourne.
+de spécifier à l'application PHP dans quel "environnement de fonctionnement" elle tourne.
 Notamment, lorsque sa valeur est `development`, cela active l'affichage détaillé des erreurs rencontrées par SyGAL :
 ```apacheconf
 <VirtualHost *:443>
      # ...
      SetEnv APPLICATION_ENV "development"
 # ...
+```
+
+#### Logs d'erreur PHP-FPM
+
+- Prenez connaissance du chemin spécifié par le paramètre `error_log` du fichier de config `/etc/php/${PHP_VERSION}/fpm/php-fpm.conf`, 
+exemple :
+```conf
+error_log = /var/log/php7.4-fpm.log
+```
+
+- Créez le fichier de log avec le propriétaire qui va bien, exemple :
+```bash
+FPM_PHP_LOG_FILE=/var/log/php7.4-fpm.log
+touch ${FPM_PHP_LOG_FILE} && chown www-data:www-data ${FPM_PHP_LOG_FILE}
 ```
 
 
@@ -95,14 +122,14 @@ git fetch && git fetch --tags && git tag
 Si la version la plus récente est par exemple la `4.0.0`, utilisez les commandes suivantes pour "installer" cette version 
 sur votre serveur :
 ```bash
-git checkout --force 4.0.0 && bash install.sh
+git checkout --force 4.0.0
 ```
 
 
 ### Mode développement vs. production
 
 Pour commencer, placez l'application en mode "développement" afin d'activer l'affichage détaillé des futures erreurs 
-rencontrées. Pour cela placez-vous dans le répertoire des sources de l'application puis lancez la commande suivante :
+rencontrées. Pour cela, placez-vous dans le répertoire des sources de l'application puis lancez la commande suivante :
 ```bash
 vendor/bin/laminas-development-mode enable
 ```
@@ -116,7 +143,7 @@ vendor/bin/laminas-development-mode disable
 ### Configuration du moteur PHP pour SyGAL
 
 Si vous êtes sur un serveur de PROD, corrigez les lignes suivantes du fichier de config PHP 
-`/etc/php/7.4/fpm/conf.d/90-app.ini` :
+`/etc/php/${PHP_VERSION}/fpm/conf.d/90-app.ini` :
 ```
     display_errors = Off
     #...
@@ -264,6 +291,16 @@ de la création de votre établissement dans la base de données (dans le script
 
 
 
+## Script d'install et d'init des dépendances
+
+Lancez le script suivant :
+
+```bash
+bash install.sh
+```
+
+
+
 ## Dans l'application SyGAL elle-même
 
 Si vous n'avez rien changé à la config de l'application concernant Shibboleth et si vous cliquez en haut à droite de
@@ -293,15 +330,16 @@ de la création de votre établissement dans la base de données (dans le script
 
 
 
-## Import de données
+## Import des données
+
+ESUP-Sygal doit pouvoir importer les thèses, acteurs des thèses, etc. depuis le SI Scolarité de votre établissement 
+(soit Apogée, soit Physalis). Pour cela ESUP-SyGAL fournit un web service (API REST) que vous devez installer.
 
 
 ### Installation du web service
 
-Vous devez à présent installer le web service d'import de données, 
-reportez-vous au projet `sygal-import-ws`sur 
-[sur github.com/EsupPortail](https://github.com/EsupPortail/sygal-import-ws) ou sur 
-[sur git.unicaen.fr](https://git.unicaen.fr/open-source/sygal-import-ws).
+Vous devez à présent installer le web service d'import de données. Reportez-vous au projet `sygal-import-ws` 
+sur [sur github.com/EsupPortail](https://github.com/EsupPortail/sygal-import-ws).
 
 
 ### Lancement de l'import seul
