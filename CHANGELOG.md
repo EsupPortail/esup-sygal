@@ -1,5 +1,9 @@
 Journal des modifications
 =========================
+4.0.4
+-----
+- Correction de typos dans mail de feu vert de la soutenance
+- Ajout de redirection de mail lorsque certains mails n'ont pas de destinataire "ATTENTION MAIL NON DÉLIVRÉ".
 
 4.0.3
 -----
@@ -7,6 +11,7 @@ Journal des modifications
 - [FIX] Correction de l'affichage de la date d'historisation dans Individu lié
 - [FIX] Correction de la signature de Membre::setEtablissement(?string) qui faisait planter la création de proprosition (lorsqu'aucun établissement n'était fourni)
 - Ajout de l'unité de recherche des acteurs (manuel pour le moment) pour améliorer les pages de couverture
+- 
 4.0.2
 -----
 - [FIX] Affichage de la bonne adresse électronique institutionnelle sur la fiche thèse 
