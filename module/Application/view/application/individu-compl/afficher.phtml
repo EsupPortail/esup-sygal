@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * @see \Application\Controller\IndividuComplController::afficherAction()
+ * @var IndividuCompl $complement
+ */
+use Application\Entity\Db\IndividuCompl;
+
+?>
+
+<div class="row">
+    <div class="col-md-6">
+        <dl>
+            <?php if ($complement->getEmail()) : ?>
+                <dt> Adresse électronique </dt>
+                <dd> <?php echo $complement->getEmail(); ?> </dd>
+            <?php endif; ?>
+        </dl>
+    </div>
+    <div class="col-md-6">
+        <dl>
+            <?php if ($complement->getHistoCreation()) :?>
+                <dt> Création </dt>
+                <dd>
+                        <?php echo $complement->getHistoCreateur()->getDisplayName(); ?>
+                        le
+                        <?php echo $complement->getHistoCreation()->format("d/m/Y H:i:s"); ?>
+                </dd>
+            <?php endif; ?>
+            <?php if ($complement->getHistoModification()) :?>
+                <dt> Modification </dt>
+                <dd>
+                    <?php echo $complement->getHistoModificateur()->getDisplayName(); ?>
+                    le
+                    <?php echo $complement->getHistoModification()->format("d/m/Y H:i:s"); ?>
+                </dd>
+            <?php endif; ?>
+            <?php if ($complement->getHistoDestruction()) :?>
+            <dt> Historisation </dt>
+            <dd>
+                <?php echo $complement->getHistoDestructeur()->getDisplayName(); ?>
+                le
+                <?php echo $complement->getHistoDestruction()->format("d/m/Y H:i:s"); ?>
+            </dd>
+            <?php endif; ?>
+        </dl>
+    </div>
+</div>
