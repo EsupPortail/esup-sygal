@@ -243,7 +243,12 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
      */
     public function getEmail(): ?string
     {
-        return $this->email;
+        $email = $this->getEmail();
+        if ($email === null) {
+            $complement = $this->getComplement();
+            if ($complement) $email = $this->getComplement()->getEmail();
+        }
+        return $email;
     }
 
     /**

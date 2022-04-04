@@ -111,10 +111,14 @@ $etablissement = $these->getEtablissement();
                                     <?php else : ?>
                                         <ul>
                                         <?php foreach ($uniteResponsables as $uniteResponsable) : ?>
+                                            <?php
+                                                $email = $uniteResponsable->getIndividu()->getEmail();
+                                                $complement = $uniteResponsable->getIndividu()->getComplement();
+                                                if ($email === null AND $complement !== null) $email = "<span class='complement'>" . $complement->getEmail() . "</span>";
+                                            ?>
                                             <li>
                                                 <?php echo $uniteResponsable->getIndividu()->getNomComplet(); ?>
-                                                <?php //echo ($uniteResponsable->getIndividu()->getEtablissement())?$uniteResponsable->getIndividu()->getEtablissement()->getSigle():"Aucun"; ?>
-                                                (<?php echo $uniteResponsable->getIndividu()->getEmail(); ?>)
+                                                (<?php echo $email; ?>)
                                             </li>
                                         <?php endforeach; ?>
                                         </ul>
@@ -134,10 +138,14 @@ $etablissement = $these->getEtablissement();
                                 <?php else : ?>
                                     <ul>
                                         <?php foreach ($ecoleResponsables as $ecoleResponsable) : ?>
+                                            <?php
+                                            $email = $ecoleResponsable->getIndividu()->getEmail();
+                                            $complement = $ecoleResponsable->getIndividu()->getComplement();
+                                            if ($email === null AND $complement !== null) $email = "<span class='complement'>" . $complement->getEmail() . "</span>";
+                                            ?>
                                             <li>
                                                 <?php echo $ecoleResponsable->getIndividu()->getNomComplet(); ?>
-                                                <?php //echo ($ecoleResponsable->getIndividu()->getEtablissement())?$ecoleResponsable->getIndividu()->getEtablissement()->getSigle():"Aucun"; ?>
-                                                (<?php echo $ecoleResponsable->getIndividu()->getEmail(); ?>)
+                                                (<?php echo $email; ?>)
                                             </li>
                                         <?php endforeach; ?>
                                     </ul>
@@ -157,10 +165,14 @@ $etablissement = $these->getEtablissement();
                                 <?php else : ?>
                                     <ul>
                                         <?php foreach ($etablissementResponsables as $etablissementResponsable) : ?>
+                                            <?php
+                                            $email = $etablissementResponsable->getIndividu()->getEmail();
+                                            $complement = $etablissementResponsable->getIndividu()->getComplement();
+                                            if ($email === null AND $complement !== null) $email = "<span class='complement'>" . $complement->getEmail() . "</span>";
+                                            ?>
                                             <li>
                                                 <?php echo $etablissementResponsable->getIndividu()->getNomComplet(); ?>
-                                                <?php //echo ($etablissementResponsable->getIndividu()->getEtablissement())?$etablissementResponsable->getIndividu()->getEtablissement()->getSigle():"Aucun"; ?>
-                                                (<?php echo $etablissementResponsable->getIndividu()->getEmail(); ?>)
+                                                (<?php echo $email; ?>)
                                             </li>
                                         <?php endforeach; ?>
                                     </ul>
@@ -180,3 +192,7 @@ $etablissement = $these->getEtablissement();
         color:darkblue;
     }
 </style>
+
+<script>
+    $('span.complement').attr('title','Information obtenue depuis un complément');
+</script>

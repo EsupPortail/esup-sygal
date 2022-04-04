@@ -843,7 +843,7 @@ class NotifierSoutenanceService extends NotifierService
     {
         if ($membre->getActeur() === null) throw new RuntimeException("Notification vers rapporteur [MembreId = " . $membre->getId() . "] impossible car aucun acteur n'est lié.");
 
-        $email = $membre->getIndividu()->getEmail();
+        $email = $membre->getEmail();
         if ($email === null) throw new RuntimeException("Notification vers rapporteur [MembreId = " . $membre->getId() . "] impossible car aucun email est donné pour l'individu associé [IndividuId = " . $membre->getIndividu()->getId() . "].");
 
 
