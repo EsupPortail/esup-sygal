@@ -4,7 +4,6 @@ namespace Application\Form\IndividuCompl;
 
 use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Email;
-use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
 use Laminas\Validator\EmailAddress;
@@ -13,11 +12,27 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 class IndividuComplForm extends Form {
 
     /** @var string */
-    private $url;
+    private $urlAgent;
 
-    public function setUrl(string $url)
+    public function setUrlAgent(string $urlAgent)
     {
-        $this->url = $url;
+        $this->urlAgent = $urlAgent;
+    }
+
+    /** @var string */
+    private $urlEtablissement;
+
+    public function setUrlEtablissement(string $urlEtablissement)
+    {
+        $this->urlEtablissement = $urlEtablissement;
+    }
+
+    /** @var string */
+    private $urlUniteRecherche;
+
+    public function setUrlUniteRecherche(string $urlUniteRecherche)
+    {
+        $this->urlUniteRecherche = $urlUniteRecherche;
     }
 
     public function init()
@@ -25,14 +40,13 @@ class IndividuComplForm extends Form {
         //sas individu
         $individu = new SearchAndSelect('individu', ['label' => "Individu * :"]);
         $individu
-            ->setAutocompleteSource($this->url)
+            ->setAutocompleteSource($this->urlAgent)
             ->setSelectionRequired(true)
             ->setAttributes([
                 'id' => 'individu',
                 'placeholder' => "Agent à ajouter comme individu ...",
             ]);
         $this->add($individu);
-
         //text email
         $mailValidator = new EmailAddress();
         $mailValidator->setMessages([
@@ -40,9 +54,31 @@ class IndividuComplForm extends Form {
         ]);
         $this->add(
             (new Email('email'))
-                ->setLabel("Adresse électronique :")
+                ->setLabel("Adresse électronique professionnelle * :")
+                ->setAttribute('placeholder' , "Adresse électronique professionnelle associée à l'individu ...")
                 ->setValidator($mailValidator)
         );
+        //sas etablissement
+        $individu = new SearchAndSelect('etablissement', ['label' => "Établissement :"]);
+        $individu
+            ->setAutocompleteSource($this->urlEtablissement)
+            ->setSelectionRequired(true)
+            ->setAttributes([
+                'id' => 'etablissement',
+                'placeholder' => "Établissement associé à l'individu ...",
+            ]);
+        $this->add($individu);
+        //sas unite
+        $individu = new SearchAndSelect('uniteRecherche', ['label' => "Unité de recherche :"]);
+        $individu
+            ->setAutocompleteSource($this->urlUniteRecherche)
+            ->setSelectionRequired(true)
+            ->setAttributes([
+                'id' => 'uniteRecherche',
+                'placeholder' => "Unité de recherche associée à l'individu ...",
+            ]);
+        $this->add($individu);
+
         //bouton
         $this->add([
             'type' => Button::class,
@@ -74,6 +110,14 @@ class IndividuComplForm extends Form {
                         EmailAddress::INVALID_FORMAT => '',
                     ],
                 ],
+            ],
+            'etablissement' => [
+                'name' => 'etablissement',
+                'required' => false,
+            ],
+            'uniteRecherche' => [
+                'name' => 'uniteRecherche',
+                'required' => false,
             ],
         ]));
     }

@@ -34,7 +34,7 @@ class IndividuComplRepository extends DefaultEntityRepository
             ->join("individucompl.individu","individu")
             ->andWhere("individucompl.individu = :individu")
             ->setParameter("individu", $individu)
-            ->andWhere("individuCompl.histoDestruction is NULL")
+            ->andWhere("individucompl.histoDestruction is NULL")
         ;
 
         /** @var IndividuCompl $entity */

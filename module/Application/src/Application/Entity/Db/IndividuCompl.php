@@ -14,6 +14,10 @@ class IndividuCompl implements HistoriqueAwareInterface {
     private $individu;
     /** @var string $email */
     private $email;
+    /** @var Etablissement $etablissement */
+    private $etablissement;
+    /** @var UniteRecherche $uniteRecherche */
+    private $uniteRecherche;
 
     /**
      * @return int
@@ -57,6 +61,38 @@ class IndividuCompl implements HistoriqueAwareInterface {
     {
         $this->email = $email;
         return $this;
+    }
+
+    /**
+     * @return Etablissement|null
+     */
+    public function getEtablissement(): ?Etablissement
+    {
+        return $this->etablissement;
+    }
+
+    /**
+     * @param Etablissement|null $etablissement
+     */
+    public function setEtablissement(?Etablissement $etablissement): void
+    {
+        $this->etablissement = $etablissement;
+    }
+
+    /**
+     * @return UniteRecherche|null
+     */
+    public function getUniteRecherche(): ?UniteRecherche
+    {
+        return $this->uniteRecherche;
+    }
+
+    /**
+     * @param UniteRecherche|null $uniteRecherche
+     */
+    public function setUniteRecherche(?UniteRecherche $uniteRecherche): void
+    {
+        $this->uniteRecherche = $uniteRecherche;
     }
 
 }

@@ -24,6 +24,7 @@ return [
                     'action'     => [
                         'index',
                         'afficher',
+                        'gerer',
                         'ajouter',
                         'modifier',
                         'historiser',
@@ -76,6 +77,16 @@ return [
                             'defaults' => [
                                 'controller'    => IndividuComplController::class,
                                 'action'        => 'afficher',
+                            ],
+                        ],
+                    ],
+                    'gerer' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'    => '/gerer/:individu',
+                            'defaults' => [
+                                'controller'    => IndividuComplController::class,
+                                'action'        => 'gerer',
                             ],
                         ],
                     ],

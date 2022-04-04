@@ -11,13 +11,17 @@ class IndividuComplFormFactory {
     {
         /* @var PhpRenderer $renderer  */
         $renderer = $container->get('ViewRenderer');
-        $url = $renderer->url('utilisateur/rechercher-individu', [], [], true);
+        $urlAgent = $renderer->url('utilisateur/rechercher-individu', [], [], true);
+        $urlEtablissement = $renderer->url('etablissement/rechercher', [], [], true);
+        $urlUnite = $renderer->url('unite-recherche/rechercher', [], [], true);
 
         /** @var IndividuComplHydrator $hydrator */
         $hydrator = $container->get('HydratorManager')->get(IndividuComplHydrator::class);
 
         $form = new IndividuComplForm();
-        $form->setUrl($url);
+        $form->setUrlAgent($urlAgent);
+        $form->setUrlEtablissement($urlEtablissement);
+        $form->setUrlUniteRecherche($urlUnite);
         $form->setHydrator($hydrator);
         return $form;
     }

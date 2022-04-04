@@ -4,6 +4,7 @@ namespace Soutenance\Controller;
 
 use Application\Service\Acteur\ActeurService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Application\Service\Role\RoleService;
 use Application\Service\UserContextService;
 use Interop\Container\ContainerInterface;
 use Soutenance\Form\Anglais\AnglaisForm;
@@ -38,6 +39,7 @@ class PropositionControllerFactory
          * @var MembreService $membreService
          * @var NotifierSoutenanceService $notificationSoutenanceService
          * @var PropositionService $propositionService
+         * @var RoleService $roleService
          * @var UserContextService $userContextService
          * @var ValidationService $validationService
          * @var JustificatifService $justificatifService
@@ -49,6 +51,7 @@ class PropositionControllerFactory
         $membreService = $container->get(MembreService::class);
         $notificationSoutenanceService = $container->get(NotifierSoutenanceService::class);
         $propositionService = $container->get(PropositionService::class);
+        $roleService = $container->get(RoleService::class);
         $userContextService = $container->get('UserContextService');
         $validationService = $container->get(ValidationService::class);
         $justificatifService = $container->get(JustificatifService::class);
@@ -82,6 +85,7 @@ class PropositionControllerFactory
         $controller->setMembreService($membreService);
         $controller->setNotifierSoutenanceService($notificationSoutenanceService);
         $controller->setPropositionService($propositionService);
+        $controller->setRoleService($roleService);
         $controller->setUserContextService($userContextService);
         $controller->setValidationService($validationService);
         $controller->setJustificatifService($justificatifService);

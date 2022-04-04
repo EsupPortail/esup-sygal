@@ -52,15 +52,34 @@ $canDetruire = true;
         <thead>
             <tr>
                 <th> Adresse électronique </th>
+                <th> Établissement </th>
+                <th> Unite de recherche </th>
                 <th> Action </th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($liste as $complement) : ?>
-                <tr>
+                <tr <?php if ($complement->estHistorise()) echo " class='histo'"; ?>>
                     <td>
-                        <?php echo $complement->getEmail(); ?>
-                        <span <?php if($complement->estHistorise()) echo 'class="historise"'; ?>></span>
+                        <?php if ($complement->getEmail()) : ?>
+                            <?php echo $complement->getEmail(); ?>
+                        <?php else: ?>
+                            N.C.
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if ($complement->getEtablissement()) : ?>
+                            <?php echo $complement->getEtablissement()->getLibelle(); ?>
+                        <?php else: ?>
+                            N.C.
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if ($complement->getUniteRecherche()) : ?>
+                            <?php echo $complement->getUniteRecherche()->getLibelle(); ?>
+                        <?php else: ?>
+                            N.C.
+                        <?php endif; ?>
                     </td>
                     <td>
                         <?php if ($canAfficher) : ?>
@@ -100,3 +119,10 @@ $canDetruire = true;
         });
     });
 </script>
+
+<style>
+    .histo {
+        background: #fda4a4;
+        color: darkred;
+    }
+</style>

@@ -10,6 +10,7 @@ use Application\Entity\UserWrapper;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\Query\Expr\Join;
+use Laminas\Mvc\Controller\AbstractActionController;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 
@@ -134,5 +135,19 @@ class IndividuRepository extends DefaultEntityRepository
         return array_map(function(IndividuRole $ir) {
             return $ir->getIndividu();
         }, $res);
+    }
+
+    /**
+     * @param AbstractActionController $controller
+     * @param string $param
+     * @return Individu|null
+     */
+    public function findRequestedIndividu(AbstractActionController $controller, string $param='individu') : ?Individu
+    {
+        $individuId = $controller->params()->fromRoute($param);
+        /** @var Individu|null $individu */
+        $individu = $this->find($individuId);
+
+        return $individu;
     }
 }

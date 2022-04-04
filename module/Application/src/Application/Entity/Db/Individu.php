@@ -5,6 +5,7 @@ namespace Application\Entity\Db;
 use Application\Constants;
 use Application\Filter\NomCompletFormatter;
 use Doctrine\Common\Collections\ArrayCollection;
+use Faker\Provider\tr_TR\DateTime;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
@@ -120,6 +121,11 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
      * @var Etablissement|null
      */
     private $etablissement;
+
+    /**
+     * @var ArrayCollection (IndividuCompl)
+     */
+    private $complements;
 
     /**
      * Individu constructor.
@@ -633,4 +639,19 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
         return $this;
     }
 
+    /**
+     * @param DateTime|null $date
+     * @return IndividuCompl|null
+     */
+    public function getComplement(?DateTime $date = null) : ?IndividuCompl
+    {
+        /** @var IndividuCompl $complement */
+        foreach ($this->complements as $complement) {
+            if ($date === null and $complement->getHistoDestruction() === null) return $complement;
+            else {
+                if ($date >= $complement->getHistoCreation() AND ($date <= $complement->getHistoDestruction() OR $complement->getHistoDestruction() === null)) return $complement;
+            }
+        }
+        return null;
+    }
 }

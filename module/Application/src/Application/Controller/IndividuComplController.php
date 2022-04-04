@@ -2,6 +2,7 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuCompl;
 use Application\Form\IndividuCompl\IndividuComplFormAwareTrait;
 use Application\Service\IndividuCompl\IndividuComplServiceAwareTrait;
@@ -55,7 +56,40 @@ class IndividuComplController extends AbstractController
         $vm = new ViewModel([
             'title' => "Ajout d'un complément d'individu",
             'form' => $form,
-            'withIndividu' => true,
+        ]);
+        $vm->setTemplate('application/individu-compl/formulaire');
+        return $vm;
+    }
+
+    public function gererAction() : ViewModel
+    {
+        $individu = $this->getEntityManager()->getRepository(Individu::class)->findRequestedIndividu($this);
+        $individuCompl = $this->getEntityManager()->getRepository(IndividuCompl::class)->findIndividuComplByIndividu($individu);
+
+        if ($individuCompl === null) {
+            $individuCompl = new IndividuCompl();
+            $individuCompl->setIndividu($individu);
+            $individuCompl = $this->getIndividuComplService()->create($individuCompl);
+        }
+
+        $form = $this->getIndividuComplForm();
+        $form->setAttribute('action', $this->url()->fromRoute('individu-compl/gerer', ['individu' => $individu->getId()], [], true));
+        $form->bind($individuCompl);
+        $form->get('individu')->setAttribute('readonly','readonly');
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->getIndividuComplService()->update($individuCompl);
+                $this->flashMessenger()->addSuccessMessage("Gestion du complément pour [".$individu->getNomComplet()."] effectué.");
+            }
+        }
+
+        $vm = new ViewModel([
+            'title' => "Gestion du complément pour [".$individu->getNomComplet()."]",
+            'form' => $form,
         ]);
         $vm->setTemplate('application/individu-compl/formulaire');
         return $vm;
@@ -68,6 +102,7 @@ class IndividuComplController extends AbstractController
         $form = $this->getIndividuComplForm();
         $form->setAttribute('action', $this->url()->fromRoute('individu-compl/modifier', ['individu-compl' => $individuCompl->getId()], [], true));
         $form->bind($individuCompl);
+        $form->get('individu')->setAttribute('readonly','readonly');
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -82,7 +117,6 @@ class IndividuComplController extends AbstractController
         $vm = new ViewModel([
             'title' => "Modification d'un complément d'individu",
             'form' => $form,
-            'withIndividu' => true,
         ]);
         $vm->setTemplate('application/individu-compl/formulaire');
         return $vm;

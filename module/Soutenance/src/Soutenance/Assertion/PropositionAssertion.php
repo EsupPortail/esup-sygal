@@ -192,6 +192,8 @@ class PropositionAssertion implements  AssertionInterface {
                 }
             case PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER:
                 switch ($role) {
+                    case Role::CODE_ADMIN_TECH :
+                        return true;
                     case Role::CODE_DOCTORANT :
                         $isDoctorant = $doctorant->getId() === $individu->getId();
                         $dateOk = ($sursis OR ($dateCurrent <= $dateValidationMax));

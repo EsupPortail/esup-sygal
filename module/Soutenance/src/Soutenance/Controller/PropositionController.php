@@ -5,13 +5,20 @@ namespace Soutenance\Controller;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
+use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
-use Soutenance\Entity\Evenement;
+use Laminas\Form\Form;
+use Laminas\Http\Request;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Renderer\PhpRenderer;
 use Soutenance\Entity\Etat;
+use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Parametre;
 use Soutenance\Entity\Proposition;
@@ -34,11 +41,6 @@ use Soutenance\Service\SignaturePresident\SiganturePresidentPdfExporter;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Db\RoleInterface;
-use Laminas\Form\Form;
-use Laminas\Http\Request;
-use Laminas\Http\Response;
-use Laminas\View\Model\ViewModel;
-use Laminas\View\Renderer\PhpRenderer;
 
 /** @method boolean isAllowed($resource, $privilege = null) */
 class PropositionController extends AbstractController
@@ -46,13 +48,14 @@ class PropositionController extends AbstractController
     use ActeurServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use EvenementServiceAwareTrait;
+    use JustificatifServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
+    use ParametreServiceAwareTrait;
     use PropositionServiceAwareTrait;
+    use RoleServiceAwareTrait;
     use UserContextServiceAwareTrait;
     use ValidatationServiceAwareTrait;
-    use JustificatifServiceAwareTrait;
-    use ParametreServiceAwareTrait;
 
     use DateLieuFormAwareTrait;
     use MembreFromAwareTrait;
@@ -104,11 +107,40 @@ class PropositionController extends AbstractController
         /** Adresse des formulaires --------------------------------------------------------------------------------- */
         $parametres = $this->getParametreService()->getParametresAsArray();
 
+        /** Collècte des informations sur les individus liés -------------------------------------------------------- */
+        $ecoleResponsables = $this->getRoleService()->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
+        $ecoleResponsables = array_filter($ecoleResponsables, function(IndividuRole $ir) use ($these) { return $ir->getIndividu()->getEtablissement() AND $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId(); });
+        $uniteResponsables = $this->getRoleService()->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
+        $uniteResponsables = array_filter($uniteResponsables, function(IndividuRole $ir) use ($these) { return $ir->getIndividu()->getEtablissement() AND $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId(); });
+        $etablissementResponsables = $this->roleService->getIndividuRoleByStructure($these->getEtablissement()->getStructure());
+        $etablissementResponsables = array_filter($etablissementResponsables, function (IndividuRole $ir) { return $ir->getRole()->getCode() === Role::CODE_BDD;});
+        $etablissementResponsables = array_filter($etablissementResponsables, function(IndividuRole $ir) use ($these) { return $ir->getIndividu()->getEtablissement() AND $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId(); });
+
+        $informationsOk = true;
+        $directeurs = $this->getActeurService()->getRepository()->findEncadrementThese($these);
+        foreach ($directeurs as $directeur) {
+            if ($directeur->getIndividu()->getEmail() === null AND $directeur->getIndividu()->getComplement() === null) {
+                $informationsOk = false;
+                break;
+            }
+        }
+        if (empty($uniteResponsables)) $informationsOk = false;
+        if (empty($ecoleResponsables)) $informationsOk = false;
+        if (empty($etablissementResponsables)) $informationsOk = false;
+        /** @var Individu $individu */
+        foreach (array_merge($ecoleResponsables, $uniteResponsables, $etablissementResponsables) as $ecoleResponsable) {
+            $individu = $ecoleResponsable->getIndividu();
+            if ($individu->getEmail() === null AND $individu->getComplement() === null) {
+                $informationsOk = false;
+                break;
+            }
+        }
+
         return new ViewModel([
             'these' => $these,
             'proposition' => $proposition,
             'doctorant' => $these->getDoctorant(),
-            'directeurs' => $this->getActeurService()->getRepository()->findEncadrementThese($these),
+            'directeurs' => $directeurs,
             'validations' => $this->getPropositionService()->getValidationSoutenance($these),
             'validationActeur' => $this->getPropositionService()->isValidated($these, $currentIndividu, $currentRole),
             'roleCode' => $currentRole,
@@ -119,6 +151,11 @@ class PropositionController extends AbstractController
             'justificatifs' => $justificatifs,
             'justificatifsOk' => $justificatifsOk,
             'signatures' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_SIGNATURE),
+
+            'ecoleResponsables' => $ecoleResponsables,
+            'uniteResponsables' => $uniteResponsables,
+            'etablissementResponsables' => $etablissementResponsables,
+            'informationsOk' => $informationsOk,
 
             'FORMULAIRE_DELOCALISATION' => $parametres[Parametre::CODE_FORMULAIRE_DELOCALISATION],
             'FORMULAIRE_DELEGUATION' => $parametres[Parametre::CODE_FORMULAIRE_DELEGUATION],

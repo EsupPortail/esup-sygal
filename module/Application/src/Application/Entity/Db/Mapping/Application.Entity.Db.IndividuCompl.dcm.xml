@@ -15,6 +15,17 @@
         </many-to-one>
         <field name="email" column="email" type="string" length="1024" nullable="false"/>
 
+        <many-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement">
+            <join-columns>
+                <join-column name="etablissement_id" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="uniteRecherche" target-entity="Application\Entity\Db\UniteRecherche">
+            <join-columns>
+                <join-column name="unite_id" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
         <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>

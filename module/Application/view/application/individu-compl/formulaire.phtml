@@ -6,17 +6,17 @@ use Application\Form\IndividuCompl\IndividuComplForm;
  * @see \Application\Controller\IndividuComplController::ajouterAction()
  * @see \Application\Controller\IndividuComplController::modifierAction()
  * @var IndividuComplForm $form
- * @var bool $withIndividu
  */
 
 ?>
 
 <?php echo $this->form()->openTag($form); ?>
-<?php if ($withIndividu) : ?>
-    <?php echo $this->formControlGroup()->render($form->get('individu')); ?>
-<?php endif;?>
 
+<?php echo $this->formControlGroup()->render($form->get('individu')); ?>
 <?php echo $this->formControlGroup()->render($form->get('email')); ?>
+<?php echo $this->formControlGroup()->render($form->get('etablissement')); ?>
+<?php echo $this->formControlGroup()->render($form->get('uniteRecherche')); ?>
+
 <?php echo $this->formControlGroup()->render($form->get('enregistrer')); ?>
 
 <?php echo $this->form()->closeTag(); ?>
