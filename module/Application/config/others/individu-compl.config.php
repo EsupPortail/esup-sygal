@@ -9,6 +9,7 @@ use Application\Form\IndividuCompl\IndividuComplForm;
 use Application\Form\IndividuCompl\IndividuComplFormFactory;
 use Application\Form\IndividuCompl\IndividuComplHydrator;
 use Application\Form\IndividuCompl\IndividuComplHydratorFactory;
+use Application\Provider\Privilege\IndividuPrivileges;
 use Application\Service\IndividuCompl\IndividuComplService;
 use Application\Service\IndividuCompl\IndividuComplServiceFactory;
 use Laminas\Router\Http\Literal;
@@ -23,15 +24,41 @@ return [
                     'controller' => IndividuComplController::class,
                     'action'     => [
                         'index',
+                    ],
+                    'privilege' => [
+                        IndividuPrivileges::INDIVIDU_COMPLMENT_INDEX,
+                    ],
+                ],
+                [
+                    'controller' => IndividuComplController::class,
+                    'action'     => [
                         'afficher',
+                    ],
+                    'privilege' => [
+                        IndividuPrivileges::INDIVIDU_COMPLMENT_AFFICHER,
+                    ],
+                ],
+                [
+                    'controller' => IndividuComplController::class,
+                    'action'     => [
                         'gerer',
                         'ajouter',
                         'modifier',
                         'historiser',
-                        'restaurer',
+                        'restaurer'
+                    ],
+                    'privilege' => [
+                        IndividuPrivileges::INDIVIDU_COMPLMENT_AFFICHER,
+                    ],
+                ],
+                [
+                    'controller' => IndividuComplController::class,
+                    'action'     => [
                         'detruire',
                     ],
-                    'role' => [],
+                    'privilege' => [
+                        IndividuPrivileges::INDIVIDU_COMPLMENT_SUPPRIMER,
+                    ],
                 ],
             ],
         ],

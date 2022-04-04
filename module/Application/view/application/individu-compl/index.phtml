@@ -5,13 +5,16 @@
  * @var array $complements
  */
 
-use Application\Entity\Db\IndividuCompl;$this->headTitle("Liste des compléments d'individu");
+use Application\Entity\Db\IndividuCompl;
+use Application\Provider\Privilege\IndividuPrivileges;
 
-$canAfficher = true;
-$canAjouter = true;
-$canModifier = true;
-$canHistoriser = true;
-$canDetruire = true;
+$this->headTitle("Liste des compléments d'individu");
+
+$canAfficher        = $this->isAllowed(IndividuPrivileges::getResourceId(IndividuPrivileges::INDIVIDU_COMPLMENT_AFFICHER));
+$canAjouter         = $this->isAllowed(IndividuPrivileges::getResourceId(IndividuPrivileges::INDIVIDU_COMPLMENT_MODIFIER));
+$canModifier        = $canAjouter;
+$canHistoriser      = $canAjouter;
+$canDetruire        = $this->isAllowed(IndividuPrivileges::getResourceId(IndividuPrivileges::INDIVIDU_COMPLMENT_SUPPRIMER));;
 
 ?>
 
