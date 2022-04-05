@@ -243,7 +243,7 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
      */
     public function getEmail(): ?string
     {
-        $email = $this->getEmail();
+        $email = $this->email;
         if ($email === null) {
             $complement = $this->getComplement();
             if ($complement) $email = $this->getComplement()->getEmail();
@@ -631,7 +631,14 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
      */
     public function getEtablissement(): ?Etablissement
     {
-        return $this->etablissement;
+        $etablissement =  $this->etablissement;
+        if ($etablissement === null) {
+            $complement = $this->getComplement();
+            if ($complement) {
+                $etablissement = $complement->getEtablissement();
+            }
+        }
+        return $etablissement;
     }
 
     /**
@@ -642,6 +649,19 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     {
         $this->etablissement = $etablissement;
         return $this;
+    }
+
+    /**
+     * @return Etablissement|null
+     */
+    public function getUniteRecherche(): ?UniteRecherche
+    {
+        $unite =  null;
+        if ($unite === null) {
+            $complement = $this->getComplement();
+            if ($complement) $unite = $complement->getUniteRecherche();
+        }
+        return $unite;
     }
 
     /**

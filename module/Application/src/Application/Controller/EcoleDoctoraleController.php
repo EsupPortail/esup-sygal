@@ -47,7 +47,7 @@ class EcoleDoctoraleController extends StructureConcreteController
     /**
      * @return ViewModel
      */
-    public function informationAction()
+    public function informationAction() : ViewModel
     {
         $id = $this->params()->fromRoute('structure');
         $structureConcrete = $this->getStructureConcreteService()->getRepository()->findByStructureId($id);

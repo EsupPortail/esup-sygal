@@ -4,7 +4,7 @@
  * @see \Application\Controller\UniteRechercheController::informationAction()
  * @var UniteRecherche              $unite
  * @var array                       $roleListing     (string => int)
- * @var array                       $individuListing (string => string[])
+ * @var IndividuRole[]              $individuRoles
  * @var EtablissementRattachement[] $etablissementsRattachements
  * @var string                      $logoContent
  * @var array                       $coencadrants
@@ -12,6 +12,7 @@
  */
 
 use Application\Entity\Db\EtablissementRattachement;
+use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Provider\Privilege\CoEncadrantPrivileges;
@@ -183,14 +184,12 @@ $structure = $unite->getStructure();
                     </tr>
                     </thead>
                     <tbody>
-                    <?php foreach ($individuListing as $denomination => $data): ?>
-                        <?php foreach ($data as $item): ?>
-                            <tr>
-                                <td> <?php echo $denomination; ?> </td>
-                                <td> <?php echo $item['Etablissement']; ?> </td>
-                                <td> <?php echo $item['Role']; ?> </td>
-                            </tr>
-                        <?php endforeach; ?>
+                    <?php foreach ($individuRoles as $individuRole): ?>
+                        <tr>
+                            <td> <?php echo $individuRole->getIndividu()->getNomComplet(); ?> </td>
+                            <td> <?php echo $individuRole->getIndividu()->getEtablissement(); ?> </td>
+                            <td> <?php echo $individuRole->getRole()->getLibelle(); ?> </td>
+                        </tr>
                     <?php endforeach; ?>
                     </tbody>
                 </table>

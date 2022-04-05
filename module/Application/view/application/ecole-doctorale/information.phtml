@@ -4,7 +4,7 @@
  * @see \Application\Controller\EcoleDoctoraleController::informationAction()
  * @var EcoleDoctorale $ecole
  * @var array          $roleListing     (string => int)
- * @var array          $individuListing (string => string[])
+ * @var IndividuRole[] $individuRoles
  * @var string         $logoContent
  * @var Acteur[]       $coencadrants
  * @var string[]       $contenus
@@ -12,6 +12,7 @@
 
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\StructureDocument;
 use Application\Entity\Db\TypeStructure;
 use Application\Provider\Privilege\CoEncadrantPrivileges;
@@ -159,7 +160,6 @@ $structure = $ecole->getStructure();
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
-
                 </table>
             </div>
 
@@ -169,18 +169,18 @@ $structure = $ecole->getStructure();
                     <thead>
                     <tr>
                         <th> Dénomination</th>
+                        <th> Établissement</th>
                         <th> Rôle</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <?php foreach ($individuListing as $denomination => $data): ?>
-                        <?php foreach ($data as $item): ?>
-                            <tr>
-                                <td> <?php echo $denomination; ?> </td>
-                                <td> <?php echo $item['Etablissement']; ?> </td>
-                                <td> <?php echo $item['Role']; ?> </td>
-                            </tr>
-                        <?php endforeach; ?>
+                    <?php /** @var IndividuRole $individuRole */ ?>
+                    <?php foreach ($individuRoles as $individuRole): ?>
+                        <tr>
+                            <td> <?php echo $individuRole->getIndividu()->getNomComplet(); ?> </td>
+                            <td> <?php echo $individuRole->getIndividu()->getEtablissement(); ?> </td>
+                            <td> <?php echo $individuRole->getRole()->getLibelle(); ?> </td>
+                        </tr>
                     <?php endforeach; ?>
                     </tbody>
                 </table>
