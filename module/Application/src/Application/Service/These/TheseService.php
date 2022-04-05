@@ -612,13 +612,13 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         $nomination = [];
         foreach ($directeurs as $directeur) {
             $current = strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true, true));
-            $structure = ($these->getUniteRecherche())?:$directeur->getEtablissement();
+            $structure = ($these->getUniteRecherche())?:$directeur->getIndividu()->getUniteRecherche()?:$directeur->getIndividu()->getEtablissement();
             if ($structure !== null) $current .= " (". $structure->getLibelle() .")";
             $nomination[] = $current;
         }
         foreach ($codirecteurs as $directeur) {
             $current = strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true, true));
-            $structure = ($directeur->getUniteRecherche())?:$directeur->getEtablissement();
+            $structure = ($directeur->getIndividu()->getUniteRecherche())?:$directeur->getIndividu()->getEtablissement();
             if ($structure !== null) $current .= " (". $structure->getLibelle() .")";
             $nomination[] = $current;
         }
