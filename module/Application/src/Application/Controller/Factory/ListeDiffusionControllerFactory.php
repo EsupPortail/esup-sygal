@@ -28,7 +28,7 @@ class ListeDiffusionControllerFactory
         /**
          * @var IndividuService $individuService
          */
-        $individuService = $container->get('IndividuService');
+        $individuService = $container->get(IndividuService::class);
         $controller->setIndividuService($individuService);
 
         /**

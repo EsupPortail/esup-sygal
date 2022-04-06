@@ -29,7 +29,7 @@ class ListeDiffusionHandlerFactory
         /**
          * @var IndividuService $individuService
          */
-        $individuService = $container->get('IndividuService');
+        $individuService = $container->get(IndividuService::class);
         $service->setIndividuService($individuService);
 
         /**

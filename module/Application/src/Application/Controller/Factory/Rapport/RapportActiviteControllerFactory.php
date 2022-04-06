@@ -45,7 +45,7 @@ class RapportActiviteControllerFactory
         $rapportService = $container->get(RapportService::class);
         $versionFichierService = $container->get('VersionFichierService');
         $notificationService = $container->get(NotifierService::class);
-        $individuService = $container->get('IndividuService');
+        $individuService = $container->get(IndividuService::class);
         $rapportForm = $container->get('FormElementManager')->get(RapportActiviteForm::class);
         $validationService = $container->get(ValidationService::class);
         $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);

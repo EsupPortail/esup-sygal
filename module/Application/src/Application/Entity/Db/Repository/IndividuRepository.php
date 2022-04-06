@@ -61,7 +61,7 @@ class IndividuRepository extends DefaultEntityRepository
      * @param string  $type (doctorant, acteur, ...)
      * @param integer $limit
      *
-     * @return array
+     * @return Individu[]
      */
     public function findByText($text, $type = null, $limit = 100)
     {

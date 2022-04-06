@@ -12,11 +12,11 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 class IndividuComplForm extends Form {
 
     /** @var string */
-    private $urlAgent;
+    private $urlIndividu;
 
-    public function setUrlAgent(string $urlAgent)
+    public function setUrlIndividu(string $urlIndividu)
     {
-        $this->urlAgent = $urlAgent;
+        $this->urlIndividu = $urlIndividu;
     }
 
     /** @var string */
@@ -40,7 +40,7 @@ class IndividuComplForm extends Form {
         //sas individu
         $individu = new SearchAndSelect('individu', ['label' => "Individu * :"]);
         $individu
-            ->setAutocompleteSource($this->urlAgent)
+            ->setAutocompleteSource($this->urlIndividu)
             ->setSelectionRequired(true)
             ->setAttributes([
                 'id' => 'individu',

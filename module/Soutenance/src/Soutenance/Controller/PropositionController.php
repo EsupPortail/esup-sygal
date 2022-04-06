@@ -108,10 +108,13 @@ class PropositionController extends AbstractController
         $parametres = $this->getParametreService()->getParametresAsArray();
 
         /** Collècte des informations sur les individus liés -------------------------------------------------------- */
+        /** @var IndividuRole[] $ecoleResponsables */
         $ecoleResponsables = $this->getRoleService()->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
         $ecoleResponsables = array_filter($ecoleResponsables, function(IndividuRole $ir) use ($these) { return $ir->getIndividu()->getEtablissement() AND $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId(); });
+        /** @var IndividuRole[] $uniteResponsables */
         $uniteResponsables = $this->getRoleService()->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
         $uniteResponsables = array_filter($uniteResponsables, function(IndividuRole $ir) use ($these) { return $ir->getIndividu()->getEtablissement() AND $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId(); });
+        /** @var IndividuRole[] $etablissementResponsables */
         $etablissementResponsables = $this->roleService->getIndividuRoleByStructure($these->getEtablissement()->getStructure());
         $etablissementResponsables = array_filter($etablissementResponsables, function (IndividuRole $ir) { return $ir->getRole()->getCode() === Role::CODE_BDD;});
         $etablissementResponsables = array_filter($etablissementResponsables, function(IndividuRole $ir) use ($these) { return $ir->getIndividu()->getEtablissement() AND $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId(); });
@@ -125,8 +128,17 @@ class PropositionController extends AbstractController
             }
         }
         if (empty($uniteResponsables)) $informationsOk = false;
+        foreach ($uniteResponsables as $uniteResponsable) {
+            if ($uniteResponsable->getIndividu()->getEmail() === null) { $informationsOk = false; break;}
+        }
         if (empty($ecoleResponsables)) $informationsOk = false;
+        foreach ($ecoleResponsables as $ecoleResponsable) {
+            if ($ecoleResponsable->getIndividu()->getEmail() === null) { $informationsOk = false; break;}
+        }
         if (empty($etablissementResponsables)) $informationsOk = false;
+        foreach ($etablissementResponsables as $etablissementResponsable) {
+            if ($etablissementResponsable->getIndividu()->getEmail() === null) { $informationsOk = false; break;}
+        }
         /** @var Individu $individu */
         foreach (array_merge($ecoleResponsables, $uniteResponsables, $etablissementResponsables) as $ecoleResponsable) {
             $individu = $ecoleResponsable->getIndividu();
