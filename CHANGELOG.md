@@ -6,6 +6,7 @@ Journal des modifications
 - Correction de typos dans mail de feu vert de la soutenance
 - Ajout de redirection de mail lorsque certains mails n'ont pas de destinataire "ATTENTION MAIL NON DÉLIVRÉ".
 - Compléments d'individu : mise en place des éléments de base 
+- Modification du texte de mail de réussite au doctorat
 
 4.0.3
 -----
