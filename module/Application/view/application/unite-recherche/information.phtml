@@ -152,49 +152,56 @@ $structure = $unite->getStructure();
         <h2>
             Rôles et membres
         </h2>
-        <div class="row">
-            <div class="col-md-6">
-                <table class="table table-sm">
-                    <thead>
-                    <tr>
-                        <th> Libellé du rôle</th>
-                        <th> Effectif</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach ($roleListing as $libelle => $count): ?>
-                        <tr>
-                            <td> <?php echo $libelle; ?> </td>
-                            <td> <?php echo $count; ?> </td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
 
-                </table>
-            </div>
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th> Libellé du rôle</th>
+                <th> Effectif</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($roleListing as $libelle => $count): ?>
+                <tr>
+                    <td> <?php echo $libelle; ?> </td>
+                    <td> <?php echo $count; ?> </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
 
+        </table>
 
-            <div class="col-md-6">
-                <table class="table table-sm">
-                    <thead>
-                    <tr>
-                        <th> Dénomination</th>
-                        <th> Établissement</th>
-                        <th> Rôle</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach ($individuRoles as $individuRole): ?>
-                        <tr>
-                            <td> <?php echo $individuRole->getIndividu()->getNomComplet(); ?> </td>
-                            <td> <?php echo $individuRole->getIndividu()->getEtablissement(); ?> </td>
-                            <td> <?php echo $individuRole->getRole()->getLibelle(); ?> </td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th> Dénomination</th>
+                <th> Adresse électronique</th>
+                <th> Établissement</th>
+                <th> Rôle</th>
+                <th> &nbsp; </th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($individuRoles as $individuRole): ?>
+                <?php
+                $individu = $individuRole->getIndividu();
+                $role = $individuRole->getRole();
+                ?>
+                <tr>
+                    <td> <?php echo $individu->getNomComplet(); ?> </td>
+                    <td> <?php echo $individu->getEmail(); ?> </td>
+                    <td> <?php echo $individu->getEtablissement(); ?> </td>
+                    <td> <?php echo $role->getLibelle(); ?> </td>
+                    <td>
+                        <?php if ($canEdit) : ?>
+                            <a href="<?php echo $this->url("individu-compl/gerer", ['individu' => $individu->getId()], [], true); ?>" class="ajax-modal" data-event="modification">
+                                <span class="icon icon-editer" title="Ajouter/Modifier un complément"></span></a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
 
         <?php if ($canAddRole && empty($roleListing)): ?>
             <a href="<?php echo $this->url('structure/generer-roles-defauts', [
