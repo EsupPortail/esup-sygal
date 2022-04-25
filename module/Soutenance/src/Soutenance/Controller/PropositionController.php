@@ -83,6 +83,12 @@ class PropositionController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
+        if (!$proposition) {
+            $proposition = $this->getPropositionService()->create($these);
+            $this->getPropositionService()->addDirecteursAsMembres($proposition);
+            return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
+        }
+
         $message = "
                 Vous n'êtes pas autorisé·e à visualiser cette proposition de soutenance. <br/><br/>
                 Les personnes pouvant visualiser celle-ci sont :
@@ -94,12 +100,6 @@ class PropositionController extends AbstractController
             ";
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_VISUALISER], $message);
         if ($autorisation !== null) return $autorisation;
-
-        if (!$proposition) {
-            $proposition = $this->getPropositionService()->create($these);
-            $this->getPropositionService()->addDirecteursAsMembres($proposition);
-            return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
-        }
 
         /** @var Utilisateur $currentUser */
         $currentUser = $this->userContextService->getDbUser();
