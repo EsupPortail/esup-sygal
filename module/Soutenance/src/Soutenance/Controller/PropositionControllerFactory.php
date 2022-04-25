@@ -7,6 +7,7 @@ use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Role\RoleService;
 use Application\Service\UserContextService;
 use Interop\Container\ContainerInterface;
+use Soutenance\Assertion\PropositionAssertion;
 use Soutenance\Form\Anglais\AnglaisForm;
 use Soutenance\Form\ChangementTitre\ChangementTitreForm;
 use Soutenance\Form\Confidentialite\ConfidentialiteForm;
@@ -77,6 +78,11 @@ class PropositionControllerFactory
         /* @var $renderer PhpRenderer */
         $renderer = $container->get('ViewRenderer');
 
+        /**
+         * @var PropositionAssertion $propositionAssertion
+         */
+        $propositionAssertion = $container->get(PropositionAssertion::class);
+
         $controller = new PropositionController();
 
         $controller->setActeurService($acteurService);
@@ -100,6 +106,8 @@ class PropositionControllerFactory
         $controller->setChangementTitreForm($changementTitreForm);
 
         $controller->setRenderer($renderer);
+
+        $controller->setPropositionAssertion($propositionAssertion);
 
         return $controller;
     }

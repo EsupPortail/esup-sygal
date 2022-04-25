@@ -7,6 +7,7 @@ Journal des modifications
 - Ajout de redirection de mail lorsque certains mails n'ont pas de destinataire "ATTENTION MAIL NON DÉLIVRÉ".
 - Compléments d'individu : mise en place des éléments de base 
 - Modification du texte de mail de réussite au doctorat
+- [FIX] verification des assertions au niveau des actions de PropositionController
 
 4.0.3
 -----

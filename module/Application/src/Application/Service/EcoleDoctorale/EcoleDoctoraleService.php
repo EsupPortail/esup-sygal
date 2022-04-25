@@ -3,7 +3,6 @@
 namespace Application\Service\EcoleDoctorale;
 
 use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\EcoleDoctoraleRepository;
 use Application\Entity\Db\Structure;
@@ -13,8 +12,8 @@ use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
+use Laminas\Mvc\Controller\AbstractActionController;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Mvc\Controller\AbstractActionController;
 
 /**
  * @method EcoleDoctorale|null findOneBy(array $criteria, array $orderBy = null)
@@ -144,7 +143,8 @@ class EcoleDoctoraleService extends BaseService
 
     /**
      * Instancie une pseudo-école doctorale "Toute école doctorale confondue" utile dans les vues.
-     *
+     *use Application\Entity\Db\Etablissement;
+
      * @return EcoleDoctorale
      */
     public function createTouteEcoleDoctoraleConfondue()

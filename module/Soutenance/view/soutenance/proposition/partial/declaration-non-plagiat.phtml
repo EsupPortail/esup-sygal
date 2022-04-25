@@ -66,6 +66,7 @@ $canRevoquer = $this->isAllowed($these,PropositionPrivileges::PROPOSITION_DECLAR
         </div>
 
         <?php if ($isValider !== null AND $canRevoquer) : ?>
+            <?php /** @see \Soutenance\Controller\PropositionController::revoquerDeclarationNonPlagiatAction() */ ?>
             <a href="<?php echo $this->url('soutenance/proposition/declaration-non-plagiat/revoquer', ['these' => $these->getId()], [], true); ?>"
                class="btn btn-danger"
            >

@@ -259,7 +259,6 @@ class NotifierSoutenanceService extends NotifierService
     /**
      * @param These $these
      * @see Application/view/soutenance/notification/validation-structure.phtml
-     * @throws NotificationException
      */
     public function triggerNotificationUniteRechercheProposition(These $these)
     {
@@ -302,7 +301,6 @@ class NotifierSoutenanceService extends NotifierService
     /**
      * @param These $these
      * @see Application/view/soutenance/notification/validation-structure.phtml
-     * @throws NotificationException
      */
     public function triggerNotificationEcoleDoctoraleProposition(These $these)
     {
@@ -345,7 +343,6 @@ class NotifierSoutenanceService extends NotifierService
     /**
      * @param These $these
      * @see Application/view/soutenance/notification/validation-structure.phtml
-     * @throws NotificationException
      */
     public function triggerNotificationBureauDesDoctoratsProposition(These $these)
     {

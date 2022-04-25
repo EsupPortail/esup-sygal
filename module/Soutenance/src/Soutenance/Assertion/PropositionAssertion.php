@@ -38,6 +38,7 @@ class PropositionAssertion implements  AssertionInterface {
 
     public function assert(Acl $acl, RoleInterface $role = null, ResourceInterface $resource = null, $privilege = null)
     {
+        /** Recuperation de la proposition **/
         /** @var These $these */
         $these = $resource;
         $proposition = null;
@@ -48,14 +49,38 @@ class PropositionAssertion implements  AssertionInterface {
                 break;
             }
         }
+
+        $role = $this->userContextService->getSelectedIdentityRole();
+        return $this->computeValeur($role, $proposition, $privilege);
+
+    }
+
+    /**
+     * @param RoleInterface|null $role
+     * @param Proposition|null $resource
+     * @param $privilege
+     * @return bool
+     *
+     */
+    public function computeValeur(RoleInterface $role = null, ?Proposition $proposition = null, $privilege = null) : bool
+    {
+
+        $these = $proposition->getThese();
         $sursis = ($proposition)?$proposition->hasSursis():false;
         $dateValidationMax = ($proposition->getDate())?DateTime::createFromFormat('d/m/Y',$proposition->getDate()->format('d/m/Y'))->sub(new DateInterval('P2M')):null;
         $dateCurrent = new DateTime();
 
         /** @var Role $identityRole */
-        $identityRole = $this->userContextService->getSelectedIdentityRole();
-        $role = $identityRole->getCode();
-        $structure = $identityRole->getStructure();
+        if ($role === null) {
+            $identityRole = $this->userContextService->getSelectedIdentityRole();
+            $role = $identityRole->getCode();
+            $structure = $identityRole->getStructure();
+        } else {
+            $structure = $role->getStructure();
+            $role = $role->getCode();
+        }
+
+
         $individu = $this->userContextService->getIdentityDb()->getIndividu();
 
         $doctorant = $these->getDoctorant()->getIndividu();
@@ -113,12 +138,6 @@ class PropositionAssertion implements  AssertionInterface {
                         return true;
                     case Role::CODE_BDD :
                         return ($these->getEtablissement()->getStructure() === $identityRole->getStructure());
-//                        $validations_ACTEUR = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PROPOSITION_SOUTENANCE, $these);
-//                        $validations_UNITE = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
-//                        $nbDirs = count($these->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE));
-//                        $nbCoDirs = count($these->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE));
-//                        $nbActeur = 1 + $nbDirs + $nbCoDirs;
-//                        return !$validations_UNITE && count($validations_ACTEUR) === $nbActeur && $structure === $theseEtablissementStructure;
                     default:
                         return false;
                 }
