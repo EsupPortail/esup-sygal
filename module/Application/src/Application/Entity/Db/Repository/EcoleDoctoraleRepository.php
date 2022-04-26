@@ -4,6 +4,7 @@ namespace Application\Entity\Db\Repository;
 
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\UniteRecherche;
 use Doctrine\ORM\NonUniqueResultException;
 use UnicaenApp\Exception\RuntimeException;
 
@@ -71,5 +72,25 @@ class EcoleDoctoraleRepository extends DefaultEntityRepository
         }
 
         return $entity;
+    }
+
+    /**
+     * @param string|null $term
+     * @return EcoleDoctorale[]
+     */
+    public function findByText(?string $term) : array
+    {
+        $qb = $this->createQueryBuilder("e")
+            ->addSelect("s")->leftJoin("e.structure", "s")
+            ->andWhere('lower(s.libelle) like :term or lower(s.sigle) like :term')
+            ->setParameter('term', '%'.strtolower($term).'%')
+            ->andWhere('e.histoDestruction is null')
+            ->andWhere('s.estFermee = :false')
+            ->setParameter('false', false)
+            ->leftJoin('s.structureSubstituante', 'substitutionTo')
+            ->andWhere('substitutionTo IS NULL')
+        ;
+        $result = $qb->getQuery()->getResult();
+        return $result;
     }
 }

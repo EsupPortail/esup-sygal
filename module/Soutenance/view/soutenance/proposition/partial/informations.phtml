@@ -1,0 +1,143 @@
+<?php
+
+/**
+ * @var Proposition $proposition
+ * @var string $FORMULAIRE_DELOCALISATION
+ * @var boolean $canModifier
+ * @var boolean $informationsOk
+ *
+ * @var IndividuRole[] $ecoleResponsables
+ * @var IndividuRole[] $uniteResponsables
+ * @var IndividuRole[] $etablissementResponsables
+ *
+ * @var Acteur[] $directeurs
+ */
+
+use Application\Entity\Db\Acteur;
+use Application\Entity\Db\IndividuRole;
+use Soutenance\Entity\Proposition;
+
+$these = $proposition->getThese();
+
+
+$unite = $these->getUniteRecherche();
+$ecole = $these->getEcoleDoctorale();
+$etablissement = $these->getEtablissement();
+
+?>
+
+
+
+<div id="BOXDIV_INFORMATIONS">
+<div class="box card" >
+
+    <div class="card-header <?php echo ($informationsOk)?'bg-success':'bg-danger'; ?>">
+        <h2>
+            Informations sur les intervenants (Directeurs, Responsables d'UR, Responsable d'ED, ...)
+        </h2>
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Direction de la thèse</h3>
+
+                <ul>
+                    <?php foreach ($directeurs as $directeur) : ?>
+                        <li>
+                            <?php echo $directeur->getIndividu()->getNomComplet(); ?>
+                            (<?php echo ($directeur->getIndividu()->getEmail())?:'<span class="text-danger">Adresse électronique manquante</span>'; ?>)
+                            <br/>
+                            Établissement :
+                            <?php echo ($directeur->getIndividu()->getEtablissement())?:'<span class="text-danger">Établissement manquant</span>'; ?>
+                            <br/>
+                            Unité de recherche :
+                            <?php echo ($directeur->getIndividu()->getUniteRecherche())?:'<span class="text-danger">Unité de recherche manquante</span>'; ?>
+                            <br/>
+                            <?php if ($canModifier) : ?>
+                                <?php /** @see \Application\Controller\IndividuComplController::gererAction() */ ?>
+                                <a href="<?php echo $this->url("individu-compl/gerer", ['individu' => $directeur->getIndividu()->getId()], [], true); ?>" class="btn btn-primary btn-sm ajax-modal" data-event="modification">
+                                    <span class="icon icon-editer"></span> Compléter les informations
+                                </a>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h3>Structures associées</h3>
+                    <dl>
+                        <dt> Unité de recherche </dt>
+                        <dd>
+                            <?php if (!$unite) : ?>
+                                <strong class="text-danger">Aucune unité de recherche !</strong>
+                            <?php else : ?>
+                                <?php echo $unite->getLibelle(); ?>
+                                    <?php if (empty($uniteResponsables)) : ?>
+                                        <div class="alert alert-danger">
+                                            <span class="icon icon-attention"></span> Aucun reponsable de site
+                                        </div>
+                                    <?php else : ?>
+                                        <ul>
+                                        <?php foreach ($uniteResponsables as $uniteResponsable) : ?>
+                                            <li>
+                                                <?php echo $uniteResponsable->getIndividu()->getNomComplet(); ?>
+                                                (<?php echo ($uniteResponsable->getIndividu()->getEmail())?:"<span class='text-danger'>Adresse électronique manquante</span>"; ?>)
+                                            </li>
+                                        <?php endforeach; ?>
+                                        </ul>
+                                    <?php endif; ?>
+                            <?php endif; ?>
+                        </dd>
+                        <dt> École doctorale </dt>
+                        <dd>
+                            <?php if (!$ecole) : ?>
+                                <strong class="text-danger">Aucune école doctorale !</strong>
+                            <?php else : ?>
+                                <?php echo $ecole->getLibelle(); ?>
+                                <?php if (empty($ecoleResponsables)) : ?>
+                                    <div class="alert alert-danger">
+                                        <span class="icon icon-attention"></span> Aucun reponsable de site
+                                    </div>
+                                <?php else : ?>
+                                    <ul>
+                                        <?php foreach ($ecoleResponsables as $ecoleResponsable) : ?>
+                                            <li>
+                                                <?php echo $ecoleResponsable->getIndividu()->getNomComplet(); ?>
+                                                (<?php echo ($ecoleResponsable->getIndividu()->getEmail())?:"<span class='text-danger'>Adresse électronique manquante</span>"; ?>)
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        </dd>
+                        <dt> Établissement </dt>
+                        <dd>
+                            <?php if (!$ecole) : ?>
+                                <strong class="text-danger">Aucun établissement !</strong>
+                            <?php else : ?>
+                                <?php echo $etablissement->getLibelle(); ?>
+                                <?php if (empty($etablissementResponsables)) : ?>
+                                    <div class="alert alert-danger">
+                                        <span class="icon icon-attention"></span> Aucun reponsable de site
+                                    </div>
+                                <?php else : ?>
+                                    <ul>
+                                        <?php foreach ($etablissementResponsables as $etablissementResponsable) : ?>
+                                            <li>
+                                                <?php echo $etablissementResponsable->getIndividu()->getNomComplet(); ?>
+                                                (<?php echo ($etablissementResponsable->getIndividu()->getEmail())?:"<span class='text-danger'>Adresse électronique manquante</span>"; ?>)
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        </dd>
+                    </dl>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>

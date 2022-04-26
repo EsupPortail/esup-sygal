@@ -13,6 +13,7 @@
  * @var Individu $currentIndividu
  * @var boolean $validationActeur
  *
+ * @var bool $informationsOk
  */
 
 
@@ -38,18 +39,26 @@ $a=1;
     </div>
     <div class="card-body">
 
+        <?php if (!$informationsOk) : ?>
+            <div class="alert alert-danger">
+                <span class="icon icon-attention"></span>
+                Au moins une information sur la direction ou l'encadrement de la thèse est manquante.
+            </div>
+        <?php endif; ?>
+        <?php if (!$declarationHonneur) : ?>
+            <div class="alert alert-danger">
+                <span class="icon icon-attention"></span>
+                La déclaration sur l'honneur de non-plagiat doit être validée avant de permettre la validation de la proposition.
+            </div>
+        <?php endif; ?>
+
         <div class="row">
             <div class="col-md-6" >
                 <h4>
                     Liste des validations
                 </h4>
 
-                <?php if ($declarationHonneur !== true) : ?>
-                    <div class="alert alert-danger">
-                        <span class="glyphicon glyphicon-warning-sign"></span>
-                        La déclaration sur l'honneur de non plagiat doit être validée avant de permettre la validation de la proposition.
-                    </div>
-                <?php else : ?>
+                <?php if ($declarationHonneur === true) : ?>
                     <ul>
                     <li>
                         <?php echo $doctorant->getIndividu(); ?>

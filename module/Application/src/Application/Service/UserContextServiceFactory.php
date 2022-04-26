@@ -24,7 +24,7 @@ class UserContextServiceFactory
         $authenticationService = $container->get('Laminas\Authentication\AuthenticationService');
 
         /** @var IndividuService $individuService */
-        $individuService = $container->get('IndividuService');
+        $individuService = $container->get(IndividuService::class);
 
         $etablissementService = $this->locateEtablissementService($container);
 

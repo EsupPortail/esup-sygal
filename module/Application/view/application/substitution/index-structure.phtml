@@ -84,6 +84,7 @@ $canEdit =  $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionP
                                 <?php if ($canEdit): ?>
                                         <span id="detruire"
                                               ref="<?php echo $structure->getId(); ?>"
+<!--                                              href="--><?php //echo $this->url('substitution-detruire', ['cible' => $structure->getId()], [], true); ?><!--"-->
                                               type="<?php echo $type; ?>"
                                               class="text-danger icon icon-delete iconly"
 

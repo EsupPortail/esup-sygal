@@ -59,7 +59,7 @@ class PresoutenanceControllerFactory
         $propositionService = $container->get(PropositionService::class);
         $membreService = $container->get(MembreService::class);
         $theseService = $container->get('TheseService');
-        $individuService = $container->get('IndividuService');
+        $individuService = $container->get(IndividuService::class);
         $acteurService = $container->get(ActeurService::class);
         $notifierService = $container->get(NotifierSoutenanceService::class);
         $validationService = $container->get(ValidationService::class);

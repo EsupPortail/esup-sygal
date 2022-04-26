@@ -12,6 +12,7 @@ use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
+use Laminas\View\Model\JsonModel;
 use UnicaenApp\Exception\RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
@@ -64,7 +65,7 @@ class EtablissementController extends StructureConcreteController
     /**
      * @return ViewModel
      */
-    public function informationAction()
+    public function informationAction() : ViewModel
     {
         $id = $this->params()->fromRoute('structure');
         /** @var Etablissement $etablissement */
@@ -142,6 +143,27 @@ class EtablissementController extends StructureConcreteController
         $viewModel->setTemplate('application/etablissement/modifier');
 
         return $viewModel;
+    }
+
+    public function rechercherAction()
+    {
+        if (($term = $this->params()->fromQuery('term'))) {
+            $unites = $this->getEtablissementService()->getRepository()->findByText($term);
+            $result = [];
+            foreach ($unites as $unite) {
+                $result[] = array(
+                    'id' => $unite->getId(),            // identifiant unique de l'item
+                    'label' => $unite->getLibelle(),    // libellé de l'item
+                    'extra' => $unite->getSigle(),      // infos complémentaires (facultatives) sur l'item
+                );
+            }
+            usort($result, function ($a, $b) {
+                return strcmp($a['label'], $b['label']);
+            });
+
+            return new JsonModel($result);
+        }
+        exit;
     }
 
 }

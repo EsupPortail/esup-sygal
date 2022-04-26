@@ -4,8 +4,10 @@ namespace Soutenance\Controller;
 
 use Application\Service\Acteur\ActeurService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Application\Service\Role\RoleService;
 use Application\Service\UserContextService;
 use Interop\Container\ContainerInterface;
+use Soutenance\Assertion\PropositionAssertion;
 use Soutenance\Form\Anglais\AnglaisForm;
 use Soutenance\Form\ChangementTitre\ChangementTitreForm;
 use Soutenance\Form\Confidentialite\ConfidentialiteForm;
@@ -38,6 +40,7 @@ class PropositionControllerFactory
          * @var MembreService $membreService
          * @var NotifierSoutenanceService $notificationSoutenanceService
          * @var PropositionService $propositionService
+         * @var RoleService $roleService
          * @var UserContextService $userContextService
          * @var ValidationService $validationService
          * @var JustificatifService $justificatifService
@@ -49,6 +52,7 @@ class PropositionControllerFactory
         $membreService = $container->get(MembreService::class);
         $notificationSoutenanceService = $container->get(NotifierSoutenanceService::class);
         $propositionService = $container->get(PropositionService::class);
+        $roleService = $container->get(RoleService::class);
         $userContextService = $container->get('UserContextService');
         $validationService = $container->get(ValidationService::class);
         $justificatifService = $container->get(JustificatifService::class);
@@ -74,6 +78,11 @@ class PropositionControllerFactory
         /* @var $renderer PhpRenderer */
         $renderer = $container->get('ViewRenderer');
 
+        /**
+         * @var PropositionAssertion $propositionAssertion
+         */
+        $propositionAssertion = $container->get(PropositionAssertion::class);
+
         $controller = new PropositionController();
 
         $controller->setActeurService($acteurService);
@@ -82,6 +91,7 @@ class PropositionControllerFactory
         $controller->setMembreService($membreService);
         $controller->setNotifierSoutenanceService($notificationSoutenanceService);
         $controller->setPropositionService($propositionService);
+        $controller->setRoleService($roleService);
         $controller->setUserContextService($userContextService);
         $controller->setValidationService($validationService);
         $controller->setJustificatifService($justificatifService);
@@ -96,6 +106,8 @@ class PropositionControllerFactory
         $controller->setChangementTitreForm($changementTitreForm);
 
         $controller->setRenderer($renderer);
+
+        $controller->setPropositionAssertion($propositionAssertion);
 
         return $controller;
     }

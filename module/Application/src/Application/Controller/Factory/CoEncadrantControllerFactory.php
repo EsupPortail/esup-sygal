@@ -34,7 +34,7 @@ class CoEncadrantControllerFactory {
         $acteurService = $container->get(ActeurService::class);
         $coEncadrantService = $container->get(CoEncadrantService::class);
         $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
-        $individuService = $container->get('IndividuService');
+        $individuService = $container->get(IndividuService::class);
         $fileService = $container->get(FileService::class);
         $theseService = $container->get('TheseService');
         $uniteRechercheService = $container->get(UniteRechercheService::class);

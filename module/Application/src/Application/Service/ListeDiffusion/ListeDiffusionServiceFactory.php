@@ -18,7 +18,7 @@ class ListeDiffusionServiceFactory
         /**
          * @var IndividuService $individuService
          */
-        $individuService = $container->get('IndividuService');
+        $individuService = $container->get(IndividuService::class);
         $service->setIndividuService($individuService);
         $service->setAvailableHandlers([
             $container->get(ListeDiffusionHandler::class),

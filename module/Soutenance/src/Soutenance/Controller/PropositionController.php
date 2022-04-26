@@ -5,13 +5,20 @@ namespace Soutenance\Controller;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Individu;
+use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
-use Soutenance\Entity\Evenement;
+use Laminas\Form\Form;
+use Laminas\Http\Request;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Renderer\PhpRenderer;
+use Soutenance\Assertion\PropositionAssertionAwareTrait;
 use Soutenance\Entity\Etat;
+use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Parametre;
 use Soutenance\Entity\Proposition;
@@ -34,11 +41,6 @@ use Soutenance\Service\SignaturePresident\SiganturePresidentPdfExporter;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Db\RoleInterface;
-use Laminas\Form\Form;
-use Laminas\Http\Request;
-use Laminas\Http\Response;
-use Laminas\View\Model\ViewModel;
-use Laminas\View\Renderer\PhpRenderer;
 
 /** @method boolean isAllowed($resource, $privilege = null) */
 class PropositionController extends AbstractController
@@ -46,13 +48,14 @@ class PropositionController extends AbstractController
     use ActeurServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use EvenementServiceAwareTrait;
+    use JustificatifServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
+    use ParametreServiceAwareTrait;
     use PropositionServiceAwareTrait;
+    use RoleServiceAwareTrait;
     use UserContextServiceAwareTrait;
     use ValidatationServiceAwareTrait;
-    use JustificatifServiceAwareTrait;
-    use ParametreServiceAwareTrait;
 
     use DateLieuFormAwareTrait;
     use MembreFromAwareTrait;
@@ -61,6 +64,8 @@ class PropositionController extends AbstractController
     use ConfidentialiteFormAwareTrait;
     use RefusFormAwareTrait;
     use ChangementTitreFormAwareTrait;
+
+    use PropositionAssertionAwareTrait;
 
     /** @var PhpRenderer */
     private $renderer;
@@ -84,11 +89,22 @@ class PropositionController extends AbstractController
             return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
         }
 
+        $message = "
+                Vous n'êtes pas autorisé·e à visualiser cette proposition de soutenance. <br/><br/>
+                Les personnes pouvant visualiser celle-ci sont :
+                <ul>
+                    <li> le·la doctorant·e ; </li>  
+                    <li> le·la directeur·trice et les co-directeur·trice·s ; </li>
+                    <li> les personnes gérant cette thèse (école doctorale, établissement et unité de recherche associés).</li>
+                </ul>
+            ";
+        $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_VISUALISER], $message);
+        if ($autorisation !== null) return $autorisation;
+
         /** @var Utilisateur $currentUser */
         $currentUser = $this->userContextService->getDbUser();
         $currentIndividu = $currentUser->getIndividu();
 
-        /** @var Role $currentRole */
         $currentRole = $this->userContextService->getSelectedIdentityRole();
 
         /** Indicateurs --------------------------------------------------------------------------------------------- */
@@ -104,11 +120,52 @@ class PropositionController extends AbstractController
         /** Adresse des formulaires --------------------------------------------------------------------------------- */
         $parametres = $this->getParametreService()->getParametresAsArray();
 
+        /** Collècte des informations sur les individus liés -------------------------------------------------------- */
+        /** @var IndividuRole[] $ecoleResponsables */
+        $ecoleResponsables = $this->getRoleService()->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
+        $ecoleResponsables = array_filter($ecoleResponsables, function(IndividuRole $ir) use ($these) { return $ir->getIndividu()->getEtablissement() AND $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId(); });
+        /** @var IndividuRole[] $uniteResponsables */
+        $uniteResponsables = $this->getRoleService()->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
+        $uniteResponsables = array_filter($uniteResponsables, function(IndividuRole $ir) use ($these) { return $ir->getIndividu()->getEtablissement() AND $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId(); });
+        /** @var IndividuRole[] $etablissementResponsables */
+        $etablissementResponsables = $this->roleService->getIndividuRoleByStructure($these->getEtablissement()->getStructure());
+        $etablissementResponsables = array_filter($etablissementResponsables, function (IndividuRole $ir) { return $ir->getRole()->getCode() === Role::CODE_BDD;});
+        $etablissementResponsables = array_filter($etablissementResponsables, function(IndividuRole $ir) use ($these) { return $ir->getIndividu()->getEtablissement() AND $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId(); });
+
+        $informationsOk = true;
+        $directeurs = $this->getActeurService()->getRepository()->findEncadrementThese($these);
+        foreach ($directeurs as $directeur) {
+            if ($directeur->getIndividu()->getEmail() === null AND $directeur->getIndividu()->getComplement() === null) {
+                $informationsOk = false;
+                break;
+            }
+        }
+        if (empty($uniteResponsables)) $informationsOk = false;
+        foreach ($uniteResponsables as $uniteResponsable) {
+            if ($uniteResponsable->getIndividu()->getEmail() === null) { $informationsOk = false; break;}
+        }
+        if (empty($ecoleResponsables)) $informationsOk = false;
+        foreach ($ecoleResponsables as $ecoleResponsable) {
+            if ($ecoleResponsable->getIndividu()->getEmail() === null) { $informationsOk = false; break;}
+        }
+        if (empty($etablissementResponsables)) $informationsOk = false;
+        foreach ($etablissementResponsables as $etablissementResponsable) {
+            if ($etablissementResponsable->getIndividu()->getEmail() === null) { $informationsOk = false; break;}
+        }
+        /** @var Individu $individu */
+        foreach (array_merge($ecoleResponsables, $uniteResponsables, $etablissementResponsables) as $ecoleResponsable) {
+            $individu = $ecoleResponsable->getIndividu();
+            if ($individu->getEmail() === null AND $individu->getComplement() === null) {
+                $informationsOk = false;
+                break;
+            }
+        }
+
         return new ViewModel([
             'these' => $these,
             'proposition' => $proposition,
             'doctorant' => $these->getDoctorant(),
-            'directeurs' => $this->getActeurService()->getRepository()->findEncadrementThese($these),
+            'directeurs' => $directeurs,
             'validations' => $this->getPropositionService()->getValidationSoutenance($these),
             'validationActeur' => $this->getPropositionService()->isValidated($these, $currentIndividu, $currentRole),
             'roleCode' => $currentRole,
@@ -120,6 +177,11 @@ class PropositionController extends AbstractController
             'justificatifsOk' => $justificatifsOk,
             'signatures' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_SIGNATURE),
 
+            'ecoleResponsables' => $ecoleResponsables,
+            'uniteResponsables' => $uniteResponsables,
+            'etablissementResponsables' => $etablissementResponsables,
+            'informationsOk' => $informationsOk,
+
             'FORMULAIRE_DELOCALISATION' => $parametres[Parametre::CODE_FORMULAIRE_DELOCALISATION],
             'FORMULAIRE_DELEGUATION' => $parametres[Parametre::CODE_FORMULAIRE_DELEGUATION],
             'FORMULAIRE_DEMANDE_LABEL' => $parametres[Parametre::CODE_FORMULAIRE_LABEL_EUROPEEN],
@@ -129,71 +191,13 @@ class PropositionController extends AbstractController
         ]);
     }
 
-    public function generateViewDateLieuAction()
+    public function modifierDateLieuAction() : ViewModel
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
-        $parametres = $this->getParametreService()->getParametresAsArray();
 
-        $vm = new ViewModel();
-        $vm->setTerminal(true);
-        $vm->setVariables([
-            'these' => $these,
-            'proposition' => $proposition,
-            'FORMULAIRE_DELOCALISATION' => $parametres[Parametre::CODE_FORMULAIRE_DELOCALISATION],
-            'canModifier' => $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER)),
-        ]);
-        return $vm;
-    }
-
-    public function generateViewJuryAction()
-    {
-        $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
-        $parametres = $this->getParametreService()->getParametresAsArray();
-
-        /** Indicateurs --------------------------------------------------------------------------------------------- */
-        $indicateurs = $this->getPropositionService()->computeIndicateur($proposition);
-        $juryOk = $this->getPropositionService()->juryOk($proposition, $indicateurs);
-        if ($juryOk === false) $indicateurs["valide"] = false;
-        //$isOk = $this->getPropositionService()->isOk($proposition, $indicateurs);
-
-        $vm = new ViewModel();
-        $vm->setTerminal(true);
-        $vm->setVariables([
-            'these' => $these,
-            'proposition' => $proposition,
-            'FORMULAIRE_DELEGUATION' => $parametres[Parametre::CODE_FORMULAIRE_DELEGUATION],
-            'canModifier' => $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER)),
-            'indicateurs' => $indicateurs,
-        ]);
-        return $vm;
-    }
-
-    public function generateViewInformationsAction()
-    {
-        $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
-        $parametres = $this->getParametreService()->getParametresAsArray();
-
-
-        $vm = new ViewModel();
-        $vm->setTerminal(true);
-        $vm->setVariables([
-            'these' => $these,
-            'proposition' => $proposition,
-            'FORMULAIRE_DEMANDE_LABEL' => $parametres[Parametre::CODE_FORMULAIRE_LABEL_EUROPEEN],
-            'FORMULAIRE_DEMANDE_ANGLAIS' => $parametres[Parametre::CODE_FORMULAIRE_THESE_ANGLAIS],
-            'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $parametres[Parametre::CODE_FORMULAIRE_CONFIDENTIALITE],
-            'canModifier' => $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER)),
-        ]);
-        return $vm;
-    }
-
-    public function modifierDateLieuAction()
-    {
-        $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
+        if ($autorisation !== null) return $autorisation;
 
         $form = $this->getDateLieuForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/modifier-date-lieu', ['these' => $these->getId()], [], true));
@@ -215,10 +219,13 @@ class PropositionController extends AbstractController
         return $vm;
     }
 
-    public function modifierMembreAction()
+    public function modifierMembreAction() : ViewModel
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
+
+        $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
+        if ($autorisation !== null) return $autorisation;
 
         $form = $this->getMembreForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/modifier-membre', ['these' => $these->getId()], [], true));
@@ -258,8 +265,12 @@ class PropositionController extends AbstractController
     public function effacerMembreAction()
     {
         $these = $this->requestedThese();
-        $membre = $this->getMembreService()->getRequestedMembre($this);
+        $proposition = $this->getPropositionService()->findByThese($these);
 
+        $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
+        if ($autorisation !== null) return $autorisation;
+
+        $membre = $this->getMembreService()->getRequestedMembre($this);
         if ($membre) {
             if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($membre->getProposition());
             $this->getMembreService()->delete($membre);
@@ -268,10 +279,13 @@ class PropositionController extends AbstractController
         return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
     }
 
-    public function labelEuropeenAction()
+    public function labelEuropeenAction() : ViewModel
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
+
+        $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
+        if ($autorisation !== null) return $autorisation;
 
         $form = $this->getLabelEuropeenForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/label-europeen', ['these' => $these->getId()], [], true));
@@ -292,10 +306,13 @@ class PropositionController extends AbstractController
         return $vm;
     }
 
-    public function anglaisAction()
+    public function anglaisAction() : ViewModel
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
+
+        $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
+        if ($autorisation !== null) return $autorisation;
 
         $form = $this->getAnglaisForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/anglais', ['these' => $these->getId()], [], true));
@@ -316,10 +333,13 @@ class PropositionController extends AbstractController
         return $vm;
     }
 
-    public function confidentialiteAction()
+    public function confidentialiteAction() : ViewModel
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
+
+        $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
+        if ($autorisation !== null) return $autorisation;
 
         $form = $this->getConfidentialiteForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/confidentialite', ['these' => $these->getId()], [], true));
@@ -341,10 +361,13 @@ class PropositionController extends AbstractController
         return $vm;
     }
 
-    public function changementTitreAction()
+    public function changementTitreAction() : ViewModel
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
+
+        $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
+        if ($autorisation !== null) return $autorisation;
 
         $form = $this->getChangementTitreForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/changement-titre', ['these' => $these->getId()], [], true));
@@ -368,6 +391,10 @@ class PropositionController extends AbstractController
     public function validerActeurAction()
     {
         $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR]);
+        if ($autorisation !== null) return $autorisation;
 
         $validation = $this->getValidationService()->validatePropositionSoutenance($these);
         $this->getNotifierSoutenanceService()->triggerValidationProposition($these, $validation);
@@ -395,6 +422,10 @@ class PropositionController extends AbstractController
     public function validerStructureAction()
     {
         $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_VALIDER_BDD, PropositionPrivileges::PROPOSITION_VALIDER_UR, PropositionPrivileges::PROPOSITION_VALIDER_ED]);
+        if ($autorisation !== null) return $autorisation;
 
         /**
          * @var Role $role
@@ -430,10 +461,13 @@ class PropositionController extends AbstractController
 
     }
 
-    public function refuserStructureAction()
+    public function refuserStructureAction() : ViewModel
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
+
+        $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_VALIDER_BDD, PropositionPrivileges::PROPOSITION_VALIDER_UR, PropositionPrivileges::PROPOSITION_VALIDER_ED]);
+        if ($autorisation !== null) return $autorisation;
 
         $form = $this->getRefusForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/proposition/refuser-structure', ['these' => $these->getId()], [], true));
@@ -463,6 +497,11 @@ class PropositionController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
+        $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_PRESIDENCE]);
+        if ($autorisation !== null) return $autorisation;
+
+
+
         $codirecteurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE);
 
 
@@ -485,6 +524,9 @@ class PropositionController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
 
+        $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
+        if ($autorisation !== null) return $autorisation;
+
         $sursis = $proposition->hasSursis();
         $proposition->setSurcis(!$sursis);
         $this->getPropositionService()->update($proposition);
@@ -498,7 +540,7 @@ class PropositionController extends AbstractController
      * @param Proposition $proposition
      * @return Proposition
      */
-    private function update(Request $request, Form $form, Proposition $proposition)
+    private function update(Request $request, Form $form, Proposition $proposition) : Proposition
     {
         $data = $request->getPost();
         $form->setData($data);
@@ -512,6 +554,9 @@ class PropositionController extends AbstractController
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
+
+        $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
+        if ($autorisation !== null) return $autorisation;
 
         //detruire la  || historiser si on histo
         $this->getPropositionService()->historise($proposition);
@@ -541,6 +586,10 @@ class PropositionController extends AbstractController
     public function declarationNonPlagiatAction() : ViewModel
     {
         $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER, PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_REVOQUER]);
+        if ($autorisation !== null) return $autorisation;
 
         return new ViewModel([
             'title' => '«&nbsp;Lutte anti-plagiat : Déclaration sur l’honneur&nbsp;»',
@@ -554,27 +603,41 @@ class PropositionController extends AbstractController
         ]);
     }
 
-    public function validerDeclarationNonPlagiatAction() : Response
+    public function validerDeclarationNonPlagiatAction()
     {
         $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER]);
+        if ($autorisation !== null) return $autorisation;
+
         $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
         $this->getValidationService()->create(TypeValidation::CODE_VALIDATION_DECLARATION_HONNEUR, $these, $individuUtilisateur);
 
         return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
     }
 
-    public function refuserDeclarationNonPlagiatAction() : Response
+    public function refuserDeclarationNonPlagiatAction()
     {
         $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER]);
+        if ($autorisation !== null) return $autorisation;
+
         $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
         $this->getValidationService()->create(TypeValidation::CODE_REFUS_DECLARATION_HONNEUR, $these, $individuUtilisateur);
 
         return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
     }
 
-    public function revoquerDeclarationNonPlagiatAction() : Response
+    public function revoquerDeclarationNonPlagiatAction()
     {
         $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+
+        $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_REVOQUER]);
+        if ($autorisation !== null) return $autorisation;
 
         $validations = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_DECLARATION_HONNEUR, $these);
         foreach ($validations as $validation) { $this->getValidationService()->historise($validation); }
@@ -582,5 +645,90 @@ class PropositionController extends AbstractController
         foreach ($refus as $refu) { $this->getValidationService()->historise($refu); }
 
         return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
+    }
+
+    /** Vue ***********************************************************************************************************/
+
+    public function generateViewDateLieuAction()  : ViewModel
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+        $parametres = $this->getParametreService()->getParametresAsArray();
+
+        $vm = new ViewModel();
+        $vm->setTerminal(true);
+        $vm->setVariables([
+            'these' => $these,
+            'proposition' => $proposition,
+            'FORMULAIRE_DELOCALISATION' => $parametres[Parametre::CODE_FORMULAIRE_DELOCALISATION],
+            'canModifier' => $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER)),
+        ]);
+        return $vm;
+    }
+    public function generateViewJuryAction() : ViewModel
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+        $parametres = $this->getParametreService()->getParametresAsArray();
+
+        /** Indicateurs --------------------------------------------------------------------------------------------- */
+        $indicateurs = $this->getPropositionService()->computeIndicateur($proposition);
+        $juryOk = $this->getPropositionService()->juryOk($proposition, $indicateurs);
+        if ($juryOk === false) $indicateurs["valide"] = false;
+        //$isOk = $this->getPropositionService()->isOk($proposition, $indicateurs);
+
+        $vm = new ViewModel();
+        $vm->setTerminal(true);
+        $vm->setVariables([
+            'these' => $these,
+            'proposition' => $proposition,
+            'FORMULAIRE_DELEGUATION' => $parametres[Parametre::CODE_FORMULAIRE_DELEGUATION],
+            'canModifier' => $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER)),
+            'indicateurs' => $indicateurs,
+        ]);
+        return $vm;
+    }
+    public function generateViewInformationsAction() : ViewModel
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findByThese($these);
+        $parametres = $this->getParametreService()->getParametresAsArray();
+
+
+        $vm = new ViewModel();
+        $vm->setTerminal(true);
+        $vm->setVariables([
+            'these' => $these,
+            'proposition' => $proposition,
+            'FORMULAIRE_DEMANDE_LABEL' => $parametres[Parametre::CODE_FORMULAIRE_LABEL_EUROPEEN],
+            'FORMULAIRE_DEMANDE_ANGLAIS' => $parametres[Parametre::CODE_FORMULAIRE_THESE_ANGLAIS],
+            'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $parametres[Parametre::CODE_FORMULAIRE_CONFIDENTIALITE],
+            'canModifier' => $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER)),
+        ]);
+        return $vm;
+    }
+
+    /** Error *********************************************************************************************************/
+
+    /**
+     * @param Proposition $proposition
+     * @param array $privilieges
+     * @param string|null $message
+     * @return ViewModel|null
+     */
+    private function verifierAutorisation(Proposition  $proposition, array $privilieges, ?string $message = null) : ?ViewModel
+    {
+        $authorized = false;
+        foreach ($privilieges as $priviliege) {
+            $authorized = $this->getPropositionAssertion()->computeValeur(null, $proposition, $priviliege);
+            if ($authorized === true) break;
+        }
+        if ($authorized === false) {
+            $vm = new ViewModel();
+            $vm->setTemplate('soutenance/error/403');
+            $vm->setVariables(['message' => $message ]);
+            return $vm;
+        }
+        return null;
     }
 }

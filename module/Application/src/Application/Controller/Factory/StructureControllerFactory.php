@@ -36,7 +36,7 @@ class StructureControllerFactory
          * @var StructureDocumentService $structureDocumentService
          */
 
-        $individuService = $container->get('IndividuService');
+        $individuService = $container->get(IndividuService::class);
         $roleService = $container->get('RoleService');
         $structureService = $container->get('StructureService');
         $ecoleService = $container->get('EcoleDoctoraleService');
