@@ -2,6 +2,7 @@
 
 namespace Soutenance\Service\Notifier;
 
+use Application\Service\Individu\IndividuServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
@@ -32,6 +33,7 @@ use Laminas\View\Helper\Url as UrlHelper;
 class NotifierSoutenanceService extends NotifierService
 {
     use ActeurServiceAwareTrait;
+    use IndividuServiceAwareTrait;
     use MembreServiceAwareTrait;
     use RoleServiceAwareTrait;
     use VariableServiceAwareTrait;
@@ -49,6 +51,19 @@ class NotifierSoutenanceService extends NotifierService
     }
 
     /**
+     * @return string[]
+     */
+    protected function getEmailAdministrateurTechnique() : array
+    {
+        $individus = $this->getIndividuService()->getRepository()->findByRole(Role::CODE_ADMIN_TECH);
+        $emails = [];
+        foreach ($individus as $individu) {
+            $email = $individu->getEmailUtilisateur();
+            if ($email) $emails[] = $email;
+        }
+        return $emails;
+    }
+    /**
      * @param These $these
      * @return string
      */
@@ -56,7 +71,6 @@ class NotifierSoutenanceService extends NotifierService
     {
         $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
         return $variable->getValeur();
-
     }
 
     /**
@@ -152,10 +166,24 @@ class NotifierSoutenanceService extends NotifierService
         $emails = [];
         $encadrants = $this->getActeurService()->getRepository()->findEncadrementThese($these);
         foreach ($encadrants as $encadrant) {
+            //tentative dans individu
             $email = $encadrant->getIndividu()->getEmail();
+            //tentative dans membre
             if ($email === null) {
                 $membre = $this->getMembreService()->getMembreByActeur($encadrant);
                 if ($membre) $email = $membre->getEmail();
+            }
+            //tentative dans utilisateur
+            if ($email === null) {
+                $utilisateurs = $this->getUtilisateurService()->getRepository()->findByIndividu($encadrant->getIndividu());
+                foreach ($utilisateurs as $utilisateur) {
+                    $email = $utilisateur->getEmail();
+                    if ($email !== null) break;
+                }
+            }
+            // echec ...
+            if ($email === null) {
+                throw new InvalidArgumentException("Pas de mail pour l'encadrant de thèse [".$encadrant->getIndividu()->getNomComplet()."]");
             }
             $emails[] = $email;
         }
@@ -231,7 +259,6 @@ class NotifierSoutenanceService extends NotifierService
     /**
      * @param These $these
      * @see Application/view/soutenance/notification/validation-structure.phtml
-     * @throws NotificationException
      */
     public function triggerNotificationUniteRechercheProposition(These $these)
     {
@@ -253,15 +280,27 @@ class NotifierSoutenanceService extends NotifierService
                 ]);
             $this->trigger($notif);
         } else {
-            throw new InvalidArgumentException("Aucun mail de disponible pour l'unité de recherche (".__METHOD__."::TheseId#".
-                $these->getId()."|UniteRecherche#".$these->getUniteRecherche()->getId().")" );
+            $emailsAdmin = $this->getEmailAdministrateurTechnique();
+            $emailsMdd = $this->fetchEmailMaisonDuDoctorat($these);
+            $emails = array_merge($emailsAdmin, $emailsMdd);
+
+            $notif = new Notification();
+            $notif
+                ->setSubject("ATTENTION MAIL NON DÉLIVRÉ : Demande de validation d'une proposition de soutenance")
+                ->setTo($emails)
+                ->setTemplatePath('soutenance/notification/validation-structure')
+                ->setTemplateVariables([
+                    'these' => $these,
+                    'type' => 'unité de recherche',
+                    'panic' => true,
+                ]);
+            $this->trigger($notif);
         }
     }
 
     /**
      * @param These $these
      * @see Application/view/soutenance/notification/validation-structure.phtml
-     * @throws NotificationException
      */
     public function triggerNotificationEcoleDoctoraleProposition(These $these)
     {
@@ -283,15 +322,27 @@ class NotifierSoutenanceService extends NotifierService
                 ]);
             $this->trigger($notif);
         } else {
-            throw new InvalidArgumentException("Aucun mail de disponible pour l'école doctorale (".__METHOD__."::TheseId#".
-                $these->getId()."|EcoleDoctorale#".$these->getEcoleDoctorale()->getId().")" );
+            $emailsAdmin = $this->getEmailAdministrateurTechnique();
+            $emailsMdd = $this->fetchEmailMaisonDuDoctorat($these);
+            $emails = array_merge($emailsAdmin, $emailsMdd);
+
+            $notif = new Notification();
+            $notif
+                ->setSubject("ATTENTION MAIL NON DÉLIVRÉ : Demande de validation d'une proposition de soutenance")
+                ->setTo($emails)
+                ->setTemplatePath('soutenance/notification/validation-structure')
+                ->setTemplateVariables([
+                    'these' => $these,
+                    'type' => 'école doctorale',
+                    'panic' => true,
+                ]);
+            $this->trigger($notif);
         }
     }
 
     /**
      * @param These $these
      * @see Application/view/soutenance/notification/validation-structure.phtml
-     * @throws NotificationException
      */
     public function triggerNotificationBureauDesDoctoratsProposition(These $these)
     {
@@ -310,8 +361,21 @@ class NotifierSoutenanceService extends NotifierService
                 ]);
             $this->trigger($notif);
         } else {
-            throw new InvalidArgumentException("Aucun mail de disponible pour l'établissement (".__METHOD__."::TheseId#".
-                $these->getId()."|Etablissement#".$these->getEtablissement()->getId().")" );
+            $emailsAdmin = $this->getEmailAdministrateurTechnique();
+            $emailsMdd = $this->fetchEmailMaisonDuDoctorat($these);
+            $emails = array_merge($emailsAdmin, $emailsMdd);
+
+            $notif = new Notification();
+            $notif
+                ->setSubject("ATTENTION MAIL NON DÉLIVRÉ : Demande de validation d'une proposition de soutenance")
+                ->setTo($email)
+                ->setTemplatePath('soutenance/notification/validation-structure')
+                ->setTemplateVariables([
+                    'these' => $these,
+                    'type' => 'maison du doctorat',
+                    'panic' => true,
+                ]);
+            $this->trigger($notif);
         }
     }
 
@@ -657,7 +721,7 @@ class NotifierSoutenanceService extends NotifierService
         if (!empty($emails)) {
             $notif = new Notification();
             $notif
-                ->setSubject("La soutenance de " . $these->getDoctorant()->getIndividu() . " a été accepté par votre établissement.")
+                ->setSubject("La soutenance de " . $these->getDoctorant()->getIndividu() . " a été acceptée par votre établissement.")
                 ->setTo($emails)
                 ->setTemplatePath('soutenance/notification/feu-vert-soutenance')
                 ->setTemplateVariables([
@@ -776,7 +840,7 @@ class NotifierSoutenanceService extends NotifierService
     {
         if ($membre->getActeur() === null) throw new RuntimeException("Notification vers rapporteur [MembreId = " . $membre->getId() . "] impossible car aucun acteur n'est lié.");
 
-        $email = $membre->getIndividu()->getEmail();
+        $email = $membre->getEmail();
         if ($email === null) throw new RuntimeException("Notification vers rapporteur [MembreId = " . $membre->getId() . "] impossible car aucun email est donné pour l'individu associé [IndividuId = " . $membre->getIndividu()->getId() . "].");
 
 

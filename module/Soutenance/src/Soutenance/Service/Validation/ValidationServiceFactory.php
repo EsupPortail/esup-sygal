@@ -24,7 +24,7 @@ class ValidationServiceFactory
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $userContextService = $container->get('UserContextService');
-        $individuService = $container->get('IndividuService');
+        $individuService = $container->get(IndividuService::class);
 
         /** @var ValidationService $service */
         $service = new ValidationService();

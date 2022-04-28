@@ -1,0 +1,26 @@
+<?php
+/**
+ * @var string|null $message
+ */
+
+$this->headTitle("Erreur 403");
+?>
+
+<div class="card">
+    <div class="card-header bg-danger">
+        <h1>
+            Erreur 403 : Vous n'êtes pas autorisé·e à visualiser cette page
+        </h1>
+    </div>
+    <div class="card card-body">
+        <?php if ($message) : ?>
+            <span style="font-size: large;"> <?php echo $message; ?> </span>
+        <?php endif; ?>
+
+        <br/><br/>
+
+        <div class="alert alert-info" style="width: 100%;">
+            <span style="font-size: large;"><strong>Correction possible :</strong> veuillez vérifier que vous incarnez le rôle adéquat.</span>
+        </div>
+    </div>
+</div>

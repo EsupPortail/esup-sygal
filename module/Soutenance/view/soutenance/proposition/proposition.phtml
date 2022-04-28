@@ -2,6 +2,7 @@
 
 use Application\Controller\Plugin\UrlFichierThese;
 use Application\Entity\Db\Acteur;
+use Application\Entity\Db\IndividuRole;
 use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
@@ -29,6 +30,11 @@ use Soutenance\Provider\Validation\TypeValidation;
  * @var boolean $justificatifsOk,
  * @var boolean $validationActeur
  * @var Evenement[] $signatures
+ *
+ * @var IndividuRole[] $ecoleResponsables
+ * @var IndividuRole[] $uniteResponsables
+ * @var IndividuRole[] $etablissementResponsables
+ * @var bool $informationsOk
  *
  * @var $FORMULAIRE_DELOCALISATION
  * @var $FORMULAIRE_DELEGUATION
@@ -59,6 +65,20 @@ $this->headTitle("Proposition de soutenance");
 </div>
 
 <br/><br/>
+
+<div class="INFORMATIONS"></div>
+<?php
+echo $this->partial('partial/informations', [
+    'proposition' => $proposition,
+
+    'informationsOk' => $informationsOk,
+    'directeurs' => $directeurs,
+    'uniteResponsables' => $uniteResponsables,
+    'ecoleResponsables' => $ecoleResponsables,
+    'etablissementResponsables' => $etablissementResponsables,
+
+    'canModifier' => $canModifier]);
+?>
 
 <div id="DATE_ET_LIEU"></div>
 <?php
@@ -108,7 +128,7 @@ $this->headTitle("Proposition de soutenance");
 
 <div id="VALIDATION"></div>
 <?php
-    $canValiderActeur = $isOk && ($justificatifsOk !== false) && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR);
+    $canValiderActeur = $isOk && ($justificatifsOk !== false) && ($informationsOk !== false) &&$this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR);
     $canSursis = $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_SURSIS));
 
     echo $this->partial('partial/validations-acteurs', [
@@ -121,6 +141,8 @@ $this->headTitle("Proposition de soutenance");
         'doctorant' => $doctorant,
         'directeurs' => $directeurs,
         'validationActeur' => $validationActeur,
+
+        'informationsOk' => $informationsOk,
 
     ]); ?>
 
@@ -241,4 +263,12 @@ $this->headTitle("Proposition de soutenance");
             },
         });
     });
+
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+
 </script>

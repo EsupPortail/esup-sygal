@@ -44,7 +44,7 @@ class FichierTheseControllerFactory
         $fichierTheseService = $container->get('FichierTheseService');
         $versionFichierService = $container->get('VersionFichierService');
         $notificationService = $container->get(NotifierService::class);
-        $individuService = $container->get('IndividuService');
+        $individuService = $container->get(IndividuService::class);
         $validationService = $container->get('ValidationService');
         $eventRouterReplacer = new EventRouterReplacer($httpRouter, $cliConfig);
         $eventManager = $container->get('EventManager');

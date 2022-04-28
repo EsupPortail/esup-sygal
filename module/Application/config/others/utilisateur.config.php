@@ -23,9 +23,9 @@ use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Utilisateur\UtilisateurServiceFactory;
 use Application\View\Helper\IndividuUsurpationHelperFactory;
 use Application\View\Helper\RoleHelper;
-use UnicaenAuth\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
+use UnicaenAuth\Guard\PrivilegeController;
 
 return [
     'bjyauthorize'    => [

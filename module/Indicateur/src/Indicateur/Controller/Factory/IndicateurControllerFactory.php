@@ -28,7 +28,7 @@ class IndicateurControllerFactory
          * @var StructureService $structureService
          * @var IndicateurService $indicateurService
          */
-        $individuService = $container->get('IndividuService');
+        $individuService = $container->get(IndividuService::class);
         $theseService = $container->get('TheseService');
         $anomalieService = $container->get(AnomalieService::class);
         $etablissementService = $container->get('EtablissementService');
