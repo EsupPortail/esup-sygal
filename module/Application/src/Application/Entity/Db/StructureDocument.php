@@ -10,8 +10,13 @@ class StructureDocument implements HistoriqueAwareInterface {
 
     /** @var int */
     private $id;
-    /** @var NatureFichier|null */
+
+    /**
+     * @var NatureFichier|null
+     * @deprecated À supprimer car redondant avec {@see \Application\Entity\Db\Fichier::$nature}
+     */
     private $nature;
+
     /** @var Structure|null */
     private $structure;
     /** @var Etablissement|null */
@@ -39,6 +44,7 @@ class StructureDocument implements HistoriqueAwareInterface {
 
     /**
      * @return NatureFichier|null
+     * @deprecated À supprimer car redondant avec {@see \Application\Entity\Db\Fichier::getNature()}
      */
     public function getNature(): ?NatureFichier
     {
@@ -48,6 +54,7 @@ class StructureDocument implements HistoriqueAwareInterface {
     /**
      * @param NatureFichier|null $nature
      * @return StructureDocument
+     * @deprecated À supprimer car redondant avec {@see \Application\Entity\Db\Fichier::setNature()}
      */
     public function setNature(?NatureFichier $nature): StructureDocument
     {

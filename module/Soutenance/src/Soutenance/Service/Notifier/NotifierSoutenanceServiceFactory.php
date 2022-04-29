@@ -3,17 +3,18 @@
 namespace Soutenance\Service\Notifier;
 
 use Application\Service\Acteur\ActeurService;
+use Application\Service\Email\EmailTheseService;
 use Application\Service\Notification\NotificationFactory;
 use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Variable\VariableService;
 use Interop\Container\ContainerInterface;
-use Notification\Service\NotifierServiceFactory;
-use Soutenance\Service\Membre\MembreService;
 use Laminas\Mvc\Console\View\ViewManager as ConsoleViewManager;
 use Laminas\Mvc\View\Http\ViewManager as HttpViewManager;
 use Laminas\View\Helper\Url as UrlHelper;
+use Notification\Service\NotifierServiceFactory;
+use Soutenance\Service\Membre\MembreService;
 
 class NotifierSoutenanceServiceFactory extends NotifierServiceFactory
 {
@@ -40,9 +41,8 @@ class NotifierSoutenanceServiceFactory extends NotifierServiceFactory
         $acteurService = $container->get(ActeurService::class);
         $membreService = $container->get(MembreService::class);
         $roleService = $container->get('RoleService');
-        $variableService = $container->get('VariableService');
         $theseService = $container->get('TheseService');
-        $utilisateurService = $container->get('UtilisateurService');
+        $emailTheseService = $container->get(EmailTheseService::class);
 
         /** @var HttpViewManager|ConsoleViewManager $vm */
         $vm = $container->get('ViewManager');
@@ -58,9 +58,8 @@ class NotifierSoutenanceServiceFactory extends NotifierServiceFactory
         $service->setActeurService($acteurService);
         $service->setMembreService($membreService);
         $service->setRoleService($roleService);
-        $service->setVariableService($variableService);
         $service->setTheseService($theseService);
-        $service->setUtilisateurService($utilisateurService);
+        $service->setEmailTheseService($emailTheseService);
 
         return $service;
     }

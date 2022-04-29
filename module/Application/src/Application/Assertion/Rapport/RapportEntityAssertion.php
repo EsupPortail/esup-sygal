@@ -37,19 +37,6 @@ class RapportEntityAssertion implements EntityAssertionInterface
     public function assert($privilege = null): bool
     {
         switch ($privilege) {
-            case RapportPrivileges::RAPPORT_ACTIVITE_TELEVERSER_TOUT:
-            case RapportPrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN:
-            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT:
-            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN:
-            case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT:
-            case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
-            case RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT:
-            case RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN:
-            case RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT:
-            case RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN:
-            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT:
-            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN:
-
             case RapportPrivileges::RAPPORT_CSI_TELEVERSER_TOUT:
             case RapportPrivileges::RAPPORT_CSI_TELEVERSER_SIEN:
             case RapportPrivileges::RAPPORT_CSI_SUPPRIMER_TOUT:
@@ -63,18 +50,6 @@ class RapportEntityAssertion implements EntityAssertionInterface
         }
 
         switch ($privilege) {
-            case RapportPrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN:
-            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN:
-            case RapportPrivileges::RAPPORT_ACTIVITE_TELECHARGER_SIEN:
-            case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT:
-            case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
-            case RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT:
-            case RapportPrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN:
-            case RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT:
-            case RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN:
-            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT:
-            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN:
-
             case RapportPrivileges::RAPPORT_CSI_TELEVERSER_SIEN:
             case RapportPrivileges::RAPPORT_CSI_SUPPRIMER_SIEN:
             case RapportPrivileges::RAPPORT_CSI_TELECHARGER_SIEN:
@@ -86,29 +61,12 @@ class RapportEntityAssertion implements EntityAssertionInterface
         }
 
         switch ($privilege) {
-            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT:
-            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN:
-            case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT:
-            case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
-            case RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT:
-            case RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN:
-            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT:
-            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN:
-
             case RapportPrivileges::RAPPORT_CSI_SUPPRIMER_TOUT:
             case RapportPrivileges::RAPPORT_CSI_SUPPRIMER_SIEN:
 
             case RapportPrivileges::RAPPORT_MIPARCOURS_SUPPRIMER_TOUT:
             case RapportPrivileges::RAPPORT_MIPARCOURS_SUPPRIMER_SIEN:
                 $this->assertAucuneValidation();
-        }
-
-        switch ($privilege) {
-            case RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT:
-            case RapportPrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN:
-            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT:
-            case RapportPrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN:
-                $this->assertRapportFinDeThese();
         }
 
         return true;

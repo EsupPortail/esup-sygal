@@ -1,0 +1,69 @@
+<?php
+/**
+ * @var \UnicaenAvis\Form\AvisForm $form
+ */
+
+$form->prepare();
+$avisElement = $form->getAvisElement();
+?>
+
+<?php echo $this->form()->openTag($form) ?>
+<div class="row">
+    <div class="col-md-4">
+        <fieldset>
+            <legend><?php echo $avisElement->getLabel() ?></legend>
+            <?php $avisElement->setLabel('') ?>
+            <?php echo $this->formControlGroup($avisElement) ?>
+        </fieldset>
+    </div>
+</div>
+<?php if ($avisTypeValeurComplemsElements = $form->getAvisTypeValeurComplemsElements()): ?>
+<div class="row">
+    <div class="col-md-7">
+        <?php foreach ($avisTypeValeurComplemsElements as $element): ?>
+            <div class="avis-type-complem" style="display: none">
+                <?php echo $this->formControlGroup($element); ?>
+            </div>
+        <?php endforeach ?>
+    </div>
+</div>
+<?php endif ?>
+<div>
+    <?php
+    echo $this->formControlGroup($form->get('csrf'));
+    echo $this->formSubmit($form->get('submit')->setAttributes(['class' => 'btn btn-primary']));
+    ?>
+</div>
+<?php echo $this->form()->closeTag() ?>
+
+
+<script>
+    $(function() {
+        //
+        // Affichage/masquage des éléments complémentaires en fonction de la valeur de l'avis sélectionnée.
+        //
+        let radioSelector = "[name=<?php echo $avisElement->getName() ?>]",
+            updateAvisTypeValeurComplem = function() {
+                // masquage de tous les éléments complémentaires
+                $(".avis-type-complem").hide();
+                // réapparition de ceux ayant la classe CSS égale à la valeur d'avis sélectionné
+                let val = $(radioSelector + ":checked").val();
+                val && $(".avis-type-complem ." + val).parents(".avis-type-complem").show();
+            };
+        $(radioSelector).on('change', updateAvisTypeValeurComplem).change();
+
+        //
+        // Affichage/masquage des éléments complémentaires fils en fonction du parent.
+        //
+        let parentSelector = "[data-children-class][data-children-class!='']",
+            childrenSelector = ".avis-type-complem-children",
+            updateAvisTypeValeurComplemChildren = function($parent) {
+                let $children = $(childrenSelector + "." + $parent.data('children-class'));
+                $children.toggle($parent.is(":checked"));
+        };
+        $(childrenSelector).hide();
+        $(parentSelector).on('change', function() {
+            updateAvisTypeValeurComplemChildren($(this));
+        }).change();
+    });
+</script>

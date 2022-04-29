@@ -275,6 +275,16 @@ class ApplicationNavigationFactory extends NavigationFactory
         $page['query'] = array_merge($page['query'], $query);
         $newPages[] = $page;
 
+        // génération d'une page fille emmenant vers les rapports d'activité
+        $protoPage = $parentPage['pages']['RAPPORTS_ACTIVITES'];
+        $page = $protoPage;
+        // label
+        $page['label'] = "Rapports d'activité " . $label;
+        // params
+        $page['query'] = $page['query'] ?? [];
+        $page['query'] = array_merge($page['query'], $query);
+        $newPages[] = $page;
+
         // génération d'une page fille emmenant vers les soutenances
         $protoPage = $parentPage['pages']['SOUTENANCES'];
         $page = $protoPage;

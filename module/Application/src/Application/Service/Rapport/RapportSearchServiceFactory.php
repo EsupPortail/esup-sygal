@@ -5,7 +5,7 @@ namespace Application\Service\Rapport;
 use Application\Entity\Db\TypeValidation;
 use Application\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
 use Application\Search\Etablissement\EtablissementSearchFilter;
-use Application\Search\Rapport\AnneeRapportActiviteSearchFilter;
+use RapportActivite\Search\AnneeRapportActiviteSearchFilter;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\Financement\FinancementService;
 use Application\Search\Financement\OrigineFinancementSearchFilter;

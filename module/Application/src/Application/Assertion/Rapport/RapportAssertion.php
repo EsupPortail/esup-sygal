@@ -9,8 +9,8 @@ use Laminas\Permissions\Acl\Resource\ResourceInterface;
  * Class RapportAssertion
  *
  * @property \Application\Assertion\Rapport\RapportEntityAssertion $entityAssertion
- * @property \Application\Assertion\Rapport\RapportControllerAssertion $controllerAssertion
- * @property \Application\Assertion\Rapport\RapportPageAssertion $pageAssertion
+ * @property \Application\Assertion\Rapport\RapportActivite\RapportActiviteControllerAssertion $controllerAssertion
+ * @property \Application\Assertion\Rapport\RapportActivite\RapportActivitePageAssertion $pageAssertion
  */
 class RapportAssertion extends BaseAssertion
 {

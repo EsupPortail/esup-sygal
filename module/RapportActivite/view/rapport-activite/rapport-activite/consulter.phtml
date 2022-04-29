@@ -1,0 +1,199 @@
+<?php
+
+namespace RapportActivite;
+
+use RapportActivite\Entity\Db\RapportActivite;
+use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
+use RapportActivite\Form\RapportActiviteForm;
+use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var RapportActivite[] $rapports
+ * @var RapportActiviteForm $form
+ * @var bool $isTeleversementPossible
+ * @var TypeValidation $typeValidation
+ * @var string $returnUrl
+ *
+ * @see \RapportActivite\Controller\RapportActiviteController::consulterAction()
+ */
+
+$routeName = 'rapport-activite';
+$privilege_TELEVERSER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_TOUT;
+$privilege_TELEVERSER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN;
+$privilege_SUPPRIMER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT;
+$privilege_SUPPRIMER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN;
+$privilege_TELECHARGER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_TOUT;
+$privilege_TELECHARGER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_SIEN;
+$privilege_VALIDER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT;
+$privilege_VALIDER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN;
+$privilege_DEVALIDER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT;
+$privilege_DEVALIDER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN;
+$privilege_AJOUTER_AVIS_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT;
+$privilege_AJOUTER_AVIS_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN;
+$privilege_MODIFIER_AVIS_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_AVIS_TOUT;
+$privilege_MODIFIER_AVIS_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_AVIS_SIEN;
+$privilege_SUPPRIMER_AVIS_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT;
+$privilege_SUPPRIMER_AVIS_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN;
+
+$form->prepare();
+$rapportProto = (new RapportActivite())->setThese($these);
+$canAdd = $this->isAllowed($rapportProto, $privilege_TELEVERSER_TOUT) || $this->isAllowed($rapportProto, $privilege_TELEVERSER_SIEN);
+if (!$isTeleversementPossible) {
+    $canAdd = false;
+}
+?>
+
+<?php $this->headTitle($this->translate($title = "Rapports d'activité"))
+    ->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+
+<h1 class="page-header">
+    <?php echo $this->translate($title); ?>
+    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<p class="lead">
+    <strong>Rapports d'activité : <u>selon l'état d'avancement de votre thèse et selon les obligations définies par votre Ecole Doctorale</u>.</strong>
+</p>
+<ul class="lead">
+    <li>
+        <strong>Vous devez rédiger un rapport d'activité annuel qui doit être déposé ci-dessous avant le 30 juin.</strong>.
+        Son dépôt conditionne le cas échéant l'autorisation de réinscription en thèse.
+        <a href="<?php echo $this->url('fichier/telecharger-permanent', ['idPermanent' => 'RAPPORT_ACTIVITE_ANNUEL']) ?>"
+        >Cliquez ici pour télécharger le document.</a>
+    </li>
+    <li>
+        <strong>Vous devez rédiger un rapport d'activité de fin de contrat</strong> au moment de votre soutenance.
+        Dans ce cas, les données indiquées doivent couvrir l'ensemble de la thèse. Il doit être
+        <strong>déposé ci-dessous dans l’application <?php echo $this->appInfos()->nom ?> au maximum 1 mois avant votre date de soutenance.</strong>
+        Son dépôt conditionne votre autorisation de soutenance.
+        <a href="<?php echo $this->url('fichier/telecharger-permanent', ['idPermanent' => 'RAPPORT_ACTIVITE_FINTHESE']) ?>"
+        >Cliquez ici pour télécharger le document.</a>
+    </li>
+</ul>
+<ul class="lead">
+    <li>Complétez le document téléchargé, faites-le signer par vos directions de thèse et de laboratoire ;</li>
+    <li>Scannez le document signé et téléversez-le en version PDF.</li>
+</ul>
+
+<div class="row">
+    <div class="col-md-12">
+
+        <h2>Rapports téléversés</h2>
+
+        <?php if (count($rapports) > 0): ?>
+
+            <?php echo $this->partial('rapport-activite/partial/rapports-table', [
+                'rapports' => $rapports,
+                'routeName' => $routeName,
+                'typeValidation' => $typeValidation,
+                'returnUrl' => $returnUrl,
+
+                'privilege_TELEVERSER_TOUT' => $privilege_TELEVERSER_TOUT,
+                'privilege_TELEVERSER_SIEN' => $privilege_TELEVERSER_SIEN,
+                'privilege_SUPPRIMER_TOUT' => $privilege_SUPPRIMER_TOUT,
+                'privilege_SUPPRIMER_SIEN' => $privilege_SUPPRIMER_SIEN,
+                'privilege_TELECHARGER_TOUT' => $privilege_TELECHARGER_TOUT,
+                'privilege_TELECHARGER_SIEN' => $privilege_TELECHARGER_SIEN,
+                'privilege_VALIDER_TOUT' => $privilege_VALIDER_TOUT,
+                'privilege_VALIDER_SIEN' => $privilege_VALIDER_SIEN,
+                'privilege_DEVALIDER_TOUT' => $privilege_DEVALIDER_TOUT,
+                'privilege_DEVALIDER_SIEN' => $privilege_DEVALIDER_SIEN,
+                'privilege_AJOUTER_AVIS_TOUT' => $privilege_AJOUTER_AVIS_TOUT,
+                'privilege_AJOUTER_AVIS_SIEN' => $privilege_AJOUTER_AVIS_SIEN,
+                'privilege_MODIFIER_AVIS_TOUT' => $privilege_MODIFIER_AVIS_TOUT,
+                'privilege_MODIFIER_AVIS_SIEN' => $privilege_MODIFIER_AVIS_SIEN,
+                'privilege_SUPPRIMER_AVIS_TOUT' => $privilege_SUPPRIMER_AVIS_TOUT,
+                'privilege_SUPPRIMER_AVIS_SIEN' => $privilege_SUPPRIMER_AVIS_SIEN,
+
+                'displayEtablissement' => false,
+                'displayType' => true,
+                'displayDoctorant' => false,
+                'displayDirecteurThese' => false,
+                'displayEcoleDoctorale' => false,
+                'displayUniteRecherche' => false,
+                'displayValidation' => true,
+                'displayAvis' => true,
+            ]) ?>
+
+        <?php else: ?>
+
+            <p>Aucun.</p>
+
+        <?php endif; ?>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-offset-1 col-md-8">
+
+        <?php $ajouterFormVisible = !empty($form->getMessages()); ?>
+        <div id="ajouterDiv">
+            <div class="row">
+                <div class="col-md-4">
+                    <a href="#" id="ajouterBtn" class="btn btn-primary <?php echo $canAdd ? '' : 'disabled' ?>"
+                       style="display: <?php echo !$ajouterFormVisible ? 'inherit' : 'none' ?>">
+                        <span class="icon icon-plus"></span> Téléverser un rapport</a>
+                </div>
+            </div>
+
+            <div id="ajouterForm" style="display: <?php echo $ajouterFormVisible ? 'inherit' : 'none' ?>">
+                <h3>Formulaire de téléversement</h3>
+
+                <?php echo $this->form()->openTag($form) ?>
+                <div class="row">
+                    <div class="col-md-6">
+                        <?php echo $this->formControlGroup($form->get('estFinal')); ?>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <?php echo $this->formControlGroup($form->get('anneeUniv')) ?>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-7">
+                        <?php
+                        echo $this->formControlGroup($form->get('files'));
+                        echo $this->formControlGroup($form->get('security'));
+                        echo $this->formSubmit($form->get('submit')->setAttributes(['class' => 'btn btn-primary']));
+                        ?>
+                    </div>
+                </div>
+                <?php echo $this->form()->closeTag() ?>
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="#" id="annulerBtn" class="btn btn-danger">Annuler</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    $(function() {
+        var $ajouterBtn = $("#ajouterBtn");
+        var $annulerBtn = $("#annulerBtn");
+        var $ajouterForm = $("#ajouterForm");
+
+        $ajouterBtn.on('click', function() {
+            $ajouterForm.show();
+            $ajouterBtn.hide();
+            return false;
+        });
+        $annulerBtn.on('click', function() {
+            $ajouterForm.hide();
+            $ajouterBtn.show();
+            return false;
+        });
+    });
+</script>

@@ -29,9 +29,8 @@ class RapportValidationController extends AbstractController
 
         $redirectUrl = $this->params()->fromQuery('redirect');
 
-        $this->rapportValidationService
-            ->setTypeValidation($typeValidation)
-            ->createForRapport($rapport);
+        $this->rapportValidationService->setTypeValidation($typeValidation);
+        $this->rapportValidationService->createForRapport($rapport);
 
         $this->flashMessenger()->addSuccessMessage(sprintf(
             "La validation du rapport '%s' a été enregistrée avec succès.",

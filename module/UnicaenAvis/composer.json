@@ -1,0 +1,44 @@
+{
+    "name": "unicaen/avis",
+    "description": "Module Unicaen de gestion des avis",
+    "require": {
+        "php": ">=7.4",
+        "webmozart/assert": "^1.10",
+        "ocramius/proxy-manager": "^2.0",
+        "doctrine/doctrine-laminas-hydrator": "^2.0",
+        "doctrine/doctrine-orm-module": "^4.0",
+        "laminas/laminas-config": "^3.2",
+        "laminas/laminas-console": "^2.8",
+        "laminas/laminas-eventmanager": "^3.2",
+        "laminas/laminas-form": "^2.17",
+        "laminas/laminas-http": "^2.10",
+        "laminas/laminas-i18n": "^2.9",
+        "laminas/laminas-i18n-resources": "^2.6",
+        "laminas/laminas-log": "^2.10",
+        "laminas/laminas-mvc": "^3.1",
+        "laminas/laminas-mvc-console": "^1.2",
+        "laminas/laminas-mvc-i18n": "^1.1",
+        "laminas/laminas-mvc-plugin-fileprg": "^1.2",
+        "laminas/laminas-mvc-plugin-flashmessenger": "^1.1",
+        "laminas/laminas-mvc-plugin-prg": "*",
+        "laminas/laminas-navigation": "^2.9",
+        "laminas/laminas-serializer": "^2.9",
+        "laminas/laminas-servicemanager": "^3.4",
+        "laminas/laminas-session": "^2.8",
+        "laminas/laminas-view": "^2.11",
+        "laminas/laminas-dependency-plugin": "^2.1"
+    },
+    "require-dev": {
+        "laminas/laminas-test": "^3.2",
+        "phpunit/phpunit": "^5.6"
+    },
+    "autoload": {
+        "psr-0": {
+            "UnicaenAvis": "src/",
+            "UnicaenAvisTest": "tests/"
+        },
+        "classmap": [
+            "./Module.php"
+        ]
+    }
+}

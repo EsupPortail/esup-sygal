@@ -1,0 +1,38 @@
+<?php
+/**
+ * @var \RapportActivite\Entity\Db\RapportActiviteAvis $rapportActiviteAvis
+ * @var string[] $messagesByAvisValeurBool
+ *
+ * @see \RapportActivite\Service\RapportActiviteService::triggerNotificationAvisGestionnaire()
+ */
+
+$avis = $rapportActiviteAvis->getAvis();
+?>
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?> à propos de
+    l'événement suivant : &laquo; <?php echo $avis->getAvisType() ?> &raquo;.
+</p>
+<p>
+    Voici l'avis rendu par
+    <?php echo $rapportActiviteAvis->getHistoModificateur() ?: $rapportActiviteAvis->getHistoCreateur() ?>,
+    le <?php echo ($rapportActiviteAvis->getHistoModification() ?: $rapportActiviteAvis->getHistoCreation())->format('d/m/Y H:i') ?> :
+    <strong><?php echo $avis->getAvisValeur()->getValeur() ?></strong>
+</p>
+
+<?php if ($avisComplemsToHtml = $avis->getAvisComplemsToHtml()): ?>
+    <p>
+        Compléments :
+    </p>
+    <p>
+        <?php echo $avisComplemsToHtml ?>
+    </p>
+<?php endif ?>
+
+<?php if (($message = $messagesByAvisValeurBool[$avis->getAvisValeur()->getValeurBool()]) ?? null): ?>
+    <p>
+        <?php echo $message ?>
+    </p>
+<?php endif ?>

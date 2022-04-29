@@ -729,4 +729,24 @@ span.badge.badge-error {
   padding: 0.5em;
   margin-top: 1em; }
 
+p.avis-complem {
+  margin-bottom: 0.4rem; }
+
+.avis-complem-libelle {
+  font-weight: 450; }
+
+.avis-complem-checkbox .avis-complem-valeur {
+  font-weight: 450; }
+
+.avis-complem-textarea .avis-complem-valeur {
+  display: block;
+  padding-left: 1rem; }
+
+.card.validation-rapport-activite {
+  margin-bottom: 1rem; }
+  .card.validation-rapport-activite .card-header {
+    font-weight: 500; }
+  .card.validation-rapport-activite .card-body {
+    padding: 0.5rem; }
+
 /*# sourceMappingURL=app.css.map */

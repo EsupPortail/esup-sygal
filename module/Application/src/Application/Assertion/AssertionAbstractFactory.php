@@ -26,47 +26,82 @@ use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
  */
 class AssertionAbstractFactory implements AbstractFactoryInterface
 {
-    const START = 'Assertion';
+    protected string $namespace = __NAMESPACE__;
+    protected string $prefix = 'Assertion';
 
-    public function canCreate(ContainerInterface $container, $requestedName)
+    protected array $requestedNameParts;
+    protected string $requestedDomain;
+
+    /**
+     * @param \Interop\Container\ContainerInterface $container
+     * @param string $requestedName
+     * @return bool
+     */
+    public function canCreate(ContainerInterface $container, $requestedName): bool
     {
-        $parts = explode('\\', $requestedName);
-        if (!$parts || $parts[0] !== self::START) {
+        $this->requestedNameParts = explode('\\', $requestedName);
+
+        $firstPart = $this->requestedNameParts[0] ?: null;
+        if ($firstPart !== $this->prefix) {
             return false;
         }
 
-        return
-            $this->isBaseAssertionRequested($requestedName) ||
-            $this->isSpecializedAssertionRequested($requestedName);
+        $this->requestedDomain = $this->requestedNameParts[1];
+
+        return $this->isBaseAssertionRequested() || $this->isSpecializedAssertionRequested();
     }
 
+    /**
+     * @param \Interop\Container\ContainerInterface $container
+     * @param string $requestedName
+     * @param array|null $options
+     * @return \Application\Assertion\BaseAssertion
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $parts = explode('\\', $requestedName);
-        $parts = array_slice($parts, 1);
-        $domain = $parts[0];
-
-        if ($this->isBaseAssertionRequested($requestedName)) {
-            $className = __NAMESPACE__ . sprintf('\\%s\\%sAssertion', $domain, $domain);
-            $prefix = self::START . '\\' . $domain . '\\';
-
-            /** @var BaseAssertion $baseAssertion */
-            $baseAssertion = new $className;
-            $this->initBaseAssertion($baseAssertion, $container, $prefix);
-
-            return $baseAssertion;
-
-        } elseif ($this->isSpecializedAssertionRequested($requestedName)) {
-            $className = __NAMESPACE__ . sprintf('\\%s\\%s%sAssertion', $domain, $domain, $parts[1]);
-
-            return new $className;
-
+        if ($this->isBaseAssertionRequested()) {
+            $className = $this->computeBaseAssertionClassName();
+            $prefix = $this->prefix . '\\' . $this->requestedDomain . '\\';
+            /** @var BaseAssertion $instance */
+            $instance = new $className;
+            $this->initBaseAssertion($instance, $container, $prefix);
+        } elseif ($this->isSpecializedAssertionRequested()) {
+            $className = $this->computeSpecializedAssertionClassName();
+            $instance = new $className;
         } else {
             throw new InvalidArgumentException("Assertion demandée inattendue : $requestedName");
         }
+
+        return $instance;
     }
 
-    private function initBaseAssertion(BaseAssertion $baseAssertion, ContainerInterface $container, $prefix)
+    private function isBaseAssertionRequested(): bool
+    {
+        return count($this->requestedNameParts) === 2;
+    }
+
+    private function isSpecializedAssertionRequested(): bool
+    {
+        return count($this->requestedNameParts) === 3;
+    }
+
+    protected function computeBaseAssertionClassName(): string
+    {
+        return $this->namespace . sprintf('\\%s\\%sAssertion', $this->requestedDomain, $this->requestedDomain);
+    }
+
+    protected function computeSpecializedAssertionClassName(): string
+    {
+        return $this->namespace . sprintf('\\%s\\%s%sAssertion', $this->requestedDomain, $this->requestedDomain, $this->requestedNameParts[2]);
+    }
+
+    /**
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     */
+    private function initBaseAssertion(BaseAssertion $baseAssertion, ContainerInterface $container, string $prefix)
     {
         /* @var AuthorizeService $authorizeService */
         $authorizeService = $container->get('BjyAuthorize\Service\Authorize');
@@ -100,21 +135,5 @@ class AssertionAbstractFactory implements AbstractFactoryInterface
 //        $logger = new Logger();
 //        $logger->addWriter(new \Laminas\Log\Writer\Stream('/tmp/TheseEntityAssertion.log'));
 //        $entityAssertion->setLogger($logger);
-
-        return $baseAssertion;
-    }
-
-    private function isBaseAssertionRequested($requestedName)
-    {
-        $parts = explode('\\', $requestedName);
-
-        return count($parts) === 2;
-    }
-
-    private function isSpecializedAssertionRequested($requestedName)
-    {
-        $parts = explode('\\', $requestedName);
-
-        return count($parts) === 3;
     }
 }

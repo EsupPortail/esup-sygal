@@ -1,0 +1,24 @@
+image: registre.unicaen.fr:5000/unicaen-dev-php7.3-apache
+
+stages:
+- publish
+- tests
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - vendor/
+
+#unit-tests:
+#  stage: tests
+#  script:
+#    - composer install --no-interaction --no-suggest --no-progress
+#    - php vendor/bin/phpunit --coverage-text=coverage.txt --colors=never
+#  artifacts:
+#    paths:
+#      - coverage.txt
+
+update-satis:
+  stage: publish
+  script:
+    - curl https://gest.unicaen.fr/packagist/update

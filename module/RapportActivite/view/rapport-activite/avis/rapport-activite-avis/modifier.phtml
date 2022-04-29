@@ -1,0 +1,21 @@
+<?php
+/**
+ * @var \RapportActivite\Entity\Db\RapportActivite $rapport
+ * @var \Application\Form\Rapport\RapportAvisForm $form
+ */
+
+$form->prepare();
+?>
+
+<?php $this->headTitle($this->translate($title = "Rapports d'activité"))
+    ->prepend("Avis")
+    ->prepend($rapport->getThese()->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+
+<h1 class="page-header">Modification d'un avis à propos d'un rapport</h1>
+
+<dl>
+    <dt>Rapport :</dt>
+    <dd><?php echo $rapport ?></dd>
+</dl>
+
+<?php echo $this->partial('unicaen-avis/partial/avis-form', ['form' => $form]) ?>
