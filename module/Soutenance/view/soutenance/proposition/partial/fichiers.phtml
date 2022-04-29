@@ -43,7 +43,7 @@ foreach ($proposition->getMembres() as $membre) {
             </a>
         <?php endif; ?>
 
-        <?php if ($justificatifsOk === false) : ?>
+        <?php if ($justificatifsOk !== true) : ?>
             <div class="alert alert-warning float-end">
                 <span class="fas fa-exclamation-triangle"></span>
                 Liste des justificatifs manquants :
