@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+4.0.5
+-----
+- [FIX] Correction du plantage de la page de saisie du mail perso doctorant.
+
 4.0.4
 -----
 - Correction de typos dans mail de feu vert de la soutenance
