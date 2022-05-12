@@ -135,6 +135,7 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
         $this->roles = new ArrayCollection();
         $this->mailsConfirmations = new ArrayCollection();
         $this->utilisateurs = new ArrayCollection();
+        $this->complements = new ArrayCollection();
     }
 
     /**
