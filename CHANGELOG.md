@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+4.0.6
+-----
+- [FIX] Plantage lors de la création d'une structure (ED, UR, établissement).
+
 4.0.4
 -----
 - Correction de typos dans mail de feu vert de la soutenance
