@@ -4,7 +4,7 @@ namespace Structure\Controller;
 
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\TypeStructure;
-use Application\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
+use These\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;

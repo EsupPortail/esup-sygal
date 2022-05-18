@@ -20,7 +20,7 @@ class DepotVersionCorrigeeValidationPresident
     private $id;
 
     /**
-     * @var \Application\Entity\Db\These
+     * @var \These\Entity\Db\These
      */
     private $these;
 
@@ -81,11 +81,11 @@ class DepotVersionCorrigeeValidationPresident
     /**
      * Set these
      *
-     * @param \Application\Entity\Db\These $these
+     * @param \These\Entity\Db\These $these
      *
      * @return DepotVersionCorrigeeValidationPresident
      */
-    public function setThese(\Application\Entity\Db\These $these = null)
+    public function setThese(\These\Entity\Db\These $these = null)
     {
         $this->these = $these;
 
@@ -95,7 +95,7 @@ class DepotVersionCorrigeeValidationPresident
     /**
      * Get these
      *
-     * @return \Application\Entity\Db\These
+     * @return \These\Entity\Db\These
      */
     public function getThese()
     {

@@ -2,14 +2,14 @@
 
 namespace Application\Notification;
 
-use Application\Entity\Db\Interfaces\TheseAwareTrait;
+use These\Entity\Db\Interfaces\TheseAwareTrait;
 use Notification\Notification;
 
 class ValidationRdvBuNotification extends Notification
 {
     use TheseAwareTrait;
 
-    protected $templatePath = 'application/these/mail/notif-validation-rdv-bu';
+    protected $templatePath = 'these/these/mail/notif-validation-rdv-bu';
     protected $estDevalidation = false;
     protected $notifierDoctorant = false;
     protected $notifierDoctorantImpossibleMessage;

@@ -2,7 +2,7 @@
 
 namespace Soutenance\Form\Justificatif;
 
-use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
+use These\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;

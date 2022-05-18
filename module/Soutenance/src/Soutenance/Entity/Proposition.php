@@ -2,7 +2,7 @@
 
 namespace Soutenance\Entity;
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;

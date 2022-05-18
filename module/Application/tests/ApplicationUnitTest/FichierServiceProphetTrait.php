@@ -2,7 +2,7 @@
 
 namespace ApplicationUnitTest;
 
-use Application\Service\FichierThese\FichierTheseService;
+use These\Service\FichierThese\FichierTheseService;
 use Application\Service\UserContextService;
 use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophet;

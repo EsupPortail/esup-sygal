@@ -1,0 +1,265 @@
+<?php
+
+use Application\Assertion\BaseAssertion;
+use These\Entity\Db\FichierThese;
+use Fichier\Entity\Db\NatureFichier;
+use These\Entity\Db\These;
+use Fichier\Entity\Db\VersionFichier;
+use Fichier\Provider\Privilege\FichierPrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer    $this
+ * @var These          $these
+ * @var string         $info
+ * @var string         $uploadUrl
+ * @var string         $theseRetraiteeAutoListUrl
+ * @var string         $theseRetraiteeManuListUrl
+ * @var string         $creerVersionRetraiteeUrl
+ * @var FichierThese   $fichierVOouVOC
+ * @var FichierThese   $fichierVAouVAC
+ * @var NatureFichier  $nature
+ * @var VersionFichier $versionFichier
+ */
+
+$privilege = FichierPrivileges::privilegeTeleverserFor($nature, $versionFichier);
+$canEdit = $this->isAllowed($these, $privilege);
+
+$uploader = $this->uploader()->setUrl($uploadUrl);
+
+$maxFileCountThese = 1;
+
+$validite = $fichierVOouVOC ? $fichierVOouVOC->getFichier()->getValidite() : null;
+$validiteEstInconnue = $validite && $validite->getEstValide() === null;
+$estValide = $validite && $validite->getEstValide() === true;
+if ($validite === null || $validiteEstInconnue || $estValide) {
+    return;
+}
+?>
+
+<?php if ($info): ?>
+    <div class="alert alert-md alert-danger">
+        <span class="icon icon-warning"></span> <?php echo $info ?>
+    </div>
+<?php endif ?>
+
+<div class="card box">
+
+    <div class="card-body">
+
+        <div class="row" id="uploader-div-these">
+
+            <div class="col-md-6" style="border-right: 3px solid lightgray">
+                <!---------------------------------------------------------------------->
+                <!------------------------ Retraitement automatique -------------------->
+                <!---------------------------------------------------------------------->
+                <?php
+                $autreMethodeRetraitementEchouee =
+                    $fichierVAouVAC &&
+                    $fichierVAouVAC->isRetraitementManuel() && $fichierVAouVAC->getFichier()->estArchivable() === false;
+
+                $displayContent =
+                    !$fichierVAouVAC ||
+                    $fichierVAouVAC->getEstPartiel() ||
+                    $fichierVAouVAC->isRetraitementAuto() ||
+                    $autreMethodeRetraitementEchouee;
+
+                $displayForm =
+                    !$fichierVAouVAC ||
+                    $autreMethodeRetraitementEchouee;
+
+                $displayFiles =
+                    $fichierVAouVAC &&
+                    $fichierVAouVAC->isRetraitementAuto() &&
+                    !$fichierVAouVAC->getEstPartiel();
+                ?>
+
+                <?php if ($displayContent): ?>
+
+                    <h3 class="text-center first">
+                        <?php if (! $displayForm): ?><span class="icon icon-checked"></span><?php endif ?>
+                        Retraitement automatique
+                    </h3>
+
+                    <?php if ($displayForm): ?>
+                        <p>
+                            L'application peut générer une version retraitée de votre thèse à l'aide d'un
+                            retraitement automatique permettant dans la plupart des cas de la rendre archivable.
+                        </p>
+                        <?php if ($canEdit): ?>
+                        <p>
+                            Cliquez sur le bouton ci-dessous pour générer une version retraitée de votre thèse...
+                        </p>
+                        <?php endif ?>
+                    <?php else: ?>
+                        <p>
+                            Vous avez opté pour le retraitement automatique.
+                        </p>
+                        <?php if ($fichierVAouVAC->getEstPartiel()): ?>
+                            <div class="alert alert-md alert-success alert-strong">
+                                <span class="fas fa-info-circle"></span>
+                                Le retraitement du fichier est en cours, vous recevrez un courriel lorsqu'il sera terminé...
+                                <button class="btn btn-link btn-sm float-end icon icon-refresh"
+                                        onclick="$('body').trigger('event-version-retraitee-creee'); return false;"
+                                        title="Cliquez pour recharger les informations..."></button>
+                            </div>
+                        <?php endif ?>
+                    <?php endif ?>
+
+                    <?php if ($displayForm): ?>
+                        <?php if ($canEdit): ?>
+                            <a href="<?php echo $creerVersionRetraiteeUrl ?>" id="btnCreerVersionRetraitee"
+                               class="btn btn-secondary">Générer</a>
+                            <div class="text-sm text-info" style="margin-top: 8px; margin-bottom: 12px; max-width: 250px">
+                                <strong>NB: </strong> <?php echo FichierThese::MESSAGE_RETRAITEMENT_DUREE ?>
+                            </div>
+                        <?php else: ?>
+                            <?php
+                            $msgCollector = $this->messageCollector(BaseAssertion::class);
+                            $msgCollector->getMessengerHelper()->setContainerClassesToAdd('alert-sm');
+                            echo $msgCollector->render();
+                            ?>
+                        <?php endif ?>
+                    <?php endif ?>
+
+                    <div class="these auto widget-uploader" id="uploader-auto">
+                        <?php if ($displayFiles): ?>
+                            <div>
+                                <?php echo $uploader->renderUploadedFiles($theseRetraiteeAutoListUrl, "Fichier généré par l'application:") ?>
+                            </div>
+                        <?php endif ?>
+                    </div>
+                <?php endif ?>
+            </div>
+
+
+            <div class="col-md-6" style="border-left: 3px solid lightgray; margin-left: -3px;">
+                <!---------------------------------------------------------------------->
+                <!------------------------ Retraitement manuel ------------------------->
+                <!---------------------------------------------------------------------->
+                <?php
+                $autreMethodeRetraitementEchouee =
+                    $fichierVAouVAC &&
+                    $fichierVAouVAC->isRetraitementAuto() && $fichierVAouVAC->getFichier()->estArchivable() === false;
+
+                $displayContent =
+                    !$fichierVAouVAC ||
+                    $fichierVAouVAC->isRetraitementManuel() ||
+                    $autreMethodeRetraitementEchouee;
+
+                $displayForm =
+                    !$fichierVAouVAC ||
+                    $autreMethodeRetraitementEchouee;
+
+                $displayFiles =
+                    $displayForm ||
+                    $fichierVAouVAC && $fichierVAouVAC->isRetraitementManuel();
+                ?>
+
+                <?php if ($displayContent): ?>
+
+                    <h3 class="text-center">
+                        <?php if (! $displayForm): ?><span class="icon icon-checked"></span><?php endif ?>
+                        Retraitement par vos soins
+                    </h3>
+
+                    <?php if ($displayForm): ?>
+                        <p>
+                            Sinon, vous pouvez procéder vous-même en utilisant Acrobat Pro
+                            ou PDF Creator pour fabriquer une version retraitée puis la déposer ci-dessous. <br>
+                            <small>Concernant Acrobat Pro, vous pouvez vous reporter au <a href="https://facile.cines.fr" target="_blank"
+                               title="Cliquez pour ouvrir le lien dans un autre onglet ou fenêtre">tutoriel du CINES</a>.</small>
+                        </p>
+                    <?php else: ?>
+                        <p>
+                            Vous avez opté pour un retraitement par vos soins.
+                        </p>
+                    <?php endif ?>
+
+                    <div class="these manu widget-uploader" id="uploader-manu">
+                        <?php if ($displayForm): ?>
+                            <?php if ($canEdit): ?>
+                                <div class="upload-form" style="margin-bottom: 10px">
+                                    <?php
+                                    $form = $uploader->getForm();
+                                    $form->get('files')->setAttribute('multiple', false)->setAttribute('accept', '.pdf');
+                                    echo $uploader->renderForm();
+                                    ?>
+                                    <div class="clearfix"></div>
+                                    <div class="text-sm text-info" style="margin-top: 8px; max-width: 250px">
+                                        <strong>NB: </strong> <?php echo FichierThese::MESSAGE_DEPOT_DUREE ?>
+                                    </div>
+                                </div>
+                            <?php else: ?>
+                                <?php
+                                $msgCollector = $this->messageCollector(BaseAssertion::class);
+                                $msgCollector->getMessengerHelper()->setContainerClassesToAdd('alert-sm');
+                                echo $msgCollector->render();
+                                ?>
+                            <?php endif ?>
+                        <?php endif ?>
+
+                        <?php if ($displayFiles): ?>
+                            <div>
+                                <?php echo $uploader->renderUploadedFiles($theseRetraiteeManuListUrl, "Fichier téléversé :") ?>
+                            </div>
+                        <?php endif ?>
+                    </div>
+                <?php endif ?>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    $(function () {
+        var maxFileCountThese = <?php echo $maxFileCountThese ?>;
+        var eventNames = "upload-event-files-listed upload-event-file-deleted upload-event-file-uploaded";
+        var body = $("body");
+
+        // Comportement du bouton "Créer une version retraitée".
+        $("#btnCreerVersionRetraitee").on("click", function(event) {
+            event.preventDefault();
+            $(this).data("loading-text", "Patientez, svp...").button('loading');
+            $("body").addClass("wait");
+            $.post(this.href, {}, function(data) {
+                $("body").trigger("event-version-retraitee-creee", [data]).removeClass("wait");
+            });
+        });
+
+        // Un upload de fichier vient de commencer.
+        body.on("upload-event-files-added", ".these.manu.widget-uploader", function(event, data) {
+            var uploadContainer = $(data[0]);
+            // masque le formulaire pour éviter un dépôt de thèse pendant qu'un upload est déjà en cours
+            uploadContainer.find(".upload-form").hide();
+        });
+
+        // Un fichier vient d'être déposé ou supprimé, ou la liste des fichiers a été actualisée.
+        body.on(eventNames, ".these.widget-uploader", function(event, data) {
+            var uploadContainer = $(data[0]);
+            updateUploadForm(uploadContainer);
+        });
+
+        /**
+         * Compte le nombre de fichiers déjà déposés et masque le formulaire de dépôt si le maximum est atteint.
+         *
+         * @param uploadContainer
+         */
+        function updateUploadForm(uploadContainer) {
+            var fichiersCount = uploadContainer.find(".uploaded-files-div ul li").length;
+            var div = uploadContainer.find(".upload-form");
+
+            if (fichiersCount >= maxFileCountThese) {
+                div.hide('fade');
+            }
+            else {
+                div.show('fade');
+            }
+        }
+    });
+</script>

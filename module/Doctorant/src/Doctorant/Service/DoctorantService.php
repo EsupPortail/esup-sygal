@@ -92,4 +92,19 @@ class DoctorantService extends BaseService
 
         return $doctorant;
     }
+
+    /**
+     * @param string|null $term
+     * @return Doctorant[]
+     */
+    public function getDoctorantsByTerm(?string $term = null) : array
+    {
+        $seach = '%' . strtolower($term) . '%';
+        $qb = $this->getRepository()->createQueryBuilder('doctorant')
+            ->join('doctorant.individu', 'individu')->addSelect('individu')
+            ->andWhere("concat(concat(concat(concat(lower(individu.prenom1), ' '), lower(individu.nomUsuel)), ' '), doctorant.ine) like :search")
+            ->setParameter('search', $seach);
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
 }

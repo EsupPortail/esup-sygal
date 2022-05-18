@@ -7,7 +7,7 @@ use Application\Assertion\Interfaces\EntityAssertionInterface;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Provider\Privilege\RapportPrivileges;
 use Application\Service\UserContextServiceAwareTrait;
 

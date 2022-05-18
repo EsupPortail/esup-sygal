@@ -158,7 +158,7 @@ return array(
                         'options'       => [
                             'route'    => '/these',
                             'defaults' => [
-                                'controller'    => 'Application\Controller\These',
+                                'controller'    => TheseController::class',
                                 'action'        => 'index',
                             ],
                         ],
@@ -173,7 +173,7 @@ return array(
                                         'these' => '\d+',
                                     ],
                                     'defaults'    => [
-                                        'controller'    => 'Application\Controller\These',
+                                        'controller'    => TheseController::class,
                                         'action' => 'detail-identite',
                                     ],
                                 ],
@@ -183,7 +183,7 @@ return array(
                                 'options'       => [
                                     'route'       => '/rechercher',
                                     'defaults'    => [
-                                        'controller'    => 'Application\Controller\These',
+                                        'controller'    => TheseController::class,
                                         'action' => 'rechercher',
                                     ],
                                 ],

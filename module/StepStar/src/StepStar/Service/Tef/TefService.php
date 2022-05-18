@@ -2,7 +2,7 @@
 
 namespace StepStar\Service\Tef;
 
-use Application\Service\These\TheseServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 use Doctrine\ORM\Query;
 use StepStar\Exception\TefServiceException;
 use StepStar\Service\Xml\XmlServiceAwareTrait;

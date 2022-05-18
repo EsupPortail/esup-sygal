@@ -2,7 +2,7 @@
 
 namespace Application\QueryBuilder;
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
 use Application\QueryBuilder\Expr\AndWhereTheseIs;

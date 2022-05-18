@@ -7,7 +7,7 @@ use Application\Entity\UserWrapperFactoryAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactory;

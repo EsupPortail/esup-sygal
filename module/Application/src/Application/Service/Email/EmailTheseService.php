@@ -4,7 +4,7 @@ namespace Application\Service\Email;
 
 use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\Variable;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;

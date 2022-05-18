@@ -5,7 +5,7 @@ namespace RapportActivite\Controller;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Interfaces\TypeRapportAwareTrait;
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Filter\IdifyFilter;
 use Fichier\FileUtils;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
@@ -48,7 +48,7 @@ class RapportActiviteController extends AbstractController
     private array $rapportsTeleverses = [];
 
     /**
-     * @var \Application\Entity\Db\These
+     * @var \These\Entity\Db\These
      */
     private These $these;
 

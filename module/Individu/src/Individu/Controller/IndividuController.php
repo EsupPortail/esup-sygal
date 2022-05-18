@@ -2,12 +2,12 @@
 
 namespace Individu\Controller;
 
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Structure\Entity\Db\TypeStructure;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;

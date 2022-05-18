@@ -3,7 +3,7 @@
 namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Structure\Entity\Db\Etablissement;
 use Individu\Entity\Db\Individu;
 use Fichier\Entity\Db\NatureFichier;
@@ -11,13 +11,13 @@ use Application\Entity\Db\Profil;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Source;
 use Application\Entity\Db\TypeValidation;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
 use Soutenance\Entity\Avis;

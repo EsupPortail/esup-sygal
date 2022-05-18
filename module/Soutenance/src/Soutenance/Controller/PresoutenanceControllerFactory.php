@@ -2,13 +2,13 @@
 
 namespace Soutenance\Controller;
 
-use Application\Service\Acteur\ActeurService;
+use These\Service\Acteur\ActeurService;
 use Fichier\Service\Fichier\FichierService;
 use Individu\Service\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\Source\SourceService;
 use Structure\Service\StructureDocument\StructureDocumentService;
-use Application\Service\These\TheseService;
+use These\Service\These\TheseService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Interop\Container\ContainerInterface;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceForm;

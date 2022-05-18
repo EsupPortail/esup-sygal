@@ -1,0 +1,109 @@
+<?php
+/**
+ * @var $this  PhpRenderer
+ * @var $these These
+ */
+
+use These\Entity\Db\These;
+use These\Filter\ActeursFormatter;
+use Application\View\Renderer\PhpRenderer;
+
+$acteursFormatter = new ActeursFormatter();
+?>
+
+<table class="table table-sm these-fiche">
+    <tbody>
+    <tr>
+        <th>Doctorant</th>
+        <td>
+            <?php echo $these->getDoctorant()->getNomComplet(true, true, true) ?>
+            (<?php echo $these->getDoctorant()->getDateNaissanceToString() ?>) <br>
+            N°<?php echo $these->getDoctorant()->getNumeroEtudiant() ?> <br>
+            Nationalité: <?php echo $these->getDoctorant()->getNationalite() ?>
+        </td>
+    </tr>
+
+    <?php if ($these->getActeurs()->count()) {
+            $roles = ["Directeur de thèse", "Co-directeur de thèse", "Membre du jury", "Rapporteur du jury"];
+//            $roles = ["D", "K", "M", "R"];
+            foreach ($roles as $role) {
+                $acteursFormatter->asArray()->paramFilter(["roleLibelle" => $role,]);
+                $acteurs = $acteursFormatter->filter($these->getActeurs());
+
+                if (count($acteurs) != 0) {
+                    echo "<tr>";
+                    echo "<th>" . $role . "</th>";
+                    echo "<td>";
+                    if (count($acteurs) == 0) echo "(Inconnus)";
+                    else echo implode("<br>", $acteurs);
+                    echo "</td>";
+                    echo "</tr>";
+                }
+            }
+        }
+    ?>
+
+    <tr>
+        <th>Établissement</th>
+        <td>
+            <?php
+                $etablissement = $these->getEtablissement();
+                if ($etablissement === null) echo "Non renseigné"; else echo $etablissement->getSigle();
+                echo " - ";
+                if ($etablissement === null) echo "Non renseigné"; else echo $etablissement->getLibelle();
+            ?>
+        </td>
+
+    </tr>
+
+    <tr>
+        <th>École doct.</th>
+        <td>
+            <?php if ($these->getEcoleDoctorale()): ?>
+                <?php echo $these->getEcoleDoctorale()->getSigle() . " - " . $these->getEcoleDoctorale()->getLibelle() ?>
+            <?php endif ?>
+        </td>
+    </tr>
+
+    <tr>
+        <th>Unité rech.</th>
+        <td><?php echo $these->getCodeUniteRecherche() . " - " . $these->getLibelleUniteRecherche() ?></td>
+    </tr>
+
+    <tr>
+        <th>Titre</th>
+        <td><?php echo $these->getTitre() ?></td>
+    </tr>
+
+    <tr>
+        <th>Confidentialité</th>
+        <?php if ($these->etaitConfidentielle()): ?>
+            <td>Confidentielle, jusqu'au <?php echo $these->getDateFinConfidentialiteToString() ?></td>
+        <?php elseif ($these->estConfidentielle()): ?>
+            <td class="text-danger">Confidentielle, jusqu'au <?php echo $these->getDateFinConfidentialiteToString() ?></td>
+        <?php else: ?>
+            <td>Non confidentielle</td>
+        <?php endif ?>
+    </tr>
+
+    <tr>
+        <th>Discipline</th>
+        <td><?php echo $these->getLibelleDiscipline() ?: "Inconnue" ?></td>
+    </tr>
+
+    <!--        <tr>-->
+    <!--            <th>Persopass</th>-->
+    <!--            <td>--><?php //echo $these->getDoctorant()->getPersopass() ?: "Non renseigné" ?><!--</td>-->
+    <!--        </tr>-->
+    <!--        <tr>-->
+    <!--            <th>Mail</th>-->
+    <!--            <td>-->
+    <!--                --><?php //if ($email = trim($these->getDoctorant()->getEmail())): ?>
+    <!--                    <a href="mailto: --><?php //echo $email ?><!--">--><?php //echo $email ?><!--</a>-->
+    <!--                --><?php //else: ?>
+    <!--                    Inconnu-->
+    <!--                --><?php //endif ?>
+    <!--            </td>-->
+    <!--        </tr>-->
+    </tbody>
+</table>

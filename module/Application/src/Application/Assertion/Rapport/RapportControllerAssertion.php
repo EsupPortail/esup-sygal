@@ -12,7 +12,7 @@ class RapportControllerAssertion extends ControllerAssertion
     use UserContextServiceAwareTrait;
 
     /**
-     * @var \Application\Entity\Db\These
+     * @var \These\Entity\Db\These
      */
     private $these;
 

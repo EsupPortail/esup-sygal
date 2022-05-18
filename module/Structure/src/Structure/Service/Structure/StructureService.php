@@ -8,7 +8,7 @@ use Structure\Entity\Db\Structure;
 use Structure\Entity\Db\StructureConcreteInterface;
 use Structure\Entity\Db\StructureInterface;
 use Structure\Entity\Db\StructureSubstit;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;
 use Application\Service\BaseService;

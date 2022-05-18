@@ -2,7 +2,7 @@
 
 namespace Application\QueryBuilder\Expr;
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 
 class AndWhereTheseIs extends AndWhereExpr
 {

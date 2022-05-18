@@ -3,7 +3,7 @@
 namespace RapportActivite\Rule\Televersement;
 
 use Application\Entity\AnneeUniv;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Rule\RuleInterface;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Form\RapportActiviteForm;
@@ -55,7 +55,7 @@ class RapportActiviteTeleversementRule implements RuleInterface
     }
 
     /**
-     * @param \Application\Entity\Db\These $these
+     * @param \These\Entity\Db\These $these
      * @return $this
      */
     public function setThese(These $these): self
