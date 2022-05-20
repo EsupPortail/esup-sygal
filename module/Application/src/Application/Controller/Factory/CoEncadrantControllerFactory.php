@@ -8,7 +8,7 @@ use Application\Service\Acteur\ActeurService;
 use Application\Service\CoEncadrant\CoEncadrantService;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\File\FileService;
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Application\Service\These\TheseService;
 use Application\Service\UniteRecherche\UniteRechercheService;
 use Interop\Container\ContainerInterface;

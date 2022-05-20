@@ -3,7 +3,7 @@
 namespace Application\Provider;
 
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\IndividuRole;
+use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactory;

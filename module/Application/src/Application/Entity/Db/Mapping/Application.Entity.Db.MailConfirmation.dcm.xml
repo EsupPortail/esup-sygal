@@ -11,7 +11,7 @@
         <field name="etat"      column="ETAT"       nullable="false"    type="string"   length="1"/>
         <field name="code"      column="CODE"       nullable="true"     type="string"   length="19"/>
 
-        <many-to-one field="individu" target-entity="Application\Entity\Db\Individu">
+        <many-to-one field="individu" target-entity="Individu\Entity\Db\Individu">
             <join-columns>
                 <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
             </join-columns>

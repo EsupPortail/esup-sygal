@@ -1,0 +1,112 @@
+<?php
+
+namespace Individu;
+
+use Application\Filter\IdifyFilter;
+use Application\View\Renderer\PhpRenderer;
+use Individu\Provider\Privilege\IndividuPrivileges;
+use UnicaenAuth\Provider\Privilege\Privileges;
+
+/**
+ * @var PhpRenderer $this
+ * @var \Laminas\Paginator\Paginator $paginator
+ * @var \Application\Search\Filter\SearchFilter[] $filters
+ *
+ * @see \Individu\Controller\IndividuController::indexAction()
+ */
+
+$canAjouter = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::INDIVIDU_AJOUTER));
+?>
+
+<?php $this->headTitle($this->translate("Individus")) ?>
+
+<h1 class="page-header">
+    <span class="fas fa-user-friends"></span>
+    <?php echo $this->translate("Individus"); ?>
+
+    <?php if ($canAjouter): ?>
+        <a class="btn btn-primary float-end"
+           title="Création d'un nouvel individu..."
+           href="<?php echo $this->url('individu/ajouter') ?>"><?php echo $this->translate("Nouvel individu...") ?></a>
+    <?php endif ?>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<?php echo $this->filtersPanel($filters) ?>
+
+<p>
+    <?php echo $paginator->getTotalItemCount() . " " . $this->translate("individu(s) trouvé(s).") ?>
+</p>
+
+<?php if (!empty($paginator)): ?>
+    <table class="table table-bordered table-extra-condensed">
+        <tr>
+            <th>Id</th>
+            <th>Nom d'usage</th>
+            <th>Prénoms</th>
+            <th>Adresse électronique</th>
+            <th>Date de naissance</th>
+            <th title="Complément d'individu">Compl.</th>
+            <th class="action">Action</th>
+        </tr>
+        <?php /** @var \Individu\Entity\Db\Individu $individu */
+        foreach ($paginator as $individu): ?>
+            <?php
+            $canModifier = $this->isAllowed($individu, IndividuPrivileges::INDIVIDU_MODIFIER);
+            $canSupprimer = $this->isAllowed($individu, IndividuPrivileges::INDIVIDU_SUPPRIMER);
+            ?>
+            <tr>
+                <td>
+                    <span class="<?php echo $individu->estHistorise() ? 'historise' : '' ?>">
+                        <a href="<?php echo $this->url('individu/voir', ['individu' => IdifyFilter::id($individu)]) ?>"
+                           title="Accéder à la fiche détaillée de cet individu">
+                            <?php echo $individu->getId() ?>
+                        </a>
+                    </span>
+                </td>
+                <td><?php echo $individu->getNomUsuel() ?></td>
+                <td>
+                    <?php echo $individu->getPrenom1() ?>
+                    <span class="text-sm text-secondary">
+                        <?php echo implode(', ', array_filter([$individu->getPrenom2(), $individu->getPrenom3()])) ?>
+                    </span>
+                </td>
+                <td><?php echo $individu->getEmail() ?></td>
+                <td><?php echo $individu->getDateNaissanceToString() ?></td>
+                <td>
+                    <?php if ($complement = $individu->getComplement()): ?>
+                        <a href="<?php echo $this->url('individu-compl/afficher', ['individu-compl' => $complement->getId()]) ?>"
+                            title="Voir le complément de individu">
+                            <span class="icon icon-voir"></span>
+                        </a>
+                    <?php endif ?>
+                </td>
+                <td class="action">
+                    <?php if ($canModifier): ?>
+                        <a href="<?php echo $this->url('individu/modifier', ['individu' => $individu->getId()], [], true); ?>"
+                           title="Modifier cet individu"
+                           class="ajax-modal" data-event="modification">
+                            <span class="icon icon-modifier"></span></a>
+                    <?php endif ?>
+                    <?php if ($canSupprimer): ?>
+                        <?php if ($individu->estHistorise()): ?>
+                            <a href="<?php echo $this->url('individu/restaurer', ['individu' => $individu->getId()], [], true); ?>"
+                               title="Restaurer cet individu"
+                               data-toggle="confirmationx">
+                                <span class="icon icon-restaurer"></span></a>
+                        <?php else: ?>
+                            <a href="<?php echo $this->url('individu/supprimer', ['individu' => $individu->getId()], [], true); ?>"
+                               title="Supprimer cet individu"
+                               data-toggle="confirmationx">
+                                <span class="icon icon-supprimer"></span></a>
+                        <?php endif ?>
+                    <?php endif ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+    <?php echo $this->paginationControl($paginator, 'sliding', 'application/paginator.phtml', ['route' => 'individu']) ?>
+<?php else: ?>
+    <p>Aucun individu trouvé.</p>
+<?php endif ?>

@@ -2,7 +2,8 @@
 
 namespace Application\Entity\Db;
 
-use Application\Entity\Db\Interfaces\IndividuAwareInterface;
+use Individu\Entity\Db\IndividuAwareInterface;
+use Individu\Entity\Db\Individu;
 use Soutenance\Entity\Membre;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;

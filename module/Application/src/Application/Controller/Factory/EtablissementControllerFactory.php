@@ -5,7 +5,7 @@ namespace Application\Controller\Factory;
 use Application\Controller\EtablissementController;
 use Application\Form\EtablissementForm;
 use Application\Service\Etablissement\EtablissementService;
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
 use Application\Service\StructureDocument\StructureDocumentService;

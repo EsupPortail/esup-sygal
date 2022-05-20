@@ -4,7 +4,7 @@ namespace Application\Event;
 
 use Application\Entity\UserWrapperFactory;
 use Application\Service\Etablissement\EtablissementServiceLocateTrait;
-use Application\Service\Individu\IndividuServiceLocateTrait;
+use Individu\Service\IndividuServiceLocateTrait;
 use Application\Service\Source\SourceService;
 use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurServiceLocateTrait;

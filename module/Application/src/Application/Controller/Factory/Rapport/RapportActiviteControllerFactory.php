@@ -9,7 +9,7 @@ use Application\Form\Rapport\RapportForm;
 use Application\Form\RapportActiviteForm;
 use Application\Service\Fichier\FichierService;
 use Application\Service\File\FileService;
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Rapport\RapportService;
 use Application\Service\These\TheseService;

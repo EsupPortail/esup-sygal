@@ -2,7 +2,7 @@
 
 namespace Application\Service;
 
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
 use Ramsey\Uuid\Uuid;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -95,7 +95,7 @@ class MailConfirmationService
     /**
      * Supprime toutes les demandes en cours.
      *
-     * @param \Application\Entity\Db\Individu $individu
+     * @param \Individu\Entity\Db\Individu $individu
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      */

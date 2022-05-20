@@ -2,7 +2,7 @@
 
 namespace Application\Service\ListeDiffusion;
 
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Application\Service\ListeDiffusion\Handler\ListeDiffusionHandler;
 use Interop\Container\ContainerInterface;
 

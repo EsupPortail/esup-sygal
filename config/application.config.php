@@ -35,6 +35,7 @@ return [
         'UnicaenLivelog',
         'Import',
         'Indicateur',
+        'Individu',
         'Retraitement',
         'Soutenance',
         'Notification',

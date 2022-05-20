@@ -4,8 +4,8 @@ namespace Application\Service\Role;
 
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\Individu;
-use Application\Entity\Db\IndividuRole;
+use Individu\Entity\Db\Individu;
+use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Profil;
 use Application\Entity\Db\Repository\RoleRepository;

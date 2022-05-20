@@ -2,10 +2,10 @@
 
 namespace Application\Service\ListeDiffusion\Handler;
 
-use Application\Entity\Db\Individu;
-use Application\Entity\Db\Interfaces\IndividuAwareInterface;
+use Individu\Entity\Db\Individu;
+use Individu\Entity\Db\IndividuAwareInterface;
 use Application\Entity\Db\ListeDiffusion;
-use Application\Service\Individu\IndividuServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressParser;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressParserResult;
 use Webmozart\Assert\Assert;

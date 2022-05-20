@@ -1,0 +1,366 @@
+<?php
+
+namespace Application;
+
+use Application\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\UniteRecherche;
+use Application\Provider\Privilege\UtilisateurPrivileges;
+use Application\View\Helper\RoleHelper;
+use Application\View\Renderer\PhpRenderer;
+use Individu\Entity\Db\Individu;
+use UnicaenAuth\Provider\Privilege\Privileges;
+
+/**
+ * @var PhpRenderer $this
+ * @var Individu $individu
+ * @var Role[] $roles
+ * @var Role[] $rolesAffectes
+ * @var Role[] $rolesAffectesAuto
+ * @var Etablissement[] $etablissements
+ * @var EcoleDoctorale[] $ecoles
+ * @var UniteRecherche[] $unites
+ *
+ * @see \Individu\Controller\IndividuController::voirAction()
+ */
+
+$canModifier = $this->isAllowed(Privileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION));
+?>
+
+<div class="row">
+    <div class="col-md-5">
+        <h3>Rôles attribués automatiquement
+            <span class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="right"
+                  title="Ce sont les rôles attribués automatiquement à l'individu par l'application
+                  lors de sa connexion, selon les données disponibles le concernant (ex: acteur d'une thèse,
+                  auteur d'une thèse, etc.)"></span></h3>
+            <ul>
+            <?php foreach ($rolesAffectesAuto as $role): ?>
+                <li><?php echo $role ?></li>
+            <?php endforeach ?>
+            </ul>
+    </div>
+</div>
+
+<hr>
+
+<div class="row">
+    <div class="col-md-5">
+        <h3>Rôles attribués manuellement
+            <span class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="right"
+                  title="Ce sont les rôles attribués à l'individu manuellement parmi les rôles disponibles
+                  dans la liste ci-contre."></span></h3>
+            <?php echo generateRolesAffectes($individu, $roles, $rolesAffectes, $canModifier) ?>
+    </div>
+    <div class="col-md-6">
+        <h3>Rôles attribuables manuellement</h3>
+        <dl>
+            <dt> Rôles non liés à une structure</dt>
+            <dd>
+                <?php echo generatesRoleStatiques($individu, $roles, $rolesAffectes, $canModifier) ?>
+            </dd>
+            <dt> Rôles liés aux établissements</dt>
+            <dd>
+                <?php echo generateRolesEtablissements($individu, $roles, $rolesAffectes, $etablissements, $canModifier) ?>
+            </dd>
+            <dt> Rôles liés aux écoles doctorales</dt>
+            <dd>
+                <?php echo generateRolesEcoles($individu, $roles, $rolesAffectes, $ecoles, $canModifier) ?>
+            </dd>
+            <dt> Rôles liés aux unités de recherche</dt>
+            <dd>
+                <?php echo generateRolesUnites($individu, $roles, $rolesAffectes, $unites, $canModifier) ?>
+            </dd>
+        </dl>
+    </div>
+
+</div>
+
+
+<?php
+/**
+ * @param Etablissement[]|UniteRecherche[]|EcoleDoctorale[] $structures
+ * @param string $id
+ * @param Role[] $roles
+ * @return string
+ */
+function generateSelect($structures, $id, $roles = null)
+{
+    $texte = '<div class="form-group" style="margin-bottom: 0">';
+    $texte .= '<select class="form-control selectpicker" data-live-search="true" id="' . $id . '">';
+
+    $structuresValides = [];
+    if ($roles === null) {
+        $structuresValides = $structures;
+    } else {
+        foreach ($structures as $structure) {
+            foreach ($roles as $role) {
+                if ($role->getStructure() !== null && $role->getStructure()->getId() === $structure->getStructure()->getId()) {
+                    $structuresValides[] = $structure;
+                    break;
+                }
+            }
+        }
+    }
+
+    $typeStructure = current($structuresValides) ?
+        current($structuresValides)->getStructure()->getTypeStructure()->getLibelle() :
+        "structure";
+
+    $texte .= '<option value="">Sélectionnez un(e) ' . $typeStructure . '...</option>';
+
+    foreach ($structuresValides as $structure) {
+        $texte .= '<option value="' . $structure->getStructure()->getId() . '">';
+        $texte .= $structure->getStructure()->getLibelle();
+        $texte .= ' (' . $structure->getSigle() . ')';
+        $texte .= '</option>';
+    }
+    $texte .= "</select>";
+    $texte .= "</div>";
+    return $texte;
+}
+
+
+/**
+ * @param Individu $individu
+ * @param Role[] $roles
+ * @param Role[] $rolesAffectes
+ * @param Boolean $canModifier
+ * @return string
+ */
+function generateRolesAffectes($individu, $roles, $rolesAffectes, $canModifier = false)
+{
+    $texte = "";
+    $VH = new RoleHelper();
+    foreach ($roles as $role) {
+        $texte .= '<div id="affecte_' . $role->getId() . '"';
+        if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) === false) $texte .= ' style="display:none;" ';
+        $texte .= '>';
+        $texte .= $VH->render($role);
+        if ($canModifier) {
+            $texte .= '<span class="remove-role icon icon-delete iconly iconly text-danger" title="Retirer ce rôle" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+        }
+        $texte .= '</div>';
+    }
+    return $texte;
+}
+
+/**
+ * @param Individu $individu
+ * @param Role[] $roles
+ * @param Role[] $rolesAffectes
+ * @return string
+ */
+function generatesRoleStatiques($individu, $roles, $rolesAffectes, $canModifier = false)
+{
+    $texte = "";
+    foreach ($roles as $role) {
+        if ($role->getTypeStructureDependant() === null && $role->isTheseDependant() === false) {
+            $texte .= '<div id="disponible_' . $role->getId() . '"';
+            if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
+            $texte .= '>';
+            $texte .= $role->getRoleId();
+            if ($canModifier) {
+                $texte .= '<span class="add-role icon icon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+            }
+            $texte .= '</div>';
+        }
+    }
+    return $texte;
+}
+
+/**
+ * @param Individu $individu
+ * @param Role[] $roles
+ * @param Role[] $rolesAffectes
+ * @param Etablissement[] $etablissements
+ * @return string
+ */
+function generateRolesEtablissements($individu, $roles, $rolesAffectes, $etablissements, $canModifier = false)
+{
+    $texte = "";
+    $texte .= generateSelect($etablissements, "etablissements", $roles);
+    foreach ($etablissements as $structureConcrete) {
+        $structureId = $structureConcrete->getStructure()->getId();
+        $rolesFiltres = array_filter($roles, function (Role $role) use ($structureId) {
+            return $role->getStructure() !== null && $role->getStructure()->getId() === $structureId && !$role->isTheseDependant();
+        });
+
+        if (!empty($rolesFiltres)) {
+            $texte .= '<div id="etablissement_' . $structureId . '" style="display:none;">';
+            foreach ($rolesFiltres as $role) {
+                $texte .= '<div id="disponible_' . $role->getId() . '"';
+                if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
+                $texte .= '>';
+                $texte .= $role->getRoleId();
+                if ($canModifier) {
+                    $texte .= '<span class="add-role icon icon-plus text-success" title="Attribuer ce rôle" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+                }
+                $texte .= '</div>';
+            }
+            $texte .= '</div>';
+        }
+    }
+    return $texte;
+}
+
+/**
+ * @param Individu $individu
+ * @param Role[] $roles
+ * @param Role[] $rolesAffectes
+ * @param EcoleDoctorale[] $ecoles
+ * @return string
+ */
+function generateRolesEcoles($individu, $roles, $rolesAffectes, $ecoles, $canModifier = false)
+{
+    $texte = "";
+    $texte .= generateSelect($ecoles, "ecoles");
+    foreach ($ecoles as $structureConcrete) {
+        $structureId = $structureConcrete->getStructure()->getId();
+        $rolesFiltres = array_filter($roles, function ($role) use ($structureId) {
+            return $role->getStructure() !== null && $role->getStructure()->getId() === $structureId;
+        });
+
+        if (!empty($rolesFiltres)) {
+            $texte .= '<div id="ecole_' . $structureId . '" style="display:none;">';
+            foreach ($rolesFiltres as $role) {
+                $texte .= '<div id="disponible_' . $role->getId() . '"';
+                if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
+                $texte .= '>';
+                $texte .= $role->getLibelle();
+                $texte .= $role->getStructure()->getSigle();
+                if ($canModifier) {
+                    $texte .= '<span class="add-role icon icon-plus text-success" title="Attribuer ce rôle" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+                }
+                $texte .= '</div>';
+            }
+            $texte .= '</div>';
+        }
+    }
+    return $texte;
+}
+
+/**
+ * @param Individu $individu
+ * @param Role[] $roles
+ * @param Role[] $rolesAffectes
+ * @param UniteRecherche[] $unites
+ * @return string
+ */
+function generateRolesUnites($individu, $roles, $rolesAffectes, $unites, $canModifier = false)
+{
+    $texte = "";
+
+    $texte .= generateSelect($unites, "unites");
+    foreach ($unites as $structureConcrete) {
+        $structureId = $structureConcrete->getStructure()->getId();
+        $rolesFiltres = array_filter($roles, function ($role) use ($structureId) {
+            return $role->getStructure() !== null && $role->getStructure()->getId() === $structureId;
+        });
+
+        if (!empty($rolesFiltres)) {
+            $texte .= '<div id="unite_' . $structureId . '" style="display:none;">';
+            foreach ($rolesFiltres as $role) {
+                $texte .= '<div id="disponible_' . $role->getId() . '"';
+                if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
+                $texte .= '>';
+                $texte .= $role->getRoleId();
+                if ($canModifier) {
+                    $texte .= '<span class="add-role icon icon-plus text-success" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
+                }
+                $texte .= '</div>';
+            }
+            $texte .= '</div>';
+        }
+    }
+    return $texte;
+}
+
+?>
+
+<script>
+    $(document).ready(function () {
+        $('.selectpicker').selectpicker();
+        $(".remove-role").on("click", function () {
+            var id = $(this).attr("id");
+            var splits = id.split("_");
+            var role = splits[1];
+            var individu = splits[0];
+
+            var url = "<?php echo $this->url('utilisateur/retirer-role', ['individu' => '_INDIVIDU_', 'role' => '_ROLE_']) ?>"
+                .replace('_INDIVIDU_', individu)
+                .replace('_ROLE_', role);
+            $("#affecte_" + role).hide();
+            $("#disponible_" + role).show();
+
+            $.ajax({
+                type: "POST",
+                url: url
+            });
+        });
+    });
+    $(document).ready(function () {
+        $(".add-role").on("click", function () {
+            var id = $(this).attr("id");
+            var splits = id.split("_");
+            var role = splits[1];
+            var individu = splits[0];
+
+            var url = "<?php echo $this->url('utilisateur/ajouter-role', ['individu' => '_INDIVIDU_', 'role' => '_ROLE_']) ?>"
+                .replace('_INDIVIDU_', individu)
+                .replace('_ROLE_', role);
+            $("#affecte_" + role).show();
+            $("#disponible_" + role).hide();
+
+            $.ajax({
+                type: "POST",
+                url: url
+            });
+        });
+    });
+    $(document).ready(function () {
+        $("#etablissements").on("change", function () {
+            $("div[id^=etablissement]").hide();
+            var val = $("#etablissements").val();
+            $("#etablissement_" + val).show();
+        });
+    });
+    $(document).ready(function () {
+        $("#ecoles").on("change", function () {
+            $("div[id^=ecole]").hide();
+            var val = $("#ecoles").val();
+            $("#ecole_" + val).show();
+        });
+    });
+    $(document).ready(function () {
+        $("#unites").on("change", function () {
+            $("div[id^=unite]").hide();
+            var val = $("#unites").val();
+            $("#unite_" + val).show();
+        });
+    });
+</script>
+<style>
+    .remove-role,
+    .add-role {
+        margin-left: 5px;
+    }
+
+    .remove-role:hover {
+        cursor: pointer;
+    }
+    .add-role:hover {
+        cursor: pointer;
+    }
+
+    select {
+        margin-top: 5px;
+    }
+
+    .dropdown-menu {
+        z-index: 100000;
+        max-height: 400px;
+    }
+
+</style>

@@ -2,7 +2,7 @@
 
 namespace Application\Service\Utilisateur;
 
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Repository\UtilisateurRepository;
 use Application\Entity\Db\Source;
 use Application\Entity\Db\Utilisateur;
@@ -107,15 +107,16 @@ class UtilisateurService extends BaseService
         return $this->createFromIndividu($individu, $username, $password);
     }
 
-    public function createFromFormData(array $data)
+    public function createFromFormData(array $data): Utilisateur
     {
         $userName = $data['email'];
         $displayName = $data['prenom'] . " " . $data['nomUsuel'];
-        $email = $data['email'];
 
         $utilisateur = new Utilisateur();
         $utilisateur->setDisplayName($displayName);
-        $utilisateur->setEmail($email);
+        $utilisateur->setNom($data['nomUsuel']);
+        $utilisateur->setPrenom($data['prenom']);
+        $utilisateur->setEmail($data['email']);
         $utilisateur->setUsername($userName);
         $utilisateur->setPassword('none');
         $utilisateur->setState(1);
@@ -168,12 +169,12 @@ class UtilisateurService extends BaseService
 
     /**
      * @param Individu $individu
-     * @param array    $formData
+     * @param array $formData
      * @return Utilisateur
      */
-    public function createFromIndividuAndFormData(Individu $individu, array $formData)
+    public function createFromIndividuAndFormData(Individu $individu, array $formData): Utilisateur
     {
-        if (! $individu->getEmail()) {
+        if (!$individu->getEmail()) {
             throw new RuntimeException("Impossible de créer un utilisateur à partir d'un individu n'ayant pas d'email");
         }
 
@@ -183,46 +184,6 @@ class UtilisateurService extends BaseService
         $password = $bcrypt->create($formData['password']);
 
         return $this->createFromIndividu($individu, $username, $password);
-    }
-
-    /**
-     * Crée un utilisateur ainsi que l'individu associé, à partir des données du formulaire de création d'utilisateur.
-     *
-     * @param array $formData
-     * @return Individu
-     */
-    public function createIndividuFromFormData(array $formData)
-    {
-        $source = $this->sourceService->fetchApplicationSource();
-
-        /** @var Individu $individu */
-        $individu = new Individu();
-        $individu->setCivilite($formData['civilite']);
-        $individu->setNomUsuel($formData['nomUsuel']);
-        $individu->setNomPatronymique($formData['nomPatronymique']);
-        $individu->setPrenom1($formData['prenom']);
-        $individu->setEmail($formData['email']);
-        $individu->setSource($source);
-        $individu->setSourceCode(uniqid()); // NB: sera remplacé par "COMUE::{INDIVIDU.ID}"
-
-        try {
-            $this->getEntityManager()->persist($individu);
-            $this->getEntityManager()->flush($individu);
-        } catch (ORMException $e) {
-            throw new RuntimeException("Erreur lors de l'enregistrement du nouvel individu", null, $e);
-        }
-
-        // source code définitif, ex : "COMUE::{INDIVIDU.ID}"
-        $sourceCodeIndividu = $this->sourceCodeStringHelper->addDefaultPrefixTo($individu->getId());
-        $individu->setSourceCode($sourceCodeIndividu);
-
-        try {
-            $this->getEntityManager()->flush($individu);
-        } catch (ORMException $e) {
-            throw new RuntimeException("Erreur lors de l'enregistrement de l'individu", null, $e);
-        }
-
-        return $individu;
     }
 
     /**
@@ -287,8 +248,13 @@ class UtilisateurService extends BaseService
     public function getRequestedUtilisateur(AbstractActionController $controller, string $param = "utilisateur") : ?Utilisateur
     {
         $id = $controller->params()->fromRoute($param);
+        if ($id === null) {
+            return null;
+        }
+
         /** @var Utilisateur $result */
         $result = $this->getRepository()->find($id);
+
         return $result;
     }
 

@@ -2,10 +2,10 @@
 
 namespace Soutenance\Service\Notifier;
 
-use Application\Service\Individu\IndividuServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
-use Application\Entity\Db\Individu;
-use Application\Entity\Db\IndividuRole;
+use Individu\Entity\Db\Individu;
+use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;

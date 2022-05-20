@@ -312,6 +312,7 @@ const CONFIG_IMPORTS = [
                 'email' => 'EMAIL',
                 'dateNaissance' => 'DAT_NAI_PER',
                 'nationalite' => 'LIB_NAT',
+                'codePaysNationalite' => 'cod_pay_nat', // à partir de la v2.1.0 du WS
                 'sourceCode' => 'SOURCE_CODE',
                 'sourceId' => 'SOURCE_ID',
                 'sourceInsertDate' => 'SOURCE_INSERT_DATE',

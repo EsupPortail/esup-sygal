@@ -4,7 +4,7 @@ namespace Indicateur\Controller\Factory;
 
 use Application\Service\AnomalieService;
 use Application\Service\Etablissement\EtablissementService;
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Application\Service\Structure\StructureService;
 use Application\Service\These\TheseService;
 use Indicateur\Controller\IndicateurController;

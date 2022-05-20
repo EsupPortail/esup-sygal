@@ -5,7 +5,7 @@ namespace Application\Entity\Db\Repository;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Doctrine\ORM\NonUniqueResultException;

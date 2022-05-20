@@ -1,0 +1,30 @@
+<?php
+
+namespace Individu;
+
+use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\ORM\Mapping\Driver\XmlDriver;
+
+return [
+    'doctrine' => [
+        'driver' => [
+            'orm_default' => [
+                'class' => MappingDriverChain::class,
+                'drivers' => [
+                    'Individu\Entity\Db' => 'orm_default_xml_driver',
+                ],
+            ],
+            'orm_default_xml_driver' => [
+                'class' => XmlDriver::class,
+                'paths' => [
+                    __DIR__ . '/../src/Individu/Entity/Db/Mapping',
+                ],
+            ],
+        ],
+    ],
+    'view_manager' => [
+        'template_path_stack' => [
+            __DIR__ . '/../view',
+        ],
+    ],
+];

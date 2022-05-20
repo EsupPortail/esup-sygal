@@ -5,7 +5,7 @@ namespace Application\Service\ListeDiffusion\Handler;
 use Application\Entity\Db\Acteur;
 use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Doctorant\Service\DoctorantServiceAwareTrait;

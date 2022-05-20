@@ -3,7 +3,7 @@
 namespace StepStar\Service\Xml;
 
 use Application\Constants;
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Webmozart\Assert\Assert;
 use XMLWriter;

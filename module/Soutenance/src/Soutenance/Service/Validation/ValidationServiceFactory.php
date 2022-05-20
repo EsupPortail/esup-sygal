@@ -3,7 +3,7 @@
 namespace Soutenance\Service\Validation;
 
 
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Application\Service\UserContextService;
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;

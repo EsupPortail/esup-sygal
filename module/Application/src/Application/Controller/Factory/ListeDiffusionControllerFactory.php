@@ -6,7 +6,7 @@ use Application\Controller\ListeDiffusionController;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\File\FileService;
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Application\Service\ListeDiffusion\ListeDiffusionService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;

@@ -14,7 +14,7 @@
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
         <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
 
-        <many-to-one field="individu" target-entity="Application\Entity\Db\Individu">
+        <many-to-one field="individu" target-entity="Individu\Entity\Db\Individu">
             <join-columns>
                 <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
             </join-columns>

@@ -5,7 +5,7 @@ namespace Application\Service\ListeDiffusion\Handler;
 use Application\Service\Acteur\ActeurService;
 use Doctorant\Service\DoctorantService;
 use Application\Service\Etablissement\EtablissementService;
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Application\Service\ListeDiffusion\Handler;
 use Application\Service\Role\RoleService;
 use Application\Service\Structure\StructureService;
