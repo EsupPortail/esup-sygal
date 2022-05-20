@@ -8,6 +8,7 @@ use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureDocument;
+use Application\Service\Fichier\Exception\FichierServiceException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
@@ -16,6 +17,7 @@ use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\Mvc\Controller\AbstractActionController;
+use UnicaenApp\Util;
 
 class StructureDocumentService {
     use EntityManagerAwareTrait;
@@ -224,7 +226,11 @@ class StructureDocumentService {
         $documents = $this->getStructuresDocumentsByStructure($structure);
         $contenus = [];
         foreach ($documents as $document) {
-            $contenus[$document->getId()] = $this->fichierService->fetchContenuFichier($document->getFichier());
+            try {
+                $contenus[$document->getId()] = $this->fichierService->fetchContenuFichier($document->getFichier());
+            } catch (FichierServiceException $e) {
+                $contenus[$document->getId()] = Util::createImageWithText(implode('|', str_split($e->getMessage(), 25)), 200, 200);
+            }
         }
         return $contenus;
     }
