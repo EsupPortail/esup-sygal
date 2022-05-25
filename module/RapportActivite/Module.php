@@ -7,6 +7,7 @@ use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Stdlib\Glob;
 use RapportActivite\Event\Avis\RapportActiviteAvisEventListener;
+use RapportActivite\Event\RapportActiviteEventListener;
 use RapportActivite\Event\Validation\RapportActiviteValidationEventListener;
 
 class Module
@@ -23,13 +24,17 @@ class Module
 
         $container = $e->getApplication()->getServiceManager();
 
-        /** @var RapportActiviteAvisEventListener $rapportAvisAvisListener */
-        $rapportAvisAvisListener = $container->get(RapportActiviteAvisEventListener::class);
-        $rapportAvisAvisListener->attach($eventManager);
+        /** @var \RapportActivite\Event\RapportActiviteEventListener $rapportActiviteListener */
+        $rapportActiviteListener = $container->get(RapportActiviteEventListener::class);
+        $rapportActiviteListener->attach($eventManager);
 
-        /** @var \RapportActivite\Event\Validation\RapportActiviteValidationEventListener $rapportAvisValidationListener */
-        $rapportAvisValidationListener = $container->get(RapportActiviteValidationEventListener::class);
-        $rapportAvisValidationListener->attach($eventManager);
+        /** @var \RapportActivite\Event\Avis\RapportActiviteAvisEventListener $rapportActiviteAvisListener */
+        $rapportActiviteAvisListener = $container->get(RapportActiviteAvisEventListener::class);
+        $rapportActiviteAvisListener->attach($eventManager);
+
+        /** @var \RapportActivite\Event\Validation\RapportActiviteValidationEventListener $rapportActiviteValidationListener */
+        $rapportActiviteValidationListener = $container->get(RapportActiviteValidationEventListener::class);
+        $rapportActiviteValidationListener->attach($eventManager);
     }
 
     public function getConfig()

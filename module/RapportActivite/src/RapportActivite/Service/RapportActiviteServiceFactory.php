@@ -64,6 +64,7 @@ class RapportActiviteServiceFactory
         $service->setRapportActiviteValidationService($rapportValidationService);
         $service->setStructureDocumentService($structureDocumentService);
         $service->setPageValidationPdfExporter($pageValidationPdfExporter);
+        $service->setEventManager($container->get('EventManager'));
 
         return $service;
     }
@@ -76,7 +77,7 @@ class RapportActiviteServiceFactory
     {
         $config = $container->get('Config');
 
-        $pdcConfig = $config['sygal']['rapport']['page_de_couverture'];
+        $pdcConfig = $config['rapport-activite']['page_de_couverture'];
         $templateConfig = $pdcConfig['template'];
         $templateFilePath = $templateConfig['phtml_file_path'];
         $cssFilePath = $templateConfig['css_file_path'];

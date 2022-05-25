@@ -28,6 +28,11 @@ class AvisType
     /**
      * @var int
      */
+    private int $ordre;
+
+    /**
+     * @var int
+     */
     private int $id;
 
     /**
@@ -116,6 +121,24 @@ class AvisType
     public function getDescription(): ?string
     {
         return $this->description;
+    }
+
+    /**
+     * @param int $ordre
+     * @return self
+     */
+    public function setOrdre(int $ordre): self
+    {
+        $this->ordre = $ordre;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOrdre(): int
+    {
+        return $this->ordre;
     }
 
     /**

@@ -46,7 +46,8 @@ class RapportActiviteSearchService extends SearchService
     const NAME_nom_doctorant = 'nom_doctorant';
     const NAME_nom_directeur = 'nom_directeur';
     const NAME_type = 'type';
-    const NAME_avis = 'avis';
+    const NAME_avis_attendu = 'avis_attendu';
+    const NAME_avis_fourni = 'avis_fourni';
     const NAME_validation = 'est_valide';
 
     private ?EtablissementSearchFilter $etablissementTheseSearchFilter = null;
@@ -56,7 +57,8 @@ class RapportActiviteSearchService extends SearchService
     private ?AnneeRapportActiviteSearchFilter $anneeRapportActiviteSearchFilter = null;
     private ?SelectSearchFilter $validationSearchFilter = null;
     private ?SelectSearchFilter $finalSearchFilter = null;
-    private ?SelectSearchFilter $avisManquantSearchFilter = null;
+    private ?SelectSearchFilter $avisFourniSearchFilter = null;
+    private ?SelectSearchFilter $avisAttenduSearchFilter = null;
 
     /**
      * @inheritDoc
@@ -68,7 +70,8 @@ class RapportActiviteSearchService extends SearchService
         $uniteRechercheFilter = $this->getUniteRechercheSearchFilter();
         $ecoleDoctoraleFilter = $this->getEcoleDoctoraleSearchFilter();
         $anneeRapportActiviteInscrFilter = $this->getAnneeRapportActiviteSearchFilter();
-        $avisManquantSearchFilter = $this->getAvisManquantSearchFilter();
+        $avisFourniSearchFilter = $this->getAvisFourniSearchFilter();
+        $avisAttenduSearchFilter = $this->getAvisAttenduSearchFilter();
         $validationSearchFilter = $this->getValidationSearchFilter();
         $finalSearchFilter = $this->getFinalSearchFilter();
 
@@ -83,11 +86,12 @@ class RapportActiviteSearchService extends SearchService
             $origineFinancementFilter,
             $ecoleDoctoraleFilter,
             $uniteRechercheFilter,
+            $finalSearchFilter,
             $anneeRapportActiviteInscrFilter,
             $this->createFilterNomDoctorant(),
             $this->createFilterNomDirecteur(),
-            $finalSearchFilter,
-            $avisManquantSearchFilter,
+            $avisFourniSearchFilter,
+            $avisAttenduSearchFilter,
             $validationSearchFilter,
         ]));
 
@@ -100,6 +104,35 @@ class RapportActiviteSearchService extends SearchService
             $this->createSorterNomPrenomDoctorant()->setIsDefault(),
             $this->createSorterValidation(),
         ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function createQueryBuilder(): QueryBuilder
+    {
+        // ATTENTION ! Les relations suivantes doivent être sélectionnées lors du fetch des rapports :
+        // 'rapportAvis->avis->avisType'.
+
+        $qb = $this->rapportActiviteService->getRepository()->createQueryBuilder('ra')
+            ->addSelect('tr, these, f, d, i, rav, raa, a, at')
+            ->join('ra.typeRapport', 'tr')
+            ->join('ra.these', 'these')
+            ->join('these.doctorant', 'd')
+            ->join('d.individu', 'i')
+            ->join('ra.fichier', 'f')
+            ->leftJoin('ra.rapportValidations', 'rav')
+            ->leftJoin('ra.rapportAvis', 'raa')
+            ->leftJoin('raa.avis', 'a')
+            ->leftJoin('a.avisType', 'at')
+            ->addOrderBy('at.ordre')
+            ->andWhereNotHistorise();
+
+        if ($this->typeRapport !== null) {
+            $qb->andWhere('tr = :type')->setParameter('type', $this->typeRapport);
+        }
+
+        return $qb;
     }
 
     private function fetchEtablissements(): array
@@ -140,23 +173,6 @@ class RapportActiviteSearchService extends SearchService
     }
 
     /**
-     * @param array $annees
-     * @return array
-     */
-    static public function formatToAnneesUniv(array $annees): array
-    {
-        // formattage du label, ex: "2018" devient "2018/2019"
-        $f = new AnneeUnivFormatter();
-
-        return array_map(function($annee) use ($f) {
-            if (! is_numeric($annee)) {
-                return $annee; // déjà formattée
-            }
-            return $f->filter($annee);
-        }, $annees);
-    }
-
-    /**
      * @param SearchFilter $filter
      * @param QueryBuilder $qb
      */
@@ -173,23 +189,6 @@ class RapportActiviteSearchService extends SearchService
                 break;
             case self::NAME_validation:
                 $this->applyValidationFilterToQueryBuilder($filter, $qb);
-                break;
-            default:
-                throw new InvalidArgumentException("Cas imprévu");
-        }
-    }
-
-    /**
-     * @param SearchSorter $sorter
-     * @param QueryBuilder $qb
-     */
-    public function applySorterToQueryBuilder(SearchSorter $sorter, QueryBuilder $qb)
-    {
-        // todo: permettre la spécification de l'alias Doctrine à utiliser via $sorter->getAlias() ?
-
-        switch ($sorter->getName()) {
-            case self::NAME_nom_doctorant:
-                $this->applyNomDoctorantSorterToQueryBuilder($sorter, $qb);
                 break;
             default:
                 throw new InvalidArgumentException("Cas imprévu");
@@ -225,40 +224,87 @@ class RapportActiviteSearchService extends SearchService
         }
     }
 
-    public function applyAvisManquantSearchFilterToQueryBuilder(SearchFilter $filter, QueryBuilder $qb, $alias = 'ra')
+    public function applyAvisFourniSearchFilterToQueryBuilder(SearchFilter $filter, QueryBuilder $qb, $alias = 'ra')
     {
         $filterValue = $filter->getValue();
         if (!$filterValue) {
             return;
         }
 
-        $dql = 'SELECT rapportAvis_%1$d.id ' .
-            'FROM ' . RapportActiviteAvis::class . ' rapportAvis_%1$d ' .
-            'JOIN rapportAvis_%1$d.avis avis_%1$d ' .
-            'JOIN avis_%1$d.avisType avisType_%1$d WITH avisType_%1$d.code = :code_%1$d ' .
-            'WHERE rapportAvis_%1$d.rapport = ra';
+        $dql = 'SELECT rapportAvis_fourni_%1$d.id ' .
+            'FROM ' . RapportActiviteAvis::class . ' rapportAvis_fourni_%1$d ' .
+            'JOIN rapportAvis_fourni_%1$d.avis avis_fourni_%1$d ' .
+            'JOIN avis_fourni_%1$d.avisType avisType_fourni_%1$d WITH avisType_fourni_%1$d.code = :code_fourni_%1$d ' .
+            'WHERE rapportAvis_fourni_%1$d.rapport = ra';
+
+        switch ($filterValue) {
+            case 'null':
+                $qb
+                    ->andWhere('NOT EXISTS (' . sprintf($dql, 1) . ')')
+                    ->setParameter('code_fourni_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST)
+                    ->andWhere('NOT EXISTS (' . sprintf($dql, 2) . ')')
+                    ->setParameter('code_fourni_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR);
+                break;
+
+            case RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST:
+                $qb
+                    ->andWhere('EXISTS (' . sprintf($dql, 1) . ')')
+                    ->setParameter('code_fourni_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST);
+                break;
+
+            case RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR:
+                $qb
+                    ->andWhere('EXISTS (' . sprintf($dql, 2) . ')')
+                    ->setParameter('code_fourni_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR);
+                break;
+
+            case 'tous':
+                $qb
+                    ->andWhere('EXISTS (' . sprintf($dql, 1) . ')')
+                    ->setParameter('code_fourni_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST)
+                    ->andWhere('EXISTS (' . sprintf($dql, 2) . ')')
+                    ->setParameter('code_fourni_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR);
+                break;
+
+            default:
+                throw new InvalidArgumentException("Valeur inattendue pour le filtre " . $filter->getName());
+        }
+    }
+
+    public function applyAvisAttenduSearchFilterToQueryBuilder(SearchFilter $filter, QueryBuilder $qb, $alias = 'ra')
+    {
+        $filterValue = $filter->getValue();
+        if (!$filterValue) {
+            return;
+        }
+
+        $dql = 'SELECT rapportAvis_attendu_%1$d.id ' .
+            'FROM ' . RapportActiviteAvis::class . ' rapportAvis_attendu_%1$d ' .
+            'JOIN rapportAvis_attendu_%1$d.avis avis_attendu_%1$d ' .
+            'JOIN avis_attendu_%1$d.avisType avisType_attendu_%1$d WITH avisType_attendu_%1$d.code = :code_attendu_%1$d ' .
+            'WHERE rapportAvis_attendu_%1$d.rapport = ra';
 
         switch ($filterValue) {
             case 'null':
                 $qb
                     ->andWhere('EXISTS (' . sprintf($dql, 1) . ')')
-                    ->setParameter('code_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST)
+                    ->setParameter('code_attendu_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST)
                     ->andWhere('EXISTS (' . sprintf($dql, 2) . ')')
-                    ->setParameter('code_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR);
+                    ->setParameter('code_attendu_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR);
                 break;
 
             case RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST:
                 $qb
                     ->andWhere('NOT EXISTS (' . sprintf($dql, 1) . ')')
-                    ->setParameter('code_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST);
+                    ->setParameter('code_attendu_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST);
                 break;
 
             case RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR:
                 $qb
                     ->andWhere('EXISTS (' . sprintf($dql, 1) . ')')
-                    ->setParameter('code_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST)
+                    ->setParameter('code_attendu_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST)
                     ->andWhere('NOT EXISTS (' . sprintf($dql, 2) . ')')
-                    ->setParameter('code_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR);
+                    ->setParameter('code_attendu_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR);
                 break;
 
             default:
@@ -287,6 +333,23 @@ class RapportActiviteSearchService extends SearchService
             ->setParameter('final', $filterValue === 'finthese');
     }
 
+    /**
+     * @param SearchSorter $sorter
+     * @param QueryBuilder $qb
+     */
+    public function applySorterToQueryBuilder(SearchSorter $sorter, QueryBuilder $qb)
+    {
+        // todo: permettre la spécification de l'alias Doctrine à utiliser via $sorter->getAlias() ?
+
+        switch ($sorter->getName()) {
+            case self::NAME_nom_doctorant:
+                $this->applyNomDoctorantSorterToQueryBuilder($sorter, $qb);
+                break;
+            default:
+                throw new InvalidArgumentException("Cas imprévu");
+        }
+    }
+
     public function applyNomDoctorantSorterToQueryBuilder(SearchSorter $sorter, QueryBuilder $qb, $alias = 'these')
     {
         $direction = $sorter->getDirection();
@@ -295,27 +358,6 @@ class RapportActiviteSearchService extends SearchService
             ->join('d_sort.individu', 'i_sort')
             ->addOrderBy('i_sort.nomUsuel', $direction)
             ->addOrderBy('i_sort.prenom1', $direction);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function createQueryBuilder(): QueryBuilder
-    {
-        $qb = $this->rapportActiviteService->getRepository()->createQueryBuilder('ra')
-            ->addSelect('tr, these, f, d, i')
-            ->join('ra.typeRapport', 'tr')
-            ->join('ra.these', 'these')
-            ->join('these.doctorant', 'd')
-            ->join('d.individu', 'i')
-            ->join('ra.fichier', 'f')
-            ->andWhereNotHistorise();
-
-        if ($this->typeRapport !== null) {
-            $qb->andWhere('tr = :type')->setParameter('type', $this->typeRapport);
-        }
-
-        return $qb;
     }
 
     /**
@@ -435,25 +477,47 @@ class RapportActiviteSearchService extends SearchService
         return $this->finalSearchFilter;
     }
 
-    public function getAvisManquantSearchFilter(): SelectSearchFilter
+    public function getAvisFourniSearchFilter(): SelectSearchFilter
     {
-        if ($this->avisManquantSearchFilter === null) {
-            $valueOptions = ['null' => "Aucun (i.e. rapport validé)"];
-            foreach($this->rapportActiviteAvisService->findAllAvisTypes() as $avisType) {
+        if ($this->avisFourniSearchFilter === null) {
+            $valueOptions = ['null' => "Aucun"];
+            foreach($this->rapportActiviteAvisService->findAllSortedAvisTypes() as $avisType) {
                 $valueOptions[$avisType->getCode()] = $avisType->__toString();
             }
+            $valueOptions['tous'] = "Tous (i.e. rapport validé)";
 
-            $this->avisManquantSearchFilter = new SelectSearchFilter("Avis attendu", self::NAME_avis);
-            $this->avisManquantSearchFilter
+            $this->avisFourniSearchFilter = new SelectSearchFilter("Avis fourni", self::NAME_avis_fourni);
+            $this->avisFourniSearchFilter
                 ->setDataProvider(function () use ($valueOptions) {
                     return $valueOptions;
                 })
                 ->setEmptyOptionLabel("(Peu importe)")
                 ->setAllowsEmptyOption()
-                ->setQueryBuilderApplier([$this, 'applyAvisManquantSearchFilterToQueryBuilder']);
+                ->setQueryBuilderApplier([$this, 'applyAvisFourniSearchFilterToQueryBuilder']);
         }
 
-        return $this->avisManquantSearchFilter;
+        return $this->avisFourniSearchFilter;
+    }
+
+    public function getAvisAttenduSearchFilter(): SelectSearchFilter
+    {
+        if ($this->avisAttenduSearchFilter === null) {
+            $valueOptions = ['null' => "Aucun (i.e. rapport validé)"];
+            foreach($this->rapportActiviteAvisService->findAllSortedAvisTypes() as $avisType) {
+                $valueOptions[$avisType->getCode()] = $avisType->__toString();
+            }
+
+            $this->avisAttenduSearchFilter = new SelectSearchFilter("Avis attendu", self::NAME_avis_attendu);
+            $this->avisAttenduSearchFilter
+                ->setDataProvider(function () use ($valueOptions) {
+                    return $valueOptions;
+                })
+                ->setEmptyOptionLabel("(Peu importe)")
+                ->setAllowsEmptyOption()
+                ->setQueryBuilderApplier([$this, 'applyAvisAttenduSearchFilterToQueryBuilder']);
+        }
+
+        return $this->avisAttenduSearchFilter;
     }
 
     /**

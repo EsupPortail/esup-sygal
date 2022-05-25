@@ -60,7 +60,7 @@ $config = [
             // Resaisir les attestations ? Sinon celles saisies au 1er dépôt sont reprises/dupliquées.
             'resaisir_attestations' => true,
         ],
-        // Options concernant les rapports (activité, CSI, mi-parcours)
+        // Options concernant les rapports (CSI, mi-parcours)
         'rapport' => [
             // Page de couverture des rapports d'activité déposés
             'page_de_couverture' => [

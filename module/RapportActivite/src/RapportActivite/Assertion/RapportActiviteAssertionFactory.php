@@ -3,8 +3,10 @@
 namespace RapportActivite\Assertion;
 
 use Application\Assertion\AbstractAssertion;
+use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Assertion\RapportActiviteAssertion;
+use RapportActivite\Rule\Televersement\RapportActiviteTeleversementRule;
 use RapportActivite\Service\RapportActiviteService;
 
 class RapportActiviteAssertionFactory
@@ -24,6 +26,17 @@ class RapportActiviteAssertionFactory
         $assertion->setUserContextService($userContext);
         $assertion->setRapportActiviteService($rapportActiviteService);
         $assertion->setServiceMessageCollector($messageCollector);
+
+        /** @var \Application\Service\TheseAnneeUniv\TheseAnneeUnivService $theseAnneeUnivService */
+        $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
+
+        /** @var \RapportActivite\Rule\Televersement\RapportActiviteTeleversementRule $rapportActiviteTeleversementRule */
+        $rapportActiviteTeleversementRule = $container->get(RapportActiviteTeleversementRule::class);
+        $rapportActiviteTeleversementRule->setAnneesUnivs([
+            $theseAnneeUnivService->anneeUnivCourante(),
+            $theseAnneeUnivService->anneeUnivPrecedente(),
+        ]);
+        $assertion->setRapportActiviteTeleversementRule($rapportActiviteTeleversementRule);
 
         $this->injectCommons($assertion, $container);
 

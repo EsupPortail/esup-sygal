@@ -9,6 +9,7 @@ use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Application\Service\Validation\ValidationService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Form\RapportActiviteForm;
+use RapportActivite\Rule\Televersement\RapportActiviteTeleversementRule;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
 use RapportActivite\Service\Fichier\RapportActiviteFichierService;
 use RapportActivite\Service\RapportActiviteService;
@@ -55,11 +56,19 @@ class RapportActiviteControllerFactory
         $controller->setFichierService($fichierService);
         $controller->setRapportActiviteAvisService($rapportActiviteAvisService);
         $controller->setRapportActiviteFichierService($rapportActiviteFichierService);
+
         $controller->setForm($rapportActiviteForm);
-        $controller->setTheseAnneeUnivService($theseAnneeUnivService);
 
         $controller->setTypeRapport($typeRapportActivite);
         $controller->setTypeValidation($typeValidation);
+
+        /** @var \RapportActivite\Rule\Televersement\RapportActiviteTeleversementRule $rapportActiviteTeleversementRule */
+        $rapportActiviteTeleversementRule = $container->get(RapportActiviteTeleversementRule::class);
+        $rapportActiviteTeleversementRule->setAnneesUnivs([
+            $theseAnneeUnivService->anneeUnivCourante(),
+            $theseAnneeUnivService->anneeUnivPrecedente(),
+        ]);
+        $controller->setRapportActiviteTeleversementRule($rapportActiviteTeleversementRule);
 
         return $controller;
     }

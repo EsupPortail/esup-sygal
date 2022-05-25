@@ -8,10 +8,10 @@ use Application\Navigation\ApplicationNavigationFactory;
 use Application\Search\Controller\SearchControllerPluginFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
-use RapportActivite\Assertion\RapportActiviteAssertion;
-use RapportActivite\Assertion\RapportActiviteAssertionFactory;
 use RapportActivite\Assertion\Avis\RapportActiviteAvisAssertion;
 use RapportActivite\Assertion\Avis\RapportActiviteAvisAssertionFactory;
+use RapportActivite\Assertion\RapportActiviteAssertion;
+use RapportActivite\Assertion\RapportActiviteAssertionFactory;
 use RapportActivite\Assertion\Validation\RapportActiviteValidationAssertion;
 use RapportActivite\Assertion\Validation\RapportActiviteValidationAssertionFactory;
 use RapportActivite\Controller\Avis\RapportActiviteAvisController;
@@ -24,25 +24,29 @@ use RapportActivite\Controller\Validation\RapportActiviteValidationController;
 use RapportActivite\Controller\Validation\RapportActiviteValidationControllerFactory;
 use RapportActivite\Event\Avis\RapportActiviteAvisEventListener;
 use RapportActivite\Event\Avis\RapportActiviteAvisEventListenerFactory;
+use RapportActivite\Event\RapportActiviteEventListener;
+use RapportActivite\Event\RapportActiviteEventListenerFactory;
 use RapportActivite\Event\Validation\RapportActiviteValidationEventListener;
 use RapportActivite\Event\Validation\RapportActiviteValidationEventListenerFactory;
-use RapportActivite\Service\Fichier\Exporter\PageValidationPdfExporter;
-use RapportActivite\Service\Fichier\Exporter\PageValidationPdfExporterFactory;
-use RapportActivite\Service\Fichier\RapportActiviteFichierService;
-use RapportActivite\Service\Fichier\RapportActiviteFichierServiceFactory;
 use RapportActivite\Form\RapportActiviteForm;
 use RapportActivite\Form\RapportActiviteFormFactory;
 use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
 use RapportActivite\Rule\Avis\RapportActiviteAvisNotificationRule;
 use RapportActivite\Rule\Avis\RapportActiviteAvisNotificationRuleFactory;
+use RapportActivite\Rule\Televersement\RapportActiviteTeleversementRule;
+use RapportActivite\Rule\Televersement\RapportActiviteTeleversementRuleFactory;
 use RapportActivite\Rule\Validation\RapportActiviteValidationRule;
 use RapportActivite\Rule\Validation\RapportActiviteValidationRuleFactory;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceFactory;
-use RapportActivite\Service\Search\RapportActiviteSearchService;
-use RapportActivite\Service\Search\RapportActiviteSearchServiceFactory;
+use RapportActivite\Service\Fichier\Exporter\PageValidationPdfExporter;
+use RapportActivite\Service\Fichier\Exporter\PageValidationPdfExporterFactory;
+use RapportActivite\Service\Fichier\RapportActiviteFichierService;
+use RapportActivite\Service\Fichier\RapportActiviteFichierServiceFactory;
 use RapportActivite\Service\RapportActiviteService;
 use RapportActivite\Service\RapportActiviteServiceFactory;
+use RapportActivite\Service\Search\RapportActiviteSearchService;
+use RapportActivite\Service\Search\RapportActiviteSearchServiceFactory;
 use RapportActivite\Service\Validation\RapportActiviteValidationService;
 use RapportActivite\Service\Validation\RapportActiviteValidationServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -189,8 +193,8 @@ return [
                         'filters',
                     ],
                     'privileges' => [
-                        RapportActivitePrivileges::RAPPORT_ACTIVITE_RECHERCHER_TOUT,
-                        RapportActivitePrivileges::RAPPORT_ACTIVITE_RECHERCHER_SIEN,
+                        RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT,
+                        RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN,
                     ],
                     'assertion' => RapportActiviteAssertion::class,
                 ],
@@ -505,8 +509,8 @@ return [
                                 'route' => 'rapport-activite/recherche/index',
                                 'resource' => PrivilegeController::getResourceId(RapportActiviteRechercheController::class, 'index'),
                                 'privilege' => [
-                                    RapportActivitePrivileges::RAPPORT_ACTIVITE_RECHERCHER_TOUT,
-                                    RapportActivitePrivileges::RAPPORT_ACTIVITE_RECHERCHER_SIEN,
+                                    RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT,
+                                    RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN,
                                 ],
                                 'visible' => Assertion\RapportActiviteAssertion::class,
                             ],
@@ -528,8 +532,8 @@ return [
                                 'order' => 100,
                                 'resource' => PrivilegeController::getResourceId(RapportActiviteRechercheController::class, 'index'),
                                 'privilege' => [
-                                    RapportActivitePrivileges::RAPPORT_ACTIVITE_RECHERCHER_TOUT,
-                                    RapportActivitePrivileges::RAPPORT_ACTIVITE_RECHERCHER_SIEN,
+                                    RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT,
+                                    RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN,
                                 ],
                                 'visible' => Assertion\RapportActiviteAssertion::class,
                             ],
@@ -559,11 +563,13 @@ return [
 
             RapportActiviteFichierService::class => RapportActiviteFichierServiceFactory::class,
 
+            RapportActiviteEventListener::class => RapportActiviteEventListenerFactory::class,
             RapportActiviteAvisEventListener::class => RapportActiviteAvisEventListenerFactory::class,
             RapportActiviteValidationEventListener::class => RapportActiviteValidationEventListenerFactory::class,
 
             RapportActiviteAvisNotificationRule::class => RapportActiviteAvisNotificationRuleFactory::class,
             RapportActiviteValidationRule::class => RapportActiviteValidationRuleFactory::class,
+            RapportActiviteTeleversementRule::class => RapportActiviteTeleversementRuleFactory::class,
 
             PageValidationPdfExporter::class => PageValidationPdfExporterFactory::class,
         ],

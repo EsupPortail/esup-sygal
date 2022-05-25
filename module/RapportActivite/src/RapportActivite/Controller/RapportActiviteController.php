@@ -3,22 +3,18 @@
 namespace RapportActivite\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\AnneeUniv;
 use Application\Entity\Db\Interfaces\TypeRapportAwareTrait;
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
 use Application\Entity\Db\These;
 use Application\Filter\IdifyFilter;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
-use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
-use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
-use Doctrine\ORM\NoResultException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Entity\Db\RapportActiviteAvis;
 use RapportActivite\Form\RapportActiviteForm;
-use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
+use RapportActivite\Rule\Televersement\RapportActiviteTeleversementRuleAwareTrait;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
 use RapportActivite\Service\Fichier\RapportActiviteFichierServiceAwareTrait;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
@@ -32,36 +28,13 @@ class RapportActiviteController extends AbstractController
 {
     use FichierServiceAwareTrait;
     use FileServiceAwareTrait;
-    use TheseAnneeUnivServiceAwareTrait;
     use RapportActiviteAvisServiceAwareTrait;
     use RapportActiviteServiceAwareTrait;
     use RapportActiviteFichierServiceAwareTrait;
+    use RapportActiviteTeleversementRuleAwareTrait;
 
     use TypeRapportAwareTrait;
     use TypeValidationAwareTrait;
-    
-    private string $routeName = 'rapport-activite';
-
-    private string $privilege_LISTER_TOUT;
-    private string $privilege_LISTER_SIEN;
-    private string $privilege_TELEVERSER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_TOUT;
-    private string $privilege_TELEVERSER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN;
-    private string $privilege_SUPPRIMER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT;
-    private string $privilege_SUPPRIMER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN;
-    private string $privilege_RECHERCHER_TOUT;
-    private string $privilege_RECHERCHER_SIEN;
-    private string $privilege_TELECHARGER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_TOUT;
-    private string $privilege_TELECHARGER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_SIEN;
-    private string $privilege_TELECHARGER_ZIP;
-    private string $privilege_VALIDER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT;
-    private string $privilege_VALIDER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN;
-    private string $privilege_DEVALIDER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT;
-    private string $privilege_DEVALIDER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN;
-
-    /**
-     * @var string
-     */
-    private string $rapportTeleverseEventName = 'RAPPORT_TELEVERSE';
 
     /**
      * @var \RapportActivite\Form\RapportActiviteForm
@@ -79,63 +52,11 @@ class RapportActiviteController extends AbstractController
     private These $these;
 
     /**
-     * Années univ proposables.
-     *
-     * @var \Application\Entity\AnneeUniv[]
-     */
-    private array $anneesUnivs;
-
-    /**
-     * @var RapportActivite[]
-     */
-    private array $rapportsTeleversesAnnuels = [];
-
-    /**
-     * @var RapportActivite[]
-     */
-    private array $rapportsTeleversesFintheses = [];
-
-    /**
-     * @var array [int => bool]
-     */
-    private array $canTeleverserRapportAnnuel;
-
-    /**
-     * @var array [int => bool]
-     */
-    private array $canTeleverserRapportFinthese;
-
-    /**
-     * @inheritDoc
-     */
-    public function setTheseAnneeUnivService(TheseAnneeUnivService $service)
-    {
-        $this->theseAnneeUnivService = $service;
-
-        $this->anneesUnivs = [
-            $this->theseAnneeUnivService->anneeUnivCourante(),
-            $this->theseAnneeUnivService->anneeUnivPrecedente(),
-        ];
-    }
-
-    /**
      * @param \RapportActivite\Form\RapportActiviteForm $form
      */
     public function setForm(RapportActiviteForm $form)
     {
         $this->form = $form;
-    }
-
-    /**
-     * @return AnneeUniv
-     */
-    private function getAnneeUnivMax(): AnneeUniv
-    {
-        $annees = array_map(function(AnneeUniv $anneeUniv) {
-            return $anneeUniv->getPremiereAnnee();
-        }, $this->anneesUnivs);
-
-        return AnneeUniv::fromPremiereAnnee(max($annees));
     }
 
     /**
@@ -146,8 +67,12 @@ class RapportActiviteController extends AbstractController
         $this->these = $this->requestedThese();
         $this->fetchRapportsTeleverses();
 
+        $this->rapportActiviteTeleversementRule->setRapportsTeleverses($this->rapportsTeleverses);
+        $this->rapportActiviteTeleversementRule->computeCanTeleverserRapports();
+        $isTeleversementPossible = $this->rapportActiviteTeleversementRule->isTeleversementPossible();
+
         foreach ($this->rapportsTeleverses as $rapport) {
-            $avisTypeDispo = $this->rapportActiviteAvisService->findNextExpectedAvisTypeForRapport($rapport);
+            $avisTypeDispo = $this->rapportActiviteAvisService->findExpectedAvisTypeForRapport($rapport);
             if ($avisTypeDispo === null) {
                 $rapport->setRapportAvisPossible(null);
                 continue;
@@ -161,7 +86,7 @@ class RapportActiviteController extends AbstractController
             $rapport->setRapportAvisPossible($rapportAvisPossible);
         }
 
-        // gestion d'une éventuelle requête POST d'ajout d'un rapport
+        // Gestion du formulaire de dépôt
         $result = $this->ajouterAction();
         if ($result instanceof Response) {
             return $result;
@@ -171,11 +96,10 @@ class RapportActiviteController extends AbstractController
             'rapports' => $this->rapportsTeleverses,
             'these' => $this->these,
             'form' => $this->form,
-            'isTeleversementPossible' => $this->isTeleversementPossible(),
+            'isTeleversementPossible' => $isTeleversementPossible,
 
             'typeValidation' => $this->typeValidation,
-            'returnUrl' => $this->url()->fromRoute($this->routeName . '/consulter', ['these' => $this->these->getId()]),
-            'routeName' => $this->routeName,
+            'returnUrl' => $this->url()->fromRoute('rapport-activite/consulter', ['these' => $this->these->getId()]),
         ]);
     }
 
@@ -188,6 +112,10 @@ class RapportActiviteController extends AbstractController
 
         $this->initForm();
 
+        $rapport = $this->rapportActiviteService->newRapportActivite($this->these);
+        $rapport->setTypeRapport($this->typeRapport);
+        $this->form->bind($rapport);
+
         $request = $this->getRequest();
         if ($request->isPost()) {
             $uploadData = $request->getFiles()->toArray();
@@ -199,26 +127,26 @@ class RapportActiviteController extends AbstractController
             if ($this->form->isValid()) {
                 /** @var RapportActivite $rapport */
                 $rapport = $this->form->getData();
-                $rapport->setTypeRapport($this->typeRapport);
-                $rapport->setThese($this->these);
-                if ($this->canTeleverserRapport($rapport)) {
-                    $this->rapportActiviteService->saveRapport($rapport, $uploadData);
-
-                    // déclenchement d'un événement "rapport téléversé"
-                    $this->events->trigger(
-                        $this->rapportTeleverseEventName,
-                        $rapport, [
-
-                        ]
-                    );
+                if ($this->rapportActiviteTeleversementRule->canTeleverserRapport($rapport)) {
+                    $event = $this->rapportActiviteService->saveRapport($rapport, $uploadData);
 
                     $this->flashMessenger()->addSuccessMessage(sprintf(
                         "Rapport téléversé avec succès sous le nom suivant :<br>'%s'.",
                         $rapport->getFichier()->getNom()
                     ));
+
+                    if ($messages = $event->getMessages()) {
+                        foreach ($messages as $namespace => $message) {
+                            $this->flashMessenger()->addMessage($message, $namespace);
+                        }
+                    }
+                } else {
+                    $this->flashMessenger()->addErrorMessage(
+                        "Ce téléversement n'est pas possible. Vérifiez la cohérence entre le type de rapport et l'année universitaire, svp."
+                    );
                 }
 
-                return $this->redirect()->toRoute($this->routeName . '/consulter', ['these' => IdifyFilter::id($this->these)]);
+                return $this->redirect()->toRoute('rapport-activite/consulter', ['these' => IdifyFilter::id($this->these)]);
             }
         }
 
@@ -233,11 +161,17 @@ class RapportActiviteController extends AbstractController
         $rapport = $this->requestedRapport();
         $these = $rapport->getThese();
 
-        $this->rapportActiviteService->deleteRapport($rapport);
+        $event = $this->rapportActiviteService->deleteRapport($rapport);
 
         $this->flashMessenger()->addSuccessMessage("Rapport supprimé avec succès.");
 
-        return $this->redirect()->toRoute($this->routeName . '/consulter', ['these' => IdifyFilter::id($these)]);
+        if ($messages = $event->getMessages()) {
+            foreach ($messages as $namespace => $message) {
+                $this->flashMessenger()->addMessage($message, $namespace);
+            }
+        }
+
+        return $this->redirect()->toRoute('rapport-activite/consulter', ['these' => IdifyFilter::id($these)]);
     }
 
     public function telechargerAction()
@@ -245,7 +179,7 @@ class RapportActiviteController extends AbstractController
         $rapport = $this->requestedRapport();
 
         // s'il s'agit d'un rapport validé, on ajoute à la volée la page de validation
-        if ($rapport->getRapportValidation() !== null) {
+        if ($rapport->estValide()) {
             // l'ajout de la page de validation n'est pas forcément possible
             if ($rapport->supporteAjoutPageValidation()) {
                 $exportData = $this->rapportActiviteService->createPageValidationData($rapport);
@@ -264,129 +198,18 @@ class RapportActiviteController extends AbstractController
     private function fetchRapportsTeleverses()
     {
         $this->rapportsTeleverses = $this->rapportActiviteService->findRapportsForThese($this->these);
-
-        $this->rapportsTeleversesAnnuels = array_filter($this->rapportsTeleverses, function(RapportActivite $rapport) {
-            return $rapport->estFinal() === false;
-        });
-        $this->rapportsTeleversesFintheses = array_filter($this->rapportsTeleverses, function(RapportActivite $rapport) {
-            return $rapport->estFinal() === true;
-        });
-
-        $this->canTeleverserRapportAnnuel = [];
-        foreach ($this->anneesUnivs as $anneeUniv) {
-            $this->canTeleverserRapportAnnuel[$anneeUniv->getPremiereAnnee()] =
-                $this->canTeleverserRapportAnnuelForAnneeUniv($anneeUniv);
-        }
-        $this->canTeleverserRapportFinthese = [];
-        foreach ($this->anneesUnivs as $anneeUniv) {
-            $this->canTeleverserRapportFinthese[$anneeUniv->getPremiereAnnee()] =
-                $this->canTeleverserRapportFintheseForAnneeUniv($anneeUniv);
-        }
-    }
-
-    private function isTeleversementPossible(): bool
-    {
-        return
-            count(array_filter($this->canTeleverserRapportAnnuel)) > 0 ||
-            count(array_filter($this->canTeleverserRapportFinthese)) > 0;
-    }
-
-    private function getAnneesPrises(): array
-    {
-        return array_keys(
-            array_intersect_key(
-                array_filter($this->canTeleverserRapportAnnuel, function(bool $can) { return $can === false; }),
-                array_filter($this->canTeleverserRapportFinthese, function(bool $can) { return $can === false; })
-            )
-        );
-    }
-
-    /**
-     * @return AnneeUniv[]
-     */
-    private function getAnneesUnivsDisponibles(): array
-    {
-        $anneesPrises = $this->getAnneesPrises();
-
-        return array_filter($this->anneesUnivs, function(AnneeUniv $annee) use ($anneesPrises) {
-            $utilisee = in_array($annee->getPremiereAnnee(), $anneesPrises);
-            return !$utilisee;
-        });
-    }
-
-    private function canTeleverserRapport(RapportActivite $rapport): bool
-    {
-        if ($rapport->estFinal()) {
-            return $this->canTeleverserRapportFintheseForAnneeUniv($rapport->getAnneeUniv());
-        } else {
-            return $this->canTeleverserRapportAnnuelForAnneeUniv($rapport->getAnneeUniv());
-        }
-    }
-
-    private function canTeleverserRapportAnnuel(): bool
-    {
-        // Peut être téléversé : 1 rapport annuel par année universitaire.
-
-        foreach ($this->anneesUnivs as $anneeUniv) {
-            $rapportsTeleverses = array_filter(
-                $this->rapportsTeleversesAnnuels,
-                $this->rapportActiviteService->getFilterRapportsByAnneeUniv($anneeUniv)
-            );
-            if (empty($rapportsTeleverses)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private function canTeleverserRapportAnnuelForAnneeUniv(AnneeUniv $anneeUniv): bool
-    {
-        // Peut être téléversé : 1 rapport annuel.
-
-        $rapportsTeleverses = array_filter(
-            $this->rapportsTeleversesAnnuels,
-            $this->rapportActiviteService->getFilterRapportsByAnneeUniv($anneeUniv)
-        );
-
-        return empty($rapportsTeleverses);
-    }
-
-    private function canTeleverserRapportFinthese(): bool
-    {
-        // Dépôt d'1 rapport de fin de contrat maxi toutes années univ confondues.
-
-        return count($this->rapportsTeleversesFintheses) === 0;
-    }
-
-    private function canTeleverserRapportFintheseForAnneeUniv(AnneeUniv $anneeUniv): bool
-    {
-        // Dépôt d'un rapport de fin de contrat seulement sur la dernière année univ.
-
-        if ($anneeUniv !== $this->getAnneeUnivMax()) {
-            return false;
-        }
-
-        $rapportsTeleverses = array_filter(
-            $this->rapportsTeleversesFintheses,
-            $this->rapportActiviteService->getFilterRapportsByAnneeUniv($anneeUniv)
-        );
-
-        return empty($rapportsTeleverses);
     }
 
     private function initForm()
     {
-        $this->form->setAnneesUnivs($this->getAnneesUnivsDisponibles());
+        $this->form->setAnneesUnivs($this->rapportActiviteTeleversementRule->getAnneesUnivsDisponibles());
 
-        $estFinalValueOptions = [];
-        if ($this->canTeleverserRapportAnnuel()) {
-            $estFinalValueOptions['0'] = "Rapport d'activité annuel";
+        if ($this->rapportActiviteTeleversementRule->canTeleverserRapportAnnuel()) {
+            $this->form->addRapportAnnuelSelectOption();
         }
-        if ($this->canTeleverserRapportFinthese()) {
-            $estFinalValueOptions['1'] = "Rapport d'activité de fin de contrat";
+        if ($this->rapportActiviteTeleversementRule->canTeleverserRapportFinContrat()) {
+            $this->form->addRapportFinContratSelectOption();
         }
-        $this->form->setEstFinalValueOptions($estFinalValueOptions);
     }
 
     /**
@@ -395,10 +218,10 @@ class RapportActiviteController extends AbstractController
     private function requestedRapport(): RapportActivite
     {
         $id = $this->params()->fromRoute('rapport') ?: $this->params()->fromQuery('rapport');
-        try {
-            $rapport = $this->rapportActiviteService->findRapportById($id);
-        } catch (NoResultException $e) {
-            throw new RuntimeException("Aucun rapport trouvé avec cet id", 0, $e);
+
+        $rapport = $this->rapportActiviteService->findRapportById($id);
+        if ($rapport === null) {
+            throw new RuntimeException("Aucun rapport trouvé avec l'id spécifié");
         }
 
         if ($rapport->getTypeRapport() !== $this->typeRapport) {

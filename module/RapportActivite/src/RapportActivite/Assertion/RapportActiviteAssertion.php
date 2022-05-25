@@ -10,10 +10,11 @@ use Application\Entity\Db\These;
 use Application\RouteMatch;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
-use Doctrine\ORM\NoResultException;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use RapportActivite\Controller\RapportActiviteController;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
+use RapportActivite\Rule\Televersement\RapportActiviteTeleversementRuleAwareTrait;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareInterface;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
@@ -26,6 +27,8 @@ class RapportActiviteAssertion extends AbstractAssertion
 
     use UserContextServiceAwareTrait;
     use RapportActiviteServiceAwareTrait;
+
+    use RapportActiviteTeleversementRuleAwareTrait;
 
     private ?RapportActivite $rapportActivite = null;
 
@@ -44,7 +47,7 @@ class RapportActiviteAssertion extends AbstractAssertion
      */
     private function assertPage(array $page): bool
     {
-        $these = $this->getRouteMatch()->getThese();
+        $these = $this->getRequestedThese();
         if ($these === null) {
             return true;
         }
@@ -74,24 +77,30 @@ class RapportActiviteAssertion extends AbstractAssertion
             return false;
         }
 
-        if ($id = $this->getRouteMatch()->getParam('rapport')) {
-            try {
-                $rapportActivite = $this->rapportActiviteService->findRapportById($id);
-                $these = $rapportActivite->getThese();
-            } catch (NoResultException $e) {
-                return false;
-            }
-        } else {
-            $these = $this->getRouteMatch()->getThese();
-        }
-
+        $these = $this->getRequestedThese();
         if ($these === null) {
             return true;
         }
 
         try {
-
             $this->assertAppartenanceThese($these);
+
+            switch ($controller) {
+
+                case RapportActiviteController::class:
+
+                    switch ($action) {
+                        case 'ajouter':
+                            $this->assertTeleversementPossible();
+                            break;
+
+                        case 'supprimer':
+                            $this->rapportActivite = $this->getRequestedRapport();
+                            $this->assertAucuneValidation();
+                    }
+
+                    break;
+            }
 
         } catch (FailedAssertionException $e) {
             if ($e->getMessage()) {
@@ -177,6 +186,35 @@ class RapportActiviteAssertion extends AbstractAssertion
         return true;
     }
 
+
+    private function getRequestedThese(): ?These
+    {
+        if ($rapportActivite = $this->getRequestedRapport()) {
+            return $rapportActivite->getThese();
+        } else {
+            return $this->getRouteMatch()->getThese();
+        }
+    }
+
+    private function getRequestedRapport(): ?RapportActivite
+    {
+        $rapportActivite = null;
+        if ($id = $this->getRouteMatch()->getParam('rapport')) {
+            $rapportActivite = $this->rapportActiviteService->findRapportById($id);
+        }
+
+        return $rapportActivite;
+    }
+
+
+    private function assertTeleversementPossible()
+    {
+        $this->rapportActiviteTeleversementRule->setThese($this->getRequestedThese());
+
+        if (!$this->rapportActiviteTeleversementRule->isTeleversementPossible()) {
+            throw new FailedAssertionException("Le téléversement n'est pas possible.");
+        }
+    }
 
     private function assertEtatThese(These $these)
     {

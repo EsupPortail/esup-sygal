@@ -20,6 +20,7 @@ class RapportActiviteAvisServiceFactory
 
         $service->setEtablissementService($etablissementService);
         $service->setAvisService($avisService);
+        $service->setEventManager($container->get('EventManager'));
 
         return $service;
     }

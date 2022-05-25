@@ -8,8 +8,10 @@ use RapportActivite\Notification\RapportActiviteAvisNotification;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
 use RuntimeException;
 use UnicaenApp\Traits\MessageAwareTrait;
-use UnicaenAvis\Entity\Db\AvisValeur;
 
+/**
+ * Application des règles métiers concernant la notification en cas d'avis apporté sur un rapport d'activité.
+ */
 class RapportActiviteAvisNotificationRule implements RuleInterface
 {
     use RapportActiviteAvisServiceAwareTrait;
@@ -21,6 +23,12 @@ class RapportActiviteAvisNotificationRule implements RuleInterface
     private array $messagesByAvisValeurBool;
     private string $subject;
 
+    /**
+     * Spécifie l'avis sur lequel tester les règles métiers.
+     *
+     * @param \RapportActivite\Entity\Db\RapportActiviteAvis $rapportActiviteAvis
+     * @return $this
+     */
     public function setRapportActiviteAvis(RapportActiviteAvis $rapportActiviteAvis): self
     {
         $this->rapportActiviteAvis = $rapportActiviteAvis;
@@ -32,51 +40,59 @@ class RapportActiviteAvisNotificationRule implements RuleInterface
      */
     public function execute(): self
     {
-        $nextAvisTypeForRapport =
-            $this->rapportActiviteAvisService->findNextExpectedAvisTypeForRapport($this->rapportActiviteAvis->getRapportActivite());
+        $this->notificationRequired = false;
 
-        // s'agit-il du dernier avis attendu ?
-        $isLastAvisTypeForRapport = null === $nextAvisTypeForRapport;
+        $avisType = $this->rapportActiviteAvis->getAvis()->getAvisType();
 
-        $avisValeur = $this->rapportActiviteAvis->getAvis()->getAvisValeur();
-        $these = $this->rapportActiviteAvis->getRapportActivite()->getThese();
-
-        switch (true) {
-            case !$isLastAvisTypeForRapport &&
-                $avisValeur->getValeurBool() === false:
-
-                // notifier doctorant
-                $this->notificationRequired = true;
-                $this->to = [$these->getDoctorant()->getEmail() => $these->getDoctorant()->getIndividu()->getNomComplet()];
-                $this->subject = "Votre rapport d'activité";
-                $this->messagesByAvisValeurBool = [
-                    false => '<strong>Important : pour que votre École Doctorale valide votre rapport, vous devez prendre en compte les remarques ci-dessus et le redéposer.</strong>',
-                ];
-
+        switch ($avisType->getCode()) {
+            case RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST:
+                $this->onAvisGestionnaire();
                 break;
-
-            case $isLastAvisTypeForRapport &&
-                $avisValeur->getCode() === RapportActiviteAvis::AVIS_VALEUR__CODE__AVIS_RAPPORT_ACTIVITE_DIR_VALEUR_INCOMPLET:
-
-                // notifier l'auteur de l'avis précédent
-                $rapportActiviteAvisPrec = $this->fetchPreviousAvis();
-                $auteurPrec = $rapportActiviteAvisPrec->getHistoModificateur() ?: $rapportActiviteAvisPrec->getHistoCreateur();
-                $auteurPrecEmail = $auteurPrec->getIndividu() ? $auteurPrec->getIndividu()->getEmailBestOf() : $auteurPrec->getEmail();
-
-                $this->notificationRequired = true;
-                $this->to = [$auteurPrecEmail => $auteurPrec->getDisplayName()];
-                $this->subject = "Rapport d'activité de " . $these->getDoctorant();
-                $this->messagesByAvisValeurBool = [
-                    false => '<strong>Important : le rapport étant incomplet, la balle revient dans votre camp !!</strong>',
-                ];
-
+            case RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR:
+                $this->onAvisResponsable();
                 break;
-
-            default:
-                $this->notificationRequired = false;
         }
 
         return $this;
+    }
+
+    private function onAvisGestionnaire()
+    {
+        $avisValeur = $this->rapportActiviteAvis->getAvis()->getAvisValeur();
+        $these = $this->rapportActiviteAvis->getRapportActivite()->getThese();
+
+        if ($avisValeur->getValeurBool() === false) {
+            // notifier doctorant
+            $this->notificationRequired = true;
+            $this->to = [$these->getDoctorant()->getEmail() => $these->getDoctorant()->getIndividu()->getNomComplet()];
+            $this->subject = "Important : problème concernant votre rapport";
+            $this->messagesByAvisValeurBool = [
+                false => "<strong>Important : pour que votre École Doctorale valide votre rapport, vous devez " .
+                    "prendre en compte les remarques ci-dessus et le redéposer (i.e. supprimer celui téléversé " .
+                    "puis déposer le nouveau).</strong>",
+            ];
+        }
+    }
+
+    private function onAvisResponsable()
+    {
+        $avisValeur = $this->rapportActiviteAvis->getAvis()->getAvisValeur();
+        $these = $this->rapportActiviteAvis->getRapportActivite()->getThese();
+
+        if ($avisValeur->getCode() === RapportActiviteAvis::AVIS_VALEUR__CODE__AVIS_RAPPORT_ACTIVITE_DIR_VALEUR_INCOMPLET) {
+            // notifier l'auteur de l'avis précédent
+            $rapportActiviteAvisPrec = $this->fetchPreviousAvis();
+            $auteurPrec = $rapportActiviteAvisPrec->getHistoModificateur() ?: $rapportActiviteAvisPrec->getHistoCreateur();
+            $auteurPrecEmail = $auteurPrec->getIndividu() ? $auteurPrec->getIndividu()->getEmailBestOf() : $auteurPrec->getEmail();
+
+            $this->notificationRequired = true;
+            $this->to = [$auteurPrecEmail => $auteurPrec->getDisplayName()];
+            $this->subject = "Rapport d'activité de " . $these->getDoctorant();
+            $this->messagesByAvisValeurBool = [
+                false => "<strong>Important : le rapport étant incomplet, la balle revient dans votre camp.</strong> " .
+                    "Vous devez revenir sur votre avis et déclarer le rapport incomplet afin de notifier le doctorant.",
+            ];
+        }
     }
 
     public function configureNotification(RapportActiviteAvisNotification $notif)
@@ -100,16 +116,8 @@ class RapportActiviteAvisNotificationRule implements RuleInterface
             $previousAvisTypeForRapport);
     }
 
-    public function isNotificationPossible(): bool
+    public function isNotificationRequired(): bool
     {
         return $this->notificationRequired;
-    }
-
-    /**
-     * @return array
-     */
-    public function getTo(): array
-    {
-        return $this->to;
     }
 }

@@ -8,25 +8,17 @@ $avisElement = $form->getAvisElement();
 ?>
 
 <?php echo $this->form()->openTag($form) ?>
-<div class="row">
-    <div class="col-md-4">
-        <fieldset>
-            <legend><?php echo $avisElement->getLabel() ?></legend>
-            <?php $avisElement->setLabel('') ?>
-            <?php echo $this->formControlGroup($avisElement) ?>
-        </fieldset>
-    </div>
-</div>
+<fieldset>
+    <legend><?php echo $avisElement->getLabel() ?></legend>
+    <?php $avisElement->setLabel('') ?>
+    <?php echo $this->formControlGroup($avisElement) ?>
+</fieldset>
 <?php if ($avisTypeValeurComplemsElements = $form->getAvisTypeValeurComplemsElements()): ?>
-<div class="row">
-    <div class="col-md-7">
-        <?php foreach ($avisTypeValeurComplemsElements as $element): ?>
-            <div class="avis-type-complem" style="display: none">
-                <?php echo $this->formControlGroup($element); ?>
-            </div>
-        <?php endforeach ?>
-    </div>
-</div>
+    <?php foreach ($avisTypeValeurComplemsElements as $element): ?>
+        <div class="avis-type-complem" style="display: none">
+            <?php echo $this->formControlGroup($element); ?>
+        </div>
+    <?php endforeach ?>
 <?php endif ?>
 <div>
     <?php

@@ -28,7 +28,8 @@ create table unicaen_avis_type
     id bigint not null constraint unicaen_avis_type__pkey primary key default nextval('unicaen_avis_type_id_seq'),
     code varchar(64) not null,
     libelle varchar(128) not null,
-    description varchar(128)
+    description varchar(128),
+    ordre smallint default 0 not null
 );
 
 create index unicaen_avis_type__idx on unicaen_avis_type (id);
@@ -38,6 +39,7 @@ comment on table unicaen_avis_type is 'Types d''avis existants';
 comment on column unicaen_avis_type.code is 'Code littéral unique de ce type d''avis';
 comment on column unicaen_avis_type.libelle is 'Libellé de ce type d''avis';
 comment on column unicaen_avis_type.description is 'Description éventuelle de ce type d''avis';
+comment on column unicaen_avis_type.ordre is 'Entier permettant d''ordonner les types d''avis';
 
 --
 -- Valeurs d'avis possibles.

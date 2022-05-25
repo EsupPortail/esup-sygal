@@ -4,7 +4,6 @@ namespace RapportActivite\Controller\Avis;
 
 use Application\Service\Notification\NotifierService;
 use Application\Service\Validation\ValidationService;
-use Laminas\EventManager\EventManagerInterface;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Rule\Avis\RapportActiviteAvisNotificationRule;
 use RapportActivite\Rule\Validation\RapportActiviteValidationRule;
@@ -42,8 +41,6 @@ class RapportActiviteAvisControllerFactory
 
         $controller->setNotificationRule($rapportActiviteAvisNotificationRule);
         $controller->setValidationRule($rapportActiviteValidationRule);
-
-        $controller->setEventManager($container->get('EventManager'));
 
         return $controller;
     }

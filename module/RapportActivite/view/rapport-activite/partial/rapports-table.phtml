@@ -2,7 +2,6 @@
 
 namespace RapportActivite;
 
-use RapportActivite\Entity\Db\RapportActivite;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
 use Application\Filter\ActeursFormatter;
@@ -12,29 +11,14 @@ use Application\Search\Etablissement\EtablissementSearchFilter;
 use Application\Search\UniteRecherche\UniteRechercheSearchFilter;
 use Application\Service\Rapport\RapportSearchService;
 use Application\View\Renderer\PhpRenderer;
+use RapportActivite\Entity\Db\RapportActivite;
+use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
 
 /**
  * @var PhpRenderer $this
  * @var RapportActivite[] $rapports
  *
- * @var string $routeName
  * @var TypeValidation $typeValidation
- * @var string $privilege_TELEVERSER_TOUT
- * @var string $privilege_TELEVERSER_SIEN
- * @var string $privilege_SUPPRIMER_TOUT
- * @var string $privilege_SUPPRIMER_SIEN
- * @var string $privilege_TELECHARGER_TOUT
- * @var string $privilege_TELECHARGER_SIEN
- * @var string $privilege_VALIDER_TOUT
- * @var string $privilege_VALIDER_SIEN
- * @var string $privilege_DEVALIDER_TOUT
- * @var string $privilege_DEVALIDER_SIEN
- * @var string $privilege_AJOUTER_AVIS_TOUT
- * @var string $privilege_AJOUTER_AVIS_SIEN
- * @var string $privilege_MODIFIER_AVIS_TOUT
- * @var string $privilege_MODIFIER_AVIS_SIEN
- * @var string $privilege_SUPPRIMER_AVIS_TOUT
- * @var string $privilege_SUPPRIMER_AVIS_SIEN
  *
  * @var bool $displayEtablissement
  * @var bool $displayType
@@ -58,6 +42,8 @@ $acteursFormatterCodirecteurs = new ActeursFormatter();
 $acteursFormatterCodirecteurs->asSeparated()
     ->paramDisplay(['role' => false, 'complement' => false, "qualite" => false, "etablissement" => false,])
     ->paramFilter((['role' => Role::CODE_CODIRECTEUR_THESE]));
+
+$ajaxModalEvent = 'EVENT_AVIS_SAISI';
 ?>
 
 <table class="table table-bordered table-hover">
@@ -127,7 +113,7 @@ $acteursFormatterCodirecteurs->asSeparated()
 
         <?php if ($displayAvis): ?>
             <th>
-                Avis
+                Statut
             </th>
         <?php endif ?>
 
@@ -137,8 +123,8 @@ $acteursFormatterCodirecteurs->asSeparated()
             </th>
         <?php endif ?>
 
-        <th>
-
+        <th class="action">
+            Action
         </th>
     </tr>
     </thead>
@@ -150,8 +136,15 @@ $acteursFormatterCodirecteurs->asSeparated()
             $these = $rapport->getThese();
             $rapportValidation = $rapport->getRapportValidation();
             $rapportAviss = $rapport->getRapportAvis();
-            $canDel = $this->isAllowed($rapport, $privilege_SUPPRIMER_TOUT) || $this->isAllowed($rapport, $privilege_SUPPRIMER_SIEN);
-            $canDl = $this->isAllowed($rapport, $privilege_TELECHARGER_TOUT) || $this->isAllowed($rapport, $privilege_TELECHARGER_SIEN);
+            $canList =
+                $this->isAllowed(RapportActivitePrivileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT)) ||
+                $this->isAllowed(RapportActivitePrivileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN));
+            $canDel =
+                $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT) ||
+                $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN);
+            $canDl =
+                $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_TOUT) ||
+                $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_SIEN);
             ?>
 
             <?php if ($displayEtablissement): ?>
@@ -174,10 +167,14 @@ $acteursFormatterCodirecteurs->asSeparated()
 
             <?php if ($displayDoctorant): ?>
             <td>
-                <a href="<?php echo $this->url('these/identite', ['these' => $these->getId()], [], true) ?>"
-                   title="<?php echo $these->getTitre() ?>">
-                    <?php echo $these->getDoctorant()->getIndividu()->getNomComplet() ?>
-                </a>
+                <?php echo $these->getDoctorant()->getIndividu()->getNomComplet() ?>
+                <?php if ($canList): ?>
+                    <p>
+                        <a href="<?php echo $this->url('rapport-activite/consulter', ['these' => $these->getId()], [], true) ?>"
+                           class="small"
+                           title="Aller à la page des rapports d'activité de <?php echo $these->getDoctorant() ?>">Rapports</a>
+                    </p>
+                <?php endif ?>
             </td>
             <?php endif ?>
 
@@ -218,7 +215,7 @@ $acteursFormatterCodirecteurs->asSeparated()
 
             <td>
                 <?php if ($canDl): ?>
-                    <a href="<?php echo $this->url($routeName . '/telecharger', ['rapport' => IdifyFilter::id($rapport)]) ?>"
+                    <a href="<?php echo $this->url('rapport-activite/telecharger', ['rapport' => IdifyFilter::id($rapport)]) ?>"
                        title="Cliquez pour télécharger">
                         <?php echo $rapport->getFichier()->getNom() ?>
                     </a>
@@ -235,19 +232,25 @@ $acteursFormatterCodirecteurs->asSeparated()
                 <td>
                 <?php
                 $rapportAvisPossible = $rapport->getRapportAvisPossible();
-                $canAjouterAvis = $rapportAvisPossible &&
-                    ($this->isAllowed($rapportAvisPossible, $privilege_AJOUTER_AVIS_TOUT) || $this->isAllowed($rapportAvisPossible, $privilege_AJOUTER_AVIS_SIEN));
+                $canAjouterAvis = $rapportAvisPossible && (
+                        $this->isAllowed($rapportAvisPossible, RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT) ||
+                        $this->isAllowed($rapportAvisPossible, RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN)
+                    );
                 ?>
-                <?php foreach ($rapportAviss as $i => $rapportAvis): ?>
+                    <?php foreach ($rapportAviss as $i => $rapportAvis): ?>
                     <?php
-                    $canModifierAvis = $this->isAllowed($rapportAvis, $privilege_MODIFIER_AVIS_TOUT) || $this->isAllowed($rapportAvis, $privilege_MODIFIER_AVIS_SIEN);
-                    $canSupprimerAvis = $this->isAllowed($rapportAvis, $privilege_SUPPRIMER_AVIS_TOUT) || $this->isAllowed($rapportAvis, $privilege_SUPPRIMER_AVIS_SIEN);
+                    $canModifierAvis =
+                        $this->isAllowed($rapportAvis, RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_AVIS_TOUT) ||
+                        $this->isAllowed($rapportAvis, RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_AVIS_SIEN);
+                    $canSupprimerAvis =
+                        $this->isAllowed($rapportAvis, RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT) ||
+                        $this->isAllowed($rapportAvis, RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN);
                     $avis = $rapportAvis->getAvis();
                     $statusClass = $avis->getAvisValeur()->getValeurBool() ? 'success' : 'danger';
                     ?>
                     <div class="card text-center validation-rapport-activite">
                         <div class="card-header">
-                            <span class="badge rounded-pill bg-secondary"><?php echo $i+1 ?></span>
+                            <!--<span class="badge rounded-pill bg-secondary"><?php /*echo $i+1 */?></span>-->
                             <?php echo $avis->getAvisType()->getLibelle() ?>
                         </div>
                         <div class="card-body">
@@ -270,12 +273,13 @@ $acteursFormatterCodirecteurs->asSeparated()
                                 <?php echo $avisComplemsToHtml ?>
                             </div>
                             <?php if ($canModifierAvis): ?>
-                                <a href="<?php echo $this->url($routeName . '/avis/modifier', ['rapportAvis' => $rapportAvis->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
-                                   class="card-link btn btn-secondary btn-sm"
+                                <a href="<?php echo $this->url('rapport-activite/avis/modifier', ['rapportAvis' => $rapportAvis->getId()]) ?>"
+                                   class="card-link btn btn-secondary btn-sm action ajax-modal"
+                                   data-event="<?php echo $ajaxModalEvent ?>"
                                    title="Modifier cet avis ?">Modifier l'avis</span></a>
                             <?php endif ?>
                             <?php if ($canSupprimerAvis): ?>
-                                <a href="<?php echo $this->url($routeName . '/avis/supprimer', ['rapportAvis' => $rapportAvis->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
+                                <a href="<?php echo $this->url('rapport-activite/avis/supprimer', ['rapportAvis' => $rapportAvis->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
                                    class="card-link btn btn-warning btn-sm"
                                    title="Supprimer cet avis ?"
                                    data-toggle="confirmationx">Supprimer l'avis</span></a>
@@ -286,16 +290,17 @@ $acteursFormatterCodirecteurs->asSeparated()
                 <?php if ($rapportAvisPossible !== null): ?>
                     <div class="card text-center validation-rapport-activite">
                         <div class="card-header">
-                            <span class="badge rounded-pill bg-secondary"><?php echo count($rapportAviss)+1 ?></span>
+                            <!--<span class="badge rounded-pill bg-secondary"><?php /*echo count($rapportAviss)+1 */?></span>-->
                             <?php echo $rapportAvisPossible->getAvis()->getAvisType()->getLibelle() ?>
                         </div>
                         <div class="card-body">
                             <p class="card-text">
-                                Aucun
+                                En attente
                             </p>
                             <?php if ($canAjouterAvis): ?>
-                                <a href="<?php echo $this->url($routeName . '/avis/ajouter', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
-                                   class="card-link btn btn-primary btn-sm">Saisir l'avis</span></a>
+                                <a href="<?php echo $this->url('rapport-activite/avis/ajouter', ['rapport' => $rapport->getId()]) ?>"
+                                   class="card-link btn btn-primary btn-sm action ajax-modal"
+                                   data-event="<?php echo $ajaxModalEvent ?>">Saisir l'avis</span></a>
                             <?php endif ?>
                         </div>
                     </div>
@@ -305,26 +310,26 @@ $acteursFormatterCodirecteurs->asSeparated()
 
             <?php if ($displayValidation): ?>
             <td>
-                <?php $returnUrl = $returnUrl ?: $this->url($routeName . '/consulter', ['these' => $these->getId()]) ?>
+                <?php $returnUrl = $returnUrl ?: $this->url('rapport-activite/consulter', ['these' => $these->getId()]) ?>
                 <?php if ($rapportValidation !== null): ?>
                     <p>
                         <strong>Validé</strong> <br>
                         <span class="text-sm text-muted"><?php echo $rapportValidation->getHistoCreateur() ?><br>
                             <?php echo $rapportValidation->getHistoCreation()->format('d/m/Y H:i') ?></span>
                     </p>
-                    <?php $canDevalider = $this->isAllowed($rapport, $privilege_DEVALIDER_TOUT) || $this->isAllowed($rapport, $privilege_DEVALIDER_SIEN) ?>
+                    <?php $canDevalider = $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT) || $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN) ?>
                     <?php if ($canDevalider): ?>
-                        <a href="<?php echo $this->url($routeName . '/devalider', ['rapportValidation' => $rapportValidation->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
+                        <a href="<?php echo $this->url('rapport-activite/devalider', ['rapportValidation' => $rapportValidation->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
                            class="btn btn-danger collapsable-action"
                            title="Dévalider ce rapport ?"
                            data-toggle="confirmationx"
                            data-message="Êtes-vous sûr·e de vouloir dévalider ?">Dévalider</span></a>
                     <?php endif ?>
                 <?php else: ?>
-<!--                    <p>Non validé</p>-->
-                    <?php $canValider = $this->isAllowed($rapport, $privilege_VALIDER_TOUT) || $this->isAllowed($rapport, $privilege_VALIDER_SIEN) ?>
+                    <p>En attente d'avis.</p>
+                    <?php $canValider = $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT) || $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN) ?>
                     <?php if ($canValider): ?>
-                        <a href="<?php echo $this->url($routeName . '/valider', ['rapport' => $rapport->getId(), 'typeValidation' => $typeValidation->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
+                        <a href="<?php echo $this->url('rapport-activite/valider', ['rapport' => $rapport->getId(), 'typeValidation' => $typeValidation->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
                            class="btn btn-success"
                            title="Valider ce rapport ?"
                            data-toggle="confirmationx"
@@ -336,10 +341,10 @@ $acteursFormatterCodirecteurs->asSeparated()
 
             <td class="action">
                 <?php if ($canDel): ?>
-                    <a href="<?php echo $this->url($routeName . '/supprimer', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
-                       title="Supprimer ce rapport ?"
+                    <a href="<?php echo $this->url('rapport-activite/supprimer', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
+                       title="Supprimer ce rapport"
                        data-toggle="confirmationx"
-                       data-message="Êtes-vous sûr·e de vouloir supprimer ce rapport ?"><span class="icon icon-delete iconly"></span></a>
+                       data-message="Êtes-vous sûr de vouloir supprimer ce rapport ?"><span class="icon icon-delete iconly"></span></a>
                 <?php endif; ?>
             </td>
         </tr>
@@ -375,6 +380,14 @@ $acteursFormatterCodirecteurs->asSeparated()
             // Update the modal's content.
             const modalBody = avisComplemsModal.querySelector('.modal-body');
             $(modalBody).html(logFullContent);
-        })
+        });
+
+        // Gestion de la fermeture de la modale
+        let ajaxModalEvent = '<?php echo $ajaxModalEvent ?>';
+        $("body").on(ajaxModalEvent, function(event) {
+            $("body").addClass("loading");
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
     })
 </script>

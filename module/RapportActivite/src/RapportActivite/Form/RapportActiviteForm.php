@@ -12,31 +12,28 @@ use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\Form;
 use Laminas\InputFilter\FileInput;
+use Laminas\InputFilter\InputFilterProviderInterface;
 use Laminas\Validator\File\Extension;
 use Laminas\Validator\File\MimeType;
 use Laminas\Validator\File\Size;
 use Laminas\Validator\File\UploadFile;
-use Laminas\Validator\InArray;
 use Laminas\Validator\NotEmpty;
 use RapportActivite\Entity\Db\RapportActivite;
+use SplObjectStorage;
 
-class RapportActiviteForm extends Form
+class RapportActiviteForm extends Form implements InputFilterProviderInterface
 {
-    protected array $estFinalValueOptions = [
-        '0' => "Rapport d'activité annuel",
-        '1' => "Rapport d'activité de fin de contrat",
-    ];
+    const ANNEE_UNIV__HTML_CLASS_ATTRIB__VALUE = 'annee-univ';
+    const ANNEE_UNIV__HTML_CLASS_ATTRIB__VALUE_PREFIX = 'if-estFinal-equals-';
 
-    /**
-     * @var TheseAnneeUniv[]
-     */
-    protected array $anneesUnivs;
+    const EST_FINAL__VALUE__ANNUEL = '0';
+    const EST_FINAL__VALUE__FIN_CONTRAT = '1';
 
-    /**
-     * @param TheseAnneeUniv[]|AnneeUniv[] $anneesUnivs
-     * @return self
-     */
-    public function setAnneesUnivs(array $anneesUnivs): self
+    protected array $estFinalValueOptions = [];
+
+    protected SplObjectStorage $anneesUnivs;
+
+    public function setAnneesUnivs(SplObjectStorage $anneesUnivs): self
     {
         $this->anneesUnivs = $anneesUnivs;
 
@@ -45,26 +42,45 @@ class RapportActiviteForm extends Form
 
     protected function getAnneesUnivsAsOptions(): array
     {
-        $anneesUnivs = [];
-        foreach ($this->anneesUnivs as $anneeUniv) {
+        $valuesOptions = [];
+
+        while ($anneeUniv = $this->anneesUnivs->current()) {
+            $infos = $this->anneesUnivs->getInfo();
+
             if ($anneeUniv instanceof TheseAnneeUniv) {
-                $anneesUnivs[$anneeUniv->getAnneeUniv()] = $anneeUniv->getAnneeUnivToString();
+                $data = [
+                    'value' => $anneeUniv->getAnneeUniv(),
+                    'label' => $anneeUniv->getAnneeUnivToString()
+                ];
             } elseif ($anneeUniv instanceof AnneeUniv) {
-                $anneesUnivs[$anneeUniv->getPremiereAnnee()] = (string) $anneeUniv;
+                $data = [
+                    'value' => $anneeUniv->getPremiereAnnee(),
+                    'label' => (string)$anneeUniv
+                ];
             }
+            $data['attributes'] = $infos;
+            $valuesOptions[] = $data;
+
+            $this->anneesUnivs->next();
         }
 
-        return $anneesUnivs;
+        return $valuesOptions;
     }
 
-    /**
-     * @param string[] $estFinalValueOptions
-     * @return self
-     */
-    public function setEstFinalValueOptions(array $estFinalValueOptions): self
+    public function addRapportAnnuelSelectOption()
     {
-        $this->estFinalValueOptions = $estFinalValueOptions;
-        return $this;
+        $this->estFinalValueOptions[] = [
+            'value' => self::EST_FINAL__VALUE__ANNUEL,
+            'label' => "Rapport d'activité annuel",
+        ];
+    }
+
+    public function addRapportFinContratSelectOption()
+    {
+        $this->estFinalValueOptions[] = [
+            'value' => self::EST_FINAL__VALUE__FIN_CONTRAT,
+            'label' => "Rapport d'activité de fin de contrat",
+        ];
     }
 
     /**
@@ -102,7 +118,7 @@ class RapportActiviteForm extends Form
             'type' => Radio::class,
             'options' => [
                 'label' => false,
-                'value_options' => $this->estFinalValueOptions,
+                'disable_inarray_validator' => true,
             ],
             'attributes' => [
                 'id' => 'estFinal',
@@ -140,24 +156,31 @@ class RapportActiviteForm extends Form
      */
     public function prepare()
     {
-        $this->get('estFinal')->setValueOptions($this->estFinalValueOptions);
-
+        $this->prepareEstFinalRadio();
         $this->prepareAnneeUnivSelect();
 
         return parent::prepare();
     }
 
+    protected function prepareEstFinalRadio()
+    {
+        /** @var Radio $esFinalRadio */
+        $esFinalRadio = $this->get('estFinal');
+        $esFinalRadio->setValueOptions($this->estFinalValueOptions);
+    }
+
     protected function prepareAnneeUnivSelect()
     {
-        $anneesUnivs = $this->getAnneesUnivsAsOptions();
+        $valuesOptions = $this->getAnneesUnivsAsOptions();
 
         /** @var Select $anneeUnivSelect */
         $anneeUnivSelect = $this->get('anneeUniv');
-        $anneeUnivSelect->setValueOptions($anneesUnivs);
+        $anneeUnivSelect->setValueOptions($valuesOptions);
 
-        if (count($anneesUnivs) === 1) {
+        if (count($valuesOptions) === 1) {
+            $firstValue = reset($valuesOptions)['value'];
             $anneeUnivSelect
-                ->setValue(key($anneesUnivs))
+                ->setValue($firstValue)
                 ->setEmptyOption(null);
         }
     }
@@ -183,15 +206,18 @@ class RapportActiviteForm extends Form
                             ],
                         ],
                     ],
-                    [
-                        'name' => InArray::class,
-                        'options' => [
-                            'haystack' => array_keys($this->getAnneesUnivsAsOptions()),
-                            'messages' => [
-                                InArray::NOT_IN_ARRAY => "L'année universitaire n'est pas dans la liste proposée.",
-                            ],
-                        ],
-                    ],
+//                    [
+//                        'name' => InArray::class,
+//                        'options' => [
+////                            'haystack' => array_map(
+////                                fn(array $item) => $item['value'],
+////                                $this->getAnneesUnivsAsOptions()
+////                            ),
+//                            'messages' => [
+//                                InArray::NOT_IN_ARRAY => "L'année universitaire n'est pas dans la liste proposée.",
+//                            ],
+//                        ],
+//                    ],
                 ],
             ],
 

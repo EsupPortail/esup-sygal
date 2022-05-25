@@ -16,21 +16,6 @@ use UnicaenAuth\Provider\Privilege\Privileges;
  *
  * @var TypeValidation $typeValidation
  * @var string $routeName
- * @var string $privilege_LISTER_TOUT
- * @var string $privilege_LISTER_SIEN
- * @var string $privilege_TELEVERSER_TOUT
- * @var string $privilege_TELEVERSER_SIEN
- * @var string $privilege_SUPPRIMER_TOUT
- * @var string $privilege_SUPPRIMER_SIEN
- * @var string $privilege_RECHERCHER_TOUT
- * @var string $privilege_RECHERCHER_SIEN
- * @var string $privilege_TELECHARGER_TOUT
- * @var string $privilege_TELECHARGER_SIEN
- * @var string $privilege_TELECHARGER_ZIP
- * @var string $privilege_VALIDER_TOUT
- * @var string $privilege_VALIDER_SIEN
- * @var string $privilege_DEVALIDER_TOUT
- * @var string $privilege_DEVALIDER_SIEN
  *
  * @var string $returnUrl
  *
@@ -46,24 +31,7 @@ use UnicaenAuth\Provider\Privilege\Privileges;
  * @see \RapportActivite\Controller\Recherche\RapportActiviteRechercheController::indexAction()
  */
 
-$privilege_TELEVERSER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_TOUT;
-$privilege_TELEVERSER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN;
-$privilege_SUPPRIMER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT;
-$privilege_SUPPRIMER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN;
-$privilege_TELECHARGER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_TOUT;
-$privilege_TELECHARGER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_SIEN;
-$privilege_VALIDER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT;
-$privilege_VALIDER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN;
-$privilege_DEVALIDER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT;
-$privilege_DEVALIDER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN;
-$privilege_AJOUTER_AVIS_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT;
-$privilege_AJOUTER_AVIS_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN;
-$privilege_MODIFIER_AVIS_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_AVIS_TOUT;
-$privilege_MODIFIER_AVIS_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_AVIS_SIEN;
-$privilege_SUPPRIMER_AVIS_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT;
-$privilege_SUPPRIMER_AVIS_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN;
-
-$canDlZip = $this->isAllowed(Privileges::getResourceId($privilege_TELECHARGER_ZIP));
+$canDlZip = $this->isAllowed(Privileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_ZIP));
 $queryParams = $this->queryParams();
 
 $acteursFormatterDirecteurs = new ActeursFormatter();
@@ -106,25 +74,8 @@ $this->headTitle($this->translate($title));
         'rapports' => $paginator,
         'routeName' => $routeName,
         'typeValidation' => $typeValidation,
-
-        'privilege_TELEVERSER_TOUT' => $privilege_TELEVERSER_TOUT,
-        'privilege_TELEVERSER_SIEN' => $privilege_TELEVERSER_SIEN,
-        'privilege_SUPPRIMER_TOUT' => $privilege_SUPPRIMER_TOUT,
-        'privilege_SUPPRIMER_SIEN' => $privilege_SUPPRIMER_SIEN,
-        'privilege_TELECHARGER_TOUT' => $privilege_TELECHARGER_TOUT,
-        'privilege_TELECHARGER_SIEN' => $privilege_TELECHARGER_SIEN,
-        'privilege_VALIDER_TOUT' => $privilege_VALIDER_TOUT,
-        'privilege_VALIDER_SIEN' => $privilege_VALIDER_SIEN,
-        'privilege_DEVALIDER_TOUT' => $privilege_DEVALIDER_TOUT,
-        'privilege_DEVALIDER_SIEN' => $privilege_DEVALIDER_SIEN,
-        'privilege_AJOUTER_AVIS_TOUT' => $privilege_AJOUTER_AVIS_TOUT,
-        'privilege_AJOUTER_AVIS_SIEN' => $privilege_AJOUTER_AVIS_SIEN,
-        'privilege_MODIFIER_AVIS_TOUT' => $privilege_MODIFIER_AVIS_TOUT,
-        'privilege_MODIFIER_AVIS_SIEN' => $privilege_MODIFIER_AVIS_SIEN,
-        'privilege_SUPPRIMER_AVIS_TOUT' => $privilege_SUPPRIMER_AVIS_TOUT,
-        'privilege_SUPPRIMER_AVIS_SIEN' => $privilege_SUPPRIMER_AVIS_SIEN,
-
         'returnUrl' => $returnUrl,
+
         'displayEtablissement' => $displayEtablissement,
         'displayType' => $displayType,
         'displayDoctorant' => $displayDoctorant,

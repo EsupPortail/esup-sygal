@@ -9,7 +9,7 @@ use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
 use UnicaenApp\Traits\MessageAwareTrait;
 
 /**
- * Règles métiers concernant la validation des rapports d'activité.
+ * Application des règles métiers pour déterminer si la validation d'un rapport d'activité est possible.
  */
 class RapportActiviteValidationRule implements RuleInterface
 {
@@ -49,7 +49,7 @@ class RapportActiviteValidationRule implements RuleInterface
 
         // recherche du type d'avis attendu ensuite
         $nextAvisTypeForRapport =
-            $this->rapportActiviteAvisService->findNextExpectedAvisTypeForRapport($this->rapportActivite);
+            $this->rapportActiviteAvisService->findExpectedAvisTypeForRapport($this->rapportActivite);
 
         // La validation est possible à condition que le dernier avis apporté soit positif ou négatif
         // et qu'aucun type d'avis ne soit attendu ensuite.

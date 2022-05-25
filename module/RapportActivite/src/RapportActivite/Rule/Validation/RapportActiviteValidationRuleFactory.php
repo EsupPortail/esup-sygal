@@ -14,6 +14,7 @@ class RapportActiviteValidationRuleFactory
      */
     public function __invoke(ContainerInterface $container): RapportActiviteValidationRule
     {
+        /** @var RapportActiviteAvisService $rapportAvisService */
         $rapportAvisService = $container->get(RapportActiviteAvisService::class);
 
         $rule = new RapportActiviteValidationRule();

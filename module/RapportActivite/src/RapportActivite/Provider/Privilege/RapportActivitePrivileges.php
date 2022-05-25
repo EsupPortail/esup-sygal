@@ -8,8 +8,6 @@ class RapportActivitePrivileges extends Privileges
 {
     const RAPPORT_ACTIVITE_LISTER_TOUT = 'rapport-activite-lister-tout';
     const RAPPORT_ACTIVITE_LISTER_SIEN = 'rapport-activite-lister-sien';
-    const RAPPORT_ACTIVITE_RECHERCHER_TOUT = 'rapport-activite-rechercher-tout';
-    const RAPPORT_ACTIVITE_RECHERCHER_SIEN = 'rapport-activite-rechercher-sien';
     const RAPPORT_ACTIVITE_TELECHARGER_ZIP = 'rapport-activite-telecharger-zip';
 
     const RAPPORT_ACTIVITE_TELEVERSER_TOUT = 'rapport-activite-televerser-tout';

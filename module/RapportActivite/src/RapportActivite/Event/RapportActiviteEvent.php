@@ -4,7 +4,7 @@ namespace RapportActivite\Event;
 
 use Laminas\EventManager\Event;
 
-abstract class RapportActiviteEvent extends Event
+class RapportActiviteEvent extends Event
 {
     /**
      * Retourne les éventuels messages positionnés par les listeners.
@@ -19,6 +19,12 @@ abstract class RapportActiviteEvent extends Event
     public function setMessages(array $messages): RapportActiviteEvent
     {
         $this->setParam('messages', $messages);
+        return $this;
+    }
+
+    public function addMessages(array $messages): RapportActiviteEvent
+    {
+        $this->setMessages(array_merge($this->getMessages(), $messages));
         return $this;
     }
 }

@@ -10,10 +10,10 @@ use Application\Entity\Db\TypeValidation;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use Laminas\Permissions\Acl\Resource\ResourceInterface;
-use Webmozart\Assert\Assert;
+use UnicaenAvis\Entity\Db\AvisType;
 
 class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
 {
@@ -212,9 +212,20 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
     }
 
     /**
-     * Retourne l'éventuelle validation du type spécifié.
+     * Détermine si ce rapport a été validé.
+     *
+     * @return bool
+     */
+    public function estValide(): bool
+    {
+        return $this->getRapportValidation() !== null;
+    }
+
+    /**
+     * Retourne l'éventuelle validation de ce rapport.
      *
      * @return RapportActiviteValidation|null
+     * @deprecated À supprimer pour utiliser {@see \RapportActivite\Service\Validation\RapportActiviteValidationService::findByRapportActivite()}
      */
     public function getRapportValidation(): ?RapportActiviteValidation
     {

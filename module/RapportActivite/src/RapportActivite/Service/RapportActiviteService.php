@@ -19,11 +19,13 @@ use Application\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Closure;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Exception;
+use Laminas\EventManager\EventManagerAwareTrait;
 use RapportActivite\Entity\Db\RapportActivite;
+use RapportActivite\Event\RapportActiviteEvent;
 use RapportActivite\Formatter\RapportActiviteNomFichierFormatter;
+use RapportActivite\Notification\RapportActiviteSupprimeNotification;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
 use RapportActivite\Service\Fichier\Exporter\PageValidationExportData;
 use RapportActivite\Service\Fichier\Exporter\PageValidationPdfExporterTrait;
@@ -40,17 +42,22 @@ class RapportActiviteService extends BaseService
     use NatureFichierServiceAwareTrait;
     use RapportActiviteAvisServiceAwareTrait;
     use RapportActiviteValidationServiceAwareTrait;
-    use PageValidationPdfExporterTrait;
     use RoleServiceAwareTrait;
-    use ShellCommandRunnerTrait;
     use StructureDocumentServiceAwareTrait;
+
+    use PageValidationPdfExporterTrait;
+    use ShellCommandRunnerTrait;
+
+    use EventManagerAwareTrait;
+
+    const RAPPORT_ACTIVITE__AJOUTE__EVENT = 'RAPPORT_ACTIVITE__AJOUTE__EVENT';
+    const RAPPORT_ACTIVITE__SUPPRIME__EVENT = 'RAPPORT_ACTIVITE__SUPPRIME__EVENT';
 
     /**
      * @param int $id
-     * @return RapportActivite
-     * @throws NoResultException
+     * @return RapportActivite|null
      */
-    public function findRapportById(int $id): RapportActivite
+    public function findRapportById(int $id): ?RapportActivite
     {
         $qb = $this->getRepository()->createQueryBuilder('ra');
         $qb
@@ -60,7 +67,7 @@ class RapportActiviteService extends BaseService
             ->where('ra = :id')->setParameter('id', $id);
 
         try {
-            return $qb->getQuery()->getSingleResult();
+            return $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
             throw new RuntimeException("Impossible mais vrai !");
         }
@@ -72,15 +79,25 @@ class RapportActiviteService extends BaseService
      */
     public function findRapportsForThese(These $these): array
     {
+        // ATTENTION ! Les relations suivantes doivent être sélectionnées lors du fetch des rapports :
+        // 'rapportAvis->avis->avisType'.
+
         $qb = $this->getRepository()->createQueryBuilder('ra');
         $qb
-            ->addSelect('t, f, rav')
-            ->addSelect('tr')->join('ra.typeRapport', 'tr', Join::WITH, 'tr.code = :code')->setParameter('code', TypeRapport::RAPPORT_ACTIVITE)
+            ->addSelect('tr, t, f, d, i, rav, raa, a, at')
+            ->join('ra.typeRapport', 'tr', Join::WITH, 'tr.code = :code')->setParameter('code', TypeRapport::RAPPORT_ACTIVITE)
             ->join('ra.these', 't', Join::WITH, 't =:these')->setParameter('these', $these)
             ->join('ra.fichier', 'f')
+            ->join('t.doctorant', 'd')
+            ->join('d.individu', 'i')
             ->leftJoin('ra.rapportValidations', 'rav')
+            ->leftJoin('ra.rapportAvis', 'raa')
+            ->leftJoin('raa.avis', 'a')
+            ->leftJoin('a.avisType', 'at')
             ->andWhereNotHistorise()
-            ->orderBy('ra.anneeUniv');
+            ->addOrderBy('ra.anneeUniv')
+            ->addOrderBy('ra.estFinal')
+            ->addOrderBy('at.ordre');
 
         return $qb->getQuery()->getResult();
     }
@@ -94,13 +111,28 @@ class RapportActiviteService extends BaseService
     }
 
     /**
+     * Retourne une nouvelle instance de {@see RapportActivite}, liée à la thèse spécifiée.
+     *
+     * @param \Application\Entity\Db\These $these
+     * @return \RapportActivite\Entity\Db\RapportActivite
+     */
+    public function newRapportActivite(These $these): RapportActivite
+    {
+        $rapportActivite = new RapportActivite();
+        $rapportActivite->setTypeRapport($this->findTypeRapport());
+        $rapportActivite->setThese($these);
+
+        return $rapportActivite;
+    }
+
+    /**
      * Enregistre le rapport spécifié, après avoir créé le fichier à partir des données d'upload fournies.
      *
-     * @param RapportActivite $rapportActivite
+     * @param \RapportActivite\Entity\Db\RapportActivite $rapportActivite
      * @param array $uploadData Données résultant de l'upload de fichiers
-     * @return RapportActivite Rapport annuel créé
+     * @return \RapportActivite\Event\RapportActiviteEvent Rapport annuel créé
      */
-    public function saveRapport(RapportActivite $rapportActivite, array $uploadData): RapportActivite
+    public function saveRapport(RapportActivite $rapportActivite, array $uploadData): RapportActiviteEvent
     {
         $this->fichierService->setNomFichierFormatter(new RapportActiviteNomFichierFormatter($rapportActivite));
         $fichiers = $this->fichierService->createFichiersFromUpload($uploadData, NatureFichier::CODE_RAPPORT_ACTIVITE);
@@ -111,38 +143,52 @@ class RapportActiviteService extends BaseService
 
             $fichier = array_pop($fichiers); // il n'y a en fait qu'un seul fichier
             $rapportActivite->setFichier($fichier);
-//           $rapportActivite->getThese()->addRapportActivite($rapportActivite;
 
             $this->entityManager->persist($rapportActivite);
             $this->entityManager->flush($rapportActivite);
             $this->entityManager->commit();
+
+            $event = $this->triggerEvent(
+                self::RAPPORT_ACTIVITE__AJOUTE__EVENT,
+                $rapportActivite,
+                []
+            );
         } catch (Exception $e) {
             $this->entityManager->rollback();
             throw new RuntimeException("Erreur survenue lors de l'enregistrement des rapports annuels, rollback!", 0, $e);
         }
 
-        return $rapportActivite;
+        return $event;
     }
 
     /**
      * @param RapportActivite $rapportActivite
+     * @return \RapportActivite\Event\RapportActiviteEvent
      */
-    public function deleteRapport(RapportActivite $rapportActivite)
+    public function deleteRapport(RapportActivite $rapportActivite): RapportActiviteEvent
     {
         $fichier = $rapportActivite->getFichier();
 
         $this->entityManager->beginTransaction();
         try {
             $this->rapportActiviteAvisService->deleteAllAvisForRapportActivite($rapportActivite);
-            $this->rapportActiviteValidationService->deleteValidationForRapportActivite($rapportActivite);
+            $this->rapportActiviteValidationService->deleteRapportValidationForRapportActivite($rapportActivite);
             $this->fichierService->supprimerFichiers([$fichier]);
 
             $this->entityManager->remove($rapportActivite);
             $this->entityManager->commit();
+
+            $event = $this->triggerEvent(
+                self::RAPPORT_ACTIVITE__SUPPRIME__EVENT,
+                $rapportActivite,
+                []
+            );
         } catch (Exception $e) {
             $this->entityManager->rollback();
             throw new RuntimeException("Erreur survenue lors de la suppression des rapports, rollback!", 0, $e);
         }
+
+        return $event;
     }
 
     /**
@@ -229,7 +275,7 @@ class RapportActiviteService extends BaseService
 
         // doctorant
         if ($these->getDoctorant()) {
-            $exportData->doctorant = strtoupper($these->getDoctorant()->getIndividu()->getNomComplet(false, true, false, true, true, false));
+            $exportData->doctorant = strtoupper($these->getDoctorant()->getIndividu()->getNomComplet(true, true, false, true, true, false));
         }
 
         // structures
@@ -259,7 +305,7 @@ class RapportActiviteService extends BaseService
         try {
             $exportData->signatureEcoleDoctorale = $this->structureDocumentService->getContenuFichier(
                 $these->getEcoleDoctorale()->getStructure(),
-                NatureFichier::CODE_SIGNATURE_CONVOCATION,
+                NatureFichier::CODE_SIGNATURE_RAPPORT_ACTIVITE,
                 $these->getEtablissement()
             );
         } catch (FichierServiceException $e) {
@@ -275,5 +321,26 @@ class RapportActiviteService extends BaseService
         }
 
         return $exportData;
+    }
+
+    private function triggerEvent(string $name, $target, array $params = []): RapportActiviteEvent
+    {
+        $event = new RapportActiviteEvent($name, $target, $params);
+
+        $this->events->triggerEvent($event);
+
+        return $event;
+    }
+
+    public function newRapportActiviteSupprimeNotification(RapportActivite $rapportActivite): RapportActiviteSupprimeNotification
+    {
+        $doctorant = $rapportActivite->getThese()->getDoctorant();
+
+        $notif = new RapportActiviteSupprimeNotification();
+        $notif->setRapportActivite($rapportActivite);
+        $notif->setSubject("Rapport d'activité supprimé");
+        $notif->setTo([$doctorant->getEmail() => $doctorant->getIndividu()->getNomComplet()]);
+
+        return $notif;
     }
 }

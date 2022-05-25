@@ -7,10 +7,10 @@ use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\ListenerAggregateInterface;
 use Laminas\EventManager\ListenerAggregateTrait;
 use Notification\Exception\NotificationException;
-use RapportActivite\Controller\Avis\RapportActiviteAvisController;
 use RapportActivite\Entity\Db\RapportActiviteAvis;
-use RapportActivite\Rule\Avis\RapportActiviteNotificationRuleAwareTrait;
+use RapportActivite\Rule\Avis\RapportActiviteAvisNotificationRuleAwareTrait;
 use RapportActivite\Rule\Validation\RapportActiviteValidationRuleAwareTrait;
+use RapportActivite\Service\Avis\RapportActiviteAvisService;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
 use RapportActivite\Service\Validation\RapportActiviteValidationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
@@ -24,7 +24,7 @@ class RapportActiviteAvisEventListener implements ListenerAggregateInterface
 
     use ListenerAggregateTrait;
 
-    use RapportActiviteNotificationRuleAwareTrait;
+    use RapportActiviteAvisNotificationRuleAwareTrait;
     use RapportActiviteValidationRuleAwareTrait;
 
     /**
@@ -33,13 +33,13 @@ class RapportActiviteAvisEventListener implements ListenerAggregateInterface
     public function attach(EventManagerInterface $events, $priority = 1)
     {
         $events->getSharedManager()->attach(
-            RapportActiviteAvisController::class,
-            RapportActiviteAvisController::RAPPORT_ACTIVITE__AVIS_AJOUTE__EVENT,
+            RapportActiviteAvisService::class,
+            RapportActiviteAvisService::RAPPORT_ACTIVITE__AVIS_AJOUTE__EVENT,
             [$this, 'onAvisAjouteModifie']
         );
         $events->getSharedManager()->attach(
-            RapportActiviteAvisController::class,
-            RapportActiviteAvisController::RAPPORT_ACTIVITE__AVIS_MODIFIE__EVENT,
+            RapportActiviteAvisService::class,
+            RapportActiviteAvisService::RAPPORT_ACTIVITE__AVIS_MODIFIE__EVENT,
             [$this, 'onAvisAjouteModifie']
         );
     }
@@ -78,7 +78,8 @@ class RapportActiviteAvisEventListener implements ListenerAggregateInterface
             return;
         }
 
-        $this->rapportActiviteValidationService->createForRapportActivite($rapportActiviteAvis->getRapportActivite());
+        $rapportValidation = $this->rapportActiviteValidationService->newRapportValidation($rapportActiviteAvis->getRapportActivite());
+        $newValidationEvent = $this->rapportActiviteValidationService->saveNewRapportValidation($rapportValidation);
 
         $event->setMessages([
             'success' => sprintf(
@@ -86,6 +87,7 @@ class RapportActiviteAvisEventListener implements ListenerAggregateInterface
                 $rapportActiviteAvis->getRapportActivite()->getFichier()->getNom()
             ),
         ]);
+        $event->addMessages($newValidationEvent->getMessages());
     }
 
     /**
@@ -104,11 +106,11 @@ class RapportActiviteAvisEventListener implements ListenerAggregateInterface
         $this->rapportActiviteAvisNotificationRule
             ->setRapportActiviteAvis($rapportActiviteAvis)
             ->execute();
-        if (! $this->rapportActiviteAvisNotificationRule->isNotificationPossible()) {
+        if (! $this->rapportActiviteAvisNotificationRule->isNotificationRequired()) {
             return;
         }
 
-        $notif = $this->rapportActiviteAvisService->createRapportActiviteAvisNotification($rapportActiviteAvis);
+        $notif = $this->rapportActiviteAvisService->newRapportActiviteAvisNotification($rapportActiviteAvis);
         $this->rapportActiviteAvisNotificationRule->configureNotification($notif);
 
         try {

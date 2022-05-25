@@ -67,12 +67,11 @@ class RapportActiviteAvisAssertion extends AbstractAssertion
         switch ($action) {
             case 'ajouter':
                 $id = $this->getRouteMatch()->getParam('rapport');
-                try {
                     $rapportActivite = $this->rapportActiviteService->findRapportById($id);
+                    if ($rapportActivite === null) {
+                        return false;
+                    }
                     $these = $rapportActivite->getThese();
-                } catch (NoResultException $e) {
-                    return false;
-                }
                 break;
 
             case 'modifier':
@@ -104,14 +103,21 @@ class RapportActiviteAvisAssertion extends AbstractAssertion
                 case 'ajouter':
                     $avisTypeDispo = $this->assertExistsAvisTypeDisponible($rapportActivite);
                     $this->assertAvisTypeMatchesRole($avisTypeDispo);
-                    $this->assertLastAvisValeurCompatible($rapportActivite);
+                    $this->assertMostRecentAvisValeurCompatible($rapportActivite);
                     break;
             }
 
             switch ($action) {
                 case 'modifier':
+                    $this->assertNextAvisValeurCompatible($rapportActiviteAvis);
+                    $this->assertAvisTypeMatchesRole($rapportActiviteAvis->getAvis()->getAvisType());
+                    return true;
+            }
+
+            switch ($action) {
+                case 'modifier':
                 case 'supprimer':
-                    $avisTypeDernier = $this->assertEstDernierAvisType($rapportActiviteAvis);
+                    $avisTypeDernier = $this->assertIsMostRecentAvisType($rapportActiviteAvis);
                     $this->assertAvisTypeMatchesRole($avisTypeDernier);
                     break;
             }
@@ -171,7 +177,15 @@ class RapportActiviteAvisAssertion extends AbstractAssertion
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN:
                     $avisTypeDispo = $this->assertExistsAvisTypeDisponible($entity->getRapportActivite());
                     $this->assertAvisTypeMatchesRole($avisTypeDispo);
-                    $this->assertLastAvisValeurCompatible($entity->getRapportActivite());
+                    $this->assertMostRecentAvisValeurCompatible($entity->getRapportActivite());
+            }
+
+            switch ($privilege) {
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_AVIS_TOUT:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_AVIS_SIEN:
+                    $this->assertNextAvisValeurCompatible($entity);
+                    $this->assertAvisTypeMatchesRole($entity->getAvis()->getAvisType());
+                    return true;
             }
 
             switch ($privilege) {
@@ -179,8 +193,8 @@ class RapportActiviteAvisAssertion extends AbstractAssertion
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_AVIS_SIEN:
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT:
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN:
-                    $avisTypeDernier = $this->assertEstDernierAvisType($entity);
-                    $this->assertAvisTypeMatchesRole($avisTypeDernier);
+                    $avisType = $this->assertIsMostRecentAvisType($entity);
+                    $this->assertAvisTypeMatchesRole($avisType);
             }
 
         } catch (FailedAssertionException $e) {
@@ -239,14 +253,14 @@ class RapportActiviteAvisAssertion extends AbstractAssertion
         return $avisTypeDisponible;
     }
 
-    private function getAvisTypeDisponible(RapportActivite $rapportActivite): AvisType
+    private function getAvisTypeDisponible(RapportActivite $rapportActivite): ?AvisType
     {
-        // Le type d'avis attendu/possible peut être spécifié via le RapportActivite (pattern DAO).
-        // Dans le cas contraire, faut voir...
         if ($rapportAvisPossible = $rapportActivite->getRapportAvisPossible()) {
+            // Le type d'avis attendu/possible peut être spécifié via le RapportActivite (pattern DAO).
             return $rapportAvisPossible->getAvis()->getAvisType();
         } else {
-            return $this->rapportActiviteAvisService->findNextExpectedAvisTypeForRapport($rapportActivite);
+            // Mais dans le cas contraire, faut voir...
+            return $this->rapportActiviteAvisService->findExpectedAvisTypeForRapport($rapportActivite);
         }
     }
 
@@ -272,7 +286,24 @@ class RapportActiviteAvisAssertion extends AbstractAssertion
         }
     }
 
-    private function assertEstDernierAvisType(RapportActiviteAvis $rapportActiviteAvis)
+    private function assertNextAvisValeurCompatible(RapportActiviteAvis $rapportActiviteAvis)
+    {
+        // On peut modifier un avis à condition que l'avis d'après est "rapport incomplet".
+
+        $nextRapportAvis = $this->rapportActiviteAvisService->findRapportAvisAfter($rapportActiviteAvis);
+        if ($nextRapportAvis === null) {
+            return;
+        }
+
+        $avisValeur = RapportActiviteAvis::AVIS_VALEUR__CODE__AVIS_RAPPORT_ACTIVITE_DIR_VALEUR_INCOMPLET;
+
+        $this->assertTrue(
+            $nextRapportAvis->getAvis()->getAvisValeur()->getCode() === $avisValeur,
+            "La valeur de l'avis fourni ensuite ne permet pas de modifier cet avis"
+        );
+    }
+
+    private function assertIsMostRecentAvisType(RapportActiviteAvis $rapportActiviteAvis)
     {
         $dernierAvisType =
             $this->rapportActiviteAvisService->findMostRecentAvisTypeForRapport($rapportActiviteAvis->getRapportActivite());
@@ -285,7 +316,7 @@ class RapportActiviteAvisAssertion extends AbstractAssertion
         return $dernierAvisType;
     }
 
-    private function assertLastAvisValeurCompatible(RapportActivite $rapportActivite)
+    private function assertMostRecentAvisValeurCompatible(RapportActivite $rapportActivite)
     {
         $dernierAvis = $this->rapportActiviteAvisService->findMostRecentRapportAvisForRapport($rapportActivite);
         if ($dernierAvis === null) {

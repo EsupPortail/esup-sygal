@@ -2,7 +2,7 @@
 
 namespace RapportActivite\Rule\Avis;
 
-trait RapportActiviteNotificationRuleAwareTrait
+trait RapportActiviteAvisNotificationRuleAwareTrait
 {
     protected RapportActiviteAvisNotificationRule $rapportActiviteAvisNotificationRule;
 

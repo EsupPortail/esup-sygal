@@ -12,7 +12,7 @@ trait TheseAnneeUnivServiceAwareTrait
     /**
      * @param TheseAnneeUnivService $service
      */
-    public function setTheseAnneeUnivService(TheseAnneeUnivService $service)
+    public function setAnneesUnivs(TheseAnneeUnivService $service)
     {
         $this->theseAnneeUnivService = $service;
     }

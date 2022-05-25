@@ -43,10 +43,10 @@ class RapportActiviteNomFichierFormatter extends AbstractNomFichierFormatter
 
         $parts = [];
         $parts['type'] = $this->normalizedString($this->type());
+        $parts['date'] = $this->rapport->getAnneeUniv()->toString('-');
         $parts['ed'] = 'ED' . $ed;
         $parts['nomDoctorant'] = $this->normalizedString($doctorant->getIndividu()->getNomUsuel());
         $parts['prenomDoctorant'] = ucfirst(mb_strtolower($this->normalizedString($doctorant->getIndividu()->getPrenom())));
-        $parts['date'] = $this->rapport->getAnneeUniv()->toString('-');
         $parts['id'] = $value->getShortUuid(); // on inclue un id unique au cas où il y ait plusieurs fichiers de même nom déposés
 
         $name = implode($this->separator, $parts);
@@ -57,7 +57,7 @@ class RapportActiviteNomFichierFormatter extends AbstractNomFichierFormatter
     protected function type(): string
     {
         if ($this->rapport->getTypeRapport()->estRapportActivite()) {
-            return $this->rapport->getTypeRapport()->getCode() . ($this->rapport->estFinal() ? '_FINTHESE' : '_ANNUEL');
+            return $this->rapport->getTypeRapport()->getCode() . ($this->rapport->estFinal() ? '_FINCONTRAT' : '_ANNUEL');
         } else {
             return $this->rapport->getTypeRapport()->getCode();
         }

@@ -29,6 +29,7 @@ class RapportActiviteValidationServiceFactory
         $service->setIndividuService($individuService);
         $service->setUserContextService($userContextService);
         $service->setTypeValidation($typeValidation);
+        $service->setEventManager($container->get('EventManager'));
 
         return $service;
     }

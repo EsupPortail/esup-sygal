@@ -19,6 +19,8 @@ div.logo-comue {
 .bandeau-titre {
     width:18cm;
     display: block;
+    margin-top: 2cm;
+    margin-bottom: 1cm;
     margin-left: auto;
     margin-right: auto;
     background-color: #5B2268;
@@ -105,7 +107,8 @@ div.logo-comue {
     text-align: center;
 }
 .signature-ecole-doctorale {
-    text-align: center;
+    width: 4cm !important;
+    margin: auto
 }
 
 .infos-validation {
@@ -126,7 +129,7 @@ div.logos {
     left:1.5cm;
 }
 table.logos {
-    width:18cm;
+    width:15cm;
     margin-left: auto;
     margin-right: auto;
 }

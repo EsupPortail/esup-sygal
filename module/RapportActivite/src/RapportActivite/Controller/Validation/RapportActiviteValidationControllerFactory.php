@@ -4,7 +4,6 @@ namespace RapportActivite\Controller\Validation;
 
 use Application\Service\Validation\ValidationService;
 use Psr\Container\ContainerInterface;
-use RapportActivite\Controller\Validation\RapportActiviteValidationController;
 use RapportActivite\Service\RapportActiviteService;
 use RapportActivite\Service\Validation\RapportActiviteValidationService;
 

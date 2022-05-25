@@ -1,23 +1,19 @@
 <?php
 
-use Application\Service\FichierThese\PdcData;
-use Application\Service\These\TheseService;
-use Application\View\Renderer\PhpRenderer;
-
 /**
- * @var PhpRenderer $this
+ * @var \Application\View\Renderer\PhpRenderer $this
  * @var \Application\Entity\Db\Rapport $rapport
- * @var PdcData $data
+ * @var \RapportActivite\Service\Fichier\Exporter\PageValidationExportData $data
  *
- * @see TheseService::fetchInformationsPageDeCouverture() pour la génération de $data
+ * @see \RapportActivite\Controller\RapportActiviteController::telechargerAction()
  */
 ?>
 
 <!-- SECTION DU LOGO DE LA COMUE -------------------------------------------------------------------------------------->
 <div style="text-align: center; margin-bottom: 30px;">
     <div class='logo-comue'>
-        <?php if ($data->getLogoCOMUE() !== null): ?>
-            <img src="<?php echo $data->getLogoCOMUE() ?>"/>
+        <?php if ($data->logoCOMUE !== null): ?>
+            <img src="<?php echo $data->logoCOMUE ?>"/>
         <?php else: ?>
             <span style='background-color:red;'> COMUE ou logo de la COMUE non renseigné. </span>
         <?php endif; ?>
@@ -54,41 +50,25 @@ use Application\View\Renderer\PhpRenderer;
     <br/>
 
     Spécialité
-    <?php if ($data->getSpecialite() !== null): ?>
-        <?php echo $data->getSpecialite(); ?>
+    <?php if ($data->specialite !== null): ?>
+        <?php echo $data->specialite; ?>
     <?php else: ?>
         <span style='background-color:red;'> non renseignée </span>
     <?php endif; ?>
     <br/>
 
     Préparée au sein de
-    <?php if ($data->getEtablissement() !== null): ?>
-        l'<?php echo $data->getEtablissement(); ?>
+    <?php if ($data->etablissement !== null): ?>
+        l'<?php echo $data->etablissement; ?>
     <?php else: ?>
         <span style='background-color:red;'> non renseigné </span>
-    <?php endif; ?>
-    <!--    --><?php //if ($data->isAssocie()): ?>
-    <!--     et de l'--><?php //echo $data->getLibelleAssocie(); ?>
-    <!--    --><?php //endif; ?>
-    <br/>
-
-    <?php if ($data->isCotutuelle()): ?>
-        En cotutelle
-        <?php if ($data->getCotutuellePays() !== null): ?>
-            internationale
-        <?php endif; ?>
-        avec
-        <?php echo $data->getCotutuelleLibelle(); ?>
-        <?php if ($data->getCotutuellePays() !== null): ?>
-            , <?php echo ($data->getCotutuellePays()); ?>
-        <?php endif; ?>
     <?php endif; ?>
 </div>
 
 
 <div class='bandeau-titre'>
-    <?php if ($data->getTitre() !== null): ?>
-        <?php echo $data->getTitre(); ?>
+    <?php if ($data->titre !== null): ?>
+        <?php echo $data->titre; ?>
     <?php else: ?>
         <span style='background-color:red;'> Aucun titre </span>
     <?php endif; ?>
@@ -97,8 +77,8 @@ use Application\View\Renderer\PhpRenderer;
 
 <div class='infos-doctorant' style=''>
     <!--Présentée et soutenue par <br/>-->
-    <?php if ($data->getDoctorant() !== null): ?>
-        <?php echo $data->getDoctorant(); ?>
+    <?php if ($data->doctorant !== null): ?>
+        <?php echo $data->doctorant; ?>
     <?php else: ?>
         <span style='background-color:red;'> Aucun doctorant </span>
     <?php endif; ?>
@@ -110,31 +90,22 @@ use Application\View\Renderer\PhpRenderer;
     <table style="border:none;" class="logos">
         <tr>
             <td>
-                <?php if ($data->getLogoEtablissement()): ?>
-                    <img class="logo_small" src="<?php echo $data->getLogoEtablissement() ?>"/>
+                <?php if ($data->logoEtablissement): ?>
+                    <img class="logo_small" src="<?php echo $data->logoEtablissement ?>"/>
                 <?php else: ?>
                     <span style='background-color:red;'> Établissement d'inscription ou logo d'établissement non renseigné. </span>
                 <?php endif; ?>
             </td>
-            <?php if ($data->isAssocie()): ?>
-                <td>
-                    <?php if ($data->getLogoAssocie()): ?>
-                        <img class="logo_small" src="<?php echo $data->getLogoAssocie() ?>"/>
-                    <?php else: ?>
-                        <span style='background-color:red;'> Établissement associé ou logo d'établissement non renseigné. </span>
-                    <?php endif; ?>
-                </td>
-            <?php endif; ?>
             <td>
-                <?php if ($data->getLogoEcoleDoctorale()): ?>
-                    <img class="logo_small" src="<?php echo $data->getLogoEcoleDoctorale() ?>"/>
+                <?php if ($data->logoEcoleDoctorale): ?>
+                    <img class="logo_small" src="<?php echo $data->logoEcoleDoctorale ?>"/>
                 <?php else: ?>
                     <span style='background-color:red;'> École doctorale ou logo d'école doctorale non renseigné </span>
                 <?php endif; ?>
             </td>
             <td>
-                <?php if ($data->getLogoUniteRecherche()): ?>
-                    <img class="logo_small" src="<?php echo $data->getLogoUniteRecherche() ?>"/>
+                <?php if ($data->logoUniteRecherche): ?>
+                    <img class="logo_small" src="<?php echo $data->logoUniteRecherche ?>"/>
                 <?php else: ?>
                     <span style='background-color:red;'> Unité de recherche ou logo d'unité de recherche non renseigné </span>
                 <?php endif; ?>

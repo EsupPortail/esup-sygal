@@ -3,7 +3,9 @@
 namespace UnicaenAvis\Service;
 
 use Doctrine\DBAL\Exception;
-use Doctrine\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr;
+use Doctrine\PersistenceEntityRepository ;
 use DoctrineModule\Persistence\ProvidesObjectManager;
 use RuntimeException;
 use UnicaenAvis\Entity\Db\Avis;
@@ -16,30 +18,51 @@ class AvisService
 {
     use ProvidesObjectManager;
 
-    protected function getAvisTypeRepository(): ObjectRepository
+    protected function getAvisTypeRepository(): EntityRepository
     {
         return $this->objectManager->getRepository(AvisType::class);
     }
 
-    protected function getAvisValeurRepository(): ObjectRepository
+    protected function getAvisValeurRepository(): EntityRepository
     {
         return $this->objectManager->getRepository(AvisValeur::class);
     }
 
-    protected function getAvisTypeValeurRepository(): ObjectRepository
+    protected function getAvisTypeValeurRepository(): EntityRepository
     {
         return $this->objectManager->getRepository(AvisTypeValeur::class);
     }
 
-    protected function getAvisTypeValeurComplemRepository(): ObjectRepository
+    protected function getAvisTypeValeurComplemRepository(): EntityRepository
     {
         return $this->objectManager->getRepository(AvisTypeValeurComplem::class);
     }
 
+    /**
+     * Recherche des types d'avis par leurs codes, ordonnés selon la colonne 'ordre'.
+     *
+     * @param array $codes
+     * @return AvisType[]
+     */
+    public function findAvisTypesByCodes(array $codes): array
+    {
+        $qb = $this->getAvisTypeRepository()->createQueryBuilder('at')
+            ->where((new Expr())->in('at.code', $codes))
+            ->addOrderBy('at.ordre')
+        ;
+
+        return $qb->getQuery()->useQueryCache(true)->enableResultCache()->getResult();
+    }
+
     public function findOneAvisTypeByCode(string $code): AvisType
     {
+        $qb = $this->getAvisTypeRepository()->createQueryBuilder('at')
+            ->where('at.code = :code')
+            ->setParameter('code', $code)
+        ;
+
         /** @var \UnicaenAvis\Entity\Db\AvisType $avisType */
-        $avisType = $this->getAvisTypeRepository()->findOneBy(['code' => $code]);
+        $avisType = $qb->getQuery()->useQueryCache(true)->enableResultCache()->getOneOrNullResult();
 
         return $avisType;
     }

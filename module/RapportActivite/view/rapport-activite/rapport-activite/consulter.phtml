@@ -2,12 +2,12 @@
 
 namespace RapportActivite;
 
-use RapportActivite\Entity\Db\RapportActivite;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
+use Application\View\Renderer\PhpRenderer;
+use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Form\RapportActiviteForm;
 use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
-use Application\View\Renderer\PhpRenderer;
 
 /**
  * @var PhpRenderer $this
@@ -21,27 +21,9 @@ use Application\View\Renderer\PhpRenderer;
  * @see \RapportActivite\Controller\RapportActiviteController::consulterAction()
  */
 
-$routeName = 'rapport-activite';
-$privilege_TELEVERSER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_TOUT;
-$privilege_TELEVERSER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN;
-$privilege_SUPPRIMER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT;
-$privilege_SUPPRIMER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN;
-$privilege_TELECHARGER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_TOUT;
-$privilege_TELECHARGER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_SIEN;
-$privilege_VALIDER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT;
-$privilege_VALIDER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN;
-$privilege_DEVALIDER_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT;
-$privilege_DEVALIDER_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN;
-$privilege_AJOUTER_AVIS_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT;
-$privilege_AJOUTER_AVIS_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN;
-$privilege_MODIFIER_AVIS_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_AVIS_TOUT;
-$privilege_MODIFIER_AVIS_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_AVIS_SIEN;
-$privilege_SUPPRIMER_AVIS_TOUT = RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT;
-$privilege_SUPPRIMER_AVIS_SIEN = RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN;
-
 $form->prepare();
 $rapportProto = (new RapportActivite())->setThese($these);
-$canAdd = $this->isAllowed($rapportProto, $privilege_TELEVERSER_TOUT) || $this->isAllowed($rapportProto, $privilege_TELEVERSER_SIEN);
+$canAdd = $this->isAllowed($rapportProto, RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_TOUT) || $this->isAllowed($rapportProto, RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN);
 if (!$isTeleversementPossible) {
     $canAdd = false;
 }
@@ -90,26 +72,8 @@ if (!$isTeleversementPossible) {
 
             <?php echo $this->partial('rapport-activite/partial/rapports-table', [
                 'rapports' => $rapports,
-                'routeName' => $routeName,
                 'typeValidation' => $typeValidation,
                 'returnUrl' => $returnUrl,
-
-                'privilege_TELEVERSER_TOUT' => $privilege_TELEVERSER_TOUT,
-                'privilege_TELEVERSER_SIEN' => $privilege_TELEVERSER_SIEN,
-                'privilege_SUPPRIMER_TOUT' => $privilege_SUPPRIMER_TOUT,
-                'privilege_SUPPRIMER_SIEN' => $privilege_SUPPRIMER_SIEN,
-                'privilege_TELECHARGER_TOUT' => $privilege_TELECHARGER_TOUT,
-                'privilege_TELECHARGER_SIEN' => $privilege_TELECHARGER_SIEN,
-                'privilege_VALIDER_TOUT' => $privilege_VALIDER_TOUT,
-                'privilege_VALIDER_SIEN' => $privilege_VALIDER_SIEN,
-                'privilege_DEVALIDER_TOUT' => $privilege_DEVALIDER_TOUT,
-                'privilege_DEVALIDER_SIEN' => $privilege_DEVALIDER_SIEN,
-                'privilege_AJOUTER_AVIS_TOUT' => $privilege_AJOUTER_AVIS_TOUT,
-                'privilege_AJOUTER_AVIS_SIEN' => $privilege_AJOUTER_AVIS_SIEN,
-                'privilege_MODIFIER_AVIS_TOUT' => $privilege_MODIFIER_AVIS_TOUT,
-                'privilege_MODIFIER_AVIS_SIEN' => $privilege_MODIFIER_AVIS_SIEN,
-                'privilege_SUPPRIMER_AVIS_TOUT' => $privilege_SUPPRIMER_AVIS_TOUT,
-                'privilege_SUPPRIMER_AVIS_SIEN' => $privilege_SUPPRIMER_AVIS_SIEN,
 
                 'displayEtablissement' => false,
                 'displayType' => true,
@@ -135,13 +99,9 @@ if (!$isTeleversementPossible) {
 
         <?php $ajouterFormVisible = !empty($form->getMessages()); ?>
         <div id="ajouterDiv">
-            <div class="row">
-                <div class="col-md-4">
-                    <a href="#" id="ajouterBtn" class="btn btn-primary <?php echo $canAdd ? '' : 'disabled' ?>"
-                       style="display: <?php echo !$ajouterFormVisible ? 'inherit' : 'none' ?>">
-                        <span class="icon icon-plus"></span> Téléverser un rapport</a>
-                </div>
-            </div>
+            <button id="ajouterBtn" class="btn btn-primary <?php echo $canAdd ? '' : 'disabled' ?>"
+               style="display: <?php echo !$ajouterFormVisible ? 'inherit' : 'none' ?>">
+                <span class="icon icon-plus"></span> Téléverser un rapport</button>
 
             <div id="ajouterForm" style="display: <?php echo $ajouterFormVisible ? 'inherit' : 'none' ?>">
                 <h3>Formulaire de téléversement</h3>
@@ -181,10 +141,10 @@ if (!$isTeleversementPossible) {
 
 <script>
     $(function() {
+        // Affichage/masquage du formulaire de dépôt.
         var $ajouterBtn = $("#ajouterBtn");
         var $annulerBtn = $("#annulerBtn");
         var $ajouterForm = $("#ajouterForm");
-
         $ajouterBtn.on('click', function() {
             $ajouterForm.show();
             $ajouterBtn.hide();
@@ -194,6 +154,26 @@ if (!$isTeleversementPossible) {
             $ajouterForm.hide();
             $ajouterBtn.show();
             return false;
+        });
+
+        // Interdiction de la sélection de certaines années universitaires selon qu'elles sont ou non compatibles
+        // avec le type de rapport sélectionné (annuel ou fin de contrat) :
+        // - les <option> ayant la classe CSS 'if-estFinal-equals-0' sont compatibles avec la sélection du type de rapport annuel (estFinal = '0') ;
+        // - celles ayant la classe 'if-estFinal-equals-1' sont compatibles avec la sélection du type '1' (fin de contrat).
+        let anneeUnivClass = '<?php echo RapportActiviteForm::ANNEE_UNIV__HTML_CLASS_ATTRIB__VALUE ?>';
+        let searchedClassPrefix = '<?php echo RapportActiviteForm::ANNEE_UNIV__HTML_CLASS_ATTRIB__VALUE_PREFIX ?>';
+        let $estFinalRadio = $("[name='estFinal']");
+        let $anneeUnivSelect = $("[name='anneeUniv']");
+        $estFinalRadio.on('change', function (event) {
+            let estFinalValue = $(this).val();
+            let searchedClass = searchedClassPrefix + estFinalValue;
+            $anneeUnivSelect.find("option."+anneeUnivClass).each(function(i, option) {
+                let enabled = $(option).hasClass(searchedClass);
+                $(option).attr('disabled', !enabled);
+                if (!enabled && $(option).is(":checked")) {
+                    $anneeUnivSelect.val("");
+                }
+            });
         });
     });
 </script>
