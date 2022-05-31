@@ -17,6 +17,7 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
 class StructureController extends AbstractController
@@ -129,26 +130,28 @@ class StructureController extends AbstractController
 
     /** GESTION DES DOCUMENTS LIES AUX STRUCTURES *********************************************************************/
 
-    public function televerserDocumentAction()
+    public function televerserDocumentAction(): ViewModel
     {
-        $structure = $this->getStructureService()->getRequestedStructure($this);
-        $natures = [$this->natureFichierService->getRepository()->findOneBy(['code' => NatureFichier::CODE_SIGNATURE_CONVOCATION]) ];
-        $etablissements = $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions();
+        $structure = $this->structureService->getRequestedStructure($this);
+        $natures = $this->natureFichierService->findAllByCodes([
+            NatureFichier::CODE_SIGNATURE_CONVOCATION,
+            NatureFichier::CODE_SIGNATURE_RAPPORT_ACTIVITE,
+        ]);
+        $etablissements = $this->etablissementService->getRepository()->findAllEtablissementsInscriptions();
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
             /** @var Etablissement|null $etablissement */
             $etablissement = null;
-            if ($data['etablissement'] !== 'Aucun') $etablissement = $this->getEtablissementService()->getRepository()->find($data['etablissement']);
+            if ($data['etablissement'] !== 'Aucun') $etablissement = $this->etablissementService->getRepository()->find($data['etablissement']);
             /** @var NatureFichier $nature */
             $nature = $this->natureFichierService->getRepository()->find($data['nature']);
 
             $files = $request->getFiles()->toArray();
             $fichiers = $this->fichierService->createFichiersFromUpload(['files' => $files], $nature);
             $this->fichierService->saveFichiers($fichiers);
-
-            $this->getStructureDocumentService()->addDocument($structure, $etablissement, $nature, $fichiers[0]);
+            $this->structureDocumentService->addDocument($structure, $etablissement, $nature, $fichiers[0]);
         }
 
         $vm =  new ViewModel([
@@ -158,10 +161,11 @@ class StructureController extends AbstractController
             'etablissements' => $etablissements,
         ]);
         $vm->setTemplate('application/structure/televerser-document');
+
         return $vm;
     }
 
-    public function supprimerDocumentAction()
+    public function supprimerDocumentAction(): Response
     {
         /** @var Etablissement $etablissement */
         $structure = $this->getStructureService()->getRequestedStructure($this);

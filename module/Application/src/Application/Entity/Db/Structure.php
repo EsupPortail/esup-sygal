@@ -495,7 +495,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     }
 
     /**
-     * @return array
+     * @return \Application\Entity\Db\StructureDocument[][]
      */
     public function getDocuments() : array
     {

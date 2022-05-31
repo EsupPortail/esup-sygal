@@ -64,7 +64,7 @@ class EtablissementController extends StructureConcreteController
     /**
      * @return ViewModel
      */
-    public function informationAction()
+    public function informationAction(): ViewModel
     {
         $id = $this->params()->fromRoute('structure');
         /** @var Etablissement $etablissement */

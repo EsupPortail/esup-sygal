@@ -53,24 +53,22 @@ class UniteRechercheController extends StructureConcreteController
     /**
      * @return ViewModel
      */
-    public function informationAction()
+    public function informationAction(): ViewModel
     {
-        $id = $this->params()->fromRoute('structure');
-        $structureConcrete = $this->getStructureConcreteService()->getRepository()->findByStructureId($id);
+        $viewModel = parent::informationAction();
+
+        /** @var UniteRecherche $structureConcrete */
+        $structureConcrete = $viewModel->getVariable('structure');
         $coencadrants = $this->getCoEncadrantService()->getCoEncadrantsByStructureConcrete($structureConcrete, false);
         $contenus = $this->getStructureDocumentService()->getContenusFichiers($structureConcrete->getStructure());
 
-        $viewModel = parent::informationAction();
-
-        $unite = $viewModel->getVariable('structure');
-
-        $etablissementsRattachements = $this->uniteRechercheService->findEtablissementRattachement($unite);
+        $etablissementsRattachements = $this->uniteRechercheService->findEtablissementRattachement($structureConcrete);
 
         $viewModel->setVariables([
-            'unite'                       => $unite,
+            'unite' => $structureConcrete,
             'etablissementsRattachements' => $etablissementsRattachements,
-            'coencadrants'                => $coencadrants,
-            'contenus'                    => $contenus,
+            'coencadrants' => $coencadrants,
+            'contenus' => $contenus,
         ]);
 
         return $viewModel;
