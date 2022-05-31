@@ -1,6 +1,11 @@
 Journal des modifications
 =========================
 
+4.1.0
+-----
+- Refonte du module 'Rapports d'activité'.
+- Nouveau document téléversable pour une structure : Signature figurant sur la page de validation d'un rapport d'activité.
+
 4.0.3
 -----
 - Corrections et améliorations de la doc d'install suite aux remarques de l'université de Montpellier (merci)
