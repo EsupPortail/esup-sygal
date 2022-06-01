@@ -16,7 +16,7 @@ $seances = array_filter($seances, function (Seance $a) { return $a->estNonHistor
 usort($seances, function (Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
 
 $gestionnaire = ($session->getFormation()->getResponsable())?$session->getFormation()->getResponsable()->getNomComplet():$this->appInfos()->nom;
-$url = $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], ['force-canonical' => true], true);
+$url = $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], ['force_canonical' => true], true);
 ?>
 
 <p>
