@@ -60,11 +60,11 @@ usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->
             <?php endif ?>
         </dl>
 
-        <h2> Valeur par défaut transmises aux sessions </h2>
+        <h2> Valeurs par défaut transmises aux sessions </h2>
 
         <dl class="row">
             <?php if ($formation->getSite()) : ?>
-                <dt class="col-md-3"> Site</dt>
+                <dt class="col-md-3"> Site organisateur</dt>
                 <dd class="col-md-9"> <?php echo $this->site($formation); ?> </dd>
             <?php endif; ?>
             <?php if ($formation->getResponsable()) : ?>

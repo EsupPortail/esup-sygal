@@ -3,8 +3,10 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Application\Entity\Db\These;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
+use DateTime;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Formation;
@@ -19,6 +21,7 @@ use Formation\Service\Session\SessionServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
+use UnicaenApp\View\Model\CsvModel;
 
 class SessionController extends AbstractController
 {
@@ -289,6 +292,46 @@ class SessionController extends AbstractController
 
         if ($retour) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/session/afficher', ['session' => $session->getId()], [], true);
+    }
+
+    public function genererExportAction() : CsvModel
+    {
+        /**@var Session $session */
+        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
+
+        $headers = ['Liste', 'Dénomination étudiant', 'Adresse électronique', 'Établissement', 'École doctorale', 'Unité de recherche'];
+
+        $inscriptions = $session->getInscriptions()->toArray();
+        usort($inscriptions, function (Inscription $a, Inscription $b) {
+
+        });
+        $records = [];
+        /** @var Inscription $inscription */
+        foreach ($inscriptions as $inscription) {
+            $doctorant = $inscription->getDoctorant();
+            $theses = array_filter($doctorant->getTheses(), function (These $t) { return $t->getEtatThese() === These::ETAT_EN_COURS; });
+            $etablissements = array_map(function (These $t) { return ($t->getEtablissement())?$t->getEtablissement()->getLibelle():"Établissement non renseigné";}, $theses);
+            $ecoles = array_map(function (These $t) { return ($t->getEcoleDoctorale())?$t->getEcoleDoctorale()->getLibelle():"École doctorale non renseignée";}, $theses);
+            $unites = array_map(function (These $t) { return ($t->getUniteRecherche())?$t->getUniteRecherche()->getLibelle():"Unité de recherche non renseignée";}, $theses);
+            $entry = [
+                'Liste' => $inscription->getListe(),
+                'Dénomination étudiant' => $doctorant->getIndividu()->getNomComplet(),
+                'Adresse électronique' => $doctorant->getIndividu()->getEmail(),
+                'Établissement' => implode("/",$etablissements),
+                'École doctorale' => implode("/",$ecoles),
+                'Unité de recherche' => implode("/",$unites),
+            ];
+            $records[] = $entry;
+        }
+
+        $filename = (new DateTime())->format('Ymd-His') . '-session-' . str_replace(' ','_',$session->getFormation()->getLibelle()) . '-'. $session->getDateDebut()->format('d_m_Y') .'.csv';
+        $CSV = new CsvModel();
+        $CSV->setDelimiter(';');
+        $CSV->setEnclosure('"');
+        $CSV->setHeader($headers);
+        $CSV->setData($records);
+        $CSV->setFilename($filename);
+        return $CSV;
     }
 
     public function genererEmargementsAction()

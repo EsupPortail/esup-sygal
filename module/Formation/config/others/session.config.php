@@ -33,6 +33,7 @@ return [
                     'action' => [
                         'afficher',
                         'generer-emargements',
+                        'generer-export',
                     ],
                     'privileges' => [
                         SessionPrivileges::SESSION_AFFICHER,
@@ -132,6 +133,17 @@ return [
                                     'defaults' => [
                                         'controller' => SessionController::class,
                                         'action'     => 'afficher',
+                                    ],
+                                ],
+                            ],
+                            'generer-export' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/generer-export/:session',
+                                    'defaults' => [
+                                        'controller' => SessionController::class,
+                                        'action'     => 'generer-export',
                                     ],
                                 ],
                             ],

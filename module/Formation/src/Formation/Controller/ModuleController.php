@@ -148,7 +148,7 @@ class ModuleController extends AbstractController {
         return $vm;
     }
 
-    public function catalogueAction()
+    public function catalogueAction() : ViewModel
     {
         /** @var Module[] $modules */
         $modules = $this->getEntityManager()->getRepository(Module::class)->findAll();

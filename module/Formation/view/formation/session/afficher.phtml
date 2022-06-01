@@ -321,6 +321,11 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
                 <span class="fas fa-align-right"></span>
                 Déclasser les inscrits
             </a>
+            <a href="<?php echo $this->url('formation/session/generer-export', ['session' => $session->getId()], [] , true); ?>"
+               class="btn btn-primary action">
+                <span class="fas fa-file-csv"></span>
+                Générer export des inscriptions
+            </a>
         <?php endif; ?>
     </div>
 </div>

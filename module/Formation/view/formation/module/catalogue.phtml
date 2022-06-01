@@ -7,7 +7,10 @@
 
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Session;
+use Formation\Provider\Privilege\FormationPrivileges;
 
+
+$canFormationAfficher = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_AFFICHER));
 ?>
 
 <h1 class="page-header">
@@ -29,13 +32,22 @@ use Formation\Entity\Db\Session;
         </thead>
         <tbody>
     <?php if (empty($element['formations'])) : ?>
-        <tr><td colspan="4" class="vide">Aucune formation</td></tr>
+        <tr class="vide"><td colspan="4">Aucune formation</td></tr>
     <?php else : ?>
         <?php /** @var Formation $formation */ ?>
         <?php foreach ($element['formations'] as $formation) : ?>
         <tr>
             <td class="libelle">
-                <?php echo $formation->getLibelle(); ?>
+                <?php if ($canFormationAfficher) : ?>
+                <a
+                        href="<?php echo $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true); ?>"
+                        title="Accéder à la formation [<strong><?php echo $formation->getLibelle(); ?></strong>]" data-bs-toggle="tooltip" data-bs-html="true"
+                >
+                    <?php echo $formation->getLibelle(); ?>
+                </a>
+                <?php else : ?>
+                    <?php echo $formation->getLibelle(); ?>
+                <?php endif; ?>
             </td>
             <td class="site">
                     <?php echo $this->site($formation); ?>
@@ -47,7 +59,7 @@ use Formation\Entity\Db\Session;
                     N.C.
                 <?php endif; ?>
             </td>
-            <td>
+            <td class="infos">
                 <ul>
                 <?php /** @var Session $session */ ?>
                 <?php foreach ($formation->getSessions() as $session) : ?>
@@ -90,9 +102,18 @@ use Formation\Entity\Db\Session;
         width:45rem;
     }
     td.site {
-        width:10rem;
+        /*width:10rem;*/
+        min-width: 10rem;
+        max-width: 10rem;
     }
     td.responsable {
-        width:15rem;
+        /*width:15rem;*/
+        min-width: 15rem;
+        max-width: 15rem;
+    }
+    td.infos {
+        /*width:20rem;*/
+        min-width:20rem;
+        max-width:20rem;
     }
 </style>
