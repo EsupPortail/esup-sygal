@@ -1,6 +1,12 @@
 Journal des modifications
 =========================
 
+4.0.6
+-----
+- Retour du logo ESUp-SyGAL dans la barre de menu principal. 
+  Assombrissement du bleu dans la barre de menu principal et dans le pied de page.
+- [FIX] Plantage lors de la création d'une structure (ED, UR, établissement).
+
 4.0.5
 -----
 - [FIX] Correction du plantage de la page de saisie du mail perso doctorant.

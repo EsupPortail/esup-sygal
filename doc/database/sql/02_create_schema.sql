@@ -2495,7 +2495,8 @@ CREATE TABLE public.tmp_individu (
     dat_nai_per timestamp without time zone,
     lib_nat character varying(128),
     supann_id character varying(30),
-    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone
+    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    codepaysnationalite character varying(60)
 );
 
 
@@ -2687,7 +2688,8 @@ CREATE TABLE public.tmp_these (
     dat_abandon timestamp without time zone,
     dat_transfert_dep timestamp without time zone,
     source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
-    correction_effectuee character varying(30) DEFAULT 'null'::character varying
+    correction_effectuee character varying(30) DEFAULT 'null'::character varying,
+    codesisediscipline character varying(40)
 );
 
 

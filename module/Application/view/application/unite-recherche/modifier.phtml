@@ -54,7 +54,6 @@ $form->get('code')->setAttribute('readonly', !$editable);
 
     <div class="col-md-6">
         <?php echo $this->form()->openTag($form->prepare()->setAttribute('class', 'unite-recherche')) ?>
-        <?php echo $this->formHidden($form->get('id')) ?>
         <?php echo $fcg($form->get('libelle')) ?>
         <?php echo $fcg($form->get('sigle')) ?>
         <?php echo $fcg($form->get('code')) ?>

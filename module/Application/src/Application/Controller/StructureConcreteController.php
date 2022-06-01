@@ -43,6 +43,19 @@ abstract class StructureConcreteController extends AbstractController
     protected $routeName;
 
     /**
+     * @var UniteRechercheForm|EcoleDoctoraleForm|EtablissementForm
+     */
+    protected $structureForm;
+
+    /**
+     * @param UniteRechercheForm|EcoleDoctoraleForm|EtablissementForm $form
+     */
+    public function setStructureForm($form)
+    {
+        $this->structureForm = $form;
+    }
+
+    /**
      * @return ViewModel
      */
     public function indexAction()
@@ -111,19 +124,6 @@ abstract class StructureConcreteController extends AbstractController
             'individuRoles' => $individuRoles,
             'logoContent'     => $this->structureService->getLogoStructureContent($structureConcrete),
         ]);
-    }
-
-    /**
-     * @var UniteRechercheForm|EcoleDoctoraleForm|EtablissementForm
-     */
-    protected $structureForm;
-
-    /**
-     * @param UniteRechercheForm|EcoleDoctoraleForm|EtablissementForm $form
-     */
-    public function setStructureForm($form)
-    {
-        $this->structureForm = $form;
     }
 
     /**
