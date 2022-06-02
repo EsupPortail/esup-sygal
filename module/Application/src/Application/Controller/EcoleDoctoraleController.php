@@ -2,6 +2,7 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\TypeStructure;
 use Application\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
 use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
@@ -47,14 +48,14 @@ class EcoleDoctoraleController extends StructureConcreteController
     /**
      * @return ViewModel
      */
-    public function informationAction() : ViewModel
+    public function informationAction(): ViewModel
     {
-        $id = $this->params()->fromRoute('structure');
-        $structureConcrete = $this->getStructureConcreteService()->getRepository()->findByStructureId($id);
-        $coencadrants = $this->getCoEncadrantService()->getCoEncadrantsByStructureConcrete($structureConcrete, false);
-        $contenus = $this->getStructureDocumentService()->getContenus($structureConcrete->getStructure());
-
         $viewModel = parent::informationAction();
+
+        /** @var EcoleDoctorale $structureConcrete */
+        $structureConcrete = $viewModel->getVariable('structure');
+        $coencadrants = $this->getCoEncadrantService()->getCoEncadrantsByStructureConcrete($structureConcrete, false);
+        $contenus = $this->getStructureDocumentService()->getContenusFichiers($structureConcrete->getStructure());
 
         $viewModel->setVariables([
             'ecole' => $viewModel->getVariable('structure'),

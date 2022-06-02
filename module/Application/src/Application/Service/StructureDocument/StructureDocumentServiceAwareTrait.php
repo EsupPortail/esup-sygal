@@ -4,8 +4,7 @@ namespace Application\Service\StructureDocument;
 
 trait StructureDocumentServiceAwareTrait {
 
-    /** @var StructureDocumentService */
-    private $structureDocumentService;
+    protected StructureDocumentService $structureDocumentService;
 
     /**
      * @return StructureDocumentService
@@ -17,12 +16,10 @@ trait StructureDocumentServiceAwareTrait {
 
     /**
      * @param StructureDocumentService $structureDocumentService
-     * @return StructureDocumentService
      */
-    public function setStructureDocumentService(StructureDocumentService $structureDocumentService): StructureDocumentService
+    public function setStructureDocumentService(StructureDocumentService $structureDocumentService): void
     {
         $this->structureDocumentService = $structureDocumentService;
-        return $this->structureDocumentService;
     }
 
 }

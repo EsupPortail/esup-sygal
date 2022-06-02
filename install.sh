@@ -16,7 +16,7 @@ mkdir -p upload && \
   chmod -R 770 upload
 
 # Composer install
-composer install --no-suggest --prefer-dist --optimize-autoloader
+composer install --no-interaction --no-suggest --prefer-dist --optimize-autoloader
 
 # Génération du fichier de version
 ./create-version-config-file --number $(git describe) --date $(git log --pretty='format:%ad' --date=format:'%d/%m/%Y %H:%M:%S' -1)

@@ -1,0 +1,36 @@
+<?php
+/**
+ * @var \RapportActivite\Entity\Db\RapportActiviteAvis $rapportActiviteAvis
+ * @var \RapportActivite\Entity\Db\RapportActiviteValidation $rapportActiviteValidation
+ *
+ * @see \RapportActivite\Notification\RapportActiviteValidationNotification
+ */
+
+$rapport = $rapportActiviteValidation->getRapport();
+$avis = $rapportActiviteAvis->getAvis();
+?>
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?> à propos
+    du rapport d'activité &laquo; <?php echo $rapport->getFichier()->getNom() ?> &raquo;.
+</p>
+<p>
+    Ce rapport d'activité a été validé par
+    <?php echo $rapportActiviteValidation->getHistoModificateur() ?: $rapportActiviteValidation->getHistoCreateur() ?>,
+    le <?php echo ($rapportActiviteValidation->getHistoModification() ?: $rapportActiviteValidation->getHistoCreation())->format('d/m/Y H:i') ?>.
+</p>
+<p>
+    Voici l'avis rendu :
+    <strong><?php echo $avis->getAvisValeur()->getValeur() ?></strong>
+</p>
+
+<?php if ($avisComplemsToHtml = $avis->getAvisComplemsToHtml()): ?>
+    <p>
+        Compléments :
+    </p>
+    <p>
+        <?php echo $avisComplemsToHtml ?>
+    </p>
+<?php endif ?>

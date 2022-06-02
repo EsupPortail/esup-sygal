@@ -65,7 +65,7 @@ class EtablissementController extends StructureConcreteController
     /**
      * @return ViewModel
      */
-    public function informationAction() : ViewModel
+    public function informationAction(): ViewModel
     {
         $id = $this->params()->fromRoute('structure');
         /** @var Etablissement $etablissement */
@@ -73,7 +73,7 @@ class EtablissementController extends StructureConcreteController
         if ($etablissement === null) {
             throw new RuntimeException("Aucun établissement ne possède l'identifiant renseigné.");
         }
-        $contenus = $this->getStructureDocumentService()->getContenus($etablissement->getStructure());
+        $contenus = $this->getStructureDocumentService()->getContenusFichiers($etablissement->getStructure());
 
         $roleListings = [];
         $individuListings = [];

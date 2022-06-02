@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="UnicaenAvis\Entity\Db\AvisTypeValeurComplem" table="UNICAEN_AVIS_TYPE_VALEUR_COMPLEM">
+        <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
+        </id>
+        <field name="code" column="CODE" length="64"/>
+        <field name="libelle" column="LIBELLE" length="128"/>
+        <field name="type" column="TYPE" length="64"/>
+        <field name="ordre" column="ORDRE" type="integer"/>
+        <field name="obligatoire" column="OBLIGATOIRE" type="boolean"/>
+        <field name="obligatoireUnAuMoins" column="OBLIGATOIRE_UN_AU_MOINS" type="boolean"/>
+
+        <many-to-one field="avisTypeValeur" target-entity="UnicaenAvis\Entity\Db\AvisTypeValeur">
+            <join-column name="AVIS_TYPE_VALEUR_ID" referenced-column-name="ID"/>
+        </many-to-one>
+        <many-to-one field="avisTypeValeurComplemParent" target-entity="UnicaenAvis\Entity\Db\AvisTypeValeurComplem">
+            <join-column name="PARENT_ID" referenced-column-name="ID"/>
+        </many-to-one>
+
+        <one-to-many field="avisTypeValeurComplemsEnfants" target-entity="UnicaenAvis\Entity\Db\AvisTypeValeurComplem"
+                     mapped-by="avisTypeValeurComplemParent"/>
+    </entity>
+</doctrine-mapping>

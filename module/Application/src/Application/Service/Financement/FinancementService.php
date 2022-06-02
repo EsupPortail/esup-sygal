@@ -10,13 +10,13 @@ class FinancementService
     use EntityManagerAwareTrait;
 
     /**
-     * @param string $order
+     * @param string|null $order
      * @param bool $cacheable
      * @return OrigineFinancement[]
      */
-    public function getOriginesFinancements($order = null, $cacheable = false)
+    public function getOriginesFinancements(string $order = null, bool $cacheable = false): array
     {
-        $qb = $this->getEntityManager()->getRepository(OrigineFinancement::class)->createQueryBuilder('origine');
+        $qb = $this->getRepositoryOrigineFinancement()->createQueryBuilder('origine');
 
         if ($order) {
             $qb = $qb->orderBy('origine.' . $order);
@@ -25,5 +25,18 @@ class FinancementService
         $qb->setCacheable($cacheable);
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function getOrigineFinancementByCode(string $code): OrigineFinancement
+    {
+        /** @var OrigineFinancement $of */
+        $of = $this->getRepositoryOrigineFinancement()->findOneBy(['code' => $code]);
+
+        return $of;
+    }
+
+    protected function getRepositoryOrigineFinancement()
+    {
+        return $this->getEntityManager()->getRepository(OrigineFinancement::class);
     }
 }

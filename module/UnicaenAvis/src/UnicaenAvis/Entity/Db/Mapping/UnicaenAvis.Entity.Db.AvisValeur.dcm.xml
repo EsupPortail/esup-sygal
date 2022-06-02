@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="UnicaenAvis\Entity\Db\AvisValeur" table="UNICAEN_AVIS_VALEUR">
+        <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
+        </id>
+
+        <field name="code" column="CODE" length="64"/>
+        <field name="valeur" column="VALEUR" length="128"/>
+        <field name="valeurBool" column="VALEUR_BOOL" type="boolean"/>
+        <field name="tags" column="TAGS" length="128"/>
+        <field name="ordre" column="ORDRE" type="integer"/>
+        <field name="description" column="DESCRIPTION" length="128" nullable="true"/>
+    </entity>
+</doctrine-mapping>

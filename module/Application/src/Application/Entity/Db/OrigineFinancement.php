@@ -10,6 +10,8 @@ class OrigineFinancement implements ResourceInterface, SearchFilterValueInterfac
 {
     use HistoriqueAwareTrait;
 
+    const CODE_REGION_NORMANDIE = '24';
+
     /** @var int */
     private $id;
     /** @var string */

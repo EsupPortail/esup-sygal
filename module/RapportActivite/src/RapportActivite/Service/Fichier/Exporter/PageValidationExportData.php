@@ -1,0 +1,31 @@
+<?php
+
+namespace RapportActivite\Service\Fichier\Exporter;
+
+use RapportActivite\Entity\Db\RapportActiviteAvis;
+use RapportActivite\Entity\Db\RapportActiviteValidation;
+
+class PageValidationExportData
+{
+    public string $titre;
+    public string $specialite;
+    public string $doctorant;
+
+    public string $etablissement;
+    public string $uniteRecherche;
+    public string $ecoleDoctorale;
+
+    public bool $useCOMUE;
+    public string $logoCOMUE;
+
+    public string $logoEtablissement;
+    public string $logoEcoleDoctorale;
+    public string $logoUniteRecherche;
+
+    public ?string $signatureEcoleDoctorale = null;
+    public ?string $signatureEcoleDoctoraleAnomalie = null;
+
+    public ?RapportActiviteAvis $mostRecentAvis; // NB : est null pour les validations ante-ModuleRapportActivite.
+    public RapportActiviteValidation $validation;
+
+}

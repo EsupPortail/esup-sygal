@@ -1,0 +1,179 @@
+<?php
+
+namespace RapportActivite;
+
+use Application\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
+use Application\View\Renderer\PhpRenderer;
+use RapportActivite\Entity\Db\RapportActivite;
+use RapportActivite\Form\RapportActiviteForm;
+use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
+
+/**
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var RapportActivite[] $rapports
+ * @var RapportActiviteForm $form
+ * @var bool $isTeleversementPossible
+ * @var TypeValidation $typeValidation
+ * @var string $returnUrl
+ *
+ * @see \RapportActivite\Controller\RapportActiviteController::consulterAction()
+ */
+
+$form->prepare();
+$rapportProto = (new RapportActivite())->setThese($these);
+$canAdd = $this->isAllowed($rapportProto, RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_TOUT) || $this->isAllowed($rapportProto, RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN);
+if (!$isTeleversementPossible) {
+    $canAdd = false;
+}
+?>
+
+<?php $this->headTitle($this->translate($title = "Rapports d'activité"))
+    ->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+
+<h1 class="page-header">
+    <?php echo $this->translate($title); ?>
+    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<p class="lead">
+    <strong>Rapports d'activité : <u>selon l'état d'avancement de votre thèse et selon les obligations définies par votre Ecole Doctorale</u>.</strong>
+</p>
+<ul class="lead">
+    <li>
+        <strong>Vous devez rédiger un rapport d'activité annuel qui doit être déposé ci-dessous avant le 30 juin.</strong>.
+        Son dépôt conditionne le cas échéant l'autorisation de réinscription en thèse.
+        <a href="<?php echo $this->url('fichier/telecharger-permanent', ['idPermanent' => 'RAPPORT_ACTIVITE_ANNUEL']) ?>"
+        >Cliquez ici pour télécharger le document.</a>
+    </li>
+    <li>
+        <strong>Vous devez rédiger un rapport d'activité de fin de contrat</strong> au moment de votre soutenance.
+        Dans ce cas, les données indiquées doivent couvrir l'ensemble de la thèse. Il doit être
+        <strong>déposé ci-dessous dans l’application <?php echo $this->appInfos()->nom ?> au maximum 1 mois avant votre date de soutenance.</strong>
+        Son dépôt conditionne votre autorisation de soutenance.
+        <a href="<?php echo $this->url('fichier/telecharger-permanent', ['idPermanent' => 'RAPPORT_ACTIVITE_FINTHESE']) ?>"
+        >Cliquez ici pour télécharger le document.</a>
+    </li>
+</ul>
+<ul class="lead">
+    <li>Complétez le document téléchargé, faites-le signer par vos directions de thèse et de laboratoire ;</li>
+    <li>Scannez le document signé et téléversez-le en version PDF.</li>
+</ul>
+
+<div class="row">
+    <div class="col-md-12">
+
+        <h2>Rapports téléversés</h2>
+
+        <?php if (count($rapports) > 0): ?>
+
+            <?php echo $this->partial('rapport-activite/partial/rapports-table', [
+                'rapports' => $rapports,
+                'typeValidation' => $typeValidation,
+                'returnUrl' => $returnUrl,
+
+                'displayEtablissement' => false,
+                'displayType' => true,
+                'displayDoctorant' => false,
+                'displayDirecteurThese' => false,
+                'displayEcoleDoctorale' => false,
+                'displayUniteRecherche' => false,
+                'displayValidation' => true,
+                'displayAvis' => true,
+            ]) ?>
+
+        <?php else: ?>
+
+            <p>Aucun.</p>
+
+        <?php endif; ?>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-offset-1 col-md-8">
+
+        <?php $ajouterFormVisible = !empty($form->getMessages()); ?>
+        <div id="ajouterDiv">
+            <button id="ajouterBtn" class="btn btn-primary <?php echo $canAdd ? '' : 'disabled' ?>"
+               style="display: <?php echo !$ajouterFormVisible ? 'inherit' : 'none' ?>">
+                <span class="icon icon-plus"></span> Téléverser un rapport</button>
+
+            <div id="ajouterForm" style="display: <?php echo $ajouterFormVisible ? 'inherit' : 'none' ?>">
+                <h3>Formulaire de téléversement</h3>
+
+                <?php echo $this->form()->openTag($form) ?>
+                <div class="row">
+                    <div class="col-md-6">
+                        <?php echo $this->formControlGroup($form->get('estFinal')); ?>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <?php echo $this->formControlGroup($form->get('anneeUniv')) ?>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-7">
+                        <?php
+                        echo $this->formControlGroup($form->get('files'));
+                        echo $this->formControlGroup($form->get('security'));
+                        echo $this->formSubmit($form->get('submit')->setAttributes(['class' => 'btn btn-primary']));
+                        ?>
+                    </div>
+                </div>
+                <?php echo $this->form()->closeTag() ?>
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="#" id="annulerBtn" class="btn btn-danger">Annuler</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    $(function() {
+        // Affichage/masquage du formulaire de dépôt.
+        var $ajouterBtn = $("#ajouterBtn");
+        var $annulerBtn = $("#annulerBtn");
+        var $ajouterForm = $("#ajouterForm");
+        $ajouterBtn.on('click', function() {
+            $ajouterForm.show();
+            $ajouterBtn.hide();
+            return false;
+        });
+        $annulerBtn.on('click', function() {
+            $ajouterForm.hide();
+            $ajouterBtn.show();
+            return false;
+        });
+
+        // Interdiction de la sélection de certaines années universitaires selon qu'elles sont ou non compatibles
+        // avec le type de rapport sélectionné (annuel ou fin de contrat) :
+        // - les <option> ayant la classe CSS 'if-estFinal-equals-0' sont compatibles avec la sélection du type de rapport annuel (estFinal = '0') ;
+        // - celles ayant la classe 'if-estFinal-equals-1' sont compatibles avec la sélection du type '1' (fin de contrat).
+        let anneeUnivClass = '<?php echo RapportActiviteForm::ANNEE_UNIV__HTML_CLASS_ATTRIB__VALUE ?>';
+        let searchedClassPrefix = '<?php echo RapportActiviteForm::ANNEE_UNIV__HTML_CLASS_ATTRIB__VALUE_PREFIX ?>';
+        let $estFinalRadio = $("[name='estFinal']");
+        let $anneeUnivSelect = $("[name='anneeUniv']");
+        $estFinalRadio.on('change', function (event) {
+            let estFinalValue = $(this).val();
+            let searchedClass = searchedClassPrefix + estFinalValue;
+            $anneeUnivSelect.find("option."+anneeUnivClass).each(function(i, option) {
+                let enabled = $(option).hasClass(searchedClass);
+                $(option).attr('disabled', !enabled);
+                if (!enabled && $(option).is(":checked")) {
+                    $anneeUnivSelect.val("");
+                }
+            });
+        });
+    });
+</script>

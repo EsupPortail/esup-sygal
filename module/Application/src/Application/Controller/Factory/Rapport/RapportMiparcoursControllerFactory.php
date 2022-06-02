@@ -58,7 +58,7 @@ class RapportMiparcoursControllerFactory
         $controller->setIndividuService($individuService);
         $controller->setForm($rapportForm);
         $controller->setValidationService($validationService);
-        $controller->setTheseAnneeUnivService($theseAnneeUnivService);
+        $controller->setAnneesUnivs($theseAnneeUnivService);
         $controller->setTypeRapport($typeRapport);
         $controller->setTypeValidation($typeValidation);
 

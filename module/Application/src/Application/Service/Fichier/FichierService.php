@@ -314,7 +314,9 @@ class FichierService extends BaseService
         foreach ($fichiers as $fichier) {
             $filePath = $this->computeDestinationFilePathForFichier($fichier);
             if (! is_readable($filePath)) {
-                throw new FichierServiceException("Impossible d'ajouter le fichier suivant car il n'est pas lisible : " . $filePath);
+                $message = "Impossible d'ajouter le fichier suivant à l'archive '$archiveFilepath' car il n'est pas lisible : " . $filePath;
+                error_log($message);
+                throw new FichierServiceException($message);
             }
             $filePathInArchive = $fichier->getPath();
             $archive->addFile($filePath, $filePathInArchive);

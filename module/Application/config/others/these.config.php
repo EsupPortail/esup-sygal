@@ -7,7 +7,6 @@ use Application\Controller\Factory\TheseControllerFactory;
 use Application\Controller\Factory\TheseObserverControllerFactory;
 use Application\Controller\Factory\TheseRechercheControllerFactory;
 use Application\Controller\Plugin\Url\UrlThesePluginFactory;
-use Application\Controller\Rapport\RapportActiviteController;
 use Application\Controller\Rapport\RapportCsiController;
 use Application\Controller\Rapport\RapportMiparcoursController;
 use Application\Controller\TheseConsoleController;
@@ -970,18 +969,6 @@ return [
                                 'separator' => true,
                             ],
                             //---------------------------------------------------
-                            'rapport-activite' => [
-                                'id' => 'these-rapport-activite',
-                                'label' => "Rapports d'activité",
-                                'order' => 20,
-                                'route' => 'rapport-activite/consulter',
-                                'withtarget' => true,
-                                'paramsInject' => [
-                                    'these',
-                                ],
-                                'resource' => PrivilegeController::getResourceId(RapportActiviteController::class, 'consulter'),
-                                'visible' => 'Assertion\\Rapport',
-                            ],
                             'rapport-csi' => [
                                 'label' => 'Rapports CSI',
                                 'order' => 30,

@@ -221,7 +221,7 @@ class StructureDocumentService {
         return $document;
     }
 
-    public function getContenus(Structure $structure)
+    public function getContenusFichiers(Structure $structure): array
     {
         $documents = $this->getStructuresDocumentsByStructure($structure);
         $contenus = [];
@@ -240,11 +240,15 @@ class StructureDocumentService {
      * @param string $nature_code
      * @param Etablissement|null $etablissement
      * @return string|null
+     * @throws \Application\Service\Fichier\Exception\FichierServiceException Fichier inexistant ou inaccessible sur le serveur
      */
-    public function getContenu(Structure $structure, string $nature_code, ?Etablissement $etablissement = null) {
+    public function getContenuFichier(Structure $structure, string $nature_code, ?Etablissement $etablissement = null): ?string
+    {
         $documents = $this->getStructuresDocumentsByStructure($structure);
         foreach ($documents as $document) {
-            if ($document->getNature()->getCode() === $nature_code AND $document->getEtablissement() === $etablissement) return $this->fichierService->fetchContenuFichier($document->getFichier());
+            if ($document->getNature()->getCode() === $nature_code && $document->getEtablissement() === $etablissement) {
+                return $this->fichierService->fetchContenuFichier($document->getFichier());
+            }
         }
         return null;
     }

@@ -1,6 +1,11 @@
 Journal des modifications
 =========================
 
+4.1.0
+-----
+- Refonte du module 'Rapports d'activité'.
+- Nouveau document téléversable pour une structure : Signature figurant sur la page de validation d'un rapport d'activité.
+
 4.0.6
 -----
 - Retour du logo ESUp-SyGAL dans la barre de menu principal. 

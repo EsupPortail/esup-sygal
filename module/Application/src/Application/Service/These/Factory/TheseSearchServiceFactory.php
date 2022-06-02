@@ -54,7 +54,7 @@ class TheseSearchServiceFactory
         $service->setStructureService($structureService);
         $service->setDomaineScientifiqueService($domaineService);
         $service->setFinancementService($financementService);
-        $service->setTheseAnneeUnivService($theseAnneeUnivService);
+        $service->setAnneesUnivs($theseAnneeUnivService);
 
         return $service;
     }

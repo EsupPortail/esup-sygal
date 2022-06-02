@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @var NatureFichier[] $natures;
- * @var Etablissement[] $etablissements;
+ * @var NatureFichier[] $natures ;
+ * @var Etablissement[] $etablissements ;
  * @var string $action
  */
 
@@ -12,38 +12,37 @@ use Application\Entity\Db\NatureFichier;
 ?>
 
 <form method="post" action="<?php echo $action; ?>">
-    <div class="form-group">
-        <label for="nature" class="form-label">Nature du fichier : </label>
-        <select class="form-control" id="nature" name="nature">
-            <?php foreach ($natures as $nature) : ?>
-                <option value="<?php echo $nature->getId(); ?>"> <?php echo $nature->getLibelle(); ?> </option>
-            <?php endforeach; ?>
-        </select>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-2">
+                <label for="nature" class="form-label">Nature du fichier : </label>
+                <select class="form-control" id="nature" name="nature">
+                    <?php foreach ($natures as $nature) : ?>
+                        <option value="<?php echo $nature->getId(); ?>"> <?php echo $nature->getLibelle(); ?> </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="mb-2">
+                <label for="etablissement" class="form-label">Établissement lié : </label>
+                <select class="form-control" id="etablissement" name="etablissement">
+                    <option>(Aucun)</option>
+                    <?php foreach ($etablissements as $etablissement) : ?>
+                        <option value="<?php echo $etablissement->getId(); ?>"> <?php echo $etablissement->getLibelle(); ?> </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="mb-2">
+                <label for="fichier" class="form-label">Document à téléverser : </label>
+                <input type="file" id="fichier" name="fichier" class="form-control"/>
+            </div>
+
+            <div class="mb-2">
+                <input type="submit" class="btn btn-primary" value="Téléverser">
+            </div>
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="etablissement" class="form-label">Établissement lié : </label>
-        <select class="form-control" id="etablissement" name="etablissement">
-            <option> Aucun </option>
-            <?php foreach ($etablissements as $etablissement) : ?>
-                <option value="<?php echo $etablissement->getId(); ?>"> <?php echo $etablissement->getLibelle(); ?> </option>
-            <?php endforeach; ?>
-        </select>
-    </div>
-
-    <div class="form-group">
-    <input type="file" id="fichier" name="fichier"/>
-    </div>
-
-    <div class="form-group">
-    <input type="submit" class="btn btn-primary action" value="Téléverser">
-    </div>
 </form>
-
-
-<style>
-    input[type='submit'].action {
-        width: 25rem;
-        font-weight: bold;
-    }
-</style>

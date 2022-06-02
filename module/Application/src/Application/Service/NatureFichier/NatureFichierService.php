@@ -5,26 +5,33 @@ namespace Application\Service\NatureFichier;
 use Application\Entity\Db\NatureFichier;
 use Application\Service\BaseService;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\QueryException;
+use RuntimeException;
 
 class NatureFichierService extends BaseService
 {
     /**
      * @return EntityRepository
      */
-    public function getRepository()
+    public function getRepository(): EntityRepository
     {
         return $this->entityManager->getRepository(NatureFichier::class);
     }
 
     /**
-     * @param $code
-     * @return null|NatureFichier
+     * @param array $codes
+     * @return NatureFichier[]
      */
-    public function fetchNatureFichierByCode($code)
+    public function findAllByCodes(array $codes): array
     {
-        /** @var NatureFichier $nature */
-        $nature = $this->getRepository()->findOneBy(['code' => $code]);
+        $qb = $this->getRepository()->createQueryBuilder('nf')
+            ->where((new Expr())->in('nf.code', $codes));
 
-        return $nature;
+        try {
+            return $qb->indexBy('nf', 'nf.code')->getQuery()->useQueryCache(true)->enableResultCache()->getResult();
+        } catch (QueryException $e) {
+            throw new RuntimeException("Erreur dans la requête", null, $e);
+        }
     }
 }

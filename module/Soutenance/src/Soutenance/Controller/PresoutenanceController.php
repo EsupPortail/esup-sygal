@@ -462,8 +462,8 @@ class PresoutenanceController extends AbstractController
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
-        $signature = $this->getStructureDocumentService()->getContenu($these->getEcoleDoctorale()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
-        if ($signature === null) $signature = $this->getStructureDocumentService()->getContenu($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION);
+        $signature = $this->getStructureDocumentService()->getContenuFichier($these->getEcoleDoctorale()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
+        if ($signature === null) $signature = $this->getStructureDocumentService()->getContenuFichier($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION);
 
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
@@ -489,8 +489,8 @@ class PresoutenanceController extends AbstractController
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
-        $signature = $this->getStructureDocumentService()->getContenu($these->getEcoleDoctorale()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
-        if ($signature === null) $signature = $this->getStructureDocumentService()->getContenu($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION);
+        $signature = $this->getStructureDocumentService()->getContenuFichier($these->getEcoleDoctorale()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
+        if ($signature === null) $signature = $this->getStructureDocumentService()->getContenuFichier($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION);
 
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
@@ -517,8 +517,8 @@ class PresoutenanceController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
-        $signature = $this->getStructureDocumentService()->getContenu($these->getEcoleDoctorale()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
-        if ($signature === null) $signature = $this->getStructureDocumentService()->getContenu($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION);
+        $signature = $this->getStructureDocumentService()->getContenuFichier($these->getEcoleDoctorale()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
+        if ($signature === null) $signature = $this->getStructureDocumentService()->getContenuFichier($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION);
 
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 

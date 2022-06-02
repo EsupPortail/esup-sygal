@@ -84,7 +84,7 @@ abstract class StructureConcreteController extends AbstractController
     /**
      * @return ViewModel
      */
-    public function informationAction() : ViewModel
+    public function informationAction(): ViewModel
     {
         $id = $this->params()->fromRoute('structure');
         $structureConcrete = $this->getStructureConcreteService()->getRepository()->findByStructureId($id);

@@ -1489,7 +1489,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @param Individu[] $individusSansMail Liste des individus sans mail, format: "Paul Hochon" => Individu
      * @return array
      */
-    public function getDirecteursTheseEmails(array &$individusSansMail = [])
+    public function getDirecteursTheseEmails(array &$individusSansMail = []): array
     {
         $emails = [];
         /** @var Acteur[] $directeurs */

@@ -242,7 +242,7 @@ $structure = $ecole->getStructure();
     </div>
 
     <div role="tabpanel" class="tab-pane" id="documents">
-        <?php echo $this->partial('partial/documents', ['structure' => $structure, 'contenus' => $contenus]); ?>
+        <?php echo $this->partial('application/structure/partial/documents', ['structure' => $structure, 'contenus' => $contenus]); ?>
     </div>
 </div>
 

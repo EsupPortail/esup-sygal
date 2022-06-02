@@ -1,0 +1,76 @@
+<?php
+
+/**
+ * @var Structure $structure
+ * @var string[] $contenus
+ */
+
+use Application\Entity\Db\Etablissement;
+use Application\Entity\Db\Structure;
+
+?>
+
+<h2> Documents liés à la structure </h2>
+<p>
+    <?php
+    $televerserUrlOptions = ['structure' => $structure->getId()];
+    if ($structure instanceof Etablissement) {
+        $televerserUrlOptions['etablissement'] = false;
+    }
+    ?>
+    <?php /** @see \Application\Controller\StructureController::televerserDocumentAction() */ ?>
+    <a href="<?php echo $this->url('structure/televerser-document', $televerserUrlOptions, [], true); ?>"
+       class="btn btn-primary action ajax-modal" data-event="modification">
+        <span class="icon icon-upload"></span>
+        Téléverser un document
+    </a>
+</p>
+
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Nature du document</th>
+        <?php if (! $structure instanceof Etablissement): ?>
+            <th>Établissement concerné</th>
+        <?php endif ?>
+        <th>Document téléversé</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($structure->getDocuments() as $codeNature => $structureDocuments) : ?>
+        <tr>
+            <th rowspan="<?php echo count($structureDocuments) ?>">
+                <?php $type = ($structureDocuments[0])->getFichier()->getNature(); ?>
+                <h3>
+                    <?php echo $type->getLibelle(); ?>
+                    <span class="badge bg-secondary"><?php echo count($structureDocuments) ?></span>
+                </h3>
+            </th>
+        <?php foreach ($structureDocuments as $document) : ?>
+            <?php if (! $structure instanceof Etablissement): ?>
+                <td>
+                    <?php echo($document->getEtablissement() ?: "(Aucun)"); ?>
+                </td>
+            <?php endif ?>
+            <td>
+                <img class="signature" src="data:image/png;base64,<?php echo base64_encode($contenus[$document->getId()]); ?>"/>
+
+                <?php /** @see \Application\Controller\StructureController::supprimerDocumentAction() */ ?>
+                <a href="<?php echo $this->url('structure/supprimer-document', ['structure' => $structure->getId(), 'document' => $document->getId()], [], true); ?>">
+                        <span class="icon icon-delete iconly float-end" style="color:darkred;" data-toggle="confirmationx"
+                              title="Supprimer le document"></span>
+                </a>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+
+<style>
+    img.signature {
+        max-width: 250px;
+        max-height: 100px;
+    }
+</style>

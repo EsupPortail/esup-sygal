@@ -3,6 +3,9 @@
 namespace Application\Entity\Db\Interfaces;
 
 use Application\Entity\Db\TypeValidation;
+use RapportActivite\Controller\Recherche\RapportActiviteRechercheController;
+use RapportActivite\Service\Search\RapportActiviteSearchService;
+use RapportActivite\Service\Validation\RapportActiviteValidationService;
 
 trait TypeValidationAwareTrait
 {
