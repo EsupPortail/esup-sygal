@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+4.1.1
+-----
+- Module Rapports d'activité : corrections cosmétiques.
+
 4.1.0
 -----
 - Refonte du module 'Rapports d'activité'.

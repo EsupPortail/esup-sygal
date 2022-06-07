@@ -263,9 +263,10 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
                                 <strong><?php echo $avis->getAvisValeur()->getValeur() ?></strong>
 
                                 <?php if ($avisComplemsToHtml = $avis->getAvisComplemsToHtml()): ?>
-                                    (<a type="button" class="card-link" data-bs-toggle="modal" data-bs-target="#avisComplemsModal">
-                                        <span class="fas fa-glasses" title="Voir les détails de la validation"></span>
-                                    </a>)
+                                    <br>
+                                    <a type="button" class="card-link text-sm" data-bs-toggle="modal" data-bs-target="#avisComplemsModal">
+                                        <span class="fas fa-glasses" title="Voir les détails de la validation"></span> Détails
+                                    </a>
                                 <?php endif ?>
                             </p>
                             <div class="log-full-content d-none">
