@@ -3,7 +3,10 @@ Journal des modifications
 
 4.1.1
 -----
+- Rapports d'activité de fin de contrat : aucun avis Dir/UR nécessaire dans le rapport lui-meme donc on écarte les 
+  compléments qui génèreraient une case à cocher permettant de signaler une absence d'avis.
 - Module Rapports d'activité : corrections cosmétiques.
+- [FIX] Passage à unicaen/db-import 5.1.2 pour corriger le plantage lors de la création d'une structure.
 
 4.1.0
 -----
