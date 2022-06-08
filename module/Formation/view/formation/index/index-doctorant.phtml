@@ -18,6 +18,7 @@ use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
 use Formation\Provider\Privilege\EnquetePrivileges;
 use Formation\Provider\Privilege\InscriptionPrivileges;
+use Formation\Provider\Privilege\ModulePrivileges;
 
 $this->headTitle('Mes formations');
 
@@ -40,6 +41,8 @@ $canSupprimerInscription = $this->isAllowed(InscriptionPrivileges::getResourceId
 $canConvocationInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_CONVOCATION));
 $canRepondreEnquete = $this->isAllowed(EnquetePrivileges::getResourceId(EnquetePrivileges::ENQUETE_REPONSE_REPONDRE));
 $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_ATTESTATION));
+
+$canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_CATALOGUE));
 ?>
 
 <h1 class="page-header">
@@ -56,6 +59,20 @@ $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResource
         &rightarrow; <a href="<?php echo $this->url('formation/index-doctorant', ['doctorant' => 38108], [], true); ?>">Cas du cobaye</a>
     </p>
 <?php else : ?>
+
+<div class="row">
+    <div class="col-md-9">
+        <p class="lead"><strong>Bienvenue sur la page de gestion de vos formations</strong>. Sur cette page, vous pouvez : consulter les formations ouvertes, vos inscriptions et récupérer vos attestions et convocations.</p>
+    </div>
+    <div class="col-md-3">
+        <?php if ($canCatalogueAfficher) : ?>
+            <?php /** @see \Formation\Controller\ModuleController::catalogueAction() */?>
+            <a href="<?php echo $this->url('formation/catalogue',[],[], true); ?>" class="btn btn-primary" target="_blank">
+                <span class="icon icon-voir"> Accéder au catalogue des formations</span>
+            </a>
+        <?php endif; ?>
+    </div>
+</div>
 
 <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" class="nav-item active">

@@ -2,6 +2,7 @@
 
 namespace Formation;
 
+use Formation\Controller\FormationController;
 use Formation\Controller\ModuleController;
 use Formation\Controller\ModuleControllerFactory;
 use Formation\Form\Module\ModuleForm;
@@ -25,7 +26,7 @@ return [
                         'catalogue',
                     ],
                     'privileges' => [
-                        ModulePrivileges::MODULE_INDEX,
+                        ModulePrivileges::MODULE_CATALOGUE,
                     ],
                 ],
                 [
@@ -106,7 +107,7 @@ return [
                                 'order'    => 100,
                                 'pages' => [
                                     'afficher' => [
-                                        'label'    => "Affichage d'une formation",
+                                        'label'    => "Affichage d'un module de formation",
                                         'route'    => 'formation/module/afficher',
                                         'resource' => PrivilegeController::getResourceId(ModuleController::class, 'afficher') ,
                                         'order'    => 100,

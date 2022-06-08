@@ -12,4 +12,5 @@ class ModulePrivileges extends Privileges {
     const MODULE_MODIFIER   = 'formation_module-modifier';
     const MODULE_HISTORISER = 'formation_module-historiser';
     const MODULE_SUPPRIMER  = 'formation_module-supprimer';
+    const MODULE_CATALOGUE  = 'formation_module-catalogue';
 }

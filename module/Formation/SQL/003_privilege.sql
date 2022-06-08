@@ -9,6 +9,7 @@ INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (nextval('
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (nextval('privilege_id_seq'), currval('categorie_privilege_id_seq'), 'modifier', 'Modifier un module de formation', 4);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (nextval('privilege_id_seq'), currval('categorie_privilege_id_seq'), 'historiser', 'Historiser/Restaurer un module de formation', 5);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (nextval('privilege_id_seq'), currval('categorie_privilege_id_seq'), 'supprimer', 'Supprimer un module de formation', 6);
+INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (nextval('privilege_id_seq'), currval('categorie_privilege_id_seq'), 'catalogue', 'Accéder au catalogue des formations', 7);
 
 INSERT INTO CATEGORIE_PRIVILEGE (ID, CODE, LIBELLE, ORDRE) VALUES (nextval('categorie_privilege_id_seq'), 'formation_formations', 'Gestion des formations', 3150);
 INSERT INTO PRIVILEGE (ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE) VALUES (nextval('privilege_id_seq'), currval('categorie_privilege_id_seq'), 'index', 'Accès à l''index des formations', 1);
