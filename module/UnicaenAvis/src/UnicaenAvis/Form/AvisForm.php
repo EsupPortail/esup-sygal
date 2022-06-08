@@ -60,6 +60,21 @@ class AvisForm extends Form implements InputFilterProviderInterface
     protected array $avisTypeValeurComplemsElements = [];
 
     /**
+     * @var callable|null
+     */
+    private $avisTypeValeurComplemsFilter = null;
+
+    /**
+     * Spécifie le filtre à utiliser dans un {@see array_filter()} pour filtrer les éventuels compléments d'avis.
+     *
+     * @param callable $filter
+     */
+    public function setAvisTypeValeurComplemsFilter(callable $filter)
+    {
+        $this->avisTypeValeurComplemsFilter = $filter;
+    }
+
+    /**
      * @param Avis $object
      * @param int $flags
      * @return $this
@@ -110,9 +125,12 @@ class AvisForm extends Form implements InputFilterProviderInterface
         // Création des éléments pour les éventuels compléments demandés
         foreach ($this->avisTypeValeurs as $avisTypeValeur) {
             $order = 100;
-            $avisTypeValeurs = $avisTypeValeur->getAvisTypeValeurComplems()->toArray();
-            usort($avisTypeValeurs, [AvisTypeValeurComplem::class, 'sorterByOrdre']);
-            foreach ($avisTypeValeurs as $avisTypeValeurComplem) {
+            $avisTypeValeurComplems = $avisTypeValeur->getAvisTypeValeurComplems()->toArray();
+            if ($this->avisTypeValeurComplemsFilter !== null) {
+                $avisTypeValeurComplems = array_filter($avisTypeValeurComplems, $this->avisTypeValeurComplemsFilter);
+            }
+            usort($avisTypeValeurComplems, [AvisTypeValeurComplem::class, 'sorterByOrdre']);
+            foreach ($avisTypeValeurComplems as $avisTypeValeurComplem) {
                 $this->addElementsForAvisTypeValeurComplem($avisTypeValeurComplem, $order);
                 $order++;
             }

@@ -72,10 +72,10 @@ class RapportActiviteTeleversementRule implements RuleInterface
     public function setRapportsTeleverses(array $rapportsTeleverses): self
     {
         $this->rapportsTeleversesAnnuels = array_filter($rapportsTeleverses, function(RapportActivite $rapport) {
-            return $rapport->estFinal() === false;
+            return $rapport->estFinContrat() === false;
         });
         $this->rapportsTeleversesFinContrat = array_filter($rapportsTeleverses, function(RapportActivite $rapport) {
-            return $rapport->estFinal() === true;
+            return $rapport->estFinContrat() === true;
         });
 
         return $this;
@@ -163,7 +163,7 @@ class RapportActiviteTeleversementRule implements RuleInterface
 
     public function canTeleverserRapport(RapportActivite $rapport): bool
     {
-        if ($rapport->estFinal()) {
+        if ($rapport->estFinContrat()) {
             return $this->canTeleverserRapportFinContratForAnneeUniv($rapport->getAnneeUniv());
         } else {
             return $this->canTeleverserRapportAnnuelForAnneeUniv($rapport->getAnneeUniv());

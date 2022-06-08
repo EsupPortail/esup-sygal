@@ -123,7 +123,7 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
     /**
      * @return bool
      */
-    public function estFinal(): bool
+    public function estFinContrat(): bool
     {
         return $this->estFinal;
     }

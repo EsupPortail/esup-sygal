@@ -8,6 +8,7 @@ use Application\Filter\IdifyFilterAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
+use Closure;
 use Doctrine\ORM\NoResultException;
 use Laminas\Http\Response;
 use RapportActivite\Entity\Db\RapportActivite;
@@ -20,6 +21,7 @@ use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use RapportActivite\Service\Validation\RapportActiviteValidationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAvis\Entity\Db\Avis;
+use UnicaenAvis\Entity\Db\AvisTypeValeurComplem;
 use UnicaenAvis\Form\AvisForm;
 
 class RapportActiviteAvisController extends AbstractController
@@ -90,6 +92,9 @@ class RapportActiviteAvisController extends AbstractController
         $avis = new Avis();
         $avis->setAvisType($avisTypeDispo);
 
+        if ($filter = $this->getAvisTypeValeurComplemsFilter($rapportActivite)) {
+            $this->form->setAvisTypeValeurComplemsFilter($filter);
+        }
         $this->form->bind($avis);
         $this->form->setAttribute('action', $this->url()->fromRoute(
             'rapport-activite/avis/ajouter', [], ['query' => $this->params()->fromQuery()], true
@@ -111,7 +116,7 @@ class RapportActiviteAvisController extends AbstractController
                 $this->flashMessengerAddMessagesFromEvent($event);
                 $this->flashMessengerAddMessageIfRedirect($rapportActiviteAvis);
 
-                if (! $request->isXmlHttpRequest()) {
+                if (!$request->isXmlHttpRequest()) {
                     if ($redirectUrl = $this->params()->fromQuery('redirect')) {
                         return $this->redirect()->toUrl($redirectUrl);
                     }
@@ -125,6 +130,22 @@ class RapportActiviteAvisController extends AbstractController
             'form' => $this->form,
             'title' => "Nouvel avis à propos d'un rapport",
         ];
+    }
+
+    public function getAvisTypeValeurComplemsFilter(RapportActivite $rapportActivite): ?Closure
+    {
+        if (! $rapportActivite->estFinContrat()) {
+            return null;
+        }
+
+        // Rapports de fin de contrat : aucun avis Dir/UR attendu donc on écarte les compléments qui génèreraient une
+        // case à cocher permettant de signaler une absence d'avis.
+        return function (AvisTypeValeurComplem $avisTypeValeurComplem) {
+            return !in_array($avisTypeValeurComplem->getCode(), [
+                RapportActiviteAvis::AVIS_RAPPORT_ACTIVITE_GEST__AVIS_RAPPORT_ACTIVITE_VALEUR_INCOMPLET__MANQUE_AVIS_DIRECTION_THESE,
+                RapportActiviteAvis::AVIS_RAPPORT_ACTIVITE_GEST__AVIS_RAPPORT_ACTIVITE_VALEUR_INCOMPLET__MANQUE_AVIS_DIRECTION_UR,
+            ]);
+        };
     }
 
     public function modifierAction()
@@ -148,7 +169,7 @@ class RapportActiviteAvisController extends AbstractController
                 $this->flashMessengerAddMessagesFromEvent($event);
                 $this->flashMessengerAddMessageIfRedirect($rapportActiviteAvis);
 
-                if (! $request->isXmlHttpRequest()) {
+                if (!$request->isXmlHttpRequest()) {
                     if ($redirectUrl = $this->params()->fromQuery('redirect')) {
                         return $this->redirect()->toUrl($redirectUrl);
                     }
@@ -202,9 +223,9 @@ class RapportActiviteAvisController extends AbstractController
             );
             if ($redirectUrl !== $theseRapportActivitePageUrl) {
                 $this->flashMessenger()->addInfoMessage(sprintf(
-                    'Si besoin, vous pouvez aller sur la <a href="%s">page des rapports d\'activité de %s.</a>',
-                    $theseRapportActivitePageUrl,
-                    $rapportActiviteAvis->getRapportActivite()->getThese()->getDoctorant())
+                        'Si besoin, vous pouvez aller sur la <a href="%s">page des rapports d\'activité de %s.</a>',
+                        $theseRapportActivitePageUrl,
+                        $rapportActiviteAvis->getRapportActivite()->getThese()->getDoctorant())
                 );
             }
         }

@@ -57,7 +57,7 @@ class RapportActiviteNomFichierFormatter extends AbstractNomFichierFormatter
     protected function type(): string
     {
         if ($this->rapport->getTypeRapport()->estRapportActivite()) {
-            return $this->rapport->getTypeRapport()->getCode() . ($this->rapport->estFinal() ? '_FINCONTRAT' : '_ANNUEL');
+            return $this->rapport->getTypeRapport()->getCode() . ($this->rapport->estFinContrat() ? '_FINCONTRAT' : '_ANNUEL');
         } else {
             return $this->rapport->getTypeRapport()->getCode();
         }

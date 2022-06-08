@@ -1,6 +1,6 @@
 <?php
 /**
- * @var \RapportActivite\Entity\Db\RapportActivite $rapportActivite
+ * @var \RapportActivite\Entity\Db\RapportActivite $rapport
  * @var \UnicaenAvis\Form\AvisForm $form
  * @var string $title
  */
@@ -10,13 +10,15 @@ $form->prepare();
 
 <?php $this->headTitle($this->translate($title))
     ->prepend("Nouvel avis")
-    ->prepend($rapportActivite->getThese()->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+    ->prepend($rapport->getThese()->getDoctorant()->getIndividu()->getNomUsuel()) ?>
 
 <h1 class="page-header"><?php echo $title ?></h1>
 
 <dl>
     <dt>Rapport :</dt>
-    <dd><?php echo $rapportActivite ?></dd>
+    <dd><?php echo $rapport ?></dd>
+    <dt>Type de rapport :</dt>
+    <dd><?php echo $rapport->getTypeRapportToString() ?></dd>
 </dl>
 
 <div class="row">
