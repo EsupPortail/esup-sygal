@@ -67,9 +67,9 @@ class AvisForm extends Form implements InputFilterProviderInterface
     /**
      * Spécifie le filtre à utiliser dans un {@see array_filter()} pour filtrer les éventuels compléments d'avis.
      *
-     * @param callable $filter
+     * @param callable|null $filter
      */
-    public function setAvisTypeValeurComplemsFilter(callable $filter)
+    public function setAvisTypeValeurComplemsFilter(callable $filter = null)
     {
         $this->avisTypeValeurComplemsFilter = $filter;
     }

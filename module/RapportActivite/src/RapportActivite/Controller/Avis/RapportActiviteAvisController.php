@@ -92,9 +92,7 @@ class RapportActiviteAvisController extends AbstractController
         $avis = new Avis();
         $avis->setAvisType($avisTypeDispo);
 
-        if ($filter = $this->getAvisTypeValeurComplemsFilter($rapportActivite)) {
-            $this->form->setAvisTypeValeurComplemsFilter($filter);
-        }
+        $this->form->setAvisTypeValeurComplemsFilter($this->getAvisTypeValeurComplemsFilter($rapportActivite));
         $this->form->bind($avis);
         $this->form->setAttribute('action', $this->url()->fromRoute(
             'rapport-activite/avis/ajouter', [], ['query' => $this->params()->fromQuery()], true
@@ -151,8 +149,10 @@ class RapportActiviteAvisController extends AbstractController
     public function modifierAction()
     {
         $rapportActiviteAvis = $this->requestedRapportAvis();
-        $these = $rapportActiviteAvis->getRapportActivite()->getThese();
+        $rapportActivite = $rapportActiviteAvis->getRapportActivite();
+        $these = $rapportActivite->getThese();
 
+        $this->form->setAvisTypeValeurComplemsFilter($this->getAvisTypeValeurComplemsFilter($rapportActivite));
         $this->form->bind($rapportActiviteAvis->getAvis());
         $this->form->setAttribute('action', $this->url()->fromRoute(
             'rapport-activite/avis/modifier', [], ['query' => $this->params()->fromQuery()], true
@@ -179,7 +179,7 @@ class RapportActiviteAvisController extends AbstractController
         }
 
         return [
-            'rapport' => $rapportActiviteAvis->getRapportActivite(),
+            'rapport' => $rapportActivite,
             'form' => $this->form,
             'title' => "Modification d'un avis à propos d'un rapport",
         ];
