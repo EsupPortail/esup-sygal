@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+4.1.2
+-----
+- [FIX] Plantage du formulaire de création d'un avis sur un rapport d'activité.
+
 4.1.1
 -----
 - Rapports d'activité de fin de contrat : aucun avis Dir/UR nécessaire dans le rapport lui-meme donc on écarte les 
