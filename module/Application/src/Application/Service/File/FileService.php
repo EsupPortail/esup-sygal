@@ -157,7 +157,7 @@ class FileService
      * @param string $inputFilePath
      * @return string Contenu binaire du fichier PNG généré
      */
-    public function generateFirstPagePreview($inputFilePath)
+    public function generateFirstPagePreviewPngImageFromPdf(string $inputFilePath): string
     {
         if (mime_content_type($inputFilePath) !== Fichier::MIME_TYPE_PDF) {
             return \UnicaenApp\Util::createImageWithText("Erreur: Seul le format |de fichier PDF est accepté", 200, 100);
@@ -182,9 +182,7 @@ class FileService
                 "Erreur rencontrée lors de la création de l'aperçu", null, $ie);
         }
 
-        $content = file_get_contents($outputFilePath);
-
-        return $content;
+        return file_get_contents($outputFilePath);
     }
 
     public function computeDirectoryPathForInformation() {
@@ -194,18 +192,19 @@ class FileService
 
     /**
      * @param Response $response
-     * @param string   $fileContent
+     * @param string $fileContent
+     * @param string $mimeType
      * @param int|null $cacheMaxAge En secondes, ex: 60*60*24 = 86400 s = 1 jour
      * @return Response
      */
-    public function createResponseForFileContent(Response $response, $fileContent, $cacheMaxAge = null)
+    public function createResponseForFileContent(Response $response, string $fileContent, string $mimeType, ?int $cacheMaxAge = null): Response
     {
         $response->setContent($fileContent);
 
         $headers = $response->getHeaders();
         $headers
             ->addHeaderLine('Content-Transfer-Encoding', "binary")
-            ->addHeaderLine('Content-Type', "image/png")
+            ->addHeaderLine('Content-Type', $mimeType)
             ->addHeaderLine('Content-length', strlen($fileContent));
 
         if ($cacheMaxAge === null) {
