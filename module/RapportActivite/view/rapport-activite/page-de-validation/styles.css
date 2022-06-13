@@ -107,7 +107,7 @@ div.logo-comue {
     text-align: center;
 }
 .signature-ecole-doctorale {
-    width: 4cm !important;
+    max-width: 5cm;
     margin: auto
 }
 

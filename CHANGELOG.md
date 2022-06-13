@@ -1,6 +1,11 @@
 Journal des modifications
 =========================
 
+4.1.3
+-----
+- [FIX] Balises <img> des logos/signatures dont la src est le contenu binaire : le format était systématiquement 
+  'image/png' ce qui posait problème si l'image était d'un autre format.
+
 4.1.2
 -----
 - [FIX] Plantage du formulaire de création d'un avis sur un rapport d'activité.

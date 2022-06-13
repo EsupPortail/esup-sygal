@@ -446,7 +446,7 @@ class FichierTheseController extends AbstractController
         /** @var \Laminas\Http\Response $response */
         $response = $this->getResponse();
 
-        return $this->fichierTheseService->createResponseForFileContent($response, $content);
+        return $this->fichierTheseService->createResponseForFileContent($response, $content, "image/png");
     }
 
     /**

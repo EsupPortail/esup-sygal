@@ -53,7 +53,7 @@ use Application\Entity\Db\Structure;
                 </td>
             <?php endif ?>
             <td>
-                <img class="signature" src="data:image/png;base64,<?php echo base64_encode($contenus[$document->getId()]); ?>"/>
+                <img class="signature" src="data:image/*;base64,<?php echo base64_encode($contenus[$document->getId()]); ?>"/>
 
                 <?php /** @see \Application\Controller\StructureController::supprimerDocumentAction() */ ?>
                 <a href="<?php echo $this->url('structure/supprimer-document', ['structure' => $structure->getId(), 'document' => $document->getId()], [], true); ?>">
