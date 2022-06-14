@@ -1,6 +1,17 @@
 Journal des modifications
 =========================
 
+4.2.0
+-----
+- Nouveau module Individu : recherche, création (à partir de rien ou d'un utilisateur), modification.
+- Possibilité de renseigner l'identifiant HAL d'une structure (nécessaire pour l'envoi vers STEP/STAR).
+- Import du code de la discipline SISE de la thèse.
+- Extraction d'un module Structure.
+- [FIX] Plantage de la page détails d'une structure si fichier inexistant sur le serveur (typique en preprod).
+- [FIX] Page des détails d'une structure : retour au bon onglet en cas d'action (ex : dépôt d'un document).
+- [FIX] Chevauchement des résumés sur la page de signalement d'une thèse.
+- [FIX] Correction du bug de la signature non trouvée pour la génération de la convocation de soutenance.
+
 4.1.3
 -----
 - [FIX] Balises <img> des logos/signatures dont la src est le contenu binaire : le format était systématiquement 
