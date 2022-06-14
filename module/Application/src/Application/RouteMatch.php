@@ -2,14 +2,14 @@
 
 namespace Application;
 
-use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\Structure;
+use Structure\Entity\Db\Structure;
 use Application\Entity\Db\These;
-use Application\Entity\Db\UniteRecherche;
+use Structure\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
 use Doctorant\Entity\Db\Doctorant;
 use Doctrine\ORM\EntityRepository;

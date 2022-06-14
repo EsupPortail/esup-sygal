@@ -4,7 +4,7 @@ namespace Application\Service\Rapport\Avis;
 
 use Application\Entity\Db\RapportAvis;
 use Application\Service\BaseService;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;

@@ -20,7 +20,7 @@
             </join-columns>
         </many-to-one>
 
-        <many-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement" fetch="LAZY">
+        <many-to-one field="etablissement" target-entity="Structure\Entity\Db\Etablissement" fetch="LAZY">
             <join-columns>
                 <join-column name="ETABLISSEMENT_ID" referenced-column-name="ID"/>
             </join-columns>

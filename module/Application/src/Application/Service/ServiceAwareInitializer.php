@@ -2,13 +2,13 @@
 
 namespace Application\Service;
 
-use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
-use Application\Service\UniteRecherche\UniteRechercheService;
+use Structure\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
 use Application\Service\VersionFichier\VersionFichierService;

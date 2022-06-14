@@ -4,9 +4,9 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Role;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
-use Application\Service\Structure\StructureServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\RuntimeException;

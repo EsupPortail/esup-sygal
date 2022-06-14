@@ -2,14 +2,14 @@
 
 namespace Application\Controller;
 
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Variable;
 use Application\Entity\UserWrapper;
 use Application\Exception\DomainException;
 use Application\Service\Actualite\ActualiteServiceAwareTrait;
-use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Information\Service\InformationServiceAwareTrait;

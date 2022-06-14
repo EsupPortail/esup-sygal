@@ -3,16 +3,16 @@
 namespace Application\Service\Rapport;
 
 use Application\Entity\Db\TypeValidation;
-use Application\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
-use Application\Search\Etablissement\EtablissementSearchFilter;
+use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
+use Structure\Search\Etablissement\EtablissementSearchFilter;
 use RapportActivite\Search\AnneeRapportActiviteSearchFilter;
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\Financement\FinancementService;
 use Application\Search\Financement\OrigineFinancementSearchFilter;
-use Application\Service\Structure\StructureService;
+use Structure\Service\Structure\StructureService;
 use Application\Service\These\TheseSearchService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
-use Application\Search\UniteRecherche\UniteRechercheSearchFilter;
+use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
 use Application\Service\Validation\ValidationService;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;

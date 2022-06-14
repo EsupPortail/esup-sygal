@@ -53,7 +53,7 @@
         <one-to-many field="anneesUniv1ereInscription" target-entity="Application\Entity\Db\VTheseAnneeUnivFirst" mapped-by="these"/>
         <one-to-many field="rapports" target-entity="Application\Entity\Db\Rapport" mapped-by="these"/>
 
-        <many-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement" fetch="LAZY">
+        <many-to-one field="etablissement" target-entity="Structure\Entity\Db\Etablissement" fetch="LAZY">
             <join-columns>
                 <join-column name="ETABLISSEMENT_ID" referenced-column-name="ID"/>
             </join-columns>
@@ -65,12 +65,12 @@
             </join-columns>
         </many-to-one>
 
-        <many-to-one field="ecoleDoctorale" target-entity="Application\Entity\Db\EcoleDoctorale">
+        <many-to-one field="ecoleDoctorale" target-entity="Structure\Entity\Db\EcoleDoctorale">
             <join-columns>
                 <join-column name="ECOLE_DOCT_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="uniteRecherche" target-entity="Application\Entity\Db\UniteRecherche">
+        <many-to-one field="uniteRecherche" target-entity="Structure\Entity\Db\UniteRecherche">
             <join-columns>
                 <join-column name="UNITE_RECH_ID" referenced-column-name="ID"/>
             </join-columns>

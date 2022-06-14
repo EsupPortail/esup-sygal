@@ -3,7 +3,7 @@
 namespace Soutenance\Service\Proposition;
 
 use Application\Service\Acteur\ActeurService;
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\File\FileService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\UserContextService;

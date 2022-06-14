@@ -2,7 +2,7 @@
 
 namespace Doctorant\Entity\Db;
 
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Doctorant\Entity\Db\Interfaces\DoctorantInterface;
 use Application\Entity\Db\Interfaces\IndividuAwareInterface;
@@ -48,7 +48,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     private $theses;
 
     /**
-     * @var \Application\Entity\Db\Etablissement
+     * @var \Structure\Entity\Db\Etablissement
      */
     protected $etablissement;
 
@@ -58,7 +58,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     private $ine;
 
     /**
-     * @return \Application\Entity\Db\Etablissement
+     * @return \Structure\Entity\Db\Etablissement
      */
     public function getEtablissement()
     {
@@ -66,7 +66,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     }
 
     /**
-     * @param \Application\Entity\Db\Etablissement $etablissement
+     * @param \Structure\Entity\Db\Etablissement $etablissement
      */
     public function setEtablissement(Etablissement $etablissement)
     {

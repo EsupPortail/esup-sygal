@@ -4,16 +4,16 @@ namespace Application\Service\ListeDiffusion\Handler;
 
 use Application\Entity\Db\Acteur;
 use Doctorant\Entity\Db\Doctorant;
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Doctorant\Service\DoctorantServiceAwareTrait;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressParserResult;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressParserResultWithED;
 use Application\Service\Role\RoleServiceAwareTrait;
-use Application\Service\Structure\StructureServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
 use BadMethodCallException;
 
 class ListeDiffusionHandler extends ListeDiffusionAbstractHandler

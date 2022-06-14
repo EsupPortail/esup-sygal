@@ -6,6 +6,8 @@ use Application\Constants;
 use Application\Filter\NomCompletFormatter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Faker\Provider\tr_TR\DateTime;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\UniteRecherche;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
@@ -118,7 +120,7 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     private $type;
 
     /**
-     * @var Etablissement|null
+     * @var \Structure\Entity\Db\Etablissement|null
      */
     private $etablissement;
 

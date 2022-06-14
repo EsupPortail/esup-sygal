@@ -3,19 +3,19 @@
 namespace Application\Controller;
 
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\These;
-use Application\Entity\Db\UniteRecherche;
+use Structure\Entity\Db\UniteRecherche;
 use Application\Form\RechercherCoEncadrantFormAwareTrait;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
 use Application\Service\CoEncadrant\Exporter\JustificatifCoencadrements\JustificatifCoencadrementPdfExporter;
-use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
-use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use DateTime;
 use UnicaenApp\View\Model\CsvModel;
 use Laminas\Mvc\Controller\AbstractActionController;

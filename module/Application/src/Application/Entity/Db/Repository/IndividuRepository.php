@@ -2,7 +2,7 @@
 
 namespace Application\Entity\Db\Repository;
 
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;

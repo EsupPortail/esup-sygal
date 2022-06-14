@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="Structure\Entity\Db\Etablissement" table="ETABLISSEMENT" repository-class="\Structure\Entity\Db\Repository\EtablissementRepository">
+
+        <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
+        </id>
+
+        <field name="code" length="64" column="CODE"/>
+        <field name="domaine"   type="string"   length="50"  column="DOMAINE"   nullable="true"/>
+        <field name="estMembre"  type="boolean" column="EST_MEMBRE" nullable="false"/>
+        <field name="estAssocie" type="boolean" column="EST_ASSOCIE" nullable="false"/>
+        <field name="estInscription" type="boolean" column="EST_ETAB_INSCRIPTION" nullable="false"/>
+        <field name="estComue" type="boolean" column="EST_COMUE"/>
+
+        <one-to-many field="theses"         target-entity="Application\Entity\Db\These"     mapped-by="etablissement"/>
+        <one-to-many field="doctorants"     target-entity="Doctorant\Entity\Db\Doctorant" mapped-by="etablissement"/>
+        <one-to-many field="roles"          target-entity="Application\Entity\Db\Role"      mapped-by="etablissement"/>
+
+        <one-to-one field="structure" target-entity="Structure\Entity\Db\Structure">
+            <join-columns>
+                <join-column name="STRUCTURE_ID" referenced-column-name="ID"/>
+            </join-columns>
+            <cascade>
+                <cascade-all/>
+            </cascade>
+        </one-to-one>
+
+        <field name="sourceCode" type="string" column="SOURCE_CODE" length="64" nullable="true"/>
+
+        <many-to-one field="source" target-entity="Application\Entity\Db\Source">
+            <join-columns>
+                <join-column name="SOURCE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+
+        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
+        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+        <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur"  fetch="EXTRA_LAZY">
+            <join-columns>
+                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur"  fetch="EXTRA_LAZY">
+            <join-columns>
+                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur"  fetch="EXTRA_LAZY">
+            <join-columns>
+                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+
+    </entity>
+</doctrine-mapping>

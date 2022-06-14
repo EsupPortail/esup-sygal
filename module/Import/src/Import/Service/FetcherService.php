@@ -2,7 +2,7 @@
 
 namespace Import\Service;
 
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
 use Application\SourceCodeStringHelperAwareTrait;
 use Assert\Assertion;

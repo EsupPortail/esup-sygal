@@ -1,0 +1,267 @@
+<?php
+
+/**
+ * @see \Application\Controller\EcoleDoctoraleController::informationAction()
+ * @var EcoleDoctorale $ecole
+ * @var array          $roleListing     (string => int)
+ * @var IndividuRole[] $individuRoles
+ * @var string         $logoContent
+ * @var Acteur[]       $coencadrants
+ * @var string[]       $contenus
+ */
+
+use Application\Entity\Db\Acteur;
+use Structure\Entity\Db\EcoleDoctorale;
+use Application\Entity\Db\IndividuRole;
+use Structure\Entity\Db\StructureDocument;
+use Structure\Entity\Db\TypeStructure;
+use Application\Provider\Privilege\CoEncadrantPrivileges;
+use Structure\Provider\Privilege\StructurePrivileges;
+
+$this->headTitle("École Doctorale '{$ecole->getStructure()->getCode()}'");
+
+$canEdit = ($this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES))) ||
+    ($this->isAllowed($ecole->getStructure(), StructurePrivileges::STRUCTURE_MODIFICATION_SES_STRUCTURES));
+$canAddRole = $canEdit;
+
+$canCoencadrantAfficher = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_AFFICHER));
+$canCoencadrantExport = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_AFFICHER));
+
+$structure = $ecole->getStructure();
+?>
+
+<h1 class="page-header">
+    École doctorale &laquo; <?php echo $ecole->getLibelle(); ?> &raquo;
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="nav-item active">
+        <a class="nav-link"
+           href="#informations"
+           role="tab"
+           aria-controls="informations"
+           data-bs-toggle="tab"
+
+        >
+            Informations générales
+        </a>
+    </li>
+    <li role="presentation" class="nav-item">
+        <a class="nav-link"
+           href="#membres"
+           role="tab"
+           aria-controls="membres"
+           data-bs-toggle="tab"
+        >
+            Rôles et membres
+        </a>
+    </li>
+    <li role="presentation" class="nav-item">
+        <a class="nav-link"
+           href="#coencadrants"
+           role="tab"
+           aria-controls="coencadrants"
+           data-bs-toggle="tab"
+        >
+            Co-encadrants
+        </a>
+    </li>
+    <li role="presentation" class="nav-item">
+        <a class="nav-link"
+           href="#documents"
+           role="tab"
+           aria-controls="documents"
+           data-bs-toggle="tab"
+        >
+            Documents
+        </a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane in active" id="informations">
+        <h2>
+            Informations générales
+        </h2>
+        <div class="row">
+            <div class="col-md-6">
+                <dl>
+                    <dt> Libelle :</dt>
+                    <dd>    <?php echo $ecole->getLibelle(); ?>     </dd>
+                    <dt> Sigle :</dt>
+                    <dd>    <?php echo $ecole->getSigle(); ?>       </dd>
+                    <dt> Code :</dt>
+                    <dd>    <?php echo $ecole->getStructure()->getCode(); ?>        </dd>
+                    <dt> Id REF :</dt>
+                    <dd>
+                        <?php if ($ecole->getStructure()->getIdRef() !== null AND trim($ecole->getStructure()->getIdRef()) !== "") : ?>
+                            <?php echo $ecole->getStructure()->getIdRef(); ?>
+                        <?php else : ?>
+                            (Non renseigné)
+                        <?php endif; ?>
+                    </dd>
+                    <dt> Thème :</dt>
+                    <dd> <?php echo ($ecole->getTheme())?:"(Non renseigné)"; ?></dd>
+                    <dt> Lien vers l'offre des thèses :</dt>
+                    <dd>
+                        <?php if ($ecole->getOffreThese()) : ?>
+                            <a href="<?php echo $ecole->getOffreThese(); ?>"><?php echo $ecole->getOffreThese(); ?></a>
+                        <?php else: ?>
+                            (Non renseigné)
+                        <?php endif; ?>
+                    <dt> Statut :</dt>
+                    <dd>
+                        <?php if ($ecole->getStructure()->estFermee()) : ?>
+                            <span class="badge bg-secondary" style="background-color:darkred">Structure fermée</span>
+                        <?php else : ?>
+                            <span class="badge bg-secondary" style="background-color:darkgreen">Structure ouverte</span>
+                        <?php endif; ?>
+                    </dd>
+                </dl>
+            </div>
+            <div class="col-md-4">
+                <dl>
+                    <dt>Logo :</dt>
+                    <dd>
+                        <img id="logo" style="max-width: 200px; max-height: 200px; background-color: white;"
+                             src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"/>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        <?php if ($canEdit): ?>
+            <a href="<?php echo $this->url('ecole-doctorale/modifier', ['structure' => $ecole->getStructure()->getId()], [], true); ?>"
+               class="btn btn-primary action"><span class="icon icon-edit"></span> Modifier l'école doctorale
+            </a>
+        <?php endif; ?>
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="membres">
+        <h2>
+            Rôles et membres
+        </h2>
+
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th> Libellé du rôle</th>
+                <th> Effectif</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($roleListing as $libelle => $count): ?>
+                <tr>
+                    <td> <?php echo $libelle; ?> </td>
+                    <td> <?php echo $count; ?> </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th> Dénomination</th>
+                <th> Adresse électronique</th>
+                <th> Établissement</th>
+                <th> Rôle</th>
+                <th> &nbsp; </th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php /** @var IndividuRole $individuRole */ ?>
+            <?php foreach ($individuRoles as $individuRole): ?>
+                <?php
+                    $individu = $individuRole->getIndividu();
+                    $role = $individuRole->getRole();
+                ?>
+                <tr>
+                    <td> <?php echo $individu->getNomComplet(); ?> </td>
+                    <td> <?php echo $individu->getEmail(); ?> </td>
+                    <td> <?php echo $individu->getEtablissement(); ?> </td>
+                    <td> <?php echo $role->getLibelle(); ?> </td>
+                    <td>
+                        <?php if ($canEdit) : ?>
+                            <a href="<?php echo $this->url("individu-compl/gerer", ['individu' => $individu->getId()], [], true); ?>" class="ajax-modal" data-event="modification">
+                                <span class="icon icon-editer" title="Ajouter/Modifier un complément"></span></a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <?php if ($canAddRole && empty($roleListing)): ?>
+            <a href="<?php echo $this->url('structure/generer-roles-defauts', [
+                'id' => $ecole->getStructure()->getId(),
+                'type' => TypeStructure::CODE_ECOLE_DOCTORALE], [], true); ?>"
+               class="btn btn-warning"><span class="fas fa-cog"></span> Générer rôles par défaut</a>
+        <?php endif; ?>
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="coencadrants">
+
+        <h2>
+            Co-encadrants
+            <span class="badge bg-secondary"> <?php echo count($coencadrants); ?> </span>
+        </h2>
+
+        <?php if($canCoencadrantExport) : ?>
+            <?php /** @see \Application\Controller\CoEncadrantController::genererExportCsvAction() */ ?>
+            <a href="<?php echo $this->url('co-encadrant/generer-export-csv', ['structure-type' => 'ecole-doctorale', 'structure-id' => $ecole->getId()], [], true); ?>"
+               class="btn btn-primary"
+            >
+                <span class="icon icon-export"></span>
+                Générer l'export CSV des co-encadrants
+            </a>
+        <?php endif; ?>
+
+        <br/>
+        <br/>
+
+        <ul>
+        <?php foreach ($coencadrants as $coencadrant) : ?>
+            <?php
+                $acteur = $coencadrant['co-encadrant'];
+                $count = count($coencadrant['theses']);
+            ?>
+            <li>
+                <?php echo $acteur->getIndividu()->getPrenom1(); ?>
+                <?php echo $acteur->getIndividu()->getNomUsuel(); ?>
+                (<?php echo $count; ?> co-encadrement<?php if ($count > 1) echo "s"; ?>.)
+                <?php if ($canCoencadrantAfficher) : ?>
+                    <a href="<?php echo $this->url('co-encadrant/historique', ['co-encadrant' => $acteur->getId()],[], true); ?>">
+                        <span class="icon icon-voir" title="Accéder à l'historique de co-encadrement"></span></a>
+                <?php endif; ?>
+            </li>
+        <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="documents">
+        <?php echo $this->partial('structure/structure/partial/documents', ['structure' => $structure, 'contenus' => $contenus]); ?>
+    </div>
+</div>
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+
+        let hash = $(location).attr('hash');
+        let name = hash.substr(1);
+        if (name === undefined || name === "") name = "informations";
+
+        $('a[aria-controls=' + name + ']').tab('show');
+
+        $('.nav-tabs a').on("click", function (e) {
+            // No e.preventDefault() here
+            $(this).tab('show');
+        });
+    });
+</script>

@@ -3,6 +3,7 @@
 namespace Application\Entity\Db;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Structure\Entity\Db\TypeStructure;
 
 class Profil
 {

@@ -2,6 +2,8 @@
 
 namespace Application\Entity\Db;
 
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\UniteRecherche;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 

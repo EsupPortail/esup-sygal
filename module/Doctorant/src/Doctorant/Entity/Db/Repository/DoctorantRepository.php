@@ -4,8 +4,8 @@ namespace Doctorant\Entity\Db\Repository;
 
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Doctorant\Entity\Db\Doctorant;
-use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\These;
 use Doctrine\ORM\NonUniqueResultException;

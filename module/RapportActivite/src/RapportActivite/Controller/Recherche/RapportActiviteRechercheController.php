@@ -11,7 +11,7 @@ use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Fichier\Exception\FichierServiceException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\Structure\StructureServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\Paginator\Paginator as LaminasPaginator;
 use Laminas\View\Model\ViewModel;

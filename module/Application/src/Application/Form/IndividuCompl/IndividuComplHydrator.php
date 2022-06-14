@@ -2,10 +2,10 @@
 
 namespace Application\Form\IndividuCompl;
 
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\IndividuCompl;
-use Application\Entity\Db\UniteRecherche;
+use Structure\Entity\Db\UniteRecherche;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Laminas\Hydrator\HydratorInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;

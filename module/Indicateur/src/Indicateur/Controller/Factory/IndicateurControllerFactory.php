@@ -3,9 +3,9 @@
 namespace Indicateur\Controller\Factory;
 
 use Application\Service\AnomalieService;
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\Individu\IndividuService;
-use Application\Service\Structure\StructureService;
+use Structure\Service\Structure\StructureService;
 use Application\Service\These\TheseService;
 use Indicateur\Controller\IndicateurController;
 use Indicateur\Form\IndicateurForm;

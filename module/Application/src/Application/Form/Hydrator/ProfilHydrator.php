@@ -3,7 +3,7 @@
 namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\Profil;
-use Application\Service\Structure\StructureServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
 use Laminas\Hydrator\HydratorInterface;
 
 class ProfilHydrator implements HydratorInterface

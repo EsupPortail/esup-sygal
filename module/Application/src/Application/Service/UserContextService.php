@@ -11,7 +11,7 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactory;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use UnicaenAuth\Entity\Ldap\People;

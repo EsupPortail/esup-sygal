@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db;
 
+use Structure\Entity\Db\Etablissement;
 use UnicaenDbImport\Entity\Db\AbstractSource;
 
 /**
@@ -10,12 +11,12 @@ use UnicaenDbImport\Entity\Db\AbstractSource;
 class Source extends AbstractSource
 {
     /**
-     * @var Etablissement
+     * @var \Structure\Entity\Db\Etablissement
      */
     protected $etablissement;
 
     /**
-     * @return Etablissement|null
+     * @return \Structure\Entity\Db\Etablissement|null
      */
     public function getEtablissement(): ?Etablissement
     {

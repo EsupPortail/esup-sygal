@@ -2,7 +2,7 @@
 
 namespace Application\Service\Individu;
 
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\Repository\IndividuRepository;
 use Application\Entity\Db\Utilisateur;

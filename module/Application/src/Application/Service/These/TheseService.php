@@ -20,7 +20,7 @@ use Application\Rule\SuppressionAttestationsRequiseRule;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\AuthorizeServiceAwareTrait;
 use Application\Service\BaseService;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\FichierThese\MembreData;
 use Application\Service\FichierThese\PdcData;

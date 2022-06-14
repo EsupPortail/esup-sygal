@@ -2,8 +2,8 @@
 
 namespace Application\Service\Notification;
 
-use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Application\Service\UniteRecherche\UniteRechercheService;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Variable\VariableService;
 use Interop\Container\ContainerInterface;
 use UnicaenApp\Options\ModuleOptions;

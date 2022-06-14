@@ -9,7 +9,7 @@ use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
-use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Laminas\Form\Form;

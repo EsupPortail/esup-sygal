@@ -2,21 +2,21 @@
 
 namespace Application\Controller;
 
-use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\ListeDiffusion;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\TypeStructure;
-use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Entity\Db\TypeStructure;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressGenerator;
 use Application\Service\ListeDiffusion\ListeDiffusionServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
-use Application\Service\Structure\StructureServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
 use Doctrine\ORM\ORMException;
 use InvalidArgumentException;
 use SplObjectStorage;

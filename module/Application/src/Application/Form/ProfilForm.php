@@ -2,7 +2,7 @@
 
 namespace Application\Form;
 
-use Application\Entity\Db\TypeStructure;
+use Structure\Entity\Db\TypeStructure;
 use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Text;

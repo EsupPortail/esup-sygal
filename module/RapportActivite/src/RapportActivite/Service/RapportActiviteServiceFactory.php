@@ -2,12 +2,12 @@
 
 namespace RapportActivite\Service;
 
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\Fichier\FichierService;
 use Application\Service\File\FileService;
 use Application\Service\NatureFichier\NatureFichierService;
 use Application\Service\Notification\NotifierService;
-use Application\Service\StructureDocument\StructureDocumentService;
+use Structure\Service\StructureDocument\StructureDocumentService;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
 use Application\Service\VersionFichier\VersionFichierService;
 use Psr\Container\ContainerInterface;

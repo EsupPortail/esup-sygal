@@ -6,7 +6,7 @@ use Application\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactoryAwareTrait;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;

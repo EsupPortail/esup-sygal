@@ -4,7 +4,7 @@ namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\Individu;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Profil;
@@ -16,7 +16,7 @@ use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
-use Application\Service\StructureDocument\StructureDocumentServiceAwareTrait;
+use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
