@@ -11,7 +11,7 @@ use Formation\Provider\Privilege\ModulePrivileges;
  * @var Module $module
  */
 
-$pageTitle = 'Affichage du module : ' . $module->getLibelle();
+$pageTitle = '' . $module->getLibelle();
 $this->headTitle($pageTitle);
 
 $canIndexModule      = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_INDEX));

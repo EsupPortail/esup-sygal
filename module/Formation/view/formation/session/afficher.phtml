@@ -24,7 +24,7 @@ usort($seances, function(Seance $a, Seance $b) { return $a->getDebut() > $b->get
 $formateurs = $session->getFormateurs()->toArray();
 usort($formateurs, function (Formateur $a, Formateur $b) { return $a->getIndividu()->getNomComplet() > $b->getIndividu()->getNomComplet();});
 
-$pageTitle = 'Affichage de la Session : ' . $formation->getLibelle() . ' #'.$session->getIndex();
+$pageTitle = '' . $formation->getLibelle() . ' #'.$session->getIndex();
 $this->headTitle($pageTitle);
 
 $canAfficherFormation   = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_AFFICHER));

@@ -12,7 +12,7 @@ use Formation\Provider\Privilege\SessionPrivileges;
  * @var Formation $formation
  */
 
-$pageTitle = 'Affichage de la formation : ' . $formation->getLibelle();
+$pageTitle = '' . $formation->getLibelle();
 $this->headTitle($pageTitle);
 
 $canAfficherModule      = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_AFFICHER));
