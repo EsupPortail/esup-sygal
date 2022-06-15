@@ -51,8 +51,8 @@ services:
       - sygalnet
 
   sygal-import-ws:
-    image: registre.unicaen.fr:5000/sygal-import-ws-image-php7.0
-    container_name: sygal-import-ws-container-php7.0
+    image: registre.unicaen.fr:5000/sygal-import-ws-image-php7.4
+    container_name: sygal-import-ws-container-php7.4
     environment:
       - http_proxy
       - https_proxy
