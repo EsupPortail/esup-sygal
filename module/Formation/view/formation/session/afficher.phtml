@@ -184,22 +184,26 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     </div>
 </div>
 
-<ul>
-<?php foreach ($formateurs as $formateur) : ?>
-    <li>
-        <?php echo $formateur->getIndividu()->getNomComplet(); ?>
-        <?php if ($canModifierSession) : ?>
-            <?php /** @see \Formation\Controller\FormateurController::retirerAction() */ ?>
-            <a href="<?php echo $this->url('formation/formateur/retirer', ['formateur' => $formateur->getId()], [] , true); ?>"
-               title="Retirer le·a formateur·trice" data-bs-toggle="tooltip" data-bs-html="true"
-               class="ajax-modal" data-event="modification"
-            >
-                <span class="icon icon-detruire"></span>
-            </a>
-        <?php endif ;?>
-    </li>
-<?php endforeach; ?>
-</ul>
+<?php if (empty($formateurs)) : ?>
+    Aucun·e formateur·trice d'associé·e à cette session.
+<?php else : ?>
+    <ul>
+    <?php foreach ($formateurs as $formateur) : ?>
+        <li>
+            <?php echo $formateur->getIndividu()->getNomComplet(); ?>
+            <?php if ($canModifierSession) : ?>
+                <?php /** @see \Formation\Controller\FormateurController::retirerAction() */ ?>
+                <a href="<?php echo $this->url('formation/formateur/retirer', ['formateur' => $formateur->getId()], [] , true); ?>"
+                   title="Retirer le·a formateur·trice" data-bs-toggle="tooltip" data-bs-html="true"
+                   class="ajax-modal" data-event="modification"
+                >
+                    <span class="icon icon-detruire"></span>
+                </a>
+            <?php endif ;?>
+        </li>
+    <?php endforeach; ?>
+    </ul>
+<?php endif; ?>
 
 <!-- SEANCE ######################################################################################################## -->
 <div class="row">
@@ -218,7 +222,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
         <?php if ($canEmargementSeance) : ?>
             <?php /** @see \Formation\Controller\SessionController::genererEmargementsAction() */ ?>
             <a href="<?php echo $this->url('formation/session/generer-emargements', ['session' => $session->getId()], [] , true); ?>" target="_blank"
-               class="btn btn-primary action">
+               class="btn btn-primary action <?php if (empty($seances)) echo " disabled "; ?>">
                 <span class="fas fa-list"></span>
                 Générer les émargements
             </a>
@@ -226,7 +230,10 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     </div>
 </div>
 
-<table class="table table-sm">
+<?php if (empty($seances)) : ?>
+    Aucune séance pour cette session de formation.
+<?php else : ?>
+    <table class="table table-sm table-hover">
     <thead>
     <tr>
         <th> Lieu </th>
@@ -294,6 +301,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     <?php endforeach; ?>
     </tbody>
 </table>
+<?php endif ?>
 
 <div class="row">
     <div class="col-md-8">
@@ -310,19 +318,19 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
 
             <?php /** @see \Formation\Controller\SessionController::classerInscriptionsAction() */ ?>
             <a href="<?php echo $this->url('formation/session/classer-inscriptions', ['session' => $session->getId()], [] , true); ?>"
-               class="btn btn-primary action">
+               class="btn btn-primary action <?php if (empty($inscrits)) echo " disabled "; ?>">
                 <span class="fas fa-align-left"></span>
                 Classer les inscrits
             </a>
 
             <?php /** @see \Formation\Controller\SessionController::declasserInscriptionsAction() */ ?>
             <a href="<?php echo $this->url('formation/session/declasser-inscriptions', ['session' => $session->getId()], [] , true); ?>"
-               class="btn btn-primary action">
+               class="btn btn-primary action <?php if (empty($inscrits)) echo " disabled "; ?>">
                 <span class="fas fa-align-right"></span>
                 Déclasser les inscrits
             </a>
             <a href="<?php echo $this->url('formation/session/generer-export', ['session' => $session->getId()], [] , true); ?>"
-               class="btn btn-primary action">
+               class="btn btn-primary action <?php if (empty($inscrits)) echo " disabled "; ?>">
                 <span class="fas fa-file-csv"></span>
                 Générer export des inscriptions
             </a>
@@ -330,7 +338,10 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     </div>
 </div>
 
-<div class="row">
+<?php if (empty($inscrits)) : ?>
+    Aucun·e doctorant·e inscrit·e à cette session de formation.
+<?php else : ?>
+    <div class="row">
     <div class="col-md-4">
         <h3>
             Listes des inscrits (non classés)
@@ -392,10 +403,10 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     </div>
 </div>
 
-<h2> Présences aux scéances</h2>
+    <h2> Présences aux scéances</h2>
 
-<?php echo $this->partial('formation/presence/renseigner-presences', ['session' => $session, 'presences' => $presences, 'titre' => false], [], true); ?>
-
+    <?php echo $this->partial('formation/presence/renseigner-presences', ['session' => $session, 'presences' => $presences, 'titre' => false], [], true); ?>
+<?php endif; ?>
 <script>
     $(function() {
         $("body").on("modification", function (event) {
@@ -409,6 +420,10 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     a.btn.action {
         width:25rem;
         margin-bottom: 0.1rem;
+    }
+
+    a.disabled:hover {
+        cursor: not-allowed;
     }
 </style>
 

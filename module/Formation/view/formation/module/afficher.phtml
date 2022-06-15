@@ -92,7 +92,10 @@ usort($formations, function(Formation $a, Formation $b) { return $a->getLibelle(
     </div>
 </div>
 
-<table class="table table-sm table-hover">
+<?php if (empty($formations)) : ?>
+    Aucune formation associée à ce module.
+<?php else : ?>
+    <table class="table table-sm table-hover">
     <thead>
     <tr>
         <th>Libelle</th>
@@ -127,6 +130,7 @@ usort($formations, function(Formation $a, Formation $b) { return $a->getLibelle(
     <?php endforeach; ?>
     </tbody>
 </table>
+<?php endif; ?>
 
 <script>
     $(function() {
