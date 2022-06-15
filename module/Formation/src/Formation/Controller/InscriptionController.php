@@ -7,10 +7,12 @@ use Application\Entity\Db\Individu;
 use Application\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
+use Application\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
+use Formation\Provider\NatureFichier\NatureFichier;
 use Formation\Service\Exporter\Attestation\AttestationExporter;
 use Formation\Service\Exporter\Convocation\ConvocationExporter;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
@@ -31,6 +33,7 @@ class InscriptionController extends AbstractController
     use InscriptionServiceAwareTrait;
     use NotificationServiceAwareTrait;
     use PresenceServiceAwareTrait;
+    use StructureDocumentServiceAwareTrait;
 
     /** @var PhpRenderer */
     private $renderer;
@@ -226,9 +229,12 @@ class InscriptionController extends AbstractController
             $logos['comue'] = $this->fileService->computeLogoFilePathForStructure($comue);
         }
 
+        $signature = $this->getStructureDocumentService()->getContenuFichier($inscription->getDoctorant()->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_FORMATION);
+
         //exporter
         $export = new ConvocationExporter($this->renderer, 'A4');
         $export->setVars([
+            'signature' => $signature,
             'inscription' => $inscription,
             'logos' => $logos,
         ]);
@@ -249,9 +255,12 @@ class InscriptionController extends AbstractController
             $logos['comue'] = $this->fileService->computeLogoFilePathForStructure($comue);
         }
 
+        $signature = $this->getStructureDocumentService()->getContenuFichier($inscription->getDoctorant()->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_FORMATION);
+
         //exporter
         $export = new AttestationExporter($this->renderer, 'A4');
         $export->setVars([
+            'signature' => $signature,
             'inscription' => $inscription,
             'logos' => $logos,
             'presences' => $presences,

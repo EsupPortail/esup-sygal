@@ -5,6 +5,7 @@ namespace Formation\Controller;
 use Application\Service\Etablissement\EtablissementService;
 use Application\Service\File\FileService;
 use Application\Service\Individu\IndividuService;
+use Application\Service\StructureDocument\StructureDocumentService;
 use Doctorant\Service\DoctorantService;
 use Doctrine\ORM\EntityManager;
 use Formation\Service\Inscription\InscriptionService;
@@ -30,6 +31,7 @@ class InscriptionControllerFactory {
          * @var IndividuService $individuService
          * @var NotificationService $notificationService
          * @var PresenceService $presenceService
+         * @var StructureDocumentService $structureDocumentService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $doctorantService = $container->get(DoctorantService::class);
@@ -39,6 +41,7 @@ class InscriptionControllerFactory {
         $inscriptionService = $container->get(InscriptionService::class);
         $notificationService = $container->get(NotificationService::class);
         $presenceService = $container->get(PresenceService::class);
+        $structureDocumentService = $container->get(StructureDocumentService::class);
 
         /* @var $renderer PhpRenderer */
         $renderer = $container->get('ViewRenderer');
@@ -53,6 +56,7 @@ class InscriptionControllerFactory {
         $controller->setInscriptionService($inscriptionService);
         $controller->setNotificationService($notificationService);
         $controller->setPresenceService($presenceService);
+        $controller->setStructureDocumentService($structureDocumentService);
         /** forms *****************************************************************************************************/
         /** autres*****************************************************************************************************/
         $controller->setRenderer($renderer);

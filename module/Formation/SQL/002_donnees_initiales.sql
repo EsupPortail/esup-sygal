@@ -3,3 +3,5 @@ INSERT INTO FORMATION_ETAT (CODE, LIBELLE, DESCRIPTION, ICONE, COULEUR, ORDRE) V
 INSERT INTO FORMATION_ETAT (CODE, LIBELLE, DESCRIPTION, ICONE, COULEUR, ORDRE) VALUES ('F', 'Inscription fermée', null, 'glyphicon glyphicon-ban-circle', '#008fcc', 3);
 INSERT INTO FORMATION_ETAT (CODE, LIBELLE, DESCRIPTION, ICONE, COULEUR, ORDRE) VALUES ('A', 'Session annulée', 'La session a été annulée', 'icon icon-historiser', '#cc0000', 5);
 INSERT INTO FORMATION_ETAT (CODE, LIBELLE, DESCRIPTION, ICONE, COULEUR, ORDRE) VALUES ('C', 'Close', 'Formation close', null, null, 4);
+
+INSERT INTO nature_fichier (code, libelle) VALUES ('SIGNATURE_FORMATION', 'Signature pour les formations');

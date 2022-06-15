@@ -4,6 +4,7 @@
  * @see \Formation\Service\Exporter\Convocation\ConvocationExporter;
  * @var Inscription $inscription
  * @var string[] $logos
+ * @var string $signature
  */
 
 use Formation\Entity\Db\Inscription;
@@ -107,6 +108,8 @@ Bonjour <?php echo $denomination; ?>,
 </p>
 <p></p>
 <p style="text-align: right;">L'application SyGAL</p>
+<img id="logo" style="background-color: white; max-width: 50%;"
+     src="data:image/*;base64,<?php echo base64_encode($signature); ?>"/>
 
 <p>
 </p>

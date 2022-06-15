@@ -5,6 +5,7 @@
  * @var Inscription $inscription
  * @var string[] $logos
  * @var float $presences
+ * @var string $signature
  */
 
 use Application\Entity\Db\Individu;
@@ -113,7 +114,12 @@ Bonjour ,
     ?>
     responsable du module <br/>
     <?php echo $responsable; ?>
+
+    <img id="logo" style="background-color: white; max-width: 50%;"
+         src="data:image/*;base64,<?php echo base64_encode($signature); ?>"/>
 </p>
+
+
 
 <p>
 </p>

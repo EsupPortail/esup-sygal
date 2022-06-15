@@ -17,6 +17,7 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use Formation\Provider\NatureFichier\NatureFichier as NatureFichierFormation;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
@@ -135,6 +136,7 @@ class StructureController extends AbstractController
         $structure = $this->structureService->getRequestedStructure($this);
         $natures = $this->natureFichierService->findAllByCodes([
             NatureFichier::CODE_SIGNATURE_CONVOCATION,
+            NatureFichierFormation::CODE_SIGNATURE_FORMATION,
             NatureFichier::CODE_SIGNATURE_RAPPORT_ACTIVITE,
         ]);
         $etablissements = $this->etablissementService->getRepository()->findAllEtablissementsInscriptions();
