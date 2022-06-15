@@ -3,49 +3,33 @@
 namespace Structure\Form\Hydrator;
 
 use Structure\Entity\Db\UniteRecherche;
-use Doctrine\Laminas\Hydrator\DoctrineObject;
 
-class UniteRechercheHydrator extends DoctrineObject
+class UniteRechercheHydrator extends StructureHydrator
 {
     /**
-     * Extract values from an object
-     *
-     * @param  UniteRecherche $ur
+     * @param UniteRecherche $ur
      * @return array
      */
     public function extract($ur): array
     {
         $data = parent::extract($ur);
-        $data['libelle'] = $ur->getLibelle();
-        $data['code'] = $ur->getStructure()->getCode();
-        $data['sigle'] = $ur->getSigle();
-        $data['cheminLogo'] = $ur->getCheminLogo();
+
         $data['RNSR'] = $ur->getRNSR();
-        $data['estFerme'] = $ur->getStructure()->estFermee();
-        $data['id_ref'] = $ur->getStructure()->getIdRef();
 
         return $data;
     }
 
     /**
-     * Hydrate $object with the provided $data.
-     *
-     * @param  array $data
-     * @param  UniteRecherche $ur
+     * @param array $data
+     * @param UniteRecherche $ur
      * @return UniteRecherche
      */
-    public function hydrate(array $data, $ur)
+    public function hydrate(array $data, $ur): UniteRecherche
     {
         /** @var UniteRecherche $object */
         $object = parent::hydrate($data, $ur);
 
-        $object->setLibelle($data['libelle']);
-        $object->getStructure()->setCode($data['code']);
-        $object->setSigle($data['sigle']);
-        $object->setCheminLogo($data['cheminLogo']);
         $object->setRNSR($data['RNSR']);
-        $object->getStructure()->setIdRef($data['id_ref']);
-        if (isset($data['estFerme']) AND $data['estFerme'] === "1") $object->getStructure()->setEstFermee(true); else $object->getStructure()->setEstFermee(false);
 
         return $object;
     }

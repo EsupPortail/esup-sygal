@@ -48,6 +48,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     protected $email;
     protected $siteWeb;
     protected $idRef;
+    protected $idHal;
 
     /**
      * @var string
@@ -494,6 +495,22 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     public function setIdRef($idRef)
     {
         $this->idRef = $idRef;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getIdHal(): ?string
+    {
+        return $this->idHal;
+    }
+
+    /**
+     * @param string|null $idHal
+     */
+    public function setIdHal(?string $idHal): void
+    {
+        $this->idHal = $idHal;
     }
 
     /**

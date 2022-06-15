@@ -89,6 +89,14 @@ $canModifierEtablissement = $this->isAllowed(StructurePrivileges::getResourceId(
                             (Non renseigné)
                         <?php endif; ?>
                     </dd>
+                    <dt> Id HAL :</dt>
+                    <dd>
+                        <?php if ($etablissement->getStructure()->getIdHal() !== null AND trim($etablissement->getStructure()->getIdHal()) !== "") : ?>
+                            <?php echo $etablissement->getStructure()->getIdHal(); ?>
+                        <?php else : ?>
+                            (Non renseigné)
+                        <?php endif; ?>
+                    </dd>
                     <dt> Domaine : </dt>                <dd>    <?php echo $etablissement->getDomaine() ?: "(Non renseigné)"; ?></dd>
                 </dl>
             </div>

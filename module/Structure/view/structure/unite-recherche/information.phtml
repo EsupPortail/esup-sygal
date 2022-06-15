@@ -102,6 +102,14 @@ $structure = $unite->getStructure();
                             (Non renseigné)
                         <?php endif; ?>
                     </dd>
+                    <dt> Id HAL :</dt>
+                    <dd>
+                        <?php if ($unite->getStructure()->getIdHal() !== null AND trim($unite->getStructure()->getIdHal()) !== "") : ?>
+                            <?php echo $unite->getStructure()->getIdHal(); ?>
+                        <?php else : ?>
+                            (Non renseigné)
+                        <?php endif; ?>
+                    </dd>
                     <dt> Identifiant RNSR :</dt>
                     <dd>    <?php echo $unite->getRNSR(); ?>        </dd>
                     <dt> Établissement(s) de rattachement :</dt>

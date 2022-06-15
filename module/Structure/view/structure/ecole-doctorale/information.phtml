@@ -102,6 +102,14 @@ $structure = $ecole->getStructure();
                             (Non renseigné)
                         <?php endif; ?>
                     </dd>
+                    <dt> Id HAL :</dt>
+                    <dd>
+                        <?php if ($ecole->getStructure()->getIdHal() !== null AND trim($ecole->getStructure()->getIdHal()) !== "") : ?>
+                            <?php echo $ecole->getStructure()->getIdHal(); ?>
+                        <?php else : ?>
+                            (Non renseigné)
+                        <?php endif; ?>
+                    </dd>
                     <dt> Thème :</dt>
                     <dd> <?php echo ($ecole->getTheme())?:"(Non renseigné)"; ?></dd>
                     <dt> Lien vers l'offre des thèses :</dt>

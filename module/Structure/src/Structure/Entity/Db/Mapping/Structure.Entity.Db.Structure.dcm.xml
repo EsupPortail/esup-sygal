@@ -19,6 +19,7 @@
         <field name="email"      type="string" column="EMAIL"       length="256"  nullable="true"/>
         <field name="siteWeb"    type="string" column="SITE_WEB"    length="256"  nullable="true"/>
         <field name="idRef"      type="string" column="ID_REF"      length="1024" nullable="true"/>
+        <field name="idHal"      type="string" column="ID_HAL"      length="128" nullable="true"/>
 
         <many-to-one field="typeStructure" target-entity="Structure\Entity\Db\TypeStructure">
             <join-columns>
