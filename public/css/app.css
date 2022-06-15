@@ -271,7 +271,8 @@ dl dd {
   margin-bottom: 8px; }
 
 dl.metadonnees .resume {
-  max-height: 200px; }
+  max-height: 200px;
+  overflow: scroll; }
 
 form.search-form {
   margin-bottom: 25px; }
