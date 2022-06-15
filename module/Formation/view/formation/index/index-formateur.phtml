@@ -10,17 +10,31 @@
 
 use Application\Entity\Db\Individu;
 use Formation\Entity\Db\Session;
+use Formation\Provider\Privilege\ModulePrivileges;
 use Formation\Provider\Privilege\SessionPrivileges;
 
 $this->headTitle('Mes formations');
 
 //todo assertion car dépend du rôle les formateurs ne doivent voir que leurs formations ...
 $canSessionVoir = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AFFICHER));
+$canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_CATALOGUE));
 ?>
 
-<h1 class="page-header">
-    Mes Formations
-</h1>
+<div class="row">
+    <div class="col-md-9">
+        <h1 class="page-header">
+            Mes Formations
+        </h1>
+    </div>
+    <div class="col-md-3">
+        <?php if ($canCatalogueAfficher) : ?>
+            <?php /** @see \Formation\Controller\ModuleController::catalogueAction() */?>
+            <a href="<?php echo $this->url('formation/catalogue',[],[], true); ?>" class="btn btn-primary" target="_blank">
+                <span class="icon icon-voir"> Accéder au catalogue des formations</span>
+            </a>
+        <?php endif; ?>
+    </div>
+</div>
 
 <?php if ($individu === null) : ?>
     <p class="lead">
