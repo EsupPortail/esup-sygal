@@ -121,6 +121,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * @var string
      */
+    private $codeSiseDiscipline;
+
+    /**
+     * @var string
+     */
     private $libelleDiscipline;
 
     /**
@@ -387,6 +392,24 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         $this->titre = $titre;
 
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCodeSiseDiscipline()
+    {
+        return $this->codeSiseDiscipline;
+    }
+
+    /**
+     * @param string $codeSiseDiscipline
+     * @return self
+     */
+    public function setCodeSiseDiscipline($codeSiseDiscipline): self
+    {
+        $this->codeSiseDiscipline = $codeSiseDiscipline;
         return $this;
     }
 

@@ -380,6 +380,7 @@ const CONFIG_IMPORTS = [
                 'dateAbandon' => 'DAT_ABANDON',
                 'dateTransfert' => 'DAT_TRANSFERT_DEP',
                 'etatThese' => 'ETA_THS',
+                'codeSiseDiscipline' => 'CODE_SISE_DISC',
                 'libDiscipline' => 'LIB_INT1_DIS',
                 'libEtabCotut' => 'LIB_ETAB_COTUT',
                 'libPaysCotut' => 'LIB_PAYS_COTUT',
