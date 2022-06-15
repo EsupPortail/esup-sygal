@@ -5,6 +5,7 @@ Journal des modifications
 -----
 - Nouveau module Individu : recherche, création (à partir de rien ou d'un utilisateur), modification.
 - Possibilité de renseigner l'identifiant HAL d'une structure (nécessaire pour l'envoi vers STEP/STAR).
+- Import du code de la discipline SISE de la thèse.
 - Extraction d'un module Structure.
 - [FIX] Plantage de la page détails d'une structure si fichier inexistant sur le serveur (typique en preprod).
 - [FIX] Page des détails d'une structure : retour au bon onglet en cas d'action (ex : dépôt d'un document).
