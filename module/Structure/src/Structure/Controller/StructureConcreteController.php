@@ -171,7 +171,7 @@ abstract class StructureConcreteController extends AbstractController
             }
             $this->flashMessenger()->addErrorMessage("Echec de la mise à jour : données incorrectes saissie");
 
-            return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureId], "fragment" => "" . $structureId], true);
+            return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureId]], true);
         }
 
         $viewModel = new ViewModel([
@@ -217,7 +217,7 @@ abstract class StructureConcreteController extends AbstractController
 
                 $structureId = $structureConcrete->getStructure()->getId();
 
-                return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
+                return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureId]], true);
             }
         }
 
@@ -242,7 +242,7 @@ abstract class StructureConcreteController extends AbstractController
 
         $this->flashMessenger()->addSuccessMessage("Structure '$structureConcrete' supprimée avec succès");
 
-        return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
+        return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureId]], true);
     }
 
     /**
@@ -257,7 +257,7 @@ abstract class StructureConcreteController extends AbstractController
 
         $this->flashMessenger()->addSuccessMessage("Structure '$structureConcrete' restaurée avec succès");
 
-        return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
+        return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureId]], true);
     }
 
     /**
@@ -268,7 +268,7 @@ abstract class StructureConcreteController extends AbstractController
         $structureId = $this->params()->fromRoute("structure");
         $this->supprimerLogoStructure();
 
-        return $this->redirect()->toRoute($this->routeName."/information", [], ['query' => ['selected' => $structureId], "fragment" => $structureId], true);
+        return $this->redirect()->toRoute($this->routeName."/information", [], ['query' => ['selected' => $structureId]], true);
     }
 
     /**
@@ -383,17 +383,17 @@ abstract class StructureConcreteController extends AbstractController
             case TypeStructure::CODE_ECOLE_DOCTORALE :
                 $ecole = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($id);
                 $this->getRoleService()->addRoleByStructure($ecole);
-                $this->redirect()->toRoute('ecole-doctorale/information', ['ecoleDoctorale' => $id], [], true);
+                $this->redirect()->toRoute('ecole-doctorale/information', ['ecoleDoctorale' => $id], ['query' => ['tab' => StructureController::TAB_membres]], true);
                 break;
             case TypeStructure::CODE_UNITE_RECHERCHE :
                 $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($id);
                 $this->getRoleService()->addRoleByStructure($unite);
-                $this->redirect()->toRoute('unite-recherche/information', ['uniteRecherche' => $id], [], true);
+                $this->redirect()->toRoute('unite-recherche/information', ['uniteRecherche' => $id], ['query' => ['tab' => StructureController::TAB_membres]], true);
                 break;
             case TypeStructure::CODE_ETABLISSEMENT :
                 $unite = $this->getEtablissementService()->getRepository()->findByStructureId($id);
                 $this->getRoleService()->addRoleByStructure($unite);
-                $this->redirect()->toRoute('etablissement/information', ['etablissement' => $id], [], true);
+                $this->redirect()->toRoute('etablissement/information', ['etablissement' => $id], ['query' => ['tab' => StructureController::TAB_membres]], true);
                 break;
         }
     }

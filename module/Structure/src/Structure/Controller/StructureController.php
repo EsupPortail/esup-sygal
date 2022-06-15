@@ -3,26 +3,31 @@
 namespace Structure\Controller;
 
 use Application\Controller\AbstractController;
-use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\IndividuRole;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Role;
-use Structure\Entity\Db\TypeStructure;
-use Structure\Provider\Privilege\StructurePrivileges;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Individu\IndividuServiceAwareTrait;
 use Application\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\TypeStructure;
+use Structure\Provider\Privilege\StructurePrivileges;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
-use Laminas\Http\Response;
-use Laminas\View\Model\ViewModel;
 
 class StructureController extends AbstractController
 {
+    const TAB_infos = 'informations';
+    const TAB_membres = 'membres';
+    const TAB_docs = 'documents';
+    const TAB_coenc = 'coencadrants';
+
     use RoleServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use StructureServiceAwareTrait;
@@ -32,8 +37,6 @@ class StructureController extends AbstractController
     use NatureFichierServiceAwareTrait;
     use FichierServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
-
-
 
     /**
      * @return ViewModel
@@ -114,18 +117,15 @@ class StructureController extends AbstractController
             case TypeStructure::CODE_ECOLE_DOCTORALE :
                 $ecole = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($id);
                 $this->getRoleService()->addRoleByStructure($ecole);
-                $this->redirect()->toRoute('ecole-doctorale/information', ['structure' => $id], [], true);
-                break;
+                return $this->redirect()->toRoute('ecole-doctorale/information', ['structure' => $id], ['query' => ['tab' => StructureController::TAB_infos]], true);
             case TypeStructure::CODE_UNITE_RECHERCHE :
                 $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($id);
                 $this->getRoleService()->addRoleByStructure($unite);
-                $this->redirect()->toRoute('unite-recherche/information', ['structure' => $id], [], true);
-                break;
+                return $this->redirect()->toRoute('unite-recherche/information', ['structure' => $id], ['query' => ['tab' => StructureController::TAB_infos]], true);
             case TypeStructure::CODE_ETABLISSEMENT :
                 $unite = $this->getEtablissementService()->getRepository()->findByStructureId($id);
                 $this->getRoleService()->addRoleByStructure($unite);
-                $this->redirect()->toRoute('etablissement/information', ['structure' => $id], [], true);
-                break;
+                return $this->redirect()->toRoute('etablissement/information', ['structure' => $id], ['query' => ['tab' => StructureController::TAB_infos]], true);
         }
     }
 
@@ -157,7 +157,7 @@ class StructureController extends AbstractController
 
         $vm =  new ViewModel([
             'title' => "Ajout d'un document lié à la structure",
-            'action' => $this->url()->fromRoute('structure/televerser-document', ['structure' => $structure->getId()], [], true),
+            'action' => $this->url()->fromRoute('structure/televerser-document', ['structure' => $structure->getId()], ['query' => ['tab' => StructureController::TAB_docs]], true),
             'natures' => $natures,
             'etablissements' => $etablissements,
         ]);
@@ -173,6 +173,6 @@ class StructureController extends AbstractController
         $document = $this->getStructureDocumentService()->getRequestedStructureDocument($this);
         $this->getStructureDocumentService()->historise($document);
 
-        return $this->redirect()->toRoute($structure->getTypeStructure()->getCode() ."/information", ['structure' => $structure->getId()], ['fragment' => 'documents'], true);
+        return $this->redirect()->toRoute($structure->getTypeStructure()->getCode() ."/information", ['structure' => $structure->getId()], ['query' => ['tab' => StructureController::TAB_docs]], true);
     }
 }
