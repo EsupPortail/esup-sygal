@@ -21,9 +21,6 @@ class EcoleDoctoraleForm extends Form
     {
         $this->setObject(new EcoleDoctorale());
 
-        $this
-            ->add(new Hidden('id'));
-
         $this->add((
             new Text('sigle'))
                 ->setLabel("Sigle :")

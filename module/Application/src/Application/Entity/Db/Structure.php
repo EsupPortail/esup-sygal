@@ -82,7 +82,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     protected $roles;
 
     /**
-     * @var Structure[]
+     * @var ArrayCollection|Structure[]
      */
     private $structuresSubstituees;
 
@@ -134,6 +134,12 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
         $structure->setStructure($structureRattach);
 
         return $structure;
+    }
+
+    public function __construct()
+    {
+        $this->structuresSubstituees = new ArrayCollection();
+        $this->documents = new ArrayCollection();
     }
 
     /**
@@ -489,7 +495,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     }
 
     /**
-     * @return array
+     * @return \Application\Entity\Db\StructureDocument[][]
      */
     public function getDocuments() : array
     {

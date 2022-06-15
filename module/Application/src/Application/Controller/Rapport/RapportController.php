@@ -97,7 +97,7 @@ abstract class RapportController extends AbstractController
     /**
      * @inheritDoc
      */
-    public function setTheseAnneeUnivService(TheseAnneeUnivService $service)
+    public function setAnneesUnivs(TheseAnneeUnivService $service)
     {
         $this->theseAnneeUnivService = $service;
 

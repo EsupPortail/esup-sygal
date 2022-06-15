@@ -16,4 +16,11 @@ mkdir -p upload && \
   chmod -R 770 upload
 
 # Composer install
-composer install --no-suggest --prefer-dist --optimize-autoloader
+composer install --no-interaction --no-suggest --prefer-dist --optimize-autoloader
+
+vendor/bin/doctrine-module orm:clear-cache:query
+vendor/bin/doctrine-module orm:clear-cache:metadata
+vendor/bin/doctrine-module orm:clear-cache:result
+vendor/bin/doctrine-module orm:generate-proxies
+
+vendor/bin/laminas-development-mode disable

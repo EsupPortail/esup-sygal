@@ -17,7 +17,7 @@ with d(ordre, code, lib) as (
     select 60, 'supprimer', 'SUpprimer un jeton utilisateur' from dual union
     select 70, 'tester', 'Tester unejeton utilisateur' from dual
 )
-select privilege_id_seq.nextval, cp.id, d.code, d.lib, d.ordre
+select nextval('privilege_id_seq'), cp.id, d.code, d.lib, d.ordre
 from d
 join CATEGORIE_PRIVILEGE cp on cp.CODE = 'unicaen-auth-token'
 ;
@@ -62,6 +62,19 @@ insert into PROFIL_TO_ROLE (PROFIL_ID, ROLE_ID)
     where not exists (
         select * from PROFIL_TO_ROLE where PROFIL_ID = pr.id and ROLE_ID = r.id
     ) ;
+
+--
+-- Application du profil 'GEST_ED' aux roles 'GEST_ED'.
+-- NB: penser à créer ensuite les ROLE_PRIVILEGE.
+--
+insert into profil_to_role (profil_id, role_id)
+select p.id, r.id
+from profil p, role r
+where r.code = 'GEST_ED' and p.role_id = 'GEST_ED'
+  and not exists (
+        select * from profil_to_role where profil_id = p.id and role_id = r.id
+    )
+;
 
 --
 -- Attribution automatique des privilèges aux rôles, d'après ce qui est spécifié dans :

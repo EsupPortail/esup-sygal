@@ -1,0 +1,131 @@
+<?php
+
+/**
+ * @see \Application\Controller\IndividuComplController::indexAction()
+ * @var array $complements
+ */
+
+use Application\Entity\Db\IndividuCompl;
+use Application\Provider\Privilege\IndividuPrivileges;
+
+$this->headTitle("Liste des compléments d'individu");
+
+$canAfficher        = $this->isAllowed(IndividuPrivileges::getResourceId(IndividuPrivileges::INDIVIDU_COMPLMENT_AFFICHER));
+$canAjouter         = $this->isAllowed(IndividuPrivileges::getResourceId(IndividuPrivileges::INDIVIDU_COMPLMENT_MODIFIER));
+$canModifier        = $canAjouter;
+$canHistoriser      = $canAjouter;
+$canDetruire        = $this->isAllowed(IndividuPrivileges::getResourceId(IndividuPrivileges::INDIVIDU_COMPLMENT_SUPPRIMER));;
+
+?>
+
+<div class="row">
+    <div class="col-md-8">
+        <h1 class="page-header">
+            Liste des compléments d'individu
+        </h1>
+    </div>
+    <div class="col-md-4">
+        <?php if ($canAjouter) : ?>
+        <br/>
+            <?php /** @see \Application\Controller\IndividuComplController::ajouterAction() */ ?>
+            <a href="<?php echo $this->url('individu-compl/ajouter', [], [], true); ?>"
+               class="btn btn-primary ajax-modal" data-event="modification"
+            >
+                <span class="icon icon-ajouter"></span>
+                Ajouter un complément
+            </a>
+        <?php endif; ?>
+    </div>
+</div>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<p class='lead'>
+    <?php $count = count($complements); ?>
+    <?php echo $count; ?> individus ont un complément.
+</p>
+
+<?php /** @var IndividuCompl[] $liste */ ?>
+<?php foreach ($complements as $id => $liste) : ?>
+    <?php if (!empty($liste)) : ?>
+        <?php $first = $liste[0]; $individu = $first->getIndividu(); ?>
+        <h2> Complément&middot;s pour [<?php echo $id; ?>] <?php echo $individu->getNomComplet(); ?> </h2>
+
+        <table class="table table-condensed table-hover">
+        <thead>
+            <tr>
+                <th> Adresse électronique </th>
+                <th> Établissement </th>
+                <th> Unite de recherche </th>
+                <th> Action </th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($liste as $complement) : ?>
+                <tr <?php if ($complement->estHistorise()) echo " class='histo'"; ?>>
+                    <td>
+                        <?php if ($complement->getEmail()) : ?>
+                            <?php echo $complement->getEmail(); ?>
+                        <?php else: ?>
+                            N.C.
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if ($complement->getEtablissement()) : ?>
+                            <?php echo $complement->getEtablissement()->getLibelle(); ?>
+                        <?php else: ?>
+                            N.C.
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if ($complement->getUniteRecherche()) : ?>
+                            <?php echo $complement->getUniteRecherche()->getLibelle(); ?>
+                        <?php else: ?>
+                            N.C.
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if ($canAfficher) : ?>
+                            <a href="<?php echo $this->url('individu-compl/afficher', ['individu-compl' => $complement->getId()], [], true); ?>" class="ajax-modal">
+                                <span class="icon icon-voir"></span></a>
+                        <?php endif; ?>
+                        <?php if ($canModifier) : ?>
+                            <a href="<?php echo $this->url('individu-compl/modifier', ['individu-compl' => $complement->getId()], [], true); ?>" class="ajax-modal" data-event="modification">
+                                <span class="icon icon-modifier"></span></a>
+                        <?php endif; ?>
+                        <?php if ($canHistoriser) : ?>
+                            <?php if ($complement->estNonHistorise()) : ?>
+                                <a href="<?php echo $this->url('individu-compl/historiser', ['individu-compl' => $complement->getId()], [], true); ?>">
+                                    <span class="icon icon-historiser"></span></a>
+                            <?php else : ?>
+                                <a href="<?php echo $this->url('individu-compl/restaurer', ['individu-compl' => $complement->getId()], [], true); ?>">
+                                    <span class="icon icon-restaurer"></span></a>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        <?php if ($canDetruire) : ?>
+                            <a href="<?php echo $this->url('individu-compl/detruire', ['individu-compl' => $complement->getId()], [], true); ?>" class="ajax-modal" data-event="modification">
+                                <span class="icon icon-detruire"></span></a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+        </table>
+    <?php endif; ?>
+<?php endforeach; ?>
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>
+
+<style>
+    .histo {
+        background: #fda4a4;
+        color: darkred;
+    }
+</style>

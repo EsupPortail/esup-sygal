@@ -18,15 +18,15 @@ class AnneeUnivFormatter extends AbstractFilter
             return $value;
         }
 
-        if (is_array($value)) {
-            $values = $value;
-            return array_map(function($value) use ($separator) {
-                $value = (int) $value;
-                return $value . $separator . ($value+1);
-            }, $values);
-        } else {
+        $f = function($value) use ($separator) {
             $value = (int) $value;
-            return $value . $separator . substr(($value+1), 2);
+            return $value . $separator . ($value+1);
+        };
+
+        if (is_array($value)) {
+            return array_map($f, $value);
+        } else {
+            return $f($value);
         }
     }
 }

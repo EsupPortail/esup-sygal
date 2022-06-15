@@ -8,6 +8,7 @@ use Application\Entity\Db\Fichier;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Structure;
 use Application\Entity\Db\StructureDocument;
+use Application\Service\Fichier\Exception\FichierServiceException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
@@ -16,6 +17,7 @@ use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\Mvc\Controller\AbstractActionController;
+use UnicaenApp\Util;
 
 class StructureDocumentService {
     use EntityManagerAwareTrait;
@@ -219,12 +221,16 @@ class StructureDocumentService {
         return $document;
     }
 
-    public function getContenus(Structure $structure)
+    public function getContenusFichiers(Structure $structure): array
     {
         $documents = $this->getStructuresDocumentsByStructure($structure);
         $contenus = [];
         foreach ($documents as $document) {
-            $contenus[$document->getId()] = $this->fichierService->fetchContenuFichier($document->getFichier());
+            try {
+                $contenus[$document->getId()] = $this->fichierService->fetchContenuFichier($document->getFichier());
+            } catch (FichierServiceException $e) {
+                $contenus[$document->getId()] = Util::createImageWithText(implode('|', str_split($e->getMessage(), 25)), 200, 200);
+            }
         }
         return $contenus;
     }
@@ -234,11 +240,15 @@ class StructureDocumentService {
      * @param string $nature_code
      * @param Etablissement|null $etablissement
      * @return string|null
+     * @throws \Application\Service\Fichier\Exception\FichierServiceException Fichier inexistant ou inaccessible sur le serveur
      */
-    public function getContenu(Structure $structure, string $nature_code, ?Etablissement $etablissement = null) {
+    public function getContenuFichier(Structure $structure, string $nature_code, ?Etablissement $etablissement = null): ?string
+    {
         $documents = $this->getStructuresDocumentsByStructure($structure);
         foreach ($documents as $document) {
-            if ($document->getNature()->getCode() === $nature_code AND $document->getEtablissement() === $etablissement) return $this->fichierService->fetchContenuFichier($document->getFichier());
+            if ($document->getNature()->getCode() === $nature_code && $document->getEtablissement() === $etablissement) {
+                return $this->fichierService->fetchContenuFichier($document->getFichier());
+            }
         }
         return null;
     }

@@ -12,6 +12,7 @@ use Application\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Laminas\Http\Response;
+use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
 class UniteRechercheController extends StructureConcreteController
@@ -53,24 +54,22 @@ class UniteRechercheController extends StructureConcreteController
     /**
      * @return ViewModel
      */
-    public function informationAction()
+    public function informationAction(): ViewModel
     {
-        $id = $this->params()->fromRoute('structure');
-        $structureConcrete = $this->getStructureConcreteService()->getRepository()->findByStructureId($id);
-        $coencadrants = $this->getCoEncadrantService()->getCoEncadrantsByStructureConcrete($structureConcrete, false);
-        $contenus = $this->getStructureDocumentService()->getContenus($structureConcrete->getStructure());
-
         $viewModel = parent::informationAction();
 
-        $unite = $viewModel->getVariable('structure');
+        /** @var UniteRecherche $structureConcrete */
+        $structureConcrete = $viewModel->getVariable('structure');
+        $coencadrants = $this->getCoEncadrantService()->getCoEncadrantsByStructureConcrete($structureConcrete, false);
+        $contenus = $this->getStructureDocumentService()->getContenusFichiers($structureConcrete->getStructure());
 
-        $etablissementsRattachements = $this->uniteRechercheService->findEtablissementRattachement($unite);
+        $etablissementsRattachements = $this->uniteRechercheService->findEtablissementRattachement($structureConcrete);
 
         $viewModel->setVariables([
-            'unite'                       => $unite,
+            'unite' => $structureConcrete,
             'etablissementsRattachements' => $etablissementsRattachements,
-            'coencadrants'                => $coencadrants,
-            'contenus'                    => $contenus,
+            'coencadrants' => $coencadrants,
+            'contenus' => $contenus,
         ]);
 
         return $viewModel;
@@ -196,5 +195,26 @@ class UniteRechercheController extends StructureConcreteController
         $this->flashMessenger()->addSuccessMessage("Le domaine scientifique <strong>" . $domaine->getLibelle() . "</strong> ne fait plus parti des domaines scientifiques de l'unité de recherche <strong>" . $unite->getLibelle() . "</strong>.");
 
         return $this->redirect()->toRoute("unite-recherche/modifier", [], [], true);
+    }
+
+    public function rechercherAction()
+    {
+        if (($term = $this->params()->fromQuery('term'))) {
+            $unites = $this->getUniteRechercheService()->getRepository()->findByText($term);
+            $result = [];
+            foreach ($unites as $unite) {
+                $result[] = array(
+                    'id' => $unite->getId(),            // identifiant unique de l'item
+                    'label' => $unite->getLibelle(),    // libellé de l'item
+                    'extra' => $unite->getSigle(),      // infos complémentaires (facultatives) sur l'item
+                );
+            }
+            usort($result, function ($a, $b) {
+                return strcmp($a['label'], $b['label']);
+            });
+
+            return new JsonModel($result);
+        }
+        exit;
     }
 }

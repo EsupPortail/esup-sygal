@@ -1,0 +1,153 @@
+body {
+    background-color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.anomalie {
+    color: red;
+    font-weight: bold;
+    font-style: italic;
+}
+
+div.logo-comue {
+    width:4cm;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.bandeau-titre {
+    width:18cm;
+    display: block;
+    margin-top: 2cm;
+    margin-bottom: 1cm;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #5B2268;
+
+    /*font-family: Arial, Helvetica, sans-serif;*/
+    font-weight: bold;
+    font-size:16pt;
+    color:white;
+    text-align: center;
+}
+
+.bandeau-titre.sous-titre {
+    width:14cm;
+    margin-top: 1cm;
+}
+
+.bandeau-these {
+    width:18cm;
+    display: block;
+    margin-top: 3cm;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #5B2268;
+
+    /*font-family: Arial, Helvetica, sans-serif;*/
+    font-weight: bold;
+    font-size:16pt;
+    color:white;
+    text-align: center;
+}
+
+.infos-diplome {
+    width:18cm;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+
+
+    /*font-family: Arial, Helvetica, sans-serif;*/
+    font-weight: bold;
+    font-size:12pt;
+    text-align: center;
+    line-height: 2em;
+    margin-top: 1ex;
+    margin-bottom: 1ex;
+}
+.larger-infos {
+    font-size:14pt;
+}
+
+.bandeau-titre-these {
+    width:14cm;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+
+    background-color: #BFBFBF;
+    /*font-family: Arial, Helvetica, sans-serif;*/
+    font-weight: bold;
+    font-size:11pt;
+    padding: 0.1cm;
+    color:black;
+    line-height: 1.3;
+    text-align: center;
+    margin-top: 2ex;
+    margin-bottom: 1ex;
+}
+
+.infos-rapport {
+    width:18cm;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+
+    /*font-family: Arial, Helvetica, sans-serif;*/
+    font-weight: bold;
+    font-size:12pt;
+    text-align: center;
+    margin-top: 1ex;
+    margin-bottom: 1ex;
+}
+
+.logo-ecole-doctorale {
+    text-align: center;
+}
+.signature-ecole-doctorale {
+    max-width: 5cm;
+    margin: auto
+}
+
+.infos-validation {
+    width:15cm;
+    text-align: justify;
+    text-justify: inter-word;
+
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+
+    /*font-family: Arial, Helvetica, sans-serif;*/
+    font-size:12pt;
+    margin-top: 1ex;
+    margin-bottom: 1ex;
+}
+
+div.logos {
+    position: absolute;
+    top: 25cm;
+    left:1.5cm;
+}
+table.logos {
+    width:15cm;
+    margin-left: auto;
+    margin-right: auto;
+}
+table.logos td {
+    /*border: solid;*/
+    /*border-color: black;*/
+    width:6cm;
+    height:4.5cm;
+    text-align: center;
+}
+
+img.logo {
+    max-height: 3cm;
+    text-align: center;
+}
+img.logo_small {
+    max-height: 2cm;
+}

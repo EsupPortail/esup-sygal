@@ -2,10 +2,8 @@
 
 namespace Indicateur\Controller;
 
-use Application\Entity\Db\Acteur;
 use Application\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\These;
 use Application\Entity\Db\TypeStructure;
 use Application\Entity\Db\UniteRecherche;
 use Application\Service\AnomalieServiceAwareTrait;
@@ -17,6 +15,7 @@ use DateTime;
 use Indicateur\Form\IndicateurForm;
 use Indicateur\Model\Indicateur;
 use Indicateur\Service\IndicateurServiceAwareTrait;
+use Laminas\View\Model\JsonModel;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\View\Model\CsvModel;
 use Laminas\Http\Request;
@@ -45,10 +44,10 @@ class IndicateurController extends AbstractActionController {
     }
 
     /**
-     * @return array|ViewModel
+     * @return ViewModel
      * @throws \Exception
      */
-    public function indexAction()
+    public function indexAction() : ViewModel
     {
         $resultats = [];
 
@@ -76,7 +75,8 @@ class IndicateurController extends AbstractActionController {
         );
     }
 
-    public function listerIndicateurAction() {
+    public function listerIndicateurAction() : ViewModel
+    {
         $indicateurs = $this->getIndicateurService()->findAll();
 
         return new ViewModel([
@@ -265,6 +265,5 @@ class IndicateurController extends AbstractActionController {
 
         return $CSV;
     }
-
 }
 

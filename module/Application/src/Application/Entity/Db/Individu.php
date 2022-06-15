@@ -5,6 +5,7 @@ namespace Application\Entity\Db;
 use Application\Constants;
 use Application\Filter\NomCompletFormatter;
 use Doctrine\Common\Collections\ArrayCollection;
+use Faker\Provider\tr_TR\DateTime;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
@@ -122,6 +123,11 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
     private $etablissement;
 
     /**
+     * @var ArrayCollection (IndividuCompl)
+     */
+    private $complements;
+
+    /**
      * Individu constructor.
      */
     public function __construct()
@@ -129,6 +135,7 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
         $this->roles = new ArrayCollection();
         $this->mailsConfirmations = new ArrayCollection();
         $this->utilisateurs = new ArrayCollection();
+        $this->complements = new ArrayCollection();
     }
 
     /**
@@ -237,6 +244,8 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
      */
     public function getEmail(): ?string
     {
+        $complement = $this->getComplement();
+        if ($complement AND $complement->getEmail() !== null) return $complement->getEmail();
         return $this->email;
     }
 
@@ -620,6 +629,8 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
      */
     public function getEtablissement(): ?Etablissement
     {
+        $complement = $this->getComplement();
+        if ($complement AND $complement->getEtablissement() !== null) return $complement->getEtablissement();
         return $this->etablissement;
     }
 
@@ -633,4 +644,29 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface
         return $this;
     }
 
+    /**
+     * @return Etablissement|null
+     */
+    public function getUniteRecherche(): ?UniteRecherche
+    {
+        $complement = $this->getComplement();
+        if ($complement AND $complement->getUniteRecherche() !== null) return $complement->getUniteRecherche();
+        return null;
+    }
+
+    /**
+     * @param DateTime|null $date
+     * @return IndividuCompl|null
+     */
+    public function getComplement(?DateTime $date = null) : ?IndividuCompl
+    {
+        /** @var IndividuCompl $complement */
+        foreach ($this->complements as $complement) {
+            if ($date === null and $complement->getHistoDestruction() === null) return $complement;
+            else {
+                if ($date >= $complement->getHistoCreation() AND ($date <= $complement->getHistoDestruction() OR $complement->getHistoDestruction() === null)) return $complement;
+            }
+        }
+        return null;
+    }
 }

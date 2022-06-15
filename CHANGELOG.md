@@ -1,6 +1,63 @@
 Journal des modifications
 =========================
 
+4.1.3
+-----
+- [FIX] Balises <img> des logos/signatures dont la src est le contenu binaire : le format était systématiquement 
+  'image/png' ce qui posait problème si l'image était d'un autre format.
+
+4.1.2
+-----
+- [FIX] Plantage du formulaire de création d'un avis sur un rapport d'activité.
+
+4.1.1
+-----
+- Rapports d'activité de fin de contrat : aucun avis Dir/UR nécessaire dans le rapport lui-meme donc on écarte les 
+  compléments qui génèreraient une case à cocher permettant de signaler une absence d'avis.
+- Module Rapports d'activité : corrections cosmétiques.
+- [FIX] Passage à unicaen/db-import 5.1.2 pour corriger le plantage lors de la création d'une structure.
+
+4.1.0
+-----
+- Refonte du module 'Rapports d'activité'.
+- Nouveau document téléversable pour une structure : Signature figurant sur la page de validation d'un rapport d'activité.
+
+4.0.6
+-----
+- Retour du logo ESUp-SyGAL dans la barre de menu principal. 
+  Assombrissement du bleu dans la barre de menu principal et dans le pied de page.
+- [FIX] Plantage lors de la création d'une structure (ED, UR, établissement).
+
+4.0.5
+-----
+- [FIX] Correction du plantage de la page de saisie du mail perso doctorant.
+
+4.0.4
+-----
+- Correction de typos dans mail de feu vert de la soutenance
+- Ajout de redirection de mail lorsque certains mails n'ont pas de destinataire "ATTENTION MAIL NON DÉLIVRÉ".
+- Compléments d'individu : mise en place des éléments de base 
+- Modification du texte de mail de réussite au doctorat
+- [FIX] verification des assertions au niveau des actions de PropositionController
+
+4.0.3
+-----
+- Corrections et améliorations de la doc d'install suite aux remarques de l'université de Montpellier (merci)
+- [FIX] Correction de l'affichage de la date d'historisation dans Individu lié
+- [FIX] Correction de la signature de Membre::setEtablissement(?string) qui faisait planter la création de proprosition (lorsqu'aucun établissement n'était fourni)
+- Ajout de l'unité de recherche des acteurs (manuel pour le moment) pour améliorer les pages de couverture
+
+4.0.2
+-----
+- [FIX] Affichage de la bonne adresse électronique institutionnelle sur la fiche thèse 
+- [FIX] Correction de la classe css sur les card de la page des soutenances à venir
+
+4.0.1
+-----
+- [FIX] signature des fonctions de StructureSubstitHelper string => ?string
+- [FIX] les résumés pour la BU se chevauchaient p class='resume pre-scrollable' => p class='pre-scrollable'
+- [FIX] ajustement des css de la page proposition
+
 4.0.0
 -----
 - Migration vers Laminas (back-end PHP).

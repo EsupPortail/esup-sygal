@@ -20,6 +20,13 @@ return [
                 [
                     'controller' => UniteRechercheController::class,
                     'action'     => [
+                        'rechercher',
+                    ],
+                    'role' => [],
+                ],
+                [
+                    'controller' => UniteRechercheController::class,
+                    'action'     => [
                         'index',
                         'information',
                     ],
@@ -73,6 +80,15 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'rechercher' => [
+                        'type'          => Literal::class,
+                        'options'       => [
+                            'route'       => '/rechercher',
+                            'defaults'    => [
+                                'action' => 'rechercher',
+                            ],
+                        ],
+                    ],
                     'information' => [
                         'type'          => Segment::class,
                         'options'       => [

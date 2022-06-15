@@ -113,7 +113,7 @@ $canModifierEtablissement = $this->isAllowed(StructurePrivileges::getResourceId(
                     <dt>Logo :</dt>
                     <dd>
                         <img id="logo" style="max-width: 200px; max-height: 200px; background-color: white;"
-                             src="data:image/png;base64,<?php echo base64_encode($logoContent); ?>"/>
+                             src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"/>
                     </dd>
                 </dl>
             </div>
@@ -167,7 +167,7 @@ $canModifierEtablissement = $this->isAllowed(StructurePrivileges::getResourceId(
     </div>
 
     <div role="tabpanel" class="tab-pane" id="documents">
-        <?php echo $this->partial('partial/documents', ['structure' => $etablissement->getStructure(), 'contenus' => $contenus]); ?>
+        <?php echo $this->partial('application/structure/partial/documents', ['structure' => $etablissement->getStructure(), 'contenus' => $contenus]); ?>
     </div>
 </div>
 

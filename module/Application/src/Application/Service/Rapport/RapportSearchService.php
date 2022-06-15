@@ -12,7 +12,7 @@ use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Search\Filter\TextSearchFilter;
 use Application\Search\Financement\OrigineFinancementSearchFilter;
-use Application\Search\Rapport\AnneeRapportActiviteSearchFilter;
+use RapportActivite\Search\AnneeRapportActiviteSearchFilter;
 use Application\Search\SearchService;
 use Application\Search\Sorter\SearchSorter;
 use Application\Search\These\TheseTextSearchFilter;
@@ -62,7 +62,7 @@ class RapportSearchService extends SearchService
      */
     private $uniteRechercheSearchFilter;
     /**
-     * @var AnneeRapportActiviteSearchFilter
+     * @var \RapportActivite\Search\AnneeRapportActiviteSearchFilter
      */
     private $anneeRapportActiviteSearchFilter;
     /**
@@ -499,10 +499,10 @@ class RapportSearchService extends SearchService
     }
 
     /**
-     * @param AnneeRapportActiviteSearchFilter $anneeRapportActiviteSearchFilter
+     * @param \RapportActivite\Search\AnneeRapportActiviteSearchFilter $anneeRapportActiviteSearchFilter
      * @return RapportSearchService
      */
-    public function setAnneeRapportActiviteSearchFilter(AnneeRapportActiviteSearchFilter $anneeRapportActiviteSearchFilter): RapportSearchService
+    public function setAnneeRapportActiviteSearchFilter(\RapportActivite\Search\AnneeRapportActiviteSearchFilter $anneeRapportActiviteSearchFilter): RapportSearchService
     {
         $this->anneeRapportActiviteSearchFilter = $anneeRapportActiviteSearchFilter;
         return $this;

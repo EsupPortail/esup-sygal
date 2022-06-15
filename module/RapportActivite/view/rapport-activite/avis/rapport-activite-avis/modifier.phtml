@@ -1,0 +1,28 @@
+<?php
+/**
+ * @var \RapportActivite\Entity\Db\RapportActivite $rapport
+ * @var \Application\Form\Rapport\RapportAvisForm $form
+ * @var string $title
+ */
+
+$form->prepare();
+?>
+
+<?php $this->headTitle($this->translate($title))
+    ->prepend("Avis")
+    ->prepend($rapport->getThese()->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+
+<h1 class="page-header"><?php echo $title ?></h1>
+
+<dl>
+    <dt>Rapport :</dt>
+    <dd><?php echo $rapport ?></dd>
+    <dt>Type de rapport :</dt>
+    <dd><?php echo $rapport->getTypeRapportToString() ?></dd>
+</dl>
+
+<div class="row">
+    <div class="col-md-7">
+        <?php echo $this->partial('unicaen-avis/partial/avis-form', ['form' => $form]) ?>
+    </div>
+</div>

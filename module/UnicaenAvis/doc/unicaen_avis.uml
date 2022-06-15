@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>DATABASE</ID>
+  <OriginalElement>67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis</OriginalElement>
+  <nodes>
+    <node x="552.9637781095544" y="106.62204724409438">67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis_type_valeur</node>
+    <node x="61.842519685039406" y="-45.039370078740106">67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis_type</node>
+    <node x="-23.104330708661422" y="317.35826771653547">67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis</node>
+    <node x="486.6751968503937" y="538.5748031496064">67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis_type_complem</node>
+    <node x="-49.60433070866142" y="538.5748031496064">67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis_complem</node>
+    <node x="423.36023622047253" y="287.1259842519685">67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis_valeur</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis_type_valeur" target="67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis_type" relationship="REFERENCES">
+      <point x="-187.8999971639903" y="-6.7674046618955686" />
+      <point x="582.5637809455641" y="166.9677535901924" />
+      <point x="566.3669305518633" y="166.9677535901924" />
+      <point x="566.3669305518633" y="144.31496062992113" />
+      <point x="254.3425196850394" y="144.31496062992113" />
+      <point x="0.0" y="59.0" />
+    </edge>
+    <edge source="67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis_complem" target="67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis" relationship="REFERENCES">
+      <point x="-1.0641718103409517" y="-41.767404661896194" />
+      <point x="140.83149748099763" y="515.6791338582677" />
+      <point x="141.89566929133858" y="515.6791338582677" />
+      <point x="0.0" y="48.0" />
+    </edge>
+    <edge source="67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis" target="67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis_type" relationship="REFERENCES">
+      <point x="-82.5" y="-48.0" />
+      <point x="59.39566929133858" y="214.0" />
+      <point x="254.3425196850394" y="214.0" />
+      <point x="0.0" y="59.0" />
+    </edge>
+    <edge source="67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis" target="67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis_valeur" relationship="REFERENCES">
+      <point x="82.5" y="-48.0" />
+      <point x="275.50877660626304" y="317.35826771653547" />
+      <point x="275.50877660626304" y="379.1259842519685" />
+      <point x="648.8602362204725" y="379.1259842519685" />
+      <point x="0.0" y="92.0" />
+    </edge>
+    <edge source="67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis_type_complem" target="67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis_type_valeur" relationship="REFERENCES">
+      <point x="0.0" y="-81.0" />
+      <point x="946.2566943313905" y="538.5748031496064" />
+      <point x="175.7929162218361" y="41.823146519206716" />
+    </edge>
+    <edge source="67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis_type_valeur" target="67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis_valeur" relationship="REFERENCES">
+      <point x="-121.64015464430531" y="43.29558746408861" />
+      <point x="648.823623465249" y="228.2765748031494" />
+      <point x="648.8602362204725" y="228.2765748031494" />
+      <point x="0.0" y="92.0" />
+    </edge>
+    <edge source="67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis_complem" target="67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis_type_complem" relationship="REFERENCES">
+      <point x="95.75" y="-59.0" />
+      <point x="237.64566929133858" y="607.7874015748032" />
+      <point x="766.1751968503937" y="607.7874015748032" />
+      <point x="0.0" y="81.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.6791443850267387" showDependencies="false" x="499.37086755973746" y="380.5003118735371" />
+  <SelectedNodes>
+    <node>67bf3ad7-1b10-4d5b-9f5e-8397480f5472.TABLE:sygal.public.unicaen_avis_type_complem</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Columns</Category>
+    <Category>Comments</Category>
+    <Category>Key columns</Category>
+    <Category>Virtual foreign keys</Category>
+  </Categories>
+</Diagram>
+

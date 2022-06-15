@@ -36,8 +36,8 @@ $count = count($soutenances);
             $rapporteurs = array_filter($acteurs, function (Acteur $a) { return $a->estRapporteur();});
             $membres = array_filter($acteurs, function (Acteur $a) { return $a->estMembreDuJury();});
         ?>
-        <div class="card bg-info">
-            <div class="card-header">
+        <div class="card">
+            <div class="card-header bg-info">
                 <h3>
                 <a href="<?php echo $this->url('these/identite', [ 'these' => $soutenance->getThese()->getId() ], [], true); ?>"
                    title="Accéder aux données de la thèse"

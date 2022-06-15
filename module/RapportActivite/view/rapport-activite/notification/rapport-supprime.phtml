@@ -1,0 +1,19 @@
+<?php
+/**
+ * @var \RapportActivite\Entity\Db\RapportActivite $rapportActivite
+ *
+ * @see \RapportActivite\Notification\RapportActiviteSupprimeNotification
+ */
+?>
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?> à propos
+    du rapport d'activité &laquo; <?php echo $rapportActivite->getFichier()->getNom() ?> &raquo;.
+</p>
+<p>
+    Ce rapport d'activité a été supprimé par
+    <?php echo $rapportActivite->getHistoModificateur() ?: $rapportActivite->getHistoCreateur() ?>,
+    le <?php echo ($rapportActivite->getHistoModification() ?: $rapportActivite->getHistoCreation())->format('d/m/Y H:i') ?>.
+</p>

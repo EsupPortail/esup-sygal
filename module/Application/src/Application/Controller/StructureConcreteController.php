@@ -43,6 +43,19 @@ abstract class StructureConcreteController extends AbstractController
     protected $routeName;
 
     /**
+     * @var UniteRechercheForm|EcoleDoctoraleForm|EtablissementForm
+     */
+    protected $structureForm;
+
+    /**
+     * @param UniteRechercheForm|EcoleDoctoraleForm|EtablissementForm $form
+     */
+    public function setStructureForm($form)
+    {
+        $this->structureForm = $form;
+    }
+
+    /**
      * @return ViewModel
      */
     public function indexAction()
@@ -71,7 +84,7 @@ abstract class StructureConcreteController extends AbstractController
     /**
      * @return ViewModel
      */
-    public function informationAction()
+    public function informationAction(): ViewModel
     {
         $id = $this->params()->fromRoute('structure');
         $structureConcrete = $this->getStructureConcreteService()->getRepository()->findByStructureId($id);
@@ -92,50 +105,25 @@ abstract class StructureConcreteController extends AbstractController
         }
 
         $roleListings = [];
-        $individuListings = [];
         $roles = $this->roleService->getRolesByStructure($structureConcrete->getStructure());
-        $individus = $this->roleService->getIndividuByStructure($structureConcrete->getStructure());
         $individuRoles = $this->roleService->getIndividuRoleByStructure($structureConcrete->getStructure());
 
         /** @var Role $role */
         foreach ($roles as $role) {
             $roleListings[$role->getLibelle()] = 0;
         }
-
-        /** @var Individu $individu */
-        foreach ($individus as $individu) {
-            $denomination = $individu->getNomComplet(false, false, false, true, false);
-            $individuListings[$denomination] = [];
-        }
-
         /** @var IndividuRole $individuRole */
         foreach ($individuRoles as $individuRole) {
-            $denomination = $individuRole->getIndividu()->getNomComplet(false, false, false, true, false);
             $role = $individuRole->getRole()->getLibelle();
-            $etablissement = ($individuRole->getIndividu()->getEtablissement())?$individuRole->getIndividu()->getEtablissement()->getLibelle():"Aucun";
-            $individuListings[$denomination][] = [ 'Role' => $role, 'Etablissement' => $etablissement ];
             $roleListings[$role]++;
         }
 
         return new ViewModel([
             'structure'       => $structureConcrete,
             'roleListing'     => $roleListings,
-            'individuListing' => $individuListings,
+            'individuRoles' => $individuRoles,
             'logoContent'     => $this->structureService->getLogoStructureContent($structureConcrete),
         ]);
-    }
-
-    /**
-     * @var UniteRechercheForm|EcoleDoctoraleForm|EtablissementForm
-     */
-    protected $structureForm;
-
-    /**
-     * @param UniteRechercheForm|EcoleDoctoraleForm|EtablissementForm $form
-     */
-    public function setStructureForm($form)
-    {
-        $this->structureForm = $form;
     }
 
     /**

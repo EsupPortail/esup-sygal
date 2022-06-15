@@ -42,7 +42,7 @@ class RapportCsiControllerFactory
         $rapportService = $container->get(RapportService::class);
         $versionFichierService = $container->get('VersionFichierService');
         $notificationService = $container->get(NotifierService::class);
-        $individuService = $container->get('IndividuService');
+        $individuService = $container->get(IndividuService::class);
         $rapportForm = $container->get('FormElementManager')->get(RapportCsiForm::class);
         $validationService = $container->get(ValidationService::class);
         $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
@@ -58,7 +58,7 @@ class RapportCsiControllerFactory
         $controller->setIndividuService($individuService);
         $controller->setForm($rapportForm);
         $controller->setValidationService($validationService);
-        $controller->setTheseAnneeUnivService($theseAnneeUnivService);
+        $controller->setAnneesUnivs($theseAnneeUnivService);
         $controller->setTypeRapport($typeRapport);
         $controller->setTypeValidation($typeValidation);
 

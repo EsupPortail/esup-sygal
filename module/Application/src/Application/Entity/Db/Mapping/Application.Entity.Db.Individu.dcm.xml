@@ -35,6 +35,7 @@
 
         <one-to-many target-entity="Application\Entity\Db\MailConfirmation" mapped-by="individu" field="mailsConfirmations"/>
         <one-to-many target-entity="Application\Entity\Db\Utilisateur" mapped-by="individu" field="utilisateurs"/>
+        <one-to-many target-entity="Application\Entity\Db\IndividuCompl" mapped-by="individu" field="complements"/>
 
         <many-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement">
             <join-columns>

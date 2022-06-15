@@ -611,10 +611,16 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         /** Directeurs de thèses */
         $nomination = [];
         foreach ($directeurs as $directeur) {
-            $nomination[] = strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true, true));
+            $current = strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true, true));
+            $structure = ($these->getUniteRecherche())?:$directeur->getIndividu()->getUniteRecherche()?:$directeur->getIndividu()->getEtablissement();
+            if ($structure !== null) $current .= " (". $structure->getLibelle() .")";
+            $nomination[] = $current;
         }
         foreach ($codirecteurs as $directeur) {
-            $nomination[] = strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true, true));
+            $current = strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true, true));
+            $structure = ($directeur->getIndividu()->getUniteRecherche())?:$directeur->getIndividu()->getEtablissement();
+            if ($structure !== null) $current .= " (". $structure->getLibelle() .")";
+            $nomination[] = $current;
         }
         $pdcData->setListing(implode(" et ", $nomination) . ", ");
         if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());

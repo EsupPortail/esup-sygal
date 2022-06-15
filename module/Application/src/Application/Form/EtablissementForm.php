@@ -20,9 +20,6 @@ class EtablissementForm extends Form
     {
         $this->setObject(new Etablissement());
 
-        $this
-            ->add(new Hidden('id'));
-
         $this->add((
             new Text('sigle'))
                 ->setLabel("Sigle :")

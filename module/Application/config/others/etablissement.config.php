@@ -19,6 +19,13 @@ return [
                 [
                     'controller' => EtablissementController::class,
                     'action'     => [
+                        'rechercher',
+                    ],
+                    'role' => [],
+                ],
+                [
+                    'controller' => EtablissementController::class,
+                    'action'     => [
                         'index',
                         'information',
                     ],
@@ -69,6 +76,15 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'rechercher' => [
+                        'type'          => Literal::class,
+                        'options'       => [
+                            'route'       => '/rechercher',
+                            'defaults'    => [
+                                'action' => 'rechercher',
+                            ],
+                        ],
+                    ],
                     'information' => [
                         'type'          => Segment::class,
                         'options'       => [

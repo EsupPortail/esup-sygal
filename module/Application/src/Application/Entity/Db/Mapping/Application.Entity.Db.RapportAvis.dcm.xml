@@ -13,7 +13,6 @@
     </many-to-one>
 
     <field name="avis" column="avis" />
-    <field name="commentaires" column="commentaires" nullable="true"/>
 
     <field name="histoCreation" type="datetime" column="HISTO_CREATION"/>
     <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>

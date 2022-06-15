@@ -493,4 +493,14 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     {
         return self::RESOURCE_ID;
     }
+
+    /**
+     * Teste si le type MIME de ce fichier correspond à du PDF.
+     *
+     * @return bool
+     */
+    public function isTypeMimePdf(): bool
+    {
+        return $this->getTypeMime() === self::MIME_TYPE_PDF;
+    }
 }

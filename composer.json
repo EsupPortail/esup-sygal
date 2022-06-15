@@ -29,7 +29,7 @@
         "guzzlehttp/guzzle": "^6.3",
         "ramsey/uuid": "^3.3",
         "twig/twig": "^3.0",
-        "unicaen/app": "^5.0",
+        "unicaen/app": "^5.1",
         "unicaen/auth": "^5.1",
         "unicaen/auth-token": "^5.0",
         "unicaen/bjy-authorize": "^4.0",
@@ -68,12 +68,7 @@
             "mkdir -p vendor/mpdf/mpdf/ttfontdata && chmod -R 777 vendor/mpdf/mpdf/ttfontdata",
             "mkdir -p data/cache && chmod -R 777 data/cache && rm -rf data/cache/*",
             "mkdir -p data/DoctrineModule/cache && chmod -R 777 data/DoctrineModule/cache && rm -rf data/DoctrineModule/cache/*",
-            "mkdir -p data/DoctrineORMModule/Proxy && chmod -R 777 data/DoctrineORMModule/Proxy && rm -rf data/DoctrineORMModule/Proxy/*",
-            "vendor/bin/doctrine-module orm:clear-cache:query",
-            "vendor/bin/doctrine-module orm:clear-cache:metadata",
-            "vendor/bin/doctrine-module orm:clear-cache:result",
-            "vendor/bin/doctrine-module orm:generate-proxies",
-            "vendor/bin/laminas-development-mode disable"
+            "mkdir -p data/DoctrineORMModule/Proxy && chmod -R 777 data/DoctrineORMModule/Proxy && rm -rf data/DoctrineORMModule/Proxy/*"
         ]
     }
 }

@@ -420,12 +420,10 @@ class FichierTheseService extends BaseService
      * @param string $inputFilePath
      * @return string Contenu binaire du fichier PNG généré
      * @throws LogicException Format de fichier incorrect
-     *
-     * @deprecated Appeler directement FileService::generateFirstPagePreview()
      */
-    public function generateFirstPagePreview($inputFilePath)
+    public function generateFirstPagePreview(string $inputFilePath): string
     {
-        return $this->fileService->generateFirstPagePreview($inputFilePath);
+        return $this->fileService->generateFirstPagePreviewPngImageFromPdf($inputFilePath);
     }
 
     /**
@@ -449,15 +447,14 @@ class FichierTheseService extends BaseService
 
     /**
      * @param Response $response
-     * @param string   $fileContent
+     * @param string $fileContent
+     * @param string $mimeType Ex : "image/png"
      * @param int|null $cacheMaxAge En secondes, ex: 60*60*24 = 86400 s = 1 jour
      * @return Response
-     *
-     * @deprecated Appeler directement FileService::createResponseForFileContent()
      */
-    public function createResponseForFileContent(Response $response, $fileContent, $cacheMaxAge = null)
+    public function createResponseForFileContent(Response $response, string $fileContent, string $mimeType, ?int $cacheMaxAge = null): Response
     {
-        return $this->fileService->createResponseForFileContent($response, $fileContent, $cacheMaxAge);
+        return $this->fileService->createResponseForFileContent($response, $fileContent, $mimeType, $cacheMaxAge);
     }
 
     /**

@@ -233,4 +233,24 @@ class EtablissementRepository extends DefaultEntityRepository
 
         return  $qb->getQuery()->getResult();
     }
+
+    /**
+     * @param string|null $term
+     * @return Etablissement[]
+     */
+    public function findByText(?string $term) : array
+    {
+        $qb = $this->createQueryBuilder("e")
+            ->addSelect("s")->leftJoin("e.structure", "s")
+            ->andWhere('lower(s.libelle) like :term or lower(s.sigle) like :term')
+            ->setParameter('term', '%'.strtolower($term).'%')
+            ->andWhere('e.histoDestruction is null')
+            ->andWhere('s.estFermee = :false')
+            ->setParameter('false', false)
+            ->leftJoin('s.structureSubstituante', 'substitutionTo')
+            ->andWhere('substitutionTo IS NULL')
+        ;
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
 }

@@ -1,6 +1,7 @@
-$fontSize: 13px;
+$fontSize: 12px;
 $fontColor: #333;
-$navbarBackgroundColor: #006EAD;
+//$navbarBackgroundColor: #006EAD;
+$navbarBackgroundColor: #004980;
 $navbarBackgroundColorActive: #004980;
 $sidebarBackgroundColor: #e9ecef;;
 $sidebarBackgroundColorActive: #004980;
@@ -181,7 +182,7 @@ h1.app-name {
 
   .navbar-brand {
     width: 100px;
-    background-image: url("/css/SyGAL_logo_Blanc03.png");
+    background-image: url("/css/ESUPSyGAL_logo_Blanc03.png");
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;

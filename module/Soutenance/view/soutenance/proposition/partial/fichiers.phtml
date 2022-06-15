@@ -22,14 +22,16 @@ foreach ($proposition->getMembres() as $membre) {
 }
 ?>
 
-<div class="box card
+
 <?php
-if ($justificatifsOk === null)  echo " bg-warning";
-if ($justificatifsOk === true)  echo " bg-success";
-if ($justificatifsOk === false) echo " bg-danger";
+    $cssClass = "";
+    if ($justificatifsOk === null)   $cssClass = "bg-warning";
+    if ($justificatifsOk === true)   $cssClass = "bg-success";
+    if ($justificatifsOk === false)  $cssClass = "bg-danger";
 ?>
-">
-    <div class="card-header <?php echo ($justificatifsOk)?"bg-success":"bg-danger";?>">
+
+<div class="box card">
+    <div class="card-header <?php echo $cssClass; ?>">
         <h2> Fichiers associés à la proposition</h2>
     </div>
     <div class="card-body">
@@ -41,7 +43,7 @@ if ($justificatifsOk === false) echo " bg-danger";
             </a>
         <?php endif; ?>
 
-        <?php if ($justificatifsOk === false) : ?>
+        <?php if ($justificatifsOk !== true) : ?>
             <div class="alert alert-warning float-end">
                 <span class="fas fa-exclamation-triangle"></span>
                 Liste des justificatifs manquants :

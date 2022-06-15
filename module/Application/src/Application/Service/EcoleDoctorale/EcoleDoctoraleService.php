@@ -13,8 +13,8 @@ use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
-use UnicaenApp\Exception\RuntimeException;
 use Laminas\Mvc\Controller\AbstractActionController;
+use UnicaenApp\Exception\RuntimeException;
 
 /**
  * @method EcoleDoctorale|null findOneBy(array $criteria, array $orderBy = null)
@@ -144,7 +144,6 @@ class EcoleDoctoraleService extends BaseService
 
     /**
      * Instancie une pseudo-école doctorale "Toute école doctorale confondue" utile dans les vues.
-     *
      * @return EcoleDoctorale
      */
     public function createTouteEcoleDoctoraleConfondue()

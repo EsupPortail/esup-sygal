@@ -52,4 +52,24 @@ class UniteRechercheRepository extends DefaultEntityRepository
 
         return $unite;
     }
+
+    /**
+     * @param string|null $term
+     * @return UniteRecherche[]
+     */
+    public function findByText(?string $term) : array
+    {
+        $qb = $this->createQueryBuilder("u")
+            ->addSelect("s")->leftJoin("u.structure", "s")
+            ->andWhere('lower(s.libelle) like :term or lower(s.sigle) like :term')
+            ->setParameter('term', '%'.strtolower($term).'%')
+            ->andWhere('u.histoDestruction is null')
+            ->andWhere('s.estFermee = :false')
+            ->setParameter('false', false)
+            ->leftJoin('s.structureSubstituante', 'substitutionTo')
+            ->andWhere('substitutionTo IS NULL')
+        ;
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
 }

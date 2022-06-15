@@ -40,7 +40,7 @@ class NotifierServiceFactory extends \Notification\Service\NotifierServiceFactor
         $variableService = $container->get('VariableService');
         $ecoleDoctoraleService = $container->get('EcoleDoctoraleService');
         $uniteRechercheService = $container->get('UniteRechercheService');
-        $individuService = $container->get('IndividuService');
+        $individuService = $container->get(IndividuService::class);
         $roleService = $container->get('RoleService');
 
         /** @var HttpViewManager|ConsoleViewManager $vm */

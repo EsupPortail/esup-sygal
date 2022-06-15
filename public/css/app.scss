@@ -234,6 +234,9 @@ p.appname-subtitle {
   }
 }
 
+body.loading * {
+  cursor: wait;
+}
 div.loading {
   background-image: url('//gest.unicaen.fr/images/ajax-loader-r.gif');
   background-position: center center;
@@ -1135,4 +1138,44 @@ span.badge.badge-error
 
   padding: 0.5em;
   margin-top: 1em;
+}
+
+
+
+p.avis-complem {
+  margin-bottom: 0.4rem;
+}
+.avis-complem-libelle {
+  font-weight: 450;
+}
+.avis-complem-checkbox {
+  .avis-complem-valeur {
+    font-weight: 450;
+  }
+}
+.avis-complem-textarea {
+  .avis-complem-valeur {
+    display: block;
+    padding-left: 1rem;
+  }
+}
+.avis-type-complem {
+  textarea {
+    min-height: 4rem;
+  }
+}
+
+.card.validation-rapport-activite {
+  font-size: 95%;
+  margin-bottom: 1rem;
+  .card-header {
+    padding: .25rem 0.5rem;
+    font-weight: 500;
+  }
+  .card-body {
+    padding: 0.5rem;
+  }
+  p {
+    margin-bottom: 0.5rem;
+  }
 }

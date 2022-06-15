@@ -38,7 +38,6 @@ $form->get('code')->setAttribute('readonly', !$editable);
 </h1>
 
 <?php echo $this->form()->openTag($form->prepare()->setAttribute('class', 'ecole-doctorale')) ?>
-<?php echo $this->formHidden($form->get('id')) ?>
 <div class="row">
 
     <div class="col-md-6">
@@ -73,7 +72,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
                     <img
                             id="logo"
                             style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
-                            src="data:image/png;base64,<?php echo base64_encode($logoContent); ?>"
+                            src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"
                     />
                 </td>
                 <td style="padding:20px;">

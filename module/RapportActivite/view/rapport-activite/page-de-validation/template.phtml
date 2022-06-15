@@ -1,0 +1,109 @@
+<?php
+
+use RapportActivite\Entity\Db\RapportActiviteAvis;
+
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ * @var \RapportActivite\Entity\Db\RapportActivite $rapport
+ * @var \RapportActivite\Service\Fichier\Exporter\PageValidationExportData $data
+ *
+ * @see \RapportActivite\Service\RapportActiviteService::createPageValidationData() pour la génération de $data
+ */
+?>
+
+<!-- SECTION DU LOGO DE LA COMUE -------------------------------------------------------------------------------------->
+<div style="text-align: center; margin-bottom: 30px;">
+    <div class='logo-comue'>
+        <?php if ($data->logoCOMUE !== null): ?>
+            <img src="<?php echo $data->logoCOMUE ?>" alt="Logo de la COMUE"/>
+        <?php else: ?>
+            <span style='background-color:red;'> COMUE ou logo de la COMUE non renseigné. </span>
+        <?php endif; ?>
+    </div>
+</div>
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+<div class='bandeau-titre'>
+    <?php echo mb_strtoupper($rapport->getTypeRapportToString()) ?>
+</div>
+
+<div class='bandeau-titre-these'>
+    <?php echo $data->titre; ?>
+</div>
+
+<div class='infos-rapport'>
+    <p>
+        <?php echo $rapport->getFichier()->getNom() ?>
+    </p>
+    <p>
+        Déposé le <?php echo ($rapport->getHistoModification() ?: $rapport->getHistoCreation())->format('d/m/Y H:i') ?>
+    </p>
+</div>
+
+<div class='infos-validation'>
+    <p>
+        La direction de l'ED &laquo; <?php echo $data->ecoleDoctorale ?> &raquo; atteste avoir validé le
+        <?php echo $data->validation->getHistoCreation()->format('d/m/Y à H:i') ?> le
+        <?php echo lcfirst($rapport->getTypeRapportToString()) ?> de <?php echo $data->doctorant ?>,
+        laboratoire &laquo; <?php echo $data->uniteRecherche ?> &raquo;
+        <?php if ($data->mostRecentAvis): ?>
+            <?php $avisValeur = $data->mostRecentAvis->getAvis()->getAvisValeur(); ?>
+            <?php if ($avisValeur->getCode() === RapportActiviteAvis::AVIS_VALEUR__CODE__AVIS_RAPPORT_ACTIVITE_VALEUR_NEGATIF): ?>
+                <strong>avec un avis réservé :</strong>
+            <?php elseif ($avisValeur->getCode() === RapportActiviteAvis::AVIS_VALEUR__CODE__AVIS_RAPPORT_ACTIVITE_VALEUR_POSITIF): ?>
+                <strong>avec un avis positif.</strong>
+            <?php endif ?>
+            <?php if ($commentairesToHtml = $data->mostRecentAvis->getAvis()->getAvisComplemsToHtml()): ?>
+                <?php echo $data->mostRecentAvis->getAvis()->getAvisComplemsToHtml() ?>
+            <?php else: ?>
+                <br>
+                - Commentaires : aucun.
+            <?php endif ?>
+        <?php endif ?>
+    </p>
+</div>
+
+<table style="border:none;" class="logos">
+    <tr>
+        <td>
+            <img class="logo logo_small" src="<?php echo $data->logoEcoleDoctorale ?>" alt="Logo de l'ED"/>
+        </td>
+        <td>
+            <?php if ($data->signatureEcoleDoctorale): ?>
+                <img class="signature-ecole-doctorale"
+                     src="data:image/*;base64,<?php echo base64_encode($data->signatureEcoleDoctorale); ?>"
+                     alt="Signature de la direction d'ED"/>
+            <?php endif ?>
+            <?php if ($data->signatureEcoleDoctoraleAnomalie): ?>
+                <span class="anomalie">ANOMALIE : <?php echo $data->signatureEcoleDoctoraleAnomalie ?></span>
+            <?php endif ?>
+        </td>
+    </tr>
+</table>
+
+<!--<div class="signature-ecole-doctorale">
+    <?php /*if ($data->signatureEcoleDoctorale): */ ?>
+        <img src="data:image/png;base64,<?php /*echo base64_encode($data->signatureEcoleDoctorale); */ ?>"
+             alt="Signature de la direction d'ED"/>
+    <?php /*endif */ ?>
+    <?php /*if ($data->signatureEcoleDoctoraleAnomalie): */ ?>
+        <span class="anomalie">ANOMALIE : <?php /*echo $data->signatureEcoleDoctoraleAnomalie */ ?></span>
+    <?php /*endif */ ?>
+</div>-->
+
+
+<!-- SECTION DES LOGOS EN BAS DE PAGE --------------------------------------------------------------------------------->
+<div class="logos">
+    <table style="border:none;" class="logos">
+        <tr>
+            <td>
+                <?php if ($data->logoEtablissement): ?>
+                    <img class="logo logo_small" src="<?php echo $data->logoEtablissement ?>"/>
+                <?php else: ?>
+                    <span style='background-color:red;'> Établissement d'inscription ou logo d'établissement non renseigné. </span>
+                <?php endif; ?>
+            </td>
+        </tr>
+    </table>
+</div>
+<!-- --------------------------------------------------------------------------------------------------------------- -->

@@ -22,7 +22,7 @@ $justification = true;
     Bonjour,
 </p>
 <p>
-    La soutenance de <?php echo $these->getDoctorant()->getIndividu(); ?> a été accepté par votre établissement.
+    La soutenance de <?php echo $these->getDoctorant()->getIndividu(); ?> a été acceptée par votre établissement.
     Conformément aux informations que vous avez fournies celle-ci se tiendra le
     <em> <?php echo $proposition->getDate()->format(Constants::DATETIME_FORMAT); ?> </em>
     dans <em> <?php echo $proposition->getLieu() ?> </em>.
@@ -65,7 +65,7 @@ $justification = true;
         <li> la maison du doctorat vient de donner son feu vert pour la soutenance </li>
         <li> vous êtes soit :
             <ul>
-                <li> un acteur direct de la thèse de <?php $these->getDoctorant()->getIndividu()->getNomComplet(); ?>, </li>
+                <li> un acteur direct de la thèse de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>, </li>
                 <li> un&middot;e responsable de l'école de doctorale gérant la thèse, </li>
                 <li> un&middot;e responsable de l'unité de recherche encadrant la thèse. </li>
             </ul>

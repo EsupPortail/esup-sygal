@@ -36,6 +36,11 @@
                 <join-column name="ACTEUR_ETABLISSEMENT_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
+        <many-to-one field="uniteRecherche" target-entity="Application\Entity\Db\UniteRecherche">
+            <join-columns>
+                <join-column name="ACTEUR_UNITERECH_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
 
         <many-to-one field="source" target-entity="Application\Entity\Db\Source">
             <join-columns>

@@ -4,9 +4,9 @@ namespace Application\Form;
 
 use Application\Entity\Db\UniteRecherche;
 use Laminas\Form\Element\Checkbox;
+use Laminas\Form\Element\File;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
-use Laminas\Form\Element\File;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
 
@@ -18,9 +18,6 @@ class UniteRechercheForm extends Form
     public function init()
     {
         $this->setObject(new UniteRecherche());
-
-        $this
-            ->add(new Text('id'));
 
         $this->add((
             new Text('sigle'))
