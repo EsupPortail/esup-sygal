@@ -2,7 +2,7 @@
 
 namespace Soutenance\Form\Justificatif;
 
-use Application\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\NatureFichier;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Laminas\Form\Element\Button;
 use Laminas\Form\Element\File;

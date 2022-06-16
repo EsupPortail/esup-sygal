@@ -3,8 +3,8 @@
 namespace RapportActivite\Controller\Recherche;
 
 use Application\Entity\Db\TypeValidation;
-use Application\Service\Fichier\FichierService;
-use Application\Service\File\FileService;
+use Fichier\Service\Fichier\FichierService;
+use Fichier\Service\File\FileService;
 use Application\Service\Validation\ValidationService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;

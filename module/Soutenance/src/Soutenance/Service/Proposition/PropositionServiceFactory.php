@@ -4,7 +4,7 @@ namespace Soutenance\Service\Proposition;
 
 use Application\Service\Acteur\ActeurService;
 use Structure\Service\Etablissement\EtablissementService;
-use Application\Service\File\FileService;
+use Fichier\Service\File\FileService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\UserContextService;
 use Application\Service\Variable\VariableService;

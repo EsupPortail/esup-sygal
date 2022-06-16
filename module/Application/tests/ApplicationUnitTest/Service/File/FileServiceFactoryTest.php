@@ -2,8 +2,8 @@
 
 namespace ApplicationUnitTest\Service\File;
 
-use Application\Service\File\FileService;
-use Application\Service\File\FileServiceFactory;
+use Fichier\Service\File\FileService;
+use Fichier\Service\File\FileServiceFactory;
 use UnicaenApp\Exception\RuntimeException;
 use Interop\Container\ContainerInterface;
 

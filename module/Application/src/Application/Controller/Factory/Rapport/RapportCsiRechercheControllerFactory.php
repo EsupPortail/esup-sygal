@@ -4,7 +4,7 @@ namespace Application\Controller\Factory\Rapport;
 
 use Application\Controller\Rapport\RapportCsiRechercheController;
 use Application\Entity\Db\TypeRapport;
-use Application\Service\Fichier\FichierService;
+use Fichier\Service\Fichier\FichierService;
 use Application\Service\Rapport\RapportSearchService;
 use Application\Service\Rapport\RapportService;
 use Interop\Container\ContainerInterface;

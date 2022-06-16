@@ -3,9 +3,9 @@
 namespace RapportActivite\Service\Fichier;
 
 use Application\Command\Exception\TimedOutCommandException;
-use Application\Command\Pdf\PdfMergeShellCommandQpdf;
+use Fichier\Command\Pdf\PdfMergeShellCommandQpdf;
 use Application\Command\ShellCommandRunnerTrait;
-use Application\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Service\Fichier\Exporter\PageValidationExportData;
 use RapportActivite\Service\Fichier\Exporter\PageValidationPdfExporterTrait;

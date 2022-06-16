@@ -6,7 +6,7 @@ use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\StructureConcreteInterface;
 use Structure\Entity\Db\UniteRecherche;
-use Application\Service\File\FileService;
+use Fichier\Service\File\FileService;
 use UnicaenApp\Exception\RuntimeException;
 
 class FileServiceTest extends \PHPUnit_Framework_TestCase

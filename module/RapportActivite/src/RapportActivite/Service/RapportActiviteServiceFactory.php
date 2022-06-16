@@ -3,13 +3,13 @@
 namespace RapportActivite\Service;
 
 use Structure\Service\Etablissement\EtablissementService;
-use Application\Service\Fichier\FichierService;
-use Application\Service\File\FileService;
-use Application\Service\NatureFichier\NatureFichierService;
+use Fichier\Service\Fichier\FichierService;
+use Fichier\Service\File\FileService;
+use Fichier\Service\NatureFichier\NatureFichierService;
 use Application\Service\Notification\NotifierService;
 use Structure\Service\StructureDocument\StructureDocumentService;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
-use Application\Service\VersionFichier\VersionFichierService;
+use Fichier\Service\VersionFichier\VersionFichierService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
 use RapportActivite\Service\Fichier\Exporter\PageValidationPdfExporter;

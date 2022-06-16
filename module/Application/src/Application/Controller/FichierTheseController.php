@@ -3,15 +3,15 @@
 namespace Application\Controller;
 
 use Application\Command\Exception\TimedOutCommandException;
-use Application\Entity\Db\Fichier;
+use Fichier\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\These;
-use Application\Entity\Db\VersionFichier;
+use Fichier\Entity\Db\VersionFichier;
 use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\RouteMatch;
-use Application\Service\Fichier\Exception\FichierServiceException;
-use Application\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\Fichier\Exception\FichierServiceException;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\FichierThese\Exception\DepotImpossibleException;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
@@ -19,7 +19,7 @@ use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
-use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
+use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;

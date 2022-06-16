@@ -3,8 +3,8 @@
 namespace RapportActivite\Controller;
 
 use Application\Entity\Db\TypeValidation;
-use Application\Service\Fichier\FichierService;
-use Application\Service\File\FileService;
+use Fichier\Service\Fichier\FichierService;
+use Fichier\Service\File\FileService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Application\Service\Validation\ValidationService;
 use Psr\Container\ContainerInterface;
@@ -29,8 +29,8 @@ class RapportActiviteControllerFactory
     public function __invoke(ContainerInterface $container): RapportActiviteController
     {
         /**
-         * @var \Application\Service\File\FileService $fileService
-         * @var \Application\Service\Fichier\FichierService $fichierService
+         * @var \Fichier\Service\File\FileService $fileService
+         * @var \Fichier\Service\Fichier\FichierService $fichierService
          * @var \RapportActivite\Service\RapportActiviteService $rapportActiviteService
          * @var \RapportActivite\Service\Avis\RapportActiviteAvisService $rapportActiviteAvisService
          * @var \RapportActivite\Service\Fichier\RapportActiviteFichierService $rapportActiviteFichierService

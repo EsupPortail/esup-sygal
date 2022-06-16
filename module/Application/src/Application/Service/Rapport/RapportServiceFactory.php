@@ -3,14 +3,14 @@
 namespace Application\Service\Rapport;
 
 use Structure\Service\Etablissement\EtablissementService;
-use Application\Service\Fichier\FichierService;
-use Application\Service\File\FileService;
-use Application\Service\NatureFichier\NatureFichierService;
+use Fichier\Service\Fichier\FichierService;
+use Fichier\Service\File\FileService;
+use Fichier\Service\NatureFichier\NatureFichierService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\PageDeCouverture\PageDeCouverturePdfExporter;
 use Application\Service\RapportValidation\RapportValidationService;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
-use Application\Service\VersionFichier\VersionFichierService;
+use Fichier\Service\VersionFichier\VersionFichierService;
 use Interop\Container\ContainerInterface;
 use Retraitement\Service\RetraitementService;
 use Laminas\ServiceManager\Factory\FactoryInterface;

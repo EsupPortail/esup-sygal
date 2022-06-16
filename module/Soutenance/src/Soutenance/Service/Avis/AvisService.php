@@ -3,10 +3,10 @@
 namespace Soutenance\Service\Avis;
 
 use Application\Entity\DateTimeAwareTrait;
-use Application\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
-use Application\Entity\Db\VersionFichier;
-use Application\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Entity\Db\VersionFichier;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use DateTime;

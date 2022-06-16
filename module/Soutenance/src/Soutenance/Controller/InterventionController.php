@@ -3,8 +3,8 @@
 namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\NatureFichier;
-use Application\Entity\Db\VersionFichier;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\VersionFichier;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Soutenance\Entity\Intervention;

@@ -11,7 +11,7 @@ use Application\Service\These\TheseService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
-use Application\Service\VersionFichier\VersionFichierService;
+use Fichier\Service\VersionFichier\VersionFichierService;
 use Application\Service\Workflow\WorkflowService;
 use Interop\Container\ContainerInterface;
 use Retraitement\Service\RetraitementService;

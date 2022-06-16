@@ -4,7 +4,7 @@ namespace Structure\Service\Structure;
 
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
-use Application\Service\File\FileService;
+use Fichier\Service\File\FileService;
 use Application\Service\Source\SourceService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 use Application\SourceCodeStringHelper;

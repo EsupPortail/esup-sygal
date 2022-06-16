@@ -3,7 +3,7 @@
 namespace Soutenance\Controller;
 
 use Application\Service\Acteur\ActeurService;
-use Application\Service\Fichier\FichierService;
+use Fichier\Service\Fichier\FichierService;
 use Individu\Service\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\Source\SourceService;

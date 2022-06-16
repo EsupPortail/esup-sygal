@@ -12,7 +12,7 @@ use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
 use Application\Service\CoEncadrant\Exporter\JustificatifCoencadrements\JustificatifCoencadrementPdfExporter;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Application\Service\File\FileServiceAwareTrait;
+use Fichier\Service\File\FileServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;

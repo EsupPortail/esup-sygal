@@ -2,11 +2,11 @@
 
 namespace Information\Controller;
 
-use Application\Controller\Plugin\Uploader\UploaderPlugin;
-use Application\Entity\Db\Fichier;
-use Application\Entity\Db\NatureFichier;
-use Application\Entity\Db\VersionFichier;
-use Application\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Controller\Plugin\Uploader\UploaderPlugin;
+use Fichier\Entity\Db\Fichier;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\VersionFichier;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Information\Form\FichierForm;
 use Information\Service\InformationFichierServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;

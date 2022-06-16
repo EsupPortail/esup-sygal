@@ -13,7 +13,7 @@ use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\File\FileServiceAwareTrait;
+use Fichier\Service\File\FileServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;

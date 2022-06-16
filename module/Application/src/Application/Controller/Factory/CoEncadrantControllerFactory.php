@@ -7,7 +7,7 @@ use Application\Form\RechercherCoEncadrantForm;
 use Application\Service\Acteur\ActeurService;
 use Application\Service\CoEncadrant\CoEncadrantService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Application\Service\File\FileService;
+use Fichier\Service\File\FileService;
 use Individu\Service\IndividuService;
 use Application\Service\These\TheseService;
 use Structure\Service\UniteRecherche\UniteRechercheService;

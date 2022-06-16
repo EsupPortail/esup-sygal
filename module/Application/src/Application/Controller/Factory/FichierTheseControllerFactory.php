@@ -4,13 +4,13 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\FichierTheseController;
 use Application\EventRouterReplacer;
-use Application\Service\Fichier\FichierService;
+use Fichier\Service\Fichier\FichierService;
 use Application\Service\FichierThese\FichierTheseService;
 use Individu\Service\IndividuService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\Validation\ValidationService;
-use Application\Service\VersionFichier\VersionFichierService;
+use Fichier\Service\VersionFichier\VersionFichierService;
 use Interop\Container\ContainerInterface;
 use Laminas\EventManager\EventManager;
 use Laminas\Router\Http\TreeRouteStack;

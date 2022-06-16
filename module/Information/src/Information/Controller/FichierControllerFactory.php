@@ -2,7 +2,7 @@
 
 namespace  Information\Controller;
 
-use Application\Service\Fichier\FichierService;
+use Fichier\Service\Fichier\FichierService;
 use Information\Form\FichierForm;
 use Information\Service\InformationFichierService;
 use Interop\Container\ContainerInterface;

@@ -10,7 +10,7 @@ use Application\Entity\Db\Role;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\File\FileServiceAwareTrait;
+use Fichier\Service\File\FileServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressGenerator;
 use Application\Service\ListeDiffusion\ListeDiffusionServiceAwareTrait;

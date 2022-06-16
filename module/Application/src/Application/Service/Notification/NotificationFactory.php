@@ -6,7 +6,7 @@ use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\These;
 use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\Variable;
-use Application\Entity\Db\VersionFichier;
+use Fichier\Entity\Db\VersionFichier;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;

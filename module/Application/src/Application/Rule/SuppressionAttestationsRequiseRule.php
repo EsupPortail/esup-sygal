@@ -3,7 +3,7 @@
 namespace Application\Rule;
 
 use Application\Entity\Db\These;
-use Application\Entity\Db\VersionFichier;
+use Fichier\Entity\Db\VersionFichier;
 use UnicaenApp\Exception\LogicException;
 
 /**

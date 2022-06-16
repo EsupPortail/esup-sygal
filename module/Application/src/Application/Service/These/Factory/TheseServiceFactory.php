@@ -5,7 +5,7 @@ namespace Application\Service\These\Factory;
 use Application\Service\Acteur\ActeurService;
 use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\FichierThese\FichierTheseService;
-use Application\Service\File\FileService;
+use Fichier\Service\File\FileService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;

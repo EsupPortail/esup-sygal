@@ -4,7 +4,7 @@ namespace Application\Form\Hydrator;
 
 use Application\Entity\Db\Diffusion;
 use Application\Entity\Db\RdvBu;
-use Application\Entity\Db\VersionFichier;
+use Fichier\Entity\Db\VersionFichier;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Doctrine\ORM\EntityManager;

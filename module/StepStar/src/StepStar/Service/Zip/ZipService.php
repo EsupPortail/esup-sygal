@@ -6,7 +6,7 @@ namespace StepStar\Service\Zip;
 
 use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\These;
-use Application\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use StepStar\Exception\ZipServiceException;
 use UnicaenApp\Util;

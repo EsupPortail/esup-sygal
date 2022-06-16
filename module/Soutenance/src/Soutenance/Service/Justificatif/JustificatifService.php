@@ -2,7 +2,7 @@
 
 namespace Soutenance\Service\Justificatif;
 
-use Application\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\NatureFichier;
 use Application\Service\UserContextServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;

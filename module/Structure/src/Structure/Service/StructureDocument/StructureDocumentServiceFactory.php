@@ -2,7 +2,7 @@
 
 namespace Structure\Service\StructureDocument;
 
-use Application\Service\Fichier\FichierService;
+use Fichier\Service\Fichier\FichierService;
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
 use Application\Service\UserContextService;

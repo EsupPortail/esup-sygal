@@ -3,31 +3,31 @@
 namespace Application\Service\FichierThese;
 
 use Application\Command\Exception\TimedOutCommandException;
-use Application\Command\MergeShellCommand;
-use Application\Command\Pdf\AjoutPdcShellCommandQpdf;
-use Application\Command\Pdf\RetraitementShellCommand;
+use Fichier\Command\MergeShellCommand;
+use Fichier\Command\Pdf\AjoutPdcShellCommandQpdf;
+use Fichier\Command\Pdf\RetraitementShellCommand;
 use Application\Command\ShellCommandRunner;
 use Application\Command\ShellCommandRunnerTrait;
-use Application\Entity\Db\Fichier;
+use Fichier\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
-use Application\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\Repository\FichierTheseRepository;
 use Application\Entity\Db\These;
 use Application\Entity\Db\ValiditeFichier;
-use Application\Entity\Db\VersionFichier;
+use Fichier\Entity\Db\VersionFichier;
 use Application\Filter\NomFichierTheseFormatter;
 use Application\Service\BaseService;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\FichierThese\Exception\DepotImpossibleException;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;
-use Application\Service\File\FileServiceAwareTrait;
+use Fichier\Service\File\FileServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\PageDeCouverture\PageDeCouverturePdfExporterAwareTrait;
 use Application\Service\ValiditeFichier\ValiditeFichierServiceAwareTrait;
-use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
-use Application\Validator\Exception\CinesErrorException;
-use Application\Validator\FichierCinesValidator;
+use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
+use Fichier\Validator\Exception\CinesErrorException;
+use Fichier\Validator\FichierCinesValidator;
 use Doctrine\ORM\OptimisticLockException;
 use Retraitement\Service\RetraitementServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
@@ -525,7 +525,7 @@ class FichierTheseService extends BaseService
                 "Le fichier suivant n'existe pas ou n'est pas accessible sur le serveur : " . $manuscritChemin);
         }
 
-//        $command = new \Application\Command\Pdf\AjoutPdcShellCommandGs();
+//        $command = new \Fichier\Command\Pdf\AjoutPdcShellCommandGs();
         $command = new AjoutPdcShellCommandQpdf();
         $command->setSupprimer1erePageDuManuscrit($removeFirstPage); // avec retrait de la 1ere page si necessaire
         $command->setInputFilesPaths([

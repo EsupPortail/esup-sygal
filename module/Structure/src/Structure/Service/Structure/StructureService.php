@@ -2,7 +2,7 @@
 
 namespace Structure\Service\Structure;
 
-use Application\Command\ConvertShellCommand;
+use Fichier\Command\ConvertShellCommand;
 use Application\Command\Exception\TimedOutCommandException;
 use Application\Command\ShellCommandRunner;
 use Structure\Entity\Db\EcoleDoctorale;
@@ -17,7 +17,7 @@ use Structure\Entity\Db\UniteRecherche;
 use Application\Service\BaseService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\File\FileServiceAwareTrait;
+use Fichier\Service\File\FileServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;

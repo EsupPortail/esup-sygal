@@ -4,12 +4,12 @@ namespace Structure\Service\StructureDocument;
 
 use Application\Entity\DateTimeAwareTrait;
 use Structure\Entity\Db\Etablissement;
-use Application\Entity\Db\Fichier;
-use Application\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\Fichier;
+use Fichier\Entity\Db\NatureFichier;
 use Structure\Entity\Db\Structure;
 use Structure\Entity\Db\StructureDocument;
-use Application\Service\Fichier\Exception\FichierServiceException;
-use Application\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\Fichier\Exception\FichierServiceException;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
@@ -239,7 +239,7 @@ class StructureDocumentService {
      * @param \Structure\Entity\Db\Structure $structure
      * @param string $nature_code
      * @param \Structure\Entity\Db\Etablissement $etablissement
-     * @return \Application\Entity\Db\Fichier|null
+     * @return \Fichier\Entity\Db\Fichier|null
      */
     public function getDocumentFichierForStructureNatureAndEtablissement(Structure $structure,
                                                                  string $nature_code,
@@ -260,7 +260,7 @@ class StructureDocumentService {
      * @param string $nature_code
      * @param Etablissement|null $etablissement
      * @return string|null
-     * @throws \Application\Service\Fichier\Exception\FichierServiceException Fichier inexistant ou inaccessible sur le serveur
+     * @throws \Fichier\Service\Fichier\Exception\FichierServiceException Fichier inexistant ou inaccessible sur le serveur
      */
     public function getContenuFichier(Structure $structure, string $nature_code, Etablissement $etablissement): ?string
     {

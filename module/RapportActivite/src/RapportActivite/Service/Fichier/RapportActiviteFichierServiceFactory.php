@@ -2,7 +2,7 @@
 
 namespace RapportActivite\Service\Fichier;
 
-use Application\Service\Fichier\FichierService;
+use Fichier\Service\Fichier\FichierService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Service\Fichier\Exporter\PageValidationPdfExporter;
 

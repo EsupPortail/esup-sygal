@@ -3,6 +3,7 @@
 namespace Application\Filter;
 
 use Application\Entity\Db\FichierThese;
+use Fichier\Filter\AbstractNomFichierFormatter;
 use Laminas\Filter\Exception;
 
 /**
