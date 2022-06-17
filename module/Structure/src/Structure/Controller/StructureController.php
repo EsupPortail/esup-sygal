@@ -143,9 +143,10 @@ class StructureController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
+            if ($data['etablissement'] === 'null') $data['etablissement'] = null;
             /** @var Etablissement|null $etablissement */
             $etablissement = null;
-            if ($data['etablissement'] !== 'Aucun') $etablissement = $this->etablissementService->getRepository()->find($data['etablissement']);
+            if ($data['etablissement'] !== null ) $etablissement = $this->etablissementService->getRepository()->find($data['etablissement']);
             /** @var NatureFichier $nature */
             $nature = $this->natureFichierService->getRepository()->find($data['nature']);
 

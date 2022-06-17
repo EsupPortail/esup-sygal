@@ -27,7 +27,7 @@ use Application\Entity\Db\NatureFichier;
             <div class="mb-2">
                 <label for="etablissement" class="form-label">Établissement lié : </label>
                 <select class="form-control" id="etablissement" name="etablissement">
-                    <option>(Aucun)</option>
+                    <option value="null">(Aucun)</option>
                     <?php foreach ($etablissements as $etablissement) : ?>
                         <option value="<?php echo $etablissement->getId(); ?>"> <?php echo $etablissement->getLibelle(); ?> </option>
                     <?php endforeach; ?>
