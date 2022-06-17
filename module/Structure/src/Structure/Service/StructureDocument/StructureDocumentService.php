@@ -242,7 +242,7 @@ class StructureDocumentService {
      * @return string|null
      * @throws \Application\Service\Fichier\Exception\FichierServiceException Fichier inexistant ou inaccessible sur le serveur
      */
-    public function getContenuFichier(Structure $structure, string $nature_code, ?Etablissement $etablissement = null): ?string
+    public function getContenuFichier(Structure $structure, string $nature_code, Etablissement $etablissement): ?string
     {
         $documents = $this->getStructuresDocumentsByStructure($structure);
         foreach ($documents as $document) {
@@ -253,4 +253,27 @@ class StructureDocumentService {
         return null;
     }
 
+    /**
+     * @param Structure $structure
+     * @param string $nature_code
+     * @param Etablissement|null $etablissement
+     * @return string|null
+     * @throws \Application\Service\Fichier\Exception\FichierServiceException Fichier inexistant ou inaccessible sur le serveur
+     */
+    public function getCheminFichier(Structure $structure, string $nature_code, ?Etablissement $etablissement = null): ?string
+    {
+        $documents = $this->getStructuresDocumentsByStructure($structure);
+        var_dump(count($documents));
+
+        foreach ($documents as $document) {
+            var_dump($document->getNature()->getCode() === $nature_code);
+            var_dump("zaza=".$document->getEtablissement()->getId());
+            var_dump("sasa=".$etablissement->getId());
+            var_dump($document->getEtablissement()->getLibelle() === $etablissement);
+            if ($document->getNature()->getCode() === $nature_code && $document->getEtablissement() === $etablissement) {
+                return $this->fichierService->computeDestinationFilePathForFichier($document->getFichier());
+            }
+        }
+        return null;
+    }
 }

@@ -463,7 +463,9 @@ class PresoutenanceController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
         $signature = $this->getStructureDocumentService()->getContenuFichier($these->getEcoleDoctorale()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
-        if ($signature === null) $signature = $this->getStructureDocumentService()->getContenuFichier($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION);
+        if ($signature === null) {
+            $signature = $this->getStructureDocumentService()->getContenuFichier($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
+        }
 
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
@@ -490,7 +492,7 @@ class PresoutenanceController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
         $signature = $this->getStructureDocumentService()->getContenuFichier($these->getEcoleDoctorale()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
-        if ($signature === null) $signature = $this->getStructureDocumentService()->getContenuFichier($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION);
+        if ($signature === null) $signature = $this->getStructureDocumentService()->getContenuFichier($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
 
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
@@ -518,7 +520,7 @@ class PresoutenanceController extends AbstractController
         $proposition = $this->getPropositionService()->findByThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
         $signature = $this->getStructureDocumentService()->getContenuFichier($these->getEcoleDoctorale()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
-        if ($signature === null) $signature = $this->getStructureDocumentService()->getContenuFichier($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION);
+        if ($signature === null) $signature = $this->getStructureDocumentService()->getContenuFichier($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
 
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
