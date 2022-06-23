@@ -622,7 +622,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
             if ($structure !== null) $current .= " (". $structure->getLibelle() .")";
             $nomination[] = $current;
         }
-        $pdcData->setListing(implode(" et ", $nomination) . ", ");
+        $pdcData->setListing(implode(" et ", $nomination));
         if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());
         if ($these->getEcoleDoctorale()) $pdcData->setEcoleDoctorale($these->getEcoleDoctorale()->getStructure()->getLibelle());
 

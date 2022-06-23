@@ -10,6 +10,8 @@ Journal des modifications
 - [FIX] Plantage de la page détails d'une structure si fichier inexistant sur le serveur (typique en preprod).
 - [FIX] Page des détails d'une structure : retour au bon onglet en cas d'action (ex : dépôt d'un document).
 - [FIX] Chevauchement des résumés sur la page de signalement d'une thèse.
+- [FIX] Correction du bug de la signature non trouvée pour la génération de la convocation de soutenance.
+- [FIX] Correction d'une virgule isolée sur la page de couverture 
 
 4.1.3
 -----
