@@ -7,7 +7,7 @@ use Application\Entity\Db\ListeDiffusion;
 use Application\Entity\Db\Role;
 use Structure\Entity\Db\Structure;
 use Application\Service\BaseService;
-use Application\Service\Individu\IndividuServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressGenerator;
 use Application\Service\ListeDiffusion\Handler\ListeDiffusionHandlerInterface;
 use Doctrine\ORM\ORMException;

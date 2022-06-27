@@ -4,7 +4,7 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\MailConfirmationController;
 use Application\Form\MailConfirmationForm;
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotifierService;
 use Interop\Container\ContainerInterface;

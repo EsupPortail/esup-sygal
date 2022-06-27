@@ -8,7 +8,7 @@ use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;
 use Application\Service\AnomalieServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\Individu\IndividuServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use DateTime;

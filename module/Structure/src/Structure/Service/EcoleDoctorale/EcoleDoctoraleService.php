@@ -3,7 +3,7 @@
 namespace Structure\Service\EcoleDoctorale;
 
 use Structure\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Structure\Entity\Db\Repository\EcoleDoctoraleRepository;
 use Structure\Entity\Db\Structure;
 use Structure\Entity\Db\TypeStructure;

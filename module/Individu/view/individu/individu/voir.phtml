@@ -1,0 +1,97 @@
+<?php
+
+namespace Application;
+
+use Application\View\Renderer\PhpRenderer;
+use Individu\Entity\Db\Individu;
+use Individu\Provider\Privilege\IndividuPrivileges;
+use UnicaenAuth\Provider\Privilege\Privileges;
+
+/**
+ * @var PhpRenderer $this
+ * @var Individu $individu
+ * @var array $rolesData
+ *
+ * @see \Individu\Controller\IndividuController::voirAction()
+ */
+
+$canModifier = $this->isAllowed($individu, IndividuPrivileges::INDIVIDU_MODIFIER);
+$canSupprimer = $this->isAllowed($individu, IndividuPrivileges::INDIVIDU_SUPPRIMER);
+?>
+
+<?php $this->headTitle($this->translate("Individu"))->append($individu->getNomComplet()) ?>
+
+<h1 class="page-header">
+    <span class="<?php echo $individu->estHistorise() ? 'historise' : '' ?>">
+        Individu &laquo; <?php echo $individu->getNomComplet() ?> &raquo;
+    </span>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<div class="row">
+
+    <div class="col-md-5">
+        <div class="box card">
+            <div class="card-header bg-primary text-light">
+                <h2 class="first">Détails</h2>
+            </div>
+            <div class="card-body">
+                <?php echo $this->partial('individu/individu/partial/dl', ['individu' => $individu, 'verbose' => true]) ?>
+
+                <?php if ($canModifier && !$individu->estHistorise()): ?>
+                    <a href="<?php echo $this->url('individu/modifier', ['individu' => $individu->getId()]) ?>"
+                       class="btn btn-primary"
+                       title="Accéder à la page de modification de cet individu">Modifier l'individu</a>
+                <?php endif ?>
+                <?php if ($canSupprimer): ?>
+                    <?php if ($individu->estHistorise()): ?>
+                        <a href="<?php echo $this->url('individu/restaurer', ['individu' => $individu->getId()]) ?>"
+                           class="btn bg-secondary text-light float-end"
+                           title="Restaurer (déhistoriser) cet individu"
+                           data-toggle="confirmationx">Restaurer l'individu</a>
+                    <?php else: ?>
+                        <a href="<?php echo $this->url('individu/supprimer', ['individu' => $individu->getId()]) ?>"
+                           class="btn bg-danger float-end"
+                           title="Supprimer (historiser) cet individu"
+                           data-toggle="confirmationx">Supprimer l'individu</a>
+                    <?php endif ?>
+                <?php endif ?>
+            </div>
+        </div>
+
+        <div class="box card">
+            <div class="card-header bg-info text-light">
+                <h2 class="first">Utilisateurs associés</h2>
+            </div>
+            <div class="card-body">
+                <?php if ($utilisateurs = $individu->getUtilisateurs()): ?>
+                    <ul>
+                    <?php foreach ($utilisateurs as $utilisateur): ?>
+                        <li>
+                            <a href="<?php echo $this->url('utilisateur/voir', ['utilisateur' => $utilisateur->getId()]) ?>"
+                               title="Voir la fiche détaillée de cet utilisateur"><?php echo $utilisateur->getUsername() ?></a>
+                        </li>
+                    <?php endforeach ?>
+                    </ul>
+                <?php else: ?>
+                    <p>Aucun</p>
+                <?php endif ?>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <div class="box card">
+            <div class="card-header bg-secondary text-light">
+                <h2 class="first">
+                    <?php echo $this->translate("Rôles de l'individu") ?>
+                </h2>
+            </div>
+            <div class="row card-body">
+                <?php echo $this->partial('individu/individu/partial/roles', $rolesData) ?>
+            </div>
+        </div>
+    </div>
+
+</div>

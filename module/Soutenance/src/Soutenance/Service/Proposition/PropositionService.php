@@ -5,7 +5,7 @@ namespace Soutenance\Service\Proposition;
 //TODO faire le repo aussi
 use Application\Entity\Db\Acteur;
 use Structure\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;

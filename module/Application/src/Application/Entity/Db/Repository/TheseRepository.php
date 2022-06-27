@@ -5,7 +5,7 @@ namespace Application\Entity\Db\Repository;
 use Doctorant\Entity\Db\Doctorant;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Structure\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\These;

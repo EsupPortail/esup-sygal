@@ -11,7 +11,7 @@ use Application\Service\Notification\NotifierServiceAwareTrait;
 use Retraitement\Form\Retraitement;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Filter\BytesFormatter;
-use UnicaenApp\ORM\Event\Listeners\HistoriqueListener;
+use UnicaenAuth\ORM\Event\Listeners\HistoriqueListener;
 use Laminas\Console\Request as ConsoleRequest;
 
 class IndexController extends AbstractController

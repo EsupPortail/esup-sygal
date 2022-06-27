@@ -2,21 +2,21 @@
 
 namespace Soutenance\Service\Notifier;
 
-use Application\Entity\Db\Role;
-use Application\Entity\Db\Variable;
-use Application\Service\Individu\IndividuServiceAwareTrait;
-use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
-use Application\Service\Variable\VariableServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
-use Application\Entity\Db\Individu;
-use Application\Entity\Db\IndividuRole;
+use Individu\Entity\Db\Individu;
+use Individu\Entity\Db\IndividuRole;
+use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
+use Application\Entity\Db\Variable;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Email\EmailTheseServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
+use Application\Service\Variable\VariableServiceAwareTrait;
 use DateTime;
 use InvalidArgumentException;
 use Laminas\View\Helper\Url as UrlHelper;

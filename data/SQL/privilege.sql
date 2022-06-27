@@ -9,13 +9,13 @@ insert into CATEGORIE_PRIVILEGE(ID, CODE, LIBELLE, ORDRE) values (666, 'utilisat
 --
 insert into PRIVILEGE(ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
 with d(ordre, code, lib) as (
-    select 10, 'lister', 'Lister les jetons utilisateur' from dual union
-    select 20, 'consulter', 'Consulter un jeton utilisateur' from dual union
-    select 30, 'creer', 'Créer un jeton utilisateur' from dual union
-    select 40, 'modifier', 'Modifier un jeton utilisateur' from dual union
-    select 50, 'prolonger', 'Prolonger un jeton utilisateur' from dual union
-    select 60, 'supprimer', 'SUpprimer un jeton utilisateur' from dual union
-    select 70, 'tester', 'Tester unejeton utilisateur' from dual
+    select 10, 'lister', 'Lister les jetons utilisateur' union
+    select 20, 'consulter', 'Consulter un jeton utilisateur' union
+    select 30, 'creer', 'Créer un jeton utilisateur' union
+    select 40, 'modifier', 'Modifier un jeton utilisateur' union
+    select 50, 'prolonger', 'Prolonger un jeton utilisateur' union
+    select 60, 'supprimer', 'SUpprimer un jeton utilisateur' union
+    select 70, 'tester', 'Tester unejeton utilisateur'
 )
 select nextval('privilege_id_seq'), cp.id, d.code, d.lib, d.ordre
 from d
@@ -27,8 +27,8 @@ join CATEGORIE_PRIVILEGE cp on cp.CODE = 'unicaen-auth-token'
 --
 INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
     with data(categ, priv) as (
-        select 'these', 'consultation-page-couverture' from dual /*union
-        select 'xxxxx', 'xxx' from dual*/
+        select 'these', 'consultation-page-couverture' /*union
+        select 'xxxxx', 'xxx'*/
     )
     select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
     from data
@@ -50,10 +50,10 @@ INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
 --
 insert into PROFIL_TO_ROLE (PROFIL_ID, ROLE_ID)
     with data(PROFIL_CODE, ROLE_ROLE_ID) as (
-        select 'BDD', 'Maison du doctorat UCN' from dual union
-        select 'BDD', 'Maison du doctorat URN' from dual union
-        select 'BDD', 'Maison du doctorat ULHN' from dual union
-        select 'BDD', 'Maison du doctorat INSA' from dual
+        select 'BDD', 'Maison du doctorat UCN' union
+        select 'BDD', 'Maison du doctorat URN' union
+        select 'BDD', 'Maison du doctorat ULHN' union
+        select 'BDD', 'Maison du doctorat INSA'
     )
     select pr.id, r.id
     from data
@@ -95,11 +95,11 @@ where not exists (
 --
 -- Mise en conformité brutale entre 2 bdd des CATEGORIE_PRIVILEGE, PRIVILEGE, ROLE_PRIVILEGE.
 --
-select 'delete from ROLE_PRIVILEGE;' from dual
+select 'delete from ROLE_PRIVILEGE;'
 union all
-select 'delete from PRIVILEGE;' from dual
+select 'delete from PRIVILEGE;'
 union all
-select 'delete from CATEGORIE_PRIVILEGE;' from dual
+select 'delete from CATEGORIE_PRIVILEGE;'
 union all
 select 'INSERT INTO CATEGORIE_PRIVILEGE (ID, CODE, LIBELLE, ORDRE) VALUES (' || id || ', ''' || code ||''', ''' || replace(libelle, '''', '''''') || ''', ' || ordre || ');' from CATEGORIE_PRIVILEGE
 union all

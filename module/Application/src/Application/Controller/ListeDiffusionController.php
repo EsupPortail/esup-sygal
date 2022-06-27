@@ -4,14 +4,14 @@ namespace Application\Controller;
 
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\ListeDiffusion;
 use Application\Entity\Db\Role;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
-use Application\Service\Individu\IndividuServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressGenerator;
 use Application\Service\ListeDiffusion\ListeDiffusionServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;

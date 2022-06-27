@@ -4,7 +4,7 @@ namespace Application\Service;
 
 use Application\Entity\UserWrapperFactory;
 use Structure\Service\Etablissement\EtablissementServiceLocateTrait;
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
 use UnicaenAuth\Options\ModuleOptions;

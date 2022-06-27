@@ -2,7 +2,7 @@
 
 namespace Application\Entity;
 
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
 use Exception;
 use UnicaenAuth\Entity\Ldap\People as UnicaenAuthPeople;
@@ -177,7 +177,7 @@ class UserWrapper implements UserInterface
     /**
      * Get nom.
      *
-     * @return string
+     * @return string|null
      */
     public function getNom()
     {
@@ -191,8 +191,6 @@ class UserWrapper implements UserInterface
                 return $this->userData->getSn(true);
 
             case $this->userData instanceof Utilisateur:
-                throw new RuntimeException("Cas non implementé car la classe Utilisateur n'a pas de propriété 'nom'");
-
             case $this->userData instanceof ShibUser:
                 return $this->userData->getNom();
 
@@ -204,7 +202,7 @@ class UserWrapper implements UserInterface
     /**
      * Get prenom.
      *
-     * @return string
+     * @return string|null
      */
     public function getPrenom()
     {
@@ -218,8 +216,6 @@ class UserWrapper implements UserInterface
                 return $this->userData->getGivenName();
 
             case $this->userData instanceof Utilisateur:
-                throw new RuntimeException("Cas non implementé car la classe Utilisateur n'a pas de propriété 'prenom'");
-
             case $this->userData instanceof ShibUser:
                 return $this->userData->getPrenom();
 

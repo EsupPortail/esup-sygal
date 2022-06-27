@@ -37,6 +37,7 @@ return [
         'Structure',
         'Import',
         'Indicateur',
+        'Individu',
         'Retraitement',
         'Soutenance',
         'RapportActivite',

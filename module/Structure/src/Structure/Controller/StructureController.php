@@ -3,16 +3,16 @@
 namespace Structure\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\IndividuRole;
+use Structure\Entity\Db\Etablissement;
+use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\Role;
 use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\Individu\IndividuServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
-use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Provider\Privilege\StructurePrivileges;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;

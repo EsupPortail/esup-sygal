@@ -2,12 +2,12 @@
 
 namespace Application\Event;
 
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactoryAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\Individu\IndividuServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use UnicaenAuth\Event\Listener\AuthenticatedUserSavedAbstractListener;
@@ -38,15 +38,16 @@ class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListe
             return;
         }
 
+        // Mise à jour d'attributs de l'utilisateur
         /** @var Utilisateur $utilisateur */
         $utilisateur = $e->getDbUser();
-        $utilisateur->setDisplayName($userWrapper->getDisplayName()); // màj NOM Prénom
+        $utilisateur->setDisplayName($userWrapper->getDisplayName());
+        $utilisateur->setNom($userWrapper->getNom());
+        $utilisateur->setPrenom($userWrapper->getPrenom());
     }
 
     /**
      * Méthode appelée juste après que l'entité utilisateur soit persistée.
-     *
-     * Un Individu est créé/màj à partir de l'utilisateur qui vient de s'authentifier.
      *
      * @param UserAuthenticatedEvent $e
      */

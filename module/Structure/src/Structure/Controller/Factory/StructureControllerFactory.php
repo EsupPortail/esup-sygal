@@ -6,7 +6,7 @@ use Structure\Controller\StructureController;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\Fichier\FichierService;
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Application\Service\NatureFichier\NatureFichierService;
 use Application\Service\Role\RoleService;
 use Structure\Service\Structure\StructureService;

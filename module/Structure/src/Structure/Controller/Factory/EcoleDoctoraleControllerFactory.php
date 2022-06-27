@@ -7,7 +7,7 @@ use Structure\Form\EcoleDoctoraleForm;
 use Application\Service\CoEncadrant\CoEncadrantService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementServiceLocateTrait;
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Application\Service\Role\RoleService;
 use Structure\Service\Structure\StructureService;
 use Structure\Service\StructureDocument\StructureDocumentService;

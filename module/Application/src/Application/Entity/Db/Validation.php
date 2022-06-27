@@ -3,6 +3,7 @@
 namespace Application\Entity\Db;
 
 use Application\Constants;
+use Individu\Entity\Db\Individu;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;

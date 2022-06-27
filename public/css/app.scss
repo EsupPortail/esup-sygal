@@ -6,6 +6,9 @@ $successColor: #2EA662;
 $warningColor: #f1732d;
 $dangerColor: #d23544;
 
+$historiseColor: #d22828;
+
+
 h1, h2, h3 {
   font-weight: bold;
 }
@@ -526,6 +529,7 @@ td.acteurs {
 }
 
 div.filters {
+  margin-bottom: 1em;
   table {
     td,
     th {
@@ -595,6 +599,10 @@ div.filters {
       height: 22px;
     }
   }
+}
+
+.bootstrap-select.form-control {
+  border: 1px solid #ced4da !important;
 }
 
 div#these-filters {
@@ -937,28 +945,27 @@ ul.ui-autocomplete {
   }
 }
 
+tr.historise {
+  td {
+    color: $historiseColor;
+  }
+}
 
-.histo::after {
-  margin-left: 5px;
-  color: #d22828;
+span.historise::after,
+span.historisee::after {
+  margin-left: 3px;
+  color: $historiseColor;
   font: {
     size: 55%;
     weight: bold;
   }
-  //vertical-align: top;
-}
-.historisee::after {
-  @extend .histo, ::after;
-  content: 'SUPPRIMÉE';
-}
-.historise::after {
-  @extend .histo, ::after;
-  content: 'SUPPRIMÉ';
+  content: 'SUPPR';
 }
 
 .fermee { // NB: ne pas mettre `option.fermee` sinon le style n'est pas pris en compte par bootstrap-select
   background: #ea9e9e !important;
 }
+
 
 /**************** Photo ********************/
 

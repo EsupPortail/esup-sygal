@@ -7,7 +7,7 @@ use Structure\Form\UniteRechercheForm;
 use Application\Service\CoEncadrant\CoEncadrantService;
 use Application\Service\DomaineScientifiqueService;
 use Structure\Service\Etablissement\EtablissementServiceLocateTrait;
-use Application\Service\Individu\IndividuService;
+use Individu\Service\Individu\IndividuService;
 use Application\Service\Role\RoleService;
 use Structure\Service\Structure\StructureService;
 use Structure\Service\StructureDocument\StructureDocumentService;

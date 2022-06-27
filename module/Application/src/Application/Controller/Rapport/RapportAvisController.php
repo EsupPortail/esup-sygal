@@ -9,13 +9,13 @@ use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilter;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Form\Rapport\RapportAvisForm;
-use Application\Service\Individu\IndividuServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Rapport\Avis\RapportAvisServiceAwareTrait;
 use Application\Service\Rapport\RapportServiceAwareTrait;
 use Doctrine\ORM\NoResultException;
 use UnicaenApp\Exception\RuntimeException;
-use Zend\Http\Response;
+use Laminas\Http\Response;
 
 class RapportAvisController extends AbstractController
 {

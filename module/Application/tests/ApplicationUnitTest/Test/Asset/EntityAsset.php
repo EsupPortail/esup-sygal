@@ -11,7 +11,7 @@ use Application\Entity\Db\FichierThese;
 use Import\Model\ImportObserv;
 use Application\Entity\Db\ImportObservEtab;
 use Application\Entity\Db\ImportObservEtabResult;
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;

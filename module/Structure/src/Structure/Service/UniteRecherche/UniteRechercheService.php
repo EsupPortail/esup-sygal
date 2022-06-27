@@ -4,7 +4,7 @@ namespace Structure\Service\UniteRecherche;
 
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\EtablissementRattachement;
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Structure\Entity\Db\Repository\UniteRechercheRepository;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;

@@ -3,7 +3,7 @@
 namespace Application\Service\Notification;
 
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Application\Service\Role\RoleService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Variable\VariableService;

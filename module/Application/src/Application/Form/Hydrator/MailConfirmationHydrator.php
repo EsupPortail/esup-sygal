@@ -2,9 +2,9 @@
 
 namespace Application\Form\Hydrator;
 
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
-use Application\Service\Individu\IndividuServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 
 class MailConfirmationHydrator extends DoctrineObject

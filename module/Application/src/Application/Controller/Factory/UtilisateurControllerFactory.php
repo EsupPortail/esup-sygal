@@ -9,7 +9,6 @@ use Application\Service\Acteur\ActeurService;
 use Doctorant\Service\DoctorantService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
-use Application\Service\Individu\IndividuServiceLocateTrait;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
 use Structure\Service\Structure\StructureService;
@@ -19,14 +18,15 @@ use Application\Service\Utilisateur\UtilisateurSearchService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\SourceCodeStringHelper;
 use Doctrine\ORM\EntityManager;
+use Individu\Service\IndividuServiceLocateTrait;
 use Interop\Container\ContainerInterface;
+use Laminas\Authentication\AuthenticationService;
 use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\ShibService;
 use UnicaenAuth\Service\User as UserService;
 use UnicaenAuth\Service\UserContext;
 use UnicaenAuthToken\Controller\TokenController;
 use UnicaenAuthToken\Service\TokenService;
-use Laminas\Authentication\AuthenticationService;
 use ZfcUser\Mapper\UserInterface;
 
 class UtilisateurControllerFactory
@@ -50,7 +50,6 @@ class UtilisateurControllerFactory
          * @var UserService $userService
          * @var UtilisateurSearchService $utilisateurSearchService
          * @var UserInterface $mapper
-         * @var DoctorantService $doctorantService
          */
         $acteurService = $container->get(ActeurService::class);
         $roleService = $container->get('RoleService');
@@ -66,7 +65,6 @@ class UtilisateurControllerFactory
         $userService = $container->get('unicaen-auth_user_service');
         $utilisateurSearchService = $container->get(UtilisateurSearchService::class);
         $userMapper = $container->get('zfcuser_user_mapper');
-        $doctorantService = $container->get(DoctorantService::class);
 
         /**
          * @var InitCompteForm $initCompteForm
@@ -108,7 +106,6 @@ class UtilisateurControllerFactory
         $controller->setAuthModuleOptions($authModuleOptions);
         $controller->setSearchService($utilisateurSearchService);
         $controller->setUserMapper($userMapper);
-        $controller->setDoctorantService($doctorantService);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper

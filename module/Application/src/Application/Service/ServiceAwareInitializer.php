@@ -5,7 +5,7 @@ namespace Application\Service;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\FichierThese\FichierTheseService;
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
 use Structure\Service\UniteRecherche\UniteRechercheService;

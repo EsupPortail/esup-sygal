@@ -325,42 +325,47 @@ td.acteurs ul {
   td.acteurs ul li:nth-last-of-type(1) {
     border-bottom: none; }
 
-div.filters table td,
-div.filters table th {
-  border-left: none !important;
-  border-right: none !important;
-  padding-top: 4px !important;
-  padding-bottom: 6px !important; }
-div.filters .card-header {
-  padding: 5px 10px; }
-div.filters .card-body {
-  background-color: white; }
-div.filters span.filter {
-  padding-right: 5px; }
-  div.filters span.filter span,
-  div.filters span.filter a {
-    font-size: 90%; }
-div.filters .filter-option-inner-inner {
-  padding-right: 3px; }
-div.filters form {
-  padding: 10px; }
-  div.filters form * {
-    font-size: 11px;
-    line-height: 1.15; }
-  div.filters form ul.dropdown-menu a {
-    padding: 3px 7px; }
-  div.filters form button.dropdown-toggle {
-    padding: 3px 4px 3px 4px;
-    height: 20px;
-    background-color: #eee;
-    border-color: darkgray; }
-  div.filters form .input-group .input-group-text {
-    padding: 2px 4px; }
-  div.filters form label {
-    display: block;
-    margin-bottom: 3px; }
-  div.filters form .bootstrap-select {
-    height: 22px; }
+div.filters {
+  margin-bottom: 1em; }
+  div.filters table td,
+  div.filters table th {
+    border-left: none !important;
+    border-right: none !important;
+    padding-top: 4px !important;
+    padding-bottom: 6px !important; }
+  div.filters .card-header {
+    padding: 5px 10px; }
+  div.filters .card-body {
+    background-color: white; }
+  div.filters span.filter {
+    padding-right: 5px; }
+    div.filters span.filter span,
+    div.filters span.filter a {
+      font-size: 90%; }
+  div.filters .filter-option-inner-inner {
+    padding-right: 3px; }
+  div.filters form {
+    padding: 10px; }
+    div.filters form * {
+      font-size: 11px;
+      line-height: 1.15; }
+    div.filters form ul.dropdown-menu a {
+      padding: 3px 7px; }
+    div.filters form button.dropdown-toggle {
+      padding: 3px 4px 3px 4px;
+      height: 20px;
+      background-color: #eee;
+      border-color: darkgray; }
+    div.filters form .input-group .input-group-text {
+      padding: 2px 4px; }
+    div.filters form label {
+      display: block;
+      margin-bottom: 3px; }
+    div.filters form .bootstrap-select {
+      height: 22px; }
+
+.bootstrap-select.form-control {
+  border: 1px solid #ced4da !important; }
 
 div#these-filters {
   min-width: 30px;
@@ -595,17 +600,16 @@ ul.ui-autocomplete li .extra {
   font-size: 80%;
   color: grey; }
 
-.histo::after, .historisee::after, .historise::after {
-  margin-left: 5px;
+tr.historise td {
+  color: #d22828; }
+
+span.historise::after,
+span.historisee::after {
+  margin-left: 3px;
   color: #d22828;
   font-size: 55%;
-  font-weight: bold; }
-
-.historisee::after {
-  content: 'SUPPRIMÉE'; }
-
-.historise::after {
-  content: 'SUPPRIMÉ'; }
+  font-weight: bold;
+  content: 'SUPPR'; }
 
 .fermee {
   background: #ea9e9e !important; }
