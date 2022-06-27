@@ -2,8 +2,8 @@
 
 namespace Formation\Form\Formation;
 
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\Structure\StructureServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
 use Formation\Service\Module\ModuleServiceAwareTrait;
 use UnicaenApp\Form\Element\SearchAndSelect;
 use Laminas\Form\Element\Button;

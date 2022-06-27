@@ -3,7 +3,7 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Module;
 use Formation\Form\Formation\FormationFormAwareTrait;

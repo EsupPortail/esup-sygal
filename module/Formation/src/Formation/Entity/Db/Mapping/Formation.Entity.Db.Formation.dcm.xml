@@ -15,7 +15,7 @@
         <one-to-many field="sessions" target-entity="Formation\Entity\Db\Session" mapped-by="formation"/>
 
         <!-- VALEUR PAR DEFAUT DES SESSIONS ASSOCIEES ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-        <many-to-one field="site" target-entity="Application\Entity\Db\Etablissement">
+        <many-to-one field="site" target-entity="Structure\Entity\Db\Etablissement">
             <join-columns>
                 <join-column name="SITE_ID" referenced-column-name="ID"/>
             </join-columns>
@@ -27,7 +27,7 @@
         </many-to-one>
         <field name="modalite"            type="string"       length="1"          column="MODALITE"         nullable="true"/>
         <field name="type"                type="string"       length="1"          column="TYPE"             nullable="true"/>
-        <many-to-one field="typeStructure" target-entity="Application\Entity\Db\Structure">
+        <many-to-one field="typeStructure" target-entity="Structure\Entity\Db\Structure">
             <join-columns>
                 <join-column name="TYPE_STRUCTURE_ID" referenced-column-name="ID"/>
             </join-columns>

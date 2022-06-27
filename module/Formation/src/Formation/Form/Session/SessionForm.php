@@ -2,9 +2,9 @@
 
 namespace Formation\Form\Session;
 
-use Application\Entity\Db\TypeStructure;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\Structure\StructureServiceAwareTrait;
+use Structure\Entity\Db\TypeStructure;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenApp\Form\Element\SearchAndSelect;
 use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Number;

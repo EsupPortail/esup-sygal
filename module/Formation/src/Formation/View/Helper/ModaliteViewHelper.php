@@ -2,7 +2,7 @@
 
 namespace Formation\View\Helper;
 
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 use Application\View\Renderer\PhpRenderer;
 use Formation\Entity\Db\Interfaces\HasModaliteInterface;
 use Laminas\View\Helper\AbstractHelper;

@@ -2,7 +2,7 @@
 
 namespace Formation\Entity\Db\Traits;
 
-use Application\Entity\Db\Structure;
+use Structure\Entity\Db\Structure;
 use Formation\Entity\Db\Interfaces\HasTypeInterface;
 
 trait HasTypeTrait {

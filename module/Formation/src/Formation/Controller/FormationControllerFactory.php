@@ -2,7 +2,7 @@
 
 namespace Formation\Controller;
 
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\Etablissement\EtablissementService;
 use Doctrine\ORM\EntityManager;
 use Formation\Form\Formation\FormationForm;
 use Formation\Service\Formation\FormationService;

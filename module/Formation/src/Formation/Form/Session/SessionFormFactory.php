@@ -2,8 +2,8 @@
 
 namespace Formation\Form\Session;
 
-use Application\Service\Etablissement\EtablissementService;
-use Application\Service\Structure\StructureService;
+use Structure\Service\Etablissement\EtablissementService;
+use Structure\Service\Structure\StructureService;
 use Interop\Container\ContainerInterface;
 use Laminas\View\Helper\Url;
 

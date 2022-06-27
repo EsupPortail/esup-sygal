@@ -2,7 +2,7 @@
 
 namespace Formation\Entity\Db\Interfaces;
 
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 
 interface HasSiteInterface {
 

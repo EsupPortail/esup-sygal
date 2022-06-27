@@ -2,7 +2,7 @@
 
 namespace Formation\Entity\Db\Traits;
 
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 use Formation\Entity\Db\Interfaces\HasSiteInterface;
 
 trait HasSiteTrait {

@@ -2,7 +2,7 @@
 
 namespace Formation\Entity\Db\Interfaces;
 
-use Application\Entity\Db\Structure;
+use Structure\Entity\Db\Structure;
 
 interface HasTypeInterface {
 
