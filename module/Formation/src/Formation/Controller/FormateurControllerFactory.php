@@ -2,7 +2,7 @@
 
 namespace Formation\Controller;
 
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Doctrine\ORM\EntityManager;
 use Formation\Service\Formateur\FormateurService;
 use Interop\Container\ContainerInterface;

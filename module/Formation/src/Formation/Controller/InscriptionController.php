@@ -3,11 +3,11 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\Individu;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Individu\Entity\Db\Individu;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
-use Application\Service\Individu\IndividuServiceAwareTrait;
-use Application\Service\StructureDocument\StructureDocumentServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
+use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Formation\Entity\Db\Inscription;

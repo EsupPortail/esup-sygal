@@ -3,7 +3,7 @@
 namespace Formation\Entity\Db;
 
 use Doctorant\Entity\Db\Doctorant;
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 

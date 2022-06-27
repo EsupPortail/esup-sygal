@@ -2,10 +2,10 @@
 
 namespace Formation\Controller;
 
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\File\FileService;
-use Application\Service\Individu\IndividuService;
-use Application\Service\StructureDocument\StructureDocumentService;
+use Individu\Service\IndividuService;
+use Structure\Service\StructureDocument\StructureDocumentService;
 use Doctorant\Service\DoctorantService;
 use Doctrine\ORM\EntityManager;
 use Formation\Service\Inscription\InscriptionService;

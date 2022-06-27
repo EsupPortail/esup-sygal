@@ -2,12 +2,12 @@
 
 namespace Formation\Form\Formation;
 
-use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\Individu;
-use Application\Entity\Db\Structure;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\Individu\IndividuServiceAwareTrait;
-use Application\Service\Structure\StructureServiceAwareTrait;
+use Structure\Entity\Db\Etablissement;
+use Individu\Entity\Db\Individu;
+use Structure\Entity\Db\Structure;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Module;
 use Formation\Service\Module\ModuleServiceAwareTrait;

@@ -4,7 +4,7 @@ namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
 use Doctorant\Entity\Db\Doctorant;
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Formation\Entity\Db\EnqueteReponse;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;

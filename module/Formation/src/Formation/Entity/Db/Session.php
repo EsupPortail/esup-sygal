@@ -3,8 +3,8 @@
 namespace Formation\Entity\Db;
 
 use Doctorant\Entity\Db\Doctorant;
-use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\Individu;
+use Structure\Entity\Db\Etablissement;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
 use DateInterval;
 use DateTime;

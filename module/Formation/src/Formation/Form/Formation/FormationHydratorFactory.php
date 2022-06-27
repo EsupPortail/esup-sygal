@@ -2,9 +2,9 @@
 
 namespace Formation\Form\Formation;
 
-use Application\Service\Etablissement\EtablissementService;
-use Application\Service\Individu\IndividuService;
-use Application\Service\Structure\StructureService;
+use Structure\Service\Etablissement\EtablissementService;
+use Individu\Service\IndividuService;
+use Structure\Service\Structure\StructureService;
 use Formation\Service\Module\ModuleService;
 use Interop\Container\ContainerInterface;
 

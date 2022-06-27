@@ -3,8 +3,8 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\Individu;
-use Application\Service\Individu\IndividuServiceAwareTrait;
+use Individu\Entity\Db\Individu;
+use Individu\Service\IndividuServiceAwareTrait;
 use Formation\Entity\Db\Formateur;
 use Formation\Entity\Db\Session;
 use Formation\Service\Formateur\FormateurServiceAwareTrait;

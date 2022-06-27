@@ -174,7 +174,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     }
 
 //    /**
-//     * @param \Application\Entity\Db\Individu $individu
+//     * @param \Individu\Entity\Db\Individu $individu
 //     * @return \Application\Entity\Db\Role[]
 //     */
 //    private function collectRolesDynamiquesForIndividu(Individu $individu): array

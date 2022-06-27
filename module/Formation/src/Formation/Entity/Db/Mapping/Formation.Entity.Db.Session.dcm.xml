@@ -20,7 +20,7 @@
                 <join-column name="SITE_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="responsable" target-entity="Application\Entity\Db\Individu">
+        <many-to-one field="responsable" target-entity="Individu\Entity\Db\Individu">
             <join-columns>
                 <join-column name="RESPONSABLE_ID" referenced-column-name="ID"/>
             </join-columns>

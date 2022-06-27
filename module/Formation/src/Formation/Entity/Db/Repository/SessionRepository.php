@@ -3,7 +3,7 @@
 namespace Formation\Entity\Db\Repository;
 
 use Doctorant\Entity\Db\Doctorant;
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\These;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
