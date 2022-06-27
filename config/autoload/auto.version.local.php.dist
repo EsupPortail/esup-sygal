@@ -1,0 +1,10 @@
+<?php
+return [
+    'unicaen-app' => [
+        'app_infos' => [
+            'version' => '_VERSION_NUMBER_',
+            'date' => '_VERSION_DATE_',
+        ],
+    ],
+    'comment' => 'Fichier généré le _GENERATION_DATE_.',
+];

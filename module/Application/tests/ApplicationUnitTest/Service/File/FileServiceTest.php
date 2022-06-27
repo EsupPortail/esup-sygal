@@ -2,10 +2,10 @@
 
 namespace ApplicationUnitTest\Service\File;
 
-use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\StructureConcreteInterface;
-use Application\Entity\Db\UniteRecherche;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\StructureConcreteInterface;
+use Structure\Entity\Db\UniteRecherche;
 use Application\Service\File\FileService;
 use UnicaenApp\Exception\RuntimeException;
 

@@ -2,9 +2,9 @@
 
 namespace Application\Controller;
 
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 use Application\Service\AnomalieServiceAwareTrait;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Laminas\View\Model\ViewModel;
 

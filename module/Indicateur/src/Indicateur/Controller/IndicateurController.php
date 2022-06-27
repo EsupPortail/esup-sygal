@@ -2,14 +2,14 @@
 
 namespace Indicateur\Controller;
 
-use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\TypeStructure;
-use Application\Entity\Db\UniteRecherche;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\TypeStructure;
+use Structure\Entity\Db\UniteRecherche;
 use Application\Service\AnomalieServiceAwareTrait;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\Individu\IndividuServiceAwareTrait;
-use Application\Service\Structure\StructureServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use DateTime;
 use Indicateur\Form\IndicateurForm;

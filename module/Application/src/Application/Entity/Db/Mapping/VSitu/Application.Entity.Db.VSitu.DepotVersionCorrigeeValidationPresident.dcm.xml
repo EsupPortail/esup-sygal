@@ -15,7 +15,7 @@
                 <join-column name="THESE_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="individu" target-entity="Application\Entity\Db\Individu">
+        <many-to-one field="individu" target-entity="Individu\Entity\Db\Individu">
             <join-columns>
                 <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
             </join-columns>

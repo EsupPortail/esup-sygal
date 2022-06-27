@@ -2,7 +2,7 @@
 
 namespace Import\Service\Factory;
 
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\Etablissement\EtablissementService;
 use Doctrine\ORM\EntityManager;
 use Import\Service\FetcherService;
 use Import\Service\ImportService;

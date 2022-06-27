@@ -2,7 +2,7 @@
 
 namespace Application\Service\FichierThese;
 
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\Fichier\FichierService;
 use Application\Service\File\FileService;
 use Application\Service\Notification\NotifierService;

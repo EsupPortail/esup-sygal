@@ -3,12 +3,12 @@
 namespace Application\Navigation;
 
 use Doctorant\Entity\Db\Doctorant;
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
-use Application\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
-use Application\Search\Etablissement\EtablissementSearchFilter;
-use Application\Search\UniteRecherche\UniteRechercheSearchFilter;
+use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
+use Structure\Search\Etablissement\EtablissementSearchFilter;
+use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Interop\Container\ContainerInterface;

@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db;
 
+use Structure\Entity\Db\Etablissement;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;

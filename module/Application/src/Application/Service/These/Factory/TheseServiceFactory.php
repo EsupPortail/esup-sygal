@@ -3,7 +3,7 @@
 namespace Application\Service\These\Factory;
 
 use Application\Service\Acteur\ActeurService;
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\File\FileService;
 use Application\Service\Notification\NotifierService;

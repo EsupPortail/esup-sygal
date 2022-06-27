@@ -7,7 +7,7 @@
 
         <id name="id" type="integer" column="ID"/>
 
-        <many-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement">
+        <many-to-one field="etablissement" target-entity="Structure\Entity\Db\Etablissement">
             <join-columns>
                 <join-column name="ETABLISSEMENT_ID" referenced-column-name="ID"/>
             </join-columns>

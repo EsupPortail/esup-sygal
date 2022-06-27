@@ -2,7 +2,7 @@
 
 namespace Import\Controller\Factory;
 
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\These\TheseService;
 use Application\SourceCodeStringHelper;
 use Assert\Assertion;

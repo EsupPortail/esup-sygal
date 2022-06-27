@@ -2,6 +2,8 @@
 
 namespace Application\Entity\Db\VSitu;
 
+use Individu\Entity\Db\Individu;
+
 /**
  * DepotVersionCorrigeeValidationPresident
  */
@@ -23,7 +25,7 @@ class DepotVersionCorrigeeValidationPresident
     private $these;
 
     /**
-     * @var \Application\Entity\Db\Individu
+     * @var \Individu\Entity\Db\Individu
      */
     private $individu;
 
@@ -103,11 +105,11 @@ class DepotVersionCorrigeeValidationPresident
     /**
      * Set individu
      *
-     * @param \Application\Entity\Db\Individu $individu
+     * @param \Individu\Entity\Db\Individu|null $individu
      *
      * @return DepotVersionCorrigeeValidationPresident
      */
-    public function setIndividu(\Application\Entity\Db\Individu $individu = null)
+    public function setIndividu(Individu $individu = null)
     {
         $this->individu = $individu;
 
@@ -117,7 +119,7 @@ class DepotVersionCorrigeeValidationPresident
     /**
      * Get individu
      *
-     * @return \Application\Entity\Db\Individu
+     * @return \Individu\Entity\Db\Individu
      */
     public function getIndividu()
     {

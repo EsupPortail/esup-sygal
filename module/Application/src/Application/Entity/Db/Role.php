@@ -3,6 +3,8 @@
 namespace Application\Entity\Db;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Structure\Entity\Db\Structure;
+use Structure\Entity\Db\TypeStructure;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenAuth\Entity\Db\AbstractRole;

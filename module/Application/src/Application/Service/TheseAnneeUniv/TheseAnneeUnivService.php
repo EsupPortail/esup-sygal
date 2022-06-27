@@ -3,7 +3,7 @@
 namespace Application\Service\TheseAnneeUniv;
 
 use Application\Entity\AnneeUniv;
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\TheseAnneeUniv;
 use Application\Service\BaseService;
 use DateTime;

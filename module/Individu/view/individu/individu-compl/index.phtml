@@ -1,0 +1,126 @@
+<?php
+
+/**
+ * @see \Individu\Controller\IndividuComplController::indexAction()
+ * @var IndividuCompl[] $complements
+ */
+
+use Individu\Entity\Db\IndividuCompl;
+use Individu\Provider\Privilege\IndividuPrivileges;
+
+$this->headTitle($title = "Compléments d'individu");
+
+$canAfficher = $this->isAllowed(IndividuPrivileges::getResourceId(IndividuPrivileges::INDIVIDU_COMPLMENT_AFFICHER));
+$canAjouter = $this->isAllowed(IndividuPrivileges::getResourceId(IndividuPrivileges::INDIVIDU_COMPLMENT_MODIFIER));
+$canModifier = $canAjouter;
+$canHistoriser = $canAjouter;
+?>
+
+<div class="row">
+    <div class="col-md-8">
+        <h1 class="page-header">
+            <?php echo $title ?>
+        </h1>
+    </div>
+    <div class="col-md-4">
+        <?php if ($canAjouter) : ?>
+            <br/>
+            <?php /** @see \Individu\Controller\IndividuComplController::ajouterAction() */ ?>
+            <a href="<?php echo $this->url('individu-compl/ajouter', [], [], true); ?>"
+               class="btn btn-primary ajax-modal" data-event="modification"
+            >
+                <span class="icon icon-ajouter"></span>
+                Ajouter un complément
+            </a>
+        <?php endif; ?>
+    </div>
+</div>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<p class='lead'>
+    <?php $count = count($complements); ?>
+    <?php echo $count; ?> individus ont un complément.
+</p>
+
+<table class="table table-condensed table-hover">
+    <thead>
+    <tr>
+        <th rowspan="2">Individu concerné</th>
+        <th colspan="3">Complément</th>
+        <th rowspan="2">Action</th>
+    </tr>
+    <tr>
+        <th>Adresse électronique</th>
+        <th>Établissement</th>
+        <th>Unité de recherche</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($complements as $complement) : ?>
+        <?php $individu = $complement->getIndividu(); ?>
+        <tr class="<?php echo $complement->estHistorise() ? 'historise' : '' ?>">
+            <td>
+                <a href="<?php echo $this->url('individu/voir', ['individu' => $individu->getId()], [], true); ?>"
+                   title="Voir les détails de cet individu"><?php echo $complement->getIndividu() ?></a>
+            </td>
+            <td>
+                <?php if ($complement->getEmail()) : ?>
+                    <?php echo $complement->getEmail(); ?>
+                <?php else: ?>
+                    (Non renseigné&middot;e)
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php if ($complement->getEtablissement()) : ?>
+                    <?php echo $complement->getEtablissement()->getLibelle(); ?>
+                <?php else: ?>
+                    (Non renseigné&middot;e)
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php if ($complement->getUniteRecherche()) : ?>
+                    <?php echo $complement->getUniteRecherche()->getLibelle(); ?>
+                <?php else: ?>
+                    (Non renseigné&middot;e)
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php if ($canAfficher) : ?>
+                    <a href="<?php echo $this->url('individu-compl/afficher', ['individu-compl' => $complement->getId()], [], true); ?>"
+                       class="ajax-modal">
+                        <span class="icon icon-voir"></span></a>
+                <?php endif; ?>
+                <?php if ($canModifier) : ?>
+                    <a href="<?php echo $this->url('individu-compl/modifier', ['individu-compl' => $complement->getId()], [], true); ?>"
+                       class="ajax-modal" data-event="modification">
+                        <span class="icon icon-modifier"></span></a>
+                <?php endif; ?>
+                <?php if ($canHistoriser) : ?>
+                    <?php if ($complement->estNonHistorise()) : ?>
+                        <a href="<?php echo $this->url('individu-compl/historiser', ['individu-compl' => $complement->getId()], [], true); ?>"
+                           title="Supprimer ce complément"
+                           data-message="Êtes-vous sûr de vouloir supprimer ce complément ?"
+                           data-toggle="confirmationx"><span class="icon icon-supprimer"></span></a>
+                    <?php else : ?>
+                        <a href="<?php echo $this->url('individu-compl/restaurer', ['individu-compl' => $complement->getId()], [], true); ?>"
+                           title="Restaurer ce complément"
+                           data-message="Êtes-vous sûr de vouloir restaurer ce complément ?"
+                           data-toggle="confirmationx"><span class="icon icon-restaurer"></span></a>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+
+<script>
+    $(function () {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

@@ -2,12 +2,12 @@
 
 namespace Application\Service\ListeDiffusion;
 
-use Application\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\ListeDiffusion;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\Structure;
+use Structure\Entity\Db\Structure;
 use Application\Service\BaseService;
-use Application\Service\Individu\IndividuServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressGenerator;
 use Application\Service\ListeDiffusion\Handler\ListeDiffusionHandlerInterface;
 use Doctrine\ORM\ORMException;

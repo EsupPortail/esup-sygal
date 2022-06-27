@@ -9,7 +9,7 @@ class MailConfirmation {
 
     /** @var int $id */
     private $id;
-    /** @var Individu $individu */
+    /** @var \Individu\Entity\Db\Individu $individu */
     protected $individu;
     /** @var string $email */
     protected $email;
@@ -27,7 +27,7 @@ class MailConfirmation {
     }
 
     /**
-     * @return Individu
+     * @return \Individu\Entity\Db\Individu
      */
     public function getIndividu()
     {
@@ -35,7 +35,7 @@ class MailConfirmation {
     }
 
     /**
-     * @param Individu $individu
+     * @param \Individu\Entity\Db\Individu $individu
      * @return MailConfirmation
      */
     public function setIndividu($individu)

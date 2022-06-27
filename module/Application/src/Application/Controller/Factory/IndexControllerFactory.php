@@ -4,8 +4,8 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\IndexController;
 use Application\Service\Actualite\ActualiteService;
-use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\These\TheseService;
 use Application\Service\Variable\VariableService;
 use Information\Service\InformationService;

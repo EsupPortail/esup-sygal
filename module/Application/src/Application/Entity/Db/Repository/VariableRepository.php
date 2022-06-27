@@ -3,7 +3,7 @@
 namespace Application\Entity\Db\Repository;
 
 use Application\Constants;
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Variable;
 use UnicaenApp\Exception\RuntimeException;

@@ -2,7 +2,7 @@
 
 namespace Application\Service\Rapport\Avis;
 
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\Notification\NotifierService;
 use Interop\Container\ContainerInterface;
 

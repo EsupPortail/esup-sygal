@@ -2,7 +2,7 @@
 
 namespace Application\Notification;
 
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Interfaces\TheseAwareTrait;
 use Notification\Notification;
 

@@ -2,7 +2,7 @@
 
 namespace Application\Filter;
 
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Doctorant\Entity\Db\Interfaces\DoctorantInterface;
 use Laminas\Filter\AbstractFilter;
 use UnicaenApp\Entity\Ldap\People;
@@ -77,8 +77,8 @@ class NomCompletFormatter extends AbstractFilter
         }
         elseif ($value instanceof Utilisateur) {
             /* @var $value Utilisateur */
-            $nomUsuel = $value->getDisplayName();
-            $nomPatro = $value->getDisplayName();
+            $nomUsuel = $value->getNom() ?: $value->getDisplayName();
+            $nomPatro = $value->getPrenom() ?: $value->getDisplayName();
             $prenom   = '';
             $civilite = '';
         }

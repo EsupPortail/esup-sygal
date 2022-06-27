@@ -3,7 +3,7 @@
 namespace Soutenance\Controller;
 
 use Application\Service\Acteur\ActeurService;
-use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Role\RoleService;
 use Application\Service\UserContextService;
 use Interop\Container\ContainerInterface;

@@ -3,14 +3,14 @@
 namespace Application\Service\These\Factory;
 
 use Application\Service\DomaineScientifiqueService;
-use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\Financement\FinancementService;
-use Application\Service\Structure\StructureService;
+use Structure\Service\Structure\StructureService;
 use Application\Service\These\TheseSearchService;
 use Application\Service\These\TheseService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
-use Application\Service\UniteRecherche\UniteRechercheService;
+use Structure\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\UserContextService;
 use Interop\Container\ContainerInterface;
 

@@ -9,7 +9,7 @@
 
         <field name="libelle" type="string" column="LIBELLE" length="128" nullable="false"/>
 
-        <many-to-many field="unites" target-entity="Application\Entity\Db\UniteRecherche" inversed-by="domaines" fetch="LAZY">
+        <many-to-many field="unites" target-entity="Structure\Entity\Db\UniteRecherche" inversed-by="domaines" fetch="LAZY">
             <join-table name="UNITE_DOMAINE_LINKER">
                 <join-columns>
                     <join-column name="DOMAINE_ID" referenced-column-name="ID"/>

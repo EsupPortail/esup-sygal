@@ -3,12 +3,12 @@
 namespace Application\Service\File;
 
 use Application\Controller\Plugin\Uploader\UploadedFileInterface;
-use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\Fichier;
-use Application\Entity\Db\StructureInterface;
-use Application\Entity\Db\UniteRecherche;
-use Application\Entity\Db\Structure;
+use Structure\Entity\Db\StructureInterface;
+use Structure\Entity\Db\UniteRecherche;
+use Structure\Entity\Db\Structure;
 use UnicaenApp\Exception\RuntimeException;
 use Laminas\Http\Response;
 

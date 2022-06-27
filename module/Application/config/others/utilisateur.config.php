@@ -15,8 +15,6 @@ use Application\Form\Validator\Factory\NewEmailValidatorFactory;
 use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\PasswordValidator;
 use Application\Provider\Privilege\UtilisateurPrivileges;
-use Application\Service\Individu\IndividuService;
-use Application\Service\Individu\IndividuServiceFactory;
 use Application\Service\Utilisateur\UtilisateurSearchService;
 use Application\Service\Utilisateur\UtilisateurSearchServiceFactory;
 use Application\Service\Utilisateur\UtilisateurService;
@@ -55,6 +53,7 @@ return [
                         'ajouter',
                         'ajouterFromIndividu',
                         'lier-individu',
+                        'lier-nouvel-individu',
                         'delier-individu',
                         'ajouter-token'
                     ],
@@ -133,6 +132,15 @@ return [
                             'route'       => '/lier-individu/:utilisateur[/:individu]',
                             'defaults'    => [
                                 'action' => 'lier-individu',
+                            ],
+                        ],
+                    ],
+                    'lier-nouvel-individu' => [
+                        'type'          => Segment::class,
+                        'options'       => [
+                            'route'       => '/lier-nouvel-individu/:utilisateur',
+                            'defaults'    => [
+                                'action' => 'lier-nouvel-individu',
                             ],
                         ],
                     ],
@@ -244,13 +252,6 @@ return [
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'index'),
                                 'icon'     => 'fa fa-users',
                                 'order'    => 60,
-                                'pages' => [
-                                    'creation' => [
-                                        'label'    => "Création",
-                                        'route'    => 'utilisateur/ajouter',
-                                        'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'ajouter'),
-                                    ],
-                                ],
                             ],
                         ],
                     ],
@@ -262,13 +263,11 @@ return [
         'invokables' => [
         ],
         'factories' => [
-            'IndividuService' => IndividuServiceFactory::class,
             'UtilisateurService' => UtilisateurServiceFactory::class,
             UtilisateurSearchService::class => UtilisateurSearchServiceFactory::class,
         ],
         'aliases' => [
             UtilisateurService::class => 'UtilisateurService',
-            IndividuService::class => 'IndividuService',
         ]
     ],
     'controllers'     => [

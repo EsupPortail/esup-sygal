@@ -2,7 +2,7 @@
 
 namespace Application\Controller;
 
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Laminas\View\Model\ViewModel;
 

@@ -12,7 +12,7 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\TypeRapport;
 use Application\Filter\NomFichierRapportFormatter;
 use Application\Service\BaseService;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\FichierThese\PdcData;
 use Application\Service\File\FileServiceAwareTrait;

@@ -6,7 +6,7 @@ use Application\Controller\FichierTheseController;
 use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
@@ -20,7 +20,7 @@ use Application\Rule\SuppressionAttestationsRequiseRule;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\AuthorizeServiceAwareTrait;
 use Application\Service\BaseService;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\FichierThese\MembreData;
 use Application\Service\FichierThese\PdcData;
@@ -622,7 +622,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
             if ($structure !== null) $current .= " (". $structure->getLibelle() .")";
             $nomination[] = $current;
         }
-        $pdcData->setListing(implode(" et ", $nomination) . ", ");
+        $pdcData->setListing(implode(" et ", $nomination));
         if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());
         if ($these->getEcoleDoctorale()) $pdcData->setEcoleDoctorale($these->getEcoleDoctorale()->getStructure()->getLibelle());
 

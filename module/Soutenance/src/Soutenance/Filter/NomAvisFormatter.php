@@ -3,7 +3,7 @@
 namespace Soutenance\Filter;
 
 use Application\Entity\Db\Fichier;
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Filter\NomFichierFormatter;
 
 /**

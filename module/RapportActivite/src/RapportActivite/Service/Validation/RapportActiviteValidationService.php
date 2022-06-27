@@ -4,8 +4,8 @@ namespace RapportActivite\Service\Validation;
 
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
 use Application\Service\BaseService;
-use Application\Service\Individu\IndividuServiceAwareInterface;
-use Application\Service\Individu\IndividuServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareInterface;
+use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;

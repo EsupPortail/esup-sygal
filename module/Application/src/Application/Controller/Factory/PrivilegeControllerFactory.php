@@ -3,9 +3,9 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\PrivilegeController;
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\Role\RoleService;
-use Application\Service\Structure\StructureService;
+use Structure\Service\Structure\StructureService;
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
 

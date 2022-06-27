@@ -3,7 +3,7 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\RoleController;
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\Role\RoleService;
 use Interop\Container\ContainerInterface;
 

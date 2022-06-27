@@ -6,7 +6,7 @@ use Application\Controller\FichierTheseController;
 use Application\EventRouterReplacer;
 use Application\Service\Fichier\FichierService;
 use Application\Service\FichierThese\FichierTheseService;
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\Validation\ValidationService;

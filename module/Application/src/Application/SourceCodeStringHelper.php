@@ -2,7 +2,7 @@
 
 namespace Application;
 
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 use UnicaenApp\Exception\RuntimeException;
 
 /**

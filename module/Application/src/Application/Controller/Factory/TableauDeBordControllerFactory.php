@@ -4,7 +4,7 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\TableauDeBordController;
 use Application\Service\AnomalieService;
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\Source\SourceService;
 use Interop\Container\ContainerInterface;
 

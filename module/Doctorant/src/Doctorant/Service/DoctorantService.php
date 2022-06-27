@@ -4,7 +4,7 @@ namespace Doctorant\Service;
 
 use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Entity\Db\DoctorantCompl;

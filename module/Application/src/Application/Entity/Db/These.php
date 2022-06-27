@@ -11,6 +11,10 @@ use DateTime;
 use Doctorant\Entity\Db\Doctorant;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Individu\Entity\Db\Individu;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\UniteRecherche;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\LogicException;
@@ -114,6 +118,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @var integer
      */
     private $anneeUniv1ereInscription;
+
+    /**
+     * @var string
+     */
+    private $codeSiseDiscipline;
 
     /**
      * @var string
@@ -384,6 +393,24 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     {
         $this->titre = $titre;
 
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCodeSiseDiscipline()
+    {
+        return $this->codeSiseDiscipline;
+    }
+
+    /**
+     * @param string $codeSiseDiscipline
+     * @return self
+     */
+    public function setCodeSiseDiscipline($codeSiseDiscipline): self
+    {
+        $this->codeSiseDiscipline = $codeSiseDiscipline;
         return $this;
     }
 
@@ -1472,7 +1499,8 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      */
     public function getFinancements()
     {
-        return $this->financements;
+        // Solution de filtrage temporaire (TODO : Filtrer en amont dans la requête)
+        return $this->financements->filter(fn(Financement $f) => $f->estNonHistorise());
     }
 
     /**

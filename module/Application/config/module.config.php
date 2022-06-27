@@ -13,7 +13,7 @@ use Application\Entity\UserWrapperFactory;
 use Application\Entity\UserWrapperFactoryFactory;
 use Application\Event\UserAuthenticatedEventListenerFactory;
 use Application\Event\UserRoleSelectedEventListener;
-use Application\Form\Factory\EcoleDoctoraleFormFactory;
+use Structure\Form\Factory\EcoleDoctoraleFormFactory;
 use Application\Navigation\NavigationFactoryFactory;
 use Application\Service\AuthorizeServiceAwareInitializer;
 use Application\Service\Role\RoleService;

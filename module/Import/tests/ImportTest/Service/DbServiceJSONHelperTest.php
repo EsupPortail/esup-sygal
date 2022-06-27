@@ -2,7 +2,7 @@
 
 namespace ImportTest\Service;
 
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 use Import\Service\DbServiceJSONHelper;
 
 class DbServiceJSONHelperTest extends \PHPUnit_Framework_TestCase
