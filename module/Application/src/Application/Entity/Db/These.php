@@ -1498,7 +1498,8 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      */
     public function getFinancements()
     {
-        return $this->financements;
+        // Solution de filtrage temporaire (TODO : Filtrer en amont dans la requête)
+        return $this->financements->filter(fn(Financement $f) => $f->estNonHistorise());
     }
 
     /**
