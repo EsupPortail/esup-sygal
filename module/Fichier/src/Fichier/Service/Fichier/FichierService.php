@@ -2,26 +2,27 @@
 
 namespace Fichier\Service\Fichier;
 
+use Application\Service\BaseService;
+use Application\Service\ValiditeFichier\ValiditeFichierServiceAwareTrait;
+use Doctrine\ORM\EntityRepository;
+use Exception;
 use Fichier\Entity\Db\Fichier;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
+use Fichier\FileUtils;
 use Fichier\Filter\AbstractNomFichierFormatter;
 use Fichier\Filter\NomFichierFormatter;
-use Application\Service\BaseService;
 use Fichier\Service\Fichier\Exception\FichierServiceException;
-use Fichier\Service\File\FileServiceAwareTrait;
 use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
-use Application\Service\ValiditeFichier\ValiditeFichierServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
-use Doctrine\ORM\EntityRepository;
-use Exception;
-use UnicaenApp\Exception\RuntimeException;
 use Laminas\Filter\FilterInterface;
+use UnicaenApp\Exception\RuntimeException;
 use ZipArchive;
 
 class FichierService extends BaseService
 {
-    use FileServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use NatureFichierServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use ValiditeFichierServiceAwareTrait;
@@ -50,7 +51,7 @@ class FichierService extends BaseService
     /**
      * @return EntityRepository
      */
-    public function getRepository()
+    public function getRepository(): EntityRepository
     {
         /** @var EntityRepository $repo */
         $repo = $this->entityManager->getRepository(Fichier::class);
@@ -96,10 +97,9 @@ class FichierService extends BaseService
      * @param string|NatureFichier $nature Nature de fichier, ou son code
      * @param string|VersionFichier|null $version Version de fichier, ou son code.
      *                                                 Si null, ce sera VersionFichier::CODE_ORIG
-     * @param FilterInterface|null       $nomFichierFormatter
      * @return Fichier[] Fichiers instanciés
      */
-    public function createFichiersFromUpload(array $uploadResult, $nature, $version = null, FilterInterface $nomFichierFormatter = null)
+    public function createFichiersFromUpload(array $uploadResult, $nature, $version = null): array
     {
         $fichiers = [];
         $files = $uploadResult['files'];
@@ -118,10 +118,6 @@ class FichierService extends BaseService
         // normalisation au cas où il n'y a qu'un fichier
         if (isset($files['name'])) {
             $files = [$files];
-        }
-
-        if ($nomFichierFormatter === null) {
-            $nomFichierFormatter = new NomFichierFormatter();
         }
 
         foreach ((array)$files as $file) {
@@ -153,7 +149,7 @@ class FichierService extends BaseService
     }
 
     /**
-     * Enregistre en base de données les Fichiers spécifiés, et déplace les fichiers physiques associés au bon endroit.
+     * Enregistre en base de données les Fichiers spécifiés, et enregsitre les fichiers physiques associés.
      *
      * @param Fichier[] $fichiers
      */
@@ -164,7 +160,9 @@ class FichierService extends BaseService
             foreach ($fichiers as $fichier) {
                 $this->entityManager->persist($fichier);
                 $this->entityManager->flush($fichier);
-                $this->moveUploadedFileForFichier($fichier);
+
+//                $this->moveUploadedFileForFichier($fichier);
+                $this->fichierStorageService->saveFileForFichier($fichier->getPath(), $fichier);
             }
             $this->entityManager->commit();
         } catch (\Exception $e) {
@@ -180,7 +178,6 @@ class FichierService extends BaseService
      */
     public function supprimerFichiers(array $fichiers, bool $throwExceptionOnFileError = false)
     {
-        $filePaths = [];
         $this->entityManager->beginTransaction();
         try {
             foreach ($fichiers as $fichier) {
@@ -190,7 +187,7 @@ class FichierService extends BaseService
                         $fichier->getIdPermanent()
                     ));
                 }
-                $filePaths[] = $this->computeDestinationFilePathForFichier($fichier);
+
                 $this->entityManager->remove($fichier);
                 $this->entityManager->flush($fichier);
             }
@@ -200,95 +197,19 @@ class FichierService extends BaseService
             throw new RuntimeException("Erreur survenue lors de la suppression des Fichiers en bdd, rollback!", 0, $e);
         }
 
-        // suppression des fichiers physiques sur le disque
+        // suppression des fichiers physiques
         $notDeletedFiles = [];
-        foreach ($filePaths as $filePath) {
-            $success = file_exists($filePath) && unlink($filePath);
-            if ($success === false) {
-                $notDeletedFiles[] = $filePath;
+        foreach ($fichiers as $fichier) {
+            try {
+                $this->fichierStorageService->deleteFileForFichier($fichier);
+            } catch (StorageAdapterException $e) {
+                $notDeletedFiles[] = sprintf("%s/%s (%s)", $e->getDirPath(), $e->getFileName(), $e->getMessage());
             }
         }
         if ($throwExceptionOnFileError && $notDeletedFiles) {
             throw new RuntimeException(
-                "Les fichiers suivants n'ont pas pu être supprimés sur le disque : " . implode(', ', $notDeletedFiles));
+                "Les fichiers suivants n'ont pas pu être supprimés du storage : " . implode(', ', $notDeletedFiles));
         }
-    }
-
-    /**
-     * Retourne le contenu d'un Fichier sous la forme d'une chaîne de caractères.
-     *
-     * @param Fichier $fichier
-     * @return string
-     * @throws \Fichier\Service\Fichier\Exception\FichierServiceException
-     */
-    public function fetchContenuFichier(Fichier $fichier): string
-    {
-        $filePath = $this->computeDestinationFilePathForFichier($fichier);
-
-        if (!is_readable($filePath)) {
-            throw new FichierServiceException(
-                "Le fichier suivant n'existe pas ou n'est pas accessible sur le serveur : " . $filePath);
-        }
-
-        return file_get_contents($filePath);
-    }
-
-    /**
-     * Retourne le chemin sur le disque (du serveur) du dossier parent du fichier physique associé à un Fichier.
-     *
-     * @param Fichier $fichier           Entité Fichier dont on veut connaître le chemin du fichier physique associé
-     *                                   stocké sur disque
-     * @return string
-     */
-    public function computeDestinationDirectoryPathForFichier(Fichier $fichier)
-    {
-        return $this->fileService->prependUploadRootDirToRelativePath(strtolower($fichier->getNature()->getCode()));
-    }
-
-    /**
-     * Retourne le chemin sur le disque (du serveur) du fichier physique associé à un Fichier.
-     *
-     * @param Fichier $fichier Entité Fichier dont on veut connaître le chemin du fichier physique associé
-     *                         stocké sur disque
-     * @return string
-     */
-    public function computeDestinationFilePathForFichier(Fichier $fichier): string
-    {
-        return $this->computeDestinationDirectoryPathForFichier($fichier) . '/' . $fichier->getNom();
-    }
-
-    /**
-     * Création si besoin du dossier destination du Fichier spécifié.
-     *
-     * @param Fichier $fichier
-     */
-    public function createDestinationDirectoryPathForFichier(Fichier $fichier)
-    {
-        $parentDir = $this->computeDestinationDirectoryPathForFichier($fichier);
-        $this->fileService->createWritableDirectory($parentDir);
-    }
-
-    /**
-     * @param Fichier $fichier
-     */
-    public function moveUploadedFileForFichier(Fichier $fichier)
-    {
-        $fromPath = $fichier->getPath();
-
-        // création si besoin du dossier destination
-        $this->createDestinationDirectoryPathForFichier($fichier);
-
-        $newPath = $this->computeDestinationFilePathForFichier($fichier);
-        if (file_exists($newPath)) {
-            throw new RuntimeException("Impossible de déplacer le fichier temporaire uploadé car $newPath existe déjà");
-        }
-
-        $res = move_uploaded_file($fromPath, $newPath);
-        if ($res === false) {
-            throw new RuntimeException("Erreur lors du déplacement du fichier temporaire uploadé de $fromPath vers $newPath");
-        }
-
-        $fichier->setPath($newPath);
     }
 
     /**
@@ -315,13 +236,21 @@ class FichierService extends BaseService
         foreach ($fichiersArchivables as $fichierArchivable) {
             // NB : le chemin du fichier à archiver est soit celui du FichierArchivable (spécifié à la main),
             // soit celui du Fichier original calculé comme d'hab :
-            $filePath = $fichierArchivable->getFilePath() ?:
-                $this->computeDestinationFilePathForFichier($fichierArchivable->getFichier());
-
-            if (! is_readable($filePath)) {
-                $message = "Impossible d'ajouter le fichier suivant à l'archive '$archiveFilepath' car il n'est pas lisible : " . $filePath;
-                error_log($message);
-                throw new FichierServiceException($message);
+            if ($fichierArchivable->getFilePath()) {
+                $filePath = $fichierArchivable->getFilePath();
+                if (! is_readable($filePath)) {
+                    $message = "Impossible d'ajouter le fichier suivant à l'archive '$archiveFilepath' car il n'est pas lisible : " . $filePath;
+                    error_log($message);
+                    throw new FichierServiceException($message);
+                }
+            } else {
+                try {
+                    $filePath = $this->fichierStorageService->getFileForFichier($fichierArchivable->getFichier());
+                } catch (StorageAdapterException $e) {
+                    $message = "Impossible d'ajouter le fichier suivant à l'archive '$archiveFilepath' : " . $fichier;
+                    error_log($message);
+                    throw new FichierServiceException($message, null, $e);
+                }
             }
 
             $filePathInArchive = $fichierArchivable->getFilePathInArchive();
@@ -346,16 +275,6 @@ class FichierService extends BaseService
         $content     = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
         $contentType = $fichier->getTypeMime() ?: 'application/octet-stream';
 
-        header('Content-Description: File Transfer');
-        header('Content-Type: ' . $contentType);
-        header('Content-Disposition: attachment; filename="' . $fichier->getNom() . '"');
-        header('Content-Transfer-Encoding: binary');
-        header('Content-Length: ' . strlen($content));
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header('Expires: 0');
-        header('Pragma: public');
-
-        echo $content;
-        exit;
+        FileUtils::downloadFileFromContent($content, $fichier->getNom(), $contentType);
     }
 }

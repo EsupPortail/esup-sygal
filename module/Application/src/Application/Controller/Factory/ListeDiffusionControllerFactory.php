@@ -5,7 +5,7 @@ namespace Application\Controller\Factory;
 use Application\Controller\ListeDiffusionController;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
-use Fichier\Service\File\FileService;
+use Fichier\Service\Fichier\FichierStorageService;
 use Individu\Service\IndividuService;
 use Application\Service\ListeDiffusion\ListeDiffusionService;
 use Application\Service\Notification\NotifierService;
@@ -32,10 +32,10 @@ class ListeDiffusionControllerFactory
         $controller->setIndividuService($individuService);
 
         /**
-         * @var FileService $fileService
+         * @var \Fichier\Service\Fichier\FichierStorageService $fileService
          */
-        $fileService = $container->get(FileService::class);
-        $controller->setFileService($fileService);
+        $fileService = $container->get(FichierStorageService::class);
+        $controller->setFichierStorageService($fileService);
 
         /**
          * @var NotifierService $notifierService

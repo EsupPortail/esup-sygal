@@ -8,11 +8,9 @@ use Fichier\Controller\ConsoleController;
 use Fichier\Controller\Factory\ConsoleControllerFactory;
 use Fichier\Controller\IndexController;
 use Fichier\Controller\Factory\IndexControllerFactory;
+use Laminas\Mvc\Console\Router\Simple;
 
 return [
-    'fichier' => [
-
-    ],
     'doctrine' => [
         'driver' => [
             'orm_default' => [
@@ -54,13 +52,6 @@ return [
                 'pages' => [
 
                 ],
-            ],
-        ],
-    ],
-    'console' => [
-        'router' => [
-            'routes' => [
-
             ],
         ],
     ],

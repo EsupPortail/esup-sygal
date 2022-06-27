@@ -13,7 +13,7 @@ use Application\Filter\IdifyFilter;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Form\Rapport\RapportForm;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use Fichier\Service\File\FileServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Rapport\RapportServiceAwareTrait;
@@ -30,7 +30,7 @@ use Laminas\View\Model\ViewModel;
 abstract class RapportController extends AbstractController
 {
     use TheseServiceAwareTrait;
-    use FileServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use FichierServiceAwareTrait;
     use RapportServiceAwareTrait;
     use VersionFichierServiceAwareTrait;

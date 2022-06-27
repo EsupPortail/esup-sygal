@@ -10,7 +10,8 @@ use Application\Entity\Db\Role;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Fichier\Service\File\FileServiceAwareTrait;
+use Fichier\FileUtils;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressGenerator;
 use Application\Service\ListeDiffusion\ListeDiffusionServiceAwareTrait;
@@ -29,7 +30,7 @@ class ListeDiffusionController extends AbstractController
 {
     use ListeDiffusionServiceAwareTrait;
     use IndividuServiceAwareTrait;
-    use FileServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use NotifierServiceAwareTrait;
     use StructureServiceAwareTrait;
     use EtablissementServiceAwareTrait;
@@ -340,7 +341,7 @@ class ListeDiffusionController extends AbstractController
         //$this->handleMemberIncludeNotFoundEmails(); // PAS POSSIBLE : Sympa interroge toutes les heures !
 
         $filename = $this->listeDiffusionService->generateResultFileName('member');
-        $this->fileService->downloadFileFromContent($content, $filename);
+        FileUtils::downloadFileFromContent($content, $filename);
     }
 
     /**
@@ -358,7 +359,7 @@ class ListeDiffusionController extends AbstractController
         $content = $this->listeDiffusionService->createOwnerIncludeFileContent();
 
         $filename = $this->listeDiffusionService->generateResultFileName('owner');
-        $this->fileService->downloadFileFromContent($content, $filename);
+        FileUtils::downloadFileFromContent($content, $filename);
     }
 
     /**

@@ -8,7 +8,9 @@ use Application\Entity\Db\FichierThese;
 use Application\Entity\Db\These;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use StepStar\Exception\ZipServiceException;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 
 class ZipService
@@ -39,7 +41,13 @@ class ZipService
         foreach ($these->getFichierTheses() as $fichierThese) {
             $fichier = $fichierThese->getFichier();
             $filename = $fichier->getNom();
-            $srceFilepath = $this->fichierService->computeDestinationFilePathForFichier($fichier);
+//            $srceFilepath = $this->fichierService->computeFilePathForFichier($fichier);
+            try {
+                $srceFilepath = $this->fileService->createFileCopyForFichier($fichier);
+            } catch (StorageAdapterException $e) {
+                throw new RuntimeException(
+                    "Impossible d'obtenir le fichier physique associé au Fichier suivant : " . $fichier, null, $e);
+            }
             $destFilepath = $dirPath . '/' . $filename;
             $success = copy($srceFilepath, $destFilepath);
             if (!$success) {

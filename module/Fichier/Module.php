@@ -14,7 +14,7 @@ class Module implements ConsoleBannerProviderInterface, ConsoleUsageProviderInte
 {
     public function onBootstrap(MvcEvent $e)
     {
-        $eventManager        = $e->getApplication()->getEventManager();
+        $eventManager = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
     }
@@ -55,25 +55,11 @@ class Module implements ConsoleBannerProviderInterface, ConsoleUsageProviderInte
     {
         return [
             /**
-             * @see ConsoleController::genererXmlAction()
+             * @see ConsoleController::migrerFichiersAction()
              */
-            'step-star generer-xml --these=<id> --to=<to>' => "Génère le fichier XML intermédiaire d'une thèse.",
-            [ '<id>', "Id de la thèse concernée.", "Obligatoire"],
-            [ '<to>', "Chemin du fichier XML à produire.", "Obligatoire"],
-
-            /**
-             * @see ConsoleController::genererTefAction()
-             */
-            'step-star generer-tef --from=<from> [--dir=<dir>]' => "Génère un fichier TEF en transformant un fichier XML intermédiaire.",
-            [ '<from>', "Chemin complet du fichier XML intermédiaire à transformer contenant les thèses", "Obligatoire"],
-            [ '<dir>', "Répertoire destination.", "Facultatif"],
-
-            /**
-             * @see ConsoleController::deposerAction()
-             */
-            'step-star deposer --tef=<tef> [--zip=<zip>]' => "Exporte vers STAR un fichier TEF et éventuellement un fichier ZIP.",
-            [ '<tef>', "Chemin complet du fichier TEF", "Obligatoire"],
-            [ '<zip>', "Chemin complet du fichier ZIP éventuel.", "Facultatif"],
+            'fichier:migrer-fichiers --from=<from> --to=<to>' => "Migre les fichiers d'un storage (adapter) à un autre.",
+            ['<from>', "Nom du storage adapter (service) source.", "Obligatoire"],
+            ['<to>', "Nom du storage adapter (service) destination.", "Obligatoire"],
         ];
     }
 }

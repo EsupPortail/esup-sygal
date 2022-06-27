@@ -10,6 +10,7 @@ use Individu\Service\IndividuService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\Validation\ValidationService;
+use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\VersionFichier\VersionFichierService;
 use Interop\Container\ContainerInterface;
 use Laminas\EventManager\EventManager;
@@ -31,6 +32,7 @@ class FichierTheseControllerFactory
 
         /**
          * @var TheseService          $theseService
+         * @var FichierStorageService           $fileService
          * @var FichierService        $fichierService
          * @var FichierTheseService   $fichierTheseService
          * @var VersionFichierService $versionFichierService
@@ -40,6 +42,7 @@ class FichierTheseControllerFactory
          * @var EventManager          $eventManager
          */
         $theseService = $container->get('TheseService');
+        $fileService = $container->get(FichierStorageService::class);
         $fichierService = $container->get(FichierService::class);
         $fichierTheseService = $container->get('FichierTheseService');
         $versionFichierService = $container->get('VersionFichierService');
@@ -53,6 +56,7 @@ class FichierTheseControllerFactory
         $controller->setTheseService($theseService);
         $controller->setFichierTheseService($fichierTheseService);
         $controller->setFichierService($fichierService);
+        $controller->setFichierStorageService($fileService);
         $controller->setVersionFichierService($versionFichierService);
         $controller->setNotifierService($notificationService);
         $controller->setIndividuService($individuService);

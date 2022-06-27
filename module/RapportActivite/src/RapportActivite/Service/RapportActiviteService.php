@@ -11,11 +11,12 @@ use Application\Service\BaseService;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Fichier\Service\Fichier\Exception\FichierServiceException;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use Fichier\Service\File\FileServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Closure;
 use Doctrine\ORM\NonUniqueResultException;
@@ -35,7 +36,7 @@ use UnicaenApp\Exception\RuntimeException;
 class RapportActiviteService extends BaseService
 {
     use FichierServiceAwareTrait;
-    use FileServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use NotifierServiceAwareTrait;
@@ -287,12 +288,28 @@ class RapportActiviteService extends BaseService
 
         // logos
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {
-            $exportData->logoCOMUE = $this->fileService->computeLogoFilePathForStructure($comue);
+            try {
+                $exportData->logoCOMUE = $this->fichierStorageService->getFileForLogoStructure($comue);
+            } catch (StorageAdapterException $e) {
+                $exportData->logoCOMUE = '';
+            }
         }
-        $exportData->logoEtablissement = $this->fileService->computeLogoFilePathForStructure($these->getEtablissement());
-        $exportData->logoEcoleDoctorale = $this->fileService->computeLogoFilePathForStructure($these->getEcoleDoctorale());
+        try {
+            $exportData->logoEtablissement = $this->fichierStorageService->getFileForLogoStructure($these->getEtablissement());
+        } catch (StorageAdapterException $e) {
+            $exportData->logoEtablissement = '';
+        }
+        try {
+            $exportData->logoEcoleDoctorale = $this->fichierStorageService->getFileForLogoStructure($these->getEcoleDoctorale());
+        } catch (StorageAdapterException $e) {
+            $exportData->logoEcoleDoctorale = '';
+        }
         if ($these->getUniteRecherche() !== null) {
-            $exportData->logoUniteRecherche = $this->fileService->computeLogoFilePathForStructure($these->getUniteRecherche());
+            try {
+                $exportData->logoUniteRecherche = $this->fichierStorageService->getFileForLogoStructure($these->getUniteRecherche());
+            } catch (StorageAdapterException $e) {
+                $exportData->logoUniteRecherche = '';
+            }
         }
 
         // avis
@@ -308,7 +325,7 @@ class RapportActiviteService extends BaseService
                 NatureFichier::CODE_SIGNATURE_RAPPORT_ACTIVITE,
                 $these->getEtablissement()
             );
-        } catch (FichierServiceException $e) {
+        } catch (StorageAdapterException $e) {
             $exportData->signatureEcoleDoctorale = null;
             $exportData->signatureEcoleDoctoraleAnomalie = $e->getMessage();
         }

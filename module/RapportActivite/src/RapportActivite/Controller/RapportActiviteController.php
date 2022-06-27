@@ -7,8 +7,9 @@ use Application\Entity\Db\Interfaces\TypeRapportAwareTrait;
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
 use Application\Entity\Db\These;
 use Application\Filter\IdifyFilter;
+use Fichier\FileUtils;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use Fichier\Service\File\FileServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use RapportActivite\Entity\Db\RapportActivite;
@@ -27,7 +28,7 @@ use UnicaenAvis\Entity\Db\Avis;
 class RapportActiviteController extends AbstractController
 {
     use FichierServiceAwareTrait;
-    use FileServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use RapportActiviteAvisServiceAwareTrait;
     use RapportActiviteServiceAwareTrait;
     use RapportActiviteFichierServiceAwareTrait;
@@ -184,7 +185,7 @@ class RapportActiviteController extends AbstractController
             if ($rapport->supporteAjoutPageValidation()) {
                 $exportData = $this->rapportActiviteService->createPageValidationData($rapport);
                 $outputFilePath = $this->rapportActiviteFichierService->createFileWithPageValidation($rapport, $exportData);
-                $this->fileService->downloadFile($outputFilePath);
+                FileUtils::downloadFile($outputFilePath);
                 exit;
             }
         }

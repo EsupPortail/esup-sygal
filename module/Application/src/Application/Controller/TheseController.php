@@ -28,7 +28,7 @@ use Application\Form\RdvBuTheseForm;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
-use Fichier\Service\File\FileServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Application\Service\MailConfirmationServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -39,6 +39,7 @@ use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
@@ -63,7 +64,7 @@ use Laminas\View\Renderer\PhpRenderer;
 class TheseController extends AbstractController
 {
     use FichierTheseServiceAwareTrait;
-    use FileServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use MessageCollectorAwareTrait;
     use NotifierServiceAwareTrait;
     use RoleServiceAwareTrait;
@@ -1384,7 +1385,12 @@ class TheseController extends AbstractController
         if ($etablissement === null) {
             $etablissement = $these->getEtablissement();
         }
-        $cheminLogo = $this->fileService->computeLogoFilePathForStructure($etablissement);
+//        $cheminLogo = $this->fileService->computeLogoFilePathForStructure($etablissement);
+        try {
+            $cheminLogo = $this->fichierStorageService->getFileForLogoStructure($etablissement);
+        } catch (StorageAdapterException $e) {
+            $cheminLogo = null;
+        }
 
         $renderer = $this->renderer;
         $exporter = new ConventionPdfExporter($renderer, 'A4');

@@ -31,7 +31,7 @@ $isVisible = isset($isVisible) ? $isVisible : true;
     <div class="card-body">
         <?php echo $this->partial('application/these/depot/partial/fichier', [
             'canUpload'               => $canEdit,
-            'class'                   => NatureFichier::toRoute($nature->getCode()),
+            'class'                   => (new NatureFichier)->setCode($nature->getCode())->getCodeToLowerAndDash(),
             'uploadUrl'               => $uploadUrl,
             'uploadedFilesListUrl'    => $fichiersListUrl,
             'maxUploadableFilesCount' => $maxUploadableFilesCount,

@@ -4,7 +4,7 @@ namespace RapportActivite\Service;
 
 use Structure\Service\Etablissement\EtablissementService;
 use Fichier\Service\Fichier\FichierService;
-use Fichier\Service\File\FileService;
+use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\NatureFichier\NatureFichierService;
 use Application\Service\Notification\NotifierService;
 use Structure\Service\StructureDocument\StructureDocumentService;
@@ -30,7 +30,7 @@ class RapportActiviteServiceFactory
     {
         /**
          * @var FichierService $fichierService
-         * @var FileService $fileService
+         * @var \Fichier\Service\Fichier\FichierStorageService $fileService
          * @var VersionFichierService $versionFichierService
          * @var ValiditeFichierService $validiteFichierService
          * @var RetraitementService $retraitementService
@@ -42,7 +42,7 @@ class RapportActiviteServiceFactory
          * @var StructureDocumentService $structureDocumentService
          */
         $fichierService = $container->get(FichierService::class);
-        $fileService = $container->get(FileService::class);
+        $fileService = $container->get(FichierStorageService::class);
         $versionFichierService = $container->get('VersionFichierService');
         $etablissementService = $container->get('EtablissementService');
         $notifierService = $container->get(NotifierService::class);
@@ -55,7 +55,7 @@ class RapportActiviteServiceFactory
         $service = new RapportActiviteService();
 
         $service->setFichierService($fichierService);
-        $service->setFileService($fileService);
+        $service->setFichierStorageService($fileService);
         $service->setVersionFichierService($versionFichierService);
         $service->setEtablissementService($etablissementService);
         $service->setNotifierService($notifierService);

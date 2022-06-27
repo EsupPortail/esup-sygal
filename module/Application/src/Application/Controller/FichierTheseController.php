@@ -19,6 +19,8 @@ use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use Doctrine\ORM\NonUniqueResultException;
@@ -35,6 +37,7 @@ use Laminas\View\Model\ViewModel;
 class FichierTheseController extends AbstractController
 {
     use TheseServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use FichierServiceAwareTrait;
     use FichierTheseServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
@@ -173,8 +176,8 @@ class FichierTheseController extends AbstractController
 
         // injection préalable du contenu du fichier pour pouvoir utiliser le plugin Uploader
         try {
-            $contenuFichier = $this->fichierService->fetchContenuFichier($fichier);
-        } catch (FichierServiceException $e) {
+            $contenuFichier = $this->fichierStorageService->getFileContentForFichier($fichier);
+        } catch (StorageAdapterException $e) {
             throw new RuntimeException("Impossible d'obtenir le contenu du fichier", null, $e);
         }
         $fichier->setContenuFichierData($contenuFichier);

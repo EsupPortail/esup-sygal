@@ -2,9 +2,6 @@
 
 namespace Structure\Service\Structure;
 
-use Fichier\Command\ConvertShellCommand;
-use Application\Command\Exception\TimedOutCommandException;
-use Application\Command\ShellCommandRunner;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\Structure;
@@ -17,20 +14,23 @@ use Structure\Entity\Db\UniteRecherche;
 use Application\Service\BaseService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Fichier\Service\File\FileServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\Laminas\Hydrator\DoctrineObject;
+use Fichier\FileUtils;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Import\Service\Traits\SynchroServiceAwareTrait;
+use Laminas\Mvc\Controller\AbstractActionController;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 use Webmozart\Assert\Assert;
-use Laminas\Mvc\Controller\AbstractActionController;
 use function Application\generateNameForEtab;
 
 /**
@@ -44,7 +44,7 @@ class StructureService extends BaseService
     use EcoleDoctoraleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
-    use FileServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
 
     /**
      * @return EntityRepository
@@ -848,7 +848,7 @@ class StructureService extends BaseService
      * @param StructureInterface $structure
      * @return bool
      */
-    public function deleteLogoStructure(StructureInterface $structure)
+    public function deleteLogoStructure(StructureInterface $structure): bool
     {
         $structure->setCheminLogo(null);
         try {
@@ -856,19 +856,19 @@ class StructureService extends BaseService
             if ($structure instanceof StructureConcreteInterface) {
                 $this->entityManager->flush($structure->getStructure());
             }
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Erreur lors de l'enregistrement de la structure.", null, $e);
         }
-
-        $logoFilepath = $this->fileService->computeLogoFilePathForStructure($structure);
-        if ($fileExists = file_exists($logoFilepath) && $structure->getCheminLogo() !== null) {
-            $ok = unlink($logoFilepath);
-            if (! $ok) {
-                throw new RuntimeException("Impossible de supprimer physiquement le fichier logo sur le disque.");
+        
+        if ($hasLogo = ($structure->getCheminLogo() !== null)) {
+            try {
+                $this->fichierStorageService->deleteFileForLogoStructure($structure);
+            } catch (StorageAdapterException $e) {
+                throw new RuntimeException("Erreur lors de la suppression du logo de la structure. " . $e->getMessage(), null, $e);
             }
         }
 
-        return $fileExists;
+        return $hasLogo;
     }
 
     /**
@@ -879,77 +879,48 @@ class StructureService extends BaseService
      */
     public function updateLogoStructure(StructureInterface $structure, string $uploadedFilePath)
     {
-        if ($uploadedFilePath === null || $uploadedFilePath === '') {
+        if ($uploadedFilePath === '') {
             throw new RuntimeException("Chemin du fichier logo uploadé invalide.");
         }
 
-        // mise à jour en bdd du chemin vers fichier logo.
-        $this->deleteLogoStructure($structure);
-        $logoFilename = $this->fileService->computeLogoFileNameForStructure($structure);
-        $structure->setCheminLogo($logoFilename);
+        $logoFilepath = FileUtils::convertLogoFileToPNG($uploadedFilePath);
+
+        // Suppression du logo existant
+        $this->deleteLogoStructure($structure); // todo: améliorer pour l'inclure dns le try-catch ci-après
+
         try {
+            $this->fichierStorageService->saveFileForLogoStructure($logoFilepath, $structure);
+
+            $logoFilename = $this->fichierStorageService->computeFileNameForLogoStructure($structure);
+            $structure->setCheminLogo($logoFilename);
+
             $this->entityManager->flush($structure);
             if ($structure instanceof StructureConcreteInterface) {
                 $this->entityManager->flush($structure->getStructure());
             }
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Erreur lors de l'enregistrement de la structure.", null, $e);
+        } catch (StorageAdapterException $e) {
+            throw new RuntimeException("Impossible d'enregistrer le fichier logo dans le storage. " . $e->getMessage(), null, $e);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de la structure. " . $e->getMessage(), null, $e);
         }
-
-        // création du fichier logo sur le disque.
-        $logoDir = $this->fileService->computeLogoDirectoryPathForStructure($structure);
-        $this->fileService->createWritableDirectory($logoDir);
-
-        $logoFilepath = $this->fileService->computeLogoFilePathForStructure($structure);
-
-        $command = new ConvertShellCommand();
-        $command->setOutputFilePath($logoFilepath);
-        $command->setInputFilePath($uploadedFilePath);
-        $command->generateCommandLine();
-
-        $runner = new ShellCommandRunner();
-        $runner->setCommand($command);
-        try {
-            $result = $runner->runCommand();
-
-            if (!$result->isSuccessfull()) {
-                $message = sprintf("La commande '%s' a échoué (code retour = %s). ",
-                    $command->getName(),
-                    $result->getReturnCode()
-                );
-                if ($output = $result->getOutput()) {
-                    $message .= "Voici le log d'exécution : " . implode(PHP_EOL, $output);
-                }
-                throw new RuntimeException($message);
-            }
-        } catch (TimedOutCommandException $toce) {
-            // n'arrive jamais car aucun timeout n'a été transmis à ConvertCommand
-        }
-        catch (RuntimeException $rte) {
-            throw new RuntimeException(
-                "Une erreur est survenue lors de l'exécution de la commande " . $command->getName(),
-                0,
-                $rte);
-        }
-        //!todo remplacer par 'convert  $uploadedFilePath $logoFilepath'
-
     }
 
     /**
      * Retourne au format chaîne de caractères le contenu du logo de la structure spécifiée.
      *
-     * @param StructureInterface $structure
+     * @param \Structure\Entity\Db\StructureInterface|null $structure
      * @return string|null
      */
-    public function getLogoStructureContent(StructureInterface $structure = null)
+    public function getLogoStructureContent(StructureInterface $structure = null): ?string
     {
         if ($structure === null OR $structure->getCheminLogo() === null) {
             return Util::createImageWithText("Aucun logo|renseigné", 200, 200);
         }
 
-        $logoFilepath = $this->fileService->computeLogoFilePathForStructure($structure);
-        if (! file_exists($logoFilepath)) {
-            return Util::createImageWithText("Anomalie: Fichier|absent sur le disque", 200, 200);
+        try {
+            $logoFilepath = $this->fichierStorageService->getFileForLogoStructure($structure);
+        } catch (StorageAdapterException $e) {
+            return Util::createImageWithText("Anomalie: Fichier|absent sur le storage. " . $e->getMessage(), 200, 200);
         }
 
         return file_get_contents($logoFilepath) ?: null;

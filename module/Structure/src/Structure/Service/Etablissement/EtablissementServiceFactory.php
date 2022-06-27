@@ -3,7 +3,7 @@
 namespace Structure\Service\Etablissement;
 
 use Fichier\Service\Fichier\FichierService;
-use Fichier\Service\File\FileService;
+use Fichier\Service\Fichier\FichierStorageService;
 use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
 

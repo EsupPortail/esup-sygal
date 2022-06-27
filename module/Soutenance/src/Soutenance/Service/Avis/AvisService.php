@@ -205,9 +205,11 @@ class AvisService {
 
     public function createAvisFromUpload($files, $membre)
     {
+        $this->fichierService->setNomFichierFormatter(new NomAvisFormatter($membre->getIndividu()));
+
         $nature = $this->fichierTheseService->fetchNatureFichier(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
         $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-        $fichiers = $this->fichierService->createFichiersFromUpload($files, $nature, $version, new NomAvisFormatter($membre->getIndividu()));
+        $fichiers = $this->fichierService->createFichiersFromUpload($files, $nature, $version);
         $this->fichierService->saveFichiers($fichiers);
 
         return current($fichiers);

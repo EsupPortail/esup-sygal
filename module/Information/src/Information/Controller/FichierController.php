@@ -7,6 +7,8 @@ use Fichier\Entity\Db\Fichier;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Information\Form\FichierForm;
 use Information\Service\InformationFichierServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
@@ -24,6 +26,7 @@ use Laminas\View\Model\ViewModel;
 class FichierController extends AbstractActionController
 {
     use InformationFichierServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use FichierServiceAwareTrait;
 
     /**
@@ -91,7 +94,11 @@ class FichierController extends AbstractActionController
         }
 
         // injection préalable du contenu du fichier pour pouvoir utiliser le plugin Uploader
-        $contenuFichier = $this->fichierService->fetchContenuFichier($fichier);
+        try {
+            $contenuFichier = $this->fichierStorageService->getFileContentForFichier($fichier);
+        } catch (StorageAdapterException $e) {
+            throw new RuntimeException("Impossible d'obtenir le contenu du Fichier", null, $e);
+        }
         $fichier->setContenuFichierData($contenuFichier);
 
         // Envoi du fichier au client (navigateur)

@@ -8,6 +8,7 @@ use Fichier\Controller\Plugin\Uploader\UploadedFileInterface;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Fichier\FileUtils;
 use Ramsey\Uuid\Uuid;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
@@ -22,8 +23,6 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     use HistoriqueAwareTrait;
 
     const RESOURCE_ID = 'Fichier';
-
-    const MIME_TYPE_PDF = 'application/pdf';
 
     /**
      * @var integer
@@ -503,6 +502,6 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
      */
     public function isTypeMimePdf(): bool
     {
-        return $this->getTypeMime() === self::MIME_TYPE_PDF;
+        return $this->getTypeMime() === FileUtils::MIME_TYPE_PDF;
     }
 }

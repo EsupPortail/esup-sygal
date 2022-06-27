@@ -58,16 +58,6 @@ class NatureFichier
     private $id;
 
     /**
-     * @param string $code
-     * @return string
-     */
-    static public function toRoute($code)
-    {
-        // ex: 'AVENANT_CONV_MISE_EN_LIGNE' => "avenant-conv-mise-en-ligne"
-        return strtolower(str_replace('_', '-', $code));
-    }
-
-    /**
      *
      * @return string
      */
@@ -95,9 +85,19 @@ class NatureFichier
      *
      * @return string
      */
-    public function getCode()
+    public function getCode(): string
     {
         return $this->code;
+    }
+
+    /**
+     * Remplace les '_' par des '-' dans le code mis en caractères minuscules.
+     *
+     * @return string
+     */
+    public function getCodeToLowerAndDash(): string
+    {
+        return strtolower(str_replace('_', '-', $this->code));
     }
 
     /**

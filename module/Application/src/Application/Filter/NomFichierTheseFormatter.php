@@ -45,7 +45,7 @@ class NomFichierTheseFormatter extends AbstractNomFichierFormatter
                 $parts['version'] = $fichierThese->getFichier()->getVersion()->getCode();
                 break;
             default:
-                $nature = str_replace('_', '-', $fichierThese->getFichier()->getNature()->getCode());
+                $nature = $fichierThese->getFichier()->getNature()->getCodeToLowerAndDash();
                 $parts['nature'] = mb_strtoupper($nature);
                 break;
         }

@@ -14,13 +14,15 @@ use BjyAuthorize\Exception\UnAuthorizedException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use UnicaenApp\Exception\RuntimeException;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
-
 class FichierController extends AbstractController
 {
+    use FichierStorageServiceAwareTrait;
     use FichierServiceAwareTrait;
 
     public function listerFichiersCommunsAction()
@@ -94,8 +96,8 @@ class FichierController extends AbstractController
 
         // injection préalable du contenu du fichier pour pouvoir utiliser le plugin Uploader
         try {
-            $contenuFichier = $this->fichierService->fetchContenuFichier($fichier);
-        } catch (FichierServiceException $e) {
+            $contenuFichier = $this->fichierStorageService->getFileContentForFichier($fichier);
+        } catch (StorageAdapterException $e) {
             throw new RuntimeException("Impossible d'obtenir le contenu du fichier", null, $e);
         }
         $fichier->setContenuFichierData($contenuFichier);
@@ -114,8 +116,8 @@ class FichierController extends AbstractController
 
         // injection préalable du contenu du fichier pour pouvoir utiliser le plugin Uploader
         try {
-            $contenuFichier = $this->fichierService->fetchContenuFichier($fichier);
-        } catch (FichierServiceException $e) {
+            $contenuFichier = $this->fichierStorageService->getFileContentForFichier($fichier);
+        } catch (StorageAdapterException $e) {
             throw new RuntimeException("Impossible d'obtenir le contenu du fichier", null, $e);
         }
         $fichier->setContenuFichierData($contenuFichier);

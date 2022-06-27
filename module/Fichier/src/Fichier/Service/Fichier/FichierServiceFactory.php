@@ -2,7 +2,7 @@
 
 namespace Fichier\Service\Fichier;
 
-use Fichier\Service\File\FileService;
+use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\NatureFichier\NatureFichierService;
 use Fichier\Service\VersionFichier\VersionFichierService;
 use Interop\Container\ContainerInterface;
@@ -18,17 +18,17 @@ class FichierServiceFactory
     public function __invoke(ContainerInterface $container)
     {
         /**
-         * @var FileService $fileService
+         * @var FichierStorageService $fileService
          * @var VersionFichierService $versionFichierService
          * @var NatureFichierService $natureFichierService
          */
-        $fileService = $container->get(FileService::class);
+        $fileService = $container->get(FichierStorageService::class);
         $versionFichierService = $container->get('VersionFichierService');
         $natureFichierService = $container->get('NatureFichierService');
 
         $service = new FichierService();
 
-        $service->setFileService($fileService);
+        $service->setFichierStorageService($fileService);
         $service->setVersionFichierService($versionFichierService);
         $service->setNatureFichierService($natureFichierService);
 

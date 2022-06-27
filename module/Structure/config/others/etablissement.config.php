@@ -218,10 +218,10 @@ return [
         'invokables' => [
         ],
         'factories' => [
-            'Application\Controller\Etablissement' => EtablissementControllerFactory::class,
+            'Structure\Controller\Etablissement' => EtablissementControllerFactory::class,
         ],
         'aliases' => [
-            EtablissementController::class => 'Application\Controller\Etablissement',
+            EtablissementController::class => 'Structure\Controller\Etablissement',
         ]
     ],
     'form_elements'   => [
