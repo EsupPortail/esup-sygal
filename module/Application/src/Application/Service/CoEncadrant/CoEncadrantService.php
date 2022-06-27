@@ -3,9 +3,9 @@
 namespace Application\Service\CoEncadrant;
 
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\These;
-use Application\Entity\Db\UniteRecherche;
+use Structure\Entity\Db\UniteRecherche;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\RuntimeException;

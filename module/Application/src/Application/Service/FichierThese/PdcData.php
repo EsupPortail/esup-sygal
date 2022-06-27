@@ -3,7 +3,7 @@
 namespace Application\Service\FichierThese;
 
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use DateTime;
 
 class MembreData

@@ -6,11 +6,11 @@ use Application\Controller\CoEncadrantController;
 use Application\Form\RechercherCoEncadrantForm;
 use Application\Service\Acteur\ActeurService;
 use Application\Service\CoEncadrant\CoEncadrantService;
-use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\File\FileService;
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Application\Service\These\TheseService;
-use Application\Service\UniteRecherche\UniteRechercheService;
+use Structure\Service\UniteRecherche\UniteRechercheService;
 use Interop\Container\ContainerInterface;
 use Laminas\View\Renderer\PhpRenderer;
 

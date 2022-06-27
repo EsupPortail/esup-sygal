@@ -4,11 +4,11 @@ namespace Application\Service\ListeDiffusion\Handler;
 
 use Application\Service\Acteur\ActeurService;
 use Doctorant\Service\DoctorantService;
-use Application\Service\Etablissement\EtablissementService;
-use Application\Service\Individu\IndividuService;
+use Structure\Service\Etablissement\EtablissementService;
+use Individu\Service\IndividuService;
 use Application\Service\ListeDiffusion\Handler;
 use Application\Service\Role\RoleService;
-use Application\Service\Structure\StructureService;
+use Structure\Service\Structure\StructureService;
 use Interop\Container\ContainerInterface;
 
 class ListeDiffusionHandlerFactory

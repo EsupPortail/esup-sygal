@@ -2,13 +2,13 @@
 
 namespace Soutenance\Service\Validation;
 
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Repository\ValidationRepository;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
-use Application\Service\Individu\IndividuServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;

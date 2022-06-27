@@ -2,7 +2,7 @@
 
 namespace Doctorant\Service;
 
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\Etablissement\EtablissementService;
 use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
 

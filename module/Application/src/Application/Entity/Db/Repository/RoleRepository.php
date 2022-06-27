@@ -2,8 +2,8 @@
 
 namespace Application\Entity\Db\Repository;
 
-use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\IndividuRole;
+use Structure\Entity\Db\Etablissement;
+use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;

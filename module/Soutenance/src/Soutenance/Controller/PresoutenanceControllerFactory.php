@@ -4,10 +4,10 @@ namespace Soutenance\Controller;
 
 use Application\Service\Acteur\ActeurService;
 use Application\Service\Fichier\FichierService;
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\Source\SourceService;
-use Application\Service\StructureDocument\StructureDocumentService;
+use Structure\Service\StructureDocument\StructureDocumentService;
 use Application\Service\These\TheseService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Interop\Container\ContainerInterface;

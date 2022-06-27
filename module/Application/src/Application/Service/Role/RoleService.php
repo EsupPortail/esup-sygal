@@ -2,17 +2,17 @@
 
 namespace Application\Service\Role;
 
-use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\Individu;
-use Application\Entity\Db\IndividuRole;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
+use Individu\Entity\Db\Individu;
+use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Profil;
 use Application\Entity\Db\Repository\RoleRepository;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\Structure;
-use Application\Entity\Db\TypeStructure;
-use Application\Entity\Db\UniteRecherche;
+use Structure\Entity\Db\Structure;
+use Structure\Entity\Db\TypeStructure;
+use Structure\Entity\Db\UniteRecherche;
 use Application\Service\BaseService;
 use Application\Service\Profil\ProfilServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;

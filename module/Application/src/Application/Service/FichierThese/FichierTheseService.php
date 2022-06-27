@@ -17,7 +17,7 @@ use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\VersionFichier;
 use Application\Filter\NomFichierTheseFormatter;
 use Application\Service\BaseService;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\FichierThese\Exception\DepotImpossibleException;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;

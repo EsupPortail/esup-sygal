@@ -4,12 +4,12 @@ namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\Individu;
-use Application\Entity\Db\IndividuRole;
+use Individu\Entity\Db\Individu;
+use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
-use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Laminas\Form\Form;

@@ -2,10 +2,10 @@
 
 namespace Import\Controller;
 
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
-use Application\Exception\StructureNotFoundException;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Exception\StructureNotFoundException;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Assert\Assertion;

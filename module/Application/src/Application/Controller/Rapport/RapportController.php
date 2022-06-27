@@ -14,7 +14,7 @@ use Application\Filter\IdifyFilterAwareTrait;
 use Application\Form\Rapport\RapportForm;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
-use Application\Service\Individu\IndividuServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Rapport\RapportServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;

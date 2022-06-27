@@ -1,0 +1,195 @@
+<?php
+
+/**
+ * @see \Application\Controller\EtablissementController::informationAction()
+ * @var \Application\View\Renderer\PhpRenderer $this
+ * @var Etablissement $etablissement
+ * @var array $roleListing (string => int)
+ * @var array $individuListing (string => string[])
+ * @var string $logoContent
+ * @var string $signatureConvocation
+ * @var string[] $contenus
+ */
+
+use Structure\Controller\StructureController;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\TypeStructure;
+use Structure\Provider\Privilege\StructurePrivileges;
+
+$this->headTitle('Details de l\'établissement ['.$etablissement->getLibelle().']');
+
+$canAddRole = true;
+$canModifierEtablissement = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
+
+$tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
+?>
+
+<h1 class="page-header">
+    Details de l'établissement [  <?php echo $etablissement->getLibelle(); ?> ]
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="nav-item">
+        <a class="nav-link <?php echo $tab === StructureController::TAB_infos ? 'active' : '' ?>"
+           href="<?php echo $this->url('etablissement/information', ['structure' => $etablissement->getStructure()->getId()], ['query' => ['tab' => StructureController::TAB_infos]], true) ?>"
+           role="tab"
+           aria-controls="informations"
+        >
+            Informations générales
+        </a>
+    </li>
+    <li role="presentation" class="nav-item">
+        <a class="nav-link <?php echo $tab === StructureController::TAB_membres ? 'active' : '' ?>"
+           href="<?php echo $this->url('etablissement/information', ['structure' => $etablissement->getStructure()->getId()], ['query' => ['tab' => StructureController::TAB_membres]], true) ?>"
+           role="tab"
+           aria-controls="membres"
+        >
+            Rôles et membres
+        </a>
+    </li>
+    <?php if ($etablissement->estInscription()) : ?>
+        <li role="presentation" class="nav-item">
+            <a class="nav-link <?php echo $tab === StructureController::TAB_docs ? 'active' : '' ?>"
+               href="<?php echo $this->url('etablissement/information', ['structure' => $etablissement->getStructure()->getId()], ['query' => ['tab' => StructureController::TAB_docs]], true) ?>"
+               role="tab"
+               aria-controls="documents"
+            >
+                Documents
+            </a>
+        </li>
+    <?php endif; ?>
+</ul>
+
+<div class="<?php echo $tab === StructureController::TAB_infos ? '' : 'd-none' ?>" id="informations">
+    <h2>
+        Informations générales
+    </h2>
+    <div class="row">
+        <div class="col-md-6">
+            <dl>
+                <dt> Libelle : </dt>                <dd>    <?php echo $etablissement->getLibelle(); ?>     </dd>
+                <dt> Sigle : </dt>                  <dd>    <?php echo $etablissement->getSigle() ?: "(Non renseigné)"; ?></dd>
+                <dt> Adresse : </dt>                <dd>    <?php echo $etablissement->getStructure()->getAdresse() ?: "(Non renseignée)"; ?></dd>
+                <dt> Téléphone : </dt>              <dd>    <?php echo $etablissement->getStructure()->getTelephone() ?: "(Non renseigné)"; ?></dd>
+                <dt> Fax : </dt>                    <dd>    <?php echo $etablissement->getStructure()->getFax() ?: "(Non renseigné)"; ?></dd>
+                <dt> Adresse électronique : </dt>   <dd>    <?php echo $etablissement->getStructure()->getEmail() ?: "(Non renseignée)"; ?></dd>
+                <dt> Site internet : </dt>          <dd>    <?php echo $etablissement->getStructure()->getSiteWeb() ?: "(Non renseigné)"; ?></dd>
+                <dt> Code : </dt>                   <dd>    <?php echo $etablissement->getStructure()->getCode(); ?>        </dd>
+                <dt> Id REF: </dt>
+                <dd>
+                    <?php if ($etablissement->getStructure()->getIdRef() !== null AND trim($etablissement->getStructure()->getIdRef()) !== "") : ?>
+                        <?php echo $etablissement->getStructure()->getIdRef(); ?>
+                    <?php else : ?>
+                        (Non renseigné)
+                    <?php endif; ?>
+                </dd>
+                <dt> Id HAL :</dt>
+                <dd>
+                    <?php if ($etablissement->getStructure()->getIdHal() !== null AND trim($etablissement->getStructure()->getIdHal()) !== "") : ?>
+                        <?php echo $etablissement->getStructure()->getIdHal(); ?>
+                    <?php else : ?>
+                        (Non renseigné)
+                    <?php endif; ?>
+                </dd>
+                <dt> Domaine : </dt>                <dd>    <?php echo $etablissement->getDomaine() ?: "(Non renseigné)"; ?></dd>
+            </dl>
+        </div>
+        <div class="col-md-4">
+            <dl>
+                <dt> Statut : </dt>     <dd>
+                    <?php if ($etablissement->estMembre()): ?>
+                        <span class="badge bg-primary">Membre</span>
+                    <?php endif ?>
+                    <?php if ($etablissement->estAssocie()): ?>
+                        <span class="badge bg-info">Associé</span>
+                    <?php endif ?>
+                    <?php if ($etablissement->estInscription()): ?>
+                        <span class="badge bg-warning">Inscription</span>
+                    <?php endif ?>
+                    <?php if ($etablissement->getStructure()->estFermee()) : ?>
+                        <span class="badge bg-secondary" style="background-color:darkred">Structure fermée</span>
+                    <?php else : ?>
+                        <span class="badge bg-secondary" style="background-color:darkgreen">Structure ouverte</span>
+                    <?php endif; ?>
+                </dd>
+                <dt>Logo :</dt>
+                <dd>
+                    <img id="logo" style="max-width: 200px; max-height: 200px; background-color: white;"
+                         src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"/>
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <?php if($canModifierEtablissement): ?>
+        <a href="<?php echo $this->url('etablissement/modifier', ['structure'=> $etablissement->getStructure()->getId()], [], true); ?>"
+           class="btn btn-primary action"
+        >
+            <span class="icon icon-edit"></span> Modifier l'établissement
+        </a>
+    <?php endif; ?>
+</div>
+
+<div class="<?php echo $tab === StructureController::TAB_membres ? '' : 'd-none' ?>" id="membres">
+
+<h2>
+    Rôles et membres
+</h2>
+    <div class="row">
+        <?php foreach ($roleListing as $roleId => $count) :?>
+        <div class="col-md-4">
+            <h3>
+                <?php echo $roleId; ?>
+                <span class="badge bg-secondary"><?php echo $count; ?></span>
+            </h3>
+
+            <ul>
+            <?php foreach($individuListing as $denomination => $roles): ?>
+                <?php foreach($roles as $role): ?>
+                    <?php if ($role === $roleId) : ?>
+                        <li><?php echo $denomination; ?></li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <?php endforeach; ?>
+    </div>
+
+    <?php if ($canAddRole && empty($roleListing)): ?>
+        <a
+                href="<?php echo $this->url('structure/generer-roles-defauts',
+                    ['id' => $etablissement->getStructure()->getId(), 'type' => TypeStructure::CODE_ETABLISSEMENT], [], true);?>"
+                class="btn btn-warning"
+        >
+            <span class="icon icon-refresh"></span>
+            Générer rôles par défaut
+        </a>
+    <?php endif; ?>
+</div>
+
+<div class="<?php echo $tab === StructureController::TAB_docs ? '' : 'd-none' ?>" id="documents">
+
+    <?php echo $this->partial('structure/structure/partial/documents', ['structure' => $etablissement->getStructure(), 'contenus' => $contenus]); ?>
+
+</div>
+
+
+<style>
+    .action {
+        width: 20em;
+        padding: 0.25rem;
+        margin: 0.25rem;
+    }
+</style>
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+</script>

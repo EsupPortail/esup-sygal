@@ -3,11 +3,11 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\StatistiqueController;
-use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Application\Service\Etablissement\EtablissementService;
-use Application\Service\Structure\StructureService;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\Etablissement\EtablissementService;
+use Structure\Service\Structure\StructureService;
 use Application\Service\These\TheseService;
-use Application\Service\UniteRecherche\UniteRechercheService;
+use Structure\Service\UniteRecherche\UniteRechercheService;
 use Interop\Container\ContainerInterface;
 
 class StatistiqueControllerFactory

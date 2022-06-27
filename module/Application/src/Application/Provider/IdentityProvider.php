@@ -3,22 +3,23 @@
 namespace Application\Provider;
 
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\IndividuRole;
+use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactoryAwareTrait;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
-use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Doctorant\Service\DoctorantServiceAwareTrait;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
-use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use BjyAuthorize\Provider\Identity\ProviderInterface;
-use Doctorant\Service\DoctorantServiceAwareTrait;
-use Laminas\Authentication\AuthenticationService;
+use UnicaenAuth\Acl\NamedRole;
 use UnicaenAuth\Provider\Identity\ChainableProvider;
 use UnicaenAuth\Provider\Identity\ChainEvent;
+use Laminas\Authentication\AuthenticationService;
 
 /**
  * Service chargé de fournir tous les rôles que possède l'identité authentifiée.

@@ -3,7 +3,7 @@
 namespace Application\Form\Factory;
 
 use Application\Form\Hydrator\MailConfirmationHydrator;
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 
 class MailConfirmationHydratorFactory

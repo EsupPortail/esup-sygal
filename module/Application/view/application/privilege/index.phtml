@@ -3,7 +3,7 @@
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Privilege;
 use UnicaenAuth\Provider\Privilege\Privileges;
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 
 $canVisualiser = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIVILEGE_VISUALISATION));
 $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIVILEGE_EDITION));

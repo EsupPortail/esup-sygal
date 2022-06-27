@@ -12,7 +12,7 @@ use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\Fichier\FichierServiceException;
 use RapportActivite\Service\Search\RapportActiviteSearchService;
-use Application\Service\Structure\StructureServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use Laminas\Http\Response;
 use Laminas\Paginator\Paginator as LaminasPaginator;

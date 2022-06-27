@@ -2,18 +2,15 @@
 
 namespace Application\Form;
 
-use Application\Entity\Db\Individu;
 use Application\Form\Validator\NewEmailValidator;
-use Application\Form\Validator\PasswordValidator;
+use Individu\Entity\Db\Individu;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Hidden;
-use Laminas\Form\Element\Password;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilterProviderInterface;
-use Laminas\Validator\Identical;
 
 class CreationUtilisateurForm extends Form implements InputFilterProviderInterface
 {

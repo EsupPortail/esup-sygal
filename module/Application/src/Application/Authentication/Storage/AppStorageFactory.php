@@ -4,7 +4,7 @@ namespace Application\Authentication\Storage;
 
 use Application\Entity\UserWrapperFactory;
 use Doctorant\Service\DoctorantService;
-use Application\Service\Etablissement\EtablissementServiceLocateTrait;
+use Structure\Service\Etablissement\EtablissementServiceLocateTrait;
 use Application\Service\Utilisateur\UtilisateurService;
 use Interop\Container\ContainerInterface;
 

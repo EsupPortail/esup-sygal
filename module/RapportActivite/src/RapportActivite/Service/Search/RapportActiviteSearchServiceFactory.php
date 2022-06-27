@@ -3,13 +3,13 @@
 namespace RapportActivite\Service\Search;
 
 use Application\Entity\Db\TypeValidation;
-use Application\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
-use Application\Search\Etablissement\EtablissementSearchFilter;
+use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
+use Structure\Search\Etablissement\EtablissementSearchFilter;
 use Application\Search\Financement\OrigineFinancementSearchFilter;
-use Application\Search\UniteRecherche\UniteRechercheSearchFilter;
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
+use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\Financement\FinancementService;
-use Application\Service\Structure\StructureService;
+use Structure\Service\Structure\StructureService;
 use Application\Service\These\TheseSearchService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Application\Service\Validation\ValidationService;

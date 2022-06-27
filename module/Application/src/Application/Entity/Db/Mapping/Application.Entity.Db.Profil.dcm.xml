@@ -13,7 +13,7 @@
         <field name="description" type="string" column="DESCRIPTION" length="1024" nullable="true"/>
         <field name="ordre" type="integer" column="ORDRE" nullable="true"/>
 
-        <many-to-one field="structureType" target-entity="Application\Entity\Db\TypeStructure">
+        <many-to-one field="structureType" target-entity="Structure\Entity\Db\TypeStructure">
             <join-columns>
                 <join-column name="STRUCTURE_TYPE" referenced-column-name="ID"/>
             </join-columns>

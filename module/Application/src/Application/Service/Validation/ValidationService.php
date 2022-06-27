@@ -2,15 +2,15 @@
 
 namespace Application\Service\Validation;
 
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Repository\ValidationRepository;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\VSitu\DepotVersionCorrigeeValidationPresident;
 use Application\Service\BaseService;
-use Application\Service\Individu\IndividuServiceAwareInterface;
-use Application\Service\Individu\IndividuServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareInterface;
+use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;

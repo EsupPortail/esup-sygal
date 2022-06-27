@@ -12,6 +12,7 @@
         <field name="etatThese" type="string" column="ETAT_THESE" length="20" nullable="false"/>
         <field name="resultat" type="integer" column="RESULTAT" nullable="true"/>
         <field name="datePremiereInscription" type="datetime" column="DATE_PREM_INSC" nullable="true"/>
+        <field name="codeSiseDiscipline" type="string" column="CODE_SISE_DISC" length="32" nullable="true"/>
         <field name="libelleDiscipline" type="string" column="LIB_DISC" length="200" nullable="true"/>
         <field name="datePrevisionSoutenance" type="datetime" column="DATE_PREV_SOUTENANCE" nullable="true"/>
         <field name="dateSoutenance" type="datetime" column="DATE_SOUTENANCE" nullable="true"/>
@@ -53,7 +54,7 @@
         <one-to-many field="anneesUniv1ereInscription" target-entity="Application\Entity\Db\VTheseAnneeUnivFirst" mapped-by="these"/>
         <one-to-many field="rapports" target-entity="Application\Entity\Db\Rapport" mapped-by="these"/>
 
-        <many-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement" fetch="LAZY">
+        <many-to-one field="etablissement" target-entity="Structure\Entity\Db\Etablissement" fetch="LAZY">
             <join-columns>
                 <join-column name="ETABLISSEMENT_ID" referenced-column-name="ID"/>
             </join-columns>
@@ -65,12 +66,12 @@
             </join-columns>
         </many-to-one>
 
-        <many-to-one field="ecoleDoctorale" target-entity="Application\Entity\Db\EcoleDoctorale">
+        <many-to-one field="ecoleDoctorale" target-entity="Structure\Entity\Db\EcoleDoctorale">
             <join-columns>
                 <join-column name="ECOLE_DOCT_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="uniteRecherche" target-entity="Application\Entity\Db\UniteRecherche">
+        <many-to-one field="uniteRecherche" target-entity="Structure\Entity\Db\UniteRecherche">
             <join-columns>
                 <join-column name="UNITE_RECH_ID" referenced-column-name="ID"/>
             </join-columns>

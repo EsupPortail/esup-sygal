@@ -2,7 +2,7 @@
 
 namespace ImportTest\Service;
 
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\These;
 use DateTime;
 use Doctrine\DBAL\Connection;

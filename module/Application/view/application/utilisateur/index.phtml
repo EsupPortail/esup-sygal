@@ -2,7 +2,7 @@
 
 namespace Application;
 
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
 use Application\Filter\IdifyFilter;
 use Application\Search\Filter\SearchFilter;
@@ -75,7 +75,7 @@ use Laminas\Paginator\Paginator;
             </tr>
         <?php endforeach; ?>
     </table>
-    <?php echo $paginationControl = $this->paginationControl($paginator, 'sliding', 'partial/paginator.phtml', ['route' => 'utilisateur']) ?>
+    <?php echo $this->paginationControl($paginator, 'sliding', 'partial/paginator.phtml', ['route' => 'utilisateur']) ?>
 <?php else: ?>
     <p>Aucun utilisateur trouvé.</p>
 <?php endif ?>

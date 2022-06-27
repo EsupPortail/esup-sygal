@@ -2,8 +2,8 @@
 
 namespace Application\Controller\Traits;
 
-use Application\Entity\Db\StructureConcreteInterface;
-use Application\Service\Structure\StructureService;
+use Structure\Entity\Db\StructureConcreteInterface;
+use Structure\Service\Structure\StructureService;
 use UnicaenApp\Exception\RuntimeException;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Mvc\Controller\Plugin\Params;

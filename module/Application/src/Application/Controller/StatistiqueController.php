@@ -2,12 +2,12 @@
 
 namespace Application\Controller;
 
-use Application\Entity\Db\TypeStructure;
-use Application\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\Structure\StructureServiceAwareTrait;
+use Structure\Entity\Db\TypeStructure;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
-use Application\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Laminas\Http\Request;

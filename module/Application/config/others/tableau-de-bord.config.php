@@ -2,7 +2,7 @@
 
 use Application\Controller\Factory\TableauDeBordControllerFactory;
 use Application\Controller\TableauDeBordController;
-use Application\Provider\Privilege\StructurePrivileges;
+use Structure\Provider\Privilege\StructurePrivileges;
 use Application\Service\AnomalieService;
 use UnicaenAuth\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;

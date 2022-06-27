@@ -9,24 +9,22 @@
  */
 
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use UnicaenApp\Util;
 use Application\Entity\Db\Utilisateur;
 use UnicaenApp\Form\Element\SearchAndSelect;
-
 ?>
 
-<?php if ($individu !== null AND $utilisateur !== null AND $utilisateur->getIndividu() === $individu) : ?>
+<?php if ($individu !== null and $utilisateur !== null and $utilisateur->getIndividu() === $individu) : ?>
+
     <div class="alert alert-success">
-        L'utilisateur <?php echo $utilisateur->getDisplayName(); ?> est lié à l'individu <?php echo $individu->getNomComplet(); ?>
+        L'utilisateur &laquo; <?php echo $utilisateur->getDisplayName(); ?> &raquo;
+        a été lié à l'individu &laquo; <?php echo $individu->getNomComplet(); ?> &raquo;.
     </div>
 
-<script>
-
-</script>
-
 <?php else : ?>
+
     <div class="box card">
         <div class="card-header bg-info">
             <h2 class="first">
@@ -35,18 +33,18 @@ use UnicaenApp\Form\Element\SearchAndSelect;
         </div>
         <div class="card-body">
             <dl class="row">
+                <dt class="col-md-5">Identifiant de connexion (username)</dt>
+                <dd class="col-md-5"><code><?php echo $utilisateur->getUsername() ?></code></dd>
+                <dt class="col-md-5">Adresse électronique</dt>
+                <dd class="col-md-5"><?php echo $utilisateur->getEmail() ?></dd>
+                <dt class="col-md-5">Nom d'affichage</dt>
+                <dd class="col-md-5"><?php echo $utilisateur->getDisplayName() ?></dd>
+                <dt class="col-md-5">Mot de passe</dt>
+                <dd class="col-md-5"><?php echo Util::truncatedString($utilisateur->getPassword(), 10) ?></dd>
                 <dt class="col-md-5">Id</dt>
                 <dd class="col-md-5"><?php echo $utilisateur->getId() ?></dd>
-                <dt class="col-md-5">Username</dt>
-                <dd class="col-md-5"><code><?php echo $utilisateur->getUsername() ?></code></dd>
-                <dt class="col-md-5">Email</dt>
-                <dd class="col-md-5"><?php echo $utilisateur->getEmail() ?></dd>
-                <dt class="col-md-5">Display name</dt>
-                <dd class="col-md-5"><?php echo $utilisateur->getDisplayName() ?></dd>
-                <dt class="col-md-5">Password</dt>
-                <dd class="col-md-5"><?php echo Util::truncatedString($utilisateur->getPassword(), 10) ?></dd>
                 <?php if ($token = $utilisateur->getPasswordResetToken()): ?>
-                    <dt class="col-md-5">Password reset token</dt>
+                    <dt class="col-md-5">Jeton de changement de mot de passe</dt>
                     <dd class="col-md-5"><?php echo Util::truncatedString($token, 8) ?></dd>
                 <?php endif ?>
             </dl>
@@ -57,109 +55,150 @@ use UnicaenApp\Form\Element\SearchAndSelect;
         <div class="box card">
             <div class="card-header bg-info">
                 <h2 class="first">
-                    <?php echo $this->translate("Utilisateur") ?>
+                    <?php echo $this->translate("Individu") ?>
                 </h2>
             </div>
             <div class="card-body">
                 <dl class="row">
-                    <dt class="col-md-5">Id</dt>
-                    <dd class="col-md-5"><?php echo $individu->getId() ?></dd>
                     <dt class="col-md-5">Nom complet</dt>
                     <dd class="col-md-5"><?php echo $individu->getNomComplet() ?></dd>
-                    <dt class="col-md-5">Email</dt>
+                    <dt class="col-md-5">Adresse électronique</dt>
                     <dd class="col-md-5"><?php echo $individu->getEmail() ?></dd>
+                    <dt class="col-md-5">Id</dt>
+                    <dd class="col-md-5"><?php echo $individu->getId() ?></dd>
                 </dl>
 
-                <h2> Rôles statiques associés à l'individu </h2>
+                <h3> Rôles statiques associés à l'individu </h3>
 
-                <table class="table table-extra-condensed">
-                    <thead>
-                        <tr>
-                            <th> Role </th>
-                            <th> Structure </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach ($roles as $role) : ?>
-                        <tr>
-                            <td> <?php echo $role->getLibelle() ;?> </td>
-                            <td>
-                                <?php if ($role->getStructure()) : ?>
-                                    <?php echo $role->getStructure()->getLibelle(); ?>
-                                    (<?php echo $role->getStructure()->getSigle(); ?>)
-                                <?php else : ?>
-                                    Aucune
-                                <?php endif; ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
+                <?php if (empty($roles)): ?>
 
-                <h2> Acteurs associés à l'individu </h2>
+                    <p>Aucun.</p>
 
-                <table class="table table-extra-condensed">
-                    <thead>
+                <?php else: ?>
+
+                    <table class="table table-extra-condensed">
+                        <thead>
                         <tr>
-                            <th> These Id </th>
-                            <th> Doctorant </th>
-                            <th> Role </th>
-                            <th> Qualité </th>
-                            <th> Établissement </th>
+                            <th> Role</th>
+                            <th> Structure</th>
                         </tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach ($acteurs as $acteur) : ?>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($roles as $role) : ?>
+                            <tr>
+                                <td> <?php echo $role->getLibelle(); ?> </td>
+                                <td>
+                                    <?php if ($role->getStructure()) : ?>
+                                        <?php echo $role->getStructure()->getLibelle(); ?>
+                                        (<?php echo $role->getStructure()->getSigle(); ?>)
+                                    <?php else : ?>
+                                        Aucune
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+
+                <?php endif ?>
+
+                <h3> Acteurs associés à l'individu </h3>
+
+                <?php if (empty($acteurs)): ?>
+
+                    <p>Aucun.</p>
+
+                <?php else: ?>
+
+                    <table class="table table-extra-condensed">
+                        <thead>
                         <tr>
-                            <td>
-                                <a href="<?php echo $this->url('these/identite', ['these' => $acteur->getThese()->getId()], [], true); ?>"
-                                   title="<?php echo $acteur->getThese()->getDoctorant()->getIndividu()->getNomComplet(); ?> - <?php echo $acteur->getThese()->getTitre(); ?>"
-                                >
-                                <?php echo $acteur->getThese()->getId(); ?>
-                                </a>
-                            </td>
-                            <td>
-                                <?php echo $acteur->getThese()->getDoctorant()->getIndividu()->getNomComplet(); ?>
-                            </td>
-                            <td>
-                                <?php echo $acteur->getRole()->getLibelle(); ?>
-                            </td>
-                            <td>
-                                <?php echo $acteur->getQualite(); ?>
-                            </td>
-                            <td>
-                                <?php if ($acteur->getEtablissement() !== null) : ?>
-                                    <?php echo $acteur->getEtablissement()->getLibelle(); ?>
-                                <?php else : ?>
-                                    Aucun établissement
-                                <?php endif; ?>
-                            </td>
+                            <th> These Id</th>
+                            <th> Doctorant</th>
+                            <th> Role</th>
+                            <th> Qualité</th>
+                            <th> Établissement</th>
                         </tr>
-                <?php endforeach; ?>
-                </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($acteurs as $acteur) : ?>
+                            <tr>
+                                <td>
+                                    <a href="<?php echo $this->url('these/identite', ['these' => $acteur->getThese()->getId()], [], true); ?>"
+                                       title="<?php echo $acteur->getThese()->getDoctorant()->getIndividu()->getNomComplet(); ?> - <?php echo $acteur->getThese()->getTitre(); ?>"
+                                    >
+                                        <?php echo $acteur->getThese()->getId(); ?>
+                                    </a>
+                                </td>
+                                <td>
+                                    <?php echo $acteur->getThese()->getDoctorant()->getIndividu()->getNomComplet(); ?>
+                                </td>
+                                <td>
+                                    <?php echo $acteur->getRole()->getLibelle(); ?>
+                                </td>
+                                <td>
+                                    <?php echo $acteur->getQualite(); ?>
+                                </td>
+                                <td>
+                                    <?php if ($acteur->getEtablissement() !== null) : ?>
+                                        <?php echo $acteur->getEtablissement()->getLibelle(); ?>
+                                    <?php else : ?>
+                                        Aucun établissement
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+
+                <?php endif ?>
             </div>
         </div>
 
-        <a
-                href="<?php echo $this->url('utilisateur/lier-individu', ['utilisateur' => $utilisateur->getId(), 'individu' => $individu->getId()], [], true); ?>"
-                class="btn btn-primary action"
-        >
-            Lier l'individu
-        </a>
+        <a href="<?php echo $this->url('utilisateur/lier-individu', ['utilisateur' => $utilisateur->getId()], [], true); ?>"
+           class="btn btn-secondary action">< Retour à la recherche</a>
+        <a href="<?php echo $this->url('utilisateur/lier-individu', ['utilisateur' => $utilisateur->getId(), 'individu' => $individu->getId()], [], true); ?>"
+           class="btn btn-primary action">Lier l'utilisateur à cet individu</a>
+        <a href="<?php echo $this->url('utilisateur/lier-nouvel-individu', ['utilisateur' => $utilisateur->getId()], [], true); ?>"
+           class="btn btn-warning float-end action">Créer un nouvel individu</a>
+
     <?php endif; ?>
 
-    <?php if ($individu === null) : ?>
-    <form method="post" action="<?php echo $this->url('utilisateur/lier-individu', ['utilisateur' => $utilisateur->getId()], [], true); ?>">
-        <?php
-        $sas = new SearchAndSelect('individu');
-        $sas->setLabel($this->translate("Recherche d'un individu"));
-        $sas->setAttribute('class', 'individu-finder');
-        $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu', [], [], true));
-        echo $this->formControlGroup($sas, 'formSearchAndSelect');
-        ?>
+    <?php if ($this->ajouterIndividuChildView) : ?>
 
-        <input type="submit" class="btn btn-primary action" value="Examiner l'individu">
-    </form>
+        <?php echo $this->ajouterIndividuChildView ?>
+
+    <?php elseif ($individu === null) : ?>
+
+        <form method="post"
+              action="<?php echo $this->url('utilisateur/lier-individu', ['utilisateur' => $utilisateur->getId()], [], true); ?>">
+            <?php
+            $sas = new SearchAndSelect('individu');
+            $sas->setAttribute('id', $sasId = uniqid('sas_'));
+            $sas->setLabel($this->translate("Recherche d'un individu"));
+            $sas->setAttribute('class', 'individu-finder');
+            $sas->setAutocompleteSource($this->url('utilisateur/rechercher-individu', [], [], true));
+            echo $this->formControlGroup($sas, 'formSearchAndSelect');
+            ?>
+
+            <input type="submit" id="examiner-btn" class="btn btn-primary action" value="Examiner l'individu">
+        </form>
+
+        <a href="<?php echo $this->url('utilisateur/lier-nouvel-individu', ['utilisateur' => $utilisateur->getId()], [], true); ?>"
+           class="btn btn-warning float-end action">Créer un nouvel individu</a>
+
+        <script>
+            $(function () {
+                // Gestion de l'interdiction du bouton "Examiner l'individu"
+                let examBtn = $("#examiner-btn").attr('disabled', true);
+                $("#<?php echo $sasId . '-autocomplete' ?>").on("autocompleteselect", function () {
+                    examBtn.attr('disabled', false);
+                }).on("autocompletesearch", function () {
+                    examBtn.attr('disabled', true);
+                });
+            });
+        </script>
+
     <?php endif; ?>
+
 <?php endif; ?>

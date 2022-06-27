@@ -1,0 +1,152 @@
+<?php
+
+namespace Structure;
+
+use Structure\Controller\SubstitutionController;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Structure;
+use Structure\Entity\Db\StructureConcreteInterface;
+use Structure\Entity\Db\TypeStructure;
+use Structure\Provider\Privilege\SubstitutionPrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var string $identifiant
+ * @var Structure $cible
+ * @var StructureConcreteInterface[] $structuresConcretesSubstituees
+ * @var StructureConcreteInterface[] $structuresConcretes
+ * @var TypeStructure $type
+ * @var string $structureCibleLogoContent
+ * @var string $structuresConcretesSubstitueesLogosContents
+ *
+ * @see SubstitutionController::modifierAction()
+  */
+
+
+if ( $type === null && $cible !== null) $type = $cible->getTypeStructure()->getCode();
+$canEdit =  $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_MODIFICATION_TOUTES_STRUCTURES))
+        OR  $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_MODIFICATION_SA_STRUCTURE));
+?>
+
+<div class="container">
+<?php
+$messenger = $this->messenger();
+echo $messenger->addMessagesFromFlashMessenger();
+?>
+
+<?php if($canEdit): ?>
+    <?php echo generateSelect($structuresConcretes, $this); ?>
+    <button name="ajouter" class="btn btn-success"> <span class='icon icon-plus'></span> Ajouter </button>
+<?php endif; ?>
+    <a href="<?php echo $this->url('substitution-index', [], [], null); ?>" class="btn btn-primary">Retour à l'index des substitution</a>
+
+<form action="<?php echo ($cible->getId())?$this->url('substitution-modifier', ['cible' => $cible->getId()], [],true):$this->url('substitution-creer', ['type' => $type], [],true); ?>" method="POST">
+    <input type="hidden" name="type" id="type" value="<?php echo $type; ?>">
+    <input type="hidden" name="identifiant" id="identifiant" value="<?php echo $identifiant; ?>">
+    <?php if($canEdit): ?>
+        <input type="submit" class="btn btn-primary" value="Enregistrer"/>
+    <?php endif; ?>
+
+&nbsp;
+<br/>
+&nbsp;
+<br/>
+
+<div>
+    <div id="sources" class="col-md-5">
+        <?php
+            foreach($structuresConcretesSubstituees as $i => $source) {
+                echo $this->structureSubstitHelper()->structureSource($source, $structuresConcretesSubstitueesLogosContents[$i]);
+            }
+        ?>
+    </div>
+    <div id="cible" class="col-md-5">
+        <?php
+            echo $this->structureSubstitHelper()->structureCible($cible, $structureCibleLogoContent);
+        ?>
+    </div>
+</div>
+
+</form>
+</div>
+
+<?php
+
+/**
+ * @param $structuresConcretes
+ * @param \Laminas\View\Renderer\PhpRenderer $renderer
+ * @return string
+ */
+function generateSelect($structuresConcretes, \Laminas\View\Renderer\PhpRenderer $renderer) {
+    $texte  = "";
+    $texte .= "<select name='nouveau' class='selectpicker' data-live-search='true'>";
+    foreach ($structuresConcretes as $structuresConcrete) {
+        $url = $renderer->url('substitution-generer', ['id' => $structuresConcrete->getStructure()->getId()]);
+        $texte .= "<option value='".$url."'>".$structuresConcrete->getLibelle() ."</option>";
+    }
+    $texte .= "</select>";
+    return $texte;
+
+}
+?>
+
+
+<style>
+    div.etablissement {
+        margin: 5px;
+        padding: 5px;
+        border: 2px gray solid;
+        border-radius: 5px;
+        height: 150px;
+    }
+</style>
+
+
+<script>
+    $(document).ready(function() {
+        $('select').selectpicker();
+
+        //remplacement dans la structure cible
+        $("div#sources").on("click", "input[type='radio']", function () {
+            var type = $(this).attr('name');
+
+            // var texte = ($(this).parent().find(".texte").text());
+            var texte = ($(this).parent().parent().children(":last-child").text());
+            if (type === 'logo') {
+                texte = ($(this).parent().find(".path").val());
+                var src = ($(this).parent().find(".current").attr("src"));
+                $('#logo_tmp').attr("src",src);
+            }
+            $('input#' + type).val(texte);
+        })
+        //suppression d'une structure
+        .on("click", "button.supprimer", function () {
+                var id = $(this).parent().attr("id");
+                var label = $(this).parent().find("[name=txt]").text();
+                var selected = $("select[name='nouveau'] option:selected").val();
+                console.log(selected);
+
+                $(this).parents(".card").remove();
+                //remise de l'option
+                $("select[name='nouveau']").append('<option value="'+id+'">'+label+'</option>');
+                var options = $("select[name='nouveau'] option");
+                options.detach().sort(function(a,b) {
+                    return ($(a).text() > $(b).text())?1:(($(a).text() < $(b).text())?-1:0);
+                });
+                options.appendTo("select[name='nouveau']");
+                $("select[name='nouveau'] option[value='"+ selected+"']").prop('selected', true);
+
+
+        });
+
+        //ajout d'une structure
+        $("button[name='ajouter']").on("click", function() {
+            var url = $("select[name='nouveau']").val();
+            $.get(url, function (data) {
+                $("div#sources").append(data);
+                $("select[name='nouveau'] option:selected").remove();
+            });
+        });
+    });
+</script>

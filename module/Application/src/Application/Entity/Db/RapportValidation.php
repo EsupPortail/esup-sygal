@@ -4,6 +4,7 @@ namespace Application\Entity\Db;
 
 use Application\Constants;
 use DateTime;
+use Individu\Entity\Db\Individu;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
@@ -31,7 +32,7 @@ class RapportValidation implements HistoriqueAwareInterface, ResourceInterface
     private $typeValidation;
 
     /**
-     * @var Individu
+     * @var \Individu\Entity\Db\Individu
      */
     private $individu;
 
@@ -40,7 +41,7 @@ class RapportValidation implements HistoriqueAwareInterface, ResourceInterface
      *
      * @param TypeValidation|null $type
      * @param Rapport|null $rapport
-     * @param Individu|null $individu
+     * @param \Individu\Entity\Db\Individu|null $individu
      */
     public function __construct(TypeValidation $type = null, Rapport $rapport = null, Individu $individu = null)
     {

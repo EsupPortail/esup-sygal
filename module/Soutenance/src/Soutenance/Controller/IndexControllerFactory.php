@@ -3,10 +3,10 @@
 namespace Soutenance\Controller;
 
 use Application\Service\Acteur\ActeurService;
-use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Application\Service\Etablissement\EtablissementService;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\These\TheseService;
-use Application\Service\UniteRecherche\UniteRechercheService;
+use Structure\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\UserContextService;
 use Interop\Container\ContainerInterface;
 use Soutenance\Service\Avis\AvisService;

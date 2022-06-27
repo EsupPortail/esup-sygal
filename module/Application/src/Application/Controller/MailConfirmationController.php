@@ -2,10 +2,10 @@
 
 namespace Application\Controller;
 
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
 use Application\Form\MailConfirmationForm;
-use Application\Service\Individu\IndividuServiceAwareTrait;
+use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Notification\Exception\NotificationException;

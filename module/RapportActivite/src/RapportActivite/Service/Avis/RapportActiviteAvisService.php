@@ -3,7 +3,7 @@
 namespace RapportActivite\Service\Avis;
 
 use Application\Service\BaseService;
-use Application\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;

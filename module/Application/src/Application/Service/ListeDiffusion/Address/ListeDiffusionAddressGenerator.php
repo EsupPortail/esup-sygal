@@ -2,10 +2,10 @@
 
 namespace Application\Service\ListeDiffusion\Address;
 
-use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\Etablissement;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\Structure;
+use Structure\Entity\Db\Structure;
 use Webmozart\Assert\Assert;
 
 class ListeDiffusionAddressGenerator

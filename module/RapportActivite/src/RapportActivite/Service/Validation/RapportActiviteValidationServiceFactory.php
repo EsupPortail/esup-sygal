@@ -3,7 +3,7 @@
 namespace RapportActivite\Service\Validation;
 
 use Application\Entity\Db\TypeValidation;
-use Application\Service\Individu\IndividuService;
+use Individu\Service\IndividuService;
 use Application\Service\UserContextService;
 use Application\Service\Validation\ValidationService;
 use Interop\Container\ContainerInterface;

@@ -2,11 +2,11 @@
 
 namespace Indicateur\View\Helper;
 
-use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\TypeStructure;
-use Application\Entity\Db\UniteRecherche;
-use Application\Service\Structure\StructureService;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\TypeStructure;
+use Structure\Entity\Db\UniteRecherche;
+use Structure\Service\Structure\StructureService;
 use Indicateur\Model\Indicateur;
 use Laminas\Form\View\Helper\AbstractHelper;
 

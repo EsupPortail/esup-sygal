@@ -11,12 +11,12 @@
  * @var string[]                    $contenus
  */
 
-use Application\Entity\Db\EtablissementRattachement;
-use Application\Entity\Db\IndividuRole;
-use Application\Entity\Db\TypeStructure;
-use Application\Entity\Db\UniteRecherche;
+use Structure\Entity\Db\EtablissementRattachement;
+use Individu\Entity\Db\IndividuRole;
+use Structure\Entity\Db\TypeStructure;
+use Structure\Entity\Db\UniteRecherche;
 use Application\Provider\Privilege\CoEncadrantPrivileges;
-use Application\Provider\Privilege\StructurePrivileges;
+use Structure\Provider\Privilege\StructurePrivileges;
 
 $this->headTitle("Unité de recherche '{$unite->getStructure()->getCode()}'");
 
@@ -135,7 +135,7 @@ $structure = $unite->getStructure();
                     <dt>Logo :</dt>
                     <dd>
                         <img id="logo" style="max-width: 200px; max-height: 200px; background-color: white;"
-                             src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"/>
+                             src="data:image/png;base64,<?php echo base64_encode($logoContent); ?>"/>
                     </dd>
                 </dl>
             </div>
@@ -253,7 +253,7 @@ $structure = $unite->getStructure();
     </div>
 
     <div role="tabpanel" class="tab-pane" id="documents">
-        <?php echo $this->partial('application/structure/partial/documents', ['structure' => $structure, 'contenus' => $contenus]); ?>
+        <?php echo $this->partial('partial/documents', ['structure' => $structure, 'contenus' => $contenus]); ?>
     </div>
 
 </div>

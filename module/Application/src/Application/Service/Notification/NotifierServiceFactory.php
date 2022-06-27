@@ -2,10 +2,10 @@
 
 namespace Application\Service\Notification;
 
-use Application\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Application\Service\Individu\IndividuService;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Individu\Service\IndividuService;
 use Application\Service\Role\RoleService;
-use Application\Service\UniteRecherche\UniteRechercheService;
+use Structure\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Variable\VariableService;
 use Interop\Container\ContainerInterface;
 use Laminas\Mvc\Console\View\ViewManager as ConsoleViewManager;

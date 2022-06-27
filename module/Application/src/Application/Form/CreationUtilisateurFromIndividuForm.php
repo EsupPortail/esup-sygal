@@ -2,7 +2,7 @@
 
 namespace Application\Form;
 
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Form\Validator\NewEmailValidator;
 use Application\Form\Validator\PasswordValidator;
 use Laminas\Form\Element\Hidden;

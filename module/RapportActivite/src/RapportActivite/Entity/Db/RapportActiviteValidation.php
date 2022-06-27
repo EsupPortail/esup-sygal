@@ -3,7 +3,7 @@
 namespace RapportActivite\Entity\Db;
 
 use Application\Constants;
-use Application\Entity\Db\Individu;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\TypeValidation;
 use DateTime;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
@@ -33,7 +33,7 @@ class RapportActiviteValidation implements HistoriqueAwareInterface, ResourceInt
     private $typeValidation;
 
     /**
-     * @var \Application\Entity\Db\Individu
+     * @var \Individu\Entity\Db\Individu
      *
      */
     private $individu;

@@ -3,7 +3,7 @@
 namespace Application\Form\Factory;
 
 use Application\Form\Hydrator\ProfilHydrator;
-use Application\Service\Structure\StructureService;
+use Structure\Service\Structure\StructureService;
 use Interop\Container\ContainerInterface;
 
 class ProfilHydratorFactory {

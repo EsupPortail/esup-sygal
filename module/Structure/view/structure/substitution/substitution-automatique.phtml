@@ -1,0 +1,112 @@
+<?php
+
+/**
+ * @var array $substitutionsEcolesDoctorales (identifiant => EcoleDoctorale[])
+ * @var array $substitutionsEtablissements (identifiant => Etablissement[])
+ * @var array $substitutionsUnitesRecherches (identifiant => UniteRecherche[])
+ */
+
+use Structure\Entity\Db\TypeStructure;
+
+?>
+
+<?php $this->headTitle($this->translate("Substitutions automatiques")) ?>
+
+
+<h1 class="page-header first">
+    Substitutions automatiques
+</h1>
+
+<?php
+$messenger = $this->messenger();
+echo $messenger->addMessagesFromFlashMessenger();
+?>
+
+<h2>
+    Substitutions d'écoles doctorales
+    <span class="badge bg-secondary"><?php echo count($substitutionsEcolesDoctorales); ?></span>
+</h2>
+
+<?php foreach ($substitutionsEcolesDoctorales as $identifier => $substitution) : ?>
+    <div id="<?php echo TypeStructure::CODE_ECOLE_DOCTORALE; ?>_<?php echo $identifier; ?>">
+        <?php echo $this->partial('structure/substitution/partial/substitution-automatique',
+            ['type' => TypeStructure::CODE_ECOLE_DOCTORALE, 'identifiant' => $identifier, 'substituees' => $substitution[0], 'substituante' => $substitution[1]]); ?>
+    </div>
+<?php endforeach; ?>
+
+
+<h2>
+    Substitutions d'établissements
+    <span class="badge bg-secondary"><?php echo count($substitutionsEtablissements); ?></span>
+</h2>
+
+<?php foreach ($substitutionsEtablissements as $identifier => $substitution) : ?>
+    <div id="<?php echo TypeStructure::CODE_ETABLISSEMENT; ?>_<?php echo $identifier; ?>">
+        <?php echo $this->partial('structure/substitution/partial/substitution-automatique',
+            ['type' => TypeStructure::CODE_ETABLISSEMENT, 'identifiant' => $identifier, 'substituees' => $substitution[0], 'substituante' => $substitution[1]]); ?>
+    </div>
+<?php endforeach; ?>
+
+
+<h2>
+    Substitutions d'unités de recherche
+    <span class="badge bg-secondary"><?php echo count($substitutionsUnitesRecherches); ?></span>
+</h2>
+
+<?php foreach ($substitutionsUnitesRecherches as $identifier => $substitution) : ?>
+    <div id="<?php echo TypeStructure::CODE_UNITE_RECHERCHE; ?>_<?php echo $identifier; ?>">
+        <?php echo $this->partial('structure/substitution/partial/substitution-automatique',
+            ['type' => TypeStructure::CODE_UNITE_RECHERCHE, 'identifiant' => $identifier, 'substituees' => $substitution[0], 'substituante' => $substitution[1]]); ?>
+    </div>
+<?php endforeach; ?>
+
+
+<script>
+    $(document).ready(function() {
+        $("body")
+            .on("click","button.btn-danger", function() {
+                var id = $(this).attr("id").split("_");
+                var type = id[1];
+                var identifiant = id[2];
+                $("div[id='div_"+type+ "_" + identifiant +"']").hide();
+        });
+
+        $("body")
+            .on("click","button.btn-success", function() {
+                var id = $(this).attr("id").split("_");
+                var type = id[1];
+                var identifiant = id[2];
+
+                var url = "automatique/enregistrer/" + type + "/" + identifiant;
+                $.ajax({
+                    type: "POST",
+                    url : url,
+                    success:
+                        function(retour){
+                            $("div[id='div_"+type+ "_" + identifiant +"']").hide();
+                        }
+                });
+            });
+
+        $("body").on("edition-substitution", function(event, data) {
+                event.div.modal('hide'); // ferme la fenêtre modale
+                var type = data[0].value;
+                var identifiant = data[1].value;
+                loadSubstitutionByIdentifiant(type,identifiant);
+            });
+    });
+
+    function loadSubstitutionByIdentifiant(type, identifiant) {
+        var url = "automatique/afficher/" + type + "/" + identifiant;
+        // console.log(url);
+        $.ajax({
+            type: "POST",
+            url : url,
+            success:
+                function(retour){
+                    $("div[id='"+type+ "_" +identifiant+"']").html(retour);
+                }
+        });
+
+    }
+</script>

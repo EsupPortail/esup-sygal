@@ -54,7 +54,7 @@ class DomaineScientifique implements SearchFilterValueInterface
     }
 
     /**
-     * @return UniteRecherche[]
+     * @return \Structure\Entity\Db\UniteRecherche[]
      */
     public function getUnites()
     {
@@ -62,7 +62,7 @@ class DomaineScientifique implements SearchFilterValueInterface
     }
 
     /**
-     * @param UniteRecherche $unite
+     * @param \Structure\Entity\Db\UniteRecherche $unite
      * @return DomaineScientifique
      */
     public function addUnite($unite)
@@ -72,7 +72,7 @@ class DomaineScientifique implements SearchFilterValueInterface
     }
 
     /**
-     * @param UniteRecherche $unite
+     * @param \Structure\Entity\Db\UniteRecherche $unite
      * @return DomaineScientifique
      */
     public function removeUnite($unite)

@@ -2,8 +2,11 @@
 
 namespace Application\Entity\Db;
 
-use Application\Entity\Db\Interfaces\IndividuAwareInterface;
+use Individu\Entity\Db\IndividuAwareInterface;
+use Individu\Entity\Db\Individu;
 use Soutenance\Entity\Membre;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\UniteRecherche;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;

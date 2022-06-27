@@ -3,13 +3,13 @@
 namespace Application\Entity\Db\Repository;
 
 use Doctorant\Entity\Db\Doctorant;
-use Application\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\Etablissement;
-use Application\Entity\Db\Individu;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
+use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\StructureConcreteInterface;
+use Structure\Entity\Db\StructureConcreteInterface;
 use Application\Entity\Db\These;
-use Application\Entity\Db\UniteRecherche;
+use Structure\Entity\Db\UniteRecherche;
 use Application\ORM\Query\Functions\Year;
 use Application\QueryBuilder\TheseQueryBuilder;
 use Doctrine\ORM\Query\Expr\Join;

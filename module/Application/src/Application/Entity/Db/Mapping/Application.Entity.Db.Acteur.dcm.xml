@@ -21,7 +21,7 @@
                 <join-column name="THESE_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="individu" target-entity="Application\Entity\Db\Individu">
+        <many-to-one field="individu" target-entity="Individu\Entity\Db\Individu">
             <join-columns>
                 <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
             </join-columns>
@@ -31,12 +31,12 @@
                 <join-column name="ROLE_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="etablissement" target-entity="Application\Entity\Db\Etablissement">
+        <many-to-one field="etablissement" target-entity="Structure\Entity\Db\Etablissement">
             <join-columns>
                 <join-column name="ACTEUR_ETABLISSEMENT_ID" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <many-to-one field="uniteRecherche" target-entity="Application\Entity\Db\UniteRecherche">
+        <many-to-one field="uniteRecherche" target-entity="Structure\Entity\Db\UniteRecherche">
             <join-columns>
                 <join-column name="ACTEUR_UNITERECH_ID" referenced-column-name="ID"/>
             </join-columns>

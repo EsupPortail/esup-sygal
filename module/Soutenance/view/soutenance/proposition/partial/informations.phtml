@@ -14,7 +14,7 @@
  */
 
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\IndividuRole;
+use Individu\Entity\Db\IndividuRole;
 use Soutenance\Entity\Proposition;
 
 $these = $proposition->getThese();
@@ -56,7 +56,7 @@ $etablissement = $these->getEtablissement();
                             <?php echo ($directeur->getIndividu()->getUniteRecherche())?:'<span class="text-danger">Unité de recherche manquante</span>'; ?>
                             <br/>
                             <?php if ($canModifier) : ?>
-                                <?php /** @see \Application\Controller\IndividuComplController::gererAction() */ ?>
+                                <?php /** @see \Individu\Controller\IndividuComplController::gererAction() */ ?>
                                 <a href="<?php echo $this->url("individu-compl/gerer", ['individu' => $directeur->getIndividu()->getId()], [], true); ?>" class="btn btn-primary btn-sm ajax-modal" data-event="modification">
                                     <span class="icon icon-editer"></span> Compléter les informations
                                 </a>
