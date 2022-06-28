@@ -34,6 +34,8 @@ return [
         'UnicaenDbImport',
         'UnicaenFaq',
         'UnicaenLivelog',
+        'UnicaenPdf',
+        'UnicaenRenderer',
         'Structure',
         'Import',
         'Indicateur',

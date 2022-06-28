@@ -7,6 +7,7 @@ use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Module;
 use Formation\Form\Module\ModuleFormAwareTrait;
 use Formation\Service\Module\ModuleServiceAwareTrait;
+use Laminas\Http\Response;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\View\Model\ViewModel;
 
@@ -15,36 +16,30 @@ class ModuleController extends AbstractController {
     use ModuleServiceAwareTrait;
     use ModuleFormAwareTrait;
 
-    public function indexAction()
+    public function indexAction()  :ViewModel
     {
-        /** Recupération des paramètres du filtres */
+        /** Recupération des paramètres du filtre */
         $filtres = [
             'libelle' => $this->params()->fromQuery('libelle'),
         ];
-        /** Listing pour les filtres */
-        $listings = [];
-
-        /** @var Module[] $modules */
-        $modules = $this->getEntityManager()->getRepository(Module::class)->fetchModulesWithFiltres($filtres);
+        $modules = $this->getModuleService()->getRepository()->fetchModulesWithFiltres($filtres);
 
         return new ViewModel([
             'modules' => $modules,
             'filtres' => $filtres,
-            'listings' => $listings,
         ]);
     }
 
-    public function afficherAction()
+    public function afficherAction() : ViewModel
     {
-        /** @var Module|null $module */
-        $module = $this->getEntityManager()->getRepository(Module::class)->getRequestedModule($this);
+        $module = $this->getModuleService()->getRepository()->getRequestedModule($this);
 
         return new ViewModel([
             'module' => $module,
         ]);
     }
 
-    public function ajouterAction()
+    public function ajouterAction() : ViewModel
     {
         $module = new Module();
 
@@ -69,10 +64,9 @@ class ModuleController extends AbstractController {
         return $vm;
     }
 
-    public function modifierAction()
+    public function modifierAction() : ViewModel
     {
-        /** @var Module|null $module */
-        $module = $this->getEntityManager()->getRepository(Module::class)->getRequestedModule($this);
+        $module = $this->getModuleService()->getRepository()->getRequestedModule($this);
 
         $form = $this->getModuleForm();
         $form->setAttribute('action', $this->url()->fromRoute('formation/module/modifier', [], [], true));
@@ -95,39 +89,30 @@ class ModuleController extends AbstractController {
         return $vm;
     }
 
-    public function historiserAction()
+    public function historiserAction() : Response
     {
-        /** @var Module|null $module */
-        $module = $this->getEntityManager()->getRepository(Module::class)->getRequestedModule($this);
-
+        $module = $this->getModuleService()->getRepository()->getRequestedModule($this);
         $this->getModuleService()->historise($module);
 
         $retour = $this->params()->fromQuery('retour');
-        if ($retour !== null) {
-            return $this->redirect()->toUrl($retour);
-        }
+        if ($retour !== null) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/module');
 
     }
 
-    public function restaurerAction()
+    public function restaurerAction() : Response
     {
-        /** @var Module|null $module */
-        $module = $this->getEntityManager()->getRepository(Module::class)->getRequestedModule($this);
-
+        $module = $this->getModuleService()->getRepository()->getRequestedModule($this);
         $this->getModuleService()->restore($module);
 
         $retour = $this->params()->fromQuery('retour');
-        if ($retour !== null) {
-            return $this->redirect()->toUrl($retour);
-        }
+        if ($retour !== null) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/module');
     }
 
-    public function supprimerAction()
+    public function supprimerAction() : ViewModel
     {
-        /** @var Module|null $module */
-        $module = $this->getEntityManager()->getRepository(Module::class)->getRequestedModule($this);
+        $module = $this->getModuleService()->getRepository()->getRequestedModule($this);
 
         $request = $this->getRequest();
         if ($request->isPost()) {

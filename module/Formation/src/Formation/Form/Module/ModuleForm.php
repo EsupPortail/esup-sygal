@@ -17,7 +17,8 @@ class ModuleForm extends Form {
             'type' => Text::class,
             'name' => 'libelle',
             'options' => [
-                'label' => "Libellé du module de formation :",
+                'label' => "Libellé du module de formation <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span>:",
+                'label_options' => [ 'disable_html_escape' => true, ],
             ],
             'attributes' => [
                 'id' => 'libelle',
@@ -55,9 +56,7 @@ class ModuleForm extends Form {
             'name' => 'bouton',
             'options' => [
                 'label' => '<i class="fas fa-save"></i> Enregistrer',
-                'label_options' => [
-                    'disable_html_escape' => true,
-                ],
+                'label_options' => [ 'disable_html_escape' => true, ],
             ],
             'attributes' => [
                 'type' => 'submit',

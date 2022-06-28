@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1f4efe3765f143327d5e38bf0f744e12",
+    "content-hash": "9e7b6967ecf7e870afda1fd1b8cd22e0",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -9736,6 +9736,87 @@
             },
             "description": "Module permettant d'afficher des logs en live à l'aide d'une websocket (et d'une socket)",
             "time": "2022-02-08T08:28:14+00:00"
+        },
+        {
+            "name": "unicaen/pdf",
+            "version": "4.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/pdf.git",
+                "reference": "18497c10f122c9483cb5186bd51815391caf3014"
+            },
+            "require": {
+                "laminas/laminas-dependency-plugin": "^2.1",
+                "laminas/laminas-view": "^2.11",
+                "mpdf/mpdf": "^8.0",
+                "php": "^7.0"
+            },
+            "require-dev": {
+                "laminas/laminas-test": "^3.2",
+                "phpunit/phpunit": "^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "UnicaenPdf": "src/",
+                    "UnicaenPdfTest": "tests/"
+                },
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "description": "Génération PDF",
+            "time": "2022-03-29T05:53:50+00:00"
+        },
+        {
+            "name": "unicaen/privilege",
+            "version": "5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/privilege.git",
+                "reference": "987a499ee896f74f6973e3880cd6fd94aacecf99"
+            },
+            "require": {
+                "laminas/laminas-dependency-plugin": "^2.1",
+                "unicaen/app": ">=5.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": ">=3.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "UnicaenPrivilege": "src/"
+                },
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "description": "Module reprenant la gestion des privileges  - Version laminas",
+            "time": "2022-03-30T07:52:43+00:00"
+        },
+        {
+            "name": "unicaen/renderer",
+            "version": "5.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/renderer.git",
+                "reference": "e434964aeb342bba56786335b7477fe5ea86a501"
+            },
+            "require": {
+                "laminas/laminas-dependency-plugin": "^2.1",
+                "unicaen/app": "^5.0",
+                "unicaen/privilege": "^5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": [],
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "description": "Module de rendu de texte avec templates et macros",
+            "time": "2022-06-28T07:26:56+00:00"
         },
         {
             "name": "unicaen/zfc-user",

@@ -10,19 +10,11 @@ class Module implements HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;
 
-    /** @var int */
-    private $id;
-
-    /** @var string|null */
-    private $libelle;
-
-    /** @var string|null */
-    private $description;
-    /** @var string|null */
-    private $lien;
-
-    /** @var Collection (Formation) */
-    private $formations;
+    private int $id;
+    private ?string $libelle;
+    private ?string $description;
+    private ?string $lien;
+    private Collection $formations;
 
     /**
      * @return int

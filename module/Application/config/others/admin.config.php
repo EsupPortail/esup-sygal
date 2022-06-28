@@ -260,6 +260,10 @@ return [
                             ],
                         ],
                     ],
+                    'administration' => [
+                        'route'    => 'admin',
+                        'visible'  => false,
+                    ],
                 ],
             ],
         ],

@@ -6,12 +6,16 @@ use Doctrine\ORM\EntityManager;
 use Formation\Form\Module\ModuleForm;
 use Formation\Service\Module\ModuleService;
 use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class ModuleControllerFactory {
 
     /**
      * @param ContainerInterface $container
      * @return ModuleController
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container) : ModuleController
     {

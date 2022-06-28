@@ -4,8 +4,7 @@ namespace Formation\Form\Module;
 
 trait ModuleFormAwareTrait {
 
-    /** @var ModuleForm */
-    private $moduleForm;
+    private ModuleForm $moduleForm;
 
     /**
      * @return ModuleForm
@@ -17,11 +16,9 @@ trait ModuleFormAwareTrait {
 
     /**
      * @param ModuleForm $moduleForm
-     * @return ModuleForm
      */
-    public function setModuleForm(ModuleForm $moduleForm): ModuleForm
+    public function setModuleForm(ModuleForm $moduleForm): void
     {
         $this->moduleForm = $moduleForm;
-        return $this->moduleForm;
     }
 }

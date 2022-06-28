@@ -2,7 +2,6 @@
 
 namespace Formation\Service\Module;
 
-use DateTime;
 use Doctrine\ORM\ORMException;
 use Formation\Entity\Db\Module;
 use Formation\Entity\Db\Repository\ModuleRepository;
@@ -15,7 +14,7 @@ class ModuleService {
     /**
      * @return ModuleRepository
      */
-    public function getRepository()
+    public function getRepository() : ModuleRepository
     {
         /** @var ModuleRepository $repo */
         $repo = $this->entityManager->getRepository(Module::class);
@@ -53,14 +52,14 @@ class ModuleService {
         return $module;
     }
 
-    /** (todo ...)
+    /**
      * @param Module $module
      * @return Module
      */
     public function historise(Module $module) : Module
     {
         try {
-            $module->setHistoDestruction(new DateTime());
+            $module->historiser();
             $this->getEntityManager()->flush($module);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Module]",0, $e);
@@ -75,8 +74,7 @@ class ModuleService {
     public function restore(Module $module) : Module
     {
         try {
-            $module->setHistoDestructeur(null);
-            $module->setHistoDestruction(null);
+            $module->dehistoriser();
             $this->getEntityManager()->flush($module);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Module]",0, $e);

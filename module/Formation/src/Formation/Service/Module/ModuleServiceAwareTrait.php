@@ -4,8 +4,7 @@ namespace Formation\Service\Module;
 
 trait ModuleServiceAwareTrait
 {
-    /** @var ModuleService */
-    private $moduleService;
+    private ModuleService $moduleService;
 
     /**
      * @return ModuleService
@@ -17,12 +16,10 @@ trait ModuleServiceAwareTrait
 
     /**
      * @param ModuleService $moduleService
-     * @return ModuleService
      */
-    public function setModuleService(ModuleService $moduleService): ModuleService
+    public function setModuleService(ModuleService $moduleService): void
     {
         $this->moduleService = $moduleService;
-        return $this->moduleService;
     }
 
 }
