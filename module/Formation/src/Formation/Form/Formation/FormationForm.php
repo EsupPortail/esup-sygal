@@ -19,8 +19,7 @@ class FormationForm extends Form {
     use StructureServiceAwareTrait;
     use ModuleServiceAwareTrait;
 
-    /** @var string */
-    private $urlResponsable;
+    private string $urlResponsable;
 
     /**
      * @param string $urlResponsable
@@ -39,7 +38,8 @@ class FormationForm extends Form {
             'type' => Text::class,
             'name' => 'libelle',
             'options' => [
-                'label' => "Libellé de la formation :",
+                'label' => "Libellé de la formation <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
             ],
             'attributes' => [
                 'id' => 'libelle',
@@ -74,7 +74,8 @@ class FormationForm extends Form {
             'type' => Select::class,
             'name' => 'module',
             'options' => [
-                'label' => "Module associé à la formation :",
+                'label' => "Module associé à la formation <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
                 'empty_option' => "Aucun module",
                 'value_options' => $this->getModuleService()->getModulesAsOptions(),
             ],

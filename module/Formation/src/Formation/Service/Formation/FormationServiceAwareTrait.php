@@ -4,8 +4,7 @@ namespace Formation\Service\Formation;
 
 trait FormationServiceAwareTrait
 {
-    /** @var FormationService */
-    private $formationService;
+    private FormationService $formationService;
 
     /**
      * @return FormationService
@@ -17,12 +16,10 @@ trait FormationServiceAwareTrait
 
     /**
      * @param FormationService $formationService
-     * @return FormationService
      */
-    public function setFormationService(FormationService $formationService): FormationService
+    public function setFormationService(FormationService $formationService): void
     {
         $this->formationService = $formationService;
-        return $this->formationService;
     }
 
 }

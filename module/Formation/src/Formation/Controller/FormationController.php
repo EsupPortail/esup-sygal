@@ -3,9 +3,10 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Formation\Service\Module\ModuleServiceAwareTrait;
+use Laminas\Http\Response;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Formation\Entity\Db\Formation;
-use Formation\Entity\Db\Module;
 use Formation\Form\Formation\FormationFormAwareTrait;
 use Formation\Service\Formation\FormationServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -15,13 +16,14 @@ class FormationController extends AbstractController
 {
     use EntityManagerAwareTrait;
     use FormationServiceAwareTrait;
+    use ModuleServiceAwareTrait;
     use FormationFormAwareTrait;
 
     use EtablissementServiceAwareTrait;
 
     public function indexAction() : ViewModel
     {
-        /** Recupération des paramètres du filtres */
+        /** Recupération des paramètres du filtre */
         $filtres = [
             'site' => $this->params()->fromQuery('site'),
             'libelle' => $this->params()->fromQuery('libelle'),
@@ -29,15 +31,14 @@ class FormationController extends AbstractController
             'modalite' => $this->params()->fromQuery('modalite'),
             'structure' => $this->params()->fromQuery('structure'),
         ];
-        /** Listing pour les filtres */
+        /** Listes pour les filtres */
         $listings = [
             'sites' => $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions(),
-            'responsables' => $this->getEntityManager()->getRepository(Formation::class)->fetchListeResponsable(),
-            'structures' => $this->getEntityManager()->getRepository(Formation::class)->fetchListeStructures(),
+            'responsables' => $this->getFormationService()->getRepository()->fetchListeResponsable(),
+            'structures' => $this->getFormationService()->getRepository()->fetchListeStructures(),
         ];
 
-        /** @var Formation[] $formations */
-        $formations = $this->getEntityManager()->getRepository(Formation::class)->fetchFormationsWithFiltres($filtres);
+        $formations = $this->getFormationService()->getRepository()->fetchFormationsWithFiltres($filtres);
 
         return new ViewModel([
             'formations' => $formations,
@@ -46,19 +47,18 @@ class FormationController extends AbstractController
         ]);
     }
 
-    public function afficherAction()
+    public function afficherAction() : ViewModel
     {
-        /** @var Formation|null $formation */
-        $formation = $this->getEntityManager()->getRepository(Formation::class)->getRequestedFormation($this);
+        $formation = $this->getFormationService()->getRepository()->getRequestedFormation($this);
 
         return new ViewModel([
             'formation' => $formation,
         ]);
     }
 
-    public function ajouterAction()
+    public function ajouterAction() : ViewModel
     {
-        $module = $this->getEntityManager()->getRepository(Module::class)->getRequestedModule($this);
+        $module = $this->getModuleService()->getRepository()->getRequestedModule($this);
         $formation = new Formation();
 
         if ($module !== null) $formation->setModule($module);
@@ -84,10 +84,9 @@ class FormationController extends AbstractController
         return $vm;
     }
 
-    public function modifierAction()
+    public function modifierAction() : ViewModel
     {
-        /** @var Formation|null $formation */
-        $formation = $this->getEntityManager()->getRepository(Formation::class)->getRequestedFormation($this);
+        $formation = $this->getFormationService()->getRepository()->getRequestedFormation($this);
 
         $form = $this->getFormationForm();
         $form->setAttribute('action', $this->url()->fromRoute('formation/formation/modifier', [], [], true));
@@ -110,39 +109,30 @@ class FormationController extends AbstractController
         return $vm;
     }
 
-    public function historiserAction()
+    public function historiserAction() : Response
     {
-        /** @var Formation|null $formation */
-        $formation = $this->getEntityManager()->getRepository(Formation::class)->getRequestedFormation($this);
-
+        $formation = $this->getFormationService()->getRepository()->getRequestedFormation($this);
         $this->getFormationService()->historise($formation);
 
         $retour = $this->params()->fromQuery('retour');
-        if ($retour !== null) {
-            return $this->redirect()->toUrl($retour);
-        }
+        if ($retour !== null) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/formation');
 
     }
 
-    public function restaurerAction()
+    public function restaurerAction() : Response
     {
-        /** @var Formation|null $formation */
-        $formation = $this->getEntityManager()->getRepository(Formation::class)->getRequestedFormation($this);
-
+        $formation = $this->getFormationService()->getRepository()->getRequestedFormation($this);
         $this->getFormationService()->restore($formation);
 
         $retour = $this->params()->fromQuery('retour');
-        if ($retour !== null) {
-            return $this->redirect()->toUrl($retour);
-        }
+        if ($retour !== null) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/formation');
     }
 
     public function supprimerAction()
     {
-        /** @var Formation|null $formation */
-        $formation = $this->getEntityManager()->getRepository(Formation::class)->getRequestedFormation($this);
+        $formation = $this->getFormationService()->getRepository()->getRequestedFormation($this);
 
         $request = $this->getRequest();
         if ($request->isPost()) {

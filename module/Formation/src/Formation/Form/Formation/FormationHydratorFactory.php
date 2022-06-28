@@ -2,6 +2,8 @@
 
 namespace Formation\Form\Formation;
 
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\Etablissement\EtablissementService;
 use Individu\Service\IndividuService;
 use Structure\Service\Structure\StructureService;
@@ -13,6 +15,8 @@ class FormationHydratorFactory {
     /**
      * @param ContainerInterface $container
      * @return FormationHydrator
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container) : FormationHydrator
     {

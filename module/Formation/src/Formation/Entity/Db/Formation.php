@@ -20,30 +20,15 @@ class Formation implements HistoriqueAwareInterface,
     use HasModaliteTrait;
     use HasTypeTrait;
 
-    /** @var int */
-    private $id;
-
-    /** @var string|null */
-    private $libelle;
-
-    /** @var string|null */
-    private $description;
-
-    /** @var string|null */
-    private $lien;
-
-    /** @var Module|null */
-    private $module;
-    /** @var Collection (Session) */
-    private $sessions;
-
-    /** @var Individu|null */
-    private $responsable;
-
-    /** @var int */
-    private $tailleListePrincipale;
-    /** @var int */
-    private $tailleListeComplementaire;
+    private int $id;
+    private ?string $libelle = null;
+    private ?string $description  = null;
+    private ?string $lien  = null;
+    private ?Module $module  = null;
+    private Collection $sessions;
+    private ?Individu $responsable  = null;
+    private ?int $tailleListePrincipale = null;
+    private ?int $tailleListeComplementaire = null;
 
     /**
      * @return int

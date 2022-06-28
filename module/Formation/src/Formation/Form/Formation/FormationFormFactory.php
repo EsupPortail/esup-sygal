@@ -2,6 +2,8 @@
 
 namespace Formation\Form\Formation;
 
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Structure\StructureService;
 use Formation\Service\Module\ModuleService;
@@ -13,6 +15,8 @@ class FormationFormFactory {
     /**
      * @param ContainerInterface $container
      * @return FormationForm
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container) : FormationForm
     {

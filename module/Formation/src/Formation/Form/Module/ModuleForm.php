@@ -17,7 +17,7 @@ class ModuleForm extends Form {
             'type' => Text::class,
             'name' => 'libelle',
             'options' => [
-                'label' => "Libellé du module de formation <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span>:",
+                'label' => "Libellé du module de formation <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
             ],
             'attributes' => [

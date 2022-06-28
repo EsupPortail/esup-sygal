@@ -15,9 +15,10 @@ $canAjouterFormation       = $this->isAllowed(FormationPrivileges::getResourceId
 $canHistoriserFormation    = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_HISTORISER));
 $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_SUPPRIMER));
 
+$this->headTitle('Formations');
 ?>
 
-<h1> Liste des formations </h1>
+<h1> Formations </h1>
 
 <?php echo $this->partial('partial/filtre', [ 'filtres' => $filtres, 'listings' => $listings ]); ?>
 
@@ -46,16 +47,17 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
     </thead>
     <tbody>
     <?php foreach ($formations as $formation) : ?>
-        <tr>
+        <tr class=" <?php if ($formation->estHistorise()) echo " historise "; ?> ">
 
-            <td <?php if ($formation->estHistorise()) echo " class='historise' "; ?> >
-                <span class="typage">Formation :</span>
-                <?php echo $formation->getLibelle(); ?>
-                <?php if ($formation->getDescription() !== null AND trim($formation->getDescription()) !== null) : ?>
-                    <span class="icon icon-info"
-                          title="<?php echo $formation->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
-                    ></span>
-                <?php endif; ?>
+            <td>
+                <span class=" <?php if ($formation->estHistorise()) echo " historise "; ?>  ">
+                    <?php echo $formation->getLibelle(); ?>
+                    <?php if ($formation->getDescription() !== null AND trim($formation->getDescription()) !== null) : ?>
+                        <span class="icon icon-info"
+                              title="<?php echo $formation->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
+                        ></span>
+                    <?php endif; ?>
+                </span>
                 <br>
                 <span class="typage">Module :</span>
                 <?php if ($formation->getModule()) : ?>
