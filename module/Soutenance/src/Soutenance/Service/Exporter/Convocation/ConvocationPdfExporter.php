@@ -26,6 +26,8 @@ class ConvocationPdfExporter extends PdfExporter
         parent::__construct($renderer, $format, $orientationPaysage, $defaultFontSize);
         $resolver = $renderer->resolver();
         $resolver->attach(new TemplatePathStack(['script_paths' => [__DIR__]]));
+        $this->allow_charset_conversion = true;
+        $this->charset_in='UTF-8';
     }
 
     public function export($filename = null, $destination = self::DESTINATION_BROWSER, $memoryLimit = null)
@@ -33,6 +35,7 @@ class ConvocationPdfExporter extends PdfExporter
 //        $this->addBodyHtml('<style>' . file_get_contents(APPLICATION_DIR . '/public/css/page-unicaen.css') . '</style>');
         $this->setHeaderScript('empty.phtml');
         $this->setFooterScript('empty.phtml');
+
 
         $this->addBodyScript('convocation_doctorant.phtml', false, $this->vars);
         $this->addBodyScript('empty.phtml');

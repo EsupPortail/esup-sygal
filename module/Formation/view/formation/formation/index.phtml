@@ -40,9 +40,9 @@ $this->headTitle('Formations');
             <th>Responsable<span title="valeur par défaut">*</span></th>
             <th>Modalité<span title="valeur par défaut">*</span> </th>
             <th>Type<span title="valeur par défaut">*</span> </th>
-            <th>Effectif des listes<span title="valeur par défaut">*</span> </th>
+            <th class="effectifs">Effectif des listes<span title="valeur par défaut">*</span> </th>
             <th>#Session</th>
-            <th>Action</th>
+            <th class="action">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -150,5 +150,12 @@ $this->headTitle('Formations');
         display: inline-block;
         width: 8rem;
         font-weight: 500;
+    }
+
+    th.effectifs {
+        width: 10rem;
+    }
+    th.action {
+        width: 6rem;
     }
 </style>

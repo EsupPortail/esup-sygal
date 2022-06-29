@@ -5,12 +5,24 @@ namespace Formation\Service\Session;
 use DateTime;
 use Doctrine\ORM\ORMException;
 use Formation\Entity\Db\Formation;
+use Formation\Entity\Db\Repository\FormationRepository;
+use Formation\Entity\Db\Repository\SessionRepository;
 use Formation\Entity\Db\Session;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class SessionService {
     use EntityManagerAwareTrait;
+
+    /**
+     * @return SessionRepository
+     */
+    public function getRepository() : SessionRepository
+    {
+        /** @var SessionRepository $repo */
+        $repo = $this->entityManager->getRepository(Session::class);
+        return $repo;
+    }
 
     /** GESTION DES ENTITES *******************************************************************************************/
 

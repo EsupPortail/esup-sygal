@@ -6,11 +6,22 @@ use DateTime;
 use Doctrine\ORM\ORMException;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Presence;
+use Formation\Entity\Db\Repository\PresenceRepository;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class PresenceService {
     use EntityManagerAwareTrait;
+
+    /**
+     * @return PresenceRepository
+     */
+    public function getRepository() : PresenceRepository
+    {
+        /** @var PresenceRepository $repo */
+        $repo = $this->entityManager->getRepository(Presence::class);
+        return $repo;
+    }
 
     /** GESTION DES ENTITES *******************************************************************************************/
 

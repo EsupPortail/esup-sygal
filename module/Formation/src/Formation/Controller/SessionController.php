@@ -4,13 +4,14 @@ namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\These;
+use Formation\Service\Formation\FormationServiceAwareTrait;
+use Formation\Service\Presence\PresenceServiceAwareTrait;
+use Laminas\Http\Response;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
 use DateTime;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
-use Formation\Entity\Db\Formation;
-use Formation\Entity\Db\Presence;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
 use Formation\Form\Session\SessionFormAwareTrait;
@@ -28,24 +29,25 @@ class SessionController extends AbstractController
     use EntityManagerAwareTrait;
     use EtablissementServiceAwareTrait;
     use FileServiceAwareTrait;
+    use FormationServiceAwareTrait;
     use InscriptionServiceAwareTrait;
     use NotificationServiceAwareTrait;
+    use PresenceServiceAwareTrait;
     use SessionServiceAwareTrait;
 
     use SessionFormAwareTrait;
 
-    /** @var PhpRenderer */
-    private $renderer;
+    private PhpRenderer $renderer;
 
     /**
      * @param PhpRenderer $renderer
      */
-    public function setRenderer($renderer)
+    public function setRenderer(PhpRenderer $renderer)
     {
         $this->renderer = $renderer;
     }
 
-    public function indexAction()
+    public function indexAction() : ViewModel
     {
         $filtres = [
             'site' => $this->params()->fromQuery('site'),
@@ -57,13 +59,11 @@ class SessionController extends AbstractController
         ];
         $listings = [
             'sites' => $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions(),
-            'responsables' => $this->getEntityManager()->getRepository(Formation::class)->fetchListeResponsable(),
-            'structures' => $this->getEntityManager()->getRepository(Formation::class)->fetchListeStructures(),
+            'responsables' => $this->getFormationService()->getRepository()->fetchListeResponsable(),
+            'structures' => $this->getFormationService()->getRepository()->fetchListeStructures(),
             'etats' => $this->getEntityManager()->getRepository(Etat::class)->findAll(),
         ];
-
-        /** @var Session[] $sessions */
-        $sessions = $this->getEntityManager()->getRepository(Session::class)->fetchSessionsWithFiltres($filtres);
+        $sessions = $this->getSessionService()->getRepository()->fetchSessionsWithFiltres($filtres);
 
         return new ViewModel([
             'sessions' => $sessions,
@@ -72,12 +72,11 @@ class SessionController extends AbstractController
         ]);
     }
 
-    public function afficherAction()
+    public function afficherAction() : ViewModel
     {
-        /**@var Session $session */
-        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
 
-        $presences = $this->getEntityManager()->getRepository(Presence::class)->findPresencesBySession($session);
+        $presences = $this->getPresenceService()->getRepository()->findPresencesBySession($session);
         $dictionnaire = [];
         foreach ($presences as $presence) {
             $dictionnaire[$presence->getSeance()->getId()][$presence->getInscription()->getId()] = $presence;
@@ -89,10 +88,9 @@ class SessionController extends AbstractController
         ]);
     }
 
-    public function ajouterAction()
+    public function ajouterAction() : ViewModel
     {
-        /** @var Formation $formation */
-        $formation = $this->getEntityManager()->getRepository(Formation::class)->getRequestedFormation($this);
+        $formation = $this->getFormationService()->getRepository()->getRequestedFormation($this);
 
         $session = new Session();
         $session->setFormation($formation);
@@ -119,10 +117,9 @@ class SessionController extends AbstractController
         return $vm;
     }
 
-    public function modifierAction()
+    public function modifierAction() : ViewModel
     {
-        /**@var Session $session */
-        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
 
         $form = $this->getSessionForm();
         $form->setAttribute('action', $this->url()->fromRoute('formation/session/modifier', ['session' => $session->getId()], [], true));
@@ -145,34 +142,29 @@ class SessionController extends AbstractController
         return $vm;
     }
 
-    public function historiserAction()
+    public function historiserAction() : Response
     {
-        /**@var Session $session */
-        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
-        $retour = $this->params()->fromQuery('retour');
-
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
         $this->getSessionService()->historise($session);
 
+        $retour = $this->params()->fromQuery('retour');
         if ($retour) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/session');
     }
 
-    public function restaurerAction()
+    public function restaurerAction() : Response
     {
-        /**@var Session $session */
-        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
-        $retour = $this->params()->fromQuery('retour');
-
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
         $this->getSessionService()->restore($session);
 
+        $retour = $this->params()->fromQuery('retour');
         if ($retour) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/session');
     }
 
-    public function supprimerAction()
+    public function supprimerAction() : ViewModel
     {
-        /**@var Session $session */
-        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -195,8 +187,7 @@ class SessionController extends AbstractController
 
     public function changerEtatAction()
     {
-        /**@var Session $session */
-        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
         /**@var Etat $etat */
         $etat = $this->getEntityManager()->getRepository(Etat::class)->getRequestedEtat($this);
 
@@ -236,11 +227,9 @@ class SessionController extends AbstractController
         ]);
     }
 
-    public function classerInscriptionsAction()
+    public function classerInscriptionsAction() : Response
     {
-        /**@var Session $session */
-        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
-        $retour = $this->params()->fromQuery('retour');
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
 
         $inscriptions = $session->getInscriptions();
         $classements = [Inscription::LISTE_PRINCIPALE => [],  Inscription::LISTE_COMPLEMENTAIRE => [], 'N' => []];
@@ -274,15 +263,14 @@ class SessionController extends AbstractController
             }
         }
 
+        $retour = $this->params()->fromQuery('retour');
         if ($retour) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/session/afficher', ['session' => $session->getId()], [], true);
     }
 
-    public function declasserInscriptionsAction()
+    public function declasserInscriptionsAction() : Response
     {
-        /**@var Session $session */
-        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
-        $retour = $this->params()->fromQuery('retour');
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
 
         /** @var Inscription $inscription */
         foreach ($session->getInscriptions() as $inscription) {
@@ -290,21 +278,18 @@ class SessionController extends AbstractController
             $this->getInscriptionService()->update($inscription);
         }
 
+        $retour = $this->params()->fromQuery('retour');
         if ($retour) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/session/afficher', ['session' => $session->getId()], [], true);
     }
 
     public function genererExportAction() : CsvModel
     {
-        /**@var Session $session */
-        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
 
         $headers = ['Liste', 'Dénomination étudiant', 'Adresse électronique', 'Établissement', 'École doctorale', 'Unité de recherche'];
 
         $inscriptions = $session->getInscriptions()->toArray();
-        usort($inscriptions, function (Inscription $a, Inscription $b) {
-
-        });
         $records = [];
         /** @var Inscription $inscription */
         foreach ($inscriptions as $inscription) {
@@ -336,8 +321,7 @@ class SessionController extends AbstractController
 
     public function genererEmargementsAction()
     {
-        /**@var Session $session */
-        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
         $seances = $session->getSeances()->toArray();
         $seances = array_filter($seances, function ($a) { return $a->estNonHistorise();});
         usort($seances, function (Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});

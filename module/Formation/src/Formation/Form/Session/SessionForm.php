@@ -2,7 +2,6 @@
 
 namespace Formation\Form\Session;
 
-use Structure\Entity\Db\TypeStructure;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenApp\Form\Element\SearchAndSelect;
@@ -18,8 +17,7 @@ class SessionForm extends Form {
     use EtablissementServiceAwareTrait;
     use StructureServiceAwareTrait;
 
-    /** @var string */
-    private $urlResponsable;
+    private ?string $urlResponsable = null;
 
     /**
      * @param string $urlResponsable
@@ -39,7 +37,8 @@ class SessionForm extends Form {
             'type' => Text::class,
             'name' => 'libelle',
             'options' => [
-                'label' => "Libellé de la formation :",
+                'label' => "Libellé de la formation <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
             ],
             'attributes' => [
                 'id' => 'libelle',
@@ -65,7 +64,8 @@ class SessionForm extends Form {
             'type' => Select::class,
             'name' => 'site',
             'options' => [
-                'label' => "Site de la formation :",
+                'label' => "Site de la formation <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
                 'empty_option' => "Aucun établissement",
                 'value_options' => $this->getEtablissementService()->getEtablissementInscriptionAsOption(),
             ],
@@ -76,7 +76,7 @@ class SessionForm extends Form {
             ],
         ]);
         //responsable
-        $responsable = new SearchAndSelect('responsable', ['label' => "Responsable de la formation :"]);
+        $responsable = new SearchAndSelect('responsable', ['label' => "Responsable de la formation <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :"]);
         $responsable
             ->setAutocompleteSource($this->urlResponsable)
             ->setSelectionRequired(true)
@@ -84,13 +84,15 @@ class SessionForm extends Form {
                 'id' => 'responsable',
                 'placeholder' => "Nom du responsable ...",
             ]);
+        $responsable->setLabelOption('disable_html_escape', true);
         $this->add($responsable);
         //modalité
         $this->add([
             'type' => Select::class,
             'name' => 'modalite',
             'options' => [
-                'label' => "Modalité :",
+                'label' => "Modalité <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
                 'empty_option' => "Non précisée",
                 'value_options' => ['P' => 'Présentielle', 'D' => 'Distancielle'],
             ],

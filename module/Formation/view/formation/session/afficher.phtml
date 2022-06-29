@@ -329,6 +329,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
                 <span class="fas fa-align-right"></span>
                 Déclasser les inscrits
             </a>
+            <?php /** @see \Formation\Controller\SessionController::genererExportAction() */ ?>
             <a href="<?php echo $this->url('formation/session/generer-export', ['session' => $session->getId()], [] , true); ?>"
                class="btn btn-primary action <?php if (empty($inscrits)) echo " disabled "; ?>">
                 <span class="fas fa-file-csv"></span>

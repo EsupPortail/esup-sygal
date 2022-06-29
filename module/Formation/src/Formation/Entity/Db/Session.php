@@ -34,38 +34,22 @@ class Session implements HistoriqueAwareInterface,
     const MODALITE_PRESENTIELLE = 'Présentielle';
     const MODALITE_DISTANCIELLE = 'Distancielle';
 
-    /** @var int */
-    private $id;
+    private int $id;
+    private ?int $index = null;
+    private ?Formation $formation = null;
 
-    /** @var int */
-    private $index;
-    /** @var Formation|null */
-    private $formation;
+    /** TODO COLLECTION ? */
+    //private ?Etablissement $site = null;
+    private ?Utilisateur $responsable = null;
+    private ?Etat $etat = null;
+    private ?string $description;
 
-    /** Informations générale sur la session **************************************************************************/
-    /** @var Etablissement|null */
-    private $site;
-    /** @var Utilisateur|null */
-    private $responsable;
-    /** @var Etat|null */
-    private $etat;
-    /** @var string|null */
-    private $description;
+    private Collection $seances;
+    private Collection $formateurs;
+    private Collection $inscriptions;
 
-    /** Liste des scéances ********************************************************************************************/
-    /** @var Collection (Seance) */
-    private $seances;
-    /** Liste des formateurs ******************************************************************************************/
-    /** @var Collection (Formateur) */
-    private $formateurs;
-
-    /** Liste des insscriptions et listes associées *******************************************************************/
-    /** @var int */
-    private $tailleListePrincipale;
-    /** @var int */
-    private $tailleListeComplementaire;
-    /** @var Collection (Inscription) */
-    private $inscriptions;
+    private ?int $tailleListePrincipale = null;
+    private ?int $tailleListeComplementaire = null;
 
     /**
      * @return int
@@ -102,7 +86,7 @@ class Session implements HistoriqueAwareInterface,
     }
 
     /**
-     * @param Formation|null $module
+     * @param Formation|null $formation
      * @return Session
      */
     public function setFormation(?Formation $formation): Session

@@ -105,8 +105,12 @@ usort($formations, function(Formation $a, Formation $b) { return $a->getLibelle(
     </thead>
     <tbody>
     <?php foreach ($formations as $formation) : ?>
-        <tr>
-            <td> <?php echo $formation->getLibelle(); ?> </td>
+        <tr class="<?php if ($formation->estHistorise()) echo " historise "; ?> ">
+            <td>
+                <span class=" <?php if ($formation->estHistorise()) echo " historise "; ?> ">
+                <?php echo $formation->getLibelle(); ?>
+                </span>
+            </td>
             <td>
                 <ul>
                 <?php /** @var Session $session */ ?>
