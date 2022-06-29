@@ -3,6 +3,7 @@ Journal des modifications
 
 4.2.1
 -----
+- Changement du terme Établissement par Site dans l'affichage des rôles des EDs et des URs pour éviter la confusion
 - [FIX] retrait d'un début faisant planter la génération de convaocation de soutenance 
 
 4.2.0
