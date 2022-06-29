@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+4.2.1
+-----
+- [FIX] retrait d'un début faisant planter la génération de convaocation de soutenance 
+
 4.2.0
 -----
 - Nouveau module Individu : recherche, création (à partir de rien ou d'un utilisateur), modification.
