@@ -3,6 +3,8 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Application\Service\Fichier\Exception\FichierServiceException;
+use Formation\Service\Session\SessionServiceAwareTrait;
 use Individu\Entity\Db\Individu;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
@@ -11,13 +13,13 @@ use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Formation\Entity\Db\Inscription;
-use Formation\Entity\Db\Session;
 use Formation\Provider\NatureFichier\NatureFichier;
 use Formation\Service\Exporter\Attestation\AttestationExporter;
 use Formation\Service\Exporter\Convocation\ConvocationExporter;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
 use Formation\Service\Notification\NotificationServiceAwareTrait;
 use Formation\Service\Presence\PresenceServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
@@ -33,18 +35,13 @@ class InscriptionController extends AbstractController
     use InscriptionServiceAwareTrait;
     use NotificationServiceAwareTrait;
     use PresenceServiceAwareTrait;
+    use SessionServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
 
-    /** @var PhpRenderer */
-    private $renderer;
+    private ?PhpRenderer $renderer = null;
+    public function setRenderer(?PhpRenderer $renderer) { $this->renderer = $renderer; }
 
-    /**
-     * @param PhpRenderer $renderer
-     */
-    public function setRenderer($renderer)
-    {
-        $this->renderer = $renderer;
-    }
+    /** CRUD **********************************************************************************************************/
 
     public function indexAction() : ViewModel
     {
@@ -56,7 +53,7 @@ class InscriptionController extends AbstractController
         $listings = [
         ];
         /** @var Inscription[] $inscriptions */
-        $inscriptions = $this->getEntityManager()->getRepository(Inscription::class)->fetchInscriptionsWithFiltres($filtres);
+        $inscriptions = $this->getInscriptionService()->getRepository()->fetchInscriptionsWithFiltres($filtres);
 
         return new ViewModel([
             'inscriptions' => $inscriptions,
@@ -67,8 +64,7 @@ class InscriptionController extends AbstractController
 
     public function ajouterAction()
     {
-        /** @var Session $session */
-        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
         /** @var Doctorant|null $doctorant */
         $doctorantId = $this->params()->fromRoute('doctorant');
         if ($doctorantId !== null) {
@@ -116,32 +112,27 @@ class InscriptionController extends AbstractController
 
     public function historiserAction() : Response
     {
-        /** @var Inscription $inscription */
-        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
-        $retour = $this->params()->fromQuery('retour');
-
+        $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
         $this->getInscriptionService()->historise($inscription);
 
+        $retour = $this->params()->fromQuery('retour');
         if ($retour) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/inscription',[],[], true);
     }
 
     public function restaurerAction() : Response
     {
-        /** @var Inscription $inscription */
-        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
-        $retour = $this->params()->fromQuery('retour');
-
+        $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
         $this->getInscriptionService()->restore($inscription);
 
+        $retour = $this->params()->fromQuery('retour');
         if ($retour) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/inscription',[],[], true);
     }
 
     public function supprimerAction() : ViewModel
     {
-        /** @var Inscription|null $inscription */
-        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
+        $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -162,14 +153,13 @@ class InscriptionController extends AbstractController
         return $vm;
     }
 
-    public function passerListePrincipaleAction()
+    /** GESTION DES LISTES ********************************************************************************************/
+
+    public function passerListePrincipaleAction() : Response
     {
-        /** @var Inscription|null $inscription */
-        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
-        $retour = $this->params()->fromQuery('retour');
+        $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
 
         $session = $inscription->getSession();
-
         $listePrincipale = $session->getListePrincipale();
         if (count($listePrincipale) < $session->getTailleListePrincipale()) {
             $inscription->setListe(Inscription::LISTE_PRINCIPALE);
@@ -179,18 +169,16 @@ class InscriptionController extends AbstractController
             $this->flashMessenger()->addErrorMessage('La liste principale est déjà complète.');
         }
 
+        $retour = $this->params()->fromQuery('retour');
         if ($retour) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/inscription',[],[], true);
     }
 
-    public function passerListeComplementaireAction()
+    public function passerListeComplementaireAction() : Response
     {
-        /** @var Inscription|null $inscription */
-        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
-        $retour = $this->params()->fromQuery('retour');
+        $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
 
         $session = $inscription->getSession();
-
         $listePrincipale = $session->getListeComplementaire();
         if (count($listePrincipale) < $session->getTailleListeComplementaire()) {
             $inscription->setListe(Inscription::LISTE_COMPLEMENTAIRE);
@@ -200,27 +188,27 @@ class InscriptionController extends AbstractController
             $this->flashMessenger()->addErrorMessage('La liste complémentaire est déjà complète.');
         }
 
+        $retour = $this->params()->fromQuery('retour');
         if ($retour) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/inscription',[],[], true);
     }
 
     public function retirerListeAction() : Response
     {
-        /** @var Inscription|null $inscription */
-        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
-        $retour = $this->params()->fromQuery('retour');
-
+        $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
         $inscription->setListe(null);
         $this->getInscriptionService()->update($inscription);
 
+        $retour = $this->params()->fromQuery('retour');
         if ($retour) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/inscription',[],[], true);
     }
 
+    /** DOCUMENTS LIES AUX INSCRIPTIONS *******************************************************************************/
+
     public function genererConvocationAction()
     {
-        /** @var Inscription|null $inscription */
-        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
+        $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
         $session = $inscription->getSession();
 
         $logos = [];
@@ -229,7 +217,12 @@ class InscriptionController extends AbstractController
             $logos['comue'] = $this->fileService->computeLogoFilePathForStructure($comue);
         }
 
-        $signature = $this->getStructureDocumentService()->getContenuFichier($inscription->getDoctorant()->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_FORMATION);
+        $etablissementDoctorant = $inscription->getDoctorant()->getEtablissement();
+        try {
+            $signature = $this->getStructureDocumentService()->getContenuFichier($etablissementDoctorant->getStructure(), NatureFichier::CODE_SIGNATURE_FORMATION, $etablissementDoctorant);
+        } catch (FichierServiceException $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération de la signature !",0,$e);
+        }
 
         //exporter
         $export = new ConvocationExporter($this->renderer, 'A4');
@@ -243,8 +236,7 @@ class InscriptionController extends AbstractController
 
     public function genererAttestationAction()
     {
-        /** @var Inscription|null $inscription */
-        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
+        $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
         $session = $inscription->getSession();
 
         $presences = $this->getPresenceService()->calculerDureePresence($inscription);
@@ -255,7 +247,12 @@ class InscriptionController extends AbstractController
             $logos['comue'] = $this->fileService->computeLogoFilePathForStructure($comue);
         }
 
-        $signature = $this->getStructureDocumentService()->getContenuFichier($inscription->getDoctorant()->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_FORMATION);
+        $etablissementDoctorant = $inscription->getDoctorant()->getEtablissement();
+        try {
+            $signature = $this->getStructureDocumentService()->getContenuFichier($etablissementDoctorant->getStructure(), NatureFichier::CODE_SIGNATURE_FORMATION, $etablissementDoctorant);
+        } catch (FichierServiceException $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération de la signature !",0,$e);
+        }
 
         //exporter
         $export = new AttestationExporter($this->renderer, 'A4');
@@ -268,19 +265,18 @@ class InscriptionController extends AbstractController
         $export->export('SYGAL_attestation_' . $session->getId() . "_" . $inscription->getId() . ".pdf");
     }
 
-    /** INSCRIPTION ET DESINSCRIPTION POUR LE DOCTORANT */
+    /** INSCRIPTION ET DESINSCRIPTION POUR LE DOCTORANT ***************************************************************/
 
     public function desinscriptionAction() : ViewModel
     {
-        /** @var Inscription|null $inscription */
-        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
+        $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
             $raison = ($data['justification-oui'] AND trim($data['justification-oui']) !== '')? trim($data['justification-oui']) : null;
             $inscription->setListe(null);
-            $inscription->setDescription($inscription->getDescription() . " <br/> ". (($raison)?$raison:"Aucune justification"));
+            $inscription->setDescription($inscription->getDescription() . " <br/> ". (($raison)?:"Aucune justification"));
             $this->getInscriptionService()->historise($inscription);
         }
 

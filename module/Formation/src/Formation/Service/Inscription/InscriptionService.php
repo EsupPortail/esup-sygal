@@ -2,14 +2,24 @@
 
 namespace Formation\Service\Inscription;
 
-use DateTime;
 use Doctrine\ORM\ORMException;
 use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Repository\InscriptionRepository;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class InscriptionService {
     use EntityManagerAwareTrait;
+
+    /**
+     * @return InscriptionRepository
+     */
+    public function getRepository() : InscriptionRepository
+    {
+        /** @var InscriptionRepository $repo */
+        $repo = $this->entityManager->getRepository(Inscription::class);
+        return $repo;
+    }
 
     /** GESTION DES ENTITES *******************************************************************************************/
 
@@ -42,14 +52,14 @@ class InscriptionService {
         return $seance;
     }
 
-    /** (todo ...)
+    /**
      * @param Inscription $seance
      * @return Inscription
      */
     public function historise(Inscription $seance) : Inscription
     {
         try {
-            $seance->setHistoDestruction(new DateTime());
+            $seance->historiser();
             $this->getEntityManager()->flush($seance);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Inscription]",0, $e);
@@ -64,8 +74,7 @@ class InscriptionService {
     public function restore(Inscription $seance) : Inscription
     {
         try {
-            $seance->setHistoDestructeur(null);
-            $seance->setHistoDestruction(null);
+            $seance->dehistoriser();
             $this->getEntityManager()->flush($seance);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Inscription]",0, $e);

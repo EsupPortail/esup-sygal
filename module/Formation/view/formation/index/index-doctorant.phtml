@@ -279,12 +279,17 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
                               title="Annuler mon inscription" data-bs-toggle="tooltip" data-bs-html="true"
                         ></span></a>
                         <?php endif; ?>
-                        <?php if ($canConvocationInscription AND $inscription->getListe() === Inscription::LISTE_PRINCIPALE) : ?>
-                            <?php /** @see \Formation\Controller\InscriptionController::genererConvocationAction() */?>
-                            <a href="<?php echo $this->url('formation/inscription/generer-convocation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
-                        <span class="icon icon-pdf"
-                              title="Télécharger la convocation" data-bs-toggle="tooltip" data-bs-html="true"
-                        ></span></a>
+                        <?php if ($canConvocationInscription) : ?>
+                            <?php if ($inscription->getListe() === Inscription::LISTE_PRINCIPALE) : ?>
+                                <?php /** @see \Formation\Controller\InscriptionController::genererConvocationAction() */?>
+                                <a href="<?php echo $this->url('formation/inscription/generer-convocation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
+                                    <span class="icon icon-pdf" title="Télécharger la convocation" data-bs-toggle="tooltip" data-bs-html="true"></span>
+                                </a>
+                            <?php else: ?>
+                                <span class="icon icon-pdf" style="color: lightgrey;"
+                                      title="La convocation n'est disponible que pour les inscrits en liste principale">
+                                </span>
+                            <?php endif; ?>
                         <?php endif; ?>
                     </td>
                 </tr>

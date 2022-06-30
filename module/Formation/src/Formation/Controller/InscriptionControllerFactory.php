@@ -2,6 +2,9 @@
 
 namespace Formation\Controller;
 
+use Formation\Service\Session\SessionService;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\File\FileService;
 use Individu\Service\IndividuService;
@@ -19,6 +22,8 @@ class InscriptionControllerFactory {
     /**
      * @param ContainerInterface $container
      * @return InscriptionController
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container) : InscriptionController
     {
@@ -31,6 +36,7 @@ class InscriptionControllerFactory {
          * @var IndividuService $individuService
          * @var NotificationService $notificationService
          * @var PresenceService $presenceService
+         * @var SessionService $sessionService
          * @var StructureDocumentService $structureDocumentService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
@@ -41,6 +47,7 @@ class InscriptionControllerFactory {
         $inscriptionService = $container->get(InscriptionService::class);
         $notificationService = $container->get(NotificationService::class);
         $presenceService = $container->get(PresenceService::class);
+        $sessionService = $container->get(SessionService::class);
         $structureDocumentService = $container->get(StructureDocumentService::class);
 
         /* @var $renderer PhpRenderer */
@@ -56,6 +63,7 @@ class InscriptionControllerFactory {
         $controller->setInscriptionService($inscriptionService);
         $controller->setNotificationService($notificationService);
         $controller->setPresenceService($presenceService);
+        $controller->setSessionService($sessionService);
         $controller->setStructureDocumentService($structureDocumentService);
         /** forms *****************************************************************************************************/
         /** autres*****************************************************************************************************/
