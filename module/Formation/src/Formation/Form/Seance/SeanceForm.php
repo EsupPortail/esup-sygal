@@ -18,7 +18,8 @@ class SeanceForm extends Form {
             'name' => 'date',
             'type' => DateTime::class,
             'options' => [
-                'label' => 'Date de la séance de formation * : ',
+                'label' => "Date de la séance de formation <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
                 'label_attributes' => [
                     'class' => 'control-label',
                 ],
@@ -34,7 +35,8 @@ class SeanceForm extends Form {
             'name' => 'debut',
             'type' => DateTime::class,
             'options' => [
-                'label' => 'Début de la séance * : ',
+                'label' => "Début de la séance <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
                 'label_attributes' => [
                     'class' => 'control-label',
                 ],
@@ -50,7 +52,8 @@ class SeanceForm extends Form {
             'name' => 'fin',
             'type' => DateTime::class,
             'options' => [
-                'label' => 'Fin de la séance * : ',
+                'label' => "Fin de la séance <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
                 'label_attributes' => [
                     'class' => 'control-label',
                 ],

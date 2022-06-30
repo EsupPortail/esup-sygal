@@ -3,33 +3,34 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use Formation\Entity\Db\FormationInstancePresence;
-use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Presence;
-use Formation\Entity\Db\Seance;
-use Formation\Entity\Db\Session;
+use Formation\Service\Inscription\InscriptionServiceAwareTrait;
 use Formation\Service\Presence\PresenceServiceAwareTrait;
+use Formation\Service\Seance\SeanceServiceAwareTrait;
+use Formation\Service\Session\SessionServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\View\Model\ViewModel;
 
 class PresenceController extends AbstractController {
     use EntityManagerAwareTrait;
+    use InscriptionServiceAwareTrait;
     use PresenceServiceAwareTrait;
+    use SeanceServiceAwareTrait;
+    use SessionServiceAwareTrait;
 
-    public function indexAction()
+    public function indexAction() : ViewModel
     {
-        /** @var Presence[] $presences */
-        $presences = $this->getEntityManager()->getRepository(Presence::class)->findAll();
+        $presences = $this->getPresenceService()->getRepository()->findAll();
 
         return new ViewModel([
             'presences' => $presences,
         ]);
     }
 
-    public function renseignerPresencesAction()
+    public function renseignerPresencesAction() : ViewModel
     {
-        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
-        $presences = $this->getEntityManager()->getRepository(Presence::class)->findPresencesBySession($session);
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
+        $presences = $this->getPresenceService()->getRepository()->findPresencesBySession($session);
 
         $dictionnaire = [];
         foreach ($presences as $presence) {
@@ -42,13 +43,13 @@ class PresenceController extends AbstractController {
         ]);
     }
 
-    public function togglePresenceAction()
+    public function togglePresenceAction() : ViewModel
     {
-        $seance = $this->getEntityManager()->getRepository(Seance::class)->getRequestedSeance($this);
-        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
+        $seance = $this->getSeanceService()->getRepository()->getRequestedSeance($this);
+        $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
 
         /** @var  Presence $presence */
-        $presence = $this->getEntityManager()->getRepository(Presence::class)->findPresenceByInscriptionAndSeance($inscription,$seance);
+        $presence = $this->getPresenceService()->getRepository()->findPresenceByInscriptionAndSeance($inscription,$seance);
         if ($presence === null) {
             $presence = new Presence();
             $presence->setInscription($inscription);
@@ -68,18 +69,17 @@ class PresenceController extends AbstractController {
         return $vm;
     }
 
-    public function togglePresencesAction()
+    public function togglePresencesAction() : ViewModel
     {
         $mode = $this->params()->fromRoute('mode');
-        /** @var Inscription $inscription */
-        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
+        $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
 
         $session = $inscription->getSession();
         $seances = $session->getSeances();
 
         /** @var  Presence $presence */
         foreach ($seances as $seance) {
-            $presence = $this->getEntityManager()->getRepository(Presence::class)->findPresenceByInscriptionAndSeance($inscription, $seance);
+            $presence = $this->getPresenceService()->getRepository()->findPresenceByInscriptionAndSeance($inscription, $seance);
             if ($presence === null) {
                 $presence = new Presence();
                 $presence->setSeance($seance);

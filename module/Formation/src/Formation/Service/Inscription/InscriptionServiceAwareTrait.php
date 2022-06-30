@@ -4,8 +4,7 @@ namespace Formation\Service\Inscription;
 
 trait InscriptionServiceAwareTrait
 {
-    /** @var InscriptionService */
-    private $seanceService;
+    private InscriptionService $seanceService;
 
     /**
      * @return InscriptionService

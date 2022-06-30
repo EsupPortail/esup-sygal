@@ -13,16 +13,11 @@ class Inscription implements HistoriqueAwareInterface {
     const LISTE_PRINCIPALE = 'P';
     const LISTE_COMPLEMENTAIRE = 'C';
 
-    /** @var int */
-    private $id;
-    /** @var Session */
-    private $session;
-    /** @var Doctorant */
-    private $doctorant;
-    /** @var string|null */
-    private $liste;
-    /** @var string|null */
-    private $description;
+    private int $id;
+    private ?Session $session = null;
+    private ?Doctorant $doctorant = null;
+    private ?string $liste = null;
+    private ?string $description = null;
 
     /**
      * @return int

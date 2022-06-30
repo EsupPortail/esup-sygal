@@ -2,17 +2,17 @@
 
 namespace Formation\Service\Session;
 
-use DateTime;
 use Doctrine\ORM\ORMException;
 use Formation\Entity\Db\Formation;
-use Formation\Entity\Db\Repository\FormationRepository;
 use Formation\Entity\Db\Repository\SessionRepository;
 use Formation\Entity\Db\Session;
+use Formation\Service\Formation\FormationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class SessionService {
     use EntityManagerAwareTrait;
+    use FormationServiceAwareTrait;
 
     /**
      * @return SessionRepository
@@ -32,7 +32,7 @@ class SessionService {
      */
     public function create(Session $session) : Session
     {
-        $index = $this->getEntityManager()->getRepository(Formation::class)->fetchIndexMax($session->getFormation()) + 1;
+        $index = $this->getFormationService()->getRepository()->fetchIndexMax($session->getFormation()) + 1;
         $session->setIndex($index);
         try {
             $this->getEntityManager()->persist($session);
@@ -57,14 +57,14 @@ class SessionService {
         return $session;
     }
 
-    /** (todo ...)
+    /**
      * @param Session $session
      * @return Session
      */
     public function historise(Session $session) : Session
     {
         try {
-            $session->setHistoDestruction(new DateTime());
+            $session->historiser();
             $this->getEntityManager()->flush($session);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Session]",0, $e);
@@ -79,8 +79,7 @@ class SessionService {
     public function restore(Session $session) : Session
     {
         try {
-            $session->setHistoDestructeur(null);
-            $session->setHistoDestruction(null);
+            $session->dehistoriser();
             $this->getEntityManager()->flush($session);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Session]",0, $e);

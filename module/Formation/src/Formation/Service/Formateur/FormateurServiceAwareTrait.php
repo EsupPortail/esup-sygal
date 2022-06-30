@@ -4,8 +4,7 @@ namespace Formation\Service\Formateur;
 
 trait FormateurServiceAwareTrait
 {
-    /** @var FormateurService */
-    private $formateurService;
+    private FormateurService $formateurService;
 
     /**
      * @return FormateurService
@@ -17,12 +16,10 @@ trait FormateurServiceAwareTrait
 
     /**
      * @param FormateurService $formateurService
-     * @return FormateurService
      */
-    public function setFormateurService(FormateurService $formateurService): FormateurService
+    public function setFormateurService(FormateurService $formateurService): void
     {
         $this->formateurService = $formateurService;
-        return $this->formateurService;
     }
 
 }

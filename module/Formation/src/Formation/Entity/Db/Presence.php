@@ -8,16 +8,11 @@ use UnicaenApp\Entity\HistoriqueAwareTrait;
 class Presence implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
-    /** @var int */
-    private $id;
-    /** @var Inscription */
-    private $inscription;
-    /** @var Seance */
-    private $seance;
-    /** @var string|null */
-    private $temoin;
-    /** @var string|null */
-    private $description;
+    private int $id;
+    private ?Inscription $inscription = null;
+    private ?Seance $seance = null;
+    private ?string $temoin = null;
+    private ?string $description = null;
 
     /**
      * @return int

@@ -3,17 +3,18 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
 use Formation\Entity\Db\Seance;
-use Formation\Entity\Db\Session;
 use Formation\Form\Seance\SeanceFormAwareTrait;
 use Formation\Service\Exporter\Emargement\EmargementExporter;
 use Formation\Service\Seance\SeanceServiceAwareTrait;
-use UnicaenApp\Exception\RuntimeException;
-use UnicaenApp\Service\EntityManagerAwareTrait;
+use Formation\Service\Session\SessionServiceAwareTrait;
+use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class SeanceController extends AbstractController
 {
@@ -21,33 +22,24 @@ class SeanceController extends AbstractController
     use EtablissementServiceAwareTrait;
     use FileServiceAwareTrait;
     use SeanceServiceAwareTrait;
+    use SessionServiceAwareTrait;
     use SeanceFormAwareTrait;
 
-    /** @var PhpRenderer */
-    private $renderer;
+    private ?PhpRenderer $renderer = null;
+    public function setRenderer(PhpRenderer $renderer) { $this->renderer = $renderer; }
 
-    /**
-     * @param PhpRenderer $renderer
-     */
-    public function setRenderer($renderer)
+    public function indexAction() : ViewModel
     {
-        $this->renderer = $renderer;
-    }
-
-    public function indexAction()
-    {
-        /** @var Seance[] $seances */
-        $seances = $this->getEntityManager()->getRepository(Seance::class)->findAll();
+        $seances = $this->getSeanceService()->getRepository()->findAll();
 
         return new ViewModel([
             'seances' => $seances,
         ]);
     }
 
-    public function ajouterAction()
+    public function ajouterAction() : ViewModel
     {
-        /** @var Session|null $session */
-        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
 
         if ($session === null) {
             throw new RuntimeException("Aucune session pour ajouter la séance");
@@ -77,10 +69,9 @@ class SeanceController extends AbstractController
         return $vm;
     }
 
-    public function modifierAction()
+    public function modifierAction() : ViewModel
     {
-        /** @var Seance|null $seance */
-        $seance = $this->getEntityManager()->getRepository(Seance::class)->getRequestedSeance($this);
+        $seance = $this->getSeanceService()->getRepository()->getRequestedSeance($this);
 
         $form = $this->getSeanceForm();
         $form->setAttribute('action', $this->url()->fromRoute('formation/seance/modifier', ['seance' => $seance->getId()], [], true));
@@ -103,39 +94,30 @@ class SeanceController extends AbstractController
         return $vm;
     }
 
-    public function historiserAction()
+    public function historiserAction() : Response
     {
-        /** @var Seance|null $seance */
-        $seance = $this->getEntityManager()->getRepository(Seance::class)->getRequestedSeance($this);
-
+        $seance = $this->getSeanceService()->getRepository()->getRequestedSeance($this);
         $this->getSeanceService()->historise($seance);
 
         $retour = $this->params()->fromQuery('retour');
-        if ($retour !== null) {
-            return $this->redirect()->toUrl($retour);
-        }
+        if ($retour !== null) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/seance');
 
     }
 
-    public function restaurerAction()
+    public function restaurerAction() : Response
     {
-        /** @var Seance|null $seance */
-        $seance = $this->getEntityManager()->getRepository(Seance::class)->getRequestedSeance($this);
-
+        $seance = $this->getSeanceService()->getRepository()->getRequestedSeance($this);
         $this->getSeanceService()->restore($seance);
 
         $retour = $this->params()->fromQuery('retour');
-        if ($retour !== null) {
-            return $this->redirect()->toUrl($retour);
-        }
+        if ($retour !== null) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/seance');
     }
 
-    public function supprimerAction()
+    public function supprimerAction() : ViewModel
     {
-        /** @var Seance|null $seance */
-        $seance = $this->getEntityManager()->getRepository(Seance::class)->getRequestedSeance($this);
+        $seance = $this->getSeanceService()->getRepository()->getRequestedSeance($this);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -158,8 +140,7 @@ class SeanceController extends AbstractController
 
     public function genererEmargementAction()
     {
-        /** @var Seance|null $seance */
-        $seance = $this->getEntityManager()->getRepository(Seance::class)->getRequestedSeance($this);
+        $seance = $this->getSeanceService()->getRepository()->getRequestedSeance($this);
         $session = $seance->getSession();
 
         $logos = [];

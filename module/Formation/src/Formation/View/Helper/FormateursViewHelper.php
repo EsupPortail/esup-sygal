@@ -15,7 +15,7 @@ class FormateursViewHelper extends AbstractHelper
      * @param array $options
      * @return string|Partial
      */
-    public function __invoke(?Session $object, $options = [])
+    public function __invoke(?Session $object, array $options = [])
     {
         /** @var PhpRenderer $view */
         $view = $this->getView();

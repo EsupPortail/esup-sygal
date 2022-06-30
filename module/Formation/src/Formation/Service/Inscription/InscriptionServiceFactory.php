@@ -4,14 +4,18 @@ namespace Formation\Service\Inscription;
 
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class InscriptionServiceFactory {
 
     /**
      * @param ContainerInterface $container
      * @return InscriptionService
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container) : InscriptionService
     {
         /**
          * @var EntityManager $entitymanager

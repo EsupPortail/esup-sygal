@@ -4,8 +4,7 @@ namespace Formation\Service\Presence;
 
 trait PresenceServiceAwareTrait
 {
-    /** @var PresenceService */
-    private $presenceService;
+    private PresenceService $presenceService;
 
     /**
      * @return PresenceService
@@ -17,12 +16,10 @@ trait PresenceServiceAwareTrait
 
     /**
      * @param PresenceService $presenceService
-     * @return PresenceService
      */
-    public function setPresenceService(PresenceService $presenceService): PresenceService
+    public function setPresenceService(PresenceService $presenceService): void
     {
         $this->presenceService = $presenceService;
-        return $this->presenceService;
     }
 
 }

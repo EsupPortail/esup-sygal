@@ -4,8 +4,7 @@ namespace Formation\Service\Seance;
 
 trait SeanceServiceAwareTrait
 {
-    /** @var SeanceService */
-    private $seanceService;
+    private SeanceService $seanceService;
 
     /**
      * @return SeanceService
@@ -17,12 +16,10 @@ trait SeanceServiceAwareTrait
 
     /**
      * @param SeanceService $seanceService
-     * @return SeanceService
      */
-    public function setSeanceService(SeanceService $seanceService): SeanceService
+    public function setSeanceService(SeanceService $seanceService): void
     {
         $this->seanceService = $seanceService;
-        return $this->seanceService;
     }
 
 }

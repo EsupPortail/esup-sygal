@@ -62,7 +62,7 @@ $canSupprimerInscription       = $this->isAllowed(InscriptionPrivileges::getReso
                         <span class="fas fa-list-alt"></span>
                     </a>
                 <?php endif; ?>
-                <?php if ($canHistoriser) : ?>
+                <?php if ($canHistoriserInscription) : ?>
                     <?php if ($inscription->estNonHistorise()) : ?>
                         <?php /** @see \Formation\Controller\InscriptionController::historiserAction() */ ?>
                         <a href="<?php echo $this->url('formation/inscription/historiser', ['inscription' => $inscription->getId()], [], true); ?>"
@@ -79,7 +79,7 @@ $canSupprimerInscription       = $this->isAllowed(InscriptionPrivileges::getReso
                         </a>
                     <?php endif; ?>
                 <?php endif; ?>
-                <?php if ($canSupprimer) : ?>
+                <?php if ($canSupprimerInscription) : ?>
                     <?php /** @see \Formation\Controller\InscriptionController::supprimerAction() */?>
                     <a href="<?php echo $this->url('formation/inscription/supprimer',['inscription' => $inscription->getId()], [], true); ?>"
                        class="ajax-modal" data-event="modification"

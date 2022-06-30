@@ -7,8 +7,7 @@ use Formation\Entity\Db\Interfaces\HasSiteInterface;
 
 trait HasSiteTrait {
 
-    /** @var Etablissement|null */
-    private $site;
+    private ?Etablissement $site = null;
 
     /**
      * @return Etablissement|null

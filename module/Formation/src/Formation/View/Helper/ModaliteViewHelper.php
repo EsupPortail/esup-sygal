@@ -16,7 +16,7 @@ class ModaliteViewHelper extends AbstractHelper
      * @param array $options
      * @return string|Partial
      */
-    public function __invoke(HasModaliteInterface $object, $options = [])
+    public function __invoke(HasModaliteInterface $object, array $options = [])
     {
         /** @var PhpRenderer $view */
         $view = $this->getView();

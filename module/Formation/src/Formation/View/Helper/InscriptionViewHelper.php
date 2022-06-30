@@ -17,7 +17,7 @@ class InscriptionViewHelper extends AbstractHelper
      * @param array $options
      * @return string|Partial
      */
-    public function __invoke(Inscription $object, $options = [])
+    public function __invoke(Inscription $object, array $options = [])
     {
         /** @var PhpRenderer $view */
         $view = $this->getView();

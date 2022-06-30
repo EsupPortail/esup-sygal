@@ -11,14 +11,10 @@ class Formateur  implements HistoriqueAwareInterface{
 
     const ROLE = 'FORMATEUR';
 
-    /** @var int */
-    private $id;
-    /** @var Individu */
-    private $individu;
-    /** @var Session */
-    private $session;
-    /** @var string|null */
-    private $description;
+    private int $id;
+    private ?Individu $individu = null;
+    private ?Session $session = null;
+    private ?string $description = null;
 
     /**
      * @return int

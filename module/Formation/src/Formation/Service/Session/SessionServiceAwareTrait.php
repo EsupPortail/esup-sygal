@@ -4,8 +4,7 @@ namespace Formation\Service\Session;
 
 trait SessionServiceAwareTrait
 {
-    /** @var SessionService */
-    private $sessionService;
+    private SessionService $sessionService;
 
     /**
      * @return SessionService
@@ -17,12 +16,10 @@ trait SessionServiceAwareTrait
 
     /**
      * @param SessionService $sessionService
-     * @return SessionService
      */
-    public function setSessionService(SessionService $sessionService): SessionService
+    public function setSessionService(SessionService $sessionService): void
     {
         $this->sessionService = $sessionService;
-        return $this->sessionService;
     }
 
 }

@@ -10,10 +10,18 @@ use Formation\Service\EnqueteCategorie\EnqueteCategorieService;
 use Formation\Service\EnqueteQuestion\EnqueteQuestionService;
 use Formation\Service\EnqueteReponse\EnqueteReponseService;
 use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class EnqueteControllerFactory {
 
-    public function __invoke(ContainerInterface $container)
+    /**
+     * @param ContainerInterface $container
+     * @return EnqueteController
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function __invoke(ContainerInterface $container) : EnqueteController
     {
         /**
          * @var EntityManager $entityManager

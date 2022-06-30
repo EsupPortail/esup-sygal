@@ -6,7 +6,11 @@ use Interop\Container\ContainerInterface;
 
 class EnqueteCategorieHydratorFactory {
 
-    public function __invoke(ContainerInterface $container)
+    /**
+     * @param ContainerInterface $container
+     * @return EnqueteCategorieHydrator
+     */
+    public function __invoke(ContainerInterface $container) : EnqueteCategorieHydrator
     {
         $hydrator = new EnqueteCategorieHydrator();
         return $hydrator;

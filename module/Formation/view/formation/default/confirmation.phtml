@@ -15,8 +15,8 @@
 </p>
 
 
-<table width="100%">
-    <tr><td width="50%">
+<table style="width: 100%;">
+    <tr><td style="width: 50%;">
 <form method="post" action="<?php echo $action; ?>">
     <input type="hidden" name="reponse" value="oui">
     <?php if ($justificationOui === true) : ?>
@@ -24,7 +24,7 @@
     <?php endif; ?>
     <input type="submit" name="reponse" class="btn btn-success action" value="Oui, je suis sûr&middot;e">
 </form>
-        </td><td width="50%">
+        </td><td style="width: 50%;">
 <form method="post" action="<?php echo $action; ?>">
     <input type="hidden" name="reponse" value="non">
     <?php if ($justificationNon === true) : ?>

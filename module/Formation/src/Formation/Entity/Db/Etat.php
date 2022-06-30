@@ -8,20 +8,13 @@ class Etat {
     const CODE_OUVERTE = 'O';
     const CODE_FERME = 'F';
     const CODE_CLOTURER = 'C';
-    const CODE_ANNULE = 'A';
 
-    /** @var string */
-    private $code;
-    /** @var string */
-    private $libelle;
-    /** @var string|null */
-    private $description;
-    /** @var string|null */
-    private $icone;
-    /** @var string|null */
-    private $couleur;
-    /** @var int|null */
-    private $ordre;
+    private ?string $code = null;
+    private ?string $libelle = null;
+    private ?string $description = null;
+    private ?string $icone = null;
+    private ?string $couleur = null;
+    private ?int $ordre = null;
 
     /**
      * @return string

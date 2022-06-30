@@ -3,6 +3,7 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Formation\Service\Session\SessionServiceAwareTrait;
 use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
 use Formation\Entity\Db\Formateur;
@@ -14,12 +15,12 @@ use Laminas\View\Model\ViewModel;
 class FormateurController extends AbstractController {
     use EntityManagerAwareTrait;
     use FormateurServiceAwareTrait;
+    use SessionServiceAwareTrait;
     use IndividuServiceAwareTrait;
 
-    public function ajouterAction()
+    public function ajouterAction() : ViewModel
     {
-        /** @var Session $session */
-        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -40,9 +41,9 @@ class FormateurController extends AbstractController {
         ]);
     }
 
-    public function retirerAction() {
-        /** @var Formateur $formateur */
-        $formateur = $this->getEntityManager()->getRepository(Formateur::class)->getRequestedFormateur($this);
+    public function retirerAction() : ViewModel
+    {
+        $formateur = $this->getFormateurService()->getRepository()->getRequestedFormateur($this);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -61,6 +62,5 @@ class FormateurController extends AbstractController {
             ]);
         }
         return $vm;
-
     }
 }

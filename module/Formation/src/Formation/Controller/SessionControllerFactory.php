@@ -2,6 +2,8 @@
 
 namespace Formation\Controller;
 
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\File\FileService;
 use Doctrine\ORM\EntityManager;
@@ -17,8 +19,10 @@ class SessionControllerFactory {
     /**
      * @param ContainerInterface $container
      * @return SessionController
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container) : SessionController
     {
         /**
          * @var EntityManager $entityManager

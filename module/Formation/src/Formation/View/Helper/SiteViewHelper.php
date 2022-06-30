@@ -16,7 +16,7 @@ class SiteViewHelper extends AbstractHelper
      * @param array $options
      * @return string|Partial
      */
-    public function __invoke($object, $options = [])
+    public function __invoke($object, array $options = [])
     {
         $site = $object;
         if ($site instanceof HasSiteInterface) $site = $object->getSite();

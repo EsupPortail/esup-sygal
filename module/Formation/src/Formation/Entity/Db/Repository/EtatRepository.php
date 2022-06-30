@@ -19,7 +19,7 @@ class EtatRepository extends EntityRepository
     public function getRequestedEtat(AbstractActionController $controller, string $param = 'etat') : ?Etat
     {
         $id = $controller->params()->fromRoute($param);
-        /** @var Etat|null */
+        /** @var Etat|null $etat */
         $etat = $this->findOneBy(["code" => $id]);
         return $etat;
     }

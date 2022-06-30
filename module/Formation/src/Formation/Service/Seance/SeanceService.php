@@ -2,14 +2,24 @@
 
 namespace Formation\Service\Seance;
 
-use DateTime;
 use Doctrine\ORM\ORMException;
+use Formation\Entity\Db\Repository\SeanceRepository;
 use Formation\Entity\Db\Seance;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class SeanceService {
     use EntityManagerAwareTrait;
+
+    /**
+     * @return SeanceRepository
+     */
+    public function getRepository() : SeanceRepository
+    {
+        /** @var SeanceRepository $repo */
+        $repo = $this->entityManager->getRepository(Seance::class);
+        return $repo;
+    }
 
     /** GESTION DES ENTITES *******************************************************************************************/
 
@@ -42,14 +52,14 @@ class SeanceService {
         return $seance;
     }
 
-    /** (todo ...)
+    /**
      * @param Seance $seance
      * @return Seance
      */
     public function historise(Seance $seance) : Seance
     {
         try {
-            $seance->setHistoDestruction(new DateTime());
+            $seance->historiser();
             $this->getEntityManager()->flush($seance);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Seance]",0, $e);
@@ -64,8 +74,7 @@ class SeanceService {
     public function restore(Seance $seance) : Seance
     {
         try {
-            $seance->setHistoDestructeur(null);
-            $seance->setHistoDestruction(null);
+            $seance->dehistoriser();
             $this->getEntityManager()->flush($seance);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Seance]",0, $e);

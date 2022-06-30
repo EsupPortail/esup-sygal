@@ -2,7 +2,6 @@
 
 namespace Formation\Service\Presence;
 
-use DateTime;
 use Doctrine\ORM\ORMException;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Presence;
@@ -54,14 +53,14 @@ class PresenceService {
         return $presence;
     }
 
-    /** (todo ...)
+    /**
      * @param Presence $presence
      * @return Presence
      */
     public function historise(Presence $presence) : Presence
     {
         try {
-            $presence->setHistoDestruction(new DateTime());
+            $presence->historiser();
             $this->getEntityManager()->flush($presence);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Presence]",0, $e);
@@ -76,8 +75,7 @@ class PresenceService {
     public function restore(Presence $presence) : Presence
     {
         try {
-            $presence->setHistoDestructeur(null);
-            $presence->setHistoDestruction(null);
+            $presence->dehistoriser();
             $this->getEntityManager()->flush($presence);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Presence]",0, $e);
@@ -110,8 +108,7 @@ class PresenceService {
     {
         $duree = 0;
 
-        /** @var Presence[] $presences */
-        $presences = $this->getEntityManager()->getRepository(Presence::class)->findPresencesByInscription($inscription);
+        $presences = $this->getRepository()->findPresencesByInscription($inscription);
         foreach ($presences as $presence) {
             if ($presence->isPresent()) {
                 $duree += $presence->getSeance()->getDuree();

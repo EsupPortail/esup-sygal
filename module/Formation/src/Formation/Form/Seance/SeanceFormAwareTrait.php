@@ -4,8 +4,7 @@ namespace Formation\Form\Seance;
 
 trait SeanceFormAwareTrait {
 
-    /** @var SeanceForm */
-    private $seanceForm;
+    private SeanceForm $seanceForm;
 
     /**
      * @return SeanceForm
@@ -17,12 +16,10 @@ trait SeanceFormAwareTrait {
 
     /**
      * @param SeanceForm $seanceForm
-     * @return SeanceForm
      */
-    public function setSeanceForm(SeanceForm $seanceForm): SeanceForm
+    public function setSeanceForm(SeanceForm $seanceForm): void
     {
         $this->seanceForm = $seanceForm;
-        return $this->seanceForm;
     }
 
 }

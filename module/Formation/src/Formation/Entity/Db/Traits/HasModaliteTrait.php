@@ -6,8 +6,7 @@ use Formation\Entity\Db\Interfaces\HasModaliteInterface;
 
 trait HasModaliteTrait {
 
-    /** @var string|null */
-    private $modalite;
+    private ?string $modalite = null;
 
     /**
      * @return string|null

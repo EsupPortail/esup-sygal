@@ -9,23 +9,12 @@ use UnicaenApp\Entity\HistoriqueAwareTrait;
 class Seance implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
-    /** @var int */
-    private $id;
-
-    /** @var Session|null */
-    private $session;
-
-    /** @var DateTime */
-    private $debut;
-
-    /** @var DateTime */
-    private $fin;
-
-    /** @var string */
-    private $lieu;
-
-    /** @var string */
-    private $description;
+    private int $id;
+    private ?Session $session = null;
+    private ?DateTime $debut = null;
+    private ?DateTime $fin = null;
+    private ?string $lieu = null;
+    private ?string $description = null;
 
     /**
      * @return int
@@ -98,7 +87,7 @@ class Seance implements HistoriqueAwareInterface {
     }
 
     /**
-     * @param string $lieu
+     * @param string|null $lieu
      * @return Seance|null
      */
     public function setLieu(?string $lieu): Seance

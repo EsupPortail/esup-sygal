@@ -2,14 +2,24 @@
 
 namespace Formation\Service\Formateur;
 
-use DateTime;
 use Doctrine\ORM\ORMException;
 use Formation\Entity\Db\Formateur;
+use Formation\Entity\Db\Repository\FormateurRepository;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class FormateurService {
     use EntityManagerAwareTrait;
+
+    /**
+     * @return FormateurRepository
+     */
+    public function getRepository() : FormateurRepository
+    {
+        /** @var FormateurRepository $repo */
+        $repo = $this->entityManager->getRepository(Formateur::class);
+        return $repo;
+    }
 
     /** GESTION DES ENTITES *******************************************************************************************/
 
@@ -42,14 +52,14 @@ class FormateurService {
         return $formateur;
     }
 
-    /** (todo ...)
+    /**
      * @param Formateur $formateur
      * @return Formateur
      */
     public function historise(Formateur $formateur) : Formateur
     {
         try {
-            $formateur->setHistoDestruction(new DateTime());
+            $formateur->historiser();
             $this->getEntityManager()->flush($formateur);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Formateur]",0, $e);
@@ -64,8 +74,7 @@ class FormateurService {
     public function restore(Formateur $formateur) : Formateur
     {
         try {
-            $formateur->setHistoDestructeur(null);
-            $formateur->setHistoDestruction(null);
+            $formateur->dehistoriser();
             $this->getEntityManager()->flush($formateur);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [Formateur]",0, $e);

@@ -21,9 +21,9 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
     /**
      * {@inheritDoc}
      */
-    public function injectIdentityRoles(ChainEvent $event)
+    public function injectIdentityRoles(ChainEvent $e)
     {
-        $event->addRoles($this->getIdentityRoles());
+        $e->addRoles($this->getIdentityRoles());
     }
 
     /**

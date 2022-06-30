@@ -7,10 +7,8 @@ use Formation\Entity\Db\Interfaces\HasTypeInterface;
 
 trait HasTypeTrait {
 
-    /** @var string|null */
-    private $type;
-    /** @var Structure|null */
-    private $typeStructure;
+    private ?string $type = null;
+    private ?Structure $typeStructure = null;
 
     /**
      * @return string|null

@@ -4,7 +4,6 @@ namespace Formation\Entity\Db\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Formation\Entity\Db\EnqueteCategorie;
-use Formation\Entity\Db\EnqueteQuestion;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\Mvc\Controller\AbstractActionController;
 
