@@ -94,7 +94,7 @@ class SessionForm extends Form {
                 'label' => "Modalité <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
                 'empty_option' => "Non précisée",
-                'value_options' => ['P' => 'Présentielle', 'D' => 'Distancielle'],
+                'value_options' => ['P' => 'Présentiel', 'D' => 'Distanciel'],
             ],
             'attributes' => [
                 'id' => 'modalite',

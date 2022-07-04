@@ -35,7 +35,7 @@ class SearchControllerPlugin extends AbstractPlugin
         $searchService = $this->getSearchService();
         $searchService->init();
 
-        // Application des filtres et tris par défaut, puis redirection éventuelle
+        // Mise à jour des 'query params' avec les filtres et tris par défaut éventuels, puis redirection si besoin.
         $filtersUpdated = $searchService->updateQueryParamsWithDefaultFilters($queryParams);
         $sortersUpdated = $searchService->updateQueryParamsWithDefaultSorters($queryParams);
         if ($filtersUpdated || $sortersUpdated) {

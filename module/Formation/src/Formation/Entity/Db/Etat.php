@@ -16,6 +16,11 @@ class Etat {
     private ?string $couleur = null;
     private ?int $ordre = null;
 
+    public function __toString(): string
+    {
+        return $this->libelle;
+    }
+
     /**
      * @return string
      */

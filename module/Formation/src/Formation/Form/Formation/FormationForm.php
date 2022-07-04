@@ -118,7 +118,7 @@ class FormationForm extends Form {
             'options' => [
                 'label' => "Modalité :",
                 'empty_option' => "Non précisée",
-                'value_options' => ['P' => 'Présentielle', 'D' => 'Distancielle'],
+                'value_options' => ['P' => 'Présentiel', 'D' => 'Distanciel'],
             ],
             'attributes' => [
                 'id' => 'modalite',

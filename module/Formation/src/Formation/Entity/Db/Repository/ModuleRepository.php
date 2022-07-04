@@ -27,23 +27,4 @@ class ModuleRepository extends EntityRepository
         return $module;
 
     }
-
-    /**
-     * @param array $filtres
-     * @return Module[]
-     */
-    public function fetchModulesWithFiltres(array $filtres) : array
-    {
-        $alias = 'module';
-        $qb = $this->createQueryBuilder($alias);
-        if ($filtres['libelle']) {
-            $libelle = '%' . strtolower($filtres['libelle']) . '%';
-            $qb = $qb->andWhere('lower('.$alias.'.libelle) like :libelle')
-                ->setParameter('libelle', $libelle);
-        }
-
-        $result = $qb->getQuery()->getResult();
-        return $result;
-    }
-
 }

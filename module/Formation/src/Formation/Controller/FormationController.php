@@ -21,33 +21,7 @@ class FormationController extends AbstractController
 
     use EtablissementServiceAwareTrait;
 
-    public function indexAction() : ViewModel
-    {
-        /** Recupération des paramètres du filtre */
-        $filtres = [
-            'site' => $this->params()->fromQuery('site'),
-            'libelle' => $this->params()->fromQuery('libelle'),
-            'responsable' => $this->params()->fromQuery('responsable'),
-            'modalite' => $this->params()->fromQuery('modalite'),
-            'structure' => $this->params()->fromQuery('structure'),
-        ];
-        /** Listes pour les filtres */
-        $listings = [
-            'sites' => $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions(),
-            'responsables' => $this->getFormationService()->getRepository()->fetchListeResponsable(),
-            'structures' => $this->getFormationService()->getRepository()->fetchListeStructures(),
-        ];
-
-        $formations = $this->getFormationService()->getRepository()->fetchFormationsWithFiltres($filtres);
-
-        return new ViewModel([
-            'formations' => $formations,
-            'filtres' => $filtres,
-            'listings' => $listings,
-        ]);
-    }
-
-    public function afficherAction() : ViewModel
+    public function afficherAction()
     {
         $formation = $this->getFormationService()->getRepository()->getRequestedFormation($this);
 

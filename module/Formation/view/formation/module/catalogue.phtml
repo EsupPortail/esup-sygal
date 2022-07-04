@@ -21,7 +21,7 @@ $canFormationAfficher = $this->isAllowed(FormationPrivileges::getResourceId(Form
         <table class="table table-sm">
         <thead>
             <tr>
-                <th class="module" colspan="4">
+                <th class="formation-module" colspan="4">
                     <?php if ($element["module"] !== null) : ?>
                         <?php echo $element["module"]->getLibelle(); ?>
                     <?php else : ?>
@@ -32,12 +32,12 @@ $canFormationAfficher = $this->isAllowed(FormationPrivileges::getResourceId(Form
         </thead>
         <tbody>
     <?php if (empty($element['formations'])) : ?>
-        <tr class="vide"><td colspan="4">Aucune formation</td></tr>
+        <tr class="formation-vide"><td colspan="4">Aucune formation</td></tr>
     <?php else : ?>
         <?php /** @var Formation $formation */ ?>
         <?php foreach ($element['formations'] as $formation) : ?>
         <tr>
-            <td class="libelle">
+            <td class="formation-libelle">
                 <?php if ($canFormationAfficher) : ?>
                 <a
                         href="<?php echo $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true); ?>"
@@ -49,17 +49,17 @@ $canFormationAfficher = $this->isAllowed(FormationPrivileges::getResourceId(Form
                     <?php echo $formation->getLibelle(); ?>
                 <?php endif; ?>
             </td>
-            <td class="site">
+            <td class="formation-site">
                     <?php echo $this->site($formation); ?>
             </td>
-            <td class="responsable">
+            <td class="formation-responsable">
                 <?php if ($formation->getResponsable() !== null) : ?>
                     <?php echo $formation->getResponsable()->getNomComplet(); ?>
                 <?php else : ?>
                     N.C.
                 <?php endif; ?>
             </td>
-            <td class="infos">
+            <td class="formation-infos">
                 <ul>
                 <?php /** @var Session $session */ ?>
                 <?php foreach ($formation->getSessions() as $session) : ?>
@@ -85,35 +85,3 @@ $canFormationAfficher = $this->isAllowed(FormationPrivileges::getResourceId(Form
         </tbody>
         </table>
 <?php endforeach; ?>
-
-
-<style>
-    th.module {
-        background: cornflowerblue;
-        font-size: large;
-    }
-
-    tr.vide {
-        font-style: italic;
-        color:gray;
-    }
-
-    td.libelle {
-        width:45rem;
-    }
-    td.site {
-        /*width:10rem;*/
-        min-width: 10rem;
-        max-width: 10rem;
-    }
-    td.responsable {
-        /*width:15rem;*/
-        min-width: 15rem;
-        max-width: 15rem;
-    }
-    td.infos {
-        /*width:20rem;*/
-        min-width:20rem;
-        max-width:20rem;
-    }
-</style>

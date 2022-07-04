@@ -3,7 +3,6 @@
 namespace Formation\Entity\Db;
 
 use Doctorant\Entity\Db\Doctorant;
-use Individu\Entity\Db\Individu;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
@@ -12,6 +11,10 @@ class Inscription implements HistoriqueAwareInterface {
 
     const LISTE_PRINCIPALE = 'P';
     const LISTE_COMPLEMENTAIRE = 'C';
+    const LISTES = [
+        self::LISTE_PRINCIPALE => "Principale",
+        self::LISTE_COMPLEMENTAIRE => "Complémentaire",
+    ];
 
     private int $id;
     private ?Session $session = null;

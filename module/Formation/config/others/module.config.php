@@ -5,6 +5,8 @@ namespace Formation;
 use Formation\Controller\FormationController;
 use Formation\Controller\ModuleController;
 use Formation\Controller\ModuleControllerFactory;
+use Formation\Controller\Recherche\ModuleRechercheController;
+use Formation\Controller\Recherche\ModuleRechercheControllerFactory;
 use Formation\Form\Module\ModuleForm;
 use Formation\Form\Module\ModuleFormFactory;
 use Formation\Form\Module\ModuleHydrator;
@@ -12,6 +14,8 @@ use Formation\Form\Module\ModuleHydratorFactory;
 use Formation\Provider\Privilege\ModulePrivileges;
 use Formation\Service\Module\ModuleService;
 use Formation\Service\Module\ModuleServiceFactory;
+use Formation\Service\Module\Search\ModuleSearchService;
+use Formation\Service\Module\Search\ModuleSearchServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
@@ -30,9 +34,10 @@ return [
                     ],
                 ],
                 [
-                    'controller' => ModuleController::class,
+                    'controller' => ModuleRechercheController::class,
                     'action' => [
                         'index',
+                        'filters',
                     ],
                     'privileges' => [
                         ModulePrivileges::MODULE_INDEX,
@@ -103,7 +108,7 @@ return [
                             'module' => [
                                 'label'    => 'Modules',
                                 'route'    => 'formation/module',
-                                'resource' => PrivilegeController::getResourceId(ModuleController::class, 'index') ,
+                                'resource' => PrivilegeController::getResourceId(ModuleRechercheController::class, 'index') ,
                                 'order'    => 100,
                                 'pages' => [
                                     'afficher' => [
@@ -143,11 +148,20 @@ return [
                         'options' => [
                             'route'    => '/module',
                             'defaults' => [
-                                'controller' => ModuleController::class,
+                                'controller' => ModuleRechercheController::class,
                                 'action'     => 'index',
                             ],
                         ],
                         'child_routes' => [
+                            'filters' => [
+                                'type' => 'Literal',
+                                'options' => [
+                                    'route' => '/filters',
+                                    'defaults' => [
+                                        'action' => 'filters',
+                                    ],
+                                ],
+                            ],
                             'afficher' => [
                                 'type'  => Segment::class,
                                 'may_terminate' => true,
@@ -224,11 +238,13 @@ return [
     'service_manager' => [
         'factories' => [
             ModuleService::class => ModuleServiceFactory::class,
+            ModuleSearchService::class => ModuleSearchServiceFactory::class,
         ],
     ],
     'controllers'     => [
         'factories' => [
             ModuleController::class => ModuleControllerFactory::class,
+            ModuleRechercheController::class => ModuleRechercheControllerFactory::class,
         ],
     ],
     'form_elements' => [

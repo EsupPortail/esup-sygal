@@ -30,9 +30,16 @@ class Session implements HistoriqueAwareInterface,
     const ETAT_EN_COURS         = 'E';
     const ETAT_TERMINE          = 'T';
     const ETAT_CLOS_FINAL       = 'C';
+    const ETATS = [
+        self::ETAT_PREPARATION => self::ETAT_PREPARATION,
+        self::ETAT_INSCRIPTION => self::ETAT_INSCRIPTION,
+        self::ETAT_EN_COURS => self::ETAT_EN_COURS,
+        self::ETAT_TERMINE => self::ETAT_TERMINE,
+        self::ETAT_CLOS_FINAL => self::ETAT_CLOS_FINAL,
+    ];
 
-    const MODALITE_PRESENTIELLE = 'Présentielle';
-    const MODALITE_DISTANCIELLE = 'Distancielle';
+    const MODALITE_PRESENTIELLE = 'Présentiel';
+    const MODALITE_DISTANCIELLE = 'Distanciel';
 
     private int $id;
     private ?int $index = null;

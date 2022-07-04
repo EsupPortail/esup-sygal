@@ -173,7 +173,7 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
 <!--               class="btn btn-primary ajax-modal action" data-event="modification"-->
 <!--            >-->
 <!--                <span class="icon icon-ajouter"></span>-->
-<!--                <span class="lettrine">E</span>-->
+<!--                <span class="formation-lettrine">E</span>-->
 <!--                Ajouter une enquête-->
 <!--            </a>-->
 <!--            <br>-->
@@ -183,7 +183,7 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                class="btn btn-primary ajax-modal action" data-event="modification"
             >
                 <span class="icon icon-ajouter"></span>
-                <span class="lettrine">C</span>
+                <span class="formation-lettrine">C</span>
                 Ajouter une catégorie
             </a>
             <br>
@@ -193,7 +193,7 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                class="btn btn-primary ajax-modal action" data-event="modification"
             >
                 <span class="icon icon-ajouter"></span>
-                <span class="lettrine">Q</span>
+                <span class="formation-lettrine">Q</span>
                 Ajouter une question
             </a>
             <br/>
@@ -211,23 +211,3 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
         });
     });
 </script>
-
-<style>
-    span.lettrine {
-        position:relative;
-        left:-0.60rem;
-        top:0.25rem;
-        font-weight:bolder;
-        font-size: xx-small;
-        text-shadow: 2px 0 0 #fff, -2px 0 0 #fff, 0 2px 0 #fff, 0 -2px 0 #fff, 1px 1px #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff;
-    }
-
-    span.lettrine {
-        color: var(--bs-primary);
-    }
-
-    span.question-historisee {
-        /*background: lightgray;*/
-        text-decoration: line-through;
-    }
-</style>

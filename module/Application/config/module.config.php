@@ -13,8 +13,8 @@ use Application\Entity\UserWrapperFactory;
 use Application\Entity\UserWrapperFactoryFactory;
 use Application\Event\UserAuthenticatedEventListenerFactory;
 use Application\Event\UserRoleSelectedEventListener;
-use Structure\Form\Factory\EcoleDoctoraleFormFactory;
 use Application\Navigation\NavigationFactoryFactory;
+use Application\ORM\Query\Functions\StrReduce;
 use Application\Service\AuthorizeServiceAwareInitializer;
 use Application\Service\Role\RoleService;
 use Application\Service\Role\RoleServiceFactory;
@@ -32,9 +32,10 @@ use Application\View\Helper\Uploader\UploaderHelperFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\PDO\PgSQL\Driver as PgSQL;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Laminas\Navigation\Navigation;
+use Structure\Form\Factory\EcoleDoctoraleFormFactory;
 use UnicaenApp\Controller\ConsoleController;
 use UnicaenApp\Service\EntityManagerAwareInitializer;
-use Laminas\Navigation\Navigation;
 
 return array(
     'bjyauthorize' => [
@@ -105,6 +106,9 @@ return array(
         'configuration' => [
             'orm_default' => [
                 'default_repository_class_name' => DefaultEntityRepository::class,
+                'string_functions' => [
+                    'strReduce' => StrReduce::class,
+                ],
             ]
         ],
         'cache' => [

@@ -2,6 +2,8 @@
 
 namespace Formation;
 
+use Formation\Controller\Recherche\SessionRechercheController;
+use Formation\Controller\Recherche\SessionRechercheControllerFactory;
 use Formation\Controller\SessionController;
 use Formation\Controller\SessionControllerFactory;
 use Formation\Form\Session\SessionForm;
@@ -9,6 +11,8 @@ use Formation\Form\Session\SessionFormFactory;
 use Formation\Form\Session\SessionHydrator;
 use Formation\Form\Session\SessionHydratorFactory;
 use Formation\Provider\Privilege\SessionPrivileges;
+use Formation\Service\Session\Search\SessionSearchService;
+use Formation\Service\Session\Search\SessionSearchServiceFactory;
 use Formation\Service\Session\SessionService;
 use Formation\Service\Session\SessionServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -20,9 +24,10 @@ return [
         'guards' => [
             PrivilegeController::class => [
                 [
-                    'controller' => SessionController::class,
+                    'controller' => SessionRechercheController::class,
                     'action' => [
                         'index',
+                        'filters',
                     ],
                     'privileges' => [
                         SessionPrivileges::SESSION_INDEX,
@@ -100,7 +105,7 @@ return [
                             'session' => [
                                 'label'    => 'Sessions',
                                 'route'    => 'formation/session',
-                                'resource' => PrivilegeController::getResourceId(SessionController::class, 'index') ,
+                                'resource' => PrivilegeController::getResourceId(SessionRechercheController::class, 'index') ,
                                 'order'    => 300,
                             ],
                         ],
@@ -120,11 +125,20 @@ return [
                         'options' => [
                             'route'    => '/session',
                             'defaults' => [
-                                'controller' => SessionController::class,
+                                'controller' => SessionRechercheController::class,
                                 'action'     => 'index',
                             ],
                         ],
                         'child_routes' => [
+                            'filters' => [
+                                'type' => 'Literal',
+                                'options' => [
+                                    'route' => '/filters',
+                                    'defaults' => [
+                                        'action' => 'filters',
+                                    ],
+                                ],
+                            ],
                             'afficher' => [
                                 'type'  => Segment::class,
                                 'may_terminate' => true,
@@ -256,11 +270,13 @@ return [
     'service_manager' => [
         'factories' => [
             SessionService::class => SessionServiceFactory::class,
+            SessionSearchService::class => SessionSearchServiceFactory::class,
         ],
     ],
     'controllers'     => [
         'factories' => [
             SessionController::class => SessionControllerFactory::class,
+            SessionRechercheController::class => SessionRechercheControllerFactory::class,
         ],
     ],
     'form_elements' => [

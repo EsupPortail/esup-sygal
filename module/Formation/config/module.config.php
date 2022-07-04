@@ -102,6 +102,7 @@ return array(
         'inline_scripts' => [
         ],
         'stylesheets' => [
+            '071_formation' => '/css/formation.css',
         ],
     ],
 );

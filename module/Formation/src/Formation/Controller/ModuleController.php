@@ -16,21 +16,7 @@ class ModuleController extends AbstractController {
     use ModuleServiceAwareTrait;
     use ModuleFormAwareTrait;
 
-    public function indexAction()  :ViewModel
-    {
-        /** Recupération des paramètres du filtre */
-        $filtres = [
-            'libelle' => $this->params()->fromQuery('libelle'),
-        ];
-        $modules = $this->getModuleService()->getRepository()->fetchModulesWithFiltres($filtres);
-
-        return new ViewModel([
-            'modules' => $modules,
-            'filtres' => $filtres,
-        ]);
-    }
-
-    public function afficherAction() : ViewModel
+    public function afficherAction()
     {
         $module = $this->getModuleService()->getRepository()->getRequestedModule($this);
 

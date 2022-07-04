@@ -35,7 +35,7 @@ $this->headTitle($titrePage);
 
 <div class="main">
 
-    <table class="presence">
+    <table class="formation-presence">
         <tr>
             <td class="separateur"></td>
             <?php foreach ($seances as $seance) : ?>
@@ -72,43 +72,6 @@ $this->headTitle($titrePage);
 </div>
 
 <style>
-    table.presence {
-        /*border : 1px solid black;*/
-    }
-
-    table.presence tr td {
-        border : 1px solid black;
-    }
-
-    table.presence tr td.separateur{
-        border : 0;
-    }
-    table.presence tr td.journee{
-        writing-mode: vertical-rl;
-        text-orientation: mixed;
-        padding-top:.5rem;
-        padding-bottom:1rem;
-        background: #1b6d85;
-        color:white;
-        width: 5rem;
-    }
-
-    table.presence tr td.inscrit{
-        padding-left:.5rem;
-        padding-right:1rem;
-        background: #1b6d85;
-        color:white;
-        height: 5rem;
-        width: 30rem;
-    }
-
-    table.presence tr td.reponse {
-        vertical-align: center;
-        text-align: center;
-        min-width: 3rem;
-        min-height: 3rem;
-    }
-
     td.toggle {
         cursor: pointer;
     }

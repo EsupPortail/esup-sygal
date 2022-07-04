@@ -4,9 +4,13 @@ namespace Formation;
 
 use Formation\Controller\InscriptionController;
 use Formation\Controller\InscriptionControllerFactory;
+use Formation\Controller\Recherche\InscriptionRechercheController;
+use Formation\Controller\Recherche\InscriptionRechercheControllerFactory;
 use Formation\Provider\Privilege\InscriptionPrivileges;
+use Formation\Service\Inscription\Search\InscriptionSearchServiceFactory;
 use Formation\Service\Inscription\InscriptionService;
 use Formation\Service\Inscription\InscriptionServiceFactory;
+use Formation\Service\Inscription\Search\InscriptionSearchService;
 use Formation\View\Helper\InscriptionViewHelper;
 use UnicaenAuth\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
@@ -17,9 +21,10 @@ return [
         'guards' => [
             PrivilegeController::class => [
                 [
-                    'controller' => InscriptionController::class,
+                    'controller' => InscriptionRechercheController::class,
                     'action' => [
                         'index',
+                        'filters',
                     ],
                     'privileges' => [
                         InscriptionPrivileges::INSCRIPTION_INDEX,
@@ -96,7 +101,7 @@ return [
                             'inscription' => [
                                 'label'    => 'Inscriptions',
                                 'route'    => 'formation/inscription',
-                                'resource' => PrivilegeController::getResourceId(InscriptionController::class, 'index') ,
+                                'resource' => PrivilegeController::getResourceId(InscriptionRechercheController::class, 'index') ,
                                 'order'    => 500,
                             ],
                         ],
@@ -116,11 +121,20 @@ return [
                         'options' => [
                             'route'    => '/inscription',
                             'defaults' => [
-                                'controller' => InscriptionController::class,
+                                'controller' => InscriptionRechercheController::class,
                                 'action'     => 'index',
                             ],
                         ],
                         'child_routes' => [
+                            'filters' => [
+                                'type' => 'Literal',
+                                'options' => [
+                                    'route' => '/filters',
+                                    'defaults' => [
+                                        'action' => 'filters',
+                                    ],
+                                ],
+                            ],
                             'ajouter' => [
                                 'type'  => Segment::class,
                                 'may_terminate' => true,
@@ -241,11 +255,13 @@ return [
     'service_manager' => [
         'factories' => [
             InscriptionService::class => InscriptionServiceFactory::class,
+            InscriptionSearchService::class => InscriptionSearchServiceFactory::class,
         ],
     ],
     'controllers'     => [
         'factories' => [
             InscriptionController::class => InscriptionControllerFactory::class,
+            InscriptionRechercheController::class => InscriptionRechercheControllerFactory::class,
         ],
     ],
     'form_elements' => [

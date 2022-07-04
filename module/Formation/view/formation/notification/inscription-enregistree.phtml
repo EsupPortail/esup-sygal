@@ -34,7 +34,7 @@ Nous avons bien reçu votre demande d’inscription à la formation <?php echo $
 
 <?php if ($session->getModalite() === Session::MODALITE_PRESENTIELLE) : ?>
     <p>
-    Pour rappel cette session de formation sera tenu en présentielle dans le&middot;s lieu&middot;x suivant&middot;s :
+    Pour rappel cette session de formation sera tenu en présentiel dans le&middot;s lieu&middot;x suivant&middot;s :
     <ul>
         <?php foreach ($lieux as $lieu) : ?>
             <li> <?php echo $lieu; ?> </li>
@@ -44,7 +44,7 @@ Nous avons bien reçu votre demande d’inscription à la formation <?php echo $
 <?php endif; ?>
 <?php if ($session->getModalite() === Session::MODALITE_DISTANCIELLE) : ?>
     <p>
-        Pour rappel cette session de formation sera tenu en distancielle vous pouvez utiliser les informations suivantes pour vous connecter :
+        Pour rappel cette session de formation sera tenu en distanciel vous pouvez utiliser les informations suivantes pour vous connecter :
     <ul>
         <?php foreach ($lieux as $lieu) : ?>
             <li> <?php echo $lieu; ?> </li>

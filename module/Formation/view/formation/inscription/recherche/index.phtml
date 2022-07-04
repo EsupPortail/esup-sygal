@@ -1,0 +1,140 @@
+<?php
+
+namespace Application;
+
+use Formation\Provider\Privilege\InscriptionPrivileges;
+use Formation\Provider\Privilege\SessionPrivileges;
+use Laminas\Paginator\Paginator as LaminasPaginator;
+
+/**
+ * @var string $title
+ * @var LaminasPaginator $paginator
+ * @var string $routeName
+ * @var string $returnUrl
+ *
+ * @see \Formation\Controller\Recherche\SessionRechercheController::indexAction()
+ */
+
+$this->headTitle($this->translate($title));
+
+$canVoirSession     = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AFFICHER));
+
+$canHistoriserInscription      = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_HISTORISER));
+$canSupprimerInscription       = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_SUPPRIMER));
+?>
+
+<h1 class="page-header"><?php echo $title ?></h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+
+<!-- Formulaire de filtrage -->
+<div class="float-start">
+    <?php $loadFiltersUrl = $this->url($routeName . '/filters', [], ['query' => $this->queryParams()], true); ?>
+    <div id="filters" data-url="<?php echo $loadFiltersUrl ?>" style="min-height: 160px">
+        <!-- Contenu chargé en AJAX -->
+    </div>
+</div>
+<div class="clearfix"></div>
+
+
+<?php if (count($paginator) > 0): ?>
+
+    <p>
+        <?php echo $paginator->getTotalItemCount() . ' ' . $this->translate("formation·s trouvée·s.") ?>
+    </p>
+
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th>Identifiant</th>
+            <th>Session</th>
+            <th>Individu</th>
+            <th>Liste</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($paginator as $inscription) : ?>
+            <tr>
+                <td> <?php echo $inscription->getId(); ?> </td>
+                <td>
+                    <?php echo $inscription->getSession()->getId(); ?>
+                    <?php echo $inscription->getSession()->getFormation()->getLibelle(); ?>
+                </td>
+                <td> <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?> </td>
+                <td>
+                    <?php if ($inscription->isListePrincipale()) : ?>
+                        <span class="liste-principale">
+                        Principale
+                    </span>
+                    <?php endif; ?>
+                    <?php if ($inscription->isListeComplementaire()) : ?>
+                        <span class="liste-complementaire">
+                        Complémentaire
+                    </span>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <?php if ($canVoirSession AND $inscription->getSession() !== null) : ?>
+                        <?php /** @see \Formation\Controller\SessionController::afficherAction() */ ?>
+                        <a href="<?php echo $this->url('formation/session/afficher', ['session' => $inscription->getSession()->getId()], [], true); ?>"
+                           title="Accéder à la session associée" data-bs-toggle="tooltip" data-bs-html="true"
+                        >
+                            <span class="fas fa-list-alt"></span>
+                        </a>
+                    <?php endif; ?>
+                    <?php if ($canHistoriser) : ?>
+                        <?php if ($inscription->estNonHistorise()) : ?>
+                            <?php /** @see \Formation\Controller\InscriptionController::historiserAction() */ ?>
+                            <a href="<?php echo $this->url('formation/inscription/historiser', ['inscription' => $inscription->getId()], [], true); ?>"
+                               title="Historiser l'inscription" data-bs-toggle="tooltip" data-bs-html="true"
+                            >
+                                <span class="icon icon-historiser"></span>
+                            </a>
+                        <?php else : ?>
+                            <?php /** @see \Formation\Controller\InscriptionController::restaurerAction() */ ?>
+                            <a href="<?php echo $this->url('formation/inscription/restaurer', ['inscription' => $inscription->getId()], [], true); ?>"
+                               title="Restaurer l'inscription" data-bs-toggle="tooltip" data-bs-html="true"
+                            >
+                                <span class="icon icon-restaurer"></span>
+                            </a>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    <?php if ($canSupprimer) : ?>
+                        <?php /** @see \Formation\Controller\InscriptionController::supprimerAction() */?>
+                        <a href="<?php echo $this->url('formation/inscription/supprimer',['inscription' => $inscription->getId()], [], true); ?>"
+                           class="ajax-modal" data-event="modification"
+                           title="Suppression de l'inscription de <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?>" data-bs-toggle="tooltip" data-bs-html="true">
+                            <span class="icon icon-detruire"></span>
+                        </a>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <script>
+        $(function() {
+            $("body").on("modification", function (event) {
+                event.div.modal('hide');
+                window.location.reload();
+            });
+        });
+    </script>
+
+    <?php echo $this->paginationControl($paginator, 'sliding', 'paginator', ['route' => $routeName . '/recherche/index']) ?>
+
+<?php else: ?>
+
+    <p>Aucune formation trouvée.</p>
+
+<?php endif ?>
+
+
+<script>
+    $(function() {
+        $("#filters").addClass("loading").refresh(null, function() { $(this).removeClass("loading"); });
+    });
+</script>

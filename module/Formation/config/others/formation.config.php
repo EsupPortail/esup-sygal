@@ -4,6 +4,8 @@ namespace Formation;
 
 use Formation\Controller\FormationController;
 use Formation\Controller\FormationControllerFactory;
+use Formation\Controller\Recherche\FormationRechercheController;
+use Formation\Controller\Recherche\FormationRechercheControllerFactory;
 use Formation\Form\Formation\FormationForm;
 use Formation\Form\Formation\FormationFormFactory;
 use Formation\Form\Formation\FormationHydrator;
@@ -11,18 +13,21 @@ use Formation\Form\Formation\FormationHydratorFactory;
 use Formation\Provider\Privilege\FormationPrivileges;
 use Formation\Service\Formation\FormationService;
 use Formation\Service\Formation\FormationServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
+use Formation\Service\Formation\Search\FormationSearchService;
+use Formation\Service\Formation\Search\FormationSearchServiceFactory;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
+use UnicaenAuth\Guard\PrivilegeController;
 
 return [
     'bjyauthorize' => [
         'guards' => [
             PrivilegeController::class => [
                 [
-                    'controller' => FormationController::class,
+                    'controller' => FormationRechercheController::class,
                     'action' => [
                         'index',
+                        'filters',
                     ],
                     'privileges' => [
                         FormationPrivileges::FORMATION_INDEX,
@@ -87,7 +92,7 @@ return [
                             'formation' => [
                                 'label'    => 'Formations',
                                 'route'    => 'formation/formation',
-                                'resource' => PrivilegeController::getResourceId(FormationController::class, 'index') ,
+                                'resource' => PrivilegeController::getResourceId(FormationRechercheController::class, 'index') ,
                                 'order'    => 110,
                                 'pages' => [
                                     'afficher' => [
@@ -116,11 +121,20 @@ return [
                         'options' => [
                             'route'    => '/formation',
                             'defaults' => [
-                                'controller' => FormationController::class,
+                                'controller' => FormationRechercheController::class,
                                 'action'     => 'index',
                             ],
                         ],
                         'child_routes' => [
+                            'filters' => [
+                                'type' => 'Literal',
+                                'options' => [
+                                    'route' => '/filters',
+                                    'defaults' => [
+                                        'action' => 'filters',
+                                    ],
+                                ],
+                            ],
                             'afficher' => [
                                 'type'  => Segment::class,
                                 'may_terminate' => true,
@@ -197,11 +211,13 @@ return [
     'service_manager' => [
         'factories' => [
             FormationService::class => FormationServiceFactory::class,
+            FormationSearchService::class => FormationSearchServiceFactory::class,
         ],
     ],
     'controllers'     => [
         'factories' => [
             FormationController::class => FormationControllerFactory::class,
+            FormationRechercheController::class => FormationRechercheControllerFactory::class,
         ],
     ],
     'form_elements' => [

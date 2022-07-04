@@ -100,8 +100,8 @@ use Formation\Entity\Db\Session;
                     <label for="modalite">Modalité :</label>
                     <select name="modalite" id="modalite" class="selectpicker" data-live-search="true">
                         <option value=""> Tous les modalités </option>
-                        <option value="P" <?php if ("P" == $filtres['modalite']) echo " selected "; ?>> Présentielle </option>
-                        <option value="D" <?php if ("D" == $filtres['modalite']) echo " selected "; ?>> Distancielle </option>
+                        <option value="P" <?php if ("P" == $filtres['modalite']) echo " selected "; ?>> Présentiel </option>
+                        <option value="D" <?php if ("D" == $filtres['modalite']) echo " selected "; ?>> Distanciel </option>
                     </select>
                 </div>
             </div>
@@ -122,16 +122,6 @@ use Formation\Entity\Db\Session;
     </div>
 </div>
 
-<style>
-    .filter-action {
-        width: 25rem;
-        margin: 0 1rem;
-    }
-
-    form#filter label {
-        width: 10rem;
-    }
-</style>
 
 <script>
     $('button#reset').click(function (e) {

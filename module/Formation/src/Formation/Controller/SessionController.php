@@ -47,32 +47,7 @@ class SessionController extends AbstractController
         $this->renderer = $renderer;
     }
 
-    public function indexAction() : ViewModel
-    {
-        $filtres = [
-            'site' => $this->params()->fromQuery('site'),
-            'libelle' => $this->params()->fromQuery('libelle'),
-            'responsable' => $this->params()->fromQuery('responsable'),
-            'modalite' => $this->params()->fromQuery('modalite'),
-            'structure' => $this->params()->fromQuery('structure'),
-            'etat' => $this->params()->fromQuery('etat'),
-        ];
-        $listings = [
-            'sites' => $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions(),
-            'responsables' => $this->getFormationService()->getRepository()->fetchListeResponsable(),
-            'structures' => $this->getFormationService()->getRepository()->fetchListeStructures(),
-            'etats' => $this->getEntityManager()->getRepository(Etat::class)->findAll(),
-        ];
-        $sessions = $this->getSessionService()->getRepository()->fetchSessionsWithFiltres($filtres);
-
-        return new ViewModel([
-            'sessions' => $sessions,
-            'filtres' => $filtres,
-            'listings' => $listings,
-        ]);
-    }
-
-    public function afficherAction() : ViewModel
+    public function afficherAction()
     {
         $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
 
