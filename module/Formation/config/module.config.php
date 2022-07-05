@@ -1,4 +1,17 @@
-<?php
+<?php /** @noinspection PhpUnusedAliasInspection */
+/** @noinspection PhpUnusedAliasInspection */
+/** @noinspection PhpUnusedAliasInspection */
+/** @noinspection PhpUnusedAliasInspection */
+/** @noinspection PhpUnusedAliasInspection */
+/** @noinspection PhpUnusedAliasInspection */
+/** @noinspection PhpUnusedAliasInspection */
+/** @noinspection PhpUnusedAliasInspection */
+/** @noinspection PhpUnusedAliasInspection */
+/** @noinspection PhpUnusedAliasInspection */
+/** @noinspection PhpUnusedAliasInspection */
+/** @noinspection PhpUnusedAliasInspection */
+
+/** @noinspection PhpUnusedAliasInspection */
 
 namespace Formation;
 

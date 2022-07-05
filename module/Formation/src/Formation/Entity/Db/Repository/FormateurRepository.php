@@ -19,7 +19,7 @@ class FormateurRepository extends EntityRepository
     public function getRequestedFormateur(AbstractActionController $controller, string $param = 'formateur') : ?Formateur
     {
         $id = $controller->params()->fromRoute($param);
-        /** @var Formateur|null */
+        /** @var Formateur|null $formateur */
         $formateur = $this->find($id);
         return $formateur;
     }

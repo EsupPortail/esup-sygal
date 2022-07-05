@@ -79,7 +79,7 @@ class SessionForm extends Form {
         $responsable = new SearchAndSelect('responsable', ['label' => "Responsable de la formation <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :"]);
         $responsable
             ->setAutocompleteSource($this->urlResponsable)
-            ->setSelectionRequired(true)
+            ->setSelectionRequired()
             ->setAttributes([
                 'id' => 'responsable',
                 'placeholder' => "Nom du responsable ...",

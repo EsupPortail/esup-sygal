@@ -2,6 +2,8 @@
 
 namespace Formation\Controller;
 
+use Formation\Service\Formation\FormationService;
+use Formation\Service\Presence\PresenceService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\Etablissement\EtablissementService;
@@ -28,14 +30,19 @@ class SessionControllerFactory {
          * @var EntityManager $entityManager
          * @var EtablissementService $etablissementService
          * @var FileService $fileService
+         * @var FormationService $formationService
          * @var InscriptionService $inscriptionService
+         * @var NotificationService $notificationService
+         * @var PresenceService $presenceService
          * @var SessionService $sessionService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $etablissementService = $container->get(EtablissementService::class);
         $fileService = $container->get(FileService::class);
+        $formationService = $container->get(FormationService::class);
         $inscriptionService = $container->get(InscriptionService::class);
         $notificationService = $container->get(NotificationService::class);
+        $presenceService = $container->get(PresenceService::class);
         $sessionService = $container->get(SessionService::class);
 
         /**
@@ -51,8 +58,10 @@ class SessionControllerFactory {
         /** Service ***************************************************************************************************/
         $controller->setEtablissementService($etablissementService);
         $controller->setFileService($fileService);
+        $controller->setFormationService($formationService);
         $controller->setInscriptionService($inscriptionService);
         $controller->setNotificationService($notificationService);
+        $controller->setPresenceService($presenceService);
         $controller->setSessionService($sessionService);
         /** Form ******************************************************************************************************/
         $controller->setSessionForm($sessionForm);

@@ -28,6 +28,7 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface, Resour
     const CIVILITE_MME = 'Mme';
 
     const TYPE_ACTEUR = 'acteur';
+    const TYPE_DOCTORANT = 'doctorant';
 
     /**
      * Identifiant qui correspond en fait au :

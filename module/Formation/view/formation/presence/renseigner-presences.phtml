@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnusedAliasInspection */
 
 /**
  * @see \Formation\Controller\PresenceController::renseignerPresencesAction()
@@ -107,7 +107,7 @@ $this->headTitle($titrePage);
                         // console.log(retour);
                         // console.log(id);
                         let texte;
-                        if (retour == 1) texte = "<span class='icon icon-yes' style='color:darkgreen;'></span>";
+                        if (retour === "1") texte = "<span class='icon icon-yes' style='color:darkgreen;'></span>";
                         else texte = "<span class='icon icon-no' style='color:darkred;'></span>";
                         document.getElementById(id).innerHTML = texte;
                     }
@@ -136,14 +136,14 @@ $this->headTitle($titrePage);
                         });
                     },
                 success:
-                    function(retour){
+                    function(){
                         // console.log(retour);
                         let texte = "";
                         $.each(seances, function(index, journee) {
                             // console.log(inscrit);
                             // console.log(journee);
-                            if (mode == 'on') texte = "<span class='icon icon-ok' style='color:darkgreen;'></span>";
-                            else texte = "<span class='icon icon-delete' style='color:darkred;'></span>";
+                            if (mode === 'on') texte = "<span class='icon icon-yes' style='color:darkgreen;'></span>";
+                            else texte = "<span class='icon icon-no' style='color:darkred;'></span>";
                             document.getElementById(journee + "_" + inscrit).innerHTML = texte;
                         });
                     }

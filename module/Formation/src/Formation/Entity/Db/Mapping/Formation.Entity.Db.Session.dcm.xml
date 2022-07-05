@@ -41,6 +41,7 @@
 
         <field name="description"          type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
 
+        <one-to-many field="structuresComplemenaires" target-entity="Formation\Entity\Db\SessionStructureComplementaire" mapped-by="session"/>
         <one-to-many field="seances" target-entity="Formation\Entity\Db\Seance" mapped-by="session"/>
         <one-to-many field="formateurs" target-entity="Formation\Entity\Db\Formateur" mapped-by="session"/>
 

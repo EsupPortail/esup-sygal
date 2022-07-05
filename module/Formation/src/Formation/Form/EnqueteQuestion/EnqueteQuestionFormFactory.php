@@ -4,10 +4,18 @@ namespace Formation\Form\EnqueteQuestion;
 
 use Formation\Service\EnqueteCategorie\EnqueteCategorieService;
 use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class EnqueteQuestionFormFactory {
 
-    public function __invoke(ContainerInterface $container)
+    /**
+     * @param ContainerInterface $container
+     * @return EnqueteQuestionForm
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function __invoke(ContainerInterface $container)  :EnqueteQuestionForm
     {
         /**
          * @var EnqueteCategorieService $enqueteCategorieService

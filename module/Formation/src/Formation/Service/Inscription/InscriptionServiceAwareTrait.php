@@ -4,24 +4,24 @@ namespace Formation\Service\Inscription;
 
 trait InscriptionServiceAwareTrait
 {
-    private InscriptionService $seanceService;
+    private InscriptionService $inscriptionService;
 
     /**
      * @return InscriptionService
      */
     public function getInscriptionService(): InscriptionService
     {
-        return $this->seanceService;
+        return $this->inscriptionService;
     }
 
     /**
-     * @param InscriptionService $seanceService
+     * @param InscriptionService $inscriptionService
      * @return InscriptionService
      */
-    public function setInscriptionService(InscriptionService $seanceService): InscriptionService
+    public function setInscriptionService(InscriptionService $inscriptionService): InscriptionService
     {
-        $this->seanceService = $seanceService;
-        return $this->seanceService;
+        $this->inscriptionService = $inscriptionService;
+        return $this->inscriptionService;
     }
 
 }

@@ -324,3 +324,35 @@ create table formation_enquete_reponse
 
 create unique index formation_enquete_categorie_id_uindex
     on formation_enquete_categorie (id);
+
+create table formation_session_structure_complementaire
+(
+    id                    integer default nextval('formation_session_site_complementaire_id_seq'::regclass) not null
+        constraint formation_session_site_complementaire_pk
+            primary key,
+    session_id            integer                                                                           not null
+        constraint formation_session_site_complementaire_formation_session_id_fk
+            references formation_session
+            on delete cascade,
+    structure_id          integer                                                                           not null
+        constraint formation_session_site_complementaire_structure_id_fk
+            references structure
+            on delete cascade,
+    lieu                  varchar(1024),
+    histo_creation        timestamp                                                                         not null,
+    histo_createur_id     integer                                                                           not null
+        constraint formation_session_site_complementaire_utilisateur_id_fk_1
+            references utilisateur,
+    histo_modification    timestamp,
+    histo_modificateur_id integer
+        constraint formation_session_site_complementaire_utilisateur_id_fk_2
+            references utilisateur,
+    histo_destruction     timestamp,
+    histo_destructeur_id  integer
+        constraint formation_session_site_complementaire_utilisateur_id_fk_3
+            references utilisateur
+);
+
+create unique index formation_session_site_complementaire_id_uindex
+    on formation_session_structure_complementaire (id);
+

@@ -1,4 +1,6 @@
-<?php
+<?php /** @noinspection PhpUnusedAliasInspection */
+
+/** @noinspection PhpUnusedAliasInspection */
 
 namespace Formation\View\Helper;
 

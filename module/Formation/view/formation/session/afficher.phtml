@@ -3,6 +3,7 @@
 use Formation\Entity\Db\Formateur;use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
+use Formation\Entity\Db\SessionStructureComplementaire;
 use Formation\Provider\Privilege\EnquetePrivileges;
 use Formation\Provider\Privilege\FormationPrivileges;
 use Formation\Provider\Privilege\InscriptionPrivileges;
@@ -106,7 +107,50 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     <dt class="col-md-3"> Nombre d'inscription </dt>
     <dd class="col-md-9"> <?php echo count($inscrits); ?></dd>
 </dl>
-    </div>
+
+        <?php if (!empty($session->getStructuresComplemenaires()->toArray())) : ?>
+            <dl class="row">
+                <dt class="col-md-3"> Structures Complémentaires </dt>
+                <dd class="col-md-9">
+                    <ul>
+                    <?php /** @var SessionStructureComplementaire $structureComplemenaire */ ?>
+                    <?php foreach ($session->getStructuresComplemenaires() as $structureComplemenaire) : ?>
+                        <li>
+                            <span class=" <?php if ($structureComplemenaire->estHistorise()) echo " historise "; ?> ">
+                                <?php echo $structureComplemenaire->getStructure()->getLibelle(); ?>
+                                <?php if ($structureComplemenaire->getLieu() !== null) : ?>
+                                    <br/> <?php echo $structureComplemenaire->getLieu(); ?>
+                                <?php endif; ?>
+                                </span>
+
+                            <?php if ($canModifierSession) : ?>
+                                <?php /** @see \Formation\Controller\SessionStructureComplementaireController::modifierStructureComplementaireAction() */ ?>
+                                <a href="<?php echo $this->url('formation/session/modifier-structure-complementaire', ['structure-complementaire' => $structureComplemenaire->getId()], [], true); ?>"
+                                   class="ajax-modal" data-event="modification">
+                                    <span class="icon icon-editer"></span></a>
+                                <?php if ($structureComplemenaire->estNonHistorise()) : ?>
+                                    <?php /** @see \Formation\Controller\SessionStructureComplementaireController::historiserStructureComplemlentaireAction() */ ?>
+                                    <a href="<?php echo $this->url('formation/session/historiser-structure-complementaire', ['structure-complementaire' => $structureComplemenaire->getId()], [], true); ?>">
+                                        <span class="icon icon-historiser"></span></a>
+                                <?php else : ?>
+                                    <?php /** @see \Formation\Controller\SessionStructureComplementaireController::restaurerStructureComplemlentaireAction() */ ?>
+                                    <a href="<?php echo $this->url('formation/session/restaurer-structure-complementaire', ['structure-complementaire' => $structureComplemenaire->getId()], [], true); ?>">
+                                        <span class="icon icon-restaurer"></span></a>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                            <?php if ($canSupprimerSession) : ?>
+                                <?php /** @see \Formation\Controller\SessionStructureComplementaireController::supprimerStructureComplementaireAction() */ ?>
+                                <a href="<?php echo $this->url('formation/session/supprimer-structure-complementaire', ['structure-complementaire' => $structureComplemenaire->getId()], [], true); ?>"
+                                   class="ajax-modal" data-event="modification">
+                                    <span class="icon icon-detruire"></span></a>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                    </ul>
+                </dd>
+            </dl>
+        <?php endif; ?>
+</div>
     <div class="col-md-4">
         <?php if ($canIndexSession) : ?>
             <?php /** @see \Formation\Controller\SessionController::indexAction() */?>
@@ -147,6 +191,15 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
             >
                 <span class="fas fa-adjust"></span>
                 Changer l'état
+            </a>
+            <br/>
+            <br/>
+            <?php /** @see \Formation\Controller\SessionStructureComplementaireController::ajouterStructureComplementaireAction() */?>
+            <a class="btn btn-primary action ajax-modal" data-event="modification"
+               href="<?php echo $this->url('formation/session/ajouter-structure-complementaire', ['session' => $session->getId()], [], true); ?>"
+            >
+                <span class="icon icon-ajouter"></span>
+                Ajouter une structure complémentaire
             </a>
             <br/>
             <br/>

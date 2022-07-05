@@ -3,7 +3,6 @@
 namespace Formation\Entity\Db;
 
 use Doctorant\Entity\Db\Doctorant;
-use Structure\Entity\Db\Etablissement;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
 use DateInterval;
@@ -38,19 +37,18 @@ class Session implements HistoriqueAwareInterface,
         self::ETAT_CLOS_FINAL => self::ETAT_CLOS_FINAL,
     ];
 
-    const MODALITE_PRESENTIELLE = 'Présentiel';
-    const MODALITE_DISTANCIELLE = 'Distanciel';
+    const MODALITE_PRESENTIELLE = 'présentielle';
+    const MODALITE_DISTANCIELLE = 'distancielle';
 
     private int $id;
     private ?int $index = null;
     private ?Formation $formation = null;
 
-    /** TODO COLLECTION ? */
-    //private ?Etablissement $site = null;
-    private ?Utilisateur $responsable = null;
+    private ?Individu $responsable = null;
     private ?Etat $etat = null;
     private ?string $description;
 
+    private Collection $structuresComplemenaires;
     private Collection $seances;
     private Collection $formateurs;
     private Collection $inscriptions;
@@ -136,6 +134,14 @@ class Session implements HistoriqueAwareInterface,
     {
         $this->etat = $etat;
         return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getStructuresComplemenaires(): Collection
+    {
+        return $this->structuresComplemenaires;
     }
 
     /**
@@ -309,4 +315,6 @@ class Session implements HistoriqueAwareInterface,
         }
         return false;
     }
+
+    /** Pour les macros ********************************************************************************/
 }

@@ -105,7 +105,7 @@ class FormationForm extends Form {
         $responsable = new SearchAndSelect('responsable', ['label' => "Responsable du module de formation :"]);
         $responsable
             ->setAutocompleteSource($this->urlResponsable)
-            ->setSelectionRequired(true)
+            ->setSelectionRequired()
             ->setAttributes([
                 'id' => 'responsable',
                 'placeholder' => "Nom du responsable ...",

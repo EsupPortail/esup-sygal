@@ -9,16 +9,11 @@ use UnicaenApp\Entity\HistoriqueAwareTrait;
 class EnqueteCategorie implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
-    /** @var int */
-    private $id;
-    /** @var string|null */
-    private $libelle;
-    /** @var string|null */
-    private $description;
-    /** @var int|null */
-    private $ordre;
-    /** @var Collection (EnqueteQuestion) */
-    private $questions;
+    private int $id;
+    private ?string $libelle = null;
+    private ?string $description = null;
+    private ?int $ordre = null;
+    private Collection $questions;
 
     /**
      * @return int

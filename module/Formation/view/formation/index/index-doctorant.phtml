@@ -381,7 +381,7 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
 
         $('a[aria-controls=' + name + ']').tab('show');
 
-        $('.nav-tabs a').click(function (e) {
+        $('.nav-tabs a').click(function () {
             // No e.preventDefault() here
             $(this).tab('show');
         });

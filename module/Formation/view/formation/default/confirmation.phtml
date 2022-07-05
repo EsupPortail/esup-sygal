@@ -20,6 +20,7 @@
 <form method="post" action="<?php echo $action; ?>">
     <input type="hidden" name="reponse" value="oui">
     <?php if ($justificationOui === true) : ?>
+        <label for="justification-oui"> Justification </label>
         <textarea id="justification-oui" name="justification-oui" style="width: 95%;" placeholder="Merci de justifier"></textarea><br/>
     <?php endif; ?>
     <input type="submit" name="reponse" class="btn btn-success action" value="Oui, je suis sûr&middot;e">
@@ -28,6 +29,7 @@
 <form method="post" action="<?php echo $action; ?>">
     <input type="hidden" name="reponse" value="non">
     <?php if ($justificationNon === true) : ?>
+        <label for="justification-non"> Justification </label>
         <textarea id="justification-non" name="justification-non"  style="width: 95%;" placeholder="Merci de justifier"></textarea><br/>
     <?php endif; ?>
     <input type="submit" id="non" name="reponse" class="btn btn-danger action"  value="Non, je ne veux pas">

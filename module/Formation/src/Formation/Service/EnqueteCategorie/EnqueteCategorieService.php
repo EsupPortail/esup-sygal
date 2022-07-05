@@ -2,7 +2,6 @@
 
 namespace Formation\Service\EnqueteCategorie;
 
-use DateTime;
 use Doctrine\ORM\ORMException;
 use Formation\Entity\Db\EnqueteCategorie;
 use UnicaenApp\Exception\RuntimeException;
@@ -42,14 +41,14 @@ class EnqueteCategorieService {
         return $question;
     }
 
-    /** (todo ...)
+    /**
      * @param EnqueteCategorie $question
      * @return EnqueteCategorie
      */
     public function historise(EnqueteCategorie $question) : EnqueteCategorie
     {
         try {
-            $question->setHistoDestruction(new DateTime());
+            $question->historiser();
             $this->getEntityManager()->flush($question);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [EnqueteCategorie]",0, $e);
@@ -64,8 +63,7 @@ class EnqueteCategorieService {
     public function restore(EnqueteCategorie $question) : EnqueteCategorie
     {
         try {
-            $question->setHistoDestructeur(null);
-            $question->setHistoDestruction(null);
+            $question->dehistoriser();
             $this->getEntityManager()->flush($question);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème est survnue en base pour une entité [EnqueteCategorie]",0, $e);

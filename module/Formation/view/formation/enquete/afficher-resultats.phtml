@@ -148,13 +148,13 @@ usort($sans, function (EnqueteQuestion $a, EnqueteQuestion $b) { return $a->getO
                     <tr>
                         <td> <?php echo $libelle; ?> </td>
                         <td> <?php echo $histogramme[$question->getId()][$clef]; ?> </td>
-                        <td>
+
                         <?php if ($nbReponses !== 0) : ?>
-                            <?php echo number_format(($histogramme[$question->getId()][$clef]/$nbReponses)*100,2,',',''); ?> </td>
+                            <td> <?php echo number_format(($histogramme[$question->getId()][$clef]/$nbReponses)*100,2,',',''); ?> </td>
                         <?php else : ?>
-                            0
+                            <td> 0 </td>
                         <?php endif ; ?>
-                        </td>
+
                     </tr>
                     </tbody>
                     <?php endforeach; ?>
