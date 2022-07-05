@@ -15,6 +15,8 @@ class NewEmailValidator extends AbstractValidator
     const UTILISATEUR = 'utilisateur';
     const INDIVIDU = 'individu';
 
+    protected array $perimetre = [self::UTILISATEUR, self::INDIVIDU];
+
     protected array $messageTemplates = [
         self::UTILISATEUR => "Adresse électronique déjà utilisée (Utilisateur)",
         self::INDIVIDU => "Adresse électronique déjà utilisée (Individu)",
@@ -29,7 +31,7 @@ class NewEmailValidator extends AbstractValidator
             $nb_pb++;
         }
 
-        $perimetre = $this->getOption('perimetre') ?: ['utilisateur', 'individu'];
+        $perimetre = $this->getPerimetre();
 
         if (in_array('utilisateur', $perimetre)) {
             if ($this->entityManager->getRepository(Individu::class)->findOneBy(['email' => $value]) !== null) {
@@ -48,5 +50,19 @@ class NewEmailValidator extends AbstractValidator
         return true;
     }
 
+    /**
+     * @param string[] $perimetre
+     */
+    public function setPerimetre(array $perimetre): void
+    {
+        $this->perimetre = $perimetre;
+    }
 
+    /**
+     * @return string[]
+     */
+    public function getPerimetre(): array
+    {
+        return $this->perimetre;
+    }
 }

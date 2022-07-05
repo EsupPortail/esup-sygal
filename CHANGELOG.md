@@ -6,6 +6,7 @@ Journal des modifications
 - Retrait de `IntervenantEmailFormatter` et de `IntervenantTrouveFormatter` (classes inutilisées)
 - Changement du terme Établissement par Site dans l'affichage des rôles des EDs et des URs pour éviter la confusion
 - [FIX] retrait d'un début faisant planter la génération de convaocation de soutenance 
+- [FIX] Correction du plantage lors de la création manuelle d'un utilisateur.
 
 4.2.0
 -----
