@@ -27,12 +27,16 @@ trait SearchControllerTrait
     }
 
     /**
+     * @param callable|null $queryBuilderModifierCallback Fonction de rappel éventuelle permettant d'agir sur
+     * le query builder généré par le {@see \Application\Search\SearchService}. Cette fonction doit accepter en argument
+     * un {@see \Doctrine\ORM\QueryBuilder}.
+     *
      * @return Response|LaminasPaginator
      * @see SearchControllerPlugin::searchIfRequested()
      */
-    public function searchIfRequested()
+    public function searchIfRequested(?callable $queryBuilderModifierCallback = null)
     {
-        return $this->getSearchPluginController()->searchIfRequested();
+        return $this->getSearchPluginController()->searchIfRequested($queryBuilderModifierCallback);
     }
 
     /**
@@ -61,6 +65,9 @@ trait SearchControllerTrait
             throw new DomainException("Ce trait n'est utilisable que sur un contrôleur de type " . AbstractActionController::class);
         }
 
-        return $this->getPluginManager()->get('searchControllerPlugin');
+        /** @var SearchControllerPlugin $plugin */
+        $plugin = $this->getPluginManager()->get('searchControllerPlugin');
+
+        return $plugin;
     }
 }

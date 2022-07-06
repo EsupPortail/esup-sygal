@@ -45,20 +45,21 @@ class FormationSearchService extends SearchService
     const NAME_libelle = 'libelle';
     const NAME_modalite = 'modalite';
     const NAME_responsable = 'responsable';
-
-    public function init()
+    
+    protected SearchFilter $libelleFilter;
+    protected SearchFilter $responsableFilter;
+    protected SearchFilter $modaliteFilter;
+    
+    public function __construct() 
     {
-        $libelleFilter = $this->createLibelleFilter()->setWhereField('f.libelle');
-        $responsableFilter = $this->createResponsableFilter();
-        $modaliteFilter = $this->createModaliteFilter()->setWhereField('f.modalite');
-
-        $responsableFilter->setDataProvider(fn() => $this->formationRepository->fetchListeResponsable());
-        $modaliteFilter->setData(HasModaliteInterface::MODALITES);
-
+        $this->libelleFilter = $this->createLibelleFilter()->setWhereField('f.libelle');
+        $this->responsableFilter = $this->createResponsableFilter();
+        $this->modaliteFilter = $this->createModaliteFilter()->setWhereField('f.modalite');
+        
         $this->addFilters([
-            $libelleFilter,
-            $responsableFilter,
-            $modaliteFilter,
+            $this->libelleFilter,
+            $this->responsableFilter,
+            $this->modaliteFilter,
         ]);
 
         $this->addSorters([
@@ -66,6 +67,12 @@ class FormationSearchService extends SearchService
             $this->createResponsableSorter(),
             $this->createModaliteSorter(),
         ]);
+    }
+    
+    public function init()
+    {
+        $this->responsableFilter->setDataProvider(fn() => $this->formationRepository->fetchListeResponsable());
+        $this->modaliteFilter->setData(HasModaliteInterface::MODALITES);
     }
 
     public function createQueryBuilder(): QueryBuilder
@@ -376,6 +383,7 @@ Cf. [paginator.phtml](../../module/Formation/view/formation/paginator.phtml)
                         'may_terminate' => true,
                         'options' => [
                             'route'    => '/formation',
+                            //'route'    => '/formation[/:type]', <<< Désolé mais c'est impossible !
                             'defaults' => [
                                 'controller' => FormationRechercheController::class,
                                 'action'     => 'index',
@@ -407,4 +415,20 @@ Cf. [paginator.phtml](../../module/Formation/view/formation/paginator.phtml)
                     ],
                 ],
     // ...
+```
+
+**Remarques importantes** : 
+- La route menant à l'action de recherche ne peut pas faire mention d'un paramètre facultatif.
+  Une solution possible :
+```php
+                        'options' => [
+                            'route'    => '/formation/:type',
+                            'constraints' => [
+                                'type' => '(\d+)|(tous)',
+                            ],
+                            'defaults' => [
+                                'controller' => FormationRechercheController::class,
+                                'action'     => 'index',
+                                'type'       => 'tous',
+                            ],
 ```

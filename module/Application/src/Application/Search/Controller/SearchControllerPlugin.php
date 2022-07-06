@@ -26,9 +26,13 @@ class SearchControllerPlugin extends AbstractPlugin
      * NB : Contrairement à {@see self::searchIfRequested()}, ici le paginator retourné contient systématiquement
      * un résultat de recherche (cf. {@see SearchResultPaginator::containsRealSearchResult()}).
      *
+     * @param callable|null $queryBuilderModifierCallback Fonction de rappel éventuelle permettant d'agir sur
+     * le query builder généré par le {@see \Application\Search\SearchService}. Cette fonction doit accepter en argument
+     * un {@see \Doctrine\ORM\QueryBuilder}.
+     *
      * @return Response|SearchResultPaginator
      */
-    public function search()
+    public function search(?callable $queryBuilderModifierCallback = null)
     {
         $queryParams = array_filter($this->getController()->params()->fromQuery());
 
@@ -45,8 +49,12 @@ class SearchControllerPlugin extends AbstractPlugin
         $searchService->initFiltersWithUnpopulatedOptions();
         $searchService->processQueryParams($queryParams);
 
-        /** Configuration du paginator **/
         $qb = $searchService->getQueryBuilder();
+        if ($queryBuilderModifierCallback !== null) {
+            $queryBuilderModifierCallback($qb);
+        }
+
+        /** Configuration du paginator **/
         $maxi = $this->getController()->params()->fromQuery('maxi', 50);
         $page = $this->getController()->params()->fromQuery('page', 1);
         $paginator = new SearchResultPaginator(new DoctrinePaginator(new Paginator($qb, true)));
@@ -67,9 +75,13 @@ class SearchControllerPlugin extends AbstractPlugin
      * Cela est utile pour ne lancer une recherche que lorsque l'utilisateur a cliqué sur le bouton "Rechercher"
      * du formulaire de recherche.
      *
+     * @param callable|null $queryBuilderModifierCallback Fonction de rappel éventuelle permettant d'agir sur
+     * le query builder généré par le {@see \Application\Search\SearchService}. Cette fonction doit accepter en argument
+     * un {@see \Doctrine\ORM\QueryBuilder}.
+     *
      * @return Response|SearchResultPaginator
      */
-    public function searchIfRequested()
+    public function searchIfRequested(?callable $queryBuilderModifierCallback = null)
     {
         $queryParams = array_filter($this->getController()->params()->fromQuery());
 
@@ -80,7 +92,7 @@ class SearchControllerPlugin extends AbstractPlugin
             return $paginator;
         }
 
-        return $this->search();
+        return $this->search($queryBuilderModifierCallback);
     }
 
     /**

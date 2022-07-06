@@ -5,15 +5,18 @@ use Formation\Entity\Db\EnqueteQuestion;
 use Formation\Entity\Db\EnqueteReponse;
 
 /**
- * @see \Formation\Controller\EnqueteController::afficherResultatsAction()
+ * @see \Formation\Controller\Recherche\EnqueteReponseRechercheController::afficherResultatsAction()
+ * @var \Formation\Entity\Db\Session $session
  * @var array $array;
  * @var array $histogramme;
  * @var int $nbReponses;
  * @var EnqueteCategorie[] $categories
  * @var EnqueteQuestion[] $questions
+ * @var string $routeName
+ * @var string $title
  */
 
-$this->headTitle("Résultats de l'enquête");
+$this->headTitle($this->translate($title));
 
 
 usort($categories, function (EnqueteCategorie $a, EnqueteCategorie $b) { return $a->getOrdre() > $b->getOrdre();});
@@ -24,14 +27,26 @@ usort($categories, function (EnqueteCategorie $a, EnqueteCategorie $b) { return 
 </script>
 
 <h1 class="page-header">
-    Résultats de  l'enquête
+    <?php echo $this->translate($title) ?>
 </h1>
+<h2>
+    <?php echo $session ? $this->sessionLibelle($session) : "Toutes sessions confondues" ?>
+</h2>
 
-ICI FILTRE
+
+<!-- Formulaire de filtrage -->
+<div class="float-start">
+    <?php $loadFiltersUrl = $this->url($routeName . '/filters', $session ? ['session' => $session->getId()] : [], ['query' => $this->queryParams()], true); ?>
+    <div id="filters" data-url="<?php echo $loadFiltersUrl ?>" style="min-height: 120px">
+        <!-- Contenu chargé en AJAX -->
+    </div>
+</div>
+<div class="clearfix"></div>
+
 
 <div class="row">
     <div class="col-md-6">
-        <h2> Histogrammes </h2>
+        <h3> Histogrammes </h3>
     </div>
     <div class="float-end">
         <span class="btn btn-primary export" id="histogrammes">
@@ -53,10 +68,10 @@ ICI FILTRE
 
         <div class="row">
             <div class="col-md-6">
-                <h3>
-                    <?php echo $categorie->getLibelle(); ?> <br/>
-                    <?php echo $question->getLibelle(); ?>
-                </h3>
+                <h4>
+                    <span class="formation-typage">Catégorie</span> <?php echo $categorie->getLibelle(); ?> <br/>
+                    <span class="formation-typage">Question</span> <?php echo $question->getLibelle(); ?>
+                </h4>
                 <table class="table table-sm">
             <thead>
             <tr>
@@ -205,7 +220,7 @@ usort($sans, function (EnqueteQuestion $a, EnqueteQuestion $b) { return $a->getO
 <!-- REPONSE BRUTE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 <div class="row">
     <div class="col-md-6">
-        <h2> Réponses brutes</h2>
+        <h3> Réponses brutes</h3>
     </div>
     <div class="float-end">
         <span class="btn btn-primary export" id="resultats">
@@ -281,4 +296,10 @@ usort($sans, function (EnqueteQuestion $a, EnqueteQuestion $b) { return $a->getO
         downloadCSVFromJson('enquete_'+$(this).attr('id')+'_'+ Date.now().toString() +'.csv', header, tableau);
     });
 
+</script>
+
+<script>
+    $(function() {
+        $("#filters").addClass("loading").refresh(null, function() { $(this).removeClass("loading"); });
+    });
 </script>

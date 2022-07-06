@@ -10,18 +10,14 @@ use Formation\Service\EnqueteCategorie\EnqueteCategorieService;
 use Formation\Service\EnqueteQuestion\EnqueteQuestionService;
 use Formation\Service\EnqueteReponse\EnqueteReponseService;
 use Interop\Container\ContainerInterface;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
-class EnqueteControllerFactory {
+class EnqueteQuestionControllerFactory {
 
     /**
-     * @param ContainerInterface $container
-     * @return EnqueteController
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
      */
-    public function __invoke(ContainerInterface $container) : EnqueteController
+    public function __invoke(ContainerInterface $container) : EnqueteQuestionController
     {
         /**
          * @var EntityManager $entityManager
@@ -42,7 +38,7 @@ class EnqueteControllerFactory {
         $enqueteQuestionForm = $container->get('FormElementManager')->get(EnqueteQuestionForm::class);
         $enqueteReponseForm = $container->get('FormElementManager')->get(EnqueteReponseForm::class);
 
-        $controller = new EnqueteController();
+        $controller = new EnqueteQuestionController();
         $controller->setEntityManager($entityManager);
         $controller->setEnqueteCategorieService($enqueteCategorieService);
         $controller->setEnqueteQuestionService($enqueteQuestionService);

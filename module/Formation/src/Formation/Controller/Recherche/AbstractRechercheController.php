@@ -17,7 +17,7 @@ class AbstractRechercheController extends AbstractController implements SearchCo
 
     protected string $routeName;
     protected string $indexActionTemplate;
-    protected string $filtersActionTemplate;
+    protected string $filtersActionTemplate = 'formation/filters';
     protected string $title;
 
     /**

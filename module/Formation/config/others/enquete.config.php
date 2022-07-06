@@ -2,9 +2,12 @@
 
 namespace Formation;
 
-
-use Formation\Controller\EnqueteController;
-use Formation\Controller\EnqueteControllerFactory;
+use Formation\Controller\EnqueteQuestionController;
+use Formation\Controller\EnqueteQuestionControllerFactory;
+use Formation\Controller\EnqueteReponseController;
+use Formation\Controller\EnqueteReponseControllerFactory;
+use Formation\Controller\Recherche\EnqueteReponseRechercheController;
+use Formation\Controller\Recherche\EnqueteReponseRechercheControllerFactory;
 use Formation\Form\EnqueteCategorie\EnqueteCategorieForm;
 use Formation\Form\EnqueteCategorie\EnqueteCategorieFormFactory;
 use Formation\Form\EnqueteCategorie\EnqueteCategorieHydrator;
@@ -24,16 +27,18 @@ use Formation\Service\EnqueteQuestion\EnqueteQuestionService;
 use Formation\Service\EnqueteQuestion\EnqueteQuestionServiceFactory;
 use Formation\Service\EnqueteReponse\EnqueteReponseService;
 use Formation\Service\EnqueteReponse\EnqueteReponseServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
+use Formation\Service\EnqueteReponse\Search\EnqueteReponseSearchService;
+use Formation\Service\EnqueteReponse\Search\EnqueteReponseSearchServiceFactory;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
+use UnicaenAuth\Guard\PrivilegeController;
 
 return [
     'bjyauthorize' => [
         'guards' => [
             PrivilegeController::class => [
                 [
-                    'controller' => EnqueteController::class,
+                    'controller' => EnqueteQuestionController::class,
                     'action' => [
                         'afficher-questions',
                     ],
@@ -42,7 +47,7 @@ return [
                     ],
                 ],
                 [
-                    'controller' => EnqueteController::class,
+                    'controller' => EnqueteQuestionController::class,
                     'action' => [
                         'ajouter-categorie',
                         'ajouter-question',
@@ -52,7 +57,7 @@ return [
                     ],
                 ],
                 [
-                    'controller' => EnqueteController::class,
+                    'controller' => EnqueteQuestionController::class,
                     'action' => [
                         'modifier-categorie',
                         'modifier-question',
@@ -62,7 +67,7 @@ return [
                     ],
                 ],
                 [
-                    'controller' => EnqueteController::class,
+                    'controller' => EnqueteQuestionController::class,
                     'action' => [
                         'historiser-categorie',
                         'restaurer-categorie',
@@ -74,7 +79,7 @@ return [
                     ],
                 ],
                 [
-                    'controller' => EnqueteController::class,
+                    'controller' => EnqueteQuestionController::class,
                     'action' => [
                         'supprimer-categorie',
                         'supprimer-question',
@@ -84,21 +89,22 @@ return [
                     ],
                 ],
                 [
-                    'controller' => EnqueteController::class,
-                    'action' => [
-                        'afficher-resultats',
-                    ],
-                    'privileges' => [
-                        EnquetePrivileges::ENQUETE_REPONSE_RESULTAT,
-                    ],
-                ],
-                [
-                    'controller' => EnqueteController::class,
+                    'controller' => EnqueteQuestionController::class,
                     'action' => [
                         'repondre-questions',
                     ],
                     'privileges' => [
                         EnquetePrivileges::ENQUETE_REPONSE_REPONDRE,
+                    ],
+                ],
+                [
+                    'controller' => EnqueteReponseRechercheController::class,
+                    'action' => [
+                        'afficher-resultats',
+                        'filters',
+                    ],
+                    'privileges' => [
+                        EnquetePrivileges::ENQUETE_REPONSE_RESULTAT,
                     ],
                 ],
             ],
@@ -114,13 +120,16 @@ return [
                             'enquete-question' => [
                                 'label'    => 'Enquête - Question',
                                 'route'    => 'formation/enquete/question',
-                                'resource' => PrivilegeController::getResourceId(EnqueteController::class, 'afficher-questions') ,
+                                'resource' => PrivilegeController::getResourceId(EnqueteQuestionController::class, 'afficher-questions') ,
                                 'order'    => 700,
                             ],
                             'enquete-resultat' => [
                                 'label'    => 'Enquête - Resultat',
                                 'route'    => 'formation/enquete/resultat',
-                                'resource' => PrivilegeController::getResourceId(EnqueteController::class, 'afficher-questions') ,
+                                'params'   => [
+                                    'session' => EnqueteReponseRechercheController::SESSION_ROUTE_PARAM_TOUTES,
+                                ],
+                                'resource' => PrivilegeController::getResourceId(EnqueteQuestionController::class, 'afficher-questions') ,
                                 'order'    => 800,
                             ],
                         ],
@@ -145,10 +154,25 @@ return [
                                 'type'  => Segment::class,
                                 'may_terminate' => true,
                                 'options' => [
-                                    'route'    => '/resultat[/:session]',
+                                    'route'    => '/resultat/session/:session',
+                                    'constraints' => [
+                                        'session' => '(\d+)|(' . EnqueteReponseRechercheController::SESSION_ROUTE_PARAM_TOUTES . ')',
+                                    ],
                                     'defaults' => [
-                                        'controller' => EnqueteController::class,
+                                        'controller' => EnqueteReponseRechercheController::class,
                                         'action'     => 'afficher-resultats',
+                                        'session'    => EnqueteReponseRechercheController::SESSION_ROUTE_PARAM_TOUTES,
+                                    ],
+                                ],
+                                'child_routes' => [
+                                    'filters' => [
+                                        'type' => 'Literal',
+                                        'options' => [
+                                            'route' => '/filters',
+                                            'defaults' => [
+                                                'action' => 'filters',
+                                            ],
+                                        ],
                                     ],
                                 ],
                             ],
@@ -158,7 +182,7 @@ return [
                                 'options' => [
                                     'route'    => '/question',
                                     'defaults' => [
-                                        'controller' => EnqueteController::class,
+                                        'controller' => EnqueteQuestionController::class,
                                         'action'     => 'afficher-questions',
                                     ],
                                 ],
@@ -169,7 +193,6 @@ return [
                                         'options' => [
                                             'route'    => '/ajouter',
                                             'defaults' => [
-                                                'controller' => EnqueteController::class,
                                                 'action'     => 'ajouter-question',
                                             ],
                                         ],
@@ -180,7 +203,6 @@ return [
                                         'options' => [
                                             'route'    => '/modifier/:question',
                                             'defaults' => [
-                                                'controller' => EnqueteController::class,
                                                 'action'     => 'modifier-question',
                                             ],
                                         ],
@@ -191,7 +213,6 @@ return [
                                         'options' => [
                                             'route'    => '/historiser/:question',
                                             'defaults' => [
-                                                'controller' => EnqueteController::class,
                                                 'action'     => 'historiser-question',
                                             ],
                                         ],
@@ -202,7 +223,6 @@ return [
                                         'options' => [
                                             'route'    => '/restaurer/:question',
                                             'defaults' => [
-                                                'controller' => EnqueteController::class,
                                                 'action'     => 'restaurer-question',
                                             ],
                                         ],
@@ -213,7 +233,6 @@ return [
                                         'options' => [
                                             'route'    => '/supprimer/:question',
                                             'defaults' => [
-                                                'controller' => EnqueteController::class,
                                                 'action'     => 'supprimer-question',
                                             ],
                                         ],
@@ -226,6 +245,7 @@ return [
                                 'options' => [
                                     'route'    => '/categorie',
                                     'defaults' => [
+                                        'controller' => EnqueteQuestionController::class,
                                     ],
                                 ],
                                 'child_routes' => [
@@ -235,7 +255,6 @@ return [
                                         'options' => [
                                             'route'    => '/ajouter',
                                             'defaults' => [
-                                                'controller' => EnqueteController::class,
                                                 'action'     => 'ajouter-categorie',
                                             ],
                                         ],
@@ -246,7 +265,6 @@ return [
                                         'options' => [
                                             'route'    => '/modifier/:categorie',
                                             'defaults' => [
-                                                'controller' => EnqueteController::class,
                                                 'action'     => 'modifier-categorie',
                                             ],
                                         ],
@@ -257,7 +275,6 @@ return [
                                         'options' => [
                                             'route'    => '/historiser/:categorie',
                                             'defaults' => [
-                                                'controller' => EnqueteController::class,
                                                 'action'     => 'historiser-categorie',
                                             ],
                                         ],
@@ -268,7 +285,6 @@ return [
                                         'options' => [
                                             'route'    => '/restaurer/:categorie',
                                             'defaults' => [
-                                                'controller' => EnqueteController::class,
                                                 'action'     => 'restaurer-categorie',
                                             ],
                                         ],
@@ -279,7 +295,6 @@ return [
                                         'options' => [
                                             'route'    => '/supprimer/:categorie',
                                             'defaults' => [
-                                                'controller' => EnqueteController::class,
                                                 'action'     => 'supprimer-categorie',
                                             ],
                                         ],
@@ -292,7 +307,7 @@ return [
                                 'options' => [
                                     'route'    => '/repondre-questions/:inscription',
                                     'defaults' => [
-                                        'controller' => EnqueteController::class,
+                                        'controller' => EnqueteQuestionController::class,
                                         'action'     => 'repondre-questions',
                                     ],
                                 ],
@@ -309,11 +324,16 @@ return [
             EnqueteCategorieService::class => EnqueteCategorieServiceFactory::class,
             EnqueteQuestionService::class => EnqueteQuestionServiceFactory::class,
             EnqueteReponseService::class => EnqueteReponseServiceFactory::class,
+
+            EnqueteReponseSearchService::class => EnqueteReponseSearchServiceFactory::class,
         ],
     ],
     'controllers'     => [
         'factories' => [
-            EnqueteController::class => EnqueteControllerFactory::class,
+            EnqueteQuestionController::class => EnqueteQuestionControllerFactory::class,
+            EnqueteReponseController::class => EnqueteReponseControllerFactory::class,
+
+            EnqueteReponseRechercheController::class => EnqueteReponseRechercheControllerFactory::class,
         ],
     ],
     'form_elements' => [

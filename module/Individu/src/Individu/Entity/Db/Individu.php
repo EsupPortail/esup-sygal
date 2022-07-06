@@ -138,6 +138,22 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface, Resour
     private $complements;
 
     /**
+     * Fabrique un tableau permettant d'alimenter un select.
+     *
+     * @param \Individu\Entity\Db\Individu[] $individus
+     * @return string[] id individu => nom complet sans civilité
+     */
+    static public function asSelectValuesOptions(array $individus): array
+    {
+        $valuesOptions = [];
+        foreach ($individus as $i) {
+            $valuesOptions[$i->getId()] = $i->getNomComplet(false);
+        }
+
+        return $valuesOptions;
+    }
+
+    /**
      * Individu constructor.
      */
     public function __construct()

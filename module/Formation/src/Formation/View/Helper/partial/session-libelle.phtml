@@ -1,9 +1,5 @@
-<?php /** @noinspection PhpUnusedAliasInspection */
+<?php
 
-/** @noinspection PhpUnusedAliasInspection */
-
-use Formation\Entity\Db\Formateur;
-use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
 
 /**
@@ -14,16 +10,21 @@ use Formation\Entity\Db\Session;
 
 ?>
 
-<?php echo $session->getFormation()->getLibelle(); ?>
-<?php if ($options["index"]??false) : ?>
-    #<?php echo $session->getIndex(); ?>
+<?php if ($options["index"] ?? false) : ?>
+    <span class="formation-typage">Session</span> #<?php echo $session->getIndex(); ?>
 <?php endif; ?>
-<?php if ($options["module"]??false) : ?>
+
+<span class="formation-typage">Formation</span> <?php echo $session->getFormation()->getLibelle(); ?>
+
+<?php if ($options["module"] ?? false) : ?>
     <br/>
-    <?php $module = $session->getFormation()->getModule(); ?>
-    <?php if ($module !== null) : ?>
-        <?php echo $module->getLibelle(); ?>
-    <?php else : ?>
-        <i>Aucun module</i>
-    <?php endif; ?>
+    <small>
+        <span class="formation-typage">Module</span>
+        <?php $module = $session->getFormation()->getModule(); ?>
+        <?php if ($module !== null) : ?>
+            <?php echo $module->getLibelle(); ?>
+        <?php else : ?>
+            <i>Aucun</i>
+        <?php endif; ?>
+    </small>
 <?php endif; ?>

@@ -346,7 +346,7 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
                     </td>
                     <td>
                         <?php if ($canRepondreEnquete) : ?>
-                            <?php /** @see \Formation\Controller\EnqueteController::repondreQuestionsAction() */?>
+                            <?php /** @see \Formation\Controller\EnqueteQuestionController::repondreQuestionsAction() */?>
                             <a href="<?php echo $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true); ?>">
                         <span class="icon icon-edit"
                               title="Compléter l'enquête" data-bs-toggle="tooltip" data-bs-html="true"

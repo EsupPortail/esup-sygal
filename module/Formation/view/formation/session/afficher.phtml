@@ -206,7 +206,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
         <?php endif; ?>
 
         <?php if ($canResultatEnquete) : ?>
-            <?php /** @see \Formation\Controller\EnqueteController::afficherResultatsAction() */?>
+            <?php /** @see \Formation\Controller\EnqueteQuestionController::afficherResultatsAction() */?>
             <a class="btn btn-primary action"
                href="<?php echo $this->url('formation/enquete/resultat', ['session' => $session->getId()], [], true); ?>"
                target="_blank"

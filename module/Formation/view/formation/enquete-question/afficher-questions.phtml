@@ -5,7 +5,7 @@ use Formation\Entity\Db\EnqueteQuestion;
 use Formation\Provider\Privilege\EnquetePrivileges;
 
 /**
- * @see \Formation\Controller\EnqueteController::afficherQuestionsAction()
+ * @see \Formation\Controller\EnqueteQuestionController::afficherQuestionsAction()
  * @var EnqueteCategorie[] $categories
  * @var EnqueteQuestion[] $questions
  */
@@ -42,7 +42,7 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                     <?php endif; ?>
 
                     <?php if ($canModifierQuestion) : ?>
-                        <?php /** @see \Formation\Controller\EnqueteController::modifierCategorieAction() */?>
+                        <?php /** @see \Formation\Controller\EnqueteQuestionController::modifierCategorieAction() */?>
                         <a href="<?php echo $this->url('formation/enquete/categorie/modifier', ['categorie' => $categorie->getId()], [], true); ?>"
                            class="ajax-modal" data-event="modification"
                         >
@@ -50,19 +50,19 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                     <?php endif; ?>
                     <?php if ($canHistoriserQuestion) : ?>
                         <?php if ($categorie->estNonHistorise()) : ?>
-                            <?php /** @see \Formation\Controller\EnqueteController::historiserCategorieAction() */?>
+                            <?php /** @see \Formation\Controller\EnqueteQuestionController::historiserCategorieAction() */?>
                             <a href="<?php echo $this->url('formation/enquete/categorie/historiser', ['categorie' => $categorie->getId()], [], true); ?>"
                             >
                                 <span class="icon icon-historiser"></span></a>
                         <?php else : ?>
-                            <?php /** @see \Formation\Controller\EnqueteController::restaurerCategorieAction() */?>
+                            <?php /** @see \Formation\Controller\EnqueteQuestionController::restaurerCategorieAction() */?>
                             <a href="<?php echo $this->url('formation/enquete/categorie/restaurer', ['categorie' => $categorie->getId()], [], true); ?>"
                             >
                                 <span class="icon icon-restaurer"></span></a>
                         <?php endif; ?>
                     <?php endif; ?>
                     <?php if ($canSupprimerQuestion) : ?>
-                        <?php /** @see \Formation\Controller\EnqueteController::supprimerCategorieAction() */?>
+                        <?php /** @see \Formation\Controller\EnqueteQuestionController::supprimerCategorieAction() */?>
                         <a href="<?php echo $this->url('formation/enquete/categorie/supprimer', ['categorie' => $categorie->getId()], [], true); ?>"
                            class="ajax-modal" data-event="modification"
                         >
@@ -87,7 +87,7 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                                     ></span>
                                 <?php endif; ?>
                                 <?php if ($canModifierQuestion) : ?>
-                                    <?php /** @see \Formation\Controller\EnqueteController::modifierQuestionAction() */?>
+                                    <?php /** @see \Formation\Controller\EnqueteQuestionController::modifierQuestionAction() */?>
                                     <a href="<?php echo $this->url('formation/enquete/question/modifier', ['question' => $question->getId()], [], true); ?>"
                                        class="ajax-modal" data-event="modification"
                                     >
@@ -95,19 +95,19 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                                 <?php endif; ?>
                                 <?php if ($canHistoriserQuestion) : ?>
                                     <?php if ($question->estNonHistorise()) : ?>
-                                        <?php /** @see \Formation\Controller\EnqueteController::historiserQuestionAction() */?>
+                                        <?php /** @see \Formation\Controller\EnqueteQuestionController::historiserQuestionAction() */?>
                                         <a href="<?php echo $this->url('formation/enquete/question/historiser', ['question' => $question->getId()], [], true); ?>"
                                         >
                                             <span class="icon icon-historiser"></span></a>
                                     <?php else : ?>
-                                        <?php /** @see \Formation\Controller\EnqueteController::restaurerQuestionAction() */?>
+                                        <?php /** @see \Formation\Controller\EnqueteQuestionController::restaurerQuestionAction() */?>
                                         <a href="<?php echo $this->url('formation/enquete/question/restaurer', ['question' => $question->getId()], [], true); ?>"
                                         >
                                             <span class="icon icon-restaurer"></span></a>
                                     <?php endif; ?>
                                 <?php endif; ?>
                                 <?php if ($canSupprimerQuestion) : ?>
-                                    <?php /** @see \Formation\Controller\EnqueteController::supprimerQuestionAction() */?>
+                                    <?php /** @see \Formation\Controller\EnqueteQuestionController::supprimerQuestionAction() */?>
                                     <a href="<?php echo $this->url('formation/enquete/question/supprimer', ['question' => $question->getId()], [], true); ?>"
                                        class="ajax-modal" data-event="modification"
                                     >
@@ -133,7 +133,7 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                             ></span>
                         <?php endif; ?>
                         <?php if ($canModifierQuestion) : ?>
-                            <?php /** @see \Formation\Controller\EnqueteController::modifierQuestionAction() */?>
+                            <?php /** @see \Formation\Controller\EnqueteQuestionController::modifierQuestionAction() */?>
                             <a href="<?php echo $this->url('formation/enquete/question/modifier', ['question' => $question->getId()], [], true); ?>"
                                class="ajax-modal" data-event="modification"
                             >
@@ -141,19 +141,19 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
                         <?php endif; ?>
                         <?php if ($canHistoriserQuestion) : ?>
                             <?php if ($question->estNonHistorise()) : ?>
-                                <?php /** @see \Formation\Controller\EnqueteController::historiserQuestionAction() */?>
+                                <?php /** @see \Formation\Controller\EnqueteQuestionController::historiserQuestionAction() */?>
                                 <a href="<?php echo $this->url('formation/enquete/question/historiser', ['question' => $question->getId()], [], true); ?>"
                                 >
                                     <span class="icon icon-historiser"></span></a>
                             <?php else : ?>
-                                <?php /** @see \Formation\Controller\EnqueteController::restaurerQuestionAction() */?>
+                                <?php /** @see \Formation\Controller\EnqueteQuestionController::restaurerQuestionAction() */?>
                                 <a href="<?php echo $this->url('formation/enquete/question/restaurer', ['question' => $question->getId()], [], true); ?>"
                                 >
                                     <span class="icon icon-restaurer"></span></a>
                             <?php endif; ?>
                         <?php endif; ?>
                         <?php if ($canSupprimerQuestion) : ?>
-                            <?php /** @see \Formation\Controller\EnqueteController::supprimerQuestionAction() */?>
+                            <?php /** @see \Formation\Controller\EnqueteQuestionController::supprimerQuestionAction() */?>
                             <a href="<?php echo $this->url('formation/enquete/question/supprimer', ['question' => $question->getId()], [], true); ?>"
                                class="ajax-modal" data-event="modification"
                             >
@@ -168,7 +168,7 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
     </div>
     <div class="col-md-3 float-end">
         <?php if ($canAjouterQuestion) : ?>
-<!--            --><?php ///** @see \Formation\Controller\EnqueteController::ajouterEnqueteAction() */?>
+<!--            --><?php ///** @see \Formation\Controller\EnqueteQuestionController::ajouterEnqueteAction() */?>
 <!--            <a href="--><?php ////echo $this->url('formation/enquete/enquete/ajouter', [], [], true); ?><!--"-->
 <!--               class="btn btn-primary ajax-modal action" data-event="modification"-->
 <!--            >-->
@@ -178,7 +178,7 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
 <!--            </a>-->
 <!--            <br>-->
 <!--            <br>-->
-            <?php /** @see \Formation\Controller\EnqueteController::ajouterCategorieAction() */?>
+            <?php /** @see \Formation\Controller\EnqueteQuestionController::ajouterCategorieAction() */?>
             <a href="<?php echo $this->url('formation/enquete/categorie/ajouter', [], [], true); ?>"
                class="btn btn-primary ajax-modal action" data-event="modification"
             >
@@ -188,7 +188,7 @@ $sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getC
             </a>
             <br>
             <br>
-            <?php /** @see \Formation\Controller\EnqueteController::ajouterQuestionAction() */?>
+            <?php /** @see \Formation\Controller\EnqueteQuestionController::ajouterQuestionAction() */?>
             <a href="<?php echo $this->url('formation/enquete/question/ajouter', [], [], true); ?>"
                class="btn btn-primary ajax-modal action" data-event="modification"
             >

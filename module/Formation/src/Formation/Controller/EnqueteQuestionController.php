@@ -8,7 +8,6 @@ use Formation\Entity\Db\EnqueteCategorie;
 use Formation\Entity\Db\EnqueteQuestion;
 use Formation\Entity\Db\EnqueteReponse;
 use Formation\Entity\Db\Inscription;
-use Formation\Entity\Db\Session;
 use Formation\Form\EnqueteCategorie\EnqueteCategorieFormAwareTrait;
 use Formation\Form\EnqueteQuestion\EnqueteQuestionFormAwareTrait;
 use Formation\Form\EnqueteReponse\EnqueteReponseFormAwareTrait;
@@ -16,10 +15,10 @@ use Formation\Service\EnqueteCategorie\EnqueteCategorieServiceAwareTrait;
 use Formation\Service\EnqueteQuestion\EnqueteQuestionServiceAwareTrait;
 use Formation\Service\EnqueteReponse\EnqueteReponseServiceAwareTrait;
 use Formation\Service\Session\SessionServiceAwareTrait;
-use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\View\Model\ViewModel;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 
-class EnqueteController extends AbstractController {
+class EnqueteQuestionController extends AbstractController {
     use EntityManagerAwareTrait;
     use EnqueteCategorieServiceAwareTrait;
     use EnqueteQuestionServiceAwareTrait;
@@ -28,63 +27,6 @@ class EnqueteController extends AbstractController {
     use EnqueteCategorieFormAwareTrait;
     use EnqueteQuestionFormAwareTrait;
     use EnqueteReponseFormAwareTrait;
-
-    /** ENQUETE *******************************************************************************************************/
-
-    public function afficherResultatsAction()
-    {
-        /**@var Session $session */
-        $session = $this->getEntityManager()->getRepository(Session::class)->getRequestedSession($this);
-
-        $questions = $this->getEntityManager()->getRepository(EnqueteQuestion::class)->findAll();
-        $questions = array_filter($questions, function (EnqueteQuestion $a) { return $a->estNonHistorise();});
-        usort($questions, function (EnqueteQuestion $a, EnqueteQuestion $b) { return $a->getOrdre() > $b->getOrdre();});
-
-
-        $reponses = $this->getEntityManager()->getRepository(EnqueteReponse::class)->findAll();
-
-        //todo exploiter le filtre pour réduire
-        if ($session) $reponses = array_filter($reponses, function (EnqueteReponse $r) use ($session) { return $r->getInscription()->getSession() === $session;});
-        //todo fin
-
-        $reponses = array_filter($reponses, function (EnqueteReponse $a) { return $a->estNonHistorise();});
-        usort($reponses, function (EnqueteReponse $a, EnqueteReponse $b) { return $a->getQuestion()->getId() > $b->getQuestion()->getId();});
-
-        /** PREP HISTOGRAMME $histogramme */
-        $histogramme = [];
-        foreach ($questions as $question) {
-            $histogramme[$question->getId()] = [];
-            foreach (EnqueteReponse::NIVEAUX as $clef => $value) $histogramme[$question->getId()][$clef] = 0;
-        }
-
-        $array = [];
-
-        /** @var EnqueteReponse $reponse */
-        foreach ($reponses as $reponse) {
-            if ($reponse->getQuestion()->estNonHistorise()) {
-                $question = $reponse->getQuestion()->getId();
-                $inscription = $reponse->getInscription()->getId();
-
-                $niveau = $reponse->getNiveau();
-                $description = $reponse->getDescription();
-
-                $array[$inscription]["Niveau_" . $question] = EnqueteReponse::NIVEAUX[$niveau];
-                $array[$inscription]["Commentaire_" . $question] = $description;
-                $histogramme[$question][$niveau]++;
-            }
-        }
-
-        $categories = $this->getEntityManager()->getRepository(EnqueteCategorie::class)->findAll();
-        return new ViewModel([
-            "array" => $array,
-            "histogramme" => $histogramme,
-            "nbReponses" => count($array),
-            "questions" => $questions,
-            "categories" => $categories,
-        ]);
-    }
-
-    /** QUESTIONS *****************************************************************************************************/
 
     public function afficherQuestionsAction() {
 
@@ -295,7 +237,6 @@ class EnqueteController extends AbstractController {
         return $vm;
     }
 
-    /** REPONSES ******************************************************************************************************/
     public function repondreQuestionsAction()
     {
         /** @var Inscription $inscription */

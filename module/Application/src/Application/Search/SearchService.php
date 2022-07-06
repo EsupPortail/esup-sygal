@@ -172,6 +172,17 @@ abstract class SearchService implements SearchServiceInterface
     }
 
     /**
+     * Retourne le filtre dont le nom est spécifié.
+     *
+     * @param string $name
+     * @return SearchFilter
+     */
+    public function getFilterByName(string $name): SearchFilter
+    {
+        return $this->filters[$name];
+    }
+
+    /**
      * Retourne la liste des filtres.
      *
      * @return SearchFilter[]
