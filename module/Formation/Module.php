@@ -1,12 +1,14 @@
 <?php
 namespace Formation;
 
+use Laminas\Console\Adapter\AdapterInterface as Console;
+use Laminas\ModuleManager\Feature\ConsoleUsageProviderInterface;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Config\Factory as ConfigFactory;
 use Laminas\Stdlib\Glob;
 
-class Module
+class Module implements ConsoleUsageProviderInterface
 {
     public function onBootstrap(MvcEvent $e)
     {
@@ -25,7 +27,7 @@ class Module
         return ConfigFactory::fromFiles($paths);
     }
 
-    public function getAutoloaderConfig()
+    public function getAutoloaderConfig(): array
     {
         return array(
             'Laminas\Loader\StandardAutoloader' => array(
@@ -34,5 +36,17 @@ class Module
                 ),
             ),
         );
+    }
+
+    public function getConsoleUsage(Console $console): array
+    {
+        return [
+            'formation:session:terminer-auto' =>
+                'Terminaison des sessions dont toutes les séances sont passées',
+//            ['--these',           "Id de la thèse concernée"],
+//            ['--versionFichier',  "Version du fichier de thèse à utiliser (ex: 'VA', 'VOC')"],
+//            ['--removeFirstPage', "(facultatif) Témoin indiquant si la première page doit être retirée avant la fusion"],
+//            ['--notifier',        "(facultatif) Adresses électroniques auxquelles envoyer un courriel une fois la fusion terminée"],
+        ];
     }
 }

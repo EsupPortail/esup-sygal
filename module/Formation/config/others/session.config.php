@@ -2,6 +2,8 @@
 
 namespace Formation;
 
+use Formation\Controller\Console\SessionConsoleController;
+use Formation\Controller\Console\SessionConsoleControllerFactory;
 use Formation\Controller\Recherche\SessionRechercheController;
 use Formation\Controller\Recherche\SessionRechercheControllerFactory;
 use Formation\Controller\SessionController;
@@ -91,6 +93,13 @@ return [
                     'privileges' => [
                         SessionPrivileges::SESSION_INSCRIPTION,
                     ],
+                ],
+                [
+                    'controller' => SessionConsoleController::class,
+                    'action' => [
+                        'terminer-auto',
+                    ],
+                    'role' => [],
                 ],
             ],
         ],
@@ -267,6 +276,22 @@ return [
         ],
     ],
 
+    'console' => [
+        'router' => [
+            'routes' => [
+                'terminer-auto' => [
+                    'options' => [
+                        'route' => 'formation:session:terminer-auto',
+                        'defaults' => [
+                            'controller' => SessionConsoleController::class,
+                            'action' => 'terminer-auto',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
     'service_manager' => [
         'factories' => [
             SessionService::class => SessionServiceFactory::class,
@@ -277,6 +302,7 @@ return [
         'factories' => [
             SessionController::class => SessionControllerFactory::class,
             SessionRechercheController::class => SessionRechercheControllerFactory::class,
+            SessionConsoleController::class => SessionConsoleControllerFactory::class,
         ],
     ],
     'form_elements' => [
