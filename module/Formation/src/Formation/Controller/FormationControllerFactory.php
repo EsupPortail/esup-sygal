@@ -3,6 +3,7 @@
 namespace Formation\Controller;
 
 use Formation\Service\Module\ModuleService;
+use Formation\Service\Session\SessionService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\Etablissement\EtablissementService;
@@ -26,11 +27,13 @@ class FormationControllerFactory {
          * @var EtablissementService $etablissementService
          * @var FormationService $formationService
          * @var ModuleService $moduleService
+         * @var SessionService $sessionService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $etablissementService = $container->get(EtablissementService::class);
         $formationService = $container->get(FormationService::class);
         $moduleService = $container->get(ModuleService::class);
+        $sessionService = $container->get(SessionService::class);
 
         /**
          * @var FormationForm $formationForm
@@ -42,6 +45,7 @@ class FormationControllerFactory {
         $controller->setEtablissementService($etablissementService);
         $controller->setFormationService($formationService);
         $controller->setModuleService($moduleService);
+        $controller->setSessionService($sessionService);
         $controller->setFormationForm($formationForm);
         return $controller;
     }

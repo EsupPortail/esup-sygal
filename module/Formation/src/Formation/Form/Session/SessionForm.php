@@ -137,7 +137,8 @@ class SessionForm extends Form {
             'type' => Number::class,
             'name' => 'taille_liste_principale',
             'options' => [
-                'label' => "Effectif de la liste principale :",
+                'label' => "Effectif de la liste principale <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
             ],
             'attributes' => [
                 'id' => 'taille_liste_principale',
@@ -148,7 +149,8 @@ class SessionForm extends Form {
             'type' => Number::class,
             'name' => 'taille_liste_complementaire',
             'options' => [
-                'label' => "Effectif de la liste complémentaire :",
+                'label' => "Effectif de la liste complémentaire <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
             ],
             'attributes' => [
                 'id' => 'taille_liste_complementaire',

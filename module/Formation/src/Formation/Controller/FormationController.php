@@ -4,6 +4,7 @@ namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
 use Formation\Service\Module\ModuleServiceAwareTrait;
+use Formation\Service\Session\SessionServiceAwareTrait;
 use Laminas\Http\Response;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Formation\Entity\Db\Formation;
@@ -17,16 +18,19 @@ class FormationController extends AbstractController
     use EntityManagerAwareTrait;
     use FormationServiceAwareTrait;
     use ModuleServiceAwareTrait;
+    use SessionServiceAwareTrait;
     use FormationFormAwareTrait;
 
     use EtablissementServiceAwareTrait;
 
-    public function afficherAction()
+    public function afficherAction() : ViewModel
     {
         $formation = $this->getFormationService()->getRepository()->getRequestedFormation($this);
+        $sessions = $this->getSessionService()->getRepository()->fetchSessionsByFormation($formation, 'id', 'asc', true);
 
         return new ViewModel([
             'formation' => $formation,
+            'sessions' => $sessions,
         ]);
     }
 

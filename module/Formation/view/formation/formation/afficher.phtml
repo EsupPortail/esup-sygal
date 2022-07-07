@@ -10,6 +10,7 @@ use Formation\Provider\Privilege\SessionPrivileges;
 /**
  * @see \Formation\Controller\FormationController::afficherAction()
  * @var Formation $formation
+ * @var Session[] $sessions
  */
 
 $pageTitle = '' . $formation->getLibelle();
@@ -25,129 +26,107 @@ $canAjouterSession      = $this->isAllowed(SessionPrivileges::getResourceId(Sess
 $canHistoriserSession   = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_HISTORISER));
 $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_SUPPRIMER));
 
-/** @var Session[] $sessions */
-$sessions = $formation->getSessions()->toArray();
-usort($sessions, function(Session $a, Session $b) { return $a->getIndex() > $b->getIndex();});
 ?>
 
 <h1 class="page-header">
     <?php echo $pageTitle; ?>
 </h1>
 
-<div class="row">
-    <div class="col-md-8">
+<?php if ($canModifierFormation) : ?>
+    <?php /** @see \Formation\Controller\FormationController::modifierAction() */?>
+    <a class="btn btn-primary action ajax-modal" data-event="modification"
+       href="<?php echo $this->url('formation/formation/modifier', ['formation' => $formation->getId()], [], true); ?>"
+    >
+        <span class="icon icon-modifier"></span>
+        Modifier les informations
+    </a>
+<?php endif; ?>
 
-        <h2> Informations sur la formation </h2>
+<?php if ($canIndexFormation) : ?>
+    <?php /** @see \Formation\Controller\FormationController::indexAction() */?>
+    <a class="btn btn-primary action"
+       href="<?php echo $this->url('formation/formation', [], [], true); ?>"
+    >
+        <span class="icon icon-listing"></span>
+        Retourner à la liste des formations
+    </a>
+<?php endif; ?>
 
-        <dl class="row">
-            <dt class="col-md-3"> Module </dt>
-            <dd class="col-md-9">
-                <?php if($formation->getModule()) : ?>
-                    <?php echo $formation->getModule()->getLibelle(); ?>
-                <?php else : ?>
-                    <i>Aucun module associé à cette formation</i>
-                <?php endif; ?>
-            </dd>
-            <dt class="col-md-3"> Formation </dt>
-            <dd class="col-md-9"> <?php echo $formation->getLibelle(); ?> </dd>
-            <?php if ($formation->getDescription()) : ?>
-                <dt class="col-md-3"> Description de la formation </dt>
-                <dd class="col-md-9"> <?php echo $formation->getDescription(); ?> </dd>
-            <?php endif ?>
-            <?php if ($formation->getLien()) : ?>
-                <dt class="col-md-3"> Lien vers de la fiche </dt>
-                <dd class="col-md-9"> <a href="<?php echo $formation->getLien(); ?>" target="_blank"><?php echo $formation->getLien(); ?></a> </dd>
-            <?php endif ?>
-        </dl>
+<h2> Informations sur la formation </h2>
 
-        <h2> Valeurs par défaut transmises aux sessions </h2>
-
-        <dl class="row">
-            <?php if ($formation->getSite()) : ?>
-                <dt class="col-md-3"> Site organisateur</dt>
-                <dd class="col-md-9"> <?php echo $this->site($formation); ?> </dd>
-            <?php endif; ?>
-            <?php if ($formation->getResponsable()) : ?>
-                <dt class="col-md-3"> Responsable</dt>
-                <dd class="col-md-9"> <?php echo $formation->getResponsable()->getNomComplet(); ?> </dd>
-            <?php endif; ?>
-            <?php if ($formation->getModalite()) : ?>
-                <dt class="col-md-3"> Modalité</dt>
-                <dd class="col-md-9"> <?php echo $this->modalite($formation); ?> </dd>
-            <?php endif; ?>
-            <?php if ($formation->getType()) : ?>
-                <dt class="col-md-3"> Type</dt>
-                <dd class="col-md-9"> <?php echo $this->type($formation); ?> </dd>
-            <?php endif; ?>
-            <?php if ($formation->getTailleListePrincipale()) : ?>
-                <dt class="col-md-3"> Effectif de la liste principale </dt>
-                <dd class="col-md-9"> <?php echo $formation->getTailleListePrincipale(); ?> </dd>
-            <?php endif; ?>
-            <?php if ($formation->getTailleListeComplementaire()) : ?>
-                <dt class="col-md-3"> Effectif de la liste complémentaire </dt>
-                <dd class="col-md-9"> <?php echo $formation->getTailleListeComplementaire(); ?> </dd>
-            <?php endif; ?>
-        </dl>
-    </div>
-
-    <div class="col-md-4">
-        <?php if ($canIndexFormation) : ?>
-            <?php /** @see \Formation\Controller\FormationController::indexAction() */?>
-            <a class="btn btn-primary action"
-               href="<?php echo $this->url('formation/formation', [], [], true); ?>"
-            >
-                <span class="icon icon-retour"></span>
-                Retour à la liste des formations
-            </a>
-            <br/>
-            <br/>
-            <?php if ($canAfficherModule AND $formation->getModule() !== null) : ?>
-                <?php /** @see \Formation\Controller\ModuleController::afficherAction() */?>
-                <a class="btn btn-primary action"
-                   href="<?php echo $this->url('formation/module/afficher', ['module' => $formation->getModule()->getId() ], [], true); ?>"
+<dl class="row">
+    <dt class="col-md-3"> Module </dt>
+    <dd class="col-md-9">
+        <?php if($formation->getModule()) : ?>
+            <?php if ($canAfficherModule) : ?>
+                <a href="<?php echo $this->url('formation/module/afficher', ['module' => $formation->getModule()->getId() ], [], true); ?>"
+                   title="Accéder au module <strong><?php echo $formation->getModule()->getLibelle(); ?></strong>" data-bs-toggle='tooltip' data-bs-html='true'
                 >
-                    <span class="fas fa-share-alt"></span>
-                    Accéder au module
-                </a>
-                <br/>
-                <br/>
+                    <?php echo $formation->getModule()->getLibelle(); ?></a>
+            <?php else : ?>
+                <?php echo $formation->getModule()->getLibelle(); ?>
             <?php endif; ?>
+        <?php else : ?>
+            <i>Aucun module associé à cette formation</i>
         <?php endif; ?>
+    </dd>
+    <dt class="col-md-3"> Formation </dt>
+    <dd class="col-md-9"> <?php echo $formation->getLibelle(); ?> </dd>
+    <?php if ($formation->getDescription()) : ?>
+        <dt class="col-md-3"> Description de la formation </dt>
+        <dd class="col-md-9"> <?php echo $formation->getDescription(); ?> </dd>
+    <?php endif ?>
+    <?php if ($formation->getLien()) : ?>
+        <dt class="col-md-3"> Lien vers de la fiche </dt>
+        <dd class="col-md-9"> <a href="<?php echo $formation->getLien(); ?>" target="_blank"><?php echo $formation->getLien(); ?></a> </dd>
+    <?php endif ?>
+</dl>
 
-        <?php if ($canModifierFormation) : ?>
-            <?php /** @see \Formation\Controller\FormationController::modifierAction() */?>
-            <a class="btn btn-primary action ajax-modal" data-event="modification"
-               href="<?php echo $this->url('formation/formation/modifier', ['formation' => $formation->getId()], [], true); ?>"
-            >
-                <span class="icon icon-modifier"></span>
-                Modifier les informations
-            </a>
-        <br/>
-        <br/>
-        <?php endif; ?>
-    </div>
-</div>
+<h2> Valeurs par défaut transmises aux sessions </h2>
 
-<div class="row">
-    <div class="col-md-8">
-        <h2> Liste des sessions </h2>
-    </div>
-    <div class="col-md-4">
-        <?php if ($canAjouterSession) : ?>
-            <?php /** @see \Formation\Controller\SessionController::ajouterAction() */ ?>
-            <a href="<?php echo $this->url('formation/session/ajouter', ['formation' => $formation->getId()], [], true); ?>"
-               class="btn btn-primary action ajax-modal" data-event="modification"
-               title="Ajouter une session"
-               data-bs-toggle="tooltip" data-bs-html="true">
-                <span class="icon icon-ajouter"></span>
-                Ajouter une session
-            </a>
-        <?php endif; ?>
-    </div>
-</div>
+<dl class="row">
+    <?php if ($formation->getSite()) : ?>
+        <dt class="col-md-3"> Site organisateur</dt>
+        <dd class="col-md-9"> <?php echo $this->site($formation); ?> </dd>
+    <?php endif; ?>
+    <?php if ($formation->getResponsable()) : ?>
+        <dt class="col-md-3"> Responsable</dt>
+        <dd class="col-md-9"> <?php echo $formation->getResponsable()->getNomComplet(); ?> </dd>
+    <?php endif; ?>
+    <?php if ($formation->getModalite()) : ?>
+        <dt class="col-md-3"> Modalité</dt>
+        <dd class="col-md-9"> <?php echo $this->modalite($formation); ?> </dd>
+    <?php endif; ?>
+    <?php if ($formation->getType()) : ?>
+        <dt class="col-md-3"> Type</dt>
+        <dd class="col-md-9"> <?php echo $this->type($formation); ?> </dd>
+    <?php endif; ?>
+    <?php if ($formation->getTailleListePrincipale()) : ?>
+        <dt class="col-md-3"> Effectif de la liste principale </dt>
+        <dd class="col-md-9"> <?php echo $formation->getTailleListePrincipale(); ?> </dd>
+    <?php endif; ?>
+    <?php if ($formation->getTailleListeComplementaire()) : ?>
+        <dt class="col-md-3"> Effectif de la liste complémentaire </dt>
+        <dd class="col-md-9"> <?php echo $formation->getTailleListeComplementaire(); ?> </dd>
+    <?php endif; ?>
+</dl>
 
-<?php if (empty($sessions)) : ?>
-Aucune session d'associée à cette formation.
+<h2> Liste des sessions </h2>
+
+<?php if ($canAjouterSession) : ?>
+    <?php /** @see \Formation\Controller\SessionController::ajouterAction() */ ?>
+    <a href="<?php echo $this->url('formation/session/ajouter', ['formation' => $formation->getId()], [], true); ?>"
+       class="btn btn-primary action ajax-modal" data-event="modification"
+       title="Ajouter une session"
+       data-bs-toggle="tooltip" data-bs-html="true">
+        <span class="icon icon-ajouter"></span>
+        Ajouter une session
+    </a>
+<?php endif; ?>
+
+<div class="index-result">
+    <?php if (empty($sessions)) : ?>
+    Aucune session d'associée à cette formation.
 <?php else : ?>
     <table class="table table-sm table-hover">
     <thead>
@@ -165,7 +144,11 @@ Aucune session d'associée à cette formation.
     <tbody>
     <?php foreach ($sessions as $session) : ?>
         <tr>
-            <td> <?php echo $session->getIndex(); ?> </td>
+            <td>
+                <span class=" <?php if ($session->estHistorise()) echo "historise text-danger"; ?> ">
+                <?php echo $session->getIndex(); ?>
+                </span>
+            </td>
             <td> <?php echo $this->site($session); ?> </td>
             <td>
                 <?php if ($session->getResponsable()) : ?>
@@ -216,13 +199,13 @@ Aucune session d'associée à cette formation.
                         </a>
                     <?php endif; ?>
                 <?php endif; ?>
-                <?php if ($canSupprimerSession) : ?>
+                <?php if ($canSupprimerSession AND $session->estHistorise()) : ?>
                     <?php /** @see \Formation\Controller\SessionController::supprimerAction() */ ?>
                     <a href="<?php echo $this->url('formation/session/supprimer', ['session' => $session->getId()], [], true); ?>"
                        class="ajax-modal" data-event="modification"
                        title="supprimer une session"
                        data-bs-toggle="tooltip" data-bs-html="true">
-                        <span class="icon icon-detruire"></span>
+                        <span class="icon icon-detruire text-danger"></span>
                     </a>
                 <?php endif; ?>
 
@@ -232,7 +215,7 @@ Aucune session d'associée à cette formation.
     </tbody>
 </table>
 <?php endif; ?>
-
+</div>
 
 
 <script>

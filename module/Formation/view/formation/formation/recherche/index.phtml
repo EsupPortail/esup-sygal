@@ -49,7 +49,8 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
 <?php endif; ?>
 
 
-<?php if (count($paginator) > 0): ?>
+<div class="index-result">
+    <?php if (count($paginator) > 0): ?>
 
     <p>
         <?php echo $paginator->getTotalItemCount() . ' ' . $this->translate("formation·s trouvée·s.") ?>
@@ -91,7 +92,7 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
             <th>
                 #Session
             </th>
-            <th>
+            <th style="min-width: 4rem;">
                 Action
             </th>
         </tr>
@@ -99,27 +100,28 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
         <tbody>
         <?php foreach ($paginator as $formation) : ?>
             <tr>
-
-                <td <?php if ($formation->estHistorise()) echo " class='historise' "; ?> >
-                    <span class="formation-typage">Formation</span>
-                    <?php echo $formation->getLibelle(); ?>
-                    <?php if ($formation->getDescription() !== null AND trim($formation->getDescription()) !== null) : ?>
-                        <span class="icon icon-info"
-                              title="<?php echo $formation->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
-                        ></span>
-                    <?php endif; ?>
-                    <br>
-                    <span class="formation-typage">Module</span>
-                    <?php if ($formation->getModule()) : ?>
-                        <?php echo $formation->getModule()->getLibelle(); ?>
-                        <?php if ($formation->getModule()->getDescription() !== null AND trim($formation->getModule()->getDescription()) !== null) : ?>
+                <td>
+                    <span class="  <?php if ($formation->estHistorise()) echo " historise text-danger"; ?> ">
+                        <span class="formation-typage">Formation</span>
+                        <?php echo $formation->getLibelle(); ?>
+                        <?php if ($formation->getDescription() !== null AND trim($formation->getDescription()) !== null) : ?>
                             <span class="icon icon-info"
-                                  title="<?php echo $formation->getModule()->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
+                                  title="<?php echo $formation->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
                             ></span>
                         <?php endif; ?>
-                    <?php else : ?>
-                        <i>Aucun module de spécifié</i>
-                    <?php endif; ?>
+                        <br>
+                        <span class="formation-typage">Module</span>
+                        <?php if ($formation->getModule()) : ?>
+                            <?php echo $formation->getModule()->getLibelle(); ?>
+                            <?php if ($formation->getModule()->getDescription() !== null AND trim($formation->getModule()->getDescription()) !== null) : ?>
+                                <span class="icon icon-info"
+                                      title="<?php echo $formation->getModule()->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
+                                ></span>
+                            <?php endif; ?>
+                        <?php else : ?>
+                            <i>Aucun module de spécifié</i>
+                        <?php endif; ?>
+                    </span>
                 </td>
                 <td> <?php echo $this->site($formation); ?> </td>
                 <td>
@@ -168,12 +170,12 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
                         <?php endif; ?>
                     <?php endif; ?>
 
-                    <?php if ($canSupprimerFormation) : ?>
+                    <?php if ($canSupprimerFormation and $formation->estHistorise()) : ?>
                         <?php /** @see \Formation\Controller\FormationController::supprimerAction() */?>
                         <a href="<?php echo $this->url('formation/formation/supprimer',['formation' => $formation->getId()], [], true); ?>"
                            class="ajax-modal" data-event="modification"
                            title="Suppression de la formation #<?php echo $formation->getId(); ?>" data-bs-toggle="tooltip" data-bs-html="true">
-                            <span class="icon icon-detruire"></span>
+                            <span class="icon icon-detruire text-danger"></span>
                         </a>
                     <?php endif; ?>
                 </td>
@@ -202,7 +204,7 @@ $canSupprimerFormation     = $this->isAllowed(FormationPrivileges::getResourceId
     <p>Aucune formation trouvée.</p>
 
 <?php endif ?>
-
+</div>
 
 <script>
     $(function() {

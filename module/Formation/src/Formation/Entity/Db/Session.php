@@ -44,7 +44,7 @@ class Session implements HistoriqueAwareInterface,
 
     private ?Individu $responsable = null;
     private ?Etat $etat = null;
-    private ?string $description;
+    private ?string $description = null;
 
     private Collection $structuresComplemenaires;
     private Collection $seances;
