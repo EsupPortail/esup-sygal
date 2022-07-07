@@ -8,6 +8,7 @@ Journal des modifications
 - [FIX] retrait d'un début faisant planter la génération de convaocation de soutenance 
 - [FIX] Correction du plantage lors de la création manuelle d'un utilisateur.
 - [FIX] Plantage de RapportActiviteAssertion lorsque la route demandée n'existe pas.
+- [FIX] Fourniture à Sympa des adresses institutionnelles en plus des adresses perso.
 
 4.2.0
 -----
