@@ -3,8 +3,11 @@
 namespace Formation\Service\Session;
 
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Expr\Join;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Repository\SessionRepository;
+use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
 use Formation\Service\Formation\FormationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
@@ -118,4 +121,49 @@ class SessionService {
     }
 
     /** FACADE ********************************************************************************************************/
+
+    /**
+     * Terminaison des sessions dont toutes les séances sont passées.
+     *
+     * @return int[] Id des sessions mises à jour
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function terminerSessionsDontToutesSeancesPassees(): array
+    {
+        $qb = $this->getRepository()->createQueryBuilder('sess')
+            //->addSelect('seances') // pas besoin de sélectionner la relation
+            ->join('sess.seances', 'seances', Join::WITH, 'seances.histoDestruction is null') // sessions AYANT des séances
+            ->andWhere('sess.histoDestruction is null')
+            ->andWhere('sess.etat <> :etat')->setParameter('etat', Session::ETAT_CLOS_FINAL)
+            ->andWhere(
+                'NOT EXISTS (' .
+                'select s from ' . Seance::class . ' s ' .
+                'where s.session = sess AND s.histoDestruction is null AND s.fin >= CURRENT_TIMESTAMP()' .
+                ')'
+            );
+
+        /** @var array[] $sessionsSansSeancesAVenir */
+        $sessionsSansSeancesAVenir = $qb->getQuery()->getArrayResult();
+
+        if (empty($sessionsSansSeancesAVenir)) {
+            return [];
+        }
+
+        $sessionIds = [];
+        foreach ($sessionsSansSeancesAVenir as $session) {
+            $sessionIds[] = $session['id'];
+        }
+
+        $this->getEntityManager()->createQueryBuilder();
+        $qb
+            ->update(Session::class, 's')
+            ->set('s.etat', ':etat')
+            ->setParameter('etat', Session::ETAT_CLOS_FINAL)
+            ->where($qb->expr()->in('s.id', $sessionIds));
+        $qb->getQuery()->execute();
+
+        $this->getEntityManager()->flush();
+
+        return $sessionIds;
+    }
 }

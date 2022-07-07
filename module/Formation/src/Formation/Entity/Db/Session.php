@@ -27,13 +27,11 @@ class Session implements HistoriqueAwareInterface,
     const ETAT_PREPARATION      = 'P';
     const ETAT_INSCRIPTION      = 'O';
     const ETAT_EN_COURS         = 'E';
-    const ETAT_TERMINE          = 'T';
     const ETAT_CLOS_FINAL       = 'C';
     const ETATS = [
         self::ETAT_PREPARATION => self::ETAT_PREPARATION,
         self::ETAT_INSCRIPTION => self::ETAT_INSCRIPTION,
         self::ETAT_EN_COURS => self::ETAT_EN_COURS,
-        self::ETAT_TERMINE => self::ETAT_TERMINE,
         self::ETAT_CLOS_FINAL => self::ETAT_CLOS_FINAL,
     ];
 
