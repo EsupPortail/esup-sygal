@@ -4,11 +4,20 @@ namespace Formation\Service\EnqueteCategorie;
 
 use Doctrine\ORM\ORMException;
 use Formation\Entity\Db\EnqueteCategorie;
+use Formation\Entity\Db\Repository\EnqueteCategorieRepository;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class EnqueteCategorieService {
     use EntityManagerAwareTrait;
+
+    /** @return EnqueteCategorieRepository */
+    public function getRepository() : EnqueteCategorieRepository
+    {
+        /** @var EnqueteCategorieRepository $repo */
+        $repo =  $this->getEntityManager()->getRepository(EnqueteCategorie::class);
+        return $repo;
+    }
 
     /** GESTION DES ENTITES *******************************************************************************************/
 
@@ -99,8 +108,5 @@ class EnqueteCategorieService {
         return $options;
     }
 
-    public function getRepository()
-    {
-        return $this->getEntityManager()->getRepository(EnqueteCategorie::class);
-    }
+
 }

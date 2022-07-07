@@ -9,19 +9,20 @@ use Formation\Provider\Privilege\ModulePrivileges;
 /**
  * @see \Formation\Controller\ModuleController::afficherAction()
  * @var Module $module
+ * @var Formation[] $formations
  */
 
 $pageTitle = '' . $module->getLibelle();
 $this->headTitle($pageTitle);
 
-$canIndexModule      = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_INDEX));
-$canModifierModule      = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_MODIFIER));
+$canIndexModule = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_INDEX));
+$canModifierModule = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_MODIFIER));
 
-$canAfficherFormation     = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_AFFICHER));
+$canAfficherFormation = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_AFFICHER));
+$canHistoriserFormation = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_HISTORISER));
+$canSupprimerFormation = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_SUPPRIMER));
 
-/** @var Formation[] $formations */
-$formations = $module->getFormations()->toArray();
-usort($formations, function(Formation $a, Formation $b) { return $a->getLibelle() > $b->getLibelle();});
+$urlRetour = $this->url('formation/module/afficher', ['module' => $module->getId()], [], true);
 ?>
 
 <h1 class="page-header">
@@ -34,23 +35,24 @@ usort($formations, function(Formation $a, Formation $b) { return $a->getLibelle(
         <h2> Informations sur le module </h2>
 
         <dl class="row">
-            <dt class="col-md-3"> Libellé </dt>
+            <dt class="col-md-3"> Libellé</dt>
             <dd class="col-md-9">
                 <?php echo $module->getLibelle(); ?>
             </dd>
             <?php if ($module->getDescription()) : ?>
-                <dt class="col-md-3"> Description du module </dt>
+                <dt class="col-md-3"> Description du module</dt>
                 <dd class="col-md-9"> <?php echo $module->getDescription(); ?> </dd>
             <?php endif ?>
             <?php if ($module->getLien()) : ?>
-                <dt class="col-md-3"> Lien vers la fiche </dt>
-                <dd class="col-md-9"> <a href="<?php echo $module->getLien(); ?>" target="_blank"><?php echo $module->getLien(); ?></a> </dd>
+                <dt class="col-md-3"> Lien vers la fiche</dt>
+                <dd class="col-md-9"><a href="<?php echo $module->getLien(); ?>"
+                                        target="_blank"><?php echo $module->getLien(); ?></a></dd>
             <?php endif ?>
         </dl>
     </div>
     <div class="col-md-4">
         <?php if ($canIndexModule) : ?>
-            <?php /** @see \Formation\Controller\FormationController::indexAction() */?>
+            <?php /** @see \Formation\Controller\FormationController::indexAction() */ ?>
             <a class="btn btn-primary action"
                href="<?php echo $this->url('formation/module', [], [], true); ?>"
             >
@@ -61,7 +63,7 @@ usort($formations, function(Formation $a, Formation $b) { return $a->getLibelle(
             <br/>
         <?php endif; ?>
         <?php if ($canModifierModule) : ?>
-            <?php /** @see \Formation\Controller\FormationController::modifierAction() */?>
+            <?php /** @see \Formation\Controller\FormationController::modifierAction() */ ?>
             <a class="btn btn-primary action ajax-modal" data-event="modification"
                href="<?php echo $this->url('formation/module/modifier', ['module' => $module->getId()], [], true); ?>"
             >
@@ -96,48 +98,74 @@ usort($formations, function(Formation $a, Formation $b) { return $a->getLibelle(
     Aucune formation associée à ce module.
 <?php else : ?>
     <table class="table table-sm table-hover">
-    <thead>
-    <tr>
-        <th>Libelle</th>
-        <th>Sessions</th>
-        <th>Action</th>
-    </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($formations as $formation) : ?>
-        <tr class="<?php if ($formation->estHistorise()) echo " historise "; ?> ">
-            <td>
-                <span class=" <?php if ($formation->estHistorise()) echo " historise "; ?> ">
+        <thead>
+        <tr>
+            <th>Libelle</th>
+            <th>Sessions</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($formations as $formation) : ?>
+            <tr>
+                <td>
+                <span class=" <?php if ($formation->estHistorise()) echo " historise text-danger"; ?> ">
                 <?php echo $formation->getLibelle(); ?>
                 </span>
-            </td>
-            <td>
-                <ul>
-                <?php /** @var Session $session */ ?>
-                <?php foreach ($formation->getSessions() as $session) : ?>
-                    <li>
-                        <?php echo ($session->getDateDebut())?$session->getDateDebut()->format('d/m/Y'):"---"; ?> &Rightarrow;
-                        <?php echo ($session->getDateFin())?$session->getDateFin()->format('d/m/Y'):"---"; ?>
-                    </li>
-                <?php endforeach; ?>
-                </ul>
-            </td>
-            <td>
-                <?php if ($canAfficherFormation) : ?>
-                    <?php /** @see \Formation\Controller\FormateurController::afficherAction() */ ?>
-                    <a href="<?php echo $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true); ?>">
-                        <span class="icon icon-voir"></span>
-                    </a>
-                <?php endif; ?>
-            </td>
-        </tr>
-    <?php endforeach; ?>
-    </tbody>
-</table>
+                </td>
+                <td>
+                    <?php if ($formation->getSessions()->isEmpty()) : ?>
+                        <em> Aucune session </em>
+                    <?php else : ?>
+                        <ul>
+                            <?php /** @var Session $session */ ?>
+                            <?php foreach ($formation->getSessions() as $session) : ?>
+                                <li>
+                                    <?php echo ($session->getDateDebut()) ? $session->getDateDebut()->format('d/m/Y') : "---"; ?>
+                                    &Rightarrow;
+                                    <?php echo ($session->getDateFin()) ? $session->getDateFin()->format('d/m/Y') : "---"; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <?php if ($canAfficherFormation) : ?>
+                        <?php /** @see \Formation\Controller\FormationController::afficherAction() */ ?>
+                        <a href="<?php echo $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true); ?>">
+                            <span class="icon icon-voir"></span>
+                        </a>
+                    <?php endif; ?>
+                    <?php if ($canHistoriserFormation) : ?>
+                        <?php if ($formation->estNonHistorise()) : ?>
+                            <?php /** @see \Formation\Controller\FormationController::historiserAction() */ ?>
+                            <a href="<?php echo $this->url('formation/formation/historiser', ['formation' => $formation->getId()], ['query' => ['retour' => $urlRetour]], true); ?>">
+                                <span class="icon icon-historiser"></span>
+                            </a>
+                        <?php else : ?>
+                            <?php /** @see \Formation\Controller\FormationController::restaurerAction() */ ?>
+                            <a href="<?php echo $this->url('formation/formation/restaurer', ['formation' => $formation->getId()], ['query' => ['retour' => $urlRetour]], true); ?>">
+                                <span class="icon icon-restaurer"></span>
+                            </a>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    <?php if ($canSupprimerFormation AND $formation->estHistorise()) : ?>
+                        <?php /** @see \Formation\Controller\FormationController::supprimerAction() */ ?>
+                        <a href="<?php echo $this->url('formation/formation/supprimer', ['formation' => $formation->getId()], [], true); ?>"
+                           class="ajax-modal" data-event="modification"
+                        >
+                            <span class="icon icon-detruire text-danger"></span>
+                        </a>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
 <?php endif; ?>
 
 <script>
-    $(function() {
+    $(function () {
         $("body").on("modification", function (event) {
             event.div.modal('hide');
             window.location.reload();

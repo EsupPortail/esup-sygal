@@ -5,11 +5,20 @@ namespace Formation\Service\EnqueteReponse;
 use DateTime;
 use Doctrine\ORM\ORMException;
 use Formation\Entity\Db\EnqueteReponse;
+use Formation\Entity\Db\Repository\EnqueteReponseRepository;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class EnqueteReponseService {
     use EntityManagerAwareTrait;
+
+    /** @return EnqueteReponseRepository */
+    public function getRepository() : EnqueteReponseRepository
+    {
+        /** @var EnqueteReponseRepository $repo */
+        $repo =  $this->getEntityManager()->getRepository(EnqueteReponse::class);
+        return $repo;
+    }
 
     /** GESTION DES ENTITES *******************************************************************************************/
 

@@ -3,6 +3,7 @@
 namespace Formation\Entity\Db\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Formation\Entity\Db\Module;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\Mvc\Controller\AbstractActionController;
@@ -26,5 +27,20 @@ class ModuleRepository extends EntityRepository
         }
         return $module;
 
+    }
+
+    public function createQB() : QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('module')
+            ->leftjoin('module.formations', 'formation')->addSelect('formation');
+        return $qb;
+    }
+
+    public function getModules(string $champ = "libelle", $ordre='ASC')
+    {
+        $qb = $this->createQB()
+            ->orderBy("module.".$champ, $ordre);
+        $result = $qb->getQuery()->getResult();
+        return $result;
     }
 }

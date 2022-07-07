@@ -17,10 +17,10 @@ use Laminas\Paginator\Paginator as LaminasPaginator;
 
 $this->headTitle($this->translate($title));
 
-$canAfficherModule      = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_AFFICHER));
-$canAjouterModule       = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_AJOUTER));
-$canHistoriserModule    = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_HISTORISER));
-$canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_SUPPRIMER));
+$canAfficherModule = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_AFFICHER));
+$canAjouterModule = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_AJOUTER));
+$canHistoriserModule = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_HISTORISER));
+$canSupprimerModule = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_SUPPRIMER));
 ?>
 
 <h1 class="page-header"><?php echo $title ?></h1>
@@ -37,18 +37,17 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
 </div>
 <div class="clearfix"></div>
 
-
 <?php if ($canAjouterModule) : ?>
     <a
         <?php /** @see \Formation\Controller\ModuleController::ajouterAction() */ ?>
             href="<?php echo $this->url('formation/module/ajouter', [], [], true); ?>"
-            class="btn btn-primary action ajax-modal" data-event="modification">
+            class="btn btn-primary ajax-modal" data-event="modification">
         <span class="icon icon-ajouter"></span>
         Ajouter un module
     </a>
 <?php endif; ?>
 
-
+<div class="index-result">
 <?php if (count($paginator) > 0): ?>
 
     <p>
@@ -73,16 +72,19 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
         </tr>
         </thead>
         <tbody>
-        <?php foreach($paginator as $module): ?>
+        <?php foreach ($paginator as $module): ?>
             <tr>
-                <td <?php if ($module->estHistorise()) echo " class='historise' "; ?>>
+                <td>
+                    <span class=" <?php if ($module->estHistorise()) echo " historisee text-danger"; ?>">
                     <?php echo $module->getLibelle(); ?>
-                    <?php if ($module->getDescription() !== null AND trim($module->getDescription()) !== null) : ?>
-                        <span class="icon icon-info"
-                              title="<?php echo $module->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
+                        <?php if ($module->getDescription() !== null and trim($module->getDescription()) !== null) : ?>
+                            <span class="icon icon-info"
+                                  title="<?php echo $module->getDescription(); ?>" data-bs-toggle="tooltip"
+                                  data-bs-html="true"
 
-                        ></span>
-                    <?php endif; ?>
+                            ></span>
+                        <?php endif; ?>
+                    </span>
 
                 </td>
                 <td> <?php echo count($module->getFormations()); ?> </td>
@@ -113,12 +115,13 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
                         <?php endif; ?>
                     <?php endif; ?>
 
-                    <?php if ($canSupprimerModule) : ?>
-                        <?php /** @see \Formation\Controller\ModuleController::supprimerAction() */?>
-                        <a href="<?php echo $this->url('formation/module/supprimer',['module' => $module->getId()], [], true); ?>"
+                    <?php if ($canSupprimerModule and $module->estHistorise()) : ?>
+                        <?php /** @see \Formation\Controller\ModuleController::supprimerAction() */ ?>
+                        <a href="<?php echo $this->url('formation/module/supprimer', ['module' => $module->getId()], [], true); ?>"
                            class="ajax-modal" data-event="modification"
-                           title="Suppression du module de formation #<?php echo $module->getId(); ?>" data-bs-toggle="tooltip" data-bs-html="true">
-                            <span class="icon icon-detruire"></span>
+                           title="Suppression du module de formation #<?php echo $module->getId(); ?>"
+                           data-bs-toggle="tooltip" data-bs-html="true">
+                            <span class="icon icon-detruire text-danger"></span>
                         </a>
                     <?php endif; ?>
                 </td>
@@ -126,21 +129,10 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
         <?php endforeach; ?>
         </tbody>
     </table>
+</div>
 
-    <script>
-        $(function () {
-            $('[data-bs-toggle="tooltip"]').tooltip({});
-        });
-        $(function() {
-            $("body").on("modification", function (event) {
-                event.div.modal('hide');
-                window.location.reload();
-            });
 
-        });
-    </script>
-
-    <?php echo $this->paginationControl($paginator, 'sliding', 'paginator', ['route' => $routeName . '/recherche/index']) ?>
+<?php echo $this->paginationControl($paginator, 'sliding', 'paginator', ['route' => $routeName . '/recherche/index']) ?>
 
 <?php else: ?>
 
@@ -150,7 +142,21 @@ $canSupprimerModule     = $this->isAllowed(ModulePrivileges::getResourceId(Modul
 
 
 <script>
-    $(function() {
-        $("#filters").addClass("loading").refresh(null, function() { $(this).removeClass("loading"); });
+    $(function () {
+        $("#filters").addClass("loading").refresh(null, function () {
+            $(this).removeClass("loading");
+        });
+    });
+
+    $(function () {
+        $('[data-bs-toggle="tooltip"]').tooltip({});
+    });
+
+    $(function () {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+
     });
 </script>

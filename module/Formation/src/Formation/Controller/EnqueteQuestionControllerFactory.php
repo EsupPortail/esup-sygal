@@ -9,6 +9,8 @@ use Formation\Form\EnqueteReponse\EnqueteReponseForm;
 use Formation\Service\EnqueteCategorie\EnqueteCategorieService;
 use Formation\Service\EnqueteQuestion\EnqueteQuestionService;
 use Formation\Service\EnqueteReponse\EnqueteReponseService;
+use Formation\Service\Inscription\InscriptionService;
+use Formation\Service\Session\SessionService;
 use Interop\Container\ContainerInterface;
 
 class EnqueteQuestionControllerFactory {
@@ -23,11 +25,15 @@ class EnqueteQuestionControllerFactory {
          * @var EntityManager $entityManager
          * @var EnqueteCategorieService $enqueteCategorieService
          * @var EnqueteReponseService $enqueteReponseService
+         * @var InscriptionService $inscriptionService
+         * @var SessionService $sessionService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $enqueteCategorieService = $container->get(EnqueteCategorieService::class);
         $enqueteQuestionService = $container->get(EnqueteQuestionService::class);
         $enqueteReponseService = $container->get(EnqueteReponseService::class);
+        $inscriptionService = $container->get(InscriptionService::class);
+        $sessionService = $container->get(SessionService::class);
 
         /**
          * @var EnqueteCategorieForm $enqueteCategorieForm
@@ -43,6 +49,8 @@ class EnqueteQuestionControllerFactory {
         $controller->setEnqueteCategorieService($enqueteCategorieService);
         $controller->setEnqueteQuestionService($enqueteQuestionService);
         $controller->setEnqueteReponseService($enqueteReponseService);
+        $controller->setInscriptionService($inscriptionService);
+        $controller->setSessionService($sessionService);
         $controller->setEnqueteCategorieForm($enqueteCategorieForm);
         $controller->setEnqueteQuestionForm($enqueteQuestionForm);
         $controller->setEnqueteReponseForm($enqueteReponseForm);

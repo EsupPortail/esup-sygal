@@ -3,29 +3,33 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Module;
 use Formation\Form\Module\ModuleFormAwareTrait;
+use Formation\Service\Formation\FormationServiceAwareTrait;
 use Formation\Service\Module\ModuleServiceAwareTrait;
 use Laminas\Http\Response;
-use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\View\Model\ViewModel;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 
-class ModuleController extends AbstractController {
+class ModuleController extends AbstractController
+{
     use EntityManagerAwareTrait;
+    use FormationServiceAwareTrait;
     use ModuleServiceAwareTrait;
     use ModuleFormAwareTrait;
 
-    public function afficherAction()
+    public function afficherAction(): ViewModel
     {
         $module = $this->getModuleService()->getRepository()->getRequestedModule($this);
+        $formations = $this->getFormationService()->getRepository()->fetchFormationsByModule($module, 'libelle', 'asc', true);
 
         return new ViewModel([
             'module' => $module,
+            'formations' => $formations,
         ]);
     }
 
-    public function ajouterAction() : ViewModel
+    public function ajouterAction(): ViewModel
     {
         $module = new Module();
 
@@ -50,7 +54,7 @@ class ModuleController extends AbstractController {
         return $vm;
     }
 
-    public function modifierAction() : ViewModel
+    public function modifierAction(): ViewModel
     {
         $module = $this->getModuleService()->getRepository()->getRequestedModule($this);
 
@@ -75,7 +79,7 @@ class ModuleController extends AbstractController {
         return $vm;
     }
 
-    public function historiserAction() : Response
+    public function historiserAction(): Response
     {
         $module = $this->getModuleService()->getRepository()->getRequestedModule($this);
         $this->getModuleService()->historise($module);
@@ -86,7 +90,7 @@ class ModuleController extends AbstractController {
 
     }
 
-    public function restaurerAction() : Response
+    public function restaurerAction(): Response
     {
         $module = $this->getModuleService()->getRepository()->getRequestedModule($this);
         $this->getModuleService()->restore($module);
@@ -96,7 +100,7 @@ class ModuleController extends AbstractController {
         return $this->redirect()->toRoute('formation/module');
     }
 
-    public function supprimerAction() : ViewModel
+    public function supprimerAction(): ViewModel
     {
         $module = $this->getModuleService()->getRepository()->getRequestedModule($this);
 
@@ -119,39 +123,21 @@ class ModuleController extends AbstractController {
         return $vm;
     }
 
-    public function catalogueAction() : ViewModel
+    public function catalogueAction(): ViewModel
     {
-        /** @var Module[] $modules */
-        $modules = $this->getEntityManager()->getRepository(Module::class)->findAll();
-        usort($modules, function (Module $a, Module $b) { return $a->getLibelle() > $b->getLibelle(); });
-        /** @var Formation[] $formations */
-        $formations = $this->getEntityManager()->getRepository(Formation::class)->findAll();
+        $modules = $this->getModuleService()->getRepository()->getModules();
 
         $catalogue = [];
         foreach ($modules as $module) {
             if ($module->estNonHistorise()) {
-                $liste = [];
-                foreach ($formations as $formation) {
-                    if ($formation->estNonHistorise() AND $formation->getModule() === $module) {
-                        $liste[] = $formation;
-                    }
-                }
-                usort($liste, function (Formation $a, Formation $b) { return $a->getLibelle() > $b->getLibelle();});
-
+                $liste = $this->getFormationService()->getRepository()->fetchFormationsByModule($module);
                 $catalogue[$module->getId()]["module"] = $module;
                 $catalogue[$module->getId()]["formations"] = $liste;
             }
         }
 
         {
-            $liste = [];
-            foreach ($formations as $formation) {
-                if ($formation->estNonHistorise() AND $formation->getModule() === null) {
-                    $liste[] = $formation;
-                }
-            }
-            usort($liste, function (Formation $a, Formation $b) { return $a->getLibelle() > $b->getLibelle();});
-
+            $liste = $this->getFormationService()->getRepository()->fetchFormationsByModule(null);
             $catalogue[-1]["module"] = null;
             $catalogue[-1]["formations"] = $liste;
         }

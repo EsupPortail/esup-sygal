@@ -3,7 +3,9 @@
 namespace Formation\Entity\Db\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Formation\Entity\Db\Formation;
+use Formation\Entity\Db\Module;
 use Formation\Entity\Db\Session;
 use Laminas\Mvc\Controller\AbstractActionController;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -63,5 +65,33 @@ class FormationRepository extends EntityRepository
             }
         }
         return $structures;
+    }
+
+    public function createQB() : QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('formation')
+            ->leftjoin('formation.module', 'module')->addSelect('module');
+        return $qb;
+    }
+
+    /**
+     * @param Module|null $module
+     * @param string $champ
+     * @param string $ordre
+     * @param bool $keep_histo
+     * @return array
+     */
+    public function fetchFormationsByModule(?Module $module, string $champ='libelle', string $ordre='ASC', bool $keep_histo = false) : array
+    {
+        $qb = $this->createQB()
+            ->orderBy('formation.' . $champ, $ordre);
+
+        if ($module !== null)   $qb = $qb->andWhere('formation.module = :module')->setParameter('module', $module);
+        else                    $qb = $qb->andWhere('formation.module IS NULL');
+
+        if (!$keep_histo) $qb = $qb->andWhere('formation.histoDestruction IS NULL');
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
     }
 }

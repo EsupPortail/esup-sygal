@@ -4,6 +4,7 @@ namespace Formation\Controller;
 
 use Doctrine\ORM\EntityManager;
 use Formation\Form\Module\ModuleForm;
+use Formation\Service\Formation\FormationService;
 use Formation\Service\Module\ModuleService;
 use Interop\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
@@ -21,9 +22,11 @@ class ModuleControllerFactory {
     {
         /**
          * @var EntityManager $entityManager
+         * @var FormationService $formationService
          * @var ModuleService $moduleService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
+        $formationService = $container->get(FormationService::class);
         $moduleService = $container->get(ModuleService::class);
 
         /**
@@ -33,6 +36,7 @@ class ModuleControllerFactory {
 
         $controller = new ModuleController();
         $controller->setEntityManager($entityManager);
+        $controller->setFormationService($formationService);
         $controller->setModuleService($moduleService);
         $controller->setModuleForm($moduleForm);
         return $controller;

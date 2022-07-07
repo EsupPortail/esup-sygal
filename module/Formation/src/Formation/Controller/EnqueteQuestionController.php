@@ -7,29 +7,86 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Formation\Entity\Db\EnqueteCategorie;
 use Formation\Entity\Db\EnqueteQuestion;
 use Formation\Entity\Db\EnqueteReponse;
-use Formation\Entity\Db\Inscription;
 use Formation\Form\EnqueteCategorie\EnqueteCategorieFormAwareTrait;
 use Formation\Form\EnqueteQuestion\EnqueteQuestionFormAwareTrait;
 use Formation\Form\EnqueteReponse\EnqueteReponseFormAwareTrait;
 use Formation\Service\EnqueteCategorie\EnqueteCategorieServiceAwareTrait;
 use Formation\Service\EnqueteQuestion\EnqueteQuestionServiceAwareTrait;
 use Formation\Service\EnqueteReponse\EnqueteReponseServiceAwareTrait;
+use Formation\Service\Inscription\InscriptionServiceAwareTrait;
 use Formation\Service\Session\SessionServiceAwareTrait;
-use Laminas\View\Model\ViewModel;
+use Laminas\Http\Response;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use Laminas\View\Model\ViewModel;
 
 class EnqueteQuestionController extends AbstractController {
     use EntityManagerAwareTrait;
     use EnqueteCategorieServiceAwareTrait;
     use EnqueteQuestionServiceAwareTrait;
     use EnqueteReponseServiceAwareTrait;
+    use InscriptionServiceAwareTrait;
     use SessionServiceAwareTrait;
     use EnqueteCategorieFormAwareTrait;
     use EnqueteQuestionFormAwareTrait;
     use EnqueteReponseFormAwareTrait;
 
-    public function afficherQuestionsAction() {
+    /** ENQUETE *******************************************************************************************************/
 
+    public function afficherResultatsAction() : ViewModel
+    {
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
+
+        $questions = $this->getEntityManager()->getRepository(EnqueteQuestion::class)->findAll();
+        $questions = array_filter($questions, function (EnqueteQuestion $a) { return $a->estNonHistorise();});
+        usort($questions, function (EnqueteQuestion $a, EnqueteQuestion $b) { return $a->getOrdre() > $b->getOrdre();});
+
+        $reponses = $this->getEntityManager()->getRepository(EnqueteReponse::class)->findAll();
+
+        //todo exploiter le filtre pour réduire
+        if ($session) $reponses = array_filter($reponses, function (EnqueteReponse $r) use ($session) { return $r->getInscription()->getSession() === $session;});
+        //todo fin
+
+        $reponses = array_filter($reponses, function (EnqueteReponse $a) { return $a->estNonHistorise();});
+        usort($reponses, function (EnqueteReponse $a, EnqueteReponse $b) { return $a->getQuestion()->getId() > $b->getQuestion()->getId();});
+
+        /** PREP HISTOGRAMME $histogramme */
+        $histogramme = [];
+        foreach ($questions as $question) {
+            $histogramme[$question->getId()] = [];
+            foreach (EnqueteReponse::NIVEAUX as $clef => $value) $histogramme[$question->getId()][$clef] = 0;
+        }
+
+        $array = [];
+
+        /** @var EnqueteReponse $reponse */
+        foreach ($reponses as $reponse) {
+            if ($reponse->getQuestion()->estNonHistorise()) {
+                $question = $reponse->getQuestion()->getId();
+                $inscription = $reponse->getInscription()->getId();
+
+                $niveau = $reponse->getNiveau();
+                $description = $reponse->getDescription();
+
+                $array[$inscription]["Niveau_" . $question] = EnqueteReponse::NIVEAUX[$niveau];
+                $array[$inscription]["Commentaire_" . $question] = $description;
+                $histogramme[$question][$niveau]++;
+            }
+        }
+
+        $categories = $this->getEntityManager()->getRepository(EnqueteCategorie::class)->findAll();
+        return new ViewModel([
+            "array" => $array,
+            "histogramme" => $histogramme,
+            "nbReponses" => count($array),
+            "questions" => $questions,
+            "categories" => $categories,
+        ]);
+    }
+
+    /** QUESTIONS *****************************************************************************************************/
+
+    public function afficherQuestionsAction() : ViewModel
+    {
         $questions = $this->getEntityManager()->getRepository(EnqueteQuestion::class)->findAll();
         $categories = $this->getEntityManager()->getRepository(EnqueteCategorie::class)->findAll();
 
@@ -39,8 +96,8 @@ class EnqueteQuestionController extends AbstractController {
         ]);
     }
 
-    public function ajouterCategorieAction() {
-
+    public function ajouterCategorieAction() : ViewModel
+    {
         $question = new EnqueteCategorie();
 
         $form = $this->getEnqueteCategorieForm();
@@ -64,10 +121,9 @@ class EnqueteQuestionController extends AbstractController {
         return $vm;
     }
 
-    public function modifierCategorieAction() {
-
-        /** @var EnqueteCategorie $categorie */
-        $categorie = $this->getEntityManager()->getRepository(EnqueteCategorie::class)->getRequestedEnqueteCategorie($this);
+    public function modifierCategorieAction() : ViewModel
+    {
+        $categorie = $this->getEnqueteCategorieService()->getRepository()->getRequestedEnqueteCategorie($this);
 
         $form = $this->getEnqueteCategorieForm();
         $form->setAttribute('action', $this->url()->fromRoute('formation/enquete/categorie/modifier', ['categorie' => $categorie->getId()], [], true));
@@ -90,26 +146,22 @@ class EnqueteQuestionController extends AbstractController {
         return $vm;
     }
 
-    public function historiserCategorieAction()
+    public function historiserCategorieAction() : Response
     {
-        /** @var EnqueteCategorie $categorie */
-        $categorie = $this->getEntityManager()->getRepository(EnqueteCategorie::class)->getRequestedEnqueteCategorie($this);
-        $retour = $this->params()->fromQuery('retour');
-
+        $categorie = $this->getEnqueteCategorieService()->getRepository()->getRequestedEnqueteCategorie($this);
         $this->getEnqueteCategorieService()->historise($categorie);
 
+        $retour = $this->params()->fromQuery('retour');
         if ($retour) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/enquete/question', [], [], true);
     }
 
-    public function restaurerCategorieAction()
+    public function restaurerCategorieAction() : Response
     {
-        /** @var EnqueteCategorie $categorie */
-        $categorie = $this->getEntityManager()->getRepository(EnqueteCategorie::class)->getRequestedEnqueteCategorie($this);
-        $retour = $this->params()->fromQuery('retour');
-
+        $categorie = $this->getEnqueteCategorieService()->getRepository()->getRequestedEnqueteCategorie($this);
         $this->getEnqueteCategorieService()->restore($categorie);
 
+        $retour = $this->params()->fromQuery('retour');
         if ($retour) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/enquete/question', [], [], true);
     }
@@ -117,7 +169,7 @@ class EnqueteQuestionController extends AbstractController {
     public function supprimerCategorieAction()
     {
         /** @var EnqueteCategorie|null $categorie */
-        $categorie = $this->getEntityManager()->getRepository(EnqueteCategorie::class)->getRequestedEnqueteCategorie($this);
+        $categorie = $this->getEnqueteCategorieService()->getRepository()->getRequestedEnqueteCategorie($this);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -138,7 +190,7 @@ class EnqueteQuestionController extends AbstractController {
         return $vm;
     }
 
-    public function ajouterQuestionAction() {
+    public function ajouterQuestionAction() : ViewModel {
 
         $question = new EnqueteQuestion();
 
@@ -163,10 +215,9 @@ class EnqueteQuestionController extends AbstractController {
         return $vm;
     }
 
-    public function modifierQuestionAction() {
-
-        /** @var EnqueteQuestion $question */
-        $question = $this->getEntityManager()->getRepository(EnqueteQuestion::class)->getRequestedEnqueteQuestion($this);
+    public function modifierQuestionAction() : ViewModel
+    {
+        $question = $this->getEnqueteQuestionService()->getRepository()->getRequestedEnqueteQuestion($this);
 
         $form = $this->getEnqueteQuestionForm();
         $form->setAttribute('action', $this->url()->fromRoute('formation/enquete/question/modifier', ['question' => $question->getId()], [], true));
@@ -189,34 +240,29 @@ class EnqueteQuestionController extends AbstractController {
         return $vm;
     }
 
-    public function historiserQuestionAction()
+    public function historiserQuestionAction() : Response
     {
-        /** @var EnqueteQuestion $question */
-        $question = $this->getEntityManager()->getRepository(EnqueteQuestion::class)->getRequestedEnqueteQuestion($this);
-        $retour = $this->params()->fromQuery('retour');
-
+        $question = $this->getEnqueteQuestionService()->getRepository()->getRequestedEnqueteQuestion($this);
         $this->getEnqueteQuestionService()->historise($question);
 
+        $retour = $this->params()->fromQuery('retour');
         if ($retour) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/enquete/question', [], [], true);
     }
 
-    public function restaurerQuestionAction()
+    public function restaurerQuestionAction() : Response
     {
-        /** @var EnqueteQuestion $question */
-        $question = $this->getEntityManager()->getRepository(EnqueteQuestion::class)->getRequestedEnqueteQuestion($this);
-        $retour = $this->params()->fromQuery('retour');
-
+        $question = $this->getEnqueteQuestionService()->getRepository()->getRequestedEnqueteQuestion($this);
         $this->getEnqueteQuestionService()->restore($question);
 
+        $retour = $this->params()->fromQuery('retour');
         if ($retour) return $this->redirect()->toUrl($retour);
         return $this->redirect()->toRoute('formation/enquete/question', [], [], true);
     }
 
-    public function supprimerQuestionAction()
+    public function supprimerQuestionAction() : ViewModel
     {
-        /** @var EnqueteQuestion|null $question */
-        $question = $this->getEntityManager()->getRepository(EnqueteQuestion::class)->getRequestedEnqueteQuestion($this);
+        $question = $this->getEnqueteQuestionService()->getRepository()->getRequestedEnqueteQuestion($this);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -237,18 +283,20 @@ class EnqueteQuestionController extends AbstractController {
         return $vm;
     }
 
-    public function repondreQuestionsAction()
+    /** REPONSES ******************************************************************************************************/
+
+    public function repondreQuestionsAction() : ViewModel
     {
-        /** @var Inscription $inscription */
-        $inscription = $this->getEntityManager()->getRepository(Inscription::class)->getRequestedInscription($this);
+        $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
+
         /** @var EnqueteQuestion[] $questions */
         $questions = $this->getEntityManager()->getRepository(EnqueteQuestion::class)->findAll();
         $questions = array_filter($questions, function (EnqueteQuestion $a) { return $a->estNonHistorise();});
         $dictionnaireQuestion = [];
         foreach ($questions as $question) $dictionnaireQuestion[$question->getId()] = $question;
         usort($questions, function (EnqueteQuestion $a, EnqueteQuestion $b) { return $a->getOrdre() > $b->getOrdre();});
-        /** @var EnqueteReponse[] $reponses */
-        $reponses = $this->getEntityManager()->getRepository(EnqueteReponse::class)->findEnqueteReponseByInscription($inscription);
+
+        $reponses = $this->getEnqueteReponseService()->getRepository()->findEnqueteReponseByInscription($inscription);
         $reponses = array_filter($reponses, function (EnqueteReponse $a) { return $a->estNonHistorise();});
         $dictionnaireReponse = [];
         foreach ($reponses as $reponse) $dictionnaireReponse[$reponse->getQuestion()->getId()] = $reponse;

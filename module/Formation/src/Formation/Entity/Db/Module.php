@@ -11,9 +11,9 @@ class Module implements HistoriqueAwareInterface
     use HistoriqueAwareTrait;
 
     private int $id;
-    private ?string $libelle;
-    private ?string $description;
-    private ?string $lien;
+    private ?string $libelle = null;
+    private ?string $description = null;
+    private ?string $lien = null;
     private Collection $formations;
 
     /**
