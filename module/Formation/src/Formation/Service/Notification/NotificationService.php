@@ -4,12 +4,15 @@ namespace Formation\Service\Notification;
 
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
+use Formation\Provider\Template\MailTemplates;
 use Notification\Notification;
 use Notification\Service\NotifierService;
 use Laminas\View\Helper\Url as UrlHelper;
+use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 class NotificationService extends NotifierService
 {
+    use RenduServiceAwareTrait;
     /**
      * @var UrlHelper
      */
@@ -43,19 +46,25 @@ class NotificationService extends NotifierService
 
     public function triggerInscriptionListePrincipale(Inscription $inscription)
     {
+        $vars = [
+            'doctorant' => $inscription->getDoctorant(),
+            'formation' => $inscription->getSession()->getFormation(),
+            'session'   => $inscription->getSession(),
+        ];
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::INSCRIPTION_LISTE_PRINCIPALE, $vars);
         $mail = $inscription->getDoctorant()->getIndividu()->getEmail();
-        $libelle = $inscription->getSession()->getFormation()->getLibelle();
 
         if ($mail !== null) {
             $notif = new Notification();
             $notif
-                ->setSubject("Vous êtes sur la liste principale de la formation ".$libelle)
                 ->setTo($mail)
-                ->setTemplatePath('formation/notification/inscription-principale')
-                ->setTemplateVariables([
-                    'inscription' => $inscription,
-                    'libelle' => $libelle,
-                ]);
+                ->setSubject($rendu->getSujet())
+                ->setBody($rendu->getCorps())
+//                ->setTemplatePath('formation/notification/renderer-mail')
+//                ->setTemplateVariables([
+//                    'corps' => $rendu->getCorps()])
+                ;
             $this->trigger($notif);
         }
     }

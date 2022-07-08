@@ -38,6 +38,11 @@ class Notification
     protected $subject;
 
     /**
+     * @var string
+     */
+    protected $body = null;
+
+    /**
      * @var array
      */
     protected $to;
@@ -189,6 +194,12 @@ class Notification
         return $this;
     }
 
+    public function setBody(string $body)
+    {
+        $this->body = $body;
+        return $this;
+    }
+
     /**
      * @param string|array $to
      * @return static
@@ -228,6 +239,14 @@ class Notification
     public function getSubject()
     {
         return $this->subject;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getBody()
+    {
+        return $this->body;
     }
 
     /**

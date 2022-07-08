@@ -6,6 +6,9 @@ use Application\Service\Notification\NotificationFactory;
 use Interop\Container\ContainerInterface;
 use Notification\Service\NotifierServiceFactory;
 use Laminas\View\Helper\Url as UrlHelper;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use UnicaenRenderer\Service\Rendu\RenduService;
 
 class NotificationServiceFactory extends NotifierServiceFactory
 {
@@ -15,11 +18,17 @@ class NotificationServiceFactory extends NotifierServiceFactory
     /**
      * @param ContainerInterface $container
      * @return NotificationService
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container) : NotificationService
     {
-        /** @var NotificationService $service */
+        /**
+         * @var NotificationService $service
+         * @var RenduService $renduService
+         */
         $service = parent::__invoke($container);
+        $renduService = $container->get(RenduService::class);
 
         /** @var UrlHelper $urlHelper */
         $urlHelper = $container->get('ViewHelperManager')->get('Url');
@@ -29,6 +38,7 @@ class NotificationServiceFactory extends NotifierServiceFactory
 
         $service->setNotificationFactory($notificationFactory);
         $service->setUrlHelper($urlHelper);
+        $service->setRenduService($renduService);
 
         return $service;
     }
