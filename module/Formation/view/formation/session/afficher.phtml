@@ -1,5 +1,6 @@
 <?php
 
+use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Formateur;use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
@@ -374,14 +375,14 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
 
     <?php /** @see \Formation\Controller\SessionController::classerInscriptionsAction() */ ?>
     <a href="<?php echo $this->url('formation/session/classer-inscriptions', ['session' => $session->getId()], [] , true); ?>"
-       class="btn btn-primary action <?php if (empty($inscrits)) echo " disabled "; ?>">
+       class="btn btn-primary action <?php if (empty($inscrits) OR $session->getDateDebut() === null) echo " disabled "; ?>">
         <span class="fas fa-align-left"></span>
         Classer les inscrits
     </a>
 
     <?php /** @see \Formation\Controller\SessionController::declasserInscriptionsAction() */ ?>
     <a href="<?php echo $this->url('formation/session/declasser-inscriptions', ['session' => $session->getId()], [] , true); ?>"
-       class="btn btn-primary action <?php if (empty($inscrits)) echo " disabled "; ?>">
+       class="btn btn-primary action <?php if (empty($inscrits)  OR $session->getDateDebut() === null) echo " disabled "; ?>">
         <span class="fas fa-align-right"></span>
         Déclasser les inscrits
     </a>
@@ -409,8 +410,8 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
         <ul>
         <?php foreach ($listeNonClassee as $inscrit) : ?>
             <?php echo $this->inscription($inscrit, [
-                    'action-liste-principale' => $canModifierInscription,
-                    'action-liste-complementaire' => $canModifierInscription,
+                    'action-liste-principale' => ($session->getDateDebut() !== null AND $canModifierInscription),
+                    'action-liste-complementaire' => ($session->getDateDebut() !== null AND $canModifierInscription),
                     'action-historiser' => $canModifierInscription,
                     'action-supprimer' => $canModifierInscription,
             ]); ?>
@@ -430,7 +431,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
         <?php foreach ($listePrincipale as $inscription) : ?>
             <?php echo $this->inscription($inscription, [
                     'action-liste-principale' => false,
-                    'action-liste-complementaire' => $canModifierInscription,
+                    'action-liste-complementaire' => ($session->getDateDebut() !== null AND $canModifierInscription),
                     'action-historiser' => $canModifierInscription,
                     'action-supprimer' => $canModifierInscription,
                 ]); ?>
@@ -449,7 +450,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
         <ul>
             <?php foreach ($listeComplementaire as $inscription) : ?>
                 <?php echo $this->inscription($inscription, [
-                        'action-liste-principale' => $canModifierInscription,
+                        'action-liste-principale' => ($session->getDateDebut() !== null AND $canModifierInscription),
                         'action-liste-complementaire' => false,
                         'action-historiser' => $canModifierInscription,
                         'action-supprimer' => $canModifierInscription,
@@ -461,7 +462,12 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
 
     <h2> Présences aux scéances</h2>
 
-    <?php echo $this->partial('formation/presence/renseigner-presences', ['session' => $session, 'presences' => $presences, 'titre' => false], [], true); ?>
+    <?php if ($session->getEtat()->getCode() !== Etat::CODE_FERME AND $session->getEtat()->getCode() !== Etat::CODE_CLOTURER) : ?>
+        <em> Les présences ne peuvent pas encore être renseignées.</em>
+    <?php else : ?>
+        <?php echo $this->partial('formation/presence/renseigner-presences', ['session' => $session, 'presences' => $presences, 'titre' => false], [], true); ?>
+    <?php endif; ?>
+
 <?php endif; ?>
 </div>
 

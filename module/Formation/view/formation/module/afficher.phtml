@@ -106,11 +106,13 @@ $urlRetour = $this->url('formation/module/afficher', ['module' => $module->getId
                         <ul>
                             <?php /** @var Session $session */ ?>
                             <?php foreach ($formation->getSessions() as $session) : ?>
-                                <li>
-                                    <?php echo ($session->getDateDebut()) ? $session->getDateDebut()->format('d/m/Y') : "---"; ?>
-                                    &Rightarrow;
-                                    <?php echo ($session->getDateFin()) ? $session->getDateFin()->format('d/m/Y') : "---"; ?>
-                                </li>
+                                <?php if ($session->estNonHistorise()) : ?>
+                                    <li>
+                                        <?php echo ($session->getDateDebut()) ? $session->getDateDebut()->format('d/m/Y') : "---"; ?>
+                                        &Rightarrow;
+                                        <?php echo ($session->getDateFin()) ? $session->getDateFin()->format('d/m/Y') : "---"; ?>
+                                    </li>
+                                <?php endif; ?>
                             <?php endforeach; ?>
                         </ul>
                     <?php endif; ?>
