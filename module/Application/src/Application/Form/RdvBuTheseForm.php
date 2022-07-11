@@ -116,6 +116,17 @@ class RdvBuTheseForm extends Form
             ],
         ]);
 
+        $this->add([
+            'type' => 'Text',
+            'name' => 'nnt',
+            'options' => [
+                'label' => 'NNT (facultatif)',
+            ],
+            'attributes' => [
+                'title' => "Numéro National des Thèses",
+            ],
+        ]);
+
         $this->add((new Submit('submit'))
             ->setValue("Enregistrer")
             ->setAttribute('class', 'btn btn-primary')
@@ -158,6 +169,10 @@ class RdvBuTheseForm extends Form
             ],
             'halId' => [
                 'name' => 'halId',
+                'required' => false,
+            ],
+            'nnt' => [
+                'name' => 'nnt',
                 'required' => false,
             ],
             'divers' => [

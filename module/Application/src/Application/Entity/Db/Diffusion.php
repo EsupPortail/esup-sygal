@@ -80,9 +80,9 @@ class Diffusion implements HistoriqueAwareInterface
     private $halId;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private $nnt;
+    private ?string $nnt = null;
 
     /**
      * @var integer
@@ -379,18 +379,18 @@ class Diffusion implements HistoriqueAwareInterface
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getNNT()
+    public function getNNT(): ?string
     {
         return $this->nnt;
     }
 
     /**
-     * @param string $nnt
+     * @param string|null $nnt
      * @return Diffusion
      */
-    public function setNNT($nnt)
+    public function setNNT(?string $nnt = null): self
     {
         $this->nnt = $nnt;
         return $this;

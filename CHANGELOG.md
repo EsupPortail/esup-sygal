@@ -4,6 +4,7 @@ Journal des modifications
 4.2.2
 -----
 - Changement de séparateur de mots-clés libres et RAMEAU (; remplacé par *).
+- Possibilité de saisir le Numéro National des Thèses (NNT) sur le formulaire du rendez-vous BU.
 
 4.2.1
 -----
