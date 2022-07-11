@@ -4,6 +4,7 @@ namespace Application\Filter;
 
 use Application\Entity\Db\MetadonneeThese;
 use Laminas\Filter\AbstractFilter;
+use LogicException;
 
 /**
  * Filtre pour stockage des mots-clés de description d'une thèse.
@@ -15,12 +16,10 @@ class MotsClesFilter extends AbstractFilter
     /**
      * @var string
      */
-    private $separator = MetadonneeThese::SEPARATEUR_MOTS_CLES;
+    private string $separator = MetadonneeThese::SEPARATEUR_MOTS_CLES;
 
     /**
-     * MotsClesFilter constructor.
-     *
-     * @param array $options Ex: ['separator' => ';']
+     * @param array $options Ex: ['separator' => '*']
      */
     public function __construct(array $options = [])
     {
@@ -31,7 +30,7 @@ class MotsClesFilter extends AbstractFilter
      * @param string $separator
      * @return self
      */
-    public function setSeparator($separator)
+    public function setSeparator(string $separator): self
     {
         $this->separator = $separator;
 
@@ -39,9 +38,7 @@ class MotsClesFilter extends AbstractFilter
     }
 
     /**
-     * Returns the result of filtering $value
-     *
-     * @param  array|string $motsCles These ou collection d'objets Acteur
+     * @param  string[]|string $motsCles
      * @return string
      */
     public function filter($motsCles)
@@ -50,8 +47,7 @@ class MotsClesFilter extends AbstractFilter
             return $motsCles;
         }
 
-        $separator = $this->separator;
-        $cleaner = function($value) use ($separator) {
+        $cleaner = function($value) {
             return trim($value, ' ' . $this->separator);
         };
 
@@ -59,11 +55,9 @@ class MotsClesFilter extends AbstractFilter
             $motsCles = explode($this->separator, $cleaner($motsCles));
         }
         elseif (! is_array($motsCles)) {
-            throw new \LogicException("Cas inattendu!");
+            throw new LogicException("Cas inattendu!");
         }
 
-        $motsCles = implode(" $this->separator ", array_map($cleaner, $motsCles));
-
-        return $motsCles;
+        return implode(" $this->separator ", array_map($cleaner, $motsCles));
     }
 }

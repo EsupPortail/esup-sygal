@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+4.2.2
+-----
+- Changement de séparateur de mots-clés libres et RAMEAU (; remplacé par *).
+
 4.2.1
 -----
 - Affichage d'une alerte à propos des délais durant la fermeture estivale (lib unicaen/alerte)

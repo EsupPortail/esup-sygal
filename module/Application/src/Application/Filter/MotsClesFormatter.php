@@ -2,21 +2,23 @@
 
 namespace Application\Filter;
 
+use Application\Entity\Db\MetadonneeThese;
 use Laminas\Escaper\Escaper;
 use Laminas\Filter\AbstractFilter;
+use LogicException;
 
 class MotsClesFormatter extends AbstractFilter
 {
     /**
      * @var string
      */
-    private $separator = ';';
+    private string $separator = MetadonneeThese::SEPARATEUR_MOTS_CLES;
 
     /**
      * @param string $separator
      * @return self
      */
-    public function setSeparator($separator)
+    public function setSeparator(string $separator): self
     {
         $this->separator = $separator;
 
@@ -24,9 +26,7 @@ class MotsClesFormatter extends AbstractFilter
     }
 
     /**
-     * MotsClesFormatter constructor.
-     *
-     * @param array $options Exemple: ['separator' => ';']
+     * @param array $options Exemple: ['separator' => '*']
      */
     public function __construct(array $options = [])
     {
@@ -34,11 +34,11 @@ class MotsClesFormatter extends AbstractFilter
     }
 
     /**
-     * @param array|string $motsCles
+     * @param string[]|string $motsCles
      * @param string $separator
-     * @return mixed
+     * @return string
      */
-    static public function format($motsCles, $separator = ';')
+    static public function format($motsCles, string $separator = '*'): string
     {
         $f = new static();
         $f->setSeparator($separator);
@@ -47,12 +47,10 @@ class MotsClesFormatter extends AbstractFilter
     }
 
     /**
-     * Returns the result of filtering $value
-     *
-     * @param  array|string $motsCles These ou collection d'objets Acteur
+     * @param  string[]|string $motsCles
      * @return string
      */
-    public function filter($motsCles)
+    public function filter($motsCles): string
     {
         if (! $motsCles) {
             return '';
@@ -62,7 +60,7 @@ class MotsClesFormatter extends AbstractFilter
             $motsCles = explode($this->separator, $motsCles);
         }
         elseif (! is_array($motsCles)) {
-            throw new \LogicException("Cas inattendu!");
+            throw new LogicException("Cas inattendu!");
         }
 
         $escaper = new Escaper();
