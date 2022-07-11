@@ -27,6 +27,7 @@ return [
         'ZfcUser',
         'BjyAuthorize' => 'BjyAuthorize',
         'UnicaenApp',
+        'UnicaenAlerte',
         'UnicaenAuth',
         'UnicaenAuthToken',
         'UnicaenAvis',

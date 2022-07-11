@@ -1,7 +1,7 @@
 <?php
 /**
  * @see \Application\Controller\IndexController::indexAction()
- * @var PhpRenderer $this
+ * @var \Application\View\Renderer\PhpRenderer $this
  * @var Role        $role Rôle courant de l'utilisateur
  * @var Role[]      $roles Rôles que possèdent l'utilisateur
  * @var EcoleDoctorale[] $ecoles
@@ -10,9 +10,9 @@
  * @var Information[]       $informations
  */
 
+use Application\Constants;
 use Structure\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Role;
-use Application\View\Renderer\PhpRenderer;
 use Information\Entity\Db\Information;
 
 $appName = $this->appInfos()->nom;
@@ -20,6 +20,11 @@ $subtitle = $this->appInfos()->desc;
 ?>
 
 <?php $this->headTitle($this->translate("Accueil")); ?>
+
+<?php echo $this->alertes()
+    ->withCode(Constants::ALERTE_FERMETURE_ESTIVALE)
+    ->withMatchingPlanning()
+    ->renderAsBootstrapToasts() ?>
 
 <?php
 echo $this->messenger()
