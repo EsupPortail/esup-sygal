@@ -7,6 +7,7 @@ use Application\Entity\Db\These;
 use Formation\Service\Formation\FormationServiceAwareTrait;
 use Formation\Service\Presence\PresenceServiceAwareTrait;
 use Laminas\Http\Response;
+use Notification\Exception\NotificationException;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\File\FileServiceAwareTrait;
 use DateTime;
@@ -47,7 +48,7 @@ class SessionController extends AbstractController
         $this->renderer = $renderer;
     }
 
-    public function afficherAction()
+    public function afficherAction() : ViewModel
     {
         $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
 
@@ -81,6 +82,7 @@ class SessionController extends AbstractController
             $form->setData($data);
             if ($form->isValid()) {
                 $this->getSessionService()->create($session);
+                /** @var Etat $enPrepration */
                 $enPrepration = $this->getEntityManager()->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_PREPARATION]);
                 $session->setEtat($enPrepration);
                 $this->getSessionService()->update($session);
@@ -163,10 +165,13 @@ class SessionController extends AbstractController
         return $vm;
     }
 
+    /**
+     * @throws NotificationException
+     */
     public function changerEtatAction()
     {
         $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
-        /**@var Etat $etat */
+        /** @var Etat $etat */
         $etat = $this->getEntityManager()->getRepository(Etat::class)->getRequestedEtat($this);
 
         if ($etat) {
@@ -187,13 +192,18 @@ class SessionController extends AbstractController
             if ($etat !== null) {
                 $session->setEtat($etat);
                 $this->getSessionService()->update($session);
-                //todo ceci est un test ...
-                if ($session->getEtat()->getCode() === Etat::CODE_FERME) {
-                    $this->getNotificationService()->triggerSessionImminente($session);
-                    $this->getNotificationService()->triggerInscriptionEchec($session);
-                }
-                if ($session->getEtat()->getCode() === Etat::CODE_CLOTURER) {
-                    $this->getNotificationService()->triggerSessionTerminee($session);
+
+                switch ($session->getEtat()->getCode()) {
+                    case Etat::CODE_FERME :
+                        $this->getNotificationService()->triggerSessionImminente($session);
+                        $this->getNotificationService()->triggerInscriptionEchec($session);
+                        break;
+                    case Etat::CODE_CLOTURER :
+                        $this->getNotificationService()->triggerSessionTerminee($session);
+                        break;
+                    case Etat::CODE_ANNULEE :
+                        $this->getNotificationService()->triggerSessionAnnulee($session);
+                        break;
                 }
             }
         }
@@ -205,6 +215,9 @@ class SessionController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws NotificationException
+     */
     public function classerInscriptionsAction() : Response
     {
         $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
@@ -265,7 +278,7 @@ class SessionController extends AbstractController
     {
         $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
 
-        $headers = ['Liste', 'Dénomination étudiant', 'Adresse électronique', 'Établissement', 'École doctorale', 'Unité de recherche'];
+        $headers = ['Liste', 'Dénomination étudiant', 'Adresse électronique', 'Établissement', 'École doctorale', 'Unité de recherche', 'Desinscription', 'Motif de desinscription'];
 
         $inscriptions = $session->getInscriptions()->toArray();
         $records = [];
@@ -283,6 +296,8 @@ class SessionController extends AbstractController
                 'Établissement' => implode("/",$etablissements),
                 'École doctorale' => implode("/",$ecoles),
                 'Unité de recherche' => implode("/",$unites),
+                'Desinscription' => $inscription->getHistoDestruction()->format('d/m/Y'),
+                'Motif de desinscription' => $inscription->getDescription(),
             ];
             $records[] = $entry;
         }

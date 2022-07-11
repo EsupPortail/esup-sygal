@@ -92,6 +92,7 @@ return [
                     'controller' => EnqueteQuestionController::class,
                     'action' => [
                         'repondre-questions',
+                        'valider-questions',
                     ],
                     'privileges' => [
                         EnquetePrivileges::ENQUETE_REPONSE_REPONDRE,
@@ -309,6 +310,17 @@ return [
                                     'defaults' => [
                                         'controller' => EnqueteQuestionController::class,
                                         'action'     => 'repondre-questions',
+                                    ],
+                                ],
+                            ],
+                            'valider-questions' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/valider-questions/:inscription',
+                                    'defaults' => [
+                                        'controller' => EnqueteQuestionController::class,
+                                        'action'     => 'valider-questions',
                                     ],
                                 ],
                             ],

@@ -6,7 +6,6 @@
  * @var Session[] $ouvertes
  * @var Session[] $preparations
  * @var Inscription[] $inscriptions
- * @var array[] $resultats
  * @var EnqueteReponse[] $reponses;
  */
 
@@ -34,6 +33,8 @@ foreach ($inscriptions as $inscription) {
         if ($inscription->estNonHistorise()) $encours[] = $inscription;
     }
 }
+
+/** @var Inscription[] $terminees */
 $terminees = array_filter($terminees, function (Inscription $a) { return $a->getListe() === Inscription::LISTE_PRINCIPALE; });
 
 $canAjouterInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_AJOUTER));
@@ -345,19 +346,30 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
                         Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
                     </td>
                     <td>
-                        <?php if ($canRepondreEnquete) : ?>
-                            <?php /** @see \Formation\Controller\EnqueteQuestionController::repondreQuestionsAction() */?>
-                            <a href="<?php echo $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true); ?>">
-                        <span class="icon icon-edit"
-                              title="Compléter l'enquête" data-bs-toggle="tooltip" data-bs-html="true"
-                        ></span></a>
-                        <?php endif; ?>
-                        <?php if (isset($resultats[$inscription->getId()]) AND $canAttestationInscription) : ?>
-                            <?php /** @see \Formation\Controller\InscriptionController::genererAttestationAction() */?>
-                            <a href="<?php echo $this->url('formation/inscription/generer-attestation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
-                        <span class="icon icon-pdf"
-                              title="Télécharger l'attestation" data-bs-toggle="tooltip" data-bs-html="true"
-                        ></span></a>
+                        <?php if ($inscription->computeDureePresence() > 0) : ?>
+                            <?php if ($canRepondreEnquete AND $inscription->getValidationEnquete() === null) : ?>
+                                <?php /** @see \Formation\Controller\EnqueteQuestionController::repondreQuestionsAction() */?>
+                                <a href="<?php echo $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true); ?>">
+                            <span class="icon icon-edit"
+                                  title="Compléter l'enquête" data-bs-toggle="tooltip" data-bs-html="true"
+                            ></span></a>
+                                <?php /** @see \Formation\Controller\EnqueteQuestionController::validerQuestionsAction() */?>
+                                <a href="<?php echo $this->url('formation/enquete/valider-questions', ['inscription' => $inscription->getId()], [], true); ?>"
+                                   class="ajax-modal" data-event="modification"
+                                >
+                            <span class="icon icon-checked"
+                                  title="Valider l'enquête" data-bs-toggle="tooltip" data-bs-html="true"
+                            ></span></a>
+                            <?php endif; ?>
+                            <?php if ($inscription->getValidationEnquete() !== null AND $canAttestationInscription) : ?>
+                                <?php /** @see \Formation\Controller\InscriptionController::genererAttestationAction() */?>
+                                <a href="<?php echo $this->url('formation/inscription/generer-attestation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
+                            <span class="icon icon-pdf"
+                                  title="Télécharger l'attestation" data-bs-toggle="tooltip" data-bs-html="true"
+                            ></span></a>
+                            <?php endif; ?>
+                        <?php else :?>
+                            Pas de présence
                         <?php endif; ?>
                     </td>
                 </tr>

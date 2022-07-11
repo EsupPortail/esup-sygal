@@ -189,4 +189,29 @@ class NotificationService extends NotifierService
         }
     }
 
+    public function triggerSessionAnnulee(?Session $session)
+    {
+        $inscriptions = array_merge($session->getListePrincipale(), $session->getListeComplementaire());
+
+        foreach ($inscriptions as $inscription) {
+            $vars = [
+                'doctorant' => $inscription->getDoctorant(),
+                'formation' => $inscription->getSession()->getFormation(),
+                'session'   => $inscription->getSession(),
+            ];
+            $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SESSION_ANNULEE, $vars);
+            $mail = $inscription->getDoctorant()->getIndividu()->getEmail();
+
+            if ($mail !== null) {
+                $notif = new Notification();
+                $notif
+                    ->setTo($mail)
+                    ->setSubject($rendu->getSujet())
+                    ->setBody($rendu->getCorps())
+                ;
+                $this->trigger($notif);
+            }
+        }
+    }
+
 }

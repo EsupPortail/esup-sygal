@@ -11,5 +11,6 @@ class MailTemplates {
 
     const SESSION_IMMINENTE                         = "FORMATION_SESSION_IMMINENTE";
     const SESSION_TERMINEE                          = "FORMATION_SESSION_TERMINEE";
+    const SESSION_ANNULEE                           = "FORMATION_SESSION_ANNULEE";
 
 }

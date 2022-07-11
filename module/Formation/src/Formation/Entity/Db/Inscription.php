@@ -2,7 +2,9 @@
 
 namespace Formation\Entity\Db;
 
+use DateTime;
 use Doctorant\Entity\Db\Doctorant;
+use Doctrine\Common\Collections\Collection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
@@ -21,6 +23,8 @@ class Inscription implements HistoriqueAwareInterface {
     private ?Doctorant $doctorant = null;
     private ?string $liste = null;
     private ?string $description = null;
+    private ?Collection $presences = null;
+    private ?DateTime $validationEnquete = null;
 
     /**
      * @return int
@@ -117,5 +121,34 @@ class Inscription implements HistoriqueAwareInterface {
         $this->description = $description;
         return $this;
     }
+
+    public function computeDureePresence() : float
+    {
+        $duree = 0;
+        /** @var Presence $presence */
+        foreach ($this->presences as $presence) {
+            if ($presence->estNonHistorise() AND $presence->isPresent()) {
+                $duree += $presence->getSeance()->getDuree();
+            }
+        }
+        return $duree;
+    }
+
+    /**
+     * @return DateTime|null
+     */
+    public function getValidationEnquete(): ?DateTime
+    {
+        return $this->validationEnquete;
+    }
+
+    /**
+     * @param DateTime|null $validationEnquete
+     */
+    public function setValidationEnquete(?DateTime $validationEnquete): void
+    {
+        $this->validationEnquete = $validationEnquete;
+    }
+
 
 }

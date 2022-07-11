@@ -3,6 +3,7 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Formation\Entity\Db\EnqueteCategorie;
 use Formation\Entity\Db\EnqueteQuestion;
@@ -337,5 +338,31 @@ class EnqueteQuestionController extends AbstractController {
             'categories' => $categories,
             'form' => $form,
         ]);
+    }
+
+    public function validerQuestionsAction() : ViewModel
+    {
+        $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            if ($data["reponse"] === "oui") {
+                $inscription->setValidationEnquete(new DateTime());
+                $this->getInscriptionService()->update($inscription);
+            }
+            exit();
+        }
+
+        $vm = new ViewModel();
+        if ($inscription !== null) {
+            $vm->setTemplate('formation/default/confirmation');
+            $vm->setVariables([
+                'title' => "Validation de l'enquête",
+                'text' => "La validation est définitive, après celle-ci vous ne pourrez pas revenir sur l'enquête. <br/> Êtes-vous sûr·e de vouloir continuer ?",
+                'action' => $this->url()->fromRoute('formation/enquete/valider-questions', ["inscription" => $inscription->getId()], [], true),
+            ]);
+        }
+        return $vm;
     }
 }

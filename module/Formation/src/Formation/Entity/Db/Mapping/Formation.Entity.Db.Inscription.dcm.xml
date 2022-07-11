@@ -19,8 +19,10 @@
                 </join-columns>
             </many-to-one>
 
-            <field name="liste"               type="string"       length="1"          column="LISTE"            nullable="true"/>
-            <field name="description"         type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
+            <one-to-many field="presences" target-entity="Formation\Entity\Db\Presence" mapped-by="inscription"/>
+            <field name="liste"               type="string"       length="1"          column="LISTE"                   nullable="true"/>
+            <field name="description"         type="string"       length="9999"       column="DESCRIPTION"             nullable="true"/>
+            <field name="validationEnquete"   type="datetime"                         column="validation_enquete"      nullable="true"/>
 
             <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
             <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>

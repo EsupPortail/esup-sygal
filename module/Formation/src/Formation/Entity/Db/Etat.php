@@ -8,6 +8,7 @@ class Etat {
     const CODE_OUVERTE = 'O';
     const CODE_FERME = 'F';
     const CODE_CLOTURER = 'C';
+    const CODE_ANNULEE = 'A';
 
     private ?string $code = null;
     private ?string $libelle = null;

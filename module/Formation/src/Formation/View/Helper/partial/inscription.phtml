@@ -31,9 +31,7 @@ $inscriptions = array_filter($these->getAnneesUnivInscription()->toArray(), func
     <?php
 
     echo $doctorant->getIndividu()->getNomComplet(); ?>
-    <?php if ($inscription->estHistorise()) : ?>
-    <span class="historisee"></span>
-    <?php endif; ?>
+    <span class=" <?php if ($inscription->estHistorise()) echo "historisee"; ?> " title="<?php echo $inscription->getDescription(); ?>">
     <?php foreach ($doctorant->getTheses() as $these) {
         if ($these->getEtatThese() === These::ETAT_EN_COURS) {
             echo "<br/>";
@@ -47,6 +45,7 @@ $inscriptions = array_filter($these->getAnneesUnivInscription()->toArray(), func
         }
     }
     ?>
+    </span>
     <br/>
     Inscrit le <?php echo $inscription->getHistoCreation()->format("d/m/Y à H:i"); ?>
 

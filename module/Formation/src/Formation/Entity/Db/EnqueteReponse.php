@@ -9,11 +9,12 @@ class EnqueteReponse implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
     const NIVEAUX = [
-        1 => "Pas satisfait",
-        2 => "Peu satisfait",
-        3 => "Sans Avis",
-        4 => "Assez satisfait",
         5 => "Très satisfait",
+        4 => "Assez satisfait",
+        3 => "Sans Avis",
+        2 => "Peu satisfait",
+        1 => "Pas satisfait",
+
     ];
 
     /** @var int */
