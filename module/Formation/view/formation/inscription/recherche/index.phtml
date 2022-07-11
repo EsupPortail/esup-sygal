@@ -2,6 +2,7 @@
 
 namespace Application;
 
+use Formation\Entity\Db\Inscription;
 use Formation\Provider\Privilege\InscriptionPrivileges;
 use Formation\Provider\Privilege\SessionPrivileges;
 use Laminas\Paginator\Paginator as LaminasPaginator;
@@ -55,14 +56,25 @@ $canSupprimerInscription       = $this->isAllowed(InscriptionPrivileges::getReso
         </tr>
         </thead>
         <tbody>
+        <?php /** @var Inscription $inscription*/ ?>
         <?php foreach ($paginator as $inscription) : ?>
             <tr>
                 <td> <?php echo $inscription->getId(); ?> </td>
                 <td>
+                    <span class="<?php if ($inscription->estHistorise()) echo "historise text-danger"; ?>"
+                          title="<?php echo $inscription->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
+                    >
                     <?php echo $inscription->getSession()->getId(); ?>
                     <?php echo $inscription->getSession()->getFormation()->getLibelle(); ?>
+                    </span>
                 </td>
-                <td> <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?> </td>
+                <td>
+                    <span class="<?php if ($inscription->estHistorise()) echo "historise text-danger"; ?>"
+                          title="<?php echo $inscription->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
+                    >
+                        <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?>
+                    </span>
+                </td>
                 <td>
                     <?php if ($inscription->isListePrincipale()) : ?>
                         <span class="liste-principale">

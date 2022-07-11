@@ -20,6 +20,9 @@ class Formation implements HistoriqueAwareInterface,
     use HasModaliteTrait;
     use HasTypeTrait;
 
+    const TYPE_CODE_TRAVERSAL = 'T';
+    const TYPE_CODE_SPECIFIQUE = 'S';
+
     private int $id;
     private ?string $libelle = null;
     private ?string $description  = null;
@@ -170,6 +173,15 @@ class Formation implements HistoriqueAwareInterface,
     {
         $this->tailleListeComplementaire = $tailleListeComplementaire;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCode() : string
+    {
+        $module = $this->getModule();
+        return 'M'.$module->getId() . 'F'.$this->getId();
     }
 
     /** FONCTION POUR MACRO *******************************************************************************************/

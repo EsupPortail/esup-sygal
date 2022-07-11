@@ -1,7 +1,7 @@
 <?php
 /**
- * @see \Formation\Controller\FormationController::ajouterAction()
- * @see \Formation\Controller\FormationController::modifierAction()
+ * @see \Formation\Controller\SessionController::ajouterAction()
+ * @see \Formation\Controller\SessionController::modifierAction()
  * @var FormationForm $form
  */
 
@@ -17,8 +17,6 @@ echo $this->form()->openTag($form);
 
 <?php echo $this->formControlGroup($form->get('libelle')); ?>
 <?php echo $this->formControlGroup($form->get('description')); ?>
-<?php echo $this->formControlGroup($form->get('lien')); ?>
-<?php echo $this->formControlGroup($form->get('module')); ?>
 
 <h2> Valeur par défaut des sessions de cette formation </h2>
 

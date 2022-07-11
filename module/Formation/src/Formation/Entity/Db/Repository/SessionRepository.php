@@ -43,6 +43,9 @@ class SessionRepository extends EntityRepository
             ->leftJoin($alias.".inscriptions", "inscription")->addSelect("inscription")
             ->leftJoin($alias.".seances", "seance")->addSelect("seance")
             ->leftJoin($alias.".etat", "etat")->addSelect("etat")
+            ->leftJoin($alias.".structuresComplemenaires", "complement")->addSelect("complement")
+            ->leftJoin("complement.structure", "structureSessionInscription")->addSelect("structureSessionInscription")
+            ->andWhere("complement.histoDestruction IS NULL")
         ;
         return $qb;
     }
@@ -66,10 +69,9 @@ class SessionRepository extends EntityRepository
         }
 
         $qb = $this->createQB('session')
-            ->andWhere('session.type = :transversale OR session.typeStructure in (:structures)')
-            ->setParameter('transversale', HasTypeInterface::TYPE_TRANSVERSALE)
-            ->setParameter('structures', $structures)
+            ->andWhere('complement.structure in (:structures)')
             ->andWhere('etat.code = :ouverte OR etat.code = :preparation')
+            ->setParameter('structures', $structures)
             ->setParameter('ouverte', Etat::CODE_OUVERTE)
             ->setParameter('preparation', Etat::CODE_PREPARATION)
         ;

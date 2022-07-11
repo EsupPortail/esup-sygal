@@ -76,6 +76,8 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
         <dt class="col-md-3"> Description de la formation </dt>
         <dd class="col-md-9"> <?php echo $formation->getDescription(); ?> </dd>
     <?php endif ?>
+    <dt class="col-md-3"> Code </dt>
+    <dd class="col-md-9"> <code><?php echo $formation->getCode(); ?></code></dd>
     <?php if ($formation->getLien()) : ?>
         <dt class="col-md-3"> Lien vers de la fiche </dt>
         <dd class="col-md-9"> <a href="<?php echo $formation->getLien(); ?>" target="_blank"><?php echo $formation->getLien(); ?></a> </dd>

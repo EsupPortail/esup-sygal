@@ -56,6 +56,8 @@ $urlRetour = $this->url('formation/module/afficher', ['module' => $module->getId
     <dd class="col-md-9">
         <?php echo $module->getLibelle(); ?>
     </dd>
+    <dt class="col-md-3"> Code </dt>
+    <dd class="col-md-9"> <code><?php echo $module->getCode(); ?></code></dd>
     <?php if ($module->getDescription()) : ?>
         <dt class="col-md-3"> Description du module</dt>
         <dd class="col-md-9"> <?php echo $module->getDescription(); ?> </dd>

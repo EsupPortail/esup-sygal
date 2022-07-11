@@ -134,6 +134,8 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
         <dt class="col-md-3"> Description </dt>
         <dd class="col-md-9"> <?php echo $session->getDescription(); ?> </dd>
     <?php endif; ?>
+    <dt class="col-md-3"> Code </dt>
+    <dd class="col-md-9"> <code><?php echo $session->getCode(); ?></code></dd>
     <dt class="col-md-3"> État </dt>
     <dd class="col-md-9"> <?php echo $this->etat($session); ?> </dd>
     <dt class="col-md-3"> Site </dt>
@@ -162,7 +164,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
 
 <div class="row">
     <div class="col-md-6">
-        <h2> Structure·s complémentaire·s </h2>
+        <h2> Structure·s valide·s pour l'inscription </h2>
 
         <?php if ($canModifierSession) : ?>
             <?php /** @see \Formation\Controller\SessionStructureComplementaireController::ajouterStructureComplementaireAction() */?>
@@ -170,7 +172,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
                href="<?php echo $this->url('formation/session/ajouter-structure-complementaire', ['session' => $session->getId()], [], true); ?>"
             >
                 <span class="icon icon-ajouter"></span>
-                Ajouter une structure complémentaire
+                Ajouter une structure
             </a>
         <?php endif; ?>
 

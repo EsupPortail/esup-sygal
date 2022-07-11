@@ -314,6 +314,16 @@ class Session implements HistoriqueAwareInterface,
         return false;
     }
 
+    /**
+     * @return string
+     */
+    public function getCode() : string
+    {
+        $formation = $this->getFormation();
+        $module = $formation->getModule();
+        return 'M'.$module->getId() . 'F'.$formation->getId() . 'S'.$this->getId();
+    }
+
     /** Pour les macros ********************************************************************************/
 
     /**

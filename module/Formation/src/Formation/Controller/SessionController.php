@@ -4,8 +4,11 @@ namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\These;
+use Formation\Entity\Db\Formation;
+use Formation\Entity\Db\SessionStructureComplementaire;
 use Formation\Service\Formation\FormationServiceAwareTrait;
 use Formation\Service\Presence\PresenceServiceAwareTrait;
+use Formation\Service\SessionStructureComplementaire\SessionStructureComplementaireServiceAwareTrait;
 use Laminas\Http\Response;
 use Notification\Exception\NotificationException;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -35,6 +38,7 @@ class SessionController extends AbstractController
     use NotificationServiceAwareTrait;
     use PresenceServiceAwareTrait;
     use SessionServiceAwareTrait;
+    use SessionStructureComplementaireServiceAwareTrait;
 
     use SessionFormAwareTrait;
 
@@ -85,7 +89,20 @@ class SessionController extends AbstractController
                 /** @var Etat $enPrepration */
                 $enPrepration = $this->getEntityManager()->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_PREPARATION]);
                 $session->setEtat($enPrepration);
+
                 $this->getSessionService()->update($session);
+
+                $ns = new SessionStructureComplementaire();
+                $ns->setSession($session);
+
+                switch ($session->getType()) {
+                    case Formation::TYPE_CODE_TRAVERSAL :
+                        $ns->setStructure($session->getSite()->getStructure());
+                        break;
+                    case Formation::TYPE_CODE_SPECIFIQUE :
+                        $ns->setStructure($session->getTypeStructure());
+                }
+                if ($ns->getStructure()) $this->getSessionStructureComplementaireService()->create($ns);
             }
         }
 
@@ -93,7 +110,7 @@ class SessionController extends AbstractController
             'title' => "Ajout d'une session de formation",
             'form' => $form,
         ]);
-        $vm->setTemplate('formation/default/default-form');
+        $vm->setTemplate('formation/session/modifier');
         return $vm;
     }
 
@@ -118,7 +135,6 @@ class SessionController extends AbstractController
             'title' => "Modification d'une session de formation",
             'form' => $form,
         ]);
-        $vm->setTemplate('formation/default/default-form');
         return $vm;
     }
 

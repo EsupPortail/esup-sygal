@@ -86,4 +86,11 @@ class Module implements HistoriqueAwareInterface
         return $this->formations;
     }
 
+    /**
+     * @return string
+     */
+    public function getCode() : string
+    {
+        return 'M'.$this->getId();
+    }
 }
