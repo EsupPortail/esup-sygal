@@ -3,9 +3,8 @@
 namespace Application;
 
 use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Seance;
 use Formation\Provider\Privilege\SessionPrivileges;
-use Formation\Service\Formation\Search\FormationSearchService;
-use Formation\Service\Module\Search\ModuleSearchService;
 use Formation\Service\Session\Search\SessionSearchService;
 use Laminas\Paginator\Paginator as LaminasPaginator;
 
@@ -76,20 +75,39 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
             <th>
                 <a href="<?php echo $s = $this->sortable(SessionSearchService::NAME_etat) ?>"
                    title="<?php echo $this->translate("État") ?> ">
-                    <?php echo $this->translate("État") ?>*
+                    <?php echo $this->translate("État") ?>
                 </a> <?php echo $s->icon() ?>
             </th>
             <th>Séances</th>
-            <th>Inscriptions</th>
-            <th>Action</th>
+            <th style="min-width: 9rem;">Inscriptions</th>
+            <th style="min-width: 4rem;">Action</th>
         </tr>
         </thead>
         <tbody>
         <?php foreach ($paginator as $session) : ?>
             <tr>
                 <td>
-                    <?php echo $session->getFormation()->getLibelle(); ?> <br/>
-                    Session #<?php echo $session->getIndex(); ?> <br/>
+                    <span class=" <?php if ($session->estHistorise()) echo "historise text-danger"; ?> ">
+                        <span class="formation-typage">Session</span> #<?php echo $session->getIndex(); ?>
+                        <br>
+                        <span class="formation-typage">Formation</span>
+                        <?php echo $session->getFormation()->getLibelle(); ?>
+                        <?php if ($session->getFormation()->getDescription() !== null AND trim($session->getFormation()->getDescription()) !== null) : ?>
+                            <span class="icon icon-info"
+                                  title="<?php echo $session->getFormation()->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
+                            ></span>
+                        <?php endif; ?>
+                        <br>
+                        <span class="formation-typage">Module</span>
+                        <?php if ($session->getFormation()->getModule()) : ?>
+                            <?php echo $session->getFormation()->getModule()->getLibelle(); ?>
+                            <?php if ($session->getFormation()->getModule()->getDescription() !== null AND trim($session->getFormation()->getModule()->getDescription()) !== null) : ?>
+                                <span class="icon icon-info"
+                                      title="<?php echo $session->getFormation()->getModule()->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
+                                ></span>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </span>
                 </td>
                 <td>
                     <?php echo $this->site($session); ?>
@@ -108,14 +126,8 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                     <?php echo count($session->getSeances()); ?>
                     séance<?php if (count($session->getSeances())>1) echo "s"; ?>
                     (<?php echo $session->getDuree(); ?> h.)
-                    <!--                <a href="--><?php //echo $this->url('formation/seance/ajouter', ['session' => $session->getId()], [], true); ?><!--"-->
-                    <!--                   class="ajax-modal" data-event="modification"-->
-                    <!--                   title="Ajout d'une séance pour la session de formation #--><?php //echo $session->getId(); ?><!--"-->
-                    <!--                   data-bs-toggle="tooltip" data-bs-html="true">-->
-                    <!--                    <span class="icon icon-ajouter"></span>-->
-                    <!--                </a>-->
                     <ul>
-                        <?php /** @var \Formation\Entity\Db\Seance $seance */ ?>
+                        <?php /** @var Seance $seance */ ?>
                         <?php foreach ($session->getSeances() as $seance) : ?>
                             <li>
                                 <?php echo $seance->getDebut()->format('d/m/Y'); ?>
@@ -124,29 +136,6 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                                 <?php echo $seance->getFin()->format('H:i') ; ?>
                                 -
                                 <?php echo $seance->getLieu() ; ?>
-                                <!--                            --><?php ///** @see \Formation\Controller\SeanceController::modifierAction() */?>
-                                <!--                            <a href="--><?php //echo $this->url('formation/seance/modifier',['seance' => $seance->getId()], [], true); ?><!--"-->
-                                <!--                               class="ajax-modal" data-event="modification"-->
-                                <!--                               title="Modification de la séance #--><?php //echo $seance->getId(); ?><!--" data-bs-toggle="tooltip" data-bs-html="true">-->
-                                <!--                                <span class="icon icon-modifier"></span>-->
-                                <!--                            </a>-->
-                                <!--                            --><?php //if ($seance->estNonHistorise()) : ?>
-                                <!--                                <a href="--><?php //echo $this->url('formation/seance/historiser',['seance' => $seance->getId()], ['query' => ['retour' => $this->url('formation/session',[],[],true)]], true); ?><!--"-->
-                                <!--                                   title="Historisation de la séance #--><?php //echo $seance->getId(); ?><!--" data-bs-toggle="tooltip" data-bs-html="true">-->
-                                <!--                                    <span class="icon icon-historiser"></span>-->
-                                <!--                                </a>-->
-                                <!--                            --><?php //else : ?>
-                                <!--                                <a href="--><?php //echo $this->url('formation/seance/restaurer',['seance' => $seance->getId()], ['query' => ['retour' => $this->url('formation/session',[],[],true)]], true); ?><!--"-->
-                                <!--                                   title="Restauration de la séance #--><?php //echo $seance->getId(); ?><!--" data-bs-toggle="tooltip" data-bs-html="true">-->
-                                <!--                                    <span class="icon icon-restaurer"></span>-->
-                                <!--                                </a>-->
-                                <!--                            --><?php //endif; ?>
-                                <!--                            --><?php ///** @see \Formation\Controller\SeanceController::supprimerAction() */?>
-                                <!--                            <a href="--><?php //echo $this->url('formation/seance/supprimer',['seance' => $seance->getId()], [], true); ?><!--"-->
-                                <!--                               class="ajax-modal" data-event="modification"-->
-                                <!--                               title="Suppression de la séance #--><?php //echo $seance->getId(); ?><!--" data-bs-toggle="tooltip" data-bs-html="true">-->
-                                <!--                                <span class="icon icon-delete"></span>-->
-                                <!--                            </a>-->
                             </li>
                         <?php endforeach; ?>
                     </ul>
@@ -183,13 +172,13 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                             </a>
                         <?php endif; ?>
                     <?php endif; ?>
-                    <?php if ($canSupprimerSession) : ?>
+                    <?php if ($canSupprimerSession AND $session->estHistorise()) : ?>
                         <?php /** @see \Formation\Controller\SessionController::supprimerAction() */ ?>
                         <a href="<?php echo $this->url('formation/session/supprimer', ['session' => $session->getId()], [], true); ?>"
                            class="ajax-modal" data-event="modification"
                            title="Supprimer la session"
                            data-bs-toggle="tooltip" data-bs-html="true">
-                            <span class="icon icon-detruire"></span>
+                            <span class="icon icon-detruire text-danger"></span>
                         </a>
                     <?php endif; ?>
                 </td>

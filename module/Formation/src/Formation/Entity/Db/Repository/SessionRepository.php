@@ -7,6 +7,7 @@ use Doctorant\Entity\Db\Doctorant;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Formation\Entity\Db\Etat;
+use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Interfaces\HasTypeInterface;
 use Formation\Entity\Db\Session;
 use Individu\Entity\Db\Individu;
@@ -160,6 +161,27 @@ class SessionRepository extends EntityRepository
             ->setParameter('etats', $etats)
             ->orderBy('session.id', 'ASC')
         ;
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
+
+    /**
+     * @param Formation|null $formation
+     * @param string $champ
+     * @param string $ordre
+     * @param bool $keep_histo
+     * @return array
+     */
+    public function fetchSessionsByFormation(?Formation $formation, string $champ='id', string $ordre='ASC', bool $keep_histo = false) : array
+    {
+        $qb = $this->createQB('session')
+            ->orderBy('session.' . $champ, $ordre);
+
+        if ($formation !== null)  $qb = $qb->andWhere('session.formation = :formation')->setParameter('formation', $formation);
+        else                      $qb = $qb->andWhere('session.formation IS NULL');
+
+        if (!$keep_histo) $qb = $qb->andWhere('session.histoDestruction IS NULL');
+
         $result = $qb->getQuery()->getResult();
         return $result;
     }

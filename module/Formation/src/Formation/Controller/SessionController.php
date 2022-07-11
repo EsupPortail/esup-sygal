@@ -81,6 +81,9 @@ class SessionController extends AbstractController
             $form->setData($data);
             if ($form->isValid()) {
                 $this->getSessionService()->create($session);
+                $enPrepration = $this->getEntityManager()->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_PREPARATION]);
+                $session->setEtat($enPrepration);
+                $this->getSessionService()->update($session);
             }
         }
 

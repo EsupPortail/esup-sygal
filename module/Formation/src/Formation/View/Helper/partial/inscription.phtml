@@ -52,7 +52,7 @@ $inscriptions = array_filter($these->getAnneesUnivInscription()->toArray(), func
 
     <?php if ($actionListePrincipale OR $actionListeComplementaire OR $actionHistoriser OR $actionSupprimer) : ?>
         <br/>
-        <?php if ($actionListePrincipale) : ?>
+        <?php if ($inscription->estNonHistorise() AND $actionListePrincipale) : ?>
             <a
                 <?php /** @see \Formation\Controller\InscriptionController::passerListePrincipaleAction() */?>
                     href="<?php echo $this->url('formation/inscription/passer-liste-principale', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
@@ -60,14 +60,14 @@ $inscriptions = array_filter($these->getAnneesUnivInscription()->toArray(), func
             >
                 <strong>P</strong></a>
         <?php endif; ?>
-        <?php if ($actionListeComplementaire) : ?>
+        <?php if ($inscription->estNonHistorise() AND $actionListeComplementaire) : ?>
         <a <?php /** @see \Formation\Controller\InscriptionController::passerListeComplementaireAction() */?>
                 href="<?php echo $this->url('formation/inscription/passer-liste-complementaire', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
                 title="Passer <?php echo $doctorant->getIndividu()->getNomComplet(); ?> en liste complémentaire" data-bs-toggle="tooltip" data-bs-html="true"
         >
             <strong>C</strong></a>
         <?php endif; ?>
-        <?php if (($actionListePrincipale OR $actionListeComplementaire) AND $inscription->getListe()) : ?>
+        <?php if (($inscription->getListe() !== null) AND $inscription->getListe()) : ?>
             <a <?php /** @see \Formation\Controller\InscriptionController::retirerListeAction() */?>
                     href="<?php echo $this->url('formation/inscription/retirer-liste', ['inscription' => $inscription->getId()], ['query' => ['retour' => $this->url('formation/session/afficher', ['session' => $session->getId()])]], true); ?>"
                     title="Retirer des liste l'inscription de  <?php echo $doctorant->getIndividu()->getNomComplet(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
@@ -85,12 +85,12 @@ $inscriptions = array_filter($these->getAnneesUnivInscription()->toArray(), func
                     <span class="icon icon-restaurer"></span></a>
             <?php endif; ?>
         <?php endif; ?>
-        <?php if ($actionSupprimer) : ?>
+        <?php if ($actionSupprimer AND $inscription->estHistorise()) : ?>
             <?php /** @see \Formation\Controller\InscriptionController::supprimerAction() */ ?>
             <a href="<?php echo $this->url('formation/inscription/supprimer', ['inscription' => $inscription->getId()], [], true); ?>"
                class="ajax-modal" data-event="modification"
             >
-                <span class="icon icon-supprimer"></span></a>
+                <span class="icon icon-detruire text-danger"></span></a>
         <?php endif; ?>
     <?php endif; ?>
 </li>

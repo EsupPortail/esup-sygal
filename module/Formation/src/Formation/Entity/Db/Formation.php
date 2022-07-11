@@ -172,5 +172,16 @@ class Formation implements HistoriqueAwareInterface,
         return $this;
     }
 
+    /** FONCTION POUR MACRO *******************************************************************************************/
+
+    /**
+     * @return string
+     */
+    public function toStringResponsable() : string
+    {
+        if ($this->getResponsable() === null) return "Aucun responsable de nommé·e pour cette formation";
+        return $this->getResponsable()->getNomComplet();
+    }
+
 
 }
