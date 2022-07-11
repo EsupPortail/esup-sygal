@@ -82,8 +82,8 @@ class EnqueteReponseSearchService extends SearchService
             ->join("sess.formation", 'form')
             ->join("sess.formateurs", 'formateur')
             ->join("formateur.individu", 'indf')
-            ->join("form.responsable", 'resp')
-            ->join("form.site", 'site')
+            ->leftJoin("form.responsable", 'resp')
+            ->leftJoin("form.site", 'site')
             ->andWhere('er.histoDestruction is null')
             ->addOrderBy('q.id');
     }

@@ -60,8 +60,8 @@ class FormationSearchService extends SearchService
         // ATTENTION à bien sélectionner les relations utilisées par les filtres/tris et parcourues côté vue.
         return $this->formationRepository->createQueryBuilder('f')
             ->addSelect('resp, site, struct')
-            ->join("f.responsable", 'resp')
-            ->join("f.site", 'site')
+            ->leftJoin("f.responsable", 'resp')
+            ->leftJoin("f.site", 'site')
             ->leftJoin("f.typeStructure", 'struct');
     }
 
