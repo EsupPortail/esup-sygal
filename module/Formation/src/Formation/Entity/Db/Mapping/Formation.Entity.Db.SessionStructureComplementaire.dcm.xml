@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="Formation\Entity\Db\SessionStructureComplementaire"
-            table="FORMATION_SESSION_STRUCTURE_COMPLEMENTAIRE"
+            table="FORMATION_SESSION_STRUCTURE_VALIDE"
             repository-class="Formation\Entity\Db\Repository\SessionStructureComplementaireRepository">
 
         <id name="id" type="integer" column="ID">
