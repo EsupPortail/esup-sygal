@@ -127,10 +127,8 @@ abstract class ListeDiffusionAbstractHandler implements ListeDiffusionHandlerInt
      */
     protected function createFileContent()
     {
-        $adresses = array_unique($this->individusAvecAdresse);
-
         $lines = [];
-        foreach ($adresses as $adresse => $nom) {
+        foreach ($this->individusAvecAdresse as $adresse => $nom) {
             $lines[] = $adresse . ' ' . $nom;
         }
         sort($lines);

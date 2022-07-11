@@ -1,6 +1,17 @@
 Journal des modifications
 =========================
 
+4.2.1
+-----
+- Affichage d'une alerte à propos des délais durant la fermeture estivale (lib unicaen/alerte)
+- Retrait de `IntervenantEmailFormatter` et de `IntervenantTrouveFormatter` (classes inutilisées)
+- Changement du terme Établissement par Site dans l'affichage des rôles des EDs et des URs pour éviter la confusion
+- [FIX] retrait d'un début faisant planter la génération de convaocation de soutenance 
+- [FIX] Correction du plantage lors de la création manuelle d'un utilisateur.
+- [FIX] Plantage de RapportActiviteAssertion lorsque la route demandée n'existe pas.
+- [FIX] Fourniture à Sympa des adresses institutionnelles en plus des adresses perso.
+- [FIX] Problème de config de l'aide de vue IndividuUsurpation.
+
 4.2.0
 -----
 - Nouveau module Individu : recherche, création (à partir de rien ou d'un utilisateur), modification.

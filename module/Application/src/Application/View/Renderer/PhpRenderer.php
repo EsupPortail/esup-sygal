@@ -99,9 +99,9 @@ use UnicaenApp\View\Helper\AppInfos;
  * @method string                                                    plural($strings, $number)
  * @method string                                                    translate($message, $textDomain = null, $locale = null)
  * @method string                                                    translateplural($singular, $plural, $number, $textDomain = null, $locale = null)
- * @method string                                                    laminas-developer-toolstime($time, $precision = 2)
- * @method string                                                    laminas-developer-toolsmemory($size, $precision = 2)
- * @method string                                                    laminas-developer-toolsdetailarray($label, array $details, $redundant = false)
+ * @method string                                                    LaminasDeveloperToolsTime($time, $precision = 2)
+ * @method string                                                    LaminasDeveloperToolsMemory($size, $precision = 2)
+ * @method string                                                    LaminasDeveloperToolsDetailArray($label, array $details, $redundant = false)
  * @method \UnicaenAuth\View\Helper\AppConnection                    appconnection()
  * @method \UnicaenApp\View\Helper\Messenger                         messenger()
  * @method string                                                    modalajaxdialog($dialogDivId = null)
@@ -129,6 +129,8 @@ use UnicaenApp\View\Helper\AppInfos;
  * @method \UnicaenApp\View\Helper\TagViewHelper                     tag($name = null, array $attributes = [])
  * @method MessageHelper                                             message()
  * @method AppInfos                                                  appInfos()
+ *
+ * @method \UnicaenAlerte\View\Helper\AlerteViewHelper alertes()
  *
  * @method boolean isAllowed($resource, $privilege = null)
  *

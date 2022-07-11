@@ -85,6 +85,7 @@ class CreationUtilisateurFromIndividuForm extends Form implements InputFilterPro
                 'validators' => [
                     [
                         'name' => NewEmailValidator::class,
+                        'options' => ['perimetre' => ['utilisateur']],
                     ],
                 ],
             ],

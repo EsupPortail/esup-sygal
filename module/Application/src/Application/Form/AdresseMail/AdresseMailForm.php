@@ -37,6 +37,7 @@ class AdresseMailForm extends Form {
                 'validators' => [
                     [
                         'name' => NewEmailValidator::class,
+                        'options' => ['perimetre' => ['utilisateur']],
                     ],
                 ],
             ],

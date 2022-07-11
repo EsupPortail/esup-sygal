@@ -191,15 +191,17 @@ class RapportActiviteAssertion extends AbstractAssertion
     {
         if ($rapportActivite = $this->getRequestedRapport()) {
             return $rapportActivite->getThese();
+        } elseif ($routeMatch = $this->getRouteMatch()) {
+            return $routeMatch->getThese();
         } else {
-            return $this->getRouteMatch()->getThese();
+            return null;
         }
     }
 
     private function getRequestedRapport(): ?RapportActivite
     {
         $rapportActivite = null;
-        if ($id = $this->getRouteMatch()->getParam('rapport')) {
+        if (($routeMatch = $this->getRouteMatch()) && $id = $routeMatch->getParam('rapport')) {
             $rapportActivite = $this->rapportActiviteService->findRapportById($id);
         }
 
@@ -258,7 +260,7 @@ class RapportActiviteAssertion extends AbstractAssertion
     }
 
 
-    protected function getRouteMatch(): RouteMatch
+    protected function getRouteMatch(): ?RouteMatch
     {
         /** @var \Application\RouteMatch $rm */
         return $this->getMvcEvent()->getRouteMatch();

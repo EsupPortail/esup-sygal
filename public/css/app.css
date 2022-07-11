@@ -764,4 +764,22 @@ p.avis-complem {
   .card.validation-rapport-activite p {
     margin-bottom: 0.5rem; }
 
+.icon.icon-danger:before {
+  content: "\f071"; }
+
+/******************** UnicaenAlerte **********************/
+.unicaen-alerte.toast-container {
+  right: 0 !important;
+  top: 50px !important; }
+
+@media (min-width: 1100px) {
+  .unicaen-alerte .modal-dialog {
+    max-width: 700px; } }
+@media (min-width: 1250px) {
+  .unicaen-alerte .modal-dialog {
+    max-width: 800px; } }
+@media (min-width: 1500px) {
+  .unicaen-alerte .modal-dialog {
+    max-width: 900px; } }
+
 /*# sourceMappingURL=app.css.map */
