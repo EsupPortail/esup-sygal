@@ -1,5 +1,6 @@
 <?php
 
+use Application\Constants;
 use Application\Controller\Plugin\UrlFichierThese;
 use Application\Entity\Db\Acteur;
 use Individu\Entity\Db\IndividuRole;
@@ -16,6 +17,8 @@ use Soutenance\Provider\Validation\TypeValidation;
 
 /**
  * @see \Soutenance\Controller\PropositionController::propositionAction()
+ *
+ * @var \Application\View\Renderer\PhpRenderer $this
  *
  * @var These $these
  * @var Proposition $proposition
@@ -48,6 +51,11 @@ $canModifierJustificatif = ($this->isAllowed($these, JustificatifPrivileges::JUS
 
 $this->headTitle("Proposition de soutenance");
 ?>
+
+<?php echo $this->alertes()
+    ->withCode(Constants::ALERTE_FERMETURE_ESTIVALE)
+    ->withMatchingPlanning()
+    ->renderAsBootstrapToasts() ?>
 
 <h1 class="page-header">
     Proposition de soutenance

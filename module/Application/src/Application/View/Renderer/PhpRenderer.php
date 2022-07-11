@@ -130,6 +130,8 @@ use UnicaenApp\View\Helper\AppInfos;
  * @method MessageHelper                                             message()
  * @method AppInfos                                                  appInfos()
  *
+ * @method \UnicaenAlerte\View\Helper\AlerteViewHelper alertes()
+ *
  * @method boolean isAllowed($resource, $privilege = null)
  *
  * @method array                                              queryParams()

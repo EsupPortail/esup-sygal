@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1f4efe3765f143327d5e38bf0f744e12",
+    "content-hash": "ebfe611c7d768b01bc9323a579b7b40f",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -9382,6 +9382,55 @@
                 }
             ],
             "time": "2022-02-04T06:59:48+00:00"
+        },
+        {
+            "name": "unicaen/alerte",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/alerte.git",
+                "reference": "a27c16dbd7d7869e9c3177a9655bb38b55048456"
+            },
+            "require": {
+                "doctrine/doctrine-laminas-hydrator": "^2.0",
+                "doctrine/doctrine-orm-module": "^4.0",
+                "laminas/laminas-config": "^3.2",
+                "laminas/laminas-dependency-plugin": "^2.1",
+                "laminas/laminas-eventmanager": "^3.2",
+                "laminas/laminas-form": "^2.17",
+                "laminas/laminas-http": "^2.10",
+                "laminas/laminas-i18n": "^2.9",
+                "laminas/laminas-i18n-resources": "^2.6",
+                "laminas/laminas-json": "^3.2",
+                "laminas/laminas-log": "^2.10",
+                "laminas/laminas-mvc": "^3.1",
+                "laminas/laminas-mvc-i18n": "^1.1",
+                "laminas/laminas-mvc-plugin-fileprg": "^1.2",
+                "laminas/laminas-mvc-plugin-flashmessenger": "^1.1",
+                "laminas/laminas-mvc-plugin-identity": "^1.1",
+                "laminas/laminas-mvc-plugin-prg": "*",
+                "laminas/laminas-navigation": "^2.9",
+                "laminas/laminas-serializer": "^2.9",
+                "laminas/laminas-servicemanager": "^3.4",
+                "laminas/laminas-session": "^2.8",
+                "laminas/laminas-view": "^2.11",
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "laminas/laminas-test": "^3.2",
+                "phpunit/phpunit": "^5.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "UnicaenAlerte": "src/"
+                },
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "description": "Affichage d'alertes",
+            "time": "2022-07-09T10:20:03+00:00"
         },
         {
             "name": "unicaen/app",
