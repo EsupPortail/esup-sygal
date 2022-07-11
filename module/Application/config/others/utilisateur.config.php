@@ -19,7 +19,7 @@ use Application\Service\Utilisateur\UtilisateurSearchService;
 use Application\Service\Utilisateur\UtilisateurSearchServiceFactory;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Utilisateur\UtilisateurServiceFactory;
-use Application\View\Helper\IndividuUsurpationHelperFactory;
+use Individu\View\Helper\IndividuUsurpationHelperFactory;
 use Application\View\Helper\RoleHelper;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;

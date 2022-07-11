@@ -10,6 +10,7 @@ Journal des modifications
 - [FIX] Correction du plantage lors de la création manuelle d'un utilisateur.
 - [FIX] Plantage de RapportActiviteAssertion lorsque la route demandée n'existe pas.
 - [FIX] Fourniture à Sympa des adresses institutionnelles en plus des adresses perso.
+- [FIX] Problème de config de l'aide de vue IndividuUsurpation.
 
 4.2.0
 -----
