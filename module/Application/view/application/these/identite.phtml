@@ -1,5 +1,6 @@
 <?php
 
+use Application\Constants;
 use Application\Controller\TheseController;
 use Application\Entity\Db\Acteur;
 use Structure\Entity\Db\EtablissementRattachement;
@@ -51,6 +52,11 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 ?>
 
 <?php $this->headTitle($this->translate("Thèse"))->prepend($these->getDoctorant()->getNomUsuel()) ?>
+
+<?php echo $this->alertes()
+    ->withCode(Constants::ALERTE_FERMETURE_ESTIVALE)
+    ->withMatchingPlanning()
+    ->renderAsBootstrapToasts() ?>
 
 <h1 class="page-header">
     <?php echo $this->translate("Thèse"); ?>
