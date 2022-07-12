@@ -1,0 +1,30 @@
+<?php
+
+use Formation\Entity\Db\Session;
+
+/**
+ * @see \Formation\View\Helper\SessionLibelleViewHelper
+ * @var Session $session
+ * @var array $options
+ */
+
+?>
+
+<?php if ($options["index"] ?? false) : ?>
+    <span class="formation-typage">Session</span> #<?php echo $session->getIndex(); ?>
+<?php endif; ?>
+
+<span class="formation-typage">Formation</span> <?php echo $session->getFormation()->getLibelle(); ?>
+
+<?php if ($options["module"] ?? false) : ?>
+    <br/>
+    <small>
+        <span class="formation-typage">Module</span>
+        <?php $module = $session->getFormation()->getModule(); ?>
+        <?php if ($module !== null) : ?>
+            <?php echo $module->getLibelle(); ?>
+        <?php else : ?>
+            <i>Aucun</i>
+        <?php endif; ?>
+    </small>
+<?php endif; ?>

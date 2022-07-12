@@ -6,21 +6,21 @@ use Application\Controller\UtilisateurController;
 use Application\Form\CreationUtilisateurForm;
 use Application\Form\InitCompteForm;
 use Application\Service\Acteur\ActeurService;
-use Doctorant\Service\DoctorantService;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
-use Structure\Service\Structure\StructureService;
-use Structure\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurSearchService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\SourceCodeStringHelper;
 use Doctrine\ORM\EntityManager;
+use Formation\Service\Session\SessionService;
 use Individu\Service\IndividuServiceLocateTrait;
 use Interop\Container\ContainerInterface;
 use Laminas\Authentication\AuthenticationService;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\Etablissement\EtablissementService;
+use Structure\Service\Structure\StructureService;
+use Structure\Service\UniteRecherche\UniteRechercheService;
 use UnicaenAuth\Options\ModuleOptions;
 use UnicaenAuth\Service\ShibService;
 use UnicaenAuth\Service\User as UserService;
@@ -50,6 +50,7 @@ class UtilisateurControllerFactory
          * @var UserService $userService
          * @var UtilisateurSearchService $utilisateurSearchService
          * @var UserInterface $mapper
+         * @var SessionService $sessionService
          */
         $acteurService = $container->get(ActeurService::class);
         $roleService = $container->get('RoleService');
@@ -65,6 +66,7 @@ class UtilisateurControllerFactory
         $userService = $container->get('unicaen-auth_user_service');
         $utilisateurSearchService = $container->get(UtilisateurSearchService::class);
         $userMapper = $container->get('zfcuser_user_mapper');
+        $sessionService = $container->get(SessionService::class);
 
         /**
          * @var InitCompteForm $initCompteForm
@@ -106,6 +108,7 @@ class UtilisateurControllerFactory
         $controller->setAuthModuleOptions($authModuleOptions);
         $controller->setSearchService($utilisateurSearchService);
         $controller->setUserMapper($userMapper);
+        $controller->setSessionService($sessionService);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper

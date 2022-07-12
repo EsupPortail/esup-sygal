@@ -26,6 +26,11 @@ abstract class SearchService implements SearchServiceInterface
     protected $sorters = [];
 
     /**
+     * @var SearchSorter[]
+     */
+    protected array $invisibleSorters = [];
+
+    /**
      * @var SearchSorter
      */
     protected $defaultSorter;
@@ -60,6 +65,23 @@ abstract class SearchService implements SearchServiceInterface
     }
 
     /**
+     * @param string $label
+     * @param string $name
+     * @param string $sortExpr
+     * @param bool $isDefault
+     * @return self
+     */
+    public function addSort(string $label, string $name, string $sortExpr, bool $isDefault = false): self
+    {
+        $sorter = new SearchSorter($label, $name, $isDefault);
+        $sorter->setQueryBuilderApplier(function (SearchSorter $sorter, QueryBuilder $qb) use ($sortExpr) {
+            $qb->addOrderBy($sortExpr);
+        });
+
+        return $this->addSorter($sorter);
+    }
+
+    /**
      * @param SearchSorter $sorter
      * @return self
      */
@@ -88,6 +110,53 @@ abstract class SearchService implements SearchServiceInterface
     }
 
     /**
+     * Ajoute un tri invisible à appliquer systématiquement et en dernier.
+     *
+     * @param string $sort
+     * @param string|null $order
+     * @return self
+     */
+    public function addInvisibleSort(string $sort, ?string $order = null): self
+    {
+        $sorter = new SearchSorter('Final', uniqid('final_'));
+        $sorter->setQueryBuilderApplier(function (SearchSorter $sorter, QueryBuilder $qb) use ($sort, $order) {
+            $qb->addOrderBy($sort, $order);
+        });
+
+        return $this->addInvisibleSorter($sorter);
+    }
+
+    /**
+     * Ajoute un {@see SearchSorter} invisible à appliquer systématiquement et en dernier.
+     *
+     * @param SearchSorter $sorter
+     * @return self
+     */
+    public function addInvisibleSorter(SearchSorter $sorter): self
+    {
+        $sorter->setEnabled(true);
+
+        $this->invisibleSorters[] = $sorter;
+
+        return $this;
+    }
+
+    /**
+     * Ajoute des {@see SearchSorter} invisibles à appliquer systématiquement et en dernier, dans l'ordre.
+     *
+     * @param SearchSorter[] $sorters
+     * @return self
+     */
+    public function addInvisibleSorters(array $sorters): self
+    {
+        foreach ($sorters as $sorter) {
+            $this->addInvisibleSorter($sorter);
+        }
+
+        return $this;
+    }
+
+    /**
      * @inheritDoc
      */
     public function initFiltersWithUnpopulatedOptions()
@@ -100,6 +169,17 @@ abstract class SearchService implements SearchServiceInterface
         $this->initFiltersArray($filterValueOptions);
 
         $this->unpopulatedOptions = true;
+    }
+
+    /**
+     * Retourne le filtre dont le nom est spécifié.
+     *
+     * @param string $name
+     * @return SearchFilter
+     */
+    public function getFilterByName(string $name): SearchFilter
+    {
+        return $this->filters[$name];
     }
 
     /**
@@ -261,6 +341,9 @@ abstract class SearchService implements SearchServiceInterface
         }
 
         foreach ($this->sorters as $sorter) {
+            $sorter->applyToQueryBuilder($qb);
+        }
+        foreach ($this->invisibleSorters as $sorter) {
             $sorter->applyToQueryBuilder($qb);
         }
 

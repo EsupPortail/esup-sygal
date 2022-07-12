@@ -1,0 +1,43 @@
+<?php
+
+/**
+ * @see \Formation\View\Helper\ModaliteViewHelper
+ * @var HasTypeInterface|null $objet
+ * @var array $options
+ */
+
+use Formation\Entity\Db\Interfaces\HasTypeInterface;
+
+?>
+
+<?php if ($objet->getType() !== null) : ?>
+    <?php
+        $title = "Valeur non communiquée";
+        $texte = "N.C.";
+        switch($objet->getType()) {
+            case HasTypeInterface::TYPE_TRANSVERSALE :
+                $title = "Formation transversale";
+                $texte = "Transversale";
+                break;
+            case HasTypeInterface::TYPE_SPECIFIQUE :
+                $title = "Formation spécifique";
+                $texte = "Spécifique";
+                if ($objet->getTypeStructure()) {
+                    $texte .= "<br/>";
+                    $texte .= $objet->getTypeStructure()->getSigle();
+                }
+                break;
+        }
+    ?>
+
+    <span class="modalite" title="<?php echo $title; ?>"
+          data-bs-toggle="tooltip" data-bs-html="true">
+            <?php echo $texte; ?>
+    </span>
+<?php else : ?>
+    <span class="modalite" title="Aucun type de spécifié"
+          data-bs-toggle="tooltip" data-bs-html="true">
+        N.C.
+    </span>
+<?php endif; ?>
+

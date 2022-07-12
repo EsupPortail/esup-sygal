@@ -1,0 +1,212 @@
+<?php
+
+namespace Application;
+
+use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Seance;
+use Formation\Provider\Privilege\SessionPrivileges;
+use Formation\Service\Session\Search\SessionSearchService;
+use Laminas\Paginator\Paginator as LaminasPaginator;
+
+/**
+ * @var string $title
+ * @var LaminasPaginator $paginator
+ * @var string $routeName
+ * @var string $returnUrl
+ *
+ * @see \Formation\Controller\Recherche\SessionRechercheController::indexAction()
+ */
+
+$this->headTitle($this->translate($title));
+
+$canAfficherSession     = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AFFICHER));
+$canHistoriserSession   = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_HISTORISER));
+$canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_SUPPRIMER));
+?>
+
+<h1 class="page-header"><?php echo $title ?></h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+
+<!-- Formulaire de filtrage -->
+<div class="float-start">
+    <?php $loadFiltersUrl = $this->url($routeName . '/filters', [], ['query' => $this->queryParams()], true); ?>
+    <div id="filters" data-url="<?php echo $loadFiltersUrl ?>" style="min-height: 160px">
+        <!-- Contenu chargé en AJAX -->
+    </div>
+</div>
+<div class="clearfix"></div>
+
+
+<?php if (count($paginator) > 0): ?>
+
+    <p>
+        <?php echo $paginator->getTotalItemCount() . ' ' . $this->translate("formation·s trouvée·s.") ?>
+    </p>
+
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th>
+                Sessions
+            </th>
+            <th>
+                <a href="<?php echo $s = $this->sortable(SessionSearchService::NAME_site) ?>"
+                   title="<?php echo $this->translate("Site organisateur") ?> ">
+                    <?php echo $this->translate("Site organisateur") ?>*
+                </a> <?php echo $s->icon() ?>
+            </th>
+            <th>
+                <a href="<?php echo $s = $this->sortable(SessionSearchService::NAME_responsable) ?>"
+                   title="<?php echo $this->translate("Responsable") ?> ">
+                    <?php echo $this->translate("Responsable") ?>*
+                </a> <?php echo $s->icon() ?>
+            </th>
+            <th>
+                <a href="<?php echo $s = $this->sortable(SessionSearchService::NAME_modalite) ?>"
+                   title="<?php echo $this->translate("Modalité") ?> ">
+                    <?php echo $this->translate("Modalité") ?>*
+                </a> <?php echo $s->icon() ?>
+            </th>
+            <th>
+                Type
+            </th>
+            <th>
+                <a href="<?php echo $s = $this->sortable(SessionSearchService::NAME_etat) ?>"
+                   title="<?php echo $this->translate("État") ?> ">
+                    <?php echo $this->translate("État") ?>
+                </a> <?php echo $s->icon() ?>
+            </th>
+            <th>Séances</th>
+            <th style="min-width: 9rem;">Inscriptions</th>
+            <th style="min-width: 4rem;">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($paginator as $session) : ?>
+            <tr>
+                <td>
+                    <span class=" <?php if ($session->estHistorise()) echo "historise text-danger"; ?> ">
+                        <span class="formation-typage">Session</span> #<?php echo $session->getIndex(); ?>
+                        <br>
+                        <span class="formation-typage">Formation</span>
+                        <?php echo $session->getFormation()->getLibelle(); ?>
+                        <?php if ($session->getFormation()->getDescription() !== null AND trim($session->getFormation()->getDescription()) !== null) : ?>
+                            <span class="icon icon-info"
+                                  title="<?php echo $session->getFormation()->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
+                            ></span>
+                        <?php endif; ?>
+                        <br>
+                        <span class="formation-typage">Module</span>
+                        <?php if ($session->getFormation()->getModule()) : ?>
+                            <?php echo $session->getFormation()->getModule()->getLibelle(); ?>
+                            <?php if ($session->getFormation()->getModule()->getDescription() !== null AND trim($session->getFormation()->getModule()->getDescription()) !== null) : ?>
+                                <span class="icon icon-info"
+                                      title="<?php echo $session->getFormation()->getModule()->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
+                                ></span>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </span>
+                </td>
+                <td>
+                    <?php echo $this->site($session); ?>
+                </td>
+                <td>
+                    <?php if ($session->getResponsable() !== null) : ?>
+                        <?php echo $session->getResponsable()->getNomComplet(); ?>
+                    <?php else : ?>
+                        Aucun responsable
+                    <?php endif; ?>
+                </td>
+                <td> <?php echo $this->modalite($session); ?> </td>
+                <td> <?php echo $this->type($session); ?> </td>
+                <td> <?php echo $this->etat($session); ?> </td>
+                <td> <!-- Seances ----------------------------------------------------------------------------------------->
+                    <?php echo count($session->getSeances()); ?>
+                    séance<?php if (count($session->getSeances())>1) echo "s"; ?>
+                    (<?php echo $session->getDuree(); ?> h.)
+                    <ul>
+                        <?php /** @var Seance $seance */ ?>
+                        <?php foreach ($session->getSeances() as $seance) : ?>
+                            <li>
+                                <?php echo $seance->getDebut()->format('d/m/Y'); ?>
+                                <?php echo $seance->getDebut()->format('H:i') ; ?>
+                                &rightarrow;
+                                <?php echo $seance->getFin()->format('H:i') ; ?>
+                                -
+                                <?php echo $seance->getLieu() ; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </td>
+                <td> <!-- Inscriptions ------------------------------------------------------------------------------------>
+                    Liste principale : <?php echo count($session->getInscriptionsByListe(Inscription::LISTE_PRINCIPALE)); ?>/<?php echo $session->getTailleListePrincipale(); ?> <br/>
+                    Liste secondaire : <?php echo count($session->getInscriptionsByListe(Inscription::LISTE_COMPLEMENTAIRE)); ?>/<?php echo $session->getTailleListeComplementaire(); ?> <br/>
+                    Hors liste : <?php echo count($session->getInscriptionsByListe(null)); ?><br/>
+                </td>
+                <td>
+                    <?php if ($canAfficherSession) : ?>
+                        <?php /** @see \Formation\Controller\SessionController::afficherAction() */ ?>
+                        <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>">
+                        <span class="icon icon-voir"
+                              title="Examiner la session"
+                              data-bs-toggle="tooltip" data-bs-html="true">
+                        </span>
+                        </a>
+                    <?php endif; ?>
+                    <?php if ($canHistoriserSession) : ?>
+                        <?php if ($session->estNonHistorise()) : ?>
+                            <?php /** @see \Formation\Controller\SessionController::historiserAction() */ ?>
+                            <a href="<?php echo $this->url('formation/session/historiser', ['session' => $session->getId()], [], true); ?>"
+                               title="Historiser la session"
+                               data-bs-toggle="tooltip" data-bs-html="true">
+                                <span class="icon icon-historiser"></span>
+                            </a>
+                        <?php else : ?>
+                            <?php /** @see \Formation\Controller\SessionController::restaurerAction() */ ?>
+                            <a href="<?php echo $this->url('formation/session/restaurer', ['session' => $session->getId()], [], true); ?>"
+                               title="Restaurer la session"
+                               data-bs-toggle="tooltip" data-bs-html="true">
+                                <span class="icon icon-restaurer"></span>
+                            </a>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    <?php if ($canSupprimerSession AND $session->estHistorise()) : ?>
+                        <?php /** @see \Formation\Controller\SessionController::supprimerAction() */ ?>
+                        <a href="<?php echo $this->url('formation/session/supprimer', ['session' => $session->getId()], [], true); ?>"
+                           class="ajax-modal" data-event="modification"
+                           title="Supprimer la session"
+                           data-bs-toggle="tooltip" data-bs-html="true">
+                            <span class="icon icon-detruire text-danger"></span>
+                        </a>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <script>
+        $(function() {
+            $("body").on("modification", function (event) {
+                event.div.modal('hide');
+                window.location.reload();
+            });
+        });
+    </script>
+
+    <?php echo $this->paginationControl($paginator, 'sliding', 'paginator', ['route' => $routeName . '/recherche/index']) ?>
+
+<?php else: ?>
+
+    <p>Aucune formation trouvée.</p>
+
+<?php endif ?>
+
+
+<script>
+    $(function() {
+        $("#filters").addClass("loading").refresh(null, function() { $(this).removeClass("loading"); });
+    });
+</script>

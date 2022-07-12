@@ -4,10 +4,6 @@ namespace RapportActivite\Service\Search;
 
 use Application\Entity\Db\Interfaces\TypeRapportAwareTrait;
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
-use Structure\Entity\Db\TypeStructure;
-use Application\Filter\AnneeUnivFormatter;
-use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
-use Structure\Search\Etablissement\EtablissementSearchFilter;
 use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Search\Filter\TextSearchFilter;
@@ -15,11 +11,8 @@ use Application\Search\Financement\OrigineFinancementSearchFilter;
 use Application\Search\SearchService;
 use Application\Search\Sorter\SearchSorter;
 use Application\Search\These\TheseTextSearchFilter;
-use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Financement\FinancementServiceAwareTrait;
-use Structure\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\These\TheseSearchServiceAwareTrait;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use Doctrine\ORM\Query\Expr\Join;
@@ -29,6 +22,12 @@ use RapportActivite\Entity\Db\RapportActiviteAvis;
 use RapportActivite\Search\AnneeRapportActiviteSearchFilter;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
+use Structure\Entity\Db\TypeStructure;
+use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
+use Structure\Search\Etablissement\EtablissementSearchFilter;
+use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
 
 class RapportActiviteSearchService extends SearchService
 {
@@ -65,10 +64,10 @@ class RapportActiviteSearchService extends SearchService
      */
     public function init()
     {
-        $etablissementInscrFilter = $this->getEtablissementTheseSearchFilter();
+        $etablissementInscrFilter = $this->getEtablissementTheseSearchFilter()->setWhereField('etab.sourceCode');
         $origineFinancementFilter = $this->getOrigineFinancementSearchFilter();
-        $uniteRechercheFilter = $this->getUniteRechercheSearchFilter();
-        $ecoleDoctoraleFilter = $this->getEcoleDoctoraleSearchFilter();
+        $uniteRechercheFilter = $this->getUniteRechercheSearchFilter()->setWhereField('ur.sourceCode');
+        $ecoleDoctoraleFilter = $this->getEcoleDoctoraleSearchFilter()->setWhereField('ed.sourceCode');
         $anneeRapportActiviteInscrFilter = $this->getAnneeRapportActiviteSearchFilter();
         $avisFourniSearchFilter = $this->getAvisFourniSearchFilter();
         $avisAttenduSearchFilter = $this->getAvisAttenduSearchFilter();
@@ -96,14 +95,15 @@ class RapportActiviteSearchService extends SearchService
         ]));
 
         $this->addSorters([
-            $etablissementInscrFilter->createSorter(),
+            $this->createSorterEtablissement(),
             $this->createSorterTypeRapport(),
-            $ecoleDoctoraleFilter->createSorter(),
-            $uniteRechercheFilter->createSorter(),
-            $anneeRapportActiviteInscrFilter->createSorter(),
+            $this->createSorterEcoleDoctorale(),
+            $this->createSorterUniteRecherche(),
+            $this->createSorterAnneeRapportActivite(),
             $this->createSorterNomPrenomDoctorant()->setIsDefault(),
             $this->createSorterValidation(),
         ]);
+        $this->addInvisibleSort('at.ordre');
     }
 
     /**
@@ -118,14 +118,16 @@ class RapportActiviteSearchService extends SearchService
             ->addSelect('tr, these, f, d, i, rav, raa, a, at')
             ->join('ra.typeRapport', 'tr')
             ->join('ra.these', 'these')
+            ->join("these.etablissement", 'etab')
             ->join('these.doctorant', 'd')
             ->join('d.individu', 'i')
             ->join('ra.fichier', 'f')
+            ->leftJoin("these.ecoleDoctorale", 'ed')
+            ->leftJoin("these.uniteRecherche", 'ur')
             ->leftJoin('ra.rapportValidations', 'rav')
             ->leftJoin('ra.rapportAvis', 'raa')
             ->leftJoin('raa.avis', 'a')
             ->leftJoin('a.avisType', 'at')
-            ->addOrderBy('at.ordre')
             ->andWhereNotHistorise();
 
         if ($this->typeRapport !== null) {
@@ -388,6 +390,65 @@ class RapportActiviteSearchService extends SearchService
         $filter->setQueryBuilderApplier([$this, 'applyFilterToQueryBuilder']);
 
         return $filter;
+    }
+
+    /**
+     * @return SearchSorter
+     */
+    public function createSorterEtablissement(): SearchSorter
+    {
+        $sorter = new SearchSorter("Établissement<br>d'inscr.", EtablissementSearchFilter::NAME);
+        $sorter->setQueryBuilderApplier(
+            function (SearchSorter $sorter, QueryBuilder $qb) {
+                $qb
+                    ->join('etab.structure', 's_sort')
+                    ->addOrderBy('s_sort.code', $sorter->getDirection());
+            }
+        );
+
+        return $sorter;
+    }
+
+    public function createSorterEcoleDoctorale(): SearchSorter
+    {
+        $sorter = new SearchSorter("École doctorale", EcoleDoctoraleSearchFilter::NAME);
+        $sorter->setQueryBuilderApplier(
+            function (SearchSorter $sorter, QueryBuilder $qb) {
+                $qb
+                    ->leftJoin("ed.structure", 'ed_s_sort')
+                    ->addOrderBy('ed_s_sort.code', $sorter->getDirection());
+            }
+        );
+
+        return $sorter;
+    }
+
+    public function createSorterUniteRecherche(): SearchSorter
+    {
+        $sorter = new SearchSorter("Unité recherche", UniteRechercheSearchFilter::NAME);
+        $sorter->setQueryBuilderApplier(
+            function (SearchSorter $sorter, QueryBuilder $qb) {
+                $direction = $sorter->getDirection();
+                $qb
+                    ->leftJoin("ur.structure", 'ur_s_sort')
+                    ->addOrderBy('ur_s_sort.code', $direction);
+            }
+        );
+
+        return $sorter;
+    }
+
+    public function createSorterAnneeRapportActivite(): SearchSorter
+    {
+        $sorter = new SearchSorter("Année du rapport", AnneeRapportActiviteSearchFilter::NAME);
+        $sorter->setQueryBuilderApplier(
+            function (SearchSorter $sorter, QueryBuilder $qb, $alias = 'ra') {
+                $direction = $sorter->getDirection();
+                $qb->addOrderBy("$alias.anneeUniv", $direction);
+            }
+        );
+
+        return $sorter;
     }
 
     /**

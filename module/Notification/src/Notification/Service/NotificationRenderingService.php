@@ -52,6 +52,10 @@ class NotificationRenderingService
             return $this->renderUsingTemplateContent($entity->getTemplate());
         }
 
+        if ($this->notification->getBody() !== null) {
+            return $this->notification->getBody();
+        }
+
         $template = $this->notification->getTemplatePath();
 
         $model = $this->notification->createViewModel();

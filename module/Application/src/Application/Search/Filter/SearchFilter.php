@@ -3,7 +3,7 @@
 namespace Application\Search\Filter;
 
 use Doctrine\ORM\QueryBuilder;
-use UnicaenApp\Exception\RuntimeException;
+use Webmozart\Assert\Assert;
 
 /**
  *
@@ -15,12 +15,12 @@ abstract class SearchFilter implements SearchFilterInterface
     /**
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @var string
      */
-    protected $label;
+    protected string $label;
 
     /**
      * @var null|bool|string|array
@@ -35,17 +35,22 @@ abstract class SearchFilter implements SearchFilterInterface
     /**
      * @var array
      */
-    protected $attributes = [];
+    protected array $attributes = [];
 
     /**
      * @var bool
      */
-    protected $visible = true;
+    protected bool $visible = true;
 
     /**
      * @var callable
      */
     protected $applyToQueryBuilderCallable;
+
+    /**
+     * @var string|null
+     */
+    protected ?string $whereField = null;
 
     /**
      * Constructor.
@@ -120,12 +125,66 @@ abstract class SearchFilter implements SearchFilterInterface
      */
     public function applyToQueryBuilder(QueryBuilder $qb)
     {
-        if ($this->applyToQueryBuilderCallable === null) {
-            throw new RuntimeException("Aucun callable spécifié pour le filtre suivant : " . $this->name);
+        if (!$this->canApplyToQueryBuilder()) {
+            return;
         }
 
+        if ($this->applyToQueryBuilderCallable !== null) {
+            $this->applyToQueryBuilderUsingCallable($qb);
+            return;
+        }
+
+        if ($this->whereField !== null) {
+            // utilisation du champ de condition spécifié
+            $this->applyToQueryBuilderUsingWhereField($qb);
+        } else {
+            // tentative de construction automatique du where
+            $this->applyToQueryBuilderByDefault($qb);
+        }
+    }
+
+    /**
+     * Utilisation du callable pour appliquer ce filtre au query builder spécifié.
+     *
+     * @param \Doctrine\ORM\QueryBuilder $qb
+     */
+    protected function applyToQueryBuilderUsingCallable(QueryBuilder $qb)
+    {
         $applyToQueryBuilder = $this->applyToQueryBuilderCallable;
         $applyToQueryBuilder($this, $qb);
+    }
+
+    /**
+     * Application de ce filtre au query builder spécifié, en utilisant le champ de condition.
+     *
+     * @param \Doctrine\ORM\QueryBuilder $qb
+     */
+    protected function applyToQueryBuilderUsingWhereField(QueryBuilder $qb)
+    {
+        $qb
+            ->andWhere(sprintf("%s = :%s", $this->whereField, $paramName = uniqid('p')))
+            ->setParameter($paramName, $this->getValue());
+    }
+
+    /**
+     * Application par défaut de ce filtre au query builder spécifié, avec construction automatique du where.
+     *
+     * @param \Doctrine\ORM\QueryBuilder $qb
+     */
+    protected function applyToQueryBuilderByDefault(QueryBuilder $qb)
+    {
+        $alias = current($qb->getRootAliases());
+        $qb
+            ->andWhere(sprintf("%s.%s = :%s", $alias, $this->getName(), $paramName = uniqid('p')))
+            ->setParameter($paramName, $this->getValue());
+    }
+
+    /**
+     * @return bool
+     */
+    protected function canApplyToQueryBuilder(): bool
+    {
+        return true;
     }
 
     /**
@@ -240,5 +299,21 @@ abstract class SearchFilter implements SearchFilterInterface
     {
         $this->visible = $visible;
         return $this;
+    }
+
+    /**
+     * @param string $whereField
+     * @return self
+     */
+    public function setWhereField(string $whereField): self
+    {
+        $this->whereField = $whereField;
+
+        return $this;
+    }
+
+    protected function checkWhereField()
+    {
+        Assert::notNull($this->whereField, "Vous n'avez pas spécifié le champ sur lequel doit porter le 'where'");
     }
 }

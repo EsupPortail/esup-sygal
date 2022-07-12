@@ -11,7 +11,7 @@ use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Form\ConsentementForm;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use UnicaenAuth\Authentication\Adapter\Ldap as LdapAuthAdapter;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 class DoctorantController extends AbstractController
 {
@@ -57,7 +57,7 @@ class DoctorantController extends AbstractController
     }
 
     /**
-     * @return \Zend\View\Model\ViewModel
+     * @return \Laminas\View\Model\ViewModel
      */
     public function emailContactAction(): ViewModel
     {
@@ -78,7 +78,7 @@ class DoctorantController extends AbstractController
     }
 
     /**
-     * @return \Zend\Http\Response|\Zend\View\Model\ViewModel
+     * @return \Laminas\Http\Response|\Laminas\View\Model\ViewModel
      */
     public function modifierEmailContactAction()
     {
@@ -129,7 +129,7 @@ class DoctorantController extends AbstractController
 
     /**
      * @param \Application\Entity\Db\MailConfirmation $mailConfirmation
-     * @return \Zend\View\Model\ViewModel
+     * @return \Laminas\View\Model\ViewModel
      */
     public function changementEmailContactConfirme(MailConfirmation $mailConfirmation): ViewModel
     {
@@ -145,7 +145,7 @@ class DoctorantController extends AbstractController
     /**
      * @param \Doctorant\Entity\Db\Doctorant $doctorant
      * @param \Application\Entity\Db\MailConfirmation $mailConfirmation
-     * @return \Zend\View\Model\ViewModel
+     * @return \Laminas\View\Model\ViewModel
      */
     public function changementEmailContactEnCours(Doctorant $doctorant, MailConfirmation $mailConfirmation): ViewModel
     {

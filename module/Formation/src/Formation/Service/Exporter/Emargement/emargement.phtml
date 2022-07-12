@@ -1,0 +1,102 @@
+<?php
+
+/**
+ * @var Seance $seance
+ */
+
+use Application\Entity\Db\These;
+use Formation\Entity\Db\Formateur;
+use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Seance;
+
+$session = $seance->getSession();
+$inscriptions = $session->getListePrincipale();
+usort($inscriptions, function(Inscription $a, Inscription $b) { return $a->getDoctorant()->getIndividu()->getNomComplet() > $b->getDoctorant()->getIndividu()->getNomComplet();});
+
+$libelle = $session->getFormation()->getLibelle();
+/** @var Formateur[] $formateurs */
+$formateurs = $session->getFormateurs();
+?>
+
+<h1>
+    Feuille d'émargement de la formation
+</h1>
+<h2>
+    <?php echo $libelle; ?>
+    <br/>
+    Séance du <?php echo $seance->getDebut()->format('d/m/Y'); ?> du <?php echo $seance->getDebut()->format('H:i'); ?> au <?php echo $seance->getFin()->format('H:i'); ?>
+</h2>
+
+<table style="width:100%;">
+    <tr>
+        <td>
+            Lieu de la séance :
+            <ul>
+                <li> <?php echo $seance->getLieu(); ?> </li>
+            </ul>
+        </td>
+        <td>
+            Formateur<?php if (count($formateurs)) echo "s"; ?> :
+            <ul>
+                <?php foreach ($formateurs as $formateur) : ?>
+                    <li>
+                        <?php echo $formateur->getIndividu()->getNomComplet(); ?>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </td>
+    </tr>
+</table>
+
+<br/>
+
+
+
+
+<table class="emargement">
+    <?php /** @var Inscription $inscription */ ?>
+    <?php foreach ($inscriptions as $inscription) : ?>
+        <?php
+            $theses = $inscription->getDoctorant()->getTheses();
+            $theses = array_filter($theses, function(These $t) { return $t->getEtatThese() === These::ETAT_EN_COURS;});
+            $etablissements = []; $ecoles = []; $unites = [];
+            foreach ($theses as $these) {
+                $etablissement = ($these->getEtablissement())?$these->getEtablissement()->getSigle():"Établissement non renseigné";
+                $etablissements[$etablissement] = $etablissement;
+                $ecole = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getSigle():"École doctorale non renseignée";
+                $ecoles[$ecole] = $ecole;
+                $unite = ($these->getUniteRecherche())?$these->getUniteRecherche()->getSigle():"Unité de recherche non renseignée";
+                $unites[$unite] = $unite;
+            }
+        ?>
+        <tr>
+            <td>
+                <strong> <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?> </strong>
+                <br/>
+                <?php echo implode(", ",$etablissements); ?>
+                -
+                <?php echo implode(", ",$ecoles); ?>
+                -
+                <?php echo implode(", ",$unites); ?>
+                <br/>
+                &nbsp;
+            </td>
+            <td>
+                &nbsp;
+            </td>
+        </tr>
+    <?php endforeach; ?>
+</table>
+
+<style>
+    table.emargement {
+        border: 1px solid black;
+        border-collapse: collapse;
+        width:100%;
+    }
+
+    table.emargement td {
+        border: 1px solid black;
+        width:50%;
+    }
+</style>

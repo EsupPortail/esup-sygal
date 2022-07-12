@@ -2,11 +2,14 @@
 
 namespace Structure\Search\EcoleDoctorale;
 
-use Structure\Entity\Db\EcoleDoctorale;
 use Application\Search\Filter\SelectSearchFilter;
-use Application\Search\Sorter\SearchSorter;
 use Doctrine\ORM\QueryBuilder;
+use Structure\Entity\Db\EcoleDoctorale;
+use Webmozart\Assert\Assert;
 
+/**
+ * Filtre de type "école doctorale liée" (attribut : `sourceCode`).
+ */
 class EcoleDoctoraleSearchFilter extends SelectSearchFilter
 {
     const NAME = 'ecoleDoctorale';
@@ -40,47 +43,26 @@ class EcoleDoctoraleSearchFilter extends SelectSearchFilter
      */
     public function applyToQueryBuilder(QueryBuilder $qb)
     {
-        $alias = 'these'; // todo: rendre paramétrable
+        $this->checkWhereField();
 
+        /**
+         * Pas de jointure en dur ici. Désormais, il faut :
+         * - faire la jointure nécessaire dans {@see \Application\Search\SearchService::createQueryBuilder()} ;
+         * - spécifier le champ sur lequel doit porter le 'where' via {@see \Application\Search\Filter\SearchFilter::setWhereField()}
+         */
         $filterValue = $this->getValue();
         if ($filterValue === 'NULL') {
-            $qb->andWhere("$alias.ecoleDoctorale IS NULL");
+            $qb->andWhere($this->whereField . " IS NULL");
         } elseif ($filterValue) {
             $qb
-                ->join("$alias.ecoleDoctorale", 'ed')
-                ->andWhere("ed.sourceCode = :ed_sourceCode")
+                ->andWhere($this->whereField . " = :ed_sourceCode")
                 ->setParameter('ed_sourceCode', $filterValue);
         }
 
         if ($this->data !== null) {
-            // garantit que l'ED éventuellement injectée est autorisée
-            $ids = array_map(function(EcoleDoctorale $entity) { return $entity->getId(); }, $this->data);
-            $qb->andWhere($qb->expr()->in("$alias.ecoleDoctorale", $ids));
+            // garantit que l'ED éventuellement spécifiée via $this->data est autorisée
+            $sourceCodes = array_map(function(EcoleDoctorale $entity) { return $entity->getSourceCode(); }, $this->data);
+            $qb->andWhere($qb->expr()->in($this->whereField, $sourceCodes));
         }
-    }
-
-    /**
-     * @return SearchSorter
-     *
-     * todo: extraire la classe 'EcoleDoctoraleSearchSorter'
-     */
-    public function createSorter(): SearchSorter
-    {
-        $sorter = new SearchSorter(
-            "Ecole doctorale",
-            self::NAME
-        );
-
-        $sorter->setQueryBuilderApplier(
-            function (SearchSorter $sorter, QueryBuilder $qb, $alias = 'these') {
-                $direction = $sorter->getDirection();
-                $qb
-                    ->leftJoin("$alias.ecoleDoctorale", 'ed_sort')
-                    ->leftJoin("ed_sort.structure", 'ed_s_sort')
-                    ->addOrderBy('ed_s_sort.code', $direction);
-            }
-        );
-
-        return $sorter;
     }
 }

@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * @see \Formation\View\Helper\ModaliteViewHelper
+ * @var HasModaliteInterface|null $objet
+ * @var array $options
+ */
+
+use Formation\Entity\Db\Interfaces\HasModaliteInterface;
+
+?>
+
+<?php if ($objet->getModalite() !== null) : ?>
+    <?php
+        $title = "Valeur non communiquée";
+        $texte = "N.C.";
+        switch($objet->getModalite()) {
+            case HasModaliteInterface::MODALITE_DISTANCIEL :
+                $title = "Formation en distanciel";
+                $texte = "Distanciel";
+                break;
+            case HasModaliteInterface::MODALITE_PRESENTIEL :
+                $title = "Formation en présentiel";
+                $texte = "Présentiel";
+                break;
+        }
+    ?>
+
+    <span class="modalite" title="<?php echo $title; ?>"
+          data-bs-toggle="tooltip" data-bs-html="true">
+            <?php echo $texte; ?>
+    </span>
+<?php else : ?>
+    <span class="modalite" title="Aucune modalité de spécifiée"
+          data-bs-toggle="tooltip" data-bs-html="true">
+        N.C.
+    </span>
+<?php endif; ?>
+

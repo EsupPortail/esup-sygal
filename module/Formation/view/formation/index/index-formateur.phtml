@@ -1,0 +1,235 @@
+<?php
+
+/**
+ * @see \Formation\Controller\IndexController::indexFormateurAction()
+ * @var Individu $individu
+ * @var Session[] $passees
+ * @var Session[] $courantes
+ * @var Session[] $futures
+ */
+
+use Individu\Entity\Db\Individu;
+use Formation\Entity\Db\Session;
+use Formation\Provider\Privilege\ModulePrivileges;
+use Formation\Provider\Privilege\SessionPrivileges;
+
+$this->headTitle('Mes formations');
+
+//todo assertion car dépend du rôle les formateurs ne doivent voir que leurs formations ...
+$canSessionVoir = $this->isAllowed(SessionPrivileges::getResourceId(SessionPrivileges::SESSION_AFFICHER));
+$canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_CATALOGUE));
+?>
+
+<div class="row">
+    <div class="col-md-9">
+        <h1 class="page-header">
+            Mes Formations
+        </h1>
+    </div>
+    <div class="col-md-3">
+        <?php if ($canCatalogueAfficher) : ?>
+            <?php /** @see \Formation\Controller\ModuleController::catalogueAction() */?>
+            <a href="<?php echo $this->url('formation/catalogue',[],[], true); ?>" class="btn btn-primary" target="_blank">
+                <span class="icon icon-voir"> Accéder au catalogue des formations</span>
+            </a>
+        <?php endif; ?>
+    </div>
+</div>
+
+<?php if ($individu === null) : ?>
+    <p class="lead">
+        Aucun&middot;e fomateur&middot;trice de trouvé&middot;e.
+    </p>
+
+    <p>
+    <u>N.B.:</u> Mon cobaye est Jean-Philippe METIVIER dans l'id est <code>5001</code>
+        &rightarrow; <a href="<?php echo $this->url('formation/index-formateur', ['formateur' => 5001], [], true); ?>">Cas du cobaye</a>
+    </p>
+<?php else : ?>
+
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="nav-item active">
+        <a href="#courantes"
+           class="nav-link"
+           role="tab"
+           aria-controls="courantes"
+           data-bs-toggle="tab"
+        >
+            Formations en cours
+        </a>
+    </li>
+    <li role="presentation" class="nav-item">
+        <a href="#passees"
+           class="nav-link"
+           role="tab"
+           aria-controls="passees"
+           data-bs-toggle="tab"
+        >
+            Mes formations passées
+        </a>
+    </li>
+    <li role="presentation" class="nav-item">
+        <a href="#futures"
+           class="nav-link"
+           role="tab"
+           aria-controls="futures"
+           data-bs-toggle="tab"
+        >
+            Mes formations à venir
+        </a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane in active" id="courantes">
+        <h2>
+            Formations en cours
+        </h2>
+
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th> Module de formation </th>
+                <th> Formateur&middot;trice&middot;s </th>
+                <th> Site </th>
+                <th> Dates et lieux </th>
+                <th> Modalité & type </th>
+                <th> État </th>
+                <th> Limite d’inscription </th>
+                <th> Action </th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($courantes as $session) : ?>
+                <tr>
+                    <td> <?php echo $this->sessionLibelle($session); ?> </td>
+                    <td> <?php echo $this->formateurs($session); ?> </td>
+                    <td> <?php echo $this->site($session); ?> </td>
+                    <td> <?php echo $this->seances($session); ?> </td>
+                    <td>
+                        <?php echo $this->modalite($session); ?>
+                        <br>
+                        <?php echo $this->type($session); ?>
+                    </td>
+                    <td> <?php echo $this->etat($session); ?></td>
+                    <td> <?php echo $this->sessionInscription($session, ['inscrits' => true]); ?> </td>
+                    <td>
+                        <?php if ($canSessionVoir) : ?>
+                        <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>"
+                           title="Accéder à la session" data-bs-toggle="tooltip" data-bs-html="true"
+                        ><span class="icon icon-voir"></span></a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="passees">
+        <h2> Mes formations passées </h2>
+
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th> Module de formation </th>
+                <th> Formateur&middot;trice&middot;s </th>
+                <th> Site </th>
+                <th> Dates et lieux </th>
+                <th> Modalité </th>
+                <th> Type </th>
+                <th> État </th>
+                <th> Inscription </th>
+                <th> Action </th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($passees as $session) : ?>
+                <tr>
+                    <td> <?php echo $this->sessionLibelle($session); ?> </td>
+                    <td> <?php echo $this->formateurs($session); ?> </td>
+                    <td> <?php echo $this->site($session); ?> </td>
+                    <td> <?php echo $this->seances($session); ?> </td>
+                    <td> <?php echo $this->modalite($session); ?></td>
+                    <td> <?php echo $this->type($session); ?></td>
+                    <td> <?php echo $this->etat($session); ?></td>
+                    <td> <?php echo $this->sessionInscription($session, ['inscrits' => true]); ?> </td>
+                    <td>
+                        <?php if ($canSessionVoir) : ?>
+                            <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>"
+                               title="Accéder à la session" data-bs-toggle="tooltip" data-bs-html="true"
+                            ><span class="icon icon-voir"></span></a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="futures">
+        <h2> Mes formations à venir</h2>
+
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th> Module de formation </th>
+                <th> Formateur&middot;trice&middot;s </th>
+                <th> Site </th>
+                <th> Dates et lieux </th>
+                <th> Modalité </th>
+                <th> Type </th>
+                <th> État </th>
+                <th> Limite d’inscription </th>
+                <th> Action </th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($futures as $session) : ?>
+                <tr>
+                    <td> <?php echo $this->sessionLibelle($session); ?> </td>
+                    <td> <?php echo $this->formateurs($session); ?> </td>
+                    <td> <?php echo $this->site($session); ?> </td>
+                    <td> <?php echo $this->seances($session); ?> </td>
+                    <td> <?php echo $this->modalite($session); ?></td>
+                    <td> <?php echo $this->type($session); ?></td>
+                    <td> <?php echo $this->etat($session); ?></td>
+                    <td> <?php echo $this->sessionInscription($session, ['inscrits' => true]); ?> </td>
+                    <td>
+                        <?php if ($canSessionVoir) : ?>
+                            <a href="<?php echo $this->url('formation/session/afficher', ['session' => $session->getId()], [], true); ?>"
+                               title="Accéder à la session" data-bs-toggle="tooltip" data-bs-html="true"
+                            ><span class="icon icon-voir"></span></a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+        <?php endif; ?>
+    </div>
+</div>
+
+
+
+
+
+
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+
+        let hash = $(location).attr('hash');
+        let name = hash.substr(1);
+        if (name === undefined || name === "") name = "courantes";
+
+        $('a[aria-controls=' + name + ']').tab('show');
+
+        $('.nav-tabs a').click(function () {
+            // No e.preventDefault() here
+            $(this).tab('show');
+        });
+    });
+</script>

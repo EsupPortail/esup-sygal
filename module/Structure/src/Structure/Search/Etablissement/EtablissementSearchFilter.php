@@ -2,16 +2,21 @@
 
 namespace Structure\Search\Etablissement;
 
-use Structure\Entity\Db\Etablissement;
 use Application\Search\Filter\SelectSearchFilter;
-use Application\Search\Sorter\SearchSorter;
 use Doctrine\ORM\QueryBuilder;
+use Structure\Entity\Db\Etablissement;
+use Webmozart\Assert\Assert;
 
+/**
+ * Filtre de type "établissement lié" (attribut : `sourceCode`).
+ */
 class EtablissementSearchFilter extends SelectSearchFilter
 {
     const NAME = 'etablissement';
 
     /**
+     * Instancie un filtre par établissement
+     *
      * @inheritDoc
      */
     protected function __construct(string $label, string $name, array $attributes = [], $defaultValue = null)
@@ -35,40 +40,21 @@ class EtablissementSearchFilter extends SelectSearchFilter
      */
     public function applyToQueryBuilder(QueryBuilder $qb)
     {
-        $alias = 'these'; // todo: rendre paramétrable
+        $this->checkWhereField();
 
+        /**
+         * Pas de jointure en dur ici. Désormais, il faut :
+         * - faire la jointure nécessaire dans {@see \Application\Search\SearchService::createQueryBuilder()} ;
+         * - spécifier le champ sur lequel doit porter le 'where' via {@see \Application\Search\Filter\SearchFilter::setWhereField()}
+         */
         $qb
-            ->join("$alias.etablissement", 'etab')
-            ->andWhere("etab.sourceCode = :etab_sourceCode")
+            ->andWhere($this->whereField . " = :etab_sourceCode")
             ->setParameter('etab_sourceCode', $this->getValue());
 
         if ($this->data !== null) {
-            // garantit que l'étab éventuellement injecté est autorisé
-            $ids = array_map(function(Etablissement $entity) { return $entity->getId(); }, $this->data);
-            $qb->andWhere($qb->expr()->in('etab', $ids));
+            // garantit que l'étab éventuellement spécifié via $this->data est autorisé
+            $sourceCodes = array_map(function(Etablissement $entity) { return $entity->getSourceCode(); }, $this->data);
+            $qb->andWhere($qb->expr()->in($this->whereField, $sourceCodes));
         }
-    }
-
-    /**
-     * @return SearchSorter
-     */
-    public function createSorter(): SearchSorter
-    {
-        $sorter = new SearchSorter(
-            "Établissement<br>d'inscr.",
-            self::NAME
-        );
-
-        $sorter->setQueryBuilderApplier(
-            function (SearchSorter $sorter, QueryBuilder $qb, $alias = 'these') {
-                $direction = $sorter->getDirection();
-                $qb
-                    ->join("$alias.etablissement", 'e_sort')
-                    ->join('e_sort.structure', 's_sort')
-                    ->addOrderBy('s_sort.code', $direction);
-            }
-        );
-
-        return $sorter;
     }
 }

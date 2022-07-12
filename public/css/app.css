@@ -326,6 +326,7 @@ td.acteurs ul {
     border-bottom: none; }
 
 div.filters {
+  margin-top: 1em;
   margin-bottom: 1em; }
   div.filters table td,
   div.filters table th {

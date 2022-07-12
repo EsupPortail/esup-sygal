@@ -51,7 +51,7 @@ class RapportAvisController extends AbstractController
     }
 
     /**
-     * @return array|\Zend\Http\Response
+     * @return array|\Laminas\Http\Response
      */
     public function ajouterAction()
     {
