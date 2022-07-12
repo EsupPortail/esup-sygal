@@ -1,0 +1,32 @@
+{
+    "name": "unicaen/id-ref",
+    "description": "Module d'interrogation des autorités Sudoc (IDRef)",
+    "type": "module",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://gest.unicaen.fr/packagist"
+        }
+    ],
+    "require": {
+        "laminas/laminas-dependency-plugin": "^2.1",
+        "monolog/monolog": "^2.3"
+    },
+    "require-dev": {
+        "unicaen/test": "^4.0",
+        "phpunit/phpunit": "~5.4"
+    },
+    "autoload": {
+        "psr-0": {
+            "UnicaenIdref\\": "src/"
+        },
+        "classmap": [
+            "./Module.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "UnicaenIdrefUnitTest\\": "test/UnicaenIdrefUnitTest"
+        }
+    }
+}

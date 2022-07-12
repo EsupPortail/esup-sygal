@@ -93,7 +93,14 @@ $form->get('code')->setAttribute('readonly', !$editable);
         </fieldset>
         <fieldset>
             <legend><h2>Informations techniques</h2></legend>
-            <?php echo $fcg($form->get('id_ref')) ?>
+            <div class="row">
+                <div class="col-md-5">
+                    <?php echo $fcg($form->get('id_ref')->setAttribute('id', 'id_ref')) ?>
+                </div>
+                <div class="col-md-2">
+                    <?php echo $this->idrefPopupTrigger('id_ref') ?>
+                </div>
+            </div>
             <?php echo $fcg($form->get('id_hal')) ?>
             <?php echo $fcg($form->get('code')) ?>
             <?php echo $fcg($form->get('domaine')) ?>

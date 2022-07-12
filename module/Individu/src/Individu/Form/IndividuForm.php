@@ -105,6 +105,10 @@ class IndividuForm extends Form implements InputFilterProviderInterface
                 //->setAttribute('disabled', true)
         );
 
+        $this->add((new Text('idRef'))
+            ->setLabel("IdRef :")
+        );
+
         $this->add((new Submit('submit'))
             ->setValue("Enregistrer")
             ->setAttribute('class', 'btn btn-primary')
@@ -169,6 +173,9 @@ class IndividuForm extends Form implements InputFilterProviderInterface
             ],
             'supannId' => [
                 'name' => 'supannId',
+                'required' => false,
+            ],
+            'id_ref' => [
                 'required' => false,
             ],
         ];

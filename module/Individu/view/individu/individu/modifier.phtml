@@ -50,6 +50,14 @@ $form->setAttribute('class', 'row')->prepare();
         <div class="col-md-4">
             <?php echo $this->formControlGroup($form->get('supannId')) ?>
         </div>
+        <div class="row">
+            <div class="col-md-5">
+                <?php echo $this->formControlGroup($form->get('idRef')->setAttribute('id', 'idRef')) ?>
+            </div>
+            <div class="col-md-2">
+                <?php echo $this->idrefPopupTrigger('idRef') ?>
+            </div>
+        </div>
         <?php echo $this->formSubmit($form->get('submit')) ?>
         <?php echo $this->form()->closeTag() ?>
     </div>
