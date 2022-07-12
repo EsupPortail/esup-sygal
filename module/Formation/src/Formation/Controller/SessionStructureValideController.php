@@ -2,28 +2,28 @@
 
 namespace Formation\Controller;
 
-use Formation\Entity\Db\SessionStructureComplementaire;
-use Formation\Form\SessionStructureComplementaire\SessionStructureComplementaireFormAwareTrait;
+use Formation\Entity\Db\SessionStructureValide;
+use Formation\Form\SessionStructureValide\SessionStructureValideFormAwareTrait;
 use Formation\Service\Session\SessionServiceAwareTrait;
-use Formation\Service\SessionStructureComplementaire\SessionStructureComplementaireServiceAwareTrait;
+use Formation\Service\SessionStructureValide\SessionStructureValideServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 
-class SessionStructureComplementaireController extends AbstractActionController {
+class SessionStructureValideController extends AbstractActionController {
     use SessionServiceAwareTrait;
-    use SessionStructureComplementaireServiceAwareTrait;
+    use SessionStructureValideServiceAwareTrait;
 
-    use SessionStructureComplementaireFormAwareTrait;
+    use SessionStructureValideFormAwareTrait;
 
     public function ajouterStructureComplementaireAction() : ViewModel
     {
         $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
 
-        $structureComplementaire = new SessionStructureComplementaire();
+        $structureComplementaire = new SessionStructureValide();
         $structureComplementaire->setSession($session);
 
-        $form = $this->getSessionStructureComplementaireForm();
+        $form = $this->getSessionStructureValideForm();
         $form->setAttribute('action', $this->url()->fromRoute('formation/session/ajouter-structure-complementaire', ['session' => $session->getId()], [], true));
         $form->bind($structureComplementaire);
 
@@ -32,7 +32,7 @@ class SessionStructureComplementaireController extends AbstractActionController 
             $data = $request->getPost();
             $form->setData($data);
             if ($form->isValid()) {
-                $this->getSessionStructureComplementaireService()->create($structureComplementaire);
+                $this->getSessionStructureValideService()->create($structureComplementaire);
             }
         }
 
@@ -46,9 +46,9 @@ class SessionStructureComplementaireController extends AbstractActionController 
 
     public function modifierStructureComplementaireAction() : ViewModel
     {
-        $structureComplementaire = $this->getSessionStructureComplementaireService()->getRepository()->getRequestedSessionStructureComplementaire($this);
+        $structureComplementaire = $this->getSessionStructureValideService()->getRepository()->getRequestedSessionStructureValide($this);
 
-        $form = $this->getSessionStructureComplementaireForm();
+        $form = $this->getSessionStructureValideForm();
         $form->setAttribute('action', $this->url()->fromRoute('formation/session/modifier-structure-complementaire', ['structure-complementaire' => $structureComplementaire->getId()], [], true));
         $form->bind($structureComplementaire);
 
@@ -57,7 +57,7 @@ class SessionStructureComplementaireController extends AbstractActionController 
             $data = $request->getPost();
             $form->setData($data);
             if ($form->isValid()) {
-                $this->getSessionStructureComplementaireService()->update($structureComplementaire);
+                $this->getSessionStructureValideService()->update($structureComplementaire);
             }
         }
 
@@ -71,8 +71,8 @@ class SessionStructureComplementaireController extends AbstractActionController 
 
     public function historiserStructureComplementaireAction() : Response
     {
-        $structureComplementaire = $this->getSessionStructureComplementaireService()->getRepository()->getRequestedSessionStructureComplementaire($this);
-        $this->getSessionStructureComplementaireService()->historise($structureComplementaire);
+        $structureComplementaire = $this->getSessionStructureValideService()->getRepository()->getRequestedSessionStructureValide($this);
+        $this->getSessionStructureValideService()->historise($structureComplementaire);
 
         $retour = $this->params()->fromQuery('retour');
         if ($retour) return $this->redirect()->toUrl($retour);
@@ -81,8 +81,8 @@ class SessionStructureComplementaireController extends AbstractActionController 
 
     public function restaurerStructureComplementaireAction() : Response
     {
-        $structureComplementaire = $this->getSessionStructureComplementaireService()->getRepository()->getRequestedSessionStructureComplementaire($this);
-        $this->getSessionStructureComplementaireService()->restore($structureComplementaire);
+        $structureComplementaire = $this->getSessionStructureValideService()->getRepository()->getRequestedSessionStructureValide($this);
+        $this->getSessionStructureValideService()->restore($structureComplementaire);
 
         $retour = $this->params()->fromQuery('retour');
         if ($retour) return $this->redirect()->toUrl($retour);
@@ -91,12 +91,12 @@ class SessionStructureComplementaireController extends AbstractActionController 
 
     public function supprimerStructureComplementaireAction() : ViewModel
     {
-        $structureComplementaire = $this->getSessionStructureComplementaireService()->getRepository()->getRequestedSessionStructureComplementaire($this);
+        $structureComplementaire = $this->getSessionStructureValideService()->getRepository()->getRequestedSessionStructureValide($this);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
-            if ($data["reponse"] === "oui") $this->getSessionStructureComplementaireService()->delete($structureComplementaire);
+            if ($data["reponse"] === "oui") $this->getSessionStructureValideService()->delete($structureComplementaire);
             exit();
         }
 

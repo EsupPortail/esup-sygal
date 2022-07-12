@@ -1,28 +1,28 @@
 <?php
 
-namespace Formation\Service\SessionStructureComplementaire;
+namespace Formation\Service\SessionStructureValide;
 
 use Doctrine\ORM\EntityManager;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-class SessionStructureComplementaireServiceFactory {
+class SessionStructureValideServiceFactory {
 
     /**
      * @param ContainerInterface $container
-     * @return SessionStructureComplementaireService
+     * @return SessionStructureValideService
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container) : SessionStructureComplementaireService
+    public function __invoke(ContainerInterface $container) : SessionStructureValideService
     {
         /**
          * @var EntityManager $entityManager
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
 
-        $service = new SessionStructureComplementaireService();
+        $service = new SessionStructureValideService();
         $service->setEntityManager($entityManager);
         return $service;
     }

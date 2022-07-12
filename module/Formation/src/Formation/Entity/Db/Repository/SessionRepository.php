@@ -43,7 +43,7 @@ class SessionRepository extends EntityRepository
             ->leftJoin($alias.".inscriptions", "inscription")->addSelect("inscription")
             ->leftJoin($alias.".seances", "seance")->addSelect("seance")
             ->leftJoin($alias.".etat", "etat")->addSelect("etat")
-            ->leftJoin($alias.".structuresComplemenaires", "complement")->addSelect("complement")
+            ->leftJoin($alias.".structuresValides", "complement")->addSelect("complement")
             ->leftJoin("complement.structure", "structureSessionInscription")->addSelect("structureSessionInscription")
             ->andWhere("complement.histoDestruction IS NULL")
         ;

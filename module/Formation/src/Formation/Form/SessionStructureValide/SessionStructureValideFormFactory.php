@@ -1,23 +1,21 @@
 <?php
 
-namespace Formation\Form\SessionStructureComplementaire;
+namespace Formation\Form\SessionStructureValide;
 
-use Laminas\Form\Form;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\Structure\StructureService;
-use Structure\Service\Structure\StructureServiceAwareTrait;
 
-class SessionStructureComplementaireFormFactory {
+class SessionStructureValideFormFactory {
 
     /**
      * @param ContainerInterface $container
-     * @return SessionStructureComplementaireForm
+     * @return SessionStructureValideForm
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container) : SessionStructureComplementaireForm
+    public function __invoke(ContainerInterface $container) : SessionStructureValideForm
     {
         /**
          * @var StructureService $structureService
@@ -25,11 +23,11 @@ class SessionStructureComplementaireFormFactory {
         $structureService = $container->get(StructureService::class);
 
         /**
-         * @var  SessionStructureComplementaireHydrator $hydrator
+         * @var  SessionStructureValideHydrator $hydrator
          */
-        $hydrator = $container->get('HydratorManager')->get(SessionStructureComplementaireHydrator::class);
+        $hydrator = $container->get('HydratorManager')->get(SessionStructureValideHydrator::class);
 
-        $form = new SessionStructureComplementaireForm();
+        $form = new SessionStructureValideForm();
         $form->setStructureService($structureService);
         $form->setHydrator($hydrator);
         return $form;

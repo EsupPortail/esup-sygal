@@ -46,7 +46,7 @@ class Session implements HistoriqueAwareInterface,
     private ?Etat $etat = null;
     private ?string $description = null;
 
-    private Collection $structuresComplemenaires;
+    private Collection $structuresValides;
     private Collection $seances;
     private Collection $formateurs;
     private Collection $inscriptions;
@@ -137,9 +137,9 @@ class Session implements HistoriqueAwareInterface,
     /**
      * @return Collection
      */
-    public function getStructuresComplemenaires(): Collection
+    public function getStructuresValides(): Collection
     {
-        return $this->structuresComplemenaires;
+        return $this->structuresValides;
     }
 
     /**

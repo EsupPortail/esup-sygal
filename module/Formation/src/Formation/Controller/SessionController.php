@@ -5,10 +5,10 @@ namespace Formation\Controller;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\These;
 use Formation\Entity\Db\Formation;
-use Formation\Entity\Db\SessionStructureComplementaire;
+use Formation\Entity\Db\SessionStructureValide;
 use Formation\Service\Formation\FormationServiceAwareTrait;
 use Formation\Service\Presence\PresenceServiceAwareTrait;
-use Formation\Service\SessionStructureComplementaire\SessionStructureComplementaireServiceAwareTrait;
+use Formation\Service\SessionStructureValide\SessionStructureValideServiceAwareTrait;
 use Laminas\Http\Response;
 use Notification\Exception\NotificationException;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -38,7 +38,7 @@ class SessionController extends AbstractController
     use NotificationServiceAwareTrait;
     use PresenceServiceAwareTrait;
     use SessionServiceAwareTrait;
-    use SessionStructureComplementaireServiceAwareTrait;
+    use SessionStructureValideServiceAwareTrait;
 
     use SessionFormAwareTrait;
 
@@ -92,7 +92,7 @@ class SessionController extends AbstractController
 
                 $this->getSessionService()->update($session);
 
-                $ns = new SessionStructureComplementaire();
+                $ns = new SessionStructureValide();
                 $ns->setSession($session);
 
                 switch ($session->getType()) {
@@ -102,7 +102,7 @@ class SessionController extends AbstractController
                     case Formation::TYPE_CODE_SPECIFIQUE :
                         $ns->setStructure($session->getTypeStructure());
                 }
-                if ($ns->getStructure()) $this->getSessionStructureComplementaireService()->create($ns);
+                if ($ns->getStructure()) $this->getSessionStructureValideService()->create($ns);
             }
         }
 

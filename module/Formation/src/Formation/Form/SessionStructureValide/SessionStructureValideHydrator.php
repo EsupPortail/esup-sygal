@@ -1,17 +1,17 @@
 <?php
 
-namespace Formation\Form\SessionStructureComplementaire;
+namespace Formation\Form\SessionStructureValide;
 
-use Formation\Entity\Db\SessionStructureComplementaire;
+use Formation\Entity\Db\SessionStructureValide;
 use Laminas\Hydrator\HydratorInterface;
 use Structure\Entity\Db\Structure;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 
-class SessionStructureComplementaireHydrator implements HydratorInterface {
+class SessionStructureValideHydrator implements HydratorInterface {
     use StructureServiceAwareTrait;
 
     /**
-     * @param SessionStructureComplementaire $object
+     * @param SessionStructureValide $object
      * @return array
      */
     public function extract(object $object): array
@@ -25,8 +25,8 @@ class SessionStructureComplementaireHydrator implements HydratorInterface {
 
     /**
      * @param array $data
-     * @param SessionStructureComplementaire $object
-     * @return SessionStructureComplementaire
+     * @param SessionStructureValide $object
+     * @return SessionStructureValide
      */
     public function hydrate(array $data, object $object)
     {

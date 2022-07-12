@@ -4,7 +4,7 @@ namespace Formation\Entity\Db\Repository;
 
 use Doctorant\Entity\Db\Doctorant;
 use Doctrine\ORM\NonUniqueResultException;
-use Formation\Entity\Db\SessionStructureComplementaire;
+use Formation\Entity\Db\SessionStructureValide;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\These;
 use Doctrine\ORM\EntityRepository;
@@ -17,7 +17,7 @@ use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\Mvc\Controller\AbstractActionController;
 
-class SessionStructureComplementaireRepository extends EntityRepository
+class SessionStructureValideRepository extends EntityRepository
 {
     use EntityManagerAwareTrait;
 
@@ -36,9 +36,9 @@ class SessionStructureComplementaireRepository extends EntityRepository
 
     /**
      * @param int|null $id
-     * @return SessionStructureComplementaire|null
+     * @return SessionStructureValide|null
      */
-    public function getSessionStructureComplementaire(?int $id) : ?SessionStructureComplementaire
+    public function getSessionStructureValide(?int $id) : ?SessionStructureValide
     {
         $qb = $this->createQB('structureComplementaire')
             ->andWhere("structureComplementaire.id = :id")
@@ -47,7 +47,7 @@ class SessionStructureComplementaireRepository extends EntityRepository
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs SessionStructureComplementaire partagent le même id [".$id."]", 0 , $e);
+            throw new RuntimeException("Plusieurs SessionStructureValide partagent le même id [".$id."]", 0 , $e);
         }
         return $result;
     }
@@ -55,12 +55,12 @@ class SessionStructureComplementaireRepository extends EntityRepository
     /**
      * @param AbstractActionController $controller
      * @param string $param
-     * @return SessionStructureComplementaire|null
+     * @return SessionStructureValide|null
      */
-    public function getRequestedSessionStructureComplementaire(AbstractActionController $controller, string $param = 'structure-complementaire') : ?SessionStructureComplementaire
+    public function getRequestedSessionStructureValide(AbstractActionController $controller, string $param = 'structure-complementaire') : ?SessionStructureValide
     {
         $id = $controller->params()->fromRoute($param);
-        $result = $this->getSessionStructureComplementaire($id);
+        $result = $this->getSessionStructureValide($id);
         return $result;
     }
 }

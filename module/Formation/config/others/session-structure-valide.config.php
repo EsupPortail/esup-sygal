@@ -2,15 +2,15 @@
 
 namespace Formation;
 
-use Formation\Controller\SessionStructureComplementaireController;
-use Formation\Controller\SessionStructureComplementaireControllerFactory;
-use Formation\Form\SessionStructureComplementaire\SessionStructureComplementaireForm;
-use Formation\Form\SessionStructureComplementaire\SessionStructureComplementaireFormFactory;
-use Formation\Form\SessionStructureComplementaire\SessionStructureComplementaireHydrator;
-use Formation\Form\SessionStructureComplementaire\SessionStructureComplementaireHydratorFactory;
+use Formation\Controller\SessionStructureValideController;
+use Formation\Controller\SessionStructureValideControllerFactory;
+use Formation\Form\SessionStructureValide\SessionStructureValideForm;
+use Formation\Form\SessionStructureValide\SessionStructureValideFormFactory;
+use Formation\Form\SessionStructureValide\SessionStructureValideHydrator;
+use Formation\Form\SessionStructureValide\SessionStructureValideHydratorFactory;
 use Formation\Provider\Privilege\SessionPrivileges;
-use Formation\Service\SessionStructureComplementaire\SessionStructureComplementaireService;
-use Formation\Service\SessionStructureComplementaire\SessionStructureComplementaireServiceFactory;
+use Formation\Service\SessionStructureValide\SessionStructureValideService;
+use Formation\Service\SessionStructureValide\SessionStructureValideServiceFactory;
 use Laminas\Router\Http\Segment;
 use UnicaenAuth\Guard\PrivilegeController;
 
@@ -19,7 +19,7 @@ return [
         'guards' => [
             PrivilegeController::class => [
                 [
-                    'controller' => SessionStructureComplementaireController::class,
+                    'controller' => SessionStructureValideController::class,
                     'action' => [
                         'ajouter-structure-complementaire',
                         'modifier-structure-complementaire',
@@ -31,7 +31,7 @@ return [
                     ],
                 ],
                 [
-                    'controller' => SessionStructureComplementaireController::class,
+                    'controller' => SessionStructureValideController::class,
                     'action' => [
                         'supprimer-structure-complementaire',
                     ],
@@ -55,7 +55,7 @@ return [
                                 'options' => [
                                     'route'    => '/ajouter-structure-complementaire/:session',
                                     'defaults' => [
-                                        'controller' => SessionStructureComplementaireController::class,
+                                        'controller' => SessionStructureValideController::class,
                                         'action'     => 'ajouter-structure-complementaire',
                                     ],
                                 ],
@@ -66,7 +66,7 @@ return [
                                 'options' => [
                                     'route'    => '/modifier-structure-complementaire/:structure-complementaire',
                                     'defaults' => [
-                                        'controller' => SessionStructureComplementaireController::class,
+                                        'controller' => SessionStructureValideController::class,
                                         'action'     => 'modifier-structure-complementaire',
                                     ],
                                 ],
@@ -77,7 +77,7 @@ return [
                                 'options' => [
                                     'route'    => '/historiser-structure-complementaire/:structure-complementaire',
                                     'defaults' => [
-                                        'controller' => SessionStructureComplementaireController::class,
+                                        'controller' => SessionStructureValideController::class,
                                         'action'     => 'historiser-structure-complementaire',
                                     ],
                                 ],
@@ -88,7 +88,7 @@ return [
                                 'options' => [
                                     'route'    => '/restaurer-structure-complementaire/:structure-complementaire',
                                     'defaults' => [
-                                        'controller' => SessionStructureComplementaireController::class,
+                                        'controller' => SessionStructureValideController::class,
                                         'action'     => 'restaurer-structure-complementaire',
                                     ],
                                 ],
@@ -99,7 +99,7 @@ return [
                                 'options' => [
                                     'route'    => '/supprimer-structure-complementaire/:structure-complementaire',
                                     'defaults' => [
-                                        'controller' => SessionStructureComplementaireController::class,
+                                        'controller' => SessionStructureValideController::class,
                                         'action'     => 'supprimer-structure-complementaire',
                                     ],
                                 ],
@@ -113,22 +113,22 @@ return [
 
     'service_manager' => [
         'factories' => [
-            SessionStructureComplementaireService::class => SessionStructureComplementaireServiceFactory::class,
+            SessionStructureValideService::class => SessionStructureValideServiceFactory::class,
         ],
     ],
     'controllers'     => [
         'factories' => [
-            SessionStructureComplementaireController::class => SessionStructureComplementaireControllerFactory::class,
+            SessionStructureValideController::class => SessionStructureValideControllerFactory::class,
         ],
     ],
     'form_elements' => [
         'factories' => [
-            SessionStructureComplementaireForm::class => SessionStructureComplementaireFormFactory::class,
+            SessionStructureValideForm::class => SessionStructureValideFormFactory::class,
         ],
     ],
     'hydrators' => [
         'factories' => [
-            SessionStructureComplementaireHydrator::class => SessionStructureComplementaireHydratorFactory::class,
+            SessionStructureValideHydrator::class => SessionStructureValideHydratorFactory::class,
         ],
     ]
 

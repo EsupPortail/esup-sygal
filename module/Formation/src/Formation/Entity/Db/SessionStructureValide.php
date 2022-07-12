@@ -6,7 +6,7 @@ use Structure\Entity\Db\Structure;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class SessionStructureComplementaire implements HistoriqueAwareInterface {
+class SessionStructureValide implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
     private int $id;

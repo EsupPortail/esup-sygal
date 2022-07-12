@@ -1,16 +1,15 @@
 <?php
 
-namespace Formation\Form\SessionStructureComplementaire;
+namespace Formation\Form\SessionStructureValide;
 
 use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Text;
-use Laminas\Form\Element\Textarea;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 
-class SessionStructureComplementaireForm extends Form {
+class SessionStructureValideForm extends Form {
     use StructureServiceAwareTrait;
 
     public function init()
