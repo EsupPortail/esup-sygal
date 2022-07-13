@@ -6,17 +6,18 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\Interfaces\TypeRapportAwareTrait;
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
 use Application\Entity\Db\Rapport;
+use Application\Entity\FichierArchivable;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
+use Application\Service\Fichier\Exception\FichierServiceException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\Fichier\FichierServiceException;
 use Application\Service\Rapport\RapportSearchService;
-use Structure\Service\Structure\StructureServiceAwareTrait;
-use UnicaenApp\Exception\RuntimeException;
 use Laminas\Http\Response;
 use Laminas\Paginator\Paginator as LaminasPaginator;
 use Laminas\View\Model\ViewModel;
+use Structure\Service\Structure\StructureServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
 
 /**
  * @property RapportSearchService $searchService
@@ -175,17 +176,17 @@ abstract class RapportRechercheController extends AbstractController implements 
         /** @var LaminasPaginator $paginator */
         $paginator = $result;
 
-        $fichiers = [];
+        $fichiersArchivables = [];
         /** @var Rapport $rapport */
         foreach ($paginator as $rapport) {
-            $fichier = $rapport->getFichier();
-            $fichier->setPath($rapport->generateInternalPathForZipArchive());
-            $fichiers[] = $rapport->getFichier();
+            $fichierArchivable = new FichierArchivable($rapport->getFichier());
+            $fichierArchivable->setFilePathInArchive($rapport->generateInternalPathForZipArchive());
+            $fichiersArchivables[] = $fichierArchivable;
         }
 
         $filename = sprintf("sygal_%s.zip", strtolower($this->typeRapport->getCode()));
         try {
-            $fichierZip = $this->fichierService->compresserFichiers($fichiers, $filename);
+            $fichierZip = $this->fichierService->compresserFichiers($fichiersArchivables, $filename);
         } catch (FichierServiceException $e) {
             throw new RuntimeException("Une erreur est survenue empêchant la création de l'archive zip", null, $e);
         }

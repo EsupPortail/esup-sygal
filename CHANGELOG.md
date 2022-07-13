@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+4.2.2
+-----
+- [FIX] Page de validation non ajoutée aux rapports d'activités en cas de téléchargement sous forme d'archive zip.
+
 4.2.1
 -----
 - Affichage d'une alerte à propos des délais durant la fermeture estivale (lib unicaen/alerte)

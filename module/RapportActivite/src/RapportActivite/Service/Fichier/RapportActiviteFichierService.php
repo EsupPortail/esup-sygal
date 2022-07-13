@@ -20,13 +20,13 @@ class RapportActiviteFichierService
 
 
     /**
-     * Générer une page supplémentaire et l'ajouter au rapport spécifié.
+     * Génère le fichier du rapport spécifié auquel est ajoutée la page de validation.
      *
      * @param \RapportActivite\Entity\Db\RapportActivite $rapport
      * @param \RapportActivite\Service\Fichier\Exporter\PageValidationExportData $data
      * @return string
      */
-    public function ajouterPageValidation(RapportActivite $rapport, PageValidationExportData $data): string
+    public function createFileWithPageValidation(RapportActivite $rapport, PageValidationExportData $data): string
     {
         // generation de la page de couverture
         $pdcFilePath = tempnam(sys_get_temp_dir(), 'sygal_rapport_pdc_') . '.pdf';

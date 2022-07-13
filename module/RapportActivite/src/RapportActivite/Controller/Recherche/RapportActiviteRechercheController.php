@@ -6,11 +6,15 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\Interfaces\TypeRapportAwareTrait;
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
 use Application\Entity\Db\TypeRapport;
+use Application\Entity\FichierArchivable;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Fichier\Exception\FichierServiceException;
 use Application\Service\Fichier\FichierServiceAwareTrait;
+use Application\Service\File\FileServiceAwareTrait;
+use RapportActivite\Service\Fichier\RapportActiviteFichierServiceAwareTrait;
+use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\Paginator\Paginator as LaminasPaginator;
@@ -34,7 +38,10 @@ class RapportActiviteRechercheController extends AbstractController implements S
 
     use StructureServiceAwareTrait;
     use FichierServiceAwareTrait;
+    use RapportActiviteServiceAwareTrait;
     use RapportActiviteAvisServiceAwareTrait;
+    use RapportActiviteFichierServiceAwareTrait;
+    use FileServiceAwareTrait;
 
     use TypeRapportAwareTrait;
     use TypeValidationAwareTrait;
@@ -209,17 +216,26 @@ class RapportActiviteRechercheController extends AbstractController implements S
         /** @var LaminasPaginator $paginator */
         $paginator = $result;
 
-        $fichiers = [];
+        $fichiersArchivables = [];
         /** @var RapportActivite $rapport */
         foreach ($paginator as $rapport) {
-            $fichier = $rapport->getFichier();
-            $fichier->setPath($rapport->generateInternalPathForZipArchive());
-            $fichiers[] = $rapport->getFichier();
+            $fichierArchivable = new FichierArchivable($rapport->getFichier());
+            // s'il s'agit d'un rapport validé, on ajoute à la volée la page de validation
+            if ($rapport->estValide()) {
+                // l'ajout de la page de validation n'est pas forcément possible
+                if ($rapport->supporteAjoutPageValidation()) {
+                    $exportData = $this->rapportActiviteService->createPageValidationData($rapport);
+                    $outputFilePath = $this->rapportActiviteFichierService->createFileWithPageValidation($rapport, $exportData);
+                    $fichierArchivable->setFilePath($outputFilePath);
+                }
+            }
+            $fichierArchivable->setFilePathInArchive($rapport->generateInternalPathForZipArchive());
+            $fichiersArchivables[] = $fichierArchivable;
         }
 
         $filename = sprintf("sygal_%s.zip", strtolower(TypeRapport::RAPPORT_ACTIVITE));
         try {
-            $fichierZip = $this->fichierService->compresserFichiers($fichiers, $filename);
+            $fichierZip = $this->fichierService->compresserFichiers($fichiersArchivables, $filename);
         } catch (FichierServiceException $e) {
             throw new RuntimeException("Une erreur est survenue empêchant la création de l'archive zip", null, $e);
 

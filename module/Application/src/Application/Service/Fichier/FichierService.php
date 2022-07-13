@@ -298,12 +298,12 @@ class FichierService extends BaseService
      * NB: c'est une entité Fichier qui est retournée pour une raison de praticité, elle n'a pas du tout vocation à
      * être persistée.
      *
-     * @param Fichier[] $fichiers
+     * @param \Application\Entity\FichierArchivable[] $fichiersArchivables
      * @param string $zipFileName
      * @return Fichier
      * @throws FichierServiceException
      */
-    public function compresserFichiers(array $fichiers, string $zipFileName = "archive.zip"): Fichier
+    public function compresserFichiers(array $fichiersArchivables, string $zipFileName = "archive.zip"): Fichier
     {
         $archiveFilepath = sys_get_temp_dir() . '/' . uniqid('sygal_archive_') . '.zip';
 
@@ -311,14 +311,20 @@ class FichierService extends BaseService
         if ($archive->open($archiveFilepath, ZipArchive::CREATE) !== TRUE) {
             throw new FichierServiceException("Impossible de créer le fichier " . $archiveFilepath);
         }
-        foreach ($fichiers as $fichier) {
-            $filePath = $this->computeDestinationFilePathForFichier($fichier);
+
+        foreach ($fichiersArchivables as $fichierArchivable) {
+            // NB : le chemin du fichier à archiver est soit celui du FichierArchivable (spécifié à la main),
+            // soit celui du Fichier original calculé comme d'hab :
+            $filePath = $fichierArchivable->getFilePath() ?:
+                $this->computeDestinationFilePathForFichier($fichierArchivable->getFichier());
+
             if (! is_readable($filePath)) {
                 $message = "Impossible d'ajouter le fichier suivant à l'archive '$archiveFilepath' car il n'est pas lisible : " . $filePath;
                 error_log($message);
                 throw new FichierServiceException($message);
             }
-            $filePathInArchive = $fichier->getPath();
+
+            $filePathInArchive = $fichierArchivable->getFilePathInArchive();
             $archive->addFile($filePath, $filePathInArchive);
         }
         $archive->close();

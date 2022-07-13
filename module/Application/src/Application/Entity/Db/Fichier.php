@@ -68,9 +68,9 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
      *
      * NB: Aucune colonne n'est mappée à cette propriété.
      *
-     * @var string
+     * @var string|null
      */
-    private $path;
+    private ?string $path = null;
 
     /**
      * Contenu binaire de ce fichier.
@@ -140,18 +140,18 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPath()
+    public function getPath(): ?string
     {
         return $this->path;
     }
 
     /**
-     * @param string $path
+     * @param string|null $path
      * @return Fichier
      */
-    public function setPath($path)
+    public function setPath(?string $path): self
     {
         $this->path = $path;
 

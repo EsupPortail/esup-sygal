@@ -183,7 +183,7 @@ class RapportActiviteController extends AbstractController
             // l'ajout de la page de validation n'est pas forcément possible
             if ($rapport->supporteAjoutPageValidation()) {
                 $exportData = $this->rapportActiviteService->createPageValidationData($rapport);
-                $outputFilePath = $this->rapportActiviteFichierService->ajouterPageValidation($rapport, $exportData);
+                $outputFilePath = $this->rapportActiviteFichierService->createFileWithPageValidation($rapport, $exportData);
                 $this->fileService->downloadFile($outputFilePath);
                 exit;
             }

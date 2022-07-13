@@ -4,9 +4,11 @@ namespace RapportActivite\Controller\Recherche;
 
 use Application\Entity\Db\TypeValidation;
 use Application\Service\Fichier\FichierService;
+use Application\Service\File\FileService;
 use Application\Service\Validation\ValidationService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
+use RapportActivite\Service\Fichier\RapportActiviteFichierService;
 use RapportActivite\Service\RapportActiviteService;
 use RapportActivite\Service\Search\RapportActiviteSearchService;
 
@@ -43,6 +45,19 @@ class RapportActiviteRechercheControllerFactory
         $controller->setRapportActiviteAvisService($rapportActiviteAvisService);
         $controller->setTypeRapport($typeRapport);
         $controller->setTypeValidation($typeValidation);
+
+
+        /** @var FileService $fileService */
+        $fileService = $container->get(FileService::class);
+        $controller->setFileService($fileService);
+
+        /** @var RapportActiviteService $rapportActiviteService */
+        $rapportActiviteService = $container->get(RapportActiviteService::class);
+        $controller->setRapportActiviteService($rapportActiviteService);
+
+        /** @var RapportActiviteFichierService $rapportActiviteFichierService */
+        $rapportActiviteFichierService = $container->get(RapportActiviteFichierService::class);
+        $controller->setRapportActiviteFichierService($rapportActiviteFichierService);
 
         return $controller;
     }
