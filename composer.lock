@@ -9389,7 +9389,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/alerte.git",
-                "reference": "a27c16dbd7d7869e9c3177a9655bb38b55048456"
+                "reference": "c62169489cabb0603b616f824b3fad465b73f9d3"
             },
             "require": {
                 "doctrine/doctrine-laminas-hydrator": "^2.0",
@@ -9430,7 +9430,7 @@
                 ]
             },
             "description": "Affichage d'alertes",
-            "time": "2022-07-09T10:20:03+00:00"
+            "time": "2022-07-09T20:13:02+00:00"
         },
         {
             "name": "unicaen/app",
