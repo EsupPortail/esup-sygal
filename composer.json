@@ -29,7 +29,7 @@
         "guzzlehttp/guzzle": "^6.3",
         "ramsey/uuid": "^3.3",
         "twig/twig": "^3.0",
-        "unicaen/alerte": "^1.0",
+        "unicaen/alerte": "^1.1",
         "unicaen/app": "^5.1",
         "unicaen/auth": "^5.1",
         "unicaen/auth-token": "^5.0",

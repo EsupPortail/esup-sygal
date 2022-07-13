@@ -179,6 +179,7 @@ create unique index formation_enquete_categorie_id_uindex on formation_enquete_c
 create table formation_enquete_question
 (
     id                       serial        not null        constraint formation_enquete_question_pkey primary key,
+    categorie_id             integer                       constraint formation_enquete_question_categorie_id_fk references formation_enquete_categorie,
     libelle                  varchar(1024) not null,
     description              text,
     ordre                    integer       not null,
