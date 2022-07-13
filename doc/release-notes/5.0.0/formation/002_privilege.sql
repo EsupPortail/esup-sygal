@@ -1,16 +1,13 @@
--- MODULE DE FORMATION ----------------------------------------------------------------------------------------------------
 
 create sequence if not exists categorie_privilege_id_seq;
-
 alter table categorie_privilege alter column id set default nextval('categorie_privilege_id_seq');
 alter sequence categorie_privilege_id_seq owned by categorie_privilege.id;
 
 alter sequence categorie_privilege_id_seq restart with 5000;
 
+-- INDEX --------------------------------------------------------------------------------------------------------------
 INSERT INTO categorie_privilege (code, libelle, ordre)
 VALUES ('formation', 'Module de formation', 5000);
-
-
 
 INSERT INTO privilege(id, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
 WITH d(code, lib, ordre) AS (
@@ -21,6 +18,7 @@ WITH d(code, lib, ordre) AS (
 SELECT nextval('privilege_id_seq'), cp.id, d.code, d.lib, d.ordre
 FROM d
 JOIN categorie_privilege cp ON cp.CODE = 'formation';
+
 
 -- MODULE --------------------------------------------------------------------------------------------------------------
 
@@ -39,12 +37,26 @@ WITH d(code, lib, ordre) AS (
 )
 SELECT nextval('privilege_id_seq'), cp.id, d.code, d.lib, d.ordre
 FROM d
-JOIN categorie_privilege cp ON cp.CODE = 'formation_module';
+         JOIN categorie_privilege cp ON cp.CODE = 'formation_module';
 
 -- FORMATION -----------------------------------------------------------------------------------------------------------
 
 INSERT INTO categorie_privilege (code, libelle, ordre)
 VALUES ('formation_formation', 'Gestion des formations', 5200);
+
+INSERT INTO privilege(id, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
+WITH d(code, lib, ordre) AS (
+    SELECT 'index', 'Accès à l''index des actions de formation', 1 UNION
+    SELECT 'afficher', 'Afficher une action de formation', 2 UNION
+    SELECT 'ajouter', 'Ajouter une action de formation', 3 UNION
+    SELECT 'modifier', 'Modifier une action de formation', 4 UNION
+    SELECT 'historiser', 'Historiser/Restaurer une action de formation', 5 UNION
+    SELECT 'supprimer', 'Supprimer une action de formation', 6
+)
+SELECT nextval('privilege_id_seq'), cp.id, d.code, d.lib, d.ordre
+FROM d
+     JOIN categorie_privilege cp ON cp.CODE = 'formation_formation';
+-- SESSION -------------------------------------------------------------------------------------------------------------
 
 INSERT INTO privilege(id, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
 WITH d(code, lib, ordre) AS (
@@ -60,10 +72,10 @@ SELECT nextval('privilege_id_seq'), cp.id, d.code, d.lib, d.ordre
 FROM d
 JOIN categorie_privilege cp ON cp.CODE = 'formation_formation';
 
--- SESSION -------------------------------------------------------------------------------------------------------------
-
 INSERT INTO categorie_privilege (code, libelle, ordre)
 VALUES ('formation_session', 'Gestion des sessions de formations', 5300);
+
+-- SEANCE --------------------------------------------------------------------------------------------------------------
 
 INSERT INTO privilege(id, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
 WITH d(code, lib, ordre) AS (
@@ -79,24 +91,8 @@ SELECT nextval('privilege_id_seq'), cp.id, d.code, d.lib, d.ordre
 FROM d
 JOIN categorie_privilege cp ON cp.CODE = 'formation_session';
 
--- SEANCE --------------------------------------------------------------------------------------------------------------
-
 INSERT INTO categorie_privilege (code, libelle, ordre)
 VALUES ('formation_seance', 'Gestion des séances de formations', 5400);
-
-INSERT INTO privilege(id, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
-WITH d(code, lib, ordre) AS (
-    SELECT 'index', 'Accès à l''index des séances de formation', 1 UNION
-    SELECT 'afficher', 'Afficher une séance de formation', 2 UNION
-    SELECT 'ajouter', 'Ajouter une séance de formation', 3 UNION
-    SELECT 'modifier', 'Modifier une séance de formation', 4 UNION
-    SELECT 'historiser', 'Historiser/Restaurer une séance de formation', 5 UNION
-    SELECT 'supprimer', 'Supprimer une séance de formation', 6 UNION
-    SELECT 'renseigner_presence', 'Renseigner les présences', 7
-)
-SELECT nextval('privilege_id_seq'), cp.id, d.code, d.lib, d.ordre
-FROM d
-JOIN categorie_privilege cp ON cp.CODE = 'formation_seance';
 
 -- INSCRIPTION ---------------------------------------------------------------------------------------------------------
 

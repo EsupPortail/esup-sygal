@@ -1,10 +1,3 @@
--- ROLE ----------------------------------------------------------------------------------------------------------------
-
-INSERT INTO role (id, code, libelle, source_code, source_id, role_id, is_default, ldap_filter, attrib_auto, these_dep, type_structure_dependant_id, ordre_affichage, histo_createur_id)
-select nextval('role_id_seq'), 'FORMATEUR', 'Formateur·trice', 'SYGAL::FORMATEUR', 1, 'Formateur·trice', false, null, false, false, 1, 'formation_aab', 1;
-INSERT INTO role (id, code, libelle, source_code, source_id, role_id, is_default, ldap_filter, attrib_auto, these_dep, type_structure_dependant_id, ordre_affichage, histo_createur_id)
-select nextval('role_id_seq'), 'GEST_FORMATION', 'Gestionnaire de formation', 'SYGAL::GEST_FORMATION', 1, 'Gestionnaire de formation', false, null, false, false, 1, 'formation_aaa', 1;
-
 -- NATURE DE DOCUMENT --------------------------------------------------------------------------------------------------
 
 INSERT INTO nature_fichier (id, code, libelle) VALUES (nextval('nature_fichier_id_seq'), 'SIGNATURE_FORMATION', 'Signature pour les formations');
