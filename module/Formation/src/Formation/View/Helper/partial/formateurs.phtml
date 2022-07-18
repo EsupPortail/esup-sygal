@@ -1,0 +1,32 @@
+<?php /** @noinspection PhpUnusedAliasInspection */
+
+use Formation\Entity\Db\Formateur;
+use Formation\Entity\Db\Seance;
+use Formation\Entity\Db\Session;
+
+/**
+ * @see \Formation\View\Helper\EtatViewHelper
+ * @var Session $session
+ * @var array $options
+ */
+
+
+/** @var Formateur[] $formateurs */
+$formateurs = $session->getFormateurs()->toArray();
+$formateurs = array_filter($formateurs, function (Formateur $a) { return $a->estNonHistorise();});
+usort($formateurs, function(Formateur $a, Formateur $b) { return $a->getIndividu()->getNomComplet() > $b->getIndividu()->getNomComplet();});
+
+?>
+
+<?php if (!empty($formateurs)) : ?>
+    <ul>
+        <?php foreach ($formateurs as $formateur) : ?>
+        <li>
+            <?php echo $formateur->getIndividu()->getNomComplet(); ?>
+        </li>
+        <?php endforeach; ?>
+    </ul>
+<?php else : ?>
+    Aucun formateur&middot;trice
+<?php endif; ?>
+

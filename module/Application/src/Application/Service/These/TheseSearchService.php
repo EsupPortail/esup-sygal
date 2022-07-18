@@ -7,6 +7,7 @@ use Application\Entity\Db\These;
 use Structure\Entity\Db\TypeStructure;
 use Application\Filter\AnneeUnivFormatter;
 use Application\Search\DomaineScientifique\DomaineScientifiqueSearchFilterAwareTrait;
+use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
 use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilterAwareTrait;
 use Structure\Search\Etablissement\EtablissementInscSearchFilterAwareTrait;
 use Application\Search\Filter\SearchFilter;
@@ -18,6 +19,8 @@ use Application\Search\Sorter\SearchSorter;
 use Application\Search\These\EtatTheseSearchFilterAwareTrait;
 use Application\Search\These\TheseTextSearchFilter;
 use Application\Search\These\TheseTextSearchFilterAwareTrait;
+use Structure\Search\Etablissement\EtablissementSearchFilter;
+use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
 use Structure\Search\UniteRecherche\UniteRechercheSearchFilterAwareTrait;
 use Application\Service\DomaineScientifiqueServiceAwareTrait;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -79,6 +82,7 @@ class TheseSearchService extends SearchService
     public function init()
     {
         $etablissementInscrFilter = $this->getEtablissementInscSearchFilter()
+            ->setWhereField('etab.sourceCode')
             ->setDataProvider(function(SelectSearchFilter $filter) {
                 return $this->fetchEtablissements($filter);
             });
@@ -87,10 +91,12 @@ class TheseSearchService extends SearchService
                 return $this->fetchOriginesFinancements($filter);
             });
         $uniteRechercheFilter = $this->getUniteRechercheSearchFilter()
+            ->setWhereField('ur.sourceCode')
             ->setDataProvider(function(SelectSearchFilter $filter) {
                 return $this->fetchUnitesRecherches($filter);
             });
         $ecoleDoctoraleFilter = $this->getEcoleDoctoraleSearchFilter()
+            ->setWhereField('ed.sourceCode')
             ->setDataProvider(function(SelectSearchFilter $filter) {
                 return $this->fetchEcolesDoctorales($filter);
             });
@@ -139,9 +145,9 @@ class TheseSearchService extends SearchService
             $textSearchFilter,
         ]);
         $this->addSorters([
-            $etablissementInscrFilter->createSorter(),
-            $ecoleDoctoraleFilter->createSorter(),
-            $uniteRechercheFilter->createSorter(),
+            $this->createSorterEtablissement(),
+            $this->createSorterEcoleDoctorale(),
+            $this->createSorterUniteRecherche(),
             $this->createSorterTitre(),
             $etatTheseSearchFilter->createSorter(),
             $this->createSorterNumeroEtudiant(),
@@ -232,6 +238,9 @@ class TheseSearchService extends SearchService
     {
         $qb = $this->theseService->getRepository()->createQueryBuilder('these');
         $qb
+            ->addSelect('etab')->leftJoin('these.etablissement', 'etab')
+            ->addSelect('ed')->leftJoin('these.ecoleDoctorale', 'ed')
+            ->addSelect('ur')->leftJoin('these.uniteRecherche', 'ur')
             ->addSelect('di')->leftJoin('th.individu', 'di')
             ->addSelect('a')->leftJoin('these.acteurs', 'a')
             ->addSelect('i')->leftJoin('a.individu', 'i')
@@ -572,6 +581,52 @@ EOS;
     }
 
     /////////////////////////////////////// Sorters /////////////////////////////////////////
+
+    /**
+     * @return SearchSorter
+     */
+    public function createSorterEtablissement(): SearchSorter
+    {
+        $sorter = new SearchSorter("Établissement<br>d'inscr.", EtablissementSearchFilter::NAME);
+        $sorter->setQueryBuilderApplier(
+            function (SearchSorter $sorter, QueryBuilder $qb) {
+                $qb
+                    ->join('etab.structure', 's_sort')
+                    ->addOrderBy('s_sort.code', $sorter->getDirection());
+            }
+        );
+
+        return $sorter;
+    }
+
+    public function createSorterEcoleDoctorale(): SearchSorter
+    {
+        $sorter = new SearchSorter("École doctorale", EcoleDoctoraleSearchFilter::NAME);
+        $sorter->setQueryBuilderApplier(
+            function (SearchSorter $sorter, QueryBuilder $qb) {
+                $qb
+                    ->leftJoin("ed.structure", 'ed_s_sort')
+                    ->addOrderBy('ed_s_sort.code', $sorter->getDirection());
+            }
+        );
+
+        return $sorter;
+    }
+
+    public function createSorterUniteRecherche(): SearchSorter
+    {
+        $sorter = new SearchSorter("Unité recherche", UniteRechercheSearchFilter::NAME);
+        $sorter->setQueryBuilderApplier(
+            function (SearchSorter $sorter, QueryBuilder $qb) {
+                $direction = $sorter->getDirection();
+                $qb
+                    ->leftJoin("ur.structure", 'ur_s_sort')
+                    ->addOrderBy('ur_s_sort.code', $direction);
+            }
+        );
+
+        return $sorter;
+    }
 
     /**
      * @return SearchSorter

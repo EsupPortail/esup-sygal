@@ -2,6 +2,8 @@
 
 namespace Application\Search\Filter;
 
+use Doctrine\ORM\QueryBuilder;
+
 /**
  * Représente un filtre de type liste déroulante.
  *
@@ -9,45 +11,45 @@ namespace Application\Search\Filter;
  */
 class SelectSearchFilter extends SearchFilter
 {
+    const VALUE_NULL = 'NULL';
+
     /**
-     * @var array
+     * @var array|null
      */
-    protected $data;
+    protected ?array $data = null;
 
     /**
      * @var string[]
      */
-    protected $options;
+    protected array $options = [];
 
     /**
      * @var bool
      */
-    protected $allowsEmptyOption = true;
+    protected bool $allowsEmptyOption = true;
 
     /**
      * @var string
      */
-    protected $emptyOptionLabel = "(Peu importe)";
+    protected string $emptyOptionLabel = "(Peu importe)";
 
     /**
      * @var bool
      */
-    protected $allowsNoneOption = false;
+    protected bool $allowsNoneOption = false;
 
     /**
      * @var string
      */
-    protected $noneOptionLabel = "(Non renseigné)";
+    protected string $noneOptionLabel = "(Non renseigné)";
 
     /**
-     * SelectFilter constructor.
-     *
      * @param string $label
      * @param string $name
      * @param array $attributes
-     * @param string $defaultValue
+     * @param string|null $defaultValue
      */
-    public function __construct(string $label, string $name, array $attributes = [], $defaultValue = null)
+    public function __construct(string $label, string $name, array $attributes = [], string $defaultValue = null)
     {
         parent::__construct($label, $name);
 
@@ -85,6 +87,35 @@ class SelectSearchFilter extends SearchFilter
     public function getDataProvider(): ?callable
     {
         return $this->dataProvider;
+    }
+
+    /**
+     * Application de ce filtre au query builder spécifié, en utilisant le champ de condition.
+     *
+     * @param \Doctrine\ORM\QueryBuilder $qb
+     */
+    protected function applyToQueryBuilderUsingWhereField(QueryBuilder $qb)
+    {
+        if ($this->getValue() === self::VALUE_NULL) {
+            $qb->andWhere(sprintf("%s IS NULL", $this->whereField));
+        } else {
+            parent::applyToQueryBuilderUsingWhereField($qb);
+        }
+    }
+
+    /**
+     * Application par défaut de ce filtre au query builder spécifié, avec construction automatique du where.
+     *
+     * @param \Doctrine\ORM\QueryBuilder $qb
+     */
+    protected function applyToQueryBuilderByDefault(QueryBuilder $qb)
+    {
+        if ($this->getValue() === self::VALUE_NULL) {
+            $alias = current($qb->getRootAliases());
+            $qb->andWhere(sprintf("%s.%s IS NULL", $alias, $this->getName()));
+        } else {
+            parent::applyToQueryBuilderByDefault($qb);
+        }
     }
 
     /**
@@ -284,16 +315,16 @@ class SelectSearchFilter extends SearchFilter
      * @param string $label
      * @return array
      */
-    static public function valueOptionUnknown($label = "(Inconnu.e)"): array
+    static public function valueOptionUnknown(string $label = "(Inconnu.e)"): array
     {
-        return ['value' => 'NULL', 'label' => $label];
+        return ['value' => self::VALUE_NULL, 'label' => $label];
     }
 
     /**
      * @param string $label
      * @return array
      */
-    static public function valueOptionEmpty($label = "(Peu importe)"): array
+    static public function valueOptionEmpty(string $label = "(Peu importe)"): array
     {
         return ['value' => '', 'label' => $label];
     }

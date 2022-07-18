@@ -28,6 +28,7 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface, Resour
     const CIVILITE_MME = 'Mme';
 
     const TYPE_ACTEUR = 'acteur';
+    const TYPE_DOCTORANT = 'doctorant';
 
     /**
      * Identifiant qui correspond en fait au :
@@ -135,6 +136,22 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface, Resour
      * @var ArrayCollection|IndividuCompl[]
      */
     private $complements;
+
+    /**
+     * Fabrique un tableau permettant d'alimenter un select.
+     *
+     * @param \Individu\Entity\Db\Individu[] $individus
+     * @return string[] id individu => nom complet sans civilité
+     */
+    static public function asSelectValuesOptions(array $individus): array
+    {
+        $valuesOptions = [];
+        foreach ($individus as $i) {
+            $valuesOptions[$i->getId()] = $i->getNomComplet(false);
+        }
+
+        return $valuesOptions;
+    }
 
     /**
      * Individu constructor.

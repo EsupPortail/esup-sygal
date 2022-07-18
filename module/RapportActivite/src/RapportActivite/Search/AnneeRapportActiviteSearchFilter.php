@@ -56,6 +56,7 @@ class AnneeRapportActiviteSearchFilter extends SelectSearchFilter
 
     /**
      * @return SearchSorter
+     * @deprecated
      */
     public function createSorter(): SearchSorter
     {

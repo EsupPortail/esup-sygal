@@ -1,6 +1,12 @@
 Journal des modifications
 =========================
 
+5.0.0
+-----
+- Nouveau module Formation doctorale.
+- Changement de séparateur de mots-clés libres et RAMEAU (; remplacé par *).
+- Possibilité de saisir le Numéro National des Thèses (NNT) sur le formulaire du rendez-vous BU.
+
 4.2.2
 -----
 - [FIX] Page de validation non ajoutée aux rapports d'activités en cas de téléchargement sous forme d'archive zip.

@@ -2,9 +2,9 @@
 
 namespace Doctorant;
 
-use Zend\Config\Factory as ConfigFactory;
-use Zend\Mvc\ModuleRouteListener;
-use Zend\Mvc\MvcEvent;
+use Laminas\Config\Factory as ConfigFactory;
+use Laminas\Mvc\ModuleRouteListener;
+use Laminas\Mvc\MvcEvent;
 
 class Module
 {
@@ -23,7 +23,7 @@ class Module
     public function getAutoloaderConfig(): array
     {
         return array(
-            'Zend\Loader\StandardAutoloader' => array(
+            'Laminas\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                 ),

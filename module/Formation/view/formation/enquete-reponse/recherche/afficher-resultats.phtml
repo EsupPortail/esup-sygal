@@ -1,0 +1,305 @@
+<?php
+
+use Formation\Entity\Db\EnqueteCategorie;
+use Formation\Entity\Db\EnqueteQuestion;
+use Formation\Entity\Db\EnqueteReponse;
+
+/**
+ * @see \Formation\Controller\Recherche\EnqueteReponseRechercheController::afficherResultatsAction()
+ * @var \Formation\Entity\Db\Session $session
+ * @var array $array;
+ * @var array $histogramme;
+ * @var int $nbReponses;
+ * @var EnqueteCategorie[] $categories
+ * @var EnqueteQuestion[] $questions
+ * @var string $routeName
+ * @var string $title
+ */
+
+$this->headTitle($this->translate($title));
+
+
+usort($categories, function (EnqueteCategorie $a, EnqueteCategorie $b) { return $a->getOrdre() > $b->getOrdre();});
+
+?>
+<!-- todo remplacer -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.js">
+</script>
+
+<h1 class="page-header">
+    <?php echo $this->translate($title) ?>
+</h1>
+<h2>
+    <?php echo $session ? $this->sessionLibelle($session) : "Toutes sessions confondues" ?>
+</h2>
+
+
+<!-- Formulaire de filtrage -->
+<div class="float-start">
+    <?php $loadFiltersUrl = $this->url($routeName . '/filters', $session ? ['session' => $session->getId()] : [], ['query' => $this->queryParams()], true); ?>
+    <div id="filters" data-url="<?php echo $loadFiltersUrl ?>" style="min-height: 120px">
+        <!-- Contenu chargé en AJAX -->
+    </div>
+</div>
+<div class="clearfix"></div>
+
+
+<div class="row">
+    <div class="col-md-6">
+        <h3> Histogrammes </h3>
+    </div>
+    <div class="float-end">
+        <span class="btn btn-primary export" id="histogrammes">
+            <span class="icon icon-download"></span>
+            Exporter les histogrammes
+        </span>
+    </div>
+</div>
+
+<div>
+
+<?php foreach ($categories as $categorie) : ?>
+    <?php
+        $questionsC = $categorie->getQuestions()->toArray();
+        usort($questionsC, function (EnqueteQuestion $a, EnqueteQuestion $b) { return $a->getOrdre() > $b->getOrdre();});
+    ?>
+
+    <?php foreach ($questionsC as $question) : ?>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4>
+                    <span class="formation-typage">Catégorie</span> <?php echo $categorie->getLibelle(); ?> <br/>
+                    <span class="formation-typage">Question</span> <?php echo $question->getLibelle(); ?>
+                </h4>
+                <table class="table table-sm">
+            <thead>
+            <tr>
+                <th> Niveaux </th>
+                <th> Nombres </th>
+                <th> Ratio </th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach (EnqueteReponse::NIVEAUX as $clef => $libelle) : ?>
+                <tr>
+                    <td> <?php echo $libelle; ?> </td>
+                    <td> <?php echo $histogramme[$question->getId()][$clef]; ?> </td>
+                    <td>
+                        <?php if ($nbReponses !== 0) : ?>
+                            <?php echo number_format(($histogramme[$question->getId()][$clef]/$nbReponses)*100,2,',',''); ?> </td>
+                        <?php else : ?>
+                            0
+                        <?php endif ; ?>
+
+                </tr>
+            </tbody>
+            <?php endforeach; ?>
+        </table>
+            </div>
+            <div class="col-md-6">
+                <canvas id="myChart_<?php echo $question->getId(); ?>" width="400" height="200"></canvas>
+                <script>
+            var ctx = document.getElementById('myChart_<?php echo $question->getId(); ?>').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [<?php foreach (EnqueteReponse::NIVEAUX as $niveau) echo "'".$niveau."',"; ?>],
+                    datasets: [{
+                        label: 'Nombre de réponses',
+                        data: [<?php echo implode(",", $histogramme[$question->getId()]); ?>],
+                        backgroundColor: [
+                            'rgb(18,199,0,1)',
+                            'rgb(161,191,0,1)',
+                            'rgb(255,171,3,1)',
+                            'rgb(222,76,0,1)',
+                            'rgb(156,0,0,1)',
+                        ],
+
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: false,
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                min: 0,
+                                max: <?php echo $nbReponses; ?>,
+                            }
+                        }]
+                    }
+                }
+            });
+        </script>
+            </div>
+        </div>
+    <?php endforeach; ?>
+<?php endforeach; ?>
+
+<?php
+$sans = array_filter($questions, function (EnqueteQuestion $a) { return $a->getCategorie() === null;});
+usort($sans, function (EnqueteQuestion $a, EnqueteQuestion $b) { return $a->getOrdre() > $b->getOrdre();});
+?>
+    <?php foreach ($sans as $question) : ?>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h3>
+                    <?php echo $question->getLibelle(); ?>
+                </h3>
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th> Niveaux </th>
+                        <th> Nombres </th>
+                        <th> Ratio </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach (EnqueteReponse::NIVEAUX as $clef => $libelle) : ?>
+                    <tr>
+                        <td> <?php echo $libelle; ?> </td>
+                        <td> <?php echo $histogramme[$question->getId()][$clef]; ?> </td>
+
+                        <?php if ($nbReponses !== 0) : ?>
+                            <td> <?php echo number_format(($histogramme[$question->getId()][$clef]/$nbReponses)*100,2,',',''); ?> </td>
+                        <?php else : ?>
+                            <td> 0 </td>
+                        <?php endif ; ?>
+
+                    </tr>
+                    </tbody>
+                    <?php endforeach; ?>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <canvas id="myChart_<?php echo $question->getId(); ?>" width="400" height="200"></canvas>
+                <script>
+                    var ctx = document.getElementById('myChart_<?php echo $question->getId(); ?>').getContext('2d');
+                    var myChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: [<?php foreach (EnqueteReponse::NIVEAUX as $niveau) echo "'".$niveau."',"; ?>],
+                            datasets: [{
+                                label: 'Nombre de réponses',
+                                data: [<?php echo implode(",", $histogramme[$question->getId()]); ?>],
+                                backgroundColor: [
+                                    'rgb(18,199,0,1)',
+                                    'rgb(161,191,0,1)',
+                                    'rgb(255,171,3,1)',
+                                    'rgb(222,76,0,1)',
+                                    'rgb(156,0,0,1)',
+                                ],
+
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            legend: {
+                                display: false,
+                            },
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        min: 0,
+                                        max: <?php echo $nbReponses; ?>,
+                                    }
+                                }]
+                            }
+                        }
+                    });
+                </script>
+            </div>
+        </div>
+    <?php endforeach; ?>
+</div>
+
+<!-- REPONSE BRUTE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<div class="row">
+    <div class="col-md-6">
+        <h3> Réponses brutes</h3>
+    </div>
+    <div class="float-end">
+        <span class="btn btn-primary export" id="resultats">
+            <span class="icon icon-download"></span>
+            Exporter les résultats
+        </span>
+    </div>
+</div>
+
+<table class="table table-sm">
+    <thead>
+    <tr>
+        <th> Id. </th>
+        <?php foreach ($questions as $question) : ?>
+            <th class="niveau">Niveau Q. <?php echo $question->getId(); ?></th>
+            <th class="commentaire">Commentaire Q. <?php echo $question->getId(); ?></th>
+        <?php endforeach; ?>
+    </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($array as $inscription => $item) : ?>
+        <tr>
+            <td> <?php echo $inscription; ?></td>
+            <?php foreach ($questions as $question) : ?>
+                <td class="niveau"><?php echo $item["Niveau_" . $question->getId()]; ?></td>
+                <td class="commentaire"><?php echo $item["Commentaire_" . $question->getId()]; ?></td>
+            <?php endforeach; ?>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
+<script>
+    downloadCSVFromJson = (filename, headerJson, arrayOfJson) => {
+        // convert JSON to CSV
+        let csv = "";
+        for (let value in headerJson) {
+            csv += headerJson[value] + ";";
+        }
+        csv += "\n";
+
+        for (let line in arrayOfJson) {
+            csv += line + ";";
+            for (let value in arrayOfJson[line]) {
+                csv += arrayOfJson[line][value] + ";";
+            }
+            csv += "\n";
+        }
+        console.log(csv);
+
+        // Create link and download
+        var link = document.createElement('a');
+        link.setAttribute('href', 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURIComponent(csv));
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    $('span.export#resultats').on('click', function() {
+        let header = {0:"Inscription" <?php foreach ($questions as $question) {$id = $question->getId(); echo ", ".($id*1000)."1: \"Niveau_".$id."\"";echo ", ".($id*1000)."2: \"Commentaire_".$id."\"";}?>};
+        let tableau = <?php echo json_encode($array); ?>;
+        for (let j in tableau[0]) {
+            console.log(j);
+        }
+        downloadCSVFromJson('enquete_'+$(this).attr('id')+'_'+ Date.now().toString() +'.csv', header, tableau);
+    });
+
+    $('span.export#histogrammes').on('click', function() {
+        let header = {0:"Question", 1:"Pas du tout satisfait", 2:"Peu satisfait", 3:"Sans Avis", 4:"Assez satisfait", 5:"Très satisfait"};
+        let tableau = <?php echo json_encode($histogramme); ?>;
+        downloadCSVFromJson('enquete_'+$(this).attr('id')+'_'+ Date.now().toString() +'.csv', header, tableau);
+    });
+
+</script>
+
+<script>
+    $(function() {
+        $("#filters").addClass("loading").refresh(null, function() { $(this).removeClass("loading"); });
+    });
+</script>

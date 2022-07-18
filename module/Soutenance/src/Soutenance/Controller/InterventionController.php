@@ -18,7 +18,7 @@ use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Zend\Http\Response;
+use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
 class InterventionController extends AbstractController {

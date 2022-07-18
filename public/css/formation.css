@@ -1,0 +1,83 @@
+div.index-result {
+  padding-top: 1rem; }
+
+span.formation-typage {
+  border: 1px solid lightgrey;
+  border-radius: 5px;
+  padding: 0 2px;
+  font-weight: 500; }
+
+span.formation-lettrine {
+  position: relative;
+  left: -0.60rem;
+  top: 0.25rem;
+  font-weight: bolder;
+  font-size: xx-small;
+  text-shadow: 2px 0 0 #fff, -2px 0 0 #fff, 0 2px 0 #fff, 0 -2px 0 #fff, 1px 1px #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff; }
+
+span.formation-lettrine {
+  color: var(--bs-primary); }
+
+span.question-historisee {
+  /*background: lightgray;*/
+  text-decoration: line-through; }
+
+th.formation-module {
+  background: cornflowerblue;
+  font-size: large; }
+
+tr.formation-vide {
+  font-style: italic;
+  color: gray; }
+
+td.formation-libelle {
+  width: 45rem; }
+
+td.formation-site {
+  /*width:10rem;*/
+  min-width: 10rem;
+  max-width: 10rem; }
+
+td.formation-responsable {
+  /*width:15rem;*/
+  min-width: 15rem;
+  max-width: 15rem; }
+
+td.formation-infos {
+  /*width:20rem;*/
+  min-width: 20rem;
+  max-width: 20rem; }
+
+table.formation-presence {
+  /*border : 1px solid black;*/ }
+
+table.formation-presence tr td {
+  border: 1px solid black; }
+
+table.formation-presence tr td.separateur {
+  border: 0; }
+
+table.formation-presence tr td.journee {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  padding-top: .5rem;
+  padding-bottom: 1rem;
+  background: #1b6d85;
+  color: white;
+  width: 5rem; }
+
+table.formation-presence tr td.inscrit {
+  padding-left: .5rem;
+  padding-right: 1rem;
+  background: #1b6d85;
+  color: white;
+  height: 5rem;
+  width: 30rem; }
+
+table.formation-presence tr td.reponse {
+  vertical-align: center;
+  text-align: center;
+  min-width: 3rem;
+  min-height: 3rem; }
+
+/*# sourceMappingURL=formation.css.map */

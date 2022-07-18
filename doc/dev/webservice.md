@@ -1,5 +1,5 @@
-Dévelopement de l'application SyGAL
-===================================
+Web service d'import
+====================
 
 Prise en compte d'un nouveau champ provenant du web service
 -----------------------------------------------------------

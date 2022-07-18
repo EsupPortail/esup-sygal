@@ -3,8 +3,8 @@
 namespace Soutenance\Service\Exporter\RapportTechnique;
 
 use UnicaenApp\Exporter\Pdf as PdfExporter;
-use Zend\View\Renderer\PhpRenderer;
-use Zend\View\Resolver\TemplatePathStack;
+use Laminas\View\Renderer\PhpRenderer;
+use Laminas\View\Resolver\TemplatePathStack;
 
 class RapportTechniquePdfExporter extends PdfExporter
 {

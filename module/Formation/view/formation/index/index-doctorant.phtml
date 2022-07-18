@@ -1,0 +1,401 @@
+<?php
+
+/**
+ * @see \Formation\Controller\IndexController::indexDoctorantAction()
+ * @var Doctorant $doctorant
+ * @var Session[] $ouvertes
+ * @var Session[] $preparations
+ * @var Inscription[] $inscriptions
+ * @var EnqueteReponse[] $reponses;
+ */
+
+
+use Doctorant\Entity\Db\Doctorant;
+use Formation\Entity\Db\EnqueteReponse;
+use Formation\Entity\Db\Etat;
+use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Session;
+use Formation\Provider\Privilege\EnquetePrivileges;
+use Formation\Provider\Privilege\InscriptionPrivileges;
+use Formation\Provider\Privilege\ModulePrivileges;
+
+$this->headTitle('Mes formations');
+
+$encours = [];
+$terminees = [];
+foreach ($inscriptions as $inscription) {
+    $seances = $inscription->getSession()->getSeances()->toArray();
+    $seances = array_filter($seances, function ($a) { return $a->estNonHistorise(); });
+    $nbSeance = count($seances);
+    if ($nbSeance > 0 /**  AND $inscription->getSession()->estTerminee() **/ AND $inscription->getSession()->getEtat()->getCode() === Etat::CODE_CLOTURER) {
+        $terminees[] = $inscription;
+    } else {
+        if ($inscription->estNonHistorise()) $encours[] = $inscription;
+    }
+}
+
+/** @var Inscription[] $terminees */
+$terminees = array_filter($terminees, function (Inscription $a) { return $a->getListe() === Inscription::LISTE_PRINCIPALE; });
+
+$canAjouterInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_AJOUTER));
+$canSupprimerInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_HISTORISER));
+$canConvocationInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_CONVOCATION));
+$canRepondreEnquete = $this->isAllowed(EnquetePrivileges::getResourceId(EnquetePrivileges::ENQUETE_REPONSE_REPONDRE));
+$canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_ATTESTATION));
+
+$canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_CATALOGUE));
+?>
+
+<h1 class="page-header">
+    Mes Formations
+</h1>
+
+<?php if ($doctorant === null) : ?>
+    <p class="lead">
+        Aucun&middot;e doctorant&middot;e de trouvé&middot;e.
+    </p>
+
+    <p>
+    <u>N.B.:</u> Mon cobaye est Josselin GUENERON dans l'id est <code>38108</code>
+        &rightarrow; <a href="<?php echo $this->url('formation/index-doctorant', ['doctorant' => 38108], [], true); ?>">Cas du cobaye</a>
+    </p>
+<?php else : ?>
+
+<div class="row">
+    <div class="col-md-9">
+        <p class="lead"><strong>Bienvenue sur la page de gestion de vos formations</strong>. Sur cette page, vous pouvez : consulter les formations ouvertes, vos inscriptions et récupérer vos attestions et convocations.</p>
+    </div>
+    <div class="col-md-3">
+        <?php if ($canCatalogueAfficher) : ?>
+            <?php /** @see \Formation\Controller\ModuleController::catalogueAction() */?>
+            <a href="<?php echo $this->url('formation/catalogue',[],[], true); ?>" class="btn btn-primary" target="_blank">
+                <span class="icon icon-voir"> Accéder au catalogue des formations</span>
+            </a>
+        <?php endif; ?>
+    </div>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="nav-item active">
+        <a href="#a_venir"
+           class="nav-link"
+           role="tab"
+           aria-controls="a_venir"
+           data-bs-toggle="tab"
+        >
+            Formations à venir
+        </a>
+    </li>
+    <li role="presentation" class="nav-item">
+        <a href="#inscription"
+           class="nav-link"
+           role="tab"
+           aria-controls="inscription"
+           data-bs-toggle="tab"
+        >
+            Mes inscriptions en cours
+        </a>
+    </li>
+    <li role="presentation" class="nav-item">
+        <a href="#formation"
+           class="nav-link"
+           role="tab"
+           aria-controls="formation"
+           data-bs-toggle="tab"
+        >
+            Mes formations suivies
+        </a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane in active" id="a_venir">
+        <h2>
+            Formations "Inscriptions ouvertes"
+        </h2>
+
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th> Module de formation </th>
+                <th> Session </th>
+                <th> Formateur&middot;trice&middot;s </th>
+                <th> Site </th>
+                <th> Dates et lieux </th>
+                <th> Modalité </th>
+                <th> Type </th>
+                <th> État </th>
+                <th> Limite d’inscription </th>
+                <th> Action </th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($ouvertes as $session) : ?>
+                <tr>
+                    <td> <?php echo $session->getFormation()->getLibelle(); ?> </td>
+                    <td> <?php echo $session->getIndex(); ?> </td>
+                    <td> <?php echo $this->formateurs($session); ?> </td>
+                    <td> <?php echo $this->site($session); ?> </td>
+                    <td> <?php echo $this->seances($session); ?> </td>
+                    <td> <?php echo $this->modalite($session); ?></td>
+                    <td> <?php echo $this->type($session); ?></td>
+                    <td> <?php echo $this->etat($session); ?></td>
+                    <td>
+                        Date limite :
+                        <?php
+                        $limite = $session->getLimiteInscription();
+                        if ($limite) {
+                            echo $limite->format('d/m/Y');
+                        } else {
+                            echo "N.C.";
+                        }
+                        ?>
+                        <br/>
+                        Liste principale :  <?php echo ($session->getTailleListePrincipale())?:"N.C."; ?>
+                        <br/>
+                        Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
+                    </td>
+                    <td>
+                        <?php $inscrit = $session->estInscrit($doctorant); ?>
+                        <?php if ($canAjouterInscription and !$inscrit) : ?>
+                            <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
+                            <a href="<?php echo $this->url('formation/inscription/ajouter', ['session' => $session->getId(), 'doctorant' => $doctorant->getId()], ['query' => ['retour' => $this->url('formation/index-doctorant', ['doctorant' => $doctorant->getId()], ['fragment' => 'preparation'], true)]], true); ?>"
+                            >
+                            <span class="icon icon-ajouter"
+                                  title="M'inscrire" data-bs-toggle="tooltip" data-bs-html="true"
+                            ></span></a>
+                        <?php endif; ?>
+                        <?php if ($inscrit) : ?>
+                                <span class="icon icon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <h2>
+            Formations "En prépration"
+        </h2>
+
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th> Module de formation </th>
+                <th> Session </th>
+                <th> Formateur&middot;trice&middot;s </th>
+                <th> Site </th>
+                <th> Dates et lieux </th>
+                <th> Modalité </th>
+                <th> Type </th>
+                <th> État </th>
+                <th> Limite d’inscription </th>
+                <th> Action </th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($preparations as $session) : ?>
+                <tr>
+                    <td> <?php echo $session->getFormation()->getLibelle(); ?> </td>
+                    <td> <?php echo $session->getIndex(); ?> </td>
+                    <td> <?php echo $this->formateurs($session); ?> </td>
+                    <td> <?php echo $this->site($session); ?> </td>
+                    <td> <?php echo $this->seances($session); ?> </td>
+                    <td> <?php echo $this->modalite($session); ?></td>
+                    <td> <?php echo $this->type($session); ?></td>
+                    <td> <?php echo $this->etat($session); ?></td>
+                    <td>
+                        Date limite :
+                        <?php
+                        $limite = $session->getLimiteInscription();
+                        if ($limite) {
+                            echo $limite->format('d/m/Y');
+                        } else {
+                            echo "N.C.";
+                        }
+                        ?>
+                        <br/>
+                        Liste principale :  <?php echo ($session->getTailleListePrincipale())?:"N.C."; ?>
+                        <br/>
+                        Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
+                    </td>
+                    <td>
+                        <?php $inscrit = $session->estInscrit($doctorant); ?>
+                        <?php if ($inscrit) : ?>
+                            <span class="icon icon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
+                        <?php else : ?>
+                            <span class="icon icon-info" title="Les inscriptions ne sont pas ouvertes"></span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="inscription">
+        <h2> Mes inscriptions </h2>
+
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th> Module de formation </th>
+                <th> Session </th>
+                <th> Formateur&middot;trice&middot;s </th>
+                <th> Site </th>
+                <th> Dates et lieux </th>
+                <th> Modalité </th>
+                <th> Type </th>
+                <th> État </th>
+                <th> Inscription </th>
+                <th> Action </th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($encours as $inscription) : ?>
+                <?php $session = $inscription->getSession(); ?>
+                <tr>
+                    <td> <?php echo $session->getFormation()->getLibelle(); ?> </td>
+                    <td> <?php echo $session->getIndex(); ?> </td>
+                    <td> <?php echo $this->formateurs($session); ?> </td>
+                    <td> <?php echo $this->site($session); ?> </td>
+                    <td> <?php echo $this->seances($session); ?> </td>
+                    <td> <?php echo $this->modalite($session); ?></td>
+                    <td> <?php echo $this->type($session); ?></td>
+                    <td> <?php echo $this->etat($session); ?></td>
+                    <td>
+                        <?php if ($inscription->isListePrincipale()) echo "Liste principale"; ?>
+                        <?php if ($inscription->isListeComplementaire()) echo "Liste complementaire #???"; ?>
+                        <?php if ($inscription->getListe() === null) : ?>
+                            <?php if ($session->getEtat()->getCode() === Etat::CODE_OUVERTE) echo "En attente"; ?>
+                            <?php if ($session->getEtat()->getCode() === Etat::CODE_FERME) echo "Non classée"; ?>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if ($canSupprimerInscription) : ?>
+                            <?php /** @see \Formation\Controller\InscriptionController::desinscriptionAction() */ ?>
+                            <a href="<?php echo $this->url('formation/inscription/desinscription', ['inscription' => $inscription->getId()], [], true); ?>"
+                               class="ajax-modal" data-event="modification"
+                            >
+                        <span class="icon icon-supprimer"
+                              title="Annuler mon inscription" data-bs-toggle="tooltip" data-bs-html="true"
+                        ></span></a>
+                        <?php endif; ?>
+                        <?php if ($canConvocationInscription) : ?>
+                            <?php if ($inscription->getListe() === Inscription::LISTE_PRINCIPALE) : ?>
+                                <?php /** @see \Formation\Controller\InscriptionController::genererConvocationAction() */?>
+                                <a href="<?php echo $this->url('formation/inscription/generer-convocation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
+                                    <span class="icon icon-pdf" title="Télécharger la convocation" data-bs-toggle="tooltip" data-bs-html="true"></span>
+                                </a>
+                            <?php else: ?>
+                                <span class="icon icon-pdf" style="color: lightgrey;"
+                                      title="La convocation n'est disponible que pour les inscrits en liste principale">
+                                </span>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="formation">
+        <h2>
+            Mes formations suivies
+        </h2>
+
+        <table class="table table-sm">
+            <thead>
+            <tr>
+                <th> Module de formation </th>
+                <th> Session </th>
+                <th> Formateur&middot;trice&middot;s </th>
+                <th> Site </th>
+                <th> Dates et lieux </th>
+                <th> Modalité </th>
+                <th> Type </th>
+                <th> État </th>
+                <th> Limite d’inscription </th>
+                <th> Action </th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($terminees as $inscription) : ?>
+                <?php $session = $inscription->getSession(); ?>
+                <tr>
+                    <td> <?php echo $session->getFormation()->getLibelle(); ?> </td>
+                    <td> <?php echo $session->getIndex(); ?> </td>
+                    <td> <?php echo $this->formateurs($session); ?> </td>
+                    <td> <?php echo $this->site($session); ?> </td>
+                    <td> <?php echo $this->seances($session); ?> </td>
+                    <td> <?php echo $this->modalite($session); ?></td>
+                    <td> <?php echo $this->type($session); ?></td>
+                    <td> <?php echo $this->etat($session); ?></td>
+                    <td>
+                        Date limite :
+                        <?php
+                        $limite = $session->getLimiteInscription();
+                        if ($limite) {
+                            echo $limite->format('d/m/Y');
+                        } else {
+                            echo "N.C.";
+                        }
+                        ?>
+                        <br/>
+                        Liste principale :  <?php echo ($session->getTailleListePrincipale())?:"N.C."; ?>
+                        <br/>
+                        Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
+                    </td>
+                    <td>
+                        <?php if ($inscription->computeDureePresence() > 0) : ?>
+                            <?php if ($canRepondreEnquete AND $inscription->getValidationEnquete() === null) : ?>
+                                <?php /** @see \Formation\Controller\EnqueteQuestionController::repondreQuestionsAction() */?>
+                                <a href="<?php echo $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true); ?>">
+                            <span class="icon icon-edit"
+                                  title="Compléter l'enquête" data-bs-toggle="tooltip" data-bs-html="true"
+                            ></span></a>
+                                <?php /** @see \Formation\Controller\EnqueteQuestionController::validerQuestionsAction() */?>
+                                <a href="<?php echo $this->url('formation/enquete/valider-questions', ['inscription' => $inscription->getId()], [], true); ?>"
+                                   class="ajax-modal" data-event="modification"
+                                >
+                            <span class="icon icon-checked"
+                                  title="Valider l'enquête" data-bs-toggle="tooltip" data-bs-html="true"
+                            ></span></a>
+                            <?php endif; ?>
+                            <?php if ($inscription->getValidationEnquete() !== null AND $canAttestationInscription) : ?>
+                                <?php /** @see \Formation\Controller\InscriptionController::genererAttestationAction() */?>
+                                <a href="<?php echo $this->url('formation/inscription/generer-attestation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
+                            <span class="icon icon-pdf"
+                                  title="Télécharger l'attestation" data-bs-toggle="tooltip" data-bs-html="true"
+                            ></span></a>
+                            <?php endif; ?>
+                        <?php else :?>
+                            Pas de présence
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+        <?php endif; ?>
+    </div>
+</div>
+
+<script>
+    $(function() {
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+
+        let hash = $(location).attr('hash');
+        let name = hash.substr(1);
+        if (name === undefined || name === "") name = "a_venir";
+
+        $('a[aria-controls=' + name + ']').tab('show');
+
+        $('.nav-tabs a').click(function () {
+            // No e.preventDefault() here
+            $(this).tab('show');
+        });
+    });
+</script>

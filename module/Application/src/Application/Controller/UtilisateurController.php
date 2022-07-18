@@ -10,6 +10,7 @@ use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
+use Doctorant\Service\DoctorantServiceAwareTrait;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
@@ -20,6 +21,10 @@ use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Query\Expr;
+use Formation\Entity\Db\Formateur;
+use Formation\Entity\Db\Session;
+use Formation\Service\Session\SessionServiceAwareTrait;
 use Individu\Controller\IndividuController;
 use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
@@ -62,6 +67,8 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use SourceCodeStringHelperAwareTrait;
     use UserServiceAwareTrait;
     use TokenServiceAwareTrait;
+
+    use SessionServiceAwareTrait;
 
     use InitCompteFormAwareTrait;
 
@@ -163,7 +170,45 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             'rolesData' => $rolesData,
             'redirect' => $this->url()->fromRoute(null, [], [], true),
         ]);
+
     }
+
+//    /**
+//     * @param \Individu\Entity\Db\Individu $individu
+//     * @return \Application\Entity\Db\Role[]
+//     */
+//    private function collectRolesDynamiquesForIndividu(Individu $individu): array
+//    {
+//        $roles = [];
+//
+//        // rôles d'acteur
+//        $acteurs = $this->acteurService->getRepository()->findActeursByIndividu($individu);
+//        if ($acteurs) {
+//            $acteursDirecteurThese = $this->acteurService->filterActeursDirecteurThese($acteurs);
+//            $acteursCoDirecteurThese = $this->acteurService->filterActeursCoDirecteurThese($acteurs);
+//            $acteursPresidentJury = $this->acteurService->filterActeursPresidentJury($acteurs);
+//            $acteursRapporteurJury = $this->acteurService->filterActeursRapporteurJury($acteurs);
+//            $roles = array_merge($roles, array_map(
+//                function (Acteur $a) {
+//                    return $a->getRole();
+//                },
+//                array_merge($acteursDirecteurThese, $acteursCoDirecteurThese, $acteursPresidentJury, $acteursRapporteurJury)
+//            ));
+//        }
+//
+//        $doctorant = $this->doctorantService->getRepository()->findOneByIndividu($individu);
+//        if ($doctorant) {
+//            $roles[] = $this->roleService->getRepository()->findRoleDoctorantForEtab($doctorant->getEtablissement());
+//        }
+//
+//        $sessions = $this->getSessionService()->getEntityManager()->getRepository(Session::class)->findSessionsByFormateur($individu);
+//        if (!empty($sessions)) {
+//            $formateur = $this->getRoleService()->getRepository()->findByCode(Formateur::ROLE);
+//            $roles[] = $formateur;
+//        }
+//
+//        return array_unique($roles);
+//    }
 
     /**
      * AJAX.

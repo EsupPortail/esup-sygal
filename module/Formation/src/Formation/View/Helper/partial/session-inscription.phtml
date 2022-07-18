@@ -1,0 +1,45 @@
+<?php /** @noinspection PhpUnusedAliasInspection */
+
+/** @noinspection PhpUnusedAliasInspection */
+
+use Formation\Entity\Db\Formateur;
+use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Seance;
+use Formation\Entity\Db\Session;
+
+/**
+ * @see \Formation\View\Helper\SessionLibelleViewHelper
+ * @var Session $session
+ * @var array $options
+ */
+
+$principale = [];
+$complementaire = [];
+if ($options['inscrits'] ?? false) {
+    $principale = $session->getInscriptionsByListe(Inscription::LISTE_PRINCIPALE);
+    $complementaire = $session->getInscriptionsByListe(Inscription::LISTE_COMPLEMENTAIRE);
+}
+
+?>
+
+    Date limite :
+<?php
+$limite = $session->getLimiteInscription();
+if ($limite) {
+    echo $limite->format('d/m/Y');
+} else {
+    echo "N.C.";
+}
+?>
+    <br/>
+    Liste principale :
+        <?php if ($session->getTailleListePrincipale() != 0 AND $options['inscrits']??false) : ?>
+            <?php echo count($principale); ?> /
+        <?php endif; ?>
+    <?php echo ($session->getTailleListePrincipale())?:"N.C."; ?>
+    <br/>
+    Liste complémentaire :
+        <?php if ($session->getTailleListeComplementaire() != 0 AND$options['inscrits']??false) : ?>
+            <?php echo count($complementaire); ?> /
+        <?php endif; ?>
+    <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>

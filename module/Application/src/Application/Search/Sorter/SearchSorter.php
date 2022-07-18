@@ -16,27 +16,32 @@ class SearchSorter
     /**
      * @var string
      */
-    private $label;
+    private string $label;
 
     /**
      * @var string
      */
-    private $name;
+    private string $name;
 
     /**
      * @var bool
      */
-    private $enabled = false;
+    private bool $enabled = false;
 
     /**
      * @var string
      */
-    private $direction = Sortable::ASC;
+    private string $direction = Sortable::ASC;
 
     /**
      * @var bool
      */
-    private $isDefault = false;
+    private bool $isDefault = false;
+
+    /**
+     * @var string|null
+     */
+    private ?string $orderByField = null;
 
     /**
      * @var callable
@@ -50,7 +55,7 @@ class SearchSorter
      * @param string $name
      * @param bool $isDefault
      */
-    public function __construct(string $label, string $name, $isDefault = false)
+    public function __construct(string $label, string $name, bool $isDefault = false)
     {
         $this
             ->setLabel($label)
@@ -104,7 +109,7 @@ class SearchSorter
      * @param array  $queryParams
      * @return string
      */
-    private function paramFromQueryParams($name, array $queryParams): ?string
+    private function paramFromQueryParams(string $name, array $queryParams): ?string
     {
         if (! array_key_exists($name, $queryParams)) {
             // null <=> paramètre absent
@@ -126,11 +131,18 @@ class SearchSorter
         }
 
         if ($this->applyToQueryBuilderCallable === null) {
-            // tentative de tri par défaut
-            $this->applyToQueryBuilderCallable = function(SearchSorter $sorter, QueryBuilder $qb) {
-                $alias = current($qb->getRootAliases());
-                $qb->addOrderBy(sprintf("%s.%s", $alias, $sorter->getName()), $sorter->getDirection());
-            };
+            if ($this->orderByField !== null) {
+                // utilisation du champ de tri spécifié
+                $this->applyToQueryBuilderCallable = function (SearchSorter $sorter, QueryBuilder $qb) {
+                    $qb->addOrderBy($this->orderByField, $sorter->getDirection());
+                };
+            } else {
+                // tentative de construction automatique du tri
+                $this->applyToQueryBuilderCallable = function (SearchSorter $sorter, QueryBuilder $qb) {
+                    $alias = current($qb->getRootAliases());
+                    $qb->addOrderBy(sprintf("%s.%s", $alias, $sorter->getName()), $sorter->getDirection());
+                };
+            }
         }
 
         $applyToQueryBuilder = $this->applyToQueryBuilderCallable;
@@ -225,9 +237,20 @@ class SearchSorter
      * @param bool $isDefault
      * @return self
      */
-    public function setIsDefault($isDefault = true): self
+    public function setIsDefault(bool $isDefault = true): self
     {
         $this->isDefault = $isDefault;
+
+        return $this;
+    }
+
+    /**
+     * @param string $orderByField
+     * @return self
+     */
+    public function setOrderByField(string $orderByField): self
+    {
+        $this->orderByField = $orderByField;
 
         return $this;
     }

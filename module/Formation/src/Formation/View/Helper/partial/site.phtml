@@ -1,0 +1,23 @@
+<?php
+
+use Structure\Entity\Db\Etablissement;
+
+/**
+ * @see \Formation\View\Helper\SiteViewHelper
+ * @var Etablissement|null $site
+ * @var array $options
+ */
+?>
+
+<?php if ($site !== null) : ?>
+    <span class="site" title="<?php echo $site->getLibelle(); ?>"
+          data-bs-toggle="tooltip" data-bs-html="true">
+        <?php echo $site->getSigle(); ?>
+    </span>
+<?php else : ?>
+    <span class="site" title="Aucun site de spécifié"
+          data-bs-toggle="tooltip" data-bs-html="true">
+        Aucun site
+    </span>
+<?php endif; ?>
+

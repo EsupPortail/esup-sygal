@@ -1,0 +1,31 @@
+<?php
+
+use Formation\Entity\Db\Etat;
+
+/**
+ * @see \Formation\View\Helper\EtatViewHelper
+ * @var Etat $etat
+ * @var array $options
+ */
+
+$couleur = "gray";
+$icone = "fas fa-question-circle";
+$libelle = "Pas d'état";
+$description = "Pas d'état : État manquant pour cette session de formation";
+
+if ($etat !== null) {
+    $libelle = $etat->getLibelle();
+    $description = $etat->getLibelle();
+    if ($etat->getDescription()) $description .= " : " . $etat->getDescription();
+    if ($etat->getCouleur()) $couleur = $etat->getCouleur();
+    if ($etat->getIcone()) $icone = $etat->getIcone();
+
+}
+?>
+
+<span class="badge" style="background: <?php echo $couleur; ?>"
+      title="<?php echo $description; ?>" data-bs-toggle="tooltip" data-bs-html="true"
+>
+    <span class="<?php echo $icone; ?>"></span>
+    <?php echo $libelle; ?>
+</span>

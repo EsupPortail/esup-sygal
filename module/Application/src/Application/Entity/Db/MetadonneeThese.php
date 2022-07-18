@@ -26,8 +26,8 @@ class MetadonneeThese
         self::LANGUE_AUTRE    => "Autre",
     ];
 
-    const SEPARATEUR_MOTS_CLES = ';';
-    const SEPARATEUR_MOTS_CLES_LIB = 'point virgule';
+    const SEPARATEUR_MOTS_CLES = '*';
+    const SEPARATEUR_MOTS_CLES_LIB = 'astérisque';
 
     /**
      * @var string
