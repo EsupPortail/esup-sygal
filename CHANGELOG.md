@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+5.0.1
+-----
+- [FIX] mPdf ne supporte plus les ' ' et ':' dans les noms de fichiers images (logos de structure).
+
 5.0.0
 -----
 - Nouveau module Formation doctorale.
