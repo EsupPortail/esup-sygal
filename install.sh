@@ -24,3 +24,7 @@ vendor/bin/doctrine-module orm:clear-cache:result
 vendor/bin/doctrine-module orm:generate-proxies
 
 vendor/bin/laminas-development-mode disable
+
+# Création ou vidange des répertoires de cache
+mkdir -p data/cache && chmod -R 777 data/cache && rm -rf data/cache/*
+mkdir -p data/DoctrineModule/cache && chmod -R 777 data/DoctrineModule/cache && rm -rf data/DoctrineModule/cache/*
