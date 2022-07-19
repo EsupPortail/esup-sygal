@@ -195,7 +195,7 @@ class JustificatifService {
                     'justificatif' => $proposition->getJustificatif(NatureFichier::CODE_DELEGUATION_SIGNATURE, $membre),
                 ];
             }
-            if ($membre->isExterieur() AND $membre->getQualite()->isRangB() AND $membre->getQualite()->isHDR()) {
+            if ($membre->isExterieur() AND $membre->getQualite()->isRangB() AND $membre->getQualite()->isHDR() AND $membre->getQualite()->getJustificatif() !== 'O') {
                 $justificatifs[] = [
                     'type' => NatureFichier::CODE_JUSTIFICATIF_HDR,
                     'membre' => $membre,
