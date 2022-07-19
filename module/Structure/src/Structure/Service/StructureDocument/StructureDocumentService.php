@@ -236,20 +236,22 @@ class StructureDocumentService {
     }
 
     /**
-     * @param Structure $structure
+     * @param \Structure\Entity\Db\Structure $structure
      * @param string $nature_code
-     * @param Etablissement|null $etablissement
-     * @return string|null
-     * @throws \Application\Service\Fichier\Exception\FichierServiceException Fichier inexistant ou inaccessible sur le serveur
+     * @param \Structure\Entity\Db\Etablissement $etablissement
+     * @return \Application\Entity\Db\Fichier|null
      */
-    public function getContenuFichier(Structure $structure, string $nature_code, Etablissement $etablissement): ?string
+    public function getDocumentFichierForStructureNatureAndEtablissement(Structure $structure,
+                                                                 string $nature_code,
+                                                                 Etablissement $etablissement): ?Fichier
     {
         $documents = $this->getStructuresDocumentsByStructure($structure);
         foreach ($documents as $document) {
             if ($document->getNature()->getCode() === $nature_code && $document->getEtablissement() === $etablissement) {
-                return $this->fichierService->fetchContenuFichier($document->getFichier());
+                return $document->getFichier();
             }
         }
+
         return null;
     }
 
@@ -260,20 +262,29 @@ class StructureDocumentService {
      * @return string|null
      * @throws \Application\Service\Fichier\Exception\FichierServiceException Fichier inexistant ou inaccessible sur le serveur
      */
+    public function getContenuFichier(Structure $structure, string $nature_code, Etablissement $etablissement): ?string
+    {
+        $fichier = $this->getDocumentFichierForStructureNatureAndEtablissement($structure, $nature_code, $etablissement);
+        if ($fichier === null) {
+            return null;
+        }
+
+        return $this->fichierService->fetchContenuFichier($fichier);
+    }
+
+    /**
+     * @param Structure $structure
+     * @param string $nature_code
+     * @param Etablissement|null $etablissement
+     * @return string|null
+     */
     public function getCheminFichier(Structure $structure, string $nature_code, ?Etablissement $etablissement = null): ?string
     {
-        $documents = $this->getStructuresDocumentsByStructure($structure);
-        var_dump(count($documents));
-
-        foreach ($documents as $document) {
-            var_dump($document->getNature()->getCode() === $nature_code);
-            var_dump("zaza=".$document->getEtablissement()->getId());
-            var_dump("sasa=".$etablissement->getId());
-            var_dump($document->getEtablissement()->getLibelle() === $etablissement);
-            if ($document->getNature()->getCode() === $nature_code && $document->getEtablissement() === $etablissement) {
-                return $this->fichierService->computeDestinationFilePathForFichier($document->getFichier());
-            }
+        $fichier = $this->getDocumentFichierForStructureNatureAndEtablissement($structure, $nature_code, $etablissement);
+        if ($fichier === null) {
+            return null;
         }
-        return null;
+
+        return $this->fichierService->computeDestinationFilePathForFichier($fichier);
     }
 }

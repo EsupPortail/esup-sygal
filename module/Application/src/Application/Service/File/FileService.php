@@ -54,13 +54,16 @@ class FileService
      * @param StructureInterface $structure
      * @return string
      */
-    public function computeLogoFileNameForStructure(StructureInterface $structure)
+    public function computeLogoFileNameForStructure(StructureInterface $structure): string
     {
         if ($structure instanceof Etablissement) {
             $name = $structure->getStructure()->getCode() ?: $structure->generateUniqCode();
         } else {
             $name = $structure->getSourceCode() . "-" . $structure->getSigle();
         }
+
+        $name = str_replace(["'", ':'], '_', $name);
+        $name = str_replace(' ', '', $name);
 
         return $name . ".png";
     }

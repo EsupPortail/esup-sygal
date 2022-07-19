@@ -1,6 +1,12 @@
 Journal des modifications
 =========================
 
+5.0.1
+-----
+- [FIX] Abandon des 'data:image/*;base64,' dans les templates mPDF.
+- [FIX] mPdf ne supporte plus les ' ' et ':' dans les noms de fichiers images (logos de structure).
+- [FIX] Ajustement de la demande du justificatif de demande d'HDR pour les membres étranger de rang B ayant un HDR (ou équivalent)
+
 5.0.0
 -----
 - Nouveau module Formation doctorale.

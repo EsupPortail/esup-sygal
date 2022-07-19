@@ -181,7 +181,7 @@ $texte_directeur = implode(" et ", $encadrement);
         <td>
             <?php if ($signature) : ?>
                 <img id="logo" style="background-color: white; max-width: 50%;"
-                     src="data:image/*;base64,<?php echo base64_encode($signature); ?>"/>
+                     src="<?php echo $signature ?>"/>
             <?php endif; ?>
         </td>
     </tr>

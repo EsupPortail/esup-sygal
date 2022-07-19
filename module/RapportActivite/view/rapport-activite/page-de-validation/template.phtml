@@ -71,7 +71,7 @@ use RapportActivite\Entity\Db\RapportActiviteAvis;
         <td>
             <?php if ($data->signatureEcoleDoctorale): ?>
                 <img class="signature-ecole-doctorale"
-                     src="data:image/*;base64,<?php echo base64_encode($data->signatureEcoleDoctorale); ?>"
+                     src="<?php echo $data->signatureEcoleDoctorale ?>"
                      alt="Signature de la direction d'ED"/>
             <?php endif ?>
             <?php if ($data->signatureEcoleDoctoraleAnomalie): ?>
