@@ -303,7 +303,7 @@ class RapportActiviteService extends BaseService
 
         // signature ED
         try {
-            $exportData->signatureEcoleDoctorale = $this->structureDocumentService->getContenuFichier(
+            $exportData->signatureEcoleDoctorale = $this->structureDocumentService->getCheminFichier(
                 $these->getEcoleDoctorale()->getStructure(),
                 NatureFichier::CODE_SIGNATURE_RAPPORT_ACTIVITE,
                 $these->getEtablissement()
