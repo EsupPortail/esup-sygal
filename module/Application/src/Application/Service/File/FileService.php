@@ -62,7 +62,8 @@ class FileService
             $name = $structure->getSourceCode() . "-" . $structure->getSigle();
         }
 
-        $name = strtr($name, "': ", '__-');
+        $name = str_replace(["'", ':'], '_', $name);
+        $name = str_replace(' ', '', $name);
 
         return $name . ".png";
     }
