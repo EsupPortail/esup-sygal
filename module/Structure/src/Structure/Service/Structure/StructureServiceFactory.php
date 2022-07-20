@@ -4,7 +4,7 @@ namespace Structure\Service\Structure;
 
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
-use Application\Service\File\FileService;
+use Fichier\Service\Fichier\FichierStorageService;
 use Application\Service\Source\SourceService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 use Application\SourceCodeStringHelper;
@@ -35,8 +35,8 @@ class StructureServiceFactory
         $etablissementService = $container->get(EtablissementService::class);
         $uniteRechercheService = $container->get(UniteRechercheService::class);
 
-        /** @var FileService $fileService */
-        $fileService = $container->get(FileService::class);
+        /** @var \Fichier\Service\Fichier\FichierStorageService $fileService */
+        $fileService = $container->get(FichierStorageService::class);
 
         $service = new StructureService;
         $service->setSourceService($sourceService);
@@ -44,7 +44,7 @@ class StructureServiceFactory
         $service->setEcoleDoctoraleService($ecoleService);
         $service->setEtablissementService($etablissementService);
         $service->setUniteRechercheService($uniteRechercheService);
-        $service->setFileService($fileService);
+        $service->setFichierStorageService($fileService);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper

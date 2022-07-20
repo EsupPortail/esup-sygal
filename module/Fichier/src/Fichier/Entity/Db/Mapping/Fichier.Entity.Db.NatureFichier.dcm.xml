@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="Fichier\Entity\Db\NatureFichier" table="NATURE_FICHIER">
+    <id name="id" type="integer" column="ID"/>
+
+    <field name="code" type="string" column="CODE" length="50" nullable="false"/>
+    <field name="libelle" type="string" column="LIBELLE" length="100" nullable="false"/>
+  </entity>
+</doctrine-mapping>

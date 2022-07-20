@@ -3,7 +3,7 @@
 namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\VersionFichier;
+use Fichier\Entity\Db\VersionFichier;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Parametre;

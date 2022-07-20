@@ -2,10 +2,10 @@
 
 namespace Application\Filter;
 
-use Application\Entity\Db\Fichier;
+use Fichier\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
-use Application\Entity\Db\NatureFichier;
-use Application\Entity\Db\VersionFichier;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\VersionFichier;
 use Laminas\Filter\Exception\RuntimeException;
 use Laminas\Filter\FilterInterface;
 

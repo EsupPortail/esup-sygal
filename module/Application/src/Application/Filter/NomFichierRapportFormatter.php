@@ -2,8 +2,9 @@
 
 namespace Application\Filter;
 
-use Application\Entity\Db\Fichier;
+use Fichier\Entity\Db\Fichier;
 use Application\Entity\Db\Rapport;
+use Fichier\Filter\AbstractNomFichierFormatter;
 
 /**
  * Filtre générateur du nom de fichier de rapport d'activité, CSI, etc.

@@ -4,7 +4,7 @@ namespace Soutenance\Service\Proposition;
 
 use Application\Service\Acteur\ActeurService;
 use Structure\Service\Etablissement\EtablissementService;
-use Application\Service\File\FileService;
+use Fichier\Service\Fichier\FichierStorageService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\UserContextService;
 use Application\Service\Variable\VariableService;
@@ -31,7 +31,7 @@ class PropositionServiceFactory
          * @var NotifierSoutenanceService $notifierSoutenanceService
          * @var ParametreService $parametreService
          * @var VariableService $variableService
-         * @var FileService $fileService
+         * @var FichierStorageService $fileService
          * @var EtablissementService $etablissamentService
          * @var MembreService $membreService
          * @var UserContextService $userContextService
@@ -43,7 +43,7 @@ class PropositionServiceFactory
         $notifierSoutenanceService = $container->get(NotifierSoutenanceService::class);
         $parametreService = $container->get(ParametreService::class);
         $variableService = $container->get('VariableService');
-        $fileService = $container->get(FileService::class);
+        $fileService = $container->get(FichierStorageService::class);
         $etablissamentService = $container->get(EtablissementService::class);
         $membreService = $container->get(MembreService::class);
         $userContextService = $container->get('UserContextService');
@@ -57,7 +57,7 @@ class PropositionServiceFactory
         $service->setNotifierSoutenanceService($notifierSoutenanceService);
         $service->setParametreService($parametreService);
         $service->setVariableService($variableService);
-        $service->setFileService($fileService);
+        $service->setFichierStorageService($fileService);
         $service->setEtablissementService($etablissamentService);
         $service->setMembreService($membreService);
         $service->setUserContextService($userContextService);

@@ -198,10 +198,10 @@ return [
         'invokables' => [
         ],
         'factories' => [
-            'Application\Controller\EcoleDoctorale' => EcoleDoctoraleControllerFactory::class,
+            'Structure\Controller\EcoleDoctorale' => EcoleDoctoraleControllerFactory::class,
         ],
         'aliases' => [
-            EcoleDoctoraleController::class => 'Application\Controller\EcoleDoctorale',
+            EcoleDoctoraleController::class => 'Structure\Controller\EcoleDoctorale',
         ]
     ],
     'form_elements'   => [

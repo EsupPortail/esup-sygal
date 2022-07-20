@@ -135,7 +135,7 @@ use UnicaenApp\View\Helper\AppInfos;
  * @method boolean isAllowed($resource, $privilege = null)
  *
  * @method array                                              queryParams()
- * @method \Application\View\Helper\Uploader\UploaderHelper   uploader()
+ * @method \Fichier\View\Helper\Uploader\UploaderHelper   uploader()
  * @method \Application\View\Helper\Sortable                  sortable($sort)
  * @method string                                             filterPanel($config)
  * @method string                                             filtersPanel($config)

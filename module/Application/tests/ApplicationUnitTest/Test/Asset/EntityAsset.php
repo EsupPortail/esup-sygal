@@ -6,14 +6,14 @@ use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Doctorant\Entity\Db\Doctorant;
-use Application\Entity\Db\Fichier;
+use Fichier\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
 use Import\Model\ImportObserv;
 use Application\Entity\Db\ImportObservEtab;
 use Application\Entity\Db\ImportObservEtabResult;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\MetadonneeThese;
-use Application\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Source;
@@ -22,7 +22,7 @@ use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\ValiditeFichier;
-use Application\Entity\Db\VersionFichier;
+use Fichier\Entity\Db\VersionFichier;
 
 /**
  * Données de tests.

@@ -13,7 +13,7 @@ use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\File\FileServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
@@ -24,6 +24,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -45,7 +46,7 @@ class PropositionService {
     use NotifierSoutenanceServiceAwareTrait;
     use ParametreServiceAwareTrait;
     use VariableServiceAwareTrait;
-    use FileServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use MembreServiceAwareTrait;
     use UserContextServiceAwareTrait;
@@ -514,9 +515,21 @@ class PropositionService {
         $logos = [];
         $logos['COMUE'] = null;
         if ($comue = $this->getEtablissementService()->fetchEtablissementComue()) {
-            $logos['COMUE'] = $this->fileService->computeLogoFilePathForStructure($comue);
+//            $logos['COMUE'] = $this->fileService->computeLogoFilePathForStructure($comue);
+            try {
+                $logos['COMUE'] = $this->fichierStorageService->getFileForLogoStructure($comue);
+            } catch (StorageAdapterException $e) {
+                $logos['COMUE'] = null;
+            }
         }
-        $logos['ETAB']  = $this->fileService->computeLogoFilePathForStructure($these->getEtablissement());
+
+//        $logos['ETAB']  = $this->fileService->computeLogoFilePathForStructure($these->getEtablissement());
+        try {
+            $logos['ETAB'] = $this->fichierStorageService->getFileForLogoStructure($these->getEtablissement());
+        } catch (StorageAdapterException $e) {
+            $logos['ETAB'] = null;
+        }
+
         return $logos;
     }
 

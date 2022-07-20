@@ -3,7 +3,7 @@
 namespace Application\Controller\Plugin\Url;
 
 use Application\Entity\Db\These;
-use Application\Entity\Db\VersionFichier;
+use Fichier\Entity\Db\VersionFichier;
 use Application\Service\Url\UrlTheseService;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 

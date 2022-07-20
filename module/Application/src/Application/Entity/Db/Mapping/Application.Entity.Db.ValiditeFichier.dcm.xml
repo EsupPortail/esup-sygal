@@ -21,7 +21,7 @@
       </options>
     </field>
 
-    <many-to-one field="fichier" target-entity="Application\Entity\Db\Fichier" fetch="LAZY">
+    <many-to-one field="fichier" target-entity="Fichier\Entity\Db\Fichier" fetch="LAZY">
       <join-columns>
         <join-column name="FICHIER_ID" referenced-column-name="ID"/>
       </join-columns>

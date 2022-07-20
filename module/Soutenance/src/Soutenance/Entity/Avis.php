@@ -3,7 +3,7 @@
 namespace Soutenance\Entity;
 
 use Application\Entity\Db\Acteur;
-use Application\Entity\Db\Fichier;
+use Fichier\Entity\Db\Fichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use UnicaenApp\Entity\HistoriqueAwareInterface;

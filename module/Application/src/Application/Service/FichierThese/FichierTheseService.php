@@ -3,31 +3,34 @@
 namespace Application\Service\FichierThese;
 
 use Application\Command\Exception\TimedOutCommandException;
-use Application\Command\MergeShellCommand;
-use Application\Command\Pdf\AjoutPdcShellCommandQpdf;
-use Application\Command\Pdf\RetraitementShellCommand;
+use Doctrine\ORM\ORMException;
+use Fichier\Command\MergeShellCommand;
+use Fichier\Command\Pdf\AjoutPdcShellCommandQpdf;
+use Fichier\Command\Pdf\RetraitementShellCommand;
 use Application\Command\ShellCommandRunner;
 use Application\Command\ShellCommandRunnerTrait;
-use Application\Entity\Db\Fichier;
+use Fichier\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
-use Application\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\Repository\FichierTheseRepository;
 use Application\Entity\Db\These;
 use Application\Entity\Db\ValiditeFichier;
-use Application\Entity\Db\VersionFichier;
+use Fichier\Entity\Db\VersionFichier;
 use Application\Filter\NomFichierTheseFormatter;
 use Application\Service\BaseService;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\FileUtils;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\FichierThese\Exception\DepotImpossibleException;
 use Application\Service\FichierThese\Exception\ValidationImpossibleException;
-use Application\Service\File\FileServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\PageDeCouverture\PageDeCouverturePdfExporterAwareTrait;
 use Application\Service\ValiditeFichier\ValiditeFichierServiceAwareTrait;
-use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
-use Application\Validator\Exception\CinesErrorException;
-use Application\Validator\FichierCinesValidator;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
+use Fichier\Validator\Exception\CinesErrorException;
+use Fichier\Validator\FichierCinesValidator;
 use Doctrine\ORM\OptimisticLockException;
 use Retraitement\Service\RetraitementServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
@@ -39,7 +42,7 @@ use Laminas\Http\Response;
 class FichierTheseService extends BaseService
 {
     use FichierServiceAwareTrait;
-    use FileServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use ValiditeFichierServiceAwareTrait;
     use RetraitementServiceAwareTrait;
@@ -96,11 +99,11 @@ class FichierTheseService extends BaseService
     /**
      * Crée des fichiers concernant la soutenance de la thèse spécifiée, à partir des données d'upload fournies.
      *
-     * @param These          $these        Thèse concernée
-     * @param array          $uploadResult Données résultant de l'upload de fichiers
-     * @param NatureFichier  $nature       Version de fichier
-     * @param VersionFichier $version
-     * @param string         $retraitement
+     * @param These $these Thèse concernée
+     * @param array $uploadResult Données résultant de l'upload de fichiers
+     * @param NatureFichier $nature Version de fichier
+     * @param \Fichier\Entity\Db\VersionFichier|null $version
+     * @param null $retraitement
      * @return FichierThese[] Fichiers créés
      */
     public function createFichierThesesFromUpload(
@@ -108,7 +111,7 @@ class FichierTheseService extends BaseService
         array $uploadResult,
         NatureFichier $nature,
         VersionFichier $version = null,
-        $retraitement = null)
+        $retraitement = null): array
     {
         $fichierTheses = [];
         $files = $uploadResult['files'];
@@ -131,14 +134,14 @@ class FichierTheseService extends BaseService
             $tailleFichier = $file['size'];
 
             if (! is_uploaded_file($path)) {
-                throw new RuntimeException("Possible file upload attack: " . $path);
+                throw new DepotImpossibleException("Possible file upload attack: " . $path);
             }
 
             // validation du format de fichier
-            if ($nature->estFichierNonPdf() && $typeFichier === Fichier::MIME_TYPE_PDF) {
+            if ($nature->estFichierNonPdf() && $typeFichier === FileUtils::MIME_TYPE_PDF) {
                 throw new DepotImpossibleException("Le format de fichier PDF n'est pas accepté pour les annexes");
             }
-            if ($nature->estThesePdf() && $typeFichier !== Fichier::MIME_TYPE_PDF) {
+            if ($nature->estThesePdf() && $typeFichier !== FileUtils::MIME_TYPE_PDF) {
                 throw new DepotImpossibleException("Seul le format de fichier PDF est accepté pour la thèse");
             }
 
@@ -161,14 +164,16 @@ class FichierTheseService extends BaseService
             // à faire en dernier car le formatter exploite des propriétés du FichierThese
             $fichier->setNom($nomFichierFormatter->filter($fichierThese));
 
-            $this->fichierService->moveUploadedFileForFichier($fichier);
+//            $this->fichierService->moveUploadedFileForFichier($fichier);
 
-            $this->entityManager->persist($fichier);
-            $this->entityManager->persist($fichierThese);
             try {
-                $this->entityManager->flush($fichier);
+                $this->fichierService->saveFichiers([$fichier]);
+
+//                $this->entityManager->persist($fichier);
+                $this->entityManager->persist($fichierThese);
+//                $this->entityManager->flush($fichier);
                 $this->entityManager->flush($fichierThese);
-            } catch (OptimisticLockException $e) {
+            } catch (ORMException $e) {
                 throw new RuntimeException("Erreur rencontrée lors de l'enregistrement du Fichier", null, $e);
             }
 
@@ -186,11 +191,17 @@ class FichierTheseService extends BaseService
      * @throws ValidationImpossibleException Erreur rencontrée lors de la validation
      * @throws OptimisticLockException
      */
-    public function validerFichierThese(FichierThese $fichierThese)
+    public function validerFichierThese(FichierThese $fichierThese): ValiditeFichier
     {
         $exceptionThrown = null;
 
-        $filePath = $this->fichierService->computeDestinationFilePathForFichier($fichierThese->getFichier());
+//        $filePath = $this->fichierService->computeFilePathForFichier($fichierThese->getFichier());
+        try {
+            $filePath = $this->fichierStorageService->getFileForFichier($fichierThese->getFichier());
+        } catch (StorageAdapterException $e) {
+            throw new RuntimeException(
+                "Impossible d'obtenir le fichier physique associé au Fichier suivant : " . $fichierThese->getFichier(), null, $e);
+        }
 
         try {
             $estArchivable = $this->fichierCinesValidator->isValid($filePath);
@@ -276,19 +287,32 @@ class FichierTheseService extends BaseService
      * À partir du fichier spécifié, crée un fichier retraité rattaché à la même thèse.
      *
      * @param FichierThese $fichierThese Fichier à retraiter
-     * @param string       $timeout      Timeout éventuel à appliquer au lancement du script de retraitement.
+     * @param string|null $timeout Timeout éventuel à appliquer au lancement du script de retraitement.
      * @return FichierThese Fichier retraité
-     * @throws TimedOutCommandException
+     * @throws \Application\Command\Exception\TimedOutCommandException
      */
-    public function creerFichierTheseRetraite(FichierThese $fichierThese, $timeout = null)
+    public function creerFichierTheseRetraite(FichierThese $fichierThese, string $timeout = null): FichierThese
     {
-        $inputFilePath  = $this->fichierService->computeDestinationFilePathForFichier($fichierThese->getFichier());
+//        $inputFilePath  = $this->fichierService->computeFilePathForFichier($fichierThese->getFichier());
+        try {
+            $inputFilePath = $this->fichierStorageService->getFileForFichier($fichierThese->getFichier());
+        } catch (StorageAdapterException $e) {
+            throw new RuntimeException(
+                "Impossible d'obtenir le fichier physique associé au Fichier suivant : " . $fichierThese->getFichier(), null, $e);
+        }
 
         $fichierTheseRetraite = $this->preparerFichierTheseRetraite($fichierThese);
-        $outputFilePath = $this->fichierService->computeDestinationFilePathForFichier($fichierTheseRetraite->getFichier());
+//        $outputFilePath = $this->fichierService->computeFilePathForFichier($fichierTheseRetraite->getFichier());
+        $outputFilePath = tempnam(sys_get_temp_dir(), '');
 
-        $this->fichierService->createDestinationDirectoryPathForFichier($fichierTheseRetraite->getFichier());
+//        $this->fichierService->createDirectoryForFichier($fichierTheseRetraite->getFichier());
         $this->retraitementService->retraiterFichier($inputFilePath, $outputFilePath, $timeout);
+        try {
+            $this->fichierStorageService->saveFileForFichier($outputFilePath, $fichierTheseRetraite->getFichier());
+        } catch (StorageAdapterException $e) {
+            throw new RuntimeException(
+                "Impossible d'enregistrer dans le storage le fichier associé au Fichier suivant : " . $fichierTheseRetraite->getFichier(), null, $e);
+        }
         //
         // NB: Si un timout est spécifié et qu'il est atteint, une exception TimedOutCommandException est levée.
         //
@@ -298,10 +322,10 @@ class FichierTheseService extends BaseService
         $fichierTheseRetraite->getFichier()
             ->setTaille(filesize($outputFilePath));
 
-        $this->entityManager->persist($fichierThese);
         try {
+            $this->entityManager->persist($fichierThese);
             $this->entityManager->flush($fichierThese);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement du Fichier", null, $e);
         }
 
@@ -423,7 +447,7 @@ class FichierTheseService extends BaseService
      */
     public function generateFirstPagePreview(string $inputFilePath): string
     {
-        return $this->fileService->generateFirstPagePreviewPngImageFromPdf($inputFilePath);
+        return FileUtils::generateFirstPagePreviewPngImageFromPdf($inputFilePath);
     }
 
     /**
@@ -454,7 +478,7 @@ class FichierTheseService extends BaseService
      */
     public function createResponseForFileContent(Response $response, string $fileContent, string $mimeType, ?int $cacheMaxAge = null): Response
     {
-        return $this->fileService->createResponseForFileContent($response, $fileContent, $mimeType, $cacheMaxAge);
+        return FileUtils::createResponseForFileContent($response, $fileContent, $mimeType, $cacheMaxAge);
     }
 
     /**
@@ -474,15 +498,15 @@ class FichierTheseService extends BaseService
     }
 
     /**
-     * @param These   $these
+     * @param These $these
      * @param PdcData $pdcData
-     * @param string  $versionFichier
-     * @param bool    $removeFirstPage
-     * @param string  $timeout
+     * @param string $versionFichier
+     * @param bool $removeFirstPage
+     * @param string|null $timeout
      * @return string
-     * @throws TimedOutCommandException
+     * @throws \Application\Command\Exception\TimedOutCommandException
      */
-    public function fusionnerPdcEtThese(These $these, PdcData $pdcData, $versionFichier, $removeFirstPage = false, $timeout = null): string
+    public function fusionnerPdcEtThese(These $these, PdcData $pdcData, string $versionFichier, bool $removeFirstPage = false, string $timeout = null): string
     {
         $outputFilePath = $this->generateOutputFilePathForMerge($these);
         $command = $this->createCommandForPdcMerge($these, $pdcData, $versionFichier, $removeFirstPage, $outputFilePath);
@@ -510,7 +534,7 @@ class FichierTheseService extends BaseService
      * @param string  $outputFilePath
      * @return MergeShellCommand
      */
-    private function createCommandForPdcMerge(These $these, PdcData $pdcData, $versionFichier, $removeFirstPage, $outputFilePath)
+    private function createCommandForPdcMerge(These $these, PdcData $pdcData, string $versionFichier, bool $removeFirstPage, string $outputFilePath)
     {
         // generation de la couverture
         $filename = "sygal_couverture_" . $these->getId() . "_" . uniqid() . ".pdf";
@@ -518,14 +542,15 @@ class FichierTheseService extends BaseService
 
         // recuperation de la bonne version du manuscript
         $manuscritFichier = current($this->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF, $versionFichier));
-        $manuscritChemin = $this->fichierService->computeDestinationFilePathForFichier($manuscritFichier->getFichier());
-
-        if (!is_readable($manuscritChemin)) {
+//        $manuscritChemin = $this->fichierService->computeFilePathForFichier($manuscritFichier->getFichier());
+        try {
+            $manuscritChemin = $this->fichierStorageService->getFileForFichier($manuscritFichier->getFichier());
+        } catch (StorageAdapterException $e) {
             throw new RuntimeException(
-                "Le fichier suivant n'existe pas ou n'est pas accessible sur le serveur : " . $manuscritChemin);
+                "Impossible d'obtenir le fichier physique associé au Fichier suivant : " . $manuscritFichier->getFichier(), null, $e);
         }
 
-//        $command = new \Application\Command\Pdf\AjoutPdcShellCommandGs();
+//        $command = new \Fichier\Command\Pdf\AjoutPdcShellCommandGs();
         $command = new AjoutPdcShellCommandQpdf();
         $command->setSupprimer1erePageDuManuscrit($removeFirstPage); // avec retrait de la 1ere page si necessaire
         $command->setInputFilesPaths([

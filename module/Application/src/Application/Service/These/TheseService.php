@@ -8,12 +8,12 @@ use Application\Entity\Db\Attestation;
 use Application\Entity\Db\Diffusion;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\MetadonneeThese;
-use Application\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Repository\TheseRepository;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
-use Application\Entity\Db\VersionFichier;
+use Fichier\Entity\Db\VersionFichier;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Rule\AutorisationDiffusionRule;
 use Application\Rule\SuppressionAttestationsRequiseRule;
@@ -24,7 +24,7 @@ use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\FichierThese\MembreData;
 use Application\Service\FichierThese\PdcData;
-use Application\Service\File\FileServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
@@ -35,6 +35,7 @@ use DateTime;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Soutenance\Entity\Proposition;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
@@ -58,7 +59,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
     use UserServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use EtablissementServiceAwareTrait;
-    use FileServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use AuthorizeServiceAwareTrait;
     use ActeurServiceAwareTrait;
     use MembreServiceAwareTrait;
@@ -550,7 +551,12 @@ class TheseService extends BaseService implements ListenerAggregateInterface
             if ($directeur->getEtablissement()) {
                 if ($directeur->getEtablissement()->estAssocie()) {
                     $pdcData->setAssocie(true);
-                    $pdcData->setLogoAssocie($this->fileService->computeLogoFilePathForStructure($directeur->getEtablissement()));
+//                    $pdcData->setLogoAssocie($this->fileService->computeLogoFilePathForStructure($directeur->getEtablissement()));
+                    try {
+                        $pdcData->setLogoAssocie($this->fichierStorageService->getFileForLogoStructure($directeur->getEtablissement()));
+                    } catch (StorageAdapterException $e) {
+                        $pdcData->setLogoAssocie(null);
+                    }
                     $pdcData->setLibelleAssocie($directeur->getEtablissement()->getLibelle());
                 }
             }
@@ -628,14 +634,34 @@ class TheseService extends BaseService implements ListenerAggregateInterface
 
         // chemins vers les logos
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {
-            $pdcData->setLogoCOMUE($this->fileService->computeLogoFilePathForStructure($comue));
+//            $pdcData->setLogoCOMUE($this->fileService->computeLogoFilePathForStructure($comue));
+            try {
+                $pdcData->setLogoCOMUE($this->fichierStorageService->getFileForLogoStructure($comue));
+            } catch (StorageAdapterException $e) {
+                $pdcData->setLogoCOMUE(null);
+            }
         }
-        $pdcData->setLogoEtablissement($this->fileService->computeLogoFilePathForStructure($these->getEtablissement()));
+//        $pdcData->setLogoEtablissement($this->fileService->computeLogoFilePathForStructure($these->getEtablissement()));
+        try {
+            $pdcData->setLogoEtablissement($this->fichierStorageService->getFileForLogoStructure($these->getEtablissement()));
+        } catch (StorageAdapterException $e) {
+            $pdcData->setLogoEtablissement(null);
+        }
         if ($these->getEcoleDoctorale() !== null) {
-            $pdcData->setLogoEcoleDoctorale($this->fileService->computeLogoFilePathForStructure($these->getEcoleDoctorale()));
+//            $pdcData->setLogoEcoleDoctorale($this->fileService->computeLogoFilePathForStructure($these->getEcoleDoctorale()));
+            try {
+                $pdcData->setLogoEcoleDoctorale($this->fichierStorageService->getFileForLogoStructure($these->getEcoleDoctorale()));
+            } catch (StorageAdapterException $e) {
+                $pdcData->setLogoEcoleDoctorale(null);
+            }
         }
         if ($these->getUniteRecherche() !== null) {
-            $pdcData->setLogoUniteRecherche($this->fileService->computeLogoFilePathForStructure($these->getUniteRecherche()));
+//            $pdcData->setLogoUniteRecherche($this->fileService->computeLogoFilePathForStructure($these->getUniteRecherche()));
+            try {
+                $pdcData->setLogoUniteRecherche($this->fichierStorageService->getFileForLogoStructure($these->getUniteRecherche()));
+            } catch (StorageAdapterException $e) {
+                $pdcData->setLogoUniteRecherche(null);
+            }
         }
 
         return $pdcData;

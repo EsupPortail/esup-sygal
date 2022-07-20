@@ -3,9 +3,11 @@
 namespace RapportActivite\Service\Fichier;
 
 use Application\Command\Exception\TimedOutCommandException;
-use Application\Command\Pdf\PdfMergeShellCommandQpdf;
+use Fichier\Command\Pdf\PdfMergeShellCommandQpdf;
 use Application\Command\ShellCommandRunnerTrait;
-use Application\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Service\Fichier\Exporter\PageValidationExportData;
 use RapportActivite\Service\Fichier\Exporter\PageValidationPdfExporterTrait;
@@ -15,6 +17,7 @@ use UnicaenApp\Exporter\Pdf;
 class RapportActiviteFichierService
 {
     use FichierServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use PageValidationPdfExporterTrait;
     use ShellCommandRunnerTrait;
 
@@ -51,10 +54,12 @@ class RapportActiviteFichierService
      */
     private function createCommandForAjoutPageValidation(RapportActivite $rapport, string $pdcFilePath, string $outputFilePath): PdfMergeShellCommandQpdf
     {
-        $rapportFilePath = $this->fichierService->computeDestinationFilePathForFichier($rapport->getFichier());
-        if (!is_readable($rapportFilePath)) {
+//        $rapportFilePath = $this->fichierService->computeFilePathForFichier($rapport->getFichier());
+        try {
+            $rapportFilePath = $this->fichierStorageService->getFileForFichier($rapport->getFichier());
+        } catch (StorageAdapterException $e) {
             throw new RuntimeException(
-                "Le fichier suivant n'existe pas ou n'est pas accessible sur le serveur : " . $rapportFilePath);
+                "Impossible d'obtenir le fichier physique associé au Fichier suivant : " . $rapport->getFichier(), null, $e);
         }
 
         $command = new PdfMergeShellCommandQpdf();

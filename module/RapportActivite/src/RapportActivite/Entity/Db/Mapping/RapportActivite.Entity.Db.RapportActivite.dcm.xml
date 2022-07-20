@@ -15,7 +15,7 @@
             <join-column name="TYPE_RAPPORT_ID" referenced-column-name="ID"/>
         </many-to-one>
 
-        <many-to-one field="fichier" target-entity="Application\Entity\Db\Fichier">
+        <many-to-one field="fichier" target-entity="Fichier\Entity\Db\Fichier">
             <join-column name="FICHIER_ID" referenced-column-name="ID"/>
         </many-to-one>
 

@@ -1,7 +1,7 @@
 <?php
 
 use Application\Entity\Db\Repository\DefaultEntityRepository;
-use Application\Provider\Privilege\FichierPrivileges;
+use Fichier\Provider\Privilege\FichierPrivileges;
 use Information\Controller\FichierController;
 use Information\Controller\FichierControllerFactory;
 use Information\Controller\InformationController;

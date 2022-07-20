@@ -4,7 +4,7 @@ namespace Application;
 
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
-use Application\Entity\Db\Fichier;
+use Fichier\Entity\Db\Fichier;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\Role;
 use Structure\Entity\Db\Structure;

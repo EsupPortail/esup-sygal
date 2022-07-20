@@ -3,10 +3,10 @@
 namespace Soutenance\Service\Avis;
 
 use Application\Entity\DateTimeAwareTrait;
-use Application\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
-use Application\Entity\Db\VersionFichier;
-use Application\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Entity\Db\VersionFichier;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
@@ -205,9 +205,11 @@ class AvisService {
 
     public function createAvisFromUpload($files, $membre)
     {
+        $this->fichierService->setNomFichierFormatter(new NomAvisFormatter($membre->getIndividu()));
+
         $nature = $this->fichierTheseService->fetchNatureFichier(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
         $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
-        $fichiers = $this->fichierService->createFichiersFromUpload($files, $nature, $version, new NomAvisFormatter($membre->getIndividu()));
+        $fichiers = $this->fichierService->createFichiersFromUpload($files, $nature, $version);
         $this->fichierService->saveFichiers($fichiers);
 
         return current($fichiers);

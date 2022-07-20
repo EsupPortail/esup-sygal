@@ -12,8 +12,8 @@ use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilter;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Form\Rapport\RapportForm;
-use Application\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\File\FileServiceAwareTrait;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Rapport\RapportServiceAwareTrait;
@@ -21,7 +21,7 @@ use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
-use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
+use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Doctrine\ORM\NoResultException;
 use UnicaenApp\Exception\RuntimeException;
 use Laminas\Http\Response;
@@ -30,7 +30,7 @@ use Laminas\View\Model\ViewModel;
 abstract class RapportController extends AbstractController
 {
     use TheseServiceAwareTrait;
-    use FileServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use FichierServiceAwareTrait;
     use RapportServiceAwareTrait;
     use VersionFichierServiceAwareTrait;

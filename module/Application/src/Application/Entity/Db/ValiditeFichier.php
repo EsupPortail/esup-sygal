@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db;
 
+use Fichier\Entity\Db\Fichier;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 

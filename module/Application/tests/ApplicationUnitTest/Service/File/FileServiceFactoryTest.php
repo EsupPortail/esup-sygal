@@ -2,8 +2,8 @@
 
 namespace ApplicationUnitTest\Service\File;
 
-use Application\Service\File\FileService;
-use Application\Service\File\FileServiceFactory;
+use Fichier\Service\Fichier\FichierStorageService;
+use Fichier\Service\Fichier\FichierStorageServiceFactory;
 use UnicaenApp\Exception\RuntimeException;
 use Interop\Container\ContainerInterface;
 
@@ -31,10 +31,10 @@ class FileServiceFactoryTest extends \PHPUnit_Framework_TestCase
         ];
         $this->container->expects($this->once())->method('get')->with('config')->willReturn($config);
 
-        $factory = new FileServiceFactory();
+        $factory = new FichierStorageServiceFactory();
         $service = $factory->__invoke($this->container);
 
-        $this->assertInstanceOf(FileService::class, $service);
+        $this->assertInstanceOf(FichierStorageService::class, $service);
     }
 
     public function testInvokeThrowsExceptionWhenConfigIsNotValid()
@@ -44,7 +44,7 @@ class FileServiceFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->expectException(RuntimeException::class);
 
-        $factory = new FileServiceFactory();
+        $factory = new FichierStorageServiceFactory();
         $factory->__invoke($this->container);
     }
 
@@ -60,7 +60,7 @@ class FileServiceFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->expectException(RuntimeException::class);
 
-        $factory = new FileServiceFactory();
+        $factory = new \Fichier\Service\Fichier\FichierStorageServiceFactory();
         $factory->__invoke($this->container);
     }
 }

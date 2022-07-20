@@ -2,6 +2,7 @@
 
 namespace Application\Entity\Db;
 
+use Fichier\Entity\Db\Fichier;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**

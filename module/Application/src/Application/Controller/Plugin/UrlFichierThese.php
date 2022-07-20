@@ -2,12 +2,12 @@
 
 namespace Application\Controller\Plugin;
 
-use Application\Entity\Db\Fichier;
+use Fichier\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
-use Application\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
-use Application\Entity\Db\VersionFichier;
+use Fichier\Entity\Db\VersionFichier;
 use Application\Filter\IdifyFilterAwareTrait;
 use Laminas\Mvc\Controller\Plugin\Url as UrlPlugin;
 

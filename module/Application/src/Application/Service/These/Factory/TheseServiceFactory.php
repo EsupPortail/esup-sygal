@@ -5,7 +5,7 @@ namespace Application\Service\These\Factory;
 use Application\Service\Acteur\ActeurService;
 use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\FichierThese\FichierTheseService;
-use Application\Service\File\FileService;
+use Fichier\Service\Fichier\FichierStorageService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\These\TheseService;
 use Application\Service\UserContextService;
@@ -54,8 +54,8 @@ class TheseServiceFactory
         /** @var EtablissementService $etablissementService */
         $etablissementService = $container->get(EtablissementService::class);
 
-        /** @var FileService $fileService */
-        $fileService = $container->get(FileService::class);
+        /** @var FichierStorageService $fileService */
+        $fileService = $container->get(FichierStorageService::class);
 
         $service = new TheseService();
         $service->setActeurService($acteurService);
@@ -68,7 +68,7 @@ class TheseServiceFactory
         $service->setUserService($userService);
         $service->setUtilisateurService($utilisateurService);
         $service->setEtablissementService($etablissementService);
-        $service->setFileService($fileService);
+        $service->setFichierStorageService($fileService);
         $service->setAuthorizeService($authorizeService);
 
         $this->injectConfig($service, $container);

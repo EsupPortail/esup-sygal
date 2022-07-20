@@ -2,7 +2,7 @@
 
 namespace Soutenance\Service\Avis;
 
-use Application\Service\Fichier\FichierService;
+use Fichier\Service\Fichier\FichierService;
 use Application\Service\FichierThese\FichierTheseService;
 use Application\Service\UserContextService;
 use Doctrine\ORM\EntityManager;

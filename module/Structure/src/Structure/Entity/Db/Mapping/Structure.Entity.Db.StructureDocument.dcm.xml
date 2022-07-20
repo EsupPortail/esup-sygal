@@ -7,7 +7,7 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <many-to-one field="nature" target-entity="Application\Entity\Db\NatureFichier">
+        <many-to-one field="nature" target-entity="Fichier\Entity\Db\NatureFichier">
             <join-column name="NATURE_ID" referenced-column-name="ID"/>
         </many-to-one>
         <many-to-one field="structure" target-entity="Structure\Entity\Db\Structure">
@@ -16,7 +16,7 @@
         <many-to-one field="etablissement" target-entity="Structure\Entity\Db\Etablissement">
             <join-column name="ETABLISSEMENT_ID" referenced-column-name="ID"/>
         </many-to-one>
-         <many-to-one field="fichier" target-entity="Application\Entity\Db\Fichier">
+         <many-to-one field="fichier" target-entity="Fichier\Entity\Db\Fichier">
             <join-column name="FICHIER_ID" referenced-column-name="ID"/>
         </many-to-one>
 

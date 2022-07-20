@@ -3,10 +3,10 @@
 namespace Application\Service\Rapport;
 
 use Application\Command\Exception\TimedOutCommandException;
-use Application\Command\Pdf\PdfMergeShellCommandQpdf;
+use Fichier\Command\Pdf\PdfMergeShellCommandQpdf;
 use Application\Command\ShellCommandRunnerTrait;
 use Application\Entity\AnneeUniv;
-use Application\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeRapport;
@@ -14,14 +14,15 @@ use Application\Filter\NomFichierRapportFormatter;
 use Application\Service\BaseService;
 use InvalidArgumentException;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\FichierThese\PdcData;
-use Application\Service\File\FileServiceAwareTrait;
-use Application\Service\NatureFichier\NatureFichierServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\PageDeCouverture\PageDeCouverturePdfExporterAwareTrait;
 use Application\Service\RapportValidation\RapportValidationServiceAwareTrait;
-use Application\Service\VersionFichier\VersionFichierServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Closure;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -33,7 +34,7 @@ use UnicaenApp\Exporter\Pdf;
 class RapportService extends BaseService
 {
     use FichierServiceAwareTrait;
-    use FileServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use NotifierServiceAwareTrait;
@@ -269,10 +270,12 @@ class RapportService extends BaseService
      */
     private function createCommandForAjoutPdc(Rapport $rapport, string $pdcFilePath, string $outputFilePath): PdfMergeShellCommandQpdf
     {
-        $rapportFilePath = $this->fichierService->computeDestinationFilePathForFichier($rapport->getFichier());
-        if (!is_readable($rapportFilePath)) {
+//        $rapportFilePath = $this->fichierService->computeFilePathForFichier($rapport->getFichier());
+        try {
+            $rapportFilePath = $this->fichierStorageService->getFileForFichier($rapport->getFichier());
+        } catch (StorageAdapterException $e) {
             throw new RuntimeException(
-                "Le fichier suivant n'existe pas ou n'est pas accessible sur le serveur : " . $rapportFilePath);
+                "Impossible d'obtenir le fichier physique associé au Fichier suivant : " . $rapport->getFichier(), null, $e);
         }
 
         $command = new PdfMergeShellCommandQpdf();

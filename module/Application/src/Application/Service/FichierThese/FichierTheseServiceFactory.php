@@ -3,13 +3,13 @@
 namespace Application\Service\FichierThese;
 
 use Structure\Service\Etablissement\EtablissementService;
-use Application\Service\Fichier\FichierService;
-use Application\Service\File\FileService;
+use Fichier\Service\Fichier\FichierService;
+use Fichier\Service\Fichier\FichierStorageService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\PageDeCouverture\PageDeCouverturePdfExporter;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
-use Application\Service\VersionFichier\VersionFichierService;
-use Application\Validator\FichierCinesValidator;
+use Fichier\Service\VersionFichier\VersionFichierService;
+use Fichier\Validator\FichierCinesValidator;
 use Interop\Container\ContainerInterface;
 use Retraitement\Service\RetraitementService;
 
@@ -27,7 +27,7 @@ class FichierTheseServiceFactory
 
         /**
          * @var FichierService $fichierService
-         * @var FileService $fileService
+         * @var FichierStorageService $fileService
          * @var VersionFichierService $versionFichierService
          * @var ValiditeFichierService $validiteFichierService
          * @var RetraitementService $retraitementService
@@ -35,7 +35,7 @@ class FichierTheseServiceFactory
          * @var NotifierService $notifierService
          */
         $fichierService = $container->get(FichierService::class);
-        $fileService = $container->get(FileService::class);
+        $fileService = $container->get(FichierStorageService::class);
         $versionFichierService = $container->get('VersionFichierService');
         $validiteFichierService = $container->get('ValiditeFichierService');
         $retraitementService = $container->get('RetraitementService');
@@ -46,7 +46,7 @@ class FichierTheseServiceFactory
         $service = new FichierTheseService();
 
         $service->setFichierService($fichierService);
-        $service->setFileService($fileService);
+        $service->setFichierStorageService($fileService);
         $service->setFichierCinesValidator($fichierCinesValidator);
         $service->setVersionFichierService($versionFichierService);
         $service->setValiditeFichierService($validiteFichierService);
@@ -78,7 +78,7 @@ class FichierTheseServiceFactory
 
     private function createFichierCinesValidator(ContainerInterface $container): FichierCinesValidator
     {
-        /** @var \Application\Command\TestArchivabiliteShellCommand $command */
+        /** @var \Fichier\Command\TestArchivabiliteShellCommand $command */
         $command = $container->get('ValidationFichierCinesCommand');
 
         $validator = new FichierCinesValidator();
