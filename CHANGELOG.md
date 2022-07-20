@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+5.0.2
+-----
+- [FIX] Correction du chemin de stockage des rapports CSI et de mi-parcours (voir les [releases notes](./doc/release-notes/v5.0.2.md)).
+
 5.0.1
 -----
 - [FIX] Abandon des 'data:image/*;base64,' dans les templates mPDF.

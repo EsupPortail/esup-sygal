@@ -12,6 +12,7 @@ use Application\Entity\Db\These;
 use Application\Entity\Db\TypeRapport;
 use Application\Filter\NomFichierRapportFormatter;
 use Application\Service\BaseService;
+use InvalidArgumentException;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Fichier\FichierServiceAwareTrait;
 use Application\Service\FichierThese\PdcData;
@@ -102,8 +103,10 @@ class RapportService extends BaseService
      */
     public function saveRapport(Rapport $rapport, array $uploadData): Rapport
     {
+        $codeNatureFichier = $this->computeCodeNatureFichierFromTypeRapport($rapport);
+
         $this->fichierService->setNomFichierFormatter(new NomFichierRapportFormatter($rapport));
-        $fichiers = $this->fichierService->createFichiersFromUpload($uploadData, NatureFichier::CODE_RAPPORT_ACTIVITE);
+        $fichiers = $this->fichierService->createFichiersFromUpload($uploadData, $codeNatureFichier);
 
         $this->entityManager->beginTransaction();
         try {
@@ -124,6 +127,18 @@ class RapportService extends BaseService
         }
 
         return $rapport;
+    }
+
+    private function computeCodeNatureFichierFromTypeRapport(Rapport $rapport): string
+    {
+        switch ($rapport->getTypeRapport()->getCode()) {
+            case TypeRapport::RAPPORT_CSI:
+                return NatureFichier::CODE_RAPPORT_CSI;
+            case TypeRapport::RAPPORT_MIPARCOURS:
+                return NatureFichier::CODE_RAPPORT_MIPARCOURS;
+            default:
+                throw new InvalidArgumentException("Le type du rapport spécifié n'est pas supporté");
+        }
     }
 
     /**
