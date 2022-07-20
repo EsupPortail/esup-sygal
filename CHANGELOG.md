@@ -4,7 +4,7 @@ Journal des modifications
 5.1.0
 -----
 - Nouveau module "technique" Fichier proposant 2 modes de stockage des fichiers téléversés : Filesystem ou S3 
-  (cf. [releases notes](./doc/release-notes/v5.0.2.md)).
+  (cf. [releases notes](./doc/release-notes/v5.1.0.md)).
 - [FIX] Correction du chemin de stockage des rapports CSI et de mi-parcours
 
 5.0.1
