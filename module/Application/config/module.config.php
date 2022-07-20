@@ -7,7 +7,7 @@ use Application\Cache\MemcachedFactory;
 use Application\Controller\Factory\IndexControllerFactory;
 use Application\Controller\Plugin\Forward;
 use Application\Controller\Plugin\ForwardFactory;
-use Application\Controller\Plugin\Uploader\UploaderPluginFactory;
+use Fichier\Controller\Plugin\Uploader\UploaderPluginFactory;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Entity\UserWrapperFactory;
 use Application\Entity\UserWrapperFactoryFactory;
@@ -27,8 +27,8 @@ use Application\View\Helper\EscapeTextHelper;
 use Application\View\Helper\FiltersPanel\FiltersPanelHelper;
 use Application\View\Helper\Sortable;
 use Application\View\Helper\SortableHelperFactory;
-use Application\View\Helper\Uploader\UploaderHelper;
-use Application\View\Helper\Uploader\UploaderHelperFactory;
+use Fichier\View\Helper\Uploader\UploaderHelper;
+use Fichier\View\Helper\Uploader\UploaderHelperFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\PDO\PgSQL\Driver as PgSQL;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
@@ -295,7 +295,7 @@ return array(
     ),
     'form_elements'   => [
         'invokables'   => [
-            'UploadForm' => 'Application\Controller\Plugin\Uploader\UploadForm',
+            'UploadForm' => 'Fichier\Controller\Plugin\Uploader\UploadForm',
         ],
         'factories' => [
             'EcoleDoctoraleForm' => EcoleDoctoraleFormFactory::class,

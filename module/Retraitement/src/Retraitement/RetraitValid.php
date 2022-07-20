@@ -3,7 +3,7 @@
 namespace Retraitement;
 
 use Application\Command\ShellCommandRunner;
-use Application\Validator\FichierCinesValidator;
+use Fichier\Validator\FichierCinesValidator;
 use Retraitement\Filter\Command\RetraitementShellCommandCines;
 use Retraitement\Filter\Command\RetraitementShellCommandMines;
 use UnicaenApp\Exception\RuntimeException;

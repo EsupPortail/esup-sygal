@@ -25,7 +25,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
      * @var string $id
      * @var string $sigle
      * @var string $libelle
-     * @var string $cheminLogo
+     * @var string $cheminLogo Nom du fichier (pas le chemin!)
      */
     private     $id;
     protected   $sigle;
@@ -255,6 +255,8 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     }
 
     /**
+     * Retourne le Nom du fichier (pas le chemin!)
+     *
      * @return string
      */
     public function getCheminLogo()
@@ -263,6 +265,8 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     }
 
     /**
+     * SPécifie le Nom du fichier (pas le chemin!)
+     *
      * @param string $cheminLogo
      */
     public function setCheminLogo($cheminLogo)

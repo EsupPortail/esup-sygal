@@ -7,14 +7,14 @@ use Application\Entity\Db\TypeRapport;
 use Application\Entity\Db\TypeValidation;
 use Application\Form\Rapport\RapportForm;
 use Application\Form\RapportCsiForm;
-use Application\Service\Fichier\FichierService;
+use Fichier\Service\Fichier\FichierService;
 use Individu\Service\IndividuService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Rapport\RapportService;
 use Application\Service\These\TheseService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Application\Service\Validation\ValidationService;
-use Application\Service\VersionFichier\VersionFichierService;
+use Fichier\Service\VersionFichier\VersionFichierService;
 use Interop\Container\ContainerInterface;
 
 class RapportCsiControllerFactory

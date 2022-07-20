@@ -3,22 +3,22 @@
 namespace ApplicationUnitTest\Test\Provider;
 
 use Doctorant\Entity\Db\Doctorant;
-use Application\Entity\Db\Fichier;
+use Fichier\Entity\Db\Fichier;
 use Application\Entity\Db\FichierThese;
 use Individu\Entity\Db\Individu;
-use Application\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\Parametre;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
-use Application\Entity\Db\VersionFichier;
+use Fichier\Entity\Db\VersionFichier;
 use ApplicationUnitTest\Test\Asset\EntityAsset;
 use Doctrine\ORM\EntityManager;
 use InvalidArgumentException;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenApp\ORM\Event\Listeners\HistoriqueListener;
+use UnicaenAuth\ORM\Event\Listeners\HistoriqueListener;
 use Application\Entity\Db\Source;
 use UnicaenTest\Entity\Db\AbstractEntityProvider;
 

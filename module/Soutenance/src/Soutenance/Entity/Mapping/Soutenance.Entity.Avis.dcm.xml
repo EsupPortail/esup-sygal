@@ -28,7 +28,7 @@
             </join-columns>
         </many-to-one>
 
-        <many-to-one field="fichier" target-entity="Application\Entity\Db\Fichier">
+        <many-to-one field="fichier" target-entity="Fichier\Entity\Db\Fichier">
             <join-columns>
                 <join-column name="FICHIER_ID" referenced-column-name="ID"/>
             </join-columns>

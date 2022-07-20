@@ -2,8 +2,8 @@
 
 namespace Structure\Service\Etablissement;
 
-use Application\Service\Fichier\FichierService;
-use Application\Service\File\FileService;
+use Fichier\Service\Fichier\FichierService;
+use Fichier\Service\Fichier\FichierStorageService;
 use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
 

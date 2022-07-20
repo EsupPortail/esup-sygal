@@ -3,8 +3,8 @@
 namespace RapportActivite\Controller;
 
 use Application\Entity\Db\TypeValidation;
-use Application\Service\Fichier\FichierService;
-use Application\Service\File\FileService;
+use Fichier\Service\Fichier\FichierService;
+use Fichier\Service\Fichier\FichierStorageService;
 use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Application\Service\Validation\ValidationService;
 use Psr\Container\ContainerInterface;
@@ -29,8 +29,8 @@ class RapportActiviteControllerFactory
     public function __invoke(ContainerInterface $container): RapportActiviteController
     {
         /**
-         * @var \Application\Service\File\FileService $fileService
-         * @var \Application\Service\Fichier\FichierService $fichierService
+         * @var \Fichier\Service\Fichier\FichierStorageService $fileService
+         * @var \Fichier\Service\Fichier\FichierService $fichierService
          * @var \RapportActivite\Service\RapportActiviteService $rapportActiviteService
          * @var \RapportActivite\Service\Avis\RapportActiviteAvisService $rapportActiviteAvisService
          * @var \RapportActivite\Service\Fichier\RapportActiviteFichierService $rapportActiviteFichierService
@@ -38,7 +38,7 @@ class RapportActiviteControllerFactory
          * @var \Application\Service\Validation\ValidationService $validationService
          * @var \Application\Service\TheseAnneeUniv\TheseAnneeUnivService $theseAnneeUnivService
          */
-        $fileService = $container->get(FileService::class);
+        $fileService = $container->get(FichierStorageService::class);
         $fichierService = $container->get(FichierService::class);
         $rapportActiviteService = $container->get(RapportActiviteService::class);
         $rapportActiviteAvisService = $container->get(RapportActiviteAvisService::class);
@@ -52,7 +52,7 @@ class RapportActiviteControllerFactory
 
         $controller = new RapportActiviteController();
         $controller->setRapportActiviteService($rapportActiviteService);
-        $controller->setFileService($fileService);
+        $controller->setFichierStorageService($fileService);
         $controller->setFichierService($fichierService);
         $controller->setRapportActiviteAvisService($rapportActiviteAvisService);
         $controller->setRapportActiviteFichierService($rapportActiviteFichierService);

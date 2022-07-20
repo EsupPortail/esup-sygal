@@ -2,7 +2,7 @@
 
 namespace Application\Provider\Privilege;
 
-use Application\Entity\Db\VersionFichier;
+use Fichier\Entity\Db\VersionFichier;
 use UnicaenAuth\Provider\Privilege\Privileges;
 
 /**

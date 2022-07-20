@@ -3,14 +3,14 @@
 namespace Application\Service\Rapport;
 
 use Structure\Service\Etablissement\EtablissementService;
-use Application\Service\Fichier\FichierService;
-use Application\Service\File\FileService;
-use Application\Service\NatureFichier\NatureFichierService;
+use Fichier\Service\Fichier\FichierService;
+use Fichier\Service\Fichier\FichierStorageService;
+use Fichier\Service\NatureFichier\NatureFichierService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\PageDeCouverture\PageDeCouverturePdfExporter;
 use Application\Service\RapportValidation\RapportValidationService;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
-use Application\Service\VersionFichier\VersionFichierService;
+use Fichier\Service\VersionFichier\VersionFichierService;
 use Interop\Container\ContainerInterface;
 use Retraitement\Service\RetraitementService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
@@ -29,7 +29,7 @@ class RapportServiceFactory implements FactoryInterface
     {
         /**
          * @var FichierService $fichierService
-         * @var FileService $fileService
+         * @var \Fichier\Service\Fichier\FichierStorageService $fileService
          * @var VersionFichierService $versionFichierService
          * @var ValiditeFichierService $validiteFichierService
          * @var RetraitementService $retraitementService
@@ -39,7 +39,7 @@ class RapportServiceFactory implements FactoryInterface
          * @var RapportValidationService $rapportValidationService
          */
         $fichierService = $container->get(FichierService::class);
-        $fileService = $container->get(FileService::class);
+        $fileService = $container->get(FichierStorageService::class);
         $versionFichierService = $container->get('VersionFichierService');
         $etablissementService = $container->get('EtablissementService');
         $notifierService = $container->get(NotifierService::class);
@@ -50,7 +50,7 @@ class RapportServiceFactory implements FactoryInterface
         $service = new RapportService();
 
         $service->setFichierService($fichierService);
-        $service->setFileService($fileService);
+        $service->setFichierStorageService($fileService);
         $service->setVersionFichierService($versionFichierService);
         $service->setEtablissementService($etablissementService);
         $service->setNotifierService($notifierService);

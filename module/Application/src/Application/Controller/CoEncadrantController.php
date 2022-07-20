@@ -12,11 +12,12 @@ use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
 use Application\Service\CoEncadrant\Exporter\JustificatifCoencadrements\JustificatifCoencadrementPdfExporter;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Application\Service\File\FileServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use DateTime;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use UnicaenApp\View\Model\CsvModel;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\JsonModel;
@@ -27,7 +28,7 @@ class CoEncadrantController extends AbstractActionController {
     use ActeurServiceAwareTrait;
     use CoEncadrantServiceAwareTrait;
     use IndividuServiceAwareTrait;
-    use FileServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use TheseServiceAwareTrait;
     use RechercherCoEncadrantFormAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
@@ -162,7 +163,12 @@ class CoEncadrantController extends AbstractActionController {
         $theses = $this->getTheseService()->getRepository()->fetchThesesByCoEncadrant($coencadrant->getIndividu());
 
         $logos = [];
-        $logos['etablissement'] = $this->fileService->computeLogoFilePathForStructure($coencadrant->getEtablissement());
+//        $logos['etablissement'] = $this->fileService->computeLogoFilePathForStructure($coencadrant->getEtablissement());
+        try {
+            $logos['etablissement'] = $this->fichierStorageService->getFileForLogoStructure($coencadrant->getEtablissement());
+        } catch (StorageAdapterException $e) {
+            $logos['etablissement'] = null;
+        }
 
         //exporter
         $export = new JustificatifCoencadrementPdfExporter($this->renderer, 'A4');

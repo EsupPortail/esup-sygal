@@ -2,8 +2,8 @@
 
 namespace RapportActivite\Formatter;
 
-use Application\Entity\Db\Fichier;
-use Application\Filter\AbstractNomFichierFormatter;
+use Fichier\Entity\Db\Fichier;
+use Fichier\Filter\AbstractNomFichierFormatter;
 use RapportActivite\Entity\Db\RapportActivite;
 
 /**

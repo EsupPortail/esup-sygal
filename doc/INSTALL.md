@@ -205,7 +205,13 @@ Dans la suite, vous adapterez le contenu de ces fichiers à votre situation.
 
 ```php
     'fichier' => [
-        'root_dir_path' => '/app/upload',
+        'storage' => [
+            'adapters' => [
+                \Fichier\Service\Storage\Adapter\FilesystemStorageAdapter::class => [
+                    'root_path' => '/app/upload',
+                ],
+            ],
+        ],
     ],
 ```
 *NB : ce répertoire doit être autorisé en écriture à l'utilisateur `www-data` (ou équivalent).*

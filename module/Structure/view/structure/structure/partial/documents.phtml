@@ -18,7 +18,7 @@ use Structure\Entity\Db\Structure;
         $televerserUrlOptions['etablissement'] = false;
     }
     ?>
-    <?php /** @see \Application\Controller\StructureController::televerserDocumentAction() */ ?>
+    <?php /** @see \Structure\Controller\StructureController::televerserDocumentAction() */ ?>
     <a href="<?php echo $this->url('structure/televerser-document', $televerserUrlOptions, [], true); ?>"
        class="btn btn-primary action ajax-modal" data-event="modification">
         <span class="icon icon-upload"></span>
@@ -55,7 +55,7 @@ use Structure\Entity\Db\Structure;
             <td>
                 <img class="signature" src="data:image/*;base64,<?php echo base64_encode($contenus[$document->getId()]); ?>"/>
 
-                <?php /** @see \Application\Controller\StructureController::supprimerDocumentAction() */ ?>
+                <?php /** @see \Structure\Controller\StructureController::supprimerDocumentAction() */ ?>
                 <a href="<?php echo $this->url('structure/supprimer-document', ['structure' => $structure->getId(), 'document' => $document->getId()], [], true); ?>">
                         <span class="icon icon-delete iconly float-end" style="color:darkred;" data-toggle="confirmationx"
                               title="Supprimer le document"></span>

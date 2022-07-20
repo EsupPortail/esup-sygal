@@ -2,8 +2,8 @@
 
 namespace Structure\Entity\Db;
 
-use Application\Entity\Db\Fichier;
-use Application\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\Fichier;
+use Fichier\Entity\Db\NatureFichier;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
@@ -15,7 +15,7 @@ class StructureDocument implements HistoriqueAwareInterface {
 
     /**
      * @var NatureFichier|null
-     * @deprecated À supprimer car redondant avec {@see \Application\Entity\Db\Fichier::$nature}
+     * @deprecated À supprimer car redondant avec {@see \Fichier\Entity\Db\Fichier::$nature}
      */
     private $nature;
 
@@ -46,7 +46,7 @@ class StructureDocument implements HistoriqueAwareInterface {
 
     /**
      * @return NatureFichier|null
-     * @deprecated À supprimer car redondant avec {@see \Application\Entity\Db\Fichier::getNature()}
+     * @deprecated À supprimer car redondant avec {@see \Fichier\Entity\Db\Fichier::getNature()}
      */
     public function getNature(): ?NatureFichier
     {
@@ -56,7 +56,7 @@ class StructureDocument implements HistoriqueAwareInterface {
     /**
      * @param NatureFichier|null $nature
      * @return StructureDocument
-     * @deprecated À supprimer car redondant avec {@see \Application\Entity\Db\Fichier::setNature()}
+     * @deprecated À supprimer car redondant avec {@see \Fichier\Entity\Db\Fichier::setNature()}
      */
     public function setNature(?NatureFichier $nature): StructureDocument
     {

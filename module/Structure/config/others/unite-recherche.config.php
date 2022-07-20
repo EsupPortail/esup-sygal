@@ -251,10 +251,10 @@ return [
         'invokables' => [
         ],
         'factories' => [
-            'Application\Controller\UniteRecherche' => UniteRechercheControllerFactory::class,
+            'Structure\Controller\UniteRecherche' => UniteRechercheControllerFactory::class,
         ],
         'aliases' => [
-            UniteRechercheController::class => 'Application\Controller\UniteRecherche',
+            UniteRechercheController::class => 'Structure\Controller\UniteRecherche',
         ]
     ],
     'form_elements'   => [

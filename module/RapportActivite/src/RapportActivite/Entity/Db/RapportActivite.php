@@ -3,7 +3,7 @@
 namespace RapportActivite\Entity\Db;
 
 use Application\Entity\AnneeUniv;
-use Application\Entity\Db\Fichier;
+use Fichier\Entity\Db\Fichier;
 use Application\Entity\Db\These;
 use Application\Entity\Db\TypeRapport;
 use Application\Entity\Db\TypeValidation;

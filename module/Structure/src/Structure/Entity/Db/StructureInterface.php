@@ -32,11 +32,15 @@ interface StructureInterface
     public function getLibelle();
 
     /**
+     * SPécifie le Nom du fichier (pas le chemin!)
+     *
      * @param string $cheminLogo
      */
     public function setCheminLogo($cheminLogo);
 
     /**
+     * Retourne le Nom du fichier (pas le chemin!)
+     *
      * @return string
      */
     public function getCheminLogo();

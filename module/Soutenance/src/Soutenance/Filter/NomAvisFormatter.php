@@ -2,9 +2,9 @@
 
 namespace Soutenance\Filter;
 
-use Application\Entity\Db\Fichier;
+use Fichier\Entity\Db\Fichier;
 use Individu\Entity\Db\Individu;
-use Application\Filter\NomFichierFormatter;
+use Fichier\Filter\NomFichierFormatter;
 
 /**
  * Filtre générateur du nom de l'avis téléversé.

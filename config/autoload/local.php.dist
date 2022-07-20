@@ -62,10 +62,6 @@ return [
         // cf. secret.local.php
     ],
 
-    'fichier' => [
-        'root_dir_path' => '/app/upload',
-    ],
-
     'cli_config' => [
         // cf. secret.local.php
     ],

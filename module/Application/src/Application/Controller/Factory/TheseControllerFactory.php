@@ -12,7 +12,7 @@ use Application\Form\RdvBuTheseForm;
 use Application\Service\Acteur\ActeurService;
 use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\FichierThese\FichierTheseService;
-use Application\Service\File\FileService;
+use Fichier\Service\Fichier\FichierStorageService;
 use Individu\Service\IndividuService;
 use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotifierService;
@@ -22,7 +22,7 @@ use Structure\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
-use Application\Service\VersionFichier\VersionFichierService;
+use Fichier\Service\VersionFichier\VersionFichierService;
 use Application\Service\Workflow\WorkflowService;
 use Application\SourceCodeStringHelper;
 use Doctrine\ORM\EntityManager;
@@ -49,7 +49,7 @@ class TheseControllerFactory
          * @var TheseService            $theseService
          * @var RoleService             $roleService
          * @var FichierTheseService     $fichierTheseService
-         * @var FileService             $fileService
+         * @var FichierStorageService             $fileService
          * @var WorkflowService         $workflowService
          * @var NotifierService         $notifierService
          * @var EtablissementService    $etablissementService
@@ -68,7 +68,7 @@ class TheseControllerFactory
         $roleService = $container->get('RoleService');
         $uniteService = $container->get('UniteRechercheService');
         $fichierTheseService = $container->get('FichierTheseService');
-        $fileService = $container->get(FileService::class);
+        $fileService = $container->get(FichierStorageService::class);
         $workflowService = $container->get('WorkflowService');
         $etablissementService = $container->get('EtablissementService');
         $mailConfirmationService = $container->get('MailConfirmationService');
@@ -106,7 +106,7 @@ class TheseControllerFactory
         $controller->setTheseService($theseService);
         $controller->setRoleService($roleService);
         $controller->setFichierTheseService($fichierTheseService);
-        $controller->setFileService($fileService);
+        $controller->setFichierStorageService($fileService);
         $controller->setWorkflowService($workflowService);
         $controller->setEtablissementService($etablissementService);
         $controller->setUniteRechercheService($uniteService);
