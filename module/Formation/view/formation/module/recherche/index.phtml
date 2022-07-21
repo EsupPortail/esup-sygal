@@ -132,7 +132,7 @@ $canSupprimerModule = $this->isAllowed(ModulePrivileges::getResourceId(ModulePri
 </div>
 
 
-<?php echo $this->paginationControl($paginator, 'sliding', 'paginator', ['route' => $routeName . '/recherche/index']) ?>
+<?php echo $this->paginationControl($paginator, 'sliding', 'application/paginator.phtml', ['route' => $routeName . '/recherche/index']) ?>
 
 <?php else: ?>
 
