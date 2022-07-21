@@ -515,7 +515,6 @@ class PropositionService {
         $logos = [];
         $logos['COMUE'] = null;
         if ($comue = $this->getEtablissementService()->fetchEtablissementComue()) {
-//            $logos['COMUE'] = $this->fileService->computeLogoFilePathForStructure($comue);
             try {
                 $logos['COMUE'] = $this->fichierStorageService->getFileForLogoStructure($comue);
             } catch (StorageAdapterException $e) {
@@ -523,7 +522,6 @@ class PropositionService {
             }
         }
 
-//        $logos['ETAB']  = $this->fileService->computeLogoFilePathForStructure($these->getEtablissement());
         try {
             $logos['ETAB'] = $this->fichierStorageService->getFileForLogoStructure($these->getEtablissement());
         } catch (StorageAdapterException $e) {

@@ -5,7 +5,7 @@ namespace RapportActivite\Controller;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Interfaces\TypeRapportAwareTrait;
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
-use Application\Entity\FichierArchivable;
+use Fichier\Entity\FichierArchivable;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;

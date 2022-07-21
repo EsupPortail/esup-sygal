@@ -219,7 +219,7 @@ class FichierService extends BaseService
      * NB: c'est une entité Fichier qui est retournée pour une raison de praticité, elle n'a pas du tout vocation à
      * être persistée.
      *
-     * @param \Application\Entity\FichierArchivable[] $fichiersArchivables
+     * @param \Fichier\Entity\FichierArchivable[] $fichiersArchivables
      * @param string $zipFileName
      * @return Fichier
      * @throws FichierServiceException

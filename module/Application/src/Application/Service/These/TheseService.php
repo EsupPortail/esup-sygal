@@ -551,7 +551,6 @@ class TheseService extends BaseService implements ListenerAggregateInterface
             if ($directeur->getEtablissement()) {
                 if ($directeur->getEtablissement()->estAssocie()) {
                     $pdcData->setAssocie(true);
-//                    $pdcData->setLogoAssocie($this->fileService->computeLogoFilePathForStructure($directeur->getEtablissement()));
                     try {
                         $pdcData->setLogoAssocie($this->fichierStorageService->getFileForLogoStructure($directeur->getEtablissement()));
                     } catch (StorageAdapterException $e) {
@@ -634,21 +633,18 @@ class TheseService extends BaseService implements ListenerAggregateInterface
 
         // chemins vers les logos
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {
-//            $pdcData->setLogoCOMUE($this->fileService->computeLogoFilePathForStructure($comue));
             try {
                 $pdcData->setLogoCOMUE($this->fichierStorageService->getFileForLogoStructure($comue));
             } catch (StorageAdapterException $e) {
                 $pdcData->setLogoCOMUE(null);
             }
         }
-//        $pdcData->setLogoEtablissement($this->fileService->computeLogoFilePathForStructure($these->getEtablissement()));
         try {
             $pdcData->setLogoEtablissement($this->fichierStorageService->getFileForLogoStructure($these->getEtablissement()));
         } catch (StorageAdapterException $e) {
             $pdcData->setLogoEtablissement(null);
         }
         if ($these->getEcoleDoctorale() !== null) {
-//            $pdcData->setLogoEcoleDoctorale($this->fileService->computeLogoFilePathForStructure($these->getEcoleDoctorale()));
             try {
                 $pdcData->setLogoEcoleDoctorale($this->fichierStorageService->getFileForLogoStructure($these->getEcoleDoctorale()));
             } catch (StorageAdapterException $e) {
@@ -656,7 +652,6 @@ class TheseService extends BaseService implements ListenerAggregateInterface
             }
         }
         if ($these->getUniteRecherche() !== null) {
-//            $pdcData->setLogoUniteRecherche($this->fileService->computeLogoFilePathForStructure($these->getUniteRecherche()));
             try {
                 $pdcData->setLogoUniteRecherche($this->fichierStorageService->getFileForLogoStructure($these->getUniteRecherche()));
             } catch (StorageAdapterException $e) {

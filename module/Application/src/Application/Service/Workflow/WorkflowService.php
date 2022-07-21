@@ -12,8 +12,6 @@ use Doctrine\ORM\Query;
 
 /**
  * Class WorkflowService
- *
- * @package Application\Service\Fichier\Workflow
  */
 class WorkflowService extends BaseService
 {

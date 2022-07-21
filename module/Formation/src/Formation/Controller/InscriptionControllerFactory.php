@@ -2,11 +2,11 @@
 
 namespace Formation\Controller;
 
+use Fichier\Service\Fichier\FichierStorageService;
 use Formation\Service\Session\SessionService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\Etablissement\EtablissementService;
-use Application\Service\File\FileService;
 use Individu\Service\IndividuService;
 use Structure\Service\StructureDocument\StructureDocumentService;
 use Doctorant\Service\DoctorantService;
@@ -31,7 +31,7 @@ class InscriptionControllerFactory {
          * @var EntityManager $entityManager
          * @var DoctorantService $doctorantService
          * @var EtablissementService $etablissementService
-         * @var FileService $fileService
+         * @var \Fichier\Service\Fichier\FichierStorageService $fichierStorageService
          * @var InscriptionService $inscriptionService
          * @var IndividuService $individuService
          * @var NotificationService $notificationService
@@ -42,7 +42,7 @@ class InscriptionControllerFactory {
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $doctorantService = $container->get(DoctorantService::class);
         $etablissementService = $container->get(EtablissementService::class);
-        $fileService = $container->get(FileService::class);
+        $fichierStorageService = $container->get(FichierStorageService::class);
         $individuService = $container->get(IndividuService::class);
         $inscriptionService = $container->get(InscriptionService::class);
         $notificationService = $container->get(NotificationService::class);
@@ -58,7 +58,7 @@ class InscriptionControllerFactory {
         $controller->setEntityManager($entityManager);
         $controller->setDoctorantService($doctorantService);
         $controller->setEtablissementService($etablissementService);
-        $controller->setFileService($fileService);
+        $controller->setFichierStorageService($fichierStorageService);
         $controller->setIndividuService($individuService);
         $controller->setInscriptionService($inscriptionService);
         $controller->setNotificationService($notificationService);
