@@ -6,13 +6,12 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\Interfaces\TypeRapportAwareTrait;
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
 use Application\Entity\Db\TypeRapport;
-use Application\Entity\FichierArchivable;
+use Fichier\Entity\FichierArchivable;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
 use Fichier\Service\Fichier\Exception\FichierServiceException;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use Fichier\Service\File\FileServiceAwareTrait;
 use RapportActivite\Service\Fichier\RapportActiviteFichierServiceAwareTrait;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
@@ -41,7 +40,6 @@ class RapportActiviteRechercheController extends AbstractController implements S
     use RapportActiviteServiceAwareTrait;
     use RapportActiviteAvisServiceAwareTrait;
     use RapportActiviteFichierServiceAwareTrait;
-    use FileServiceAwareTrait;
 
     use TypeRapportAwareTrait;
     use TypeValidationAwareTrait;

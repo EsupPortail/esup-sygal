@@ -163,7 +163,6 @@ class CoEncadrantController extends AbstractActionController {
         $theses = $this->getTheseService()->getRepository()->fetchThesesByCoEncadrant($coencadrant->getIndividu());
 
         $logos = [];
-//        $logos['etablissement'] = $this->fileService->computeLogoFilePathForStructure($coencadrant->getEtablissement());
         try {
             $logos['etablissement'] = $this->fichierStorageService->getFileForLogoStructure($coencadrant->getEtablissement());
         } catch (StorageAdapterException $e) {

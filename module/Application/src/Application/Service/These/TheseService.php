@@ -275,11 +275,11 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         }
 
         $these->removeAttestation($attestation);
-        $this->entityManager->remove($attestation);
 
         try {
+            $this->entityManager->remove($attestation);
             $this->entityManager->flush($attestation);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Erreur rencontrée lors de la suppression", null, $e);
         }
     }
@@ -306,7 +306,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         $diffusionCorr = clone $diffusionOrig;
         $diffusionCorr->setVersionCorrigee(true);
         $diffusionCorr->setCreationAuto(true);
-        $this->updateDiffusion($these, $diffusionCorr, $versionOrig);
+        $this->updateDiffusion($these, $diffusionCorr, $versionCorr);
     }
 
     /**
@@ -322,8 +322,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
             // on teste si la réponse à l'autorisation de diffusion existante a changé de manière "importante"
             // (auquel cas, il sera nécessaire de tester s'il faut supprimer ou pas les attestations)
             $rule = new AutorisationDiffusionRule();
-            $rule->setDiffusion($diffusion);
-            $rule->execute();
+            $rule->setDiffusion($diffusion)->execute();
             $suppressionAttestationsAVerifier = $rule->computeChangementDeReponseImportant($this->entityManager);
         } else {
             $suppressionAttestationsAVerifier = false;
@@ -332,13 +331,14 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         if (! $isUpdate) {
             $diffusion->setThese($these);
             $these->addDiffusion($diffusion);
-
-            $this->entityManager->persist($diffusion);
         }
 
         try {
+            if (! $isUpdate) {
+                $this->entityManager->persist($diffusion);
+            }
             $this->entityManager->flush($diffusion);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
         }
 
@@ -348,7 +348,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         //
         if ($suppressionAttestationsAVerifier) {
             $rule = new SuppressionAttestationsRequiseRule($these, $version);
-            $suppressionRequise = $rule->computeEstRequise();
+            $suppressionRequise = $rule->execute();
 
             if ($suppressionRequise) {
                 $this->deleteAttestationForVersion($these, $version);
@@ -551,7 +551,6 @@ class TheseService extends BaseService implements ListenerAggregateInterface
             if ($directeur->getEtablissement()) {
                 if ($directeur->getEtablissement()->estAssocie()) {
                     $pdcData->setAssocie(true);
-//                    $pdcData->setLogoAssocie($this->fileService->computeLogoFilePathForStructure($directeur->getEtablissement()));
                     try {
                         $pdcData->setLogoAssocie($this->fichierStorageService->getFileForLogoStructure($directeur->getEtablissement()));
                     } catch (StorageAdapterException $e) {
@@ -634,21 +633,18 @@ class TheseService extends BaseService implements ListenerAggregateInterface
 
         // chemins vers les logos
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {
-//            $pdcData->setLogoCOMUE($this->fileService->computeLogoFilePathForStructure($comue));
             try {
                 $pdcData->setLogoCOMUE($this->fichierStorageService->getFileForLogoStructure($comue));
             } catch (StorageAdapterException $e) {
                 $pdcData->setLogoCOMUE(null);
             }
         }
-//        $pdcData->setLogoEtablissement($this->fileService->computeLogoFilePathForStructure($these->getEtablissement()));
         try {
             $pdcData->setLogoEtablissement($this->fichierStorageService->getFileForLogoStructure($these->getEtablissement()));
         } catch (StorageAdapterException $e) {
             $pdcData->setLogoEtablissement(null);
         }
         if ($these->getEcoleDoctorale() !== null) {
-//            $pdcData->setLogoEcoleDoctorale($this->fileService->computeLogoFilePathForStructure($these->getEcoleDoctorale()));
             try {
                 $pdcData->setLogoEcoleDoctorale($this->fichierStorageService->getFileForLogoStructure($these->getEcoleDoctorale()));
             } catch (StorageAdapterException $e) {
@@ -656,7 +652,6 @@ class TheseService extends BaseService implements ListenerAggregateInterface
             }
         }
         if ($these->getUniteRecherche() !== null) {
-//            $pdcData->setLogoUniteRecherche($this->fileService->computeLogoFilePathForStructure($these->getUniteRecherche()));
             try {
                 $pdcData->setLogoUniteRecherche($this->fichierStorageService->getFileForLogoStructure($these->getUniteRecherche()));
             } catch (StorageAdapterException $e) {

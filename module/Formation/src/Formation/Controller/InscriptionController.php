@@ -3,11 +3,12 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Service\Fichier\Exception\FichierServiceException;
+use Fichier\Service\Fichier\Exception\FichierServiceException;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Formation\Service\Session\SessionServiceAwareTrait;
 use Individu\Entity\Db\Individu;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\File\FileServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
@@ -30,7 +31,7 @@ class InscriptionController extends AbstractController
     use EntityManagerAwareTrait;
     use DoctorantServiceAwareTrait;
     use EtablissementServiceAwareTrait;
-    use FileServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use InscriptionServiceAwareTrait;
     use NotificationServiceAwareTrait;
@@ -212,9 +213,17 @@ class InscriptionController extends AbstractController
         $session = $inscription->getSession();
 
         $logos = [];
-        $logos['site'] = $this->fileService->computeLogoFilePathForStructure($session->getSite());
+        try {
+            $logos['site'] = $this->fichierStorageService->getFileForLogoStructure($session->getSite());
+        } catch (StorageAdapterException $e) {
+            $logos['site'] = null;
+        }
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {
-            $logos['comue'] = $this->fileService->computeLogoFilePathForStructure($comue);
+            try {
+                $logos['comue'] = $this->fichierStorageService->getFileForLogoStructure($comue);
+            } catch (StorageAdapterException $e) {
+                $logos['comue'] = null;
+            }
         }
 
         $etablissementDoctorant = $inscription->getDoctorant()->getEtablissement();
@@ -242,9 +251,17 @@ class InscriptionController extends AbstractController
         $presences = $this->getPresenceService()->calculerDureePresence($inscription);
 
         $logos = [];
-        $logos['site'] = $this->fileService->computeLogoFilePathForStructure($session->getSite());
+        try {
+            $logos['site'] = $this->fichierStorageService->getFileForLogoStructure($session->getSite());
+        } catch (StorageAdapterException $e) {
+            $logos['site'] = null;
+        }
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {
-            $logos['comue'] = $this->fileService->computeLogoFilePathForStructure($comue);
+            try {
+                $logos['comue'] = $this->fichierStorageService->getFileForLogoStructure($comue);
+            } catch (StorageAdapterException $e) {
+                $logos['comue'] = null;
+            }
         }
 
         $etablissementDoctorant = $inscription->getDoctorant()->getEtablissement();

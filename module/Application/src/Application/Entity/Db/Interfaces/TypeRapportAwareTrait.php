@@ -3,8 +3,6 @@
 namespace Application\Entity\Db\Interfaces;
 
 use Application\Entity\Db\TypeRapport;
-use RapportActivite\Controller\Recherche\RapportActiviteRechercheController;
-use RapportActivite\Service\Search\RapportActiviteSearchService;
 
 trait TypeRapportAwareTrait
 {

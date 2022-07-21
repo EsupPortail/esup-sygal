@@ -22,9 +22,9 @@ interface StructureInterface
     public function getSourceCode();
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getCode();
+    public function getCode(): ?string;
 
     /**
      * @return string

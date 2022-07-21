@@ -2,13 +2,13 @@
 
 namespace Formation\Controller;
 
+use Fichier\Service\Fichier\FichierStorageService;
 use Formation\Service\Formation\FormationService;
 use Formation\Service\Presence\PresenceService;
 use Formation\Service\SessionStructureValide\SessionStructureValideService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\Etablissement\EtablissementService;
-use Application\Service\File\FileService;
 use Doctrine\ORM\EntityManager;
 use Formation\Form\Session\SessionForm;
 use Formation\Service\Inscription\InscriptionService;
@@ -30,7 +30,7 @@ class SessionControllerFactory {
         /**
          * @var EntityManager $entityManager
          * @var EtablissementService $etablissementService
-         * @var FileService $fileService
+         * @var \Fichier\Service\Fichier\FichierStorageService $fichierStorageService
          * @var FormationService $formationService
          * @var InscriptionService $inscriptionService
          * @var NotificationService $notificationService
@@ -40,7 +40,7 @@ class SessionControllerFactory {
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $etablissementService = $container->get(EtablissementService::class);
-        $fileService = $container->get(FileService::class);
+        $fichierStorageService = $container->get(FichierStorageService::class);
         $formationService = $container->get(FormationService::class);
         $inscriptionService = $container->get(InscriptionService::class);
         $notificationService = $container->get(NotificationService::class);
@@ -60,7 +60,7 @@ class SessionControllerFactory {
         $controller->setEntityManager($entityManager);
         /** Service ***************************************************************************************************/
         $controller->setEtablissementService($etablissementService);
-        $controller->setFileService($fileService);
+        $controller->setFichierStorageService($fichierStorageService);
         $controller->setFormationService($formationService);
         $controller->setInscriptionService($inscriptionService);
         $controller->setNotificationService($notificationService);

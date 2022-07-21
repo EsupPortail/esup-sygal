@@ -75,7 +75,7 @@ use Laminas\Paginator\Paginator;
             </tr>
         <?php endforeach; ?>
     </table>
-    <?php echo $this->paginationControl($paginator, 'sliding', 'partial/paginator.phtml', ['route' => 'utilisateur']) ?>
+    <?php echo $this->paginationControl($paginator, 'sliding', 'application/paginator.phtml', ['route' => 'utilisateur']) ?>
 <?php else: ?>
     <p>Aucun utilisateur trouvé.</p>
 <?php endif ?>

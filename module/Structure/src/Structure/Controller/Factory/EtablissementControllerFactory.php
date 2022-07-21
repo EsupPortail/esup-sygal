@@ -9,7 +9,6 @@ use Individu\Service\IndividuService;
 use Application\Service\Role\RoleService;
 use Structure\Service\Structure\StructureService;
 use Structure\Service\StructureDocument\StructureDocumentService;
-use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
 
 class EtablissementControllerFactory
@@ -43,12 +42,6 @@ class EtablissementControllerFactory
         $controller->setStructureService($structureService);
         $controller->setStructureDocumentService($structureDocumentService);
         $controller->setStructureForm($form);
-
-        /**
-         * @var SourceCodeStringHelper $sourceCodeHelper
-         */
-        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
-        $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;
     }

@@ -1,11 +1,11 @@
 <?php
 
-namespace Application\Entity;
+namespace Fichier\Entity;
 
-use Application\Entity\Db\Fichier;
+use Fichier\Entity\Db\Fichier;
 
 /**
- * Adaptateur de {@see \Application\Entity\Db\Fichier} ajoutant des caractéristiques utiles
+ * Adaptateur de {@see \Fichier\Entity\Db\Fichier} ajoutant des caractéristiques utiles
  * pour une création d'archive.
  */
 class FichierArchivable
@@ -32,7 +32,7 @@ class FichierArchivable
     }
 
     /**
-     * @return \Application\Entity\Db\Fichier
+     * @return \Fichier\Entity\Db\Fichier
      */
     public function getFichier(): Fichier
     {

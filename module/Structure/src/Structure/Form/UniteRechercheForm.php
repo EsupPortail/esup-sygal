@@ -33,6 +33,9 @@ class UniteRechercheForm extends StructureForm implements InputFilterProviderInt
     public function getInputFilterSpecification(): array
     {
         return array_merge(parent::getInputFilterSpecification(), [
+            'code' => [
+                'required' => true, // requis pour le calcul du nom de fichier logo
+            ],
             'RNSR' => [
                 'name' => 'RNSR',
                 'required' => false,

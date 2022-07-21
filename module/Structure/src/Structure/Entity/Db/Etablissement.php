@@ -109,14 +109,6 @@ class Etablissement
     }
 
     /**
-     * @return string
-     */
-    public function generateUniqCode()
-    {
-        return uniqid();
-    }
-
-    /**
      * Set sourceCode
      *
      * @param string $sourceCode

@@ -54,10 +54,11 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
      * @var string
      */
     protected $sourceCode;
+
     /**
-     * @var string
+     * @var string|null
      */
-    protected $code;
+    protected ?string $code;
 
     /**
      * @var TypeStructure
@@ -206,16 +207,6 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
      */
     public function getCode(): ?string
     {
-//        if ($this->code !== null) return $this->code;
-//        if ($this->sourceCode !== null) {
-//            $code = $this->getSourceCodeStringHelper()->removePrefixFrom($this->sourceCode);
-//            return $code;
-//        }
-        // (!) Les lignes précédentes ont été mises en commentaire car l'entité Structure *possède* un attribut 'code'
-        //     donc faire ici autre chose que de retourner l'attribut, c'est du sabotage, voire du terrorisme (spécial dédicace) !!
-        //     Preuve que ce n'est pas une bonne idée : impossible de dire dans quels cas c'était nécessaire de faire
-        //     ce jonglage avec 'code' et 'sourceCode'.
-
         return $this->code;
     }
 

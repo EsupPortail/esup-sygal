@@ -86,7 +86,7 @@ $this->headTitle($this->translate($title));
         'displayValidation' => $displayValidation,
     ]) ?>
 
-    <?php echo $this->paginationControl($paginator, 'sliding', 'partial/paginator.phtml', ['route' => $routeName . '/recherche/index']) ?>
+    <?php echo $this->paginationControl($paginator, 'sliding', 'application/paginator.phtml', ['route' => $routeName . '/recherche/index']) ?>
 
     <?php if ($canDlZip): ?>
         <a class="btn btn-secondary" href="<?php echo $this->url($routeName . '/recherche/telecharger-zip', [], ['query' => $queryParams]) ?>"

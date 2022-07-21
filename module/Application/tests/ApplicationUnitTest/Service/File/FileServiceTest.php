@@ -35,7 +35,7 @@ class FileServiceTest extends \PHPUnit_Framework_TestCase
         $etablissement = $this->createMock(Etablissement::class);
         $etablissement->expects($this->once())->method('getCode')->willReturn('CODE');
 
-        $filename = $this->fileService->computeFileNameForLogoStructure($etablissement);
+        $filename = $this->fileService->computeFileNameForNewLogoStructure($etablissement);
 
         $this->assertEquals('CODE.png', $filename);
     }
@@ -47,7 +47,7 @@ class FileServiceTest extends \PHPUnit_Framework_TestCase
         $etablissement->expects($this->once())->method('getCode')->willReturn(null);
         $etablissement->expects($this->once())->method('generateUniqCode')->willReturn('UNIQID');
 
-        $filename = $this->fileService->computeFileNameForLogoStructure($etablissement);
+        $filename = $this->fileService->computeFileNameForNewLogoStructure($etablissement);
 
         $this->assertEquals('UNIQID.png', $filename);
     }
@@ -59,40 +59,40 @@ class FileServiceTest extends \PHPUnit_Framework_TestCase
         $structure->expects($this->once())->method('getSourceCode')->willReturn('SOURCE_CODE');
         $structure->expects($this->once())->method('getSigle')->willReturn('SIGLE');
 
-        $filename = $this->fileService->computeFileNameForLogoStructure($structure);
+        $filename = $this->fileService->computeFileNameForNewLogoStructure($structure);
 
         $this->assertEquals('SOURCE_CODE-SIGLE.png', $filename);
     }
 
-    public function testCanComputeLogoDirectoryPathForEcoleDoctorale()
-    {
-        /** @var EcoleDoctorale|\PHPUnit_Framework_MockObject_MockObject $ecoleDoctorale */
-        $ecoleDoctorale = $this->createMock(EcoleDoctorale::class);
-
-        $path = $this->fileService->computeDirectoryPathForLogoStructure($ecoleDoctorale);
-
-        $this->assertEquals('/root/directory/path' . '/ressources/Logos' . '/ED', $path);
-    }
-
-    public function testCanComputeLogoDirectoryPathForUniteRecherche()
-    {
-        /** @var UniteRecherche|\PHPUnit_Framework_MockObject_MockObject $uniteRecherche */
-        $uniteRecherche = $this->createMock(UniteRecherche::class);
-
-        $path = $this->fileService->computeDirectoryPathForLogoStructure($uniteRecherche);
-
-        $this->assertEquals('/root/directory/path' . '/ressources/Logos' . '/UR', $path);
-    }
-
-    public function testCanComputeLogoDirectoryPathForEtablissement()
-    {
-        /** @var Etablissement|\PHPUnit_Framework_MockObject_MockObject $etablissement */
-        $etablissement = $this->createMock(Etablissement::class);
-
-        $path = $this->fileService->computeDirectoryPathForLogoStructure($etablissement);
-
-        $this->assertEquals('/root/directory/path' . '/ressources/Logos' . '/Etab', $path);
-    }
+//    public function testCanComputeLogoDirectoryPathForEcoleDoctorale()
+//    {
+//        /** @var EcoleDoctorale|\PHPUnit_Framework_MockObject_MockObject $ecoleDoctorale */
+//        $ecoleDoctorale = $this->createMock(EcoleDoctorale::class);
+//
+//        $path = $this->fileService->computeDirectoryPathForLogoStructure($ecoleDoctorale);
+//
+//        $this->assertEquals('/root/directory/path' . '/ressources/Logos' . '/ED', $path);
+//    }
+//
+//    public function testCanComputeLogoDirectoryPathForUniteRecherche()
+//    {
+//        /** @var UniteRecherche|\PHPUnit_Framework_MockObject_MockObject $uniteRecherche */
+//        $uniteRecherche = $this->createMock(UniteRecherche::class);
+//
+//        $path = $this->fileService->computeDirectoryPathForLogoStructure($uniteRecherche);
+//
+//        $this->assertEquals('/root/directory/path' . '/ressources/Logos' . '/UR', $path);
+//    }
+//
+//    public function testCanComputeLogoDirectoryPathForEtablissement()
+//    {
+//        /** @var Etablissement|\PHPUnit_Framework_MockObject_MockObject $etablissement */
+//        $etablissement = $this->createMock(Etablissement::class);
+//
+//        $path = $this->fileService->computeDirectoryPathForLogoStructure($etablissement);
+//
+//        $this->assertEquals('/root/directory/path' . '/ressources/Logos' . '/Etab', $path);
+//    }
 
     public function testCanComputeLogoFilepathForEcoleDoctorale()
     {

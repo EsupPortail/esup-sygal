@@ -4,6 +4,8 @@ namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\These;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\SessionStructureValide;
 use Formation\Service\Formation\FormationServiceAwareTrait;
@@ -12,7 +14,7 @@ use Formation\Service\SessionStructureValide\SessionStructureValideServiceAwareT
 use Laminas\Http\Response;
 use Notification\Exception\NotificationException;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\File\FileServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageService;
 use DateTime;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
@@ -32,7 +34,7 @@ class SessionController extends AbstractController
 {
     use EntityManagerAwareTrait;
     use EtablissementServiceAwareTrait;
-    use FileServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use FormationServiceAwareTrait;
     use InscriptionServiceAwareTrait;
     use NotificationServiceAwareTrait;
@@ -336,9 +338,18 @@ class SessionController extends AbstractController
         usort($seances, function (Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
 
         $logos = [];
-        $logos['site'] = $this->fileService->computeLogoFilePathForStructure($session->getSite());
+        try {
+            $logos['site'] = $this->fichierStorageService->getFileForLogoStructure($session->getSite());
+        } catch (StorageAdapterException $e) {
+            $logos['site'] = null;
+        }
+
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {
-            $logos['comue'] = $this->fileService->computeLogoFilePathForStructure($comue);
+            try {
+                $logos['comue'] = $this->fichierStorageService->getFileForLogoStructure($comue);
+            } catch (StorageAdapterException $e) {
+                $logos['comue'] = null;
+            }
         }
 
         //exporter

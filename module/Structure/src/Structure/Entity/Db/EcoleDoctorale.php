@@ -103,11 +103,10 @@ class EcoleDoctorale
     }
 
     /**
-     * @return string
-     * @deprecated mais encore nécessaire à cause de StructureConcreteInterface
-     * @see StructureConcreteInterface
+     * @return string|null
      */
-    public function getCode() {
+    public function getCode(): ?string
+    {
         return $this->structure->getCode();
     }
 

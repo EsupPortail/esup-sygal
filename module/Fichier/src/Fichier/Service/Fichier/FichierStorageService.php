@@ -2,9 +2,11 @@
 
 namespace Fichier\Service\Fichier;
 
+use InvalidArgumentException;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\Structure;
+use Structure\Entity\Db\StructureConcreteInterface;
 use Structure\Entity\Db\StructureInterface;
 use Structure\Entity\Db\UniteRecherche;
 use Fichier\Entity\Db\Fichier;
@@ -171,24 +173,45 @@ class FichierStorageService
     }
 
     /**
-     * Retourne le nom normalisé à donner au fichier physique du logo d'une structure.
+     * Retourne le nom normalisé à donner au fichier physique du *nouveau* logo d'une structure.
+     *
+     * *NB : Cette méthode ne doit pas être utilisée pour obtenir le nom du fichier logo existant d'une structure.
+     * Pour cela, il faut utiliser {@see StructureInterface::getCheminLogo()}.*
      *
      * @param StructureInterface $structure Entité Structure concernée
      * @return string
      */
-    public function computeFileNameForLogoStructure(StructureInterface $structure): string
+    public function computeFileNameForNewLogoStructure(StructureInterface $structure): string
     {
-        if ($structure instanceof Etablissement) {
-            $name = $structure->getStructure()->getCode() ?: $structure->generateUniqCode();
-        } else {
-            $name = $structure->getSourceCode() . "-" . $structure->getSigle();
+        // Utiliser le 'code' de la structure (plutôt que le 'source_code' et/ou le 'sigle' comme précédemment),
+        // qui n'est pas sensé changer, garantit que le calcul du chemin du fichier logo continuera de fonctionner
+        // meme si :
+        //   - la structure fait l'objet d'une substitution ;
+        //   - le sigle de la structure change (ex : 'ED 558 HMPL' => 'ED 558 NH').
+
+        if (!$structure->getCode()) {
+            throw new InvalidArgumentException(sprintf(
+                "Impossible de calculer le nom du fichier pour le logo de la structure %s car son 'code' est vide",
+                $structure->getId()
+            ));
         }
+
+        $name = $structure->getCode();
+
+        if ($structure instanceof StructureConcreteInterface) {
+            if ($type = $structure->getStructure()->getTypeStructure()) {
+                $name = $type->getCode() . '-' . $name;
+            }
+        }
+
+        $name = str_replace(["'", ':'], '_', $name);
+        $name = str_replace(' ', '', $name);
 
         return $name . ".png";
     }
 
     /**
-     * Retourne le chemin absolu d'une copie ou de l'original (selon le storage) du fichier logo physique d'une structure.
+     * Retourne le chemin absolu d'une copie du fichier physique du logo existant d'une structure.
      *
      * @param \Structure\Entity\Db\StructureInterface $structure Entité Structure concernée
      * @return string
@@ -197,7 +220,7 @@ class FichierStorageService
     public function getFileForLogoStructure(StructureInterface $structure): string
     {
         $dirPath = $this->computeDirectoryPathForLogoStructure($structure);
-        $fileName = $this->computeFileNameForLogoStructure($structure);
+        $fileName = $structure->getCheminLogo();
 
         $this->storageAdapter->saveToFilesystem($dirPath, $fileName, $tmpFilePath = tempnam(sys_get_temp_dir(), ''));
 
@@ -205,22 +228,7 @@ class FichierStorageService
     }
 
     /**
-     * Retourne le contenu brut du fichier logo physique d'une structure.
-     *
-     * @param \Structure\Entity\Db\StructureInterface $structure Entité Structure concernée
-     * @return string
-     * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
-     */
-    public function getFileContentLogoStructure(StructureInterface $structure): string
-    {
-        $dirPath = $this->computeDirectoryPathForLogoStructure($structure);
-        $fileName = $this->computeFileNameForLogoStructure($structure);
-
-        return $this->storageAdapter->getFileContent($dirPath, $fileName);
-    }
-
-    /**
-     * Enregistre le fichier logo physique d'une structure.
+     * Enregistre le fichier physique du nouveau logo d'une structure.
      *
      * @param string $logoFilepath
      * @param \Structure\Entity\Db\StructureInterface $structure
@@ -229,13 +237,13 @@ class FichierStorageService
     public function saveFileForLogoStructure(string $logoFilepath, StructureInterface $structure)
     {
         $logoDir = $this->computeDirectoryPathForLogoStructure($structure);
-        $logoFilename = $this->computeFileNameForLogoStructure($structure);
+        $logoFilename = $this->computeFileNameForNewLogoStructure($structure);
 
         $this->storageAdapter->saveFileContent(file_get_contents($logoFilepath), $logoDir, $logoFilename);
     }
 
     /**
-     * Supprime le fichier physique logo d'une structure.
+     * Supprime le fichier physique du logo existant d'une structure.
      *
      * @param \Structure\Entity\Db\StructureInterface $structure
      * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
@@ -243,7 +251,7 @@ class FichierStorageService
     public function deleteFileForLogoStructure(StructureInterface $structure)
     {
         $dirPath = $this->computeDirectoryPathForLogoStructure($structure);
-        $fileName = $this->computeFileNameForLogoStructure($structure);
+        $fileName = $structure->getCheminLogo();
 
         $this->storageAdapter->deleteFile($dirPath, $fileName);
     }

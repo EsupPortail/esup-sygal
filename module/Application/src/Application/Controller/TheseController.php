@@ -42,7 +42,6 @@ use Application\Service\Variable\VariableServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
-use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
 use Import\Service\Traits\ImportServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
@@ -80,7 +79,6 @@ class TheseController extends AbstractController
     use ImportServiceAwareTrait;
     use UserContextServiceAwareTrait;
     use VariableServiceAwareTrait;
-    use SourceCodeStringHelperAwareTrait;
     use UtilisateurServiceAwareTrait;
 
     private $timeoutRetraitement;
@@ -1385,7 +1383,6 @@ class TheseController extends AbstractController
         if ($etablissement === null) {
             $etablissement = $these->getEtablissement();
         }
-//        $cheminLogo = $this->fileService->computeLogoFilePathForStructure($etablissement);
         try {
             $cheminLogo = $this->fichierStorageService->getFileForLogoStructure($etablissement);
         } catch (StorageAdapterException $e) {

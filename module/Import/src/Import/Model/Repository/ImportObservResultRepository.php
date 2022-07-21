@@ -6,15 +6,12 @@ use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Import\Model\ImportObserv;
 use Import\Model\ImportObservResult;
 use Application\Entity\Db\These;
-use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\RuntimeException;
 
 class ImportObservResultRepository extends DefaultEntityRepository
 {
-    use SourceCodeStringHelperAwareTrait;
-
     /**
      * Recherche des résultats d'observation d'import des thèses.
      *

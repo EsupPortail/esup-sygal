@@ -2,11 +2,11 @@
 
 namespace Formation\Controller;
 
+use Fichier\Service\Fichier\FichierStorageService;
 use Formation\Service\Session\SessionService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\Etablissement\EtablissementService;
-use Application\Service\File\FileService;
 use Doctrine\ORM\EntityManager;
 use Formation\Form\Seance\SeanceForm;
 use Formation\Service\Seance\SeanceService;
@@ -26,13 +26,13 @@ class SeanceControllerFactory {
         /**
          * @var EntityManager $entityManager
          * @var EtablissementService $etablissementService
-         * @var FileService $fileService
+         * @var \Fichier\Service\Fichier\FichierStorageService $fichierStorageService
          * @var SeanceService $seanceService
          * @var SessionService $sessionService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $etablissementService = $container->get(EtablissementService::class);
-        $fileService = $container->get(FileService::class);
+        $fichierStorageService = $container->get(FichierStorageService::class);
         $seanceService = $container->get(SeanceService::class);
         $sessionService = $container->get(SessionService::class);
 
@@ -48,7 +48,7 @@ class SeanceControllerFactory {
         /** services **************************************************************************************************/
         $controller->setEntityManager($entityManager);
         $controller->setEtablissementService($etablissementService);
-        $controller->setFileService($fileService);
+        $controller->setFichierStorageService($fichierStorageService);
         $controller->setSeanceService($seanceService);
         $controller->setSessionService($sessionService);
         /** forms *****************************************************************************************************/

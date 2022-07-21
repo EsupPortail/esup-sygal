@@ -3,7 +3,8 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Service\File\FileServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Formation\Entity\Db\Seance;
 use Formation\Form\Seance\SeanceFormAwareTrait;
 use Formation\Service\Exporter\Emargement\EmargementExporter;
@@ -20,7 +21,7 @@ class SeanceController extends AbstractController
 {
     use EntityManagerAwareTrait;
     use EtablissementServiceAwareTrait;
-    use FileServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use SeanceServiceAwareTrait;
     use SessionServiceAwareTrait;
     use SeanceFormAwareTrait;
@@ -144,9 +145,17 @@ class SeanceController extends AbstractController
         $session = $seance->getSession();
 
         $logos = [];
-        $logos['site'] = $this->fileService->computeLogoFilePathForStructure($session->getSite());
+        try {
+            $logos['site'] = $this->fichierStorageService->getFileForLogoStructure($session->getSite());
+        } catch (StorageAdapterException $e) {
+            $logos['site'] = null;
+        }
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {
-            $logos['comue'] = $this->fileService->computeLogoFilePathForStructure($comue);
+            try {
+                $logos['comue'] = $this->fichierStorageService->getFileForLogoStructure($comue);
+            } catch (StorageAdapterException $e) {
+                $logos['comue'] = null;
+            }
         }
 
         //exporter

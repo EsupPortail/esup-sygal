@@ -11,7 +11,6 @@ use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
-use Application\SourceCodeStringHelperAwareTrait;
 use Laminas\View\Model\JsonModel;
 use UnicaenApp\Exception\RuntimeException;
 use Laminas\Http\Response;
@@ -24,7 +23,6 @@ class EtablissementController extends StructureConcreteController
 {
     use EtablissementServiceAwareTrait;
     use RoleServiceAwareTrait;
-    use SourceCodeStringHelperAwareTrait;
     use StructureDocumentServiceAwareTrait;
 
     protected $codeTypeStructure = TypeStructure::CODE_ETABLISSEMENT;

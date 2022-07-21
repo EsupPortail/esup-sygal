@@ -19,7 +19,6 @@ use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheService;
-use Application\SourceCodeStringHelperAwareTrait;
 use BjyAuthorize\Exception\UnAuthorizedException;
 use UnicaenApp\Exception\RuntimeException;
 use Laminas\Http\Response;
@@ -29,7 +28,6 @@ abstract class StructureConcreteController extends AbstractController
 {
     use RoleServiceAwareTrait;
     use StructureServiceAwareTrait;
-    use SourceCodeStringHelperAwareTrait;
 
     /**
      * @var string TypeStructure::CODE_ECOLE_DOCTORALE ou

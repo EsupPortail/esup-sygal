@@ -9,7 +9,6 @@ use Application\Entity\Db\Utilisateur;
 use Application\Filter\NomCompletFormatter;
 use Application\Service\BaseService;
 use Application\Service\Source\SourceServiceAwareTrait;
-use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -23,7 +22,6 @@ use Laminas\Mvc\Controller\AbstractActionController;
 class UtilisateurService extends BaseService
 {
     use SourceServiceAwareTrait;
-    use SourceCodeStringHelperAwareTrait;
     use UserServiceAwareTrait;
 
     const SQL_CREATE_APP_USER =

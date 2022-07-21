@@ -10,25 +10,24 @@ use Application\Form\PointsDeVigilanceForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
 use Application\Service\Acteur\ActeurService;
-use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\FichierThese\FichierTheseService;
-use Fichier\Service\Fichier\FichierStorageService;
-use Individu\Service\IndividuService;
 use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
 use Application\Service\These\TheseService;
-use Structure\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
-use Fichier\Service\VersionFichier\VersionFichierService;
 use Application\Service\Workflow\WorkflowService;
-use Application\SourceCodeStringHelper;
 use Doctrine\ORM\EntityManager;
+use Fichier\Service\Fichier\FichierStorageService;
+use Fichier\Service\VersionFichier\VersionFichierService;
 use Import\Service\ImportService;
+use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use Laminas\View\Renderer\PhpRenderer;
+use Structure\Service\Etablissement\EtablissementService;
+use Structure\Service\UniteRecherche\UniteRechercheService;
 
 class TheseControllerFactory
 {
@@ -122,11 +121,6 @@ class TheseControllerFactory
         $controller->setMetadonneeTheseForm($metadonneeTheseForm);
         $controller->setPointsDeVigilanceForm($pointsDeVigilanceForm);
         $controller->setRenderer($renderer);
-        /**
-         * @var SourceCodeStringHelper $sourceCodeHelper
-         */
-        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
-        $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;
     }
