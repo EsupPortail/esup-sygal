@@ -850,6 +850,8 @@ class StructureService extends BaseService
      */
     public function deleteLogoStructure(StructureInterface $structure): bool
     {
+        $cheminLogo = $structure->getCheminLogo();
+
         $structure->setCheminLogo(null);
         try {
             $this->entityManager->flush($structure);
@@ -860,7 +862,7 @@ class StructureService extends BaseService
             throw new RuntimeException("Erreur lors de l'enregistrement de la structure.", null, $e);
         }
         
-        if ($hasLogo = ($structure->getCheminLogo() !== null)) {
+        if ($hasLogo = ($cheminLogo !== null)) {
             try {
                 $this->fichierStorageService->deleteFileForLogoStructure($structure);
             } catch (StorageAdapterException $e) {
