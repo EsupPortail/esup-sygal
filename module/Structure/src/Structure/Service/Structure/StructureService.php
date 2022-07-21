@@ -893,7 +893,7 @@ class StructureService extends BaseService
         try {
             $this->fichierStorageService->saveFileForLogoStructure($logoFilepath, $structure);
 
-            $logoFilename = $this->fichierStorageService->computeFileNameForLogoStructure($structure);
+            $logoFilename = $this->fichierStorageService->computeFileNameForNewLogoStructure($structure);
             $structure->setCheminLogo($logoFilename);
 
             $this->entityManager->flush($structure);

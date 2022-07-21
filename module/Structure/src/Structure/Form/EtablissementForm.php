@@ -64,6 +64,9 @@ class EtablissementForm extends StructureForm implements InputFilterProviderInte
     public function getInputFilterSpecification(): array
     {
         return array_merge(parent::getInputFilterSpecification(), [
+            'code' => [
+                'required' => true, // requis pour le calcul du nom de fichier logo
+            ],
             'domaine' => [
                 'name' => 'domaine',
                 'required' => false,
