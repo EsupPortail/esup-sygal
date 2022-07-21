@@ -275,11 +275,11 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         }
 
         $these->removeAttestation($attestation);
-        $this->entityManager->remove($attestation);
 
         try {
+            $this->entityManager->remove($attestation);
             $this->entityManager->flush($attestation);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Erreur rencontrée lors de la suppression", null, $e);
         }
     }
@@ -306,7 +306,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         $diffusionCorr = clone $diffusionOrig;
         $diffusionCorr->setVersionCorrigee(true);
         $diffusionCorr->setCreationAuto(true);
-        $this->updateDiffusion($these, $diffusionCorr, $versionOrig);
+        $this->updateDiffusion($these, $diffusionCorr, $versionCorr);
     }
 
     /**
@@ -322,8 +322,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
             // on teste si la réponse à l'autorisation de diffusion existante a changé de manière "importante"
             // (auquel cas, il sera nécessaire de tester s'il faut supprimer ou pas les attestations)
             $rule = new AutorisationDiffusionRule();
-            $rule->setDiffusion($diffusion);
-            $rule->execute();
+            $rule->setDiffusion($diffusion)->execute();
             $suppressionAttestationsAVerifier = $rule->computeChangementDeReponseImportant($this->entityManager);
         } else {
             $suppressionAttestationsAVerifier = false;
@@ -332,13 +331,14 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         if (! $isUpdate) {
             $diffusion->setThese($these);
             $these->addDiffusion($diffusion);
-
-            $this->entityManager->persist($diffusion);
         }
 
         try {
+            if (! $isUpdate) {
+                $this->entityManager->persist($diffusion);
+            }
             $this->entityManager->flush($diffusion);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement", null, $e);
         }
 
@@ -348,7 +348,7 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         //
         if ($suppressionAttestationsAVerifier) {
             $rule = new SuppressionAttestationsRequiseRule($these, $version);
-            $suppressionRequise = $rule->computeEstRequise();
+            $suppressionRequise = $rule->execute();
 
             if ($suppressionRequise) {
                 $this->deleteAttestationForVersion($these, $version);

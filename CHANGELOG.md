@@ -4,6 +4,7 @@ Journal des modifications
 5.1.1
 -----
 - [FIX] Corrections suite à l'intégration du nouveau module Fichier.
+- [FIX] Suppression à tort des "attestations" du 1er dépôt à la place de celles du 2nd dépôt.
 - [FIX] Suppression physique de l'ancien fichier lors du changement de logo d'une structure.
 - [FIX] Correction et amélioration du calcul du nom de fichier du logo (existant ou nouveau) d'une structure.
 - Template de pagination : abandon du module/Application/view/paginator.phtml et généralisation du module/Application/view/application/paginator.phtml

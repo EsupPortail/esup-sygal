@@ -16,44 +16,24 @@ use UnicaenApp\Exception\LogicException;
  */
 class SuppressionAttestationsRequiseRule implements RuleInterface
 {
-    /**
-     * @var These
-     */
-    private $these;
+    private These $these;
+    private VersionFichier $versionFichier;
 
-    /**
-     * @var VersionFichier
-     */
-    private $versionFichier;
-
-    /**
-     * SuppressionAttestationsRequiseRule constructor.
-     *
-     * @param These          $these
-     * @param VersionFichier $versionFichier
-     */
     public function __construct(These $these, VersionFichier $versionFichier)
     {
         $this->these = $these;
         $this->versionFichier = $versionFichier;
     }
 
-    /**
-     * @return self
-     */
-    public function execute()
+    public function execute(): bool
     {
-        // rien n'est fait ici
-
-        return $this;
+        return $this->computeSuppressionAttestationEstRequise();
     }
 
     /**
-     * Retourne un booléen indiquant si la remise d'un exemplaire papier est requise.
-     *
-     * @return bool
+     * Calcule s'il est nécessaire de supprimer les réponses aux "attestations".
      */
-    public function computeEstRequise(): bool
+    private function computeSuppressionAttestationEstRequise(): bool
     {
         $attestation = $this->these->getAttestationForVersion($this->versionFichier);
 
