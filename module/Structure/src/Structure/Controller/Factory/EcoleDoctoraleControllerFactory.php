@@ -2,27 +2,24 @@
 
 namespace Structure\Controller\Factory;
 
+use Application\Service\CoEncadrant\CoEncadrantService;
+use Application\Service\Role\RoleService;
+use Individu\Service\IndividuService;
+use Interop\Container\ContainerInterface;
 use Structure\Controller\EcoleDoctoraleController;
 use Structure\Form\EcoleDoctoraleForm;
-use Application\Service\CoEncadrant\CoEncadrantService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementServiceLocateTrait;
-use Individu\Service\IndividuService;
-use Application\Service\Role\RoleService;
 use Structure\Service\Structure\StructureService;
 use Structure\Service\StructureDocument\StructureDocumentService;
-use Application\SourceCodeStringHelper;
-use Interop\Container\ContainerInterface;
 
 class EcoleDoctoraleControllerFactory
 {
     use EtablissementServiceLocateTrait;
 
     /**
-     * Create service
-     *
-     * @param ContainerInterface $container
-     * @return EcoleDoctoraleController
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container)
     {
@@ -50,12 +47,6 @@ class EcoleDoctoraleControllerFactory
         $controller->setStructureForm($form);
         $controller->setStructureService($structureService);
         $controller->setStructureDocumentService($structureDocumentService);
-
-        /**
-         * @var SourceCodeStringHelper $sourceCodeHelper
-         */
-        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
-        $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;
     }
