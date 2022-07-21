@@ -10,7 +10,6 @@ use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
-use Application\SourceCodeStringHelperAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
@@ -21,7 +20,6 @@ class UniteRechercheController extends StructureConcreteController
     use UniteRechercheServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use DomaineScientifiqueServiceAwareTrait;
-    use SourceCodeStringHelperAwareTrait;
     use StructureDocumentServiceAwareTrait;
 
     protected $codeTypeStructure = TypeStructure::CODE_UNITE_RECHERCHE;

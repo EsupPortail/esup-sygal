@@ -12,7 +12,6 @@ use Application\Service\Role\RoleService;
 use Structure\Service\Structure\StructureService;
 use Structure\Service\StructureDocument\StructureDocumentService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
-use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
 
 class UniteRechercheControllerFactory
@@ -55,12 +54,6 @@ class UniteRechercheControllerFactory
         $controller->setStructureService($structureService);
         $controller->setStructureDocumentService($structureDocumentService);
         $controller->setStructureForm($form);
-
-        /**
-         * @var SourceCodeStringHelper $sourceCodeHelper
-         */
-        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
-        $controller->setSourceCodeStringHelper($sourceCodeHelper);
 
         return $controller;
     }

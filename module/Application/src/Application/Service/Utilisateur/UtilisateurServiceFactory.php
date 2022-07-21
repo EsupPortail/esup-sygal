@@ -3,7 +3,6 @@
 namespace Application\Service\Utilisateur;
 
 use Application\Service\Source\SourceService;
-use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
 use UnicaenAuth\Service\User as UserService;
 
@@ -29,11 +28,6 @@ class UtilisateurServiceFactory
 
         $service = new UtilisateurService();
 
-        /**
-         * @var SourceCodeStringHelper $sourceCodeHelper
-         */
-        $sourceCodeHelper = $container->get(SourceCodeStringHelper::class);
-        $service->setSourceCodeStringHelper($sourceCodeHelper);
         $service->setUserService($userService);
         $service->setSourceService($sourceService);
 

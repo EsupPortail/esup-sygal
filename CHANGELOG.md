@@ -7,6 +7,7 @@ Journal des modifications
 - [FIX] Suppression physique de l'ancien fichier lors du changement de logo d'une structure.
 - [FIX] Correction et amélioration du calcul du nom de fichier du logo (existant ou nouveau) d'une structure.
 - Template de pagination : abandon du module/Application/view/paginator.phtml et généralisation du module/Application/view/application/paginator.phtml
+- Suppression des injections inutiles de SourceCodeStringHelperAwareTrait.
 
 5.1.0
 -----
