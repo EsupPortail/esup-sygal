@@ -55,7 +55,6 @@ class SynchroService
             }
         }
         $this->executeProcedureCalls([
-//            $this->backgroundify("DBMS_MVIEW.REFRESH('MV_RECHERCHE_THESE', 'C');"),
             'refresh materialized view mv_recherche_these;',
         ]);
     }
@@ -93,35 +92,6 @@ class SynchroService
         if (! $success) {
             throw new RuntimeException($message);
         }
-    }
-
-    /**
-     * Génère le code PL/SQL permettant de lancer du PL/SQL en tâche de fond.
-     *
-     * @param string $plsql
-     * @param int $secondsToWait
-     * @return string
-     * @deprecated Plus possible avec PostgreSQL
-     */
-    private function backgroundify(string $plsql, $secondsToWait = 0): string
-    {
-        throw new \BadMethodCallException("Plus possible avec PostgreSQL !");
-
-        $nextDateSql = 'SYSDATE';
-        if ($secondsToWait > 0) {
-            $nextDateSql = sprintf("SYSDATE + INTERVAL '%d' SECOND", $secondsToWait);
-        }
-
-        $template = <<<EOS
-DECLARE
-    L_jobno INTEGER;
-BEGIN
-    DBMS_JOB.SUBMIT(L_jobno, 'BEGIN %s END;', $nextDateSql);
-    COMMIT;
-END;
-EOS;
-
-        return sprintf($template, str_replace("'", "''", $plsql));
     }
 
     /**

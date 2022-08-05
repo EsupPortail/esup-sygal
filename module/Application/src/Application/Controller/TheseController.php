@@ -43,7 +43,6 @@ use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
-use Import\Service\Traits\ImportServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
@@ -76,7 +75,6 @@ class TheseController extends AbstractController
     use EntityManagerAwareTrait;
     use MailConfirmationServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
-    use ImportServiceAwareTrait;
     use UserContextServiceAwareTrait;
     use VariableServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
@@ -313,19 +311,10 @@ class TheseController extends AbstractController
 
     /**
      * Import forcé d'une thèse et des inf.
-     *
-     * @return Response
      */
     public function refreshTheseAction()
     {
-        $these = $this->requestedThese();
-
-        $this->importService->setLogger((new Logger())->addWriter(new Noop()));
-        $this->importService->updateThese($these);
-
-        $redirect = $this->params()->fromQuery('redirect', '/');
-
-        return $this->redirect()->toUrl($redirect);
+        throw new \BadMethodCallException("Cette action n'est plus fonctionnelle !");
     }
 
     /**

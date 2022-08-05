@@ -22,7 +22,6 @@ use Application\Service\Workflow\WorkflowService;
 use Doctrine\ORM\EntityManager;
 use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\VersionFichier\VersionFichierService;
-use Import\Service\ImportService;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use Laminas\View\Renderer\PhpRenderer;
@@ -55,7 +54,6 @@ class TheseControllerFactory
          * @var UniteRechercheService   $uniteService
          * @var MailConfirmationService $mailConfirmationService
          * @var EntityManager           $entityManager
-         * @var ImportService           $importService
          * @var UtilisateurService      $utilisateurService
          * @var ActeurService           $acteurService
          * @var IndividuService         $indivdiService
@@ -73,7 +71,6 @@ class TheseControllerFactory
         $mailConfirmationService = $container->get('MailConfirmationService');
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $notifierService = $container->get(NotifierService::class);
-//        $importService = $container->get('ImportService');
         $utilisateurService = $container->get('UtilisateurService');
 
         /**
@@ -112,7 +109,6 @@ class TheseControllerFactory
         $controller->setMailConfirmationService($mailConfirmationService);
         $controller->setEntityManager($entityManager);
         $controller->setNotifierService($notifierService);
-//        $controller->setImportService($importService);
         $controller->setUtilisateurService($utilisateurService);
         $controller->setRdvBuTheseDoctorantForm($rdvBuTheseDoctorantForm);
         $controller->setRdvBuTheseForm($rdvBuTheseForm);
