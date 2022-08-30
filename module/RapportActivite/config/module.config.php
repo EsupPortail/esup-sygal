@@ -56,8 +56,8 @@ return [
 
     // Options concernant les rapports d'activité
     'rapport-activite' => [
-        // Page de couverture des rapports d'activité déposés
-        'page_de_couverture' => [
+        // Page de validation des rapports d'activité déposés
+        'page_de_validation' => [
             'template' => [
                 // template .phtml
                 'phtml_file_path' => __DIR__ . '/../view/rapport-activite/page-de-validation/template.phtml',

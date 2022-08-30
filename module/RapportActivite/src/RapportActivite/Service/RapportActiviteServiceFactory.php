@@ -77,7 +77,7 @@ class RapportActiviteServiceFactory
     {
         $config = $container->get('Config');
 
-        $pdcConfig = $config['rapport-activite']['page_de_couverture'];
+        $pdcConfig = $config['rapport-activite']['page_de_validation'] ?: $config['rapport-activite']['page_de_couverture'];
         $templateConfig = $pdcConfig['template'];
         $templateFilePath = $templateConfig['phtml_file_path'];
         $cssFilePath = $templateConfig['css_file_path'];

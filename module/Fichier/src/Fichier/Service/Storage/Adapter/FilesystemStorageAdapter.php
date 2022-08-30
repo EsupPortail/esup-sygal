@@ -74,7 +74,7 @@ class FilesystemStorageAdapter extends AbstractStorageAdapter
 
     public function deleteFile(string $dirPath, string $fileName)
     {
-        $filePath = implode($this->pathSeparator, [$dirPath, $fileName]);
+        $filePath = $this->assemblePath($dirPath, $fileName);
 
         if (! file_exists($filePath)) {
             throw (new StorageAdapterException("Le fichier suivant est introuvable : " . $filePath))
@@ -95,9 +95,10 @@ class FilesystemStorageAdapter extends AbstractStorageAdapter
     {
         $filePath = $this->assemblePath($dirPath, $fileName);
 
-        if (!is_readable($filePath)) {
-            throw new StorageAdapterException(
-                "Le fichier suivant n'existe pas ou n'est pas accessible sur le serveur : " . $filePath);
+        if (! is_readable($filePath)) {
+            throw (new StorageAdapterException("Le fichier suivant n'existe pas ou n'est pas accessible sur le serveur : " . $filePath))
+                ->setDirPath($dirPath)
+                ->setFileName($fileName);
         }
 
         return file_get_contents($filePath);
@@ -112,11 +113,12 @@ class FilesystemStorageAdapter extends AbstractStorageAdapter
      */
     public function saveToFilesystem(string $fromDirPath, string $fromFileName, string $toFilesystemPath)
     {
-        $filePath = implode($this->pathSeparator, [$fromDirPath, $fromFileName]);
+        $filePath = $this->assemblePath($fromDirPath, $fromFileName);
 
-        if (!is_readable($filePath)) {
-            throw new StorageAdapterException(
-                "Le fichier suivant n'existe pas ou n'est pas accessible sur le serveur : " . $filePath);
+        if (! is_readable($filePath)) {
+            throw (new StorageAdapterException("Le fichier suivant n'existe pas ou n'est pas accessible sur le serveur : " . $filePath))
+                ->setDirPath($fromDirPath)
+                ->setFileName($fromFileName);
         }
 
         copy($filePath, $toFilesystemPath);
