@@ -2,6 +2,7 @@
 
 namespace Fichier\Service\Fichier;
 
+use Fichier\Exporter\PageFichierIntrouvablePdfExporter;
 use Fichier\Service\Storage\Adapter\StorageAdapterInterface;
 use Fichier\Service\Storage\StorageAdapterManager;
 use Interop\Container\ContainerInterface;
@@ -21,6 +22,10 @@ class FichierStorageServiceFactory
 
         $storageAdapter = $this->getStorageAdpater($container);
         $service->setStorageAdapter($storageAdapter);
+
+        /** @var PageFichierIntrouvablePdfExporter $pageFichierIntrouvablePdfExporter */
+        $pageFichierIntrouvablePdfExporter = $container->get(PageFichierIntrouvablePdfExporter::class);
+        $service->setPageFichierIntrouvablePdfExporter($pageFichierIntrouvablePdfExporter);
 
         return $service;
     }

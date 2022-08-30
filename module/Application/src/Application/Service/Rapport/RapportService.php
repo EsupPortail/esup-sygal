@@ -270,8 +270,8 @@ class RapportService extends BaseService
      */
     private function createCommandForAjoutPdc(Rapport $rapport, string $pdcFilePath, string $outputFilePath): PdfMergeShellCommandQpdf
     {
-//        $rapportFilePath = $this->fichierService->computeFilePathForFichier($rapport->getFichier());
         try {
+            $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(false);
             $rapportFilePath = $this->fichierStorageService->getFileForFichier($rapport->getFichier());
         } catch (StorageAdapterException $e) {
             throw new RuntimeException(

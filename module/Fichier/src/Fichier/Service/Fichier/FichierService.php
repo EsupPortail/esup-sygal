@@ -245,9 +245,10 @@ class FichierService extends BaseService
                 }
             } else {
                 try {
+                    $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(false);
                     $filePath = $this->fichierStorageService->getFileForFichier($fichierArchivable->getFichier());
                 } catch (StorageAdapterException $e) {
-                    $message = "Impossible d'ajouter le fichier suivant à l'archive '$archiveFilepath' : " . $fichier;
+                    $message = "Impossible d'ajouter le fichier suivant à l'archive '$archiveFilepath' : " . $fichierArchivable->getFichier();
                     error_log($message);
                     throw new FichierServiceException($message, null, $e);
                 }

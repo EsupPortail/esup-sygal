@@ -5,13 +5,13 @@ namespace RapportActivite\Service\Fichier;
 use Application\Command\Exception\TimedOutCommandException;
 use Application\Command\ShellCommandRunnerTrait;
 use Fichier\Command\Pdf\PdfMergeShellCommandQpdf;
-use Application\Command\ShellCommandRunnerTrait;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Service\Fichier\Exporter\PageValidationExportData;
 use RapportActivite\Service\Fichier\Exporter\PageValidationPdfExporterTrait;
+use RuntimeException;
 use UnicaenApp\Exporter\Pdf;
 
 class RapportActiviteFichierService
@@ -20,7 +20,6 @@ class RapportActiviteFichierService
     use FichierStorageServiceAwareTrait;
     use PageValidationPdfExporterTrait;
     use ShellCommandRunnerTrait;
-
 
     /**
      * Génère le fichier du rapport spécifié auquel est ajoutée la page de validation.

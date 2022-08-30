@@ -1,0 +1,22 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+use Fichier\Exporter\PageFichierIntrouvablePdfExporterData;
+
+/**
+ * @var PhpRenderer $this
+ * @var PageFichierIntrouvablePdfExporterData $data
+ */
+?>
+
+<div class='bandeau bandeau-titre'>
+    Fichier introuvable dans le storage !
+</div>
+
+<div class='bandeau bandeau-fichier'>
+    <?php echo $data->getFilePath() ?>
+</div>
+
+<div class='bandeau bandeau-message'>
+    Ceci est un fichier de substitution généré par l'application.
+</div>

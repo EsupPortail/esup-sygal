@@ -195,7 +195,6 @@ class FichierTheseService extends BaseService
     {
         $exceptionThrown = null;
 
-//        $filePath = $this->fichierService->computeFilePathForFichier($fichierThese->getFichier());
         try {
             $filePath = $this->fichierStorageService->getFileForFichier($fichierThese->getFichier());
         } catch (StorageAdapterException $e) {
@@ -293,7 +292,6 @@ class FichierTheseService extends BaseService
      */
     public function creerFichierTheseRetraite(FichierThese $fichierThese, string $timeout = null): FichierThese
     {
-//        $inputFilePath  = $this->fichierService->computeFilePathForFichier($fichierThese->getFichier());
         try {
             $inputFilePath = $this->fichierStorageService->getFileForFichier($fichierThese->getFichier());
         } catch (StorageAdapterException $e) {
@@ -302,10 +300,8 @@ class FichierTheseService extends BaseService
         }
 
         $fichierTheseRetraite = $this->preparerFichierTheseRetraite($fichierThese);
-//        $outputFilePath = $this->fichierService->computeFilePathForFichier($fichierTheseRetraite->getFichier());
-        $outputFilePath = tempnam(sys_get_temp_dir(), '');
+        $outputFilePath = sys_get_temp_dir() . '/' . uniqid();
 
-//        $this->fichierService->createDirectoryForFichier($fichierTheseRetraite->getFichier());
         $this->retraitementService->retraiterFichier($inputFilePath, $outputFilePath, $timeout);
         try {
             $this->fichierStorageService->saveFileForFichier($outputFilePath, $fichierTheseRetraite->getFichier());
@@ -542,7 +538,6 @@ class FichierTheseService extends BaseService
 
         // recuperation de la bonne version du manuscript
         $manuscritFichier = current($this->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF, $versionFichier));
-//        $manuscritChemin = $this->fichierService->computeFilePathForFichier($manuscritFichier->getFichier());
         try {
             $manuscritChemin = $this->fichierStorageService->getFileForFichier($manuscritFichier->getFichier());
         } catch (StorageAdapterException $e) {
