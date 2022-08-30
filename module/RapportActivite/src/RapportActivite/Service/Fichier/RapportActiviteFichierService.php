@@ -3,15 +3,15 @@
 namespace RapportActivite\Service\Fichier;
 
 use Application\Command\Exception\TimedOutCommandException;
-use Fichier\Command\Pdf\PdfMergeShellCommandQpdf;
 use Application\Command\ShellCommandRunnerTrait;
+use Fichier\Command\Pdf\PdfMergeShellCommandQpdf;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Service\Fichier\Exporter\PageValidationExportData;
 use RapportActivite\Service\Fichier\Exporter\PageValidationPdfExporterTrait;
-use UnicaenApp\Exception\RuntimeException;
+use RuntimeException;
 use UnicaenApp\Exporter\Pdf;
 
 class RapportActiviteFichierService
@@ -20,7 +20,6 @@ class RapportActiviteFichierService
     use FichierStorageServiceAwareTrait;
     use PageValidationPdfExporterTrait;
     use ShellCommandRunnerTrait;
-
 
     /**
      * Génère le fichier du rapport spécifié auquel est ajoutée la page de validation.
@@ -31,12 +30,11 @@ class RapportActiviteFichierService
      */
     public function createFileWithPageValidation(RapportActivite $rapport, PageValidationExportData $data): string
     {
-        // generation de la page de couverture
-        $pdcFilePath = tempnam(sys_get_temp_dir(), 'sygal_rapport_pdc_') . '.pdf';
-        $this->generatePageValidation($rapport, $data, $pdcFilePath);
+        // generation de la page de validation
+        $pdvFilePath = $this->generatePageValidation($rapport, $data);
 
-        $outputFilePath = tempnam(sys_get_temp_dir(), 'sygal_fusion_rapport_pdc_') . '.pdf';
-        $command = $this->createCommandForAjoutPageValidation($rapport, $pdcFilePath, $outputFilePath);
+        $outputFilePath = sys_get_temp_dir() . '/' . uniqid('sygal_fusion_rapport_pdv_') . '.pdf';
+        $command = $this->createCommandForAjoutPageValidation($rapport, $pdvFilePath, $outputFilePath);
         try {
             $this->runShellCommand($command);
         } catch (TimedOutCommandException $e) {
@@ -48,13 +46,12 @@ class RapportActiviteFichierService
 
     /**
      * @param \RapportActivite\Entity\Db\RapportActivite $rapport
-     * @param string $pdcFilePath
+     * @param string $pdvFilePath
      * @param string $outputFilePath
      * @return PdfMergeShellCommandQpdf
      */
-    private function createCommandForAjoutPageValidation(RapportActivite $rapport, string $pdcFilePath, string $outputFilePath): PdfMergeShellCommandQpdf
+    private function createCommandForAjoutPageValidation(RapportActivite $rapport, string $pdvFilePath, string $outputFilePath): PdfMergeShellCommandQpdf
     {
-//        $rapportFilePath = $this->fichierService->computeFilePathForFichier($rapport->getFichier());
         try {
             $rapportFilePath = $this->fichierStorageService->getFileForFichier($rapport->getFichier());
         } catch (StorageAdapterException $e) {
@@ -65,7 +62,7 @@ class RapportActiviteFichierService
         $command = new PdfMergeShellCommandQpdf();
         $command->setInputFilesPaths([
             0 => $rapportFilePath,
-            1 => $pdcFilePath,
+            1 => $pdvFilePath,
         ]);
         $command->setOutputFilePath($outputFilePath);
         $command->generateCommandLine();
@@ -76,12 +73,17 @@ class RapportActiviteFichierService
     /**
      * @param \RapportActivite\Entity\Db\RapportActivite $rapport
      * @param PageValidationExportData $data
-     * @param string $filepath
+     * @return string
      */
-    public function generatePageValidation(RapportActivite $rapport, PageValidationExportData $data, string $filepath)
+    public function generatePageValidation(RapportActivite $rapport, PageValidationExportData $data): string
     {
-        $this->pageValidationPdfExporter->setVars(['rapport' => $rapport, 'data' => $data]);
-        $this->pageValidationPdfExporter->export($filepath, Pdf::DESTINATION_FILE);
+        $outputFilepath = sys_get_temp_dir() . '/' . uniqid('sygal_rapport_pdv_') . '.pdf';
+
+        $exporter = clone $this->pageValidationPdfExporter; // clonage indispensable
+        $exporter->setVars(['rapport' => $rapport, 'data' => $data]);
+        $exporter->export($outputFilepath, Pdf::DESTINATION_FILE);
+
+        return $outputFilepath;
     }
 
 }

@@ -2,14 +2,13 @@
 
 namespace Import\Service\Factory;
 
-use Structure\Service\Etablissement\EtablissementService;
 use Doctrine\ORM\EntityManager;
-use Import\Service\FetcherService;
 use Import\Service\ImportService;
 use Import\Service\SynchroService;
+use Interop\Container\ContainerInterface;
 use Laminas\Log\Logger;
 use Laminas\Log\Writer\Noop;
-use Interop\Container\ContainerInterface;
+use Structure\Service\Etablissement\EtablissementService;
 
 class ImportServiceFactory
 {
@@ -21,16 +20,12 @@ class ImportServiceFactory
         /** @var SynchroService $synchroService */
         $synchroService = $container->get(SynchroService::class);
 
-        /** @var FetcherService $fetcherService */
-        $fetcherService = $container->get(FetcherService::class);
-
         /** @var EtablissementService $etbalissementService */
         $etbalissementService = $container->get(EtablissementService::class);
 
         $logger = (new Logger())->addWriter(new Noop());
 
         $service = new ImportService();
-        $service->setFetcherService($fetcherService);
         $service->setEntityManager($entityManager);
         $service->setSynchroService($synchroService);
         $service->setEtablissementService($etbalissementService);

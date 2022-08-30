@@ -14,6 +14,8 @@ use Fichier\Controller\ConsoleController;
 use Fichier\Controller\Factory\FichierControllerFactory;
 use Fichier\Controller\Plugin\UrlFichier;
 use Fichier\Provider\Privilege\FichierPrivileges;
+use Fichier\Exporter\PageFichierIntrouvablePdfExporter;
+use Fichier\Exporter\PageFichierIntrouvablePdfExporterFactory;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierServiceFactory;
 use Fichier\Service\NatureFichier\NatureFichierService;
@@ -24,7 +26,16 @@ use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'fichier' => [
-
+        // Page PDF de substitution en cas de fichier introuvable
+        'page_fichier_introuvable' => [
+            /** @see \Fichier\Exporter\PageFichierIntrouvablePdfExporterFactory */
+            'template' => [
+                // template .phtml
+                'phtml_file_path' => __DIR__ . '/../../view/fichier/page-fichier-introuvable/template.phtml',
+                // feuille de styles
+                'css_file_path' => __DIR__ . '/../../view/fichier/page-fichier-introuvable/styles.css',
+            ],
+        ],
     ],
 
     'console' => [
@@ -214,6 +225,7 @@ return [
         'factories' => [
             FichierService::class => FichierServiceFactory::class,
             FichierTheseService::class => FichierTheseServiceFactory::class,
+            PageFichierIntrouvablePdfExporter::class => PageFichierIntrouvablePdfExporterFactory::class,
             'ValidationFichierCinesCommand' => TestArchivabiliteShellCommandFactory::class,
         ],
         'aliases' => [

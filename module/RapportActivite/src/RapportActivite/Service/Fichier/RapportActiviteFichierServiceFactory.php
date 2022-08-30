@@ -15,8 +15,11 @@ class RapportActiviteFichierServiceFactory
      */
     public function __invoke(ContainerInterface $container): RapportActiviteFichierService
     {
+        /** @var FichierService $fichierService */
         $fichierService = $container->get(FichierService::class);
+        /** @var FichierStorageService $fileService */
         $fileService = $container->get(FichierStorageService::class);
+        /** @var PageValidationPdfExporter $pageSupplPdfExporter */
         $pageSupplPdfExporter = $container->get(PageValidationPdfExporter::class);
 
         $service = new RapportActiviteFichierService();

@@ -140,7 +140,9 @@ class S3StorageAdapter extends AbstractStorageAdapter
         $client = $this->getClient();
 
         if (!$client->doesObjectExist($dirPath, $fileName)) {
-            throw new StorageAdapterException("Fichier '$fileName' introuvable dans le bucket '$dirPath'");
+            throw (new StorageAdapterException("Fichier '$fileName' introuvable dans le bucket '$dirPath'"))
+                ->setDirPath($dirPath)
+                ->setFileName($fileName);
         }
 
         try {

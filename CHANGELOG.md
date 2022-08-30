@@ -1,6 +1,15 @@
 Journal des modifications
 =========================
 
+5.2.0
+-----
+- [FIX] Plantage du téléchargement d'un rapport d'activité validé dont la thèse n'est rattachée à aucune UR
+- [FIX] La même page de validation était appliquée sur tous les rapports d'activité téléchargés au format zip.
+- Fichiers liés aux thèses (manuscrit, pv, ect.) et rapports d'activité : en cas de fichier introuvable dans le storage, génération d'un fichier PDF temporaire de substitution.
+- Abandon de la fonction tmpname() mal utilisée.
+- Passage à unicaen/db-import 5.2.1
+- Ménage dans le module Import du fait de l'utilisation de unicaen/db-import
+
 5.1.1
 -----
 - [FIX] Corrections suite à l'intégration du nouveau module Fichier.

@@ -2,6 +2,7 @@
 
 namespace Fichier\Service\Fichier;
 
+use Fichier\Exporter\PageFichierIntrouvablePdfExporterTrait;
 use InvalidArgumentException;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
@@ -17,15 +18,30 @@ use RuntimeException;
 
 class FichierStorageService
 {
+    use PageFichierIntrouvablePdfExporterTrait;
+
     const DIR_ETAB = 'Etab';
     const DIR_ED = 'ED';
     const DIR_UR = 'UR';
 
     private StorageAdapterInterface $storageAdapter;
 
+    /**
+     * @var bool Active ou non la génération d'un PDF de substitution en cas de fichier introuvable.
+     */
+    private bool $genererFichierSubstitutionSiIntrouvable = true;
+
     public function setStorageAdapter(StorageAdapterInterface $storageAdapter): void
     {
         $this->storageAdapter = $storageAdapter;
+    }
+
+    /**
+     * @param bool $genererFichierSubstitutionSiIntrouvable
+     */
+    public function setGenererFichierSubstitutionSiIntrouvable(?bool $genererFichierSubstitutionSiIntrouvable = true)
+    {
+        $this->genererFichierSubstitutionSiIntrouvable = $genererFichierSubstitutionSiIntrouvable;
     }
 
 
@@ -56,9 +72,14 @@ class FichierStorageService
     /**
      * Selon le storage, retourne le chemin absolu d'une copie ou du fichier original physique associé à un Fichier.
      *
+     * En cas de fichier introuvable, possibilité de générer un PDF de substitution : cf.
+     * {@see setGenererFichierSubstitutionSiIntrouvable()}.
+     *
      * @param \Fichier\Entity\Db\Fichier $fichier Entité Fichier concernée
-     * @return string
-     * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
+     * @return string Chemin du fichier sur le filesystem
+     *
+     * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException Fichier introuvable mais génération
+     * d'un PDF de substitution non activée
      */
     public function getFileForFichier(Fichier $fichier): string
     {
@@ -66,11 +87,20 @@ class FichierStorageService
         $fileName = $this->computeFileNameForFichier($fichier);
         $dirPath = $this->storageAdapter->computeDirectoryPath($dirName);
 
-        $this->storageAdapter->saveToFilesystem(
-            $dirPath,
-            $fileName,
-            $tmpFilePath = tempnam(sys_get_temp_dir(), '')
-        );
+        try {
+            $this->storageAdapter->saveToFilesystem(
+                $dirPath,
+                $fileName,
+                $tmpFilePath = sys_get_temp_dir() . '/' . uniqid()
+            );
+        } catch (StorageAdapterException $e) {
+            // en cas de fichier introuvable dans le storage, génération éventuelle d'un PDF de substitution
+            if ($this->genererFichierSubstitutionSiIntrouvable) {
+                $tmpFilePath = $this->generatePageFichierIntrouvable($e->getDirPath() . '/' . $e->getFileName());
+            } else {
+                throw $e;
+            }
+        }
 
         return $tmpFilePath;
     }
@@ -78,9 +108,14 @@ class FichierStorageService
     /**
      * Retourne le contenu brut du fichier physique associé à un Fichier.
      *
+     * En cas de fichier introuvable, possibilité de générer un PDF de substitution : cf.
+     * {@see setGenererFichierSubstitutionSiIntrouvable()}.
+     *
      * @param \Fichier\Entity\Db\Fichier $fichier Entité Fichier concernée
-     * @return string
-     * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
+     * @return string Contenu du fichier physique
+     *
+     * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException Fichier introuvable mais génération
+     * d'un PDF de substitution non activée
      */
     public function getFileContentForFichier(Fichier $fichier): string
     {
@@ -88,7 +123,17 @@ class FichierStorageService
         $fileName = $this->computeFileNameForFichier($fichier);
         $dirPath = $this->storageAdapter->computeDirectoryPath($dirName);
 
-        return $this->storageAdapter->getFileContent($dirPath, $fileName);
+        try {
+            return $this->storageAdapter->getFileContent($dirPath, $fileName);
+        } catch (StorageAdapterException $e) {
+            // en cas de fichier introuvable dans le storage, génération éventuelle d'un PDF de substitution
+            if ($this->genererFichierSubstitutionSiIntrouvable) {
+                $tmpFilePath = $this->generatePageFichierIntrouvable($e->getDirPath() . '/' . $e->getFileName());
+                return file_get_contents($tmpFilePath);
+            } else {
+                throw $e;
+            }
+        }
     }
 
     /**
@@ -222,7 +267,11 @@ class FichierStorageService
         $dirPath = $this->computeDirectoryPathForLogoStructure($structure);
         $fileName = $structure->getCheminLogo();
 
-        $this->storageAdapter->saveToFilesystem($dirPath, $fileName, $tmpFilePath = tempnam(sys_get_temp_dir(), ''));
+        $this->storageAdapter->saveToFilesystem(
+            $dirPath,
+            $fileName,
+            $tmpFilePath = sys_get_temp_dir() . '/' . uniqid()
+        );
 
         return $tmpFilePath;
     }

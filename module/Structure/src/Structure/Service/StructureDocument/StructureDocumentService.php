@@ -231,6 +231,7 @@ class StructureDocumentService
         $contenus = [];
         foreach ($documents as $document) {
             try {
+                $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(false);
                 $contenus[$document->getId()] = $this->fichierStorageService->getFileContentForFichier($document->getFichier());
             } catch (StorageAdapterException $e) {
                 $contenus[$document->getId()] = Util::createImageWithText(implode('|', str_split($e->getMessage(), 25)), 200, 200);
@@ -273,6 +274,8 @@ class StructureDocumentService
             return null;
         }
 
+        $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(false);
+
         return $this->fichierStorageService->getFileContentForFichier($fichier);
     }
 
@@ -289,6 +292,8 @@ class StructureDocumentService
         if ($fichier === null) {
             return null;
         }
+
+        $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(false);
 
         return $this->fichierStorageService->getFileForFichier($fichier);
     }
