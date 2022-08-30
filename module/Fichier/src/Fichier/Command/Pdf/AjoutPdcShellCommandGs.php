@@ -57,7 +57,7 @@ class AjoutPdcShellCommandGs extends PdfMergeShellCommandGs
 
     public function generateCommandLineAvecSuppression1erePageDuManuscrit()
     {
-        $tmpFilePath = tempnam(sys_get_temp_dir(), $this->getName() . '_trunc_') . '.pdf';
+        $tmpFilePath = sys_get_temp_dir() . '/' . uniqid($this->getName() . '_trunc_') . '.pdf';
 
         $command = $this->executable . ' ' . $this->noCompressionOption;
         $command1 = $command . ' -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=' . $tmpFilePath . ' -dFirstPage=2 -dBATCH ' . $this->manuscritInputFilePath;

@@ -117,7 +117,7 @@ class FileUtils
 
     static public function convertLogoFileToPNG(string $uploadedFilePath): string
     {
-        $logoFilepath = tempnam(sys_get_temp_dir(), '') . '.png';
+        $logoFilepath = sys_get_temp_dir() . '/' . uniqid() . '.png';
 
         $command = new ConvertShellCommand();
         $command->setOutputFilePath($logoFilepath);

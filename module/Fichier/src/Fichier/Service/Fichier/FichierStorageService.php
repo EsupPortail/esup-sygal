@@ -69,7 +69,7 @@ class FichierStorageService
         $this->storageAdapter->saveToFilesystem(
             $dirPath,
             $fileName,
-            $tmpFilePath = tempnam(sys_get_temp_dir(), '')
+            $tmpFilePath = sys_get_temp_dir() . '/' . uniqid()
         );
 
         return $tmpFilePath;
@@ -222,7 +222,11 @@ class FichierStorageService
         $dirPath = $this->computeDirectoryPathForLogoStructure($structure);
         $fileName = $structure->getCheminLogo();
 
-        $this->storageAdapter->saveToFilesystem($dirPath, $fileName, $tmpFilePath = tempnam(sys_get_temp_dir(), ''));
+        $this->storageAdapter->saveToFilesystem(
+            $dirPath,
+            $fileName,
+            $tmpFilePath = sys_get_temp_dir() . '/' . uniqid()
+        );
 
         return $tmpFilePath;
     }
