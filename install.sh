@@ -6,6 +6,8 @@
 # Usages :
 #   ./install.sh
 
+set -o errexit
+
 CURDIR=$(cd `dirname $0` && pwd)
 
 cd ${CURDIR}
