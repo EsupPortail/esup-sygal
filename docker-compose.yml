@@ -21,12 +21,12 @@ x-minio-common: &minio-common
 
 services:
   sygal:
-#    image: registre.unicaen.fr:5000/sygal-image-php7.4
+#    image: registre.unicaen.fr:5000/sygal-image-php8.0
     build:
       context: .
       args:
-        - PHP_VERSION=7.4
-    container_name: sygal-container-php7.4
+        - PHP_VERSION=8.0
+    container_name: sygal-container-php8.0
     environment:
       - http_proxy
       - https_proxy
