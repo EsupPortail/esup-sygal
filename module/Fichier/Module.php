@@ -3,14 +3,12 @@
 namespace Fichier;
 
 use Laminas\Config\Factory as ConfigFactory;
-use Laminas\Console\Adapter\AdapterInterface;
-use Laminas\ModuleManager\Feature\ConsoleBannerProviderInterface;
-use Laminas\ModuleManager\Feature\ConsoleUsageProviderInterface;
+use Unicaen\Console\Adapter\AdapterInterface;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Stdlib\Glob;
 
-class Module implements ConsoleBannerProviderInterface, ConsoleUsageProviderInterface
+class Module
 {
     public function onBootstrap(MvcEvent $e)
     {

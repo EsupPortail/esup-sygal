@@ -117,7 +117,7 @@ class RapportActiviteForm extends Form implements InputFilterProviderInterface
             'name' => 'estFinal',
             'type' => Radio::class,
             'options' => [
-                'label' => false,
+                'label' => null,
                 'disable_inarray_validator' => true,
             ],
             'attributes' => [

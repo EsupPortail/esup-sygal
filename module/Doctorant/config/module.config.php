@@ -5,7 +5,7 @@ use Doctorant\Controller\DoctorantControllerFactory;
 use Doctorant\Provider\Privilege\DoctorantPrivileges;
 use Doctorant\Service\DoctorantService;
 use Doctorant\Service\DoctorantServiceFactory;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use UnicaenAuth\Guard\PrivilegeController;
 

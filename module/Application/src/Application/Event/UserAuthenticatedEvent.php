@@ -55,7 +55,7 @@ class UserAuthenticatedEvent extends \UnicaenAuth\Event\UserAuthenticatedEvent
      * @param People $ldapUser
      * @return UserAuthenticatedEvent
      */
-    public function setLdapUser(People $ldapUser)
+    public function setLdapUser(\UnicaenApp\Entity\Ldap\People $ldapUser)
     {
         $this->setParam(self::PARAM_LDAP_USER, $ldapUser);
         return $this;

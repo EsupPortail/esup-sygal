@@ -16,7 +16,7 @@
 namespace Formation;
 
 use Application\Navigation\ApplicationNavigationFactory;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Formation\Provider\IdentityProvider;

@@ -28,7 +28,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use Notification\Exception\NotificationException;
 use UnicaenApp\Exception\RuntimeException;
-use Laminas\Console\Request as ConsoleRequest;
+use Unicaen\Console\Request as ConsoleRequest;
 use Laminas\Form\Element\Hidden;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;

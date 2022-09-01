@@ -2,12 +2,11 @@
 
 namespace Retraitement;
 
-use Laminas\Console\Adapter\AdapterInterface as Console;
-use Laminas\ModuleManager\Feature\ConsoleUsageProviderInterface;
+use Unicaen\Console\Adapter\AdapterInterface as Console;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 
-class Module implements ConsoleUsageProviderInterface
+class Module
 {
     public function onBootstrap(MvcEvent $e)
     {

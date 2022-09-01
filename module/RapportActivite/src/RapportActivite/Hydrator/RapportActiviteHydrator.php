@@ -18,7 +18,7 @@ class RapportActiviteHydrator extends DoctrineObject
      * @param RapportActivite $object
      * @return object
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, $object): object
     {
         $data['estFinal'] = (bool) $data['estFinal'];
 

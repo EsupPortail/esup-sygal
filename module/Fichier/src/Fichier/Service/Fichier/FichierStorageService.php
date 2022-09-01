@@ -261,9 +261,14 @@ class FichierStorageService
      * @param \Structure\Entity\Db\StructureInterface $structure Entité Structure concernée
      * @return string
      * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
+     * @throws \UnexpectedValueException Si la structure ne possède aucun logo
      */
     public function getFileForLogoStructure(StructureInterface $structure): string
     {
+        if (!$structure->getCheminLogo()) {
+            throw new \UnexpectedValueException("La structure '$structure' ne possède aucun logo.");
+        }
+
         $dirPath = $this->computeDirectoryPathForLogoStructure($structure);
         $fileName = $structure->getCheminLogo();
 

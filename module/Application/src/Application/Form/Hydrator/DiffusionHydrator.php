@@ -34,7 +34,7 @@ class DiffusionHydrator extends DoctrineObject implements EntityManagerAwareInte
      * @param  Diffusion $attestation
      * @return Diffusion
      */
-    public function hydrate(array $data, $attestation)
+    public function hydrate(array $data, $attestation): Diffusion
     {
         // le champ de saisie de la confidentialité est grisé pour l'instant
         if (!isset($data['confidentielle'])) {

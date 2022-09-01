@@ -319,7 +319,8 @@ class MembreService {
     public function createToken(Membre $membre) : AbstractUserToken
     {
         $utilisateur = $this->getUtilisateur($membre);
-        if ($utilisateur === null) throw new LogicException("Aucun utilisateur n'est correctement déclaré pour le membre [username:".$username."]");
+        if ($utilisateur === null)
+            throw new LogicException("Aucun utilisateur n'est correctement déclaré pour le membre $utilisateur");
 
         try {
             $userToken = $this->tokenService->createUserToken();

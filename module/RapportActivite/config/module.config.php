@@ -6,7 +6,7 @@ use Application\Form\Factory\RapportAvisFormFactory;
 use Application\Form\Rapport\RapportAvisForm;
 use Application\Navigation\ApplicationNavigationFactory;
 use Application\Search\Controller\SearchControllerPluginFactory;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use RapportActivite\Assertion\Avis\RapportActiviteAvisAssertion;
 use RapportActivite\Assertion\Avis\RapportActiviteAvisAssertionFactory;

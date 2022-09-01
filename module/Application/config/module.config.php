@@ -29,7 +29,7 @@ use Application\View\Helper\Sortable;
 use Application\View\Helper\SortableHelperFactory;
 use Fichier\View\Helper\Uploader\UploaderHelper;
 use Fichier\View\Helper\Uploader\UploaderHelperFactory;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\PDO\PgSQL\Driver as PgSQL;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Laminas\Navigation\Navigation;

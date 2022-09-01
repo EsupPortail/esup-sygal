@@ -29,7 +29,7 @@ class ConsentementForm extends Form implements InputFilterProviderInterface
             'name' => 'consentementListesDiff',
             'type' => Radio::class,
             'options' => [
-                'label' => false,
+                'label' => null,
                 'value_options' => [
                     'oui' => "Oui",
                     'non' => "Non",
