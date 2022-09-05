@@ -12,6 +12,7 @@ use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
 use Fichier\Service\Fichier\Exception\FichierServiceException;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
+use RapportActivite\Service\Fichier\Exporter\PageValidationExportDataException;
 use RapportActivite\Service\Fichier\RapportActiviteFichierServiceAwareTrait;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
@@ -181,6 +182,8 @@ class RapportActiviteRechercheController extends AbstractController implements S
             return $result;
         }
 
+        $result->setItemCountPerPage(25);
+
         /** @var RapportActivite $rapport */
         foreach ($result as $rapport) {
             $avisTypeDispo = $this->rapportActiviteAvisService->findExpectedAvisTypeForRapport($rapport);
@@ -222,7 +225,18 @@ class RapportActiviteRechercheController extends AbstractController implements S
             if ($rapport->estValide()) {
                 // l'ajout de la page de validation n'est pas forcément possible
                 if ($rapport->supporteAjoutPageValidation()) {
-                    $exportData = $this->rapportActiviteService->createPageValidationData($rapport);
+                    try {
+                        $exportData = $this->rapportActiviteService->createPageValidationDataForRapport($rapport);
+                    } catch (PageValidationExportDataException $e) {
+                        $redirect = $this->params()->fromQuery('redirect');
+                        $this->flashMessenger()->addErrorMessage(sprintf(
+                            "Impossible de générer la page de validation du rapport '%s'. " . $e->getMessage(),
+                            $rapport->getFichier()->getNom()
+                        ));
+                        return $redirect ?
+                            $this->redirect()->toUrl($redirect) :
+                            $this->redirect()->toRoute($this->routeName . '/recherche/index');
+                    }
                     $outputFilePath = $this->rapportActiviteFichierService->createFileWithPageValidation($rapport, $exportData);
                     $fichierArchivable->setFilePath($outputFilePath);
                 }

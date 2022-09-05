@@ -17,6 +17,7 @@ use RapportActivite\Entity\Db\RapportActiviteAvis;
 use RapportActivite\Form\RapportActiviteForm;
 use RapportActivite\Rule\Televersement\RapportActiviteTeleversementRuleAwareTrait;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
+use RapportActivite\Service\Fichier\Exporter\PageValidationExportDataException;
 use RapportActivite\Service\Fichier\RapportActiviteFichierServiceAwareTrait;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
@@ -183,7 +184,18 @@ class RapportActiviteController extends AbstractController
         if ($rapport->estValide()) {
             // l'ajout de la page de validation n'est pas forcément possible
             if ($rapport->supporteAjoutPageValidation()) {
-                $exportData = $this->rapportActiviteService->createPageValidationData($rapport);
+                try {
+                    $exportData = $this->rapportActiviteService->createPageValidationDataForRapport($rapport);
+                } catch (PageValidationExportDataException $e) {
+                    $redirect = $this->params()->fromQuery('redirect');
+                    $this->flashMessenger()->addErrorMessage(sprintf(
+                        "Impossible de générer la page de validation du rapport '%s'. " . $e->getMessage(),
+                        $rapport->getFichier()->getNom()
+                    ));
+                    return $redirect ?
+                        $this->redirect()->toUrl($redirect) :
+                        $this->redirect()->toRoute('rapport-activite/consulter', ['these' => IdifyFilter::id($rapport->getThese())]);
+                }
                 $outputFilePath = $this->rapportActiviteFichierService->createFileWithPageValidation($rapport, $exportData);
                 FileUtils::downloadFile($outputFilePath);
                 exit;

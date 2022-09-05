@@ -246,9 +246,9 @@ class StructureDocumentService
      * @param \Structure\Entity\Db\Etablissement $etablissement
      * @return \Fichier\Entity\Db\Fichier|null
      */
-    public function getDocumentFichierForStructureNatureAndEtablissement(Structure $structure,
-                                                                 string $nature_code,
-                                                                 Etablissement $etablissement): ?Fichier
+    public function findDocumentFichierForStructureNatureAndEtablissement(Structure     $structure,
+                                                                          string        $nature_code,
+                                                                          Etablissement $etablissement): ?Fichier
     {
         $documents = $this->getStructuresDocumentsByStructure($structure);
         foreach ($documents as $document) {
@@ -267,28 +267,9 @@ class StructureDocumentService
      * @return string|null
      * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
      */
-    public function getContenuFichier(Structure $structure, string $nature_code, Etablissement $etablissement): ?string
-    {
-        $fichier = $this->getDocumentFichierForStructureNatureAndEtablissement($structure, $nature_code, $etablissement);
-        if ($fichier === null) {
-            return null;
-        }
-
-        $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(false);
-
-        return $this->fichierStorageService->getFileContentForFichier($fichier);
-    }
-
-    /**
-     * @param Structure $structure
-     * @param string $nature_code
-     * @param Etablissement|null $etablissement
-     * @return string|null
-     * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
-     */
     public function getCheminFichier(Structure $structure, string $nature_code, ?Etablissement $etablissement = null): ?string
     {
-        $fichier = $this->getDocumentFichierForStructureNatureAndEtablissement($structure, $nature_code, $etablissement);
+        $fichier = $this->findDocumentFichierForStructureNatureAndEtablissement($structure, $nature_code, $etablissement);
         if ($fichier === null) {
             return null;
         }

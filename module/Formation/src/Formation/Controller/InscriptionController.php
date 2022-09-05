@@ -3,16 +3,10 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use Fichier\Service\Fichier\Exception\FichierServiceException;
-use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
-use Formation\Service\Session\SessionServiceAwareTrait;
-use Individu\Entity\Db\Individu;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
-use Individu\Service\IndividuServiceAwareTrait;
-use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Formation\Entity\Db\Inscription;
 use Formation\Provider\NatureFichier\NatureFichier;
 use Formation\Service\Exporter\Attestation\AttestationExporter;
@@ -20,11 +14,17 @@ use Formation\Service\Exporter\Convocation\ConvocationExporter;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
 use Formation\Service\Notification\NotificationServiceAwareTrait;
 use Formation\Service\Presence\PresenceServiceAwareTrait;
-use UnicaenApp\Exception\RuntimeException;
-use UnicaenApp\Service\EntityManagerAwareTrait;
+use Formation\Service\Session\SessionServiceAwareTrait;
+use Individu\Entity\Db\Individu;
+use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
+use Structure\Entity\Db\Etablissement;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class InscriptionController extends AbstractController
 {
@@ -226,12 +226,7 @@ class InscriptionController extends AbstractController
             }
         }
 
-        $etablissementDoctorant = $inscription->getDoctorant()->getEtablissement();
-        try {
-            $signature = $this->getStructureDocumentService()->getContenuFichier($etablissementDoctorant->getStructure(), NatureFichier::CODE_SIGNATURE_FORMATION, $etablissementDoctorant);
-        } catch (FichierServiceException $e) {
-            throw new RuntimeException("Un problème est survenu lors de la récupération de la signature !",0,$e);
-        }
+        $signature = $this->findSignatureEtablissement($inscription->getDoctorant()->getEtablissement());
 
         //exporter
         $export = new ConvocationExporter($this->renderer, 'A4');
@@ -264,12 +259,7 @@ class InscriptionController extends AbstractController
             }
         }
 
-        $etablissementDoctorant = $inscription->getDoctorant()->getEtablissement();
-        try {
-            $signature = $this->getStructureDocumentService()->getContenuFichier($etablissementDoctorant->getStructure(), NatureFichier::CODE_SIGNATURE_FORMATION, $etablissementDoctorant);
-        } catch (FichierServiceException $e) {
-            throw new RuntimeException("Un problème est survenu lors de la récupération de la signature !",0,$e);
-        }
+        $signature = $this->findSignatureEtablissement($inscription->getDoctorant()->getEtablissement());
 
         //exporter
         $export = new AttestationExporter($this->renderer, 'A4');
@@ -280,6 +270,25 @@ class InscriptionController extends AbstractController
             'presences' => $presences,
         ]);
         $export->export('SYGAL_attestation_' . $session->getId() . "_" . $inscription->getId() . ".pdf");
+    }
+
+    private function findSignatureEtablissement(Etablissement $etablissementDoctorant): ?string
+    {
+        $fichier = $this->structureDocumentService->findDocumentFichierForStructureNatureAndEtablissement(
+            $etablissementDoctorant->getStructure(),
+            NatureFichier::CODE_SIGNATURE_FORMATION,
+            $etablissementDoctorant);
+
+        if ($fichier === null) {
+            return null;
+        }
+
+        try {
+            $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(false);
+            return $this->fichierStorageService->getFileContentForFichier($fichier);
+        } catch (StorageAdapterException $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération de la signature !", 0, $e);
+        }
     }
 
     /** INSCRIPTION ET DESINSCRIPTION POUR LE DOCTORANT ***************************************************************/

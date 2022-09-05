@@ -12,11 +12,11 @@ class PageValidationExportData
     public string $doctorant;
 
     public string $etablissement;
-    public ?string $uniteRecherche = null;
     public string $ecoleDoctorale;
+    public string $uniteRecherche;
 
-    public bool $useCOMUE;
-    public string $logoCOMUE;
+    public bool $useCOMUE = false;
+    public ?string $logoCOMUE = null;
 
     public string $logoEtablissement;
     public string $logoEcoleDoctorale;

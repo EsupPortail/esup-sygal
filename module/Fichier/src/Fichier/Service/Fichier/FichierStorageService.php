@@ -15,6 +15,8 @@ use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\Storage\Adapter\StorageAdapterInterface;
 use Generator;
 use RuntimeException;
+use UnexpectedValueException;
+use UnicaenApp\Util;
 
 class FichierStorageService
 {
@@ -87,16 +89,19 @@ class FichierStorageService
         $fileName = $this->computeFileNameForFichier($fichier);
         $dirPath = $this->storageAdapter->computeDirectoryPath($dirName);
 
+        $tmpFilePath = sys_get_temp_dir() . '/' . uniqid();
+
         try {
-            $this->storageAdapter->saveToFilesystem(
-                $dirPath,
-                $fileName,
-                $tmpFilePath = sys_get_temp_dir() . '/' . uniqid()
-            );
+            $this->storageAdapter->saveToFilesystem($dirPath, $fileName, $tmpFilePath);
         } catch (StorageAdapterException $e) {
-            // en cas de fichier introuvable dans le storage, génération éventuelle d'un PDF de substitution
+            // en cas de fichier introuvable dans le storage, génération éventuelle d'un fichier de substitution
             if ($this->genererFichierSubstitutionSiIntrouvable) {
-                $tmpFilePath = $this->generatePageFichierIntrouvable($e->getDirPath() . '/' . $e->getFileName());
+                $fichier->setPath($e->getDirPath() . '/' . $e->getFileName());
+                $substitutionFileContent = $this->createSubstitutionFileContentForFichier($fichier);
+                if ($substitutionFileContent === null ) {
+                    throw $e; // solution de facilité (todo: lancer une exception spécifique)
+                }
+                file_put_contents($tmpFilePath, $substitutionFileContent);
             } else {
                 throw $e;
             }
@@ -126,10 +131,14 @@ class FichierStorageService
         try {
             return $this->storageAdapter->getFileContent($dirPath, $fileName);
         } catch (StorageAdapterException $e) {
-            // en cas de fichier introuvable dans le storage, génération éventuelle d'un PDF de substitution
+            // en cas de fichier introuvable dans le storage, génération éventuelle d'un fichier de substitution
             if ($this->genererFichierSubstitutionSiIntrouvable) {
-                $tmpFilePath = $this->generatePageFichierIntrouvable($e->getDirPath() . '/' . $e->getFileName());
-                return file_get_contents($tmpFilePath);
+                $fichier->setPath($e->getDirPath() . '/' . $e->getFileName());
+                $substitutionFileContent = $this->createSubstitutionFileContentForFichier($fichier);
+                if ($substitutionFileContent === null ) {
+                    throw $e; // solution de facilité (todo: lancer une exception spécifique)
+                }
+                return $substitutionFileContent;
             } else {
                 throw $e;
             }
@@ -260,20 +269,50 @@ class FichierStorageService
      *
      * @param \Structure\Entity\Db\StructureInterface $structure Entité Structure concernée
      * @return string
-     * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
+     * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException Fichier introuvable dans le storage
      */
-    public function getFileForLogoStructure(StructureInterface $structure): string
+    public function getFileForLogoStructure(StructureInterface $structure): ?string
     {
+        if (!$structure->getCheminLogo()) {
+            return null;
+        }
+
         $dirPath = $this->computeDirectoryPathForLogoStructure($structure);
         $fileName = $structure->getCheminLogo();
 
-        $this->storageAdapter->saveToFilesystem(
-            $dirPath,
-            $fileName,
-            $tmpFilePath = sys_get_temp_dir() . '/' . uniqid()
-        );
+        $tmpFilePath = sys_get_temp_dir() . '/' . uniqid();
+
+        try {
+            $this->storageAdapter->saveToFilesystem($dirPath, $fileName, $tmpFilePath);
+        } catch (StorageAdapterException $e) {
+            // en cas de fichier introuvable dans le storage, génération éventuelle d'un fichier de substitution
+            if ($this->genererFichierSubstitutionSiIntrouvable) {
+                $fichier = (new Fichier())
+                    ->setTypeMime('image/png')
+                    ->setPath($e->getDirPath() . '/' . $e->getFileName());
+                $substitutionFileContent = $this->createSubstitutionFileContentForFichier($fichier);
+                if ($substitutionFileContent === null ) {
+                    throw $e; // solution de facilité (todo: lancer une exception spécifique)
+                }
+                file_put_contents($tmpFilePath, $substitutionFileContent);
+            } else {
+                throw $e;
+            }
+        }
 
         return $tmpFilePath;
+    }
+
+    private function createSubstitutionFileContentForFichier(Fichier $fichier): ?string
+    {
+        if ($fichier->isTypeMimePdf()) {
+            $tmpFilePath = $this->generatePageFichierIntrouvable($fichier->getPath());
+            return file_get_contents($tmpFilePath);
+        } elseif ($fichier->isTypeMimeImage()) {
+            return Util::createImageWithText("Anomalie: Fichier|absent sur le storage. " . $fichier->getPath(), 200, 200);
+        } else {
+            return null;
+        }
     }
 
     /**

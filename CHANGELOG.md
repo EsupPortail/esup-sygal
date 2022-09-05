@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+5.2.1
+-----
+- [FIX] Téléchargement de rapport d'activité : message d'erreur en bonne et dûe forme en cas de signature/logo absent.  
+
 5.2.0
 -----
 - [FIX] Plantage du téléchargement d'un rapport d'activité validé dont la thèse n'est rattachée à aucune UR

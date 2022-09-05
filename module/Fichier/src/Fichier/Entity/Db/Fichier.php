@@ -141,6 +141,10 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     }
 
     /**
+     * Retourne l'éventuel chemin de ce fichier.
+     *
+     * NB: Aucune colonne n'est mappée à cette propriété.
+     *
      * @return string|null
      */
     public function getPath(): ?string
@@ -149,6 +153,10 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     }
 
     /**
+     * Spécifie le chemin de ce fichier.
+     *
+     * NB: Aucune colonne n'est mappée à cette propriété.
+     *
      * @param string|null $path
      * @return Fichier
      */
@@ -503,5 +511,15 @@ class Fichier implements HistoriqueAwareInterface, ResourceInterface, UploadedFi
     public function isTypeMimePdf(): bool
     {
         return $this->getTypeMime() === FileUtils::MIME_TYPE_PDF;
+    }
+
+    /**
+     * Tente de déterminer si le type MIME de ce fichier correspond à une image.
+     *
+     * @return bool
+     */
+    public function isTypeMimeImage(): bool
+    {
+        return str_starts_with($this->getTypeMime(), 'image/');
     }
 }

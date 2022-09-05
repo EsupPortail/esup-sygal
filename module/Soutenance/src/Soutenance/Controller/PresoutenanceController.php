@@ -4,22 +4,27 @@ namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Acteur;
-use Structure\Entity\Db\Etablissement;
-use Individu\Entity\Db\Individu;
-use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\Profil;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Source;
+use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Service\Acteur\ActeurServiceAwareTrait;
-use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
-use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Individu\Entity\Db\Individu;
+use Individu\Service\IndividuServiceAwareTrait;
+use Laminas\Http\Response;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Renderer\PhpRenderer;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Evenement;
@@ -30,23 +35,20 @@ use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Exporter\AvisSoutenance\AvisSoutenancePdfExporter;
-use Soutenance\Service\Exporter\RapportTechnique\RapportTechniquePdfExporter;
 use Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter;
 use Soutenance\Service\Exporter\ProcesVerbal\ProcesVerbalSoutenancePdfExporter;
+use Soutenance\Service\Exporter\RapportTechnique\RapportTechniquePdfExporter;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
+use Structure\Entity\Db\Etablissement;
+use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
-use UnicaenAuthToken\Service\TokenServiceException;
-use Laminas\Http\Response;
-use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
-use Laminas\View\Model\ViewModel;
-use Laminas\View\Renderer\PhpRenderer;
 
 /** @method FlashMessenger flashMessenger() */
 
@@ -71,6 +73,7 @@ class PresoutenanceController extends AbstractController
     use StructureDocumentServiceAwareTrait;
     use TokenServiceAwareTrait;
     use SourceServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
 
     use DateRenduRapportFormAwareTrait;
     use AdresseSoutenanceFormAwareTrait;
@@ -462,10 +465,7 @@ class PresoutenanceController extends AbstractController
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
-        $signature = $this->getStructureDocumentService()->getCheminFichier($these->getEcoleDoctorale()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
-        if ($signature === null) {
-            $signature = $this->getStructureDocumentService()->getCheminFichier($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
-        }
+        $signature = $this->findSignatureEcoleDoctorale($these) ?: $this->findSignatureEtablissement($these);
 
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
@@ -491,10 +491,7 @@ class PresoutenanceController extends AbstractController
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
-        $signature = $this->getStructureDocumentService()->getCheminFichier($these->getEcoleDoctorale()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
-        if ($signature === null) {
-            $signature = $this->getStructureDocumentService()->getCheminFichier($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
-        }
+        $signature = $this->findSignatureEcoleDoctorale($these) ?: $this->findSignatureEtablissement($these);
 
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
@@ -516,15 +513,50 @@ class PresoutenanceController extends AbstractController
         exit;
     }
 
+    private function findSignatureEtablissement(These $these): ?string
+    {
+        $fichier = $this->structureDocumentService->findDocumentFichierForStructureNatureAndEtablissement(
+            $these->getEtablissement()->getStructure(),
+            NatureFichier::CODE_SIGNATURE_CONVOCATION,
+            $these->getEtablissement());
+
+        if ($fichier === null) {
+            return null;
+        }
+
+        try {
+            $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(false);
+            return $this->fichierStorageService->getFileContentForFichier($fichier);
+        } catch (StorageAdapterException $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération de la signature de l'établissement !", 0, $e);
+        }
+    }
+
+    private function findSignatureEcoleDoctorale(These $these): ?string
+    {
+        $fichier = $this->structureDocumentService->findDocumentFichierForStructureNatureAndEtablissement(
+            $these->getEcoleDoctorale()->getStructure(),
+            NatureFichier::CODE_SIGNATURE_CONVOCATION,
+            $these->getEtablissement());
+
+        if ($fichier === null) {
+            return null;
+        }
+
+        try {
+            $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(false);
+            return $this->fichierStorageService->getFileContentForFichier($fichier);
+        } catch (StorageAdapterException $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération de la signature de l'ED !", 0, $e);
+        }
+    }
+
     public function convocationMembreAction()
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findByThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
-        $signature = $this->getStructureDocumentService()->getCheminFichier($these->getEcoleDoctorale()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
-        if ($signature === null) {
-            $signature = $this->getStructureDocumentService()->getCheminFichier($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
-        }
+        $signature = $this->findSignatureEcoleDoctorale($these) ?: $this->findSignatureEtablissement($these);
 
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
