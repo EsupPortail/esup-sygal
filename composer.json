@@ -35,7 +35,7 @@
         "unicaen/auth-token": "^5.0",
         "unicaen/bjy-authorize": "^4.0",
         "unicaen/db-anonym": "dev-master",
-        "unicaen/db-import": "dev-release_5.2.2",
+        "unicaen/db-import": "^5.2",
         "unicaen/livelog": "dev-master",
         "unicaen/faq": "^5.0",
         "unicaen/ldap": "^4.0",
