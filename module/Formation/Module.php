@@ -1,22 +1,13 @@
 <?php
 namespace Formation;
 
+use Laminas\Config\Factory as ConfigFactory;
 use Laminas\Console\Adapter\AdapterInterface as Console;
 use Laminas\ModuleManager\Feature\ConsoleUsageProviderInterface;
-use Laminas\Mvc\ModuleRouteListener;
-use Laminas\Mvc\MvcEvent;
-use Laminas\Config\Factory as ConfigFactory;
 use Laminas\Stdlib\Glob;
 
 class Module implements ConsoleUsageProviderInterface
 {
-    public function onBootstrap(MvcEvent $e)
-    {
-        $eventManager        = $e->getApplication()->getEventManager();
-        $moduleRouteListener = new ModuleRouteListener();
-        $moduleRouteListener->attach($eventManager);
-    }
-
     public function getConfig()
     {
         $paths = array_merge(

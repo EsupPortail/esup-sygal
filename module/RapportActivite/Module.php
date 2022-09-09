@@ -3,7 +3,6 @@
 namespace RapportActivite;
 
 use Laminas\Config\Factory as ConfigFactory;
-use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Stdlib\Glob;
 use RapportActivite\Event\Avis\RapportActiviteAvisEventListener;
@@ -19,8 +18,6 @@ class Module
     public function onBootstrap(MvcEvent $e)
     {
         $eventManager = $e->getApplication()->getEventManager();
-        $moduleRouteListener = new ModuleRouteListener();
-        $moduleRouteListener->attach($eventManager);
 
         $container = $e->getApplication()->getServiceManager();
 
