@@ -9891,11 +9891,11 @@
         },
         {
             "name": "unicaen/db-import",
-            "version": "5.2.1",
+            "version": "5.2.2",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/db-import.git",
-                "reference": "dd93e89328f562ddb19cf0751a4ea7573206ddb9"
+                "reference": "0ad7c2e7a9de4499d03c1d519a3b8f55bc37e665"
             },
             "require": {
                 "beberlei/assert": "^2.7",
@@ -9927,7 +9927,7 @@
                 }
             },
             "description": "Module d'import entre bases de données",
-            "time": "2022-07-22T08:17:55+00:00"
+            "time": "2022-09-07T13:21:58+00:00"
         },
         {
             "name": "unicaen/faq",
