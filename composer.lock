@@ -9675,11 +9675,11 @@
         },
         {
             "name": "unicaen/app",
-            "version": "5.1.0",
+            "version": "5.1.1",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/app.git",
-                "reference": "668b2bb9fdc5ae74e8d0a8b162be906b9312bbb0"
+                "reference": "a33031035fb8d582837753bd13c138af97136ab2"
             },
             "require": {
                 "beberlei/assert": "^2.9",
@@ -9735,7 +9735,7 @@
                 ]
             },
             "description": "Module de base des applications unicaen",
-            "time": "2022-05-02T09:49:38+00:00"
+            "time": "2022-09-13T15:20:27+00:00"
         },
         {
             "name": "unicaen/auth",
