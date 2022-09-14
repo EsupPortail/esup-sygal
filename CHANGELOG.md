@@ -4,7 +4,8 @@ Journal des modifications
 5.2.1
 -----
 - [FIX] Téléchargement de rapport d'activité : message d'erreur en bonne et dûe forme en cas de signature/logo absent.  
-- [FIX] Passage à unicaen/db-import 5.2.2 pour corrections de dysfonctionnements dans l'import/synchro. 
+- [FIX] Passage à unicaen/db-import 5.2.2 pour corrections de dysfonctionnements dans l'import/synchro.
+- [FIX] Plantage de la recherche textuelle d'individus en cas de résultat vide. 
 
 5.2.0
 -----
