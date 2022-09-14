@@ -15,7 +15,7 @@ use Structure\Entity\Db\EtablissementRattachement;
 use Individu\Entity\Db\IndividuRole;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;
-use Application\Provider\Privilege\CoEncadrantPrivileges;
+use These\Provider\Privilege\CoEncadrantPrivileges;
 use Structure\Provider\Privilege\StructurePrivileges;
 
 $this->headTitle("Unité de recherche '{$unite->getStructure()->getCode()}'");
@@ -220,7 +220,7 @@ $structure = $unite->getStructure();
         </h2>
 
         <?php if($canCoencadrantExport) : ?>
-            <?php /** @see \Application\Controller\CoEncadrantController::genererExportCsvAction() */ ?>
+            <?php /** @see \These\Controller\CoEncadrantController::genererExportCsvAction() */ ?>
             <a href="<?php echo $this->url('co-encadrant/generer-export-csv', ['structure-type' => 'unite-recherche', 'structure-id' => $unite->getId()], [], true); ?>"
                class="btn btn-primary"
             >

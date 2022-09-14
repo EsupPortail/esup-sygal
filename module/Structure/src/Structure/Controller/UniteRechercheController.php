@@ -4,7 +4,7 @@ namespace Structure\Controller;
 
 use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;
-use Application\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
+use These\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
 use Application\Service\DomaineScientifiqueServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;

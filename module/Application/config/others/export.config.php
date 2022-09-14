@@ -1,7 +1,7 @@
 <?php
 
 use Application\Controller\Factory\ExportControllerFactory;
-use Application\Provider\Privilege\ThesePrivileges;
+use These\Provider\Privilege\ThesePrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 
 return [

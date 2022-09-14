@@ -3,10 +3,10 @@
 namespace Retraitement\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\FichierThese;
+use These\Entity\Db\FichierThese;
 use Application\EventRouterReplacerAwareTrait;
-use Application\Service\FichierThese\FichierTheseServiceAwareInterface;
-use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
+use These\Service\FichierThese\FichierTheseServiceAwareInterface;
+use These\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Retraitement\Form\Retraitement;
 use UnicaenApp\Exception\RuntimeException;

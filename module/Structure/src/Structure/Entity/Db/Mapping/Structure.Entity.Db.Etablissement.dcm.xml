@@ -16,7 +16,7 @@
         <field name="estInscription" type="boolean" column="EST_ETAB_INSCRIPTION" nullable="false"/>
         <field name="estComue" type="boolean" column="EST_COMUE"/>
 
-        <one-to-many field="theses"         target-entity="Application\Entity\Db\These"     mapped-by="etablissement"/>
+        <one-to-many field="theses"         target-entity="These\Entity\Db\These"     mapped-by="etablissement"/>
         <one-to-many field="doctorants"     target-entity="Doctorant\Entity\Db\Doctorant" mapped-by="etablissement"/>
         <one-to-many field="roles"          target-entity="Application\Entity\Db\Role"      mapped-by="etablissement"/>
 

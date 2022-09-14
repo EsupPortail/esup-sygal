@@ -4,7 +4,7 @@ namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Validation;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Membre;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;

@@ -2,7 +2,7 @@
 
 namespace Soutenance\Controller;
 
-use Application\Service\Acteur\ActeurService;
+use These\Service\Acteur\ActeurService;
 use Interop\Container\ContainerInterface;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
 use Soutenance\Service\Evenement\EvenementService;

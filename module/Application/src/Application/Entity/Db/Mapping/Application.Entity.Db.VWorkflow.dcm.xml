@@ -12,7 +12,7 @@
         <field name="resultat" type="integer" column="RESULTAT" nullable="false" />
         <field name="objectif" type="integer" column="OBJECTIF" nullable="false" />
 
-        <many-to-one field="these" target-entity="Application\Entity\Db\These">
+        <many-to-one field="these" target-entity="These\Entity\Db\These">
             <join-columns>
                 <join-column name="THESE_ID" referenced-column-name="ID"/>
             </join-columns>

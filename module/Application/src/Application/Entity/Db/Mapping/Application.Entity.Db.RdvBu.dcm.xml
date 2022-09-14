@@ -51,7 +51,7 @@
     <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
     <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
 
-    <many-to-one field="these" target-entity="Application\Entity\Db\These" fetch="LAZY">
+    <many-to-one field="these" target-entity="These\Entity\Db\These" fetch="LAZY">
       <join-columns>
         <join-column name="THESE_ID" referenced-column-name="ID"/>
       </join-columns>

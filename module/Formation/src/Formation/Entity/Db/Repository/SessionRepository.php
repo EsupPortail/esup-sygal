@@ -2,7 +2,7 @@
 
 namespace Formation\Entity\Db\Repository;
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Doctorant\Entity\Db\Doctorant;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;

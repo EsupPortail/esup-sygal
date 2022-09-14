@@ -1,0 +1,61 @@
+<?php
+
+use These\Entity\Db\These;
+
+/**
+ * @var string $subject
+ * @var string $message
+ * @var array  $data
+ */
+?>
+<style>
+    table.table-mail {
+        font-size: 10pt;
+        border-collapse: collapse;
+    }
+    table.table-mail th {
+        vertical-align: top;
+        text-align: left;
+        border: 1px dotted lightgrey;
+    }
+    table.table-mail td {
+        vertical-align: top;
+        border: 1px dotted lightgrey;
+    }
+</style>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.
+</p>
+<p>
+    <?php echo $message ?>
+</p>
+<p>
+    Voici les thèses concernées :
+</p>
+<table class="table-mail">
+    <thead>
+        <tr>
+            <th>Doctorant</th>
+            <th>Titre</th>
+            <th>Modifications</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($data as $array): ?>
+        <?php
+        $these = $array['these']; /* @var These $these */
+        $detail = $array['detail'];
+        $url = $this->url('these/identite', ['these' => $these->getId()], ['force_canonical' => true]);
+        ?>
+        <tr>
+            <td><?php echo $these->getDoctorant() ?></td>
+            <td><a href="<?php echo $url ?>"><?php echo $these->getTitre() ?></a></td>
+            <td><?php echo $detail ?></td>
+        </tr>
+    <?php endforeach ?>
+    </tbody>
+</table>

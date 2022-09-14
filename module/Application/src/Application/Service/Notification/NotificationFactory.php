@@ -2,8 +2,8 @@
 
 namespace Application\Service\Notification;
 
-use Application\Entity\Db\FichierThese;
-use Application\Entity\Db\These;
+use These\Entity\Db\FichierThese;
+use These\Entity\Db\These;
 use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\Variable;
 use Fichier\Entity\Db\VersionFichier;
@@ -67,7 +67,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
         $notif
             ->setSubject("Retraitement terminé")
             ->setTo($to)
-            ->setTemplatePath('application/these/mail/notif-retraitement-fini')
+            ->setTemplatePath('these/these/mail/notif-retraitement-fini')
             ->setTemplateVariables([
                 'fichierRetraite' => $fichierTheseRetraite,
                 'validite' => $validite,
@@ -93,7 +93,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
         $notif
             ->setTo($to)
             ->setSubject($subject)
-            ->setTemplatePath('application/these/mail/notif-modif-rdv-bu-doctorant')
+            ->setTemplatePath('these/these/mail/notif-modif-rdv-bu-doctorant')
             ->setTemplateVariables([
                 'these' => $these,
                 'updating' => !$estLaPremiereSaisie,
@@ -120,7 +120,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
         $notif
             ->setTo($to)
             ->setSubject("Dépôt d'une thèse")
-//            ->setTemplatePath('application/these/mail/notif-depot-these') // le template est dans la NotifEntity
+//            ->setTemplatePath('these/these/mail/notif-depot-these') // le template est dans la NotifEntity
             ->setTemplateVariables([
                 'these' => $these,
                 'version' => $version,
@@ -203,7 +203,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
         $notif
             ->setSubject("Ajout de la page de couverture terminé")
             ->setTo($to)
-            ->setTemplatePath('application/these/mail/notif-fusion-fini')
+            ->setTemplatePath('these/these/mail/notif-fusion-fini')
             ->setTemplateVariables([
                 'these' => $these,
                 'outputFilePath' => $outputFilePath,

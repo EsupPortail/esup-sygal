@@ -3,7 +3,7 @@
 namespace RapportActivite\Form;
 
 use Application\Entity\AnneeUniv;
-use Application\Entity\Db\TheseAnneeUniv;
+use These\Entity\Db\TheseAnneeUniv;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\File;
 use Laminas\Form\Element\Hidden;

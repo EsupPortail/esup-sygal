@@ -3,24 +3,9 @@
 namespace Individu;
 
 use Laminas\Config\Factory as ConfigFactory;
-use Laminas\Mvc\ModuleRouteListener;
-use Laminas\Mvc\MvcEvent;
 
 class Module
 {
-    /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     */
-    public function onBootstrap(MvcEvent $e)
-    {
-        $application = $e->getApplication();
-        $application->getServiceManager()->get('translator');
-        $eventManager = $application->getEventManager();
-        $moduleRouteListener = new ModuleRouteListener();
-        $moduleRouteListener->attach($eventManager);
-    }
-
     public function getConfig()
     {
         return ConfigFactory::fromFiles([

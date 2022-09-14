@@ -3,8 +3,8 @@
 namespace Soutenance\Assertion;
 
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
-use Application\Service\These\TheseServiceAwareTrait;
+use These\Entity\Db\These;
+use These\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
 use Soutenance\Entity\Etat;

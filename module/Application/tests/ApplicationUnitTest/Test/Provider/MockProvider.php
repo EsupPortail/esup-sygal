@@ -3,7 +3,7 @@
 namespace ApplicationUnitTest\Test\Provider;
 
 use Application\Service\Notification\NotifierService;
-use Application\Service\These\TheseService;
+use These\Service\These\TheseService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit_Framework_MockObject_MockObject;

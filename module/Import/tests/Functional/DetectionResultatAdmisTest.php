@@ -3,7 +3,7 @@
 namespace ImportTest\Functional;
 
 use Import\Model\ImportObserv;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use ApplicationUnitTest\Controller\AbstractControllerTestCase;
 use Doctrine\DBAL\DBALException;
 

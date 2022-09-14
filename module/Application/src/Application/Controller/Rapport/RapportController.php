@@ -17,9 +17,9 @@ use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Rapport\RapportServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareTrait;
-use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
-use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
+use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
+use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Doctrine\ORM\NoResultException;
@@ -83,7 +83,7 @@ abstract class RapportController extends AbstractController
     protected $rapportsTeleverses = [];
 
     /**
-     * @var \Application\Entity\Db\These
+     * @var \These\Entity\Db\These
      */
     protected $these;
 

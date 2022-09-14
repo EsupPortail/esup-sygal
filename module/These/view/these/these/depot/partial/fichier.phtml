@@ -1,0 +1,87 @@
+<?php
+
+use These\Entity\Db\FichierThese;
+use Fichier\Entity\Db\NatureFichier;
+use These\Entity\Db\These;
+use Fichier\Entity\Db\VersionFichier;
+use These\Provider\Privilege\ThesePrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var bool        $canUpload
+ * @var string      $class
+ * @var string      $uploadUrl
+ * @var string      $uploadedFilesListUrl
+ * @var int         $maxUploadableFilesCount
+ */
+
+//$canUpload = $this->isAllowed($these, $p = ThesePrivileges::privilegeDeposerFor($nature, $versionFichier));
+//$maxUploadableFilesCount = 1;
+$uploader = $this->uploader()->setUrl($uploadUrl);
+$uploaderDivId = uniqid('uploader-div-');
+?>
+
+<div class="<?php echo $class ?> widget-uploader" id="<?php echo $uploaderDivId ?>">
+    <div>
+        <!-- Liste des fichiers déposés -->
+        <?php echo $uploader->renderUploadedFiles($uploadedFilesListUrl, "Fichier téléversé :") ?>
+    </div>
+    <div class="upload-form" style="display: none">
+        <!-- formulaire de dépôt -->
+        <?php if ($canUpload): ?>
+            <?php
+            $form = $uploader->getForm();
+            $form->get('files')->setLabel("")->setAttribute('multiple', false)->setAttribute('accept', '.pdf');
+            echo $uploader->renderForm();
+            ?>
+            <div class="clearfix"></div>
+            <div class="text-sm text-info" style="margin-top: 8px; max-width: 250px">
+                <strong>NB: </strong> <?php echo FichierThese::MESSAGE_DEPOT_DUREE ?>
+            </div>
+        <?php endif ?>
+    </div>
+</div>
+
+
+
+<script>
+
+    var widgetUploaderId = "<?php echo $uploaderDivId ?>";
+
+    $(function () {
+        var maxFileCountThese = <?php echo $maxUploadableFilesCount ?>;
+        var eventNames = "upload-event-files-listed upload-event-file-deleted upload-event-file-uploaded";
+        var body = $("body");
+
+        // Un upload de fichier vient de commencer.
+        body.on("upload-event-files-added", "#"+widgetUploaderId, function(event, data) {
+            var uploadContainer = $(data[0]);
+            // masque le formulaire pour éviter un dépôt de fichier pendant qu'un upload est déjà en cours
+            uploadContainer.find(".upload-form").hide();
+        });
+
+        // Un fichier vient d'être déposé ou supprimé, ou la liste des fichiers a été actualisée.
+        body.on(eventNames, "#"+widgetUploaderId, function(event, data) {
+            var uploadContainer = $(data[0]);
+            updateUploadForm(uploadContainer);
+        });
+
+        /**
+         * Compte le nombre de fichiers déjà déposés et masque le formulaire de dépôt si le maximum est atteint.
+         *
+         * @param uploadContainer
+         */
+        function updateUploadForm(uploadContainer) {
+            var fichiersCount = uploadContainer.find(".uploaded-files-div ul li").length;
+            var div = uploadContainer.find("div.upload-form");
+
+            if (fichiersCount >= maxFileCountThese) {
+                div.hide('fade');
+            }
+            else {
+                div.show('fade');
+            }
+        }
+    });
+</script>

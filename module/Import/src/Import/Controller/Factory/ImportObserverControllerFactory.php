@@ -3,7 +3,7 @@
 namespace Import\Controller\Factory;
 
 use Application\EventRouterReplacer;
-use Application\Service\These\TheseService;
+use These\Service\These\TheseService;
 use Import\Controller\ImportObserverController;
 use Import\Model\Service\ImportObservResultService;
 use Interop\Container\ContainerInterface;

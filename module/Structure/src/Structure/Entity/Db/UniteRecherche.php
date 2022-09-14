@@ -3,7 +3,7 @@
 namespace Structure\Entity\Db;
 
 use Application\Entity\Db\DomaineScientifique;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Search\Filter\SearchFilterValueInterface;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 use UnicaenApp\Entity\HistoriqueAwareInterface;

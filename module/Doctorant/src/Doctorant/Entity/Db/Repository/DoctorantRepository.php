@@ -7,7 +7,7 @@ use Doctorant\Entity\Db\Doctorant;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Individu\Entity\Db\Individu;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use UnicaenApp\Exception\RuntimeException;

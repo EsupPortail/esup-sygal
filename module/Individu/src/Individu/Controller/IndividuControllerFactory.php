@@ -2,7 +2,7 @@
 
 namespace Individu\Controller;
 
-use Application\Service\Acteur\ActeurService;
+use These\Service\Acteur\ActeurService;
 use Structure\Service\Structure\StructureService;
 use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurService;
@@ -35,7 +35,7 @@ class IndividuControllerFactory {
         $individuForm = $container->get('FormElementManager')->get(IndividuForm::class);
         $controller->setIndividuForm($individuForm);
 
-        /** @var \Application\Service\Acteur\ActeurService $acteurService */
+        /** @var \These\Service\Acteur\ActeurService $acteurService */
         $acteurService = $container->get(ActeurService::class);
         $controller->setActeurService($acteurService);
 

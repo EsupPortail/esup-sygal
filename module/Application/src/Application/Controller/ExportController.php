@@ -2,14 +2,14 @@
 
 namespace Application\Controller;
 
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Application\Entity\Db\Financement;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Provider\Privilege\FinancementPrivileges;
-use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
-use Application\Service\These\TheseSearchServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareTrait;
+use These\Service\FichierThese\FichierTheseServiceAwareTrait;
+use These\Service\These\TheseSearchServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\View\Model\CsvModel;

@@ -3,7 +3,7 @@
 namespace Soutenance\Service\Intervention;
 
 use Application\Entity\DateTimeAwareTrait;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;

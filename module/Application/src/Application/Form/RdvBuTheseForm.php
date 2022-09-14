@@ -3,7 +3,7 @@
 namespace Application\Form;
 
 use Application\Entity\Db\RdvBu;
-use Application\Filter\MotsClesFilter;
+use These\Filter\MotsClesFilter;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Textarea;

@@ -3,16 +3,12 @@
 namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\Acteur;
 use Application\Entity\Db\Profil;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Source;
-use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
 use Fichier\Entity\Db\NatureFichier;
@@ -46,6 +42,10 @@ use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use Structure\Entity\Db\Etablissement;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
+use These\Entity\Db\Acteur;
+use These\Entity\Db\These;
+use These\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;

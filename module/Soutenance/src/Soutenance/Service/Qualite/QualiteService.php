@@ -3,11 +3,9 @@
 namespace Soutenance\Service\Qualite;
 
 use Application\Service\UserContextServiceAwareTrait;
-use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
-use Exception;
 use Soutenance\Entity\Qualite;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -19,25 +17,12 @@ class QualiteService {
 
     /** GESTION DES ENTITES *******************************************************************************************/
 
-
     /**
      * @param Qualite $qualite
      * @return Qualite
      */
-    public function create(Qualite $qualite)
+    public function create(Qualite $qualite) : Qualite
     {
-        try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-        } catch(Exception $e) {
-            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
-        }
-
-        $qualite->setHistoCreateur($user);
-        $qualite->setHistoCreation($date);
-        $qualite->setHistoModificateur($user);
-        $qualite->setHistoModification($date);
-
         try {
             $this->getEntityManager()->persist($qualite);
             $this->getEntityManager()->flush($qualite);
@@ -52,18 +37,8 @@ class QualiteService {
      * @param Qualite $qualite
      * @return Qualite
      */
-    public function update(Qualite $qualite)
+    public function update(Qualite $qualite) : Qualite
     {
-        try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-        } catch(Exception $e) {
-            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
-        }
-
-        $qualite->setHistoModificateur($user);
-        $qualite->setHistoModification($date);
-
         try {
             $this->getEntityManager()->flush($qualite);
         } catch (ORMException $e) {
@@ -77,19 +52,10 @@ class QualiteService {
      * @param Qualite $qualite
      * @return Qualite
      */
-    public function historise(Qualite $qualite)
+    public function historise(Qualite $qualite) : Qualite
     {
         try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-        } catch(Exception $e) {
-            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
-        }
-
-        $qualite->setHistoDestructeur($user);
-        $qualite->setHistoDestruction($date);
-
-        try {
+            $qualite->historiser();
             $this->getEntityManager()->flush($qualite);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème s'est produit lors de la mise à jour en BD d'une qualité.");
@@ -102,12 +68,10 @@ class QualiteService {
      * @param Qualite $qualite
      * @return Qualite
      */
-    public function restoreQualite(Qualite $qualite)
+    public function restoreQualite(Qualite $qualite) : Qualite
     {
-        $qualite->setHistoDestructeur(null);
-        $qualite->setHistoDestruction(null);
-
         try {
+            $qualite->dehistoriser();
             $this->getEntityManager()->flush($qualite);
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème s'est produit lors de la mise à jour en BD d'une qualité.");
@@ -118,8 +82,9 @@ class QualiteService {
 
     /**
      * @param Qualite $qualite
+     * @return Qualite
      */
-    public function delete(Qualite $qualite)
+    public function delete(Qualite $qualite) : Qualite
     {
         try {
             $this->getEntityManager()->remove($qualite);
@@ -127,6 +92,7 @@ class QualiteService {
         } catch (ORMException $e) {
             throw new RuntimeException("Un problème s'est produit lors de l'effacement en BD d'une nouvelle qualité.");
         }
+        return $qualite;
     }
 
     /** REQUETAGE *****************************************************************************************************/
@@ -134,7 +100,7 @@ class QualiteService {
     /**
      * @return QueryBuilder
      */
-    public function createQueryBuilder()
+    public function createQueryBuilder() : QueryBuilder
     {
         $qb = $this->getEntityManager()->getRepository(Qualite::class)->createQueryBuilder("qualite")
             ->addSelect('libelleSupplementaire')->leftJoin('qualite.libellesSupplementaires', 'libelleSupplementaire');
@@ -142,8 +108,11 @@ class QualiteService {
         return $qb;
     }
 
-    /** @return Qualite[] */
-    public function getQualites() {
+    /**
+     * @return Qualite[]
+     */
+    public function getQualites() : array
+    {
         $qb = $this->createQueryBuilder()
             ->orderBy('qualite.libelle', 'ASC')
         ;
@@ -151,7 +120,12 @@ class QualiteService {
         return $qb->getQuery()->getResult();
     }
 
-    public function getQualite($id) {
+    /**
+     * @param int|null $id
+     * @return Qualite|null
+     */
+    public function getQualite(?int $id) : ?Qualite
+    {
         $qb = $this->createQueryBuilder()
             ->andWhere("qualite.id = :id")
             ->setParameter("id", $id);
@@ -167,9 +141,9 @@ class QualiteService {
     /**
      * @param AbstractActionController $controller
      * @param string $paramName
-     * @return Qualite
+     * @return Qualite|null
      */
-    public function getRequestedQualite($controller, $paramName = 'qualite')
+    public function getRequestedQualite(AbstractActionController $controller, string $paramName = 'qualite') : ?Qualite
     {
         $id = $controller->params()->fromRoute($paramName);
         return $this->getQualite($id);
@@ -188,8 +162,10 @@ class QualiteService {
         return $result;
     }
 
-
-    public function findAllQualites()
+    /**
+     * @return Qualite[]
+     */
+    public function findAllQualites() : array
     {
         $qb = $this->getEntityManager()->getRepository(Qualite::class)->createQueryBuilder('qualite')
             ->orderBy('qualite.rang, qualite.libelle');
@@ -199,7 +175,7 @@ class QualiteService {
     /**
      * @return array
      */
-    public function getQualitesAsGroupOptions()
+    public function getQualitesAsGroupOptions() : array
     {
         $listings = [];
         $qualites = $this->getQualites();
@@ -226,5 +202,19 @@ class QualiteService {
         return $result;
     }
 
+    /**
+     * @param string $libelle
+     * @return Qualite|null
+     */
+    public function findQualiteByLibelle(string $libelle) : ?Qualite
+    {
+        $qb = $this->createQueryBuilder()
+            ->andWhere('qualite.libelle = :libelle')
+            ->setParameter('libelle', $libelle)
+        ;
+        $result = $qb->getQuery()->getResult();
+        if (!empty($result)) return current($result);
+        return null;
+    }
 
 }

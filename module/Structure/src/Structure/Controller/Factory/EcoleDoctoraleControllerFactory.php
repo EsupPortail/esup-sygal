@@ -2,7 +2,7 @@
 
 namespace Structure\Controller\Factory;
 
-use Application\Service\CoEncadrant\CoEncadrantService;
+use These\Service\CoEncadrant\CoEncadrantService;
 use Application\Service\Role\RoleService;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;

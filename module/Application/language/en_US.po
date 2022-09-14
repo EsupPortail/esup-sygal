@@ -624,145 +624,145 @@ msgstr ""
 msgid "Accès aux thèses..."
 msgstr ""
 
-#: module/Application/view/application/these/identite.phtml:45
+#: module/These/view/these/these/identite.phtml:45
 msgid "Fiche"
 msgstr "Information Sheet"
 
-#: module/Application/view/application/these/identite.phtml:67
+#: module/These/view/these/these/identite.phtml:67
 msgid "Nationalité :"
 msgstr "Nationality:"
 
-#: module/Application/view/application/these/identite.phtml:72
+#: module/These/view/these/these/identite.phtml:72
 msgid "N° étudiant :"
 msgstr "Student no.:"
 
-#: module/Application/view/application/these/identite.phtml:77
+#: module/These/view/these/these/identite.phtml:77
 msgid "PersoP@ss :"
 msgstr "PersoP@ss:"
 
-#: module/Application/view/application/these/identite.phtml:85
+#: module/These/view/these/these/identite.phtml:85
 msgid "Modifier"
 msgstr "Modify"
 
-#: module/Application/view/application/these/identite.phtml:90
+#: module/These/view/these/these/identite.phtml:90
 msgid "Mail :"
 msgstr "Mail:"
 
-#: module/Application/view/application/these/identite.phtml:95
+#: module/These/view/these/these/identite.phtml:95
 msgid "(Inconnu)"
 msgstr "(Unknown)"
 
-#: module/Application/view/application/these/identite.phtml:131
+#: module/These/view/these/these/identite.phtml:131
 msgid "Établissement"
 msgstr "Institution"
 
-#: module/Application/view/application/these/identite.phtml:136
-#: module/Application/view/application/these/identite.phtml:138
+#: module/These/view/these/these/identite.phtml:136
+#: module/These/view/these/these/identite.phtml:138
 msgid "Non renseigné"
 msgstr "None given"
 
-#: module/Application/view/application/these/identite.phtml:159
+#: module/These/view/these/these/identite.phtml:159
 msgid "Titre"
 msgstr "Title"
 
-#: module/Application/view/application/these/identite.phtml:166
+#: module/These/view/these/these/identite.phtml:166
 msgid "Confidentialité"
 msgstr "Confidentiality"
 
-#: module/Application/view/application/these/index.phtml:30
-#: module/Application/view/application/these/index.phtml:33
+#: module/These/view/these/these/index.phtml:30
+#: module/These/view/these/these/index.phtml:33
 msgid "Thèses"
 msgstr "PhD Theses"
 
-#: module/Application/view/application/these/index.phtml:49
+#: module/These/view/these/these/index.phtml:49
 msgid "thèse(s) trouvée(s)."
 msgstr "found PhD theses."
 
-#: module/Application/view/application/these/index.phtml:58
+#: module/These/view/these/these/index.phtml:58
 msgid "Titre de la thèse"
 msgstr "Title of the PhD thesis"
 
-#: module/Application/view/application/these/index.phtml:64
+#: module/These/view/these/these/index.phtml:64
 msgid "Numéro étudiant"
 msgstr "Student number of the PhD student"
 
-#: module/Application/view/application/these/index.phtml:65
+#: module/These/view/these/these/index.phtml:65
 msgid "N°étud."
 msgstr "Student Number"
 
-#: module/Application/view/application/these/index.phtml:70
+#: module/These/view/these/these/index.phtml:70
 msgid "Nom du doctorant"
 msgstr "Name of the PhD student"
 
-#: module/Application/view/application/these/index.phtml:75
+#: module/These/view/these/these/index.phtml:75
 msgid "Liste des directeurs de thèse"
 msgstr "List of the PhD supervisors"
 
-#: module/Application/view/application/these/index.phtml:76
+#: module/These/view/these/these/index.phtml:76
 msgid "Dir. de thèse"
 msgstr "PhD Supervisors"
 
-#: module/Application/view/application/these/index.phtml:82
+#: module/These/view/these/these/index.phtml:82
 msgid "École<br>doct."
 msgstr "Doctoral<br/>School"
 
-#: module/Application/view/application/these/index.phtml:88
+#: module/These/view/these/these/index.phtml:88
 msgid "Unité<br>rech."
 msgstr "Research<br/>Unit"
 
-#: module/Application/view/application/these/index.phtml:92
+#: module/These/view/these/these/index.phtml:92
 msgid "Date de première inscription"
 msgstr "Date of first inscription"
 
-#: module/Application/view/application/these/index.phtml:93
+#: module/These/view/these/these/index.phtml:93
 msgid "Date 1ère<br>inscr."
 msgstr "Date of 1st<br/> Inscription"
 
-#: module/Application/view/application/these/index.phtml:142
+#: module/These/view/these/these/index.phtml:142
 msgid "Exporter au format CSV"
 msgstr "Export as CSV"
 
-#: module/Application/view/application/these/index.phtml:148
+#: module/These/view/these/these/index.phtml:148
 msgid "Filtres"
 msgstr "Filters"
 
-#: module/Application/view/application/these/index.phtml:149
+#: module/These/view/these/these/index.phtml:149
 msgid "État"
 msgstr "State"
 
-#: module/Application/view/application/these/index.phtml:150
+#: module/These/view/these/these/index.phtml:150
 msgid "En cours"
 msgstr "Ongoing"
 
-#: module/Application/view/application/these/index.phtml:151
+#: module/These/view/these/these/index.phtml:151
 msgid "Abandonnée"
 msgstr "Dropped"
 
-#: module/Application/view/application/these/index.phtml:152
+#: module/These/view/these/these/index.phtml:152
 msgid "Soutenue"
 msgstr "Defended"
 
-#: module/Application/view/application/these/index.phtml:153
+#: module/These/view/these/these/index.phtml:153
 msgid "Transférée"
 msgstr "Transfered"
 
-#: module/Application/view/application/these/index.phtml:154
+#: module/These/view/these/these/index.phtml:154
 msgid "Tous"
 msgstr "All"
 
-#: module/Application/view/application/these/index.phtml:156
+#: module/These/view/these/these/index.phtml:156
 msgid "Rechercher"
 msgstr "Search"
 
-#: module/Application/view/application/these/index.phtml:157
+#: module/These/view/these/these/index.phtml:157
 msgid "Vider"
 msgstr "Clear"
 
-#: module/Application/view/application/these/index.phtml:158
+#: module/These/view/these/these/index.phtml:158
 msgid "Entrez 2 caractères au moins..."
 msgstr "Enter at least 2 characters..."
 
-#: module/Application/view/application/these/index.phtml:159
+#: module/These/view/these/these/index.phtml:159
 msgid ""
 "Recherche possible sur<ul><li>le titre de la thèse</li><li>le numéro "
 "étudiant de l'auteur</li><li>le nom de l'auteur</li><li>le nom du directeur "

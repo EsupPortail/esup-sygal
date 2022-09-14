@@ -2,7 +2,7 @@
 
 namespace Application\View\Helper\Workflow;
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\VWorkflow;
 use Application\Service\Workflow\WorkflowServiceAwareInterface;
 use Application\Service\Workflow\WorkflowServiceAwareTrait;

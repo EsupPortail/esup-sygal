@@ -1,0 +1,76 @@
+<?php
+
+use These\Entity\Db\FichierThese;
+use These\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var         $this PhpRenderer
+ * @var These   $these
+ * @var FichierThese $fichierThese
+ * @var string  $testArchivabiliteUrl
+ */
+
+$validiteFichierThese = $fichierThese ? $fichierThese->getFichier()->getValidite() : null;
+$estVersionCorrigee = $fichierThese->getFichier()->getVersion()->estVersionCorrigee();
+?>
+
+<div class="box card" id="div-tester-archi">
+
+    <div class="card-header bg-info">
+        <?php $heading = $estVersionCorrigee ? "Archivabilité de la thèse corrigée" : "Archivabilité de la thèse" ?>
+        <h2 class="first"><?php echo $heading ?></h2>
+    </div>
+
+    <div class="card-body">
+        <?php if (!$validiteFichierThese): ?>
+
+            <form method="post" class="tester-archi" action="<?php echo $testArchivabiliteUrl ?>">
+                <input type="hidden" name="action" value="tester"/>
+                <input type="submit" id="btn-tester-archivab" class="btn btn-primary" value="Tester l'archivabilité"/>
+            </form>
+
+        <?php elseif ($validiteFichierThese->getEstValide() === null): ?>
+
+            <p class="text-warning lead">
+                <span class="fas fa-exclamation-triangle"></span>
+                Indéterminée !
+            </p>
+            <form method="post" action="">
+                <input type="hidden" name="action" value="tester"/>
+                <input type="submit" class="btn btn-primary" value="Relancer le test d'archivabilité"/>
+            </form>
+
+        <?php elseif ($validiteFichierThese->getEstValide() === true): ?>
+
+            <p class="text-success lead">
+                <span class="fas fa-thumbs-up"></span>
+                Thèse archivable.
+            </p>
+
+        <?php else: ?>
+
+            <p class="text-danger lead">
+                <span class="fas fa-thumbs-down"></span>
+                Thèse non archivable en l'état.
+            </p>
+            <p>
+                Pour remédier au problème, 2 solutions s'offrent à vous : <strong>le retraitement automatique</strong>
+                ou le <strong>retraitement par vos soins</strong>...
+            </p>
+
+        <?php endif ?>
+
+    </div>
+</div>
+
+
+<script>
+    $(function() {
+        // Bouton "Tester l'archivabilité".
+        $("#btn-tester-archivab").on("click", function(event) {
+            $(this).data("loading-text", "Patientez, svp...").button('loading');
+            $("body").addClass("wait");
+        });
+    });
+</script>

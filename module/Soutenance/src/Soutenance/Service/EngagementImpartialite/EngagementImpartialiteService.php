@@ -2,9 +2,9 @@
 
 namespace Soutenance\Service\EngagementImpartialite;
 
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Individu\Entity\Db\Individu;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
 use Doctrine\ORM\NonUniqueResultException;

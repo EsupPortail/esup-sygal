@@ -1,17 +1,13 @@
 /config/autoload/*local*.php
 
-/data/db/
 /data/cache/
 /data/DoctrineModule/
 /data/DoctrineORMModule/
 /vendor
-/upload
 
 /tmp/
 /docker/
 /migration/
-
-/etabs/
 
 .DS_Store
 .idea/

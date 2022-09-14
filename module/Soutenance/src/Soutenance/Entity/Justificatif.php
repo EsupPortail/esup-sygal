@@ -2,7 +2,7 @@
 
 namespace Soutenance\Entity;
 
-use Application\Entity\Db\FichierThese;
+use These\Entity\Db\FichierThese;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 

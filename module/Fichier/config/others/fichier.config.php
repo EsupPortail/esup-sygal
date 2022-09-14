@@ -6,8 +6,8 @@
 
 namespace Fichier;
 
-use Application\Service\FichierThese\FichierTheseService;
-use Application\Service\FichierThese\FichierTheseServiceFactory;
+use These\Service\FichierThese\FichierTheseService;
+use These\Service\FichierThese\FichierTheseServiceFactory;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
 use Fichier\Command\TestArchivabiliteShellCommandFactory;
 use Fichier\Controller\ConsoleController;
@@ -72,7 +72,7 @@ return [
                             FichierPrivileges::FICHIER_COMMUN_TELEVERSER,
                         ],
                         'resources' => ['Fichier'],
-                        //'assertion'  => 'Assertion\\These',
+                        //'assertion'  => TheseAssertion::class,
                     ],
                 ],
             ],

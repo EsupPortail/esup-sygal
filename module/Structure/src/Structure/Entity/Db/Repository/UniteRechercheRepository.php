@@ -37,6 +37,27 @@ class UniteRechercheRepository extends DefaultEntityRepository
         return $unites;
     }
 
+    /**
+     * @param int|null $id
+     * @return UniteRecherche|null
+     */
+    public function find($id, $lockMode = null, $lockVersion = null) : ?UniteRecherche
+    {
+        /** @var UniteRecherche $unite */
+        $qb = $this->createQueryBuilder("u")
+            ->addSelect("s")
+            ->leftJoin("u.structure", "s")
+            ->andWhere("u.id = :id")
+            ->setParameter("id", $id);
+        try {
+            $unite = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("UniteRechercheRepository::find(".$id.") retourne de multiples unités de recherches !");
+        }
+
+        return $unite;
+    }
+
     public function findByStructureId($id)
     {
         /** @var UniteRecherche $unite */
@@ -73,4 +94,6 @@ class UniteRechercheRepository extends DefaultEntityRepository
         $result = $qb->getQuery()->getResult();
         return $result;
     }
+
+
 }

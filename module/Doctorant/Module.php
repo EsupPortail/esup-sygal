@@ -3,18 +3,9 @@
 namespace Doctorant;
 
 use Laminas\Config\Factory as ConfigFactory;
-use Laminas\Mvc\ModuleRouteListener;
-use Laminas\Mvc\MvcEvent;
 
 class Module
 {
-    public function onBootstrap(MvcEvent $e)
-    {
-        $eventManager        = $e->getApplication()->getEventManager();
-        $moduleRouteListener = new ModuleRouteListener();
-        $moduleRouteListener->attach($eventManager);
-    }
-
     public function getConfig()
     {
         return ConfigFactory::fromFile(__DIR__ . '/config/module.config.php');

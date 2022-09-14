@@ -4,7 +4,7 @@ namespace Structure\Controller\Factory;
 
 use Structure\Controller\UniteRechercheController;
 use Structure\Form\UniteRechercheForm;
-use Application\Service\CoEncadrant\CoEncadrantService;
+use These\Service\CoEncadrant\CoEncadrantService;
 use Application\Service\DomaineScientifiqueService;
 use Structure\Service\Etablissement\EtablissementServiceLocateTrait;
 use Individu\Service\Individu\IndividuService;

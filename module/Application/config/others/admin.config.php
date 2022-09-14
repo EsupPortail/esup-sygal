@@ -8,7 +8,7 @@ use Application\Controller\RoleController;
 use Application\Form\Factory\MailConfirmationFormFactory;
 use Application\Form\Factory\MailConfirmationHydratorFactory;
 use Structure\Provider\Privilege\StructurePrivileges;
-use Application\Provider\Privilege\ThesePrivileges;
+use These\Provider\Privilege\ThesePrivileges;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\Service\MailConfirmationServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;

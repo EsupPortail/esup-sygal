@@ -3,7 +3,7 @@
 namespace RapportActivite\Assertion;
 
 use Application\Assertion\AbstractAssertion;
-use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
+use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Assertion\RapportActiviteAssertion;
 use RapportActivite\Rule\Televersement\RapportActiviteTeleversementRule;
@@ -27,7 +27,7 @@ class RapportActiviteAssertionFactory
         $assertion->setRapportActiviteService($rapportActiviteService);
         $assertion->setServiceMessageCollector($messageCollector);
 
-        /** @var \Application\Service\TheseAnneeUniv\TheseAnneeUnivService $theseAnneeUnivService */
+        /** @var \These\Service\TheseAnneeUniv\TheseAnneeUnivService $theseAnneeUnivService */
         $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
 
         /** @var \RapportActivite\Rule\Televersement\RapportActiviteTeleversementRule $rapportActiviteTeleversementRule */

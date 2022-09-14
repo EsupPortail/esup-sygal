@@ -3,15 +3,15 @@
 namespace Soutenance\Service\Proposition;
 
 //TODO faire le repo aussi
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Structure\Entity\Db\EcoleDoctorale;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;

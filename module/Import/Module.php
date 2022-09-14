@@ -5,18 +5,9 @@ namespace Import;
 use Import\Model\ImportObserv;
 use Laminas\Config\Factory as ConfigFactory;
 use Laminas\Console\Adapter\AdapterInterface as Console;
-use Laminas\Mvc\ModuleRouteListener;
-use Laminas\Mvc\MvcEvent;
 
 class Module
 {
-    public function onBootstrap(MvcEvent $e)
-    {
-        $eventManager = $e->getApplication()->getEventManager();
-        $moduleRouteListener = new ModuleRouteListener();
-        $moduleRouteListener->attach($eventManager);
-    }
-
     public function getConfig()
     {
         return ConfigFactory::fromFiles([

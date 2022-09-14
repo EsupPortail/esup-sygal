@@ -1,0 +1,174 @@
+<?php
+
+use These\Entity\Db\These;
+use These\Service\FichierThese\PdcData;
+use These\Service\These\TheseService;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer             $this
+ * @var These                   $these
+ * @var array(string=>string)   $logos
+ * @var array(string=>string)   $infos
+ * @var array(string=>string)   $encadrements
+ * @var array(array)            $jury
+ * @var PdcData                 $informations
+ *
+ * @see TheseService::fetchInformationsPageDeCouverture() pour la génération de $informations
+ */
+?>
+
+<!-- SECTION DU LOGO DE LA COMUE -------------------------------------------------------------------------------------->
+<div style="text-align: center; margin-bottom: 30px;">
+    <div class='logo-comue'>
+        <?php if ($informations->getLogoCOMUE() !== null): ?>
+            <img src="<?php echo $informations->getLogoCOMUE() ?>"/>
+        <?php else: ?>
+            <span style='background-color:red;'> COMUE ou logo de la COMUE non renseigné. </span>
+        <?php endif; ?>
+    </div>
+</div>
+
+<!-- ENTETE DE LA PAGE DE COUVERTURE ---------------------------------------------------------------------------------->
+<div class='bandeau-these'>
+    THÈSE
+</div>
+
+<div class='infos-diplome'>
+    <span class='larger-infos'>Pour obtenir le diplôme de doctorat </span>
+    <br/>
+
+    Spécialité
+    <?php if ($informations->getSpecialite() !== null): ?>
+        <?php echo $informations->getSpecialite(); ?>
+    <?php else: ?>
+        <span style='background-color:red;'> non renseignée </span>
+    <?php endif; ?>
+    <br/>
+
+    Préparée au sein de
+    <?php if ($informations->getEtablissement() !== null): ?>
+        l'<?php echo $informations->getEtablissement(); ?>
+    <?php else: ?>
+        <span style='background-color:red;'> non renseigné </span>
+    <?php endif; ?>
+<!--    --><?php //if ($informations->isAssocie()): ?>
+<!--     et de l'--><?php //echo $informations->getLibelleAssocie(); ?>
+<!--    --><?php //endif; ?>
+    <br/>
+
+    <?php if ($informations->isCotutuelle()): ?>
+        En cotutelle
+        <?php if ($informations->getCotutuellePays() !== null): ?>
+            internationale
+        <?php endif; ?>
+        avec
+        <?php echo $informations->getCotutuelleLibelle(); ?>
+        <?php if ($informations->getCotutuellePays() !== null): ?>
+            , <?php echo ($informations->getCotutuellePays()); ?>
+        <?php endif; ?>
+    <?php endif; ?>
+</div>
+
+
+<div class='bandeau-titre'>
+    <?php if ($informations->getTitre() !== null): ?>
+        <?php echo $informations->getTitre(); ?>
+    <?php else: ?>
+        <span style='background-color:red;'> Aucun titre </span>
+    <?php endif; ?>
+    <br/>
+</div>
+
+<div class='infos-doctorant' style=''>
+    Présentée et soutenue par <br/>
+    <?php if ($informations->getDoctorant() !== null): ?>
+        <?php echo $informations->getDoctorant(); ?>
+    <?php else: ?>
+        <span style='background-color:red;'> Aucun doctorant </span>
+    <?php endif; ?>
+</div>
+
+<!-- SECTION JURY ----------------------------------------------------------------------------------------------------->
+
+<table class='jury'>
+    <tr>
+        <th colspan='3'>
+            Thèse
+            <?php if ($informations->getDateFinConfidentialite()) : ?>
+                à caractère confidentiel
+            <?php endif; ?>
+            soutenue le
+            <?php if ($informations->getDate() !== null): ?>
+                <?php echo $informations->getDate(); ?>
+            <?php else: ?>
+                <span style='background-color:red;'> Aucune date </span>
+            <?php endif; ?>
+            <br/>
+            devant le jury composé de
+        </th>
+    </tr>
+
+    <?php foreach ($informations->getActeursEnCouverture() as $acteur) : ?>
+        <tr>
+            <td> <?php echo $acteur->getDenomination(); ?> </td>
+            <td> <?php echo trim($acteur->getQualite()); ?>,  <?php echo $acteur->getEtablissement(); ?></td>
+            <td> <?php echo $acteur->getRole(); ?> </td>
+        </tr>
+    <?php endforeach; ?>
+
+</table>
+
+
+<!-- SECTION ENCADREMENT ---------------------------------------------------------------------------------------------->
+<div class='infos-encadrement'>
+    Thèse dirigée par
+    <?php if ($informations->getListing()): ?>
+        <?php echo $informations->getListing() ?>
+    <?php else : ?>
+        <span style='background-color:red;'> non renseigné </span>
+    <?php endif; ?>
+<!--    --><?php //if ($informations->getUniteRecherche()): ?>
+<!--        --><?php //echo $informations->getUniteRecherche() ?>
+<!--    --><?php //else : ?>
+<!--        <span style='background-color:red;'> non renseigné </span>-->
+<!--    --><?php //endif; ?>
+</div>
+
+<!-- SECTION DES LOGOS EN BAS DE PAGE --------------------------------------------------------------------------------->
+<div class="logos">
+<table style="border:none;" class="logos">
+    <tr>
+        <td>
+            <?php if ($informations->getLogoEtablissement()): ?>
+                <img class="logo_small" src="<?php echo $informations->getLogoEtablissement() ?>"/>
+            <?php else: ?>
+                <span style='background-color:red;'> Établissement d'inscription ou logo d'établissement non renseigné. </span>
+            <?php endif; ?>
+        </td>
+        <?php if ($informations->isAssocie()): ?>
+            <td>
+                <?php if ($informations->getLogoAssocie()): ?>
+                    <img class="logo_small" src="<?php echo $informations->getLogoAssocie() ?>"/>
+                <?php else: ?>
+                    <span style='background-color:red;'> Établissement associé ou logo d'établissement non renseigné. </span>
+                <?php endif; ?>
+            </td>
+        <?php endif; ?>
+        <td>
+            <?php if ($informations->getLogoEcoleDoctorale()): ?>
+                <img class="logo_small" src="<?php echo $informations->getLogoEcoleDoctorale() ?>"/>
+            <?php else: ?>
+                <span style='background-color:red;'> École doctorale ou logo d'école doctorale non renseigné </span>
+            <?php endif; ?>
+        </td>
+        <td>
+            <?php if ($informations->getLogoUniteRecherche()): ?>
+                <img class="logo_small" src="<?php echo $informations->getLogoUniteRecherche() ?>"/>
+            <?php else: ?>
+                <span style='background-color:red;'> Unité de recherche ou logo d'unité de recherche non renseigné </span>
+            <?php endif; ?>
+        </td>
+    </tr>
+</table>
+</div>

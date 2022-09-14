@@ -4,11 +4,11 @@ namespace ApplicationUnitTest\Service\ImportObservResultService;
 
 use Application\Entity\Db\ImportObservResultEtab;
 use Import\Model\Repository\ImportObservResultRepository;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Import\Model\Service\ImportObservResultService;
 use Application\Service\Notification\NotifierService;
-use Application\Service\These\TheseService;
+use These\Service\These\TheseService;
 use ApplicationUnitTest\Test\Asset\EntityAsset;
 use ApplicationUnitTest\Test\Provider\MockProviderAwareTrait;
 use DateTime;

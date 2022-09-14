@@ -1,0 +1,41 @@
+<?php
+
+use These\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var These       $these
+ * @var string      $url
+ */
+?>
+
+<?php $url = $this->url('these/depot', ['these' => $these->getId()], ['force_canonical' => true]) ?>
+
+<p>Bonjour,</p>
+<p>Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.</p>
+
+<?php if ($these->getCorrectionAutoriseeEstFacultative()): ?>
+
+    <p>
+        Le délai de <?php echo $these->getDelaiDepotVersionCorrigeeToString() ?> accordé au doctorant
+        <?php echo $these->getDoctorant()->getNomComplet(true) ?> pour corriger sa thèse est dépassé.
+    </p>
+    <p>
+        Vous pouvez saisir l’admission dans Apogée si le PV et le rapport de soutenance (les originaux) ont été transmis.
+    </p>
+
+<?php elseif ($these->getCorrectionAutoriseeEstObligatoire()): ?>
+
+    <p>
+        Le délai de <?php echo $these->getDelaiDepotVersionCorrigeeToString() ?> accordé au doctorant
+        <?php echo $these->getDoctorant()->getNomComplet(true) ?> pour corriger sa thèse est dépassé.
+    </p>
+    <p>
+        Vous pouvez saisir l’ajournement dans Apogée si le PV et le rapport de soutenance (les originaux) ont été transmis.
+    </p>
+
+<?php endif ?>
+
+Cliquez <a href="<?php echo $url ?>">ici</a> pour accéder à l'application.
+

@@ -5,7 +5,7 @@ namespace Application\Controller\Factory;
 use Application\Controller\UtilisateurController;
 use Application\Form\CreationUtilisateurForm;
 use Application\Form\InitCompteForm;
-use Application\Service\Acteur\ActeurService;
+use These\Service\Acteur\ActeurService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
 use Application\Service\UserContextService;

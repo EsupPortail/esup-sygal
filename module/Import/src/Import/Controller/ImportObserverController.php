@@ -4,9 +4,9 @@ namespace Import\Controller;
 
 use Application\Controller\AbstractController;
 use Import\Model\ImportObserv;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\EventRouterReplacerAwareTrait;
-use Application\Service\These\TheseServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 use Assert\Assertion;
 use Import\Model\Service\ImportObservResultServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;

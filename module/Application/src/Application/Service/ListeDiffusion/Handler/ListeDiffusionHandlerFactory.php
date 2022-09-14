@@ -2,7 +2,7 @@
 
 namespace Application\Service\ListeDiffusion\Handler;
 
-use Application\Service\Acteur\ActeurService;
+use These\Service\Acteur\ActeurService;
 use Doctorant\Service\DoctorantService;
 use Structure\Service\Etablissement\EtablissementService;
 use Individu\Service\IndividuService;

@@ -2,16 +2,16 @@
 
 namespace Application\Controller;
 
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
 use Application\Notification\ValidationDepotTheseCorrigeeNotification;
-use Application\Notification\ValidationPageDeCouvertureNotification;
+use These\Notification\ValidationPageDeCouvertureNotification;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Provider\Privilege\ValidationPrivileges;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
