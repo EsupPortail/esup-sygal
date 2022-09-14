@@ -7,7 +7,7 @@ use Structure\Entity\Db\EcoleDoctorale;
 use Individu\Entity\Db\Individu;
 use These\Entity\Db\These;
 use Structure\Entity\Db\UniteRecherche;
-use These\Form\RechercherCoEncadrantFormAwareTrait;
+use These\Form\CoEncadrant\RechercherCoEncadrantFormAwareTrait;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
 use These\Service\CoEncadrant\Exporter\JustificatifCoencadrements\JustificatifCoencadrementPdfExporter;

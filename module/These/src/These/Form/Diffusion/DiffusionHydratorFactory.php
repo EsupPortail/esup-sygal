@@ -1,8 +1,8 @@
 <?php
 
-namespace These\Form\Factory;
+namespace These\Form\Diffusion;
 
-use These\Form\Hydrator\DiffusionHydrator;
+use These\Form\Diffusion\DiffusionHydrator;
 use Interop\Container\ContainerInterface;
 
 class DiffusionHydratorFactory

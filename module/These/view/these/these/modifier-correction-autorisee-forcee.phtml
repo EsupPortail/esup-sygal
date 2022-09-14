@@ -2,7 +2,7 @@
 
 use These\Entity\Db\Attestation;
 use These\Entity\Db\These;
-use These\Form\AttestationTheseForm;
+use These\Form\Attestation\AttestationTheseForm;
 use These\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
 
@@ -10,7 +10,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var PhpRenderer          $this
  * @var These                $these
  * @var Attestation          $attestation
- * @var AttestationTheseForm $form
+ * @var \These\Form\Attestation\AttestationTheseForm $form
  * @var string               $modifierAttestationUrl
  *
  * @see TheseController::modifierCorrectionAutoriseeForceeAction()

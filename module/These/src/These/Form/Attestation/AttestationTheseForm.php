@@ -1,6 +1,6 @@
 <?php
 
-namespace These\Form;
+namespace These\Form\Attestation;
 
 use These\Entity\Db\Attestation;
 use These\Entity\Db\These;

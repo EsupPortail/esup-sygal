@@ -1,8 +1,8 @@
 <?php
 
-namespace These\Form\Factory;
+namespace These\Form\CoEncadrant;
 
-use These\Form\RechercherCoEncadrantForm;
+use These\Form\CoEncadrant\RechercherCoEncadrantForm;
 use Interop\Container\ContainerInterface;
 
 class RechercherCoEncadrantFormFactory {

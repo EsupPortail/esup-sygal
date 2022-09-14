@@ -19,10 +19,10 @@ use Application\Entity\Db\Variable;
 use Fichier\Entity\Db\VersionFichier;
 use Application\Entity\Db\WfEtape;
 use Application\Filter\IdifyFilterAwareTrait;
-use These\Form\AttestationTheseForm;
+use These\Form\Attestation\AttestationTheseForm;
 use Application\Form\ConformiteFichierForm;
-use These\Form\DiffusionTheseForm;
-use These\Form\MetadonneeTheseForm;
+use These\Form\Diffusion\DiffusionTheseForm;
+use These\Form\Metadonnees\MetadonneeTheseForm;
 use Application\Form\PointsDeVigilanceForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
@@ -93,12 +93,12 @@ class TheseController extends AbstractController
     private $rdvBuTheseForm;
 
     /**
-     * @var AttestationTheseForm
+     * @var \These\Form\Attestation\AttestationTheseForm
      */
     private $attestationTheseForm;
 
     /**
-     * @var DiffusionTheseForm
+     * @var \These\Form\Diffusion\DiffusionTheseForm
      */
     private $diffusionTheseForm;
 
@@ -1233,7 +1233,7 @@ class TheseController extends AbstractController
             return false;
         }
 
-        /** @var DiffusionTheseForm $form */
+        /** @var \These\Form\Diffusion\DiffusionTheseForm $form */
         $form = $this->diffusionTheseForm;
 
         $versionExpurgee = $version->estVersionCorrigee() ? VersionFichier::CODE_DIFF_CORR : VersionFichier::CODE_DIFF;
@@ -1333,13 +1333,13 @@ class TheseController extends AbstractController
 
     /**
      * @param VersionFichier $version
-     * @return DiffusionTheseForm
+     * @return \These\Form\Diffusion\DiffusionTheseForm
      */
     private function getDiffusionForm(VersionFichier $version)
     {
         $these = $this->requestedThese();
 
-        /** @var DiffusionTheseForm $form */
+        /** @var \These\Form\Diffusion\DiffusionTheseForm $form */
         $form = $this->diffusionTheseForm;
         $form->setVersionFichier($version);
 
@@ -1353,7 +1353,7 @@ class TheseController extends AbstractController
         $diffusion = $these->getDiffusionForVersion($version);
         $attestation = $these->getAttestationForVersion($version);
 
-        /** @var DiffusionTheseForm $form */
+        /** @var \These\Form\Diffusion\DiffusionTheseForm $form */
         $form = $this->diffusionTheseForm;
 
         $codes = [
@@ -1428,7 +1428,7 @@ class TheseController extends AbstractController
     }
 
     /**
-     * @return MetadonneeTheseForm
+     * @return \These\Form\Metadonnees\MetadonneeTheseForm
      */
     private function getDescriptionForm()
     {

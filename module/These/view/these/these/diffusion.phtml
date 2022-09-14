@@ -4,7 +4,7 @@ use These\Controller\TheseController;
 use These\Entity\Db\Diffusion;
 use These\Entity\Db\These;
 use Fichier\Entity\Db\VersionFichier;
-use These\Form\DiffusionTheseForm;
+use These\Form\Diffusion\DiffusionTheseForm;
 use These\Provider\Privilege\ThesePrivileges;
 use Application\View\Renderer\PhpRenderer;
 
@@ -13,7 +13,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var These              $these
  * @var VersionFichier     $version
  * @var Diffusion          $diffusion
- * @var DiffusionTheseForm $form
+ * @var \These\Form\Diffusion\DiffusionTheseForm $form
  * @var array              $theseFichiersExpurgesItems
  * @var array              $annexesFichiersExpurgesItems
  * @var bool               $resaisirAutorisationDiffusionVersionCorrigee

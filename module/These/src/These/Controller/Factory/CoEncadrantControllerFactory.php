@@ -3,7 +3,7 @@
 namespace These\Controller\Factory;
 
 use These\Controller\CoEncadrantController;
-use These\Form\RechercherCoEncadrantForm;
+use These\Form\CoEncadrant\RechercherCoEncadrantForm;
 use These\Service\Acteur\ActeurService;
 use These\Service\CoEncadrant\CoEncadrantService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;

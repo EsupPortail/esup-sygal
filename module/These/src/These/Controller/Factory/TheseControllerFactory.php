@@ -3,9 +3,9 @@
 namespace These\Controller\Factory;
 
 use These\Controller\TheseController;
-use These\Form\AttestationTheseForm;
-use These\Form\DiffusionTheseForm;
-use These\Form\MetadonneeTheseForm;
+use These\Form\Attestation\AttestationTheseForm;
+use These\Form\Diffusion\DiffusionTheseForm;
+use These\Form\Metadonnees\MetadonneeTheseForm;
 use Application\Form\PointsDeVigilanceForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;
@@ -81,9 +81,9 @@ class TheseControllerFactory
         $rdvBuTheseForm = $container->get('FormElementManager')->get('RdvBuTheseForm');
 
         /**
-         * @var AttestationTheseForm $attestationTheseForm
-         * @var DiffusionTheseForm $diffusionTheseForm
-         * @var MetadonneeTheseForm $metadonneeTheseForm
+         * @var \These\Form\Attestation\AttestationTheseForm $attestationTheseForm
+         * @var \These\Form\Diffusion\DiffusionTheseForm $diffusionTheseForm
+         * @var \These\Form\Metadonnees\MetadonneeTheseForm $metadonneeTheseForm
          * @var PointsDeVigilanceForm $pointsDeVigilanceForm
          */
         $attestationTheseForm = $container->get('FormElementManager')->get('AttestationTheseForm');

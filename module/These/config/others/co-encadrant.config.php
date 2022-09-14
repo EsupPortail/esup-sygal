@@ -4,8 +4,8 @@ namespace These;
 
 use These\Controller\CoEncadrantController;
 use These\Controller\Factory\CoEncadrantControllerFactory;
-use These\Form\Factory\RechercherCoEncadrantFormFactory;
-use These\Form\RechercherCoEncadrantForm;
+use These\Form\CoEncadrant\RechercherCoEncadrantFormFactory;
+use These\Form\CoEncadrant\RechercherCoEncadrantForm;
 use These\Provider\Privilege\CoEncadrantPrivileges;
 use These\Service\CoEncadrant\CoEncadrantService;
 use These\Service\CoEncadrant\CoEncadrantServiceFactory;

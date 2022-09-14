@@ -1,6 +1,6 @@
 <?php
 
-namespace These\Form;
+namespace These\Form\Diffusion;
 
 use These\Entity\Db\Diffusion;
 use Fichier\Entity\Db\NatureFichier;

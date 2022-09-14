@@ -1,6 +1,6 @@
 <?php
 
-namespace These\Form\Hydrator;
+namespace These\Form\Diffusion;
 
 use These\Entity\Db\Diffusion;
 use Doctrine\Laminas\Hydrator\DoctrineObject;

@@ -1,6 +1,6 @@
 <?php
 
-namespace These\Form\Hydrator;
+namespace These\Form\Attestation;
 
 use These\Entity\Db\Attestation;
 use Doctrine\Laminas\Hydrator\DoctrineObject;

@@ -1,9 +1,9 @@
 <?php
 
-namespace These\Form\Factory;
+namespace These\Form\Diffusion;
 
-use These\Form\DiffusionTheseForm;
-use These\Form\Hydrator\DiffusionHydrator;
+use These\Form\Diffusion\DiffusionTheseForm;
+use These\Form\Diffusion\DiffusionHydrator;
 use Interop\Container\ContainerInterface;
 use UnicaenApp\Message\MessageService;
 
@@ -11,7 +11,7 @@ class DiffusionTheseFormFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        /** @var DiffusionHydrator $hydrator */
+        /** @var \These\Form\Diffusion\DiffusionHydrator $hydrator */
         $hydrator = $container->get('HydratorManager')->get('DiffusionHydrator');
 
         /** @var MessageService $messageService */

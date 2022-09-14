@@ -1,16 +1,16 @@
 <?php
 
-namespace These\Form\Factory;
+namespace These\Form\Attestation;
 
-use These\Form\AttestationTheseForm;
-use These\Form\Hydrator\AttestationHydrator;
+use These\Form\Attestation\AttestationTheseForm;
+use These\Form\Attestation\AttestationHydrator;
 use Interop\Container\ContainerInterface;
 
 class AttestationTheseFormFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        /** @var AttestationHydrator $hydrator */
+        /** @var \These\Form\Attestation\AttestationHydrator $hydrator */
         $hydrator = $container->get('HydratorManager')->get('AttestationHydrator');
 
         $form = new AttestationTheseForm();

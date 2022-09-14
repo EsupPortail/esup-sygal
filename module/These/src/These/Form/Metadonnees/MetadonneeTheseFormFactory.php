@@ -1,8 +1,8 @@
 <?php
 
-namespace These\Form\Factory;
+namespace These\Form\Metadonnees;
 
-use These\Form\MetadonneeTheseForm;
+use These\Form\Metadonnees\MetadonneeTheseForm;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Interop\Container\ContainerInterface;
 

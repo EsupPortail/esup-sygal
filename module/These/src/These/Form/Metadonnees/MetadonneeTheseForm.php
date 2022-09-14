@@ -1,6 +1,6 @@
 <?php
 
-namespace These\Form;
+namespace These\Form\Metadonnees;
 
 use These\Entity\Db\MetadonneeThese;
 use These\Filter\MotsClesFilter;
