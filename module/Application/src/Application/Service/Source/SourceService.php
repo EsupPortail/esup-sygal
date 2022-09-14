@@ -4,7 +4,9 @@ namespace Application\Service\Source;
 
 use Application\Entity\Db\Source;
 use Application\Service\BaseService;
+use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\EntityRepository;
+use Structure\Entity\Db\Etablissement;
 use UnicaenApp\Exception\RuntimeException;
 
 /**
@@ -12,6 +14,8 @@ use UnicaenApp\Exception\RuntimeException;
  */
 class SourceService extends BaseService
 {
+    use SourceCodeStringHelperAwareTrait;
+
     const APPL_SOURCE_CODE = 'SYGAL::sygal';
 
     const SQL_TEMPLATE_CREATE_APP_SOURCE =
@@ -20,7 +24,7 @@ class SourceService extends BaseService
     /**
      * @return EntityRepository
      */
-    public function getRepository()
+    public function getRepository(): EntityRepository
     {
         /** @var EntityRepository $repo */
         $repo = $this->entityManager->getRepository(Source::class);
@@ -31,7 +35,7 @@ class SourceService extends BaseService
     /**
      * @return Source
      */
-    public function fetchApplicationSource()
+    public function fetchApplicationSource(): Source
     {
         $codeApp = self::APPL_SOURCE_CODE;
 
@@ -47,5 +51,15 @@ class SourceService extends BaseService
         }
 
         return $source;
+    }
+
+    /**
+     * Génère un SOURCE_CODE par défaut.
+     *
+     * @return string
+     */
+    public function genereateSourceCode(): string
+    {
+        return $this->sourceCodeStringHelper->addDefaultPrefixTo(uniqid());
     }
 }

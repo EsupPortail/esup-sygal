@@ -17,6 +17,9 @@ use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use These\Form\DomaineHalSaisie\Fieldset\DomaineHalFieldset;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
+/**
+ * @deprecated Utiliser les fieldsets.
+ */
 class TheseSaisieForm extends Form
 {
     use DisciplineServiceAwareTrait;

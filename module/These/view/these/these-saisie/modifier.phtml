@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @see \These\Controller\TheseSaisieController::modifier()
+ *
+ * @var \These\Entity\Db\These $these
+ * @var \Laminas\Form\Form $form
+ * @var string $formPartial
+ */
+
+$this->headTitle($these->getDoctorant()->getNomUsuel());
+$this->headTitle($this->translate("Modification"));
+
+$form->prepare();
+?>
+
+<h1 class="page-header">
+    <?php echo $this->translate("Modification de la thèse de") . " {$these->getDoctorant()}" ?>
+</h1>
+
+<?php echo $this->form()->openTag($form); ?>
+<?php echo $this->partial($formPartial); ?>
+<?php echo $this->formHidden($form->get('security')); ?>
+<?php echo $this->formSubmit($form->get('submit')->setAttribute('class', 'btn btn-primary')); ?>
+
+<?php echo $this->form()->closeTag(); ?>

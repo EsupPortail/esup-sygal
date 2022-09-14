@@ -10,6 +10,9 @@ use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 use These\Service\Acteur\ActeurService;
 
+/**
+ * @deprecated
+ */
 class TheseSaisieHydratorFactory {
 
     /**

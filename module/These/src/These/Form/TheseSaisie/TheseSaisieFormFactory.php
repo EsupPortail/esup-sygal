@@ -11,6 +11,9 @@ use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 
+/**
+ * @deprecated
+ */
 class TheseSaisieFormFactory {
 
     /**

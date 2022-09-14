@@ -2,6 +2,9 @@
 
 namespace These\Form\TheseSaisie;
 
+/**
+ * @deprecated
+ */
 trait TheseSaisieFormAwareTrait {
 
     /** @var TheseSaisieForm  */

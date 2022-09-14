@@ -1,0 +1,50 @@
+<?php
+/**
+ * @var \These\Entity\Db\These $these
+ * @var \Structure\Entity\Db\EtablissementRattachement[] $rattachements
+ */
+?>
+
+<dl class="row">
+
+    <dt class="col-md-4">
+        <?php echo $this->translate("Unité de recherche"); ?>
+    </dt>
+    <dd class="col-md-8">
+        <?php if ($these->getUniteRecherche()): ?>
+            <?php echo $these->getUniteRecherche(); ?>
+            <?php if ($rattachements): ?>
+                <br>
+                <?php echo $this->translate("Rattachements :"); ?>
+                <ul>
+                    <?php foreach ($rattachements as $rattachement): ?>
+                        <li><?php echo $rattachement->getEtablissement()->getLibelle() ?></li>
+                    <?php endforeach ?>
+                </ul>
+            <?php else: ?>
+                <p class="small">
+                    <?php echo $this->translate("(Aucun rattachement renseigné)") ?>
+                </p>
+            <?php endif ?>
+        <?php else: ?>
+            <span class='text-danger'>
+                <span class='fas fa-exclamation-triangle'></span>
+                <?php echo $this->translate("Aucune unité de recherche renseignée") ?>
+            </span>
+        <?php endif ?>
+    </dd>
+
+    <dt class="col-md-4">
+        <?php echo $this->translate("École doctorale"); ?>
+    </dt>
+    <dd class="col-md-8">
+        <?php if ($these->getEcoleDoctorale()): ?>
+            <?php echo $these->getEcoleDoctorale(); ?>
+        <?php else: ?>
+            <span class='text-danger'><span class='fas fa-exclamation-triangle'></span>
+                <?php echo $this->translate("Aucune école doctorale renseignée") ?>
+            </span>
+        <?php endif ?>
+    </dd>
+
+</dl>

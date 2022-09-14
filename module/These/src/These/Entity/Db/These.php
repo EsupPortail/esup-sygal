@@ -52,7 +52,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     const ETAT_SOUTENUE   = 'S';
     const ETAT_TRANSFEREE = 'U';
 
-    public static $etatsLibelles = [
+    public static array $etatsLibelles = [
         self::ETAT_EN_COURS   => "En cours",
         self::ETAT_ABANDONNEE => "Abandonnée",
         self::ETAT_SOUTENUE   => "Soutenue",
@@ -89,7 +89,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * @var string
      */
-    private $etatThese;
+    private string $etatThese = self::ETAT_EN_COURS;
 
     /**
      * @var null|int

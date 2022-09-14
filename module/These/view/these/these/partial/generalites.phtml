@@ -1,0 +1,121 @@
+<?php
+/**
+ * @var \These\Entity\Db\These $these
+ * @var bool $estDoctorant
+ * @var string $mailContact
+ * @var string $etatMailContact
+ * @var string $modifierPersopassUrl
+ *
+ */
+
+use Application\Entity\Db\MailConfirmation;
+use Doctorant\Provider\Privilege\DoctorantPrivileges;
+use Individu\View\Helper\IndividuUsurpationHelper;
+
+$canVoirEmailContact = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT);
+$canEditPersopass = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFICATION_PERSOPASS);
+$canEditPersopass = $canEditPersopass && (!$estDoctorant || !$these->getDoctorant()->getPersopass());
+$persopassModifiedEvent = 'persopass-modified-event';
+?>
+
+<dl class="row">
+
+    <dt class="col-md-3">
+        <?php echo $this->translate("Établissement d'inscription"); ?>
+    </dt>
+    <dd class="col-md-8">
+        <?php if ($these->getEtablissement()): ?>
+            <?php echo $these->getEtablissement(); ?>
+        <?php else: ?>
+            <span class='text-danger'>
+                <span class='fas fa-exclamation-triangle'></span>
+                <?php echo $this->translate("Aucun établissement renseigné") ?>
+            </span>
+        <?php endif ?>
+    </dd>
+
+    <dt class="col-md-3">
+        <?php echo $this->translate("Doctorant"); ?>
+    </dt>
+    <dd class="col-md-8">
+        <?php echo sprintf("%s (%s)",
+            $these->getDoctorant()->getIndividu()->getNomComplet(true, true, true),
+            $these->getDoctorant()->getIndividu()->getDateNaissanceToString());
+        ?>
+        <?php
+        // bouton d'usurpation d'identité
+        $individuUsurpationHelper = $this->plugin('individuUsurpation');
+        /* @var $individuUsurpationHelper IndividuUsurpationHelper */
+        $individuUsurpationHelper->setIndividu($these->getDoctorant()->getIndividu());
+        echo $individuUsurpationHelper();
+        ?>
+        <br>
+
+        <strong>
+            <?php echo $this->translate("Nationalité :"); ?>
+        </strong>
+        <?php echo $these->getDoctorant()->getNationalite() ?> <br>
+
+        <strong>
+            <?php echo $this->translate("N° étudiant :"); ?>
+        </strong>
+        <?php echo $these->getDoctorant()->getNumeroEtudiant() ?> <br>
+
+        <strong>
+            <?php echo $this->translate("Adresse électronique institutionnelle :"); ?>
+        </strong>
+        <?php if ($email = $these->getDoctorant()->getIndividu()->getEmail()): ?>
+            <a href="mailto: <?php echo $email ?>"><?php echo $email ?></a>
+        <?php else: ?>
+            <?php echo $this->translate("(Inconnu)"); ?>
+        <?php endif ?>
+
+        <?php if ($canVoirEmailContact) : ?>
+            <br/>
+
+            <strong>
+                <?php echo $this->translate("Adresse électronique de contact :"); ?>
+            </strong>
+            <?php
+            if ($mailContact === null) {
+                echo "(Non renseigné) ";
+            } else {
+                echo $mailContact;
+                if ($etatMailContact === MailConfirmation::ENVOYE) {
+                    echo " (en attente) ";
+                }
+            }
+            ?>
+        <?php endif; ?>
+        <?php if ($canEditPersopass): ?>
+            <a href="<?php echo $modifierPersopassUrl ?>"
+               data-event="<?php echo $persopassModifiedEvent ?>"
+               class="btn btn-secondary btn-sm ajax-modal">
+                <span class="icon icon-edit"></span>
+                <?php echo $this->translate("Modifier"); ?>
+            </a>
+        <?php endif ?>
+    </dd>
+
+    <dt class="col-md-3">
+        <?php echo $this->translate("Titre"); ?>
+    </dt>
+    <dd class="col-md-8">
+        <?php echo $these->getTitre() ?>
+    </dd>
+
+    <dt class="col-md-3">Discipline</dt>
+    <dd class="col-md-8"><?php echo $these->getLibelleDiscipline() ?></dd>
+
+</dl>
+
+
+<script>
+    $(function () {
+        $("body").one("<?php echo $persopassModifiedEvent ?>", function (event, data) {
+            // Le persopass vient d'être modifié.
+            event.div.modal('hide'); // ferme la fenêtre modale
+            window.location.reload();
+        });
+    });
+</script>

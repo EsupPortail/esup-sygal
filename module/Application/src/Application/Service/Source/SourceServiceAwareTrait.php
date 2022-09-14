@@ -7,19 +7,10 @@ namespace Application\Service\Source;
  */
 trait SourceServiceAwareTrait
 {
-    /**
-     * @var SourceService
-     */
-    protected $sourceService;
+    protected SourceService $sourceService;
 
-    /**
-     * @param SourceService $sourceService
-     * @return self
-     */
     public function setSourceService(SourceService $sourceService)
     {
         $this->sourceService = $sourceService;
-
-        return $this;
     }
 }

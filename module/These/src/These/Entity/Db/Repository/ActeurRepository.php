@@ -30,7 +30,7 @@ class ActeurRepository extends DefaultEntityRepository
 
         $acteurs = $qb->getQuery()->getResult();
 
-        return (empty($acteurs))?null:$acteurs[0];
+        return $acteurs[0] ?? null;
     }
 
     /**

@@ -68,8 +68,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
      */
     private $role;
 
-    /** @var string $qualite */
-    private $qualite;
+    private ?string $qualite = null;
 
     /**
      * Etablissement auquel appartient l'individu.
@@ -257,10 +256,10 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRol
 
 
     /**
-     * @param string $qualite
+     * @param string|null $qualite
      * @return self
      */
-    public function setQualite($qualite)
+    public function setQualite(?string $qualite): self
     {
         $this->qualite = $qualite;
 

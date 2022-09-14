@@ -18,6 +18,9 @@ use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 
+/**
+ * @deprecated
+ */
 class TheseSaisieHydrator implements HydratorInterface
 {
     use ActeurServiceAwareTrait;

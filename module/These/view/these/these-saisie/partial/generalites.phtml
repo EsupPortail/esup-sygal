@@ -1,0 +1,34 @@
+<?php
+/**
+ * @var \Laminas\Form\Form $form
+ */
+?>
+
+<fieldset>
+    <legend>Généralités</legend>
+
+    <?php
+    $fs = $form->get('Generalites');
+    echo $this->formHidden($fs->get('id'));
+    ?>
+    <div class="row">
+        <div class="col-3">
+            <?php echo $this->formControlGroup($fs->get('etablissement')) ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4">
+            <?php echo $this->formControlGroup($fs->get('doctorant')) ?>
+        </div>
+    </div>
+
+    <?php echo $this->formControlGroup($fs->get('titre')) ?>
+
+    <div class="row">
+        <div class="col-4">
+            <?php echo $this->formControlGroup($fs->get('discipline')) ?>
+        </div>
+    </div>
+
+</fieldset>

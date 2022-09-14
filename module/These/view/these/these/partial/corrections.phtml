@@ -1,0 +1,87 @@
+<?php
+/**
+ * @var \These\Entity\Db\These $these
+ * @var string $modifierCorrecAutorUrl
+ * @var string $accorderSursisCorrecUrl
+*
+*/
+
+use These\Provider\Privilege\ThesePrivileges;
+
+$canEditForcageCorrectionAutorisee = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
+
+?>
+
+<?php
+$titre = "Corrections attendues";
+$reponse = "Non.";
+$message = null;
+$class = null;
+
+$validationsDesCorrectionsEnAttente = [1]; //////////////////////
+
+if ($these->isCorrectionAutorisee()) {
+    $dateButoirDepassee =
+        $these->isDateButoirDepotVersionCorrigeeDepassee() &&
+        !empty($validationsDesCorrectionsEnAttente);
+
+    if ($these->getCorrectionAutoriseeEstFacultative()) {
+        $class = "text-warning";
+        $reponse = "Oui, facultatives.";
+        $message = $dateButoirDepassee ?
+            "<strong>Trop tard, le délai pour corrections facultatives est écoulé : la version déposée avant soutenance constitue désormais la version de référence.</strong>" :
+            null;
+    } elseif ($these->getCorrectionAutoriseeEstObligatoire()) {
+        $class = "text-danger";
+        $reponse = "Oui, obligatoires.";
+        $message = $dateButoirDepassee ?
+            "<strong>Trop tard, le délai pour corrections obligatoires est écoulé : ni l’attestation de réussite ni le diplôme ne peuvent désormais être délivrés.</strong>" :
+            null;
+    }
+    if (is_array($validationsDesCorrectionsEnAttente) && empty($validationsDesCorrectionsEnAttente)) {
+        $titre = "Corrections";
+        $message = sprintf("Les corrections %s ont été validées.", lcfirst($these->getCorrectionAutoriseeToString(true)));
+        $canEditForcageCorrectionAutorisee = false;
+    }
+}
+?>
+<dt class="col-md-4 <?php echo $class ?>"><?php echo $titre ?></dt>
+<dd class="col-md-8 <?php echo $class ?>">
+    <p>
+        <?php echo $reponse ?>
+        <?php if ($canEditForcageCorrectionAutorisee): ?>
+            <?php if ($these->isCorrectionAutoriseeForcee()): ?>
+                <em>Cette valeur est forcée.</em>
+            <?php endif ?>
+            <a href="<?php echo $modifierCorrecAutorUrl ?>" class="btn btn-xs btn-info ajax-modal"
+               data-event="event-correction-autorisee-forcee-modified"
+               title="Forçage du témoin de corrections attendues"
+            >Forçage</a>
+        <?php endif ?>
+    </p>
+    <?php if ($these->isCorrectionAutorisee()): ?>
+        <?php if ($dateSoutenance = $these->getDateSoutenance()): ?>
+            <p>
+                Date butoir :
+                <?php if ($these->getDateButoirDepotVersionCorrigeeAvecSursis()): ?>
+                    <?php echo $these->getDateButoirDepotVersionCorrigeeAvecSursisToString() ?> (sursis inclus)
+                <?php else: ?>
+                    <abbr title="<?php echo $these->getDelaiDepotVersionCorrigeeToString() ?> après la date de soutenance">
+                        <?php echo $these->getDateButoirDepotVersionCorrigeeFromDateSoutenanceToString($dateSoutenance) ?>
+                    </abbr>
+                <?php endif ?>
+                <?php if ($this->isAllowed($these, ThesePrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS)): ?>
+                    <a href="<?php echo $accorderSursisCorrecUrl ?>" class="btn btn-xs btn-info ajax-modal"
+                       data-event="event-sursis-correction-modified"
+                       title="Accorder un sursis"
+                    >Accorder un sursis</a>
+                <?php endif ?>
+            </p>
+        <?php endif ?>
+    <?php endif ?>
+    <?php if ($message): ?>
+        <p>
+            <?php echo $message ?>
+        </p>
+    <?php endif ?>
+</dd>

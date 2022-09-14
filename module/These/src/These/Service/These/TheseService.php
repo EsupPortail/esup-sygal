@@ -5,12 +5,20 @@ namespace These\Service\These;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\Entity\Db\Role;
 use Application\Service\BaseService;
+use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\UserContextService;
+use Application\Service\UserContextServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
+use Application\Service\Validation\ValidationServiceAwareTrait;
+use Application\Service\Variable\VariableServiceAwareTrait;
+use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Doctrine\ORM\ORMException;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Individu\Entity\Db\Individu;
+use Laminas\EventManager\ListenerAggregateTrait;
 use Laminas\Mvc\Controller\AbstractActionController;
+use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Entity\Proposition;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -21,9 +29,19 @@ use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\FichierThese\MembreData;
 use These\Service\FichierThese\PdcData;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 
 class TheseService extends BaseService //implements ListenerAggregateInterface
 {
+    use SourceServiceAwareTrait;
+    use ListenerAggregateTrait;
+    use ValidationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
+    use FichierTheseServiceAwareTrait;
+    use VariableServiceAwareTrait;
+    use UserContextServiceAwareTrait;
+    use UserServiceAwareTrait;
+    use UtilisateurServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
     use ActeurServiceAwareTrait;
@@ -33,7 +51,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
     /**
      * @return TheseRepository
      */
-    public function getRepository() : TheseRepository
+    public function getRepository(): TheseRepository
     {
         /** @var TheseRepository $repo */
         $repo = $this->entityManager->getRepository(These::class);
@@ -41,23 +59,32 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         return $repo;
     }
 
-    public function create(These $these) : These
+    public function new(): These
+    {
+        $these = new These();
+        $these->setSource($this->sourceService->fetchApplicationSource());
+        $these->setSourceCode($this->sourceService->genereateSourceCode());
+
+        return $these;
+    }
+
+    public function create(These $these): These
     {
         try {
             $this->getEntityManager()->persist($these);
             $this->getEntityManager()->flush($these);
         } catch (ORMException $e) {
-            throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !",0,$e);
+            throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !", 0, $e);
         }
         return $these;
     }
 
-    public function update(These $these) : These
+    public function update(These $these): These
     {
         try {
             $this->getEntityManager()->flush($these);
         } catch (ORMException $e) {
-            throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !",0,$e);
+            throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !", 0, $e);
         }
         return $these;
     }
@@ -69,7 +96,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
      * @param These $these
      * @return PdcData
      */
-    public function fetchInformationsPageDeCouverture(These $these) : PdcData
+    public function fetchInformationsPageDeCouverture(These $these): PdcData
     {
         $pdcData = new PdcData();
         $propositions = $these->getPropositions()->toArray();
@@ -77,17 +104,17 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         $proposition = end($propositions);
 
         if ($these->getDateSoutenance() !== null) {
-            $mois = (int) $these->getDateSoutenance()->format('m');
-            $annee = (int) $these->getDateSoutenance()->format('Y');
+            $mois = (int)$these->getDateSoutenance()->format('m');
+            $annee = (int)$these->getDateSoutenance()->format('Y');
 
-            if ($mois > 9)  $anneeUniversitaire = $annee . "/" . ($annee + 1);
+            if ($mois > 9) $anneeUniversitaire = $annee . "/" . ($annee + 1);
             else            $anneeUniversitaire = ($annee - 1) . "/" . $annee;
             $pdcData->setAnneeUniversitaire($anneeUniversitaire);
         }
 
         /** informations générales */
         $titre = trim($these->getTitre());
-        $titre = str_replace("\n",' ', $titre);
+        $titre = str_replace("\n", ' ', $titre);
         $pdcData->setTitre($titre);
         $pdcData->setSpecialite($these->getLibelleDiscipline());
         if ($these->getEtablissement()) {
@@ -107,7 +134,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         }
 
         /** Huis Clos */
-        if ($proposition AND $proposition->isHuitClos()) {
+        if ($proposition and $proposition->isHuitClos()) {
             $pdcData->setHuisClos(true);
         } else {
             $pdcData->setHuisClos(false);
@@ -119,7 +146,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         $acteurs = $these->getActeurs()->toArray();
 
         $jury = array_filter($acteurs, function (Acteur $a) {
-           return $a->estMembreDuJury();
+            return $a->estMembreDuJury();
         });
 
         $rapporteurs = array_filter($acteurs, function (Acteur $a) {
@@ -179,13 +206,17 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         foreach ($acteursEnCouverture as $acteur) {
             $individu = $acteur->getIndividu();
 
-            $acteursLies = array_filter($these->getActeurs()->toArray(), function (Acteur $a) use ($individu) { return $a->getIndividu() === $individu;});
+            $acteursLies = array_filter($these->getActeurs()->toArray(), function (Acteur $a) use ($individu) {
+                return $a->getIndividu() === $individu;
+            });
 
             $acteurData = new MembreData();
             $acteurData->setDenomination(mb_strtoupper($acteur->getIndividu()->getNomComplet(true, false, false, true)));
 
 
-            $estMembre = !empty(array_filter($jury, function (Acteur $a) use ($acteur) {return $a->getIndividu() === $acteur->getIndividu();}));
+            $estMembre = !empty(array_filter($jury, function (Acteur $a) use ($acteur) {
+                return $a->getIndividu() === $acteur->getIndividu();
+            }));
 
             /** GESTION DES RÔLES SPÉCIAUX ****************************************************************************/
             if (!$acteur->estPresidentJury()) {
@@ -214,7 +245,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
 
             /** GESTION DES ETABLISSEMENTS ****************************************************************************/
             if ($etab = ($acteur->getEtablissementForce() ?: $acteur->getEtablissement())) {
-                $acteurData->setEtablissement((string) $etab);
+                $acteurData->setEtablissement((string)$etab);
             } else {
                 foreach ($acteursLies as $acteurLie) {
                     $membre = $this->getMembreService()->getMembreByActeur($acteurLie);
@@ -282,7 +313,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
      * @param string $param
      * @return These
      */
-    public function getRequestedThese(AbstractActionController $controller, string $param='these')
+    public function getRequestedThese(AbstractActionController $controller, string $param = 'these')
     {
         $id = $controller->params()->fromRoute($param);
 
@@ -298,7 +329,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
      * @param Individu $individu
      * @return bool
      */
-    public function isDoctorant(These $these, Individu $individu) : bool
+    public function isDoctorant(These $these, Individu $individu): bool
     {
         return ($these->getDoctorant()->getIndividu() === $individu);
     }
@@ -308,7 +339,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
      * @param Individu $individu
      * @return bool
      */
-    public function isActeur(These $these, Individu $individu, ?array $roles = null) : bool
+    public function isActeur(These $these, Individu $individu, ?array $roles = null): bool
     {
         return ($these->getDoctorant()->getIndividu() === $individu);
     }
@@ -318,7 +349,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
      * @param Individu $individu
      * @return bool
      */
-    public function isDirecteur(These $these, Individu $individu) : bool
+    public function isDirecteur(These $these, Individu $individu): bool
     {
         $directeurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, 'D');
         foreach ($directeurs as $directeur) {
@@ -332,7 +363,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
      * @param Individu $individu
      * @return bool
      */
-    public function isCoDirecteur(These $these, Individu $individu) : bool
+    public function isCoDirecteur(These $these, Individu $individu): bool
     {
         $directeurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, 'K');
         foreach ($directeurs as $directeur) {
@@ -355,27 +386,23 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
                 $these->getDoctorant()->getId() === $doctorant->getId(),
                 "La thèse n'appartient pas au doctorant " . $doctorant
             );
-        }
-        elseif ($roleEcoleDoctorale = $userContextService->getSelectedRoleEcoleDoctorale()) {
+        } elseif ($roleEcoleDoctorale = $userContextService->getSelectedRoleEcoleDoctorale()) {
             $this->assertTrue(
                 $these->getEcoleDoctorale()->getStructure()->getId() === $roleEcoleDoctorale->getStructure()->getId(),
                 "La thèse n'est pas rattachée à l'ED " . $roleEcoleDoctorale->getStructure()->getCode()
             );
-        }
-        elseif ($roleUniteRech = $userContextService->getSelectedRoleUniteRecherche()) {
+        } elseif ($roleUniteRech = $userContextService->getSelectedRoleUniteRecherche()) {
             $this->assertTrue(
                 $these->getUniteRecherche()->getStructure()->getId() === $roleUniteRech->getStructure()->getId(),
                 "La thèse n'est pas rattachée à l'UR " . $roleUniteRech->getStructure()->getCode()
             );
-        }
-        elseif ($userContextService->getSelectedRoleDirecteurThese()) {
+        } elseif ($userContextService->getSelectedRoleDirecteurThese()) {
             $individuUtilisateur = $userContextService->getIdentityDb()->getIndividu();
             $this->assertTrue(
                 $these->hasActeurWithRole($individuUtilisateur, Role::CODE_DIRECTEUR_THESE),
                 "La thèse n'est pas dirigée par " . $individuUtilisateur
             );
-        }
-        elseif ($userContextService->getSelectedRoleCodirecteurThese()) {
+        } elseif ($userContextService->getSelectedRoleCodirecteurThese()) {
             $individuUtilisateur = $userContextService->getIdentityDb()->getIndividu();
             $this->assertTrue(
                 $these->hasActeurWithRole($individuUtilisateur, Role::CODE_CODIRECTEUR_THESE),
