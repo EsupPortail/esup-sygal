@@ -7,6 +7,7 @@ Journal des modifications
 - [FIX] Passage à unicaen/db-import 5.2.2 pour corrections de dysfonctionnements dans l'import/synchro.
 - [FIX] Plantage de la recherche textuelle d'individus en cas de résultat vide. 
 - [FIX] Ajout de garde pour l'index des rapporteurs (cas où le membre est null qui bloquait les administrateurs)
+- Changement du lien dans le mail pour la validation des présidents : redirect + selection du rôle
 
 5.2.0
 -----

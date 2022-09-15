@@ -199,6 +199,10 @@ class NotifierService extends \Notification\Service\NotifierService
      */
     public function triggerValidationDepotTheseCorrigee(These $these)
     {
+        $targetedUrl = $this->urlHelper->__invoke( 'these/validation-these-corrigee', ['these' => $these->getId()], ['force_canonical' => true]);
+        $president = $this->getRoleService()->getRepository()->findByCodeAndEtablissement(Role::CODE_PRESIDENT_JURY, $these->getEtablissement());
+        $url = $this->urlHelper->__invoke('zfcuser/login', ['type' => 'local'], ['query' => ['redirect' => $targetedUrl, 'role' => $president->getRoleId()], 'force_canonical' => true], true);
+
         // envoi de mail aux directeurs de thèse
         $notif = new ValidationDepotTheseCorrigeeNotification();
         $notif
@@ -206,10 +210,7 @@ class NotifierService extends \Notification\Service\NotifierService
             ->setEmailBdd($this->fetchEmailBdd($these))
             ->setTemplateVariables([
                 'these' => $these,
-                'url'   => $this->urlHelper->__invoke(
-                    'these/validation-these-corrigee',
-                    ['these' => $these->getId()],
-                    ['force_canonical' => true]),
+                'url'   => $url,
             ]);
 
         $this->trigger($notif);
