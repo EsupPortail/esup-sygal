@@ -1,7 +1,8 @@
 <?php
 
 use Application\Controller\Factory\ValidationControllerFactory;
-use Application\Provider\Privilege\ThesePrivileges;
+use These\Assertion\These\TheseAssertion;
+use These\Provider\Privilege\ThesePrivileges;
 use Application\Provider\Privilege\ValidationPrivileges;
 use Application\Service\Validation\ValidationService;
 use Application\View\Helper\ValidationViewHelper;
@@ -31,7 +32,7 @@ return [
                             ValidationPrivileges::VALIDATION_VERSION_PAPIER_CORRIGEE,
                         ],
                         'resources'  => ['These'],
-                        'assertion'  => 'Assertion\\These',
+                        'assertion'  => TheseAssertion::class,
                     ],
                 ],
             ],
@@ -44,7 +45,7 @@ return [
                         'page-de-couverture',
                     ],
                     'privileges' => ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE,
-//                    'assertion'  => 'Assertion\\These',
+//                    'assertion'  => \These\Assertion\These\TheseAssertion::class,
                 ],
                 [
                     'controller' => 'Application\Controller\Validation',
@@ -52,7 +53,7 @@ return [
                         'rdv-bu',
                     ],
                     'privileges' => ValidationPrivileges::THESE_VALIDATION_RDV_BU,
-                    'assertion'  => 'Assertion\\These',
+                    'assertion'  => TheseAssertion::class,
                 ],
                 [
                     'controller' => 'Application\Controller\Validation',
@@ -61,7 +62,7 @@ return [
                         'validation-correction-these',
                     ],
                     'privileges' => ThesePrivileges::THESE_CONSULTATION_DEPOT,
-                    'assertion'  => 'Assertion\\These',
+                    'assertion'  => TheseAssertion::class,
                 ],
                 [
                     'controller' => 'Application\Controller\Validation',
@@ -69,7 +70,7 @@ return [
                         'modifier-validation-depot-these-corrigee',
                     ],
                     'privileges' => ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE,
-                    'assertion'  => 'Assertion\\These',
+                    'assertion'  => TheseAssertion::class,
                 ],
                 [
                     'controller' => 'Application\Controller\Validation',
@@ -77,7 +78,7 @@ return [
                         'modifier-validation-correction-these',
                     ],
                     'privileges' => ValidationPrivileges::VALIDATION_CORRECTION_THESE,
-                    'assertion'  => 'Assertion\\These',
+                    'assertion'  => TheseAssertion::class,
                 ],
             ],
         ],

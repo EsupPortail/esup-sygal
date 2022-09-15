@@ -3,10 +3,10 @@
 namespace ApplicationFunctionalTest\Service\Workflow;
 
 use Fichier\Entity\Db\Fichier;
-use Application\Entity\Db\FichierThese;
+use These\Entity\Db\FichierThese;
 use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Fichier\Entity\Db\VersionFichier;
 use Application\Service\Workflow\WorkflowService;

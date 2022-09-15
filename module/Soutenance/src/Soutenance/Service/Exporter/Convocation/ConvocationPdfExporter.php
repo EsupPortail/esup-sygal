@@ -3,7 +3,7 @@
 namespace Soutenance\Service\Exporter\Convocation;
 
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Soutenance\Entity\Membre;
 use UnicaenApp\Exporter\Pdf as PdfExporter;
 use Laminas\View\Renderer\PhpRenderer;

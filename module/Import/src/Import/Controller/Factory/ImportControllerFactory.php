@@ -3,7 +3,7 @@
 namespace Import\Controller\Factory;
 
 use Structure\Service\Etablissement\EtablissementService;
-use Application\Service\These\TheseService;
+use These\Service\These\TheseService;
 use Application\SourceCodeStringHelper;
 use Assert\Assertion;
 use Assert\AssertionFailedException;

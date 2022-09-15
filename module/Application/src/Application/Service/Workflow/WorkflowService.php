@@ -2,7 +2,7 @@
 
 namespace Application\Service\Workflow;
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\VWorkflow;
 use Application\Entity\Db\WfEtape;
 use Application\Entity\VWorkflowNull;

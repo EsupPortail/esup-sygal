@@ -2,7 +2,7 @@
 
 namespace ApplicationTest\Rule;
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use DateTime;
 use Prophecy\Prophecy\ObjectProphecy;

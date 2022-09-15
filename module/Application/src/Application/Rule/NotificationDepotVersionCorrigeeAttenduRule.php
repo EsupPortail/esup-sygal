@@ -3,7 +3,7 @@
 namespace Application\Rule;
 
 use Application\Constants;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use DateInterval;
 use DateTime;
 use DomainException;

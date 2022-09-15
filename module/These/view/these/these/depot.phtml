@@ -1,0 +1,217 @@
+<?php
+
+use These\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * Dépot des originaux.
+ *
+ * @var PhpRenderer $this
+ * @var These       $these
+ * @var bool        $versionCorrigee
+ * @var string      $theseUrl
+ * @var string      $annexesUrl
+ * @var string      $attestationUrl
+ * @var string      $diffusionUrl
+ * @var string      $nextStepUrl
+ */
+
+$maxFileCountThese = 1;
+$maxFileCountAutres = 50;
+
+$divId = $versionCorrigee ? 'div-depot-corrige' : 'div-depot-initial';
+$h1 = $versionCorrigee ? "Dépôt version corrigée" : "Dépôt de la thèse";
+?>
+
+<?php $this->headTitle("Dépôt thèse")->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+
+<div class="no-intranavigation">
+
+    <h1 class="page-header"><?php echo $h1 ?> <small><?php echo $this->partial('these/these/partial/titre') ?></small></h1>
+
+    <p class="lead">
+        Le dépôt est obligatoire pour toutes les thèses, y compris confidentielles.
+        La thèse doit être regroupée en un seul fichier, en format PDF.
+        Si certaines parties ne s’y prêtent pas (ex: audio, vidéo), vous devez les déposer à part.
+    </p>
+
+    <div class="box card">
+        <div class="card-header bg-info">
+            <h2 class="first">Téléversement</h2>
+        </div>
+        <div class="card-body">
+            <div class="row" id="<?php echo $divId ?>">
+                <div class="col-md-6">
+                    <!-------------------------------------- Thèse PDF --------------------------------------->
+                    <div id="theseDiv" class="" data-url="<?php echo $theseUrl ?>" style="display: none">
+                        <!-- màj via ajax -->
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <!-------------------------------------- Autres formats --------------------------------------->
+                    <div id="annexesDiv" class="" data-url="<?php echo $annexesUrl ?>" style="display: none">
+                        <!-- màj via ajax -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-------------------------------------- Diffusion --------------------------------------->
+    <div id="diffusionDiv" data-url="<?php echo $diffusionUrl ?>">
+        <!-- màj via ajax -->
+    </div>
+
+    <!-------------------------------------- Attestations --------------------------------------->
+    <div id="attestationDiv" data-url="<?php echo $attestationUrl ?>">
+        <!-- màj via ajax -->
+    </div>
+
+    <!-------------------------------------- Next step --------------------------------------->
+    <div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>" style="display: none">
+        <!-- màj via ajax -->
+    </div>
+
+</div>
+
+
+
+<script>
+    // Evénements déclenchés par le widget Uploader (cf. app.js)
+    var uploadEventFileDeleted    = "upload-event-file-deleted";
+    var uploadEventFileUploaded   = "upload-event-file-uploaded";
+    var uploadEventFilesAdded     = "upload-event-files-added";
+
+    $(function () {
+        var body = $("body");
+        var self = this;
+
+        var depotDivId = "<?php echo $divId ?>";
+        var theseDiv = $("#theseDiv");
+        var annexesDiv = $("#annexesDiv");
+
+        var diffusionDiv = $("#diffusionDiv");
+        var attestationDiv = $("#attestationDiv");
+
+        var nextStepDiv = $("#nextStepDiv");
+
+        var theseLoader = function(done, effect) {
+            return function() {
+                theseDiv.addClass("loading").refresh({}, function () {
+                    $(this).removeClass("loading").show();
+                    if (done) done();
+                });
+            };
+        };
+        var annexesLoader = function(done, effect) {
+            return function() {
+                annexesDiv.addClass("loading").refresh({}, function () {
+                    $(this).removeClass("loading").show();
+                    if (done) done();
+                });
+            };
+        };
+        var fichiersLoader = function(done, effect) {
+            return function() {
+                runInCascade([
+                    theseLoader,
+                    annexesLoader
+                ], self);
+                if (done) done();
+            };
+        };
+        var attestationsLoader = function(done, effect) {
+            return function() {
+                attestationDiv.addClass("loading").refresh({}, function () {
+                    $(this).removeClass("loading");
+                    if (effect) {
+                        $(this).hide().fadeIn(250);
+                    } else {
+                        $(this).show();
+                    }
+                    if (done) done();
+                });
+            };
+        };
+        var diffusionLoader = function(done, effect) {
+            return function() {
+                diffusionDiv.addClass("loading").refresh({}, function () {
+                    $(this).removeClass("loading");
+                    if (effect) {
+                        $(this).hide().fadeIn(250);
+                    } else {
+                        $(this).show();
+                    }
+                    if (done) done();
+                });
+            };
+        };
+        var refreshingNextStep = function(done, effect) {
+            return function() {
+                nextStepDiv.addClass("loading").refresh(null, function () {
+                    $(this).removeClass("loading").show();
+                    if (done) done();
+                });
+            };
+        };
+
+        // Au chargement de la page, on actualise les div
+        runInCascade([
+            fichiersLoader,
+            { func: diffusionLoader, effect: true },
+            { func: attestationsLoader, effect: true },
+            refreshingNextStep
+        ], self);
+
+        // Un upload de fichier vient de commencer.
+        body.on(uploadEventFilesAdded, ".these.widget-uploader", function(event, data) {
+            var uploadContainer = $(data[0]);
+            // masque le formulaire pour éviter un dépôt de thèse pendant qu'un upload est déjà en cours
+            uploadContainer.find(".upload-form").hide();
+        });
+
+        // Un fichier de thèse vient d'être déposé.
+        body.on(uploadEventFileUploaded, "#" + depotDivId + " .these.widget-uploader", function() {
+            runInCascade([
+                annexesLoader,
+                { func: diffusionLoader, effect: true },
+                { func: attestationsLoader, effect: true },
+                refreshingNextStep
+            ], self);
+        });
+        // Un fichier de thèse vient d'être supprimé : on économise les 'refresh' en masquant les div puisqu'il n'y a plus aucune thèse déposée
+        body.on(uploadEventFileDeleted, "#" + depotDivId + " .these.widget-uploader", function() {
+            runInCascade([
+                annexesLoader,
+                function(done, effect) {
+                    return function() {
+                        diffusionDiv.hide();
+                        attestationDiv.hide();
+                        nextStepDiv.hide();
+                        if (done) done();
+                    };
+                }
+            ], self);
+        });
+
+        // Diffusion enregistrée dans la modale
+        body.on("event-diffusion-modified", function (event) {
+            event.div.modal('hide'); // ferme la fenêtre modale
+            runInCascade([
+                { func: diffusionLoader, effect: false },
+                { func: attestationsLoader, effect: true },
+                refreshingNextStep
+            ], self);
+        });
+
+        // Attestions enregistrées dans la modale
+        body.on("event-attestation-modified", function (event) {
+            // Les métadonnées viennent d'être modifiées.
+            event.div.modal('hide'); // ferme la fenêtre modale
+            runInCascade([
+                { func: attestationsLoader, effect: false },
+                refreshingNextStep
+            ], self);
+        });
+    });
+</script>

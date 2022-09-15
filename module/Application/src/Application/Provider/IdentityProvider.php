@@ -2,12 +2,12 @@
 
 namespace Application\Provider;
 
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactoryAwareTrait;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;

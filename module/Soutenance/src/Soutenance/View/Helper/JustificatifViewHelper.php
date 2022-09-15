@@ -2,7 +2,7 @@
 
 namespace Soutenance\View\Helper;
 
-use Application\Controller\Plugin\UrlFichierThese;
+use These\Controller\Plugin\UrlFichierThese;
 use Soutenance\Entity\Justificatif;
 use Laminas\Form\View\Helper\AbstractHelper;
 use Laminas\View\Renderer\PhpRenderer;

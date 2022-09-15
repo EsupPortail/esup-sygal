@@ -10,12 +10,12 @@
  * @var string[]       $contenus
  */
 
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Structure\Entity\Db\EcoleDoctorale;
 use Individu\Entity\Db\IndividuRole;
 use Structure\Entity\Db\StructureDocument;
 use Structure\Entity\Db\TypeStructure;
-use Application\Provider\Privilege\CoEncadrantPrivileges;
+use These\Provider\Privilege\CoEncadrantPrivileges;
 use Structure\Provider\Privilege\StructurePrivileges;
 
 $this->headTitle("École Doctorale '{$ecole->getStructure()->getCode()}'");
@@ -210,7 +210,7 @@ $structure = $ecole->getStructure();
         </h2>
 
         <?php if($canCoencadrantExport) : ?>
-            <?php /** @see \Application\Controller\CoEncadrantController::genererExportCsvAction() */ ?>
+            <?php /** @see \These\Controller\CoEncadrantController::genererExportCsvAction() */ ?>
             <a href="<?php echo $this->url('co-encadrant/generer-export-csv', ['structure-type' => 'ecole-doctorale', 'structure-id' => $ecole->getId()], [], true); ?>"
                class="btn btn-primary"
             >

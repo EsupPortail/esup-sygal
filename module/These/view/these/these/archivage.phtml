@@ -1,0 +1,189 @@
+<?php
+
+use These\Entity\Db\FichierThese;
+use These\Entity\Db\These;
+use These\Provider\Privilege\ThesePrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var         $this PhpRenderer
+ * @var These   $these
+ * @var FichierThese $fichierThese
+ * @var array   $theseFichiersItems
+ * @var array   $theseFichiersRetraitesItems
+ * @var string  $theseRetraiteeUrl
+ * @var string  $testArchivabiliteTheseOriginaleUrl
+ * @var string  $archivabiliteTheseRetraiteeUrl
+ * @var string  $conformiteTheseRetraiteeUrl
+ * @var string  $nextStepUrl
+ */
+
+const CERTIF_CONFORME_MODIFIED_EVENT = "CERTIF_CONFORME_MODIFIED_EVENT";
+
+$estVersionCorrigee = $fichierThese->getFichier()->getVersion()->estVersionCorrigee();
+
+$privilege = ThesePrivileges::THESE_SAISIE_DESCRIPTION_($estVersionCorrigee);
+$canEdit = $this->isAllowed($these, $privilege);
+
+$pageDepotThese = $this->navigation('navigation')->getContainer()->findOneBy('id', 'depot');
+?>
+
+<?php $this->headTitle("Archivage")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+
+<h1 class="page-header">Archivage
+    <small><?php echo $this->partial('these/these/partial/titre') ?></small>
+</h1>
+
+<div class="box card">
+    <div class="card-header bg-info">
+        <?php $heading = $estVersionCorrigee ? "Thèse corrigée au format PDF" : "Thèse au format PDF" ?>
+        <h2 class="first"><?php echo $heading ?></h2>
+    </div>
+    <div class="card-body">
+        <?php if ($fichierThese): ?>
+            <p>
+                Voici la <?php echo lcfirst($heading) ?> que vous avez téléversée :
+            </p>
+            <?php echo $this->partial('application/fichier-these/lister-fichiers', [
+                'items'               => $theseFichiersItems,
+                'inclureValidite'     => true,
+                'inclureRetraitement' => false,
+            ]) ?>
+        <?php else: ?>
+            Vous n'avez pas encore téléversé la thèse.
+        <?php endif ?>
+    </div>
+</div>
+
+<?php if ($fichierThese): ?>
+
+    <!-------------------------------------- Test Archivabilité thèse --------------------------------------->
+    <div id="testArchivabiliteTheseOriginaleDiv" class="_box" data-url="<?php echo $testArchivabiliteTheseOriginaleUrl ?>">
+        <!-- màj via ajax -->
+    </div>
+
+    <!-------------------------------------- Thèse retraitée --------------------------------------->
+    <div id="theseRetraiteeDiv" data-url="<?php echo $theseRetraiteeUrl ?>" style="display: none">
+        <!-- màj via ajax -->
+    </div>
+
+    <!-------------------------------------- Archivabilité thèse retraitée --------------------------------------->
+    <div id="validiteTheseRetraiteeDiv" class="_box" data-url="<?php echo $archivabiliteTheseRetraiteeUrl ?>" style="display: none">
+        <!-- màj via ajax -->
+    </div>
+
+    <!-------------------------------------- Conformité thèse retraitée --------------------------------------->
+    <div id="conformiteTheseRetraiteeDiv" class="_box" data-url="<?php echo $conformiteTheseRetraiteeUrl ?>" style="display: none">
+        <!-- màj via ajax -->
+    </div>
+
+<?php endif ?>
+
+<!-------------------------------------- Next step --------------------------------------->
+<div id="nextStepDiv" data-url="<?php echo $nextStepUrl ?>">
+    <!-- màj via ajax -->
+</div>
+
+
+<script>
+    var uploadEventFilesListed    = "upload-event-files-listed"; // cf. widget Uploader (app.js)
+    var uploadEventFilePreDeleted = "upload-event-file-pre-deleted";
+    var uploadEventFileDeleted    = "upload-event-file-deleted";
+    var uploadEventFileUploaded   = "upload-event-file-uploaded";
+
+    $(function() {
+        var self = this;
+
+        var refreshingTestArchivabiliteTheseOriginale = function(done, effect) {
+            return function() {
+                console.log("refreshingValiditeTheseOriginale");
+                $("#testArchivabiliteTheseOriginaleDiv").addClass("loading").refresh(null, function () {
+                    $(this).removeClass("loading").show();
+                    if (done) done();
+                });
+            };
+        };
+        var refreshingTheseRetraitee = function(done, effect) {
+            return function() {
+                console.log("refreshingTheseRetraitee");
+                $("#theseRetraiteeDiv").addClass("loading").refresh(null, function () {
+                    $(this).removeClass("loading").show();
+                    if (done) done();
+                });
+            };
+        };
+        var refreshingArchivabiliteTheseRetraitee = function(done, effect) {
+            return function() {
+                console.log("refreshingValiditeTheseRetraitee");
+                $("#validiteTheseRetraiteeDiv").addClass("loading").refresh(null, function () {
+                    $(this).removeClass("loading").show();
+                    if (done) done();
+                });
+            };
+        };
+        var refreshingConformiteTheseRetraitee = function(done, effect) {
+            return function() {
+                console.log("refreshingConformiteTheseRetraitee");
+                $("#conformiteTheseRetraiteeDiv").addClass("loading").refresh(null, function () {
+                    $(this).removeClass("loading").show();
+                    if (done) done();
+                });
+            };
+        };
+        var refreshingNextStep = function(done, effect) {
+            return function() {
+                $("#nextStepDiv").addClass("loading").refresh(null, function () {
+                    $(this).removeClass("loading").show();
+                    if (done) done();
+                });
+            };
+        };
+
+        // au chargement de la page, on actualise toutes les div en cascade.
+        runInCascade([
+            refreshingTestArchivabiliteTheseOriginale,
+            refreshingTheseRetraitee,
+            refreshingArchivabiliteTheseRetraitee,
+            refreshingConformiteTheseRetraitee,
+            refreshingNextStep
+        ], self);
+
+        // Un fichier de thèse retraitée vient d'être déposé ou supprimé.
+        // (cf. vue "detail/depot/these-retraitee")
+        var events =  uploadEventFileDeleted + ' ' + uploadEventFileUploaded;
+        var body = $("body").on(events, ".these.widget-uploader", function(/*event, data*/) {
+            runInCascade([
+                refreshingTheseRetraitee,
+                refreshingArchivabiliteTheseRetraitee,
+                refreshingConformiteTheseRetraitee,
+                refreshingNextStep
+            ], self);
+        });
+
+        // La version retraitée vient d'être créée par l'appli.
+        body.on("event-version-retraitee-creee", function(/*event, data*/) {
+            runInCascade([
+                refreshingTheseRetraitee,
+                refreshingArchivabiliteTheseRetraitee,
+                refreshingConformiteTheseRetraitee,
+                refreshingNextStep
+            ], self);
+        });
+
+        // La déclaration de conformité vient d'être modifiée.
+        body.on("<?php echo CERTIF_CONFORME_MODIFIED_EVENT ?>", function (event, data) {
+            event.div.modal('hide'); // ferme la fenêtre modale
+            runInCascade([
+                refreshingConformiteTheseRetraitee,
+                refreshingTheseRetraitee,
+                refreshingNextStep
+            ], self);
+        });
+
+        // Indication visuelle lorsque le bouton Tester l'archivabilité est cliqué
+        $("form.tester-archi").submit(function() {
+            $("#div-tester-archi").addClass("loading");
+            return true;
+        });
+    });
+</script>

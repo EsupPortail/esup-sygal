@@ -9,7 +9,7 @@ use Application\Form\InitCompteFormAwareTrait;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;

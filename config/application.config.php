@@ -38,6 +38,7 @@ return [
         'UnicaenPdf',
         'UnicaenRenderer',
         'Structure',
+        'These',
         'Fichier',
         'Import',
         'Indicateur',

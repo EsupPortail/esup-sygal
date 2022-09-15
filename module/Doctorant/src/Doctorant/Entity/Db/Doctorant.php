@@ -401,7 +401,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     }
 
     /**
-     * @return \Application\Entity\Db\These[]
+     * @return \These\Entity\Db\These[]
      */
     public function getTheses()
     {

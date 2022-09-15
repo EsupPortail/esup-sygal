@@ -3,7 +3,7 @@
 namespace Soutenance\Service\Avis;
 
 use Fichier\Service\Fichier\FichierService;
-use Application\Service\FichierThese\FichierTheseService;
+use These\Service\FichierThese\FichierTheseService;
 use Application\Service\UserContextService;
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;

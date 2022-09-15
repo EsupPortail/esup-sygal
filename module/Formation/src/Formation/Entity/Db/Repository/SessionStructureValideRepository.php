@@ -6,7 +6,7 @@ use Doctorant\Entity\Db\Doctorant;
 use Doctrine\ORM\NonUniqueResultException;
 use Formation\Entity\Db\SessionStructureValide;
 use Individu\Entity\Db\Individu;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Formation\Entity\Db\Etat;

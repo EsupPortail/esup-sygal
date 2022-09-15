@@ -3,7 +3,7 @@
 namespace Application\Notification;
 
 use Individu\Entity\Db\Individu;
-use Application\Entity\Db\Interfaces\TheseAwareTrait;
+use These\Entity\Db\Interfaces\TheseAwareTrait;
 use Notification\Notification;
 
 class ValidationDepotTheseCorrigeeNotification extends Notification

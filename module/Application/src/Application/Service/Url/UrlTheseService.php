@@ -3,7 +3,7 @@
 namespace Application\Service\Url;
 
 use Fichier\Entity\Db\NatureFichier;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Fichier\Entity\Db\VersionFichier;
 use UnicaenApp\Exception\LogicException;
 

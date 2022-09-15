@@ -147,14 +147,10 @@ class EtablissementService extends BaseService
         return $etablissement;
     }
 
-    public function getEtablissementAsOptions()
+    public function getEtablissementsInscriptionsAsOptions() : array
     {
-        $qb = $this->getEntityManager()->getRepository(Etablissement::class)->createQueryBuilder('etablissement')
-            ->addSelect('structure')->join('etablissement.structure', 'structure')
-            ->orderBy('structure.libelle', 'ASC');
-        $etablissements = $qb->getQuery()->getResult();
+        $etablissements = $this->getRepository()->findAllEtablissementsInscriptions();
         $result = [];
-        /** @var Etablissement $etablissement */
         foreach ($etablissements as $etablissement) $result[$etablissement->getId()] = $etablissement->getLibelle();
         return $result;
     }
@@ -190,5 +186,17 @@ class EtablissementService extends BaseService
             $array[$etablissement->getId()] = $etablissement->getLibelle();
         }
         return $array;
+    }
+
+    //todo faire les filtrage et considerer que les UR internes
+    public function getEtablissementsAsOptions() : array
+    {
+        $etablissements = $this->getRepository()->findAll(true);
+
+        $options = [];
+        foreach ($etablissements as $etablissement) {
+            $options[$etablissement->getId()] = $etablissement->getLibelle() . " " ."<span class='badge'>".$etablissement->getSigle()."</span>";
+        }
+        return $options;
     }
 }

@@ -5,7 +5,7 @@ namespace RapportActivite\Controller;
 use Application\Entity\Db\TypeValidation;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
-use Application\Service\TheseAnneeUniv\TheseAnneeUnivService;
+use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Application\Service\Validation\ValidationService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Form\RapportActiviteForm;
@@ -36,7 +36,7 @@ class RapportActiviteControllerFactory
          * @var \RapportActivite\Service\Fichier\RapportActiviteFichierService $rapportActiviteFichierService
          * @var \RapportActivite\Form\RapportActiviteForm $rapportActiviteForm
          * @var \Application\Service\Validation\ValidationService $validationService
-         * @var \Application\Service\TheseAnneeUniv\TheseAnneeUnivService $theseAnneeUnivService
+         * @var \These\Service\TheseAnneeUniv\TheseAnneeUnivService $theseAnneeUnivService
          */
         $fileService = $container->get(FichierStorageService::class);
         $fichierService = $container->get(FichierService::class);

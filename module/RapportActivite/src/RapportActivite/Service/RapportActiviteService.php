@@ -5,7 +5,7 @@ namespace RapportActivite\Service;
 use Application\Command\ShellCommandRunnerTrait;
 use Application\Entity\AnneeUniv;
 use Fichier\Entity\Db\NatureFichier;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\TypeRapport;
 use Application\Service\BaseService;
 use RapportActivite\Service\Fichier\Exporter\PageValidationExportDataException;
@@ -118,7 +118,7 @@ class RapportActiviteService extends BaseService
     /**
      * Retourne une nouvelle instance de {@see RapportActivite}, liée à la thèse spécifiée.
      *
-     * @param \Application\Entity\Db\These $these
+     * @param \These\Entity\Db\These $these
      * @return \RapportActivite\Entity\Db\RapportActivite
      */
     public function newRapportActivite(These $these): RapportActivite
@@ -230,7 +230,7 @@ class RapportActiviteService extends BaseService
     }
 
     /**
-     * @param \Application\Entity\Db\These $these
+     * @param \These\Entity\Db\These $these
      * @param bool $cacheable
      * @return RapportActivite[] [int => Rapport[]]
      */

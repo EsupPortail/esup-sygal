@@ -8,18 +8,18 @@ use Application\Command\ShellCommandRunnerTrait;
 use Application\Entity\AnneeUniv;
 use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\Rapport;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\TypeRapport;
 use Application\Filter\NomFichierRapportFormatter;
 use Application\Service\BaseService;
 use InvalidArgumentException;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\FichierThese\PdcData;
+use These\Service\FichierThese\PdcData;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
-use Application\Service\PageDeCouverture\PageDeCouverturePdfExporterAwareTrait;
+use These\Service\PageDeCouverture\PageDeCouverturePdfExporterAwareTrait;
 use Application\Service\RapportValidation\RapportValidationServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
@@ -185,7 +185,7 @@ class RapportService extends BaseService
     }
 
     /**
-     * @param \Application\Entity\Db\These $these
+     * @param \These\Entity\Db\These $these
      * @param TypeRapport $typeRapport
      * @param bool $cacheable
      * @return Rapport[] [int => Rapport[]]

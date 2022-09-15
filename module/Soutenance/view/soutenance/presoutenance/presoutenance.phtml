@@ -2,7 +2,7 @@
 
 /**
  * @see \Soutenance\Controller\PresoutenanceController::presoutenanceAction()
- * @var Application\Entity\Db\These $these
+ * @var These\Entity\Db\These $these
  * @var Application\Entity\Db\Validation $validationBDD
  * @var Soutenance\Entity\Proposition $proposition
  * @var Validation $validationPDC
@@ -66,7 +66,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
 
 <h1 class="page-header">
     Préparation de la soutenance
-    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+    <small><?php echo $this->partial('these/these/partial/titre') ?></small>
 </h1>
 
 <?php
@@ -184,7 +184,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                         </div>
                         <div class="float-end" style="margin-right: 2rem;">
                             <a
-                                    <?php /** @see \Application\Controller\TheseController::validationPageDeCouvertureAction() */ ?>
+                                    <?php /** @see \These\Controller\TheseController::validationPageDeCouvertureAction() */ ?>
                                     href="<?php echo $this->url('these/validation-page-de-couverture', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary">
                                 Accéder à la validation de la PDC
                             </a>

@@ -63,7 +63,7 @@ return array(
                             'SOUTENANCES' => [
                                 'label' => '(Soutenances Structure)',
                                 'route' => 'soutenances/index-structure',
-//                                'resource' => PrivilegeController::getResourceId('Application\Controller\These', 'index'),
+//                                'resource' => PrivilegeController::getResourceId(TheseController::class, 'index'),
                             ],
                         ],
                     ],

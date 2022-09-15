@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * @var Role $role
+ * @var These[] $theses
+ */
+
+use Application\Entity\Db\Role;
+use These\Entity\Db\These;
+
+?>
+
+<h1 class="page-header">
+    Accueil de la partie dépôt
+</h1>
+
+<div class="main">
+    <div id="content" class="jumbotron col-12 col-md-10">
+        <?php if ($theses !== []) : ?>
+            <p class="lead">
+                Pour accéder au dépôt d'une thèse cliquez sur le bouton détail de celle-ci.
+            </p>
+            <?php foreach ($theses as $these): ?>
+                <?php echo $this->partial('these/these/partial/panel', ['these' => $these]) ?>
+            <?php endforeach ?>
+        <?php else : ?>
+            <p class="lead">
+                Pour accéder au dépôt d'une thèse, rechercher celle-ci dans la partie "Thèses" puis cliquer sur celle-ci.
+            </p>
+
+            <a href="<?php echo $this->url('these'); ?>" class="btn btn-primary">
+                <span class="fas fa-arrow-alt-circle-right"></span>
+                Accéder aux thèses
+            </a>
+
+        <?php endif; ?>
+    </div>
+</div>
+
+

@@ -6,7 +6,7 @@ use Application\Controller\IndexController;
 use Application\Service\Actualite\ActualiteService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
-use Application\Service\These\TheseService;
+use These\Service\These\TheseService;
 use Application\Service\Variable\VariableService;
 use Information\Service\InformationService;
 use Interop\Container\ContainerInterface;

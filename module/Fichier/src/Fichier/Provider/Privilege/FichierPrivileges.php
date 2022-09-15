@@ -2,7 +2,7 @@
 
 namespace Fichier\Provider\Privilege;
 
-use Application\Provider\Privilege\ThesePrivileges;
+use These\Provider\Privilege\ThesePrivileges;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
 use UnicaenApp\Exception\RuntimeException;

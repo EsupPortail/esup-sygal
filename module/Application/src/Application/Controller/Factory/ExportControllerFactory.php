@@ -3,9 +3,9 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\ExportController;
-use Application\Service\FichierThese\FichierTheseService;
-use Application\Service\These\TheseSearchService;
-use Application\Service\These\TheseService;
+use These\Service\FichierThese\FichierTheseService;
+use These\Service\These\TheseSearchService;
+use These\Service\These\TheseService;
 use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
 

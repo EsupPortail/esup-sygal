@@ -16,7 +16,7 @@
 
 use Application\Constants;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
@@ -77,7 +77,7 @@ $canAnnuler = ($membre)?$this->isAllowed($membre->getActeur(), AvisSoutenancePri
 
 <h1 class="page-header">
     Index de la soutenance / Index of the PhD defense
-    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+    <small><?php echo $this->partial('these/these/partial/titre') ?></small>
 </h1>
 
 <div class="box card">
@@ -168,7 +168,7 @@ $canAnnuler = ($membre)?$this->isAllowed($membre->getActeur(), AvisSoutenancePri
                 Vous pouvez télécharger la version électronique de la thèse via <?php echo $this->appInfos()->nom; ?>.
 
                 <a
-                    <?php /** @see \Application\Controller\TheseController::fusionAction() */ ?>
+                    <?php /** @see \These\Controller\TheseController::fusionAction() */ ?>
                     href="<?php echo $this->url("these/fusion", ["these" => $these->getId()], [], true); ?>"
                    class="btn btn-primary float-end"
                 >

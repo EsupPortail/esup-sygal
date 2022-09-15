@@ -2,7 +2,7 @@
 
 namespace Soutenance\Form\Justificatif;
 
-use Application\Service\FichierThese\FichierTheseService;
+use These\Service\FichierThese\FichierTheseService;
 use Interop\Container\ContainerInterface;
 use Soutenance\Service\Membre\MembreService;
 

@@ -8,7 +8,7 @@ use Fichier\Entity\Db\Fichier;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\Role;
 use Structure\Entity\Db\Structure;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Structure\Entity\Db\UniteRecherche;
 use Application\Entity\Db\Utilisateur;
 use Doctorant\Entity\Db\Doctorant;

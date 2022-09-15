@@ -2,11 +2,11 @@
 
 namespace Soutenance\Service\Notifier;
 
-use Application\Service\Acteur\ActeurService;
+use These\Service\Acteur\ActeurService;
 use Application\Service\Email\EmailTheseService;
 use Application\Service\Notification\NotificationFactory;
 use Application\Service\Role\RoleService;
-use Application\Service\These\TheseService;
+use These\Service\These\TheseService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Variable\VariableService;
 use Interop\Container\ContainerInterface;

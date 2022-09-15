@@ -2,8 +2,8 @@
 
 namespace Import\Controller;
 
-use Application\Entity\Db\These;
-use Application\Service\These\TheseServiceAwareTrait;
+use These\Entity\Db\These;
+use These\Service\These\TheseServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\EntityManager;
 use Import\Service\Traits\ImportServiceAwareTrait;

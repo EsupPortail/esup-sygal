@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="These\Entity\Db\Acteur" table="ACTEUR"
+            repository-class="These\Entity\Db\Repository\ActeurRepository">
+        <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
+        </id>
+
+        <field name="sourceCode" type="string" column="SOURCE_CODE" length="100" nullable="true"/>
+        <field name="libelleRoleComplement" type="string" column="LIB_ROLE_COMPL" length="50" nullable="true"/>
+        <field name="qualite" type="string" column="QUALITE" length="50" nullable="true"/>
+
+        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
+        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+
+        <many-to-one field="these" target-entity="These\Entity\Db\These">
+            <join-columns>
+                <join-column name="THESE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="individu" target-entity="Individu\Entity\Db\Individu">
+            <join-columns>
+                <join-column name="INDIVIDU_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="role" target-entity="Application\Entity\Db\Role">
+            <join-columns>
+                <join-column name="ROLE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="etablissement" target-entity="Structure\Entity\Db\Etablissement">
+            <join-columns>
+                <join-column name="ACTEUR_ETABLISSEMENT_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="uniteRecherche" target-entity="Structure\Entity\Db\UniteRecherche">
+            <join-columns>
+                <join-column name="ACTEUR_UNITERECH_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <many-to-one field="source" target-entity="Application\Entity\Db\Source">
+            <join-columns>
+                <join-column name="SOURCE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <one-to-one field="membre" target-entity="Soutenance\Entity\Membre" mapped-by="acteur"/>
+    </entity>
+</doctrine-mapping>

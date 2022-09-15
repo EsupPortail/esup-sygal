@@ -2,12 +2,12 @@
 
 namespace Application\Service\ListeDiffusion\Handler;
 
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Doctorant\Entity\Db\Doctorant;
 use Structure\Entity\Db\Etablissement;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressParserResult;

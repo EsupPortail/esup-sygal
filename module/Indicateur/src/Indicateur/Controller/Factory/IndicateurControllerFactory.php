@@ -6,7 +6,7 @@ use Application\Service\AnomalieService;
 use Structure\Service\Etablissement\EtablissementService;
 use Individu\Service\IndividuService;
 use Structure\Service\Structure\StructureService;
-use Application\Service\These\TheseService;
+use These\Service\These\TheseService;
 use Indicateur\Controller\IndicateurController;
 use Indicateur\Form\IndicateurForm;
 use Indicateur\Service\IndicateurService;

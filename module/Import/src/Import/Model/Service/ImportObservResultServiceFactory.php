@@ -3,7 +3,7 @@
 namespace Import\Model\Service;
 
 use Application\Service\Notification\NotifierService;
-use Application\Service\These\TheseService;
+use These\Service\These\TheseService;
 use Application\Service\Variable\VariableService;
 use Doctrine\ORM\EntityManager;
 use Import\Model\Service\ImportObservResultService;

@@ -10,6 +10,7 @@ use Application\Service\MailConfirmationService;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Form\ConsentementForm;
 use Doctorant\Service\DoctorantServiceAwareTrait;
+use Laminas\View\Model\JsonModel;
 use UnicaenAuth\Authentication\Adapter\Ldap as LdapAuthAdapter;
 use Laminas\View\Model\ViewModel;
 
@@ -173,5 +174,26 @@ class DoctorantController extends AbstractController
         $routeMatch = $this->getEvent()->getRouteMatch();
 
         return $routeMatch->getDoctorant();
+    }
+
+    public function rechercherAction() : JsonModel
+    {
+        if (($term = $this->params()->fromQuery('term'))) {
+            $doctorants = $this->doctorantService->getDoctorantsByTerm($term);
+            $result = [];
+            foreach ($doctorants as $doctorant) {
+                $result[] = array(
+                    'id'    => $doctorant->getId(),
+                    'label' => $doctorant->getIndividu()->getPrenom(). " " . (($doctorant->getIndividu()->getNomUsuel())??$doctorant->getIndividu()->getNomPatronymique()),
+                    'extra' => "<span class='badge' style='background-color: slategray;'>".$doctorant->getIne()."</span>",
+                );
+            }
+            usort($result, function($a, $b) {
+                return strcmp($a['label'], $b['label']);
+            });
+
+            return new JsonModel($result);
+        }
+        exit;
     }
 }
