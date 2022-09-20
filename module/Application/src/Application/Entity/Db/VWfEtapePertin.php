@@ -2,6 +2,8 @@
 
 namespace Application\Entity\Db;
 
+use These\Entity\Db\These;
+
 /**
  * VWfEtapePertin
  */
