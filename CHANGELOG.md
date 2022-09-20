@@ -8,6 +8,7 @@ Journal des modifications
 - [FIX] Plantage de la recherche textuelle d'individus en cas de résultat vide. 
 - [FIX] Ajout de garde pour l'index des rapporteurs (cas où le membre est null qui bloquait les administrateurs)
 - Changement du lien dans le mail pour la validation des présidents : redirect + selection du rôle
+- [FIX] Amélioration de la robustesse de la proposition de soutenance pour les cas de th_se sans ED, sans UR ou sans ETAB  
 
 5.2.0
 -----
