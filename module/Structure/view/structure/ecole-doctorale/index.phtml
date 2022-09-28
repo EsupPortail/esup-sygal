@@ -1,6 +1,7 @@
 <?php
 
 use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\TypeStructure;
 use Structure\Provider\Privilege\StructurePrivileges;
 use Structure\Provider\Privilege\SubstitutionPrivileges;
 
@@ -26,15 +27,22 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
-<?php if ($canAjouter): ?>
+<p>
+    <?php if ($canAjouter): ?>
+        <a href="<?php echo $this->url('ecole-doctorale/ajouter', [], [], true) ?>"
+           class="btn btn-primary"
+           title="<?php echo $this->translate("Créer une nouvelle école doctorale"); ?>">
+            <span class="icon icon-plus"></span>
+            <?php echo $this->translate("Ajouter une nouvelle école doctorale"); ?>
+        </a>
+    <?php endif ?>
 
-    <a href="<?php echo $this->url('ecole-doctorale/ajouter', [], [], true) ?>"
-       class="btn btn-primary"
-       title="<?php echo $this->translate("Créer une nouvelle école doctorale"); ?>">
-        <span class="icon icon-plus"></span>
-        <?php echo $this->translate("Ajouter une nouvelle école doctorale"); ?>
+    <a href="<?php echo $this->url('substitution-index-structure', ['type' => TypeStructure::CODE_ECOLE_DOCTORALE], [], true) ?>"
+       class="btn btn-outline-secondary float-end"
+       title="<?php echo $this->translate("Accéder à la page des substitutions d'écoles doctorales");?>">
+        <?php echo $this->translate("Substitutions d'écoles doctorales...");?>
     </a>
-<?php endif ?>
+</p>
 
 <div>
     <table class="table table-sm">

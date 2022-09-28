@@ -17,6 +17,7 @@ class Etablissement
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
+    use StructureAwareTrait;
 
     const SOURCE_CODE_ETABLISSEMENT_INCONNU = 'ETAB_INCONNU';
 
@@ -32,11 +33,6 @@ class Etablissement
      * @var string
      */
     protected $code;
-
-    /**
-     * @var Structure
-     */
-    protected $structure;
 
     /**
      * @var string
@@ -271,22 +267,20 @@ class Etablissement
     }
 
     /**
-     * @param Structure $structure
-     * @return self
+     * Retourne l'éventuel établissement substituant celui-ci.
+     *
+     * ATTENTION : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
+     * '.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.etablissement'.
+     *
+     * @return \Structure\Entity\Db\Etablissement|null
      */
-    public function setStructure($structure)
+    public function getEtablissementSubstituant(): ?Etablissement
     {
-        $this->structure = $structure;
+        if ($substit = $this->structure->getStructureSubstituante()) {
+            return $substit->getEtablissement();
+        }
 
-        return $this;
-    }
-
-    /**
-     * @return Structure
-     */
-    public function getStructure()
-    {
-        return $this->structure;
+        return null;
     }
 
     /**

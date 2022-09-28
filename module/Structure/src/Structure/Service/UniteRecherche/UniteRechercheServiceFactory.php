@@ -2,25 +2,18 @@
 
 namespace Structure\Service\UniteRecherche;
 
-use Application\Service\Role\RoleService;
 use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
 
 class UniteRechercheServiceFactory
 {
     /**
-     * Create service
-     *
-     * @param ContainerInterface $container
-     * @return UniteRechercheService
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): UniteRechercheService
     {
-        /** @var RoleService $roleService */
-        $roleService = $container->get('RoleService');
-
         $service = new UniteRechercheService();
-        $service->setRoleService($roleService);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper

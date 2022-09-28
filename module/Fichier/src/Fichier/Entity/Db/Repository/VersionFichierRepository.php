@@ -14,7 +14,7 @@ class VersionFichierRepository extends DefaultEntityRepository
     /**
      * @var string
      */
-    protected $queryBuilderClassName = QueryBuilder::class;
+    protected string $queryBuilderClassName = QueryBuilder::class;
 
     /**
      * @param bool $corrige

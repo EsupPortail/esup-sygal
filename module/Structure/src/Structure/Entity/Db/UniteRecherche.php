@@ -19,6 +19,7 @@ class UniteRecherche
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
+    use StructureAwareTrait;
 
     /**
      * @var string
@@ -39,11 +40,6 @@ class UniteRecherche
      * @var string
      */
     protected $sourceCode;
-
-    /**
-     * @var Structure
-     */
-    protected $structure;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -211,22 +207,20 @@ class UniteRecherche
     }
 
     /**
-     * @param Structure $structure
-     * @return UniteRecherche
+     * Retourne l'éventuelle unité de recherche substituant celle-ci.
+     *
+     * ATTENTION : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
+     * '.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.uniteRecherche'.
+     *
+     * @return \Structure\Entity\Db\UniteRecherche|null
      */
-    public function setStructure($structure)
+    public function getUniteRechercheSubstituante(): ?UniteRecherche
     {
-        $this->structure = $structure;
+        if ($substit = $this->structure->getStructureSubstituante()) {
+            return $substit->getUniteRecherche();
+        }
 
-        return $this;
-    }
-
-    /**
-     * @return Structure
-     */
-    public function getStructure()
-    {
-        return $this->structure;
+        return null;
     }
 
     /**

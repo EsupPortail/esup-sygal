@@ -2,17 +2,15 @@
 
 namespace Structure\Service\EcoleDoctorale;
 
-use Structure\Entity\Db\EcoleDoctorale;
-use Individu\Entity\Db\Individu;
-use Structure\Entity\Db\Repository\EcoleDoctoraleRepository;
-use Structure\Entity\Db\Structure;
-use Structure\Entity\Db\TypeStructure;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
-use Application\Service\Role\RoleServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
 use Laminas\Mvc\Controller\AbstractActionController;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Repository\EcoleDoctoraleRepository;
+use Structure\Entity\Db\Structure;
+use Structure\Entity\Db\TypeStructure;
 use UnicaenApp\Exception\RuntimeException;
 
 /**
@@ -20,33 +18,18 @@ use UnicaenApp\Exception\RuntimeException;
  */
 class EcoleDoctoraleService extends BaseService
 {
-    use RoleServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
 
     /**
      * @return EcoleDoctoraleRepository
      */
-    public function getRepository()
+    public function getRepository(): EcoleDoctoraleRepository
     {
         /** @var EcoleDoctoraleRepository $repo */
         $repo = $this->entityManager->getRepository(EcoleDoctorale::class);
 
         return $repo;
     }
-
-
-    /**
-     * @param int $id
-     * @return Individu[]
-     */
-    public function getIndividuByEcoleDoctoraleId($id)
-    {
-        $ecole = $this->getRepository()->findOneBy(['id' => $id]);
-        $individus = $this->roleService->getIndividuByStructure($ecole->getStructure());
-
-        return $individus;
-    }
-
 
     /**
      * Historise une ED.
@@ -122,10 +105,9 @@ class EcoleDoctoraleService extends BaseService
         return $ecole;
     }
 
-    public function getOffre()
+    public function getOffre(): array
     {
-        $ecoles = $this->getEntityManager()->getRepository(EcoleDoctorale::class)->createQueryBuilder('ecole')
-            ->addSelect('structure')->join('ecole.structure','structure')
+        $ecoles = $this->getRepository()->createQueryBuilder('ecole')
             ->andWhere('ecole.histoDestruction IS NULL')
             ->andWhere('structure.estFermee = false')
             ->andWhere('ecole.theme IS NOT NULL')

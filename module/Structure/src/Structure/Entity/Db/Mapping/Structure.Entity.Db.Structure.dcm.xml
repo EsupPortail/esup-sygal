@@ -27,9 +27,10 @@
             </join-columns>
         </many-to-one>
 
-        <one-to-many field="etablissement" target-entity="Structure\Entity\Db\Etablissement"  mapped-by="structure"/>
-        <one-to-many field="ecoleDoctorale" target-entity="Structure\Entity\Db\EcoleDoctorale" mapped-by="structure"/>
-        <one-to-many field="uniteRecherche" target-entity="Structure\Entity\Db\UniteRecherche" mapped-by="structure"/>
+        <one-to-one field="etablissement" target-entity="Structure\Entity\Db\Etablissement"  mapped-by="structure"/>
+        <one-to-one field="ecoleDoctorale" target-entity="Structure\Entity\Db\EcoleDoctorale" mapped-by="structure"/>
+        <one-to-one field="uniteRecherche" target-entity="Structure\Entity\Db\UniteRecherche" mapped-by="structure"/>
+
         <one-to-many field="roles" target-entity="Application\Entity\Db\Role" mapped-by="structure"/>
 
         <many-to-many field="structuresSubstituees" target-entity="Structure\Entity\Db\Structure">

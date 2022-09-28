@@ -1,10 +1,3 @@
-<?php
-
-use Structure\Provider\Privilege\SubstitutionPrivileges;
-
-$canSubstitutionAutomatique = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_AUTOMATIQUE));
-?>
-
 <?php $this->headTitle($this->translate("Substitution de structures")) ?>
 
 <h1 class="page-header first">
@@ -16,34 +9,22 @@ $messenger = $this->messenger();
 echo $messenger->addMessagesFromFlashMessenger();
 ?>
 
-<?php if($canSubstitutionAutomatique): ?>
-    <p>
-        <a href="<?php echo $this->url('substitution-automatique', [], [], true);?>" title="Recherche automatique de substitution">
-            <button class="btn btn-primary"><span class="fas fa-cog"></span> Recherche automatique de substitutions </button>
-        </a>
-    </p>
-<?php endif; ?>
-
-<div id="ecole-doctorale"> </div>
 <div id="etablissement"> </div>
+<div id="ecole-doctorale"> </div>
 <div id="unite-recherche"> </div>
-
 
 
 <script>
     $(document).ready(function() {
-        loadSubstitution("ecole-doctorale");
         loadSubstitution("etablissement");
+        loadSubstitution("ecole-doctorale");
         loadSubstitution("unite-recherche");
-
-
 
         $("body").on("edition-substitution", function(event, data) {
             console.log("With args : ", data);
             event.div.modal('hide'); // ferme la fenêtre modale
             var type = data[0].value;
             loadSubstitution(type);
-
         })
         .on("click", "span#detruire", function() {
             var id = $(this).attr("ref");
@@ -60,7 +41,6 @@ echo $messenger->addMessagesFromFlashMessenger();
                         loadSubstitution(type);
                     }
             });
-
         });
     });
 

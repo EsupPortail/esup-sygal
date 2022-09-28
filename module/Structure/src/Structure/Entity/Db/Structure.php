@@ -58,7 +58,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     /**
      * @var string|null
      */
-    protected ?string $code;
+    protected ?string $code = null;
 
     /**
      * @var TypeStructure
@@ -66,19 +66,19 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     protected $typeStructure;
 
     /**
-     * @var Collection
+     * @var \Structure\Entity\Db\Etablissement|null
      */
-    protected $etablissement;
+    protected ?Etablissement $etablissement = null;
 
     /**
-     * @var Collection
+     * @var \Structure\Entity\Db\EcoleDoctorale|null
      */
-    protected $ecoleDoctorale;
+    protected ?EcoleDoctorale $ecoleDoctorale = null;
 
     /**
-     * @var Collection
+     * @var \Structure\Entity\Db\UniteRecherche|null
      */
-    protected $uniteRecherche;
+    protected ?UniteRecherche $uniteRecherche = null;
 
     /**
      * @var Role[] $roles
@@ -88,10 +88,9 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     /**
      * @var ArrayCollection|Structure[]
      */
-    private $structuresSubstituees;
+    private Collection $structuresSubstituees;
 
-    /** @var Structure */
-    private $structureSubstituante;
+    private Collection $structureSubstituante;
 
     /** @var ArrayCollection StructureDocument */
     private $documents;
@@ -142,6 +141,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
 
     public function __construct()
     {
+        $this->structureSubstituante = new ArrayCollection();
         $this->structuresSubstituees = new ArrayCollection();
         $this->documents = new ArrayCollection();
     }
@@ -312,54 +312,42 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
         return $this;
     }
 
-    /**
-     * @return Etablissement|null
-     */
-    public function getEtablissement()
+    public function getEtablissement(): ?Etablissement
     {
-        return $this->etablissement->first() ?: null;
+        return $this->etablissement;
+    }
+
+    public function getEcoleDoctorale(): ?EcoleDoctorale
+    {
+        return $this->ecoleDoctorale;
+    }
+
+    public function getUniteRecherche(): ?UniteRecherche
+    {
+        return $this->uniteRecherche;
     }
 
     /**
-     * @return EcoleDoctorale|null
+     * Retourne les éventuelles structures substituées par celle-ci.
+     *
+     * @return \Doctrine\Common\Collections\Collection
      */
-    public function getEcoleDoctorale()
-    {
-        return $this->ecoleDoctorale->first() ?: null;
-    }
-
-    /**
-     * @return UniteRecherche|null
-     */
-    public function getUniteRecherche()
-    {
-        return $this->uniteRecherche->first() ?: null;
-    }
-
-    /**
-     * @return Structure[]
-     */
-    public function getStructuresSubstituees()
+    public function getStructuresSubstituees(): Collection
     {
         return $this->structuresSubstituees;
     }
 
     /**
-     * @return Structure
+     * Retourne l'éventuelle "structure substituante", càd qui substitue celle-ci.
+     *
+     * NB : c'est géré avec une relation to-many mais en pratique il ne peut exister qu'une seule structure substituante
+     * (sachant que les substitutions ne sont pas historisées mais supprimées).
+     *
+     * @return \Structure\Entity\Db\Structure|null
      */
-    public function getStructureSubstituante()
+    public function getStructureSubstituante(): ?Structure
     {
-        return $this->structureSubstituante;
-    }
-
-    /**
-     * @param Structure $structureSubstituante
-     * @return Structure
-     */
-    public function setStructureSubstituante($structureSubstituante)
-    {
-        $this->structureSubstituante = $structureSubstituante;
-        return $this;
+        return $this->structureSubstituante->first() ?: null;
     }
 
     /**

@@ -251,6 +251,19 @@ class TheseSearchService extends SearchService
             ->addSelect('ta')->leftJoin('these.titreAcces', 'ta')
             ->andWhere('these.histoDestruction is null');
 
+        $qb
+            ->addSelect('etab_structure')->leftJoin("etab.structure", "etab_structure")
+            ->addSelect('etab_ss')->leftJoin("etab_structure.structureSubstituante", "etab_ss")
+            ->addSelect('etab_substituant')->leftJoin("etab_ss.etablissement", "etab_substituant");
+        $qb
+            ->addSelect('ed_structure')->leftJoin("ed.structure", "ed_structure")
+            ->addSelect('ed_ss')->leftJoin("ed_structure.structureSubstituante", "ed_ss")
+            ->addSelect('ed_substituant')->leftJoin("ed_ss.ecoleDoctorale", "ed_substituant");
+        $qb
+            ->addSelect('ur_structure')->leftJoin("ur.structure", "ur_structure")
+            ->addSelect('ur_ss')->leftJoin("ur_structure.structureSubstituante", "ur_ss")
+            ->addSelect('ur_substituant')->leftJoin("ur_ss.uniteRecherche", "ur_substituant");
+
         return $qb;
     }
 

@@ -2,32 +2,30 @@
 
 namespace Structure\Service\UniteRecherche;
 
+use Application\Entity\Db\Utilisateur;
+use Application\Service\BaseService;
+use Application\SourceCodeStringHelperAwareTrait;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\EtablissementRattachement;
-use Individu\Entity\Db\Individu;
 use Structure\Entity\Db\Repository\UniteRechercheRepository;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;
-use Application\Entity\Db\Utilisateur;
-use Application\Service\BaseService;
-use Application\Service\Role\RoleServiceAwareInterface;
-use Application\Service\Role\RoleServiceAwareTrait;
-use Application\SourceCodeStringHelperAwareTrait;
-use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 
 /**
  * @method UniteRecherche|null findOneBy(array $criteria, array $orderBy = null)
  */
-class UniteRechercheService extends BaseService implements RoleServiceAwareInterface
+class UniteRechercheService extends BaseService
 {
-    use RoleServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
 
     /**
      * @return UniteRechercheRepository
      */
-    public function getRepository()
+    public function getRepository(): UniteRechercheRepository
     {
         /** @var UniteRechercheRepository $repo */
         $repo = $this->entityManager->getRepository(UniteRecherche::class);
@@ -39,7 +37,7 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
      * @param UniteRecherche $unite
      * @return EtablissementRattachement[]
      */
-    public function findEtablissementRattachement(UniteRecherche $unite)
+    public function findEtablissementRattachement(UniteRecherche $unite): array
     {
         $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er")
             ->addSelect("e, s")
@@ -49,33 +47,22 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
             ->orderBy("s.libelle")
             ->setParameter("unite", $unite);
 
-        $result = $qb->getQuery()->getResult();
-
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
-    public function existEtablissementRattachement($unite, $etablissement)
+    public function existEtablissementRattachement($unite, $etablissement): ?EtablissementRattachement
     {
         $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er")
             ->andWhere("er.unite = :unite")
             ->andWhere("er.etablissement = :etablissement")
             ->setParameter("unite", $unite)
             ->setParameter("etablissement", $etablissement);
-        $result = $qb->getQuery()->getOneOrNullResult();
 
-        return $result;
-    }
-
-    /**
-     * @param int $id
-     * @return Individu[]
-     */
-    public function getIndividuByUniteRechercheId($id)
-    {
-        $unite = $this->getRepository()->findOneBy(['id' => $id]);
-        $individus = $this->roleService->getIndividuByStructure($unite->getStructure());
-
-        return $individus;
+        try {
+            return $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie : Plusieurs EtablissementRattachement trouvés pour une ED et un Etab donnés");
+        }
     }
 
     /**
@@ -100,7 +87,7 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
         $this->flush($ur);
     }
 
-    public function create(UniteRecherche $structureConcrete, Utilisateur $createur)
+    public function create(UniteRecherche $structureConcrete, Utilisateur $createur): UniteRecherche
     {
         /** @var TypeStructure $typeStructure */
         $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => 'etablissement']);
@@ -115,13 +102,13 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
 
         $this->entityManager->beginTransaction();
 
-        $this->entityManager->persist($structure);
-        $this->entityManager->persist($structureConcrete);
         try {
+            $this->entityManager->persist($structure);
+            $this->entityManager->persist($structureConcrete);
             $this->entityManager->flush($structure);
             $this->entityManager->flush($structureConcrete);
             $this->entityManager->commit();
-        } catch (\Exception $e) {
+        } catch (ORMException $e) {
             $this->rollback();
             throw new RuntimeException("Erreur lors de l'enregistrement de l'UR '$structure'", null, $e);
         }
@@ -152,12 +139,6 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
         return $unite;
     }
 
-    private function persist(UniteRecherche $ur)
-    {
-        $this->getEntityManager()->persist($ur);
-        $this->getEntityManager()->persist($ur->getStructure());
-    }
-
     private function flush(UniteRecherche $ur)
     {
         try {
@@ -178,7 +159,7 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
     public function addEtablissementRattachement(UniteRecherche $unite, Etablissement $etablissement)
     {
         $er = new EtablissementRattachement();
-        $er->setUnite($unite);
+        $er->setUniteRecherche($unite);
         $er->setEtablissement($etablissement);
         $this->getEntityManager()->persist($er);
         $this->getEntityManager()->flush($er);

@@ -85,26 +85,6 @@ class UtilisateurService extends BaseService
         return $entity;
     }
 
-    /**
-     * @param Individu $individu
-     * @return Utilisateur
-     */
-    public function createFromIndividuForUsurpationShib(Individu $individu)
-    {
-        if ($individu->getSupannId() == null) {
-            throw new RuntimeException("Le supannId de l'individu $individu (id={$individu->getId()}) est null.");
-        }
-
-        /** @var Source $source */
-        $source = $individu->getSource();
-        $etablissementSource = $source->getEtablissement();
-        $username = $individu->getSupannId() . '@' . $etablissementSource->getDomaine();
-
-        $password = 'shib';
-
-        return $this->createFromIndividu($individu, $username, $password);
-    }
-
     public function createFromFormData(array $data): Utilisateur
     {
         $userName = $data['email'];

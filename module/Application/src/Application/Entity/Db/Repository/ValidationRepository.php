@@ -15,7 +15,7 @@ class ValidationRepository extends DefaultEntityRepository
     /**
      * @var string
      */
-    protected $queryBuilderClassName = ValidationQueryBuilder::class;
+    protected string $queryBuilderClassName = ValidationQueryBuilder::class;
 
     /**
      * @param string $code

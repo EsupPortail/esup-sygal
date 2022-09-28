@@ -53,24 +53,34 @@ class DoctorantRepository extends DefaultEntityRepository
     }
 
     /**
-     * @param EcoleDoctorale|string|null $ecoleDoctorale ED ou code structure de l'ED
+     * Recherche des doctorants.
+     *
+     * NB : les seules ED prises en compte sont celles non substituées.
+     *
+     * NB : ici pas de jointure vers l'éventuelle établissement substitué, charge à l'appelant de passer un
+     * l'établissement adéquat (substitué ou non).
+     *
+     * @param EcoleDoctorale|string|null $ecoleDoctorale ED, code structure ou critères de recherche de l'ED
      * @param Etablissement|null $etablissement Etablissement éventuel
-     * @param string $etatThese Par défaut {@see These::ETAT_EN_COURS]
      * @return Doctorant[]
      */
-    public function findByEcoleDoctAndEtab($ecoleDoctorale = null, Etablissement $etablissement = null, $etatThese = These::ETAT_EN_COURS)
+    public function findByEcoleDoctAndEtab($ecoleDoctorale = null, Etablissement $etablissement = null): array
     {
         $qb = $this->createQueryBuilder('d');
         $qb
             ->addSelect('i')
             ->join('d.individu', 'i')
-            ->join('d.theses', 't', Join::WITH, 't.etatThese = :etat')->setParameter('etat', $etatThese)
+            ->join('d.theses', 't', Join::WITH, 't.etatThese = :etat')->setParameter('etat', These::ETAT_EN_COURS)
             ->join('t.ecoleDoctorale', 'ed')
             ->join('ed.structure', 's')
             ->andWhere('d.histoDestruction is null')
             ->addOrderBy('i.nomUsuel')
-            ->addOrderBy('i.prenom1')
-        ;
+            ->addOrderBy('i.prenom1');
+
+        // l'ED ne doit pas être substituée
+        $qb->addSelect('structureSubstituante')
+            ->leftJoin("s.structureSubstituante", "structureSubstituante")
+            ->andWhere("structureSubstituante is null");
 
         if ($ecoleDoctorale !== null) {
             if ($ecoleDoctorale instanceof EcoleDoctorale) {

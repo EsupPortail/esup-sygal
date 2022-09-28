@@ -47,6 +47,12 @@ class SessionRepository extends EntityRepository
             ->leftJoin("complement.structure", "structureSessionInscription")->addSelect("structureSessionInscription")
             ->andWhere("complement.histoDestruction IS NULL")
         ;
+
+        // la structure ne doit pas être substituée
+        $qb->addSelect('structureSubstituante')
+            ->leftJoin("structureSessionInscription.structureSubstituante", "structureSubstituante")
+            ->andWhere("structureSubstituante is null");
+
         return $qb;
     }
 

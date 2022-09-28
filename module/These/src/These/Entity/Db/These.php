@@ -862,18 +862,31 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @return EcoleDoctorale
+     * Retourne l'éventuelle ED liée *ou son substitut le cas échéant*.
+     *
+     * **ATTENTION** : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
+     * '.ecoleDoctorale' puis 'ecoleDoctorale.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.ecoleDoctorale'.
+     *
+     * @param bool $returnSubstitIfExists À true, retourne l'ED substituante s'il y en a une ; sinon l'ED d'origine.
+     * @return EcoleDoctorale|null
+     * @see EcoleDoctorale::getEcoleDoctoraleSubstituant()
      */
-    public function getEcoleDoctorale()
+    public function getEcoleDoctorale(bool $returnSubstitIfExists = true): ?EcoleDoctorale
     {
+        if ($returnSubstitIfExists && $this->ecoleDoctorale && ($sustitut = $this->ecoleDoctorale->getEcoleDoctoraleSubstituante())) {
+            return $sustitut;
+        }
+
         return $this->ecoleDoctorale;
     }
 
     /**
+     * Change l'ED liée à cette thèse.
+     *
      * @param EcoleDoctorale $ecoleDoctorale
      * @return self
      */
-    public function setEcoleDoctorale($ecoleDoctorale)
+    public function setEcoleDoctorale(EcoleDoctorale $ecoleDoctorale): self
     {
         $this->ecoleDoctorale = $ecoleDoctorale;
 
@@ -881,10 +894,21 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @return UniteRecherche
+     * Retourne l'éventuelle UR liée *ou son substitut le cas échéant*.
+     *
+     * **ATTENTION** : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
+     * '.uniteRecherche' puis 'uniteRecherche.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.uniteRecherche'.
+     *
+     * @param bool $returnSubstitIfExists À true, retourne l'UR substituante s'il y en a une ; sinon l'UR d'origine.
+     * @see UniteRecherche::getUniteRechercheSubstituante()
+     * @return UniteRecherche|null
      */
-    public function getUniteRecherche()
+    public function getUniteRecherche(bool $returnSubstitIfExists = true): ?UniteRecherche
     {
+        if ($returnSubstitIfExists && $this->uniteRecherche && ($sustitut = $this->uniteRecherche->getUniteRechercheSubstituante())) {
+            return $sustitut;
+        }
+
         return $this->uniteRecherche;
     }
 
@@ -1427,17 +1451,28 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @return Etablissement
+     * Retourne l'éventuel établissement lié *ou son substitut le cas échéant*.
+     *
+     * **ATTENTION** : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
+     * '.etablissement' puis 'etablissement.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.etablissement'.
+     *
+     * @param bool $returnSubstitIfExists À true, retourne l'établissement substituant s'il y en a un ; sinon l'établissement d'origine.
+     * @see Etablissement::getEtablissementSubstituant()
+     * @return Etablissement|null
      */
-    public function getEtablissement()
+    public function getEtablissement(bool $returnSubstitIfExists = true): ?Etablissement
     {
+        if ($returnSubstitIfExists && $this->etablissement && ($sustitut = $this->etablissement->getEtablissementSubstituant())) {
+            return $sustitut;
+        }
+
         return $this->etablissement;
     }
 
     /**
      * @param Etablissement $etablissement
      */
-    public function setEtablissement($etablissement)
+    public function setEtablissement(Etablissement $etablissement)
     {
         $this->etablissement = $etablissement;
     }

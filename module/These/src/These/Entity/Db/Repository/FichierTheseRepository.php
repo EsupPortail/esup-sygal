@@ -20,7 +20,7 @@ class FichierTheseRepository extends DefaultEntityRepository
     /**
      * @var string
      */
-    protected $queryBuilderClassName = FichierTheseQueryBuilder::class;
+    protected string $queryBuilderClassName = FichierTheseQueryBuilder::class;
 
     /**
      * Retourne les fichiers liés à une thèse, qui ont la nature et version spécifiées.

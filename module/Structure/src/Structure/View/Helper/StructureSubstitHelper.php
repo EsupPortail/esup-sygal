@@ -22,8 +22,8 @@ class StructureSubstitHelper extends AbstractHelper
      */
     public function structureSource(StructureConcreteInterface $structurestructureConcrete, ?string $logoContent)
     {
-        $texte = '<div class="card" id="panel_' . $structurestructureConcrete->getId() . '" >';
-        $texte .= '<div class="card-header bg-dark text-white">';
+        $texte = '<div class="card" data-struct-id="'.$structurestructureConcrete->getId().'" id="panel_' . $structurestructureConcrete->getId() . '" >';
+        $texte .= '<div class="card-header bg-secondary text-white">';
         $texte .= 'Source : ' . $structurestructureConcrete->getSource() . " - Identifiant : " . $structurestructureConcrete->getStructure()->getId();
         $texte .= '</div>';
 
@@ -51,7 +51,7 @@ class StructureSubstitHelper extends AbstractHelper
 
         $texte .= '<br/>';
 
-        $texte .= '<button class="btn btn-danger supprimer">';
+        $texte .= '<button type="button" class="btn btn-danger btn-sm supprimer">';
         $texte .= '<span class="icon icon-remove"></span>';
         $texte .= 'Retirer de la substitution';
         $texte .= '</button>';

@@ -12,20 +12,21 @@ use Webmozart\Assert\Assert;
 class StructureSubstit implements HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;
+
     /**
      * @var integer
      */
-    private $id;
+    private int $id;
 
     /**
      * @var Structure
      */
-    private $fromStructure;
+    private Structure $fromStructure;
 
     /**
      * @var Structure
      */
-    private $toStructure;
+    private Structure $toStructure;
 
     /**
      * StructureSubstit factory.
@@ -34,7 +35,7 @@ class StructureSubstit implements HistoriqueAwareInterface
      * @param Structure   $structureCible
      * @return self[]
      */
-    public static function fromStructures(array $structuresSources, Structure $structureCible)
+    public static function fromStructures(array $structuresSources, Structure $structureCible): array
     {
         return array_map(function($structureSource) use ($structureCible) {
             if ($structureSource instanceof Etablissement ||
@@ -52,23 +53,18 @@ class StructureSubstit implements HistoriqueAwareInterface
     }
 
     /**
-     * Get id
-     *
      * @return integer
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
-     * Set fromStructure
-     *
-     * @param Structure $fromStructure
-     *
+     * @param \Structure\Entity\Db\Structure|null $fromStructure
      * @return StructureSubstit
      */
-    public function setFromStructure(Structure $fromStructure = null)
+    public function setFromStructure(Structure $fromStructure = null): self
     {
         $this->fromStructure = $fromStructure;
 
@@ -76,23 +72,18 @@ class StructureSubstit implements HistoriqueAwareInterface
     }
 
     /**
-     * Get fromStructure
-     *
      * @return Structure
      */
-    public function getFromStructure()
+    public function getFromStructure(): Structure
     {
         return $this->fromStructure;
     }
 
     /**
-     * Set toStructure
-     *
      * @param Structure $toStructure
-     *
      * @return StructureSubstit
      */
-    public function setToStructure(Structure $toStructure = null)
+    public function setToStructure(Structure $toStructure): self
     {
         $this->toStructure = $toStructure;
 
@@ -100,11 +91,9 @@ class StructureSubstit implements HistoriqueAwareInterface
     }
 
     /**
-     * Get toStructure
-     *
      * @return Structure
      */
-    public function getToStructure()
+    public function getToStructure(): Structure
     {
         return $this->toStructure;
     }

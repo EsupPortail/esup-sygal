@@ -23,7 +23,7 @@ class TheseRepository extends DefaultEntityRepository
     /**
      * @var string
      */
-    protected $queryBuilderClassName = TheseQueryBuilder::class;
+    protected string $queryBuilderClassName = TheseQueryBuilder::class;
 
     /**
      * @return These[]

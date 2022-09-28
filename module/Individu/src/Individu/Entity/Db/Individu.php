@@ -653,13 +653,29 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface, Resour
     }
 
     /**
+     * Retourne l'éventuel établissement lié, ou celui spécifié dans les "compléments", *ou son substitut le cas échéant*.
+     *
+     * **ATTENTION** : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
+     * '.etablissement' puis 'etablissement.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.etablissement'.
+     *
+     * @param bool $returnSubstitIfExists À true, retourne l'établissement substituant s'il y en a un.
+     * @see Etablissement::getEtablissementSubstituant()
      * @return Etablissement|null
      */
-    public function getEtablissement(): ?Etablissement
+    public function getEtablissement(bool $returnSubstitIfExists = true): ?Etablissement
     {
+        $etablissement = $this->etablissement;
+
         $complement = $this->getComplement();
-        if ($complement AND !$complement->estHistorise() AND $complement->getEtablissement() !== null) return $complement->getEtablissement();
-        return $this->etablissement;
+        if ($complement AND !$complement->estHistorise() AND $complement->getEtablissement() !== null) {
+            $etablissement = $complement->getEtablissement();
+        }
+
+        if ($returnSubstitIfExists && $etablissement && ($sustitut = $etablissement->getEtablissementSubstituant())) {
+            return $sustitut;
+        }
+
+        return $etablissement;
     }
 
     /**
@@ -691,13 +707,29 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface, Resour
     }
 
     /**
-     * @return Etablissement|null
+     * Retourne l'éventuelle UR liée *ou son substitut le cas échéant*.
+     *
+     * **ATTENTION** : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
+     * '.uniteRecherche' puis 'uniteRecherche.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.uniteRecherche'.
+     *
+     * @param bool $returnSubstitIfExists À true, retourne l'UR substituante s'il y en a une ; sinon l'UR d'origine.
+     * @see UniteRecherche::getUniteRechercheSubstituante()
+     * @return UniteRecherche|null
      */
-    public function getUniteRecherche(): ?UniteRecherche
+    public function getUniteRecherche(bool $returnSubstitIfExists = true): ?UniteRecherche
     {
+        $uniteRecherche = null;
+
         $complement = $this->getComplement();
-        if ($complement AND !$complement->estHistorise() AND $complement->getUniteRecherche() !== null) return $complement->getUniteRecherche();
-        return null;
+        if ($complement AND !$complement->estHistorise() AND $complement->getUniteRecherche() !== null) {
+            $uniteRecherche = $complement->getUniteRecherche();
+        }
+
+        if ($returnSubstitIfExists && $uniteRecherche && ($sustitut = $uniteRecherche->getUniteRechercheSubstituante())) {
+            return $sustitut;
+        }
+
+        return $uniteRecherche;
     }
 
     /**
