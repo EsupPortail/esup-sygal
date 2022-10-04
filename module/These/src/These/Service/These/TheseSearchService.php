@@ -3,6 +3,7 @@
 namespace These\Service\These;
 
 use Application\Entity\Db\Role;
+use Doctrine\ORM\Query\Expr\Join;
 use These\Entity\Db\These;
 use Structure\Entity\Db\TypeStructure;
 use Application\Filter\AnneeUnivFormatter;
@@ -497,11 +498,11 @@ EOS;
             $filterValue = $filter->getValue();
             if ($filterValue === 'NULL') {
                 $qb
-                    ->leftJoin("$alias.anneesUnivInscription", 'aui')
+                    ->leftJoin("$alias.anneesUnivInscription", 'aui', Join::WITH, 'aui.histoDestruction is null')
                     ->andWhere('aui.anneeUniv IS NULL');
             } else {
                 $qb
-                    ->join("$alias.anneesUnivInscription", 'aui')
+                    ->join("$alias.anneesUnivInscription", 'aui', Join::WITH, 'aui.histoDestruction is null')
                     ->andWhere('aui.anneeUniv = :anneeUniv')
                     ->setParameter('anneeUniv', $filterValue);
             }

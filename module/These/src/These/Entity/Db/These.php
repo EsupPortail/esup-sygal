@@ -1456,11 +1456,18 @@ class These implements HistoriqueAwareInterface, ResourceInterface
      * @param string $glue Séparateur, ex: ' - '
      * @return string Ex: "2015/2016, 2016/2017, 2017/2018"
      */
-    public function getAnneesUnivInscriptionToString($glue = ', ')
+    public function getAnneesUnivInscriptionToString(string $glue = ', '): string
     {
-        return implode($glue, array_map(function(TheseAnneeUniv $tau) {
-            return $tau->getAnneeUnivToString();
-        }, $this->anneesUnivInscription->toArray()));
+        $anneesUnivs = array_map(
+            fn(TheseAnneeUniv $tau) => $tau->getAnneeUnivToString(),
+            array_filter(
+                $this->anneesUnivInscription->toArray(),
+                fn(TheseAnneeUniv $tau) => $tau->estNonHistorise()
+            )
+        );
+        sort($anneesUnivs);
+
+        return implode($glue, $anneesUnivs);
     }
 
     /**

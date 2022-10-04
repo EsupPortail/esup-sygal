@@ -10,6 +10,7 @@ Journal des modifications
 - Changement du lien dans le mail pour la validation des présidents : redirect + selection du rôle
 - [FIX] Amélioration de la robustesse de la proposition de soutenance pour les cas de th_se sans ED, sans UR ou sans ETAB
 - Ajout d'une vérification de la date de soutenance dans le formulaire pour prévenir des erreurs de saisie (p.e. 12/09/0022)
+- [FIX] Années universitaires d'inscription : les années historisées n'étaient pas écartées.
 
 5.2.0 
 -----
