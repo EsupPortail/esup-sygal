@@ -81,7 +81,7 @@ $canAnnuler = ($membre)?$this->isAllowed($membre->getActeur(), AvisSoutenancePri
 </h1>
 
 <div class="box card">
-    <div class="card-header bg-info">
+    <div class="card-header bg-dark text-white">
         <h2> Proposition de jury / Jury Proposal </h2>
     </div>
     <div class="card-body">
@@ -119,14 +119,14 @@ $canAnnuler = ($membre)?$this->isAllowed($membre->getActeur(), AvisSoutenancePri
 </div>
 
 <div class="box card">
-    <div class="card-header bg-info">
+    <div class="card-header bg-dark text-white">
         <h2> Engagement d'impartialité / Impartiality Commitement </h2>
     </div>
     <div class="card-body">
         <?php if ($engagement !== null) : ?>
             Vous avez signé l'engagement pour la thèse de <?php echo $these->getDoctorant(); ?>.
             <div class="card float-end">
-                <div class="card-header bg-secondary">
+                <div class="card-header bg-dark text-white">
                     Signature de l'engagment d'impartialité
                 </div>
                 <div class="card-body">

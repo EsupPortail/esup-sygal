@@ -11,6 +11,7 @@ Journal des modifications
 - [FIX] Amélioration de la robustesse de la proposition de soutenance pour les cas de th_se sans ED, sans UR ou sans ETAB
 - Ajout d'une vérification de la date de soutenance dans le formulaire pour prévenir des erreurs de saisie (p.e. 12/09/0022)
 - [FIX] Années universitaires d'inscription : les années historisées n'étaient pas écartées.
+- Couleur noire par défaut pour les headers des cards.
 
 5.2.0 
 -----
