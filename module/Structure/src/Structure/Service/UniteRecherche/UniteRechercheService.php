@@ -204,4 +204,16 @@ class UniteRechercheService extends BaseService implements RoleServiceAwareInter
             $this->getEntityManager()->flush($result);
         }
     }
+
+    //todo faire les filtrage et considerer que les UR internes
+    public function getUnitesRecherchesAsOptions() : array
+    {
+        $unites = $this->getRepository()->findAll(true);
+
+        $options = [];
+        foreach ($unites as $unite) {
+            $options[$unite->getId()] = $unite->getLibelle() . " " ."<span class='badge'>".$unite->getSigle()."</span>";
+        }
+        return $options;
+    }
 }

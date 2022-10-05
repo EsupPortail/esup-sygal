@@ -2,7 +2,7 @@
 
 namespace Application\Controller\Plugin;
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Laminas\Mvc\Controller\Plugin\Url as UrlPlugin;
 
 class UrlWorkflow extends UrlPlugin

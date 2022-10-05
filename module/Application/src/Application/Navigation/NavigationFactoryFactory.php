@@ -2,7 +2,7 @@
 
 namespace Application\Navigation;
 
-use Application\Service\These\TheseService;
+use These\Service\These\TheseService;
 use Application\Service\UserContextService;
 use Interop\Container\ContainerInterface;
 

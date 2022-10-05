@@ -3,7 +3,7 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Formation\Entity\Db\Formation;

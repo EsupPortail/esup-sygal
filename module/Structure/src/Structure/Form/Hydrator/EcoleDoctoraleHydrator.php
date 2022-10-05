@@ -30,6 +30,8 @@ class EcoleDoctoraleHydrator extends StructureHydrator
         $theme = (isset($data['theme']) and trim($data['theme']) !== '') ? trim($data['theme']) : null;
         $offreThese = (isset($data['offre-these']) and trim($data['offre-these']) !== '') ? trim($data['offre-these']) : null;
 
+        if ($data['id'] === "") $data['id'] = null;
+
         /** @var EcoleDoctorale $object */
         $object = parent::hydrate($data, $ed);
 

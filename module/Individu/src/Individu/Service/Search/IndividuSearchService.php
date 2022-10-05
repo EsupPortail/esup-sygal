@@ -35,8 +35,12 @@ class IndividuSearchService extends SearchService
         $textFilter->setAttributes(['title' => "Recherche sur le nom d'usage, le prénom ou l'adresse électronique"]);
         $textFilter->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb) {
             $individus = $this->individuService->getRepository()->findByText($filter->getValue());
-            $individusIds = array_map(fn(array $individu) => $individu['id'], $individus);
-            $qb->andWhere($qb->expr()->in('i.id', $individusIds));
+            if (empty($individus)) {
+                $qb->andWhere('0 = 1');
+            } else {
+                $individusIds = array_map(fn(array $individu) => $individu['id'], $individus);
+                $qb->andWhere($qb->expr()->in('i.id', $individusIds));
+            }
         });
         $this->addFilter($textFilter);
 

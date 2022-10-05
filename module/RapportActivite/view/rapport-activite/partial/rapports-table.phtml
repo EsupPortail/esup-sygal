@@ -4,7 +4,7 @@ namespace RapportActivite;
 
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
-use Application\Filter\ActeursFormatter;
+use These\Filter\ActeursFormatter;
 use Application\Filter\IdifyFilter;
 use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
 use Structure\Search\Etablissement\EtablissementSearchFilter;
@@ -215,7 +215,7 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
 
             <td>
                 <?php if ($canDl): ?>
-                    <a href="<?php echo $this->url('rapport-activite/telecharger', ['rapport' => IdifyFilter::id($rapport)]) ?>"
+                    <a href="<?php echo $this->url('rapport-activite/telecharger', ['rapport' => IdifyFilter::id($rapport)], ['query' => ['redirect' => $returnUrl]]) ?>"
                        title="Cliquez pour télécharger">
                         <?php echo $rapport->getFichier()->getNom() ?>
                     </a>

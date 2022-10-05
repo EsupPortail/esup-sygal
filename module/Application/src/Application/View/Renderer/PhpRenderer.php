@@ -3,7 +3,7 @@
 namespace Application\View\Renderer;
 
 use Structure\Entity\Db\EcoleDoctorale;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\VWorkflow;
 use Application\View\Helper\Actualite\ActualiteViewHelper;
@@ -11,7 +11,7 @@ use Structure\View\Helper\EcoleDoctoraleHelper;
 use Application\View\Helper\EscapeTextHelper;
 use Application\View\Helper\FinancementFormatterHelper;
 use Structure\View\Helper\StructureSubstitHelper;
-use Application\View\Helper\Url\UrlTheseHelper;
+use These\View\Helper\Url\UrlTheseHelper;
 use Application\View\Helper\ValidationViewHelper;
 use Application\View\Helper\Workflow\RoadmapHelper;
 use Application\View\Helper\Workflow\WorkflowHelper;

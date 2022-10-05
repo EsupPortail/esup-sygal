@@ -2,8 +2,8 @@
 
 namespace Soutenance\Controller;
 
-use Application\Service\FichierThese\FichierTheseService;
-use Application\Service\These\TheseService;
+use These\Service\FichierThese\FichierTheseService;
+use These\Service\These\TheseService;
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
 use Soutenance\Service\Intervention\InterventionService;

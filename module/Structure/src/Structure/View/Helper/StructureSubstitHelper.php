@@ -23,7 +23,7 @@ class StructureSubstitHelper extends AbstractHelper
     public function structureSource(StructureConcreteInterface $structurestructureConcrete, ?string $logoContent)
     {
         $texte = '<div class="card" id="panel_' . $structurestructureConcrete->getId() . '" >';
-        $texte .= '<div class="card-header bg-info">';
+        $texte .= '<div class="card-header bg-dark text-white">';
         $texte .= 'Source : ' . $structurestructureConcrete->getSource() . " - Identifiant : " . $structurestructureConcrete->getStructure()->getId();
         $texte .= '</div>';
 

@@ -20,7 +20,7 @@
 
         <field name="sourceCode" type="string" column="SOURCE_CODE" length="64" nullable="true"/>
 
-        <many-to-one field="these" target-entity="Application\Entity\Db\These">
+        <many-to-one field="these" target-entity="These\Entity\Db\These">
             <join-columns>
                 <join-column name="THESE_ID" referenced-column-name="ID"/>
             </join-columns>

@@ -27,7 +27,7 @@
         </many-to-one>
 
         <one-to-many field="complements" target-entity="Doctorant\Entity\Db\DoctorantCompl" mapped-by="doctorant"/>
-        <one-to-many field="theses" target-entity="Application\Entity\Db\These" mapped-by="doctorant"/>
+        <one-to-many field="theses" target-entity="These\Entity\Db\These" mapped-by="doctorant"/>
 
         <many-to-one field="source" target-entity="Application\Entity\Db\Source">
             <join-columns>

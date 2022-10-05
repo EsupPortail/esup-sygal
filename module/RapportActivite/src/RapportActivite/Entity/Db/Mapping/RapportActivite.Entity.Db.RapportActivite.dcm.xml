@@ -19,7 +19,7 @@
             <join-column name="FICHIER_ID" referenced-column-name="ID"/>
         </many-to-one>
 
-        <many-to-one field="these" target-entity="Application\Entity\Db\These">
+        <many-to-one field="these" target-entity="These\Entity\Db\These">
             <join-column name="THESE_ID" referenced-column-name="ID"/>
         </many-to-one>
 

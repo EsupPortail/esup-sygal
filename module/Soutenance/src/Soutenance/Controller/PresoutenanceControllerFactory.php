@@ -2,13 +2,14 @@
 
 namespace Soutenance\Controller;
 
-use Application\Service\Acteur\ActeurService;
+use These\Service\Acteur\ActeurService;
 use Fichier\Service\Fichier\FichierService;
+use Fichier\Service\Fichier\FichierStorageService;
 use Individu\Service\IndividuService;
 use Application\Service\Role\RoleService;
 use Application\Service\Source\SourceService;
 use Structure\Service\StructureDocument\StructureDocumentService;
-use Application\Service\These\TheseService;
+use These\Service\These\TheseService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Interop\Container\ContainerInterface;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceForm;
@@ -54,6 +55,7 @@ class PresoutenanceControllerFactory
          * @var TokenService $tokenService
          * @var SourceService $sourceService
          * @var JustificatifService $justificatifService
+         * @var FichierStorageService $fichierStorageService
          */
         $evenementService = $container->get(EvenementService::class);
         $propositionService = $container->get(PropositionService::class);
@@ -74,6 +76,7 @@ class PresoutenanceControllerFactory
         $tokenService = $container->get(TokenService::class);
         $sourceService = $container->get(SourceService::class);
         $justificatifService = $container->get(JustificatifService::class);
+        $fichierStorageService = $container->get(FichierStorageService::class);
 
         /**
          * @var DateRenduRapportForm $dateRenduRapportForm
@@ -106,6 +109,7 @@ class PresoutenanceControllerFactory
         $controller->setStructureDocumentService($structureDocumentService);
         $controller->setTokenService($tokenService);
         $controller->setJustificatifService($justificatifService);
+        $controller->setFichierStorageService($fichierStorageService);
 
         $controller->setDateRenduRapportForm($dateRenduRapportForm);
         $controller->setAdresseSoutenanceForm($adresseSoutenanceForm);

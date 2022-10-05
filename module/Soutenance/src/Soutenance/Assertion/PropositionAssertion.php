@@ -2,9 +2,9 @@
 
 namespace Soutenance\Assertion;
 
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;

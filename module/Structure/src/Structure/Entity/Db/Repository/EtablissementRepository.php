@@ -65,9 +65,10 @@ class EtablissementRepository extends DefaultEntityRepository
 //    }
 
     /**
+     * @param bool $ouverte
      * @return Etablissement[]
      */
-    public function findAll()
+    public function findAll(bool $ouverte = false)
     {
         /** @var Etablissement[] $etablissments */
         $qb = $this->createQueryBuilder("et")
@@ -76,6 +77,14 @@ class EtablissementRepository extends DefaultEntityRepository
             ->leftJoin("str.typeStructure", "typ")
             ->addSelect("str, sub, typ")
             ->orderBy("str.libelle");
+
+        if ($ouverte) {
+            $qb = $qb->andWhere('str.estFermee = false')
+                ->leftJoin('str.structureSubstituante', 'substitutionTo')
+                ->andWhere('substitutionTo IS NULL')
+                ->orderBy('str.sigle')
+            ;
+        }
 
         $etablissements = $qb->getQuery()->getResult();
 

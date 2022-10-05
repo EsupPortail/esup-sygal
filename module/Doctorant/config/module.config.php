@@ -1,12 +1,14 @@
 <?php
 
 use Application\Navigation\ApplicationNavigationFactory;
+use Doctorant\Controller\DoctorantController;
 use Doctorant\Controller\DoctorantControllerFactory;
 use Doctorant\Provider\Privilege\DoctorantPrivileges;
 use Doctorant\Service\DoctorantService;
 use Doctorant\Service\DoctorantServiceFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Laminas\Router\Http\Segment;
 use UnicaenAuth\Guard\PrivilegeController;
 
 return [
@@ -44,7 +46,7 @@ return [
                         'modifier-email-contact',
                     ],
                     'privileges' => DoctorantPrivileges::DOCTORANT_MODIFICATION_PERSOPASS,
-//                    'assertion'  => 'Assertion\\These',
+//                    'assertion'  => TheseAssertion::class,
                 ],
                 [
                     'controller' => 'Application\Controller\Doctorant',
@@ -52,13 +54,31 @@ return [
                         'consentement',
                     ],
                     'privileges' => DoctorantPrivileges::DOCTORANT_MODIFICATION_PERSOPASS,
-//                    'assertion'  => 'Assertion\\These',
+//                    'assertion'  => TheseAssertion::class,
+                ],
+                [
+                    'controller' => 'Application\Controller\Doctorant',
+                    'action' => [
+                        'rechercher',
+                    ],
+                    'roles' => 'user',
                 ],
             ],
         ],
     ],
     'router' => [
         'routes' => [
+            'recherche-doctorant' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/recherche-doctorant',
+                    'defaults' => [
+                        'controller' => 'Application\Controller\Doctorant',
+                        'action' => 'rechercher',
+                    ],
+                ],
+                'may_terminate' => true,
+            ],
             'doctorant' => [
                 'type' => 'Segment',
                 'options' => [
@@ -133,7 +153,7 @@ return [
                                 'route' => 'doctorant/email-contact',
                                 'icon' => 'icon icon-notifier',
                                 //'resource' => PrivilegeController::getResourceId('Doctorant\Controller\Doctorant', 'modifier-email-contact'),
-                                //'visible' => 'Assertion\\These',
+                                //'visible' => TheseAssertion::class,
                             ],
                         ],
                     ],

@@ -3,12 +3,12 @@
 namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
@@ -122,16 +122,32 @@ class PropositionController extends AbstractController
 
         /** Collècte des informations sur les individus liés -------------------------------------------------------- */
         /** @var IndividuRole[] $ecoleResponsables */
-        $ecoleResponsables = $this->getRoleService()->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
-        $ecoleResponsables = array_filter($ecoleResponsables, function(IndividuRole $ir) use ($these) { return $ir->getIndividu()->getEtablissement() AND $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId(); });
+        $ecoleResponsables = [];
+        if ($these->getEcoleDoctorale() !== null) {
+            $ecoleResponsables = $this->getRoleService()->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
+            $ecoleResponsables = array_filter($ecoleResponsables, function (IndividuRole $ir) use ($these) {
+                return $ir->getIndividu()->getEtablissement() and $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId();
+            });
+        }
         /** @var IndividuRole[] $uniteResponsables */
-        $uniteResponsables = $this->getRoleService()->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
-        $uniteResponsables = array_filter($uniteResponsables, function(IndividuRole $ir) use ($these) { return $ir->getIndividu()->getEtablissement() AND $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId(); });
+        $uniteResponsables = [];
+        if ($these->getUniteRecherche() !== null) {
+            $uniteResponsables = $this->getRoleService()->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
+            $uniteResponsables = array_filter($uniteResponsables, function (IndividuRole $ir) use ($these) {
+                return $ir->getIndividu()->getEtablissement() and $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId();
+            });
+        }
         /** @var IndividuRole[] $etablissementResponsables */
-        $etablissementResponsables = $this->roleService->getIndividuRoleByStructure($these->getEtablissement()->getStructure());
-        $etablissementResponsables = array_filter($etablissementResponsables, function (IndividuRole $ir) { return $ir->getRole()->getCode() === Role::CODE_BDD;});
-        $etablissementResponsables = array_filter($etablissementResponsables, function(IndividuRole $ir) use ($these) { return $ir->getIndividu()->getEtablissement() AND $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId(); });
-
+        $etablissementResponsables = [];
+        if ($these->getEtablissement() !== null) {
+            $etablissementResponsables = $this->roleService->getIndividuRoleByStructure($these->getEtablissement()->getStructure());
+            $etablissementResponsables = array_filter($etablissementResponsables, function (IndividuRole $ir) {
+                return $ir->getRole()->getCode() === Role::CODE_BDD;
+            });
+            $etablissementResponsables = array_filter($etablissementResponsables, function (IndividuRole $ir) use ($these) {
+                return $ir->getIndividu()->getEtablissement() and $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId();
+            });
+        }
         $informationsOk = true;
         $directeurs = $this->getActeurService()->getRepository()->findEncadrementThese($these);
         foreach ($directeurs as $directeur) {

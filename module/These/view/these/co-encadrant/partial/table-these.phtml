@@ -1,0 +1,54 @@
+<?php
+
+/**
+ * @var These[] $theses
+ */
+
+use These\Entity\Db\These;
+
+?>
+
+<table class="table table-sm">
+    <thead>
+    <tr>
+        <th> Doctorant </th>
+        <th> Unité de recherche </th>
+        <th> École doctorale </th>
+        <th> Établissement </th>
+        <th> État </th>
+        <th> Première inscription </th>
+        <th> Action </th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($theses as $these) : ?>
+        <tr class="these" id="<?php echo $these->getId(); ?>">
+            <td>
+                <?php echo $these->getDoctorant()->getIndividu()->getPrenom1(); ?>
+                <?php echo $these->getDoctorant()->getIndividu()->getNomUsuel(); ?>
+            </td>
+            <td>
+                <?php echo $these->getUniteRecherche()->getSigle(); ?>
+            </td>
+            <td>
+                <?php echo $these->getEcoleDoctorale()->getSigle(); ?>
+            </td>
+            <td>
+                <?php echo $these->getEtablissement()->getLibelle(); ?>
+            </td>
+            <td>
+                <?php echo $these->getEtatThese(); ?>
+            </td>
+            <td>
+                <?php echo $these->getAnneeUniv1ereInscription(); ?>
+            </td>
+            <td>
+                <a href="<?php echo $this->url('these/identite', ['these' => $these->getId()], [], true); ?>">
+                    <span class="icon icon-voir"></span>
+                </a>
+            </td>
+
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

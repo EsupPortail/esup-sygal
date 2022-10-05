@@ -4,6 +4,7 @@ namespace Application\Entity\Db;
 
 use Structure\Entity\Db\Etablissement;
 use UnicaenDbImport\Entity\Db\AbstractSource;
+use UnicaenDbImport\Entity\Db\Source as DbImportSource;
 
 /**
  * Source

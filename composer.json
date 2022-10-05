@@ -35,7 +35,7 @@
         "unicaen/auth-token": "^5.0",
         "unicaen/bjy-authorize": "^4.0",
         "unicaen/db-anonym": "dev-master",
-        "unicaen/db-import": "^5.0",
+        "unicaen/db-import": "^5.2",
         "unicaen/livelog": "dev-master",
         "unicaen/faq": "^5.0",
         "unicaen/ldap": "^4.0",
@@ -71,5 +71,10 @@
             "mkdir -p public/unicaen && cp -r vendor/unicaen/db-import/public/unicaen public/",
             "mkdir -p vendor/mpdf/mpdf/ttfontdata && chmod -R 777 vendor/mpdf/mpdf/ttfontdata"
         ]
+    },
+    "config": {
+        "allow-plugins": {
+            "laminas/laminas-dependency-plugin": true
+        }
     }
 }

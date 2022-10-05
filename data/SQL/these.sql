@@ -75,12 +75,33 @@ where d.id in (
 );
 
 
+/**
+ * Rattachement à une thèse destination de tout ce qui a été saisi sur une thèse source.
+ */
+create or replace function transfert_these(fromTheseId bigint, toTheseId bigint) returns void
+    language plpgsql
+as $$
+BEGIN
+    -- select 'update '||rpad(table_name, 35)||' set '||column_name||' = toTheseId where '||column_name||' = fromTheseId ;' from information_schema.columns
+-- where column_name ilike '%these_id%' and
+--         table_name not ilike 'v\_%' and
+--         table_name not ilike 'src_%' and
+--         table_name not ilike 'tmp_%';
+
+    update soutenance_proposition   set histo_destruction = now(), histo_destructeur_id = 1 where these_id = toTheseId ;
+
+    update attestation              set these_id = toTheseId where these_id = fromTheseId ;
+    update diffusion                set these_id = toTheseId where these_id = fromTheseId ;
+    update fichier_these            set these_id = toTheseId where these_id = fromTheseId ;
+    update metadonnee_these         set these_id = toTheseId where these_id = fromTheseId ;
+    update rapport                  set these_id = toTheseId where these_id = fromTheseId ;
+    update rdv_bu                   set these_id = toTheseId where these_id = fromTheseId ;
+    update soutenance_intervention  set these_id = toTheseId where these_id = fromTheseId ;
+    update soutenance_proposition   set these_id = toTheseId where these_id = fromTheseId ;
+    update validation                          set these_id = toTheseId where these_id = fromTheseId ;
+END;
+$$;
+
 
 -- Rattachement à une thèse destination de tout ce qui est rattaché à une thèse source
-update rapport          set these_id = 49033 where these_id = 28284;
-update attestation      set these_id = 49033 where these_id = 28284;
-update DIFFUSION        set these_id = 49033 where these_id = 28284;
-update fichier_these    set these_id = 49033 where these_id = 28284;
-update METADONNEE_THESE set these_id = 49033 where these_id = 28284;
-update RDV_BU           set these_id = 49033 where these_id = 28284;
-update VALIDATION       set these_id = 49033 where these_id = 28284;
+select transfert_these(from_id, to_id) ;

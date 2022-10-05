@@ -3,8 +3,8 @@
 namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareTrait;
+use These\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\Avis\AvisForm;

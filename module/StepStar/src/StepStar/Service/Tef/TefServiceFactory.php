@@ -2,7 +2,7 @@
 
 namespace StepStar\Service\Tef;
 
-use Application\Service\These\TheseService;
+use These\Service\These\TheseService;
 use Interop\Container\ContainerInterface;
 use StepStar\Service\Xml\XmlService;
 use StepStar\Service\Xslt\XsltService;

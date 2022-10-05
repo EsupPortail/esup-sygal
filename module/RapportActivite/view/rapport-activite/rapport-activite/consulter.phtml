@@ -2,7 +2,7 @@
 
 namespace RapportActivite;
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\View\Renderer\PhpRenderer;
 use RapportActivite\Entity\Db\RapportActivite;
@@ -34,7 +34,7 @@ if (!$isTeleversementPossible) {
 
 <h1 class="page-header">
     <?php echo $this->translate($title); ?>
-    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+    <small><?php echo $this->partial('these/these/partial/titre') ?></small>
 </h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>

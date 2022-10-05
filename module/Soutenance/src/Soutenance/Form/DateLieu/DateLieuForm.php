@@ -9,6 +9,8 @@ use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
+use Laminas\Validator\Callback;
+use DateTime as DDateTime;
 
 class DateLieuForm extends Form {
 
@@ -72,7 +74,25 @@ class DateLieuForm extends Form {
         ]);
 
         $this->setInputFilter((new Factory())->createInputFilter([
-            'date' => [ 'required' => true, ],
+            'date' => [
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => Callback::class,
+                        'options' => [
+                            'messages' => [
+                                Callback::INVALID_VALUE => "La date de soutenance est dans le passé ! ",
+                            ],
+                            'callback' => function ($value) {
+                                $sdate = DDateTime::createFromFormat('d/m/Y', $value);
+                                $cdate = new DDateTime();
+                                $res = $sdate >= $cdate;
+                                return $res;
+                            },
+                        ],
+                    ],
+                ],
+            ],
             'heure' => [ 'required' => true, ],
             'lieu' => [ 'required' => true, ],
             'exterieur' => [ 'required' => true, ],

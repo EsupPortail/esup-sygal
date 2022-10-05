@@ -4,7 +4,7 @@ namespace RapportActivite\Entity\Db;
 
 use Application\Entity\AnneeUniv;
 use Fichier\Entity\Db\Fichier;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\TypeRapport;
 use Application\Entity\Db\TypeValidation;
 use DateTime;

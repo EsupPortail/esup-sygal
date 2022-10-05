@@ -1,0 +1,20 @@
+<?php
+use These\Entity\Db\FichierThese;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * Liste de tous les fichiers uploadés.
+ *
+ * @var PhpRenderer  $this
+ * @var FichierThese $fichier
+ * @var string       $apercuUrl
+ */
+
+?>
+
+<p>Voici un aperçu de la première page du fichier <?php echo $fichier->getFichier()->getNom() ?> :</p>
+
+<!-- L'image PNG est chargée via une requête AJAX (cf. widget dans app.js) -->
+<div class="apercu-fichier widget-image-loader">
+    <div class="image-placeholder loading" data-src="<?php echo $apercuUrl ?>" style="width: 500px"></div>
+</div>

@@ -3,7 +3,7 @@
 namespace Application\Filter;
 
 use Fichier\Entity\Db\Fichier;
-use Application\Entity\Db\FichierThese;
+use These\Entity\Db\FichierThese;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
 use Laminas\Filter\Exception\RuntimeException;

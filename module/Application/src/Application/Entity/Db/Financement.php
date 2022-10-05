@@ -3,6 +3,7 @@
 namespace Application\Entity\Db;
 
 use DateTime;
+use These\Entity\Db\These;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use Application\Entity\Db\Source;
 

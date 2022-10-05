@@ -2,7 +2,7 @@
 
 namespace Import\Service;
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Import\Service\Traits\SynchroServiceAwareTrait;
 use Laminas\Log\LoggerAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;

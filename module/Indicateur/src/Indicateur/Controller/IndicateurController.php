@@ -10,7 +10,7 @@ use Application\Service\AnomalieServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 use DateTime;
 use Indicateur\Form\IndicateurForm;
 use Indicateur\Model\Indicateur;

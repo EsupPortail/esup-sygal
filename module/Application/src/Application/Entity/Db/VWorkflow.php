@@ -3,6 +3,7 @@
 namespace Application\Entity\Db;
 
 use Application\Entity\VWorkflowNull;
+use These\Entity\Db\These;
 
 /**
  * VWorkflow

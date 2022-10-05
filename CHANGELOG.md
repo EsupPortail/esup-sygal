@@ -1,7 +1,19 @@
 Journal des modifications
 =========================
 
-5.2.0
+5.2.1
+-----
+- [FIX] Téléchargement de rapport d'activité : message d'erreur en bonne et dûe forme en cas de signature/logo absent.  
+- [FIX] Passage à unicaen/db-import 5.2.2 pour corrections de dysfonctionnements dans l'import/synchro.
+- [FIX] Plantage de la recherche textuelle d'individus en cas de résultat vide. 
+- [FIX] Ajout de garde pour l'index des rapporteurs (cas où le membre est null qui bloquait les administrateurs)
+- Changement du lien dans le mail pour la validation des présidents : redirect + selection du rôle
+- [FIX] Amélioration de la robustesse de la proposition de soutenance pour les cas de th_se sans ED, sans UR ou sans ETAB
+- Ajout d'une vérification de la date de soutenance dans le formulaire pour prévenir des erreurs de saisie (p.e. 12/09/0022)
+- [FIX] Années universitaires d'inscription : les années historisées n'étaient pas écartées.
+- Couleur noire par défaut pour les headers des cards.
+
+5.2.0 
 -----
 - [FIX] Plantage du téléchargement d'un rapport d'activité validé dont la thèse n'est rattachée à aucune UR
 - [FIX] La même page de validation était appliquée sur tous les rapports d'activité téléchargés au format zip.

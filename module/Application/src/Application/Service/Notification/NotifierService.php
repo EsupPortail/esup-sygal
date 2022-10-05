@@ -2,19 +2,19 @@
 
 namespace Application\Service\Notification;
 
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Variable;
-use Application\Notification\ChangementCorrectionAttendueNotification;
-use Application\Notification\ChangementsResultatsThesesNotification;
-use Application\Notification\PasDeMailPresidentJury;
-use Application\Notification\ResultatTheseAdmisNotification;
+use These\Notification\ChangementCorrectionAttendueNotification;
+use These\Notification\ChangementsResultatsThesesNotification;
+use These\Notification\PasDeMailPresidentJury;
+use These\Notification\ResultatTheseAdmisNotification;
 use Application\Notification\ValidationDepotTheseCorrigeeNotification;
-use Application\Notification\ValidationPageDeCouvertureNotification;
+use These\Notification\ValidationPageDeCouvertureNotification;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -51,7 +51,7 @@ class NotifierService extends \Notification\Service\NotifierService
     /**
      * Notification à l'issue de la validation de la page de couverture.
      *
-     * @param \Application\Entity\Db\These $these
+     * @param \These\Entity\Db\These $these
      * @param string $action
      * @throws \Notification\Exception\NotificationException
      */
@@ -184,7 +184,7 @@ class NotifierService extends \Notification\Service\NotifierService
         $notif
             ->setSubject("Corrections " . lcfirst($these->getCorrectionAutoriseeToString(true)) . " non faites")
             ->setTo($to)
-            ->setTemplatePath('application/these/mail/notif-date-butoir-correction-depassee')
+            ->setTemplatePath('these/these/mail/notif-date-butoir-correction-depassee')
             ->setTemplateVariables([
                 'these' => $these,
             ]);
@@ -199,6 +199,10 @@ class NotifierService extends \Notification\Service\NotifierService
      */
     public function triggerValidationDepotTheseCorrigee(These $these)
     {
+        $targetedUrl = $this->urlHelper->__invoke( 'these/validation-these-corrigee', ['these' => $these->getId()], ['force_canonical' => true]);
+        $president = $this->getRoleService()->getRepository()->findByCodeAndEtablissement(Role::CODE_PRESIDENT_JURY, $these->getEtablissement());
+        $url = $this->urlHelper->__invoke('zfcuser/login', ['type' => 'local'], ['query' => ['redirect' => $targetedUrl, 'role' => $president->getRoleId()], 'force_canonical' => true], true);
+
         // envoi de mail aux directeurs de thèse
         $notif = new ValidationDepotTheseCorrigeeNotification();
         $notif
@@ -206,10 +210,7 @@ class NotifierService extends \Notification\Service\NotifierService
             ->setEmailBdd($this->fetchEmailBdd($these))
             ->setTemplateVariables([
                 'these' => $these,
-                'url'   => $this->urlHelper->__invoke(
-                    'these/validation-these-corrigee',
-                    ['these' => $these->getId()],
-                    ['force_canonical' => true]),
+                'url'   => $url,
             ]);
 
         $this->trigger($notif);

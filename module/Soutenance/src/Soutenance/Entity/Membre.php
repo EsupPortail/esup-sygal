@@ -2,7 +2,7 @@
 
 namespace Soutenance\Entity;
 
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use UnicaenApp\Entity\HistoriqueAwareInterface;

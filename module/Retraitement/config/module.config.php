@@ -21,7 +21,7 @@ return [
                     'action'     => [
                         'index',
                     ],
-                    'privileges' => \Application\Provider\Privilege\ThesePrivileges::THESE_RECHERCHE,
+                    'privileges' => \These\Provider\Privilege\ThesePrivileges::THESE_RECHERCHE,
                 ],
                 [
                     'controller' => 'Retraitement\Controller\Index',

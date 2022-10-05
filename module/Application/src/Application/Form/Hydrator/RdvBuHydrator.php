@@ -2,10 +2,10 @@
 
 namespace Application\Form\Hydrator;
 
-use Application\Entity\Db\Diffusion;
+use These\Entity\Db\Diffusion;
 use Application\Entity\Db\RdvBu;
 use Fichier\Entity\Db\VersionFichier;
-use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
+use These\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;

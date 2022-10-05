@@ -22,9 +22,9 @@ $config = [
         'page_de_couverture' => [
             'template' => [
                 // template .phtml
-                'phtml_file_path' => APPLICATION_DIR . '/module/Application/view/application/these/page-de-couverture/pagedecouverture.phtml',
+                'phtml_file_path' => APPLICATION_DIR . '/module/These/view/these/these/page-de-couverture/pagedecouverture.phtml',
                 // feuille de styles
-                'css_file_path' => APPLICATION_DIR . '/module/Application/view/application/these/page-de-couverture/pagedecouverture.css',
+                'css_file_path' => APPLICATION_DIR . '/module/These/view/these/these/page-de-couverture/pagedecouverture.css',
             ],
         ],
         // Options pour le test d'archivabilité

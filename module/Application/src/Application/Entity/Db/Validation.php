@@ -4,6 +4,7 @@ namespace Application\Entity\Db;
 
 use Application\Constants;
 use Individu\Entity\Db\Individu;
+use These\Entity\Db\These;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
@@ -23,7 +24,7 @@ class Validation implements HistoriqueAwareInterface, ResourceInterface
     private $id;
 
     /**
-     * @var These
+     * @var \These\Entity\Db\These
      */
     private $these;
 

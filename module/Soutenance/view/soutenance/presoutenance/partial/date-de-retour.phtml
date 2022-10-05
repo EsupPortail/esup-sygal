@@ -6,7 +6,7 @@
  * @var These $these
  */
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 
@@ -15,7 +15,7 @@ $canEditDateRenduRapport = $this->isAllowed($these, PresoutenancePrivileges::PRE
 
 <div class="box card">
 
-    <div class="card-header bg-info">
+    <div class="card-header bg-dark text-white">
         <h2> Date de retour des rapports </h2>
     </div>
 

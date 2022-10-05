@@ -2,7 +2,7 @@
 
 namespace Soutenance\Controller;
 
-use Application\Service\Acteur\ActeurService;
+use These\Service\Acteur\ActeurService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Role\RoleService;
 use Application\Service\UserContextService;
