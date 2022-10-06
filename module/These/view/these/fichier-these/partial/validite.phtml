@@ -19,5 +19,5 @@ $validiteFichier = $fichier->getFichier()->getValidite();
 
 <!-- Validité du fichier -->
 <?php if ($validiteFichier): ?>
-    <?php echo $this->partial('application/fichier-these/partial/label-validite', ['fichier' => $fichier]) ?>
+    <?php echo $this->partial('these/fichier-these/partial/label-validite', ['fichier' => $fichier]) ?>
 <?php endif ?>

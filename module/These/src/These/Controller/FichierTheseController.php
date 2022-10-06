@@ -162,7 +162,7 @@ class FichierTheseController extends AbstractController
             'inclureValidite' => false,
             'inclureRetraitement' => false,
         ]);
-        $viewModel->setTemplate('application/fichier-these/lister-fichiers');
+        $viewModel->setTemplate('these/fichier-these/lister-fichiers');
 
         return $viewModel;
     }

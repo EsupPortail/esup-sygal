@@ -52,12 +52,12 @@ if (!empty($items)): ?>
 
                 <?php if (!empty($inclureValidite)): ?>
                     <div class="fichier-validite">
-                    <?php echo $this->partial('application/fichier-these/partial/validite', ['fichier' => $fichierThese]) ?>
+                    <?php echo $this->partial('these/fichier-these/partial/validite', ['fichier' => $fichierThese]) ?>
                     </div>
                 <?php endif ?>
                 <?php if (!empty($inclureRetraitement)): ?>
                     <div class="fichier-retraitement">
-                        <?php echo $this->partial('application/fichier-these/partial/retraitement', ['fichier' => $fichierThese]) ?>
+                        <?php echo $this->partial('these/fichier-these/partial/retraitement', ['fichier' => $fichierThese]) ?>
                     </div>
                 <?php endif ?>
 

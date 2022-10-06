@@ -44,7 +44,7 @@ $pageDepotThese = $this->navigation('navigation')->getContainer()->findOneBy('id
             <p>
                 Voici la <?php echo lcfirst($heading) ?> que vous avez téléversée :
             </p>
-            <?php echo $this->partial('application/fichier-these/lister-fichiers', [
+            <?php echo $this->partial('these/fichier-these/lister-fichiers', [
                 'items'               => $theseFichiersItems,
                 'inclureValidite'     => true,
                 'inclureRetraitement' => false,
