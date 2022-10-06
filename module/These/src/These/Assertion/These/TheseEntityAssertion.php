@@ -140,7 +140,7 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
 
     protected function isCorrectionAttendue(): bool
     {
-        return $this->these->getCorrectionAutorisee();
+        return $this->these->isCorrectionAutorisee();
     }
 
     protected function isDepotVersionCorrigeeValide(): bool
@@ -219,7 +219,7 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
 
     private ?bool $existeFichierTheseVersionCorrigee = null;
 
-    protected ?Doctorant $identityDoctorant;
+    protected ?Doctorant $identityDoctorant = null;
 
     /**
      * @return Doctorant

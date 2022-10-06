@@ -166,7 +166,7 @@ class TheseAssertion extends AbstractAssertion implements WorkflowServiceAwareIn
         }
 
         if ($this->these === null) {
-            return false;
+            return true;
         }
 
 //        if (! $this->userContextService->isStructureDuRoleRespecteeForThese($this->these)) {
