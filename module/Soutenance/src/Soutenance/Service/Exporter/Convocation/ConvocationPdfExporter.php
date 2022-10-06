@@ -26,8 +26,8 @@ class ConvocationPdfExporter extends PdfExporter
         parent::__construct($renderer, $format, $orientationPaysage, $defaultFontSize);
         $resolver = $renderer->resolver();
         $resolver->attach(new TemplatePathStack(['script_paths' => [__DIR__]]));
-        $this->allow_charset_conversion = true;
-        $this->charset_in='UTF-8';
+//        $this->allow_charset_conversion = true;
+//        $this->charset_in='UTF-8';
     }
 
     public function export($filename = null, $destination = self::DESTINATION_BROWSER, $memoryLimit = null)

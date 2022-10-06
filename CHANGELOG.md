@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+5.2.2
+-----
+- [FIX] exploitation de la récupération des chemins plutôt que des contenus pour la génération des convocations
+
 5.2.1
 -----
 - [FIX] Téléchargement de rapport d'activité : message d'erreur en bonne et dûe forme en cas de signature/logo absent.  

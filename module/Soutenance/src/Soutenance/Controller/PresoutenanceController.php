@@ -40,6 +40,7 @@ use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
+use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use These\Entity\Db\Acteur;
@@ -526,7 +527,7 @@ class PresoutenanceController extends AbstractController
 
         try {
             $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(false);
-            return $this->fichierStorageService->getFileContentForFichier($fichier);
+            return $this->fichierStorageService->getFileForFichier($fichier);
         } catch (StorageAdapterException $e) {
             throw new RuntimeException("Un problème est survenu lors de la récupération de la signature de l'établissement !", 0, $e);
         }
@@ -545,7 +546,7 @@ class PresoutenanceController extends AbstractController
 
         try {
             $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(false);
-            return $this->fichierStorageService->getFileContentForFichier($fichier);
+            return $this->fichierStorageService->getFileForFichier($fichier);
         } catch (StorageAdapterException $e) {
             throw new RuntimeException("Un problème est survenu lors de la récupération de la signature de l'ED !", 0, $e);
         }
