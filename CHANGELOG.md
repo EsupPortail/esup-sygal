@@ -5,6 +5,7 @@ Journal des modifications
 -----
 - [FIX] exploitation de la récupération des chemins plutôt que des contenus pour la génération des convocations
 - Réorganisation des ménus latéraux de l'accueil du site
+- Renommage et réordonancement de menus.
 
 5.2.1
 -----

@@ -1016,7 +1016,7 @@ return [
 //                            ],
                             //---------------------------------------------------
                             'depot' => [
-                                'label' => 'Dépôt',
+                                'label' => 'Dépôt du mémoire',
                                 'order' => 60,
                                 'route' => 'these/roadmap',
                                 'withtarget' => true,
@@ -1091,7 +1091,7 @@ return [
                                     ],
                                     'depot' => [
                                         'id' => 'depot',
-                                        'label' => 'Dépôt de la thèse',
+                                        'label' => 'Téléversement',
                                         'route' => 'these/depot',
                                         'withtarget' => true,
                                         'paramsInject' => [
@@ -1153,7 +1153,7 @@ return [
                                     ],
                                     'depot-corrigee' => [
                                         'id' => 'depot-corrigee',
-                                        'label' => 'Dépôt version corrigée',
+                                        'label' => 'Téléversement version corrigée',
                                         'route' => 'these/depot-version-corrigee',
                                         'withtarget' => true,
                                         'paramsInject' => [

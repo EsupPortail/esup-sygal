@@ -65,7 +65,7 @@ return array(
                         'pages' => [
                             // DEPTH = 2
                             'soutenance' => [
-                                'order' => 60,
+                                'order' => 55,
                                 'label' => 'Soutenance',
                                 'route' => 'soutenance/proposition',
                                 'withtarget' => true,
@@ -152,7 +152,7 @@ return array(
                         'pages' => [
                             // DEPTH = 2
                             'soutenance' => [
-                                'order' => 60,
+                                'order' => 55,
                                 'label' => 'Soutenance',
                                 'route' => 'soutenance/proposition',
                                 'params' => [
