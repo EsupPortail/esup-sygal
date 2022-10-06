@@ -4,6 +4,8 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\IndexController;
 use Application\Service\Actualite\ActualiteService;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
 use These\Service\These\TheseService;
@@ -19,8 +21,10 @@ class IndexControllerFactory
      *
      * @param ContainerInterface $container
      * @return IndexController
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container) : IndexController
     {
         /**
          * @var TheseService $theseService
@@ -58,10 +62,6 @@ class IndexControllerFactory
         $authenticationService = $container->get('Laminas\\Authentication\\AuthenticationService');
         $controller->setAuthenticationService($authenticationService);
 
-        /** @var ActualiteService $actualiteService */
-        $actualiteService = $container->get(ActualiteService::class);
-        $controller->setActualiteService($actualiteService);
-        
         return $controller;
     }
 }

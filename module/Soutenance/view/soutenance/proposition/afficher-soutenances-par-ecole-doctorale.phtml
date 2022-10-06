@@ -4,8 +4,10 @@
  * @see \Soutenance\Controller\PropositionController::afficherSoutenancesParEcoleDoctoraleAction()
  * @var EcoleDoctorale $ecole
  * @var Proposition[] $soutenances
+ * @var Information[] $informations
  */
 
+use Information\Entity\Db\Information;
 use These\Entity\Db\Acteur;
 use Structure\Entity\Db\EcoleDoctorale;
 use Soutenance\Entity\Proposition;
@@ -15,12 +17,21 @@ $this->headTitle("Soutenances autorisées pour l'école doctorale [".$ecole->get
 $count = count($soutenances);
 ?>
 
-<h1 class="page-header">
-    Soutenances autorisées pour l'école doctorale <br/>
-    [<?php echo $ecole->getSigle(); ?>] <?php echo $ecole->getLibelle(); ?>
-</h1>
 
-<?php if ($count > 0) : ?>
+<div class="row">
+
+    <div class="col-12 col-md-2">
+        <?php echo $this->partial('application/index/partial/informations', ['informations' => $informations]) ?>
+        <?php echo $this->partial('application/index/partial/menu-lateral') ?>
+
+    </div>
+    <div id="content" class="col-12 col-md-10">
+        <h1 class="page-header">
+            Soutenances autorisées pour l'école doctorale <br/>
+            [<?php echo $ecole->getSigle(); ?>] <?php echo $ecole->getLibelle(); ?>
+        </h1>
+
+        <?php if ($count > 0) : ?>
     <h2>Liste des soutenances à venir <span class="badge"><?php echo $count; ?> </span></h2>
     <?php foreach ($soutenances as $soutenance) : ?>
 
@@ -119,3 +130,5 @@ $count = count($soutenances);
 <?php else: ?>
     <p class="lead">Aucune soutenance à venir</p>
 <?php endif; ?>
+    </div>
+</div>

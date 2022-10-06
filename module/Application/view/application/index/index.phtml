@@ -4,14 +4,10 @@
  * @var \Application\View\Renderer\PhpRenderer $this
  * @var Role        $role Rôle courant de l'utilisateur
  * @var Role[]      $roles Rôles que possèdent l'utilisateur
- * @var EcoleDoctorale[] $ecoles
  * @var bool        $estDoctorant
- * @var array       $offre
- * @var Information[]       $informations
  */
 
 use Application\Constants;
-use Structure\Entity\Db\EcoleDoctorale;
 use Application\Entity\Db\Role;
 use Information\Entity\Db\Information;
 
@@ -34,14 +30,8 @@ echo $this->messenger()
 <div class="row">
 
     <div class="col-12 col-md-2">
-            <?php echo $this->partial('application/index/partial/informations', ['informations' => $informations]) ?>
-            <?php echo $this->actualite()->render() ?>
-            <?php if($offre) : ?>
-                <?php echo $this->partial('application/index/partial/sujet-de-these', ['offre' => $offre]) ?>
-            <?php endif; ?>
-
-            <?php echo $this->partial('application/index/partial/soutenances', ['ecoles' => $ecoles]) ?>
-
+        <?php echo $this->partial('application/index/partial/informations', ['informations' => $informations]) ?>
+        <?php echo $this->partial('application/index/partial/menu-lateral') ?>
     </div>
 
     <div id="content" class="jumbotron col-12 col-md-10">

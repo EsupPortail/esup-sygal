@@ -1,0 +1,53 @@
+<?php
+
+/**
+ * @see \Application\Controller\OffreController::indexAction()
+ * @var Information[] $informations
+ * @var array $offre
+ */
+
+
+use Application\Constants;
+use Information\Entity\Db\Information;
+
+$appName = $this->appInfos()->nom;
+$subtitle = $this->appInfos()->desc;
+?>
+
+<?php $this->headTitle($this->translate("Offres de thèse")); ?>
+
+<?php echo $this->alertes()
+    ->withCode(Constants::ALERTE_FERMETURE_ESTIVALE)
+    ->withMatchingPlanning()
+    ->renderAsBootstrapToasts() ?>
+
+<?php
+echo $this->messenger()
+    ->addMessagesFromFlashMessengerWithNoNamespace()
+    ->addMessagesFromFlashMessengerWithNamespace('UnicaenAuth/*'); ?>
+
+<div class="row">
+
+    <div class="col-12 col-md-2">
+        <?php echo $this->partial('application/index/partial/informations', ['informations' => $informations]) ?>
+        <?php echo $this->partial('application/index/partial/menu-lateral', ['current' => 'offre']) ?>
+    </div>
+
+    <div id="content" class="col-12 col-md-10">
+        <h1 class="page-header">
+            Offres de thèse
+        </h1>
+
+        <p class="lead">
+            Ci-dessous sont listées les offres de thèse par thème des écoles doctorales.
+        </p>
+
+        <?php if($offre) : ?>
+            <?php echo $this->partial('application/index/partial/sujet-de-these', ['offre' => $offre]) ?>
+        <?php else: ?>
+            <div class="alert alert-warning">
+                L'affichage des offres de thèses est désactivé.
+            </div>
+        <?php endif; ?>
+    </div>
+</div>

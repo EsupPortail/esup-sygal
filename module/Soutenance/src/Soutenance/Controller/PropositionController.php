@@ -3,6 +3,7 @@
 namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
+use Information\Service\InformationServiceAwareTrait;
 use These\Entity\Db\Acteur;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuRole;
@@ -48,6 +49,7 @@ class PropositionController extends AbstractController
     use ActeurServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use EvenementServiceAwareTrait;
+    use InformationServiceAwareTrait;
     use JustificatifServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
@@ -594,6 +596,7 @@ class PropositionController extends AbstractController
         return new ViewModel([
             'ecole' => $ecole,
             'soutenances' => $soutenances,
+            'informations' => $this->informationService->getInformations(true),
         ]);
     }
 

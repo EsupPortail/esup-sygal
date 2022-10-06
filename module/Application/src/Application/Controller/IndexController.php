@@ -24,9 +24,8 @@ class IndexController extends AbstractController
     use VariableServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
-    use TheseServiceAwareTrait;
-    use ActualiteServiceAwareTrait;
     use InformationServiceAwareTrait;
+    use TheseServiceAwareTrait;
 
     /**
      * @var AuthenticationServiceInterface
@@ -77,9 +76,6 @@ class IndexController extends AbstractController
             'role' => $this->userContextService->getSelectedIdentityRole(),
             'roles' => $this->userContextService->getSelectableIdentityRoles(),
             'estDoctorant' => (bool) $this->userContextService->getIdentityDoctorant(),
-            'url' => $this->actualiteService->isActif() ? $this->actualiteService->getUrl() : null,
-            'offre' => $this->actualiteService->isOffre() ? $this->getEcoleDoctoraleService()->getOffre() : null,
-            'ecoles' => $this->getEcoleDoctoraleService()->getRepository()->findAll(true),
             'informations' => $this->informationService->getInformations(true),
         ]);
 

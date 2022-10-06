@@ -4,6 +4,8 @@ namespace Application;
 
 use Application\Controller\ActualiteController;
 use Application\Controller\Factory\ActualiteControllerFactory;
+use Application\Controller\Factory\OffreControllerFactory;
+use Application\Controller\OffreController;
 use Application\Service\Actualite\ActualiteService;
 use Application\Service\Actualite\ActualiteServiceFactory;
 use Application\View\Helper\Actualite\ActualiteViewHelperFactory;
@@ -15,7 +17,7 @@ return [
         'guards' => [
             PrivilegeController::class => [
                 [
-                    'controller' => ActualiteController::class,
+                    'controller' => OffreController::class,
                     'action'     => [
                         'index',
                     ],
@@ -26,12 +28,12 @@ return [
     ],
     'router' => [
         'routes' => [
-            'actualite' => [
+            'offre-these' => [
                 'type'          => Literal::class,
                 'options'       => [
-                    'route'    => '/actualite',
+                    'route'    => '/offre-these',
                     'defaults' => [
-                        'controller'    => ActualiteController::class,
+                        'controller'    => OffreController::class,
                         'action'        => 'index',
                     ],
                 ],
@@ -41,17 +43,15 @@ return [
     ],
     'controllers' => [
         'factories' => [
-            ActualiteController::class => ActualiteControllerFactory::class,
+            OffreController::class => OffreControllerFactory::class,
         ],
     ],
     'service_manager' => [
         'factories' => [
-            ActualiteService::class => ActualiteServiceFactory::class,
         ],
     ],
     'view_helpers' => [
         'factories' => [
-            'actualite' => ActualiteViewHelperFactory::class,
         ],
     ],
 ];
