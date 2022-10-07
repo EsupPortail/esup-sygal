@@ -33,7 +33,6 @@ return array(
                     'action' => [
                         'index-rapporteur',
                     ],
-                    'roles' => [],
                     'privileges' => IndexPrivileges::INDEX_RAPPORTEUR,
                 ],
                 [

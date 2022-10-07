@@ -2,6 +2,20 @@
 
 namespace These;
 
+use Application\Controller\Rapport\RapportCsiController;
+use Application\Controller\Rapport\RapportMiparcoursController;
+use Application\Entity\Db\WfEtape;
+use Application\Form\Factory\PointsDeVigilanceFormFactory;
+use Application\Form\Factory\PointsDeVigilanceHydratorFactory;
+use Application\Form\Factory\RdvBuHydratorFactory;
+use Application\Form\Factory\RdvBuTheseDoctorantFormFactory;
+use Application\Form\Factory\RdvBuTheseFormFactory;
+use Application\Navigation\ApplicationNavigationFactory;
+use Application\Service\Financement\FinancementService;
+use Application\Service\Financement\FinancementServiceFactory;
+use Application\Service\Message\DiffusionMessages;
+use Application\Service\ServiceAwareInitializer;
+use Soutenance\Controller\IndexController;
 use These\Assertion\These\TheseAssertion;
 use These\Assertion\These\TheseAssertionFactory;
 use These\Assertion\These\TheseEntityAssertion;
@@ -11,34 +25,21 @@ use These\Controller\Factory\TheseControllerFactory;
 use These\Controller\Factory\TheseObserverControllerFactory;
 use These\Controller\Factory\TheseRechercheControllerFactory;
 use These\Controller\Plugin\Url\UrlThesePluginFactory;
-use Application\Controller\Rapport\RapportCsiController;
-use Application\Controller\Rapport\RapportMiparcoursController;
 use These\Controller\TheseConsoleController;
 use These\Controller\TheseController;
 use These\Controller\TheseObserverController;
 use These\Controller\TheseRechercheController;
 use These\Entity\Db\Diffusion;
-use Application\Entity\Db\WfEtape;
 use These\Form\Attestation\AttestationHydratorFactory;
 use These\Form\Attestation\AttestationTheseFormFactory;
 use These\Form\Diffusion\DiffusionHydratorFactory;
 use These\Form\Diffusion\DiffusionTheseFormFactory;
 use These\Form\Metadonnees\MetadonneeTheseFormFactory;
-use Application\Form\Factory\PointsDeVigilanceFormFactory;
-use Application\Form\Factory\PointsDeVigilanceHydratorFactory;
-use Application\Form\Factory\RdvBuHydratorFactory;
-use Application\Form\Factory\RdvBuTheseDoctorantFormFactory;
-use Application\Form\Factory\RdvBuTheseFormFactory;
-use Application\Navigation\ApplicationNavigationFactory;
 use These\Provider\Privilege\ThesePrivileges;
 use These\Service\Acteur\ActeurService;
 use These\Service\Acteur\ActeurServiceFactory;
-use Application\Service\Financement\FinancementService;
-use Application\Service\Financement\FinancementServiceFactory;
-use Application\Service\Message\DiffusionMessages;
 use These\Service\PageDeCouverture\PageDeCouverturePdfExporter;
 use These\Service\PageDeCouverture\PageDeCouverturePdfExporterFactory;
-use Application\Service\ServiceAwareInitializer;
 use These\Service\These\Factory\TheseObserverServiceFactory;
 use These\Service\These\Factory\TheseSearchServiceFactory;
 use These\Service\These\Factory\TheseServiceFactory;
@@ -1003,17 +1004,17 @@ return [
                                 'separator' => true,
                             ],
 //                            //---------------------------------------------------
-//                            'page-rapporteur' => [
-//                                'order' => 60,
-//                                'label' => 'Dépôt du rapport',
-//                                'route' => 'soutenance/index-rapporteur',
-//                                'withtarget' => true,
-//                                'paramsInject' => [
-//                                    'these',
-//                                ],
-//                                'icon' => 'fas fa-clipboard',
-//                                'resource' => IndexPrivileges::getResourceId(IndexPrivileges::INDEX_RAPPORTEUR),
-//                            ],
+                            'page-rapporteur' => [
+                                'order' => 60,
+                                'label' => 'Dépôt du rapport',
+                                'route' => 'soutenance/index-rapporteur',
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                ],
+                                'icon' => 'fas fa-clipboard',
+                                'resource' => PrivilegeController::getResourceId(IndexController::class, 'index-rapporteur'),
+                            ],
                             //---------------------------------------------------
                             'depot' => [
                                 'label' => 'Dépôt du mémoire',

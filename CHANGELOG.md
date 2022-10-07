@@ -8,6 +8,8 @@ Journal des modifications
 - [FIX] Correction de bug dans les assertions du domaine Thèse.
 - [FIX] Correction de chemins de scripts de vues erronés déplacés dans le module These.
 - Renommage et réordonancement de menus.
+- Changement de l'assertion pour l'accès des rapporteurs à la proposition de soutenance
+- [FIX] Remise en place du menu de dépôt de rapport de pré-soutenance
 
 5.2.1
 -----
