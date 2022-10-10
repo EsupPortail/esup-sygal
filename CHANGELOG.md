@@ -10,6 +10,7 @@ Journal des modifications
 - Renommage et réordonancement de menus.
 - Changement de l'assertion pour l'accès des rapporteurs à la proposition de soutenance
 - [FIX] Remise en place du menu de dépôt de rapport de pré-soutenance
+- Changement du libellé 'Aucun Site' => 'Multi-site'
 
 5.2.1
 -----
