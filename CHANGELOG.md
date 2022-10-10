@@ -12,6 +12,7 @@ Journal des modifications
 - [FIX] Remise en place du menu de dépôt de rapport de pré-soutenance
 - Changement du libellé 'Aucun Site' => 'Multi-site' (module de formation)
 - Extension du mail "échec d'inscription" aux personnes non classées (module de formation)
+- Changements de libellés.
 
 5.2.1
 -----

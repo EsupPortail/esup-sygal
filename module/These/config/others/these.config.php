@@ -1017,7 +1017,7 @@ return [
                             ],
                             //---------------------------------------------------
                             'depot' => [
-                                'label' => 'Dépôt du mémoire',
+                                'label' => 'Dépôt de la thèse',
                                 'order' => 60,
                                 'route' => 'these/roadmap',
                                 'withtarget' => true,

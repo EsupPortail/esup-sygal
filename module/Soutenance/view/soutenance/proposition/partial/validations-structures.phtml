@@ -71,7 +71,8 @@ $these = $proposition->getThese();
                         <?php endif; ?>
                     </li>
                     <li>
-                        <?php echo $these->getEtablissement()->getLibelle(); ?>  (Maison du doctorat) <br/>
+                        <?php echo $these->getEtablissement()->getLibelle(); ?>
+                        (Signature de la proposition de soutenance par la direction de l'établissement) <br/>
                         <?php if ($validations[Role::CODE_BDD]) : ?>
                             <?php $validation = current($validations[Role::CODE_BDD]); ?>
                             <span class="badge bg-success"> Validée</span>
