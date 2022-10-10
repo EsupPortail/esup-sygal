@@ -104,7 +104,10 @@ class NotificationService extends NotifierService
      */
     public function triggerInscriptionEchec(Session $session) : void
     {
-        $inscriptions = $session->getListeComplementaire();
+        $complementaire = $session->getListeComplementaire();
+        $nonClasses = $session->getNonClasses();
+
+        $inscriptions = array_merge($complementaire, $nonClasses);
 
         foreach ($inscriptions as $inscription) {
             $vars = [

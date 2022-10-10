@@ -11,6 +11,7 @@ Journal des modifications
 - Changement de l'assertion pour l'accès des rapporteurs à la proposition de soutenance
 - [FIX] Remise en place du menu de dépôt de rapport de pré-soutenance
 - Changement du libellé 'Aucun Site' => 'Multi-site' (module de formation)
+- Extension du mail "échec d'inscription" aux personnes non classées (module de formation)
 
 5.2.1
 -----

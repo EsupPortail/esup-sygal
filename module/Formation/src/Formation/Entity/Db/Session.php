@@ -223,6 +223,12 @@ class Session implements HistoriqueAwareInterface,
         return $inscriptions;
     }
 
+    public function getNonClasses() : array
+    {
+        $inscriptions = array_filter($this->getInscriptions()->toArray(), function (Inscription $a) { return $a->estNonHistorise() AND $a->getListe() === null; });
+        return $inscriptions;
+    }
+
     /**
      * @return string|null
      */
