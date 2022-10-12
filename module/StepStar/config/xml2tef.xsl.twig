@@ -410,11 +410,11 @@ que ces méta sont saisies dans les formulaires STAR. C'est au choix.
                                                     <xsl:value-of select="preceding-sibling::*[contains(name(), 'PPN_EQUIPE_RECHERCHE')]"/>
                                                 </tef:autoriteExterne>
                                             </xsl:if>
-                                            <!--<xsl:if test="preceding-sibling::*[contains(name(), 'IDHAL_EQUIPE_RECHERCHE')]">-->
-                                            <!--    <tef:autoriteExterne autoriteSource="labTEL">-->
-                                            <!--        <xsl:value-of select="preceding-sibling::*[contains(name(), 'IDHAL_EQUIPE_RECHERCHE')]"/>-->
-                                            <!--    </tef:autoriteExterne>-->
-                                            <!--</xsl:if>-->
+                                            <xsl:if test="preceding-sibling::*[contains(name(), 'IDHAL_EQUIPE_RECHERCHE')]">
+                                                <tef:autoriteExterne autoriteSource="labTEL">
+                                                    <xsl:value-of select="preceding-sibling::*[contains(name(), 'IDHAL_EQUIPE_RECHERCHE')]"/>
+                                                </tef:autoriteExterne>
+                                            </xsl:if>
                                             <xsl:if test="preceding-sibling::*[contains(name(), 'CONVENTION_CIFRE')]">
                                                 <suj:cifre>
                                                     <xsl:value-of select="preceding-sibling::*[contains(name(), 'CONVENTION_CIFRE')]"/>
