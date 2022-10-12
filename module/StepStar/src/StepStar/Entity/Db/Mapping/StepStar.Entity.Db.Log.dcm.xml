@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="StepStar\Entity\Db\Log" table="STEP_STAR_LOG">
+
+        <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
+        </id>
+
+        <field name="operation" column="OPERATION"/>
+        <field name="startedOn" type="datetime" column="STARTED_ON"/>
+        <field name="endedOn" type="datetime" column="ENDED_ON"/>
+        <field name="success" type="boolean" column="SUCCESS"/>
+        <field name="log" column="LOG"/>
+        <field name="command" column="COMMAND"/>
+        <field name="tefFileContentHash" column="TEF_FILE_CONTENT_HASH"/>
+        <field name="tefFileContent" column="TEF_FILE_CONTENT"/>
+        <field name="hasProblems" type="boolean" column="HAS_PROBLEMS"/>
+
+        <many-to-one field="these" target-entity="These\Entity\Db\These">
+            <join-columns>
+                <join-column name="THESE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+    </entity>
+
+</doctrine-mapping>

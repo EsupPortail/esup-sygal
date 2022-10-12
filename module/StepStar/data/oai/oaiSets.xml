@@ -1,0 +1,1185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Voir les explications ici : http://www.abes.fr/abes/documents/tef/recommandation/adminMeta.html#intro_oai -->
+<ListSets xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <set>
+      <setSpec>ddc:000</setSpec>
+      <setName>Informatique, information, généralités</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Data processing, information science, general collection</dc:description>
+            <dc:description xml:lang="ge">Informatik, Informationswissenschaft, allgemeine Werke</dc:description>
+            <dc:description xml:lang="sp">Informática, información, generalidades</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:004</setSpec>
+      <setName>Informatique</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Data processing, computer science</dc:description>
+            <dc:description xml:lang="ge">Datenverarbeitung; Informatik</dc:description>
+            <dc:description xml:lang="sp">Informática</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:020</setSpec>
+      <setName>Bibliothéconomie et sciences de l'information</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Library and information sciences</dc:description>
+            <dc:description xml:lang="ge">Bibliotheks- und Informationswissenschaften</dc:description>
+            <dc:description xml:lang="sp">Bibliotecología y ciencias de la información</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:060</setSpec>
+      <setName>Organisations générales et muséologie</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">General organizations and museology</dc:description>
+            <dc:description xml:lang="ge">Allgemeine Organisationen und Museumswissenschaft</dc:description>
+            <dc:description xml:lang="sp">Organizaciones y museografía</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:070</setSpec>
+      <setName>Médias d'information, journalisme, édition</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">News media, journalism, publishing</dc:description>
+            <dc:description xml:lang="ge">Publizistische Medien, Journalismus, Verlagswesen</dc:description>
+            <dc:description xml:lang="sp">Periodismo, editoriales, diarios</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:090</setSpec>
+      <setName>Manuscrits et livres rares</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Manuscripts and rare books</dc:description>
+            <dc:description xml:lang="ge">Handschriften und seltene Bücher</dc:description>
+            <dc:description xml:lang="sp">Manuscritos y libros raros</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:100</setSpec>
+      <setName>Philosophie, psychologie</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Philosophy, psychology</dc:description>
+            <dc:description xml:lang="ge">Philosophie und Psychologie</dc:description>
+            <dc:description xml:lang="sp">Filosofía, psicología</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:110</setSpec>
+      <setName>Métaphysique</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Metaphysics</dc:description>
+            <dc:description xml:lang="ge">Metaphysik</dc:description>
+            <dc:description xml:lang="sp">Metafísica</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:120</setSpec>
+      <setName>Epistémologie, causalité, genre humain</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Epistemology, causation, humankind</dc:description>
+            <dc:description xml:lang="ge">Epistemologie, Kausalität, Menschheit</dc:description>
+            <dc:description xml:lang="sp">Epistemología, causalidad, género humano</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:130</setSpec>
+      <setName>Phénomènes paranormaux, seudosciences</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Parapsychology, occultism</dc:description>
+            <dc:description xml:lang="ge">Parapsychologie, Okkultismus</dc:description>
+            <dc:description xml:lang="sp">Parapsicología, ocultismo</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:140</setSpec>
+      <setName>Les divers systèmes et écoles philosophiques</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Specific philosophical schools</dc:description>
+            <dc:description xml:lang="ge">Einzelne philosophische Systeme und Schulen</dc:description>
+            <dc:description xml:lang="sp">Escuelas de filosofía</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:150</setSpec>
+      <setName>Psychologie</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Psychology</dc:description>
+            <dc:description xml:lang="ge">Psychologie</dc:description>
+            <dc:description xml:lang="sp">Psicología</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:160</setSpec>
+      <setName>Logique</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Logic</dc:description>
+            <dc:description xml:lang="ge">Logik</dc:description>
+            <dc:description xml:lang="sp">Lógica</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:170</setSpec>
+      <setName>Morale (éthique)</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Ethics</dc:description>
+            <dc:description xml:lang="ge">Ethik</dc:description>
+            <dc:description xml:lang="sp">Ética</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:180</setSpec>
+      <setName>Philosophie de l'Antiquité, du Moyen Âge, de
+            l'Orient</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Ancient, medieval, eastern philosophy</dc:description>
+            <dc:description xml:lang="ge">Antike, mittelalterliche und östliche Philosophie</dc:description>
+            <dc:description xml:lang="sp">Filosofía antigua, medieval, oriental</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:190</setSpec>
+      <setName>Philosophie occidentale moderne et philosophies non orientales</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Modern western philosophy</dc:description>
+            <dc:description xml:lang="ge">Neuzeitliche westliche Philosophie</dc:description>
+            <dc:description xml:lang="sp">Filosofía moderna occidental, filosofías no orientales</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:200</setSpec>
+      <setName>Religion</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Religion</dc:description>
+            <dc:description xml:lang="ge">Religion</dc:description>
+            <dc:description xml:lang="sp">Religión</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:210</setSpec>
+      <setName>Philosophie et théorie de la religion</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Philosophy and theory of religion</dc:description>
+            <dc:description xml:lang="ge">Religionsphilosophie und Religionstheorie</dc:description>
+            <dc:description xml:lang="sp">Filosofía y teoría de la religión</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:220</setSpec>
+      <setName>Bible</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Bible</dc:description>
+            <dc:description xml:lang="ge">Bibel</dc:description>
+            <dc:description xml:lang="sp">Biblia</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:230</setSpec>
+      <setName>Théologie chrétienne</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Christian theology</dc:description>
+            <dc:description xml:lang="ge">Christentum, Christliche Theologie</dc:description>
+            <dc:description xml:lang="sp">Teología cristiana</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:240</setSpec>
+      <setName>Théologie morale et pratiques chrétiennes</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Christian moral and devotional theology</dc:description>
+            <dc:description xml:lang="ge">Christliche Ethik, spirituelle Theologie</dc:description>
+            <dc:description xml:lang="sp">Teología moral y prácticas cristianas</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:250</setSpec>
+      <setName>Eglises locales, ordres religieux chrétiens</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Local church. Christian orders </dc:description>
+            <dc:description xml:lang="ge">Christliche Ortskirchen, christliche Orden </dc:description>
+            <dc:description xml:lang="sp">Iglesia local y órdenes religiosas</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:260</setSpec>
+      <setName>Théologie chrétienne et société, ecclésiologie</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Social and ecclesiastical theology</dc:description>
+            <dc:description xml:lang="ge">Soziallehre des Christentums, Ekklesiologie</dc:description>
+            <dc:description xml:lang="sp">Teología cristiana y sociedad. Eclesiología</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:270</setSpec>
+      <setName>Histoire et géographie du christianisme et de l'Eglise
+            chrétienne</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">History of Christianity and Christian church</dc:description>
+            <dc:description xml:lang="ge">Geschichte des Christentumsder und der christlichen Kirche </dc:description>
+            <dc:description xml:lang="sp">Historia y geografía del cristianismo y de la Iglesia</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:280</setSpec>
+      <setName>Confessions et sectes de l'Eglise chrétienne</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Christian denominations and sects</dc:description>
+            <dc:description xml:lang="ge">Christliche Konfessionen und Sekten</dc:description>
+            <dc:description xml:lang="sp">Credos y sectas de la Iglesia cristiana</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:290</setSpec>
+      <setName>Autres religions</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Other religions</dc:description>
+            <dc:description xml:lang="ge">Andere Religionen</dc:description>
+            <dc:description xml:lang="sp">Otras religiones</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:300</setSpec>
+      <setName>Sciences sociales, sociologie, anthropologie</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Social sciences, sociology, anthropology</dc:description>
+            <dc:description xml:lang="ge">Sozialwissenschaften, Soziologie, Anthropologie</dc:description>
+            <dc:description xml:lang="sp">Ciencias sociales, sociología, antropología</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:310</setSpec>
+      <setName>Statistiques générales</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Collections of general statistics</dc:description>
+            <dc:description xml:lang="ge">Sammlungen allgemeiner Statistiken</dc:description>
+            <dc:description xml:lang="sp">Estadística</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:320</setSpec>
+      <setName>Science politique</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Political science</dc:description>
+            <dc:description xml:lang="ge">Politikwissenschaft</dc:description>
+            <dc:description xml:lang="sp">Ciencias políticas</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:330</setSpec>
+      <setName>Economie</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Economics</dc:description>
+            <dc:description xml:lang="ge">Wirtschaft</dc:description>
+            <dc:description xml:lang="sp">Economía</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:340</setSpec>
+      <setName>Droit</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Law</dc:description>
+            <dc:description xml:lang="ge">Recht</dc:description>
+            <dc:description xml:lang="sp">Derecho</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:350</setSpec>
+      <setName>Administration publique. Arts et science militaires</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Public administration. Military science</dc:description>
+            <dc:description xml:lang="ge">Öffentliche Verwaltung, Militärwissenschaft</dc:description>
+            <dc:description xml:lang="sp">Aministración pública. Artes y ciencias militares</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:360</setSpec>
+      <setName>Problèmes et services sociaux</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Social problems and services</dc:description>
+            <dc:description xml:lang="ge">Soziale Probleme und Sozialdienste; Verbände</dc:description>
+            <dc:description xml:lang="sp">Problemas y servicios sociales</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:370</setSpec>
+      <setName>Education et enseignement</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Education and teaching</dc:description>
+            <dc:description xml:lang="ge">Bildung und Erziehung</dc:description>
+            <dc:description xml:lang="sp">Educación</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:380</setSpec>
+      <setName>Commerce, communications, transports</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Commerce, communication, transportation</dc:description>
+            <dc:description xml:lang="ge">Handel, Kommunikation, Verkehr</dc:description>
+            <dc:description xml:lang="sp">Comercio, comunicaciones y transportes</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:390</setSpec>
+      <setName>Ethnologie</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Ethnology</dc:description>
+            <dc:description xml:lang="ge">Ethnologie</dc:description>
+            <dc:description xml:lang="sp">Etnología</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:400</setSpec>
+      <setName>Langues et linguistique</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Language and linguistics</dc:description>
+            <dc:description xml:lang="ge">Sprache und Linguistik</dc:description>
+            <dc:description xml:lang="sp">Lenguas y lingüística</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:410</setSpec>
+      <setName>Linguistique générale</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Linguistics</dc:description>
+            <dc:description xml:lang="ge">Linguistik</dc:description>
+            <dc:description xml:lang="sp">Lingüística</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:420</setSpec>
+      <setName>Langue anglaise. Anglo-saxon</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">English and old english (anglo-saxon)</dc:description>
+            <dc:description xml:lang="ge">Englisch, Altenglisch</dc:description>
+            <dc:description xml:lang="sp">Inglés y anglosajón</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:430</setSpec>
+      <setName>Langues germaniques. Allemand</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Germanic languages. German</dc:description>
+            <dc:description xml:lang="ge">Germanische Sprachen; Deutsch</dc:description>
+            <dc:description xml:lang="sp">Lenguas germánicas. Alemán</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:440</setSpec>
+      <setName>Langues romanes. Français</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Romance languages. French</dc:description>
+            <dc:description xml:lang="ge">Romanische Sprachen; Französisch</dc:description>
+            <dc:description xml:lang="sp">Lenguas romances. Francés</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:450</setSpec>
+      <setName>Langues italienne, roumaine, rhéto-romane</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Italian, romanian, rhaeto-romanic languages</dc:description>
+            <dc:description xml:lang="ge">Italienisch, Rumänisch, rätoromanische Sprache  </dc:description>
+            <dc:description xml:lang="sp">Italiano, rumánico, rético</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:460</setSpec>
+      <setName>Langues espagnole et portugaise</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Spanish and Portuguese languages</dc:description>
+            <dc:description xml:lang="ge">Spanisch, Portugiesisch</dc:description>
+            <dc:description xml:lang="sp">Español, portugués</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:470</setSpec>
+      <setName>Langues italiques. Latin</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Italic languages. Latin</dc:description>
+            <dc:description xml:lang="ge">Italische Sprachen; Latein</dc:description>
+            <dc:description xml:lang="sp">Lenguas itálicas. Latín</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:480</setSpec>
+      <setName>Langues helléniques. Grec classique</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Hellenic languages. Classical greek</dc:description>
+            <dc:description xml:lang="ge">Hellenische Sprachen. Klassisches Griechisch</dc:description>
+            <dc:description xml:lang="sp">Lenguas helénicas. Griego clásico</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:490</setSpec>
+      <setName>Autres langues</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Other languages</dc:description>
+            <dc:description xml:lang="ge">Andere Sprachen</dc:description>
+            <dc:description xml:lang="sp">Otras lenguas</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:500</setSpec>
+      <setName>Sciences de la nature et mathématiques</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Natural sciences and mathematics</dc:description>
+            <dc:description xml:lang="ge">Naturwissenschaften und Mathematik</dc:description>
+            <dc:description xml:lang="sp">Ciencias naturales y matemáticas</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:510</setSpec>
+      <setName>Mathématiques</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Mathematics</dc:description>
+            <dc:description xml:lang="ge">Mathematik</dc:description>
+            <dc:description xml:lang="sp">Matemáticas</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:520</setSpec>
+      <setName>Astronomie, cartographie, géodésie</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Astronomy, cartography (map making), geodesy</dc:description>
+            <dc:description xml:lang="ge">Astronomie und zugeordnete Wissenschaften</dc:description>
+            <dc:description xml:lang="sp">Astronomía, cartografía, geodesia</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:530</setSpec>
+      <setName>Physique</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Physics</dc:description>
+            <dc:description xml:lang="ge">Physik</dc:description>
+            <dc:description xml:lang="sp">Física</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:540</setSpec>
+      <setName>Chimie, minéralogie, cristallographie</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Chemistry, mineralogy, crystallography</dc:description>
+            <dc:description xml:lang="ge">Chemie und zugeordnete Wissenschaften</dc:description>
+            <dc:description xml:lang="sp">Química, mineralogía, cristalografía</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:550</setSpec>
+      <setName>Sciences de la terre</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Earth sciences</dc:description>
+            <dc:description xml:lang="ge">Geowissenschaften</dc:description>
+            <dc:description xml:lang="sp">Ciencias de la tierra</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:560</setSpec>
+      <setName>Paléontologie. Paléozoologie</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Paleontology. Paleozoology</dc:description>
+            <dc:description xml:lang="ge">Paläontologie. Paläozoologie</dc:description>
+            <dc:description xml:lang="sp">Paleontología. Paleozoología</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:570</setSpec>
+      <setName>Sciences de la vie, biologie, biochimie</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Life sciences, biology, biochemistry</dc:description>
+            <dc:description xml:lang="ge">Biowissenschaften, Biologie</dc:description>
+            <dc:description xml:lang="sp">Ciencias biológicas</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:580</setSpec>
+      <setName>Plantes. Botanique</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Botanical Sciences</dc:description>
+            <dc:description xml:lang="ge">Pflanzen (Botanik)</dc:description>
+            <dc:description xml:lang="sp">Plantas. Botánica</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:590</setSpec>
+      <setName>Animaux. Zoologie</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Animals. Zoology</dc:description>
+            <dc:description xml:lang="ge">Tiere. Zoologie</dc:description>
+            <dc:description xml:lang="sp">Animales. Zoología</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:600</setSpec>
+      <setName>Technologie (Sciences appliquées)</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Technology (applied sciences)</dc:description>
+            <dc:description xml:lang="ge">Technik, Technologie</dc:description>
+            <dc:description xml:lang="sp">Tecnología</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:610</setSpec>
+      <setName>Médecine et santé</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Medicine and health</dc:description>
+            <dc:description xml:lang="ge">Medizin und Gesundheit</dc:description>
+            <dc:description xml:lang="sp">Ciencias médicas</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:620</setSpec>
+      <setName>Sciences de l'ingénieur</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Engineering</dc:description>
+            <dc:description xml:lang="ge">Ingenieurwissenschaften</dc:description>
+            <dc:description xml:lang="sp">Ingeniería</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:630</setSpec>
+      <setName>Agronomie, agriculture et médecine vétérinaire</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Agronomy, agriculture, veterinary medicine</dc:description>
+            <dc:description xml:lang="ge">Landwirtschaft und verwandte Bereiche</dc:description>
+            <dc:description xml:lang="sp">Agronomía, agricultura, veterinaria</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:640</setSpec>
+      <setName>Economie domestique. Vie familiale</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Home and family management</dc:description>
+            <dc:description xml:lang="ge">Hauswirtschaft und Familie</dc:description>
+            <dc:description xml:lang="sp">Economía doméstica</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:650</setSpec>
+      <setName>Gestion et organisation de l'entreprise</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Management and office management</dc:description>
+            <dc:description xml:lang="ge">Management und Arbeitsorganisation </dc:description>
+            <dc:description xml:lang="sp">Gestión y organización empresarial</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:660</setSpec>
+      <setName>Génie chimique, technologies alimentaires</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Chemical engineering, food technology</dc:description>
+            <dc:description xml:lang="ge">Technische Chemie</dc:description>
+            <dc:description xml:lang="sp">Química industrial</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:670</setSpec>
+      <setName>Fabrication industrielle</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Manufacturing</dc:description>
+            <dc:description xml:lang="ge">Industrielle Fertigung</dc:description>
+            <dc:description xml:lang="sp">Manufacturas</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:680</setSpec>
+      <setName>Fabrication de produits à usages spécifiques</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Manufacture for specific uses</dc:description>
+            <dc:description xml:lang="ge">Industrielle Fertigung für einzelne Verwendungszwecke</dc:description>
+            <dc:description xml:lang="sp">Manufacturas varias</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:690</setSpec>
+      <setName>Bâtiments</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Buildings</dc:description>
+            <dc:description xml:lang="ge">Hausbau, Bauhandwerk</dc:description>
+            <dc:description xml:lang="sp">Construcciones</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:700</setSpec>
+      <setName>Arts. Beaux-arts et arts décoratifs</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Art. Fine and decorative arts</dc:description>
+            <dc:description xml:lang="ge">Künste; Bildende und angewandte Kunst</dc:description>
+            <dc:description xml:lang="sp">Bellas artes y artes decorativas</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:710</setSpec>
+      <setName>Urbanisme</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Urban planning</dc:description>
+            <dc:description xml:lang="ge">Landschaftsgestaltung, Raumplanung</dc:description>
+            <dc:description xml:lang="sp">Arquitectura del paisaje</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:720</setSpec>
+      <setName>Architecture</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Architecture</dc:description>
+            <dc:description xml:lang="ge">Architektur</dc:description>
+            <dc:description xml:lang="sp">Arquitectura del paisaje</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:730</setSpec>
+      <setName>Arts plastiques. Sculpture</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Plastic arts. Sculpture</dc:description>
+            <dc:description xml:lang="ge">Plastische Künste; Bildhauerkunst</dc:description>
+            <dc:description xml:lang="sp">Artes plásticas. Escultura</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:740</setSpec>
+      <setName>Dessin. Arts décoratifs</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Drawing. Decorative arts</dc:description>
+            <dc:description xml:lang="ge">Zeichnung, Kunsthandwerk</dc:description>
+            <dc:description xml:lang="sp">Dibujo. Artes decorativas</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:750</setSpec>
+      <setName>Peinture</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Painting</dc:description>
+            <dc:description xml:lang="ge">Malerei</dc:description>
+            <dc:description xml:lang="sp">Pintura</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:760</setSpec>
+      <setName>Arts graphiques</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Graphic arts</dc:description>
+            <dc:description xml:lang="ge">Grafische Verfahren, Drucke</dc:description>
+            <dc:description xml:lang="sp">Artes gráficas</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:770</setSpec>
+      <setName>Photographie et les photographies, art numérique</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Photography and photographs and computer art</dc:description>
+            <dc:description xml:lang="ge">Fotografie, Fotografien, Computerkunst</dc:description>
+            <dc:description xml:lang="sp">Fotografía y arte digital</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:780</setSpec>
+      <setName>Musique</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Music</dc:description>
+            <dc:description xml:lang="ge">Musik</dc:description>
+            <dc:description xml:lang="sp">Música</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:790</setSpec>
+      <setName>Arts du spectacle, loisirs</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Recreational and performing arts</dc:description>
+            <dc:description xml:lang="ge">Freizeitgestaltung, darstellende Künste</dc:description>
+            <dc:description xml:lang="sp">Artes del espectáculo, entretenimientos</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:796</setSpec>
+      <setName>Sport</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Sports</dc:description>
+            <dc:description xml:lang="ge">Sport</dc:description>
+            <dc:description xml:lang="sp">Deporte</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:800</setSpec>
+      <setName>Histoire et critique littéraires, rhétorique</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">History and critical literature, rhetoric</dc:description>
+            <dc:description xml:lang="ge">Literatur, Rhetorik, Literaturwissenschaft</dc:description>
+            <dc:description xml:lang="sp">Historia y crítica literaria, retórica</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:810</setSpec>
+      <setName>Littérature américaine en anglais</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">American literature in english</dc:description>
+            <dc:description xml:lang="ge">Amerikanische Literatur in Englisch</dc:description>
+            <dc:description xml:lang="sp">Literatura americana en inglés</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:820</setSpec>
+      <setName>Littératures anglaise et anglo-saxonne</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">English and old english (anglo-saxon) literatures</dc:description>
+            <dc:description xml:lang="ge">Englische, altenglische Literaturen</dc:description>
+            <dc:description xml:lang="sp">Literatura inglesa y anglosajona</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:830</setSpec>
+      <setName>Littérature allemande</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">German literature</dc:description>
+            <dc:description xml:lang="ge">Deutsche Literatur</dc:description>
+            <dc:description xml:lang="sp">Literaturas germánicas</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:840</setSpec>
+      <setName>Littérature de langues romanes. Littérature française</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Literatures of Romance languages. French literature</dc:description>
+            <dc:description xml:lang="ge">Literaturen romanischer Sprachen; Französische
+            Literatur</dc:description>
+            <dc:description xml:lang="sp">Literaturas de las lenguas romance. Literatura francesa</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:850</setSpec>
+      <setName>Littérature italienne</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Italian literature</dc:description>
+            <dc:description xml:lang="ge">Italienische, rumänische, rätoromanische Literaturen</dc:description>
+            <dc:description xml:lang="sp">Literatura italiana</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:860</setSpec>
+      <setName>Littératures espagnole et portugaise</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Spanish and Portuguese literatures</dc:description>
+            <dc:description xml:lang="ge">Spanische und portugiesische Literaturen</dc:description>
+            <dc:description xml:lang="sp">Literaturas española y portuguesa</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:870</setSpec>
+      <setName>Littérature latine</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Latin literature</dc:description>
+            <dc:description xml:lang="ge">Lateinische Literatur</dc:description>
+            <dc:description xml:lang="sp">Literatura latina</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:880</setSpec>
+      <setName>Littérature grecque</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Greek literature</dc:description>
+            <dc:description xml:lang="ge">Griechische Literatur</dc:description>
+            <dc:description xml:lang="sp">Literatura griega</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:890</setSpec>
+      <setName>Littératures des autres langues</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Literatures of other languages</dc:description>
+            <dc:description xml:lang="ge">Literaturen anderer Sprachen</dc:description>
+            <dc:description xml:lang="sp">Literaturas de otras lenguas</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:900</setSpec>
+      <setName> Géographie et histoire</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Geography and history</dc:description>
+            <dc:description xml:lang="ge">Geschichte und Geografie</dc:description>
+            <dc:description xml:lang="sp">Geografía e historia</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:910</setSpec>
+      <setName>Géographie et voyages</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Geography and travel</dc:description>
+            <dc:description xml:lang="ge">Geografie und Reisen</dc:description>
+            <dc:description xml:lang="sp">Geografía y viajes</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:920</setSpec>
+      <setName>Biographies générales, généalogie, emblèmes</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Biography, genealogy and insignia</dc:description>
+            <dc:description xml:lang="ge">Biografien, Genealogie und Insignien</dc:description>
+            <dc:description xml:lang="sp">Biografía, genealogía y emblemas</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:930</setSpec>
+      <setName>Histoire ancienne et préhistoire</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">History of ancient world and prehistory</dc:description>
+            <dc:description xml:lang="ge">Alte Geschichte und Archäologie</dc:description>
+            <dc:description xml:lang="sp">Historia antigua y prehistoria</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:940</setSpec>
+      <setName>Histoire moderne et contemporaine de l'Europe</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">Modern and ancient history of Europe</dc:description>
+            <dc:description xml:lang="ge">Geschichte Europas</dc:description>
+            <dc:description xml:lang="sp">Historia moderna y contemporánea de Europa</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:944</setSpec>
+      <setName>Histoire générale de la France</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">General history of France</dc:description>
+            <dc:description xml:lang="ge">Geschichte Frankreichs und Monacos</dc:description>
+            <dc:description xml:lang="sp">Historia de Francia</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:950</setSpec>
+      <setName>Histoire générale de l'Asie, Orient, Extrême-Orient</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">General history of Asia, Orient, Far East</dc:description>
+            <dc:description xml:lang="ge">Geschichte Asiens; des Fernen Ostens</dc:description>
+            <dc:description xml:lang="sp">Historia de Asia, Oriente, extremo oriente</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:960</setSpec>
+      <setName>Histoire générale de l'Afrique</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">General history of Africa</dc:description>
+            <dc:description xml:lang="ge">Geschichte Afrikas</dc:description>
+            <dc:description xml:lang="sp">Historia de África</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:970</setSpec>
+      <setName>Histoire générale de l'Amérique du Nord</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">General history of North America</dc:description>
+            <dc:description xml:lang="ge">Geschichte Nordamerikas</dc:description>
+            <dc:description xml:lang="sp">Histroia de América del norte</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:980</setSpec>
+      <setName>Histoire générale de l'Amérique du Sud</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">General history of South America</dc:description>
+            <dc:description xml:lang="ge">Geschichte Südamerikas</dc:description>
+            <dc:description xml:lang="sp">Historia de América del sur</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+    
+   <set>
+      <setSpec>ddc:990</setSpec>
+      <setName>Histoire générale des autres parties du monde, des mondes
+            extraterrestres. Iles du Pacifique</setName>
+      <setDescription>
+         <dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/                      http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <dc:description xml:lang="en">General history of other parts of world, of
+            extraterrestrial worlds, of Pacific Ocean Islands</dc:description>
+            <dc:description xml:lang="ge">Geschichte der übrigen Welt</dc:description>
+            <dc:description xml:lang="sp">Historia de otras regiones</dc:description>
+         </dc>
+      </setDescription>
+   </set>
+
+</ListSets>

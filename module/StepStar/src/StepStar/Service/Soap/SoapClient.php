@@ -2,9 +2,7 @@
 
 namespace StepStar\Service\Soap;
 
-use Traversable;
 use Laminas\Soap\Client;
-use Laminas\Stdlib\ArrayUtils;
 
 /**
  * Client SOAP capable d'appeler le Web Service DepotTEF de l'ABES.
@@ -19,7 +17,7 @@ class SoapClient extends Client
      *
      * @var array $params
      */
-    protected $params;
+    protected array $params;
 
     /**
      * SoapClient constructor.
@@ -52,10 +50,6 @@ class SoapClient extends Client
      */
     public function setParams(array $params): self
     {
-        if ($params instanceof Traversable) {
-            $params = ArrayUtils::iteratorToArray($params);
-        }
-
         $this->params = $params;
 
         return $this;

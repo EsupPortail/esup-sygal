@@ -5,20 +5,24 @@ namespace StepStar\Service\Api;
 use DOMDocument;
 use DOMXPath;
 use SoapFault;
+use stdClass;
 use StepStar\Exception\ApiServiceException;
 use StepStar\Service\Soap\SoapClientAwareTrait;
 use StepStar\Service\Xslt\XsltServiceAwareTrait;
-use UnicaenApp\Exception\RuntimeException;
 
 class ApiService
 {
     use SoapClientAwareTrait;
-    use XsltServiceAwareTrait;
+
+    const OPERATION_DEPOSER = 'deposer';
+    const OPERATION_DEPOSER_AVEC_ZIP = 'deposerAvecZip';
+//    const OPERATION_DEPOSER = 'Depot';
+//    const OPERATION_DEPOSER_AVEC_ZIP = 'DepotAvecZip';
 
     /**
      * @var array
      */
-    protected $params = [];
+    protected array $params = [];
 
     /**
      * @param array $params
@@ -49,19 +53,27 @@ class ApiService
             throw new ApiServiceException("La requête 'deposer' nécessite le paramètre '$k'.");
         }
 
-        $operation = 'deposer';
+        $operation = self::OPERATION_DEPOSER;
         $params = $this->params;
-        $params['tef'] = base64_encode(file_get_contents($tefFilePath));
+        $params['tef'] = file_get_contents($tefFilePath);
 //        $params['tef'] = file_get_contents('/tmp/tef_base64.txt');
 //        $params['tef'] = file_get_contents('/tmp/tef_base64_dumontier.txt');
         if ($zipFilePath !== null) {
-            $operation = 'deposerAvecZip';
+            $operation = self::OPERATION_DEPOSER_AVEC_ZIP;
             $params['zip'] = base64_encode(file_get_contents($zipFilePath));
         }
         try {
             $response = $this->soapClient->call($operation, [$params]); // NB : tableau de paramètres DANS UN TABLEAU
         } catch (SoapFault $e) {
-            throw new ApiServiceException("Erreur rencontrée lors de la requête '$operation'.", null, $e);
+            throw new ApiServiceException(
+                "Erreur rencontrée lors de la requête '$operation' : " . $e->getMessage(), null, $e);
+        }
+
+        if ($response instanceof stdClass) {
+            if (!isset($response->DepotResponse)) {
+                throw new ApiServiceException("La réponse du web service de type stdClass a un format inattendu");
+            }
+            $response = $response->DepotResponse;
         }
 
         if ($error = $this->detectErrorInResponse($response)) {

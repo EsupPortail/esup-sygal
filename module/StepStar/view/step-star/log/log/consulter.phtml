@@ -1,0 +1,81 @@
+<?php
+/**
+ * @var \StepStar\Entity\Db\Log $log
+ *
+ * @see \StepStar\Controller\Log\LogController::consulterAction()
+ */
+
+use StepStar\Provider\StepStarPrivileges;
+use const StepStar\STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES;
+?>
+
+<h1 class="page-header">Module STEP-STAR</h1>
+
+<h2>
+    Log <?php echo $log->getId() ?>
+    <?php if ($log->isSuccess()): ?>
+        <span class="icon iconly icon-success text-success"></span>
+    <?php else: ?>
+        <span class="icon iconly icon-failure text-danger"></span>
+    <?php endif ?>
+</h2>
+
+<div class="row">
+
+    <dl class="col-md-4">
+        <dt>Début - Fin</dt>
+        <dd><?php echo $log->getStartedOnToString() ?> - <?php echo $log->getEndedOnToString() ?></dd>
+
+        <dt>Durée</dt>
+        <dd><?php echo $log->getDurationToString() ?></dd>
+
+        <dt>Opération</dt>
+        <dd><?php echo $log->getOperation() ?></dd>
+
+        <dt>Thèse</dt>
+        <dd>
+            <?php if ($theseId = $log->getTheseId()): ?>
+                <a href="<?php echo $this->url('these/identite', ['these' => $theseId]) ?>"
+                   title="Aller à cette thèse">
+                    <?php echo $theseId ?>
+                </a>
+            <?php endif ?>
+        </dd>
+
+        <dt>Commande</dt>
+        <dd><pre><?php echo $log->getCommand() ?></pre></dd>
+
+        <dt>Succès ?</dt>
+        <dd><?php echo $log->isSuccessToString() ?></dd>
+
+        <?php if (!$log->isSuccess()): ?>
+            <dt>Commande à rejouer</dt>
+            <dd><pre><?php echo STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES . ' --these ' . $theseId ?></pre></dd>
+        <?php endif ?>
+    </dl>
+
+    <dl class="col-md-8">
+        <dt>Log</dt>
+        <dd class="<?php echo $log->isSuccess() ? '' : 'text-danger' ?>"><?php echo $log->getLogToHtml() ?></dd>
+
+        <?php if ($log->getTefFileContentHash()): ?>
+            <dt>Fichier TEF envoyé</dt>
+            <dd>
+                Hash : <?php echo $log->getTefFileContentHash() ?> <br>
+                Fichier :
+                <?php if ($log->getTefFileContent()): ?>
+                    <?php if ($this->isAllowed(StepStarPrivileges::getResourceId(StepStarPrivileges::TEF_TELECHARGER))): ?>
+                        <a title="Télécharger le fichier TEF envoyé"
+                           href="<?php echo $this->url('step-star/log/telecharger-tef',
+                               ['log' => $log->getId(), 'hash' => $log->getTefFileContentHash()]) ?>">Télécharger</a>
+                    <?php else: ?>
+                        (Droits insuffisants)
+                    <?php endif ?>
+                <?php else: ?>
+                    <span class="text-muted">Non conservé en cas de succès.</span>
+                <?php endif ?>
+            </dd>
+        <?php endif ?>
+    </dl>
+
+</div>

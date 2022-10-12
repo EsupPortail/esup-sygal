@@ -4,6 +4,7 @@ Journal des modifications
 6.0.0
 -----
 - Substitution de structures : réalisation des jointures dans les requêtes Doctrine et suppression dans les vues SRC_*.
+- Module StepStar : envoi des thèses vers Step/Star.
 
 5.2.2
 -----
