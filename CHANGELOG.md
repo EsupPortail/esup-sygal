@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+6.0.0
+-----
+- Substitution de structures : réalisation des jointures dans les requêtes Doctrine et suppression dans les vues SRC_*.
+
 5.2.2
 -----
 - [FIX] exploitation de la récupération des chemins plutôt que des contenus pour la génération des convocations
