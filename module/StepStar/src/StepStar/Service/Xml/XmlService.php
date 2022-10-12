@@ -428,10 +428,6 @@ class XmlService
             self::VILLE_DOCTORANT => null, // pas dispo
             self::PAYS_DOCTORANT => null, // pas dispo
 
-            // etablissement
-            self::CODE_ETAB_SOUT => $these['etablissement']['structure']['code'],
-            self::LIBELLE_ETAB_SOUT => $these['etablissement']['structure']['libelle'],
-
             // inscription
             self::DATE_1ERE_INSCR_DOCTORAT => $this->formatDate($date1ereInscr),
             self::DATE_1ERE_INSCR_ETAB => $this->formatDate($these['dateTransfert']) ?: $this->formatDate($date1ereInscr),
@@ -475,24 +471,32 @@ class XmlService
             // cotutelle
             self::CODE_ETAB_COTUTELLE => 'xxxxx', // todo : kezako ?
             self::LIBELLE_ETAB_COTUTELLE => $these['libelleEtabCotutelle'],
-
-            // ed
-            self::PPN_ECOLE_DOCTORALE => $these['ecoleDoctorale']['structure']['idRef'] ?? null,
-            self::CODE_ECOLE_DOCTORALE => $these['ecoleDoctorale']['structure']['code'],
-            self::LIBELLE_ECOLE_DOCTORALE => $these['ecoleDoctorale']['structure']['libelle'],
-
-            // ur
-            self::CONVENTION_CIFRE_1 => $conventionCifre,
-            self::PPN_EQUIPE_RECHERCHE_1 => $these['uniteRecherche']['structure']['idRef'] ?? null,
-            self::IDHAL_EQUIPE_RECHERCHE_1 => $these['uniteRecherche']['structure']['idHal'] ?? null,
-            self::CODE_EQUIPE_RECHERCHE_1 => $these['uniteRecherche']['structure']['code'],
-            self::LIBELLE_EQUIPE_RECHERCHE_1 => $these['uniteRecherche']['structure']['libelle'],
-            // ajout de l'établissement comme partenaire de recherche typé "Autre"
-            self::CONVENTION_CIFRE_ETAB => $conventionCifre,
-            self::PPN_PARTENAIRE_RECHERCHE_ETAB => $these['etablissement']['structure']['idRef'] ?? null,
-            self::CODE_PARTENAIRE_RECHERCHE_ETAB => $these['etablissement']['structure']['code'],
-            self::LIBELLE_PARTENAIRE_RECHERCHE_ETAB => $these['etablissement']['structure']['libelle'],
         ];
+
+        // etablissement (possiblement substitué)
+        $dataStructureEtablissement = $this->extractStructureEtablissement($these);
+        $data[self::CODE_ETAB_SOUT] = $dataStructureEtablissement['code'];
+        $data[self::LIBELLE_ETAB_SOUT] = $dataStructureEtablissement['libelle'];
+
+        // ed (possiblement substituée)
+        $dataStructureEcoleDoctorale = $this->extractStructureEcoleDoctorale($these);
+        $data[self::PPN_ECOLE_DOCTORALE] = $dataStructureEcoleDoctorale['idRef'] ?? null;
+        $data[self::CODE_ECOLE_DOCTORALE] = $dataStructureEcoleDoctorale['code'];
+        $data[self::LIBELLE_ECOLE_DOCTORALE] = $dataStructureEcoleDoctorale['libelle'];
+
+        // ur (possiblement substituée)
+        $dataStructureUniteRecherche = $this->extractStructureUniteRecherche($these);
+        $data[self::CONVENTION_CIFRE_1] = $conventionCifre;
+        $data[self::PPN_EQUIPE_RECHERCHE_1] = $dataStructureUniteRecherche['idRef'] ?? null;
+        $data[self::IDHAL_EQUIPE_RECHERCHE_1] = $dataStructureUniteRecherche['idHal'] ?? null;
+        $data[self::CODE_EQUIPE_RECHERCHE_1] = $dataStructureUniteRecherche['code'];
+        $data[self::LIBELLE_EQUIPE_RECHERCHE_1] = $dataStructureUniteRecherche['libelle'];
+
+        // ajout de l'établissement comme partenaire de recherche typé "Autre"
+        $data[self::CONVENTION_CIFRE_ETAB] = $conventionCifre;
+        $data[self::PPN_PARTENAIRE_RECHERCHE_ETAB] = $dataStructureEtablissement['idRef'] ?? null;
+        $data[self::CODE_PARTENAIRE_RECHERCHE_ETAB] = $dataStructureEtablissement['code'];
+        $data[self::LIBELLE_PARTENAIRE_RECHERCHE_ETAB] = $dataStructureEtablissement['libelle'];
 
         // mots clefs
         $motsClesLibresFrancais = $metadonnees['motsClesLibresFrancais'] ?? null;
@@ -557,6 +561,27 @@ class XmlService
         }
 
         return array_filter($data);
+    }
+
+    private function extractStructureEtablissement(array $these): array
+    {
+        return
+            $these['etablissement']['structure']['structureSubstituante'][0] ??
+            $these['etablissement']['structure'];
+    }
+
+    private function extractStructureEcoleDoctorale(array $these): array
+    {
+        return
+            $these['ecoleDoctorale']['structure']['structureSubstituante'][0] ??
+            $these['ecoleDoctorale']['structure'];
+    }
+
+    private function extractStructureUniteRecherche(array $these): array
+    {
+        return
+            $these['uniteRecherche']['structure']['structureSubstituante'][0] ??
+            $these['uniteRecherche']['structure'];
     }
 
     private function explodeMotsClefs(?string $motsClefs): array
