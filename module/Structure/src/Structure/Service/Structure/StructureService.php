@@ -653,49 +653,47 @@ class StructureService extends BaseService
 
     /**
      * @param string $type
-     * @param int $structureId
+     * @param int|string $structureId
      * @return StructureConcreteInterface
      */
-    public function getStructuresConcreteByTypeAndStructureId($type, $structureId)
+    public function getStructuresConcreteByTypeAndStructureId(string $type, $structureId): StructureConcreteInterface
     {
         $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
-            ->addSelect('structure')
-            ->join('structureConcrete.structure', 'structure')
-            ->andWhere('structure.id = :structureId')
-            ->setParameter('structureId', $structureId)
-        ;
+            ->addSelect('structurec')
+            ->join('structureConcrete.structure', 'structurec')
+            ->andWhere('structurec.id = :structureId')
+            ->setParameter('structureId', $structureId);
 
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
             throw new RuntimeException("Plusieurs ".$type." partagent le même identifiant de structure [".$structureId."]");
         }
-
         if (!$result) throw new RuntimeException("Aucun(e) ".$type." de trouvé(e).");
+
         return $result;
     }
 
     /**
      * @param string $type
-     * @param int $structureId
+     * @param int|string $structureId
      * @return StructureConcreteInterface
      */
-    public function getStructuresConcreteByTypeAndStructureConcreteId($type, $structureId)
+    public function getStructuresConcreteByTypeAndStructureConcreteId(string $type, $structureId): StructureConcreteInterface
     {
         $qb = $this->getEntityManager()->getRepository($this->getEntityByType($type))->createQueryBuilder('structureConcrete')
-            ->addSelect('structure')
-            ->join('structureConcrete.structure', 'structure')
+            ->addSelect('structurec')
+            ->join('structureConcrete.structure', 'structurec')
             ->andWhere('structureConcrete.id = :structureId')
-            ->setParameter('structureId', $structureId)
-        ;
+            ->setParameter('structureId', $structureId);
 
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
             throw new RuntimeException("Plusieurs ".$type." partagent le même identifiant de structure [".$structureId."]");
         }
-
         if (!$result) throw new RuntimeException("Aucun(e) ".$type." de trouvé(e).");
+
         return $result;
     }
 
