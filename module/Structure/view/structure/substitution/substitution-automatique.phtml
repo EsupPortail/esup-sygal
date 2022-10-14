@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @var TypeStructure|null $typeStructure
  * @var array $substitutionsEcolesDoctorales (identifiant => EcoleDoctorale[])
  * @var array $substitutionsEtablissements (identifiant => Etablissement[])
  * @var array $substitutionsUnitesRecherches (identifiant => UniteRecherche[])
@@ -22,43 +23,44 @@ $messenger = $this->messenger();
 echo $messenger->addMessagesFromFlashMessenger();
 ?>
 
+<?php if ($substitutionsEcolesDoctorales !== null): ?>
 <h2>
     Substitutions d'écoles doctorales
     <span class="badge bg-secondary"><?php echo count($substitutionsEcolesDoctorales); ?></span>
 </h2>
-
 <?php foreach ($substitutionsEcolesDoctorales as $identifier => $substitution) : ?>
     <div id="<?php echo TypeStructure::CODE_ECOLE_DOCTORALE; ?>_<?php echo $identifier; ?>">
         <?php echo $this->partial('structure/substitution/partial/substitution-automatique',
             ['type' => TypeStructure::CODE_ECOLE_DOCTORALE, 'identifiant' => $identifier, 'substituees' => $substitution[0], 'substituante' => $substitution[1]]); ?>
     </div>
 <?php endforeach; ?>
+<?php endif ?>
 
-
+<?php if ($substitutionsEtablissements !== null): ?>
 <h2>
     Substitutions d'établissements
     <span class="badge bg-secondary"><?php echo count($substitutionsEtablissements); ?></span>
 </h2>
-
 <?php foreach ($substitutionsEtablissements as $identifier => $substitution) : ?>
     <div id="<?php echo TypeStructure::CODE_ETABLISSEMENT; ?>_<?php echo $identifier; ?>">
         <?php echo $this->partial('structure/substitution/partial/substitution-automatique',
             ['type' => TypeStructure::CODE_ETABLISSEMENT, 'identifiant' => $identifier, 'substituees' => $substitution[0], 'substituante' => $substitution[1]]); ?>
     </div>
 <?php endforeach; ?>
+<?php endif ?>
 
-
+<?php if ($substitutionsUnitesRecherches !== null): ?>
 <h2>
     Substitutions d'unités de recherche
     <span class="badge bg-secondary"><?php echo count($substitutionsUnitesRecherches); ?></span>
 </h2>
-
 <?php foreach ($substitutionsUnitesRecherches as $identifier => $substitution) : ?>
     <div id="<?php echo TypeStructure::CODE_UNITE_RECHERCHE; ?>_<?php echo $identifier; ?>">
         <?php echo $this->partial('structure/substitution/partial/substitution-automatique',
             ['type' => TypeStructure::CODE_UNITE_RECHERCHE, 'identifiant' => $identifier, 'substituees' => $substitution[0], 'substituante' => $substitution[1]]); ?>
     </div>
 <?php endforeach; ?>
+<?php endif ?>
 
 
 <script>

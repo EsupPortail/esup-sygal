@@ -13,7 +13,7 @@ class ValidationQueryBuilder extends DefaultQueryBuilder
 {
     protected $rootAlias = "v";
 
-    public function initWithDefault()
+    public function initWithDefault(): self
     {
         $this
             ->addSelect("t, tv, i")

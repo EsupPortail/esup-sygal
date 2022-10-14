@@ -1,0 +1,20 @@
+<?php
+/**
+ * @var \StepStar\Form\EnvoiForm $form
+ */
+
+$form->prepare();
+?>
+
+<h1 class="page-header">Envoi</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<div class="row">
+    <div class="col-md-3">
+        <?php echo $this->form($form) ?>
+    </div>
+</div>
+
+
+

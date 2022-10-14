@@ -2,25 +2,18 @@
 
 namespace Structure\Service\EcoleDoctorale;
 
-use Application\Service\Role\RoleService;
 use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
 
 class EcoleDoctoraleServiceFactory
 {
     /**
-     * Create service
-     *
-     * @param ContainerInterface $container
-     * @return EcoleDoctoraleService
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): EcoleDoctoraleService
     {
-        /** @var RoleService $roleService */
-        $roleService = $container->get('RoleService');
-
         $service = new EcoleDoctoraleService();
-        $service->setRoleService($roleService);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper

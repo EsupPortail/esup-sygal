@@ -17,6 +17,7 @@ class EcoleDoctorale
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
+    use StructureAwareTrait;
 
     const CODE_TOUTE_ECOLE_DOCTORALE_CONFONDUE = 'TOUTE_ED';
 
@@ -29,11 +30,6 @@ class EcoleDoctorale
      * @var string
      */
     protected $sourceCode;
-
-    /**
-     * @var Structure
-     */
-    protected $structure;
 
     /**
      * @var string
@@ -159,22 +155,20 @@ class EcoleDoctorale
     }
 
     /**
-     * @param Structure $structure
-     * @return self
+     * Retourne l'éventuelle école doctorale substituant celle-ci.
+     *
+     * ATTENTION : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
+     * '.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.ecoleDoctorale'.
+     *
+     * @return \Structure\Entity\Db\EcoleDoctorale|null
      */
-    public function setStructure($structure)
+    public function getEcoleDoctoraleSubstituante(): ?EcoleDoctorale
     {
-        $this->structure = $structure;
+        if ($substit = $this->structure->getStructureSubstituante()) {
+            return $substit->getEcoleDoctorale();
+        }
 
-        return $this;
-    }
-
-    /**
-     * @return Structure
-     */
-    public function getStructure()
-    {
-        return $this->structure;
+        return null;
     }
 
     /**

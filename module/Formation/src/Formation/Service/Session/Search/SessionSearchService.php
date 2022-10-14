@@ -150,7 +150,11 @@ class SessionSearchService extends SearchService
         $sorter->setQueryBuilderApplier(
             function (SearchSorter $sorter, QueryBuilder $qb) {
                 $qb
+                    ->addSelect('s_sort')
                     ->join('site.structure', 's_sort')
+                    ->addSelect('structureSubstituante_sort')
+                    ->leftJoin('s_sort.structureSubstituante', 'structureSubstituante_sort')
+                    ->addOrderBy('structureSubstituante_sort.code', $sorter->getDirection())
                     ->addOrderBy('s_sort.code', $sorter->getDirection());
             }
         );

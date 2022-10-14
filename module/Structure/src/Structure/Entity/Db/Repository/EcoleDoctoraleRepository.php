@@ -3,45 +3,53 @@
 namespace Structure\Entity\Db\Repository;
 
 use Application\Entity\Db\Repository\DefaultEntityRepository;
-use Structure\Entity\Db\EcoleDoctorale;
+use Application\QueryBuilder\DefaultQueryBuilder;
 use Doctrine\ORM\NonUniqueResultException;
+use Structure\Entity\Db\EcoleDoctorale;
 use UnicaenApp\Exception\RuntimeException;
 
 class EcoleDoctoraleRepository extends DefaultEntityRepository
 {
+    public function createQueryBuilder($alias, $indexBy = null): DefaultQueryBuilder
+    {
+        $qb = parent::createQueryBuilder($alias, $indexBy);
+        $qb
+            ->addSelect('structure')
+            ->join("$alias.structure", 'structure')
+            ->addSelect('structureSubstituante')
+            ->leftJoin("structure.structureSubstituante", 'structureSubstituante')
+            ->addSelect('ecoleDoctoraleSubstituante')
+            ->leftJoin("structureSubstituante.ecoleDoctorale", 'ecoleDoctoraleSubstituante');
+
+        return $qb;
+    }
+
     /**
      * @param bool $ouverte
      * @return EcoleDoctorale[]
      */
-    public function findAll(bool $ouverte = false)
+    public function findAll(bool $ouverte = false): array
     {
         $qb = $this->createQueryBuilder("ed");
         $qb
-            ->leftJoin("ed.structure", "str", "WITH", "ed.structure = str.id")
-            ->leftJoin("str.structuresSubstituees", "sub")
-            ->leftJoin("str.typeStructure", "typ")
-            ->addSelect("str, sub, typ")
-            ->orderBy("str.libelle");
+            ->leftJoin("structure.structuresSubstituees", "sub")
+            ->leftJoin("structure.typeStructure", "typ")
+            ->addSelect("sub, typ")
+            ->orderBy("structure.libelle");
 
         if ($ouverte) {
-            $qb = $qb->andWhere('str.estFermee = false')
-                ->leftJoin('str.structureSubstituante', 'substitutionTo')
-                ->andWhere('substitutionTo IS NULL')
-                ->orderBy('str.sigle')
-            ;
+            $qb->andWhere('structure.estFermee = false')
+                ->andWhere('structureSubstituante IS NULL');
         }
-        $ecoles = $qb->getQuery()->getResult();
 
-        return $ecoles;
+        return $qb->getQuery()->getResult();
     }
 
     public function findByStructureId($id)
     {
         /** @var EcoleDoctorale $ecole */
         $qb = $this->createQueryBuilder("ed")
-            ->addSelect("s")
-            ->leftJoin("ed.structure", "s")
-            ->andWhere("s.id = :id")
+            ->andWhere("structure.id = :id")
             ->setParameter("id", $id);
         try {
             $ecole = $qb->getQuery()->getOneOrNullResult();
@@ -56,10 +64,9 @@ class EcoleDoctoraleRepository extends DefaultEntityRepository
      * @param string $code Code national unique de l'ED, ex: '591'
      * @return EcoleDoctorale|null
      */
-    public function findOneByCodeStructure($code)
+    public function findOneByCodeStructure(string $code): ?EcoleDoctorale
     {
-        $qb = $this->getEntityManager()->getRepository(EcoleDoctorale::class)->createQueryBuilder("e")
-            ->join("e.structure","structure")
+        $qb = $this->createQueryBuilder("e")
             ->andWhere("structure.code = :code")
             ->setParameter("code", $code);
 
@@ -80,16 +87,13 @@ class EcoleDoctoraleRepository extends DefaultEntityRepository
     public function findByText(?string $term) : array
     {
         $qb = $this->createQueryBuilder("e")
-            ->addSelect("s")->leftJoin("e.structure", "s")
-            ->andWhere('lower(s.libelle) like :term or lower(s.sigle) like :term')
+            ->andWhere('lower(structure.libelle) like :term or lower(structure.sigle) like :term')
             ->setParameter('term', '%'.strtolower($term).'%')
             ->andWhere('e.histoDestruction is null')
-            ->andWhere('s.estFermee = :false')
+            ->andWhere('structure.estFermee = :false')
             ->setParameter('false', false)
-            ->leftJoin('s.structureSubstituante', 'substitutionTo')
-            ->andWhere('substitutionTo IS NULL')
-        ;
-        $result = $qb->getQuery()->getResult();
-        return $result;
+            ->andWhere('structureSubstituante IS NULL');
+
+        return $qb->getQuery()->getResult();
     }
 }

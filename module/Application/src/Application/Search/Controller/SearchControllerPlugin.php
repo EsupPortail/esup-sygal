@@ -34,7 +34,10 @@ class SearchControllerPlugin extends AbstractPlugin
      */
     public function search(?callable $queryBuilderModifierCallback = null)
     {
-        $queryParams = array_filter($this->getController()->params()->fromQuery());
+        $queryParams = array_filter(
+            $this->getController()->params()->fromQuery(),
+            fn($value) => $value || $value === '0'
+        );
 
         $searchService = $this->getSearchService();
         $searchService->init();

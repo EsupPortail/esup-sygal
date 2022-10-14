@@ -30,18 +30,18 @@ class DefaultQueryBuilder extends QueryBuilder
     }
 
     /**
-     * @return static
+     * @return self
      */
-    public function initWithDefault()
+    public function initWithDefault(): self
     {
         return $this;
     }
 
     /**
      * @param AndWhereExpr $expr
-     * @return static
+     * @return self
      */
-    protected function applyExpr(AndWhereExpr $expr)
+    protected function applyExpr(AndWhereExpr $expr): self
     {
         $expr->applyToQueryBuilder($this);
 
@@ -49,9 +49,9 @@ class DefaultQueryBuilder extends QueryBuilder
     }
 
     /**
-     * @return static
+     * @return self
      */
-    public function andWhereNotHistorise()
+    public function andWhereNotHistorise(): self
     {
         return $this->applyExpr(new AndWhereHistorise($this->rootAlias, false));
     }

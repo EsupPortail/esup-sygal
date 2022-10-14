@@ -1,6 +1,7 @@
 <?php
 
 use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\TypeStructure;
 use Structure\Provider\Privilege\StructurePrivileges;
 use Structure\Provider\Privilege\SubstitutionPrivileges;
 
@@ -31,15 +32,22 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
-<?php if ($canModifier): ?>
+<p>
+    <?php if ($canModifier): ?>
+        <a href="<?php echo $this->url('etablissement/ajouter', [], [], true) ?>"
+           class="btn btn-primary"
+           title="<?php echo $this->translate("Créer un nouvel établissement");?>">
+            <span class="icon icon-plus"></span>
+            <?php echo $this->translate("Ajouter un nouvel établissement");?>
+        </a>
+    <?php endif ?>
 
-    <a href="<?php echo $this->url('etablissement/ajouter', [], [], true) ?>"
-       class="btn btn-primary"
-       title="<?php echo $this->translate("Créer un nouvel établissement");?>">
-        <span class="icon icon-plus"></span>
-        <?php echo $this->translate("Ajouter un nouvel établissement");?>
+    <a href="<?php echo $this->url('substitution-index-structure', ['type' => TypeStructure::CODE_ETABLISSEMENT], [], true) ?>"
+       class="btn btn-outline-secondary float-end"
+       title="<?php echo $this->translate("Accéder à la page des substitutions d'établissements");?>">
+        <?php echo $this->translate("Substitutions d'établissements...");?>
     </a>
-<?php endif ?>
+</p>
 
 <h2>
     Établissements participant à <?php echo $appName ?>

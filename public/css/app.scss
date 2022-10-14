@@ -1191,7 +1191,11 @@ p.avis-complem {
 
 
 
-.icon.icon-danger:before { // todo: à déplacer dans unicaen-app
+// todo: à déplacer dans unicaen-app
+.icon::before {
+  vertical-align: text-bottom;
+}
+.icon.icon-danger:before {
   content: "\f071";
 }
 

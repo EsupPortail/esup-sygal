@@ -3,7 +3,9 @@ Journal des modifications
 
 5.2.3
 -----
-- Module Formation : mise en commentaire provisoire des paginators problématiques.
+- Substitution de structures : réalisation des jointures dans les requêtes Doctrine et suppression dans les vues SRC_*.
+- Module StepStar : envoi des thèses vers Step/Star.
+- [FIX] Module Formation : mise en commentaire provisoire des paginators problématiques.
 
 5.2.2
 -----

@@ -18,7 +18,7 @@ class TheseQueryBuilder extends DefaultQueryBuilder
     /**
      * @return $this
      */
-    public function initWithDefault()
+    public function initWithDefault(): self
     {
         $this
             ->addSelect("th")
@@ -70,52 +70,6 @@ class TheseQueryBuilder extends DefaultQueryBuilder
     public function joinDoctorant($alias = 'd')
     {
         $this->join("$this->rootAlias.doctorant", $alias);
-
-        return $this;
-    }
-
-    /**
-     * @param string $alias
-     * @return $this
-     */
-    public function leftJoinEcoleDoctorale($alias = 'ed')
-    {
-        $this
-            ->leftJoin("$this->rootAlias.ecoleDoctorale", $alias)
-            ->leftJoin("$alias.structure", uniqid("struct"));
-
-        return $this;
-    }
-
-    /**
-     * @param string $alias
-     * @return $this
-     */
-    public function leftJoinUniteRecherche($alias = 'ur')
-    {
-        $this
-            ->leftJoin("$this->rootAlias.uniteRecherche", $alias)
-            ->leftJoin("$alias.structure", uniqid("struct"));
-
-        return $this;
-    }
-
-    /**
-     * @param string      $alias
-     * @param string|null $codeRole
-     * @return $this
-     */
-    public function leftJoinActeur($alias = 'a', $codeRole = null)
-    {
-        if ($codeRole !== null) {
-            $this
-                ->leftJoin("$this->rootAlias.acteurs", $alias)
-                ->leftJoin("$alias.role", uniqid("role"), Join::WITH, "r.code = :codeRole")
-                ->setParameter("codeRole", $codeRole);
-        } else {
-            $this
-                ->leftJoin("$this->rootAlias.acteurs", $alias);
-        }
 
         return $this;
     }

@@ -115,7 +115,7 @@ class RapportActiviteSearchService extends SearchService
         // 'rapportAvis->avis->avisType'.
 
         $qb = $this->rapportActiviteService->getRepository()->createQueryBuilder('ra')
-            ->addSelect('tr, these, f, d, i, rav, raa, a, at')
+            ->addSelect('tr, these, etab, f, d, i, ed, ur, rav, raa, a, at')
             ->join('ra.typeRapport', 'tr')
             ->join('ra.these', 'these')
             ->join("these.etablissement", 'etab')
@@ -401,7 +401,11 @@ class RapportActiviteSearchService extends SearchService
         $sorter->setQueryBuilderApplier(
             function (SearchSorter $sorter, QueryBuilder $qb) {
                 $qb
+                    ->addSelect('s_sort')
                     ->join('etab.structure', 's_sort')
+                    ->addSelect('structureSubstituante_sort')
+                    ->leftJoin('s_sort.structureSubstituante', 'structureSubstituante_sort')
+                    ->addOrderBy('structureSubstituante_sort.code', $sorter->getDirection())
                     ->addOrderBy('s_sort.code', $sorter->getDirection());
             }
         );
@@ -415,7 +419,11 @@ class RapportActiviteSearchService extends SearchService
         $sorter->setQueryBuilderApplier(
             function (SearchSorter $sorter, QueryBuilder $qb) {
                 $qb
+                    ->addSelect('ed_s_sort')
                     ->leftJoin("ed.structure", 'ed_s_sort')
+                    ->addSelect('structureSubstituante_sort')
+                    ->leftJoin('ed_s_sort.structureSubstituante', 'structureSubstituante_sort')
+                    ->addOrderBy('structureSubstituante_sort.code', $sorter->getDirection())
                     ->addOrderBy('ed_s_sort.code', $sorter->getDirection());
             }
         );
@@ -430,7 +438,11 @@ class RapportActiviteSearchService extends SearchService
             function (SearchSorter $sorter, QueryBuilder $qb) {
                 $direction = $sorter->getDirection();
                 $qb
+                    ->addSelect('ur_s_sort')
                     ->leftJoin("ur.structure", 'ur_s_sort')
+                    ->addSelect('structureSubstituante_sort')
+                    ->leftJoin('ur_s_sort.structureSubstituante', 'structureSubstituante_sort')
+                    ->addOrderBy('structureSubstituante_sort.code', $sorter->getDirection())
                     ->addOrderBy('ur_s_sort.code', $direction);
             }
         );

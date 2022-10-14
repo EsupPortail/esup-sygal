@@ -141,13 +141,11 @@ class StructureDocumentService
      */
     public function createQueryBuilder() : QueryBuilder
     {
-        $qb = $this->getEntityManager()->getRepository(StructureDocument::class)->createQueryBuilder('document')
+        return $this->getEntityManager()->getRepository(StructureDocument::class)->createQueryBuilder('document')
             ->addSelect('nature')->join('document.nature', 'nature')
             ->addSelect('structure')->join('document.structure', 'structure')
             ->addSelect('etablissement')->leftjoin('document.etablissement', 'etablissement')
-            ->addSelect('fichier')->leftJoin('document.fichier', 'fichier')
-        ;
-        return $qb;
+            ->addSelect('fichier')->leftJoin('document.fichier', 'fichier');
     }
 
     /**
@@ -157,29 +155,29 @@ class StructureDocumentService
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('document.histoDestruction IS NULL');
-        $result = $qb->getQuery()->getResult();
-        return $result;
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
      * @param Structure $structure
      * @return StructureDocument[]]
      */
-    public function getStructuresDocumentsByStructure(Structure  $structure) : array
+    public function getStructuresDocumentsByStructure(Structure $structure) : array
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('document.histoDestruction IS NULL')
             ->andWhere('document.structure = :structure')
             ->setParameter('structure', $structure);
-        $result = $qb->getQuery()->getResult();
-        return $result;
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
-     * @param int|null $id
+     * @param int $id
      * @return StructureDocument|null
      */
-    public function getStructureDocument(?int $id) : ?StructureDocument
+    public function getStructureDocument(int $id) : ?StructureDocument
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('document.id = :id')
@@ -189,6 +187,7 @@ class StructureDocumentService
         } catch (NonUniqueResultException $e) {
             throw new RuntimeException("Plusieurs StructureDocument partagent le même id [".$id."]");
         }
+
         return $result;
     }
 
@@ -200,8 +199,8 @@ class StructureDocumentService
     public function getRequestedStructureDocument(AbstractActionController $controller, string $param = 'document') : ?StructureDocument
     {
         $id = $controller->params()->fromRoute($param);
-        $result = $this->getStructureDocument($id);
-        return $result;
+
+        return $this->getStructureDocument($id);
     }
 
     /** USAGE *********************************************************************************************************/

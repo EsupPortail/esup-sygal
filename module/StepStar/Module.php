@@ -7,9 +7,13 @@ use Laminas\Console\Adapter\AdapterInterface;
 use Laminas\ModuleManager\Feature\ConsoleBannerProviderInterface;
 use Laminas\ModuleManager\Feature\ConsoleUsageProviderInterface;
 use Laminas\Stdlib\Glob;
+use StepStar\Controller\Envoi\EnvoiConsoleController;
 
 class Module implements ConsoleBannerProviderInterface, ConsoleUsageProviderInterface
 {
+    // Nom du module
+    const NAME = __NAMESPACE__;
+
     public function getConfig()
     {
         $paths = array_merge(
@@ -46,25 +50,26 @@ class Module implements ConsoleBannerProviderInterface, ConsoleUsageProviderInte
     {
         return [
             /**
-             * @see ConsoleController::genererXmlAction()
+             * @see \StepStar\Controller\Oai\OaiConsoleController::generateConfigFileFromSiseOaiSetXmlFileAction()
              */
-            'step-star generer-xml --these=<id> --to=<to>' => "Génère le fichier XML intermédiaire d'une thèse.",
-            [ '<id>', "Id de la thèse concernée.", "Obligatoire"],
-            [ '<to>', "Chemin du fichier XML à produire.", "Obligatoire"],
+            'step-star:oai:generateConfigFileFromSiseOaiSetXmlFile' =>
+                "Génère (remplace) le fichier config/others/sise_oai_set.config.php à partir du fichier data/oai/siseOaiSet.xml.",
 
             /**
-             * @see ConsoleController::genererTefAction()
+             * @see \StepStar\Controller\Oai\OaiConsoleController::generateConfigFileFromOaiSetsXmlFileAction()
              */
-            'step-star generer-tef --from=<from> [--dir=<dir>]' => "Génère un fichier TEF en transformant un fichier XML intermédiaire.",
-            [ '<from>', "Chemin complet du fichier XML intermédiaire à transformer contenant les thèses", "Obligatoire"],
-            [ '<dir>', "Répertoire destination.", "Facultatif"],
+            'step-star:oai:generateConfigFileFromOaiSetsXmlFile' =>
+                "Génère (remplace) le fichier config/others/oai_sets.config.php à partir du fichier data/oai/oaiSets.xml.",
 
             /**
-             * @see ConsoleController::deposerAction()
+             * @see EnvoiConsoleController::envoyerThesesAction()
              */
-            'step-star deposer --tef=<tef> [--zip=<zip>]' => "Exporte vers STAR un fichier TEF et éventuellement un fichier ZIP.",
-            [ '<tef>', "Chemin complet du fichier TEF", "Obligatoire"],
-            [ '<zip>', "Chemin complet du fichier ZIP éventuel.", "Facultatif"],
+            STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES . ' [--these=<id>] [--etat=<etat>] [--etablissement=<etab>] [--force]' =>
+                "Pour chaque thèse spécifiée, génère le fichier XML intermédiaire puis le fichier TEF puis envoie ce dernier vers STEP/STAR.",
+            [ '<id>', "Ids des thèses concernées, séparées par une virgule.", "Facultatif"],
+            [ '<etat>', "États des thèses, séparés par une virgule, ex : 'E,S'.", "Facultatif"],
+            [ '<etab>', "Codes des établissements d'inscription, séparés par une virgule, ex : 'UCN,URN'.", "Facultatif"],
+            [ '--force', "Réalise l'envoi même si le contenu du fichier TEF est le même qu'au dernier envoi.", "Facultatif"],
         ];
     }
 }

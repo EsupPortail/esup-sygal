@@ -22,7 +22,7 @@ class EtablissementService extends BaseService
     /**
      * @return EtablissementRepository
      */
-    public function getRepository()
+    public function getRepository(): EtablissementRepository
     {
         /** @var EtablissementRepository $repo */
         $repo = $this->entityManager->getRepository(Etablissement::class);
@@ -35,11 +35,9 @@ class EtablissementService extends BaseService
      *
      * @return Etablissement|null
      */
-    public function fetchEtablissementComue()
+    public function fetchEtablissementComue(): ?Etablissement
     {
         $qb = $this->getRepository()->createQueryBuilder('e')
-            ->addSelect('s')
-            ->join('e.structure', 's')
             ->where('e.estComue = true');
 
         try {

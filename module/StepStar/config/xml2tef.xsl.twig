@@ -11,237 +11,600 @@ que ces méta sont saisies dans les formulaires STAR. C'est au choix.
 
  -->
 <xsl:stylesheet
- xmlns:tef="http://www.abes.fr/abes/documents/tef"
- xmlns:local="http://www.local.univ.fr/theses"
- xmlns:dc="http://purl.org/dc/elements/1.1/"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xmlns:dcterms="http://purl.org/dc/terms/"
- xmlns:mets="http://www.loc.gov/METS/"
- xmlns:metsRights="http://cosimo.stanford.edu/sdr/metsrights/"
- xmlns:xlink="http://www.w3.org/1999/xlink"
- xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
- version="2.0">
- <xsl:output method="xml" indent="yes" encoding="UTF-8"/>
- <!-- Paramètres fixés -->
- <xsl:param name="ETABLISSEMENT">{{ etablissement }}</xsl:param>
- <xsl:param name="autoriteSudoc_etabSoutenance">{{ autoriteSudoc_etabSoutenance }}</xsl:param>
- <!--<xsl:param name="LIBELLE_ETAB_SOUT"></xsl:param>-->
- <!-- Paramètres par défaut, éventuellement à modifier dans l'interface STAR -->
- <xsl:param name="langue_titre_defaut">fr</xsl:param>
- <xsl:param name="these_sur_travaux">non</xsl:param>
- <xsl:param name="langue_de_these">fr</xsl:param>
+        xmlns:tef="http://www.abes.fr/abes/documents/tef"
+        xmlns:suj="http://www.theses.fr/namespace/sujets"
+        xmlns:dc="http://purl.org/dc/elements/1.1/"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:dcterms="http://purl.org/dc/terms/"
+        xmlns:mets="http://www.loc.gov/METS/"
+        xmlns:metsRights="http://cosimo.stanford.edu/sdr/metsrights/"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        version="2.0">
+    <xsl:output method="xml" indent="yes" encoding="UTF-8"/>
+    <!-- Paramètres fixés -->
+    <xsl:param name="ETABLISSEMENT">{{ etablissementStepStar }}</xsl:param>
+    <xsl:param name="autoriteSudoc_etabSoutenance">{{ autoriteSudoc_etabSoutenance }}</xsl:param>
+    <!--<xsl:param name="LIBELLE_ETAB_SOUT"></xsl:param>-->
+    <!-- Paramètres par défaut, éventuellement à modifier dans l'interface STAR -->
+    <xsl:param name="langue_titre_defaut">fr</xsl:param>
+    <xsl:param name="langue_de_these">fr</xsl:param>
 
- <xsl:template match="/">
-  <xsl:apply-templates select="//{{ thesesRootTag }}" />
- </xsl:template>
+    <xsl:template match="/">
+        <xsl:apply-templates select="//{{ thesesRootTag }}"/>
+    </xsl:template>
 
-<!-- Thèse -->
- <xsl:template match="{{ theseTag }}">
-  <!-- -->
-  <xsl:result-document href="{$ETABLISSEMENT}_{CODE_ETUDIANT}.xml">
-  <!-- -->
-   <mets:mets
-    xsi:schemaLocation="http://www.loc.gov/METS/ http://www.abes.fr/abes/documents/tef/recommandation/tef_schemas.xsd"
-    ID="{$ETABLISSEMENT}_{CODE_ETUDIANT}"
-    OBJID="{CODE_ETUDIANT}"    >
-   <!-- Création du bloc de md desciptives de la thèse -->
-   <mets:dmdSec ID="{generate-id()}_desc_these">
-    <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_desc_these">
-     <mets:xmlData>
-      <tef:thesisRecord>
-       <dc:title xml:lang="{$langue_titre_defaut}">
-        <xsl:value-of select="TITRE"/>
-       </dc:title>
-       <dc:type xsi:type="dcterms:DCMIType">Text</dc:type>
-       <dc:type>Electronic Thesis or Dissertation</dc:type>
-       <dc:language xsi:type="dcterms:RFC3066">
-        <xsl:value-of select="$langue_de_these"></xsl:value-of>
-       </dc:language>
-      </tef:thesisRecord>
-     </mets:xmlData>
-    </mets:mdWrap>
-   </mets:dmdSec>
- <!-- Pas de md descriptives de la version -->
- <!-- Pas de md descriptives de l'édition -->
- <!-- Création du bloc de md administratives de la thèse -->
-   <mets:amdSec>
-    <mets:techMD ID="{generate-id()}_admin">
-     <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_admin_these">
-      <mets:xmlData>
-       <tef:thesisAdmin>
-        <!-- tef:auteur -->
-        <tef:auteur>
-         <xsl:choose>
-          <xsl:when test="NOM_ETUDIANT_USUEL != ''">
-           <tef:nom>
-            <xsl:value-of select="NOM_ETUDIANT_USUEL"/>
-           </tef:nom>
-           <tef:prenom>
-            <xsl:value-of select="PRENOM_ETUDIANT"/>
-           </tef:prenom>
-           <tef:nomDeNaissance>
-            <xsl:value-of select="NOM_ETUDIANT"/>
-           </tef:nomDeNaissance>
-          </xsl:when>
-          <xsl:otherwise>
-           <tef:nom>
-            <xsl:value-of select="NOM_ETUDIANT"/>
-           </tef:nom>
-           <tef:prenom>
-            <xsl:value-of select="PRENOM_ETUDIANT"/>
-           </tef:prenom>
-          </xsl:otherwise>
-         </xsl:choose>
-         <tef:dateNaissance>
-          <xsl:call-template name="reformater_date">
-           <xsl:with-param name="date" select="DATE_NAISSANCE_ETUDIANT" />
-          </xsl:call-template>
-         </tef:dateNaissance>
-         <tef:autoriteExterne autoriteSource="CODE_ETUDIANT">
-            <xsl:value-of select="CODE_ETUDIANT"/>
-         </tef:autoriteExterne>
-        </tef:auteur>
-        <!-- Soutenance -->
-        <dcterms:dateAccepted xsi:type="dcterms:W3CDTF">
-         <xsl:call-template name="reformater_date">
-          <xsl:with-param name="date" select="DATE_SOUTENANCE"/>
-         </xsl:call-template>
-        </dcterms:dateAccepted>
-        <tef:thesis.degree>
-         <tef:thesis.degree.discipline xml:lang="fr">
-          <xsl:value-of select="DISCIPLINE"/>
-         </tef:thesis.degree.discipline>
-         <tef:thesis.degree.grantor>
-          <tef:nom>
-           <xsl:value-of select="LIBELLE_ETAB_SOUT"/>
-          </tef:nom>
-          <tef:autoriteExterne autoriteSource="RNE">
-           <xsl:value-of select="CODE_ETAB_SOUT" />
-          </tef:autoriteExterne>
-          <tef:autoriteExterne autoriteSource="Sudoc">
-           <xsl:value-of select="$autoriteSudoc_etabSoutenance"/>
-          </tef:autoriteExterne>
-         </tef:thesis.degree.grantor>
-         <tef:thesis.degree.level>Doctorat</tef:thesis.degree.level>
-        </tef:thesis.degree>
-        <tef:theseSurTravaux>
-         <xsl:value-of select="$these_sur_travaux"></xsl:value-of>
-        </tef:theseSurTravaux>
-        <tef:avisJury>oui</tef:avisJury>
-        <!-- Directeur -->
-        <tef:directeurThese>
-         <tef:nom>
-          <xsl:value-of select="NOM_DIRECTEUR"/>
-         </tef:nom>
-          <tef:prenom>
-          <xsl:value-of select="PRENOM_DIRECTEUR"/>
-          </tef:prenom>
-        </tef:directeurThese>
-        <!-- Ecoles doctorales -->
-        <xsl:for-each select="*[contains(name(), 'LIBELLE_ECOLE_DOCTORALE')]">
-         <tef:ecoleDoctorale>
-          <tef:nom>
-           <xsl:value-of select="."/>
-          </tef:nom>
-          <xsl:if test="preceding-sibling::*[contains(name(), 'CODE_ECOLE_DOCTORALE')]">
-          <tef:autoriteExterne autoriteSource="Annuaire des formations doctorales et des unités de recherche">
-           <xsl:value-of select="preceding-sibling::*[contains(name(), 'CODE_ECOLE_DOCTORALE')]"/>
-          </tef:autoriteExterne>
-          </xsl:if>
-         </tef:ecoleDoctorale>
-        </xsl:for-each>
-        <!-- Equipes de recherche -->
-        <xsl:for-each select="*[contains(name(), 'LIBELLE_EQUIPE_RECHERCHE')]">
-         <tef:partenaireRecherche type="equipeRecherche">
-          <tef:nom>
-           <xsl:value-of select="."/>
-          </tef:nom>
-          <xsl:if test="preceding-sibling::*[contains(name(), 'CODE_EQUIPE_RECHERCHE')]">
-           <tef:autoriteExterne autoriteSource=" Annuaire des formations doctorales et des unités de recherche">
-            <xsl:value-of select="preceding-sibling::*[contains(name(), 'CODE_EQUIPE_RECHERCHE')]"/>
-          </tef:autoriteExterne>
-           </xsl:if>
-        </tef:partenaireRecherche>
-        </xsl:for-each>
-       </tef:thesisAdmin>
-      </mets:xmlData>
-     </mets:mdWrap>
-    </mets:techMD>
- <!--  Ce bloc explicite les actions qu'autorise le chef d'établissement. -->
-    <mets:rightsMD ID="{generate-id()}_etab">
-     <mets:mdWrap
-      MDTYPE="OTHER"
-      OTHERMDTYPE="tef_droits_etablissement_these"
-      >
-      <mets:xmlData>
-       <metsRights:RightsDeclarationMD>
-          <metsRights:Context CONTEXTCLASS="GENERAL PUBLIC">
-           <metsRights:Permissions
-            COPY="true" DISCOVER="true"
-            DISPLAY="true" DUPLICATE="true" PRINT="true"
-            MODIFY="false"  />
-           <xsl:if test="DATE_FIN_CONF/text()">
-            <metsRights:Constraints CONSTRAINTTYPE="TIME">
-            <metsRights:ConstraintDescription>
-             <xsl:text>confidentialité </xsl:text>
-             <xsl:call-template name="reformater_date">
-              <xsl:with-param name="date" select="DATE_SOUT"/>
-             </xsl:call-template>
-             <xsl:text> </xsl:text>
-             <xsl:call-template name="reformater_date">
-              <xsl:with-param name="date" select="DATE_FIN_CONF"/>
-             </xsl:call-template>
-            </metsRights:ConstraintDescription>
-            </metsRights:Constraints>
-           </xsl:if>
-          </metsRights:Context>
-       </metsRights:RightsDeclarationMD>
-      </mets:xmlData>
-     </mets:mdWrap>
-    </mets:rightsMD>
-   </mets:amdSec>
-   <!--
-  Génération de la carte de structure METS.
+    <!-- Thèse -->
+    <xsl:template match="{{ theseTag }}">
+        <!-- -->
+        <xsl:result-document href="{{ resultDocumentHref }}">
+            <!-- -->
+            <mets:mets
+                    xsi:schemaLocation="http://www.loc.gov/METS/ http://www.abes.fr/abes/documents/stef/stef_schemas.xsd"
+                    ID="{$ETABLISSEMENT}_{THESE_ID}_{CODE_ETAB_SOUT}_{CODE_ETUDIANT}"
+                    OBJID="{THESE_ID}_{CODE_ETAB_SOUT}_{CODE_ETUDIANT}">
+                <!-- Création du bloc de md desciptives de la thèse -->
+                <mets:dmdSec ID="{generate-id()}_desc_these">
+                    <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_desc_these">
+                        <mets:xmlData>
+                            <tef:thesisRecord>
 
- Il existe une THESE, une VERSION_COMPLETE et une EDITION.
- Chacune de ces entités TEF est associée à un URI. Dans ce scénario, chaque URI est généré en partant de l'identifiant local de la thèse.
- L'identifiant local est inclus dans un URI géré par l'abes au sein du scheme URI info: (http://info-uri.info/registry/docs/misc/faq.html).
- Ainsi, l'identifiant local d'une thèse devient un identifiant global, unique à l'échelle du Web, un URI.
- Ce n'est qu'un scénario possible, à titre d'illustration !! La recommandation TEF ne se prononce pas sur la manière d'assigner un URI aux entités TEF.
- Ce choix relève de l'implémentation de la norme. Dans l'absolu, il serait possible d'utiliser l'identifiant pérenne (dc:identifier xsi:type="tef:nationalThesisPID")
- que l'abes assignera à chaque thèse, mais cet identifiant pérenne s'appuie sur le numéro national de thèse qui est connu tardivement, après la soutenance.
- Or, on peut vouloir échanger du TEF avant la soutenance (du TEF incomplet, certes...).
+                                <dc:title>
+                                    <xsl:attribute name="xml:lang">
+                                        <xsl:value-of select="TITRE_LANGUE"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="TITRE"/>
+                                </dc:title>
+                                <xsl:if test="TITRE_TRADUIT != ''">
+                                    <dcterms:alternative>
+                                        <xsl:attribute name="xml:lang">
+                                            <xsl:value-of select="TITRE_TRADUIT_LANGUE"/>
+                                        </xsl:attribute>
+                                        <xsl:value-of select="TITRE_TRADUIT"/>
+                                    </dcterms:alternative>
+                                </xsl:if>
 
- info:fides/STAR/{$ETABLISSEMENT}/{$id} est l'URI de la thèse
- info:fides/STAR/{$ETABLISSEMENT}/{$id}/vc est l'URI de la la version complète (vc)
- info:fides/STAR/{$ETABLISSEMENT}/{$id}/vc/ed1 est l'URI d'une édition (ed1)
+                                <xsl:for-each select="*[contains(name(), 'MOTS_CLES_FRANCAIS')]">
+                                    <dc:subject xml:lang="fr">
+                                        <xsl:value-of select="."/>
+                                    </dc:subject>
+                                </xsl:for-each>
+                                <xsl:for-each select="*[contains(name(), 'MOTS_CLES_ANGLAIS')]">
+                                    <dc:subject xml:lang="en">
+                                        <xsl:value-of select="."/>
+                                    </dc:subject>
+                                </xsl:for-each>
 
- info: est le schème URI (au même titre que urn, http...).
- fides est, dans cet exemple fictif, l'espace de noms de l'abes au sein de info.
- STAR est un sous-ensemble de l'espace fides (utilisable pour les échanges avec STAR).
- ISAL est le sous-ensemble de info:fides/STAR réservé à l'INSA de Lyon.
- {$id} contiendra l'id local de la thèse (valeur de l'attribut id, à la racine de la notice DC de départ)
--->
-   <mets:structMap TYPE="logical">
-    <mets:div
-     TYPE="THESE"
-     ADMID="{generate-id()}_admin {generate-id()}_etab"
-     DMDID="{generate-id()}_desc_these"
-     CONTENTIDS="info:fides/STAR/{$ETABLISSEMENT}/{CODE_ETUDIANT}">
-    </mets:div>
-   </mets:structMap>
-  </mets:mets>
-   <!-- -->
-  </xsl:result-document>
-  <!-- -->
- </xsl:template>
- <!-- Manipulation des dates -->
-  <xsl:template name="reformater_date">
-  <xsl:param name="date" />
-  <xsl:value-of select="substring($date, 7, 4)"/>
-  <xsl:text>-</xsl:text>
-  <xsl:value-of select="substring($date, 4, 2)"/>
-  <xsl:text>-</xsl:text>
-  <xsl:value-of select="substring($date, 1, 2)"/>
- </xsl:template>
+                                <tef:sujetRameau xml:lang="fr">
+                                    <!--<tef:vedetteRameauNomCommun>-->
+                                    <!--    <tef:elementdEntree autoriteExterne="050573063" autoriteSource="Sudoc">Droit du travail</tef:elementdEntree>-->
+                                    <!--    <tef:subdivision autoriteExterne="02847094X" autoriteSource="Sudoc" type="subdivisionDeSujet">Jurisprudence</tef:subdivision>-->
+                                    <!--</tef:vedetteRameauNomCommun>-->
+                                    <xsl:for-each select="*[contains(name(), 'MOTS_CLES_RAMEAU')]">
+                                        <tef:vedetteRameauNomCommun>
+                                            <tef:elementdEntree autoriteSource="Sudoc">
+                                                <xsl:value-of select="."/>
+                                            </tef:elementdEntree>
+                                        </tef:vedetteRameauNomCommun>
+                                    </xsl:for-each>
+                                </tef:sujetRameau>
+
+                                <xsl:if test="RESUME_FRANCAIS != ''">
+                                    <dcterms:abstract xml:lang="fr">
+                                        <xsl:value-of select="RESUME_FRANCAIS"/>
+                                    </dcterms:abstract>
+                                </xsl:if>
+                                <xsl:if test="RESUME_ANGLAIS != ''">
+                                    <dcterms:abstract xml:lang="en">
+                                        <xsl:value-of select="RESUME_ANGLAIS"/>
+                                    </dcterms:abstract>
+                                </xsl:if>
+
+                                <dc:type xsi:type="dcterms:DCMIType">Text</dc:type>
+                                <dc:type>Electronic Thesis or Dissertation</dc:type>
+                                <dc:language xsi:type="dcterms:RFC3066">
+                                    <xsl:value-of select="TITRE_LANGUE"/>
+                                </dc:language>
+                            </tef:thesisRecord>
+                        </mets:xmlData>
+                    </mets:mdWrap>
+                </mets:dmdSec>
+                <!-- Pas de md descriptives de la version -->
+                <!-- Pas de md descriptives de l'édition -->
+                <!-- Création du bloc de md administratives de la thèse -->
+                <mets:amdSec>
+                    <mets:techMD ID="{generate-id()}_admin">
+                        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_admin_these">
+                            <mets:xmlData>
+                                <tef:thesisAdmin>
+                                    <!-- Auteur -->
+                                    <tef:auteur>
+                                        <xsl:choose>
+                                            <xsl:when test="NOM_ETUDIANT_USUEL != ''">
+                                                <tef:nom>
+                                                    <xsl:value-of select="NOM_ETUDIANT_USUEL"/>
+                                                </tef:nom>
+                                                <tef:prenom>
+                                                    <xsl:value-of select="PRENOM_ETUDIANT"/>
+                                                </tef:prenom>
+                                                <tef:nomDeNaissance>
+                                                    <xsl:value-of select="NOM_ETUDIANT"/>
+                                                </tef:nomDeNaissance>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <tef:nom>
+                                                    <xsl:value-of select="NOM_ETUDIANT"/>
+                                                </tef:nom>
+                                                <tef:prenom>
+                                                    <xsl:value-of select="PRENOM_ETUDIANT"/>
+                                                </tef:prenom>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                        <tef:dateNaissance>
+                                            <xsl:value-of select="DATE_NAISSANCE_ETUDIANT"/>
+                                        </tef:dateNaissance>
+                                        <xsl:if test="NATIONALITE_DOCTORANT != ''">
+                                            <tef:nationalite scheme="ISO-3166-1">
+                                                <xsl:value-of select="NATIONALITE_DOCTORANT"/>
+                                            </tef:nationalite>
+                                        </xsl:if>
+
+                                        <xsl:if test="ADRESSE_DOCTORANT != ''">
+                                            <suj:adresseDoctorant>
+                                                <xsl:value-of select="ADRESSE_DOCTORANT"/>
+                                            </suj:adresseDoctorant>
+                                        </xsl:if>
+                                        <xsl:if test="CODE_POSTAL_DOCTORANT != ''">
+                                            <suj:codePostalDoctorant>
+                                                <xsl:value-of select="CODE_POSTAL_DOCTORANT"/>
+                                            </suj:codePostalDoctorant>
+                                        </xsl:if>
+                                        <xsl:if test="VILLE_DOCTORANT != ''">
+                                            <suj:villeAdresseDoctorant>
+                                                <xsl:value-of select="VILLE_DOCTORANT"/>
+                                            </suj:villeAdresseDoctorant>
+                                        </xsl:if>
+                                        <xsl:if test="PAYS_DOCTORANT != ''">
+                                            <suj:paysAdresseDoctorant>
+                                                <xsl:value-of select="PAYS_DOCTORANT"/>
+                                            </suj:paysAdresseDoctorant>
+                                        </xsl:if>
+                                        <xsl:if test="TELEPHONE_DOCTORANT != ''">
+                                            <suj:telephoneDoctorant>
+                                                <xsl:value-of select="TELEPHONE_DOCTORANT"/>
+                                            </suj:telephoneDoctorant>
+                                        </xsl:if>
+
+                                        <tef:autoriteExterne autoriteSource="CODE_ETUDIANT">
+                                            <xsl:value-of select="CODE_ETUDIANT"/>
+                                        </tef:autoriteExterne>
+
+                                        <xsl:if test="EMAIL_PERSO_ETUDIANT != ''">
+                                            <tef:autoriteExterne autoriteSource="mailPerso">
+                                                <xsl:value-of select="EMAIL_PERSO_ETUDIANT"/>
+                                            </tef:autoriteExterne>
+                                        </xsl:if>
+                                        <xsl:if test="EMAIL_INSTITUTION_ETUDIANT != ''">
+                                            <tef:autoriteExterne autoriteSource="mailPro">
+                                                <xsl:value-of select="EMAIL_INSTITUTION_ETUDIANT"/>
+                                            </tef:autoriteExterne>
+                                        </xsl:if>
+
+                                        <tef:autoriteExterne autoriteSource="INE">
+                                            <xsl:value-of select="CODE_INE"/>
+                                        </tef:autoriteExterne>
+                                    </tef:auteur>
+                                    <xsl:if test="NNT != ''">
+                                        <dc:identifier xsi:type="tef:NNT">
+                                            <xsl:value-of select="NNT"/>
+                                        </dc:identifier>
+                                    </xsl:if>
+
+                                    <xsl:if test="DATE_SOUTENANCE != ''">
+                                        <dcterms:dateAccepted xsi:type="dcterms:W3CDTF">
+                                            <xsl:value-of select="DATE_SOUTENANCE"/>
+                                        </dcterms:dateAccepted>
+                                    </xsl:if>
+
+                                    <tef:thesis.degree>
+                                        <xsl:if test="DISCIPLINE != ''">
+                                            <tef:thesis.degree.discipline xml:lang="fr">
+                                                <xsl:value-of select="DISCIPLINE"/>
+                                            </tef:thesis.degree.discipline>
+                                        </xsl:if>
+
+                                        <!-- Etablissement d'inscription -->
+                                        <tef:thesis.degree.grantor>
+                                            <tef:nom>
+                                                <xsl:value-of select="LIBELLE_ETAB_SOUT"/>
+                                            </tef:nom>
+                                            <tef:autoriteExterne autoriteSource="RNE">
+                                                <xsl:value-of select="CODE_ETAB_SOUT"/>
+                                            </tef:autoriteExterne>
+                                            <tef:autoriteExterne autoriteSource="Sudoc">
+                                                <xsl:value-of select="$autoriteSudoc_etabSoutenance"/>
+                                            </tef:autoriteExterne>
+                                        </tef:thesis.degree.grantor>
+
+                                        <!-- Etablissement de cotutelle -->
+                                        <xsl:if test="LIBELLE_ETAB_COTUTELLE != ''">
+                                            <tef:thesis.degree.grantor>
+                                                <tef:nom>
+                                                    <xsl:value-of select="LIBELLE_ETAB_COTUTELLE"/>
+                                                </tef:nom>
+                                                <tef:autoriteExterne autoriteSource="RNE">
+                                                    <xsl:value-of select="CODE_ETAB_COTUTELLE"/>
+                                                </tef:autoriteExterne>
+                                            </tef:thesis.degree.grantor>
+                                        </xsl:if>
+
+                                        <tef:thesis.degree.level>
+                                            <xsl:value-of select="MENTION_DIPLOME"/>
+                                        </tef:thesis.degree.level>
+
+                                        <xsl:if test="DATE_1ERE_INSCR_DOCTORAT != ''">
+                                            <suj:datePremiereInscriptionDoctorat>
+                                                <xsl:value-of select="DATE_1ERE_INSCR_DOCTORAT"/>
+                                            </suj:datePremiereInscriptionDoctorat>
+                                        </xsl:if>
+
+                                        <xsl:if test="DATE_1ERE_INSCR_ETAB != ''">
+                                            <suj:dateInscriptionEtab>
+                                                <xsl:value-of select="DATE_1ERE_INSCR_ETAB"/>
+                                            </suj:dateInscriptionEtab>
+                                        </xsl:if>
+
+                                        <xsl:if test="CONTRAT_DOCTORAL != ''">
+                                            <suj:contratDoctoral>
+                                                <xsl:value-of select="CONTRAT_DOCTORAL"/>
+                                            </suj:contratDoctoral>
+                                        </xsl:if>
+
+                                    </tef:thesis.degree>
+
+                                    <suj:vie>
+                                        <!-- Soutenance -->
+                                        <xsl:if test="DATE_PREVISION_SOUTENANCE != ''">
+                                            <suj:soutenancePrevue>
+                                                <suj:datePrevue>
+                                                    <xsl:value-of select="DATE_PREVISION_SOUTENANCE"/>
+                                                </suj:datePrevue>
+
+                                                <xsl:if test="LIEU_SOUTENANCE != ''">
+                                                    <suj:lieuPrevu>
+                                                        <xsl:value-of select="LIEU_SOUTENANCE"/>
+                                                    </suj:lieuPrevu>
+                                                </xsl:if>
+
+                                                <xsl:if test="HEURE_SOUTENANCE != ''">
+                                                    <suj:heurePrevue>
+                                                        <xsl:value-of select="HEURE_SOUTENANCE"/>
+                                                    </suj:heurePrevue>
+                                                </xsl:if>
+
+                                                <xsl:if test="SOUTENANCE_PUB_OU_HUIS != ''">
+                                                    <suj:publiciteSoutenance>
+                                                        <xsl:value-of select="SOUTENANCE_PUB_OU_HUIS"/>
+                                                    </suj:publiciteSoutenance>
+                                                </xsl:if>
+                                            </suj:soutenancePrevue>
+                                        </xsl:if>
+
+                                        <!-- Abandon -->
+                                        <xsl:if test="DATE_ABANDON != ''">
+                                            <suj:dateAbandon>
+                                                <xsl:value-of select="DATE_ABANDON"/>
+                                            </suj:dateAbandon>
+                                        </xsl:if>
+                                    </suj:vie>
+
+                                    <tef:theseSurTravaux>
+                                        <xsl:value-of select="THESE_SUR_TRAVAUX"></xsl:value-of>
+                                    </tef:theseSurTravaux>
+
+                                    <tef:avisJury>oui</tef:avisJury>
+
+                                    <!-- Directeur -->
+                                    <xsl:if test="NOM_DIRECTEUR != ''">
+                                        <tef:directeurThese>
+                                            <tef:nom>
+                                                <xsl:value-of select="NOM_DIRECTEUR"/>
+                                            </tef:nom>
+                                            <tef:prenom>
+                                                <xsl:value-of select="PRENOM_DIRECTEUR"/>
+                                            </tef:prenom>
+                                        </tef:directeurThese>
+                                    </xsl:if>
+
+                                    <!-- Co-directeur -->
+                                    <xsl:if test="NOM_CODIRECTEUR != ''">
+                                        <tef:directeurThese>
+                                            <tef:nom>
+                                                <xsl:value-of select="NOM_CODIRECTEUR"/>
+                                            </tef:nom>
+                                            <tef:prenom>
+                                                <xsl:value-of select="PRENOM_CODIRECTEUR"/>
+                                            </tef:prenom>
+                                        </tef:directeurThese>
+                                    </xsl:if>
+
+                                    <!-- Président du jury -->
+                                    <xsl:for-each select="PRESIDENT_JURY">
+                                        <tef:presidentJury>
+                                            <tef:nom>
+                                                <xsl:value-of select="attribute::nom"/>
+                                            </tef:nom>
+                                            <tef:prenom>
+                                                <xsl:value-of select="attribute::prenom"/>
+                                            </tef:prenom>
+                                            <xsl:if test="attribute::PPN != ''">
+                                                <tef:autoriteExterne autoriteSource="Sudoc">
+                                                    <xsl:value-of select="attribute::PPN"/>
+                                                </tef:autoriteExterne>
+                                            </xsl:if>
+                                        </tef:presidentJury>
+                                    </xsl:for-each>
+
+                                    <!-- Membre jury -->
+                                    <xsl:for-each select="MEMBRE_JURY">
+                                        <tef:membreJury>
+                                            <tef:nom>
+                                                <xsl:value-of select="attribute::nom"/>
+                                            </tef:nom>
+                                            <tef:prenom>
+                                                <xsl:value-of select="attribute::prenom"/>
+                                            </tef:prenom>
+                                            <xsl:if test="attribute::PPN != ''">
+                                                <tef:autoriteExterne autoriteSource="Sudoc">
+                                                    <xsl:value-of select="attribute::PPN"/>
+                                                </tef:autoriteExterne>
+                                            </xsl:if>
+                                        </tef:membreJury>
+                                    </xsl:for-each>
+
+                                    <!-- Rapporteurs -->
+                                    <xsl:for-each select="RAPPORTEUR_JURY">
+                                        <tef:rapporteur>
+                                            <tef:nom>
+                                                <xsl:value-of select="attribute::nom"/>
+                                            </tef:nom>
+                                            <tef:prenom>
+                                                <xsl:value-of select="attribute::prenom"/>
+                                            </tef:prenom>
+                                            <xsl:if test="attribute::PPN != ''">
+                                                <tef:autoriteExterne autoriteSource="Sudoc">
+                                                    <xsl:value-of select="attribute::PPN"/>
+                                                </tef:autoriteExterne>
+                                            </xsl:if>
+                                        </tef:rapporteur>
+                                    </xsl:for-each>
+
+                                    <!-- Ecole doctorale -->
+                                    <tef:ecoleDoctorale>
+                                        <tef:nom>
+                                            <xsl:value-of select="LIBELLE_ECOLE_DOCTORALE"/>
+                                        </tef:nom>
+                                        <tef:autoriteExterne autoriteSource="Annuaire des formations doctorales et des unités de recherche">
+                                            <xsl:value-of select="CODE_ECOLE_DOCTORALE"/>
+                                        </tef:autoriteExterne>
+                                        <xsl:if test="PPN_ECOLE_DOCTORALE != ''">
+                                            <tef:autoriteExterne autoriteSource="Sudoc">
+                                                <xsl:value-of select="PPN_ECOLE_DOCTORALE"/>
+                                            </tef:autoriteExterne>
+                                        </xsl:if>
+                                    </tef:ecoleDoctorale>
+
+                                    <!-- Equipes de recherche -->
+                                    <xsl:for-each select="*[contains(name(), 'LIBELLE_EQUIPE_RECHERCHE')]">
+                                        <tef:partenaireRecherche type="laboratoire">
+                                            <tef:nom>
+                                                <xsl:value-of select="."/>
+                                            </tef:nom>
+                                            <xsl:if test="preceding-sibling::*[contains(name(), 'CODE_EQUIPE_RECHERCHE')]">
+                                                <tef:autoriteExterne autoriteSource="Annuaire des formations doctorales et des unités de recherche">
+                                                    <xsl:value-of select="preceding-sibling::*[contains(name(), 'CODE_EQUIPE_RECHERCHE')]"/>
+                                                </tef:autoriteExterne>
+                                            </xsl:if>
+                                            <xsl:if test="preceding-sibling::*[contains(name(), 'PPN_EQUIPE_RECHERCHE')]">
+                                                <tef:autoriteExterne autoriteSource="Sudoc">
+                                                    <xsl:value-of select="preceding-sibling::*[contains(name(), 'PPN_EQUIPE_RECHERCHE')]"/>
+                                                </tef:autoriteExterne>
+                                            </xsl:if>
+                                            <xsl:if test="preceding-sibling::*[contains(name(), 'IDHAL_EQUIPE_RECHERCHE')]">
+                                                <tef:autoriteExterne autoriteSource="labTEL">
+                                                    <xsl:value-of select="preceding-sibling::*[contains(name(), 'IDHAL_EQUIPE_RECHERCHE')]"/>
+                                                </tef:autoriteExterne>
+                                            </xsl:if>
+                                            <xsl:if test="preceding-sibling::*[contains(name(), 'CONVENTION_CIFRE')]">
+                                                <suj:cifre>
+                                                    <xsl:value-of select="preceding-sibling::*[contains(name(), 'CONVENTION_CIFRE')]"/>
+                                                </suj:cifre>
+                                            </xsl:if>
+                                        </tef:partenaireRecherche>
+                                    </xsl:for-each>
+
+                                    <!-- Partenaire de recherche : établissement -->
+                                    <tef:partenaireRecherche type="autreType" autreType="Établissement de préparation">
+                                        <tef:nom>
+                                            <xsl:value-of select="LIBELLE_PARTENAIRE_RECHERCHE_ETAB"/>
+                                        </tef:nom>
+                                        <tef:autoriteExterne autoriteSource="RNE">
+                                            <xsl:value-of select="CODE_PARTENAIRE_RECHERCHE_ETAB"/>
+                                        </tef:autoriteExterne>
+                                        <xsl:if test="PPN_PARTENAIRE_RECHERCHE_ETAB != ''">
+                                            <tef:autoriteExterne autoriteSource="Sudoc">
+                                                <xsl:value-of select="PPN_PARTENAIRE_RECHERCHE_ETAB"/>
+                                            </tef:autoriteExterne>
+                                        </xsl:if>
+                                        <xsl:if test="CONVENTION_CIFRE_ETAB != ''">
+                                            <suj:cifre>
+                                                <xsl:value-of select="CONVENTION_CIFRE_ETAB"/>
+                                            </suj:cifre>
+                                        </xsl:if>
+                                    </tef:partenaireRecherche>
+
+                                    <!-- Domaine -->
+                                    <xsl:if test="DOMAINE != ''">
+                                        <tef:oaiSetSpec>
+                                            <xsl:value-of select="DOMAINE"/>
+                                        </tef:oaiSetSpec>
+                                    </xsl:if>
+                                </tef:thesisAdmin>
+                            </mets:xmlData>
+                        </mets:mdWrap>
+                    </mets:techMD>
+
+                    <!--Déclaration des droits-->
+                    <!--Déclaration de l'autorisation du chef d'établissement-->
+                    <mets:rightsMD ID="{generate-id()}_etab">
+                        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_droits_etablissement_these">
+                            <mets:xmlData>
+                                <metsRights:RightsDeclarationMD>
+                                    <!-- Autorisations sur internet-->
+                                    <metsRights:Context CONTEXTCLASS="GENERAL PUBLIC">
+                                        <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false"/>
+                                        <!--déclaration d'une confidentialité de la date de soutenance à la date de fin de confidentialité-->
+                                        <xsl:if test="DATE_FIN_CONFIDENTIALITE != ''">
+                                            <metsRights:Constraints CONSTRAINTTYPE="TIME">
+                                                <metsRights:ConstraintDescription>
+                                                    <xsl:text>confidentialité</xsl:text>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_DEBUT_CONFIDENTIALITE"/>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_FIN_CONFIDENTIALITE"/>
+                                                </metsRights:ConstraintDescription>
+                                            </metsRights:Constraints>
+                                        </xsl:if>
+                                    </metsRights:Context>
+
+                                    <!-- Autorisations sur intranet-->
+                                    <metsRights:Context CONTEXTCLASS="INSTITUTIONAL AFFILIATE">
+                                        <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false"/>
+                                        <!--déclaration d'une confidentialité de la date de soutenance à la date de fin de confidentialité-->
+                                        <xsl:if test="DATE_FIN_CONFIDENTIALITE != ''">
+                                            <metsRights:Constraints CONSTRAINTTYPE="TIME">
+                                                <metsRights:ConstraintDescription>
+                                                    <xsl:text>confidentialité</xsl:text>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_DEBUT_CONFIDENTIALITE"/>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_FIN_CONFIDENTIALITE"/>
+                                                </metsRights:ConstraintDescription>
+                                            </metsRights:Constraints>
+                                        </xsl:if>
+                                    </metsRights:Context>
+                                </metsRights:RightsDeclarationMD>
+                            </mets:xmlData>
+                        </mets:mdWrap>
+                    </mets:rightsMD>
+
+                    <!--Déclaration de l'autorisation de l'auteur-->
+                    <mets:rightsMD ID="CODEETAB.IMPORT.DROITS_DOCTORANT">
+                        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_droits_auteur_these">
+                            <mets:xmlData>
+                                <metsRights:RightsDeclarationMD RIGHTSCATEGORY="CONTRACTUAL">
+                                    <!-- Autorisations sur internet-->
+                                    <metsRights:Context CONTEXTCLASS="GENERAL PUBLIC">
+                                        <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false"/>
+                                        <!--déclaration d'un embargo de la date de soutenance à la date de fin d'embargo-->
+                                        <xsl:if test="DATE_DEBUT_EMBARGO != ''">
+                                            <metsRights:Constraints CONSTRAINTTYPE="TIME">
+                                                <metsRights:ConstraintDescription>
+                                                    <xsl:text>restriction</xsl:text>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_DEBUT_EMBARGO"/>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_FIN_EMBARGO"/>
+                                                </metsRights:ConstraintDescription>
+                                            </metsRights:Constraints>
+                                        </xsl:if>
+                                    </metsRights:Context>
+                                    <!-- Autorisations sur intranet-->
+                                    <metsRights:Context CONTEXTCLASS="INSTITUTIONAL AFFILIATE">
+                                        <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true" MODIFY="false" DELETE="false"/>
+                                    </metsRights:Context>
+                                </metsRights:RightsDeclarationMD>
+                            </mets:xmlData>
+                        </mets:mdWrap>
+                    </mets:rightsMD>
+
+                    <!--Droits consolidés pour la version complète d'archivage-->
+                    <mets:rightsMD ID="CODEETAB.IMPORT.VERSION_COMPLETE.DROITS">
+                        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_droits_version">
+                            <mets:xmlData>
+                                <metsRights:RightsDeclarationMD RIGHTSCATEGORY="CONTRACTUAL">
+                                    <!-- Autorisations sur internet-->
+                                    <metsRights:Context CONTEXTCLASS="GENERAL PUBLIC">
+                                        <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true"
+                                                                MODIFY="false" DELETE="false"/>
+                                        <!--droits calculés : confidentialité  de la date de soutenance à la date de fin de confidentialité-->
+                                        <xsl:if test="DATE_FIN_CONFIDENTIALITE != ''">
+                                            <metsRights:Constraints CONSTRAINTTYPE="TIME">
+                                                <metsRights:ConstraintDescription>
+                                                    <xsl:text>confidentialité</xsl:text>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_DEBUT_CONFIDENTIALITE"/>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_FIN_CONFIDENTIALITE"/>
+                                                </metsRights:ConstraintDescription>
+                                            </metsRights:Constraints>
+                                        </xsl:if>
+                                    </metsRights:Context>
+                                    <!-- Autorisations sur intranet-->
+                                    <metsRights:Context CONTEXTCLASS="INSTITUTIONAL AFFILIATE">
+                                        <metsRights:Permissions DISPLAY="true" DUPLICATE="true" PRINT="true" COPY="true"
+                                                                MODIFY="false" DELETE="false"/>
+                                        <!--droits calculés : confidentialité de la date de soutenance à la date de fin de confidentialité-->
+                                        <xsl:if test="DATE_FIN_CONFIDENTIALITE != ''">
+                                            <metsRights:Constraints CONSTRAINTTYPE="TIME">
+                                                <metsRights:ConstraintDescription>
+                                                    <xsl:text>confidentialité</xsl:text>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_DEBUT_CONFIDENTIALITE"/>
+                                                    <xsl:text> </xsl:text>
+                                                    <xsl:value-of select="DATE_FIN_CONFIDENTIALITE"/>
+                                                </metsRights:ConstraintDescription>
+                                            </metsRights:Constraints>
+                                        </xsl:if>
+                                    </metsRights:Context>
+                                </metsRights:RightsDeclarationMD>
+                            </mets:xmlData>
+                        </mets:mdWrap>
+                    </mets:rightsMD>
+                </mets:amdSec>
+                <!--
+               Génération de la carte de structure METS.
+
+              Il existe une THESE, une VERSION_COMPLETE et une EDITION.
+              Chacune de ces entités TEF est associée à un URI. Dans ce scénario, chaque URI est généré en partant de l'identifiant local de la thèse.
+              L'identifiant local est inclus dans un URI géré par l'abes au sein du scheme URI info: (http://info-uri.info/registry/docs/misc/faq.html).
+              Ainsi, l'identifiant local d'une thèse devient un identifiant global, unique à l'échelle du Web, un URI.
+              Ce n'est qu'un scénario possible, à titre d'illustration !! La recommandation TEF ne se prononce pas sur la manière d'assigner un URI aux entités TEF.
+              Ce choix relève de l'implémentation de la norme. Dans l'absolu, il serait possible d'utiliser l'identifiant pérenne (dc:identifier xsi:type="tef:nationalThesisPID")
+              que l'abes assignera à chaque thèse, mais cet identifiant pérenne s'appuie sur le numéro national de thèse qui est connu tardivement, après la soutenance.
+              Or, on peut vouloir échanger du TEF avant la soutenance (du TEF incomplet, certes...).
+
+              info:fides/STAR/{$ETABLISSEMENT}/{$id} est l'URI de la thèse
+              info:fides/STAR/{$ETABLISSEMENT}/{$id}/vc est l'URI de la la version complète (vc)
+              info:fides/STAR/{$ETABLISSEMENT}/{$id}/vc/ed1 est l'URI d'une édition (ed1)
+
+              info: est le schème URI (au même titre que urn, http...).
+              fides est, dans cet exemple fictif, l'espace de noms de l'abes au sein de info.
+              STAR est un sous-ensemble de l'espace fides (utilisable pour les échanges avec STAR).
+              ISAL est le sous-ensemble de info:fides/STAR réservé à l'INSA de Lyon.
+              {$id} contiendra l'id local de la thèse (valeur de l'attribut id, à la racine de la notice DC de départ)
+             -->
+                <mets:structMap TYPE="logical">
+                    <mets:div
+                            TYPE="THESE"
+                            ADMID="{generate-id()}_admin {generate-id()}_etab"
+                            DMDID="{generate-id()}_desc_these"
+                            CONTENTIDS="info:fides/STAR/{$ETABLISSEMENT}/{CODE_ETUDIANT}">
+                    </mets:div>
+                </mets:structMap>
+            </mets:mets>
+            <!-- -->
+        </xsl:result-document>
+        <!-- -->
+    </xsl:template>
 </xsl:stylesheet>
