@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+5.2.3
+-----
+- Module Formation : mise en commentaire provisoire des paginators problématiques.
+
 5.2.2
 -----
 - [FIX] exploitation de la récupération des chemins plutôt que des contenus pour la génération des convocations
