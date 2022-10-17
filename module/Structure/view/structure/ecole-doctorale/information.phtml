@@ -33,7 +33,7 @@ $structure = $ecole->getStructure();
 ?>
 
 <h1 class="page-header">
-    École doctorale &laquo; <?php echo $ecole->getLibelle(); ?> &raquo;
+    École doctorale &laquo; <?php echo $ecole->getStructure()->getLibelle(); ?> &raquo;
 </h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
@@ -81,9 +81,9 @@ $structure = $ecole->getStructure();
         <div class="col-md-6">
             <dl>
                 <dt> Libelle :</dt>
-                <dd>    <?php echo $ecole->getLibelle(); ?>     </dd>
+                <dd>    <?php echo $ecole->getStructure()->getLibelle(); ?>     </dd>
                 <dt> Sigle :</dt>
-                <dd>    <?php echo $ecole->getSigle(); ?>       </dd>
+                <dd>    <?php echo $ecole->getStructure()->getSigle(); ?>       </dd>
                 <dt> Code :</dt>
                 <dd>    <?php echo $ecole->getStructure()->getCode(); ?>        </dd>
                 <dt> Id REF :</dt>

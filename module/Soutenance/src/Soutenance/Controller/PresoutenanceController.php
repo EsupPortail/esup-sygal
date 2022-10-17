@@ -444,7 +444,7 @@ class PresoutenanceController extends AbstractController
      */
     private function getVille(Etablissement $etablissement) : string
     {
-        switch ($etablissement->getSigle()) {
+        switch ($etablissement->getStructure()->getSigle()) {
             case "UCN" :
                 $ville = "Caen";
                 break;

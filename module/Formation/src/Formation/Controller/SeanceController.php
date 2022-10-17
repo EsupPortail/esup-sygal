@@ -146,13 +146,13 @@ class SeanceController extends AbstractController
 
         $logos = [];
         try {
-            $logos['site'] = $this->fichierStorageService->getFileForLogoStructure($session->getSite());
+            $logos['site'] = $this->fichierStorageService->getFileForLogoStructure($session->getSite()->getStructure());
         } catch (StorageAdapterException $e) {
             $logos['site'] = null;
         }
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {
             try {
-                $logos['comue'] = $this->fichierStorageService->getFileForLogoStructure($comue);
+                $logos['comue'] = $this->fichierStorageService->getFileForLogoStructure($comue->getStructure());
             } catch (StorageAdapterException $e) {
                 $logos['comue'] = null;
             }

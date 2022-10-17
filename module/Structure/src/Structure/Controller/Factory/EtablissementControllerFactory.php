@@ -2,24 +2,22 @@
 
 namespace Structure\Controller\Factory;
 
+use Application\Service\Role\RoleService;
+use Individu\Service\IndividuService;
+use Interop\Container\ContainerInterface;
 use Structure\Controller\EtablissementController;
 use Structure\Form\EtablissementForm;
 use Structure\Service\Etablissement\EtablissementService;
-use Individu\Service\IndividuService;
-use Application\Service\Role\RoleService;
 use Structure\Service\Structure\StructureService;
 use Structure\Service\StructureDocument\StructureDocumentService;
-use Interop\Container\ContainerInterface;
 
 class EtablissementControllerFactory
 {
     /**
-     * Create service
-     *
-     * @param ContainerInterface $container
-     * @return EtablissementController
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): EtablissementController
     {
         /** @var EtablissementForm $form */
         $form = $container->get('FormElementManager')->get('EtablissementForm');

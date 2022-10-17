@@ -34,7 +34,7 @@ $structure = $unite->getStructure();
 ?>
 
 <h1 class="page-header">
-    Unité de recherche &laquo; <?php echo $unite->getLibelle(); ?> &raquo;
+    Unité de recherche &laquo; <?php echo $unite->getStructure()->getLibelle(); ?> &raquo;
 </h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
@@ -82,9 +82,9 @@ $structure = $unite->getStructure();
         <div class="col-md-8">
             <dl>
                 <dt> Libelle :</dt>
-                <dd>    <?php echo $unite->getLibelle(); ?>     </dd>
+                <dd>    <?php echo $unite->getStructure()->getLibelle(); ?>     </dd>
                 <dt> Sigle :</dt>
-                <dd>    <?php echo $unite->getSigle(); ?>       </dd>
+                <dd>    <?php echo $unite->getStructure()->getSigle(); ?>       </dd>
                 <dt> Code :</dt>
                 <dd>    <?php echo $unite->getStructure()->getCode(); ?>        </dd>
                 <dt> Id REF: </dt>
@@ -109,7 +109,7 @@ $structure = $unite->getStructure();
                 <dd>
                     <ul>
                         <?php foreach ($etablissementsRattachements as $etablissementRattachement) : ?>
-                            <li> <?php echo $etablissementRattachement->getEtablissement()->getLibelle(); ?></li>
+                            <li> <?php echo $etablissementRattachement->getEtablissement()->getStructure()->getLibelle(); ?></li>
                         <?php endforeach; ?>
                     </ul>
                 </dd>

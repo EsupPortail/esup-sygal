@@ -76,21 +76,21 @@ $this->headTitle($this->translate("Statistiques"));
                     //null option
                     $("select#structure_id").append(new Option(("Selectionner un établissement ... "), null, false, true));
                     <?php foreach ($etablissements as $structureConcrete) : ?>
-                        $("select#structure_id").append(new Option(<?php echo '"'.$structureConcrete->getLibelle().'"'; ?> , <?php echo $structureConcrete->getId(); ?>, false, false));
+                        $("select#structure_id").append(new Option(<?php echo '"'.$structureConcrete->getStructure()->getLibelle().'"'; ?> , <?php echo $structureConcrete->getId(); ?>, false, false));
                     <?php endforeach; ?>
                     break;
                 case "ED" :
                     //null option
                     $("select#structure_id").append(new Option(("Selectionner une école doctorale ... "), null, false, true));
                     <?php foreach ($ecoles as $structureConcrete) : ?>
-                        $("select#structure_id").append(new Option(<?php echo '"'.$structureConcrete->getLibelle().'"'; ?> , <?php echo $structureConcrete->getId(); ?>, false, false));
+                        $("select#structure_id").append(new Option(<?php echo '"'.$structureConcrete->getStructure()->getLibelle().'"'; ?> , <?php echo $structureConcrete->getId(); ?>, false, false));
                     <?php endforeach; ?>
                     break;
                 case "UR" :
                     //null option
                     $("select#structure_id").append(new Option(("Selectionner une unité de recherche ... "), null, false, true));
                     <?php foreach ($unites as $structureConcrete) : ?>
-                        $("select#structure_id").append(new Option(<?php echo '"'.$structureConcrete->getLibelle().'"'; ?> , <?php echo $structureConcrete->getId(); ?>, false, false));
+                        $("select#structure_id").append(new Option(<?php echo '"'.$structureConcrete->getStructure()->getLibelle().'"'; ?> , <?php echo $structureConcrete->getId(); ?>, false, false));
                     <?php endforeach; ?>
                     break;
             }

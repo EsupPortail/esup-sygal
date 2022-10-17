@@ -297,7 +297,7 @@ class RapportActiviteService extends BaseService
         }
 
         // structures
-        $exportData->etablissement = $etablissement->getLibelle();
+        $exportData->etablissement = $etablissement->getStructure()->getLibelle();
         $exportData->ecoleDoctorale = $ed->getStructure()->getLibelle();
         $exportData->uniteRecherche = $ur->getStructure()->getLibelle();
 
@@ -307,11 +307,11 @@ class RapportActiviteService extends BaseService
         $exportData->useCOMUE = false;
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {
             $exportData->useCOMUE = true;
-            if (!$comue->getCheminLogo()) {
+            if (!$comue->getStructure()->getCheminLogo()) {
                 throw new PageValidationExportDataException("La COMUE '{$comue}' n'a aucun logo !");
             }
             try {
-                $exportData->logoCOMUE = $this->fichierStorageService->getFileForLogoStructure($comue);
+                $exportData->logoCOMUE = $this->fichierStorageService->getFileForLogoStructure($comue->getStructure());
             } catch (StorageAdapterException $e) {
                 throw new PageValidationExportDataException(
                     "Accès impossible au logo de la COMUE '{$comue}' : " . $e->getMessage());
@@ -319,33 +319,33 @@ class RapportActiviteService extends BaseService
         }
 
         // logo etablissement
-        if (!$etablissement->getCheminLogo()) {
+        if (!$etablissement->getStructure()->getCheminLogo()) {
             throw new PageValidationExportDataException("L'établissement '{$etablissement}' n'a aucun logo !");
         }
         try {
-            $exportData->logoEtablissement = $this->fichierStorageService->getFileForLogoStructure($etablissement);
+            $exportData->logoEtablissement = $this->fichierStorageService->getFileForLogoStructure($etablissement->getStructure());
         } catch (StorageAdapterException $e) {
             throw new PageValidationExportDataException(
                 "Accès impossible au logo de l'établissement '{$etablissement}' : " . $e->getMessage());
         }
 
         // logo ED
-        if (!$ed->getCheminLogo()) {
+        if (!$ed->getStructure()->getCheminLogo()) {
             throw new PageValidationExportDataException("L'ED '{$ed}' n'a aucun logo !");
         }
         try {
-            $exportData->logoEcoleDoctorale = $this->fichierStorageService->getFileForLogoStructure($ed);
+            $exportData->logoEcoleDoctorale = $this->fichierStorageService->getFileForLogoStructure($ed->getStructure());
         } catch (StorageAdapterException $e) {
             throw new PageValidationExportDataException(
                 "Accès impossible au logo de l'ED '{$ed}' : " . $e->getMessage());
         }
 
         // logo UR
-        if (!$ur->getCheminLogo()) {
+        if (!$ur->getStructure()->getCheminLogo()) {
             throw new PageValidationExportDataException("L'UR '{$ur}' n'a aucun logo !");
         }
         try {
-            $exportData->logoUniteRecherche = $this->fichierStorageService->getFileForLogoStructure($ur);
+            $exportData->logoUniteRecherche = $this->fichierStorageService->getFileForLogoStructure($ur->getStructure());
         } catch (StorageAdapterException $e) {
             throw new PageValidationExportDataException(
                 "Accès impossible au logo de l'UR '{$ur}' : " . $e->getMessage());

@@ -40,7 +40,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
     <?php if ($isNew): ?>
         Création d'une nouvelle UR
     <?php else: ?>
-        Modification de l'UR &laquo; <?php echo $unite->getLibelle(); ?> &raquo;
+        Modification de l'UR &laquo; <?php echo $unite->getStructure()->getLibelle(); ?> &raquo;
     <?php endif ?>
 </h1>
 
@@ -71,7 +71,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
 
         $content = $logoContent;
         if ($content === null) {
-            $unite->setCheminLogo(null);
+            $unite->getStructure()->setCheminLogo(null);
         }
         ?>
 
@@ -146,7 +146,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
             <tbody>
             <?php foreach ($etablissementsRattachements as $etablissementRattachement): ?>
                 <tr>
-                    <td> <?php echo $etablissementRattachement->getEtablissement()->getLibelle(); ?> </td>
+                    <td> <?php echo $etablissementRattachement->getEtablissement()->getStructure()->getLibelle(); ?> </td>
                     <td>
                         <a
                                 href="<?php echo $this->url("unite-recherche/modifier/retirer-etablissement-rattachement", ["structure" => $idUniteRecherche, "etablissement" => $etablissementRattachement->getEtablissement()->getId()], [], true); ?>"

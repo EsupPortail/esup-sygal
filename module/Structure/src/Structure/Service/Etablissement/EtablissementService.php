@@ -2,16 +2,16 @@
 
 namespace Structure\Service\Etablissement;
 
+use Application\Entity\Db\Utilisateur;
+use Application\Service\BaseService;
+use Application\SourceCodeStringHelperAwareTrait;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\ORMException;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\Repository\EtablissementRepository;
 use Structure\Entity\Db\Structure;
 use Structure\Entity\Db\TypeStructure;
-use Application\Entity\Db\Utilisateur;
-use Application\Service\BaseService;
-use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use Application\SourceCodeStringHelperAwareTrait;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\ORMException;
 use UnicaenApp\Exception\RuntimeException;
 
 class EtablissementService extends BaseService
@@ -114,7 +114,7 @@ class EtablissementService extends BaseService
 
     public function setLogo(Etablissement $etablissement, $cheminLogo)
     {
-        $etablissement->setCheminLogo($cheminLogo);
+        $etablissement->getStructure()->setCheminLogo($cheminLogo);
         $this->flush($etablissement);
 
         return $etablissement;
@@ -122,7 +122,7 @@ class EtablissementService extends BaseService
 
     public function deleteLogo(Etablissement $etablissement)
     {
-        $etablissement->setCheminLogo(null);
+        $etablissement->getStructure()->setCheminLogo(null);
         $this->flush($etablissement);
 
         return $etablissement;
@@ -147,9 +147,9 @@ class EtablissementService extends BaseService
 
     public function getEtablissementsInscriptionsAsOptions() : array
     {
-        $etablissements = $this->getRepository()->findAllEtablissementsInscriptions();
+        $etablissements = $this->getRepository()->findAllEtablissementsInscriptions(true);
         $result = [];
-        foreach ($etablissements as $etablissement) $result[$etablissement->getId()] = $etablissement->getLibelle();
+        foreach ($etablissements as $etablissement) $result[$etablissement->getId()] = $etablissement->getStructure()->getLibelle();
         return $result;
     }
 
@@ -181,7 +181,7 @@ class EtablissementService extends BaseService
         $etablissements = $this->getRepository()->findAllEtablissementsInscriptions();
         $array = [];
         foreach ($etablissements as $etablissement) {
-            $array[$etablissement->getId()] = $etablissement->getLibelle();
+            $array[$etablissement->getId()] = $etablissement->getStructure()->getLibelle();
         }
         return $array;
     }
@@ -193,7 +193,7 @@ class EtablissementService extends BaseService
 
         $options = [];
         foreach ($etablissements as $etablissement) {
-            $options[$etablissement->getId()] = $etablissement->getLibelle() . " " ."<span class='badge'>".$etablissement->getSigle()."</span>";
+            $options[$etablissement->getId()] = $etablissement->getStructure()->getLibelle() . " " ."<span class='badge'>".$etablissement->getStructure()->getSigle()."</span>";
         }
         return $options;
     }

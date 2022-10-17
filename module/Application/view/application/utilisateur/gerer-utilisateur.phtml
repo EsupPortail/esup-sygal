@@ -85,7 +85,7 @@ use Application\Entity\Db\Utilisateur;
                         </td>
                         <td>
                             <?php if ($acteur->getEtablissement() !== null) : ?>
-                                <?php echo $acteur->getEtablissement()->getLibelle(); ?>
+                                <?php echo $acteur->getEtablissement()->getStructure()->getLibelle(); ?>
                             <?php else : ?>
                                 Aucun établissement
                             <?php endif; ?>

@@ -14,11 +14,6 @@ interface StructureInterface
     /**
      * @return string
      */
-    public function getSigle();
-
-    /**
-     * @return string
-     */
     public function getSourceCode();
 
     /**
@@ -30,6 +25,11 @@ interface StructureInterface
      * @return string
      */
     public function getLibelle();
+
+    /**
+     * @return string
+     */
+    public function getSigle();
 
     /**
      * SPécifie le Nom du fichier (pas le chemin!)

@@ -29,7 +29,7 @@ $these = $proposition->getThese();
                 <ul>
                     <li>
                         <?php if ($these->getUniteRecherche()) : ?>
-                            <?php echo $these->getUniteRecherche()->getLibelle(); ?>  (Unité de recherche) <br/>
+                            <?php echo $these->getUniteRecherche()->getStructure()->getLibelle(); ?>  (Unité de recherche) <br/>
                         <?php else: ?>
                             <strong style="color:darkred;">
                                 Libellé complémentaire :
@@ -53,7 +53,7 @@ $these = $proposition->getThese();
                     </li>
                     <li>
                         <?php if ($these->getEcoleDoctorale()) : ?>
-                            <?php echo $these->getEcoleDoctorale()->getLibelle(); ?>  (École Doctorale) <br/>
+                            <?php echo $these->getEcoleDoctorale()->getStructure()->getLibelle(); ?>  (École Doctorale) <br/>
                         <?php else: ?>
                             <strong style="color:darkred;">
                                 Aucune
@@ -71,7 +71,7 @@ $these = $proposition->getThese();
                         <?php endif; ?>
                     </li>
                     <li>
-                        <?php echo $these->getEtablissement()->getLibelle(); ?>
+                        <?php echo $these->getEtablissement()->getStructure()->getLibelle(); ?>
                         (Signature de la proposition de soutenance par la direction de l'établissement) <br/>
                         <?php if ($validations[Role::CODE_BDD]) : ?>
                             <?php $validation = current($validations[Role::CODE_BDD]); ?>

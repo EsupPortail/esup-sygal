@@ -164,7 +164,7 @@ class CoEncadrantController extends AbstractActionController {
 
         $logos = [];
         try {
-            $logos['etablissement'] = $this->fichierStorageService->getFileForLogoStructure($coencadrant->getEtablissement());
+            $logos['etablissement'] = $this->fichierStorageService->getFileForLogoStructure($coencadrant->getEtablissement()->getStructure());
         } catch (StorageAdapterException $e) {
             $logos['etablissement'] = null;
         }
@@ -203,7 +203,7 @@ class CoEncadrantController extends AbstractActionController {
             );
             $records[] = $entry;
         }
-        $filename = (new DateTime())->format('Ymd-His') . '_coencadrants-' . str_replace(' ','_',$structure->getSigle()) . '.csv';
+        $filename = (new DateTime())->format('Ymd-His') . '_coencadrants-' . str_replace(' ','_',$structure->getStructure()->getSigle()) . '.csv';
         $CSV = new CsvModel();
         $CSV->setDelimiter(';');
         $CSV->setEnclosure('"');

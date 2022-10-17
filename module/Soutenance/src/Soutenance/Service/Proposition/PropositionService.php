@@ -516,14 +516,14 @@ class PropositionService {
         $logos['COMUE'] = null;
         if ($comue = $this->getEtablissementService()->fetchEtablissementComue()) {
             try {
-                $logos['COMUE'] = $this->fichierStorageService->getFileForLogoStructure($comue);
+                $logos['COMUE'] = $this->fichierStorageService->getFileForLogoStructure($comue->getStructure());
             } catch (StorageAdapterException $e) {
                 $logos['COMUE'] = null;
             }
         }
 
         try {
-            $logos['ETAB'] = $this->fichierStorageService->getFileForLogoStructure($these->getEtablissement());
+            $logos['ETAB'] = $this->fichierStorageService->getFileForLogoStructure($these->getEtablissement()->getStructure());
         } catch (StorageAdapterException $e) {
             $logos['ETAB'] = null;
         }

@@ -54,15 +54,15 @@ class CompletIndicateurTheseHelper extends AbstractHelper
                         case 'Établissement d\'inscription':
                             if ($entry[$valeur]) {
                                 /** @var Etablissement $etablissement */
-                                $etablissement = $structureService->getStructuresConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_ETABLISSEMENT, $entry[$valeur]);
-                                $html .= '<abbr title="' . $etablissement->getLibelle() . '">' . $etablissement->getSigle() . '</abbr>';
+                                $etablissement = $structureService->getStructureConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_ETABLISSEMENT, $entry[$valeur]);
+                                $html .= '<abbr title="' . $etablissement->getStructure()->getLibelle() . '">' . $etablissement->getStructure()->getSigle() . '</abbr>';
                             } else $html .= "---";
                             break;
                         case 'École doctorale':
                             if ($entry[$valeur]) {
                                 /** @var EcoleDoctorale $ecole */
-                                $ecole = $structureService->getStructuresConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_ECOLE_DOCTORALE, $entry[$valeur]);
-                                $html .= '<abbr title="' . $ecole->getLibelle() . '">' . $ecole->getSigle() . '</abbr>';
+                                $ecole = $structureService->getStructureConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_ECOLE_DOCTORALE, $entry[$valeur]);
+                                $html .= '<abbr title="' . $ecole->getStructure()->getLibelle() . '">' . $ecole->getStructure()->getSigle() . '</abbr>';
                             } else {
                                 $html .= "---";
                             }
@@ -70,8 +70,8 @@ class CompletIndicateurTheseHelper extends AbstractHelper
                         case 'Unité de recherche':
                             if ($entry[$valeur]) {
                                 /** @var UniteRecherche $unite */
-                                $unite = $structureService->getStructuresConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_UNITE_RECHERCHE, $entry[$valeur]);
-                                $html .= '<abbr title="' . $unite->getLibelle() . '">' . $unite->getSigle() . '</abbr>';
+                                $unite = $structureService->getStructureConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_UNITE_RECHERCHE, $entry[$valeur]);
+                                $html .= '<abbr title="' . $unite->getStructure()->getLibelle() . '">' . $unite->getStructure()->getSigle() . '</abbr>';
                             } else {
                                 $html .= "---";
                             }

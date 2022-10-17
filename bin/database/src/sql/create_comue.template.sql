@@ -9,7 +9,8 @@ select
   nextval('structure_id_seq'), 'COMUE',
   '{ETAB_COMUE_SIGLE}',   --> sigle ou abbréviation à personnaliser
   '{ETAB_COMUE_LIBELLE}', --> libellé à personnaliser
-  null, 1, 'COMUE', 1, 1
+  1, 1, 'COMUE', 1, 1
+from type_structure ts
 where {ETAB_COMUE} = 1
 ;
 

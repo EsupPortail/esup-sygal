@@ -163,7 +163,7 @@ $acteursFormatterCodirecteurs->asSeparated()
 
             <?php if ($displayEtablissement): ?>
             <td>
-                <abbr title="<?php echo $these->getEtablissement()->getLibelle() ?>">
+                <abbr title="<?php echo $these->getEtablissement()->getStructure()->getLibelle() ?>">
                     <?php echo $these->getEtablissement()->getCode() ?>
                 </abbr>
             </td>
@@ -206,7 +206,7 @@ $acteursFormatterCodirecteurs->asSeparated()
             <?php if ($displayEcoleDoctorale): ?>
             <td>
                 <?php if ($ed = $these->getEcoleDoctorale()): ?>
-                    <abbr title="<?php echo $ed->getLibelle() ?>">
+                    <abbr title="<?php echo $ed->getStructure()->getLibelle() ?>">
                         <?php echo $ed->getStructure()->getCode(); ?>
                     </abbr>
                 <?php endif ?>
@@ -216,7 +216,7 @@ $acteursFormatterCodirecteurs->asSeparated()
             <?php if ($displayUniteRecherche): ?>
             <td>
                 <?php if ($ur = $these->getUniteRecherche()): ?>
-                    <abbr title="<?php echo $ur->getLibelle() ?>">
+                    <abbr title="<?php echo $ur->getStructure()->getLibelle() ?>">
                         <?php echo $ur->getStructure()->getCode(); ?>
                     </abbr>
                 <?php endif ?>

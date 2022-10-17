@@ -95,9 +95,9 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
                     <td>
                         <?php if ($these->getEtablissement()) : ?>
                             <span class="structure etablissement"
-                                  title="Établissement : <?php echo $these->getEtablissement()->getLibelle(); ?> (<?php echo $these->getEtablissement()->getCode(); ?>)"
+                                  title="Établissement : <?php echo $these->getEtablissement()->getStructure()->getLibelle(); ?> (<?php echo $these->getEtablissement()->getCode(); ?>)"
                             >
-                                <?php echo $these->getEtablissement()->getLibelle(); ?>
+                                <?php echo $these->getEtablissement()->getStructure()->getLibelle(); ?>
                             </span>
                         <?php else : ?>
                             <strong style="color:darkred;">
@@ -108,9 +108,9 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
 
                         <?php if ($these->getEcoleDoctorale()) : ?>
                             <span class="structure ecole-doctorale"
-                                  title="École doctorale : <?php echo $these->getEcoleDoctorale()->getLibelle(); ?> <?php echo "(".$these->getEcoleDoctorale()->getSigle() .")"; ?>"
+                                  title="École doctorale : <?php echo $these->getEcoleDoctorale()->getStructure()->getLibelle(); ?> <?php echo "(".$these->getEcoleDoctorale()->getStructure()->getSigle() .")"; ?>"
                             >
-                                <?php echo $these->getEcoleDoctorale()->getLibelle(); ?>
+                                <?php echo $these->getEcoleDoctorale()->getStructure()->getLibelle(); ?>
                             </span>
                         <?php else : ?>
                             <strong style="color:darkred;">
@@ -121,9 +121,9 @@ $canSuppression = ($role->getCode() === Role::CODE_ADMIN_TECH);
 
                         <?php if ($these->getUniteRecherche()) : ?>
                             <span class="structure unite-recherche"
-                                  title="Unité de recherche : <?php echo $these->getUniteRecherche()->getLibelle(); ?> <?php echo "(".$these->getUniteRecherche()->getSigle() .")"; ?>"
+                                  title="Unité de recherche : <?php echo $these->getUniteRecherche()->getStructure()->getLibelle(); ?> <?php echo "(".$these->getUniteRecherche()->getStructure()->getSigle() .")"; ?>"
                             >
-                                <?php echo $these->getUniteRecherche()->getLibelle(); ?>
+                                <?php echo $these->getUniteRecherche()->getStructure()->getLibelle(); ?>
                             </span>
                         <?php else : ?>
                             <!-- Gestion des unités de recherche -->

@@ -6,6 +6,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\Source;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use InvalidArgumentException;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\LogicException;
@@ -110,11 +111,11 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
         $structureRattach = new Structure();
         $structureRattach->setTypeStructure($type);
         $structureRattach->setSource($source);
-        $structureRattach->setCheminLogo($data->getCheminLogo());
-        $structureRattach->setLibelle($data->getLibelle());
-        $structureRattach->setSigle($data->getSigle());
+        $structureRattach->setCheminLogo($data->getStructure()->getCheminLogo());
+        $structureRattach->setLibelle($data->getStructure()->getLibelle());
+        $structureRattach->setSigle($data->getStructure()->getSigle());
         $structureRattach->setSourceCode($data->getSourceCode());
-        $structureRattach->setCode($data->getCode());
+        $structureRattach->setCode($data->getStructure()->getCode());
 
         // structure concrète
         switch (true) {
@@ -296,7 +297,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     /**
      * @return TypeStructure
      */
-    public function getTypeStructure()
+    public function getTypeStructure(): TypeStructure
     {
         return $this->typeStructure;
     }
@@ -305,23 +306,63 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
      * @param TypeStructure $typeStructure
      * @return self
      */
-    public function setTypeStructure(TypeStructure $typeStructure)
+    public function setTypeStructure(TypeStructure $typeStructure): self
     {
         $this->typeStructure = $typeStructure;
 
         return $this;
     }
 
+    /**
+     * Retourne la Structure "concrète" correspondant à cette Structure "abstraite".
+     *
+     * @return \Structure\Entity\Db\StructureConcreteInterface
+     */
+    public function getStructureConcrete(): StructureConcreteInterface
+    {
+        switch (true) {
+            case $this->typeStructure->isEtablissement():
+                return $this->etablissement;
+            case $this->typeStructure->isEcoleDoctorale():
+                return $this->ecoleDoctorale;
+            case $this->typeStructure->isUniteRecherche():
+                return $this->uniteRecherche;
+            default:
+                throw new InvalidArgumentException("Type de structure inattendu");
+        }
+    }
+
+    /**
+     * Retourne l'éventuel Etablissement correspondant à cette Structure "abstraite",
+     * telle que défini par la jointure Doctrine.
+     *
+     * @see getStructureConcrete()
+     * @return \Structure\Entity\Db\Etablissement|null
+     */
     public function getEtablissement(): ?Etablissement
     {
         return $this->etablissement;
     }
 
+    /**
+     * Retourne l'éventuelle EcoleDoctorale correspondant à cette Structure "abstraite",
+     * telle que définie par la jointure Doctrine.
+     *
+     * @see getStructureConcrete()
+     * @return \Structure\Entity\Db\EcoleDoctorale|null
+     */
     public function getEcoleDoctorale(): ?EcoleDoctorale
     {
         return $this->ecoleDoctorale;
     }
 
+    /**
+     * Retourne l'éventuelle UniteRecherche correspondant à cette Structure "abstraite",
+     * telle que défini par la jointure Doctrine.
+     *
+     * @see getStructureConcrete()
+     * @return \Structure\Entity\Db\UniteRecherche|null
+     */
     public function getUniteRecherche(): ?UniteRecherche
     {
         return $this->uniteRecherche;
@@ -330,11 +371,23 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     /**
      * Retourne les éventuelles structures substituées par celle-ci.
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @see getStructuresConcretesSubstituees()
+     * @return \Doctrine\Common\Collections\Collection|\Structure\Entity\Db\Structure[]
      */
     public function getStructuresSubstituees(): Collection
     {
         return $this->structuresSubstituees;
+    }
+
+    /**
+     * Retourne les éventuelles structures "concrètes" substituées par celle-ci.
+     *
+     * @see getStructuresSubstituees()
+     * @return \Doctrine\Common\Collections\Collection|\Structure\Entity\Db\StructureConcreteInterface[]
+     */
+    public function getStructuresConcretesSubstituees(): Collection
+    {
+        return $this->structuresSubstituees->map(fn(Structure $s) => $s->getStructureConcrete());
     }
 
     /**

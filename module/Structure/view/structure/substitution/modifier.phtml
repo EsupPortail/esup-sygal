@@ -3,7 +3,6 @@
 namespace Structure;
 
 use Structure\Controller\SubstitutionController;
-use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Structure;
 use Structure\Entity\Db\StructureConcreteInterface;
 use Structure\Entity\Db\TypeStructure;
@@ -15,11 +14,12 @@ use Application\View\Renderer\PhpRenderer;
  * @var string $identifiant
  * @var Structure $cible
  * @var StructureConcreteInterface[] $structuresConcretesSubstituees
- * @var StructureConcreteInterface[] $structuresConcretes
+ * @var array[] $structuresConcretes
  * @var TypeStructure $type
  * @var string $structureCibleLogoContent
  * @var string $structuresConcretesSubstitueesLogosContents
  *
+ * @see SubstitutionController::creerAction()
  * @see SubstitutionController::modifierAction()
  */
 
@@ -38,7 +38,7 @@ echo $messenger->addMessagesFromFlashMessenger();
 
 <p>
     <a href="<?php echo $this->url('substitution-index', [], [], null); ?>" class="">
-        < Retour à l'index des substitution
+        < Retour à l'index des substitutions
     </a>
 </p>
 
@@ -94,18 +94,18 @@ echo $messenger->addMessagesFromFlashMessenger();
 <?php
 
 /**
- * @param $structuresConcretes
+ * @param array[] $structuresConcretes
  * @param \Laminas\View\Renderer\PhpRenderer $renderer
  * @return string
  */
-function generateSelect($structuresConcretes, \Laminas\View\Renderer\PhpRenderer $renderer)
+function generateSelect(array $structuresConcretes, \Laminas\View\Renderer\PhpRenderer $renderer): string
 {
-    $texte = "";
-    $texte .= "<select name='nouveau' class='selectpicker' data-bs-html='true' data-live-search='true'>";
+    $texte = "<select name='nouveau' class='selectpicker' data-bs-html='true' data-live-search='true'>";
     $texte .= "<option value=''>(Sélectionnez la structure à ajouter)</option>";
     foreach ($structuresConcretes as $structuresConcrete) {
-        $url = $renderer->url('substitution-generer', ['id' => $structuresConcrete->getStructure()->getId()]);
-        $texte .= "<option data-struct-id='" . $structuresConcrete->getId() . "' value='" . $url . "'>" . $structuresConcrete->getLibelle() . "</option>";
+        $url = $renderer->url('substitution-generer', ['id' => $structuresConcrete['structure']['id']]);
+        $disabled = isset($structuresConcrete['structure']['structureSubstituante'][0]) ? 'disabled' : '';
+        $texte .= "<option data-struct-id='" . $structuresConcrete['id'] . "' value='" . $url . "' $disabled>" . $structuresConcrete['structure']['libelle'] . "</option>";
     }
     $texte .= "</select>";
     return $texte;

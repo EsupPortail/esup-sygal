@@ -141,7 +141,7 @@ $civilite = ($these->getDoctorant()->getIndividu()->getCivilite() === 'M.')?"Mon
             <br/>
             <br/>
             Visa de l'établissement d'inscription du doctorant,<br/>
-            <?php echo $these->getEtablissement()->getLibelle(); ?>
+            <?php echo $these->getEtablissement()->getStructure()->getLibelle(); ?>
         </td>
     </tr>
     <tr>

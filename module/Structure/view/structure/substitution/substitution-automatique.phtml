@@ -5,17 +5,19 @@
  * @var array $substitutionsEcolesDoctorales (identifiant => EcoleDoctorale[])
  * @var array $substitutionsEtablissements (identifiant => Etablissement[])
  * @var array $substitutionsUnitesRecherches (identifiant => UniteRecherche[])
+ *
+ * @see \Structure\Controller\SubstitutionController::substitutionAutomatiqueAction()
  */
 
 use Structure\Entity\Db\TypeStructure;
 
 ?>
 
-<?php $this->headTitle($this->translate("Substitutions automatiques")) ?>
+<?php $this->headTitle()->append($this->translate("Recherche de substitutions possibles")) ?>
 
 
 <h1 class="page-header first">
-    Substitutions automatiques
+    Recherche de substitutions possibles
 </h1>
 
 <?php
@@ -79,7 +81,7 @@ echo $messenger->addMessagesFromFlashMessenger();
                 var type = id[1];
                 var identifiant = id[2];
 
-                var url = "automatique/enregistrer/" + type + "/" + identifiant;
+                var url = type + "/enregistrer/" + identifiant;
                 $.ajax({
                     type: "POST",
                     url : url,

@@ -2,8 +2,30 @@
 
 namespace Structure\Entity\Db;
 
-interface StructureConcreteInterface extends StructureInterface
+use Application\Entity\Db\Source;
+
+interface StructureConcreteInterface
 {
+    /**
+     * @return string
+     */
+    public function __toString();
+
+    /**
+     * @return string
+     */
+    public function getId();
+
+    /**
+     * @return string
+     */
+    public function getSourceCode();
+
+    /**
+     * @return Source
+     */
+    public function getSource();
+
     /**
      * @param Structure $structure
      * @return self
@@ -11,7 +33,10 @@ interface StructureConcreteInterface extends StructureInterface
     public function setStructure(Structure $structure): self;
 
     /**
-     * @return Structure
+     * Retourne l'éventuelle structure liée *ou son substitut le cas échéant*.
+     *
+     * @param bool $returnSubstitIfExists À true, retourne la structure substituante s'il y en a une ; sinon la structure d'origine.
+     * @return Structure|null
      */
-    public function getStructure(): ?Structure;
+    public function getStructure(bool $returnSubstitIfExists = true): ?Structure;
 }

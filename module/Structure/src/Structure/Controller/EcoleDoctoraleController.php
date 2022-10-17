@@ -106,8 +106,8 @@ class EcoleDoctoraleController extends StructureConcreteController
             foreach ($unites as $unite) {
                 $result[] = array(
                     'id' => $unite->getId(),            // identifiant unique de l'item
-                    'label' => $unite->getLibelle(),    // libellé de l'item
-                    'extra' => $unite->getSigle(),      // infos complémentaires (facultatives) sur l'item
+                    'label' => $unite->getStructure()->getLibelle(),    // libellé de l'item
+                    'extra' => $unite->getStructure()->getSigle(),      // infos complémentaires (facultatives) sur l'item
                 );
             }
             usort($result, function ($a, $b) {

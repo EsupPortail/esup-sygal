@@ -93,6 +93,25 @@ class EtablissementRepository extends DefaultEntityRepository
     }
 
     /**
+     * @return Etablissement[]
+     */
+    public function findSubstituables(): array
+    {
+        $qb = $this->createQueryBuilder("ed");
+        $qb
+            ->addSelect("typ")
+            ->leftJoin("structure.typeStructure", "typ")
+            ->addSelect("structuresSubstituees")
+            ->leftJoin("structure.structuresSubstituees", "structuresSubstituees")
+            ->andWhere('structure.estFermee = false')
+            ->andWhere('structureSubstituante IS NULL')
+            ->andWhere('structuresSubstituees IS NULL')
+            ->orderBy("structure.libelle");
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @param string source
      * @param boolean $include (si 'true' alors seulement la source sinon tous sauf la source)
      * @return Etablissement[]
@@ -176,18 +195,16 @@ class EtablissementRepository extends DefaultEntityRepository
         return $etab;
     }
 
-    public function findByStructureId($structureId)
+    public function findByStructureId($structureId): ?Etablissement
     {
         $qb = $this->createQueryBuilder("e")
             ->andWhere("structure.id = :structureId")
             ->setParameter("structureId", $structureId);
         try {
-            $etablissement = $qb->getQuery()->getOneOrNullResult();
+            return $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
             throw new RuntimeException("Anomalie plusieurs établissements avec le même id.", 0, $e);
         }
-
-        return $etablissement;
     }
 
     /**
@@ -206,7 +223,7 @@ class EtablissementRepository extends DefaultEntityRepository
      * @param bool $cacheable
      * @return Etablissement[]
      */
-    public function findAllEtablissementsInscriptions(bool $cacheable): array
+    public function findAllEtablissementsInscriptions(bool $cacheable = false): array
     {
         $qb = $this->createQueryBuilder("e")
             ->andWhere("e.estInscription = true")

@@ -129,12 +129,13 @@ class UniteRechercheController extends StructureConcreteController
         if ($etablissementId == 0) {
             $this->flashMessenger()->addErrorMessage("Pour ajouter un établissement de rattachement, veuillez sélectionner un établissement.");
         } else {
+            /** @var \Structure\Entity\Db\Etablissement $etablissement */
             $etablissement = $this->getEtablissementService()->getRepository()->find($etablissementId);
             if ($this->getUniteRechercheService()->existEtablissementRattachement($unite, $etablissement)) {
-                $this->flashMessenger()->addErrorMessage("L'établissement de rattachement <strong>" . $etablissement->getLibelle() . "</strong> n'a pas pu être ajouter car déjà enregistré comme établissement de rattachement de l'unité de recherche <strong>" . $unite->getLibelle() . "</strong>.");
+                $this->flashMessenger()->addErrorMessage("L'établissement de rattachement <strong>" . $etablissement->getLibelle() . "</strong> n'a pas pu être ajouter car déjà enregistré comme établissement de rattachement de l'unité de recherche <strong>" . $unite->getStructure()->getLibelle() . "</strong>.");
             } else {
                 $this->getUniteRechercheService()->addEtablissementRattachement($unite, $etablissement);
-                $this->flashMessenger()->addSuccessMessage("L'établissement <strong>" . $etablissement->getLibelle() . "</strong> vient d'être ajouter comme établissement de rattachement de l'unité de recherche <strong>" . $unite->getLibelle() . "</strong>.");
+                $this->flashMessenger()->addSuccessMessage("L'établissement <strong>" . $etablissement->getLibelle() . "</strong> vient d'être ajouter comme établissement de rattachement de l'unité de recherche <strong>" . $unite->getStructure()->getLibelle() . "</strong>.");
             }
         }
 
@@ -146,10 +147,11 @@ class UniteRechercheController extends StructureConcreteController
         $structureId = $this->params()->fromRoute("structure");
         $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($structureId);
         $etablissementId = $this->params()->fromRoute("etablissement");
+        /** @var \Structure\Entity\Db\Etablissement $etablissement */
         $etablissement = $this->getEtablissementService()->getRepository()->find($etablissementId);
 
         $this->getUniteRechercheService()->removeEtablissementRattachement($unite, $etablissement);
-        $this->flashMessenger()->addSuccessMessage("L'établissement <strong>" . $etablissement->getLibelle() . "</strong> n'est plus un établissement de rattachement de l'unité de recherche <strong>" . $unite->getLibelle() . "</strong>.");
+        $this->flashMessenger()->addSuccessMessage("L'établissement <strong>" . $etablissement->getLibelle() . "</strong> n'est plus un établissement de rattachement de l'unité de recherche <strong>" . $unite->getStructure()->getLibelle() . "</strong>.");
 
         $this->redirect()->toRoute("unite-recherche/modifier", [], [], true);
     }
@@ -170,7 +172,7 @@ class UniteRechercheController extends StructureConcreteController
 
             $this->getDomaineScientifiqueService()->updateDomaineScientifique($domaine);
 
-            $this->flashMessenger()->addSuccessMessage("Le domaine scientifique <strong>" . $domaine->getLibelle() . "</strong> est maintenant un des domaines scientifiques de l'unité de recherche <strong>" . $unite->getLibelle() . "</strong>.");
+            $this->flashMessenger()->addSuccessMessage("Le domaine scientifique <strong>" . $domaine->getLibelle() . "</strong> est maintenant un des domaines scientifiques de l'unité de recherche <strong>" . $unite->getStructure()->getLibelle() . "</strong>.");
         }
         $this->redirect()->toRoute("unite-recherche/modifier", [], [], true);
     }
@@ -190,7 +192,7 @@ class UniteRechercheController extends StructureConcreteController
 
         $this->getDomaineScientifiqueService()->updateDomaineScientifique($domaine);
 
-        $this->flashMessenger()->addSuccessMessage("Le domaine scientifique <strong>" . $domaine->getLibelle() . "</strong> ne fait plus parti des domaines scientifiques de l'unité de recherche <strong>" . $unite->getLibelle() . "</strong>.");
+        $this->flashMessenger()->addSuccessMessage("Le domaine scientifique <strong>" . $domaine->getLibelle() . "</strong> ne fait plus parti des domaines scientifiques de l'unité de recherche <strong>" . $unite->getStructure()->getLibelle() . "</strong>.");
 
         return $this->redirect()->toRoute("unite-recherche/modifier", [], [], true);
     }
@@ -203,8 +205,8 @@ class UniteRechercheController extends StructureConcreteController
             foreach ($unites as $unite) {
                 $result[] = array(
                     'id' => $unite->getId(),            // identifiant unique de l'item
-                    'label' => $unite->getLibelle(),    // libellé de l'item
-                    'extra' => $unite->getSigle(),      // infos complémentaires (facultatives) sur l'item
+                    'label' => $unite->getStructure()->getLibelle(),    // libellé de l'item
+                    'extra' => $unite->getStructure()->getSigle(),      // infos complémentaires (facultatives) sur l'item
                 );
             }
             usort($result, function ($a, $b) {

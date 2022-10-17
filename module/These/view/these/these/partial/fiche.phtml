@@ -48,9 +48,9 @@ $acteursFormatter = new ActeursFormatter();
         <td>
             <?php
                 $etablissement = $these->getEtablissement();
-                if ($etablissement === null) echo "Non renseigné"; else echo $etablissement->getSigle();
+                if ($etablissement === null) echo "Non renseigné"; else echo $etablissement->getStructure()->getSigle();
                 echo " - ";
-                if ($etablissement === null) echo "Non renseigné"; else echo $etablissement->getLibelle();
+                if ($etablissement === null) echo "Non renseigné"; else echo $etablissement->getStructure()->getLibelle();
             ?>
         </td>
 
@@ -60,7 +60,7 @@ $acteursFormatter = new ActeursFormatter();
         <th>École doct.</th>
         <td>
             <?php if ($these->getEcoleDoctorale()): ?>
-                <?php echo $these->getEcoleDoctorale()->getSigle() . " - " . $these->getEcoleDoctorale()->getLibelle() ?>
+                <?php echo $these->getEcoleDoctorale()->getStructure()->getSigle() . " - " . $these->getEcoleDoctorale()->getStructure()->getLibelle() ?>
             <?php endif ?>
         </td>
     </tr>

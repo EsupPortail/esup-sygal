@@ -264,7 +264,7 @@ class RoleService extends BaseService
                 $roleId = $roleModele->getLibelle() . " " . $structure->getStructure()->getCode();
             } else {
                 $sourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo($roleModele->getRoleCode() . "_" . $structure->getSourceCode());
-                $roleId = $roleModele->getLibelle() . " " . $structure->getSigle();
+                $roleId = $roleModele->getLibelle() . " " . $structure->getStructure()->getSigle();
             }
 
             $role = $this->createRole($roleModele->getRoleCode(), $roleModele->getLibelle(), $sourceCode);

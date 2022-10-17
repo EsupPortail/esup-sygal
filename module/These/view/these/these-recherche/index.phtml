@@ -144,7 +144,7 @@ $acteursFormatterCodirecteurs->asSeparated()
                     if ($displayEtablissement) {
                         echo "<td>";
                         echo "<abbr title='";
-                        echo $these->getEtablissement()->getLibelle();
+                        echo $these->getEtablissement()->getStructure()->getLibelle();
                         echo "'>";
                         echo $these->getEtablissement()->getStructure()->getCode();
                         echo "</abbr>";
@@ -169,9 +169,9 @@ $acteursFormatterCodirecteurs->asSeparated()
                 </td>
                 <td>
                     <?php if($these->getEcoleDoctorale()): ?>
-                        <abbr title="<?php echo $these->getEcoleDoctorale()->getLibelle() ?>">
+                        <abbr title="<?php echo $these->getEcoleDoctorale()->getStructure()->getLibelle() ?>">
                             <?php
-                            $sigle = $these->getEcoleDoctorale()->getSigle();
+                            $sigle = $these->getEcoleDoctorale()->getStructure()->getSigle();
                             if ($sigle && $sigle !== "") {
                                 echo $sigle;
                             } else {
@@ -183,7 +183,7 @@ $acteursFormatterCodirecteurs->asSeparated()
                 </td>
                 <td>
                     <?php if($these->getUniteRecherche()): ?>
-                        <abbr title="<?php echo $these->getUniteRecherche()->getLibelle() ?>">
+                        <abbr title="<?php echo $these->getUniteRecherche()->getStructure()->getLibelle() ?>">
                             <?php echo $these->getUniteRecherche()->getStructure()->getCode(); ?>
                         </abbr>
                     <?php endif ?>

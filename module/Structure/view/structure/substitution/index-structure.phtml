@@ -7,7 +7,7 @@ use Structure\Provider\Privilege\SubstitutionPrivileges;
 /**
   * @see \Soutenance\Controller\IndexController::indexStructureAction()
   * @var string $type
-  * @var StructureConcreteInterface[] $structures
+  * @var \Structure\Entity\Db\StructureInterface[] $structures
   */
 
  $libelle = 'Structure';
@@ -61,7 +61,7 @@ $canSubstitutionAutomatique = $this->isAllowed(SubstitutionPrivileges::getResour
 
                     <?php if ($canSubstitutionAutomatique): ?>
                         <a href="<?php echo $this->url('substitution-automatique', ['type' => $type], [], true);?>" class="float-end" title="Recherche automatique de substitution">
-                            <button class="btn btn-secondary"><span class="fas fa-cog"></span> Recherche automatique de substitutions </button>
+                            <button class="btn btn-secondary"><span class="fas fa-cog"></span> Recherche de substitutions possibles</button>
                         </a>
                     <?php endif; ?>
                 </p>

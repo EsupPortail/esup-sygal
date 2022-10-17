@@ -67,7 +67,7 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
             <tr>
                 <td>
                     <a href="<?php echo $this->url('ecole-doctorale/information', ['structure' => $ecole->getStructure()->getId()], [], true); ?>">
-                        <?php echo $ecole->getLibelle(); ?>
+                        <?php echo $ecole->getStructure()->getLibelle(); ?>
                         <?php if ($ecole->getStructure()->estFermee()) : ?>
                             &nbsp;<span class="badge bg-danger">Structure fermée</span>
                         <?php endif; ?>
@@ -79,7 +79,7 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
                 <td>
                     <?php echo $ecole->getStructure()->getCode(); ?>
                 </td>
-                <td> <?php echo $ecole->getSigle(); ?> </td>
+                <td> <?php echo $ecole->getStructure()->getSigle(); ?> </td>
                 <td>
                     <?php if (($canModifier OR $canModifierCetteEcole) && !$historisee) : ?>
                         <a href="<?php echo $this->url('ecole-doctorale/supprimer', ["structure" => $ecole->getStructure()->getId()], [], true); ?>"

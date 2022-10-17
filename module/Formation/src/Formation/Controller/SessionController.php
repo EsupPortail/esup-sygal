@@ -304,9 +304,9 @@ class SessionController extends AbstractController
         foreach ($inscriptions as $inscription) {
             $doctorant = $inscription->getDoctorant();
             $theses = array_filter($doctorant->getTheses(), function (These $t) { return $t->getEtatThese() === These::ETAT_EN_COURS; });
-            $etablissements = array_map(function (These $t) { return ($t->getEtablissement())?$t->getEtablissement()->getLibelle():"Établissement non renseigné";}, $theses);
-            $ecoles = array_map(function (These $t) { return ($t->getEcoleDoctorale())?$t->getEcoleDoctorale()->getLibelle():"École doctorale non renseignée";}, $theses);
-            $unites = array_map(function (These $t) { return ($t->getUniteRecherche())?$t->getUniteRecherche()->getLibelle():"Unité de recherche non renseignée";}, $theses);
+            $etablissements = array_map(function (These $t) { return ($t->getEtablissement())?$t->getEtablissement()->getStructure()->getLibelle():"Établissement non renseigné";}, $theses);
+            $ecoles = array_map(function (These $t) { return ($t->getEcoleDoctorale())?$t->getEcoleDoctorale()->getStructure()->getLibelle():"École doctorale non renseignée";}, $theses);
+            $unites = array_map(function (These $t) { return ($t->getUniteRecherche())?$t->getUniteRecherche()->getStructure()->getLibelle():"Unité de recherche non renseignée";}, $theses);
             $entry = [
                 'Liste' => $inscription->getListe(),
                 'Dénomination étudiant' => $doctorant->getIndividu()->getNomComplet(),
@@ -339,14 +339,14 @@ class SessionController extends AbstractController
 
         $logos = [];
         try {
-            $logos['site'] = $this->fichierStorageService->getFileForLogoStructure($session->getSite());
+            $logos['site'] = $this->fichierStorageService->getFileForLogoStructure($session->getSite()->getStructure());
         } catch (StorageAdapterException $e) {
             $logos['site'] = null;
         }
 
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {
             try {
-                $logos['comue'] = $this->fichierStorageService->getFileForLogoStructure($comue);
+                $logos['comue'] = $this->fichierStorageService->getFileForLogoStructure($comue->getStructure());
             } catch (StorageAdapterException $e) {
                 $logos['comue'] = null;
             }

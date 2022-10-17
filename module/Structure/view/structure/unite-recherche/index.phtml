@@ -69,7 +69,7 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
             <tr>
                 <td>
                     <a href="<?php echo $this->url('unite-recherche/information', ['structure' => $unite->getStructure()->getId()], [], true); ?>">
-                        <?php echo $unite->getLibelle(); ?>
+                        <?php echo $unite->getStructure()->getLibelle(); ?>
                         <?php if ($unite->getStructure()->estFermee()) : ?>
                             &nbsp;<span class="badge bg-danger">Structure fermée</span>
                         <?php endif; ?>
@@ -81,7 +81,7 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
                 <td>
                     <?php echo $unite->getStructure()->getCode(); ?>
                 </td>
-                <td> <?php echo $unite->getSigle(); ?> </td>
+                <td> <?php echo $unite->getStructure()->getSigle(); ?> </td>
                 <td> <?php echo $unite->getRNSR(); ?> </td>
 <!--                <td> --><?php //echo count($unite->getTheses()); ?><!-- </td>-->
                 <td>

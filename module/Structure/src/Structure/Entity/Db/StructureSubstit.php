@@ -31,7 +31,7 @@ class StructureSubstit implements HistoriqueAwareInterface
     /**
      * StructureSubstit factory.
      *
-     * @param Structure[] $structuresSources
+     * @param \Structure\Entity\Db\StructureConcreteInterface[]\Structure\Entity\Db\StructureInterface[] $structuresSources
      * @param Structure   $structureCible
      * @return self[]
      */

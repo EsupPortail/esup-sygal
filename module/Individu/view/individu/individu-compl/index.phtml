@@ -73,14 +73,14 @@ $canHistoriser = $canAjouter;
             </td>
             <td>
                 <?php if ($complement->getEtablissement()) : ?>
-                    <?php echo $complement->getEtablissement()->getLibelle(); ?>
+                    <?php echo $complement->getEtablissement()->getStructure()->getLibelle(); ?>
                 <?php else: ?>
                     (Non renseigné&middot;e)
                 <?php endif; ?>
             </td>
             <td>
                 <?php if ($complement->getUniteRecherche()) : ?>
-                    <?php echo $complement->getUniteRecherche()->getLibelle(); ?>
+                    <?php echo $complement->getUniteRecherche()->getStructure()->getLibelle(); ?>
                 <?php else: ?>
                     (Non renseigné&middot;e)
                 <?php endif; ?>

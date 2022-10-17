@@ -28,13 +28,13 @@ use These\Entity\Db\These;
                 <?php echo $these->getDoctorant()->getIndividu()->getNomUsuel(); ?>
             </td>
             <td>
-                <?php echo $these->getUniteRecherche()->getSigle(); ?>
+                <?php echo $these->getUniteRecherche()->getStructure()->getSigle(); ?>
             </td>
             <td>
-                <?php echo $these->getEcoleDoctorale()->getSigle(); ?>
+                <?php echo $these->getEcoleDoctorale()->getStructure()->getSigle(); ?>
             </td>
             <td>
-                <?php echo $these->getEtablissement()->getLibelle(); ?>
+                <?php echo $these->getEtablissement()->getStructure()->getLibelle(); ?>
             </td>
             <td>
                 <?php echo $these->getEtatThese(); ?>

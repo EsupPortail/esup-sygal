@@ -12,7 +12,7 @@ use These\Entity\Db\Acteur;
 use Structure\Entity\Db\EcoleDoctorale;
 use Soutenance\Entity\Proposition;
 
-$this->headTitle("Soutenances autorisées pour l'école doctorale [".$ecole->getSigle()."] " . $ecole->getLibelle());
+$this->headTitle("Soutenances autorisées pour l'école doctorale [".$ecole->getStructure()->getSigle()."] " . $ecole->getStructure()->getLibelle());
 
 $count = count($soutenances);
 ?>
@@ -28,7 +28,7 @@ $count = count($soutenances);
     <div id="content" class="col-12 col-md-10">
         <h1 class="page-header">
             Soutenances autorisées pour l'école doctorale <br/>
-            [<?php echo $ecole->getSigle(); ?>] <?php echo $ecole->getLibelle(); ?>
+            [<?php echo $ecole->getStructure()->getSigle(); ?>] <?php echo $ecole->getStructure()->getLibelle(); ?>
         </h1>
 
         <?php if ($count > 0) : ?>

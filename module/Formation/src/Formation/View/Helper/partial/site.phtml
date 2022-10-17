@@ -10,9 +10,9 @@ use Structure\Entity\Db\Etablissement;
 ?>
 
 <?php if ($site !== null) : ?>
-    <span class="site" title="<?php echo $site->getLibelle(); ?>"
+    <span class="site" title="<?php echo $site->getStructure()->getLibelle(); ?>"
           data-bs-toggle="tooltip" data-bs-html="true">
-        <?php echo $site->getSigle(); ?>
+        <?php echo $site->getStructure()->getSigle(); ?>
     </span>
 <?php else : ?>
     <span class="site" title="Formation dispensée pour tous les sites"

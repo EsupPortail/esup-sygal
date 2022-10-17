@@ -47,6 +47,22 @@ class UniteRechercheRepository extends DefaultEntityRepository
     }
 
     /**
+     * @return UniteRecherche[]
+     */
+    public function findSubstituables(): array
+    {
+        $qb = $this->createQueryBuilder("ed");
+        $qb
+            ->addSelect("typ")
+            ->join("structure.typeStructure", "typ")
+            ->andWhere('structureSubstituante IS NULL')
+            ->andWhere('structure.structuresSubstituees IS EMPTY')
+            ->orderBy("structure.libelle");
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @param int|null $id
      * @return UniteRecherche|null
      */
@@ -67,19 +83,16 @@ class UniteRechercheRepository extends DefaultEntityRepository
         return $unite;
     }
 
-    public function findByStructureId($id)
+    public function findByStructureId($id): ?UniteRecherche
     {
-        /** @var UniteRecherche $unite */
         $qb = $this->createQueryBuilder("u")
             ->andWhere("structure.id = :id")
             ->setParameter("id", $id);
         try {
-            $unite = $qb->getQuery()->getOneOrNullResult();
+            return $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
             throw new RuntimeException("UniteRechercheRepository::findByStructureId(".$id.") retourne de multiples unités de recherches !");
         }
-
-        return $unite;
     }
 
     /**

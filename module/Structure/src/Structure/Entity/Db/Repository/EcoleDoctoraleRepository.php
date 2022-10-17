@@ -45,19 +45,35 @@ class EcoleDoctoraleRepository extends DefaultEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findByStructureId($id)
+    /**
+     * @return EcoleDoctorale[]
+     */
+    public function findSubstituables(): array
     {
-        /** @var EcoleDoctorale $ecole */
+        $qb = $this->createQueryBuilder("ed");
+        $qb
+            ->addSelect("typ")
+            ->leftJoin("structure.typeStructure", "typ")
+            ->addSelect("structuresSubstituees")
+            ->leftJoin("structure.structuresSubstituees", "structuresSubstituees")
+            ->andWhere('structure.estFermee = false')
+            ->andWhere('structureSubstituante IS NULL')
+            ->andWhere('structuresSubstituees IS NULL')
+            ->orderBy("structure.libelle");
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findByStructureId($id): ?EcoleDoctorale
+    {
         $qb = $this->createQueryBuilder("ed")
             ->andWhere("structure.id = :id")
             ->setParameter("id", $id);
         try {
-            $ecole = $qb->getQuery()->getOneOrNullResult();
+            return $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
             throw new RuntimeException("EcoleDoctoraleRepository::findByStructureId(".$id.") retourne de multiples écoles doctorales !");
         }
-
-        return $ecole;
     }
 
     /**

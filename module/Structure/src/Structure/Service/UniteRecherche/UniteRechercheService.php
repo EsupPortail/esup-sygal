@@ -6,7 +6,6 @@ use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\EtablissementRattachement;
@@ -125,7 +124,7 @@ class UniteRechercheService extends BaseService
 
     public function setLogo(UniteRecherche $unite, $cheminLogo)
     {
-        $unite->setCheminLogo($cheminLogo);
+        $unite->getStructure()->setCheminLogo($cheminLogo);
         $this->flush($unite);
 
         return $unite;
@@ -133,7 +132,7 @@ class UniteRechercheService extends BaseService
 
     public function deleteLogo(UniteRecherche $unite)
     {
-        $unite->setCheminLogo(null);
+        $unite->getStructure()->setCheminLogo(null);
         $this->flush($unite);
 
         return $unite;
@@ -144,7 +143,7 @@ class UniteRechercheService extends BaseService
         try {
             $this->getEntityManager()->flush($ur);
             $this->getEntityManager()->flush($ur->getStructure());
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Erreur lors de l'enregistrement de l'UR", null, $e);
         }
     }
@@ -154,22 +153,23 @@ class UniteRechercheService extends BaseService
     /**
      * @param UniteRecherche $unite
      * @param Etablissement  $etablissement
-     * @throws OptimisticLockException
      */
     public function addEtablissementRattachement(UniteRecherche $unite, Etablissement $etablissement)
     {
         $er = new EtablissementRattachement();
         $er->setUniteRecherche($unite);
         $er->setEtablissement($etablissement);
-        $this->getEntityManager()->persist($er);
-        $this->getEntityManager()->flush($er);
+        try {
+            $this->getEntityManager()->persist($er);
+            $this->getEntityManager()->flush($er);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de l'UR", null, $e);
+        }
     }
 
     /**
      * @param UniteRecherche $unite
      * @param Etablissement  $etablissement
-     * @throws OptimisticLockException
-     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function removeEtablissementRattachement(UniteRecherche $unite, Etablissement $etablissement)
     {
@@ -178,11 +178,19 @@ class UniteRechercheService extends BaseService
             ->andWhere("er.etablissement = :etablissement")
             ->setParameter("unite", $unite)
             ->setParameter("etablissement", $etablissement);
-        $result = $qb->getQuery()->getOneOrNullResult();
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de l'UR", null, $e);
+        }
 
         if ($result) {
-            $this->getEntityManager()->remove($result);
-            $this->getEntityManager()->flush($result);
+            try {
+                $this->getEntityManager()->remove($result);
+                $this->getEntityManager()->flush($result);
+            } catch (ORMException $e) {
+                throw new RuntimeException("Erreur lors de l'enregistrement de l'UR", null, $e);
+            }
         }
     }
 
@@ -193,7 +201,7 @@ class UniteRechercheService extends BaseService
 
         $options = [];
         foreach ($unites as $unite) {
-            $options[$unite->getId()] = $unite->getLibelle() . " " ."<span class='badge'>".$unite->getSigle()."</span>";
+            $options[$unite->getId()] = $unite->getStructure()->getLibelle() . " " ."<span class='badge'>".$unite->getStructure()->getSigle()."</span>";
         }
         return $options;
     }

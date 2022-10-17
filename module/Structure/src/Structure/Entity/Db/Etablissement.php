@@ -122,7 +122,7 @@ class Etablissement
      *
      * @return string
      */
-    public function getSourceCode()
+    public function getSourceCode(): ?string
     {
         return $this->sourceCode;
     }
@@ -141,38 +141,6 @@ class Etablissement
     public function setDomaine($domaine)
     {
         $this->domaine = $domaine;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLibelle()
-    {
-        return $this->getStructure()->getLibelle();
-    }
-
-    /**
-     * @param string $libelle
-     */
-    public function setLibelle($libelle)
-    {
-        $this->getStructure()->setLibelle($libelle);
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getSigle(): ?string
-    {
-        return $this->getStructure()->getSigle();
-    }
-
-    /**
-     * @param string|null $sigle
-     */
-    public function setSigle(string $sigle = null)
-    {
-        $this->getStructure()->setSigle($sigle);
     }
 
     /**
@@ -251,22 +219,6 @@ class Etablissement
     }
 
     /**
-     * @return string
-     */
-    public function getCheminLogo()
-    {
-        return $this->getStructure()->getCheminLogo();
-    }
-
-    /**
-     * @param string $cheminLogo
-     */
-    public function setCheminLogo($cheminLogo)
-    {
-        $this->getStructure()->setCheminLogo($cheminLogo);
-    }
-
-    /**
      * Retourne l'éventuel établissement substituant celui-ci.
      *
      * ATTENTION : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
@@ -314,7 +266,7 @@ class Etablissement
      */
     public function estToutEtablissementConfondu()
     {
-        return $this->getStructure()->getCode() === self::CODE_TOUT_ETABLISSEMENT_CONFONDU;
+        return $this->structure->getCode() === self::CODE_TOUT_ETABLISSEMENT_CONFONDU;
     }
 
     /**
@@ -322,8 +274,8 @@ class Etablissement
      */
     public function createSearchFilterValueOption(): array
     {
-        $label = ($this->getCode() ?: $this->getSigle()) ?: $this->getLibelle();
-        if ($this->getStructure()->estFermee()) {
+        $label = ($this->code ?: $this->structure->getSigle()) ?: $this->structure->getLibelle();
+        if ($this->structure->estFermee()) {
             $label .= "&nbsp; FERMÉ";
         }
 

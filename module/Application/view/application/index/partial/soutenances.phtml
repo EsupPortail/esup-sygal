@@ -13,7 +13,7 @@ use Structure\Entity\Db\EcoleDoctorale;
             <li>
                 <a
                    href="<?php echo $this->url('soutenances-par-ecole-doctorale', ['ecole' => $ecole->getId()], [], true); ?>"
-                ><?php echo ($ecole->getSigle())??$ecole->getLibelle(); ?></a>
+                ><?php echo ($ecole->getStructure()->getSigle())??$ecole->getStructure()->getLibelle(); ?></a>
             </li>
         <?php endforeach; ?>
     </ul>

@@ -244,7 +244,7 @@ class MembreService {
         $membre->setGenre(($acteur->getIndividu()->estUneFemme())?"F":"H");
         $qualite = $this->getQualiteService()->getQualiteByLibelle($acteur->getQualite());
         $membre->setQualite(($qualite !== null)?$qualite:$inconnue);
-        $membre->setEtablissement(($acteur->getEtablissement())?$acteur->getEtablissement()->getLibelle():"Etablissement inconnu");
+        $membre->setEtablissement(($acteur->getEtablissement())?$acteur->getEtablissement()->getStructure()->getLibelle():"Etablissement inconnu");
         $membre->setRole(Membre::MEMBRE_JURY);
         $membre->setExterieur("non");
         $membre->setEmail($acteur->getIndividu()->getEmail());

@@ -1374,7 +1374,7 @@ class TheseController extends AbstractController
             $etablissement = $these->getEtablissement();
         }
         try {
-            $cheminLogo = $this->fichierStorageService->getFileForLogoStructure($etablissement);
+            $cheminLogo = $this->fichierStorageService->getFileForLogoStructure($etablissement->getStructure());
         } catch (StorageAdapterException $e) {
             $cheminLogo = null;
         }

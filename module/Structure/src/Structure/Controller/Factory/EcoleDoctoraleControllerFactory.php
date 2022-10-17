@@ -21,7 +21,7 @@ class EcoleDoctoraleControllerFactory
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): EcoleDoctoraleController
     {
         /** @var EcoleDoctoraleForm $form */
         $form = $container->get('FormElementManager')->get('EcoleDoctoraleForm');

@@ -245,7 +245,7 @@ class ApplicationNavigationFactory extends NavigationFactory
         switch (true) {
             case $role->isEcoleDoctoraleDependant():
                 $ed = $role->getStructure()->getEcoleDoctorale();
-                $label = $ed->getSigle();
+                $label = $ed->getStructure()->getSigle();
                 $query = [EcoleDoctoraleSearchFilter::NAME => $ed->getSourceCode()];
                 break;
             case $role->isUniteRechercheDependant():

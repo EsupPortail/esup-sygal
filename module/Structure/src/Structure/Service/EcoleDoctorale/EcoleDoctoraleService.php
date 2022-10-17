@@ -6,6 +6,7 @@ use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Repository\EcoleDoctoraleRepository;
@@ -68,13 +69,13 @@ class EcoleDoctoraleService extends BaseService
 
         $this->entityManager->beginTransaction();
 
-        $this->entityManager->persist($structure);
-        $this->entityManager->persist($structureConcrete);
         try {
+            $this->entityManager->persist($structure);
+            $this->entityManager->persist($structureConcrete);
             $this->entityManager->flush($structure);
             $this->entityManager->flush($structureConcrete);
             $this->entityManager->commit();
-        } catch (\Exception $e) {
+        } catch (ORMException $e) {
             $this->rollback();
             throw new RuntimeException("Erreur lors de l'enregistrement de l'ED '$structure'", null, $e);
         }
@@ -91,7 +92,7 @@ class EcoleDoctoraleService extends BaseService
 
     public function setLogo(EcoleDoctorale $ecole, $cheminLogo)
     {
-        $ecole->setCheminLogo($cheminLogo);
+        $ecole->getStructure()->setCheminLogo($cheminLogo);
         $this->flush($ecole);
 
         return $ecole;
@@ -99,7 +100,7 @@ class EcoleDoctoraleService extends BaseService
 
     public function deleteLogo(EcoleDoctorale $ecole)
     {
-        $ecole->setCheminLogo(null);
+        $ecole->getStructure()->setCheminLogo(null);
         $this->flush($ecole);
 
         return $ecole;
@@ -141,18 +142,12 @@ class EcoleDoctoraleService extends BaseService
         return $ed;
     }
 
-    private function persist(EcoleDoctorale $ecole)
-    {
-        $this->getEntityManager()->persist($ecole);
-        $this->getEntityManager()->persist($ecole->getStructure());
-    }
-
     private function flush(EcoleDoctorale $ecole)
     {
         try {
             $this->getEntityManager()->flush($ecole);
             $this->getEntityManager()->flush($ecole->getStructure());
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Erreur lors de l'enregistrement de l'ED", null, $e);
         }
     }
@@ -177,7 +172,7 @@ class EcoleDoctoraleService extends BaseService
 
         $options = [];
         foreach ($ecoles as $ecole) {
-            $options[$ecole->getId()] = $ecole->getLibelle() . " " ."<span class='badge'>".$ecole->getSigle()."</span>";
+            $options[$ecole->getId()] = $ecole->getStructure()->getLibelle() . " " ."<span class='badge'>".$ecole->getStructure()->getSigle()."</span>";
         }
         return $options;
     }

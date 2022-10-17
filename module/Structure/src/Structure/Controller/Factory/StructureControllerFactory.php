@@ -2,27 +2,25 @@
 
 namespace Structure\Controller\Factory;
 
+use Application\Service\Role\RoleService;
+use Fichier\Service\Fichier\FichierService;
+use Fichier\Service\NatureFichier\NatureFichierService;
+use Individu\Service\IndividuService;
+use Interop\Container\ContainerInterface;
 use Structure\Controller\StructureController;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
-use Fichier\Service\Fichier\FichierService;
-use Individu\Service\IndividuService;
-use Fichier\Service\NatureFichier\NatureFichierService;
-use Application\Service\Role\RoleService;
 use Structure\Service\Structure\StructureService;
 use Structure\Service\StructureDocument\StructureDocumentService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
-use Interop\Container\ContainerInterface;
 
 class StructureControllerFactory
 {
     /**
-     * Create service
-     *
-     * @param ContainerInterface $container
-     * @return StructureController
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): StructureController
     {
         /**
          * @var IndividuService $individuService
@@ -56,7 +54,6 @@ class StructureControllerFactory
         $controller->setNatureFichierService($natureFichierService);
         $controller->setFichierService($fichierService);
         $controller->setStructureDocumentService($structureDocumentService);
-
 
         return $controller;
     }

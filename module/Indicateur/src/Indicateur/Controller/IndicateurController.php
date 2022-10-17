@@ -226,22 +226,22 @@ class IndicateurController extends AbstractActionController {
                     case 'Établissement d\'inscription' :
                         if ($entry[$fct]) {
                             /** @var Etablissement $etablissement */
-                            $etablissement = $this->getStructureService()->getStructuresConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_ETABLISSEMENT, $entry[$fct]);
-                            $value = $etablissement->getLibelle();
+                            $etablissement = $this->getStructureService()->getStructureConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_ETABLISSEMENT, $entry[$fct]);
+                            $value = $etablissement->getStructure()->getLibelle();
                         } else $value .= "";
                         break;
                     case 'École doctorale' :
                         if ($entry[$fct]) {
                             /** @var EcoleDoctorale $ecole */
-                            $ecole = $this->getStructureService()->getStructuresConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_ECOLE_DOCTORALE, $entry[$fct]);
-                            $value = $ecole->getLibelle();
+                            $ecole = $this->getStructureService()->getStructureConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_ECOLE_DOCTORALE, $entry[$fct]);
+                            $value = $ecole->getStructure()->getLibelle();
                         } else $value .= "";
                         break;
                     case 'Unité de recherche' :
                         if ($entry[$fct]) {
                             /** @var UniteRecherche $unite */
-                            $unite = $this->getStructureService()->getStructuresConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_UNITE_RECHERCHE, $entry[$fct]);
-                            $value = $unite->getLibelle();
+                            $unite = $this->getStructureService()->getStructureConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_UNITE_RECHERCHE, $entry[$fct]);
+                            $value = $unite->getStructure()->getLibelle();
                         } else $value .= "";
                         break;
                     default:

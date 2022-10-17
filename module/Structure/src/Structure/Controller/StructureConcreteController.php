@@ -7,6 +7,7 @@ use Structure\Entity\Db\EcoleDoctorale;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
+use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\StructureConcreteInterface;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;
@@ -121,7 +122,7 @@ abstract class StructureConcreteController extends AbstractController
             'structure'       => $structureConcrete,
             'roleListing'     => $roleListings,
             'individuRoles' => $individuRoles,
-            'logoContent'     => $this->structureService->getLogoStructureContent($structureConcrete),
+            'logoContent'     => $this->structureService->getLogoStructureContent($structureConcrete->getStructure()),
         ]);
     }
 
@@ -135,21 +136,19 @@ abstract class StructureConcreteController extends AbstractController
      */
     public function modifierAction()
     {
-        /** @var UniteRecherche $structureConcrete */
         $structureId = $this->params()->fromRoute("structure");
         $structureConcrete  = $this->getStructureConcreteService()->getRepository()->findByStructureId($structureId);
         $this->structureForm->bind($structureConcrete);
 
-        // si POST alors on revient du formulaire
-        if ($data = $this->params()->fromPost()) {
+        $request = $this->getRequest();
 
+        if ($request->isPost()) {
             // récupération des données et des fichiers
-            $request = $this->getRequest();
             $data = $request->getPost()->toArray();
             $file = $request->getFiles()->toArray();
 
             // action de modification
-            $cheminLogo = $structureConcrete->getCheminLogo();
+            $cheminLogo = $structureConcrete->getStructure()->getCheminLogo();
             $this->structureForm->setData($data);
             if ($this->structureForm->isValid()) {
 
@@ -157,9 +156,10 @@ abstract class StructureConcreteController extends AbstractController
                 if ($file['cheminLogo']['tmp_name'] !== '') {
                     $this->ajouterLogoStructure($file['cheminLogo']['tmp_name']);
                 } else {
-                    $structureConcrete->setCheminLogo($cheminLogo);
+                    $structureConcrete->getStructure()->setCheminLogo($cheminLogo);
                 }
                 // mise à jour des données relatives aux structures
+                /** @var EcoleDoctorale|Etablissement|UniteRecherche $structureConcrete */
                 $structureConcrete = $this->structureForm->getData();
                 $this->getStructureConcreteService()->update($structureConcrete);
 
@@ -172,17 +172,11 @@ abstract class StructureConcreteController extends AbstractController
             return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureId]], true);
         }
 
-        $viewModel = new ViewModel([
+        return new ViewModel([
             'structure' => $structureConcrete,
-            'form'                        => $this->structureForm,
-//            'etablissements'              => $etablissements,
-//            'etablissementsRattachements' => $etablissementsRattachements,
-//            'domainesAssocies'            => $unite->getDomaines(),
-//            'domainesScientifiques'       => $domaineScientifiques,
-            'logoContent'                 => $this->structureService->getLogoStructureContent($structureConcrete),
+            'form' => $this->structureForm,
+            'logoContent' => $this->structureService->getLogoStructureContent($structureConcrete->getStructure()),
         ]);
-
-        return $viewModel;
     }
 
     /**
@@ -190,16 +184,16 @@ abstract class StructureConcreteController extends AbstractController
      */
     public function ajouterAction()
     {
-        if ($data = $this->params()->fromPost()) {
+        $request = $this->getRequest();
 
+        if ($request->isPost()) {
             // récupération des données et des fichiers
-            $request = $this->getRequest();
             $data = $request->getPost()->toArray();
             $file = $request->getFiles()->toArray();
 
             $this->structureForm->setData($data);
             if ($this->structureForm->isValid()) {
-                /** @var EcoleDoctorale $structureConcrete */
+                /** @var EcoleDoctorale|Etablissement|UniteRecherche $structureConcrete */
                 $structureConcrete = $this->structureForm->getData();
                 $structureConcrete = $this->getStructureConcreteService()->create($structureConcrete, $this->userContextService->getIdentityDb());
 
@@ -221,11 +215,9 @@ abstract class StructureConcreteController extends AbstractController
 
         $this->structureForm->setAttribute('action', $this->url()->fromRoute($this->routeName . '/ajouter'));
 
-        $viewModel = new ViewModel([
+        return new ViewModel([
             'form' => $this->structureForm,
         ]);
-
-        return $viewModel;
     }
 
     /**
@@ -285,7 +277,7 @@ abstract class StructureConcreteController extends AbstractController
         $structure  = $this->getStructureConcreteService()->getRepository()->findByStructureId($structureId);
 
         try {
-            $fileDeleted = $this->structureService->deleteLogoStructure($structure);
+            $fileDeleted = $this->structureService->deleteLogoStructure($structure->getStructure(false));
         } catch (RuntimeException $e) {
             $this->flashMessenger()->addErrorMessage(
                 "Erreur lors de l'effacement du logo de la structure '$structure' : " . $e->getMessage());
@@ -305,10 +297,10 @@ abstract class StructureConcreteController extends AbstractController
      * - modification du chemin en bdd
      * - création du fichier sur le serveur.
      *
-     * @param string                     $cheminLogoUploade chemin vers le fichier temporaire associé au logo
-     * @param StructureConcreteInterface $structure
+     * @param string $cheminLogoUploade chemin vers le fichier temporaire associé au logo
+     * @param \Structure\Entity\Db\StructureConcreteInterface|null $structure
      */
-    protected function ajouterLogoStructure($cheminLogoUploade, StructureConcreteInterface $structure = null)
+    protected function ajouterLogoStructure(string $cheminLogoUploade, StructureConcreteInterface $structure = null)
     {
         if ($structure === null) {
             $structureId = $this->params()->fromRoute("structure");
@@ -316,7 +308,7 @@ abstract class StructureConcreteController extends AbstractController
         }
 
         try {
-            $this->structureService->updateLogoStructure($structure, $cheminLogoUploade);
+            $this->structureService->updateLogoStructure($structure->getStructure(false), $cheminLogoUploade);
         } catch (RuntimeException $e) {
             $this->flashMessenger()->addErrorMessage(
                 "Erreur lors de l'enregistrement du logo de la structure '$structure' : " . $e->getMessage());

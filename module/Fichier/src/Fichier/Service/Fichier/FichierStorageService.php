@@ -2,20 +2,14 @@
 
 namespace Fichier\Service\Fichier;
 
-use Fichier\Exporter\PageFichierIntrouvablePdfExporterTrait;
-use InvalidArgumentException;
-use Structure\Entity\Db\EcoleDoctorale;
-use Structure\Entity\Db\Etablissement;
-use Structure\Entity\Db\Structure;
-use Structure\Entity\Db\StructureConcreteInterface;
-use Structure\Entity\Db\StructureInterface;
-use Structure\Entity\Db\UniteRecherche;
 use Fichier\Entity\Db\Fichier;
+use Fichier\Exporter\PageFichierIntrouvablePdfExporterTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\Storage\Adapter\StorageAdapterInterface;
 use Generator;
+use InvalidArgumentException;
 use RuntimeException;
-use UnexpectedValueException;
+use Structure\Entity\Db\StructureInterface;
 use UnicaenApp\Util;
 
 class FichierStorageService
@@ -188,23 +182,16 @@ class FichierStorageService
      */
     private function computeDirectoryNameForLogoStructure(StructureInterface $structure): string
     {
+        $type = $structure->getTypeStructure();
         $dir = null;
 
         // sous-répertoire identifiant le type de structure
-        if ($structure instanceof EcoleDoctorale) {
-            $dir = self::DIR_ED;
-        } elseif ($structure instanceof UniteRecherche) {
-            $dir = self::DIR_UR;
-        } elseif ($structure instanceof Etablissement) {
+        if ($type->isEtablissement()) {
             $dir = self::DIR_ETAB;
-        } elseif ($structure instanceof Structure) {
-            if ($structure->getTypeStructure()->isEtablissement()) {
-                $dir = self::DIR_ETAB;
-            } elseif ($structure->getTypeStructure()->isEcoleDoctorale()) {
-                $dir = self::DIR_ED;
-            } elseif ($structure->getTypeStructure()->isUniteRecherche()) {
-                $dir = self::DIR_UR;
-            }
+        } elseif ($type->isEcoleDoctorale()) {
+            $dir = self::DIR_ED;
+        } elseif ($type->isUniteRecherche()) {
+            $dir = self::DIR_UR;
         }
         if ($dir === null) {
             throw new RuntimeException("Structure spécifiée imprévue.");
@@ -251,12 +238,6 @@ class FichierStorageService
         }
 
         $name = $structure->getCode();
-
-        if ($structure instanceof StructureConcreteInterface) {
-            if ($type = $structure->getStructure()->getTypeStructure()) {
-                $name = $type->getCode() . '-' . $name;
-            }
-        }
 
         $name = str_replace(["'", ':'], '_', $name);
         $name = str_replace(' ', '', $name);
