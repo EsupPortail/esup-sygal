@@ -132,10 +132,10 @@ class UniteRechercheController extends StructureConcreteController
             /** @var \Structure\Entity\Db\Etablissement $etablissement */
             $etablissement = $this->getEtablissementService()->getRepository()->find($etablissementId);
             if ($this->getUniteRechercheService()->existEtablissementRattachement($unite, $etablissement)) {
-                $this->flashMessenger()->addErrorMessage("L'établissement de rattachement <strong>" . $etablissement->getLibelle() . "</strong> n'a pas pu être ajouter car déjà enregistré comme établissement de rattachement de l'unité de recherche <strong>" . $unite->getStructure()->getLibelle() . "</strong>.");
+                $this->flashMessenger()->addErrorMessage("L'établissement de rattachement <strong>" . $etablissement->getStructure()->getLibelle() . "</strong> n'a pas pu être ajouter car déjà enregistré comme établissement de rattachement de l'unité de recherche <strong>" . $unite->getStructure()->getLibelle() . "</strong>.");
             } else {
                 $this->getUniteRechercheService()->addEtablissementRattachement($unite, $etablissement);
-                $this->flashMessenger()->addSuccessMessage("L'établissement <strong>" . $etablissement->getLibelle() . "</strong> vient d'être ajouter comme établissement de rattachement de l'unité de recherche <strong>" . $unite->getStructure()->getLibelle() . "</strong>.");
+                $this->flashMessenger()->addSuccessMessage("L'établissement <strong>" . $etablissement->getStructure()->getLibelle() . "</strong> vient d'être ajouter comme établissement de rattachement de l'unité de recherche <strong>" . $unite->getStructure()->getLibelle() . "</strong>.");
             }
         }
 
@@ -151,7 +151,7 @@ class UniteRechercheController extends StructureConcreteController
         $etablissement = $this->getEtablissementService()->getRepository()->find($etablissementId);
 
         $this->getUniteRechercheService()->removeEtablissementRattachement($unite, $etablissement);
-        $this->flashMessenger()->addSuccessMessage("L'établissement <strong>" . $etablissement->getLibelle() . "</strong> n'est plus un établissement de rattachement de l'unité de recherche <strong>" . $unite->getStructure()->getLibelle() . "</strong>.");
+        $this->flashMessenger()->addSuccessMessage("L'établissement <strong>" . $etablissement->getStructure()->getLibelle() . "</strong> n'est plus un établissement de rattachement de l'unité de recherche <strong>" . $unite->getStructure()->getLibelle() . "</strong>.");
 
         $this->redirect()->toRoute("unite-recherche/modifier", [], [], true);
     }

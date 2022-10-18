@@ -864,7 +864,7 @@ class StructureService extends BaseService
         $array = [];
         foreach ($structures as $structure) {
             if (!$structure->getStructure()->estFermee()) {
-                $array[$structure->getStructure()->getId()] = (($structure->getStructure()->getTypeStructure())?$structure->getStructure()->getTypeStructure()->getLibelle():"Non précisé"). " - ".$structure->getSigle(). " - " .$structure->getLibelle();
+                $array[$structure->getStructure()->getId()] = (($structure->getStructure()->getTypeStructure())?$structure->getStructure()->getTypeStructure()->getLibelle():"Non précisé"). " - ".$structure->getStructure()->getSigle(). " - " .$structure->getStructure()->getLibelle();
             }
         }
         return $array;
