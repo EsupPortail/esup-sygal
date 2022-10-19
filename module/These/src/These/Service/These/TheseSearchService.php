@@ -83,7 +83,7 @@ class TheseSearchService extends SearchService
     public function init()
     {
         $etablissementInscrFilter = $this->getEtablissementInscSearchFilter()
-            ->setWhereField('etab.sourceCode')
+            ->setWhereField('etab_substituant.sourceCode')
             ->setDataProvider(function(SelectSearchFilter $filter) {
                 return $this->fetchEtablissements($filter);
             });
@@ -92,12 +92,12 @@ class TheseSearchService extends SearchService
                 return $this->fetchOriginesFinancements($filter);
             });
         $uniteRechercheFilter = $this->getUniteRechercheSearchFilter()
-            ->setWhereField('ur.sourceCode')
+            ->setWhereField('ur_substituant.sourceCode')
             ->setDataProvider(function(SelectSearchFilter $filter) {
                 return $this->fetchUnitesRecherches($filter);
             });
         $ecoleDoctoraleFilter = $this->getEcoleDoctoraleSearchFilter()
-            ->setWhereField('ed.sourceCode')
+            ->setWhereField('ed_substituant.sourceCode')
             ->setDataProvider(function(SelectSearchFilter $filter) {
                 return $this->fetchEcolesDoctorales($filter);
             });
