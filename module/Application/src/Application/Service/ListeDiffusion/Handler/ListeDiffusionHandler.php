@@ -27,16 +27,16 @@ class ListeDiffusionHandler extends ListeDiffusionAbstractHandler
     /**
      * Rôle concerné.
      *
-     * @var string
+     * @var string|null
      */
-    protected $role;
+    protected ?string $role = null;
 
     /**
      * Etablissement concerné éventuel.
      *
      * @var Etablissement
      */
-    protected $etablissement;
+    protected ?Etablissement $etablissement = null;
 
     /**
      * @inheritDoc
@@ -57,7 +57,7 @@ class ListeDiffusionHandler extends ListeDiffusionAbstractHandler
     /**
      * @inheritDoc
      */
-    public function canHandleListeDiffusion()
+    public function canHandleListeDiffusion(): bool
     {
         $this->parseAdresse();
 
@@ -79,7 +79,7 @@ class ListeDiffusionHandler extends ListeDiffusionAbstractHandler
      *
      * @return string
      */
-    public function createMemberIncludeFileContent()
+    public function createMemberIncludeFileContent(): string
     {
         $entities = $this->fetchMembers();
         $this->extractEmailsFromEntities($entities);
@@ -90,7 +90,7 @@ class ListeDiffusionHandler extends ListeDiffusionAbstractHandler
     /**
      * @return Individu[]
      */
-    protected function fetchMembers()
+    protected function fetchMembers(): array
     {
         switch ($this->role) {
             case 'dirtheses':
@@ -111,7 +111,7 @@ class ListeDiffusionHandler extends ListeDiffusionAbstractHandler
     /**
      * @return Acteur[]
      */
-    protected function fetchActeursDirecteursTheses()
+    protected function fetchActeursDirecteursTheses(): array
     {
         $critereEd = $this->computeCritereED();
 
@@ -125,7 +125,7 @@ class ListeDiffusionHandler extends ListeDiffusionAbstractHandler
     /**
      * @return Doctorant[]
      */
-    protected function fetchDoctorants()
+    protected function fetchDoctorants(): array
     {
         $critereEd = $this->computeCritereED();
 
@@ -138,11 +138,11 @@ class ListeDiffusionHandler extends ListeDiffusionAbstractHandler
     /**
      * @return array|null
      */
-    protected function computeCritereED()
+    protected function computeCritereED(): ?array
     {
         if ($this->parserResult instanceof ListeDiffusionAddressParserResultWithED) {
             $sigleSansEspace = $this->parserResult->getEcoleDoctorale();
-            return ["REPLACE(s.sigle,' ','')" => $sigleSansEspace];
+            return ["REPLACE(%s.sigle,' ','')" => $sigleSansEspace];
         } elseif ($this->parserResult instanceof ListeDiffusionAddressParserResult) {
             return null;
         } else {
@@ -153,7 +153,7 @@ class ListeDiffusionHandler extends ListeDiffusionAbstractHandler
     /**
      * @return Individu[]
      */
-    protected function fetchIndividusWithRole()
+    protected function fetchIndividusWithRole(): array
     {
         $code = strtoupper($this->role);
         $structure = $this->etablissement->getStructure();
@@ -167,7 +167,7 @@ class ListeDiffusionHandler extends ListeDiffusionAbstractHandler
      * @param string $prefix
      * @return string
      */
-    public function generateResultFileName(string $prefix)
+    public function generateResultFileName(string $prefix): string
     {
         return sprintf('%sinclude_%s.inc',
             $prefix,

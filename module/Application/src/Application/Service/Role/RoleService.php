@@ -52,10 +52,20 @@ class RoleService extends BaseService
      */
     public function findOneByCodeAndStructure(string $code, Structure $structure): ?Role
     {
-        /** @var Role|null $role */
-        $role = $this->getRepository()->findOneBy(['code' => $code, 'structure' => $structure]);
+        $qb = $this->getRepository()->createQueryBuilder('r')
+            ->andWhere('r.code = :code')
+            ->setParameter('code', $code)
+            ->leftJoin('r.structure', 's')->addSelect('s')
+            ->leftJoin('s.structureSubstituante', 'structureSubstituante')->addSelect('structureSubstituante')
+            ->andWhere('s = :structure OR structureSubstituante = :structure')
+            ->setParameter('structure', $structure)
+        ;
 
-        return $role;
+        try {
+            return $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie : Plusieurs Role ont été trouvés", null, $e);
+        }
     }
 
     /**
