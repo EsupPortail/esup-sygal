@@ -111,12 +111,12 @@ $count = count($soutenances);
                     </div>
                     <div class="col-md-7">
                         <dl>
-                            <?php $resume = $soutenance->getThese()->getMetadonnee()->getResume(); ?>
+                            <?php $resume = $soutenance->getThese()->getMetadonnee() ? $soutenance->getThese()->getMetadonnee()->getResume() : null; ?>
                             <?php if ($resume !== null) : ?>
                                 <dt> Résumé</dt>
                                 <dd> <?php  echo $resume?></dd>
                             <?php endif; ?>
-                            <?php $abstract = $soutenance->getThese()->getMetadonnee()->getResumeAnglais(); ?>
+                            <?php $abstract = $soutenance->getThese()->getMetadonnee() ? $soutenance->getThese()->getMetadonnee()->getResumeAnglais() : null; ?>
                             <?php if ($abstract !== null) : ?>
                                 <dt> Abstract</dt>
                                 <dd> <?php  echo $abstract?></dd>

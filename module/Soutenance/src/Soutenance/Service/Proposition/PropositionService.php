@@ -177,9 +177,9 @@ class PropositionService {
     /**
      * @return QueryBuilder
      */
-    public function createQueryBuilder(/*$alias = 'proposition'*/)
+    public function createQueryBuilder(/*$alias = 'proposition'*/): QueryBuilder
     {
-        $qb = $this->getEntityManager()->getRepository(Proposition::class)->createQueryBuilder("proposition")
+        return $this->getEntityManager()->getRepository(Proposition::class)->createQueryBuilder("proposition")
             ->addSelect('etat')->join('proposition.etat', 'etat')
             ->addSelect('these')->join('proposition.these', 'these')
             ->addSelect('unite')->leftJoin('these.uniteRecherche', 'unite')
@@ -196,14 +196,14 @@ class PropositionService {
             ->andWhere('proposition.histoDestruction is null')
             //->addSelect('validation')->leftJoin('proposition.validations', 'validation')
         ;
-        return $qb;
     }
 
     /**
      * @param int $id
      * @return Proposition
      */
-    public function find($id) {
+    public function find($id)
+    {
         $qb = $this->createQueryBuilder()
             ->andWhere("proposition.id = :id")
             ->setParameter("id", $id)
@@ -227,11 +227,13 @@ class PropositionService {
         $result = $this->find($id);
         return $result;
     }
+
     /**
      * @param These $these
      * @return Proposition
      */
-    public function findByThese($these) {
+    public function findByThese($these)
+    {
         $qb = $this->createQueryBuilder()
             ->andWhere("proposition.these = :these")
             ->setParameter("these", $these)
@@ -250,7 +252,8 @@ class PropositionService {
     /**
      * @return Proposition[]
      */
-    public function findAll() {
+    public function findAll()
+    {
         $qb = $this->createQueryBuilder();
         $result = $qb->getQuery()->getResult();
         return $result;
@@ -260,7 +263,8 @@ class PropositionService {
      * @param Proposition $proposition
      * @return Membre[]
      */
-    public function getRapporteurs($proposition) {
+    public function getRapporteurs($proposition)
+    {
         $rapporteurs = [];
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
@@ -565,7 +569,7 @@ class PropositionService {
      * @param Role $role
      * @return Proposition[]
      */
-    public function getPropositionsByRole($role)
+    public function getPropositionsByRole(Role $role): array
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('these.etatThese = :encours')
@@ -575,27 +579,32 @@ class PropositionService {
 
         switch ($role->getCode()) {
             case Role::CODE_RESP_UR :
-                $qb = $qb ->andWhere('structure_ur.id = :unite')
-                    ->setParameter('unite', $role->getStructure()->getId())
+                $qb = $qb
+                    ->leftJoin('structure_ur.structureSubstituante', 'structureSubstituante')->addSelect('structureSubstituante')
+                    ->andWhere('structure_ur.id = :structure OR structureSubstituante = :structure')
+                    ->setParameter('structure', $role->getStructure(false)->getId())
                 ;
                 break;
             case Role::CODE_RESP_ED :
             case Role::CODE_GEST_ED :
-                $qb = $qb->andWhere('structure_ed.id = :ecole')
-                    ->setParameter('ecole', $role->getStructure()->getId())
+                $qb = $qb
+                    ->leftJoin('structure_ed.structureSubstituante', 'structureSubstituante')->addSelect('structureSubstituante')
+                    ->andWhere('structure_ed.id = :structure OR structureSubstituante = :structure')
+                    ->setParameter('structure', $role->getStructure(false)->getId())
                 ;
                 break;
             case Role::CODE_BDD :
-                $qb = $qb->andWhere('structure_etab.id = :etablissement')
-                    ->setParameter('etablissement', $role->getStructure()->getId())
+                $qb = $qb
+                    ->leftJoin('structure_etab.structureSubstituante', 'structureSubstituante')->addSelect('structureSubstituante')
+                    ->andWhere('structure_etab.id = :structure OR structureSubstituante = :structure')
+                    ->setParameter('structure', $role->getStructure(false)->getId())
                 ;
                 break;
             default:
                 break;
         }
 
-        $propositions = $qb->getQuery()->getResult();
-        return $propositions;
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -623,16 +632,18 @@ class PropositionService {
     public function getSoutenancesAutoriseesByEcoleDoctorale(EcoleDoctorale $ecole) : array
     {
         $qb = $this->createQueryBuilder()
-            ->andWhere('these.ecoleDoctorale = :ecole')
+            ->join('these.ecoleDoctorale', 'ed')->addSelect('ed')
+            ->leftJoin('structure_ed.structureSubstituante', 'structureSubstituante')->addSelect('structureSubstituante')
+            ->andWhere('structure_ed = :structure OR structureSubstituante = :structure')
+            ->setParameter('structure', $ecole->getStructure(false))
             ->andWhere('etat.code = :autorise')
             ->andWhere('these.dateSoutenance >= :date')
-            ->setParameter('ecole', $ecole)
             ->setParameter('autorise', Etat::VALIDEE)
             ->setParameter('date', new DateTime())
             ->orderBy('these.dateSoutenance', 'ASC')
         ;
-        $result = $qb->getQuery()->getResult();
-        return $result;
+
+        return $qb->getQuery()->getResult();
     }
     /** PROPOSTITION ETAT  ********************************************************************************************/
 
