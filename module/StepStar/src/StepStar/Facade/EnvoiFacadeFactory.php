@@ -7,6 +7,7 @@ use StepStar\Service\Api\ApiService;
 use StepStar\Service\Log\LogService;
 use StepStar\Service\Tef\TefService;
 use StepStar\Service\Xml\XmlService;
+use StepStar\Service\Xsl\XslService;
 
 class EnvoiFacadeFactory
 {
@@ -23,6 +24,12 @@ class EnvoiFacadeFactory
          */
         $xmlService = $container->get(XmlService::class);
         $facade->setXmlService($xmlService);
+
+        /**
+         * @var \StepStar\Service\Xsl\XslService $xslService
+         */
+        $xslService = $container->get(XslService::class);
+        $facade->setXslService($xslService);
 
         /**
          * @var \StepStar\Service\Tef\TefService $tefService

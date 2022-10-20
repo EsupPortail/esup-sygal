@@ -39,6 +39,8 @@ use StepStar\Service\Tef\TefService;
 use StepStar\Service\Tef\TefServiceFactory;
 use StepStar\Service\Xml\XmlService;
 use StepStar\Service\Xml\XmlServiceFactory;
+use StepStar\Service\Xsl\XslService;
+use StepStar\Service\Xsl\XslServiceFactory;
 use StepStar\Service\Xslt\XsltService;
 use StepStar\Service\Xslt\XsltServiceFactory;
 use StepStar\Service\Zip\ZipService;
@@ -83,7 +85,7 @@ return [
                 'autoriteSudoc_etabSoutenance' => '123456789',
                 'thesesRootTag' => 'THESES',
                 'theseTag' => 'THESE',
-                'resultDocumentHref' => '{$ETABLISSEMENT}_{THESE_ID}_{CODE_ETAB_SOUT}_{CODE_ETUDIANT}.xml',
+//                'resultDocumentHref' => '{$ETABLISSEMENT}_{THESE_ID}_{CODE_ETAB_SOUT}_{CODE_ETUDIANT}.tef.xml',
             ],
         ],
         'api' => [
@@ -408,6 +410,7 @@ return [
             EnvoiFacade::class => EnvoiFacadeFactory::class,
 
             XmlService::class => XmlServiceFactory::class,
+            XslService::class => XslServiceFactory::class,
             XsltService::class => XsltServiceFactory::class,
             TefService::class => TefServiceFactory::class,
             ApiService::class => ApiServiceFactory::class,

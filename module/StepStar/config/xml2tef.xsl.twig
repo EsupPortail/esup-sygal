@@ -44,7 +44,7 @@ que ces méta sont saisies dans les formulaires STAR. C'est au choix.
                     ID="{$ETABLISSEMENT}_{THESE_ID}_{CODE_ETAB_SOUT}_{CODE_ETUDIANT}"
                     OBJID="{THESE_ID}_{CODE_ETAB_SOUT}_{CODE_ETUDIANT}">
                 <!-- Création du bloc de md desciptives de la thèse -->
-                <mets:dmdSec ID="{generate-id()}_desc_these">
+                <mets:dmdSec ID="these_{CODE_ETAB_SOUT}_{THESE_ID}">
                     <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_desc_these">
                         <mets:xmlData>
                             <tef:thesisRecord>
@@ -113,7 +113,7 @@ que ces méta sont saisies dans les formulaires STAR. C'est au choix.
                 <!-- Pas de md descriptives de l'édition -->
                 <!-- Création du bloc de md administratives de la thèse -->
                 <mets:amdSec>
-                    <mets:techMD ID="{generate-id()}_admin">
+                    <mets:techMD ID="these_{CODE_ETAB_SOUT}_{THESE_ID}_admin">
                         <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_admin_these">
                             <mets:xmlData>
                                 <tef:thesisAdmin>
@@ -456,7 +456,7 @@ que ces méta sont saisies dans les formulaires STAR. C'est au choix.
 
                     <!--Déclaration des droits-->
                     <!--Déclaration de l'autorisation du chef d'établissement-->
-                    <mets:rightsMD ID="{generate-id()}_etab">
+                    <mets:rightsMD ID="these_{CODE_ETAB_SOUT}_{THESE_ID}_etab">
                         <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="tef_droits_etablissement_these">
                             <mets:xmlData>
                                 <metsRights:RightsDeclarationMD>
@@ -597,8 +597,8 @@ que ces méta sont saisies dans les formulaires STAR. C'est au choix.
                 <mets:structMap TYPE="logical">
                     <mets:div
                             TYPE="THESE"
-                            ADMID="{generate-id()}_admin {generate-id()}_etab"
-                            DMDID="{generate-id()}_desc_these"
+                            ADMID="these_{CODE_ETAB_SOUT}_{THESE_ID}_admin these_{CODE_ETAB_SOUT}_{THESE_ID}_etab"
+                            DMDID="these_{CODE_ETAB_SOUT}_{THESE_ID}_desc_these"
                             CONTENTIDS="info:fides/STAR/{$ETABLISSEMENT}/{CODE_ETUDIANT}">
                     </mets:div>
                 </mets:structMap>

@@ -15,18 +15,22 @@ use StepStar\Service\Api\ApiServiceAwareTrait;
 use StepStar\Service\Log\LogServiceAwareTrait;
 use StepStar\Service\Tef\TefServiceAwareTrait;
 use StepStar\Service\Xml\XmlServiceAwareTrait;
+use StepStar\Service\Xsl\XslServiceAwareTrait;
 
 class EnvoiFacade
 {
     use LogServiceAwareTrait;
+    use XslServiceAwareTrait;
     use XmlServiceAwareTrait;
     use TefServiceAwareTrait;
     use ApiServiceAwareTrait;
 
     use LoggerAwareTrait;
 
-    private string $tefResultDocumentHref = '{$ETABLISSEMENT}_{THESE_ID}_{CODE_ETAB_SOUT}_{CODE_ETUDIANT}.xml';
-    private string $tefResultDocumentHrefTheseIdPregMatchPattern = '/^.+_(.+)_.+_.+\.xml$/U';
+    // ATTENTION, la partie extension doit exprimer "la même chose" dans les 3 propriétés suivantes :
+    private string $tefResultDocumentHref = '{$ETABLISSEMENT}_{THESE_ID}_{CODE_ETAB_SOUT}_{CODE_ETUDIANT}.tef.xml';
+    private string $tefResultDocumentHrefTheseIdPregMatchPattern = '/^.+_(.+)_.+_.+\.tef\.xml$/U';
+    private string $listXmlFilesInDirectoryGlobPattern = '*.tef.xml';
 
     private bool $saveLog;
 
@@ -48,8 +52,8 @@ class EnvoiFacade
      */
     public function envoyerTheses(array $theses, bool $force, string $command): Generator
     {
-        $xmlFilePath = tempnam(sys_get_temp_dir(), 'sygal_xml_') . '.xml';
-        $outputDir = sys_get_temp_dir() . '/' . uniqid('out_');
+        $inputDir = sys_get_temp_dir() . '/' . uniqid('sygal_xml_input_');
+        $outputDir = sys_get_temp_dir() . '/' . uniqid('sygal_xml_output_');
 
         /**
          * Generation du fichier XML intermediaire (1 pour N theses) & des fichiers TEF (1 par these).
@@ -59,8 +63,8 @@ class EnvoiFacade
         $this->newLog($operation, $command);
         $success = true;
         try {
-            $this->genererXmlForTheses($theses, $xmlFilePath);
-            $this->genererTef($outputDir, $xmlFilePath);
+            $this->genererXmlForThesesInDir($theses, $inputDir);
+            $this->generateTefFromDir($inputDir, $outputDir);
         } catch (Exception $e) {
             $this->appendExceptionToLog($e);
             $success = false;
@@ -150,9 +154,33 @@ class EnvoiFacade
     }
 
     /**
+     * @param array $theses Thèses à exporter au format XML.
+     * @param string $outputDirPath Répertoire destination dans lequel générer le fichier XML
+     * @return string Chemin du fichier XML généré
      * @throws \Exception
      */
-    private function genererXmlForTheses(array $theses, string $xmlFilePath)
+    private function genererXmlForThesesInDir(array $theses, string $outputDirPath): string
+    {
+        if (!is_dir($outputDirPath)) {
+            $ok = mkdir($outputDirPath);
+            if (!$ok) {
+                throw new Exception("Impossible de créer le répertoire '$outputDirPath'.");
+            }
+        }
+
+        $xmlFilePath = $outputDirPath . '/' . uniqid('sygal_xml_') . '.xml';
+
+        $this->generateXmlForThesesInFile($theses, $xmlFilePath);
+
+        return $xmlFilePath;
+    }
+
+    /**
+     * @param array $theses Thèses à exporter au format XML.
+     * @param string $xmlFilePath Chemin du fichier XML à générer
+     * @throws \Exception
+     */
+    private function generateXmlForThesesInFile(array $theses, string $xmlFilePath)
     {
         $theseIds = implode(',', array_map(fn($these) => $these['id'], $theses));
 
@@ -188,7 +216,7 @@ class EnvoiFacade
     /**
      * @throws \Exception
      */
-    private function genererXmlForThese(array $these, string $xmlFilePath)
+    private function generateXmlForThese(array $these, string $xmlFilePath)
     {
         $theseId = $these['id'];
         $this->appendToLog("Generation du fichier XML contenant la these $theseId dans $xmlFilePath");
@@ -211,7 +239,37 @@ class EnvoiFacade
     /**
      * @throws \Exception
      */
-    private function genererTef(string $outputDir, string $xmlInputFilePath)
+    private function generateTefFromDir(string $inputDirPath, string $outputDir)
+    {
+        $this->appendToLog(sprintf(
+            "Generation des fichiers TEF (1 par these) dans %s, a partir du repertoire %s :",
+            $outputDir, $inputDirPath
+        ));
+
+//        $this->xslService->setOutputDir($inputDirPath);
+        try {
+            $xslFilePath = $this->xslService->generateXslFile($this->tefResultDocumentHref);
+        } catch (TefServiceException $e) {
+            throw new Exception("Une erreur est survenue pendant la generation du fichier XSL.", null, $e);
+        }
+
+        $this->tefService->setOutputDir($outputDir);
+        try {
+            $this->tefService->generateTefFilesFromDir($inputDirPath, $xslFilePath);
+        } catch (TefServiceException $e) {
+            throw new Exception("Une erreur est survenue pendant la generation des fichiers TEF.", null, $e);
+        }
+
+        $paths = $this->listXmlFilesInDirectory($outputDir);
+        foreach ($paths as $path) {
+            $this->appendToLog("> " . realpath($path));
+        }
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function generateTefFromFile(string $xmlInputFilePath, string $outputDir)
     {
         $this->appendToLog(sprintf(
             "Generation des fichiers TEF (1 par these) dans %s, a partir du fichier XML intermediaire %s :",
@@ -220,7 +278,8 @@ class EnvoiFacade
 
         $this->tefService->setOutputDir($outputDir);
         try {
-            $this->tefService->generateTefFilesFromXml($xmlInputFilePath, $this->tefResultDocumentHref);
+            $xslFilePath = $this->xslService->generateXslFile($this->tefResultDocumentHref);
+            $this->tefService->generateTefFilesFromFile($xmlInputFilePath, $xslFilePath);
         } catch (TefServiceException $e) {
             throw new Exception("Une erreur est survenue pendant la generation des fichiers TEF.", null, $e);
         }
@@ -254,6 +313,6 @@ class EnvoiFacade
      */
     private function listXmlFilesInDirectory(string $dir): array
     {
-        return Glob::glob($dir . '/*.xml', Glob::GLOB_BRACE);
+        return Glob::glob($dir . '/' . $this->listXmlFilesInDirectoryGlobPattern, Glob::GLOB_BRACE);
     }
 }
