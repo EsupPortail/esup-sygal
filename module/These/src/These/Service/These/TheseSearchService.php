@@ -3,37 +3,37 @@
 namespace These\Service\These;
 
 use Application\Entity\Db\Role;
-use Doctrine\ORM\Query\Expr\Join;
-use These\Entity\Db\These;
-use Structure\Entity\Db\TypeStructure;
 use Application\Filter\AnneeUnivFormatter;
 use Application\Search\DomaineScientifique\DomaineScientifiqueSearchFilterAwareTrait;
-use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
-use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilterAwareTrait;
-use Structure\Search\Etablissement\EtablissementInscSearchFilterAwareTrait;
 use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Search\Filter\TextCriteriaSearchFilter;
 use Application\Search\Financement\OrigineFinancementSearchFilterAwareTrait;
 use Application\Search\SearchService;
 use Application\Search\Sorter\SearchSorter;
-use These\Search\These\EtatTheseSearchFilterAwareTrait;
-use These\Search\These\TheseTextSearchFilter;
-use These\Search\These\TheseTextSearchFilterAwareTrait;
+use Application\Service\DomaineScientifiqueServiceAwareTrait;
+use Application\Service\Financement\FinancementServiceAwareTrait;
+use Application\Service\UserContextServiceAwareTrait;
+use Application\View\Helper\Sortable;
+use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
+use Exception;
+use Structure\Entity\Db\TypeStructure;
+use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
+use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilterAwareTrait;
+use Structure\Search\Etablissement\EtablissementInscSearchFilterAwareTrait;
 use Structure\Search\Etablissement\EtablissementSearchFilter;
 use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
 use Structure\Search\UniteRecherche\UniteRechercheSearchFilterAwareTrait;
-use Application\Service\DomaineScientifiqueServiceAwareTrait;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\Financement\FinancementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
-use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
-use Application\Service\UserContextServiceAwareTrait;
-use Application\View\Helper\Sortable;
-use Doctrine\ORM\QueryBuilder;
-use Exception;
+use These\Entity\Db\These;
+use These\Search\These\EtatTheseSearchFilterAwareTrait;
+use These\Search\These\TheseTextSearchFilter;
+use These\Search\These\TheseTextSearchFilterAwareTrait;
+use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
@@ -80,26 +80,76 @@ class TheseSearchService extends SearchService
     /**
      * @inheritDoc
      */
+    protected function createQueryBuilder(): QueryBuilder
+    {
+        $qb = $this->theseService->getRepository()->createQueryBuilder('these');
+        $qb
+            ->addSelect('etab')->leftJoin('these.etablissement', 'etab')
+            ->addSelect('ed')->leftJoin('these.ecoleDoctorale', 'ed')
+            ->addSelect('ur')->leftJoin('these.uniteRecherche', 'ur')
+            ->addSelect('di')->leftJoin('th.individu', 'di')
+            ->addSelect('a')->leftJoin('these.acteurs', 'a')
+            ->addSelect('i')->leftJoin('a.individu', 'i')
+            ->addSelect('r')->leftJoin('a.role', 'r')
+            ->addSelect('f')->leftJoin('these.financements', 'f')
+            ->addSelect('fi')->leftJoin('these.fichierTheses', 'fi')
+            ->addSelect('ta')->leftJoin('these.titreAcces', 'ta')
+            ->andWhere('these.histoDestruction is null');
+
+        $qb
+            ->addSelect('etab_structure')->leftJoin("etab.structure", "etab_structure")
+            ->addSelect('etab_ss')->leftJoin("etab_structure.structureSubstituante", "etab_ss")
+            ->addSelect('etab_substituant')->leftJoin("etab_ss.etablissement", "etab_substituant");
+        $qb
+            ->addSelect('ed_structure')->leftJoin("ed.structure", "ed_structure")
+            ->addSelect('ed_ss')->leftJoin("ed_structure.structureSubstituante", "ed_ss")
+            ->addSelect('ed_substituant')->leftJoin("ed_ss.ecoleDoctorale", "ed_substituant");
+        $qb
+            ->addSelect('ur_structure')->leftJoin("ur.structure", "ur_structure")
+            ->addSelect('ur_ss')->leftJoin("ur_structure.structureSubstituante", "ur_ss")
+            ->addSelect('ur_substituant')->leftJoin("ur_ss.uniteRecherche", "ur_substituant");
+
+        return $qb;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function init()
     {
         $etablissementInscrFilter = $this->getEtablissementInscSearchFilter()
-            ->setWhereField('etab_substituant.sourceCode')
             ->setDataProvider(function(SelectSearchFilter $filter) {
                 return $this->fetchEtablissements($filter);
+            })
+            ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
+                /** @var TextCriteriaSearchFilter $filter */
+                $qb
+                    ->andWhere($qb->expr()->orX('etab.sourceCode = :sourceCodeEtab', 'etab_substituant.sourceCode = :sourceCodeEtab'))
+                    ->setParameter('sourceCodeEtab', $filter->getValue());
             });
         $origineFinancementFilter = $this->getOrigineFinancementSearchFilter()
             ->setDataProvider(function(SelectSearchFilter $filter) {
                 return $this->fetchOriginesFinancements($filter);
             });
         $uniteRechercheFilter = $this->getUniteRechercheSearchFilter()
-            ->setWhereField('ur_substituant.sourceCode')
             ->setDataProvider(function(SelectSearchFilter $filter) {
                 return $this->fetchUnitesRecherches($filter);
+            })
+            ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
+                /** @var TextCriteriaSearchFilter $filter */
+                $qb
+                    ->andWhere($qb->expr()->orX('ur.sourceCode = :sourceCodeUR', 'ur_substituant.sourceCode = :sourceCodeUR'))
+                    ->setParameter('sourceCodeUR', $filter->getValue());
             });
         $ecoleDoctoraleFilter = $this->getEcoleDoctoraleSearchFilter()
-            ->setWhereField('ed_substituant.sourceCode')
             ->setDataProvider(function(SelectSearchFilter $filter) {
                 return $this->fetchEcolesDoctorales($filter);
+            })
+            ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
+                /** @var TextCriteriaSearchFilter $filter */
+                $qb
+                    ->andWhere($qb->expr()->orX('ed.sourceCode = :sourceCodeED', 'ed_substituant.sourceCode = :sourceCodeED'))
+                    ->setParameter('sourceCodeED', $filter->getValue());
             });
         $domaineScientifiqueFilter = $this->getDomaineScientifiqueSearchFilter()
             ->setDataProvider(function(SelectSearchFilter $filter) {
@@ -230,41 +280,6 @@ class TheseSearchService extends SearchService
             default:
                 throw new \InvalidArgumentException("Cas imprévu");
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function createQueryBuilder(): QueryBuilder
-    {
-        $qb = $this->theseService->getRepository()->createQueryBuilder('these');
-        $qb
-            ->addSelect('etab')->leftJoin('these.etablissement', 'etab')
-            ->addSelect('ed')->leftJoin('these.ecoleDoctorale', 'ed')
-            ->addSelect('ur')->leftJoin('these.uniteRecherche', 'ur')
-            ->addSelect('di')->leftJoin('th.individu', 'di')
-            ->addSelect('a')->leftJoin('these.acteurs', 'a')
-            ->addSelect('i')->leftJoin('a.individu', 'i')
-            ->addSelect('r')->leftJoin('a.role', 'r')
-            ->addSelect('f')->leftJoin('these.financements', 'f')
-            ->addSelect('fi')->leftJoin('these.fichierTheses', 'fi')
-            ->addSelect('ta')->leftJoin('these.titreAcces', 'ta')
-            ->andWhere('these.histoDestruction is null');
-
-        $qb
-            ->addSelect('etab_structure')->leftJoin("etab.structure", "etab_structure")
-            ->addSelect('etab_ss')->leftJoin("etab_structure.structureSubstituante", "etab_ss")
-            ->addSelect('etab_substituant')->leftJoin("etab_ss.etablissement", "etab_substituant");
-        $qb
-            ->addSelect('ed_structure')->leftJoin("ed.structure", "ed_structure")
-            ->addSelect('ed_ss')->leftJoin("ed_structure.structureSubstituante", "ed_ss")
-            ->addSelect('ed_substituant')->leftJoin("ed_ss.ecoleDoctorale", "ed_substituant");
-        $qb
-            ->addSelect('ur_structure')->leftJoin("ur.structure", "ur_structure")
-            ->addSelect('ur_ss')->leftJoin("ur_structure.structureSubstituante", "ur_ss")
-            ->addSelect('ur_substituant')->leftJoin("ur_ss.uniteRecherche", "ur_substituant");
-
-        return $qb;
     }
 
     /**

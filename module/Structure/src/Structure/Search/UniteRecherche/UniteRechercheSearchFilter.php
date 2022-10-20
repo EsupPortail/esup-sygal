@@ -5,7 +5,6 @@ namespace Structure\Search\UniteRecherche;
 use Application\Search\Filter\SelectSearchFilter;
 use Doctrine\ORM\QueryBuilder;
 use Structure\Entity\Db\UniteRecherche;
-use Webmozart\Assert\Assert;
 
 /**
  * Filtre de type "unité de recherche liée" (attribut : `sourceCode`).
@@ -38,13 +37,8 @@ class UniteRechercheSearchFilter extends SelectSearchFilter
         return $instance;
     }
 
-    /**
-     * @param QueryBuilder $qb
-     */
-    public function applyToQueryBuilder(QueryBuilder $qb)
+    protected function applyToQueryBuilderUsingWhereField(QueryBuilder $qb)
     {
-        $this->checkWhereField();
-
         /**
          * Pas de jointure en dur ici. Désormais, il faut :
          * - faire la jointure nécessaire dans {@see \Application\Search\SearchService::createQueryBuilder()} ;
