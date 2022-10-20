@@ -149,7 +149,7 @@ class ActeurRepository extends DefaultEntityRepository
         }
 
         $qb = $this->createQueryBuilder('a')
-            ->addSelect('i')
+            ->addSelect('i, r, t, ed, s')
             ->join('a.individu', 'i')
             ->join('a.role', 'r', Join::WITH, 'r.code = :role')->setParameter('role', $role)
             ->join('a.these', 't', Join::WITH, 't.etatThese = :etat')->setParameter('etat', These::ETAT_EN_COURS)

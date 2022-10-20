@@ -68,7 +68,7 @@ class DoctorantRepository extends DefaultEntityRepository
     {
         $qb = $this->createQueryBuilder('d');
         $qb
-            ->addSelect('i')
+            ->addSelect('i, t, ed, s')
             ->join('d.individu', 'i')
             ->join('d.theses', 't', Join::WITH, 't.etatThese = :etat')->setParameter('etat', These::ETAT_EN_COURS)
             ->join('t.ecoleDoctorale', 'ed')
