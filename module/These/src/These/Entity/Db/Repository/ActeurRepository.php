@@ -193,7 +193,7 @@ class ActeurRepository extends DefaultEntityRepository
         $qb = $this->createQueryBuilder('a')
             ->addSelect('i')->join('a.individu', 'i')
             ->addSelect('t')->join('a.these', 't')
-            ->addSelect('m')->join('a.membre', 'm')
+            ->addSelect('m')->leftJoin('a.membre', 'm')
             ->addSelect('r')->join('a.role', 'r')
             ->addSelect('s')->leftJoin('r.structure', 's')
             ->andWhere('r.code = :president')
