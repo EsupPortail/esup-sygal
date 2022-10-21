@@ -260,7 +260,7 @@ class Session implements HistoriqueAwareInterface,
             }
         }
         $interval = $somme->diff(new DateTime('00:00'));
-        return ((float) $interval->format('%h')) + ((float) $interval->format('%i'))/60;
+        return ((float) $interval->format('%d')*24 + (float) $interval->format('%h')) + ((float) $interval->format('%i'))/60;
     }
 
     public function estTerminee() : bool
