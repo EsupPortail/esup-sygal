@@ -43,6 +43,12 @@ class NotificationService extends NotifierService
         }
     }
 
+    public function triggerInscriptionsListePrincipale(Session $session) : void
+    {
+        $inscriptions = $session->getInscriptionsByListe(Inscription::LISTE_PRINCIPALE);
+        foreach ($inscriptions as $inscription) $this->triggerInscriptionListePrincipale($inscription);
+    }
+
     /**
      * @param Inscription $inscription
      * @return void
@@ -68,6 +74,12 @@ class NotificationService extends NotifierService
                 ;
             $this->trigger($notif);
         }
+    }
+
+    public function triggerInscriptionsListeComplementaire(Session $session) : void
+    {
+        $inscriptions = $session->getInscriptionsByListe(Inscription::LISTE_COMPLEMENTAIRE);
+        foreach ($inscriptions as $inscription) $this->triggerInscriptionListeComplementaire($inscription);
     }
 
     /**

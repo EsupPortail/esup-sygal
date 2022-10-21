@@ -6,6 +6,7 @@ Journal des modifications
 - [FIX] Correction du ViewHelper SelectHelper (ne suivant pas le lien de substitution)
 - Ajout de la modalité de formation mixte
 - Ajout d'une garde pour éviter les inscriptions répétées
+- Changement des notifications envoyées à propos des listes des formations
 
 5.2.3
 -----

@@ -213,8 +213,12 @@ class SessionController extends AbstractController
 
                 switch ($session->getEtat()->getCode()) {
                     case Etat::CODE_FERME :
-                        $this->getNotificationService()->triggerSessionImminente($session);
+                        $this->getNotificationService()->triggerInscriptionsListePrincipale($session);
+                        $this->getNotificationService()->triggerInscriptionsListeComplementaire($session);
                         $this->getNotificationService()->triggerInscriptionEchec($session);
+                        break;
+                    case Etat::CODE_IMMINENT :
+                        $this->getNotificationService()->triggerSessionImminente($session);
                         break;
                     case Etat::CODE_CLOTURER :
                         $this->getNotificationService()->triggerSessionTerminee($session);

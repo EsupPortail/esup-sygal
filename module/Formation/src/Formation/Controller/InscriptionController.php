@@ -174,7 +174,7 @@ class InscriptionController extends AbstractController
         if (count($listePrincipale) < $session->getTailleListePrincipale()) {
             $inscription->setListe(Inscription::LISTE_PRINCIPALE);
             $this->getInscriptionService()->update($inscription);
-            $this->getNotificationService()->triggerInscriptionListePrincipale($inscription);
+            if ($session->isFinInscription()) $this->getNotificationService()->triggerInscriptionListePrincipale($inscription);
         } else {
             $this->flashMessenger()->addErrorMessage('La liste principale est déjà complète.');
         }
@@ -193,7 +193,7 @@ class InscriptionController extends AbstractController
         if (count($listePrincipale) < $session->getTailleListeComplementaire()) {
             $inscription->setListe(Inscription::LISTE_COMPLEMENTAIRE);
             $this->getInscriptionService()->update($inscription);
-            $this->getNotificationService()->triggerInscriptionListeComplementaire($inscription);
+            if ($session->isFinInscription()) $this->getNotificationService()->triggerInscriptionListeComplementaire($inscription);
         } else {
             $this->flashMessenger()->addErrorMessage('La liste complémentaire est déjà complète.');
         }
