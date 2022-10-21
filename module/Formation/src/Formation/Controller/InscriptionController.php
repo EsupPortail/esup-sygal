@@ -66,6 +66,7 @@ class InscriptionController extends AbstractController
     public function ajouterAction()
     {
         $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
+        $libelle = $session->getFormation()->getLibelle();
         /** @var Doctorant|null $doctorant */
         $doctorantId = $this->params()->fromRoute('doctorant');
         if ($doctorantId !== null) {
@@ -78,10 +79,13 @@ class InscriptionController extends AbstractController
             $inscription = new Inscription();
             $inscription->setSession($session);
             $inscription->setDoctorant($doctorant);
-            $this->getInscriptionService()->create($inscription);
-            $this->flashMessenger()->addSuccessMessage("Inscription à la formation [] faite.");
-
-            $this->getNotificationService()->triggerInscriptionEnregistree($inscription);
+            if (!empty($this->getInscriptionService()->getRepository()->findInscriptionsByDoctorantAndSession($doctorant, $session))) {
+                $this->flashMessenger()->addErrorMessage("Vous êtes déjà inscrit·e à la formation <strong>" . $libelle . "</strong>.");
+            } else {
+                $this->getInscriptionService()->create($inscription);
+                $this->flashMessenger()->addSuccessMessage("Inscription à la formation <strong>".$libelle."</strong> faite.");
+                $this->getNotificationService()->triggerInscriptionEnregistree($inscription);
+            }
 
             $retour=$this->params()->fromQuery('retour');
             if ($retour) return $this->redirect()->toUrl($retour);
@@ -98,10 +102,15 @@ class InscriptionController extends AbstractController
                 $doctorant = $this->doctorantService->getRepository()->findOneByIndividu($individu);
             }
             if ($doctorant !== null) {
-                $inscription = new Inscription();
-                $inscription->setSession($session);
-                $inscription->setDoctorant($doctorant);
-                $this->getInscriptionService()->create($inscription);
+                if (!empty($this->getInscriptionService()->getRepository()->findInscriptionsByDoctorantAndSession($doctorant, $session))) {
+                    $this->flashMessenger()->addSuccessMessage("Vous êtes déjà inscrit·e à la formation <strong>" . $libelle . "</strong>.");
+                } else {
+                    $inscription = new Inscription();
+                    $inscription->setSession($session);
+                    $inscription->setDoctorant($doctorant);
+                    $this->getInscriptionService()->create($inscription);
+                    $this->flashMessenger()->addSuccessMessage("Vous êtes maintenant inscrit·e à la formation <strong>" . $libelle . "</strong>.");
+                }
             }
         }
 

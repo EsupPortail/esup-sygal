@@ -87,4 +87,17 @@ class InscriptionRepository extends EntityRepository
         $result = $qb->getQuery()->getResult();
         return $result;
     }
+
+    public function findInscriptionsByDoctorantAndSession($doctorant, ?Session $session)
+    {
+        $qb = $this->createQB('inscription')
+            ->andWhere('inscription.doctorant = :doctorant')
+            ->setParameter('doctorant', $doctorant)
+            ->andWhere('inscription.session = :session')
+            ->setParameter('session', $session)
+            ->andWhere('inscription.histoDestruction IS NULL')
+        ;
+        $result = $qb->getQuery()->getResult();
+        return $result;
+    }
 }
