@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+5.2.4
+-----
+- [FIX] Correction du ViewHelper SelectHelper (ne suivant pas le lien de substitution)
+
 5.2.3
 -----
 - Substitution de structures : réalisation des jointures dans les requêtes Doctrine et suppression dans les vues SRC_*.
