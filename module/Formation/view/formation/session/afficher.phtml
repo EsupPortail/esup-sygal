@@ -66,6 +66,10 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     <?php echo $pageTitle; ?>
 </h1>
 
+<?php
+echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
+?>
+
 <?php if ($canModifierSession) : ?>
     <?php /** @see \Formation\Controller\SessionController::modifierAction() */?>
     <a class="btn btn-primary action ajax-modal" data-event="modification"
@@ -404,9 +408,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     <div class="col-md-4">
         <h3>
             Listes des inscrits (non classés)
-            <span class="badge">
-                <?php echo count($listeNonClassee); ?>
-            </span>
+            (<?php echo count($listeNonClassee); ?> inscriptions)
         </h3>
 
         <ul>
@@ -424,9 +426,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     <div class="col-md-4">
         <h3>
             Liste principale
-            <span class="badge">
-                <?php echo count($listePrincipaleTrue); ?>
-            </span>
+            (<?php echo count($listePrincipaleTrue); ?>/<?php echo $session->getTailleListePrincipale(); ?>)
         </h3>
 
         <ul>
@@ -444,9 +444,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     <div class="col-md-4">
         <h3>
             Liste complémentaire
-            <span class="badge">
-                <?php echo count($listeComplementaireTrue); ?>
-            </span>
+            (<?php echo count($listeComplementaireTrue); ?>/<?php echo $session->getTailleListeComplementaire(); ?>)
         </h3>
 
         <ul>
