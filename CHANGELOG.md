@@ -8,6 +8,7 @@ Journal des modifications
 - Ajout d'une garde pour éviter les inscriptions répétées
 - Changement des notifications envoyées à propos des listes des formations
 - [FIX] priorisation de l'utilisateur pour les notifications au président depuis la page dédiée
+- [FIX] correction export csv des inscrits
 
 5.2.3
 -----

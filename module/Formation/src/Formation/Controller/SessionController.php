@@ -318,7 +318,7 @@ class SessionController extends AbstractController
                 'Établissement' => implode("/",$etablissements),
                 'École doctorale' => implode("/",$ecoles),
                 'Unité de recherche' => implode("/",$unites),
-                'Desinscription' => $inscription->getHistoDestruction()->format('d/m/Y'),
+                'Desinscription' => ($inscription->getHistoDestruction())?$inscription->getHistoDestruction()->format('d/m/Y'): null,
                 'Motif de desinscription' => $inscription->getDescription(),
             ];
             $records[] = $entry;
