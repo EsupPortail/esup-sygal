@@ -2,6 +2,7 @@
 
 namespace These\Service\These;
 
+use Application\Entity\Db\Utilisateur;
 use These\Controller\FichierTheseController;
 use These\Entity\Db\Acteur;
 use These\Entity\Db\Attestation;
@@ -751,7 +752,7 @@ EOS;
      * @param These $these
      * @return array
      */
-    public function notifierCorrectionsApportees(These $these)
+    public function notifierCorrectionsApportees(These $these, ?Utilisateur $utilisateur = null)
     {
         $president = $these->getPresidentJury();
         if ($president === null) {
@@ -762,10 +763,10 @@ EOS;
         $individu = $president->getIndividu();
         $utilisateurs = $this->getUtilisateurService()->getRepository()->findByIndividu($individu);
 
-        // Notification direct de l'utilisateur déjà existant
+        // Notification directe de l'utilisateur déjà existant
         if (!empty($utilisateurs)) {
-            $this->getNotifierService()->triggerValidationDepotTheseCorrigee($these);
-            return ['success', "Notification des corrections faite à <strong>".current($utilisateurs)->getEmail()."</strong>"];
+            $this->getNotifierService()->triggerValidationDepotTheseCorrigee($these, end($utilisateurs));
+            return ['success', "Notification des corrections faite à <strong>".end($utilisateurs)->getEmail()."</strong>"];
         }
         else {
             // Recupération du "meilleur" email

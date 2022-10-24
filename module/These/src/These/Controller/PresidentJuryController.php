@@ -2,6 +2,7 @@
 
 namespace These\Controller;
 
+use Application\Entity\Db\Utilisateur;
 use These\Entity\Db\Acteur;
 use Application\Form\AdresseMail\AdresseMailFormAwareTrait;
 use These\Service\Acteur\ActeurServiceAwareTrait;
@@ -35,9 +36,14 @@ class PresidentJuryController extends AbstractActionController {
     public function notifierCorrectionAction()
     {
         $president = $this->getActeurService()->getRequestedActeur($this, 'president');
+        $utilisateurId = $this->params()->fromQuery('utilisateur');
+
+        if ($utilisateurId) $utilisateur = $this->getActeurService()->getEntityManager()->getRepository(Utilisateur::class)->find($utilisateurId);
+
+
         $these = $president->getThese();
 
-        $message = $this->getTheseService()->notifierCorrectionsApportees($these);
+        $message = $this->getTheseService()->notifierCorrectionsApportees($these, $utilisateur);
         if ($message[0] === 'success') $this->flashMessenger()->addSuccessMessage($message[1]);
         if ($message[0] === 'error')   $this->flashMessenger()->addErrorMessage($message[1]);
 

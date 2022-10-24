@@ -7,6 +7,7 @@ Journal des modifications
 - Ajout de la modalité de formation mixte
 - Ajout d'une garde pour éviter les inscriptions répétées
 - Changement des notifications envoyées à propos des listes des formations
+- [FIX] priorisation de l'utilisateur pour les notifications au président depuis la page dédiée
 
 5.2.3
 -----
