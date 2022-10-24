@@ -9,6 +9,7 @@ Journal des modifications
 - Changement des notifications envoyées à propos des listes des formations
 - [FIX] priorisation de l'utilisateur pour les notifications au président depuis la page dédiée
 - [FIX] correction export csv des inscrits
+- [FIX] récupération des mappings manquants pour l'enquete des formations
 
 5.2.3
 -----
