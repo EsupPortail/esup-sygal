@@ -501,7 +501,9 @@ class TheseService extends BaseService implements ListenerAggregateInterface
         }
 
         /** informations générales */
-        $pdcData->setTitre($these->getTitre());
+        $titre = $these->getTitre();
+        $titre = str_replace("\n","<br/>", $titre);
+        $pdcData->setTitre($titre);
         $pdcData->setSpecialite($these->getLibelleDiscipline());
         if ($these->getEtablissement()) {
             $pdcData->setEtablissement($these->getEtablissement()->getStructure()->getLibelle());

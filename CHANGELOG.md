@@ -10,6 +10,7 @@ Journal des modifications
 - [FIX] priorisation de l'utilisateur pour les notifications au président depuis la page dédiée
 - [FIX] correction export csv des inscrits
 - [FIX] récupération des mappings manquants pour l'enquete des formations
+- Remplacement de \n en <br> pour conserver les sauts de ligne dans les titres sur la page de couverture.
 
 5.2.3
 -----
