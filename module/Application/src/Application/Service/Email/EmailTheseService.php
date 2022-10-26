@@ -84,7 +84,7 @@ class EmailTheseService
     public function fetchEmailEcoleDoctorale(These $these) : array
     {
         /** @var IndividuRole[] $individuRoles */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
+        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
         return $this->fetchEmailsByEtablissement($individuRoles, $these);
     }
 
@@ -95,7 +95,7 @@ class EmailTheseService
     public function fetchEmailUniteRecherche(These $these) : array
     {
         /** @var IndividuRole[] $individuRoles */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
+        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
         return $this->fetchEmailsByEtablissement($individuRoles, $these);
     }
 
@@ -106,7 +106,7 @@ class EmailTheseService
     public function fetchEmailMaisonDuDoctorat(These $these) : array
     {
         /** @var IndividuRole[] $individuRoles */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEtablissement()->getStructure());
+        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getEtablissement()->getStructure());
         $individuRoles = array_filter($individuRoles, function (IndividuRole $ir) { return $ir->getRole()->getCode() === Role::CODE_BDD;});
         return $this->fetchEmailsByEtablissement($individuRoles, $these);
     }

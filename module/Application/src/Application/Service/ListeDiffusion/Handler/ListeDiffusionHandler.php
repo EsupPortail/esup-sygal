@@ -158,7 +158,7 @@ class ListeDiffusionHandler extends ListeDiffusionAbstractHandler
         $code = strtoupper($this->role);
         $structure = $this->etablissement->getStructure();
 
-        $role = $this->roleService->findOneByCodeAndStructure($code, $structure);
+        $role = $this->roleService->getRepository()->findOneByCodeAndStructure($code, $structure);
 
         return $this->individuService->getRepository()->findByRole($role);
     }

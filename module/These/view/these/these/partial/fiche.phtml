@@ -4,11 +4,13 @@
  * @var $these These
  */
 
+use Application\Entity\Db\Role;
 use These\Entity\Db\These;
 use These\Filter\ActeursFormatter;
 use Application\View\Renderer\PhpRenderer;
 
 $acteursFormatter = new ActeursFormatter();
+$theseActeurs = $these->getActeurs();
 ?>
 
 <table class="table table-sm these-fiche">
@@ -23,19 +25,17 @@ $acteursFormatter = new ActeursFormatter();
         </td>
     </tr>
 
-    <?php if ($these->getActeurs()->count()) {
-            $roles = ["Directeur de thèse", "Co-directeur de thèse", "Membre du jury", "Rapporteur du jury"];
-//            $roles = ["D", "K", "M", "R"];
+    <?php if ($theseActeurs->count()) {
+            $roles = [Role::CODE_DIRECTEUR_THESE, Role::CODE_CODIRECTEUR_THESE, Role::CODE_MEMBRE_JURY, Role::CODE_RAPPORTEUR_JURY];
             foreach ($roles as $role) {
-                $acteursFormatter->asArray()->paramFilter(["roleLibelle" => $role,]);
-                $acteurs = $acteursFormatter->filter($these->getActeurs());
-
+                /** @var \These\Entity\Db\Acteur[] $acteurs */
+                $acteurs = $acteursFormatter->paramFilter(["role" => $role])->filter($theseActeurs);
                 if (count($acteurs) != 0) {
+                    $libelle = $acteurs[0]->getRole()->getLibelle();
                     echo "<tr>";
-                    echo "<th>" . $role . "</th>";
+                    echo "<th>" . $libelle . "</th>";
                     echo "<td>";
-                    if (count($acteurs) == 0) echo "(Inconnus)";
-                    else echo implode("<br>", $acteurs);
+                    echo implode("<br>", $acteurs);
                     echo "</td>";
                     echo "</tr>";
                 }
@@ -67,7 +67,9 @@ $acteursFormatter = new ActeursFormatter();
 
     <tr>
         <th>Unité rech.</th>
-        <td><?php echo $these->getCodeUniteRecherche() . " - " . $these->getLibelleUniteRecherche() ?></td>
+        <?php if ($these->getUniteRecherche()): ?>
+            <?php echo $these->getUniteRecherche()->getStructure()->getSigle() . " - " . $these->getUniteRecherche()->getStructure()->getLibelle() ?>
+        <?php endif ?>
     </tr>
 
     <tr>
@@ -90,20 +92,5 @@ $acteursFormatter = new ActeursFormatter();
         <th>Discipline</th>
         <td><?php echo $these->getLibelleDiscipline() ?: "Inconnue" ?></td>
     </tr>
-
-    <!--        <tr>-->
-    <!--            <th>Persopass</th>-->
-    <!--            <td>--><?php //echo $these->getDoctorant()->getPersopass() ?: "Non renseigné" ?><!--</td>-->
-    <!--        </tr>-->
-    <!--        <tr>-->
-    <!--            <th>Mail</th>-->
-    <!--            <td>-->
-    <!--                --><?php //if ($email = trim($these->getDoctorant()->getEmail())): ?>
-    <!--                    <a href="mailto: --><?php //echo $email ?><!--">--><?php //echo $email ?><!--</a>-->
-    <!--                --><?php //else: ?>
-    <!--                    Inconnu-->
-    <!--                --><?php //endif ?>
-    <!--            </td>-->
-    <!--        </tr>-->
     </tbody>
 </table>

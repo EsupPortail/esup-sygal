@@ -6,7 +6,8 @@
 
 ARG PHP_VERSION
 
-FROM registre.unicaen.fr:5000/open-source/docker/sygal-image:php${PHP_VERSION}
+#FROM registre.unicaen.fr:5000/open-source/docker/sygal-image:php${PHP_VERSION}
+FROM sygal-image-php${PHP_VERSION}
 
 LABEL maintainer="Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>"
 

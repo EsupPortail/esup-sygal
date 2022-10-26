@@ -26,8 +26,8 @@ class StatistiqueController extends AbstractController
         $theses = null;
 
         /** TODO prendre les non substitué **/
-        $ecoles = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle');
-        $unites = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle');
+        $ecoles = $this->getStructureService()->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle');
+        $unites = $this->getStructureService()->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle');
         $etablissements = $this->getEtablissementService()->getRepository()->findAllEtablissementsInscriptions();
 
         /**

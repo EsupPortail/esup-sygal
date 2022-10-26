@@ -80,7 +80,7 @@ class AvisSoutenanceAssertion  implements  AssertionInterface {
                 }
 
                 /** @var Proposition $proposition */
-                $proposition = $this->getPropositionService()->findByThese($these);
+                $proposition = $this->getPropositionService()->findOneForThese($these);
                 $dateRetour = ($proposition->getRenduRapport())->add(new DateInterval('P1D'));
                 if ($currentDate > $dateRetour) return false;
                 return true;

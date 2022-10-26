@@ -41,7 +41,7 @@ class JustificatifAssertion implements AssertionInterface {
     {
         /** @var These $these */
         $these = $resource;
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $date_soutenance = ($these->getDateSoutenance())?$these->getDateSoutenance():$proposition->getDate();
 
         $depasse = (new DateTime() > $date_soutenance);

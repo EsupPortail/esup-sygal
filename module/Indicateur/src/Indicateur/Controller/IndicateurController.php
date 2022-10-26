@@ -226,21 +226,21 @@ class IndicateurController extends AbstractActionController {
                     case 'Établissement d\'inscription' :
                         if ($entry[$fct]) {
                             /** @var Etablissement $etablissement */
-                            $etablissement = $this->getStructureService()->getStructureConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_ETABLISSEMENT, $entry[$fct]);
+                            $etablissement = $this->getStructureService()->findStructureConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_ETABLISSEMENT, $entry[$fct]);
                             $value = $etablissement->getStructure()->getLibelle();
                         } else $value .= "";
                         break;
                     case 'École doctorale' :
                         if ($entry[$fct]) {
                             /** @var EcoleDoctorale $ecole */
-                            $ecole = $this->getStructureService()->getStructureConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_ECOLE_DOCTORALE, $entry[$fct]);
+                            $ecole = $this->getStructureService()->findStructureConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_ECOLE_DOCTORALE, $entry[$fct]);
                             $value = $ecole->getStructure()->getLibelle();
                         } else $value .= "";
                         break;
                     case 'Unité de recherche' :
                         if ($entry[$fct]) {
                             /** @var UniteRecherche $unite */
-                            $unite = $this->getStructureService()->getStructureConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_UNITE_RECHERCHE, $entry[$fct]);
+                            $unite = $this->getStructureService()->findStructureConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_UNITE_RECHERCHE, $entry[$fct]);
                             $value = $unite->getStructure()->getLibelle();
                         } else $value .= "";
                         break;

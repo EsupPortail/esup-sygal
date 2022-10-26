@@ -3,6 +3,7 @@
 namespace Structure\Service\UniteRecherche;
 
 use Application\Entity\Db\Utilisateur;
+use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Service\BaseService;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
@@ -38,20 +39,31 @@ class UniteRechercheService extends BaseService
      */
     public function findEtablissementRattachement(UniteRecherche $unite): array
     {
-        $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er")
+        /** @var DefaultQueryBuilder $qb */
+        $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er");
+        $qb
             ->addSelect("e, s")
-            ->join("er.etablissement", "e")
-            ->join("e.structure", "s")
-            ->andWhere("er.unite = :unite")
-            ->orderBy("s.libelle")
-            ->setParameter("unite", $unite);
+            ->join('er.etablissement', 'e')
+            ->join('e.structure', 's')
+            ->join('er.unite', 'ur')->addSelect('ur')
+            ->join('ur.structure', 'ur_structure')->addSelect('ur_structure')
+            ->andWhereStructureOuSubstituanteIs($unite->getStructure(), 'ur_structure')
+            ->orderBy('s.libelle');
 
         return $qb->getQuery()->getResult();
     }
 
-    public function existEtablissementRattachement($unite, $etablissement): ?EtablissementRattachement
+    public function existEtablissementRattachement(UniteRecherche $unite, Etablissement $etablissement): ?EtablissementRattachement
     {
-        $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er")
+        /** @var DefaultQueryBuilder $qb */
+        $qb = $this->getEntityManager()->getRepository(EtablissementRattachement::class)->createQueryBuilder("er");
+        $qb
+            ->join('er.unite', 'ur')->addSelect('ur')
+            ->join('er.etablissement', 'etab')->addSelect('etab')
+            ->join('ur.structure', 'ur_structure')->addSelect('ur_structure')
+            ->join('etab.structure', 'etab_structure')->addSelect('etab_structure')
+            ->andWhereStructureOuSubstituanteIs($unite->getStructure(), 'ur_structure')
+            ->andWhereStructureOuSubstituanteIs($etablissement->getStructure(), 'etab_structure')
             ->andWhere("er.unite = :unite")
             ->andWhere("er.etablissement = :etablissement")
             ->setParameter("unite", $unite)
@@ -197,7 +209,7 @@ class UniteRechercheService extends BaseService
     //todo faire les filtrage et considerer que les UR internes
     public function getUnitesRecherchesAsOptions() : array
     {
-        $unites = $this->getRepository()->findAll(true);
+        $unites = $this->getRepository()->findAll();
 
         $options = [];
         foreach ($unites as $unite) {

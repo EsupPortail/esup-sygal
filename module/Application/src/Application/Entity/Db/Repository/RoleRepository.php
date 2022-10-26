@@ -4,8 +4,8 @@ namespace Application\Entity\Db\Repository;
 
 use Application\Entity\Db\Role;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\Query\Expr\Join;
-use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\StructureConcreteInterface;
+use Structure\Entity\Db\StructureInterface;
 use UnicaenApp\Exception\RuntimeException;
 
 class RoleRepository extends DefaultEntityRepository
@@ -41,74 +41,54 @@ class RoleRepository extends DefaultEntityRepository
     }
 
     /**
-     * Recherche du rôle Doctorant pour un établissement.
+     * Recherche de rôles "thèse dépendants" liés à la structure *concrète* spécifiée.
      *
-     * NB : ici pas de jointure vers l'éventuelle structure substituée, charge à l'appelant de passer la structure
-     * substituée si besoin.
-     *
-     * @param string|Etablissement $etablissement
-     * @return Role|null
-     */
-    public function findRoleDoctorantForEtab(Etablissement $etablissement): ?Role
-    {
-        $qb = $this->createQueryBuilder('r');
-        $qb
-            ->addSelect('s')
-            ->join('r.structure', 's', Join::WITH, 's.code = :etablissement')
-            ->where('r.code = :code')
-            ->setParameter('code', Role::CODE_DOCTORANT)
-            ->setParameter('etablissement', $code = $etablissement->getStructure()->getCode());
-
-        try {
-            return $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs rôles doctorant trouvés pour le même établissement " . $code);
-        }
-    }
-
-    /**
-     * Recherche de rôles par établissement.
-     *
-     * NB : ici pas de jointure vers l'éventuelle structure substituée, charge à l'appelant de passer la structure
-     * substituée si besoin.
-     *
-     * @param Etablissement $etablissement
+     * @param StructureConcreteInterface $structureConcrete
      * @return Role[]
      */
-    public function findAllRolesTheseDependantByEtablissement(Etablissement $etablissement): array
+    public function findAllRolesTheseDependantForStructureConcrete(StructureConcreteInterface $structureConcrete): array
     {
         $qb = $this->createQueryBuilder("role")
+            ->join('role.structure', 's')
             ->andWhere("role.theseDependant = true")
-            ->andWhere("role.structure = :etablissement")
-            ->setParameter("etablissement", $etablissement)
+            ->andWhereStructureOuSubstituanteIs($structureConcrete->getStructure(/*false*/))
             ->orderBy("role.ordreAffichage", "DESC");
 
         return $qb->getQuery()->getResult();
     }
 
     /**
-     * Recherche d'un rôle selon son code et son établissement.
-     *
-     * NB : ici pas de jointure vers l'éventuelle structure substituée, charge à l'appelant de passer la structure
-     * substituée si besoin.
+     * Recherche d'un rôle selon son code et la structure *concrète* liée (Etab, ED, UR).
      *
      * @param string $code
-     * @param Etablissement $etablissement
-     * @return Role|null
+     * @param \Structure\Entity\Db\StructureConcreteInterface $structureConcrete
+     * @return \Application\Entity\Db\Role|null
      */
-    public function findByCodeAndEtablissement(string $code, Etablissement $etablissement): ?Role
+    public function findOneByCodeAndStructureConcrete(string $code, StructureConcreteInterface $structureConcrete): ?Role
+    {
+        return $this->findOneByCodeAndStructure($code, $structureConcrete->getStructure(/*false*/));
+    }
+
+    /**
+     * Recherche d'un rôle selon son code et la {@see \Structure\Entity\Db\Structure} *abstraite* liée.
+     *
+     * @param string $code
+     * @param \Structure\Entity\Db\StructureInterface $structure
+     * @return \Application\Entity\Db\Role|null
+     */
+    public function findOneByCodeAndStructure(string $code, StructureInterface $structure): ?Role
     {
         $qb = $this->createQueryBuilder('r')
-            ->andWhere('r.structure = :structure')
-            ->setParameter('structure', $etablissement->getStructure())
+            ->join('r.structure', 's')->addSelect('s')
             ->andWhere('r.code = :code')
             ->setParameter('code', $code)
+            ->andWhereStructureOuSubstituanteIs($structure)
             ->andWhere('r.histoDestruction is null');
 
         try {
             return $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException('Plusieurs Role partagent le même code ['.$code.'] et le même établissement ['.$etablissement->getStructure()->getCode().']');
+            throw new RuntimeException('Plusieurs Role partagent le même code ['.$code.'] et la même structure ['.$structure->getId().']');
         }
     }
 }

@@ -25,7 +25,7 @@ class PresidentJuryController extends AbstractActionController {
     public function indexAction() {
         $date = (new DateTime())->sub(new DateInterval('P4M'));
 
-        $presidents = $this->getActeurService()->getRepository()->fetchPresidentDuJuryTheseAvecCorrection();
+        $presidents = $this->getActeurService()->getRepository()->findActeursPresidentDuJuryForThesesAvecCorrection();
         $presidents = array_filter($presidents, function (Acteur $president) use ($date) { return $president->getThese()->getDateSoutenance() > $date;});
 
         return new ViewModel([

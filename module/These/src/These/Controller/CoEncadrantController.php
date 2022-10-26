@@ -189,7 +189,7 @@ class CoEncadrantController extends AbstractActionController {
         if ($structureType === 'ecole-doctorale') $structure = $this->getEcoleDoctoraleService()->getRepository()->find($structureId);
         if ($structureType === 'unite-recherche') $structure = $this->getUniteRechercheService()->getRepository()->find($structureId);
 
-        $listing = $this->getCoEncadrantService()->getCoEncadrantsByStructureConcrete($structure);
+        $listing = $this->getCoEncadrantService()->findCoEncadrantsByStructureConcrete($structure);
 
         //export
         $headers = ['Co-endrants', 'Nombre d\'encadrements actuels', 'Listing'];

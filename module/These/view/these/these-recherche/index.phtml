@@ -155,7 +155,6 @@ $acteursFormatterCodirecteurs->asSeparated()
                 <td><?php echo $these->getDoctorant()->getNumeroEtudiant() ?></td>
                 <td><?php echo $these->getDoctorant()->getIndividu()->getNomComplet() ?></td>
                 <td class="acteurs">
-
                     <?php
                     $directeurs = $acteursFormatterDirecteurs->filter($these->getActeurs());
                     foreach ($directeurs as $directeur) {
@@ -170,14 +169,7 @@ $acteursFormatterCodirecteurs->asSeparated()
                 <td>
                     <?php if($these->getEcoleDoctorale()): ?>
                         <abbr title="<?php echo $these->getEcoleDoctorale()->getStructure()->getLibelle() ?>">
-                            <?php
-                            $sigle = $these->getEcoleDoctorale()->getStructure()->getSigle();
-                            if ($sigle && $sigle !== "") {
-                                echo $sigle;
-                            } else {
-                                echo $these->getEcoleDoctorale()->getStructure()->getCode();
-                            }
-                            ?>
+                            <?php echo $these->getEcoleDoctorale()->getStructure()->getSigle() ?: "Pas de sigle" ?>
                         </abbr>
                     <?php endif ?>
                 </td>

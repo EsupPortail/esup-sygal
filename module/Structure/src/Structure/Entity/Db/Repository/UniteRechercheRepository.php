@@ -4,21 +4,18 @@ namespace Structure\Entity\Db\Repository;
 
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\QueryBuilder\DefaultQueryBuilder;
-use Doctrine\ORM\Query\Expr\Join;
-use Structure\Entity\Db\UniteRecherche;
 use Doctrine\ORM\NonUniqueResultException;
+use Structure\Entity\Db\UniteRecherche;
 use UnicaenApp\Exception\RuntimeException;
 
 class UniteRechercheRepository extends DefaultEntityRepository
 {
+    use StructureConcreteRepositoryTrait;
+
     public function createQueryBuilder($alias, $indexBy = null): DefaultQueryBuilder
     {
-        $qb = parent::createQueryBuilder($alias, $indexBy);
+        $qb = $this->_createQueryBuilder($alias);
         $qb
-            ->addSelect('structure')
-            ->join("$alias.structure", 'structure')
-            ->addSelect('structureSubstituante')
-            ->leftJoin("structure.structureSubstituante", 'structureSubstituante')
             ->addSelect('uniteRechercheSubstituante')
             ->leftJoin("structureSubstituante.uniteRecherche", 'uniteRechercheSubstituante');
 
@@ -26,24 +23,13 @@ class UniteRechercheRepository extends DefaultEntityRepository
     }
 
     /**
-     * @param bool $ouverte
      * @return UniteRecherche[]
      */
-    public function findAll(bool $ouverte = false): array
+    public function findAll(): array
     {
         $qb = $this->createQueryBuilder("ur");
-        $qb
-            ->leftJoin("structure.structuresSubstituees", "sub")
-            ->leftJoin("structure.typeStructure", "typ")
-            ->addSelect("sub, typ")
-            ->orderBy("structure.libelle");
 
-        if ($ouverte) {
-            $qb->andWhere('structure.estFermee = false')
-                ->andWhere('structureSubstituante IS NULL');
-        }
-
-        return $qb->getQuery()->getResult();
+        return $this->_findAll($qb);
     }
 
     /**
@@ -51,21 +37,33 @@ class UniteRechercheRepository extends DefaultEntityRepository
      */
     public function findSubstituables(): array
     {
-        $qb = $this->createQueryBuilder("ed");
-        $qb
-            ->addSelect("typ")
-            ->join("structure.typeStructure", "typ")
-            ->andWhere('structureSubstituante IS NULL')
-            ->andWhere('structure.structuresSubstituees IS EMPTY')
-            ->orderBy("structure.libelle");
+        $qb = $this->createQueryBuilder("ur");
 
-        return $qb->getQuery()->getResult();
+        return $this->_findSubstituables($qb);
     }
 
     /**
-     * @param int|null $id
-     * @return UniteRecherche|null
+     * @param $structureId
+     * @return \Structure\Entity\Db\UniteRecherche|null
      */
+    public function findByStructureId($structureId): ?UniteRecherche
+    {
+        $qb = $this->createQueryBuilder("ur");
+
+        return $this->_findByStructureId($qb, $structureId);
+    }
+
+    /**
+     * @param string|null $term
+     * @return UniteRecherche[]
+     */
+    public function findByText(?string $term) : array
+    {
+        $qb = $this->createQueryBuilder("ur");
+
+        return $this->_findByText($qb, $term);
+    }
+
     public function find($id, $lockMode = null, $lockVersion = null) : ?UniteRecherche
     {
         /** @var UniteRecherche $unite */
@@ -82,35 +80,4 @@ class UniteRechercheRepository extends DefaultEntityRepository
 
         return $unite;
     }
-
-    public function findByStructureId($id): ?UniteRecherche
-    {
-        $qb = $this->createQueryBuilder("u")
-            ->andWhere("structure.id = :id")
-            ->setParameter("id", $id);
-        try {
-            return $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("UniteRechercheRepository::findByStructureId(".$id.") retourne de multiples unités de recherches !");
-        }
-    }
-
-    /**
-     * @param string|null $term
-     * @return UniteRecherche[]
-     */
-    public function findByText(?string $term) : array
-    {
-        $qb = $this->createQueryBuilder("u")
-            ->andWhere('lower(structure.libelle) like :term or lower(structure.sigle) like :term')
-            ->setParameter('term', '%'.strtolower($term).'%')
-            ->andWhere('u.histoDestruction is null')
-            ->andWhere('structure.estFermee = :false')
-            ->setParameter('false', false)
-            ->andWhere('structureSubstituante IS NULL');
-
-        return $qb->getQuery()->getResult();
-    }
-
-
 }

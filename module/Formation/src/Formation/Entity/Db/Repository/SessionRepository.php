@@ -2,21 +2,43 @@
 
 namespace Formation\Entity\Db\Repository;
 
-use These\Entity\Db\These;
+use Application\Entity\Db\Repository\DefaultEntityRepository;
+use Application\QueryBuilder\DefaultQueryBuilder;
 use Doctorant\Entity\Db\Doctorant;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Formation;
-use Formation\Entity\Db\Interfaces\HasTypeInterface;
 use Formation\Entity\Db\Session;
 use Individu\Entity\Db\Individu;
 use Laminas\Mvc\Controller\AbstractActionController;
+use These\Entity\Db\These;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
-class SessionRepository extends EntityRepository
+class SessionRepository extends DefaultEntityRepository
 {
     use EntityManagerAwareTrait;
+
+    public function createQueryBuilder($alias, $indexBy = null): DefaultQueryBuilder
+    {
+        $qb = parent::createQueryBuilder($alias, $indexBy)
+            ->join($alias . '.responsable', 'resp')->addSelect('resp')
+            ->join($alias . '.formation', "formation")->addSelect("formation")
+            ->join($alias. '.site', 'site')->addSelect("site")
+            ->leftJoin($alias . '.typeStructure', 'struct')->addSelect("struct")
+            ->leftJoin($alias . '.inscriptions', "inscription")->addSelect("inscription")
+            ->leftJoin($alias . '.seances', 'seance')->addSelect("seance")
+            ->leftJoin($alias . '.etat', 'etat')->addSelect("etat")
+            ->leftJoin($alias . '.structuresValides', 'complement')->addSelect("complement")
+            ->leftJoin("complement.structure", "structureSessionInscription")->addSelect("structureSessionInscription")
+            ->andWhereStructureEstNonSubstituee('structureSessionInscription')
+            ->andWhere("complement.histoDestruction IS NULL");
+
+        $qb
+            ->leftJoin('site.structure', 'site_structure')->addSelect('site_structure')
+            ->leftJoinStructureSubstituante('site_structure', 'site_structureSubstituante')
+            ->leftJoinStructureSubstituante('struct', 'struct_structureSubstituante');
+
+        return $qb;
+    }
 
     /**
      * @param AbstractActionController $controller
@@ -33,30 +55,6 @@ class SessionRepository extends EntityRepository
     }
 
     /**
-     * @param string $alias
-     * @return QueryBuilder
-     */
-    public function createQB(string $alias) : QueryBuilder
-    {
-        $qb = $this->createQueryBuilder($alias)
-            ->join($alias.".formation", "formation")->addSelect("formation")
-            ->leftJoin($alias.".inscriptions", "inscription")->addSelect("inscription")
-            ->leftJoin($alias.".seances", "seance")->addSelect("seance")
-            ->leftJoin($alias.".etat", "etat")->addSelect("etat")
-            ->leftJoin($alias.".structuresValides", "complement")->addSelect("complement")
-            ->leftJoin("complement.structure", "structureSessionInscription")->addSelect("structureSessionInscription")
-            ->andWhere("complement.histoDestruction IS NULL")
-        ;
-
-        // la structure ne doit pas être substituée
-        $qb->addSelect('structureSubstituante')
-            ->leftJoin("structureSessionInscription.structureSubstituante", "structureSubstituante")
-            ->andWhere("structureSubstituante is null");
-
-        return $qb;
-    }
-
-    /**
      * @param Doctorant $doctorant
      * @return Session[]
      */
@@ -65,24 +63,30 @@ class SessionRepository extends EntityRepository
         $structures = [];
         foreach ($doctorant->getTheses() as $these) {
             if ($these->estNonHistorise() AND $these->getEtatThese() === These::ETAT_EN_COURS) {
-                $etablissement  = ($these->getEtablissement())?$these->getEtablissement()->getStructure():null;
-                $ecoleDoctorale = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getStructure():null;
-                $uniteRecherche = ($these->getUniteRecherche())?$these->getUniteRecherche()->getStructure():null;
-                if ($etablissement) $structures[] = $etablissement;
-                if ($ecoleDoctorale) $structures[] = $ecoleDoctorale;
-                if ($uniteRecherche) $structures[] = $uniteRecherche;
+                if ($etablissement = $these->getEtablissement()) {
+                    $structures[] = $etablissement->getStructure(false)->getId(); // structure originale
+                    $structures[] = $etablissement->getStructure()->getId(); // structure substituante éventuelle
+                }
+                if ($ecoleDoctorale = $these->getEcoleDoctorale()) {
+                    $structures[] = $ecoleDoctorale->getStructure(false)->getId();
+                    $structures[] = $ecoleDoctorale->getStructure()->getId();
+                }
+                if ($uniteRecherche = $these->getUniteRecherche()) {
+                    $structures[] = $uniteRecherche->getStructure(false)->getId();
+                    $structures[] = $uniteRecherche->getStructure()->getId();
+                }
             }
         }
 
-        $qb = $this->createQB('session')
+        $qb = $this->createQueryBuilder('session')
             ->andWhere('complement.structure in (:structures)')
             ->andWhere('etat.code = :ouverte OR etat.code = :preparation')
-            ->setParameter('structures', $structures)
+            ->setParameter('structures', array_unique($structures))
             ->setParameter('ouverte', Etat::CODE_OUVERTE)
             ->setParameter('preparation', Etat::CODE_PREPARATION)
         ;
-        $result = $qb->getQuery()->getResult();
-        return $result;
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -91,7 +95,7 @@ class SessionRepository extends EntityRepository
      */
     public function findSessionsByFormateur(Individu $individu) : array
     {
-        $qb = $this->createQB('session')
+        $qb = $this->createQueryBuilder('session')
             ->leftJoin('session.formateurs', 'formateur')
             ->leftJoin('session.formateurs', 'aformateur')->addSelect('aformateur')
             ->andWhere('formateur.individu = :individu')
@@ -100,8 +104,8 @@ class SessionRepository extends EntityRepository
             ->andWhere('formateur.histoDestruction IS NULL')
             ->orderBy('session.id', 'ASC')
         ;
-        $result = $qb->getQuery()->getResult();
-        return $result;
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -112,7 +116,7 @@ class SessionRepository extends EntityRepository
     {
         $etats = [ Etat::CODE_CLOTURER ];
 
-        $qb = $this->createQB('session')
+        $qb = $this->createQueryBuilder('session')
             ->leftJoin('session.formateurs', 'formateur')
             ->leftJoin('session.formateurs', 'aformateur')->addSelect('aformateur')
             ->andWhere('formateur.individu = :individu')
@@ -123,8 +127,8 @@ class SessionRepository extends EntityRepository
             ->setParameter('etats', $etats)
             ->orderBy('session.id', 'ASC')
         ;
-        $result = $qb->getQuery()->getResult();
-        return $result;
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -135,7 +139,7 @@ class SessionRepository extends EntityRepository
     {
         $etats = [ Etat::CODE_FERME ];
 
-        $qb = $this->createQB('session')
+        $qb = $this->createQueryBuilder('session')
             ->leftJoin('session.formateurs', 'formateur')
             ->leftJoin('session.formateurs', 'aformateur')->addSelect('aformateur')
             ->andWhere('formateur.individu = :individu')
@@ -146,8 +150,8 @@ class SessionRepository extends EntityRepository
             ->setParameter('etats', $etats)
             ->orderBy('session.id', 'ASC')
         ;
-        $result = $qb->getQuery()->getResult();
-        return $result;
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -158,7 +162,7 @@ class SessionRepository extends EntityRepository
     {
         $etats = [ Etat::CODE_OUVERTE, Etat::CODE_PREPARATION ];
 
-        $qb = $this->createQB('session')
+        $qb = $this->createQueryBuilder('session')
             ->leftJoin('session.formateurs', 'formateur')
             ->leftJoin('session.formateurs', 'aformateur')->addSelect('aformateur')
             ->andWhere('formateur.individu = :individu')
@@ -169,8 +173,8 @@ class SessionRepository extends EntityRepository
             ->setParameter('etats', $etats)
             ->orderBy('session.id', 'ASC')
         ;
-        $result = $qb->getQuery()->getResult();
-        return $result;
+
+       return $qb->getQuery()->getResult();
     }
 
     /**
@@ -182,7 +186,7 @@ class SessionRepository extends EntityRepository
      */
     public function fetchSessionsByFormation(?Formation $formation, string $champ='id', string $ordre='ASC', bool $keep_histo = false) : array
     {
-        $qb = $this->createQB('session')
+        $qb = $this->createQueryBuilder('session')
             ->orderBy('session.' . $champ, $ordre);
 
         if ($formation !== null)  $qb = $qb->andWhere('session.formation = :formation')->setParameter('formation', $formation);
@@ -190,7 +194,6 @@ class SessionRepository extends EntityRepository
 
         if (!$keep_histo) $qb = $qb->andWhere('session.histoDestruction IS NULL');
 
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 }

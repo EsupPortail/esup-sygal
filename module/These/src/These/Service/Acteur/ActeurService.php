@@ -112,7 +112,7 @@ class ActeurService extends BaseService
     public function ajouterCoEncradrant(These $these, Individu $individu)
     {
         $etablissement = $these->getEtablissement();
-        $role = $this->getRoleService()->getRepository()->findByCodeAndEtablissement(Role::CODE_CO_ENCADRANT, $etablissement);
+        $role = $this->getRoleService()->getRepository()->findOneByCodeAndStructureConcrete(Role::CODE_CO_ENCADRANT, $etablissement);
         $source = $this->sourceService->fetchApplicationSource();
 
         $acteur = new Acteur();

@@ -189,7 +189,7 @@ class EtablissementService extends BaseService
     //todo faire les filtrage et considerer que les UR internes
     public function getEtablissementsAsOptions() : array
     {
-        $etablissements = $this->getRepository()->findAll(true);
+        $etablissements = $this->getRepository()->findAll();
 
         $options = [];
         foreach ($etablissements as $etablissement) {

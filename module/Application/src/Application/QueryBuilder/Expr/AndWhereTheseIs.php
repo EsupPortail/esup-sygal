@@ -6,13 +6,7 @@ use These\Entity\Db\These;
 
 class AndWhereTheseIs extends AndWhereExpr
 {
-    /**
-     * AndWhereTheseIs constructor.
-     *
-     * @param string $alias
-     * @param These  $entity
-     */
-    public function __construct($alias, These $entity)
+    public function __construct(string $alias, These $entity)
     {
         parent::__construct($alias);
 
@@ -20,7 +14,7 @@ class AndWhereTheseIs extends AndWhereExpr
         $this->parameters = ['these' => $entity];
     }
 
-    protected function getJoinSuggestion($rootAlias)
+    protected function getJoinSuggestion($rootAlias): string
     {
         return sprintf(
             "Peut-être avez-vous oublié de faire la jointure suivante: '->join(\"%s.these\", \"%s\")'.",

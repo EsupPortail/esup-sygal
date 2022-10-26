@@ -89,7 +89,7 @@ class IndexController extends AbstractController
 
         if ($these !== null) {
             /** @var These $these */
-            $proposition = $this->getPropositionService()->findByThese($these);
+            $proposition = $this->getPropositionService()->findOneForThese($these);
             /** @var Membre[] $membres */
             $membres = $proposition->getMembres()->toArray();
             $membre = null;
@@ -130,7 +130,7 @@ class IndexController extends AbstractController
     public function indexStructureAction()
     {
         $role = $this->userContextService->getSelectedIdentityRole();
-        $propositions = $this->getPropositionService()->getPropositionsByRole($role);
+        $propositions = $this->getPropositionService()->findPropositionsByRole($role);
 
 
         $etablissementId = $this->params()->fromQuery('etablissement');
@@ -154,9 +154,9 @@ class IndexController extends AbstractController
             'uniteRechercheId' => $uniteRechercheId,
             'etatId' => $etatId,
             'etablissements' => $this->getEtablissementService()->getRepository()->findAllEtablissementsMembres(),
-            'ecoles' => $this->getEcoleDoctoraleService()->getRepository()->findAll(true),
-            'unites' => $this->getUniteRechercheService()->getRepository()->findAll(true),
-            'etats' =>  $this->getPropositionService()->getPropositionEtats(),
+            'ecoles' => $this->getEcoleDoctoraleService()->getRepository()->findAll(),
+            'unites' => $this->getUniteRechercheService()->getRepository()->findAll(),
+            'etats' =>  $this->getPropositionService()->findPropositionEtats(),
         ]);
     }
 }

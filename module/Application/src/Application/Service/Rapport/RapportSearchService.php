@@ -134,18 +134,18 @@ class RapportSearchService extends SearchService
 
     private function fetchEcolesDoctorales(): array
     {
-        return $this->structureService->getAllStructuresAffichablesByType(
+        return $this->structureService->findAllStructuresAffichablesByType(
             TypeStructure::CODE_ECOLE_DOCTORALE, 'sigle', true, true);
     }
 
     private function fetchUnitesRecherches(): array
     {
-        return $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'code', false, true);
+        return $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'code', false, true);
     }
 
     private function fetchOriginesFinancements(): array
     {
-        $values = $this->getFinancementService()->getOriginesFinancements("libelleLong");
+        $values = $this->getFinancementService()->findOriginesFinancements("libelleLong");
 
         // dédoublonnage (sur le code origine) car chaque établissement pourrait fournir les mêmes données
         $origines = [];

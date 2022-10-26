@@ -71,7 +71,7 @@ class JustificatifController extends AbstractController {
     {
 
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $justificatif = new Justificatif();
         $justificatif->setProposition($proposition);

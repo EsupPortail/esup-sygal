@@ -85,7 +85,7 @@ class PrivilegeController extends AbstractController
      */
     private function cleanRoles($roles)
     {
-        $substituees = $this->structureService->getStructuresSubstituees();
+        $substituees = $this->structureService->findStructuresSubstituees();
 
         // Retrait des rôles associés à des structures historisées ou substituées
         $roles = array_filter($roles, function (Role $role) use ($substituees) {

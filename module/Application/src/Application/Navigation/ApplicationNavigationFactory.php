@@ -255,7 +255,7 @@ class ApplicationNavigationFactory extends NavigationFactory
                 break;
             case $role->isEtablissementDependant():
                 $etab = $role->getStructure()->getEtablissement();
-                $label = $etab->getCode();
+                $label = $etab->getStructure()->getCode();
                 $query = [EtablissementSearchFilter::NAME => $etab->getSourceCode()];
                 break;
             default:
