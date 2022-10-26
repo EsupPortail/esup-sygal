@@ -11,6 +11,7 @@ Journal des modifications
 - [FIX] correction export csv des inscrits
 - [FIX] récupération des mappings manquants pour l'enquete des formations
 - Remplacement de \n en <br> pour conserver les sauts de ligne dans les titres sur la page de couverture.
+- [FIX] Corrections concernant la subsitution de structures.
 
 5.2.3
 -----
