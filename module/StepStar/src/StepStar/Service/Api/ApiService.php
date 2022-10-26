@@ -8,16 +8,34 @@ use SoapFault;
 use stdClass;
 use StepStar\Exception\ApiServiceException;
 use StepStar\Service\Soap\SoapClientAwareTrait;
-use StepStar\Service\Xslt\XsltServiceAwareTrait;
+use Webmozart\Assert\Assert;
 
 class ApiService
 {
     use SoapClientAwareTrait;
 
-    const OPERATION_DEPOSER = 'deposer';
-    const OPERATION_DEPOSER_AVEC_ZIP = 'deposerAvecZip';
-//    const OPERATION_DEPOSER = 'Depot';
-//    const OPERATION_DEPOSER_AVEC_ZIP = 'DepotAvecZip';
+    const OPERATION_KEY__DEPOSER = 'deposer';
+    const OPERATION_KEY__DEPOSER_AVEC_ZIP = 'deposer_avec_zip';
+
+    /**
+     * @var array
+     */
+    protected array $operations = [];
+
+    /**
+     * @param array $operations
+     * @return self
+     */
+    public function setOperations(array $operations): self
+    {
+        $message = "Clé obligatoire introuvable dans le tableau de config des opérations : %s";
+        Assert::keyExists($operations, self::OPERATION_KEY__DEPOSER, $message);
+        Assert::keyExists($operations, self::OPERATION_KEY__DEPOSER_AVEC_ZIP, $message);
+
+        $this->operations = $operations;
+
+        return $this;
+    }
 
     /**
      * @var array
@@ -53,13 +71,12 @@ class ApiService
             throw new ApiServiceException("La requête 'deposer' nécessite le paramètre '$k'.");
         }
 
-        $operation = self::OPERATION_DEPOSER;
+        $operation = $this->operations[self::OPERATION_KEY__DEPOSER];
         $params = $this->params;
         $params['tef'] = file_get_contents($tefFilePath);
-//        $params['tef'] = file_get_contents('/tmp/tef_base64.txt');
-//        $params['tef'] = file_get_contents('/tmp/tef_base64_dumontier.txt');
+
         if ($zipFilePath !== null) {
-            $operation = self::OPERATION_DEPOSER_AVEC_ZIP;
+            $operation = $this->operations[self::OPERATION_KEY__DEPOSER_AVEC_ZIP];
             $params['zip'] = base64_encode(file_get_contents($zipFilePath));
         }
         try {

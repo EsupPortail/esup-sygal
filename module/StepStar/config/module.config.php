@@ -91,19 +91,22 @@ return [
         'api' => [
             'soap_client' => [
                 'wsdl' => [
-//                    'url' => 'https://imports-test.theses.fr/services/DepotTEF.wsdl',
-////                    'url' => 'https://imports-new-test.theses.fr/ThesesImports/services/DepotTEF.wsdl',
+                    'url' => 'https://xxxx/yyyyy.wsdl',
                 ],
                 'soap' => [
                     'version' => SOAP_1_1, // cf. extension "php-soap"
-//                    'proxy_host' => 'proxy.unicaen.fr',
-//                    'proxy_port' => 3128,
+                    //'proxy_host' => 'proxy.unicaen.fr',
+                    //'proxy_port' => 3128,
                 ],
             ],
+            'operations' => [
+//                'deposer' => 'deposer',
+//                'deposer_avec_zip' => 'deposerAvecZip',
+                'deposer' => 'Depot',
+                'deposer_avec_zip' => 'DepotAvecZip',
+            ],
             'params' => [
-//                'idEtablissement' => 'SYGA',
-                'idEtablissement' => 'NORM',
-//                'ws' => 'ABES_TRF_THESE',
+                'idEtablissement' => 'XXXX',
             ],
         ],
         'notification' => [

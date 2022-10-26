@@ -17,6 +17,7 @@ class ApiServiceFactory implements FactoryInterface
         /** @var array $config */
         $config = $container->get('Config');
 
+        $operations = $config['step_star']['api']['operations'];
         $params = $config['step_star']['api']['params'];
 
         /** @var SoapClient $soapClient */
@@ -24,6 +25,7 @@ class ApiServiceFactory implements FactoryInterface
 
         $service = new ApiService();
         $service->setSoapClient($soapClient);
+        $service->setOperations($operations);
         $service->setParams($params);
 
         return $service;
