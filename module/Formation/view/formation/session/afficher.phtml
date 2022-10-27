@@ -56,6 +56,7 @@ $canSupprimerInscription    = $this->isAllowed(InscriptionPrivileges::getResourc
 /** @var Inscription[] $inscrits */
 $inscrits = $session->getInscriptions()->toArray();
 $listeNonClassee = array_filter($inscrits, function (Inscription $a) { return $a->getListe() === null;});
+$listeNonClasseeTrue = array_filter($listeNonClassee, function (Inscription $a) { return $a->estNonHistorise();});
 $listePrincipale = array_filter($inscrits, function (Inscription $a) { return  $a->getListe() === Inscription::LISTE_PRINCIPALE;});
 $listePrincipaleTrue = array_filter($listePrincipale, function (Inscription $a) { return $a->estNonHistorise();});
 $listeComplementaire = array_filter($inscrits, function (Inscription $a) { return  $a->getListe() === Inscription::LISTE_COMPLEMENTAIRE;});
@@ -408,7 +409,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
     <div class="col-md-4">
         <h3>
             Listes des inscrits (non classés)
-            (<?php echo count($listeNonClassee); ?> inscriptions)
+            (<?php echo count($listeNonClasseeTrue); ?> inscriptions)
         </h3>
 
         <ul>
