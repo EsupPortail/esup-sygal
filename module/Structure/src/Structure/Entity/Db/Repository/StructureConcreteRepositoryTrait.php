@@ -30,7 +30,7 @@ trait StructureConcreteRepositoryTrait
             ->leftJoin("structure.structuresSubstituees", "sub")->addSelect('sub')
             ->leftJoin("structure.typeStructure", "typ")->addSelect('typ')
             ->andWhere('structure.estFermee = false')
-            ->andWhereStructureEstNonSubstituante()
+            ->andWhereStructureEstNonSubstituante('structure')
             ->orderBy("structure.libelle");
 
         return $qb->getQuery()->getResult();
