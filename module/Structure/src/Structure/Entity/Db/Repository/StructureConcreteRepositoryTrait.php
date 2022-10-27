@@ -14,6 +14,7 @@ trait StructureConcreteRepositoryTrait
 {
     public function _createQueryBuilder(string $alias): DefaultQueryBuilder
     {
+        /** @var DefaultQueryBuilder $qb */
         $qb = parent::createQueryBuilder($alias);
 
         $qb
@@ -30,7 +31,7 @@ trait StructureConcreteRepositoryTrait
             ->leftJoin("structure.structuresSubstituees", "sub")->addSelect('sub')
             ->leftJoin("structure.typeStructure", "typ")->addSelect('typ')
             ->andWhere('structure.estFermee = false')
-            ->andWhereStructureEstNonSubstituante('structure')
+            ->andWhereStructureEstNonSubstituee('structure')
             ->orderBy("structure.libelle");
 
         return $qb->getQuery()->getResult();
