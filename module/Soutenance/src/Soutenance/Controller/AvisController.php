@@ -35,7 +35,7 @@ class AvisController extends AbstractController
         $membre = $this->getMembreService()->getRequestedMembre($this, 'rapporteur');
 
         /** @var Proposition $proposition */
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $avis = $this->getAvisService()->getAvisByMembre($membre);
 
         if ($avis !== null) {

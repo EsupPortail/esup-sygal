@@ -32,11 +32,6 @@ class Etablissement
     /**
      * @var string
      */
-    protected $code;
-
-    /**
-     * @var string
-     */
     private $sourceCode;
 
     /**
@@ -82,26 +77,6 @@ class Etablissement
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Retourne le code de cet établissement ou null, ex: '0761904GE' pour l'Université de Rouen.
-     *
-     * @return string|null
-     */
-    public function getCode(): ?string
-    {
-        return $this->code;
-    }
-
-    /**
-     * @param string $code
-     * @return self
-     */
-    public function setCode(string $code): self
-    {
-        $this->code = $code;
-        return $this;
     }
 
     /**
@@ -274,7 +249,7 @@ class Etablissement
      */
     public function createSearchFilterValueOption(): array
     {
-        $label = ($this->code ?: $this->structure->getSigle()) ?: $this->structure->getLibelle();
+        $label = ($this->structure->getCode() ?: $this->structure->getSigle()) ?: $this->structure->getLibelle();
         if ($this->structure->estFermee()) {
             $label .= "&nbsp; FERMÉ";
         }

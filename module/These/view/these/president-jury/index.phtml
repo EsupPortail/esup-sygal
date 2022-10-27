@@ -223,10 +223,16 @@ $canNotifierPresident     = $this->isAllowed(PresidentJuryPrivileges::getResourc
                             <?php endif; ?>
 
                             <?php if ($canNotifierPresident) : ?>
-                                <?php if (($president->getIndividu() AND $president->getIndividu()->getEmail()) OR ($president->getMembre() AND $president->getMembre()->getEmail())) : ?>
+                                <?php if (!empty($utilisateurs) OR ($president->getIndividu() AND $president->getIndividu()->getEmail()) OR ($president->getMembre() AND $president->getMembre()->getEmail())) : ?>
                                     <?php /** @see \These\Controller\PresidentJuryController::notifierCorrectionAction() */ ?>
-                                    <a href="<?php echo $this->url('president-jury/notifier-correction', ['president' => $president->getId()], [], true); ?>"
-                                       title="Création du compte & notification du président du jury"
+                                    <a href="<?php
+                                        if (!empty($utilisateurs) AND ($president->getIndividu() === null OR $president->getIndividu()->getEmail() === null) AND ($president->getMembre() === null OR $president->getMembre()->getEmail() === null)) {
+                                            echo $this->url('president-jury/notifier-correction', ['president' => $president->getId()], ['query' => ['utilisateur' => end($utilisateurs)->getId()]], true);
+                                        } else {
+                                            echo $this->url('president-jury/notifier-correction', ['president' => $president->getId()], [], true);
+                                        }
+                                        ?>"
+                                       title="Création du compte (si nécessaire) & notification du président du jury"
                                     >
                                         <span class="icon icon-notify"></span>
                                     </a>

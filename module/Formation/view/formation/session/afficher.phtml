@@ -56,15 +56,21 @@ $canSupprimerInscription    = $this->isAllowed(InscriptionPrivileges::getResourc
 /** @var Inscription[] $inscrits */
 $inscrits = $session->getInscriptions()->toArray();
 $listeNonClassee = array_filter($inscrits, function (Inscription $a) { return $a->getListe() === null;});
+$listeNonClasseeTrue = array_filter($listeNonClassee, function (Inscription $a) { return $a->estNonHistorise();});
 $listePrincipale = array_filter($inscrits, function (Inscription $a) { return  $a->getListe() === Inscription::LISTE_PRINCIPALE;});
 $listePrincipaleTrue = array_filter($listePrincipale, function (Inscription $a) { return $a->estNonHistorise();});
 $listeComplementaire = array_filter($inscrits, function (Inscription $a) { return  $a->getListe() === Inscription::LISTE_COMPLEMENTAIRE;});
 $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscription $a) { return $a->estNonHistorise();});
+usort($listeComplementaire, function (Inscription $a, Inscription $b) {return $a->getHistoCreation() > $b->getHistoCreation();});
 ?>
 
 <h1 class="page-header">
     <?php echo $pageTitle; ?>
 </h1>
+
+<?php
+echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
+?>
 
 <?php if ($canModifierSession) : ?>
     <?php /** @see \Formation\Controller\SessionController::modifierAction() */?>
@@ -404,9 +410,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     <div class="col-md-4">
         <h3>
             Listes des inscrits (non classés)
-            <span class="badge">
-                <?php echo count($listeNonClassee); ?>
-            </span>
+            (<?php echo count($listeNonClasseeTrue); ?> inscriptions)
         </h3>
 
         <ul>
@@ -424,9 +428,7 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     <div class="col-md-4">
         <h3>
             Liste principale
-            <span class="badge">
-                <?php echo count($listePrincipaleTrue); ?>
-            </span>
+            (<?php echo count($listePrincipaleTrue); ?>/<?php echo $session->getTailleListePrincipale(); ?>)
         </h3>
 
         <ul>
@@ -444,12 +446,11 @@ $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscript
     <div class="col-md-4">
         <h3>
             Liste complémentaire
-            <span class="badge">
-                <?php echo count($listeComplementaireTrue); ?>
-            </span>
+            (<?php echo count($listeComplementaireTrue); ?>/<?php echo $session->getTailleListeComplementaire(); ?>)
         </h3>
 
         <ul>
+            <?php /** @var Inscription $inscription */ ?>
             <?php foreach ($listeComplementaire as $inscription) : ?>
                 <?php echo $this->inscription($inscription, [
                         'action-liste-principale' => ($session->getDateDebut() !== null AND $canModifierInscription),

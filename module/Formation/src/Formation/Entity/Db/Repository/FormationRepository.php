@@ -2,17 +2,42 @@
 
 namespace Formation\Entity\Db\Repository;
 
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
+use Application\Entity\Db\Repository\DefaultEntityRepository;
+use Application\QueryBuilder\DefaultQueryBuilder;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Module;
 use Formation\Entity\Db\Session;
 use Laminas\Mvc\Controller\AbstractActionController;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
-class FormationRepository extends EntityRepository
+class FormationRepository extends DefaultEntityRepository
 {
     use EntityManagerAwareTrait;
+
+    public function createQueryBuilder($alias, $indexBy = null): DefaultQueryBuilder
+    {
+        $qb = parent::createQueryBuilder($alias, $indexBy);
+        $qb
+            ->leftjoin($alias . '.module', 'module')->addSelect('module')
+            ->leftJoin($alias . '.responsable', 'resp')->addSelect('resp')
+            ->leftJoin($alias . '.site', 'site')->addSelect('site');
+
+        $qb
+            ->leftJoin('site.structure', 'site_structure')->addSelect('site_structure')
+            ->leftJoin($alias . '.typeStructure', 'struct')->addSelect('struct')
+            ->leftJoinStructureSubstituante('site_structure', 'site_structureSubstituante')
+            ->leftJoinStructureSubstituante('struct', 'struct_structureSubstituante');
+
+        return $qb;
+    }
+
+    /**
+     * @return Formation[]
+     */
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('f')->getQuery()->getResult();
+    }
 
     /**
      * @param AbstractActionController $controller
@@ -39,7 +64,6 @@ class FormationRepository extends EntityRepository
 
     public function fetchListeResponsable() : array
     {
-        /** @var Formation[] $modules */
         $modules = $this->findAll();
         $responsables = [];
 
@@ -54,7 +78,6 @@ class FormationRepository extends EntityRepository
 
     public function fetchListeStructures() : array
     {
-        /** @var Formation[] $modules */
         $modules = $this->findAll();
         $structures = [];
 
@@ -67,13 +90,6 @@ class FormationRepository extends EntityRepository
         return $structures;
     }
 
-    public function createQB() : QueryBuilder
-    {
-        $qb = $this->createQueryBuilder('formation')
-            ->leftjoin('formation.module', 'module')->addSelect('module');
-        return $qb;
-    }
-
     /**
      * @param Module|null $module
      * @param string $champ
@@ -83,7 +99,7 @@ class FormationRepository extends EntityRepository
      */
     public function fetchFormationsByModule(?Module $module, string $champ='libelle', string $ordre='ASC', bool $keep_histo = false) : array
     {
-        $qb = $this->createQB()
+        $qb = $this->createQueryBuilder('formation')
             ->orderBy('formation.' . $champ, $ordre);
 
         if ($module !== null)   $qb = $qb->andWhere('formation.module = :module')->setParameter('module', $module);
@@ -91,7 +107,6 @@ class FormationRepository extends EntityRepository
 
         if (!$keep_histo) $qb = $qb->andWhere('formation.histoDestruction IS NULL');
 
-        $result = $qb->getQuery()->getResult();
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 }

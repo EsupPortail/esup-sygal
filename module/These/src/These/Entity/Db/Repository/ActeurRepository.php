@@ -67,7 +67,8 @@ class ActeurRepository extends DefaultEntityRepository
             ->andWhere('acteur.histoDestruction is null');
 
         $qb
-            ->addSelect('structureSubstituante')->leftJoin("structure.structureSubstituante", "structureSubstituante")
+            ->leftJoinStructureSubstituante('structure')
+            ->andWhereStructureEstNonSubstituee('structure')
             ->addSelect('etablissementSubstituant')->leftJoin("structureSubstituante.etablissement", "etablissementSubstituant")
             ->addSelect('ecoleDoctoraleSubstituant')->leftJoin("structureSubstituante.ecoleDoctorale", "ecoleDoctoraleSubstituant")
             ->addSelect('uniteRechercheSubstituant')->leftJoin("structureSubstituante.uniteRecherche", "uniteRechercheSubstituant");
@@ -93,7 +94,8 @@ class ActeurRepository extends DefaultEntityRepository
             ->andWhere('acteur.histoDestruction is null');
 
         $qb
-            ->addSelect('structureSubstituante')->leftJoin("structure.structureSubstituante", "structureSubstituante")
+            ->leftJoinStructureSubstituante('structure')
+            ->andWhereStructureEstNonSubstituee('structure')
             ->addSelect('etablissementSubstituant')->leftJoin("structureSubstituante.etablissement", "etablissementSubstituant")
             ->addSelect('ecoleDoctoraleSubstituant')->leftJoin("structureSubstituante.ecoleDoctorale", "ecoleDoctoraleSubstituant")
             ->addSelect('uniteRechercheSubstituant')->leftJoin("structureSubstituante.uniteRecherche", "uniteRechercheSubstituant");
@@ -106,7 +108,7 @@ class ActeurRepository extends DefaultEntityRepository
      * @param Individu $individu
      * @return Acteur[]
      */
-    public function findActeursByIndividu(Individu $individu): array
+    public function findActeursForIndividu(Individu $individu): array
     {
         $qb = $this->createQueryBuilder('acteur')
             ->addSelect('these')->join('acteur.these', 'these')
@@ -118,10 +120,11 @@ class ActeurRepository extends DefaultEntityRepository
             ->orderBy('these.id', 'ASC');
 
         $qb
-            ->addSelect('ss')->leftJoin("structure.structureSubstituante", "ss")
-            ->addSelect('etablissementSubstituant')->leftJoin("ss.etablissement", "etablissementSubstituant")
-            ->addSelect('ecoleDoctoraleSubstituant')->leftJoin("ss.ecoleDoctorale", "ecoleDoctoraleSubstituant")
-            ->addSelect('uniteRechercheSubstituant')->leftJoin("ss.uniteRecherche", "uniteRechercheSubstituant");
+            ->leftJoinStructureSubstituante('structure')
+            ->andWhereStructureEstNonSubstituee('structure')
+            ->addSelect('etablissementSubstituant')->leftJoin("structureSubstituante.etablissement", "etablissementSubstituant")
+            ->addSelect('ecoleDoctoraleSubstituant')->leftJoin("structureSubstituante.ecoleDoctorale", "ecoleDoctoraleSubstituant")
+            ->addSelect('uniteRechercheSubstituant')->leftJoin("structureSubstituante.uniteRecherche", "uniteRechercheSubstituant");
 
         return $qb->getQuery()->getResult();
     }
@@ -155,16 +158,15 @@ class ActeurRepository extends DefaultEntityRepository
             ->join('a.these', 't', Join::WITH, 't.etatThese = :etat')->setParameter('etat', These::ETAT_EN_COURS)
             ->join('t.ecoleDoctorale', 'ed')
             ->join('ed.structure', 's')
-            ->leftJoin('s.structureSubstituante', 'structureSubstituante')->addSelect('structureSubstituante')
+            ->leftJoinStructureSubstituante('s')
             ->andWhere('a.histoDestruction is null')
-            ->addOrderBy('i.nomUsuel')
-            ->addOrderBy('i.prenom1');
+            ->addOrderBy('i.nomUsuel, i.prenom1');
 
         if ($ecoleDoctorale !== null) {
             if ($ecoleDoctorale instanceof EcoleDoctorale) {
                 $qb
                     ->andWhere('s = :structure OR structureSubstituante = :structure')
-                    ->setParameter('structure', $ecoleDoctorale->getStructure(false));
+                    ->setParameter('structure', $ecoleDoctorale->getStructure(/*false*/));
             } elseif (is_array($ecoleDoctorale)) {
                 $leftPart = key($ecoleDoctorale);
                 $rightPart = current($ecoleDoctorale);
@@ -181,27 +183,9 @@ class ActeurRepository extends DefaultEntityRepository
         if ($etablissement !== null) {
             $qb
                 ->join('t.etablissement', 'e')->addSelect('e')
-                ->join('e.structure', 'setab')->addSelect('setab')
-                ->leftJoin('setab.structureSubstituante', 'structureSubstituanteEtab')->addSelect('structureSubstituanteEtab')
-                ->andWhere('setab = :structureEtab OR structureSubstituanteEtab = :structureEtab')
-                ->setParameter('structureEtab', $etablissement->getStructure(false));
+                ->join('e.structure', 'etab_structure')//->addSelect('etab_structure')
+                ->andWhereStructureOuSubstituanteIs($etablissement->getStructure(/*false*/), 'etab_structure');
         }
-
-//        if ($ecoleDoctorale !== null) {
-//            if ($ecoleDoctorale instanceof EcoleDoctorale) {
-//                $qb->andWhere('ed = :ed');
-//            } elseif (is_array($ecoleDoctorale)) {
-//                $qb->andWhere(key($ecoleDoctorale) . ' = :ed');
-//                $ecoleDoctorale = current($ecoleDoctorale);
-//            } else {
-//                $qb->andWhere('s.code = :ed');
-//            }
-//            $qb->setParameter('ed', $ecoleDoctorale);
-//        }
-//
-//        if ($etablissement !== null) {
-//            $qb->join('t.etablissement', 'e', Join::WITH, 'e = :etab')->setParameter('etab', $etablissement);
-//        }
 
         return $qb->getQuery()->getResult();
     }
@@ -211,7 +195,7 @@ class ActeurRepository extends DefaultEntityRepository
     /**
      * @return Acteur[]
      */
-    public function fetchPresidentDuJuryTheseAvecCorrection(): array
+    public function findActeursPresidentDuJuryForThesesAvecCorrection(): array
     {
         $qb = $this->createQueryBuilder('a')
             ->addSelect('i')->join('a.individu', 'i')

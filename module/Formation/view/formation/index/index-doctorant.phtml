@@ -75,6 +75,8 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
     </div>
 </div>
 
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
 <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" class="nav-item active">
         <a href="#a_venir"
@@ -264,7 +266,7 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
                     <td> <?php echo $this->etat($session); ?></td>
                     <td>
                         <?php if ($inscription->isListePrincipale()) echo "Liste principale"; ?>
-                        <?php if ($inscription->isListeComplementaire()) echo "Liste complementaire #???"; ?>
+                        <?php if ($inscription->isListeComplementaire()) echo "Liste complementaire <br/>Position " . $inscription->getPositionListeComplementaire(); ?>
                         <?php if ($inscription->getListe() === null) : ?>
                             <?php if ($session->getEtat()->getCode() === Etat::CODE_OUVERTE) echo "En attente"; ?>
                             <?php if ($session->getEtat()->getCode() === Etat::CODE_FERME) echo "Non classée"; ?>

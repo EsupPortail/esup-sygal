@@ -50,7 +50,7 @@ class StructureController extends AbstractController
 
         $structures = [];
         if ($consultationToutes) {
-            $structures = $this->getStructureService()->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle');
+            $structures = $this->getStructureService()->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle');
         } else {
             /** @var Role $role*/
             $role = $this->userContextService->getSelectedIdentityRole();
@@ -71,14 +71,14 @@ class StructureController extends AbstractController
         $structure = $this->structureService->findStructureById($structureId);
         $type = $this->params()->fromRoute("type");
 
-        $roles_tmp = $this->roleService->getRolesByStructure($structure);
+        $roles_tmp = $this->roleService->findRolesForStructure($structure);
         $roles = [];
         /** @var Role $role */
         foreach ($roles_tmp as $role) {
             if (!$role->isTheseDependant()) $roles[] = $role;
         }
 
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($structure);
+        $individuRoles = $this->roleService->findIndividuRoleByStructure($structure);
 
         $repartition = [];
         foreach ($roles as $role) {

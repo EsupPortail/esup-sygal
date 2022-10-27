@@ -1,6 +1,20 @@
 Journal des modifications
 =========================
 
+5.2.4
+-----
+- [FIX] Correction du ViewHelper SelectHelper (ne suivant pas le lien de substitution)
+- Ajout de la modalité de formation mixte
+- Ajout d'une garde pour éviter les inscriptions répétées
+- Changement des notifications envoyées à propos des listes des formations
+- [FIX] priorisation de l'utilisateur pour les notifications au président depuis la page dédiée
+- [FIX] correction export csv des inscrits
+- [FIX] récupération des mappings manquants pour l'enquete des formations
+- Remplacement de \n en <br> pour conserver les sauts de ligne dans les titres sur la page de couverture.
+- [FIX] Corrections concernant la subsitution de structures.
+- Retrait du readonly sur les libellés et sigles des URs et des EDs
+- Calcul de la position sur la liste complémentaire + affichage + possibilité de macro pour les templates
+
 5.2.3
 -----
 - Substitution de structures : réalisation des jointures dans les requêtes Doctrine et suppression dans les vues SRC_*.

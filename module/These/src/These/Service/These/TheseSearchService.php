@@ -4,6 +4,7 @@ namespace These\Service\These;
 
 use Application\Entity\Db\Role;
 use Application\Filter\AnneeUnivFormatter;
+use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Search\DomaineScientifique\DomaineScientifiqueSearchFilterAwareTrait;
 use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
@@ -91,23 +92,21 @@ class TheseSearchService extends SearchService
             ->addSelect('a')->leftJoin('these.acteurs', 'a')
             ->addSelect('i')->leftJoin('a.individu', 'i')
             ->addSelect('r')->leftJoin('a.role', 'r')
-            ->addSelect('f')->leftJoin('these.financements', 'f')
-            ->addSelect('fi')->leftJoin('these.fichierTheses', 'fi')
-            ->addSelect('ta')->leftJoin('these.titreAcces', 'ta')
-            ->andWhere('these.histoDestruction is null');
+            ->addSelect('am')->leftJoin('a.membre', 'am') // todo : pas trouvé pourquoi mais réduit le nombre de requêtes !
+            ->andWhereNotHistorise('these');
 
         $qb
             ->addSelect('etab_structure')->leftJoin("etab.structure", "etab_structure")
-            ->addSelect('etab_ss')->leftJoin("etab_structure.structureSubstituante", "etab_ss")
-            ->addSelect('etab_substituant')->leftJoin("etab_ss.etablissement", "etab_substituant");
+            ->addSelect('etab_structureSubstituante')->leftJoin("etab_structure.structureSubstituante", "etab_structureSubstituante")
+            ->addSelect('etab_substituant')->leftJoin("etab_structureSubstituante.etablissement", "etab_substituant");
         $qb
             ->addSelect('ed_structure')->leftJoin("ed.structure", "ed_structure")
-            ->addSelect('ed_ss')->leftJoin("ed_structure.structureSubstituante", "ed_ss")
-            ->addSelect('ed_substituant')->leftJoin("ed_ss.ecoleDoctorale", "ed_substituant");
+            ->addSelect('ed_structureSubstituante')->leftJoin("ed_structure.structureSubstituante", "ed_structureSubstituante")
+            ->addSelect('ed_substituant')->leftJoin("ed_structureSubstituante.ecoleDoctorale", "ed_substituant");
         $qb
             ->addSelect('ur_structure')->leftJoin("ur.structure", "ur_structure")
-            ->addSelect('ur_ss')->leftJoin("ur_structure.structureSubstituante", "ur_ss")
-            ->addSelect('ur_substituant')->leftJoin("ur_ss.uniteRecherche", "ur_substituant");
+            ->addSelect('ur_structureSubstituante')->leftJoin("ur_structure.structureSubstituante", "ur_structureSubstituante")
+            ->addSelect('ur_substituant')->leftJoin("ur_structureSubstituante.uniteRecherche", "ur_substituant");
 
         return $qb;
     }
@@ -122,34 +121,31 @@ class TheseSearchService extends SearchService
                 return $this->fetchEtablissements($filter);
             })
             ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
-                /** @var TextCriteriaSearchFilter $filter */
                 $qb
                     ->andWhere($qb->expr()->orX('etab.sourceCode = :sourceCodeEtab', 'etab_substituant.sourceCode = :sourceCodeEtab'))
                     ->setParameter('sourceCodeEtab', $filter->getValue());
-            });
-        $origineFinancementFilter = $this->getOrigineFinancementSearchFilter()
-            ->setDataProvider(function(SelectSearchFilter $filter) {
-                return $this->fetchOriginesFinancements($filter);
-            });
-        $uniteRechercheFilter = $this->getUniteRechercheSearchFilter()
-            ->setDataProvider(function(SelectSearchFilter $filter) {
-                return $this->fetchUnitesRecherches($filter);
-            })
-            ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
-                /** @var TextCriteriaSearchFilter $filter */
-                $qb
-                    ->andWhere($qb->expr()->orX('ur.sourceCode = :sourceCodeUR', 'ur_substituant.sourceCode = :sourceCodeUR'))
-                    ->setParameter('sourceCodeUR', $filter->getValue());
             });
         $ecoleDoctoraleFilter = $this->getEcoleDoctoraleSearchFilter()
             ->setDataProvider(function(SelectSearchFilter $filter) {
                 return $this->fetchEcolesDoctorales($filter);
             })
             ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
-                /** @var TextCriteriaSearchFilter $filter */
                 $qb
                     ->andWhere($qb->expr()->orX('ed.sourceCode = :sourceCodeED', 'ed_substituant.sourceCode = :sourceCodeED'))
                     ->setParameter('sourceCodeED', $filter->getValue());
+            });
+        $uniteRechercheFilter = $this->getUniteRechercheSearchFilter()
+            ->setDataProvider(function(SelectSearchFilter $filter) {
+                return $this->fetchUnitesRecherches($filter);
+            })
+            ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb, string $alias = 'these') {
+                $qb
+                    ->andWhere($qb->expr()->orX('ur.sourceCode = :sourceCodeUR', 'ur_substituant.sourceCode = :sourceCodeUR'))
+                    ->setParameter('sourceCodeUR', $filter->getValue());
+            });
+        $origineFinancementFilter = $this->getOrigineFinancementSearchFilter()
+            ->setDataProvider(function(SelectSearchFilter $filter) {
+                return $this->fetchOriginesFinancements($filter);
             });
         $domaineScientifiqueFilter = $this->getDomaineScientifiqueSearchFilter()
             ->setDataProvider(function(SelectSearchFilter $filter) {
@@ -403,18 +399,19 @@ EOS;
 
     private function fetchEcolesDoctorales(SelectSearchFilter $filter): array
     {
-        return $this->structureService->getAllStructuresAffichablesByType(
+        return $this->structureService->findAllStructuresAffichablesByType(
             TypeStructure::CODE_ECOLE_DOCTORALE, 'sigle', true, true);
     }
 
     private function fetchUnitesRecherches(SelectSearchFilter $filter): array
     {
-        return $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'code', true, true);
+        return $this->structureService->findAllStructuresAffichablesByType(
+            TypeStructure::CODE_UNITE_RECHERCHE, 'code', true, true);
     }
 
     private function fetchOriginesFinancements(SelectSearchFilter $filter): array
     {
-        $values = $this->getFinancementService()->getOriginesFinancements("libelleLong");
+        $values = $this->getFinancementService()->findOriginesFinancements("libelleLong");
 
         // dédoublonnage (sur le code origine) car chaque établissement pourrait fournir les mêmes données
         $origines = [];
@@ -618,10 +615,8 @@ EOS;
     {
         $sorter = new SearchSorter("Établissement<br>d'inscr.", EtablissementSearchFilter::NAME);
         $sorter->setQueryBuilderApplier(
-            function (SearchSorter $sorter, QueryBuilder $qb) {
-                $qb
-                    ->join('etab.structure', 's_sort')
-                    ->addOrderBy('s_sort.code', $sorter->getDirection());
+            function (SearchSorter $sorter, DefaultQueryBuilder $qb) {
+                $qb->addOrderBy('etab_structureSubstituante.code, etab_structure.code', $sorter->getDirection());
             }
         );
 
@@ -632,10 +627,8 @@ EOS;
     {
         $sorter = new SearchSorter("École doctorale", EcoleDoctoraleSearchFilter::NAME);
         $sorter->setQueryBuilderApplier(
-            function (SearchSorter $sorter, QueryBuilder $qb) {
-                $qb
-                    ->leftJoin("ed.structure", 'ed_s_sort')
-                    ->addOrderBy('ed_s_sort.code', $sorter->getDirection());
+            function (SearchSorter $sorter, DefaultQueryBuilder $qb) {
+                $qb->addOrderBy('ed_structureSubstituante.sigle, ed_structure.sigle', $sorter->getDirection());
             }
         );
 
@@ -646,11 +639,8 @@ EOS;
     {
         $sorter = new SearchSorter("Unité recherche", UniteRechercheSearchFilter::NAME);
         $sorter->setQueryBuilderApplier(
-            function (SearchSorter $sorter, QueryBuilder $qb) {
-                $direction = $sorter->getDirection();
-                $qb
-                    ->leftJoin("ur.structure", 'ur_s_sort')
-                    ->addOrderBy('ur_s_sort.code', $direction);
+            function (SearchSorter $sorter, DefaultQueryBuilder $qb) {
+                $qb->addOrderBy('ur_structureSubstituante.code, ur_structure.code', $sorter->getDirection());
             }
         );
 

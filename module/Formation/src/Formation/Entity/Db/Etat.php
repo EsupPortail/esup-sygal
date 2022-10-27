@@ -7,8 +7,10 @@ class Etat {
     const CODE_PREPARATION = 'P';
     const CODE_OUVERTE = 'O';
     const CODE_FERME = 'F';
+    const CODE_NOTIFIER = 'N';
     const CODE_CLOTURER = 'C';
     const CODE_ANNULEE = 'A';
+    const CODE_IMMINENT = 'I';
 
     private ?string $code = null;
     private ?string $libelle = null;

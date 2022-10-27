@@ -2,6 +2,7 @@
 
 namespace These\Service\These;
 
+use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\View\Helper\Sortable;
 use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\LogicException;
@@ -98,9 +99,9 @@ class TheseSorter
     }
 
     /**
-     * @param QueryBuilder $qb
+     * @param DefaultQueryBuilder $qb
      */
-    public function applyToQueryBuilder(QueryBuilder $qb)
+    public function applyToQueryBuilder(DefaultQueryBuilder $qb)
     {
         if (! $this->isEnabled()) {
             return;

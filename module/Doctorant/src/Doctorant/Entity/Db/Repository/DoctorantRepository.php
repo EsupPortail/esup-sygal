@@ -4,22 +4,21 @@ namespace Doctorant\Entity\Db\Repository;
 
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Doctorant\Entity\Db\Doctorant;
-use Structure\Entity\Db\EcoleDoctorale;
-use Structure\Entity\Db\Etablissement;
-use Individu\Entity\Db\Individu;
-use These\Entity\Db\These;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
+use Individu\Entity\Db\Individu;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
+use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
 
 class DoctorantRepository extends DefaultEntityRepository
 {
     /**
-     * @param string        $sourceCode
+     * @param string $sourceCode
      * @return Doctorant
-     * @throws NonUniqueResultException
      */
-    public function findOneBySourceCode($sourceCode)
+    public function findOneBySourceCode(string $sourceCode): Doctorant
     {
         $qb = $this->createQueryBuilder('t');
         $qb
@@ -29,7 +28,11 @@ class DoctorantRepository extends DefaultEntityRepository
             ->andWhere('t.histoDestruction is null')
             ->setParameter('sourceCode', $sourceCode);
 
-        return $qb->getQuery()->getOneOrNullResult();
+        try {
+            return $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie: plusieurs doctorants ont été trouvés avec le même source code: " . $sourceCode);
+        }
     }
 
     /**
@@ -53,12 +56,7 @@ class DoctorantRepository extends DefaultEntityRepository
     }
 
     /**
-     * Recherche des doctorants.
-     *
-     * NB : les seules ED prises en compte sont celles non substituées.
-     *
-     * NB : ici pas de jointure vers l'éventuelle établissement substitué, charge à l'appelant de passer un
-     * l'établissement adéquat (substitué ou non).
+     * Recherche des doctorants par ED et Etablissement.
      *
      * @param EcoleDoctorale|string|null $ecoleDoctorale ED, code structure ou critères de recherche de l'ED
      * @param Etablissement|null $etablissement Etablissement éventuel
@@ -73,16 +71,15 @@ class DoctorantRepository extends DefaultEntityRepository
             ->join('d.theses', 't', Join::WITH, 't.etatThese = :etat')->setParameter('etat', These::ETAT_EN_COURS)
             ->join('t.ecoleDoctorale', 'ed')
             ->join('ed.structure', 's')
-            ->leftJoin('s.structureSubstituante', 'structureSubstituante')->addSelect('structureSubstituante')
+            ->leftJoinStructureSubstituante('s')
             ->andWhere('d.histoDestruction is null')
-            ->addOrderBy('i.nomUsuel')
-            ->addOrderBy('i.prenom1');
+            ->addOrderBy('i.nomUsuel, i.prenom1');
 
         if ($ecoleDoctorale !== null) {
             if ($ecoleDoctorale instanceof EcoleDoctorale) {
                 $qb
                     ->andWhere('s = :structure OR structureSubstituante = :structure')
-                    ->setParameter('structure', $ecoleDoctorale->getStructure(false));
+                    ->setParameter('structure', $ecoleDoctorale->getStructure(/*false*/));
             } elseif (is_array($ecoleDoctorale)) {
                 $leftPart = key($ecoleDoctorale);
                 $rightPart = current($ecoleDoctorale);
@@ -99,10 +96,8 @@ class DoctorantRepository extends DefaultEntityRepository
         if ($etablissement !== null) {
             $qb
                 ->join('t.etablissement', 'e')->addSelect('e')
-                ->join('e.structure', 'setab')->addSelect('setab')
-                ->leftJoin('setab.structureSubstituante', 'structureSubstituanteEtab')->addSelect('structureSubstituanteEtab')
-                ->andWhere('setab = :structureEtab OR structureSubstituanteEtab = :structureEtab')
-                ->setParameter('structureEtab', $etablissement->getStructure(false));
+                ->join('e.structure', 'etab_structure')->addSelect('etab_structure')
+                ->andWhereStructureOuSubstituanteIs($etablissement->getStructure(/*false*/)->getStructureSubstituante(), 'etab_structure');
         }
 
         return $qb->getQuery()->getResult();

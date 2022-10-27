@@ -72,7 +72,7 @@ class LogSearchService extends SearchService
     public function fetchEtablissements(): array
     {
         $etablissements = $this->etablissementService->getRepository()->findAllEtablissementsInscriptions(true);
-        usort($etablissements, fn(Etablissement $a, Etablissement $b) => $a->getCode() <=> $b->getCode());
+        usort($etablissements, fn(Etablissement $a, Etablissement $b) => $a->getStructure()->getCode() <=> $b->getStructure()->getCode());
 
         return $etablissements;
     }

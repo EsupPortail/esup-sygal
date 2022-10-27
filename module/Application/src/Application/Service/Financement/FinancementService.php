@@ -14,7 +14,7 @@ class FinancementService
      * @param bool $cacheable
      * @return OrigineFinancement[]
      */
-    public function getOriginesFinancements(string $order = null, bool $cacheable = false): array
+    public function findOriginesFinancements(string $order = null, bool $cacheable = false): array
     {
         $qb = $this->getRepositoryOrigineFinancement()->createQueryBuilder('origine');
 

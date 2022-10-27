@@ -58,7 +58,7 @@ class UniteRechercheController extends StructureConcreteController
 
         /** @var UniteRecherche $structureConcrete */
         $structureConcrete = $viewModel->getVariable('structure');
-        $coencadrants = $this->getCoEncadrantService()->getCoEncadrantsByStructureConcrete($structureConcrete, false);
+        $coencadrants = $this->getCoEncadrantService()->findCoEncadrantsByStructureConcrete($structureConcrete, false);
         $contenus = $this->getStructureDocumentService()->getContenusFichiers($structureConcrete->getStructure());
 
         $etablissementsRattachements = $this->uniteRechercheService->findEtablissementRattachement($structureConcrete);
@@ -127,15 +127,22 @@ class UniteRechercheController extends StructureConcreteController
         $etablissementId = $this->params()->fromRoute("etablissement");
 
         if ($etablissementId == 0) {
-            $this->flashMessenger()->addErrorMessage("Pour ajouter un établissement de rattachement, veuillez sélectionner un établissement.");
+            $this->flashMessenger()->addErrorMessage(
+                "Pour ajouter un établissement de rattachement, veuillez sélectionner un établissement.");
         } else {
             /** @var \Structure\Entity\Db\Etablissement $etablissement */
             $etablissement = $this->getEtablissementService()->getRepository()->find($etablissementId);
             if ($this->getUniteRechercheService()->existEtablissementRattachement($unite, $etablissement)) {
-                $this->flashMessenger()->addErrorMessage("L'établissement de rattachement <strong>" . $etablissement->getStructure()->getLibelle() . "</strong> n'a pas pu être ajouter car déjà enregistré comme établissement de rattachement de l'unité de recherche <strong>" . $unite->getStructure()->getLibelle() . "</strong>.");
+                $this->flashMessenger()->addErrorMessage(
+                    "L'établissement de rattachement <strong>" . $etablissement->getStructure()->getLibelle() .
+                    "</strong> n'a pas pu être ajouté car déjà enregistré comme établissement de rattachement de l'unité de recherche <strong>" .
+                    $unite->getStructure()->getLibelle() . "</strong>.");
             } else {
                 $this->getUniteRechercheService()->addEtablissementRattachement($unite, $etablissement);
-                $this->flashMessenger()->addSuccessMessage("L'établissement <strong>" . $etablissement->getStructure()->getLibelle() . "</strong> vient d'être ajouter comme établissement de rattachement de l'unité de recherche <strong>" . $unite->getStructure()->getLibelle() . "</strong>.");
+                $this->flashMessenger()->addSuccessMessage(
+                    "L'établissement <strong>" . $etablissement->getStructure()->getLibelle() .
+                    "</strong> vient d'être ajouté comme établissement de rattachement de l'unité de recherche <strong>" .
+                    $unite->getStructure()->getLibelle() . "</strong>.");
             }
         }
 

@@ -168,7 +168,7 @@ class EcoleDoctoraleService extends BaseService
     //todo faire les filtrage et considerer que les UR internes
     public function getEcolesDoctoralsAsOptions() : array
     {
-        $ecoles = $this->getRepository()->findAll(true);
+        $ecoles = $this->getRepository()->findAll();
 
         $options = [];
         foreach ($ecoles as $ecole) {

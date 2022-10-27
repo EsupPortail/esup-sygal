@@ -345,7 +345,7 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
         $str = $this->getLibelle();
 
         if ($this->getStructure() !== null) {
-            $str .= " " . $this->getStructure()->getCode();
+            $str .= " " . $this->getStructure()->getSigle();
         }
 
         return $str;

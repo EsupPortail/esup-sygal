@@ -5,6 +5,7 @@ namespace Application\Service;
 use Application\Entity\Db\DomaineScientifique;
 use Application\Entity\Db\Repository\DomaineScientifiqueRepository;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\ORMException;
 use UnicaenApp\Exception\RuntimeException;
 
 class DomaineScientifiqueService extends BaseService
@@ -24,18 +25,23 @@ class DomaineScientifiqueService extends BaseService
      * @return DomaineScientifique
      * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function createDomaineScientifique($libelle)
+    public function createDomaineScientifique($libelle): DomaineScientifique
     {
         /** @var DomaineScientifiqueRepository $repo */
         $repo = $this->getRepository();
-        $result = $repo->findByLibelle($libelle);
+        $result = $repo->findOneBy(["libelle" => $libelle]);
         if ($result !== null) {
-            throw new RuntimeException("Il existe déjà un domaine scientifique libellé [".$libelle."]");
+            throw new RuntimeException("Il existe déjà un domaine scientifique libellé '".$libelle."'");
         }
         $domaine = new DomaineScientifique();
         $domaine->setLibelle($libelle);
-        $this->getEntityManager()->persist($domaine);
-        $this->getEntityManager()->flush($domaine);
+        try {
+            $this->getEntityManager()->persist($domaine);
+            $this->getEntityManager()->flush($domaine);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement du domaine scientifique");
+        }
+
         return $domaine;
     }
 

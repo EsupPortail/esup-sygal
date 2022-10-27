@@ -7,6 +7,7 @@ use Application\Cache\MemcachedFactory;
 use Application\Controller\Factory\IndexControllerFactory;
 use Application\Controller\Plugin\Forward;
 use Application\Controller\Plugin\ForwardFactory;
+use Application\ORM\Query\Functions\ToNumber;
 use Fichier\Controller\Plugin\Uploader\UploaderPluginFactory;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Entity\UserWrapperFactory;
@@ -108,6 +109,7 @@ return array(
                 'default_repository_class_name' => DefaultEntityRepository::class,
                 'string_functions' => [
                     'strReduce' => StrReduce::class,
+                    'toNumber' => ToNumber::class,
                 ],
             ]
         ],

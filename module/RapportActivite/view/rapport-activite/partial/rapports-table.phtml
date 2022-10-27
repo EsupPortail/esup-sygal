@@ -150,7 +150,7 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
             <?php if ($displayEtablissement): ?>
             <td>
                 <abbr title="<?php echo $these->getEtablissement()->getStructure()->getLibelle() ?>">
-                    <?php echo $these->getEtablissement()->getCode() ?>
+                    <?php echo $these->getEtablissement()->getStructure()->getCode() ?>
                 </abbr>
             </td>
             <?php endif ?>

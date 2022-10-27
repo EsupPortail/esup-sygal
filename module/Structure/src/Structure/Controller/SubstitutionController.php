@@ -35,7 +35,7 @@ class SubstitutionController extends AbstractController
     public function indexStructureAction()
     {
         $type = $this->params()->fromRoute("type");
-        $structures = $this->getStructureService()->getStructuresSubstituantes($type, 'libelle');
+        $structures = $this->getStructureService()->findStructuresSubstituantes($type, 'libelle');
 
         return new ViewModel([
             'type' => $type,
@@ -49,7 +49,7 @@ class SubstitutionController extends AbstractController
     public function creerAction()
     {
         $type = $this->params()->fromRoute('type');
-        $structures = $this->getStructureService()->getStructuresSubstituablesByType($type);
+        $structures = $this->getStructureService()->findStructuresSubstituablesByType($type);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -68,7 +68,7 @@ class SubstitutionController extends AbstractController
             // récupération des structures sources
             $sources = [];
             foreach ($data['sourceIds'] as $sourceId) {
-                $structureConcrete = $this->getStructureService()->getStructureConcreteByTypeAndStructureId($type, $sourceId);
+                $structureConcrete = $this->getStructureService()->findStructureConcreteByTypeAndStructureId($type, $sourceId);
                 $sources[] = $structureConcrete;
             }
 
@@ -115,7 +115,7 @@ class SubstitutionController extends AbstractController
         $type = $structureCible->getTypeStructure();
 
         $structuresConcretesSubstituees = $structureCible->getStructuresConcretesSubstituees()->toArray();
-        $structures = $this->getStructureService()->getStructuresSubstituablesByType($type);
+        $structures = $this->getStructureService()->findStructuresSubstituablesByType($type);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -124,7 +124,7 @@ class SubstitutionController extends AbstractController
             // récupération des structures sources
             $sources = [];
             foreach ($data['sourceIds'] as $sourceId) {
-                $structureConcrete = $this->getStructureService()->getStructureConcreteByTypeAndStructureId($type, $sourceId);
+                $structureConcrete = $this->getStructureService()->findStructureConcreteByTypeAndStructureId($type, $sourceId);
                 $sources[] = $structureConcrete;
             }
 
@@ -176,50 +176,24 @@ class SubstitutionController extends AbstractController
     /** Fonction principale des substitutions (appelle checkStructure) */
     public function substitutionAutomatiqueAction(): ViewModel
     {
-        $typeStructure = ($code = $this->params()->fromRoute('type')) ? $this->structureService->fetchTypeStructure($code) : null;
+        $typeStructure = $this->structureService->findOneTypeStructureForCode($this->params()->fromRoute('type'));
 
-        if ($typeStructure !== null) {
-            $substitutionsEcolesDoctorales = $typeStructure->isEcoleDoctorale() ? $this->structureService->findStructuresSubstituablesSelonSourceCode($typeStructure->getCode()) : null;
-            $substitutionsEtablissements = $typeStructure->isEtablissement() ? $this->structureService->findStructuresSubstituablesSelonSourceCode($typeStructure->getCode()) : null;
-            $substitutionsUnitesRecherches = $typeStructure->isUniteRecherche() ? $this->structureService->findStructuresSubstituablesSelonSourceCode($typeStructure->getCode()) : null;
-        } else {
-            $substitutionsEcolesDoctorales  = $this->getStructureService()->findStructuresSubstituablesSelonSourceCode(TypeStructure::CODE_ECOLE_DOCTORALE);
-            $substitutionsEtablissements    = $this->getStructureService()->findStructuresSubstituablesSelonSourceCode(TypeStructure::CODE_ETABLISSEMENT);
-            $substitutionsUnitesRecherches  = $this->getStructureService()->findStructuresSubstituablesSelonSourceCode(TypeStructure::CODE_UNITE_RECHERCHE);
+        $substitutionsEcolesDoctorales = $typeStructure->isEcoleDoctorale() ?
+            $this->structureService->findStructuresSubstituablesSelonSourceCode($typeStructure->getCode()) :
+            null;
+        $substitutionsEtablissements = $typeStructure->isEtablissement() ?
+            $this->structureService->findStructuresSubstituablesSelonSourceCode($typeStructure->getCode()) :
+            null;
+        $substitutionsUnitesRecherches = $typeStructure->isUniteRecherche() ?
+            $this->structureService->findStructuresSubstituablesSelonSourceCode($typeStructure->getCode()) :
+            null;
 
-        }
         return new ViewModel([
             'typeStructure' => $typeStructure,
             'substitutionsEcolesDoctorales' => $substitutionsEcolesDoctorales,
             'substitutionsEtablissements' => $substitutionsEtablissements,
             'substitutionsUnitesRecherches' => $substitutionsUnitesRecherches,
         ]);
-    }
-
-    /** Enregistrer une substitution automatique (! créer une structure cible si aucune n'existe */
-    public function enregistrerAutomatiqueAction()
-    {
-        $type = $this->params()->fromRoute('type');
-        $identifiant = $this->params()->fromRoute('identifiant');
-
-        /** @var StructureConcreteInterface[] $sources */
-        /** @var StructureConcreteInterface $cible */
-        $dictionnary = $this->getStructureService()->getSubstitutionDictionnary($identifiant, $type);
-        $sources = $dictionnary["sources"];
-        $cible = $dictionnary["cible"];
-
-        if ($cible != null) {
-            $this->structureService->updateStructureSubstitutions($sources, $cible);
-        } else {
-            /** @var StructureConcreteInterface $cible */
-            $cible = $this->getStructureService()->createStructureConcrete($type);
-            $cible->getStructure()->setLibelle($sources[0]->getStructure(false)->getLibelle());
-            $cible->getStructure()->setSigle($sources[0]->getStructure(false)->getSigle());
-            $cible->getStructure()->setCode($sources[0]->getStructure(false)->getCode());
-            $this->getStructureService()->createStructureSubstitutions($sources, $cible);
-        }
-
-        return new ViewModel();
     }
 
     public function modifierAutomatiqueAction()
@@ -231,7 +205,7 @@ class SubstitutionController extends AbstractController
         $sources = $dictionnary["sources"];
         $cible = $dictionnary["cible"];
 
-        $structures = $this->getStructureService()->getStructuresSubstituablesByType($type);
+        $structures = $this->getStructureService()->findStructuresSubstituablesByType($type);
 
         $request = $this->getRequest();
         if ($request->isPost()) {

@@ -14,6 +14,7 @@ class SiteViewHelper extends AbstractHelper
     /**
      * @param HasSiteInterface|Etablissement $object
      * @param array $options
+     * @desc $options['long'] si true le site est affiché avec le libellé et avec le sigle sinon
      * @return string|Partial
      */
     public function __invoke($object, array $options = [])

@@ -102,7 +102,7 @@ class FetchService
             ->leftJoin('a.individu', 'ai', Join::WITH, 'ai.histoDestruction is null')
             ->leftJoin('a.role', 'r', Join::WITH, 'r.histoDestruction is null')
             ->andWhereNotHistorise()
-            ->orderBy('e.code, t.id');
+            ->orderBy('es.code, t.id');
 
         $qb
             ->addSelect('et_ss')->leftJoin('es.structureSubstituante', 'et_ss')

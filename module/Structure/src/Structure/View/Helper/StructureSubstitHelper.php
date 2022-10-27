@@ -22,7 +22,7 @@ class StructureSubstitHelper extends AbstractHelper
      */
     public function structureSource(StructureConcreteInterface $structurestructureConcrete, ?string $logoContent): string
     {
-        // structure substituée SANS REMONTER À LA STRUCTURE SUBSTITUANTE
+        // structure substituée SANS PRENDRE EN COMPTE LA STRUCTURE SUBSTITUANTE ÉVENTUELLE :
         $structure = $structurestructureConcrete->getStructure(false);
 
         $texte = '<div class="card" data-struct-id="'.$structurestructureConcrete->getId().'" id="panel_' . $structurestructureConcrete->getId() . '" >';

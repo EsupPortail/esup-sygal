@@ -54,7 +54,7 @@ class EcoleDoctoraleController extends StructureConcreteController
 
         /** @var EcoleDoctorale $structureConcrete */
         $structureConcrete = $viewModel->getVariable('structure');
-        $coencadrants = $this->getCoEncadrantService()->getCoEncadrantsByStructureConcrete($structureConcrete, false);
+        $coencadrants = $this->getCoEncadrantService()->findCoEncadrantsByStructureConcrete($structureConcrete, false);
         $contenus = $this->getStructureDocumentService()->getContenusFichiers($structureConcrete->getStructure());
 
         $viewModel->setVariables([

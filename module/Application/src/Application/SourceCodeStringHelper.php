@@ -2,6 +2,8 @@
 
 namespace Application;
 
+use Exception;
+use InvalidArgumentException;
 use Structure\Entity\Db\Etablissement;
 use UnicaenApp\Exception\RuntimeException;
 
@@ -13,20 +15,13 @@ use UnicaenApp\Exception\RuntimeException;
  */
 class SourceCodeStringHelper
 {
-    /**
-     * @var string
-     */
-    private $separator = '::';
-
-    /**
-     * @var string
-     */
-    private $defaultPrefix;
+    private string $separator = '::';
+    private ?string $defaultPrefix = null;
 
     /**
      * @param string $defaultPrefix
      */
-    public function setDefaultPrefix($defaultPrefix)
+    public function setDefaultPrefix(string $defaultPrefix)
     {
         $this->defaultPrefix = $defaultPrefix;
     }
@@ -36,14 +31,14 @@ class SourceCodeStringHelper
      * (i.e. le code établissement + un séparateur).
      *
      * @param string $value Ex: "UCN::ABC123"
-     * @throws RuntimeException La chaîne de caractères spécifiée n'est pas préfixée
      * @return string Ex: "ABC123"
+     * @throws \Exception La chaîne de caractères spécifiée n'est pas préfixée
      */
-    public function removePrefixFrom($value)
+    public function removePrefixFrom(string $value): string
     {
-        $pos = stripos($value, $this->separator);
+        $pos = $this->computeSeparatorPosition($value);
         if ($pos === false) {
-            throw new RuntimeException("La chaîne de caractère spécifiée n'est pas préfixée par l'établissement");
+            throw new Exception("La chaîne de caractère spécifiée n'est pas préfixée par l'établissement");
         }
 
         return substr($value, $pos + strlen($this->separator));
@@ -56,7 +51,7 @@ class SourceCodeStringHelper
      * @param  string $prefix Préfixe obligatoire, ex: 'UCN'.
      * @return string Ex: "UCN::ABC123"
      */
-    public function addPrefixTo($value, $prefix)
+    public function addPrefixTo(string $value, string $prefix): string
     {
         return $prefix . $this->separator . $value;
     }
@@ -67,10 +62,10 @@ class SourceCodeStringHelper
      * @param  string $value Ex: "ABC123"
      * @return string Ex: "SyGAL::ABC123"
      */
-    public function addDefaultPrefixTo($value)
+    public function addDefaultPrefixTo(string $value): string
     {
         if ($this->defaultPrefix === null) {
-            throw new RuntimeException("Anomalie: aucun préfixe par défaut n'a été spécifié.");
+            throw new InvalidArgumentException("Anomalie: aucun préfixe par défaut n'a été spécifié.");
         }
 
         return $this->addPrefixTo($value, $this->defaultPrefix);
@@ -83,10 +78,10 @@ class SourceCodeStringHelper
      * @param  Etablissement $etablissement Etablissement dont le 'code' sera utilisé comme préfixe.
      * @return string Ex: "UCN::ABC123"
      */
-    public function addEtablissementPrefixTo($value, Etablissement $etablissement)
+    public function addEtablissementPrefixTo(string $value, Etablissement $etablissement): string
     {
         if (! $etablissement->getStructure()->getCode()) {
-            throw new RuntimeException(
+            throw new InvalidArgumentException(
                 "Impossible de préfixer car l'établissement dont l'id est {$etablissement->getId()} n'a pas de code");
         }
 
@@ -94,17 +89,17 @@ class SourceCodeStringHelper
     }
 
     /**
-     * Retourne le code établissement présent dans le "préfixe établissement" de la chaîne de caractères spécifiée.
+     * Retourne le "préfixe établissement" de la chaîne de caractères spécifiée.
      *
      * @param  string $value Ex: "UCN::ABC123"
-     * @throws RuntimeException La chaîne de caractères spécifiée n'est pas préfixée
      * @return string Ex: "UCN"
+     * @throws Exception La chaîne de caractères spécifiée n'est pas préfixée
      */
-    public function extractPrefixFrom($value)
+    public function extractPrefixFrom(string $value): ?string
     {
-        $pos = stripos($value, $this->separator);
+        $pos = $this->computeSeparatorPosition($value);
         if ($pos === false) {
-            throw new RuntimeException("La chaîne de caractère spécifiée n'est pas préfixée par l'établissement");
+            throw new Exception("La chaîne de caractère spécifiée n'est pas préfixée par l'établissement");
         }
 
         return substr($value, 0, $pos);
@@ -116,7 +111,7 @@ class SourceCodeStringHelper
      * @param string $value Ex: "ABC123"
      * @return string Ex: "%::ABC123"
      */
-    public function generateSearchPatternForAnyPrefix($value)
+    public function generateSearchPatternForAnyPrefix(string $value): string
     {
         return $this->addPrefixTo($value, '%');
     }
@@ -127,8 +122,20 @@ class SourceCodeStringHelper
      * @param string $value Ex: "UCN"
      * @return string Ex: "UCN::%"
      */
-    public function generateSearchPatternForThisPrefix($value)
+    public function generateSearchPatternForThisPrefix(string $value): string
     {
         return $this->addPrefixTo('%', $value);
+    }
+
+    /**
+     * Détermine la position du séparateur dans a chaîne spécifiée.
+     * Retourne `false` si le séparateur n'est pas trouvé.
+     *
+     * @param string $value
+     * @return false|int
+     */
+    protected function computeSeparatorPosition(string $value)
+    {
+        return stripos($value, $this->separator);
     }
 }

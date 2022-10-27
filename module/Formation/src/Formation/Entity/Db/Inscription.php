@@ -150,5 +150,18 @@ class Inscription implements HistoriqueAwareInterface {
         $this->validationEnquete = $validationEnquete;
     }
 
+    public function getPositionListeComplementaire() : int
+    {
+        if ($this->getListe() !== Inscription::LISTE_COMPLEMENTAIRE OR $this->estHistorise()) return -1;
+
+        $liste = $this->session->getListeComplementaire();
+        usort($liste, function(Inscription $a, Inscription $b) { return $a->getHistoCreation() > $b->getHistoCreation(); });
+
+        for ($i = 0 ; $i < count($liste) ; $i++) {
+            if ($liste[$i] === $this) return ($i+1);
+        }
+        return -1;
+    }
+
 
 }

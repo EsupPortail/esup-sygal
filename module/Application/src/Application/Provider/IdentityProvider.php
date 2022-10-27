@@ -2,24 +2,23 @@
 
 namespace Application\Provider;
 
-use These\Entity\Db\Acteur;
-use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactoryAwareTrait;
-use These\Service\Acteur\ActeurServiceAwareTrait;
-use Doctorant\Service\DoctorantServiceAwareTrait;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
-use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use BjyAuthorize\Provider\Identity\ProviderInterface;
-use UnicaenAuth\Acl\NamedRole;
+use Doctorant\Service\DoctorantServiceAwareTrait;
+use Individu\Entity\Db\IndividuRole;
+use Laminas\Authentication\AuthenticationService;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use These\Entity\Db\Acteur;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use UnicaenAuth\Provider\Identity\ChainableProvider;
 use UnicaenAuth\Provider\Identity\ChainEvent;
-use Laminas\Authentication\AuthenticationService;
 
 /**
  * Service chargé de fournir tous les rôles que possède l'identité authentifiée.
@@ -127,7 +126,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
             return [];
         }
 
-        $acteurs = $this->acteurService->getRepository()->findActeursByIndividu($individu);
+        $acteurs = $this->acteurService->getRepository()->findActeursForIndividu($individu);
 
         $acteursDirecteurThese = $this->acteurService->filterActeursDirecteurThese($acteurs);
         $acteursCoDirecteurThese = $this->acteurService->filterActeursCoDirecteurThese($acteurs);
@@ -175,7 +174,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
      *
      * @return Role[]
      */
-    private function getRolesFromDoctorant()
+    private function getRolesFromDoctorant(): array
     {
         $doctorant = $this->doctorantService->findOneByUserWrapper($this->userWrapper);
 
@@ -183,7 +182,8 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
             return [];
         }
 
-        $role = $this->roleService->getRepository()->findRoleDoctorantForEtab($doctorant->getEtablissement());
+        $role = $this->roleService->getRepository()
+            ->findOneByCodeAndStructureConcrete(Role::CODE_DOCTORANT, $doctorant->getEtablissement());
 
         return [$role];
     }

@@ -373,7 +373,7 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwa
      * @return Membre|null
      */
     public function getMembre(): ?Membre
-    {
+    {throw new \Exception();
         return $this->membre;
     }
 }

@@ -45,7 +45,7 @@ class EtablissementController extends StructureConcreteController
      */
     public function indexAction()
     {
-        $etablissements = $this->structureService->getAllStructuresAffichablesByType($this->codeTypeStructure, 'libelle');
+        $etablissements = $this->structureService->findAllStructuresAffichablesByType($this->codeTypeStructure, 'libelle');
 
         $etablissementsPrincipaux = array_filter($etablissements, function (Etablissement $e) {
             return $e->estMembre();
@@ -75,9 +75,9 @@ class EtablissementController extends StructureConcreteController
 
         $roleListings = [];
         $individuListings = [];
-        $roles = $this->roleService->getRolesByStructure($etablissement->getStructure());
-        $individus = $this->roleService->getIndividuByStructure($etablissement->getStructure());
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($etablissement->getStructure());
+        $roles = $this->roleService->findRolesForStructure($etablissement->getStructure());
+        $individus = $this->roleService->findIndividuForStructure($etablissement->getStructure());
+        $individuRoles = $this->roleService->findIndividuRoleByStructure($etablissement->getStructure());
 
         /** @var Role $role */
         foreach ($roles as $role) {

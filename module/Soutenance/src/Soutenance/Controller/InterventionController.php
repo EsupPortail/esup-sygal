@@ -39,7 +39,7 @@ class InterventionController extends AbstractController {
     public function afficherAction() : ViewModel
     {
         $these = $this->getTheseService()->getRequestedThese($this);
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition, true);
         $distanciels = $this->getInterventionService()->getInterventionByTheseAndType($these, Intervention::TYPE_DISTANCIEL);
         $visios = $this->getInterventionService()->getInterventionByTheseAndType($these, Intervention::TYPE_VISIO_TARDIVE);
@@ -87,7 +87,7 @@ class InterventionController extends AbstractController {
     public function ajouterVisioconferenceTardiveAction() : ViewModel
     {
         $these = $this->getTheseService()->getRequestedThese($this);
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -136,7 +136,7 @@ class InterventionController extends AbstractController {
     {
         $intervention = $this->getInterventionService()->getRequestedIntervention($this);
         $these = $intervention->getThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         /** retrait de la déclaration de viso sur le membre et du justificatif */
         $membre = $this->getMembreService()->find($intervention->getComplement());

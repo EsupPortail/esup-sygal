@@ -42,7 +42,7 @@ class InterventionAssertion implements  AssertionInterface
     {
         /** @var These $these */
         $these = $resource;
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $date_soutenance = ($these->getDateSoutenance())?$these->getDateSoutenance():$proposition->getDate();
 
         $interval = $this->getParametreService()->getParametreByCode('PERIODE_INTERVENTION_DIRECTEUR')->getValeur();

@@ -2,6 +2,8 @@
 
 namespace Formation\Service\Session\Search;
 
+use Application\QueryBuilder\DefaultQueryBuilder;
+use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Search\Filter\StrReducedTextSearchFilter;
 use Application\Search\Filter\TextSearchFilter;
@@ -36,7 +38,7 @@ class SessionSearchService extends SearchService
         $siteFilter = $this->createSiteFilter();
         $structureFilter = $this->createStructureFilter();
         $etatFilter = $this->createEtatFilter();//->setWhereField('s.etat');
-        $libelleFilter = $this->createLibelleFilter()->setWhereField('form.libelle');
+        $libelleFilter = $this->createLibelleFilter()->setWhereField('formation.libelle');
         $responsableFilter = $this->createResponsableFilter();
         $modaliteFilter = $this->createModaliteFilter();
 
@@ -59,7 +61,7 @@ class SessionSearchService extends SearchService
         ]);
 
         $this->addSorters([
-            $this->createLibelleSorter()->setOrderByField('form.libelle')->setIsDefault(),
+            $this->createLibelleSorter()->setOrderByField('formation.libelle')->setIsDefault(),
             $this->createSiteSorter(),
             $this->createStructureSorter(),
             $this->createResponsableSorter(),
@@ -71,12 +73,7 @@ class SessionSearchService extends SearchService
     public function createQueryBuilder(): QueryBuilder
     {
         // ATTENTION à bien sélectionner les relations utilisées par les filtres/tris et parcourues côté vue.
-        return $this->sessionRepository->createQueryBuilder('s')
-            ->addSelect('form, resp, site, struct')
-            ->join('s.formation', 'form')
-            ->join("s.responsable", 'resp')
-            ->join("s.site", 'site')
-            ->leftJoin("s.typeStructure", 'struct');
+        return $this->sessionRepository->createQueryBuilder('s');
     }
 
     /********************************** FILTERS ****************************************/
@@ -86,19 +83,21 @@ class SessionSearchService extends SearchService
         return EtablissementSearchFilter::newInstance()
             ->setName(self::NAME_site)
             ->setLabel("Site")
-            ->setWhereField('site.sourceCode'); // cf. `join("f.site", 'site')` fait dans `createQueryBuilder()`
+            ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb) {
+                $qb
+                    ->andWhere('site.sourceCode = :sourceCodeSite OR site_structureSubstituante.sourceCode = :sourceCodeSite')
+                    ->setParameter('sourceCodeSite', $filter->getValue());
+            });
     }
 
     private function createStructureFilter(): SelectSearchFilter
     {
         $filter = new SelectSearchFilter("Structure associée", self::NAME_structure);
-        $filter->setQueryBuilderApplier(
-            function(SelectSearchFilter $filter, QueryBuilder $qb, string $alias = 'f') {
-                $qb
-                    ->andWhere("struct = :structure")
-                    ->setParameter('structure', $filter->getValue());
-            }
-        );
+        $filter->setQueryBuilderApplier(function(SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
+            $qb
+                ->andWhere("struct = :structure OR struct_structureSubstituante = :structure")
+                ->setParameter('structure', $filter->getValue());
+        });
 
         return $filter;
     }
@@ -106,13 +105,11 @@ class SessionSearchService extends SearchService
     private function createResponsableFilter(): SelectSearchFilter
     {
         $filter = new SelectSearchFilter("Responsable", self::NAME_responsable);
-        $filter->setQueryBuilderApplier(
-            function(SelectSearchFilter $filter, QueryBuilder $qb) {
-                $qb
-                    ->andWhere("resp = :responsable")
-                    ->setParameter('responsable', $filter->getValue());
-            }
-        );
+        $filter->setQueryBuilderApplier(function(SelectSearchFilter $filter, QueryBuilder $qb) {
+            $qb
+                ->andWhere("resp = :responsable")
+                ->setParameter('responsable', $filter->getValue());
+        });
 
         return $filter;
     }
@@ -141,23 +138,10 @@ class SessionSearchService extends SearchService
 
     /********************************** SORTERS ****************************************/
 
-    /**
-     * @return SearchSorter
-     */
     public function createSiteSorter(): SearchSorter
     {
-        $sorter = new SearchSorter("Site", EtablissementSearchFilter::NAME);
-        $sorter->setQueryBuilderApplier(
-            function (SearchSorter $sorter, QueryBuilder $qb) {
-                $qb
-                    ->addSelect('s_sort')
-                    ->join('site.structure', 's_sort')
-                    ->addSelect('structureSubstituante_sort')
-                    ->leftJoin('s_sort.structureSubstituante', 'structureSubstituante_sort')
-                    ->addOrderBy('structureSubstituante_sort.code', $sorter->getDirection())
-                    ->addOrderBy('s_sort.code', $sorter->getDirection());
-            }
-        );
+        $sorter = new SearchSorter("Site", self::NAME_site);
+        $sorter->setOrderByField("site_structureSubstituante.code, site_structure.code");
 
         return $sorter;
     }
@@ -165,20 +149,15 @@ class SessionSearchService extends SearchService
     private function createStructureSorter(): SearchSorter
     {
         $sorter = new SearchSorter("Structure associée", self::NAME_structure);
-        $sorter->setQueryBuilderApplier([$this, 'applyStructureSorter']);
+        $sorter->setOrderByField("struct_structureSubstituante.libelle, struct.libelle");
 
         return $sorter;
-    }
-
-    public function applyStructureSorter(SearchSorter $sorter, QueryBuilder $qb, string $alias = 'f')
-    {
-        $qb->addOrderBy("struct.libelle", $sorter->getDirection());
     }
 
     private function createResponsableSorter(): SearchSorter
     {
         $sorter = new SearchSorter("Responsable", self::NAME_responsable);
-        $sorter->setOrderByField("resp.nomUsuel");
+        $sorter->setOrderByField("resp.nomUsuel, resp.prenom1");
 
         return $sorter;
     }

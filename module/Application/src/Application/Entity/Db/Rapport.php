@@ -326,7 +326,7 @@ class Rapport implements ResourceInterface, HistoriqueAwareInterface
         $these = $this->getThese();
 
         return sprintf('%s/%s/%s/%s',
-            $these->getEtablissement()->getCode(),
+            $these->getEtablissement()->getStructure()->getCode(),
             ($ed = $these->getEcoleDoctorale()) ? $ed->getStructure()->getCode() : "ED_inconnue",
             ($ur = $these->getUniteRecherche()) ? $ur->getStructure()->getCode() : "UR_inconnue",
             $this->getFichier()->getNom()

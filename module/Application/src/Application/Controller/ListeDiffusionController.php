@@ -80,7 +80,7 @@ class ListeDiffusionController extends AbstractController
 
         /** @var EcoleDoctorale[] $ecolesDoctorales */
         $etablissements = $this->etablissementService->getRepository()->findAllEtablissementsInscriptions(true);
-        $ecolesDoctorales = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', false, true);
+        $ecolesDoctorales = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', false, true);
         $codesRolesAvecTemoinsED = [
             Role::CODE_DOCTORANT => true,
             Role::CODE_DIRECTEUR_THESE => true,

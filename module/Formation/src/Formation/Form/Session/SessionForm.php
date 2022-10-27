@@ -2,6 +2,7 @@
 
 namespace Formation\Form\Session;
 
+use Formation\Entity\Db\Interfaces\HasModaliteInterface;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenApp\Form\Element\SearchAndSelect;
@@ -94,7 +95,7 @@ class SessionForm extends Form {
                 'label' => "Modalité <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
                 'empty_option' => "Non précisée",
-                'value_options' => ['P' => 'Présentiel', 'D' => 'Distanciel'],
+                'value_options' => HasModaliteInterface::MODALITES,
             ],
             'attributes' => [
                 'id' => 'modalite',

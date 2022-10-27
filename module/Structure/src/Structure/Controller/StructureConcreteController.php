@@ -66,7 +66,7 @@ abstract class StructureConcreteController extends AbstractController
 
         $structures = [];
         if ($consultationToutes) {
-            $structures = $this->structureService->getAllStructuresAffichablesByType($this->codeTypeStructure, 'libelle');
+            $structures = $this->structureService->findAllStructuresAffichablesByType($this->codeTypeStructure, 'libelle');
         } else {
             /** @var Role $role*/
             $role = $this->userContextService->getSelectedIdentityRole();
@@ -105,8 +105,8 @@ abstract class StructureConcreteController extends AbstractController
         }
 
         $roleListings = [];
-        $roles = $this->roleService->getRolesByStructure($structureConcrete->getStructure());
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($structureConcrete->getStructure());
+        $roles = $this->roleService->findRolesForStructure($structureConcrete->getStructure());
+        $individuRoles = $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure());
 
         /** @var Role $role */
         foreach ($roles as $role) {
@@ -274,20 +274,22 @@ abstract class StructureConcreteController extends AbstractController
     protected function supprimerLogoStructure()
     {
         $structureId = $this->params()->fromRoute("structure");
-        $structure  = $this->getStructureConcreteService()->getRepository()->findByStructureId($structureId);
+        $structureConcrete  = $this->getStructureConcreteService()->getRepository()->findByStructureId($structureId);
 
         try {
-            $fileDeleted = $this->structureService->deleteLogoStructure($structure->getStructure(false));
+            // NB : on vise ici la structure liée originale, pas son éventuelle structure substituante.
+            $structure = $structureConcrete->getStructure(false);
+            $fileDeleted = $this->structureService->deleteLogoStructure($structure);
         } catch (RuntimeException $e) {
             $this->flashMessenger()->addErrorMessage(
-                "Erreur lors de l'effacement du logo de la structure '$structure' : " . $e->getMessage());
+                "Erreur lors de l'effacement du logo de la structure '$structureConcrete' : " . $e->getMessage());
             return;
         }
 
         if ($fileDeleted) {
-            $this->flashMessenger()->addSuccessMessage("Le logo de la structure '$structure' vient d'être supprimé.");
+            $this->flashMessenger()->addSuccessMessage("Le logo de la structure '$structureConcrete' vient d'être supprimé.");
         } else {
-            $this->flashMessenger()->addWarningMessage("Aucun logo à supprimer pour la structure '$structure'.");
+            $this->flashMessenger()->addWarningMessage("Aucun logo à supprimer pour la structure '$structureConcrete'.");
         }
     }
 
@@ -298,23 +300,25 @@ abstract class StructureConcreteController extends AbstractController
      * - création du fichier sur le serveur.
      *
      * @param string $cheminLogoUploade chemin vers le fichier temporaire associé au logo
-     * @param \Structure\Entity\Db\StructureConcreteInterface|null $structure
+     * @param \Structure\Entity\Db\StructureConcreteInterface|null $structureConcrete
      */
-    protected function ajouterLogoStructure(string $cheminLogoUploade, StructureConcreteInterface $structure = null)
+    protected function ajouterLogoStructure(string $cheminLogoUploade, StructureConcreteInterface $structureConcrete = null)
     {
-        if ($structure === null) {
+        if ($structureConcrete === null) {
             $structureId = $this->params()->fromRoute("structure");
-            $structure  = $this->getStructureConcreteService()->getRepository()->findByStructureId($structureId);
+            $structureConcrete  = $this->getStructureConcreteService()->getRepository()->findByStructureId($structureId);
         }
 
         try {
-            $this->structureService->updateLogoStructure($structure->getStructure(false), $cheminLogoUploade);
+            // NB : on vise ici la structure liée originale, pas son éventuelle structure substituante.
+            $structure = $structureConcrete->getStructure(false);
+            $this->structureService->updateLogoStructure($structure, $cheminLogoUploade);
         } catch (RuntimeException $e) {
             $this->flashMessenger()->addErrorMessage(
-                "Erreur lors de l'enregistrement du logo de la structure '$structure' : " . $e->getMessage());
+                "Erreur lors de l'enregistrement du logo de la structure '$structureConcrete' : " . $e->getMessage());
         }
 
-        $this->flashMessenger()->addSuccessMessage("Le logo de la structure '$structure' vient d'être ajouté.");
+        $this->flashMessenger()->addSuccessMessage("Le logo de la structure '$structureConcrete' vient d'être ajouté.");
     }
 
     /**
@@ -326,14 +330,14 @@ abstract class StructureConcreteController extends AbstractController
         $structure = $this->structureService->findStructureById($structureId);
         $type = $this->params()->fromRoute("type");
 
-        $roles_tmp = $this->roleService->getRolesByStructure($structure);
+        $roles_tmp = $this->roleService->findRolesForStructure($structure);
         $roles = [];
         /** @var Role $role */
         foreach ($roles_tmp as $role) {
             if (!$role->isTheseDependant()) $roles[] = $role;
         }
 
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($structure);
+        $individuRoles = $this->roleService->findIndividuRoleByStructure($structure);
 
         $repartition = [];
         foreach ($roles as $role) {

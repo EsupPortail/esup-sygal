@@ -3,22 +3,21 @@
 namespace Structure\Service\StructureDocument;
 
 use Application\Entity\DateTimeAwareTrait;
-use Structure\Entity\Db\Etablissement;
-use Fichier\Entity\Db\Fichier;
-use Fichier\Entity\Db\NatureFichier;
-use Structure\Entity\Db\Structure;
-use Structure\Entity\Db\StructureDocument;
-use Fichier\Service\Fichier\Exception\FichierServiceException;
-use Fichier\Service\Fichier\FichierServiceAwareTrait;
+use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Service\UserContextServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
-use Doctrine\ORM\QueryBuilder;
+use Fichier\Entity\Db\Fichier;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\Structure;
+use Structure\Entity\Db\StructureDocument;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Laminas\Mvc\Controller\AbstractActionController;
 use UnicaenApp\Util;
 
 class StructureDocumentService
@@ -136,16 +135,16 @@ class StructureDocumentService
 
     /** REQUETAGE *****************************************************************************************************/
 
-    /**
-     * @return QueryBuilder
-     */
-    public function createQueryBuilder() : QueryBuilder
+    public function createQueryBuilder() : DefaultQueryBuilder
     {
-        return $this->getEntityManager()->getRepository(StructureDocument::class)->createQueryBuilder('document')
+        /** @var DefaultQueryBuilder $qb */
+        $qb = $this->getEntityManager()->getRepository(StructureDocument::class)->createQueryBuilder('document')
             ->addSelect('nature')->join('document.nature', 'nature')
             ->addSelect('structure')->join('document.structure', 'structure')
             ->addSelect('etablissement')->leftjoin('document.etablissement', 'etablissement')
             ->addSelect('fichier')->leftJoin('document.fichier', 'fichier');
+
+        return $qb;
     }
 
     /**
@@ -167,8 +166,7 @@ class StructureDocumentService
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('document.histoDestruction IS NULL')
-            ->andWhere('document.structure = :structure')
-            ->setParameter('structure', $structure);
+            ->andWhereStructureOuSubstituanteIs($structure, 'structure');
 
         return $qb->getQuery()->getResult();
     }
