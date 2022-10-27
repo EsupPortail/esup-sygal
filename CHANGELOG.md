@@ -13,6 +13,7 @@ Journal des modifications
 - Remplacement de \n en <br> pour conserver les sauts de ligne dans les titres sur la page de couverture.
 - [FIX] Corrections concernant la subsitution de structures.
 - Retrait du readonly sur les libellés et sigles des URs et des EDs
+- Calcul de la position sur la liste complémentaire + affichage + possibilité de macro pour les templates
 
 5.2.3
 -----

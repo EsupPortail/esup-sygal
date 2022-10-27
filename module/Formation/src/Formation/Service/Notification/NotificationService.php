@@ -93,6 +93,7 @@ class NotificationService extends NotifierService
             'doctorant' => $inscription->getDoctorant(),
             'formation' => $inscription->getSession()->getFormation(),
             'session'   => $inscription->getSession(),
+            'inscription' => $inscription,
         ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::INSCRIPTION_LISTE_COMPLEMENTAIRE, $vars);

@@ -266,7 +266,7 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
                     <td> <?php echo $this->etat($session); ?></td>
                     <td>
                         <?php if ($inscription->isListePrincipale()) echo "Liste principale"; ?>
-                        <?php if ($inscription->isListeComplementaire()) echo "Liste complementaire #???"; ?>
+                        <?php if ($inscription->isListeComplementaire()) echo "Liste complementaire <br/>Position " . $inscription->getPositionListeComplementaire(); ?>
                         <?php if ($inscription->getListe() === null) : ?>
                             <?php if ($session->getEtat()->getCode() === Etat::CODE_OUVERTE) echo "En attente"; ?>
                             <?php if ($session->getEtat()->getCode() === Etat::CODE_FERME) echo "Non classée"; ?>

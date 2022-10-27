@@ -61,6 +61,7 @@ $listePrincipale = array_filter($inscrits, function (Inscription $a) { return  $
 $listePrincipaleTrue = array_filter($listePrincipale, function (Inscription $a) { return $a->estNonHistorise();});
 $listeComplementaire = array_filter($inscrits, function (Inscription $a) { return  $a->getListe() === Inscription::LISTE_COMPLEMENTAIRE;});
 $listeComplementaireTrue = array_filter($listeComplementaire, function (Inscription $a) { return $a->estNonHistorise();});
+usort($listeComplementaire, function (Inscription $a, Inscription $b) {return $a->getHistoCreation() > $b->getHistoCreation();});
 ?>
 
 <h1 class="page-header">
@@ -449,6 +450,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
         </h3>
 
         <ul>
+            <?php /** @var Inscription $inscription */ ?>
             <?php foreach ($listeComplementaire as $inscription) : ?>
                 <?php echo $this->inscription($inscription, [
                         'action-liste-principale' => ($session->getDateDebut() !== null AND $canModifierInscription),
