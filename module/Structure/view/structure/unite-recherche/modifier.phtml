@@ -10,6 +10,7 @@ use Application\View\Helper\FiltersPanel\FiltersPanelHelper;
 use Application\View\Renderer\PhpRenderer;
 
 /**
+ * @see \Structure\Controller\UniteRechercheController::modifierAction()
  * @var PhpRenderer                 $this
  * @var string                      $title
  * @var UniteRechercheForm          $form
@@ -31,8 +32,8 @@ $fcg = $this->formControlGroup();
 $this->headTitle("Modification de l'UR " . $unite->getStructure()->getCode());
 
 $editable = $isNew || $estSubstituante;
-$form->get('libelle')->setAttribute('readonly', !$editable);
-$form->get('sigle')->setAttribute('readonly', !$editable);
+//$form->get('libelle')->setAttribute('readonly', !$editable);
+//$form->get('sigle')->setAttribute('readonly', !$editable);
 $form->get('code')->setAttribute('readonly', !$editable);
 ?>
 

@@ -24,8 +24,8 @@ $fcg = $this->formControlGroup();
 $this->headTitle("Modification de l'école doctorale ".$ecole->getStructure()->getCode());
 
 $editable = $isNew || $estSubstituante;
-$form->get('libelle')->setAttribute('readonly', !$editable);
-$form->get('sigle')->setAttribute('readonly', !$editable);
+//$form->get('libelle')->setAttribute('readonly', !$editable);
+//$form->get('sigle')->setAttribute('readonly', !$editable);
 $form->get('code')->setAttribute('readonly', !$editable);
 ?>
 
