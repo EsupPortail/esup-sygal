@@ -97,7 +97,7 @@ class DoctorantRepository extends DefaultEntityRepository
             $qb
                 ->join('t.etablissement', 'e')->addSelect('e')
                 ->join('e.structure', 'etab_structure')->addSelect('etab_structure')
-                ->andWhereStructureOuSubstituanteIs($etablissement->getStructure(/*false*/)->getStructureSubstituante(), 'etab_structure');
+                ->andWhereStructureOuSubstituanteIs($etablissement->getStructure(/*false*/), 'etab_structure');
         }
 
         return $qb->getQuery()->getResult();
