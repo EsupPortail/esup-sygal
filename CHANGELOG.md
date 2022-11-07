@@ -5,6 +5,7 @@ Journal des modifications
 -----
 - [FIX] Erreur dans la recherche de doctroants par établissement et ED (plantage impactant les listes de diff).
 - [FIX] Recherche de rapports d'activités : restrictions par ED/UR selon le rôle endossé et ses privilèges.
+- [FIX] Doublons dans la recherche des établissements de rattachement d'une UR.
 
 5.2.4
 -----

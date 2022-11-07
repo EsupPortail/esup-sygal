@@ -48,6 +48,7 @@ class UniteRechercheService extends BaseService
             ->join('er.unite', 'ur')->addSelect('ur')
             ->join('ur.structure', 'ur_structure')->addSelect('ur_structure')
             ->andWhereStructureOuSubstituanteIs($unite->getStructure(), 'ur_structure')
+            ->andWhereStructureEstNonSubstituee('ur_structure')
             ->orderBy('s.libelle');
 
         return $qb->getQuery()->getResult();
