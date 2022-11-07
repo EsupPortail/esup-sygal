@@ -290,6 +290,9 @@ class ApplicationNavigationFactory extends NavigationFactory
         $page = $protoPage;
         // label
         $page['label'] = "Soutenances " . $label;
+        // params
+        $page['query'] = $page['query'] ?? [];
+        $page['query'] = array_merge($page['query'], $query);
         $newPages[] = $page;
 
         return $newPages;

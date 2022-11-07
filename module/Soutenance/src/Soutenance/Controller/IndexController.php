@@ -129,16 +129,16 @@ class IndexController extends AbstractController
 
     public function indexStructureAction()
     {
+        $etablissement = $this->params()->fromQuery('etablissement');
         $role = $this->userContextService->getSelectedIdentityRole();
         $propositions = $this->getPropositionService()->findPropositionsByRole($role);
-
 
         $etablissementId = $this->params()->fromQuery('etablissement');
         $ecoleDoctoraleId = $this->params()->fromQuery('ecoledoctorale');
         $uniteRechercheId = $this->params()->fromQuery('uniterecherche');
         $etatId = $this->params()->fromQuery('etat');
 
-        if ($etablissementId != '') $propositions = array_filter($propositions, function($proposition) use ($etablissementId) { return $proposition->getThese()->getEtablissement()->getId() == $etablissementId; });
+        if ($etablissementId != '') $propositions = array_filter($propositions, function($proposition) use ($etablissementId) { return $proposition->getThese()->getEtablissement()->getStructure()->getCode() == $etablissementId; });
         if ($ecoleDoctoraleId != '') $propositions = array_filter($propositions, function($proposition) use ($ecoleDoctoraleId) { return $proposition->getThese()->getEcoleDoctorale()->getId() == $ecoleDoctoraleId; });
         if ($uniteRechercheId != '') $propositions = array_filter($propositions, function($proposition) use ($uniteRechercheId) { return $proposition->getThese()->getUniteRecherche()->getId() == $uniteRechercheId; });
         if ($etatId != '') $propositions = array_filter($propositions, function($proposition) use ($etatId) { return $proposition->getEtat()->getId() == $etatId; });

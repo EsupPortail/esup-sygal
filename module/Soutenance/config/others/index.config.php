@@ -5,6 +5,7 @@ namespace Soutenance;
 use Application\Navigation\ApplicationNavigationFactory;
 use Soutenance\Controller\IndexController;
 use Soutenance\Controller\IndexControllerFactory;
+use Soutenance\Controller\PropositionRechercheController;
 use Soutenance\Provider\Privilege\IndexPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
@@ -84,14 +85,38 @@ return array(
                     ],
                 ],
                 'child_routes' => [
+                    'recherche' => [
+                        'type' => Literal::class,
+                        'may_terminate' => false,
+                        'options' => [
+                            'route' => '/recherche',
+                            'defaults' => [
+                                'controller' => PropositionRechercheController::class,
+                            ],
+                        ],
+                        'child_routes' => [
+                            'filters' => [
+                                'type' => Literal::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/filters',
+                                    'defaults' => [
+                                        'action' => 'filters',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
                     'index-structure' => [
                         'type' => Literal::class,
                         'may_terminate' => true,
                         'options' => [
                             'route' => '/index-structure',
                             'defaults' => [
-                                'controller' => IndexController::class,
-                                'action' => 'index-structure',
+//                                'controller' => IndexController::class,
+//                                'action' => 'index-structure',
+                                'controller' => PropositionRechercheController::class,
+                                'action' => 'index',
                             ],
                         ],
                     ],

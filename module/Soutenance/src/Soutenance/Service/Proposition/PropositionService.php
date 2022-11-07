@@ -3,11 +3,13 @@
 namespace Soutenance\Service\Proposition;
 
 //TODO faire le repo aussi
+use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
 use Application\QueryBuilder\DefaultQueryBuilder;
+use Application\Service\BaseService;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
@@ -37,7 +39,8 @@ use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
-class PropositionService {
+class PropositionService extends BaseService
+{
     use EntityManagerAwareTrait;
     use ActeurServiceAwareTrait;
     use ValidatationServiceAwareTrait;
@@ -49,6 +52,14 @@ class PropositionService {
     use EtablissementServiceAwareTrait;
     use MembreServiceAwareTrait;
     use UserContextServiceAwareTrait;
+
+    public function getRepository(): DefaultEntityRepository
+    {
+        /** @var DefaultEntityRepository $qb */
+        $qb = $this->getEntityManager()->getRepository(Proposition::class);
+
+        return $qb;
+    }
 
     /** GESTION DES ENTITES *******************************************************************************************/
 
@@ -175,7 +186,7 @@ class PropositionService {
 
     public function createQueryBuilder(): DefaultQueryBuilder
     {
-        return $this->getEntityManager()->getRepository(Proposition::class)->createQueryBuilder("proposition")
+        return $this->getRepository()->createQueryBuilder("proposition")
             ->addSelect('etat')->join('proposition.etat', 'etat')
             ->addSelect('these')->join('proposition.these', 'these')
             ->addSelect('unite')->leftJoin('these.uniteRecherche', 'unite')
