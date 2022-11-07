@@ -62,6 +62,7 @@ class RapportActiviteRechercheController extends AbstractController implements S
     public function indexAction()
     {
         $this->restrictFilterEcolesDoctorales();
+        $this->restrictFilterUnitesRecherches();
         $this->initFilterAvisAttendu();
 
         $text = $this->params()->fromQuery('text');
@@ -105,6 +106,7 @@ class RapportActiviteRechercheController extends AbstractController implements S
     public function filtersAction(): ViewModel
     {
         $this->restrictFilterEcolesDoctorales();
+        $this->restrictFilterUnitesRecherches();
         $this->initFilterAvisAttendu();
 
         $filters = $this->filters();
@@ -131,6 +133,28 @@ class RapportActiviteRechercheController extends AbstractController implements S
                 $edFilter->setData([$ed]);
                 $edFilter->setDefaultValueAsObject($ed);
                 $edFilter->setAllowsEmptyOption(false);
+            }
+        } else {
+            throw new UnexpectedValueException(
+                "Anomalie : l'action aurait dû être bloquée en amont (controller guard) car l'utilisateur n'a aucun des privilèges suivants : " .
+                implode(', ', [RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT, RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN])
+            );
+        }
+    }
+
+    private function restrictFilterUnitesRecherches()
+    {
+        $filter = $this->searchService->getUniteRechercheSearchFilter();
+
+        if ($this->isAllowed(Privileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT))) {
+            // aucune restriction sur les ED sélectionnables
+        } elseif ($this->isAllowed(Privileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN))) {
+            // restrictions en fonction du rôle
+            if ($roleUniteRecherche = $this->userContextService->getSelectedRoleUniteRecherche()) {
+                $ur = $roleUniteRecherche->getStructure()->getUniteRecherche();
+                $filter->setData([$ur]);
+                $filter->setDefaultValueAsObject($ur);
+                $filter->setAllowsEmptyOption(false);
             }
         } else {
             throw new UnexpectedValueException(
