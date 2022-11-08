@@ -3,6 +3,8 @@
 namespace Application\Search\Filter;
 
 use Doctrine\ORM\QueryBuilder;
+use InvalidArgumentException;
+use Throwable;
 
 /**
  * Représente un filtre de type liste déroulante.
@@ -138,7 +140,16 @@ class SelectSearchFilter extends SearchFilter
             if ($value instanceof SearchFilterValueInterface) {
                 $options[] = $value->createSearchFilterValueOption();
             } else {
-                $options[] = static::valueOption((string) $value, (string) $key);
+                try {
+                    $valueToString = (string) $value;
+                } catch (Throwable $e) {
+                    throw new InvalidArgumentException(sprintf(
+                        "Impossible de convertir en string les valeurs de type '%s'. Vous pouvez implémenter l'interface '%s'.",
+                        is_object($value) ? get_class($value) : gettype($value),
+                        SearchFilterValueInterface::class
+                    ));
+                }
+                $options[] = static::valueOption($valueToString, (string) $key);
             }
         }
 

@@ -221,6 +221,8 @@ class FormationRechercheController extends AbstractController implements SearchC
      */
     public function filtersAction(): ViewModel
     {
+        $this->restrictFilters();
+
         $filters = $this->filters();
 
         $model = new ViewModel([
@@ -229,6 +231,33 @@ class FormationRechercheController extends AbstractController implements SearchC
         $model->setTemplate($this->filtersActionTemplate);
 
         return $model;
+    }
+
+    private function restrictFilters()
+    {
+        $role = $this->userContextService->getSelectedIdentityRole();
+
+        switch (true) {
+            case $role->isEcoleDoctoraleDependant():
+                $filter = $this->searchService->getEcoleDoctoraleSearchFilter();
+                $entity = $role->getStructure()->getEcoleDoctorale();
+                break;
+            case $role->isUniteRechercheDependant():
+                $filter = $this->searchService->getUniteRechercheSearchFilter();
+                $entity = $role->getStructure()->getUniteRecherche();
+                break;
+            case $role->isEtablissementDependant():
+                $filter = $this->searchService->getEtablissementInscSearchFilter();
+                $entity = $role->getStructure()->getEtablissement();
+                break;
+            default:
+                return;
+        }
+
+        $filter
+            ->setData([$entity])
+            ->setDefaultValueAsObject($entity)
+            ->setAllowsEmptyOption(false);
     }
 }
 ```
