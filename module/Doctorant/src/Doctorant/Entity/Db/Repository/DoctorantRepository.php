@@ -18,7 +18,7 @@ class DoctorantRepository extends DefaultEntityRepository
      * @param string $sourceCode
      * @return Doctorant
      */
-    public function findOneBySourceCode(string $sourceCode): Doctorant
+    public function findOneBySourceCode(string $sourceCode): ?Doctorant
     {
         $qb = $this->createQueryBuilder('t');
         $qb
