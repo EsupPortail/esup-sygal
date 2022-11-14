@@ -19,7 +19,7 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 <?php if ($individu !== null and $utilisateur !== null and $utilisateur->getIndividu() === $individu) : ?>
 
     <div class="alert alert-success">
-        L'utilisateur &laquo; <?php echo $utilisateur->getDisplayName(); ?> &raquo;
+        Le compte utilisateur &laquo; <?php echo $utilisateur->getDisplayName(); ?> &raquo;
         a été lié à l'individu &laquo; <?php echo $individu->getNomComplet(); ?> &raquo;.
     </div>
 
@@ -28,7 +28,7 @@ use UnicaenApp\Form\Element\SearchAndSelect;
     <div class="box card">
         <div class="card-header bg-dark text-white">
             <h2 class="first">
-                <?php echo $this->translate("Utilisateur") ?>
+                <?php echo $this->translate("Compte utilisateur") ?>
             </h2>
         </div>
         <div class="card-body">
