@@ -4,10 +4,12 @@ Journal des modifications
 5.2.5
 -----
 - Filtrage des propositions de soutenances par Etab, ED, UR, état.
+- Renommage de 'Utilisateurs' en 'Comptes utilisateurs'.
 - [FIX] Erreur dans la recherche de doctroants par établissement et ED (plantage impactant les listes de diff).
 - [FIX] Recherche de rapports d'activités : restrictions par ED/UR selon le rôle endossé et ses privilèges.
 - [FIX] Doublons dans la recherche des établissements de rattachement d'une UR.
 - [FIX] Module Formation : correction des routes des paginators.
+- [FIX] Création/modification d'individu : erreur 'Adresse existante (Utilisateur)'.
 
 5.2.4
 -----
