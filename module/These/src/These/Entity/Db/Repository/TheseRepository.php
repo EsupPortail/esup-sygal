@@ -139,10 +139,13 @@ class TheseRepository extends DefaultEntityRepository
             ->join('th.individu', 'i')
             ->andWhere('i = :individu')
             ->setParameter('individu', $individu)
-            ->andWhereEtatIn($etats)
             ->andWhere('t.histoDestruction is null')
             ->orderBy('t.datePremiereInscription', 'ASC')
         ;
+
+        if ($etats) {
+            $qb->andWhereEtatIn($etats);
+        }
 
         return $qb->getQuery()->getResult();
     }

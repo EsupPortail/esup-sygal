@@ -2,22 +2,20 @@
 
 namespace Application\Controller;
 
-use Structure\Entity\Db\Etablissement;
-use Application\Entity\Db\Role;
 use Application\Entity\Db\Variable;
 use Application\Entity\UserWrapper;
-use Application\Exception\DomainException;
-use Application\Service\Actualite\ActualiteServiceAwareTrait;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use These\Service\These\TheseServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Information\Service\InformationServiceAwareTrait;
-use UnicaenApp\Exception\RuntimeException;
 use Laminas\Authentication\AuthenticationServiceInterface;
 use Laminas\Http\Response;
 use Laminas\Validator\EmailAddress as EmailAddressValidator;
 use Laminas\View\Model\ViewModel;
+use Structure\Entity\Db\Etablissement;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use These\Entity\Db\These;
+use These\Service\These\TheseServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
 
 class IndexController extends AbstractController
 {
@@ -117,9 +115,7 @@ EOS
                     "Anomalie: le rôle '{$role->getRoleId()}' est sélectionné mais les données d'identité associées sont vides");
             }
 
-            $qb = $this->theseService->getRepository()->createQueryBuilder('t')
-                ->andWhereDoctorantIs($doctorant);
-            $theses = $qb->getQuery()->getResult();
+            $theses = $this->theseService->getRepository()->findThesesByDoctorant($doctorant, [These::ETAT_EN_COURS, These::ETAT_SOUTENUE]);
 
             /**
              * Si aucune thèse n'a été trouvée pour le doctorant connecté, on le déconnecte!
