@@ -176,8 +176,8 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 }
                 if ($acteur->estDirecteur() && $aucunSupannIdDansIndividu) {
                     if (empty($utilisateurs[$acteur->getId()])) {
-                        $ligne[] = sprintf('<span class="fas fa-exclamation-triangle text-danger" title="%s"></span>',
-                            $result['alerte-supann-id']);
+//                        $ligne[] = sprintf('<span class="fas fa-exclamation-triangle text-danger" title="%s"></span>',
+//                            $result['alerte-supann-id']);
                     } else {
                         $ligne[] = sprintf('<span class="fas fa-info-circle text-warning" title="Compte local"></span>');
                     }
