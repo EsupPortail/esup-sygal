@@ -2,8 +2,8 @@
 
 namespace These\Form\Diffusion;
 
-use These\Entity\Db\Diffusion;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
+use These\Entity\Db\Diffusion;
 use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 
@@ -31,14 +31,17 @@ class DiffusionHydrator extends DoctrineObject implements EntityManagerAwareInte
      * Hydrate $object with the provided $data.
      *
      * @param  array     $data
-     * @param  Diffusion $attestation
+     * @param  Diffusion $object
      * @return Diffusion
      */
-    public function hydrate(array $data, $attestation)
+    public function hydrate(array $data, $object): Diffusion
     {
-        // le champ de saisie de la confidentialité est grisé pour l'instant
+        // NB : le champ de saisie de la confidentialité est grisé pour l'instant
         if (!isset($data['confidentielle'])) {
-            $data['confidentielle'] = $attestation->getThese()->getDateFinConfidentialite() !== null ? Diffusion::CONFIDENTIELLE_OUI : Diffusion::CONFIDENTIELLE_NON;
+            $data['confidentielle'] = $object->getThese()->getDateFinConfidentialite() !== null ? Diffusion::CONFIDENTIELLE_OUI : Diffusion::CONFIDENTIELLE_NON;
+        }
+        if (!isset($data['dateFinConfidentialite'])) {
+            $data['dateFinConfidentialite'] = $object->getThese()->getDateFinConfidentialite();
         }
 
         if (!isset($data['orcid'])) {
@@ -49,7 +52,7 @@ class DiffusionHydrator extends DoctrineObject implements EntityManagerAwareInte
         }
 
         /** @var Diffusion $diff */
-        $diff = parent::hydrate($data, $attestation);
+        $diff = parent::hydrate($data, $object);
 
         switch ($diff->getAutorisMel()) {
             case Diffusion::AUTORISATION_OUI_IMMEDIAT:

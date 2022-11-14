@@ -13,6 +13,7 @@ Journal des modifications
 - [FIX] Création/modification d'individu : erreur 'Adresse existante (Utilisateur)'.
 - [FIX] Masquage du message abscons 'Cette personne ne pourra pas utiliser l'application...' sur la fiche Thèse.
 - [FIX] Page Assistance : ne plante plus et affiche toutes les adresses possibles en cas d'adresse établissement introuvable.
+- [FIX] Enregistrement de la date de fin de confidentialité dans la Diffusion.
 
 5.2.4
 -----

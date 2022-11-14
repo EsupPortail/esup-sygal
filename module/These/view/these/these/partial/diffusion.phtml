@@ -10,16 +10,16 @@
 
 use These\Entity\Db\Diffusion;
 use These\Entity\Db\These;
-use These\Form\Diffusion\DiffusionTheseForm;
 use Application\Service\Message\DiffusionMessages;
 
 ?>
 
-<?php if ($diffusion->getConfidentielle()): ?>
+<?php if ($diffusion->getConfidentielle() || $diffusion->getThese()->estConfidentielle()): ?>
 <div class="row">
     <div class="col-6">
         <div class="alert alert-md alert-danger">
-            <?php echo sprintf("La thèse est confidentielle jusqu'au %s.", $diffusion->getDateFinConfidentialiteToString()) ?>
+            <?php echo sprintf("La thèse est confidentielle jusqu'au %s.",
+                $diffusion->getDateFinConfidentialiteToString() ?: $diffusion->getThese()->getDateFinConfidentialiteToString()) ?>
         </div>
     </div>
 </div>
