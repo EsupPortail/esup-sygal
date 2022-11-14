@@ -1076,7 +1076,7 @@ class TheseController extends AbstractController
         $theseFichiersRetraite = $this->fichierTheseService->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF, $codeVersionRetraitee, true);
         $fichierTheseRetraite = current($theseFichiersRetraite);
 
-        $variableEmailAssist = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_ASSISTANCE, $these);
+        $variableEmailAssist = $this->variableService->getRepository()->findOneByCodeAndThese(Variable::CODE_EMAIL_ASSISTANCE, $these);
 
         $view = new ViewModel([
             'these'    => $these,
@@ -1100,7 +1100,7 @@ class TheseController extends AbstractController
 
         $fichier = current($this->fichierTheseService->getRepository()->fetchFichierTheses($these, NatureFichier::CODE_THESE_PDF, $versionArchivage, true)) ?: null;
 
-        $variableEmailAssist = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_ASSISTANCE, $these);
+        $variableEmailAssist = $this->variableService->getRepository()->findOneByCodeAndThese(Variable::CODE_EMAIL_ASSISTANCE, $these);
 
         $view = new ViewModel([
             'these'                     => $these,
@@ -1356,15 +1356,14 @@ class TheseController extends AbstractController
         /** @var \These\Form\Diffusion\DiffusionTheseForm $form */
         $form = $this->diffusionTheseForm;
 
-        $codes = [
-            Variable::CODE_ETB_LIB,
-            Variable::CODE_ETB_ART_ETB_LIB,
-        ];
         $dateObs = $these->getDateSoutenance() ?: $these->getDatePrevisionSoutenance();
         $variableRepo = $this->variableService->getRepository();
-        $vars = $variableRepo->findByCodeAndEtab($codes, $these->getEtablissement(), $dateObs);
-        $etab = $vars[Variable::CODE_ETB_LIB]->getValeur();
-        $letab = lcfirst($vars[Variable::CODE_ETB_ART_ETB_LIB]->getValeur()) . $etab;
+        $ETB_LIB = $variableRepo->findOneByCodeAndEtab(Variable::CODE_ETB_LIB, $these->getEtablissement(), $dateObs);
+        $ETB_ART_ETB_LIB = $variableRepo->findOneByCodeAndEtab(Variable::CODE_ETB_ART_ETB_LIB, $these->getEtablissement(), $dateObs);
+
+        $etab = $ETB_LIB ? $ETB_LIB->getValeur() : "(Variable ETB_LIB introuvable)";
+        $l = $ETB_ART_ETB_LIB ? $ETB_ART_ETB_LIB->getValeur() : "";
+        $letab = lcfirst($l) . $etab;
         $libEtablissementA = "à " . $letab;
         $libEtablissementLe = $letab;
         $libEtablissementDe = "de " . $letab;

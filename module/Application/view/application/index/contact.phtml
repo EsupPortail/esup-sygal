@@ -2,17 +2,18 @@
 
 namespace Application;
 
+use Application\Entity\Db\Variable;
 use Structure\Entity\Db\Etablissement;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\View\Renderer\PhpRenderer;
+use Laminas\Validator\EmailAddress as EmailAddressValidator;
 
 /**
  * @var PhpRenderer $this
  * @var Etablissement $etablissement
- * @var string $contact
- * @var bool $contactValide
+ * @var Variable[] $variables
  * @var Individu|null $individu
  * @var Utilisateur|null $utilisateur
  * @var Role|null $role
@@ -20,9 +21,11 @@ use Application\View\Renderer\PhpRenderer;
  * @see \Application\Controller\IndexController::contactAction()
  */
 
+$v = new EmailAddressValidator();
+
 $mailBody =
     "Bonjour,".PHP_EOL.PHP_EOL .
-    "[Description précise de votre problème]".PHP_EOL.PHP_EOL.PHP_EOL .
+    "Decrivez précisément votre problème ici, svp...".PHP_EOL.PHP_EOL.PHP_EOL .
     '------------------------------------------------------------'.PHP_EOL .
     trim($this->partial('application/index/partial/debug-infos', [
         'individu' => $individu,
@@ -42,14 +45,24 @@ $mailBody =
         <dl>
             <dt>Adresse d'assistance - <?php echo $etablissement ?: "Établissement indéterminé" ?></dt>
             <dd>
-                <?php if ($contact): ?>
-                    <?php if ($contactValide): ?>
-                        <a href="mailto:<?php echo trim($contact) ?>?body=<?php echo urlencode($mailBody) ?>"
-                           title="<?php echo $this->translate("Envoyer un mail à cette adresse") ?>"><?php echo $contact ?></a>
-                    <?php else: ?>
-                        <?php echo $contact ?>
-                        <span class="icon icon-warning text-danger" title="Adresse non valide !"></span>
-                    <?php endif ?>
+                <?php if (!empty($variables)): ?>
+                    <ul>
+                    <?php foreach ($variables as $variable): ?>
+                        <?php
+                        $contact = $variable->getValeur();
+                        $contactValide = $v->isValid($contact);
+                        ?>
+                        <li>
+                            <?php if ($contactValide): ?>
+                                <a href="mailto:<?php echo trim($contact) ?>?body=<?php echo urlencode($mailBody) ?>"
+                                   title="<?php echo $this->translate("Envoyer un mail à cette adresse") ?>"><?php echo $contact ?></a>
+                            <?php else: ?>
+                                <?php echo $contact ?>
+                                <span class="icon icon-warning text-danger" title="Adresse non valide !"></span>
+                            <?php endif ?>
+                        </li>
+                    <?php endforeach ?>
+                    </ul>
                 <?php else: ?>
                     Indéterminée
                 <?php endif ?>

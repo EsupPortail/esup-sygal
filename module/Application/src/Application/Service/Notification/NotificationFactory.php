@@ -155,7 +155,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
      */
     private function fetchEmailBdd(These $these)
     {
-        $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
+        $variable = $this->variableService->getRepository()->findOneByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
 
         return $variable->getValeur();
     }
@@ -166,7 +166,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
      */
     private function fetchEmailBu(These $these)
     {
-        $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BU, $these);
+        $variable = $this->variableService->getRepository()->findOneByCodeAndThese(Variable::CODE_EMAIL_BU, $these);
 
         return $variable->getValeur();
     }

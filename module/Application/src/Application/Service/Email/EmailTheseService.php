@@ -22,7 +22,7 @@ class EmailTheseService
      */
     public function fetchEmailBdd(These $these) : string
     {
-        $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
+        $variable = $this->variableService->getRepository()->findOneByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
         return $variable->getValeur();
 
     }

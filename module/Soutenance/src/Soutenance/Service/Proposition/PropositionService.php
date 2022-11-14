@@ -497,13 +497,18 @@ class PropositionService extends BaseService
      */
     public function generateLibelleSignaturePresidenceForThese(These $these): string
     {
+        $ETB_LIB_NOM_RESP = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB_NOM_RESP, $these->getEtablissement());
+        $ETB_LIB_TIT_RESP = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB_TIT_RESP, $these->getEtablissement());
+        $ETB_ART_ETB_LIB = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_ART_ETB_LIB, $these->getEtablissement());
+        $ETB_LIB = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB, $these->getEtablissement());
+
         $libelle  = "";
-        $libelle .= $this->variableService->getRepository()->findByCodeAndEtab(Variable::CODE_ETB_LIB_NOM_RESP, $these->getEtablissement())->getValeur();
+        $libelle .= $ETB_LIB_NOM_RESP ? $ETB_LIB_NOM_RESP->getValeur() : "";
         $libelle .= ", ";
-        $libelle .= $this->variableService->getRepository()->findByCodeAndEtab(Variable::CODE_ETB_LIB_TIT_RESP, $these->getEtablissement())->getValeur();
+        $libelle .= $ETB_LIB_TIT_RESP ? $ETB_LIB_TIT_RESP->getValeur() : "(Variable ETB_LIB_TIT_RESP introuvable)";
         $libelle .= " de ";
-        $libelle .= $this->variableService->getRepository()->findByCodeAndEtab(Variable::CODE_ETB_ART_ETB_LIB, $these->getEtablissement())->getValeur();
-        $libelle .= $this->variableService->getRepository()->findByCodeAndEtab(Variable::CODE_ETB_LIB, $these->getEtablissement())->getValeur();
+        $libelle .= $ETB_ART_ETB_LIB ? $ETB_ART_ETB_LIB->getValeur() : "";
+        $libelle .= $ETB_LIB ? $ETB_LIB->getValeur() : "(Variable ETB_LIB introuvable)";
 
         return $libelle;
     }

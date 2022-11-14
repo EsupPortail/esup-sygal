@@ -12,6 +12,7 @@ Journal des modifications
 - [FIX] Module Formation : correction des routes des paginators.
 - [FIX] Création/modification d'individu : erreur 'Adresse existante (Utilisateur)'.
 - [FIX] Masquage du message abscons 'Cette personne ne pourra pas utiliser l'application...' sur la fiche Thèse.
+- [FIX] Page Assistance : ne plante plus et affiche toutes les adresses possibles en cas d'adresse établissement introuvable.
 
 5.2.4
 -----

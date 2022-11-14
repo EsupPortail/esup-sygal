@@ -8,7 +8,6 @@ use Application\Service\Variable\VariableServiceAwareTrait;
 use Information\Service\InformationServiceAwareTrait;
 use Laminas\Authentication\AuthenticationServiceInterface;
 use Laminas\Http\Response;
-use Laminas\Validator\EmailAddress as EmailAddressValidator;
 use Laminas\View\Model\ViewModel;
 use Structure\Entity\Db\Etablissement;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -193,27 +192,22 @@ EOS
 
         $etablissement = $this->findEtablissementUtilisateur($userWrapper);
 
+        $repo = $this->variableService->getRepository();
+        $variables = [];
         if ($etablissement !== null) {
-            $repo = $this->variableService->getRepository();
-            $variable = $repo->findByCodeAndEtab(Variable::CODE_EMAIL_ASSISTANCE, $etablissement);
-            if ($variable === null) {
-                throw new RuntimeException(
-                    "Anomalie: aucune adresse d'assistance trouvée dans les Variables pour l'établissement '$etablissement'.");
+            // recherche de l'adresse d'assistance associé à l'établissement en question
+            if ($variable = $repo->findOneByCodeAndEtab(Variable::CODE_EMAIL_ASSISTANCE, $etablissement)) {
+                $variables[] = $variable;
             }
-
-            $contact = $variable->getValeur();
-
-            $v = new EmailAddressValidator();
-            $contactValide = $v->isValid($contact);
-        } else {
-            $contact = null;
-            $contactValide = false;
+        }
+        // si aucune variable trouvée, recherche des toutes les adresses d'assistance possibles
+        if (empty($variables)) {
+            $variables = $repo->findByCode(Variable::CODE_EMAIL_ASSISTANCE);
         }
 
         return [
             'etablissement' => $etablissement,
-            'contact' => $contact,
-            'contactValide' => $contactValide,
+            'variables' => $variables,
             'individu' => $this->userContextService->getIdentityIndividu(),
             'utilisateur' => $this->userContextService->getIdentityDb(),
             'role' => $this->userContextService->getSelectedIdentityRole(),
