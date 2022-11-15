@@ -57,6 +57,7 @@ class PropositionSearchService extends SearchService
             ->andWhere('proposition.date is not null')
             ->andWhere('these.etatThese = :etatThese')->setParameter('etatThese', These::ETAT_EN_COURS)
             //->addSelect('validation')->leftJoin('proposition.validations', 'validation')
+            ->orderBy('proposition.date', 'ASC')
             ;
 
         $qb
