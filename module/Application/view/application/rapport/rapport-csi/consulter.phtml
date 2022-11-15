@@ -3,6 +3,7 @@
 namespace Application;
 
 use Application\Entity\Db\Rapport;
+use ComiteSuiviIndividuel\Entity\Db\Membre;
 use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Form\RapportCsiForm;
@@ -16,6 +17,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var RapportCsiForm $form
  * @var bool $isTeleversementPossible
  * @var TypeValidation $typeValidation
+ * @var Membre[] $mebre
  *
  * @see \Application\Controller\Rapport\RapportCsiController::consulterAction()
  */
@@ -49,6 +51,13 @@ if (!$isTeleversementPossible) {
 <p class="lead">
     Cette page est consacrée au téléversement des rapports CSI.
 </p>
+
+<a href="<?php echo $this->url('comite-suivi-individuel/membre/ajouter', ['these' => $these->getId()]); ?>"
+   class="btn btn-primary ajax-modal" data-event="modification"
+>
+    <span class="icon icon-ajouter"></span>
+    Ajouter une membre du comité
+</a>
 
 <div class="row">
     <div class="col-md-11">
