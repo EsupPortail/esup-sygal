@@ -19,6 +19,7 @@ use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use These\Entity\Db\These;
 
 class PropositionSearchService extends SearchService
 {
@@ -52,6 +53,9 @@ class PropositionSearchService extends SearchService
             ->addSelect('justificatif')->leftJoin('proposition.justificatifs', 'justificatif')
             ->addSelect('avis')->leftJoin('proposition.avis', 'avis')
             ->andWhere('proposition.histoDestruction is null')
+            ->andWhere('these.histoDestruction is null')
+            ->andWhere('proposition.date is not null')
+            ->andWhere('these.etatThese = :etatThese')->setParameter('etatThese', These::ETAT_EN_COURS)
             //->addSelect('validation')->leftJoin('proposition.validations', 'validation')
             ;
 
