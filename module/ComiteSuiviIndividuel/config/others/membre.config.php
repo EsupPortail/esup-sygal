@@ -2,16 +2,17 @@
 
 namespace Soutenance;
 
+use Application\Provider\Privilege\RapportPrivileges;
 use ComiteSuiviIndividuel\Controller\MembreController;
 use ComiteSuiviIndividuel\Controller\MembreControllerFactory;
 use ComiteSuiviIndividuel\Form\Membre\MembreForm;
 use ComiteSuiviIndividuel\Form\Membre\MembreFormFactory;
 use ComiteSuiviIndividuel\Form\Membre\MembreHydrator;
+use ComiteSuiviIndividuel\Form\Membre\MembreHydratorFactory;
 use ComiteSuiviIndividuel\Service\Membre\MembreService;
 use ComiteSuiviIndividuel\Service\Membre\MembreServiceFactory;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
-use These\Provider\Privilege\ThesePrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
@@ -43,13 +44,11 @@ return [
                     'action' => [
                         'ajouter',
                         'modifier',
-                        'historiser',
-                        'restaurer',
                         'supprimer',
                     ],
                     'privileges' => [
-                        ThesePrivileges::THESE_MODIFICATION_SES_THESES,
-                        ThesePrivileges::THESE_MODIFICATION_TOUTES_THESES,
+                        RapportPrivileges::RAPPORT_CSI_TELEVERSER_SIEN,
+                        RapportPrivileges::RAPPORT_CSI_TELEVERSER_TOUT,
                     ],
                 ],
             ],
@@ -109,26 +108,6 @@ return [
                                     ],
                                 ],
                             ],
-                            'historiser' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/historiser/:membre',
-                                    'defaults' => [
-                                        'action' => 'historiser',
-                                    ],
-                                ],
-                            ],
-                            'restaurer' => [
-                                'type' => Segment::class,
-                                'may_terminate' => true,
-                                'options' => [
-                                    'route' => '/restaurer/:membre',
-                                    'defaults' => [
-                                        'action' => 'restaurer',
-                                    ],
-                                ],
-                            ],
                             'supprimer' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
@@ -165,7 +144,7 @@ return [
 
     'hydrators' => [
         'factories' => [
-            MembreHydrator::class => MembreHydrator::class,
+            MembreHydrator::class => MembreHydratorFactory::class,
         ],
     ],
 

@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+5.2.6
+-----
+- Déclaration des membres du comite de suivi individuel
+
 5.2.5
 -----
 - Filtrage des propositions de soutenances par Etab, ED, UR, état.

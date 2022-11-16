@@ -23,6 +23,11 @@ return [
             ],
         ],
     ],
+    'view_manager' => [
+        'template_path_stack' => [
+            __DIR__ . '/../view',
+        ],
+    ],
     'bjyauthorize' => [
 //        'rule_providers'     => [
 //            PrivilegeRuleProvider::class => [

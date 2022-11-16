@@ -25,7 +25,7 @@ class Membre implements HistoriqueAwareInterface {
     private ?Qualite $qualite = null;
     private ?string $etablissement = null;
     private ?string $exterieur = null;
-    private ?string $role;
+    private ?string $role = null;
     private bool $visio = false;
     private ?Acteur $acteur = null;
 

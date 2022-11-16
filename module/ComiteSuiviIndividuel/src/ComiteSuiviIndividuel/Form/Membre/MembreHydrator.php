@@ -2,7 +2,7 @@
 
 namespace ComiteSuiviIndividuel\Form\Membre;
 
-use Soutenance\Entity\Membre;
+use ComiteSuiviIndividuel\Entity\Db\Membre;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use Laminas\Hydrator\HydratorInterface;
 
@@ -22,7 +22,6 @@ class MembreHydrator implements HydratorInterface
         $membre->setNom($data['nom']);
         $membre->setQualite($this->getQualiteService()->getQualite($data['qualite']));
         $membre->setEtablissement($data['etablissement']);
-        $membre->setAdresse($data['adresse']);
         $membre->setExterieur($data['exterieur']);
         $membre->setVisio($data['visio']);
         $membre->setRole($data['role']);
@@ -42,7 +41,6 @@ class MembreHydrator implements HydratorInterface
         $data['nom']                = $membre->getNom();
         $data['qualite']            = ($membre->getQualite())?$membre->getQualite()->getId():null;
         $data['etablissement']      = $membre->getEtablissement();
-        $data['adresse']            = $membre->getAdresse();
         $data['exterieur']          = $membre->getExterieur();
         $data['visio']              = $membre->isVisio();
         $data['role']               = $membre->getRole();
