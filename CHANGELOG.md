@@ -4,6 +4,7 @@ Journal des modifications
 5.2.6
 -----
 - Déclaration des membres du comite de suivi individuel
+- [FIX] Plus d'envoi de mail lors du classement des inscriptions si les inscriptions ne sont pas closes
 
 5.2.5
 -----

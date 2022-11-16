@@ -261,13 +261,13 @@ class SessionController extends AbstractController
             if ($positionPrincipale < $session->getTailleListePrincipale()) {
                 $inscription->setListe(Inscription::LISTE_PRINCIPALE);
                 $this->getInscriptionService()->update($inscription);
-                $this->getNotificationService()->triggerInscriptionListePrincipale($inscription);
+                if ($session->isFinInscription()) $this->getNotificationService()->triggerInscriptionListePrincipale($inscription);
                 $positionPrincipale++;
             } else {
                 if ($positionComplementaire < $session->getTailleListeComplementaire()) {
                     $inscription->setListe(Inscription::LISTE_COMPLEMENTAIRE);
                     $this->getInscriptionService()->update($inscription);
-                    $this->getNotificationService()->triggerInscriptionListeComplementaire($inscription);
+                    if ($session->isFinInscription()) $this->getNotificationService()->triggerInscriptionListeComplementaire($inscription);
                     $positionComplementaire++;
                 }
                 else {
