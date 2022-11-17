@@ -6,7 +6,7 @@ Journal des modifications
 - Déclaration des membres du comite de suivi individuel
 - Amélioration du message de blocage des modifications des structures
 - Le texte de l'engagement d'impartialité est maintenant un 'contenu' éditable dans le module unicaen/renderer
-- Ajout de l'année de thèse du doctorant (au moment de la session) dans l'export des sessions de formation
+- Ajout de l'année de thèse du doctorant (au moment de la session) dans l'export des sessions de formation et sur les émargements
 - [FIX] Plus d'envoi de mail lors du classement des inscriptions si les inscriptions ne sont pas closes
 - [FIX] Ajout de l'affichage de la liste des présences à une session si celle-ci est imminente.
 - [FIX] Correction du calcul d'erreur de l'année de thèse du doctorant dans les sessions de formation.
