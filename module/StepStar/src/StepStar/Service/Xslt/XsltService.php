@@ -43,6 +43,12 @@ class XsltService
      */
     public function transformToFiles(string $thesesXmlFilepath)
     {
+        if (! class_exists(SaxonProcessor::class)) {
+            throw new \RuntimeException(
+                "Le module PHP SaxonC est nécessaire pour cette opération (https://www.saxonica.com/download/c.xml)."
+            );
+        }
+
         // il faut spécifier un fichier mais c'est son répertoire qui recevra les fichiers générés
         $outputFilepath = $this->outputDir . '/' . uniqid('saxonc_') . '.xml';
 
