@@ -4,7 +4,8 @@ Journal des modifications
 5.2.6
 -----
 - Déclaration des membres du comite de suivi individuel
-- Amélioration du message de blocage des modification des structures
+- Amélioration du message de blocage des modifications des structures
+- Le texte de l'engagement d'impartialité est maintenant un 'contenu' éditable dans le module unicaen/renderer
 - [FIX] Plus d'envoi de mail lors du classement des inscriptions si les inscriptions ne sont pas closes
 - [FIX] Ajout de l'affichage de la liste des présences à une session si celle-ci est imminente.
 
