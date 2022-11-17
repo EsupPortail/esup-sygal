@@ -1851,4 +1851,17 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         return null;
     }
 
+    public static function getAnneeScolaireCourante() : int {
+        $mois = ((int) (new DateTime())->format('m'));
+        $annee = ((int) (new DateTime())->format('Y'));
+        if ($mois > 8) $annee += 1;
+        return $annee;
+    }
+
+    public function getNbInscription(?int $annee = null) : int
+    {
+        if ($annee === null) $annee = These::getAnneeScolaireCourante();
+        $inscriptions = array_filter($this->getAnneesUnivInscription()->toArray(), function (TheseAnneeUniv $a) use ($annee) { return ($a->estNonHistorise() AND $a->getAnneeUniv() <= $annee); });
+        return count($inscriptions);
+    }
 }

@@ -331,6 +331,17 @@ class Session implements HistoriqueAwareInterface,
         return 'M'.$module->getId() . 'F'.$formation->getId() . 'S'.$this->getId();
     }
 
+    public function getAnneeScolaire() : int
+    {
+        $debut = $this->getDateDebut();
+        if ($debut === null) $debut = new DateTime();
+
+        $mois = ((int) $debut->format('m'));
+        $annee =  ((int) $debut->format('Y'));
+        if ($mois > 8) $annee += 1;
+        return $annee;
+    }
+
     /** Pour les macros ********************************************************************************/
 
     /**
