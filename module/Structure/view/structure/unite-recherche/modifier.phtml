@@ -27,13 +27,14 @@ use Application\View\Renderer\PhpRenderer;
 $unite = $form->getObject();
 $idUniteRecherche = $unite->getStructure()->getId();
 $isNew = $unite->getId() === null;
-$estSubstituante = $unite->getStructure()->estStructureSubstituante();
+$estSubstituee = $unite->getStructure()->estSubstituee();
+$estModifiable = !($unite->getSource()->getImportable());
 $fcg = $this->formControlGroup();
 $this->headTitle("Modification de l'UR " . $unite->getStructure()->getCode());
 
-$editable = $isNew || $estSubstituante;
-//$form->get('libelle')->setAttribute('readonly', !$editable);
-//$form->get('sigle')->setAttribute('readonly', !$editable);
+$editable = $isNew || (!$estSubstituee AND $estModifiable);
+$form->get('libelle')->setAttribute('readonly', !$editable);
+$form->get('sigle')->setAttribute('readonly', !$editable);
 $form->get('code')->setAttribute('readonly', !$editable);
 ?>
 
@@ -46,6 +47,27 @@ $form->get('code')->setAttribute('readonly', !$editable);
 </h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<?php if (!$editable) : ?>
+    <div class="alert alert-warning">
+        <p>
+            <?php if (!$estModifiable) : ?>
+                <span class="icon icon-attention"></span>
+                <strong>La source (<?php echo $unite->getSource()->getLibelle(); ?>) ne permet pas de modification.</strong>
+                <br/>
+            <?php endif; ?>
+            <?php if ($estSubstituee) : ?>
+                <span class="icon icon-attention"></span>
+                <strong>La structure est substituée et ne doit pas être modifiée.</strong>
+                <br/>
+            <?php endif; ?>
+        </p>
+
+        <p>
+            Par conséquent, vous ne pouvez pas modifier les champs : libellé, sigle et code.
+        </p>
+    </div>
+<?php endif; ?>
 
 <!-- BLOC DES INFORMATIONS GENERALES ---------------------------------------------------------------------------------->
 

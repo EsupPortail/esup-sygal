@@ -157,6 +157,12 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
         return count($this->getStructuresSubstituees()) > 0;
     }
 
+    public function estSubstituee() : bool
+    {
+        return $this->getStructureSubstituante() !== null;
+    }
+
+
     /**
      * @return string
      */
