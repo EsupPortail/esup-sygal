@@ -463,9 +463,9 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
     </div>
 </div>
 
-    <h2> Présences aux scéances</h2>
+    <h2> Présences aux séances</h2>
 
-    <?php if ($session->getEtat()->getCode() !== Etat::CODE_FERME AND $session->getEtat()->getCode() !== Etat::CODE_CLOTURER) : ?>
+    <?php if ($session->getEtat()->getCode() !== Etat::CODE_IMMINENT AND $session->getEtat()->getCode() !== Etat::CODE_FERME AND $session->getEtat()->getCode() !== Etat::CODE_CLOTURER) : ?>
         <em> Les présences ne peuvent pas encore être renseignées.</em>
     <?php else : ?>
         <?php echo $this->partial('formation/presence/renseigner-presences', ['session' => $session, 'presences' => $presences, 'titre' => false], [], true); ?>

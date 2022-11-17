@@ -6,6 +6,7 @@ Journal des modifications
 - Déclaration des membres du comite de suivi individuel
 - Amélioration du message de blocage des modification des structures
 - [FIX] Plus d'envoi de mail lors du classement des inscriptions si les inscriptions ne sont pas closes
+- [FIX] Ajout de l'affichage de la liste des présences à une session si celle-ci est imminente.
 
 5.2.5
 -----
