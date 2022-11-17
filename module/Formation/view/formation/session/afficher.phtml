@@ -111,61 +111,76 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
 <?php endif; ?>
 
 <h2> Informations sur la session de formation </h2>
-
-<div class="index-result">
-<dl class="row">
-    <dt class="col-md-3"> Module </dt>
-    <dd class="col-md-9">
-        <?php if ($module !== null) : ?>
-            <?php if ($canAfficherModule) : ?>
-                <a href="<?php echo $this->url('formation/module/afficher', ['module' => $module->getId()], [], true); ?>">
-                    <?php echo $module->getLibelle(); ?></a>
+<div class="row">
+    <div class="col-md-7">
+        <div class="index-result">
+    <dl class="row">
+        <dt class="col-md-3"> Module </dt>
+        <dd class="col-md-9">
+            <?php if ($module !== null) : ?>
+                <?php if ($canAfficherModule) : ?>
+                    <a href="<?php echo $this->url('formation/module/afficher', ['module' => $module->getId()], [], true); ?>">
+                        <?php echo $module->getLibelle(); ?></a>
+                <?php else : ?>
+                    <?php echo $module->getLibelle(); ?>
+                <?php endif; ?>
             <?php else : ?>
-                <?php echo $module->getLibelle(); ?>
+                <i> Aucun module associé à la formation</i>
             <?php endif; ?>
-        <?php else : ?>
-            <i> Aucun module associé à la formation</i>
+        </dd>
+        <dt class="col-md-3"> Formation </dt>
+        <dd class="col-md-9">
+            <?php if ($canAfficherFormation) : ?>
+                <a href="<?php echo $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true); ?>">
+                    <?php echo $formation->getLibelle(); ?></a>
+            <?php else : ?>
+                <?php echo $formation->getLibelle(); ?>
+            <?php endif; ?>
+        </dd>
+        <?php if ($session->getDescription() !== null) : ?>
+            <dt class="col-md-3"> Description </dt>
+            <dd class="col-md-9"> <?php echo $session->getDescription(); ?> </dd>
         <?php endif; ?>
-    </dd>
-    <dt class="col-md-3"> Formation </dt>
-    <dd class="col-md-9">
-        <?php if ($canAfficherFormation) : ?>
-            <a href="<?php echo $this->url('formation/formation/afficher', ['formation' => $formation->getId()], [], true); ?>">
-                <?php echo $formation->getLibelle(); ?></a>
-        <?php else : ?>
-            <?php echo $formation->getLibelle(); ?>
-        <?php endif; ?>
-    </dd>
-    <?php if ($session->getDescription() !== null) : ?>
-        <dt class="col-md-3"> Description </dt>
-        <dd class="col-md-9"> <?php echo $session->getDescription(); ?> </dd>
-    <?php endif; ?>
-    <dt class="col-md-3"> Code </dt>
-    <dd class="col-md-9"> <code><?php echo $session->getCode(); ?></code></dd>
-    <dt class="col-md-3"> État </dt>
-    <dd class="col-md-9"> <?php echo $this->etat($session); ?> </dd>
-    <dt class="col-md-3"> Site organisateur </dt>
-    <dd class="col-md-9"> <?php echo $this->site($session); ?> </dd>
-    <dt class="col-md-3"> Responsable </dt>
-    <dd class="col-md-9">
-        <?php if ($session->getResponsable()) : ?>
-            <?php echo $session->getResponsable()->getNomComplet(); ?>
-        <?php else : ?>
-            Aucun responsable
-        <?php endif; ?>
-    </dd>
-    <dt class="col-md-3"> Modalité </dt>
-    <dd class="col-md-9"> <?php echo $this->modalite($session); ?> </dd>
-    <dt class="col-md-3"> Type </dt>
-    <dd class="col-md-9"> <?php echo $this->type($session); ?> </dd>
+        <dt class="col-md-3"> Code </dt>
+        <dd class="col-md-9"> <code><?php echo $session->getCode(); ?></code></dd>
+        <dt class="col-md-3"> État </dt>
+        <dd class="col-md-9"> <?php echo $this->etat($session); ?> </dd>
+        <dt class="col-md-3"> Site organisateur </dt>
+        <dd class="col-md-9"> <?php echo $this->site($session); ?> </dd>
+        <dt class="col-md-3"> Responsable </dt>
+        <dd class="col-md-9">
+            <?php if ($session->getResponsable()) : ?>
+                <?php echo $session->getResponsable()->getNomComplet(); ?>
+            <?php else : ?>
+                Aucun responsable
+            <?php endif; ?>
+        </dd>
+        <dt class="col-md-3"> Modalité </dt>
+        <dd class="col-md-9"> <?php echo $this->modalite($session); ?> </dd>
+        <dt class="col-md-3"> Type </dt>
+        <dd class="col-md-9"> <?php echo $this->type($session); ?> </dd>
 
-    <dt class="col-md-3"> Liste principale </dt>
-    <dd class="col-md-9"> <?php echo count($listePrincipaleTrue); ?>/<?php echo $session->getTailleListePrincipale(); ?></dd>
-    <dt class="col-md-3"> Liste complémentaire </dt>
-    <dd class="col-md-9"> <?php echo count($listeComplementaireTrue); ?>/<?php echo $session->getTailleListeComplementaire(); ?></dd>
-    <dt class="col-md-3"> Nombre d'inscription </dt>
-    <dd class="col-md-9"> <?php echo count($inscrits); ?></dd>
-</dl>
+        <dt class="col-md-3"> Liste principale </dt>
+        <dd class="col-md-9"> <?php echo count($listePrincipaleTrue); ?>/<?php echo $session->getTailleListePrincipale(); ?></dd>
+        <dt class="col-md-3"> Liste complémentaire </dt>
+        <dd class="col-md-9"> <?php echo count($listeComplementaireTrue); ?>/<?php echo $session->getTailleListeComplementaire(); ?></dd>
+        <dt class="col-md-3"> Nombre d'inscription </dt>
+        <dd class="col-md-9"> <?php echo count($inscrits); ?></dd>
+    </dl>
+    </div>
+    </div>
+    <div class="col-md-5">
+        <h3>Heurodatage</h3>
+        <?php $heurodatages = $session->getHeurodatages(); ?>
+        <?php foreach ($heurodatages as $heurodatage) : ?>
+            <?php echo $this->etat($heurodatage); ?>
+            &nbsp;
+            <?php echo $heurodatage->getHeurodatage()->format('d/m/Y à H:i'); ?>
+            par
+            <?php echo $heurodatage->getUtilisateur()->getDisplayName(); ?>
+        <br/>
+        <?php endforeach; ?>
+    </div>
 </div>
 
 <div class="row">

@@ -91,6 +91,7 @@ class SessionController extends AbstractController
                 /** @var Etat $enPrepration */
                 $enPrepration = $this->getEntityManager()->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_PREPARATION]);
                 $session->setEtat($enPrepration);
+                $this->sessionService->addHeurodatage($session, $enPrepration);
 
                 $this->getSessionService()->update($session);
 
@@ -209,6 +210,7 @@ class SessionController extends AbstractController
 
             if ($etat !== null) {
                 $session->setEtat($etat);
+                $this->sessionService->addHeurodatage($session, $etat);
                 $this->getSessionService()->update($session);
 
                 switch ($session->getEtat()->getCode()) {

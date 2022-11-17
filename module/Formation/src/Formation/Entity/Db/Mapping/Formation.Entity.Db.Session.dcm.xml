@@ -44,6 +44,7 @@
         <one-to-many field="structuresValides" target-entity="Formation\Entity\Db\SessionStructureValide" mapped-by="session"/>
         <one-to-many field="seances" target-entity="Formation\Entity\Db\Seance" mapped-by="session"/>
         <one-to-many field="formateurs" target-entity="Formation\Entity\Db\Formateur" mapped-by="session"/>
+        <one-to-many field="heurodatages" target-entity="Formation\Entity\Db\SessionEtatHeurodatage" mapped-by="session"/>
 
         <one-to-many field="inscriptions" target-entity="Formation\Entity\Db\Inscription" mapped-by="session"/>
         <field name="tailleListePrincipale"     type="integer"                     column="TAILLE_LISTE_PRINCIPALE"      nullable="true"/>

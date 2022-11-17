@@ -8,6 +8,7 @@ use Application\View\Renderer\PhpRenderer;
 use Formation\Entity\Db\Interfaces\HasSiteInterface;
 use Formation\Entity\Db\Interfaces\HasTypeInterface;
 use Formation\Entity\Db\Session;
+use Formation\Entity\Db\SessionEtatHeurodatage;
 use Laminas\View\Helper\AbstractHelper;
 use Laminas\View\Helper\Partial;
 use Laminas\View\Resolver\TemplatePathStack;
@@ -15,11 +16,11 @@ use Laminas\View\Resolver\TemplatePathStack;
 class EtatViewHelper extends AbstractHelper
 {
     /**
-     * @param Session|null $object
+     * @param Session|SessionEtatHeurodatage|null $object
      * @param array $options
      * @return string|Partial
      */
-    public function __invoke(?Session $object, array $options = [])
+    public function __invoke($object, array $options = [])
     {
         /** @var PhpRenderer $view */
         $view = $this->getView();
