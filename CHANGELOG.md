@@ -12,6 +12,7 @@ Journal des modifications
 - [FIX] Ajout de l'affichage de la liste des présences à une session si celle-ci est imminente.
 - [FIX] Correction du calcul d'erreur de l'année de thèse du doctorant dans les sessions de formation.
 - [FIX] Correction du problème de téléchargement des avis en mode non connecté (par exemple pour les membres du jury)
+- [FIX] removeProp() ne fonctionnait plus dans le widget JS d'autorisation de mise en ligne : remplacé par prop().  
 
 5.2.5
 -----
