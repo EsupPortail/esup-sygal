@@ -11,6 +11,7 @@ Journal des modifications
 - [FIX] Plus d'envoi de mail lors du classement des inscriptions si les inscriptions ne sont pas closes
 - [FIX] Ajout de l'affichage de la liste des présences à une session si celle-ci est imminente.
 - [FIX] Correction du calcul d'erreur de l'année de thèse du doctorant dans les sessions de formation.
+- [FIX] Correction du problème de téléchargement des avis en mode non connecté (par exemple pour les membres du jury)
 
 5.2.5
 -----
