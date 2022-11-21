@@ -1,0 +1,74 @@
+<?php
+use Depot\Entity\Db\MetadonneeThese;
+use Depot\Entity\Db\RdvBu;
+use These\Entity\Db\These;
+use Depot\Entity\Db\FichierThese;
+use Depot\Filter\MotsClesFormatter;
+
+/**
+ * Affichage des renseignements concernant le RDV BU.
+ *
+ * @var These $these
+ * @var FichierThese $versionArchivable
+ * @var bool $pageCouvValidee
+ * @var bool $isExemplPapierFourniPertinent
+ */
+
+$rdvBu = $these->getRdvBu();
+$desc = $these->getMetadonnee();
+$motsClesFormatter = new MotsClesFormatter(['separator' => MetadonneeThese::SEPARATEUR_MOTS_CLES]);
+$motsClesRameauFormatter = new MotsClesFormatter(['separator' => RdvBu::SEPARATEUR_MOTS_CLES_RAMEAU]);
+$motsClesLibresFrancais = $desc ? $desc->getMotsClesLibresFrancais() : null;
+$motsClesLibresAnglais = $desc ? $desc->getMotsClesLibresAnglais() : null;
+
+$check_icon     = '<span class="icon icon-checked"></span>';
+$uncheck_icon   = '<span class="icon icon-unchecked"></span>';
+$checked        = $check_icon.' Oui';
+$unchecked      = $uncheck_icon.' Non';
+
+$fichier = $versionArchivable;
+$versionArchivableFournie = $rdvBu->isVersionArchivableFournie();
+if ($fichier && $versionArchivableFournie) {
+    $ddVersionArchivage = sprintf('%s (%s)', $checked, (bool)$fichier->getRetraitement() ? 'version retraitée et validée' : 'version originale');
+}
+else {
+    $ddVersionArchivage = $unchecked;
+}
+$ddPageCouv = $pageCouvValidee ? $checked : $unchecked;
+?>
+
+<dl class="rdv-bu">
+    <dt>Rappel des propositions de mots-clés en français :</dt>
+    <dd><?php echo $motsClesLibresFrancais ? $motsClesFormatter->filter($motsClesLibresFrancais) : "(Non renseignés)" ?></dd>
+    <dt>Rappel des propositions de mots-clés en anglais :</dt>
+    <dd><?php echo $motsClesLibresAnglais ? $motsClesFormatter->filter($motsClesLibresAnglais) : "(Non renseignés)" ?></dd>
+
+    <dt>Mots-clés RAMEAU :</dt>
+    <?php $class = ($ok = $rdvBu->getMotsClesRameau()) ? '' : 'text-danger' ?>
+    <dd class="<?php echo $class ?>"><?php echo $motsClesRameauFormatter->filter($rdvBu->getMotsClesRameau()) ?: "(Non renseignés)" ?></dd>
+
+    <dt>Page de couverture conforme :</dt>
+    <?php $class = $pageCouvValidee ? '' : 'text-danger' ?>
+    <dd class="<?php echo $class ?>"><?php echo $ddPageCouv ?></dd>
+
+    <dt>Version archivable fournie :</dt>
+    <?php $class = $versionArchivableFournie ? '' : 'text-danger' ?>
+    <dd class="<?php echo $class ?>"><?php echo $ddVersionArchivage ?></dd>
+
+    <dt>Conventions de mise en ligne signées :</dt>
+    <?php $class = ($ok = $rdvBu->getConventionMelSignee()) ? '' : 'text-danger' ?>
+    <dd class="<?php echo $class ?>"><?php echo $ok ? $checked : $unchecked ?></dd>
+
+    <?php if ($isExemplPapierFourniPertinent || $rdvBu->getExemplPapierFourni()): ?>
+    <dt>Exemplaire papier fourni :</dt>
+    <?php $class = ($ok = $rdvBu->getExemplPapierFourni()) ? '' : 'text-danger' ?>
+    <dd class="<?php echo $class ?>"><?php echo $ok ? $checked : $unchecked ?></dd>
+    <?php endif ?>
+
+    <dt>Points de vigilance :</dt>
+    <dd>
+        <p class="pre-scrollable">
+            <?php echo $rdvBu->getDivers() ? $this->escapeText()->render($rdvBu->getDivers()) : "(Non renseigné)" ?>
+        </p>
+    </dd>
+</dl>

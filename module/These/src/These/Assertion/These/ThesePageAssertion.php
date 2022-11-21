@@ -2,7 +2,7 @@
 
 namespace These\Assertion\These;
 
-use Application\Acl\WfEtapeResource;
+use Depot\Acl\WfEtapeResource;
 use Application\Assertion\Interfaces\PageAssertionInterface;
 use Application\Service\AuthorizeServiceAwareTrait;
 use Application\Service\UserContextService;

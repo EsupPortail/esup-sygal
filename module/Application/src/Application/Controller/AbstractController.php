@@ -3,11 +3,12 @@
 namespace Application\Controller;
 
 use Fichier\Controller\Plugin\Uploader\UploaderPlugin;
+use Depot\Controller\Plugin\Url\UrlDepotPlugin;
 use These\Controller\Plugin\Url\UrlThesePlugin;
 use Doctorant\Controller\Plugin\UrlDoctorant;
 use Fichier\Controller\Plugin\UrlFichier;
-use These\Controller\Plugin\UrlFichierThese;
-use Application\Controller\Plugin\UrlWorkflow;
+use Depot\Controller\Plugin\UrlFichierThese;
+use Depot\Controller\Plugin\UrlWorkflow;
 use These\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\RouteMatch;
@@ -30,6 +31,7 @@ use ZfcUser\Controller\Plugin\ZfcUserAuthentication;
  * @method HttpRequest getRequest()
  * @method UploaderPlugin uploader()
  * @method boolean isAllowed($resource, $privilege = null)
+ * @method UrlDepotPlugin urlDepot()
  * @method UrlThesePlugin urlThese()
  * @method UrlDoctorant urlDoctorant()
  * @method UrlFichier urlFichier()

@@ -2,7 +2,7 @@
 
 namespace ApplicationFunctionalTest\Service\Workflow\VersionInitiale;
 
-use Application\Entity\Db\WfEtape;
+use Depot\Entity\Db\WfEtape;
 use ApplicationFunctionalTest\Service\Workflow\WorkflowServiceAbstractTest;
 
 /**

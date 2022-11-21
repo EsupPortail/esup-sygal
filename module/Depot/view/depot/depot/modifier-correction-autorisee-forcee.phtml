@@ -1,0 +1,32 @@
+<?php
+
+use Depot\Entity\Db\Attestation;
+use These\Entity\Db\These;
+use Depot\Form\Attestation\AttestationTheseForm;
+use Depot\Provider\Privilege\DepotPrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer          $this
+ * @var These                $these
+ * @var Attestation          $attestation
+ * @var \Depot\Form\Attestation\AttestationTheseForm $form
+ * @var string               $modifierAttestationUrl
+ *
+ * @see DepotController::modifierCorrectionAutoriseeForceeAction()
+ */
+
+$canEdit = $this->isAllowed($these, DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
+$form->prepare();
+?>
+
+<p class="lead">
+    <?php echo $form->getLabel() ?>
+</p>
+<p>
+    Que voulez-vous faire ?
+</p>
+<?php echo $this->form()->openTag($form) ?>
+<?php echo $this->formControlGroup()->render($form->get('forcage')) ?>
+<?php echo $this->formElement($form->get('submit')->setAttribute('class', 'btn btn-primary')) ?>
+<?php echo $this->form()->closeTag() ?>

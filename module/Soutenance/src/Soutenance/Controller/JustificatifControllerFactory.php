@@ -2,7 +2,7 @@
 
 namespace Soutenance\Controller;
 
-use These\Service\FichierThese\FichierTheseService;
+use Depot\Service\FichierThese\FichierTheseService;
 use Interop\Container\ContainerInterface;
 use Soutenance\Form\Justificatif\JustificatifForm;
 use Soutenance\Service\Justificatif\JustificatifService;

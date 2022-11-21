@@ -403,12 +403,12 @@ $.widget("unicaen.widgetImageLoader", {
 
         //create image to preload:
         var image = new Image();
-        $(image).on('load', function (response, status) {
-            if (status === 'error') {
-                image = null;
-            }
+        $(image).on('load', function() {
             insertResult();
             $("body").trigger('image-loaded-event', { imagePlaceholder: imagePlaceholder });
+        }).on('error', function() {
+            image = null;
+            insertResult();
         });
         $(image).attr({
             src: url,
@@ -416,7 +416,7 @@ $.widget("unicaen.widgetImageLoader", {
         });
 
         function insertResult() {
-            var content = image ? $(image) : $("<span />").html("Erreur!");
+            var content = image ? $(image) : $("<span />").css('color','red').html("Une erreur est survenue !");
             imagePlaceholder.removeClass('loading').replaceWith(content);
         }
     },

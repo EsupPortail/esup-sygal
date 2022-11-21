@@ -12,7 +12,7 @@ use These\Filter\ActeursFormatter;
 use Application\Filter\FinancementFormatter;
 use These\Provider\Privilege\CoEncadrantPrivileges;
 use Doctorant\Provider\Privilege\DoctorantPrivileges;
-use These\Provider\Privilege\ThesePrivileges;
+use Depot\Provider\Privilege\DepotPrivileges;
 use Application\Provider\Privilege\UtilisateurPrivileges;
 use Individu\View\Helper\IndividuUsurpationHelper;
 use Application\View\Renderer\PhpRenderer;
@@ -44,7 +44,7 @@ $canCoEncadrantAfficher = $this->isAllowed(CoEncadrantPrivileges::getResourceId(
 $canCoEncadrantGerer    = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_GERER));
 
 
-$canEditForcageCorrectionAutorisee = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
+$canEditForcageCorrectionAutorisee = $this->isAllowed($these, DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
 
 $financementFormatter = $this->financementFormatter();
 $financementFormatter->setSortBy(FinancementFormatter::SORT_BY_DATE);
@@ -449,7 +449,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                                     <?php echo $these->getDateButoirDepotVersionCorrigeeFromDateSoutenanceToString($dateSoutenance) ?>
                                 </abbr>
                             <?php endif ?>
-                            <?php if ($this->isAllowed($these, ThesePrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS)): ?>
+                            <?php if ($this->isAllowed($these, DepotPrivileges::THESE_CORREC_AUTORISEE_ACCORDER_SURSIS)): ?>
                                 <a href="<?php echo $accorderSursisCorrecUrl ?>" class="btn btn-xs btn-info ajax-modal"
                                    data-event="event-sursis-correction-modified"
                                    title="Accorder un sursis"

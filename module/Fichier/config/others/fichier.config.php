@@ -6,19 +6,17 @@
 
 namespace Fichier;
 
-use These\Service\FichierThese\FichierTheseService;
-use These\Service\FichierThese\FichierTheseServiceFactory;
-use Application\Service\ValiditeFichier\ValiditeFichierService;
 use Fichier\Command\TestArchivabiliteShellCommandFactory;
 use Fichier\Controller\ConsoleController;
 use Fichier\Controller\Factory\FichierControllerFactory;
 use Fichier\Controller\Plugin\UrlFichier;
-use Fichier\Provider\Privilege\FichierPrivileges;
 use Fichier\Exporter\PageFichierIntrouvablePdfExporter;
 use Fichier\Exporter\PageFichierIntrouvablePdfExporterFactory;
+use Fichier\Provider\Privilege\FichierPrivileges;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierServiceFactory;
 use Fichier\Service\NatureFichier\NatureFichierService;
+use Fichier\Service\ValiditeFichier\ValiditeFichierService;
 use Fichier\Service\VersionFichier\VersionFichierService;
 use Laminas\Mvc\Console\Router\Simple;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -72,7 +70,6 @@ return [
                             FichierPrivileges::FICHIER_COMMUN_TELEVERSER,
                         ],
                         'resources' => ['Fichier'],
-                        //'assertion'  => TheseAssertion::class,
                     ],
                 ],
             ],
@@ -224,13 +221,11 @@ return [
         ],
         'factories' => [
             FichierService::class => FichierServiceFactory::class,
-            FichierTheseService::class => FichierTheseServiceFactory::class,
             PageFichierIntrouvablePdfExporter::class => PageFichierIntrouvablePdfExporterFactory::class,
             'ValidationFichierCinesCommand' => TestArchivabiliteShellCommandFactory::class,
         ],
         'aliases' => [
             'FichierService' => FichierService::class,
-            'FichierTheseService' => FichierTheseService::class,
         ]
     ],
     'controllers' => [

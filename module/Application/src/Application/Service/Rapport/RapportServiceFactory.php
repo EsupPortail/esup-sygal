@@ -7,9 +7,9 @@ use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\NatureFichier\NatureFichierService;
 use Application\Service\Notification\NotifierService;
-use These\Service\PageDeCouverture\PageDeCouverturePdfExporter;
+use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporter;
 use Application\Service\RapportValidation\RapportValidationService;
-use Application\Service\ValiditeFichier\ValiditeFichierService;
+use Fichier\Service\ValiditeFichier\ValiditeFichierService;
 use Fichier\Service\VersionFichier\VersionFichierService;
 use Interop\Container\ContainerInterface;
 use Retraitement\Service\RetraitementService;
@@ -31,7 +31,7 @@ class RapportServiceFactory implements FactoryInterface
          * @var FichierService $fichierService
          * @var \Fichier\Service\Fichier\FichierStorageService $fileService
          * @var VersionFichierService $versionFichierService
-         * @var ValiditeFichierService $validiteFichierService
+         * @var \Fichier\Service\ValiditeFichier\ValiditeFichierService $validiteFichierService
          * @var RetraitementService $retraitementService
          * @var EtablissementService $etablissementService
          * @var NotifierService $notifierService

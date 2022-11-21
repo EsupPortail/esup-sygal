@@ -5,7 +5,7 @@ namespace ApplicationUnitTest\Service\ImportObservResultService;
 use Application\Entity\Db\ImportObservResultEtab;
 use Import\Model\Repository\ImportObservResultRepository;
 use These\Entity\Db\These;
-use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
+use Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Import\Model\Service\ImportObservResultService;
 use Application\Service\Notification\NotifierService;
 use These\Service\These\TheseService;

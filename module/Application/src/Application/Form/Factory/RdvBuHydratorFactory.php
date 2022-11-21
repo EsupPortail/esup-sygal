@@ -2,7 +2,7 @@
 
 namespace Application\Form\Factory;
 
-use Application\Form\Hydrator\RdvBuHydrator;
+use Depot\Form\Hydrator\RdvBuHydrator;
 use Interop\Container\ContainerInterface;
 
 class RdvBuHydratorFactory

@@ -8,6 +8,7 @@ use Application\View\Helper\Navigation\MenuSecondaire;
 use Laminas\Config\Factory as ConfigFactory;
 use Laminas\Console\Adapter\AdapterInterface as Console;
 use Laminas\Http\Request as HttpRequest;
+use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Stdlib\Glob;
 use Laminas\View\Helper\Navigation;
@@ -20,6 +21,8 @@ class Module
         $application = $e->getApplication();
         $application->getServiceManager()->get('translator');
         $eventManager = $application->getEventManager();
+        $moduleRouteListener = new ModuleRouteListener();
+        $moduleRouteListener->attach($eventManager);
 
 // TODO decommenter cela avec la bonne route
         $eventManager->attach(MvcEvent::EVENT_DISPATCH, function(MvcEvent $e) {

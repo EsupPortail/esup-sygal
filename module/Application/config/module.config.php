@@ -8,6 +8,7 @@ use Application\Controller\Factory\IndexControllerFactory;
 use Application\Controller\Plugin\Forward;
 use Application\Controller\Plugin\ForwardFactory;
 use Application\ORM\Query\Functions\ToNumber;
+use Application\ORM\Query\Functions\Year;
 use Fichier\Controller\Plugin\Uploader\UploaderPluginFactory;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Entity\UserWrapperFactory;
@@ -50,16 +51,6 @@ return array(
             ],
             \UnicaenAuth\Guard\PrivilegeController::class => [
                 [
-                    'controller' => \UnicaenOracle\Controller\IndexController::class,
-                    'action'     => [
-                        'generateScriptForSchemaClearingConsole',
-                        'generateScriptForSchemaCreationConsole',
-                        'generateScriptForRefConstraintsCreationConsole',
-                        'generateScriptsForDataInsertsConsole',
-                    ],
-                    'roles' => [], // pas d'authentification requise
-                ],
-                [
                     'controller' => 'DoctrineModule\Controller\Cli',
                     'roles' => [],
                 ],
@@ -80,7 +71,6 @@ return array(
                 'class'   => MappingDriverChain::class,
                 'drivers' => [
                     'Application\Entity\Db' => 'orm_default_xml_driver',
-                    'Application\Entity\Db\VSitu' => 'orm_default_xml_driver',
                 ],
             ],
             'orm_default_xml_driver' => [
@@ -88,7 +78,6 @@ return array(
                 'cache' => 'array',
                 'paths' => [
                     __DIR__ . '/../src/Application/Entity/Db/Mapping',
-                    __DIR__ . '/../src/Application/Entity/Db/Mapping/VSitu',
                 ],
             ],
         ],
@@ -110,6 +99,7 @@ return array(
                 'string_functions' => [
                     'strReduce' => StrReduce::class,
                     'toNumber' => ToNumber::class,
+                    'year' => Year::class,
                 ],
             ]
         ],

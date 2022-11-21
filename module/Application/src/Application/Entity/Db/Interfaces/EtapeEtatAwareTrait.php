@@ -2,13 +2,13 @@
 
 namespace Application\Entity\Db\Interfaces;
 
-use Application\Entity\Db\WfEtape;
+use Depot\Entity\Db\WfEtape;
 
 /**
  * Trait spécifiant les propriétés et accesseurs utiles pour obtenir l'état d'une étape de workflow.
  *
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
- * @see    WfEtape
+ * @see    \Depot\Entity\Db\WfEtape
  */
 trait EtapeEtatAwareTrait
 {
@@ -24,7 +24,7 @@ trait EtapeEtatAwareTrait
     private $suivante;
 
     /**
-     * @return WfEtape
+     * @return \Depot\Entity\Db\WfEtape
      */
     public function getPrecedente()
     {

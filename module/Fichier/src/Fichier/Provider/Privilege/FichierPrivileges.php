@@ -2,7 +2,7 @@
 
 namespace Fichier\Provider\Privilege;
 
-use These\Provider\Privilege\ThesePrivileges;
+use Depot\Provider\Privilege\DepotPrivileges;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
 use UnicaenApp\Exception\RuntimeException;
@@ -11,7 +11,7 @@ use UnicaenAuth\Provider\Privilege\Privileges;
 /**
  * Privilèges pour les opérations sur les fichiers *NE CONCERNANT PAS UNE THÈSE*.
  *
- * @see ThesePrivileges Pour ce qui concerne les thèses.
+ * @see DepotPrivileges Pour ce qui concerne les thèses.
  */
 class FichierPrivileges extends Privileges
 {
@@ -40,14 +40,14 @@ class FichierPrivileges extends Privileges
             case NatureFichier::CODE_CONV_MISE_EN_LIGNE:
             case NatureFichier::CODE_AVENANT_CONV_MISE_EN_LIGNE:
                 //
-                return ThesePrivileges::THESE_FICHIER_DIVERS_TELEVERSER;
+                return DepotPrivileges::THESE_FICHIER_DIVERS_TELEVERSER;
 
             case NatureFichier::CODE_THESE_PDF:
             case NatureFichier::CODE_FICHIER_NON_PDF:
                 //
                 return $versionFichier !== null && $versionFichier->estVersionCorrigee() ?
-                    ThesePrivileges::THESE_DEPOT_VERSION_CORRIGEE :
-                    ThesePrivileges::THESE_DEPOT_VERSION_INITIALE;
+                    DepotPrivileges::THESE_DEPOT_VERSION_CORRIGEE :
+                    DepotPrivileges::THESE_DEPOT_VERSION_INITIALE;
 
             case NatureFichier::CODE_COMMUNS:
                 //
@@ -78,11 +78,11 @@ class FichierPrivileges extends Privileges
             case NatureFichier::CODE_CONV_MISE_EN_LIGNE:
             case NatureFichier::CODE_AVENANT_CONV_MISE_EN_LIGNE:
                 //
-                return ThesePrivileges::THESE_FICHIER_DIVERS_CONSULTER;
+                return DepotPrivileges::THESE_FICHIER_DIVERS_CONSULTER;
 
             case NatureFichier::CODE_THESE_PDF:
             case NatureFichier::CODE_FICHIER_NON_PDF:
-                return ThesePrivileges::THESE_TELECHARGEMENT_FICHIER;
+                return DepotPrivileges::THESE_TELECHARGEMENT_FICHIER;
 
             case NatureFichier::CODE_COMMUNS:
                 //

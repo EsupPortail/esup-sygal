@@ -62,7 +62,7 @@ class RapportMiparcoursControllerFactory
         $controller->setTypeRapport($typeRapport);
         $controller->setTypeValidation($typeValidation);
 
-        $theseService->attach($controller->getEventManager());
+//        $theseService->attach($controller->getEventManager());
 
         return $controller;
     }

@@ -9,7 +9,7 @@ use These\Form\TheseSaisie\TheseSaisieForm;
 use These\Form\TheseSaisie\TheseSaisieFormFactory;
 use These\Form\TheseSaisie\TheseSaisieHydrator;
 use These\Form\TheseSaisie\TheseSaisieHydratorFactory;
-use These\Provider\Privilege\ThesePrivileges;
+use Depot\Provider\Privilege\DepotPrivileges;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 use UnicaenAuth\Guard\PrivilegeController;

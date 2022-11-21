@@ -2,7 +2,7 @@
 
 namespace Soutenance\Controller;
 
-use These\Service\FichierThese\FichierTheseService;
+use Depot\Service\FichierThese\FichierTheseService;
 use These\Service\These\TheseService;
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;

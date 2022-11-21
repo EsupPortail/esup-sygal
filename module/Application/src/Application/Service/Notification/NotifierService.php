@@ -9,14 +9,14 @@ use Application\Entity\Db\Role;
 use These\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Variable;
-use These\Notification\ChangementCorrectionAttendueNotification;
+use Depot\Notification\ChangementCorrectionAttendueNotification;
 use These\Notification\ChangementsResultatsThesesNotification;
-use These\Notification\PasDeMailPresidentJury;
+use Depot\Notification\PasDeMailPresidentJury;
 use These\Notification\ResultatTheseAdmisNotification;
-use Application\Notification\ValidationDepotTheseCorrigeeNotification;
-use These\Notification\ValidationPageDeCouvertureNotification;
-use Application\Notification\ValidationRdvBuNotification;
-use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
+use Depot\Notification\ValidationDepotTheseCorrigeeNotification;
+use Depot\Notification\ValidationPageDeCouvertureNotification;
+use Depot\Notification\ValidationRdvBuNotification;
+use Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
@@ -68,7 +68,7 @@ class NotifierService extends \Notification\Service\NotifierService
     /**
      * Notification concernant la validation à l'issue du RDV BU.
      *
-     * @param ValidationRdvBuNotification $notification
+     * @param \Depot\Notification\ValidationRdvBuNotification $notification
      */
     public function triggerValidationRdvBu(ValidationRdvBuNotification $notification)
     {
@@ -184,7 +184,7 @@ class NotifierService extends \Notification\Service\NotifierService
         $notif
             ->setSubject("Corrections " . lcfirst($these->getCorrectionAutoriseeToString(true)) . " non faites")
             ->setTo($to)
-            ->setTemplatePath('these/these/mail/notif-date-butoir-correction-depassee')
+            ->setTemplatePath('depot/depot/mail/notif-date-butoir-correction-depassee')
             ->setTemplateVariables([
                 'these' => $these,
             ]);

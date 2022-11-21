@@ -2,9 +2,7 @@
 
 namespace These\Assertion\These;
 
-use Application\Service\Validation\ValidationService;
 use Psr\Container\ContainerInterface;
-use These\Service\FichierThese\FichierTheseService;
 use These\Service\These\TheseService;
 
 class TheseEntityAssertionFactory
@@ -24,14 +22,6 @@ class TheseEntityAssertionFactory
         /** @var \These\Service\These\TheseService $theseService */
         $theseService = $container->get(TheseService::class);
         $assertion->setTheseService($theseService);
-
-        /** @var \Application\Service\Validation\ValidationService $validationService */
-        $validationService = $container->get(ValidationService::class);
-        $assertion->setValidationService($validationService);
-
-        /** @var \These\Service\FichierThese\FichierTheseService $fichierTheseService */
-        $fichierTheseService = $container->get(FichierTheseService::class);
-        $assertion->setFichierTheseService($fichierTheseService);
 
         return $assertion;
     }

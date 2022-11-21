@@ -2,6 +2,7 @@
 
 namespace These\Controller\Factory;
 
+use Depot\Service\These\DepotService;
 use These\Controller\PresidentJuryController;
 use Application\Form\AdresseMail\AdresseMailForm;
 use These\Service\Acteur\ActeurService;
@@ -36,6 +37,11 @@ class PresidentJuryControllerFactory
         $controller->setMembreService($membreService);
         $controller->setTheseService($theseService);
         $controller->setAdresseMailForm($adresseMailForm);
+
+        /** @var DepotService $depotService */
+        $depotService = $container->get(DepotService::class);
+        $controller->setDepotService($depotService);
+
         return $controller;
     }
 }

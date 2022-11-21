@@ -8,7 +8,7 @@ use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\NatureFichier\NatureFichierService;
 use Application\Service\Notification\NotifierService;
 use Structure\Service\StructureDocument\StructureDocumentService;
-use Application\Service\ValiditeFichier\ValiditeFichierService;
+use Fichier\Service\ValiditeFichier\ValiditeFichierService;
 use Fichier\Service\VersionFichier\VersionFichierService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
@@ -32,7 +32,7 @@ class RapportActiviteServiceFactory
          * @var FichierService $fichierService
          * @var \Fichier\Service\Fichier\FichierStorageService $fileService
          * @var VersionFichierService $versionFichierService
-         * @var ValiditeFichierService $validiteFichierService
+         * @var \Fichier\Service\ValiditeFichier\ValiditeFichierService $validiteFichierService
          * @var RetraitementService $retraitementService
          * @var EtablissementService $etablissementService
          * @var NotifierService $notifierService

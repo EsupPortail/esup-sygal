@@ -5,11 +5,15 @@ namespace These\Entity\Db;
 use Application\Constants;
 use Application\Entity\Db\Financement;
 use Application\Entity\Db\Rapport;
-use Application\Entity\Db\RdvBu;
+use Depot\Entity\Db\RdvBu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TitreAcces;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
+use Depot\Entity\Db\Attestation;
+use Depot\Entity\Db\Diffusion;
+use Depot\Entity\Db\FichierThese;
+use Depot\Entity\Db\MetadonneeThese;
 use These\Filter\TitreApogeeFilter;
 use Assert\Assertion;
 use BadMethodCallException;
@@ -1222,10 +1226,10 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @param RdvBu $rdvBu
+     * @param \Depot\Entity\Db\RdvBu $rdvBu
      * @return $this
      */
-    public function addRdvBu(RdvBu $rdvBu)
+    public function addRdvBu(\Depot\Entity\Db\RdvBu $rdvBu)
     {
         $this->rdvBus->add($rdvBu);
         return $this;

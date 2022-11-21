@@ -2,7 +2,7 @@
 
 namespace Application\Form\Factory;
 
-use Application\Form\RdvBuTheseDoctorantForm;
+use Depot\Form\RdvBuTheseDoctorantForm;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Interop\Container\ContainerInterface;
 

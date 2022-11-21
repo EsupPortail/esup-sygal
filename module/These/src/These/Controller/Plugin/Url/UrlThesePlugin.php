@@ -2,45 +2,14 @@
 
 namespace These\Controller\Plugin\Url;
 
-use These\Entity\Db\These;
-use Fichier\Entity\Db\VersionFichier;
-use Application\Service\Url\UrlTheseService;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+use These\Entity\Db\These;
+use These\Service\Url\UrlTheseService;
 
 /**
  * Aide de vue de génération d'URL.
  *
  * @method string refreshTheseUrl(These $these, $redirect = null)
- * @method validationPageDeCouvertureUrl(These $these)
- * @method depotFichiers(These $these, $nature, $version = null, $retraite = false, array $queryParams = [])
- * @method identiteThese(These $these)
- * @method depotThese(These $these, $version = null)
- * @method archivageThese(These $these, $version)
- * @method testArchivabilite(These $these, $version)
- * @method creerVersionRetraitee(These $these, $version)
- * @method archivabiliteThese(These $these, $version, $retraite = false)
- * @method conformiteTheseRetraitee(These $these, $version)
- * @method validationFichierRetraiteUrl(These $these)
- * @method attestationThese(These $these, $version)
- * @method diffusionThese(These $these, $version)
- * @method modifierMetadonneesUrl(These $these)
- * @method modifierCorrecAutoriseeForceeUrl(These $these)
- * @method accorderSursisCorrecUrl(These $these)
- * @method certifierConformiteTheseRetraiteUrl(These $these, $version)
- * @method modifierAttestationUrl(These $these, VersionFichier $version)
- * @method modifierDiffusionUrl(These $these, VersionFichier $version)
- * @method exporterConventionMiseEnLigneUrl(These $these, VersionFichier $version)
- * @method modifierRdvBuUrl(These $these)
- * @method validerRdvBuUrl(These $these)
- * @method devaliderRdvBuUrl(These $these)
- * @method validationDepotTheseCorrigeeUrl(These $these)
- * @method validationCorrectionTheseUrl(These $these)
- * @method validerDepotTheseCorrigeeUrl(These $these)
- * @method devaliderDepotTheseCorrigeeUrl(These $these)
- * @method validerCorrectionTheseUrl(These $these)
- * @method devaliderCorrectionTheseUrl(These $these)
- * @method validerPageDeCouvertureUrl(These $these)
- * @method devaliderPageDeCouvertureUrl(These $these)
  *
  * @see UrlTheseService
  *
@@ -49,7 +18,7 @@ use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 class UrlThesePlugin extends AbstractPlugin
 {
     /**
-     * @var UrlTheseService
+     * @var \These\Service\Url\UrlTheseService
      */
     protected $urlTheseService;
 

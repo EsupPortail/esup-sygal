@@ -4,7 +4,7 @@ namespace ApplicationUnitTest\Test\Provider;
 
 use Doctorant\Entity\Db\Doctorant;
 use Fichier\Entity\Db\Fichier;
-use These\Entity\Db\FichierThese;
+use Depot\Entity\Db\FichierThese;
 use Individu\Entity\Db\Individu;
 use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\Parametre;
