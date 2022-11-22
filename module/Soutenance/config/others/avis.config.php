@@ -56,6 +56,13 @@ return array(
                     ],
                     'privileges' => AvisSoutenancePrivileges::AVIS_ANNULER,
                 ],
+                [
+                    'controller' => AvisController::class,
+                    'action' => [
+                        'telecharger',
+                    ],
+                    'roles' => [],
+                ],
             ],
         ],
     ],
@@ -94,6 +101,17 @@ return array(
                                     'defaults' => [
                                         'controller' => AvisController::class,
                                         'action' => 'annuler',
+                                    ],
+                                ],
+                            ],
+                            'telecharger' => [
+                                'type' => Literal::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/telecharger',
+                                    'defaults' => [
+                                        'controller' => AvisController::class,
+                                        'action' => 'telecharger',
                                     ],
                                 ],
                             ],

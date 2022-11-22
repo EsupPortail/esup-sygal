@@ -2,13 +2,18 @@
 
 namespace Formation\Service\Session;
 
+use Application\Entity\Db\Utilisateur;
+use Application\Service\UserContextServiceAwareTrait;
+use DateTime;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Expr\Join;
+use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Repository\SessionRepository;
 use Formation\Entity\Db\Seance;
 use Formation\Entity\Db\Session;
+use Formation\Entity\Db\SessionEtatHeurodatage;
 use Formation\Service\Formation\FormationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
@@ -16,6 +21,7 @@ use UnicaenApp\Service\EntityManagerAwareTrait;
 class SessionService {
     use EntityManagerAwareTrait;
     use FormationServiceAwareTrait;
+    use UserContextServiceAwareTrait;
 
     /**
      * @return SessionRepository
@@ -165,5 +171,26 @@ class SessionService {
         $this->getEntityManager()->flush();
 
         return $sessionIds;
+    }
+
+    public function addHeurodatage(Session $session, Etat $etat) : SessionEtatHeurodatage
+    {
+
+        $heurodatage = new SessionEtatHeurodatage();
+        $heurodatage->setSession($session);
+        $heurodatage->setEtat($etat);
+        $heurodatage->setHeurodatage(new DateTime());
+        $user = $this->userContextService->getIdentityDb();
+        if ($user === null) $user = $this->getEntityManager()->getRepository(Utilisateur::class)->find(1);
+        $heurodatage->setUtilisateur($user);
+
+        try {
+            $this->getEntityManager()->persist($heurodatage);
+            $this->getEntityManager()->flush($heurodatage);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Une erreur s'est produite en bd.", 0, $e);
+        }
+
+        return $heurodatage;
     }
 }

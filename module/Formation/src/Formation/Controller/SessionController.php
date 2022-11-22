@@ -91,6 +91,7 @@ class SessionController extends AbstractController
                 /** @var Etat $enPrepration */
                 $enPrepration = $this->getEntityManager()->getRepository(Etat::class)->findOneBy(["code" => Etat::CODE_PREPARATION]);
                 $session->setEtat($enPrepration);
+                $this->sessionService->addHeurodatage($session, $enPrepration);
 
                 $this->getSessionService()->update($session);
 
@@ -209,6 +210,7 @@ class SessionController extends AbstractController
 
             if ($etat !== null) {
                 $session->setEtat($etat);
+                $this->sessionService->addHeurodatage($session, $etat);
                 $this->getSessionService()->update($session);
 
                 switch ($session->getEtat()->getCode()) {
@@ -261,13 +263,13 @@ class SessionController extends AbstractController
             if ($positionPrincipale < $session->getTailleListePrincipale()) {
                 $inscription->setListe(Inscription::LISTE_PRINCIPALE);
                 $this->getInscriptionService()->update($inscription);
-                $this->getNotificationService()->triggerInscriptionListePrincipale($inscription);
+                if ($session->isFinInscription()) $this->getNotificationService()->triggerInscriptionListePrincipale($inscription);
                 $positionPrincipale++;
             } else {
                 if ($positionComplementaire < $session->getTailleListeComplementaire()) {
                     $inscription->setListe(Inscription::LISTE_COMPLEMENTAIRE);
                     $this->getInscriptionService()->update($inscription);
-                    $this->getNotificationService()->triggerInscriptionListeComplementaire($inscription);
+                    if ($session->isFinInscription()) $this->getNotificationService()->triggerInscriptionListeComplementaire($inscription);
                     $positionComplementaire++;
                 }
                 else {
@@ -299,15 +301,16 @@ class SessionController extends AbstractController
     public function genererExportAction() : CsvModel
     {
         $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
+        $annee = $session->getAnneeScolaire();
 
-        $headers = ['Liste', 'Dénomination étudiant', 'Adresse électronique', 'Établissement', 'École doctorale', 'Unité de recherche', 'Desinscription', 'Motif de desinscription'];
+        $headers = ['Liste', 'Dénomination étudiant', 'Adresse électronique', 'Année de thèse', 'Établissement', 'École doctorale', 'Unité de recherche', 'Desinscription', 'Motif de desinscription'];
 
         $inscriptions = $session->getInscriptions()->toArray();
         $records = [];
         /** @var Inscription $inscription */
         foreach ($inscriptions as $inscription) {
             $doctorant = $inscription->getDoctorant();
-            $theses = array_filter($doctorant->getTheses(), function (These $t) { return $t->getEtatThese() === These::ETAT_EN_COURS; });
+            $theses = array_filter($doctorant->getTheses(), function (These $t) { return ($t->getEtatThese() === These::ETAT_EN_COURS AND $t->estNonHistorise());});
             $etablissements = array_map(function (These $t) { return ($t->getEtablissement())?$t->getEtablissement()->getStructure()->getLibelle():"Établissement non renseigné";}, $theses);
             $ecoles = array_map(function (These $t) { return ($t->getEcoleDoctorale())?$t->getEcoleDoctorale()->getStructure()->getLibelle():"École doctorale non renseignée";}, $theses);
             $unites = array_map(function (These $t) { return ($t->getUniteRecherche())?$t->getUniteRecherche()->getStructure()->getLibelle():"Unité de recherche non renseignée";}, $theses);
@@ -315,6 +318,7 @@ class SessionController extends AbstractController
                 'Liste' => $inscription->getListe(),
                 'Dénomination étudiant' => $doctorant->getIndividu()->getNomComplet(),
                 'Adresse électronique' => $doctorant->getIndividu()->getEmail(),
+                'Année de thèse' => current($theses)->getNbInscription($annee),
                 'Établissement' => implode("/",$etablissements),
                 'École doctorale' => implode("/",$ecoles),
                 'Unité de recherche' => implode("/",$unites),

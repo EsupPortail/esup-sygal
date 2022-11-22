@@ -2,6 +2,10 @@
 
 namespace Soutenance\Controller;
 
+use Fichier\Service\Fichier\FichierService;
+use Fichier\Service\Fichier\FichierStorageService;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use These\Service\Acteur\ActeurService;
 use These\Service\These\TheseService;
 use Interop\Container\ContainerInterface;
@@ -17,8 +21,10 @@ class AvisControllerFactory
     /**
      * @param ContainerInterface $container
      * @return AvisController
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container) : AvisController
     {
 
         /**
@@ -38,12 +44,17 @@ class AvisControllerFactory
         $theseService               = $container->get('TheseService');
         $validationService          = $container->get(ValidationService::class);
 
+        /** @var FichierService $fichierService */
+        $fichierService = $container->get(FichierService::class);
+
+        /** @var FichierStorageService $fileService */
+        $fileService = $container->get(FichierStorageService::class);
+
         /**
          * @var AvisForm $avisForm
          */
         $avisForm = $container->get('FormElementManager')->get(AvisForm::class);
 
-        /** @var AvisController $controller */
         $controller = new AvisController();
         $controller->setTheseService($theseService);
         $controller->setValidationService($validationService);
@@ -52,6 +63,9 @@ class AvisControllerFactory
         $controller->setPropositionService($propositionService);
         $controller->setAvisService($avisService);
         $controller->setMembreService($membreService);
+
+        $controller->setFichierService($fichierService);
+        $controller->setFichierStorageService($fileService);
 
         $controller->setAvisForm($avisForm);
 

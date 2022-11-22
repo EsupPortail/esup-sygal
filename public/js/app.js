@@ -211,8 +211,8 @@ $.widget("unicaen.widgetDroitAuteurThese", {
                 this.getAnnexesDiv().refresh({}, function () {
                     $(this).show();
                 });
-                this.getTheseDiv().show(effect, {direction: "left"}).find(':input').removeProp('disabled');
-                this.getAnnexesDiv().show(effect, {direction: "left"}).find(':input').removeProp('disabled');
+                this.getTheseDiv().show(effect, {direction: "left"}).find(':input').prop('disabled', false);
+                this.getAnnexesDiv().show(effect, {direction: "left"}).find(':input').prop('disabled', false);
                 break;
             default:
                 this.getDivFichiersExpurges().hide();
@@ -270,22 +270,22 @@ $.widget("unicaen.widgetAutorisationMiseEnLigne", {
             case "2": // oui immédiatement
                 this.getInputDivEmbargoDuree().hide(effect, {direction: "left"}).find(':input').prop('disabled', 'disabled');
                 this.getInputDivMotif().hide(effect, {direction: "up"}).find(':input').prop('disabled', 'disabled');
-                this.getInputDivAuteur().show(effect, {direction: "up"}).find(':input').removeProp('disabled');
+                this.getInputDivAuteur().show(effect, {direction: "up"}).find(':input').prop('disabled', false);
                 this.getExplicOuiImmediat().show();
                 this.getExplicOuiEmbargo().hide();
                 this.getExplicNon().hide();
                 break;
             case "1": // oui avec embargo
-                this.getInputDivEmbargoDuree().show(effect, {direction: "left"}).find(':input').removeProp('disabled');
-                this.getInputDivMotif().show(effect, {direction: "up"}).find(':input').removeProp('disabled');
-                this.getInputDivAuteur().show(effect, {direction: "up"}).find(':input').removeProp('disabled');
+                this.getInputDivEmbargoDuree().show(effect, {direction: "left"}).find(':input').prop('disabled', false);
+                this.getInputDivMotif().show(effect, {direction: "up"}).find(':input').prop('disabled', false);
+                this.getInputDivAuteur().show(effect, {direction: "up"}).find(':input').prop('disabled', false);
                 this.getExplicOuiImmediat().hide();
                 this.getExplicOuiEmbargo().show();
                 this.getExplicNon().hide();
                 break;
             case "0": // non
                 this.getInputDivEmbargoDuree().hide(effect, {direction: "left"}).find(':input').prop('disabled', 'disabled');
-                this.getInputDivMotif().show(effect, {direction: "up"}).find(':input').removeProp('disabled');
+                this.getInputDivMotif().show(effect, {direction: "up"}).find(':input').prop('disabled', false);
                 this.getInputDivAuteur().hide(effect, {direction: "up"}).find(':input').prop('disabled', 'disabled');
                 this.getExplicOuiImmediat().hide();
                 this.getExplicOuiEmbargo().hide();
@@ -349,7 +349,7 @@ $.widget("unicaen.widgetConfidentialiteThese", {
         effect = effect ? "slide" : null;
         switch (value) {
             case "1":
-                this.getDivDateFin().show(effect, {direction: "left"}).find(':input').removeProp('disabled');
+                this.getDivDateFin().show(effect, {direction: "left"}).find(':input').prop('disabled', false);
                 this.getExplicConfidentialiteOui().show(effect, {direction: "left"});
                 this.getExplicConfidentialiteNon().hide(effect, {direction: "left"});
                 break;

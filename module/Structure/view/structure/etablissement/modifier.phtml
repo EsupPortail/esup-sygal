@@ -1,6 +1,7 @@
 <?php
 
 use Structure\Controller\EtablissementController;
+use Structure\Entity\Db\Etablissement;
 use Structure\Form\EtablissementForm;
 use Application\View\Renderer\PhpRenderer;
 
@@ -16,7 +17,42 @@ use Application\View\Renderer\PhpRenderer;
  */
 
 $fcg = $this->formControlGroup();
+
+
+/** @var Etablissement $etablissement */
+$etablissement = $form->getObject();
+$idEtablissement = $etablissement->getStructure()->getId();
+$isNew = $etablissement->getId() === null;
+$estSubstituee = $etablissement->getStructure()->estSubstituee();
+$estModifiable = !($etablissement->getSource()->getImportable());
+$fcg = $this->formControlGroup();
+
+$editable = $isNew || (!$estSubstituee AND $estModifiable);
+$form->get('libelle')->setAttribute('readonly', !$editable);
+$form->get('sigle')->setAttribute('readonly', !$editable);
+$form->get('code')->setAttribute('readonly', !$editable);
 ?>
+
+<?php if (!$editable) : ?>
+    <div class="alert alert-warning">
+        <p>
+            <?php if (!$estModifiable) : ?>
+                <span class="icon icon-attention"></span>
+                <strong>La source (<?php echo $etablissement->getSource()->getLibelle(); ?>) ne permet pas de modification.</strong>
+                <br/>
+            <?php endif; ?>
+            <?php if ($estSubstituee) : ?>
+                <span class="icon icon-attention"></span>
+                <strong>La structure est substituée et ne doit pas être modifiée.</strong>
+                <br/>
+            <?php endif; ?>
+        </p>
+
+        <p>
+            Par conséquent, vous ne pouvez pas modifier les champs : libellé, sigle et code.
+        </p>
+    </div>
+<?php endif; ?>
 
 <?php echo $this->form()->openTag($form->prepare()->setAttribute('class', 'etablissement')) ?>
 

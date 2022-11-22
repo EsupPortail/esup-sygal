@@ -51,6 +51,7 @@ class Session implements HistoriqueAwareInterface,
     private Collection $seances;
     private Collection $formateurs;
     private Collection $inscriptions;
+    private Collection $heurodatages;
 
     private ?int $tailleListePrincipale = null;
     private ?int $tailleListeComplementaire = null;
@@ -329,6 +330,29 @@ class Session implements HistoriqueAwareInterface,
         $formation = $this->getFormation();
         $module = $formation->getModule();
         return 'M'.$module->getId() . 'F'.$formation->getId() . 'S'.$this->getId();
+    }
+
+    public function getAnneeScolaire() : int
+    {
+        $debut = $this->getDateDebut();
+        if ($debut === null) $debut = new DateTime();
+
+        $mois = ((int) $debut->format('m'));
+        $annee =  ((int) $debut->format('Y'));
+        if ($mois > 8) $annee += 1;
+        return $annee;
+    }
+
+    /**
+     * @return SessionEtatHeurodatage[]
+     */
+    public function getHeurodatages() : array
+    {
+        $array = $this->heurodatages->toArray();
+        usort($array,
+            function (SessionEtatHeurodatage $a, SessionEtatHeurodatage $b) {
+                return $a->getHeurodatage() > $b->getHeurodatage(); });
+        return $array;
     }
 
     /** Pour les macros ********************************************************************************/

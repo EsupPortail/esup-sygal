@@ -3,6 +3,9 @@
 namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use Soutenance\Entity\Avis;
@@ -16,6 +19,7 @@ use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use Laminas\Http\Request;
 use Laminas\View\Model\ViewModel;
+use UnicaenApp\Exception\RuntimeException;
 
 class AvisController extends AbstractController
 {
@@ -26,6 +30,9 @@ class AvisController extends AbstractController
     use PropositionServiceAwareTrait;
     use TheseServiceAwareTrait;
     use ValidatationServiceAwareTrait;
+
+    use FichierStorageServiceAwareTrait;
+    use FichierServiceAwareTrait;
 
     use AvisFormAwareTrait;
 
@@ -133,4 +140,22 @@ class AvisController extends AbstractController
         $this->redirect()->toRoute('soutenance/index-rapporteur', ['these' => $these->getId()], [], true);
     }
 
+
+    public function telechargerAction()
+    {
+        $these = $this->requestedThese();
+        $membre = $this->getMembreService()->getRequestedMembre($this, 'rapporteur');
+        $avis = $this->getAvisService()->getAvisByMembre($membre);
+        $fichier = $avis->getFichier();
+
+        // injection préalable du contenu du fichier pour pouvoir utiliser le plugin Uploader
+        try {
+            $contenuFichier = $this->fichierStorageService->getFileContentForFichier($fichier);
+        } catch (StorageAdapterException $e) {
+            throw new RuntimeException("Impossible d'obtenir le contenu du fichier", null, $e);
+        }
+        $fichier->setContenuFichierData($contenuFichier);
+
+        $this->uploader()->download($fichier);
+    }
 }

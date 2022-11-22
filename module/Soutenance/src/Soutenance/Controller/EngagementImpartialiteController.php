@@ -4,6 +4,7 @@ namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Validation;
+use Soutenance\Provider\Template\TexteTemplates;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Membre;
@@ -14,6 +15,7 @@ use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
 use Laminas\View\Model\ViewModel;
+use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 /**
  * Class SoutenanceController
@@ -28,6 +30,7 @@ class EngagementImpartialiteController extends AbstractController
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
     use PropositionServiceAwareTrait;
+    use RenduServiceAwareTrait;
     use TokenServiceAwareTrait;
 
     public function engagementImpartialiteAction() : ViewModel
@@ -35,6 +38,9 @@ class EngagementImpartialiteController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findOneForThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
+
+        $vars = [ 'membre' => $membre, 'doctorant' => $these->getDoctorant() ];
+        $texteEngagnement = $this->getRenduService()->generateRenduByTemplateCode(TexteTemplates::SOUTENANCE_ENGAGEMENT_IMPARTIALITE, $vars);
 
         /** @var Validation $validation */
         $validation = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($these, $membre);
@@ -49,6 +55,8 @@ class EngagementImpartialiteController extends AbstractController
             'urlSigner' => $this->url()->fromRoute('soutenance/engagement-impartialite/signer', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true),
             'urlRefuser' => $this->url()->fromRoute('soutenance/engagement-impartialite/refuser', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true),
             'urlAnnuler' => $this->url()->fromRoute('soutenance/engagement-impartialite/annuler', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true),
+
+            'texteEngagement' => $texteEngagnement,
         ]);
     }
 
