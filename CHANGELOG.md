@@ -5,6 +5,7 @@ Journal des modifications
 -----
 - Ajout d'une date de fermeture (indicative) pour les sessions de formation
 - [FIX] Retrait de la liste complémentaire du mail d'echec
+- [FIX] Ordonnancement des seance sur les index des formations et des sessions 
 
 5.2.6
 -----
