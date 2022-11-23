@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+5.2.7
+-----
+- Ajout d'une date de fermeture (indicative) pour les sessions de formation
+
 5.2.6
 -----
 - Déclaration des membres du comite de suivi individuel

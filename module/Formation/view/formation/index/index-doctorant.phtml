@@ -138,7 +138,14 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
                     <td> <?php echo $session->getIndex(); ?> </td>
                     <td> <?php echo $this->formateurs($session); ?> </td>
                     <td> <?php echo $this->site($session); ?> </td>
-                    <td> <?php echo $this->seances($session); ?> </td>
+                    <td>
+                        <?php if ($session->getDateClotureInscription()) : ?>
+                            <strong> Date de fermeture des inscriptions : </strong>
+                            <?php echo $session->getDateClotureInscription()->format('d/m/Y'); ?>
+                            <br/>
+                        <?php endif; ?>
+                        <?php echo $this->seances($session); ?>
+                    </td>
                     <td> <?php echo $this->modalite($session); ?></td>
                     <td> <?php echo $this->type($session); ?></td>
                     <td> <?php echo $this->etat($session); ?></td>

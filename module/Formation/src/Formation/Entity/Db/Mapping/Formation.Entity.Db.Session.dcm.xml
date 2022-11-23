@@ -50,6 +50,8 @@
         <field name="tailleListePrincipale"     type="integer"                     column="TAILLE_LISTE_PRINCIPALE"      nullable="true"/>
         <field name="tailleListeComplementaire" type="integer"                     column="TAILLE_LISTE_COMPLEMENTAIRE"  nullable="true"/>
 
+        <field name="dateClotureInscription" type="datetime" column="DATE_FERMETURE_INSCRIPTION" nullable="true"/>
+
 
         <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>

@@ -166,6 +166,10 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
         <dd class="col-md-9"> <?php echo count($listeComplementaireTrue); ?>/<?php echo $session->getTailleListeComplementaire(); ?></dd>
         <dt class="col-md-3"> Nombre d'inscription </dt>
         <dd class="col-md-9"> <?php echo count($inscrits); ?></dd>
+        <?php if ($session->getDateClotureInscription()) : ?>
+            <dt class="col-md-3"> Date de clôture des inscriptions </dt>
+            <dd class="col-md-9"> <?php echo $session->getDateClotureInscription()->format('d/m/Y'); ?></dd>
+        <?php endif; ?>
     </dl>
     </div>
     </div>

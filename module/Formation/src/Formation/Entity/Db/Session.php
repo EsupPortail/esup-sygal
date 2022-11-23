@@ -4,7 +4,6 @@ namespace Formation\Entity\Db;
 
 use Doctorant\Entity\Db\Doctorant;
 use Individu\Entity\Db\Individu;
-use Application\Entity\Db\Utilisateur;
 use DateInterval;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
@@ -46,6 +45,7 @@ class Session implements HistoriqueAwareInterface,
     private ?Individu $responsable = null;
     private ?Etat $etat = null;
     private ?string $description = null;
+    private ?DateTime $dateClotureInscription = null;
 
     private Collection $structuresValides;
     private Collection $seances;
@@ -56,144 +56,85 @@ class Session implements HistoriqueAwareInterface,
     private ?int $tailleListePrincipale = null;
     private ?int $tailleListeComplementaire = null;
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return int|null
-     */
     public function getIndex(): ?int
     {
         return $this->index;
     }
 
-    /**
-     * @param int $index
-     * @return Session
-     */
-    public function setIndex(int $index): Session
+    public function setIndex(int $index): void
     {
         $this->index = $index;
-        return $this;
     }
 
-    /**
-     * @return Formation|null
-     */
     public function getFormation(): ?Formation
     {
         return $this->formation;
     }
 
-    /**
-     * @param Formation|null $formation
-     * @return Session
-     */
-    public function setFormation(?Formation $formation): Session
+    public function setFormation(?Formation $formation): void
     {
         $this->formation = $formation;
-        return $this;
     }
 
-    /**
-     * @return Utilisateur|null
-     */
     public function getResponsable(): ?Individu
     {
         return $this->responsable;
     }
 
-    /**
-     * @param Individu|null $responsable
-     * @return Session
-     */
-    public function setResponsable(?Individu $responsable): Session
+    public function setResponsable(?Individu $responsable): void
     {
         $this->responsable = $responsable;
-        return $this;
     }
 
-    /**
-     * @return Etat|null
-     */
     public function getEtat(): ?Etat
     {
         return $this->etat;
     }
 
-    /**
-     * @param Etat|null $etat
-     * @return Session
-     */
-    public function setEtat(?Etat $etat): Session
+    public function setEtat(?Etat $etat): void
     {
         $this->etat = $etat;
-        return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getStructuresValides(): Collection
     {
         return $this->structuresValides;
     }
 
-    /**
-     * @return Collection
-     */
     public function getSeances() : Collection
     {
         return $this->seances;
     }
 
-    /**
-     * @return Collection
-     */
     public function getFormateurs() : Collection
     {
         return $this->formateurs;
     }
 
-    /**
-     * @return Collection
-     */
     public function getInscriptions() : Collection
     {
         return $this->inscriptions;
     }
 
-    /**
-     * @param string|null $liste
-     * @return Inscription[]
-     */
     public function getInscriptionsByListe(?string $liste) : array
     {
         $result = array_filter($this->inscriptions->toArray(), function (Inscription $a) use ($liste) { return ($a->estNonHistorise() AND $a->getListe()===$liste);});
         return $result;
     }
 
-    /**
-     * @return int|null
-     */
     public function getTailleListePrincipale(): ?int
     {
         return $this->tailleListePrincipale;
     }
 
-    /**
-     * @param int|null $tailleListePrincipale
-     * @return Session
-     */
-    public function setTailleListePrincipale(?int $tailleListePrincipale): Session
+    public function setTailleListePrincipale(?int $tailleListePrincipale): void
     {
         $this->tailleListePrincipale = $tailleListePrincipale;
-        return $this;
     }
 
     public function getListePrincipale() : array
@@ -201,22 +142,15 @@ class Session implements HistoriqueAwareInterface,
         $inscriptions = array_filter($this->getInscriptions()->toArray(), function (Inscription $a) { return $a->estNonHistorise() AND $a->getListe() === Inscription::LISTE_PRINCIPALE; });
         return $inscriptions;
     }
-    /**
-     * @return int|null
-     */
+
     public function getTailleListeComplementaire(): ?int
     {
         return $this->tailleListeComplementaire;
     }
 
-    /**
-     * @param int|null $tailleListeComplementaire
-     * @return Session
-     */
-    public function setTailleListeComplementaire(?int $tailleListeComplementaire): Session
+    public function setTailleListeComplementaire(?int $tailleListeComplementaire): void
     {
         $this->tailleListeComplementaire = $tailleListeComplementaire;
-        return $this;
     }
 
     public function getListeComplementaire() : array
@@ -231,22 +165,24 @@ class Session implements HistoriqueAwareInterface,
         return $inscriptions;
     }
 
-    /**
-     * @return string|null
-     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * @param string|null $description
-     * @return Session
-     */
-    public function setDescription(?string $description): Session
+    public function setDescription(?string $description): void
     {
         $this->description = $description;
-        return $this;
+    }
+
+    public function getDateClotureInscription(): ?DateTime
+    {
+        return $this->dateClotureInscription;
+    }
+
+    public function setDateClotureInscription(?DateTime $dateClotureInscription): void
+    {
+        $this->dateClotureInscription = $dateClotureInscription;
     }
 
     public function getDuree() : float
@@ -309,10 +245,6 @@ class Session implements HistoriqueAwareInterface,
         return $limite;
     }
 
-    /**
-     * @param Doctorant $doctorant
-     * @return bool
-     */
     public function estInscrit(Doctorant $doctorant) : bool
     {
         /** @var Inscription $inscription */
@@ -358,6 +290,7 @@ class Session implements HistoriqueAwareInterface,
     /** Pour les macros ********************************************************************************/
 
     /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
      * @return string
      */
     public function getSeancesAsTable() : string

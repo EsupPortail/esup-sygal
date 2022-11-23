@@ -2,6 +2,7 @@
 
 namespace Formation\Form\Session;
 
+use DateTime;
 use Structure\Entity\Db\Etablissement;
 use Individu\Entity\Db\Individu;
 use Structure\Entity\Db\Structure;
@@ -32,6 +33,7 @@ class SessionHydrator implements HydratorInterface {
             'type_structure' => ($object->getTypeStructure())?$object->getTypeStructure()->getId():null,
             'taille_liste_principale' => $object->getTailleListePrincipale(),
             'taille_liste_complementaire' => $object->getTailleListeComplementaire(),
+            'date_fermeture_inscription' => $object->getDateClotureInscription(),
         ];
         return $data;
     }
@@ -54,6 +56,7 @@ class SessionHydrator implements HydratorInterface {
         $structure = (isset($data['type_structure']) AND trim($data['type_structure']) !== "")?$this->getStructureService()->getRepository()->find($data['type_structure']):null;
         $tailleListePrincipale = (isset($data['taille_liste_principale']) AND trim($data['taille_liste_principale']) !== '')?trim($data['taille_liste_principale']):null;
         $tailleListeComplementaire = (isset($data['taille_liste_complementaire']) AND trim($data['taille_liste_complementaire']) !== '')?trim($data['taille_liste_complementaire']):null;
+        $dateFermetureInscription = (isset($data['date_fermeture_inscription']))?DateTime::createFromFormat('d/m/Y', $data['date_fermeture_inscription']):null;
 
         $object->setDescription($description);
         $object->setSite($site);
@@ -63,6 +66,7 @@ class SessionHydrator implements HydratorInterface {
         $object->setTypeStructure($structure);
         $object->setTailleListePrincipale((int) $tailleListePrincipale);
         $object->setTailleListeComplementaire((int) $tailleListeComplementaire);
+        $object->setDateClotureInscription($dateFermetureInscription);
         return $object;
     }
 
