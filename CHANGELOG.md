@@ -4,6 +4,7 @@ Journal des modifications
 5.2.7
 -----
 - Ajout d'une date de fermeture (indicative) pour les sessions de formation
+- Extraction d'un module Depot (dépôt du manuscrit de thèse).
 - [FIX] Retrait de la liste complémentaire du mail d'echec
 - [FIX] Ordonnancement des seance sur les index des formations et des sessions 
 
