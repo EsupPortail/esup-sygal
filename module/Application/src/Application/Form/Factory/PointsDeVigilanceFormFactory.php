@@ -2,7 +2,7 @@
 
 namespace Application\Form\Factory;
 
-use Application\Form\PointsDeVigilanceForm;
+use Depot\Form\PointsDeVigilanceForm;
 use Interop\Container\ContainerInterface;
 
 class PointsDeVigilanceFormFactory

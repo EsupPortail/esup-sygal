@@ -1,0 +1,26 @@
+<?php
+/**
+ * @var PhpRenderer $this
+ * @var These       $these
+ * @var Diffusion   $diffusion
+ */
+
+use Depot\Entity\Db\Diffusion;
+use These\Entity\Db\These;
+use Application\Service\Message\DiffusionMessages;
+use Application\View\Renderer\PhpRenderer;
+
+?>
+
+<style>
+    .droits-item .droits-item-value { margin-bottom: 10px;}
+</style>
+
+
+<h2>Droits d'auteur</h2>
+
+<div class="droits-item">
+    <div class="droits-item-value">
+        <?php echo $this->message()->render(DiffusionMessages::DROITS_AUTEUR_OK_PHRASE_CONV, [], $diffusion) ?>
+    </div>
+</div>

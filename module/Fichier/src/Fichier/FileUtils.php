@@ -4,9 +4,11 @@ namespace Fichier;
 
 use Application\Command\ShellCommandRunner;
 use Fichier\Command\ConvertShellCommand;
+use ImagickException;
 use Laminas\Http\Response;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
+use UnicaenLdap\Exception;
 
 class FileUtils
 {
@@ -18,6 +20,7 @@ class FileUtils
      *
      * @param string $inputFilePath
      * @return string Contenu binaire du fichier PNG généré
+     * @throws \UnicaenLdap\Exception
      */
     static public function generateFirstPagePreviewPngImageFromPdf(string $inputFilePath): string
     {
@@ -39,9 +42,10 @@ class FileUtils
             $im->writeImage($outputFilePath);
             $im->clear();
             $im->destroy();
-        } catch (\ImagickException $ie) {
-            throw new RuntimeException(
-                "Erreur rencontrée lors de la création de l'aperçu", null, $ie);
+        } catch (ImagickException $ie) {
+            throw new Exception(
+                "Erreur rencontrée lors de la création de l'aperçu : " . $ie->getMessage(), null, $ie
+            );
         }
 
         return file_get_contents($outputFilePath);

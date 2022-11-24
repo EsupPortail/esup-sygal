@@ -3,6 +3,7 @@
 namespace These\Controller;
 
 use Application\Entity\Db\Utilisateur;
+use Depot\Service\These\DepotServiceAwareTrait;
 use These\Entity\Db\Acteur;
 use Application\Form\AdresseMail\AdresseMailFormAwareTrait;
 use These\Service\Acteur\ActeurServiceAwareTrait;
@@ -16,11 +17,13 @@ use Laminas\View\Model\ViewModel;
 
 /** @method FlashMessenger flashMessenger() **/
 
-class PresidentJuryController extends AbstractActionController {
+class PresidentJuryController extends AbstractActionController
+{
     use ActeurServiceAwareTrait;
     use MembreServiceAwareTrait;
     use TheseServiceAwareTrait;
     use AdresseMailFormAwareTrait;
+    use DepotServiceAwareTrait;
 
     public function indexAction() {
         $date = (new DateTime())->sub(new DateInterval('P4M'));
@@ -33,6 +36,10 @@ class PresidentJuryController extends AbstractActionController {
         ]);
     }
 
+    /**
+     * @throws \Notification\Exception\NotificationImpossibleException
+     * @todo : déplacer dans la module Depot.
+     */
     public function notifierCorrectionAction()
     {
         $president = $this->getActeurService()->getRequestedActeur($this, 'president');
@@ -43,7 +50,7 @@ class PresidentJuryController extends AbstractActionController {
 
         $these = $president->getThese();
 
-        $message = $this->getTheseService()->notifierCorrectionsApportees($these, $utilisateur);
+        $message = $this->depotService->notifierCorrectionsApportees($these, $utilisateur);
         if ($message[0] === 'success') $this->flashMessenger()->addSuccessMessage($message[1]);
         if ($message[0] === 'error')   $this->flashMessenger()->addErrorMessage($message[1]);
 

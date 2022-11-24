@@ -1,0 +1,75 @@
+<?php
+
+use These\Controller\TheseController;
+use Depot\Entity\Db\Diffusion;
+use These\Entity\Db\These;
+use Fichier\Entity\Db\VersionFichier;
+use Depot\Form\Diffusion\DiffusionTheseForm;
+use Depot\Provider\Privilege\DepotPrivileges;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var                    $this PhpRenderer
+ * @var These              $these
+ * @var VersionFichier     $version
+ * @var Diffusion          $diffusion
+ * @var \Depot\Form\Diffusion\DiffusionTheseForm $form
+ * @var array              $theseFichiersExpurgesItems
+ * @var array              $annexesFichiersExpurgesItems
+ * @var bool               $resaisirAutorisationDiffusionVersionCorrigee
+ * @var string             $modifierDiffusionUrl
+ * @var string             $exporterConventionMelUrl
+ *
+ * @see TheseController::diffusionAction()
+ */
+
+$privilege = DepotPrivileges::THESE_SAISIE_AUTORISATION_DIFFUSION_($version);
+$canEdit = $this->isAllowed($these, $privilege);
+if ($version->estVersionCorrigee() && ! $resaisirAutorisationDiffusionVersionCorrigee) {
+    $canEdit = false;
+}
+?>
+
+<div class="box card">
+
+    <div class="card-header bg-dark text-white">
+        <h2 class="first">Autorisation de diffusion
+            <?php if ($diffusion && $diffusion->estCreationAuto()): ?><span>(Rappel)</span><?php endif ?></h2>
+    </div>
+
+    <div class="card-body">
+        <?php if ($hasFichierThese): ?>
+
+            <!-------------------------------------- Questionnaire --------------------------------------->
+            <?php if ($diffusion): ?>
+                <?php echo $this->partial('depot/depot/partial/diffusion') ?>
+                <?php if ($canEdit): ?>
+                    <p><a href="<?php echo $modifierDiffusionUrl ?>"
+                          class="btn btn-secondary zajax-modal"
+                          data-event="event-diffusion-modified"><span class="icon icon-edit"></span> Modifier</a></p>
+                <?php endif ?>
+            <?php else: ?>
+                <?php if ($canEdit): ?>
+                    <p><a href="<?php echo $modifierDiffusionUrl ?>"
+                          class="btn btn-primary zajax-modal"
+                          data-event="event-diffusion-modified"><span class="icon icon-edit"></span> Compléter</a></p>
+                <?php endif ?>
+            <?php endif ?>
+
+            <!-------------------------------------- Convention de mise en ligne --------------------------------------->
+            <?php if ($diffusion && ! $diffusion->estCreationAuto()): ?>
+                <hr>
+
+                <h2>Convention de mise en ligne</h2>
+                <p><a href="<?php echo $exporterConventionMelUrl ?>" target="_blank"
+                      class="btn btn-primary"><span class="icon icon-export"></span>
+                        Éditer la convention de mise en ligne</a></p>
+            <?php endif ?>
+
+        <?php else: ?>
+
+            <p>Vous devez d'abord téléverser la thèse au format PDF.</p>
+
+        <?php endif ?>
+    </div>
+</div>

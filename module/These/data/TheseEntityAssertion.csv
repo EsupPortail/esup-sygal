@@ -1,0 +1,7 @@
+class;These\Assertion\These\GeneratedTheseEntityAssertion;;1;2;3;4;5;6;21;22;;;
+line;enabled;privilege;isRoleDoctorantSelected;;isStructureDuRoleRespectee;;isTheseEnCours;isTheseSoutenue;;isUtilisateurEstAuteurDeLaThese;;return;message
+1;1;\These\Provider\Privilege\ThesePrivileges::THESE_TOUT_FAIRE;;;;;;;;;;1;
+2;1;*;1:1;;;;;;;2:0;;0;Cette thèse n'est pas la vôtre.
+3;1;*;;;1:0;;;;;;;0;Votre profil dans l’application ne vous permet pas d’agir sur cette thèse.
+81;1;\Doctorant\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT;1:1;;;;;;;2:0;;0;Vous ne pouvez pas visualiser l’adresse de contact car vous n’êtes pas l’auteur de la thèse
+82;1;\Doctorant\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT;;;;;;;;;;1;

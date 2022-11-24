@@ -1,0 +1,54 @@
+<?php
+/**
+ * @var These              $these
+ * @var Diffusion          $diffusion
+ * @var \Depot\Form\Diffusion\DiffusionTheseForm $form
+ * @var boolean            $masquerFichiers
+ * @var array              $theseFichiersExpurgesItems
+ * @var array              $annexesFichiersExpurgesItems
+ */
+
+use Depot\Entity\Db\Diffusion;
+use These\Entity\Db\These;
+use Application\Service\Message\DiffusionMessages;
+
+?>
+
+<?php if ($diffusion->getConfidentielle() || $diffusion->getThese()->estConfidentielle()): ?>
+<div class="row">
+    <div class="col-6">
+        <div class="alert alert-md alert-danger">
+            <?php echo sprintf("La thèse est confidentielle jusqu'au %s.",
+                $diffusion->getDateFinConfidentialiteToString() ?: $diffusion->getThese()->getDateFinConfidentialiteToString()) ?>
+        </div>
+    </div>
+</div>
+<?php endif ?>
+
+<ul class="autorisation-diffusion">
+    <li><?php echo $this->message()->render('DROITS_AUTEUR_OK_PHRASE', [], $diffusion) ?></li>
+
+    <?php if (empty($masquerFichiers) && ! $diffusion->getDroitAuteurOk()): ?>
+        <li>Version expurgée pour la diffusion :
+        <?php echo $this->partial('depot/fichier-these/lister-fichiers', ['items' => $theseFichiersExpurgesItems]) ?></li>
+        <li>Autres formats de fichiers expurgés, le cas échéant :
+        <?php echo $this->partial('depot/fichier-these/lister-fichiers', ['items' => $annexesFichiersExpurgesItems]) ?></li>
+    <?php endif ?>
+
+    <li><?php echo $form->get('certifCharteDiff')->getLabel() . "." ?>
+
+    <li>
+        <?php echo $this->message()->render(DiffusionMessages::AUTORIS_MISE_EN_LIGNE_PHRASE, [], $diffusion) ?>
+        <div class="autorisation-laius text-info">
+            <?php echo $this->message()->render(DiffusionMessages::AUTORIS_MISE_EN_LIGNE_LAIUS, [], $diffusion) ?>
+        </div>
+    </li>
+
+    <?php if ($orcid = $diffusion->getOrcid()): ?>
+        <li>Identifiant ORCID : <code class="text-muted"><?php echo $orcid ?></code></li>
+    <?php endif ?>
+
+    <?php if ($halId = $diffusion->getHalId()): ?>
+        <li>IdHAL : <code class="text-muted"><?php echo $halId ?></code></li>
+    <?php endif ?>
+</ul>

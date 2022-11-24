@@ -3,13 +3,13 @@
 namespace ApplicationFunctionalTest\Service\Workflow;
 
 use Fichier\Entity\Db\Fichier;
-use These\Entity\Db\FichierThese;
+use Depot\Entity\Db\FichierThese;
 use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\Role;
 use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Fichier\Entity\Db\VersionFichier;
-use Application\Service\Workflow\WorkflowService;
+use Depot\Service\Workflow\WorkflowService;
 use ApplicationUnitTest\Controller\AbstractControllerTestCase;
 
 abstract class WorkflowServiceAbstractTest extends AbstractControllerTestCase

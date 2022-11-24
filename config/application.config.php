@@ -46,6 +46,7 @@ return [
         'Individu',
         'Retraitement',
         'Soutenance',
+        'Depot',
         'Formation',
         'ComiteSuiviIndividuel',
         'RapportActivite',

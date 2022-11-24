@@ -54,10 +54,23 @@
     "autoload": {
         "psr-0": {
             "Application\\": "module/Application/src",
-            "Retraitement\\": "module/Retraitement/src",
-            "Notification\\": "module/Notification/src",
+            "ComiteSuiviIndividuel\\": "module/ComiteSuiviIndividuel/src",
+            "Depot\\": "module/Depot/src",
+            "Doctorant\\": "module/Doctorant/src",
+            "Fichier\\": "module/Fichier/src",
+            "Formation\\": "module/Formation/src",
             "Import\\": "module/Import/src",
-            "StepStar\\": "module/StepStar/src"
+            "Indicateur\\": "module/Indicateur/src",
+            "Individu\\": "module/Individu/src",
+            "Information\\": "module/Information/src",
+            "Notification\\": "module/Notification/src",
+            "RapportActivite\\": "module/RapportActivite/src",
+            "Retraitement\\": "module/Retraitement/src",
+            "Soutenance\\": "module/Soutenance/src",
+            "StepStar\\": "module/StepStar/src",
+            "Structure\\": "module/Structure/src",
+            "These\\": "module/These/src",
+            "UnicaenAvis\\": "module/UnicaenAvis/src"
         }
     },
     "autoload-dev": {

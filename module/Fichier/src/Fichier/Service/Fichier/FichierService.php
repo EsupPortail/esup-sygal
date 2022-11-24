@@ -3,7 +3,7 @@
 namespace Fichier\Service\Fichier;
 
 use Application\Service\BaseService;
-use Application\Service\ValiditeFichier\ValiditeFichierServiceAwareTrait;
+use Fichier\Service\ValiditeFichier\ValiditeFichierServiceAwareTrait;
 use Doctrine\ORM\EntityRepository;
 use Exception;
 use Fichier\Entity\Db\Fichier;

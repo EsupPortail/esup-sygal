@@ -4,7 +4,7 @@
 namespace StepStar\Service\Zip;
 
 
-use These\Entity\Db\FichierThese;
+use Depot\Entity\Db\FichierThese;
 use These\Entity\Db\These;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;

@@ -2,7 +2,7 @@
 
 namespace ApplicationFunctionalTest\Service\Workflow;
 
-use Application\Entity\Db\WfEtape;
+use Depot\Entity\Db\WfEtape;
 
 class WorkflowServiceGeneralTest extends WorkflowServiceAbstractTest
 {

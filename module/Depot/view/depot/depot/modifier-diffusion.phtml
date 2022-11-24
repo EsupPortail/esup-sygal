@@ -1,0 +1,128 @@
+<?php
+
+use Depot\Entity\Db\Diffusion;
+use These\Entity\Db\These;
+use Depot\Form\Diffusion\DiffusionTheseForm;
+use Application\Service\Message\DiffusionMessages;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer        $this
+ * @var string             $title
+ * @var These              $these
+ * @var Diffusion          $diffusion
+ * @var bool               $expurge
+ * @var DiffusionTheseForm $form
+ * @var string             $theseUrl
+ * @var string             $annexesUrl
+ *
+ * @method string formControlGroup()
+ */
+
+$canEdit = true;
+$fcg = $this->formControlGroup();
+$protoDiffusion = new Diffusion();
+?>
+
+<?php $this->headTitle("Diffusion") ?>
+
+<h1 class="page-header"><?php echo $title . ($diffusion->getVersionCorrigee() ? " de la version corrigée" : "") ?>
+    <small><?php echo $this->partial('these/these/partial/titre') ?></small>
+</h1>
+
+<?php echo $this->form()->openTag($form->setAttribute('class', 'diffusion')) ?>
+
+<!-------------------------------- Confidentialité -------------------------------->
+<?php if ($these->getDateFinConfidentialite() !== null): ?>
+<h2>Confidentialité de la thèse</h2>
+<div class="widget-confidentialite-these" id="confidentialite-these">
+    <div class="row">
+        <div class="col-4">
+            <?php echo $fcg->render($form->get('confidentielle')->setLabel("")) ?>
+        </div>
+        <div class="col-3 confidentDateFin" style="display: none">
+            <?php echo $this->formDate()->setDateReadonly(true)->render($form->get('dateFinConfidentialite')) ?>
+        </div>
+    </div>
+    <div id="explicConfidentialiteOui" class="alert alert-md alert-info" style="display: none">
+        <span class="fas fa-info-circle"></span>
+        <?php echo $this->message()->render(DiffusionMessages::CONFIDENTIALITE_LAIUS, [], Diffusion::CONFIDENTIELLE_OUI) ?>
+    </div>
+    <div id="explicConfidentialiteNon" class="alert alert-md alert-info" style="display: none">
+        <span class="fas fa-info-circle"></span>
+        <?php echo $this->message()->render(DiffusionMessages::CONFIDENTIALITE_LAIUS, [], Diffusion::CONFIDENTIELLE_NON) ?>
+    </div>
+</div>
+<?php endif ?>
+
+<!-------------------------------- Droit d'auteur -------------------------------->
+<h2>Droit d'auteur</h2>
+<div class="widget-droit-auteur-these" id="droit-auteur-these">
+    <?php echo $fcg($form->get('droitAuteurOk')) ?>
+    <div class="row">
+        <!-------------------------------------- Dépôt Thèse PDF --------------------------------------->
+        <div id="theseDiv" class="col-md-offset-1 col-md-5" data-url="<?php echo $theseUrl ?>" style="display: none">
+            <!-- màj via ajax -->
+        </div>
+        <!-------------------------------------- Dépôt Autres formats --------------------------------------->
+        <div id="annexesDiv" class="col-md-5" data-url="<?php echo $annexesUrl ?>" style="display: none">
+            <!-- màj via ajax -->
+        </div>
+    </div>
+</div>
+
+<!-------------------------------- Charte de diffusion -------------------------------->
+<h2>Charte de diffusion</h2>
+<?php echo $fcg($form->get('certifCharteDiff')) ?>
+Cliquez sur <a href="<?php echo $this->url('fichier/telecharger-permanent', ['idPermanent' => 'CHARTE_DEPOT_DIFFUSION_THESE']) ?>"
+               target="_blank" download>ce lien</a> pour télécharger la charte.
+
+<!-------------------------------- Autorisation de mise en ligne -------------------------------->
+<h2>Autorisation de mise en ligne</h2>
+<div class="widget-autorisation-mise-en-ligne" id="amel">
+    <div class="row">
+        <div class="col-md-6">
+            <?php echo $fcg($form->get('autorisMel')) ?>
+        </div>
+        <div class="col-md-6 embargoDuree" style="display: none">
+            <?php echo $fcg($form->get('autorisEmbargoDuree')) ?>
+        </div>
+    </div>
+    <div class="motif" style="display: none">
+        <?php echo $fcg($form->get('autorisMotif')->setAttributes(['rows' => 3])) ?>
+    </div>
+    <div id="explicOuiImmediat" class="alert alert-md alert-info" style="display: none">
+        <span class="fas fa-info-circle"></span>
+        <?php echo $this->message()->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_LAIUS, [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_OUI_IMMEDIAT)) ?>
+    </div>
+    <div id="explicOuiEmbargo" class="alert alert-md alert-info" style="display: none">
+        <span class="fas fa-info-circle"></span>
+        <?php echo $this->message()->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_LAIUS, [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_OUI_EMBARGO)) ?>
+    </div>
+    <div id="explicNon" class="alert alert-md alert-info" style="display: none">
+        <span class="fas fa-info-circle"></span>
+        <?php echo $this->message()->render(DiffusionMessages::AUTORIS_DIFFUSION_FORM_LAIUS, [], $protoDiffusion->setAutorisMel(Diffusion::AUTORISATION_NON)) ?>
+    </div>
+    <div class="row auteur" style="display: none">
+        <div class="col-sm-7 col-md-4">
+            <?php echo $fcg
+                ->setHelpContent(
+                        "Cet identifiant permet d’identifier de manière unique les chercheurs et auteurs de contributions académiques scientifiques. ".
+                        '<a target="_blank" title="Ouvrir ce lien dans un autre onglet" href="https://orcid.org">Plus d\'infos...</a>')
+                ->render($form->get('orcid')) ?>
+            <?php echo $fcg
+                ->setHelpContent(
+                    "L’IdHAL, géré dans l’archive ouverte HAL, permet de vous identifier en tant qu’auteur de vos travaux déposés sur la plateforme. ".
+                    '<a target="_blank" title="Ouvrir ce lien dans un autre onglet" href="https://doc.archives-ouvertes.fr/identifiant-auteur-idhal-cv/">Plus d\'infos...</a>')
+                ->render($form->get('halId')) ?>
+        </div>
+    </div>
+</div>
+
+<!--<h2>Attestation de conformité de la version mise en ligne</h2>-->
+<?php //echo $fcg($form->get('certifConformMel')) ?>
+
+<?php echo $this->formElement($form->get('submit')) ?>
+
+<?php echo $this->form()->closeTag() ?>
+

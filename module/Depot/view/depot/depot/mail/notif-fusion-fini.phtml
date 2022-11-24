@@ -1,0 +1,27 @@
+<?php
+
+use These\Entity\Db\These;
+use Application\Entity\Db\ValiditeFichier;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var string $outputFilePath
+ * @var string $url
+ * @var These $these
+ */
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.
+</p>
+<p>
+    L'ajout de la page de couverture est maintenant terminé.
+</p>
+<p>
+    <?php $url = $this->urlDepot()->setForceCanonical()->telechargerFusion($these, $outputFilePath) ?>
+    Cliquez <a href="<?php echo $url ?>">ici</a> pour télécharger votre manuscrit complet.
+</p>

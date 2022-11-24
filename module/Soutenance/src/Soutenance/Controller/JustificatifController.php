@@ -4,7 +4,7 @@ namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
 use Fichier\Entity\Db\VersionFichier;
-use These\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Parametre;
 use Soutenance\Form\Justificatif\JustificatifFormAwareTrait;

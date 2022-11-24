@@ -2,7 +2,7 @@
 
 namespace Application\Service\Notification;
 
-use These\Entity\Db\FichierThese;
+use Depot\Entity\Db\FichierThese;
 use These\Entity\Db\These;
 use Application\Entity\Db\ValiditeFichier;
 use Application\Entity\Db\Variable;
@@ -67,7 +67,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
         $notif
             ->setSubject("Retraitement terminé")
             ->setTo($to)
-            ->setTemplatePath('these/these/mail/notif-retraitement-fini')
+            ->setTemplatePath('depot/depot/mail/notif-retraitement-fini')
             ->setTemplateVariables([
                 'fichierRetraite' => $fichierTheseRetraite,
                 'validite' => $validite,
@@ -93,7 +93,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
         $notif
             ->setTo($to)
             ->setSubject($subject)
-            ->setTemplatePath('these/these/mail/notif-modif-rdv-bu-doctorant')
+            ->setTemplatePath('depot/depot/mail/notif-modif-rdv-bu-doctorant')
             ->setTemplateVariables([
                 'these' => $these,
                 'updating' => !$estLaPremiereSaisie,
@@ -120,7 +120,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
         $notif
             ->setTo($to)
             ->setSubject("Dépôt d'une thèse")
-//            ->setTemplatePath('these/these/mail/notif-depot-these') // le template est dans la NotifEntity
+//            ->setTemplatePath('depot/depot/mail/notif-depot-these') // le template est dans la NotifEntity
             ->setTemplateVariables([
                 'these' => $these,
                 'version' => $version,
@@ -203,7 +203,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
         $notif
             ->setSubject("Ajout de la page de couverture terminé")
             ->setTo($to)
-            ->setTemplatePath('these/these/mail/notif-fusion-fini')
+            ->setTemplatePath('depot/depot/mail/notif-fusion-fini')
             ->setTemplateVariables([
                 'these' => $these,
                 'outputFilePath' => $outputFilePath,

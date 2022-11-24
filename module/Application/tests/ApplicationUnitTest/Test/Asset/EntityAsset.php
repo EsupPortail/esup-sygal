@@ -3,18 +3,18 @@
 namespace ApplicationUnitTest\Test\Asset;
 
 use These\Entity\Db\Acteur;
-use These\Entity\Db\Attestation;
-use These\Entity\Db\Diffusion;
+use Depot\Entity\Db\Attestation;
+use Depot\Entity\Db\Diffusion;
 use Doctorant\Entity\Db\Doctorant;
 use Fichier\Entity\Db\Fichier;
-use These\Entity\Db\FichierThese;
+use Depot\Entity\Db\FichierThese;
 use Import\Model\ImportObserv;
 use Application\Entity\Db\ImportObservEtab;
 use Application\Entity\Db\ImportObservEtabResult;
 use Individu\Entity\Db\Individu;
-use These\Entity\Db\MetadonneeThese;
+use Depot\Entity\Db\MetadonneeThese;
 use Fichier\Entity\Db\NatureFichier;
-use Application\Entity\Db\RdvBu;
+use Depot\Entity\Db\RdvBu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Source;
 use These\Entity\Db\These;

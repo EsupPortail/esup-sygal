@@ -2,6 +2,8 @@
 
 namespace Notification;
 
+use Depot\Notification\ValidationDepotTheseCorrigeeNotification;
+use Depot\Notification\ValidationRdvBuNotification;
 use Notification\Entity\NotifEntity;
 use Laminas\View\Model\ViewModel;
 
