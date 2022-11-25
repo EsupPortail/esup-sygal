@@ -397,19 +397,23 @@ class DepotController extends AbstractController
     /**
      * @return ViewModel
      */
-    public function detailDepotDiversAction()
+    public function detailDepotDiversAction(): ViewModel
     {
         $these = $this->requestedThese();
 
         $view = new ViewModel([
-            'these'                     => $these,
-            'pvSoutenanceUrl'           => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_PV_SOUTENANCE),
-            'rapportSoutenanceUrl'      => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_RAPPORT_SOUTENANCE),
-            'preRapportSoutenanceUrl'   => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE),
-            'demandeConfidentUrl'       => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_DEMANDE_CONFIDENT),
-            'prolongConfidentUrl'       => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_PROLONG_CONFIDENT),
-            'convMiseEnLigneUrl'        => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_CONV_MISE_EN_LIGNE),
-            'avenantConvMiseEnLigneUrl' => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_AVENANT_CONV_MISE_EN_LIGNE),
+            'these' => $these,
+            'pvSoutenanceUrl' => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_PV_SOUTENANCE),
+            'rapportSoutenanceUrl' => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_RAPPORT_SOUTENANCE),
+            'preRapportSoutenanceUrl' => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE),
+            'demandeConfidentUrl' => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_DEMANDE_CONFIDENT),
+            'prolongConfidentUrl' => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_PROLONG_CONFIDENT),
+            'convMiseEnLigneUrl' => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_CONV_MISE_EN_LIGNE),
+            'convMiseEnLigneAvenantUrl' => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_CONV_MISE_EN_LIGNE_AVENANT),
+            'charteDoctoratUrl' => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_CHARTE_DOCTORAT),
+            'charteDoctoratAvenantUrl' => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_CHARTE_DOCTORAT_AVENANT),
+            'convFormationDoctoraleUrl' => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_CONV_FORMATION_DOCTORALE),
+            'convFormationDoctoraleAvenantUrl' => $this->urlDepot()->depotFichiers($these, NatureFichier::CODE_CONV_FORMATION_DOCTORALE_AVENANT),
         ]);
         $view->setTemplate('depot/depot/depot-divers');
 
@@ -911,13 +915,16 @@ class DepotController extends AbstractController
     /**
      * @return ViewModel
      */
-    public function depotPvSoutenanceAction()
+    public function depotPvSoutenanceAction(): ViewModel
     {
         $these = $this->requestedThese();
         $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new \DateTime();
 
         $view = $this->createViewForFichierAction(NatureFichier::CODE_PV_SOUTENANCE);
         $view->setVariable('isVisible', $dateSoutenanceDepassee);
+        if (!$dateSoutenanceDepassee) {
+            $view->setVariable('message', "Téléversement impossible avant la soutenance.");
+        }
         $view->setTemplate('depot/depot/depot/fichier-divers');
 
         return $view;
@@ -926,13 +933,16 @@ class DepotController extends AbstractController
     /**
      * @return ViewModel
      */
-    public function depotRapportSoutenanceAction()
+    public function depotRapportSoutenanceAction(): ViewModel
     {
         $these = $this->requestedThese();
         $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new \DateTime();
 
         $view = $this->createViewForFichierAction(NatureFichier::CODE_RAPPORT_SOUTENANCE);
         $view->setVariable('isVisible', $dateSoutenanceDepassee);
+        if (!$dateSoutenanceDepassee) {
+            $view->setVariable('message', "Téléversement impossible avant la soutenance.");
+        }
         $view->setTemplate('depot/depot/depot/fichier-divers');
 
         return $view;
@@ -941,13 +951,16 @@ class DepotController extends AbstractController
     /**
      * @return ViewModel
      */
-    public function depotPreRapportSoutenanceAction()
+    public function depotPreRapportSoutenanceAction(): ViewModel
     {
         $these = $this->requestedThese();
         $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new \DateTime();
 
         $view = $this->createViewForFichierAction(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
         $view->setVariable('isVisible', $dateSoutenanceDepassee);
+        if (!$dateSoutenanceDepassee) {
+            $view->setVariable('message', "Téléversement impossible avant la soutenance.");
+        }
         $view->setVariable('maxUploadableFilesCount', 3);
         $view->setTemplate('depot/depot/depot/fichier-divers');
 
@@ -957,7 +970,7 @@ class DepotController extends AbstractController
     /**
      * @return ViewModel
      */
-    public function depotDemandeConfidentAction()
+    public function depotDemandeConfidentAction(): ViewModel
     {
         $view = $this->createViewForFichierAction(NatureFichier::CODE_DEMANDE_CONFIDENT);
         $view->setTemplate('depot/depot/depot/fichier-divers');
@@ -968,7 +981,7 @@ class DepotController extends AbstractController
     /**
      * @return ViewModel
      */
-    public function depotProlongConfidentAction()
+    public function depotProlongConfidentAction(): ViewModel
     {
         $view = $this->createViewForFichierAction(NatureFichier::CODE_PROLONG_CONFIDENT);
         $view->setTemplate('depot/depot/depot/fichier-divers');
@@ -979,7 +992,7 @@ class DepotController extends AbstractController
     /**
      * @return ViewModel
      */
-    public function depotConvMiseEnLigneAction()
+    public function depotConvMiseEnLigneAction(): ViewModel
     {
         $view = $this->createViewForFichierAction(NatureFichier::CODE_CONV_MISE_EN_LIGNE);
         $view->setTemplate('depot/depot/depot/fichier-divers');
@@ -990,9 +1003,53 @@ class DepotController extends AbstractController
     /**
      * @return ViewModel
      */
-    public function depotAvenantConvMiseEnLigneAction()
+    public function depotConvMiseEnLigneAvenantAction(): ViewModel
     {
-        $view = $this->createViewForFichierAction(NatureFichier::CODE_AVENANT_CONV_MISE_EN_LIGNE);
+        $view = $this->createViewForFichierAction(NatureFichier::CODE_CONV_MISE_EN_LIGNE_AVENANT);
+        $view->setTemplate('depot/depot/depot/fichier-divers');
+
+        return $view;
+    }
+
+    /**
+     * @return ViewModel
+     */
+    public function depotCharteDoctoratAction(): ViewModel
+    {
+        $view = $this->createViewForFichierAction(NatureFichier::CODE_CHARTE_DOCTORAT);
+        $view->setTemplate('depot/depot/depot/fichier-divers');
+
+        return $view;
+    }
+
+    /**
+     * @return ViewModel
+     */
+    public function depotCharteDoctoratAvenantAction(): ViewModel
+    {
+        $view = $this->createViewForFichierAction(NatureFichier::CODE_CHARTE_DOCTORAT_AVENANT);
+        $view->setTemplate('depot/depot/depot/fichier-divers');
+
+        return $view;
+    }
+
+    /**
+     * @return ViewModel
+     */
+    public function depotConvFormationDoctoraleAction(): ViewModel
+    {
+        $view = $this->createViewForFichierAction(NatureFichier::CODE_CONV_FORMATION_DOCTORALE);
+        $view->setTemplate('depot/depot/depot/fichier-divers');
+
+        return $view;
+    }
+
+    /**
+     * @return ViewModel
+     */
+    public function depotConvFormationDoctoraleAvenantAction(): ViewModel
+    {
+        $view = $this->createViewForFichierAction(NatureFichier::CODE_CONV_FORMATION_DOCTORALE_AVENANT);
         $view->setTemplate('depot/depot/depot/fichier-divers');
 
         return $view;
@@ -1002,7 +1059,7 @@ class DepotController extends AbstractController
      * @param string $codeNatureFichier
      * @return ViewModel
      */
-    private function createViewForFichierAction($codeNatureFichier)
+    private function createViewForFichierAction(string $codeNatureFichier): ViewModel
     {
         $these = $this->requestedThese();
         $nature = $this->fichierTheseService->fetchNatureFichier($codeNatureFichier);
