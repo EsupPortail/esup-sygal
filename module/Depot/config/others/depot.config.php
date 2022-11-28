@@ -779,19 +779,6 @@ return [
                                         'etape' => null,
                                         'visible' => TheseAssertion::class,
                                     ],
-                                    'depot-divers' => [
-                                        'id' => 'depot-divers',
-                                        'label' => 'Dépôt fichiers divers',
-                                        'route' => 'these/depot-divers',
-                                        'withtarget' => true,
-                                        'paramsInject' => [
-                                            'these',
-                                        ],
-                                        'icon' => 'fas fa-copy',
-                                        'resource' => PrivilegeController::getResourceId(DepotController::class, 'detail-fichiers'),
-                                        'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
-                                        'visible' => TheseAssertion::class,
-                                    ],
                                     'divider-these' => [
                                         'label' => null,
                                         'uri' => '',
@@ -948,6 +935,27 @@ return [
                                         'visible' => TheseAssertion::class,
                                     ],
                                 ]
+                            ],
+                            'divider-depot' => [
+                                'label' => null,
+                                'order' => 90,
+                                'uri' => '',
+                                'class' => 'divider',
+                                'separator' => true,
+                            ],
+                            'depot-divers' => [
+                                'id' => 'depot-divers',
+                                'label' => 'Dépôt fichiers divers',
+                                'order' => 100,
+                                'route' => 'these/depot-divers',
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                ],
+                                'icon' => 'fas fa-copy',
+                                'resource' => PrivilegeController::getResourceId(DepotController::class, 'detail-fichiers'),
+                                'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
+                                'visible' => TheseAssertion::class,
                             ],
                         ],
                     ],
