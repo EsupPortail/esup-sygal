@@ -128,10 +128,10 @@ class ListeDiffusionAddressGenerator
             return null;
         }
 
-        Assert::notEmpty($this->ecoleDoctorale->getSigle(),
+        Assert::notEmpty($this->ecoleDoctorale->getStructure()->getSigle(),
             "Ecole doctorale n°{$this->ecoleDoctorale->getId()} sans sigle");
 
-        return trim(str_replace(str_split(' -_'), '', $this->ecoleDoctorale->getSigle())); // ex: 'ED590MIIS'
+        return trim(str_replace(str_split(' -_'), '', $this->ecoleDoctorale->getStructure()->getSigle())); // ex: 'ED590MIIS'
     }
 
     /**

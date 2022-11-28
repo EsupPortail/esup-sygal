@@ -17,8 +17,8 @@ use Soutenance\Entity\Proposition;
  */
 
 $these = $proposition->getThese();
-$unite = ($these->getUniteRecherche())?$these->getUniteRecherche()->getLibelle():$these->getLibelleUniteRecherche();
-$ecole = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getLibelle():"Information manquante";
+$unite = ($these->getUniteRecherche())?$these->getUniteRecherche()->getStructure()->getLibelle():$these->getLibelleUniteRecherche();
+$ecole = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getStructure()->getLibelle():"Information manquante";
 ?>
 
 <style>

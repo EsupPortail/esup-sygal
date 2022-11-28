@@ -15,7 +15,7 @@ use Structure\Entity\Db\EtablissementRattachement;
 use Individu\Entity\Db\IndividuRole;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;
-use Application\Provider\Privilege\CoEncadrantPrivileges;
+use These\Provider\Privilege\CoEncadrantPrivileges;
 use Structure\Provider\Privilege\StructurePrivileges;
 
 $this->headTitle("Unité de recherche '{$unite->getStructure()->getCode()}'");
@@ -31,7 +31,7 @@ $structure = $unite->getStructure();
 ?>
 
 <h1 class="page-header">
-    Unité de recherche &laquo; <?php echo $unite->getLibelle(); ?> &raquo;
+    Unité de recherche &laquo; <?php echo $unite->getStructure()->getLibelle(); ?> &raquo;
 </h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
@@ -89,9 +89,9 @@ $structure = $unite->getStructure();
             <div class="col-md-8">
                 <dl>
                     <dt> Libelle :</dt>
-                    <dd>    <?php echo $unite->getLibelle(); ?>     </dd>
+                    <dd>    <?php echo $unite->getStructure()->getLibelle(); ?>     </dd>
                     <dt> Sigle :</dt>
-                    <dd>    <?php echo $unite->getSigle(); ?>       </dd>
+                    <dd>    <?php echo $unite->getStructure()->getSigle(); ?>       </dd>
                     <dt> Code :</dt>
                     <dd>    <?php echo $unite->getStructure()->getCode(); ?>        </dd>
                     <dt> Id REF: </dt>
@@ -108,7 +108,7 @@ $structure = $unite->getStructure();
                     <dd>
                         <ul>
                             <?php foreach ($etablissementsRattachements as $etablissementRattachement) : ?>
-                                <li> <?php echo $etablissementRattachement->getEtablissement()->getLibelle(); ?></li>
+                                <li> <?php echo $etablissementRattachement->getEtablissement()->getStructure()->getLibelle(); ?></li>
                             <?php endforeach; ?>
                         </ul>
                     </dd>
@@ -220,7 +220,7 @@ $structure = $unite->getStructure();
         </h2>
 
         <?php if($canCoencadrantExport) : ?>
-            <?php /** @see \Application\Controller\CoEncadrantController::genererExportCsvAction() */ ?>
+            <?php /** @see \These\Controller\CoEncadrantController::genererExportCsvAction() */ ?>
             <a href="<?php echo $this->url('co-encadrant/generer-export-csv', ['structure-type' => 'unite-recherche', 'structure-id' => $unite->getId()], [], true); ?>"
                class="btn btn-primary"
             >

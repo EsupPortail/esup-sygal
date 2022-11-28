@@ -5,6 +5,8 @@
  * @var string  $type
  * @var StructureConcreteInterface[] $substituees
  * @var StructureConcreteInterface   $substituante
+ *
+ * @see \Structure\Controller\SubstitutionController::substitutionAutomatiqueAction()
  */
 
 use Structure\Entity\Db\StructureConcreteInterface;
@@ -12,56 +14,54 @@ use Structure\Entity\Db\StructureConcreteInterface;
 ?>
 
 <div id="div_<?php echo $type; ?>_<?php echo $identifiant; ?>" class="card">
-    <div class="card-header bg-info">
-        Substitution basé sur l'identitfiant <?php echo $identifiant; ?>
+    <div class="card-header bg-dark text-white">
+        Substitution basée sur l'identifiant commun '<?php echo $identifiant; ?>'
     </div>
     <div class="row card-body">
 
-        <div class="col-md-5">
-            Substituées :
+        <div class="col-md-7">
+            Substituables :
             <ol>
                 <?php foreach($substituees as $structure): ?>
                     <li>
                         <?php echo $structure->getSourceCode(); ?>
                         -
-                        <?php echo $structure->getLibelle(); ?>
+                        <?php echo $structure->getStructure()->getLibelle(); ?>
                     </li>
                 <?php endforeach; ?>
             </ol>
         </div>
-        <div class="col-md-5">
-            Substituante :
-            <?php if ($substituante !== null): ?>
-                <ul>
-                    <li>
-                        <?php echo $substituante->getSourceCode(); ?>
-                        -
-                        <?php echo $substituante->getLibelle(); ?>
-                    </li>
-                </ul>
-            <?php endif ?>
-        </div>
+<!--        <div class="col-md-5">-->
+<!--            Substituante :-->
+<!--            --><?php //if ($substituante !== null): ?>
+<!--                <ul>-->
+<!--                    <li>-->
+<!--                        --><?php //echo $substituante->getSourceCode(); ?>
+<!--                        --->
+<!--                        --><?php //echo $substituante->getStructure()->getLibelle(); ?>
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            --><?php //endif ?>
+<!--        </div>-->
         <div class="col-md-2">
             <a
                 data-event="edition-substitution"
                 href="<?php echo $this->url('substitution-automatique/modifier', ['type' => $type, 'identifiant' => $identifiant], [], true); ?>"
-                class="ajax-modal"
+                class="ajax-modalx"
             >
-                <button id="editer_<?php echo $type; ?>_<?php echo $identifiant; ?>" class="btn btn-info" style="width:95%;margin:2px;">
+                <button id="editer_<?php echo $type; ?>_<?php echo $identifiant; ?>" class="btn btn-primary">
                     <span class="icon icon-edit"></span>
-                    Personnaliser
+                    Personnaliser...
                 </button>
             </a>
-            <br/>
-            <button id="valider_<?php echo $type; ?>_<?php echo $identifiant; ?>" class="btn btn-success" style="width:95%;margin:2px;">
-                <span class="icon icon-oui"></span>
-                Enregistrer
-            </button>
-            <br/>
-            <button id="annuler_<?php echo $type; ?>_<?php echo $identifiant; ?>" class="btn btn-danger" style="width:95%;margin:2px;">
+<!--            <button id="valider_--><?php //echo $type; ?><!--_--><?php //echo $identifiant; ?><!--" class="btn btn-success">-->
+<!--                <span class="icon icon-oui"></span>-->
+<!--                Enregistrer-->
+<!--            </button>-->
+            <button id="annuler_<?php echo $type; ?>_<?php echo $identifiant; ?>" class="btn btn-outline-danger">
                 <span class="icon icon-delete"></span>
                 Masquer
-            </button> <br/>
+            </button>
         </div>
     </div>
 </div>

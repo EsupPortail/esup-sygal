@@ -1,12 +1,12 @@
 <?php
 
 use Application\Constants;
-use Application\Controller\Plugin\UrlFichierThese;
-use Application\Entity\Db\Acteur;
+use These\Controller\Plugin\UrlFichierThese;
+use These\Entity\Db\Acteur;
 use Individu\Entity\Db\IndividuRole;
 use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Etat;
@@ -59,7 +59,7 @@ $this->headTitle("Proposition de soutenance");
 
 <h1 class="page-header">
     Proposition de soutenance
-    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+    <small><?php echo $this->partial('these/these/partial/titre') ?></small>
 </h1>
 
 <p class="lead">

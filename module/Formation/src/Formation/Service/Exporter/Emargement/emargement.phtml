@@ -4,7 +4,7 @@
  * @var Seance $seance
  */
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Formation\Entity\Db\Formateur;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Seance;
@@ -61,11 +61,11 @@ $formateurs = $session->getFormateurs();
             $theses = array_filter($theses, function(These $t) { return $t->getEtatThese() === These::ETAT_EN_COURS;});
             $etablissements = []; $ecoles = []; $unites = [];
             foreach ($theses as $these) {
-                $etablissement = ($these->getEtablissement())?$these->getEtablissement()->getSigle():"Établissement non renseigné";
+                $etablissement = ($these->getEtablissement())?$these->getEtablissement()->getStructure()->getSigle():"Établissement non renseigné";
                 $etablissements[$etablissement] = $etablissement;
-                $ecole = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getSigle():"École doctorale non renseignée";
+                $ecole = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getStructure()->getSigle():"École doctorale non renseignée";
                 $ecoles[$ecole] = $ecole;
-                $unite = ($these->getUniteRecherche())?$these->getUniteRecherche()->getSigle():"Unité de recherche non renseignée";
+                $unite = ($these->getUniteRecherche())?$these->getUniteRecherche()->getStructure()->getSigle():"Unité de recherche non renseignée";
                 $unites[$unite] = $unite;
             }
         ?>

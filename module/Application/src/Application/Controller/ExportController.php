@@ -2,14 +2,14 @@
 
 namespace Application\Controller;
 
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Application\Entity\Db\Financement;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Provider\Privilege\FinancementPrivileges;
-use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
-use Application\Service\These\TheseSearchServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareTrait;
+use These\Service\FichierThese\FichierTheseServiceAwareTrait;
+use These\Service\These\TheseSearchServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\View\Model\CsvModel;
@@ -62,11 +62,11 @@ class ExportController extends AbstractController
                 return implode(",", $noms);
             },
             //Structures
-            'Etablissement'                         => function ($variables) { return $variables['etablissement']->getLibelle(); },
+            'Etablissement'                         => function ($variables) { return $variables['etablissement']->getStructure()->getLibelle(); },
             'Ecole Doctorale Code'                  => function ($variables) { return ($variables['ecole doctorale'])?$variables['ecole doctorale']->getStructure()->getCode():null; },
-            'Ecole Doctorale'                       => function ($variables) { return ($variables['ecole doctorale'])?$variables['ecole doctorale']->getLibelle():null; },
+            'Ecole Doctorale'                       => function ($variables) { return ($variables['ecole doctorale'])?$variables['ecole doctorale']->getStructure()->getLibelle():null; },
             'Unité de Recherche Code'               => function ($variables) { return ($variables['unite de recherche'])?$variables['unite de recherche']->getStructure()->getCode():null; },
-            'Unité de Recherche'                    => function ($variables) { return ($variables['unite de recherche'])?$variables['unite de recherche']->getLibelle():null; },
+            'Unité de Recherche'                    => function ($variables) { return ($variables['unite de recherche'])?$variables['unite de recherche']->getStructure()->getLibelle():null; },
             'Etablissement Co-Tutelle'              => function ($variables) { return $variables['these']->getLibelleEtabCotutelle(); },
             'Pays Co-Tutelle'                       => function ($variables) { return $variables['these']->getLibellePaysCotutelle(); },
             //accession

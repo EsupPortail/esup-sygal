@@ -6,7 +6,7 @@ use Application\Controller\StatistiqueController;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Structure\StructureService;
-use Application\Service\These\TheseService;
+use These\Service\These\TheseService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 use Interop\Container\ContainerInterface;
 

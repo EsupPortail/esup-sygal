@@ -2,7 +2,7 @@
 
 namespace StepStar\Service\Soap;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 class SoapClientFactory
 {

@@ -5,7 +5,7 @@ namespace Application;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
-use Application\Filter\ActeursFormatter;
+use These\Filter\ActeursFormatter;
 use Application\Filter\IdifyFilter;
 use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
 use Structure\Search\Etablissement\EtablissementSearchFilter;
@@ -163,8 +163,8 @@ $acteursFormatterCodirecteurs->asSeparated()
 
             <?php if ($displayEtablissement): ?>
             <td>
-                <abbr title="<?php echo $these->getEtablissement()->getLibelle() ?>">
-                    <?php echo $these->getEtablissement()->getCode() ?>
+                <abbr title="<?php echo $these->getEtablissement()->getStructure()->getLibelle() ?>">
+                    <?php echo $these->getEtablissement()->getStructure()->getCode() ?>
                 </abbr>
             </td>
             <?php endif ?>
@@ -206,7 +206,7 @@ $acteursFormatterCodirecteurs->asSeparated()
             <?php if ($displayEcoleDoctorale): ?>
             <td>
                 <?php if ($ed = $these->getEcoleDoctorale()): ?>
-                    <abbr title="<?php echo $ed->getLibelle() ?>">
+                    <abbr title="<?php echo $ed->getStructure()->getLibelle() ?>">
                         <?php echo $ed->getStructure()->getCode(); ?>
                     </abbr>
                 <?php endif ?>
@@ -216,7 +216,7 @@ $acteursFormatterCodirecteurs->asSeparated()
             <?php if ($displayUniteRecherche): ?>
             <td>
                 <?php if ($ur = $these->getUniteRecherche()): ?>
-                    <abbr title="<?php echo $ur->getLibelle() ?>">
+                    <abbr title="<?php echo $ur->getStructure()->getLibelle() ?>">
                         <?php echo $ur->getStructure()->getCode(); ?>
                     </abbr>
                 <?php endif ?>

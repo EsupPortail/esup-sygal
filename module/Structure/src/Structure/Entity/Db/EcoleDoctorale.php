@@ -3,11 +3,11 @@
 namespace Structure\Entity\Db;
 
 use Application\Search\Filter\SearchFilterValueInterface;
-use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
-use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
 /**
  * EcoleDoctorale
@@ -17,6 +17,7 @@ class EcoleDoctorale
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
+    use StructureAwareTrait;
 
     const CODE_TOUTE_ECOLE_DOCTORALE_CONFONDUE = 'TOUTE_ED';
 
@@ -29,11 +30,6 @@ class EcoleDoctorale
      * @var string
      */
     protected $sourceCode;
-
-    /**
-     * @var Structure
-     */
-    protected $structure;
 
     /**
      * @var string
@@ -97,84 +93,26 @@ class EcoleDoctorale
      *
      * @return string
      */
-    public function getSourceCode()
+    public function getSourceCode(): ?string
     {
         return $this->sourceCode;
     }
 
     /**
-     * @return string|null
+     * Retourne l'éventuelle école doctorale substituant celle-ci.
+     *
+     * ATTENTION : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
+     * '.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.ecoleDoctorale'.
+     *
+     * @return \Structure\Entity\Db\EcoleDoctorale|null
      */
-    public function getCode(): ?string
+    public function getEcoleDoctoraleSubstituante(): ?EcoleDoctorale
     {
-        return $this->structure->getCode();
-    }
+        if ($substit = $this->structure->getStructureSubstituante()) {
+            return $substit->getEcoleDoctorale();
+        }
 
-    /**
-     * @return string
-     */
-    public function getLibelle()
-    {
-        return $this->getStructure()->getLibelle();
-    }
-
-    /**
-     * @param string $libelle
-     */
-    public function setLibelle($libelle)
-    {
-        $this->getStructure()->setLibelle($libelle);
-    }
-
-    /**
-     * @return string
-     */
-    public function getCheminLogo()
-    {
-        return $this->getStructure()->getCheminLogo();
-    }
-
-    /**
-     * @param string $cheminLogo
-     */
-    public function setCheminLogo($cheminLogo)
-    {
-        $this->getStructure()->setCheminLogo($cheminLogo);
-    }
-
-    /**
-     * @return string
-     */
-    public function getSigle()
-    {
-        return $this->getStructure()->getSigle();
-    }
-
-    /**
-     * @param string $sigle
-     */
-    public function setSigle($sigle)
-    {
-        $this->getStructure()->setSigle($sigle);
-    }
-
-    /**
-     * @param Structure $structure
-     * @return self
-     */
-    public function setStructure($structure)
-    {
-        $this->structure = $structure;
-
-        return $this;
-    }
-
-    /**
-     * @return Structure
-     */
-    public function getStructure()
-    {
-        return $this->structure;
+        return null;
     }
 
     /**
@@ -184,7 +122,7 @@ class EcoleDoctorale
      */
     public function estTouteEcoleDoctoraleConfondue()
     {
-        return $this->getStructure()->getCode() === self::CODE_TOUTE_ECOLE_DOCTORALE_CONFONDUE;
+        return $this->structure->getCode() === self::CODE_TOUTE_ECOLE_DOCTORALE_CONFONDUE;
     }
 
     /**
@@ -228,16 +166,16 @@ class EcoleDoctorale
      */
     public function createSearchFilterValueOption(): array
     {
-        $estFermee = $this->getStructure()->estFermee();
+        $estFermee = $this->structure->estFermee();
 
-        $subtext = $this->getLibelle();
+        $subtext = $this->structure->getLibelle();
         if ($estFermee) {
             $subtext .= " - FERMÉE";
         }
 
         return [
             'value' => $this->getSourceCode(),
-            'label' => $this->getSigle(),
+            'label' => $this->structure->getSigle(),
             'subtext' => $subtext,
             'class' => $estFermee ? 'fermee' : '',
         ];

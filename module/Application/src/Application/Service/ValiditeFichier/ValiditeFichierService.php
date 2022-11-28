@@ -3,7 +3,7 @@
 namespace Application\Service\ValiditeFichier;
 
 use Application\Entity\Db\ValiditeFichier;
-use Application\Entity\Db\FichierThese;
+use These\Entity\Db\FichierThese;
 use Application\Entity\Db\Repository\ValiditeFichierRepository;
 use Application\Service\BaseService;
 

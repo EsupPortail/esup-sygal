@@ -23,10 +23,10 @@ use UnicaenAuthToken\Entity\Db\UserToken;
  */
 ?>
 
-<?php $this->headTitle($this->translate("Utilisateur"))->append($utilisateur->getUsername()) ?>
+<?php $this->headTitle($this->translate("Compte utilisateur"))->append($utilisateur->getUsername()) ?>
 
 <h1 class="page-header">
-    <?php echo $this->translate("Utilisateur") ?> &laquo; <?php echo $utilisateur->getUsername() ?> &raquo;
+    <?php echo $this->translate("Compte utilisateur") ?> &laquo; <?php echo $utilisateur->getUsername() ?> &raquo;
 </h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
@@ -36,9 +36,9 @@ use UnicaenAuthToken\Entity\Db\UserToken;
     <div class="col-md-6">
 
         <div class="box card">
-            <div class="card-header bg-info">
+            <div class="card-header bg-dark text-white">
                 <h2 class="first">
-                    <?php echo $this->translate("Utilisateur") ?>
+                    <?php echo $this->translate("Compte utilisateur") ?>
                     <div class="float-end">
                         <?php
                         // bouton d'usurpation d'identité
@@ -88,7 +88,7 @@ use UnicaenAuthToken\Entity\Db\UserToken;
                         <div class="float-end">
                             <a href="<?php echo $this->url('utilisateur/delier-individu', ['utilisateur' => $utilisateur->getId()], [], true);?>"
                                class="btn btn-danger"
-                               data-toggle="confirmationx">Délier de l'utilisateur</a>
+                               data-toggle="confirmationx">Délier du compte utilisateur</a>
                         </div>
                     </h2>
                 </div>
@@ -102,7 +102,7 @@ use UnicaenAuthToken\Entity\Db\UserToken;
 
         <?php else: ?>
 
-            <p>Cet utilisateur n'est associé à aucun individu.</p>
+            <p>Ce compte utilisateur n'est associé à aucun individu.</p>
             <a
                 <?php /** @see UtilisateurController::lierIndividuAction() */?>
                 href="<?php echo $this->url('utilisateur/lier-individu', ['utilisateur' => $utilisateur->getId()], [], true); ?>"
@@ -121,7 +121,7 @@ use UnicaenAuthToken\Entity\Db\UserToken;
 <!-- TOKEN D'AUTHENTIFICATION ----------------------------------------------------------------------------------------->
 
 <div class="box card">
-    <div class="card-header bg-info">
+    <div class="card-header bg-dark text-white">
         <h2 class="first">
             <?php echo $this->translate("Jeton d'authentification") ?>
             <div class="float-end">
@@ -134,7 +134,7 @@ use UnicaenAuthToken\Entity\Db\UserToken;
     </div>
     <div class="card-body">
         <?php if (empty($tokens)): ?>
-            L'utilisateur n'a aucun jeton d'authentification.
+            Le compte utilisateur n'a aucun jeton d'authentification.
         <?php else: ?>
             <?php echo $this->partial('unicaen-auth-token/token/partial/table', ['paginator' => $tokens, 'redirect' => $redirect]); ?>
         <?php endif ?>
@@ -144,7 +144,7 @@ use UnicaenAuthToken\Entity\Db\UserToken;
 <?php if ($rolesData) : ?>
 
     <div class="box card">
-        <div class="card-header bg-info">
+        <div class="card-header bg-dark text-white">
             <h2 class="first">
                 <?php echo $this->translate("Rôles de l'individu") ?>
             </h2>

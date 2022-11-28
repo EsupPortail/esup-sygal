@@ -247,7 +247,7 @@ return [
                     'admin' => [
                         'pages' => [
                             'index' => [
-                                'label'    => 'Utilisateurs',
+                                'label'    => 'Comptes utilisateurs',
                                 'route'    => 'utilisateur',
                                 'resource' => PrivilegeController::getResourceId('Application\Controller\Utilisateur', 'index'),
                                 'icon'     => 'fa fa-users',

@@ -2,9 +2,9 @@
 
 namespace Soutenance\Assertion;
 
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
@@ -92,6 +92,11 @@ class PropositionAssertion implements  AssertionInterface {
         $directeurs = [];
         foreach ($acteurs as $acteur) $directeurs[] = $acteur->getIndividu();
 
+        $rapporteursJ = $these->getActeursByRoleCode(Role::CODE_RAPPORTEUR_JURY);
+        $rapporteursA = $these->getActeursByRoleCode(Role::CODE_RAPPORTEUR_ABSENT);
+        $acteurs = array_merge($rapporteursJ->toArray(), $rapporteursA->toArray());
+        $rapporteurs = [];
+        foreach ($acteurs as $acteur) $rapporteurs[] = $acteur->getIndividu();
 //        if ($role === Role::CODE_ADMIN_TECH) return true;
 
         $theseEtablissementStructure = $these->getEtablissement()->getStructure();
@@ -113,6 +118,9 @@ class PropositionAssertion implements  AssertionInterface {
                     case Role::CODE_DIRECTEUR_THESE :
                     case Role::CODE_CODIRECTEUR_THESE :
                         return (array_search($individu, $directeurs) !== false);
+                    case Role::CODE_RAPPORTEUR_JURY :
+                    case Role::CODE_RAPPORTEUR_ABSENT :
+                        return (array_search($individu, $rapporteurs) !== false);
                     default:
                         return false;
                 }

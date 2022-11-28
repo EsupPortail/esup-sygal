@@ -27,11 +27,11 @@ class IndividuComplHydrator implements HydratorInterface {
             'email' => ($object->getEmail())?:null,
             'etablissement' => [
                 'id' => ($object->getEtablissement())?$object->getEtablissement()->getId():null,
-                'label' => ($object->getEtablissement())?$object->getEtablissement()->getLibelle():null,
+                'label' => ($object->getEtablissement())?$object->getEtablissement()->getStructure()->getLibelle():null,
             ],
             'uniteRecherche' => [
                 'id' => ($object->getUniteRecherche())?$object->getUniteRecherche()->getId():null,
-                'label' => ($object->getUniteRecherche())?$object->getUniteRecherche()->getLibelle():null,
+                'label' => ($object->getUniteRecherche())?$object->getUniteRecherche()->getStructure()->getLibelle():null,
             ],
         ];
         return $data;

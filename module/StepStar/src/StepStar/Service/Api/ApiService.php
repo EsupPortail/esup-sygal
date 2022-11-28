@@ -5,20 +5,42 @@ namespace StepStar\Service\Api;
 use DOMDocument;
 use DOMXPath;
 use SoapFault;
+use stdClass;
 use StepStar\Exception\ApiServiceException;
 use StepStar\Service\Soap\SoapClientAwareTrait;
-use StepStar\Service\Xslt\XsltServiceAwareTrait;
-use UnicaenApp\Exception\RuntimeException;
+use Webmozart\Assert\Assert;
 
 class ApiService
 {
     use SoapClientAwareTrait;
-    use XsltServiceAwareTrait;
+
+    const OPERATION_KEY__DEPOSER = 'deposer';
+    const OPERATION_KEY__DEPOSER_AVEC_ZIP = 'deposer_avec_zip';
 
     /**
      * @var array
      */
-    protected $params = [];
+    protected array $operations = [];
+
+    /**
+     * @param array $operations
+     * @return self
+     */
+    public function setOperations(array $operations): self
+    {
+        $message = "Clé obligatoire introuvable dans le tableau de config des opérations : %s";
+        Assert::keyExists($operations, self::OPERATION_KEY__DEPOSER, $message);
+        Assert::keyExists($operations, self::OPERATION_KEY__DEPOSER_AVEC_ZIP, $message);
+
+        $this->operations = $operations;
+
+        return $this;
+    }
+
+    /**
+     * @var array
+     */
+    protected array $params = [];
 
     /**
      * @param array $params
@@ -49,19 +71,26 @@ class ApiService
             throw new ApiServiceException("La requête 'deposer' nécessite le paramètre '$k'.");
         }
 
-        $operation = 'deposer';
+        $operation = $this->operations[self::OPERATION_KEY__DEPOSER];
         $params = $this->params;
-        $params['tef'] = base64_encode(file_get_contents($tefFilePath));
-//        $params['tef'] = file_get_contents('/tmp/tef_base64.txt');
-//        $params['tef'] = file_get_contents('/tmp/tef_base64_dumontier.txt');
+        $params['tef'] = file_get_contents($tefFilePath);
+
         if ($zipFilePath !== null) {
-            $operation = 'deposerAvecZip';
+            $operation = $this->operations[self::OPERATION_KEY__DEPOSER_AVEC_ZIP];
             $params['zip'] = base64_encode(file_get_contents($zipFilePath));
         }
         try {
             $response = $this->soapClient->call($operation, [$params]); // NB : tableau de paramètres DANS UN TABLEAU
         } catch (SoapFault $e) {
-            throw new ApiServiceException("Erreur rencontrée lors de la requête '$operation'.", null, $e);
+            throw new ApiServiceException(
+                "Erreur rencontrée lors de la requête '$operation' : " . $e->getMessage(), null, $e);
+        }
+
+        if ($response instanceof stdClass) {
+            if (!isset($response->DepotResponse)) {
+                throw new ApiServiceException("La réponse du web service de type stdClass a un format inattendu");
+            }
+            $response = $response->DepotResponse;
         }
 
         if ($error = $this->detectErrorInResponse($response)) {

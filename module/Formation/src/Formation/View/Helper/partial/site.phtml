@@ -7,17 +7,23 @@ use Structure\Entity\Db\Etablissement;
  * @var Etablissement|null $site
  * @var array $options
  */
+
+$long = $options['long']??false;
 ?>
 
 <?php if ($site !== null) : ?>
-    <span class="site" title="<?php echo $site->getLibelle(); ?>"
+    <span class="site" title="<?php echo $site->getStructure()->getLibelle(); ?>"
           data-bs-toggle="tooltip" data-bs-html="true">
-        <?php echo $site->getSigle(); ?>
+        <?php if ($long) : ?>
+            <?php echo $site->getStructure()->getLibelle(); ?>
+        <?php else : ?>
+            <?php echo $site->getStructure()->getSigle(); ?>
+        <?php endif; ?>
     </span>
 <?php else : ?>
-    <span class="site" title="Aucun site de spécifié"
+    <span class="site" title="Formation dispensée pour tous les sites"
           data-bs-toggle="tooltip" data-bs-html="true">
-        Aucun site
+        Multi-site
     </span>
 <?php endif; ?>
 

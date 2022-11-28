@@ -9,7 +9,7 @@ use Application\Form\InitCompteFormAwareTrait;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -394,7 +394,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     public function gererUtilisateurAction()
     {
         $individu = $this->getIndividuService()->getRequestedIndividu($this);
-        $acteurs = $this->acteurService->getRepository()->findActeursByIndividu($individu);
+        $acteurs = $this->acteurService->getRepository()->findActeursForIndividu($individu);
         $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu, $isLocal = true); // done
         // NB: findByIndividu() avec $isLocal = true renverra 1 utilisateur au maximum
         $utilisateur = $utilisateurs ? current($utilisateurs) : null;
@@ -558,7 +558,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             /** @var Individu $individu */
             $individu = $this->getIndividuService()->getRepository()->find($individuId);
             if ($individu !== null) {
-                $acteurs = $this->getActeurService()->getRepository()->findActeursByIndividu($individu);
+                $acteurs = $this->getActeurService()->getRepository()->findActeursForIndividu($individu);
                 $roles = $individu->getRoles();
 
                 $vars['individu'] = $individu;

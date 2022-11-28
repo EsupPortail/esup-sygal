@@ -616,6 +616,11 @@ table.these-fiche {
   font-size: 85%;
 }
 
+.these-card {
+  margin-top: 1em;
+  margin-bottom: 1.5em;
+}
+
 .popover {
   max-width: 100%; /* Max Width of the popover (depending on the container!) */
 }
@@ -1191,7 +1196,11 @@ p.avis-complem {
 
 
 
-.icon.icon-danger:before { // todo: à déplacer dans unicaen-app
+// todo: à déplacer dans unicaen-app
+.icon::before {
+  vertical-align: text-bottom;
+}
+.icon.icon-danger:before {
   content: "\f071";
 }
 

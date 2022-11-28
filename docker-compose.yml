@@ -39,6 +39,7 @@ services:
     volumes:
      - .:/app
      - /tmp:/tmp
+     - /tmp/upload:/tmp/upload
      - $HOME/.ssh:/root/.ssh
      - ./docker/apache/livelog.conf:/etc/apache2/conf-available/livelog.conf
      - ./docker/entrypoint.d/009_livelog:/entrypoint.d/009_livelog
@@ -64,8 +65,8 @@ services:
       - 5432:5432
     volumes:
       # Base de dev
-      - ./tmp/docker/db/dev/sql/:/sql          # Scripts de création/init
-      - ./data/db/dev:/var/lib/postgresql/data # Données persistées.
+      - ../sygal-db/sql/dev:/sql                 # Scripts de création/init
+      - ../sygal-db/dev:/var/lib/postgresql/data # Données persistées.
     networks:
       - sygalnet
 

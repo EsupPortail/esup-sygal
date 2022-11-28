@@ -8,17 +8,12 @@ use Structure\Entity\Db\EcoleDoctorale;
 
 ?>
 
-<div id="menu-soutenances-a-venir" class="card">
-    <div class="card-header">
-        Soutenances à venir
-    </div>
-    <ul class="card-body nav flex-column">
+    <ul>
         <?php foreach ($ecoles as $ecole) : ?>
-            <li class="nav-item">
-                <a class="nav-link"
+            <li>
+                <a
                    href="<?php echo $this->url('soutenances-par-ecole-doctorale', ['ecole' => $ecole->getId()], [], true); ?>"
-                ><?php echo $ecole->getSigle(); ?></a>
+                ><?php echo ($ecole->getStructure()->getSigle())??$ecole->getStructure()->getLibelle(); ?></a>
             </li>
         <?php endforeach; ?>
     </ul>
-</div>

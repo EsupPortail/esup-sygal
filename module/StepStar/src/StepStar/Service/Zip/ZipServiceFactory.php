@@ -3,8 +3,8 @@
 namespace StepStar\Service\Zip;
 
 use Fichier\Service\Fichier\FichierService;
-use Application\Service\These\TheseService;
-use Interop\Container\ContainerInterface;
+use These\Service\These\TheseService;
+use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class ZipServiceFactory implements FactoryInterface

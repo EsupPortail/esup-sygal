@@ -18,7 +18,7 @@ use Soutenance\Entity\Etat;
 ?>
 
 <div class="card">
-    <div class="card-header bg-secondary">
+    <div class="card-header bg-dark text-white">
         <span class="icon icon-filter"></span> Filtrage des propositions de soutenance
     </div>
     <div class="card-body">
@@ -30,7 +30,7 @@ use Soutenance\Entity\Etat;
                     <option value="">Tous les établissements </option>
                     <?php foreach ($etablissements as $etablissement) : ?>
                         <option value="<?php echo $etablissement->getId(); ?>" <?php if ($etablissement->getId() == $etablissementId) echo " selected "; ?>>
-                            <?php echo $etablissement->getLibelle(); ?>
+                            <?php echo $etablissement->getStructure()->getLibelle(); ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -41,8 +41,8 @@ use Soutenance\Entity\Etat;
                         <option value="">Toutes les écoles doctorales </option>
                         <?php foreach ($ecoles as $ecole) : ?>
                             <option value="<?php echo $ecole->getId(); ?>" <?php if ($ecole->getId() == $ecoleDoctoraleId) echo " selected "; ?>>
-                                <?php echo $ecole->getSigle(); ?> :
-                                <?php echo $ecole->getLibelle(); ?>
+                                <?php echo $ecole->getStructure()->getSigle(); ?> :
+                                <?php echo $ecole->getStructure()->getLibelle(); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -53,8 +53,8 @@ use Soutenance\Entity\Etat;
                         <option value="">Toutes les unités de recherche </option>
                         <?php foreach ($unites as $unite) : ?>
                             <option value="<?php echo $unite->getId(); ?>" <?php if ($unite->getId() == $uniteRechercheId) echo " selected "; ?>>
-                                <?php echo $unite->getSigle(); ?> :
-                                <?php echo $unite->getLibelle(); ?>
+                                <?php echo $unite->getStructure()->getSigle(); ?> :
+                                <?php echo $unite->getStructure()->getLibelle(); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>

@@ -1,0 +1,53 @@
+<?php
+
+/**
+ * @see \Application\Controller\SoutenanceController::indexAction()
+ * @var Information[] $informations
+ * @var EcoleDoctorale[]|null $ecoles
+ */
+
+use Application\Constants;
+use Information\Entity\Db\Information;
+use Structure\Entity\Db\EcoleDoctorale;
+
+$appName = $this->appInfos()->nom;
+$subtitle = $this->appInfos()->desc;
+?>
+
+<?php $this->headTitle($this->translate("Soutenances à venir")); ?>
+
+<?php echo $this->alertes()
+    ->withCode(Constants::ALERTE_FERMETURE_ESTIVALE)
+    ->withMatchingPlanning()
+    ->renderAsBootstrapToasts() ?>
+
+<?php
+echo $this->messenger()
+    ->addMessagesFromFlashMessengerWithNoNamespace()
+    ->addMessagesFromFlashMessengerWithNamespace('UnicaenAuth/*'); ?>
+
+<div class="row">
+
+    <div class="col-12 col-md-2">
+        <?php echo $this->partial('application/index/partial/informations', ['informations' => $informations]) ?>
+        <?php echo $this->partial('application/index/partial/menu-lateral', ['current' => 'soutenance']) ?>
+    </div>
+
+    <div id="content" class="col-12 col-md-10">
+        <h1 class="page-header">
+            Soutenances à venir
+        </h1>
+
+        <p class="lead">
+            Ci-dessous sont listées les soutenances à venir par école doctorale
+        </p>
+
+        <?php if($ecoles !== null) : ?>
+            <?php echo $this->partial('application/index/partial/soutenances', ['ecoles' => $ecoles]) ?>
+        <?php else: ?>
+            <div class="alert alert-warning">
+                L'affichage des soutenances à venir est désactivé.
+            </div>
+        <?php endif; ?>
+    </div>
+</div>

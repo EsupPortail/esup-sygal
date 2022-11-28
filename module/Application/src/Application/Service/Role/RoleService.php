@@ -2,25 +2,25 @@
 
 namespace Application\Service\Role;
 
-use Structure\Entity\Db\EcoleDoctorale;
-use Structure\Entity\Db\Etablissement;
-use Individu\Entity\Db\Individu;
-use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Profil;
 use Application\Entity\Db\Repository\RoleRepository;
 use Application\Entity\Db\Role;
-use Structure\Entity\Db\Structure;
-use Structure\Entity\Db\TypeStructure;
-use Structure\Entity\Db\UniteRecherche;
 use Application\Service\BaseService;
 use Application\Service\Profil\ProfilServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr\Join;
+use Individu\Entity\Db\Individu;
+use Individu\Entity\Db\IndividuRole;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\Structure;
+use Structure\Entity\Db\TypeStructure;
+use Structure\Entity\Db\UniteRecherche;
 use UnicaenApp\Exception\RuntimeException;
 
 /**
@@ -36,7 +36,7 @@ class RoleService extends BaseService
     /**
      * @return RoleRepository
      */
-    public function getRepository()
+    public function getRepository(): RoleRepository
     {
         /** @var RoleRepository $repo */
         $repo = $this->entityManager->getRepository(Role::class);
@@ -45,45 +45,55 @@ class RoleService extends BaseService
     }
 
     /**
-     * @param string $code
-     * @param Structure $structure
-     * @return Role|null
+     * Recherche de rôles par structure.
+     *
+     * @param \Structure\Entity\Db\Structure $structure
+     * @return array
      */
-    public function findOneByCodeAndStructure(string $code, Structure $structure)
+    public function findRolesForStructure(Structure $structure): array
     {
-        /** @var Role|null $role */
-        $role = $this->getRepository()->findOneBy(['code' => $code, 'structure' => $structure]);
-
-        return $role;
-    }
-
-    public function getRolesByStructure(Structure $structure)
-    {
+        /** @var \Application\Entity\Db\Repository\DefaultEntityRepository $repo */
         $repo = $this->entityManager->getRepository(Role::class);
-        $qb = $repo->createQueryBuilder("ro")
-            ->andWhere("ro.structure = :structure");
-        $qb->setParameter('structure', $structure);
+        $qb = $repo->createQueryBuilder("r")
+            ->join('r.structure', 's')->addSelect('s')
+            ->andWhereStructureOuSubstituanteIs($structure);
+
         return $qb->getQuery()->execute();
     }
 
-    public function getIndividuByStructure(Structure $structure)
+    /**
+     * Recherche des individus ayant un rôle lié à la structure spécifiée.
+     *
+     * @param \Structure\Entity\Db\Structure $structure
+     * @return array
+     */
+    public function findIndividuForStructure(Structure $structure): array
     {
-        $individuRoles = $this->getIndividuRoleByStructure($structure);
+        $individuRoles = $this->findIndividuRoleByStructure($structure);
         $individus = [];
         /** @var IndividuRole $individuRole */
         foreach ($individuRoles as $individuRole) {
             $individus[] = $individuRole->getIndividu();
         }
+
         return $individus;
     }
 
-    public function getIndividuRoleByStructure(Structure $structure)
+    /**
+     * Recherche des IndividuRole liés à la structure spécifiée.
+     *
+     * @param \Structure\Entity\Db\Structure $structure
+     * @return array
+     */
+    public function findIndividuRoleByStructure(Structure $structure): array
     {
+        /** @var \Application\Entity\Db\Repository\DefaultEntityRepository $repo */
         $repo = $this->entityManager->getRepository(IndividuRole::class);
         $qb = $repo->createQueryBuilder("ir")
-            ->leftJoin("ir.role", "r")
-            ->andWhere('r.structure = :structure')
-            ->setParameter("structure", $structure);
+            ->leftJoin("ir.role", "r")->addSelect('r')
+            ->leftJoin('r.structure', 's')->addSelect('s')
+            ->andWhereStructureOuSubstituanteIs($structure);
+
         return $qb->getQuery()->execute();
     }
 
@@ -93,7 +103,7 @@ class RoleService extends BaseService
      * @param Individu $individu
      * @return IndividuRole[]
      */
-    public function findIndividuRolesByIndividu(Individu $individu)
+    public function findIndividuRolesByIndividu(Individu $individu): array
     {
         $repo = $this->entityManager->getRepository(IndividuRole::class);
 
@@ -113,7 +123,7 @@ class RoleService extends BaseService
      * @param string $individuSourceCodePattern
      * @return IndividuRole[]
      */
-    public function findIndividuRolesByIndividuSourceCodePattern($individuSourceCodePattern)
+    public function findIndividuRolesByIndividuSourceCodePattern(string $individuSourceCodePattern): array
     {
         $repo = $this->entityManager->getRepository(IndividuRole::class);
 
@@ -125,32 +135,12 @@ class RoleService extends BaseService
         return $qb->getQuery()->execute();
     }
 
-    public function getIndividuRoleById($individuRoleId)
-    {
-        $repo = $this->entityManager->getRepository(IndividuRole::class);
-        $individuRole = $repo->findOneBy(["id" => $individuRoleId]);
-        return $individuRole;
-    }
-
-    /**
-     * @param int $individuRoleId
-     * @return null|object
-     * @throws \Doctrine\ORM\OptimisticLockException
-     */
-    public function removeIndividuRoleById($individuRoleId)
-    {
-        $individuRole = $this->getIndividuRoleById($individuRoleId);
-        $this->entityManager->remove($individuRole);
-        $this->entityManager->flush($individuRole);
-        return $individuRole;
-    }
-
     /**
      * @param Individu $individu
      * @param Role $role
-     * @return IndividuRole
+     * @return IndividuRole|null
      */
-    public function getIndividuRole($individu, $role)
+    public function findOneIndividuRole(Individu $individu, Role $role): ?IndividuRole
     {
         $qb = $this->entityManager->getRepository(IndividuRole::class)->createQueryBuilder('ir')
             ->andWhere('ir.individu = :individu')
@@ -158,11 +148,10 @@ class RoleService extends BaseService
             ->setParameter('individu', $individu->getId())
             ->setParameter('role', $role->getId());
         try {
-            $result = $qb->getQuery()->getOneOrNullResult();
+            return $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Plusieurs IndividuRole ont été trouvé pour l'association [Individu(" . $individu->getId() . "),Role(" . $role->getId() . ")].", $e);
+            throw new RuntimeException("Plusieurs IndividuRole ont été trouvés pour [Individu(" . $individu->getId() . "),Role(" . $role->getId() . ")].", $e);
         }
-        return $result;
     }
 
     /**
@@ -170,52 +159,24 @@ class RoleService extends BaseService
      * @param Role $role
      * @return IndividuRole
      */
-    public function addIndividuRole(Individu $individu, Role $role)
+    public function addIndividuRole(Individu $individu, Role $role): IndividuRole
     {
-        $result = $this->getIndividuRole($individu, $role);
+        $result = $this->findOneIndividuRole($individu, $role);
 
         if ($result === null) {
             $ur = new IndividuRole();
             $ur->setIndividu($individu);
             $ur->setRole($role);
-            $this->getEntityManager()->persist($ur);
             try {
+                $this->getEntityManager()->persist($ur);
                 $this->getEntityManager()->flush($ur);
-            } catch (OptimisticLockException $e) {
-                throw new RuntimeException("Un problème est survenu.", $e);
+            } catch (ORMException $e) {
+                throw new RuntimeException("Un problème est survenu lors de l'enregistrement de l'IndividuRole.", $e);
             }
             $result = $ur;
         }
+
         return $result;
-    }
-
-    /**
-     * @param Individu $individu
-     * @param Role $role
-     */
-    public function removeIndividuRole(Individu $individu, Role $role)
-    {
-        $result = $this->getIndividuRole($individu, $role);
-        $this->getEntityManager()->remove($result);
-        try {
-            $this->getEntityManager()->flush();
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Un problème est en BD.", $e);
-        }
-    }
-
-
-    /**
-     * @param int $structureType_id
-     * @return Profil[] $roles
-     */
-    public function getProfilByStructureType($structureType_id)
-    {
-        $qb = $this->entityManager->getRepository(Profil::class)->createQueryBuilder("rm")
-            //->join("TypeStructure", "ts", "WITH", "rm.structureType = ts.id")
-            ->andWhere('rm.structureType = :structureType')->setParameter("structureType", $structureType_id);
-        $roles = $qb->getQuery()->execute();
-        return $roles;
     }
 
     /**
@@ -223,7 +184,6 @@ class RoleService extends BaseService
      */
     public function addRoleByStructure($structure)
     {
-
         /** @var TypeStructure $type */
         $type = null;
         switch (true) {
@@ -244,15 +204,12 @@ class RoleService extends BaseService
         $roleModeles = $qb->getQuery()->execute();
 
         foreach ($roleModeles as $roleModele) {
-
-            $sourceCode = null;
-            $roleId = null;
             if ($structure instanceof Etablissement) {
                 $sourceCode = $this->sourceCodeStringHelper->addEtablissementPrefixTo($roleModele->getRoleCode() . "_" . $structure->getSourceCode(), $structure);
                 $roleId = $roleModele->getLibelle() . " " . $structure->getStructure()->getCode();
             } else {
                 $sourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo($roleModele->getRoleCode() . "_" . $structure->getSourceCode());
-                $roleId = $roleModele->getLibelle() . " " . $structure->getSigle();
+                $roleId = $roleModele->getLibelle() . " " . $structure->getStructure()->getSigle();
             }
 
             $role = $this->createRole($roleModele->getRoleCode(), $roleModele->getLibelle(), $sourceCode);
@@ -261,7 +218,7 @@ class RoleService extends BaseService
             $role->setStructure($structure->getStructure());
             try {
                 $this->entityManager->flush($role);
-            } catch (OptimisticLockException $e) {
+            } catch (ORMException $e) {
                 throw new RuntimeException("Erreur lors de l'enregistrement du rôle '{$role->getRoleId()}'", null, $e);
             }
 
@@ -270,13 +227,12 @@ class RoleService extends BaseService
                 $privilege->addRole($role);
                 try {
                     $this->entityManager->flush($privilege);
-                } catch (OptimisticLockException $e) {
+                } catch (ORMException $e) {
                     throw new RuntimeException(
                         "Erreur lors de l'ajout du privilège '{$privilege->getCode()}' au rôle '{$role->getRoleId()}'", null, $e);
                 }
             }
         }
-
     }
 
     /**
@@ -285,7 +241,7 @@ class RoleService extends BaseService
      * @param string $sourceCode
      * @return Role
      */
-    private function createRole($code, $libelle, $sourceCode)
+    private function createRole(string $code, string $libelle, string $sourceCode): Role
     {
         $appSource = $this->sourceService->fetchApplicationSource();
 
@@ -300,11 +256,11 @@ class RoleService extends BaseService
         $role->setOrdreAffichage("zzz");
 
         $this->entityManager->beginTransaction();
-        $this->entityManager->persist($role);
         try {
+            $this->entityManager->persist($role);
             $this->entityManager->flush($role);
             $this->entityManager->commit();
-        } catch (\Exception $e) {
+        } catch (ORMException $e) {
             $this->rollback();
             throw new RuntimeException("Erreur lors de l'enregistrement du rôle '{$role->getRoleId()}'.", null, $e);
         }
@@ -327,11 +283,11 @@ class RoleService extends BaseService
             throw new RuntimeException("Un problème est survenu.", $e);
         }
         if ($result !== null) {
-            $this->getEntityManager()->remove($result);
             try {
+                $this->getEntityManager()->remove($result);
                 $this->getEntityManager()->flush($result);
-            } catch (OptimisticLockException $e) {
-                throw new RuntimeException("Un problème est survenu.", $e);
+            } catch (ORMException $e) {
+                throw new RuntimeException("Un problème est survenu lors de la suppression de l'IndividuRole.", $e);
             }
         }
     }
@@ -349,80 +305,51 @@ class RoleService extends BaseService
         $ir->setIndividu($individu);
         $ir->setRole($role);
 
-        $this->getEntityManager()->persist($ir);
         try {
+            $this->getEntityManager()->persist($ir);
             $this->getEntityManager()->flush($ir);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Un problème est survenu.", $e);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenu lors de la création de l'IndividuRole.", $e);
         }
     }
 
     /**
      * @return Role[]
      */
-    public function findAllRoles()
+    public function findAllRoles(): array
     {
         $qb = $this->getRepository()->createQueryBuilder('r')
             ->addSelect('s')
-            ->leftJoin('r.structure', 's');
+            ->leftJoin('r.structure', 's')
+            ->leftJoinStructureSubstituante('s')
+            ->andWhereStructureEstNonSubstituee('s');
 
         return $qb->getQuery()->getResult();
-    }
-
-//    /**
-//     * @param Role $role
-//     * @return Role
-//     */
-//    public function updateRole($role)
-//    {
-//        try {
-//            $this->getEntityManager()->flush($role);
-//        } catch (OptimisticLockException $e) {
-//            throw new RuntimeException("Problème lors du change de l'ordre d'affichage du rôle [".$role->getId()."]");
-//        }
-//        return $role;
-//    }
-
-
-    public function getRolesEcolesDoctorales()
-    {
-        $typeStructureId = 2;
-
-        $qb = $this->getEntityManager()->getRepository(Role::class)->createQueryBuilder('role')
-            ->andWhere('role.typeStructureDependant = :typeStructureId')
-            ->setParameter('typeStructureId', $typeStructureId)
-            ->join('role.structure', 'structure')
-            ->leftJoin('structure.structureSubstituante', 'substitutionTo')
-            ->andWhere('substitutionTo.id IS NULL');
-
-        $result = $qb->getQuery()->getResult();
-        return $result;
     }
 
     /**
      * @return Role[]
      */
-    public function getRolesSansProfil()
+    public function findRolesSansProfil(): array
     {
         $qb = $this->getEntityManager()->getRepository(Role::class)->createQueryBuilder('role')
             ->leftJoin('role.profils', 'profil')
             ->andWhere('profil.id IS NULL')
             ->orderBy('role.roleId', 'ASC');
 
-        $roles = $qb->getQuery()->getResult();
-        return $roles;
+        return $qb->getQuery()->getResult();
     }
 
     /**
      * @param Role $role
      */
-    public function removeProfils($role)
+    public function removeProfils(Role $role)
     {
         foreach ($role->getProfils() as $profil) {
             $role->removeProfil($profil);
             try {
                 $this->getEntityManager()->flush($role);
-            } catch (OptimisticLockException $e) {
+            } catch (ORMException $e) {
                 throw new RuntimeException("Un problème est survenu lors de la déassociation entre le role et le profil.", $e);
             }
         }
@@ -444,47 +371,9 @@ class RoleService extends BaseService
             }
             try {
                 $this->getEntityManager()->flush($privilege);
-            } catch (OptimisticLockException $e) {
+            } catch (ORMException $e) {
                 throw new RuntimeException("Un problème est survenu lors de l'application du changement du profil aux rôles associés.", $e);
             }
         }
     }
-
-    public function getRolesAsGroupOptions()
-    {
-        /** @var Profil[] $profils */
-        $profils = [];
-        $profils[] = $this->getProfilService()->getProfil(11);
-        $profils[] = $this->getProfilService()->getProfil(101);
-        $profils[] = $this->getProfilService()->getProfil(121);
-        //$profils[] = $this->getProfilService()->getProfil(161);
-
-        $groupOptions = [];
-        foreach ($profils as $profil) {
-            $result = [];
-            $result["label"] = $profil->getLibelle();
-            $result["options"] = [];
-            /** @var Role $role */
-            foreach ($profil->getRoles() as $role) {
-                $this_option = [
-                    'value' => $role->getId(),
-//                    'attributes' => [
-//                        'data-content' => "<span class='badge ".$competence->getType()->getLibelle()."'>".$competence->getType()->getLibelle()."</span> &nbsp;". $competence->getLibelle(),
-//                    ],
-                    'label' => $role->getLibelle() . " (" . $role->getStructure()->getLibelle(). ")" ,
-                ];
-                $result["options"][] = $this_option;
-
-            }
-            $groupOptions[] = $result;
-        }
-        return $groupOptions;
-    }
-
-//SELECT * FROM ROLE R
-//JOIN STRUCTURE S on R.STRUCTURE_ID = S.ID
-//LEFT JOIN STRUCTURE_SUBSTIT SS on S.ID = SS.FROM_STRUCTURE_ID
-//WHERE TYPE_STRUCTURE_DEPENDANT_ID = 2
-//  and SS.TO_STRUCTURE_ID IS NULL
-
 }

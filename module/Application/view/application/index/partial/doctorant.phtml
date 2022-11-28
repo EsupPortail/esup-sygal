@@ -3,15 +3,16 @@
  * @var These[] $theses
  */
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 
 $appName = $this->appInfos()->nom;
 ?>
 
-        <h2><?php echo count($theses) > 1 ? "Vos thèses" : "Votre thèse" ?></h2>
-        <?php foreach ($theses as $these): ?>
-            <?php echo $this->partial('application/these/partial/panel', ['these' => $these]) ?>
-        <?php endforeach ?>
+<h2><?php echo count($theses) > 1 ? "Mes thèses" : "Ma thèse" ?></h2>
+
+<?php foreach ($theses as $these): ?>
+    <?php echo $this->partial('these/these/partial/panel', ['these' => $these]) ?>
+<?php endforeach ?>
 
 <p>
     Avec <?php echo $appName ?>, vous allez pouvoir :

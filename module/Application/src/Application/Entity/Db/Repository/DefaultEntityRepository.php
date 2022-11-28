@@ -10,14 +10,14 @@ class DefaultEntityRepository extends EntityRepository
     /**
      * @var string
      */
-    protected $queryBuilderClassName = DefaultQueryBuilder::class;
+    protected string $queryBuilderClassName = DefaultQueryBuilder::class;
 
     /**
      * @param string $alias
      * @param string $indexBy
      * @return DefaultQueryBuilder
      */
-    public function createQueryBuilder($alias, $indexBy = null)
+    public function createQueryBuilder($alias, $indexBy = null): DefaultQueryBuilder
     {
         $className = $this->queryBuilderClassName;
 

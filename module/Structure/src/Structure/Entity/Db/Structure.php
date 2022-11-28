@@ -6,6 +6,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\Source;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use InvalidArgumentException;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\LogicException;
@@ -58,7 +59,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     /**
      * @var string|null
      */
-    protected ?string $code;
+    protected ?string $code = null;
 
     /**
      * @var TypeStructure
@@ -66,19 +67,19 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     protected $typeStructure;
 
     /**
-     * @var Collection
+     * @var \Structure\Entity\Db\Etablissement|null
      */
-    protected $etablissement;
+    protected ?Etablissement $etablissement = null;
 
     /**
-     * @var Collection
+     * @var \Structure\Entity\Db\EcoleDoctorale|null
      */
-    protected $ecoleDoctorale;
+    protected ?EcoleDoctorale $ecoleDoctorale = null;
 
     /**
-     * @var Collection
+     * @var \Structure\Entity\Db\UniteRecherche|null
      */
-    protected $uniteRecherche;
+    protected ?UniteRecherche $uniteRecherche = null;
 
     /**
      * @var Role[] $roles
@@ -88,10 +89,9 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     /**
      * @var ArrayCollection|Structure[]
      */
-    private $structuresSubstituees;
+    private Collection $structuresSubstituees;
 
-    /** @var Structure */
-    private $structureSubstituante;
+    private Collection $structureSubstituante;
 
     /** @var ArrayCollection StructureDocument */
     private $documents;
@@ -111,11 +111,11 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
         $structureRattach = new Structure();
         $structureRattach->setTypeStructure($type);
         $structureRattach->setSource($source);
-        $structureRattach->setCheminLogo($data->getCheminLogo());
-        $structureRattach->setLibelle($data->getLibelle());
-        $structureRattach->setSigle($data->getSigle());
+        $structureRattach->setCheminLogo($data->getStructure()->getCheminLogo());
+        $structureRattach->setLibelle($data->getStructure()->getLibelle());
+        $structureRattach->setSigle($data->getStructure()->getSigle());
         $structureRattach->setSourceCode($data->getSourceCode());
-        $structureRattach->setCode($data->getCode());
+        $structureRattach->setCode($data->getStructure()->getCode());
 
         // structure concrète
         switch (true) {
@@ -142,6 +142,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
 
     public function __construct()
     {
+        $this->structureSubstituante = new ArrayCollection();
         $this->structuresSubstituees = new ArrayCollection();
         $this->documents = new ArrayCollection();
     }
@@ -296,7 +297,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     /**
      * @return TypeStructure
      */
-    public function getTypeStructure()
+    public function getTypeStructure(): TypeStructure
     {
         return $this->typeStructure;
     }
@@ -305,7 +306,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
      * @param TypeStructure $typeStructure
      * @return self
      */
-    public function setTypeStructure(TypeStructure $typeStructure)
+    public function setTypeStructure(TypeStructure $typeStructure): self
     {
         $this->typeStructure = $typeStructure;
 
@@ -313,53 +314,93 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
     }
 
     /**
-     * @return Etablissement|null
+     * Retourne la Structure "concrète" correspondant à cette Structure "abstraite".
+     *
+     * @return \Structure\Entity\Db\StructureConcreteInterface
      */
-    public function getEtablissement()
+    public function getStructureConcrete(): StructureConcreteInterface
     {
-        return $this->etablissement->first() ?: null;
+        switch (true) {
+            case $this->typeStructure->isEtablissement():
+                return $this->etablissement;
+            case $this->typeStructure->isEcoleDoctorale():
+                return $this->ecoleDoctorale;
+            case $this->typeStructure->isUniteRecherche():
+                return $this->uniteRecherche;
+            default:
+                throw new InvalidArgumentException("Type de structure inattendu");
+        }
     }
 
     /**
-     * @return EcoleDoctorale|null
+     * Retourne l'éventuel Etablissement correspondant à cette Structure "abstraite",
+     * telle que défini par la jointure Doctrine.
+     *
+     * @see getStructureConcrete()
+     * @return \Structure\Entity\Db\Etablissement|null
      */
-    public function getEcoleDoctorale()
+    public function getEtablissement(): ?Etablissement
     {
-        return $this->ecoleDoctorale->first() ?: null;
+        return $this->etablissement;
     }
 
     /**
-     * @return UniteRecherche|null
+     * Retourne l'éventuelle EcoleDoctorale correspondant à cette Structure "abstraite",
+     * telle que définie par la jointure Doctrine.
+     *
+     * @see getStructureConcrete()
+     * @return \Structure\Entity\Db\EcoleDoctorale|null
      */
-    public function getUniteRecherche()
+    public function getEcoleDoctorale(): ?EcoleDoctorale
     {
-        return $this->uniteRecherche->first() ?: null;
+        return $this->ecoleDoctorale;
     }
 
     /**
-     * @return Structure[]
+     * Retourne l'éventuelle UniteRecherche correspondant à cette Structure "abstraite",
+     * telle que défini par la jointure Doctrine.
+     *
+     * @see getStructureConcrete()
+     * @return \Structure\Entity\Db\UniteRecherche|null
      */
-    public function getStructuresSubstituees()
+    public function getUniteRecherche(): ?UniteRecherche
+    {
+        return $this->uniteRecherche;
+    }
+
+    /**
+     * Retourne les éventuelles structures substituées par celle-ci.
+     *
+     * @see getStructuresConcretesSubstituees()
+     * @return \Doctrine\Common\Collections\Collection|\Structure\Entity\Db\Structure[]
+     */
+    public function getStructuresSubstituees(): Collection
     {
         return $this->structuresSubstituees;
     }
 
     /**
-     * @return Structure
+     * Retourne les éventuelles structures "concrètes" substituées par celle-ci.
+     *
+     * @see getStructuresSubstituees()
+     * @return \Doctrine\Common\Collections\Collection|\Structure\Entity\Db\StructureConcreteInterface[]
      */
-    public function getStructureSubstituante()
+    public function getStructuresConcretesSubstituees(): Collection
     {
-        return $this->structureSubstituante;
+        return $this->structuresSubstituees->map(fn(Structure $s) => $s->getStructureConcrete());
     }
 
     /**
-     * @param Structure $structureSubstituante
-     * @return Structure
+     * Retourne l'éventuelle "structure substituante", càd qui substitue celle-ci.
+     *
+     * NB : c'est géré avec une relation to-many mais en pratique il ne peut exister qu'une seule structure substituante
+     * (sachant que les substitutions ne sont pas historisées mais supprimées).
+     *
+     * @return \Structure\Entity\Db\Structure|null
      */
-    public function setStructureSubstituante($structureSubstituante)
+    public function getStructureSubstituante(): ?Structure
     {
-        $this->structureSubstituante = $structureSubstituante;
-        return $this;
+        return $this->structureSubstituante->first() ?: null;
     }
 
     /**

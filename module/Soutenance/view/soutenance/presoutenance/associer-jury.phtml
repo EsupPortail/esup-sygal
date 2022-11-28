@@ -1,7 +1,7 @@
 <?php
 
-use Application\Entity\Db\Acteur;
-use Application\Entity\Db\These;
+use These\Entity\Db\Acteur;
+use These\Entity\Db\These;
 use Soutenance\Entity\Membre;
 
 /**
@@ -22,7 +22,7 @@ use Soutenance\Entity\Membre;
 <!--                --><?php //echo $acteur->getIndividu()->getNomComplet(false,false,false, true); ?>
                 <?php echo $acteur->getIndividu()->getNomComplet(false,false,false, true); ?>
                 <?php echo $acteur->getQualite(); ?>
-                <?php echo ($acteur->getEtablissement())?$acteur->getEtablissement()->getLibelle():"Établissement inconnu"; ?>
+                <?php echo ($acteur->getEtablissement())?$acteur->getEtablissement()->getStructure()->getLibelle():"Établissement inconnu"; ?>
             </option>
         <?php endforeach; ?>
     </select>

@@ -10,7 +10,7 @@ use Application\Service\AnomalieServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 use DateTime;
 use Indicateur\Form\IndicateurForm;
 use Indicateur\Model\Indicateur;
@@ -226,22 +226,22 @@ class IndicateurController extends AbstractActionController {
                     case 'Établissement d\'inscription' :
                         if ($entry[$fct]) {
                             /** @var Etablissement $etablissement */
-                            $etablissement = $this->getStructureService()->getStructuresConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_ETABLISSEMENT, $entry[$fct]);
-                            $value = $etablissement->getLibelle();
+                            $etablissement = $this->getStructureService()->findStructureConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_ETABLISSEMENT, $entry[$fct]);
+                            $value = $etablissement->getStructure()->getLibelle();
                         } else $value .= "";
                         break;
                     case 'École doctorale' :
                         if ($entry[$fct]) {
                             /** @var EcoleDoctorale $ecole */
-                            $ecole = $this->getStructureService()->getStructuresConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_ECOLE_DOCTORALE, $entry[$fct]);
-                            $value = $ecole->getLibelle();
+                            $ecole = $this->getStructureService()->findStructureConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_ECOLE_DOCTORALE, $entry[$fct]);
+                            $value = $ecole->getStructure()->getLibelle();
                         } else $value .= "";
                         break;
                     case 'Unité de recherche' :
                         if ($entry[$fct]) {
                             /** @var UniteRecherche $unite */
-                            $unite = $this->getStructureService()->getStructuresConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_UNITE_RECHERCHE, $entry[$fct]);
-                            $value = $unite->getLibelle();
+                            $unite = $this->getStructureService()->findStructureConcreteByTypeAndStructureConcreteId(TypeStructure::CODE_UNITE_RECHERCHE, $entry[$fct]);
+                            $value = $unite->getStructure()->getLibelle();
                         } else $value .= "";
                         break;
                     default:

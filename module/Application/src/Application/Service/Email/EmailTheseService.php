@@ -4,7 +4,7 @@ namespace Application\Service\Email;
 
 use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\Variable;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
@@ -22,7 +22,7 @@ class EmailTheseService
      */
     public function fetchEmailBdd(These $these) : string
     {
-        $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
+        $variable = $this->variableService->getRepository()->findOneByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
         return $variable->getValeur();
 
     }
@@ -84,7 +84,7 @@ class EmailTheseService
     public function fetchEmailEcoleDoctorale(These $these) : array
     {
         /** @var IndividuRole[] $individuRoles */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
+        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
         return $this->fetchEmailsByEtablissement($individuRoles, $these);
     }
 
@@ -95,7 +95,7 @@ class EmailTheseService
     public function fetchEmailUniteRecherche(These $these) : array
     {
         /** @var IndividuRole[] $individuRoles */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
+        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
         return $this->fetchEmailsByEtablissement($individuRoles, $these);
     }
 
@@ -106,7 +106,7 @@ class EmailTheseService
     public function fetchEmailMaisonDuDoctorat(These $these) : array
     {
         /** @var IndividuRole[] $individuRoles */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEtablissement()->getStructure());
+        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getEtablissement()->getStructure());
         $individuRoles = array_filter($individuRoles, function (IndividuRole $ir) { return $ir->getRole()->getCode() === Role::CODE_BDD;});
         return $this->fetchEmailsByEtablissement($individuRoles, $these);
     }

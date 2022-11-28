@@ -2,7 +2,7 @@
 
 namespace Application\Entity;
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\VWorkflow;
 
 /**

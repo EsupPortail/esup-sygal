@@ -4,23 +4,34 @@
  * @see \Soutenance\Controller\PropositionController::afficherSoutenancesParEcoleDoctoraleAction()
  * @var EcoleDoctorale $ecole
  * @var Proposition[] $soutenances
+ * @var Information[] $informations
  */
 
-use Application\Entity\Db\Acteur;
+use Information\Entity\Db\Information;
+use These\Entity\Db\Acteur;
 use Structure\Entity\Db\EcoleDoctorale;
 use Soutenance\Entity\Proposition;
 
-$this->headTitle("Soutenances autorisées pour l'école doctorale [".$ecole->getSigle()."] " . $ecole->getLibelle());
+$this->headTitle("Soutenances autorisées pour l'école doctorale [".$ecole->getStructure()->getSigle()."] " . $ecole->getStructure()->getLibelle());
 
 $count = count($soutenances);
 ?>
 
-<h1 class="page-header">
-    Soutenances autorisées pour l'école doctorale <br/>
-    [<?php echo $ecole->getSigle(); ?>] <?php echo $ecole->getLibelle(); ?>
-</h1>
 
-<?php if ($count > 0) : ?>
+<div class="row">
+
+    <div class="col-12 col-md-2">
+        <?php echo $this->partial('application/index/partial/informations', ['informations' => $informations]) ?>
+        <?php echo $this->partial('application/index/partial/menu-lateral') ?>
+
+    </div>
+    <div id="content" class="col-12 col-md-10">
+        <h1 class="page-header">
+            Soutenances autorisées pour l'école doctorale <br/>
+            [<?php echo $ecole->getStructure()->getSigle(); ?>] <?php echo $ecole->getStructure()->getLibelle(); ?>
+        </h1>
+
+        <?php if ($count > 0) : ?>
     <h2>Liste des soutenances à venir <span class="badge"><?php echo $count; ?> </span></h2>
     <?php foreach ($soutenances as $soutenance) : ?>
 
@@ -37,7 +48,7 @@ $count = count($soutenances);
             $membres = array_filter($acteurs, function (Acteur $a) { return $a->estMembreDuJury();});
         ?>
         <div class="card">
-            <div class="card-header bg-info">
+            <div class="card-header bg-dark text-white">
                 <h3>
                 <a href="<?php echo $this->url('these/identite', [ 'these' => $soutenance->getThese()->getId() ], [], true); ?>"
                    title="Accéder aux données de la thèse"
@@ -100,12 +111,12 @@ $count = count($soutenances);
                     </div>
                     <div class="col-md-7">
                         <dl>
-                            <?php $resume = $soutenance->getThese()->getMetadonnee()->getResume(); ?>
+                            <?php $resume = $soutenance->getThese()->getMetadonnee() ? $soutenance->getThese()->getMetadonnee()->getResume() : null; ?>
                             <?php if ($resume !== null) : ?>
                                 <dt> Résumé</dt>
                                 <dd> <?php  echo $resume?></dd>
                             <?php endif; ?>
-                            <?php $abstract = $soutenance->getThese()->getMetadonnee()->getResumeAnglais(); ?>
+                            <?php $abstract = $soutenance->getThese()->getMetadonnee() ? $soutenance->getThese()->getMetadonnee()->getResumeAnglais() : null; ?>
                             <?php if ($abstract !== null) : ?>
                                 <dt> Abstract</dt>
                                 <dd> <?php  echo $abstract?></dd>
@@ -119,3 +130,5 @@ $count = count($soutenances);
 <?php else: ?>
     <p class="lead">Aucune soutenance à venir</p>
 <?php endif; ?>
+    </div>
+</div>

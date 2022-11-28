@@ -2,8 +2,8 @@
 
 namespace Soutenance\Controller;
 
-use Application\Service\Acteur\ActeurService;
-use Application\Service\These\TheseService;
+use These\Service\Acteur\ActeurService;
+use These\Service\These\TheseService;
 use Interop\Container\ContainerInterface;
 use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Service\Avis\AvisService;

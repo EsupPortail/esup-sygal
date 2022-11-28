@@ -3,12 +3,12 @@
 namespace Application\Controller;
 
 use Fichier\Controller\Plugin\Uploader\UploaderPlugin;
-use Application\Controller\Plugin\Url\UrlThesePlugin;
+use These\Controller\Plugin\Url\UrlThesePlugin;
 use Doctorant\Controller\Plugin\UrlDoctorant;
 use Fichier\Controller\Plugin\UrlFichier;
-use Application\Controller\Plugin\UrlFichierThese;
+use These\Controller\Plugin\UrlFichierThese;
 use Application\Controller\Plugin\UrlWorkflow;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\RouteMatch;
 use Application\Service\UserContextServiceAwareInterface;

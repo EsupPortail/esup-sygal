@@ -11,11 +11,11 @@ use Application\Search\Filter\TextSearchFilter;
 use Application\Search\Financement\OrigineFinancementSearchFilter;
 use Application\Search\SearchService;
 use Application\Search\Sorter\SearchSorter;
-use Application\Search\These\TheseTextSearchFilter;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
+use These\Search\These\TheseTextSearchFilter;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Financement\FinancementServiceAwareTrait;
-use Application\Service\These\TheseSearchServiceAwareTrait;
-use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
+use These\Service\These\TheseSearchServiceAwareTrait;
+use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use InvalidArgumentException;
@@ -134,18 +134,18 @@ class RapportSearchService extends SearchService
 
     private function fetchEcolesDoctorales(): array
     {
-        return $this->structureService->getAllStructuresAffichablesByType(
+        return $this->structureService->findAllStructuresAffichablesByType(
             TypeStructure::CODE_ECOLE_DOCTORALE, 'sigle', true, true);
     }
 
     private function fetchUnitesRecherches(): array
     {
-        return $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'code', false, true);
+        return $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'code', false, true);
     }
 
     private function fetchOriginesFinancements(): array
     {
-        $values = $this->getFinancementService()->getOriginesFinancements("libelleLong");
+        $values = $this->getFinancementService()->findOriginesFinancements("libelleLong");
 
         // dédoublonnage (sur le code origine) car chaque établissement pourrait fournir les mêmes données
         $origines = [];
@@ -288,7 +288,7 @@ class RapportSearchService extends SearchService
     public function createQueryBuilder(): QueryBuilder
     {
         $qb = $this->rapportService->getRepository()->createQueryBuilder('ra')
-            ->addSelect('tr, these, f, d, i')
+            ->addSelect('tr, these, etab, ed, ur, f, d, i')
             ->join('ra.typeRapport', 'tr')
             ->join('ra.these', 'these')
             ->join("these.etablissement", 'etab')
@@ -360,7 +360,11 @@ class RapportSearchService extends SearchService
         $sorter->setQueryBuilderApplier(
             function (SearchSorter $sorter, QueryBuilder $qb) {
                 $qb
+                    ->addSelect('s_sort')
                     ->join('etab.structure', 's_sort')
+                    ->addSelect('structureSubstituante_sort')
+                    ->leftJoin('s_sort.structureSubstituante', 'structureSubstituante_sort')
+                    ->addOrderBy('structureSubstituante_sort.code', $sorter->getDirection())
                     ->addOrderBy('s_sort.code', $sorter->getDirection());
             }
         );
@@ -374,7 +378,11 @@ class RapportSearchService extends SearchService
         $sorter->setQueryBuilderApplier(
             function (SearchSorter $sorter, QueryBuilder $qb) {
                 $qb
+                    ->addSelect('ed_s_sort')
                     ->leftJoin("ed.structure", 'ed_s_sort')
+                    ->addSelect('structureSubstituante_sort')
+                    ->leftJoin('ed_s_sort.structureSubstituante', 'structureSubstituante_sort')
+                    ->addOrderBy('structureSubstituante_sort.code', $sorter->getDirection())
                     ->addOrderBy('ed_s_sort.code', $sorter->getDirection());
             }
         );
@@ -389,7 +397,11 @@ class RapportSearchService extends SearchService
             function (SearchSorter $sorter, QueryBuilder $qb) {
                 $direction = $sorter->getDirection();
                 $qb
+                    ->addSelect('ur_s_sort')
                     ->leftJoin("ur.structure", 'ur_s_sort')
+                    ->addSelect('structureSubstituante_sort')
+                    ->leftJoin('ur_s_sort.structureSubstituante', 'structureSubstituante_sort')
+                    ->addOrderBy('structureSubstituante_sort.code', $sorter->getDirection())
                     ->addOrderBy('ur_s_sort.code', $direction);
             }
         );

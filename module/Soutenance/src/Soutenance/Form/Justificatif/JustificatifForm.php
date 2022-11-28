@@ -47,7 +47,7 @@ class JustificatifForm extends Form {
             'options' => [
                 'label' => 'Associer à un membre du jury :',
                 'empty_option' => 'Aucun',
-                'value_options' => ($this->getObject()?$this->getPropositionService()->getMembresAsOptions($this->getObject()->getProposition()):null),
+                'value_options' => ($this->getObject()?$this->getPropositionService()->extractMembresAsOptionsFromProposition($this->getObject()->getProposition()):null),
                 'attributes' => [
                     'class' => 'bootstrap-selectpicker show-tick',
                     'data-live-search' => 'true',

@@ -2,14 +2,11 @@
 
 namespace Individu\Controller;
 
-use Application\Entity\Db\Acteur;
-use Structure\Entity\Db\TypeStructure;
+use Application\Entity\Db\Role;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
-use Structure\Service\Structure\StructureServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Doctorant\Service\DoctorantServiceAwareTrait;
@@ -24,6 +21,10 @@ use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Paginator\Paginator as LaminasPaginator;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
+use Structure\Entity\Db\TypeStructure;
+use Structure\Service\Structure\StructureServiceAwareTrait;
+use These\Entity\Db\Acteur;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 
 /**
  * @property \Individu\Service\Search\IndividuSearchService $searchService
@@ -90,12 +91,12 @@ class IndividuController extends AbstractActionController implements SearchContr
         $rolesAffectesAuto = $this->collectRolesDynamiquesForIndividu($individu);
 
         // établissements : pour l'instant les rôles ne concernent que des établissements d'inscription donc on flitre
-        $etablissementsQb = $this->structureService->getAllStructuresAffichablesByTypeQb(TypeStructure::CODE_ETABLISSEMENT, 'libelle', true);
+        $etablissementsQb = $this->structureService->findAllStructuresAffichablesByTypeQb(TypeStructure::CODE_ETABLISSEMENT, 'libelle', true);
         $etablissementsQb->join('structure.etablissement', 'etab', Join::WITH, 'etab.estInscription = true');
         $etablissements = $etablissementsQb->getQuery()->execute();
 
-        $unites = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle', true, true);
-        $ecoles = $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', true, true);
+        $unites = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'libelle', true, true);
+        $ecoles = $this->structureService->findAllStructuresAffichablesByType(TypeStructure::CODE_ECOLE_DOCTORALE, 'libelle', true, true);
 
         return new ViewModel([
             'individu' => $individu,
@@ -118,7 +119,7 @@ class IndividuController extends AbstractActionController implements SearchContr
         $roles = [];
 
         // rôles d'acteur
-        $acteurs = $this->acteurService->getRepository()->findActeursByIndividu($individu);
+        $acteurs = $this->acteurService->getRepository()->findActeursForIndividu($individu);
         if ($acteurs) {
             $acteursDirecteurThese = $this->acteurService->filterActeursDirecteurThese($acteurs);
             $acteursCoDirecteurThese = $this->acteurService->filterActeursCoDirecteurThese($acteurs);
@@ -134,7 +135,8 @@ class IndividuController extends AbstractActionController implements SearchContr
 
         $doctorant = $this->doctorantService->getRepository()->findOneByIndividu($individu);
         if ($doctorant) {
-            $roles[] = $this->roleService->getRepository()->findRoleDoctorantForEtab($doctorant->getEtablissement());
+            $roles[] = $this->roleService->getRepository()
+                ->findOneByCodeAndStructureConcrete(Role::CODE_DOCTORANT, $doctorant->getEtablissement());
         }
 
         return array_unique($roles);

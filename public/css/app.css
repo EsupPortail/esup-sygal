@@ -376,6 +376,10 @@ table.these-fiche {
   max-width: 400px;
   font-size: 85%; }
 
+.these-card {
+  margin-top: 1em;
+  margin-bottom: 1.5em; }
+
 .popover {
   max-width: 100%;
   /* Max Width of the popover (depending on the container!) */ }
@@ -764,6 +768,9 @@ p.avis-complem {
     padding: 0.5rem; }
   .card.validation-rapport-activite p {
     margin-bottom: 0.5rem; }
+
+.icon::before {
+  vertical-align: text-bottom; }
 
 .icon.icon-danger:before {
   content: "\f071"; }

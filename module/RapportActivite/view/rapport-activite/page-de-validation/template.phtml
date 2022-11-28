@@ -7,20 +7,22 @@ use RapportActivite\Entity\Db\RapportActiviteAvis;
  * @var \RapportActivite\Entity\Db\RapportActivite $rapport
  * @var \RapportActivite\Service\Fichier\Exporter\PageValidationExportData $data
  *
- * @see \RapportActivite\Service\RapportActiviteService::createPageValidationData() pour la génération de $data
+ * @see \RapportActivite\Service\RapportActiviteService::createPageValidationDataForRapport() pour la génération de $data
  */
 ?>
 
 <!-- SECTION DU LOGO DE LA COMUE -------------------------------------------------------------------------------------->
-<div style="text-align: center; margin-bottom: 30px;">
-    <div class='logo-comue'>
-        <?php if ($data->logoCOMUE !== null): ?>
-            <img src="<?php echo $data->logoCOMUE ?>" alt="Logo de la COMUE"/>
-        <?php else: ?>
-            <span style='background-color:red;'> COMUE ou logo de la COMUE non renseigné. </span>
-        <?php endif; ?>
+<?php if ($data->useCOMUE): ?>
+    <div style="text-align: center; margin-bottom: 30px;">
+        <div class='logo-comue'>
+            <?php if ($data->logoCOMUE): ?>
+                <img src="<?php echo $data->logoCOMUE ?>" alt="Logo de la COMUE"/>
+            <?php else: ?>
+                <span style='background-color:red;'> COMUE ou logo de la COMUE non renseigné. </span>
+            <?php endif; ?>
+        </div>
     </div>
-</div>
+<?php endif; ?>
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
 <div class='bandeau-titre'>

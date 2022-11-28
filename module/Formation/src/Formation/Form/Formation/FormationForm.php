@@ -2,6 +2,8 @@
 
 namespace Formation\Form\Formation;
 
+use Formation\Entity\Db\Interfaces\HasModaliteInterface;
+use Formation\Entity\Db\Traits\HasModaliteTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use Formation\Service\Module\ModuleServiceAwareTrait;
@@ -118,7 +120,9 @@ class FormationForm extends Form {
             'options' => [
                 'label' => "Modalité :",
                 'empty_option' => "Non précisée",
-                'value_options' => ['P' => 'Présentiel', 'D' => 'Distanciel'],
+                'value_options' => [
+                    HasModaliteInterface::MODALITES,
+                ],
             ],
             'attributes' => [
                 'id' => 'modalite',

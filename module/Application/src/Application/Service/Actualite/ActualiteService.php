@@ -72,4 +72,9 @@ class ActualiteService
         $this->url = $url;
         return $this;
     }
+
+    public function isSoutenance() : bool
+    {
+        return true;
+    }
 }

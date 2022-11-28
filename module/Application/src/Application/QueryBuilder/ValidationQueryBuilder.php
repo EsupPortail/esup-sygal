@@ -2,7 +2,7 @@
 
 namespace Application\QueryBuilder;
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
 use Application\QueryBuilder\Expr\AndWhereTheseIs;
@@ -13,7 +13,7 @@ class ValidationQueryBuilder extends DefaultQueryBuilder
 {
     protected $rootAlias = "v";
 
-    public function initWithDefault()
+    public function initWithDefault(): self
     {
         $this
             ->addSelect("t, tv, i")

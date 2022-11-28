@@ -135,10 +135,21 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     }
 
     /**
-     * @return Structure
+     * Retourne l'éventuelle structure liée *ou son substitut le cas échéant*.
+     *
+     * **ATTENTION** : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
+     * '.structure' puis 'structure.structureSubstituante'.
+     *
+     * @param bool $returnSubstitIfExists À true, retourne la structure substituante s'il y en a une ; sinon la structure d'origine.
+     * @see Structure::getStructureSubstituante()
+     * @return Structure|null
      */
-    public function getStructure()
+    public function getStructure(bool $returnSubstitIfExists = true): ?Structure
     {
+        if ($returnSubstitIfExists && $this->structure && ($sustitut = $this->structure->getStructureSubstituante())) {
+            return $sustitut;
+        }
+
         return $this->structure;
     }
 
@@ -146,7 +157,7 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
      * @param Structure $structure
      * @return Role
      */
-    public function setStructure($structure)
+    public function setStructure(Structure $structure): self
     {
         $this->structure = $structure;
 
@@ -334,7 +345,7 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
         $str = $this->getLibelle();
 
         if ($this->getStructure() !== null) {
-            $str .= " " . $this->getStructure()->getCode();
+            $str .= " " . $this->getStructure()->getSigle();
         }
 
         return $str;

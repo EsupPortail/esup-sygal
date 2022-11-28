@@ -113,7 +113,7 @@ function generateSelect($structures, $id, $roles = null)
     foreach ($structuresValides as $structure) {
         $texte .= '<option value="' . $structure->getStructure()->getId() . '">';
         $texte .= $structure->getStructure()->getLibelle();
-        $texte .= ' (' . $structure->getSigle() . ')';
+        $texte .= ' (' . $structure->getStructure()->getSigle() . ')';
         $texte .= '</option>';
     }
     $texte .= "</select>";
@@ -228,8 +228,7 @@ function generateRolesEcoles($individu, $roles, $rolesAffectes, $ecoles, $canMod
                 $texte .= '<div id="disponible_' . $role->getId() . '"';
                 if (is_array($rolesAffectes) && array_search($role, $rolesAffectes) !== false) $texte .= ' style="display:none;" ';
                 $texte .= '>';
-                $texte .= $role->getLibelle();
-                $texte .= $role->getStructure()->getSigle();
+                $texte .= $role;
                 if ($canModifier) {
                     $texte .= '<span class="add-role icon icon-plus text-success" title="Attribuer ce rôle" id="' . $individu->getId() . '_' . $role->getId() . '"></span>';
                 }

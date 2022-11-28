@@ -24,19 +24,20 @@ class Session implements HistoriqueAwareInterface,
     use HasModaliteTrait;
     use HasTypeTrait;
 
-    const ETAT_PREPARATION      = 'P';
-    const ETAT_INSCRIPTION      = 'O';
-    const ETAT_EN_COURS         = 'E';
-    const ETAT_CLOS_FINAL       = 'C';
+    const ETAT_PREPARATION       = 'P';
+    const ETAT_INSCRIPTION       = 'O';
+    const ETAT_INSCRIPTION_CLOSE = 'F';
+    const ETAT_IMMINENTE         = 'I';
+    const ETAT_EN_COURS          = 'E';
+    const ETAT_CLOS_FINAL        = 'C';
     const ETATS = [
         self::ETAT_PREPARATION => self::ETAT_PREPARATION,
         self::ETAT_INSCRIPTION => self::ETAT_INSCRIPTION,
+        self::ETAT_INSCRIPTION_CLOSE => self::ETAT_INSCRIPTION_CLOSE,
+        self::ETAT_IMMINENTE => self::ETAT_IMMINENTE,
         self::ETAT_EN_COURS => self::ETAT_EN_COURS,
         self::ETAT_CLOS_FINAL => self::ETAT_CLOS_FINAL,
     ];
-
-    const MODALITE_PRESENTIELLE = 'présentielle';
-    const MODALITE_DISTANCIELLE = 'distancielle';
 
     private int $id;
     private ?int $index = null;
@@ -223,6 +224,12 @@ class Session implements HistoriqueAwareInterface,
         return $inscriptions;
     }
 
+    public function getNonClasses() : array
+    {
+        $inscriptions = array_filter($this->getInscriptions()->toArray(), function (Inscription $a) { return $a->estNonHistorise() AND $a->getListe() === null; });
+        return $inscriptions;
+    }
+
     /**
      * @return string|null
      */
@@ -254,7 +261,7 @@ class Session implements HistoriqueAwareInterface,
             }
         }
         $interval = $somme->diff(new DateTime('00:00'));
-        return ((float) $interval->format('%h')) + ((float) $interval->format('%i'))/60;
+        return ((float) $interval->format('%d')*24 + (float) $interval->format('%h')) + ((float) $interval->format('%i'))/60;
     }
 
     public function estTerminee() : bool
@@ -354,5 +361,11 @@ class Session implements HistoriqueAwareInterface,
         $texte .= '</tbody>';
         $texte .= '</table>';
         return $texte;
+    }
+
+    public function isFinInscription() : bool
+    {
+        $etatCode = $this->getEtat()->getCode();
+        return ($etatCode === Session::ETAT_INSCRIPTION_CLOSE OR $etatCode === Session::ETAT_IMMINENTE);
     }
 }

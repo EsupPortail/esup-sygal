@@ -4,7 +4,7 @@ namespace Application\Form\Rapport;
 
 use Application\Entity\AnneeUniv;
 use Application\Entity\Db\Rapport;
-use Application\Entity\Db\TheseAnneeUniv;
+use These\Entity\Db\TheseAnneeUniv;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\File;
 use Laminas\Form\Element\Hidden;

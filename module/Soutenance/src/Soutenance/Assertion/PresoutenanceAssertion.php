@@ -3,7 +3,7 @@
 namespace Soutenance\Assertion;
 
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Service\UserContextServiceAwareTrait;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Laminas\Permissions\Acl\Acl;

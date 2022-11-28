@@ -14,6 +14,7 @@ use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilterProviderInterface;
+use Laminas\Validator\EmailAddress;
 
 class IndividuForm extends Form implements InputFilterProviderInterface
 {
@@ -115,6 +116,20 @@ class IndividuForm extends Form implements InputFilterProviderInterface
      */
     public function getInputFilterSpecification(): array
     {
+        /** @var \Individu\Entity\Db\Individu $individu */
+        $individu = $this->getObject();
+
+        $emailValidators = [];
+        $emailValidators[] = [
+            'name' => EmailAddress::class,
+        ];
+        if (!$individu instanceof Individu || !$individu->getId()) {
+            $emailValidators[] = [
+                'name' => NewEmailValidator::class,
+                'options' => ['perimetre' => ['individu']],
+            ];
+        }
+
         return [
             'civilite' => [
                 'name' => 'civilite',
@@ -139,12 +154,7 @@ class IndividuForm extends Form implements InputFilterProviderInterface
             'email' => [
                 'name' => 'email',
                 'required' => false,
-                'validators' => [
-                    [
-                        'name' => NewEmailValidator::class,
-                        'options' => ['perimetre' => ['individu']],
-                    ],
-                ],
+                'validators' => $emailValidators,
             ],
             'dateNaissance' => [
                 'name' => 'dateNaissance',

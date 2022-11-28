@@ -1,0 +1,20 @@
+<?php
+
+use These\Entity\Db\These;
+use Application\View\Renderer\PhpRenderer;
+use Laminas\Form\Form;
+
+/**
+ * @var $this PhpRenderer
+ * @var These $these
+ * @var Form $form
+ */
+
+$canEdit = true;
+?>
+
+<p>L'auteur déclare que la version retraitée :</p>
+
+<?php echo $this->form()->render($form) ?>
+
+

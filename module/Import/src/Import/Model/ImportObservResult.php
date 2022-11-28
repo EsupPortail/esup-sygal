@@ -2,7 +2,7 @@
 
 namespace Import\Model;
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use DateTime;
 use UnicaenDbImport\Entity\Db\AbstractImportObserv;
 

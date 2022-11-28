@@ -17,6 +17,7 @@ class Etablissement
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
+    use StructureAwareTrait;
 
     const SOURCE_CODE_ETABLISSEMENT_INCONNU = 'ETAB_INCONNU';
 
@@ -27,16 +28,6 @@ class Etablissement
     protected $theses;
     protected $doctorants;
     protected $roles;
-
-    /**
-     * @var string
-     */
-    protected $code;
-
-    /**
-     * @var Structure
-     */
-    protected $structure;
 
     /**
      * @var string
@@ -89,26 +80,6 @@ class Etablissement
     }
 
     /**
-     * Retourne le code de cet établissement ou null, ex: '0761904GE' pour l'Université de Rouen.
-     *
-     * @return string|null
-     */
-    public function getCode(): ?string
-    {
-        return $this->code;
-    }
-
-    /**
-     * @param string $code
-     * @return self
-     */
-    public function setCode(string $code): self
-    {
-        $this->code = $code;
-        return $this;
-    }
-
-    /**
      * Set sourceCode
      *
      * @param string $sourceCode
@@ -126,7 +97,7 @@ class Etablissement
      *
      * @return string
      */
-    public function getSourceCode()
+    public function getSourceCode(): ?string
     {
         return $this->sourceCode;
     }
@@ -145,38 +116,6 @@ class Etablissement
     public function setDomaine($domaine)
     {
         $this->domaine = $domaine;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLibelle()
-    {
-        return $this->getStructure()->getLibelle();
-    }
-
-    /**
-     * @param string $libelle
-     */
-    public function setLibelle($libelle)
-    {
-        $this->getStructure()->setLibelle($libelle);
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getSigle(): ?string
-    {
-        return $this->getStructure()->getSigle();
-    }
-
-    /**
-     * @param string|null $sigle
-     */
-    public function setSigle(string $sigle = null)
-    {
-        $this->getStructure()->setSigle($sigle);
     }
 
     /**
@@ -255,38 +194,20 @@ class Etablissement
     }
 
     /**
-     * @return string
+     * Retourne l'éventuel établissement substituant celui-ci.
+     *
+     * ATTENTION : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
+     * '.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.etablissement'.
+     *
+     * @return \Structure\Entity\Db\Etablissement|null
      */
-    public function getCheminLogo()
+    public function getEtablissementSubstituant(): ?Etablissement
     {
-        return $this->getStructure()->getCheminLogo();
-    }
+        if ($substit = $this->structure->getStructureSubstituante()) {
+            return $substit->getEtablissement();
+        }
 
-    /**
-     * @param string $cheminLogo
-     */
-    public function setCheminLogo($cheminLogo)
-    {
-        $this->getStructure()->setCheminLogo($cheminLogo);
-    }
-
-    /**
-     * @param Structure $structure
-     * @return self
-     */
-    public function setStructure($structure)
-    {
-        $this->structure = $structure;
-
-        return $this;
-    }
-
-    /**
-     * @return Structure
-     */
-    public function getStructure()
-    {
-        return $this->structure;
+        return null;
     }
 
     /**
@@ -320,7 +241,7 @@ class Etablissement
      */
     public function estToutEtablissementConfondu()
     {
-        return $this->getStructure()->getCode() === self::CODE_TOUT_ETABLISSEMENT_CONFONDU;
+        return $this->structure->getCode() === self::CODE_TOUT_ETABLISSEMENT_CONFONDU;
     }
 
     /**
@@ -328,8 +249,8 @@ class Etablissement
      */
     public function createSearchFilterValueOption(): array
     {
-        $label = ($this->getCode() ?: $this->getSigle()) ?: $this->getLibelle();
-        if ($this->getStructure()->estFermee()) {
+        $label = ($this->structure->getCode() ?: $this->structure->getSigle()) ?: $this->structure->getLibelle();
+        if ($this->structure->estFermee()) {
             $label .= "&nbsp; FERMÉ";
         }
 

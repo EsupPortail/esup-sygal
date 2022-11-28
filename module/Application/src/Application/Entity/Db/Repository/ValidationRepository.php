@@ -3,7 +3,7 @@
 namespace Application\Entity\Db\Repository;
 
 use Individu\Entity\Db\Individu;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Application\QueryBuilder\ValidationQueryBuilder;
 
@@ -15,7 +15,7 @@ class ValidationRepository extends DefaultEntityRepository
     /**
      * @var string
      */
-    protected $queryBuilderClassName = ValidationQueryBuilder::class;
+    protected string $queryBuilderClassName = ValidationQueryBuilder::class;
 
     /**
      * @param string $code

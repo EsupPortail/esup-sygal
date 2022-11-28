@@ -5,7 +5,7 @@ namespace Import\Model\Repository;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Import\Model\ImportObserv;
 use Import\Model\ImportObservResult;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\RuntimeException;

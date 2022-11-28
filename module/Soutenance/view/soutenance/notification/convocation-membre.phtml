@@ -1,7 +1,7 @@
 <?php
 
-use Application\Entity\Db\These;
-use Application\Service\FichierThese\PdcData;
+use These\Entity\Db\These;
+use These\Service\FichierThese\PdcData;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -34,7 +34,7 @@ Par décision en date du
                 Date manquante,
         </span>
 <?php endif; ?>
-le chef de l'établissement <?php echo  $these->getEtablissement()->getLibelle(); ?> vous a désigné<?php if($civilite==="Madame") echo "e"; ?>
+le chef de l'établissement <?php echo  $these->getEtablissement()->getStructure()->getLibelle(); ?> vous a désigné<?php if($civilite==="Madame") echo "e"; ?>
 pour participer au jury devant examiner les travaux de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(true); ?>
 en vue de l'obtention du diplôme : <br/>
 Doctorat en <?php echo $these->getLibelleDiscipline(); ?>.

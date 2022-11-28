@@ -2,7 +2,7 @@
 
 namespace Soutenance\Service\Membre;
 
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
@@ -244,7 +244,7 @@ class MembreService {
         $membre->setGenre(($acteur->getIndividu()->estUneFemme())?"F":"H");
         $qualite = $this->getQualiteService()->getQualiteByLibelle($acteur->getQualite());
         $membre->setQualite(($qualite !== null)?$qualite:$inconnue);
-        $membre->setEtablissement(($acteur->getEtablissement())?$acteur->getEtablissement()->getLibelle():"Etablissement inconnu");
+        $membre->setEtablissement(($acteur->getEtablissement())?$acteur->getEtablissement()->getStructure()->getLibelle():"Etablissement inconnu");
         $membre->setRole(Membre::MEMBRE_JURY);
         $membre->setExterieur("non");
         $membre->setEmail($acteur->getIndividu()->getEmail());

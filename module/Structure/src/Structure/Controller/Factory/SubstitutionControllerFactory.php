@@ -2,24 +2,22 @@
 
 namespace Structure\Controller\Factory;
 
+use Application\SourceCodeStringHelper;
+use Doctrine\ORM\EntityManager;
+use Interop\Container\ContainerInterface;
 use Structure\Controller\SubstitutionController;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Structure\StructureService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
-use Application\SourceCodeStringHelper;
-use Doctrine\ORM\EntityManager;
-use Interop\Container\ContainerInterface;
 
 class SubstitutionControllerFactory
 {
     /**
-     * Create service
-     *
-     * @param ContainerInterface $container
-     * @return SubstitutionController
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): SubstitutionController
     {
         /**
          * @var EntityManager $entityManager

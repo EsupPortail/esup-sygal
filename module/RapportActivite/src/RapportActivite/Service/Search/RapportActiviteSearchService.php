@@ -4,17 +4,18 @@ namespace RapportActivite\Service\Search;
 
 use Application\Entity\Db\Interfaces\TypeRapportAwareTrait;
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
+use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Search\Filter\TextSearchFilter;
 use Application\Search\Financement\OrigineFinancementSearchFilter;
 use Application\Search\SearchService;
 use Application\Search\Sorter\SearchSorter;
-use Application\Search\These\TheseTextSearchFilter;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
+use These\Search\These\TheseTextSearchFilter;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Financement\FinancementServiceAwareTrait;
-use Application\Service\These\TheseSearchServiceAwareTrait;
-use Application\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
+use These\Service\These\TheseSearchServiceAwareTrait;
+use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use InvalidArgumentException;
@@ -64,10 +65,25 @@ class RapportActiviteSearchService extends SearchService
      */
     public function init()
     {
-        $etablissementInscrFilter = $this->getEtablissementTheseSearchFilter()->setWhereField('etab.sourceCode');
+        $etablissementInscrFilter = $this->getEtablissementTheseSearchFilter()
+            ->setQueryBuilderApplier(function (SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
+                $qb
+                    ->andWhere('etab.sourceCode = :sourceCodeEtab OR etab_structureSubstituante.sourceCode = :sourceCodeEtab')
+                    ->setParameter('sourceCodeEtab', $filter->getValue());
+            });
+        $ecoleDoctoraleFilter = $this->getEcoleDoctoraleSearchFilter()
+            ->setQueryBuilderApplier(function (SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
+                $qb
+                    ->andWhere('ed.sourceCode = :sourceCodeED OR ed_structureSubstituante.sourceCode = :sourceCodeED')
+                    ->setParameter('sourceCodeED', $filter->getValue());
+            });
+        $uniteRechercheFilter = $this->getUniteRechercheSearchFilter()
+            ->setQueryBuilderApplier(function (SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
+                $qb
+                    ->andWhere('ur.sourceCode = :sourceCodeUR OR ur_structureSubstituante.sourceCode = :sourceCodeUR')
+                    ->setParameter('sourceCodeUR', $filter->getValue());
+            });
         $origineFinancementFilter = $this->getOrigineFinancementSearchFilter();
-        $uniteRechercheFilter = $this->getUniteRechercheSearchFilter()->setWhereField('ur.sourceCode');
-        $ecoleDoctoraleFilter = $this->getEcoleDoctoraleSearchFilter()->setWhereField('ed.sourceCode');
         $anneeRapportActiviteInscrFilter = $this->getAnneeRapportActiviteSearchFilter();
         $avisFourniSearchFilter = $this->getAvisFourniSearchFilter();
         $avisAttenduSearchFilter = $this->getAvisAttenduSearchFilter();
@@ -115,7 +131,7 @@ class RapportActiviteSearchService extends SearchService
         // 'rapportAvis->avis->avisType'.
 
         $qb = $this->rapportActiviteService->getRepository()->createQueryBuilder('ra')
-            ->addSelect('tr, these, f, d, i, rav, raa, a, at')
+            ->addSelect('tr, these, etab, f, d, i, ed, ur, rav, raa, a, at')
             ->join('ra.typeRapport', 'tr')
             ->join('ra.these', 'these')
             ->join("these.etablissement", 'etab')
@@ -130,6 +146,14 @@ class RapportActiviteSearchService extends SearchService
             ->leftJoin('a.avisType', 'at')
             ->andWhereNotHistorise();
 
+        $qb
+            ->leftJoin('etab.structure', 'etab_structure')->addSelect('etab_structure')
+            ->leftJoin('ed.structure', 'ed_structure')->addSelect('ed_structure')
+            ->leftJoin('ur.structure', 'ur_structure')->addSelect('ur_structure')
+            ->leftJoinStructureSubstituante('etab_structure', 'etab_structureSubstituante')
+            ->leftJoinStructureSubstituante('ed_structure', 'ed_structureSubstituante')
+            ->leftJoinStructureSubstituante('ur_structure', 'ur_structureSubstituante');
+
         if ($this->typeRapport !== null) {
             $qb->andWhere('tr = :type')->setParameter('type', $this->typeRapport);
         }
@@ -139,23 +163,29 @@ class RapportActiviteSearchService extends SearchService
 
     private function fetchEtablissements(): array
     {
+        // ETAB non substitués
         return $this->etablissementService->getRepository()->findAllEtablissementsInscriptions(true);
     }
 
     private function fetchEcolesDoctorales(): array
     {
-        return $this->structureService->getAllStructuresAffichablesByType(
-            TypeStructure::CODE_ECOLE_DOCTORALE, 'sigle', true, true);
+        // ED non substituées
+        return $this->structureService->findAllStructuresAffichablesByType(
+            TypeStructure::CODE_ECOLE_DOCTORALE, 'sigle', true, true
+        );
     }
 
     private function fetchUnitesRecherches(): array
     {
-        return $this->structureService->getAllStructuresAffichablesByType(TypeStructure::CODE_UNITE_RECHERCHE, 'code', false, true);
+        // UR non substituées
+        return $this->structureService->findAllStructuresAffichablesByType(
+            TypeStructure::CODE_UNITE_RECHERCHE, 'code', false, true
+        );
     }
 
     private function fetchOriginesFinancements(): array
     {
-        $values = $this->getFinancementService()->getOriginesFinancements("libelleLong");
+        $values = $this->getFinancementService()->findOriginesFinancements("libelleLong");
 
         // dédoublonnage (sur le code origine) car chaque établissement pourrait fournir les mêmes données
         $origines = [];
@@ -398,13 +428,7 @@ class RapportActiviteSearchService extends SearchService
     public function createSorterEtablissement(): SearchSorter
     {
         $sorter = new SearchSorter("Établissement<br>d'inscr.", EtablissementSearchFilter::NAME);
-        $sorter->setQueryBuilderApplier(
-            function (SearchSorter $sorter, QueryBuilder $qb) {
-                $qb
-                    ->join('etab.structure', 's_sort')
-                    ->addOrderBy('s_sort.code', $sorter->getDirection());
-            }
-        );
+        $sorter->setOrderByField("etab_structureSubstituante.code, etab_structure.code");
 
         return $sorter;
     }
@@ -412,13 +436,7 @@ class RapportActiviteSearchService extends SearchService
     public function createSorterEcoleDoctorale(): SearchSorter
     {
         $sorter = new SearchSorter("École doctorale", EcoleDoctoraleSearchFilter::NAME);
-        $sorter->setQueryBuilderApplier(
-            function (SearchSorter $sorter, QueryBuilder $qb) {
-                $qb
-                    ->leftJoin("ed.structure", 'ed_s_sort')
-                    ->addOrderBy('ed_s_sort.code', $sorter->getDirection());
-            }
-        );
+        $sorter->setOrderByField("toNumber(ed_structureSubstituante.code, '9999999'), toNumber(ed_structure.code, '9999999')");
 
         return $sorter;
     }
@@ -426,14 +444,7 @@ class RapportActiviteSearchService extends SearchService
     public function createSorterUniteRecherche(): SearchSorter
     {
         $sorter = new SearchSorter("Unité recherche", UniteRechercheSearchFilter::NAME);
-        $sorter->setQueryBuilderApplier(
-            function (SearchSorter $sorter, QueryBuilder $qb) {
-                $direction = $sorter->getDirection();
-                $qb
-                    ->leftJoin("ur.structure", 'ur_s_sort')
-                    ->addOrderBy('ur_s_sort.code', $direction);
-            }
-        );
+        $sorter->setOrderByField("ur_structureSubstituante.code, ur_structure.code");
 
         return $sorter;
     }

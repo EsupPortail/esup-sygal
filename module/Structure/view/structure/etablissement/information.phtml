@@ -16,7 +16,7 @@ use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Provider\Privilege\StructurePrivileges;
 
-$this->headTitle('Details de l\'établissement ['.$etablissement->getLibelle().']');
+$this->headTitle('Details de l\'établissement ['.$etablissement->getStructure()->getLibelle().']');
 
 $canAddRole = true;
 $canModifierEtablissement = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
@@ -25,7 +25,7 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
 ?>
 
 <h1 class="page-header">
-    Details de l'établissement [  <?php echo $etablissement->getLibelle(); ?> ]
+    Details de l'établissement [  <?php echo $etablissement->getStructure()->getLibelle(); ?> ]
 </h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
@@ -69,8 +69,8 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
     <div class="row">
         <div class="col-md-6">
             <dl>
-                <dt> Libelle : </dt>                <dd>    <?php echo $etablissement->getLibelle(); ?>     </dd>
-                <dt> Sigle : </dt>                  <dd>    <?php echo $etablissement->getSigle() ?: "(Non renseigné)"; ?></dd>
+                <dt> Libelle : </dt>                <dd>    <?php echo $etablissement->getStructure()->getLibelle(); ?>     </dd>
+                <dt> Sigle : </dt>                  <dd>    <?php echo $etablissement->getStructure()->getSigle() ?: "(Non renseigné)"; ?></dd>
                 <dt> Adresse : </dt>                <dd>    <?php echo $etablissement->getStructure()->getAdresse() ?: "(Non renseignée)"; ?></dd>
                 <dt> Téléphone : </dt>              <dd>    <?php echo $etablissement->getStructure()->getTelephone() ?: "(Non renseigné)"; ?></dd>
                 <dt> Fax : </dt>                    <dd>    <?php echo $etablissement->getStructure()->getFax() ?: "(Non renseigné)"; ?></dd>

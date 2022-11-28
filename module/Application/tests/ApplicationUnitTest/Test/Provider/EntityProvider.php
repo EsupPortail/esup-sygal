@@ -4,12 +4,12 @@ namespace ApplicationUnitTest\Test\Provider;
 
 use Doctorant\Entity\Db\Doctorant;
 use Fichier\Entity\Db\Fichier;
-use Application\Entity\Db\FichierThese;
+use These\Entity\Db\FichierThese;
 use Individu\Entity\Db\Individu;
 use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\Parametre;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;

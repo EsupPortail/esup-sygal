@@ -8,7 +8,7 @@
  * @var Role[] $roles
  */
 
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
 use UnicaenApp\Util;
@@ -19,16 +19,16 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 <?php if ($individu !== null and $utilisateur !== null and $utilisateur->getIndividu() === $individu) : ?>
 
     <div class="alert alert-success">
-        L'utilisateur &laquo; <?php echo $utilisateur->getDisplayName(); ?> &raquo;
+        Le compte utilisateur &laquo; <?php echo $utilisateur->getDisplayName(); ?> &raquo;
         a été lié à l'individu &laquo; <?php echo $individu->getNomComplet(); ?> &raquo;.
     </div>
 
 <?php else : ?>
 
     <div class="box card">
-        <div class="card-header bg-info">
+        <div class="card-header bg-dark text-white">
             <h2 class="first">
-                <?php echo $this->translate("Utilisateur") ?>
+                <?php echo $this->translate("Compte utilisateur") ?>
             </h2>
         </div>
         <div class="card-body">
@@ -53,7 +53,7 @@ use UnicaenApp\Form\Element\SearchAndSelect;
 
     <?php if ($individu)  : ?>
         <div class="box card">
-            <div class="card-header bg-info">
+            <div class="card-header bg-dark text-white">
                 <h2 class="first">
                     <?php echo $this->translate("Individu") ?>
                 </h2>
@@ -141,7 +141,7 @@ use UnicaenApp\Form\Element\SearchAndSelect;
                                 </td>
                                 <td>
                                     <?php if ($acteur->getEtablissement() !== null) : ?>
-                                        <?php echo $acteur->getEtablissement()->getLibelle(); ?>
+                                        <?php echo $acteur->getEtablissement()->getStructure()->getLibelle(); ?>
                                     <?php else : ?>
                                         Aucun établissement
                                     <?php endif; ?>

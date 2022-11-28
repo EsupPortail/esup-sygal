@@ -2,37 +2,36 @@
 
 namespace Application\Entity\Db\Repository;
 
-use Application\Constants;
-use Structure\Entity\Db\Etablissement;
-use Application\Entity\Db\These;
 use Application\Entity\Db\Variable;
+use DateTime;
+use Doctrine\ORM\NonUniqueResultException;
+use Structure\Entity\Db\Etablissement;
+use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
 
 class VariableRepository extends DefaultEntityRepository
 {
     /**
-     * @see VariableRepository::findByCodeAndEtab()
+     * Recherche une variable par son code et pour l'établissement de rattachement d'une thèse.
      *
-     * @param string|string[] $code
-     * @param These           $these
-     * @return Variable|Variable[]|null
+     * @param string $code
+     * @param These $these
+     * @return Variable|null
+     *
+     * @see VariableRepository::findOneByCodeAndEtab()
      */
-    public function findByCodeAndThese($code, These $these)
+    public function findOneByCodeAndThese(string $code, These $these): ?Variable
     {
         $dateObservation = $these->getDateSoutenance() ?: $these->getDatePrevisionSoutenance();
 
-        return $this->findByCodeAndEtab(
+        return $this->findOneByCodeAndEtab(
             $code,
             $these->getEtablissement(),
-            $dateObservation ?: new \DateTime());
+            $dateObservation ?: new DateTime());
     }
 
     /**
-     * Recherche d'une ou plusieurs variables.
-     *
-     * Valeurs retournée :
-     * - Si un seul code est spécifié: null ou Variable trouvée.
-     * - Si pluieurs codes sont spécifiés: tableau [code => Variable].
+     * Recherche une variable par son code et l'établissement concerné.
      *
      * Une variable possède une période de validité. Seules les variables dont la période de validité
      * contient la date d'observation spécifiée sont retenues.
@@ -40,54 +39,68 @@ class VariableRepository extends DefaultEntityRepository
      * Si plusieurs variables sont valides à la date d'observation spécifiée, c'est celle dont la date de
      * fin de validité est la plus tardive qui est retenue.
      *
-     * @param string|string[] $code
-     * @param Etablissement   $etab
-     * @param \DateTime|null  $dateObservation
-     * @return null|Variable|Variable[]
+     * @param string $code
+     * @param Etablissement $etab
+     * @param \DateTime|null $dateObservation
+     * @return null|Variable
      */
-    public function findByCodeAndEtab($code, Etablissement $etab, \DateTime $dateObservation = null)
+    public function findOneByCodeAndEtab(string $code, Etablissement $etab, DateTime $dateObservation = null): ?Variable
     {
-        $dateObservation = $dateObservation ?: date_create('now');
+        $dateObservation = $dateObservation ?: date_create();
 
         $qb = $this->createQueryBuilder('v');
         $qb
             ->where($qb->expr()->in('v.code', (array) $code))
             ->andWhere('v.etablissement = :etab')
             ->andWhere(':dateObservation BETWEEN v.dateDebutValidite AND v.dateFinValidite')
-            ->orderBy('v.dateFinValidite', 'ASC') // tri chronologique important!
+            ->orderBy('v.dateFinValidite', 'desc') // tri important!
             ->setParameter('etab', $etab)
             ->setParameter('dateObservation', $dateObservation)
-            ;
+        ;
 
-        /** @var Variable[] $results */
-        $results = $qb->getQuery()->getResult();
-
-        if (! is_array($code)) {
-            $variable =  current($results) ?: null;
-            if ($variable === null) {
-                throw new RuntimeException(sprintf(
-                    "La valeur de la variable '%s' est manquante pour l'établissement '%s' " .
-                    "à la date d'observation %s.",
-                    $code, $etab->getStructure()->getCode(), $dateObservation->format(Constants::DATE_FORMAT)
-                ));
-            }
-            return $variable;
+        /** @var Variable|null $variable */
+        try {
+            $variable = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie : plusieurs Variables trouvées");
         }
 
-        $variables = [];
-        foreach ($results as $v) {
-            $variables[$v->getCode()] = $v;
-        }
-        foreach ($code as $c) {
-            if (!isset($variables[$c])) {
-                throw new RuntimeException(sprintf(
-                    "La valeur de la variable '%s' est manquante pour l'établissement '%s' " .
-                    "à la date d'observation %s.",
-                    $c, $etab->getStructure()->getCode(), $dateObservation->format(Constants::DATE_FORMAT)
-                ));
-            }
-        }
+//        if ($variable === null) {
+//            throw new RuntimeException(sprintf(
+//                "La valeur de la variable '%s' est manquante pour l'établissement '%s' " .
+//                "à la date d'observation %s.",
+//                $code, $etab->getStructure()->getCode(), $dateObservation->format(Constants::DATE_FORMAT)
+//            ));
+//        }
 
-        return $variables;
+        return $variable;
+    }
+
+    /**
+     * Recherche de variables par le code, pour tous les établissements.
+     *
+     * Une variable possède une période de validité. Seules les variables dont la période de validité
+     * contient la date d'observation spécifiée sont retenues.
+     *
+     * Si plusieurs variables sont valides à la date d'observation spécifiée, c'est celle dont la date de
+     * fin de validité est la plus tardive qui est retenue.
+     *
+     * @param string $code
+     * @param \DateTime|null $dateObservation
+     * @return Variable[]
+     */
+    public function findByCode(string $code, DateTime $dateObservation = null): array
+    {
+        $dateObservation = $dateObservation ?: date_create();
+
+        $qb = $this->createQueryBuilder('v');
+        $qb
+            ->where($qb->expr()->in('v.code', (array) $code))
+            ->andWhere(':dateObservation BETWEEN v.dateDebutValidite AND v.dateFinValidite')
+            ->orderBy('v.dateFinValidite', 'desc') // tri important!
+            ->setParameter('dateObservation', $dateObservation)
+        ;
+
+        return $qb->getQuery()->getResult();
     }
 }

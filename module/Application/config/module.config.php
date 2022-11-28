@@ -7,6 +7,7 @@ use Application\Cache\MemcachedFactory;
 use Application\Controller\Factory\IndexControllerFactory;
 use Application\Controller\Plugin\Forward;
 use Application\Controller\Plugin\ForwardFactory;
+use Application\ORM\Query\Functions\ToNumber;
 use Fichier\Controller\Plugin\Uploader\UploaderPluginFactory;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Entity\UserWrapperFactory;
@@ -108,6 +109,7 @@ return array(
                 'default_repository_class_name' => DefaultEntityRepository::class,
                 'string_functions' => [
                     'strReduce' => StrReduce::class,
+                    'toNumber' => ToNumber::class,
                 ],
             ]
         ],
@@ -158,7 +160,7 @@ return array(
                         'options'       => [
                             'route'    => '/these',
                             'defaults' => [
-                                'controller'    => 'Application\Controller\These',
+                                'controller'    => TheseController::class',
                                 'action'        => 'index',
                             ],
                         ],
@@ -173,7 +175,7 @@ return array(
                                         'these' => '\d+',
                                     ],
                                     'defaults'    => [
-                                        'controller'    => 'Application\Controller\These',
+                                        'controller'    => TheseController::class,
                                         'action' => 'detail-identite',
                                     ],
                                 ],
@@ -183,7 +185,7 @@ return array(
                                 'options'       => [
                                     'route'       => '/rechercher',
                                     'defaults'    => [
-                                        'controller'    => 'Application\Controller\These',
+                                        'controller'    => TheseController::class,
                                         'action' => 'rechercher',
                                     ],
                                 ],
@@ -312,14 +314,14 @@ return array(
             '063_uploader' => "/vendor/unicaen.uploader.widget.js",
         ],
         'inline_scripts' => [
-            '070_bootstrap-select' => '/vendor/bootstrap-select-1.14.0-beta2/js/bootstrap-select.min.js',
-            '070_bootstrap-select-fr' => '/vendor/bootstrap-select-1.14.0-beta2/js/i18n/defaults-fr_FR.js',
+            '070_bootstrap-select' => '/vendor/bootstrap-select-1.14.0-beta3/js/bootstrap-select.min.js',
+            '070_bootstrap-select-fr' => '/vendor/bootstrap-select-1.14.0-beta3/js/i18n/defaults-fr_FR.js',
         ],
         'stylesheets'           => [
             '050_bootstrap-theme' => false,
             '100_charte' => '/css/charte.css',
             '200_fa' => '/vendor/fontawesome-free-5.12.0-web/css/all.min.css',
-            '300_bs' => '/vendor/bootstrap-select-1.14.0-beta2/css/bootstrap-select.min.css',
+            '300_bs' => '/vendor/bootstrap-select-1.14.0-beta3/css/bootstrap-select.min.css',
             '400_faa' => '/vendor/font-awesome-animation.min.css',
         ],
         'printable_stylesheets' => [

@@ -2,7 +2,7 @@
 
 namespace Structure\Controller\Factory;
 
-use Application\Service\CoEncadrant\CoEncadrantService;
+use These\Service\CoEncadrant\CoEncadrantService;
 use Application\Service\Role\RoleService;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
@@ -21,7 +21,7 @@ class EcoleDoctoraleControllerFactory
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): EcoleDoctoraleController
     {
         /** @var EcoleDoctoraleForm $form */
         $form = $container->get('FormElementManager')->get('EcoleDoctoraleForm');

@@ -116,7 +116,7 @@ return [
             'substitution-automatique' => [
                 'type'          => Segment::class,
                 'options'       => [
-                    'route'    => '/substitution/automatique',
+                    'route'    => '/substitution/automatique/:type',
                     'defaults' => [
                         '__NAMESPACE__' => 'Application\Controller',
                         'controller'    => 'Substitution',
@@ -128,7 +128,7 @@ return [
                     'modifier' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/modifier/:type/:identifiant',
+                            'route'       => '/modifier/:identifiant',
                             'defaults'    => [
                                 'action' => 'modifier-automatique',
                             ],
@@ -137,7 +137,7 @@ return [
                     'enregistrer' => [
                         'type'          => Segment::class,
                         'options'       => [
-                            'route'       => '/enregistrer/:type/:identifiant',
+                            'route'       => '/enregistrer/:identifiant',
                             'defaults'    => [
                                 'action' => 'enregistrer-automatique',
                             ],

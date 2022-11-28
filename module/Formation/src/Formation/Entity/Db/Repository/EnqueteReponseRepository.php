@@ -2,15 +2,15 @@
 
 namespace Formation\Entity\Db\Repository;
 
+use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Doctorant\Entity\Db\Doctorant;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Formation\Entity\Db\EnqueteReponse;
 use Formation\Entity\Db\Inscription;
-use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\Mvc\Controller\AbstractActionController;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 
-class EnqueteReponseRepository extends EntityRepository
+class EnqueteReponseRepository extends DefaultEntityRepository
 {
     use EntityManagerAwareTrait;
 
@@ -33,11 +33,10 @@ class EnqueteReponseRepository extends EntityRepository
      */
     public function createQB(string $alias) : QueryBuilder
     {
-        $qb = $this->createQueryBuilder($alias)
+        return $this->createQueryBuilder($alias)
             ->join($alias.".inscription", "inscription")->addSelect("inscription")
             ->join($alias.".question", "question")->addSelect("question")
         ;
-        return $qb;
     }
 
     /**
@@ -50,8 +49,8 @@ class EnqueteReponseRepository extends EntityRepository
             ->andWhere('enquetereponse.inscription  = :inscription')
             ->setParameter('inscription', $inscription)
         ;
-        $result = $qb->getQuery()->getResult();
-        return $result;
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -64,8 +63,8 @@ class EnqueteReponseRepository extends EntityRepository
             ->andWhere('inscription.doctorant  = :doctorant')
             ->setParameter('doctorant', $doctorant)
         ;
-        $result = $qb->getQuery()->getResult();
-        return $result;
+
+        return $qb->getQuery()->getResult();
     }
 
 }

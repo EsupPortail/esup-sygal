@@ -2,16 +2,16 @@
 
 namespace Structure\Service\Etablissement;
 
+use Application\Entity\Db\Utilisateur;
+use Application\Service\BaseService;
+use Application\SourceCodeStringHelperAwareTrait;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\ORMException;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\Repository\EtablissementRepository;
 use Structure\Entity\Db\Structure;
 use Structure\Entity\Db\TypeStructure;
-use Application\Entity\Db\Utilisateur;
-use Application\Service\BaseService;
-use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use Application\SourceCodeStringHelperAwareTrait;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\ORMException;
 use UnicaenApp\Exception\RuntimeException;
 
 class EtablissementService extends BaseService
@@ -22,7 +22,7 @@ class EtablissementService extends BaseService
     /**
      * @return EtablissementRepository
      */
-    public function getRepository()
+    public function getRepository(): EtablissementRepository
     {
         /** @var EtablissementRepository $repo */
         $repo = $this->entityManager->getRepository(Etablissement::class);
@@ -35,11 +35,9 @@ class EtablissementService extends BaseService
      *
      * @return Etablissement|null
      */
-    public function fetchEtablissementComue()
+    public function fetchEtablissementComue(): ?Etablissement
     {
         $qb = $this->getRepository()->createQueryBuilder('e')
-            ->addSelect('s')
-            ->join('e.structure', 's')
             ->where('e.estComue = true');
 
         try {
@@ -116,7 +114,7 @@ class EtablissementService extends BaseService
 
     public function setLogo(Etablissement $etablissement, $cheminLogo)
     {
-        $etablissement->setCheminLogo($cheminLogo);
+        $etablissement->getStructure()->setCheminLogo($cheminLogo);
         $this->flush($etablissement);
 
         return $etablissement;
@@ -124,7 +122,7 @@ class EtablissementService extends BaseService
 
     public function deleteLogo(Etablissement $etablissement)
     {
-        $etablissement->setCheminLogo(null);
+        $etablissement->getStructure()->setCheminLogo(null);
         $this->flush($etablissement);
 
         return $etablissement;
@@ -147,15 +145,11 @@ class EtablissementService extends BaseService
         return $etablissement;
     }
 
-    public function getEtablissementAsOptions()
+    public function getEtablissementsInscriptionsAsOptions() : array
     {
-        $qb = $this->getEntityManager()->getRepository(Etablissement::class)->createQueryBuilder('etablissement')
-            ->addSelect('structure')->join('etablissement.structure', 'structure')
-            ->orderBy('structure.libelle', 'ASC');
-        $etablissements = $qb->getQuery()->getResult();
+        $etablissements = $this->getRepository()->findAllEtablissementsInscriptions(true);
         $result = [];
-        /** @var Etablissement $etablissement */
-        foreach ($etablissements as $etablissement) $result[$etablissement->getId()] = $etablissement->getLibelle();
+        foreach ($etablissements as $etablissement) $result[$etablissement->getId()] = $etablissement->getStructure()->getLibelle();
         return $result;
     }
 
@@ -187,8 +181,20 @@ class EtablissementService extends BaseService
         $etablissements = $this->getRepository()->findAllEtablissementsInscriptions();
         $array = [];
         foreach ($etablissements as $etablissement) {
-            $array[$etablissement->getId()] = $etablissement->getLibelle();
+            $array[$etablissement->getId()] = $etablissement->getStructure()->getLibelle();
         }
         return $array;
+    }
+
+    //todo faire les filtrage et considerer que les UR internes
+    public function getEtablissementsAsOptions() : array
+    {
+        $etablissements = $this->getRepository()->findAll();
+
+        $options = [];
+        foreach ($etablissements as $etablissement) {
+            $options[$etablissement->getId()] = $etablissement->getStructure()->getLibelle() . " " ."<span class='badge'>".$etablissement->getStructure()->getSigle()."</span>";
+        }
+        return $options;
     }
 }

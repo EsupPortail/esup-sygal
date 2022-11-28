@@ -4,7 +4,7 @@ namespace Structure\Controller;
 
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\TypeStructure;
-use Application\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
+use These\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
@@ -54,7 +54,7 @@ class EcoleDoctoraleController extends StructureConcreteController
 
         /** @var EcoleDoctorale $structureConcrete */
         $structureConcrete = $viewModel->getVariable('structure');
-        $coencadrants = $this->getCoEncadrantService()->getCoEncadrantsByStructureConcrete($structureConcrete, false);
+        $coencadrants = $this->getCoEncadrantService()->findCoEncadrantsByStructureConcrete($structureConcrete, false);
         $contenus = $this->getStructureDocumentService()->getContenusFichiers($structureConcrete->getStructure());
 
         $viewModel->setVariables([
@@ -106,8 +106,8 @@ class EcoleDoctoraleController extends StructureConcreteController
             foreach ($unites as $unite) {
                 $result[] = array(
                     'id' => $unite->getId(),            // identifiant unique de l'item
-                    'label' => $unite->getLibelle(),    // libellé de l'item
-                    'extra' => $unite->getSigle(),      // infos complémentaires (facultatives) sur l'item
+                    'label' => $unite->getStructure()->getLibelle(),    // libellé de l'item
+                    'extra' => $unite->getStructure()->getSigle(),      // infos complémentaires (facultatives) sur l'item
                 );
             }
             usort($result, function ($a, $b) {

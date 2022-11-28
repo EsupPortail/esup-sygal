@@ -3,8 +3,8 @@
 namespace Soutenance\Assertion;
 
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
-use Application\Service\These\TheseServiceAwareTrait;
+use These\Entity\Db\These;
+use These\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
 use Soutenance\Entity\Etat;
@@ -41,7 +41,7 @@ class JustificatifAssertion implements AssertionInterface {
     {
         /** @var These $these */
         $these = $resource;
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $date_soutenance = ($these->getDateSoutenance())?$these->getDateSoutenance():$proposition->getDate();
 
         $depasse = (new DateTime() > $date_soutenance);

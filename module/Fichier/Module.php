@@ -3,20 +3,13 @@
 namespace Fichier;
 
 use Laminas\Config\Factory as ConfigFactory;
-use Unicaen\Console\Adapter\AdapterInterface;
-use Laminas\Mvc\ModuleRouteListener;
-use Laminas\Mvc\MvcEvent;
+use Laminas\Console\Adapter\AdapterInterface;
+use Laminas\ModuleManager\Feature\ConsoleBannerProviderInterface;
+use Laminas\ModuleManager\Feature\ConsoleUsageProviderInterface;
 use Laminas\Stdlib\Glob;
 
-class Module
+class Module implements ConsoleBannerProviderInterface, ConsoleUsageProviderInterface
 {
-    public function onBootstrap(MvcEvent $e)
-    {
-        $eventManager = $e->getApplication()->getEventManager();
-        $moduleRouteListener = new ModuleRouteListener();
-        $moduleRouteListener->attach($eventManager);
-    }
-
     public function getConfig()
     {
         $paths = array_merge(

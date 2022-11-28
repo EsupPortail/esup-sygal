@@ -7,6 +7,7 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Fichier\Entity\Db\Fichier;
+use These\Entity\Db\These;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
@@ -325,7 +326,7 @@ class Rapport implements ResourceInterface, HistoriqueAwareInterface
         $these = $this->getThese();
 
         return sprintf('%s/%s/%s/%s',
-            $these->getEtablissement()->getCode(),
+            $these->getEtablissement()->getStructure()->getCode(),
             ($ed = $these->getEcoleDoctorale()) ? $ed->getStructure()->getCode() : "ED_inconnue",
             ($ur = $these->getUniteRecherche()) ? $ur->getStructure()->getCode() : "UR_inconnue",
             $this->getFichier()->getNom()

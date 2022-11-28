@@ -20,13 +20,13 @@ use Laminas\Paginator\Paginator;
  */
 ?>
 
-<?php $this->headTitle($this->translate("Utilisateurs")) ?>
+<?php $this->headTitle($this->translate("Comptes utilisateurs")) ?>
 
 <h1 class="page-header">
-    <?php echo $this->translate("Utilisateurs"); ?>
+    <?php echo $this->translate("Comptes utilisateurs"); ?>
     <a class="btn btn-primary float-end"
        title="Création d'un nouvel utilisateur..."
-       href="<?php echo $this->url('utilisateur/ajouter') ?>"><?php echo $this->translate("Nouvel utilisateur...") ?></a>
+       href="<?php echo $this->url('utilisateur/ajouter') ?>"><?php echo $this->translate("Nouveau compte utilisateur...") ?></a>
 </h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
@@ -38,17 +38,17 @@ use Laminas\Paginator\Paginator;
         <?php
         echo $paginator->getTotalItemCount();
         echo " ";
-        echo $this->translate("utilisateurs trouvés.");
+        echo $this->translate("comptes utilisateurs trouvés.");
         ?>
     </p>
     <table class="table table-bordered table-extra-condensed">
         <tr>
-            <th>Display name</th>
-            <th>Username</th>
+            <th>Identité</th>
+            <th>Identifiant de connexion</th>
             <th>Id</th>
             <th>Email</th>
-            <th>Password</th>
-            <th>Individu</th>
+            <th>Mot de passe</th>
+            <th>Individu lié</th>
         </tr>
         <?php /** @var Utilisateur $utilisateur */
         foreach ($paginator as $utilisateur): ?>

@@ -12,6 +12,7 @@ use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
 use Fichier\Service\Fichier\Exception\FichierServiceException;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
+use RapportActivite\Service\Fichier\Exporter\PageValidationExportDataException;
 use RapportActivite\Service\Fichier\RapportActiviteFichierServiceAwareTrait;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
@@ -61,6 +62,7 @@ class RapportActiviteRechercheController extends AbstractController implements S
     public function indexAction()
     {
         $this->restrictFilterEcolesDoctorales();
+        $this->restrictFilterUnitesRecherches();
         $this->initFilterAvisAttendu();
 
         $text = $this->params()->fromQuery('text');
@@ -104,6 +106,7 @@ class RapportActiviteRechercheController extends AbstractController implements S
     public function filtersAction(): ViewModel
     {
         $this->restrictFilterEcolesDoctorales();
+        $this->restrictFilterUnitesRecherches();
         $this->initFilterAvisAttendu();
 
         $filters = $this->filters();
@@ -130,6 +133,28 @@ class RapportActiviteRechercheController extends AbstractController implements S
                 $edFilter->setData([$ed]);
                 $edFilter->setDefaultValueAsObject($ed);
                 $edFilter->setAllowsEmptyOption(false);
+            }
+        } else {
+            throw new UnexpectedValueException(
+                "Anomalie : l'action aurait dû être bloquée en amont (controller guard) car l'utilisateur n'a aucun des privilèges suivants : " .
+                implode(', ', [RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT, RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN])
+            );
+        }
+    }
+
+    private function restrictFilterUnitesRecherches()
+    {
+        $filter = $this->searchService->getUniteRechercheSearchFilter();
+
+        if ($this->isAllowed(Privileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT))) {
+            // aucune restriction sur les ED sélectionnables
+        } elseif ($this->isAllowed(Privileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN))) {
+            // restrictions en fonction du rôle
+            if ($roleUniteRecherche = $this->userContextService->getSelectedRoleUniteRecherche()) {
+                $ur = $roleUniteRecherche->getStructure()->getUniteRecherche();
+                $filter->setData([$ur]);
+                $filter->setDefaultValueAsObject($ur);
+                $filter->setAllowsEmptyOption(false);
             }
         } else {
             throw new UnexpectedValueException(
@@ -181,6 +206,8 @@ class RapportActiviteRechercheController extends AbstractController implements S
             return $result;
         }
 
+        $result->setItemCountPerPage(25);
+
         /** @var RapportActivite $rapport */
         foreach ($result as $rapport) {
             $avisTypeDispo = $this->rapportActiviteAvisService->findExpectedAvisTypeForRapport($rapport);
@@ -222,7 +249,18 @@ class RapportActiviteRechercheController extends AbstractController implements S
             if ($rapport->estValide()) {
                 // l'ajout de la page de validation n'est pas forcément possible
                 if ($rapport->supporteAjoutPageValidation()) {
-                    $exportData = $this->rapportActiviteService->createPageValidationData($rapport);
+                    try {
+                        $exportData = $this->rapportActiviteService->createPageValidationDataForRapport($rapport);
+                    } catch (PageValidationExportDataException $e) {
+                        $redirect = $this->params()->fromQuery('redirect');
+                        $this->flashMessenger()->addErrorMessage(sprintf(
+                            "Impossible de générer la page de validation du rapport '%s'. " . $e->getMessage(),
+                            $rapport->getFichier()->getNom()
+                        ));
+                        return $redirect ?
+                            $this->redirect()->toUrl($redirect) :
+                            $this->redirect()->toRoute($this->routeName . '/recherche/index');
+                    }
                     $outputFilePath = $this->rapportActiviteFichierService->createFileWithPageValidation($rapport, $exportData);
                     $fichierArchivable->setFilePath($outputFilePath);
                 }

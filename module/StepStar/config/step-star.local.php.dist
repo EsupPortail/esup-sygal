@@ -1,0 +1,29 @@
+<?php
+
+namespace StepStar;
+
+return [
+    'step_star' => [
+        'tef' => [
+            'xsl_template_params' => [
+                'etablissementStepStar' => 'XXXX',
+                'autoriteSudoc_etabSoutenance' => '123456789',
+            ],
+        ],
+        'api' => [
+            'soap_client' => [
+                'wsdl' => [
+                    'url' => 'https://xxxxx/yyyyy.wsdl',
+                ],
+                'soap' => [
+                    'version' => SOAP_1_1, // cf. extension "php-soap"
+                    //'proxy_host' => 'proxy.unicaen.fr',
+                    //'proxy_port' => 3128,
+                ],
+            ],
+            'params' => [
+                'idEtablissement' => 'XXXX',
+            ],
+        ],
+    ],
+];

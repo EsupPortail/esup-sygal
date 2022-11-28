@@ -4,10 +4,10 @@ namespace Soutenance\Service\Avis;
 
 use Application\Entity\DateTimeAwareTrait;
 use Fichier\Entity\Db\NatureFichier;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Fichier\Entity\Db\VersionFichier;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\FichierThese\FichierTheseServiceAwareTrait;
+use These\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;

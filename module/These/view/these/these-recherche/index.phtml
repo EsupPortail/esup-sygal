@@ -1,0 +1,239 @@
+<?php
+
+use Application\Entity\Db\Role;
+use These\Entity\Db\These;
+use These\Filter\ActeursFormatter;
+use These\Provider\Privilege\ThesePrivileges;
+use Application\Search\SearchResultPaginator;
+use These\Service\These\TheseSorter;
+use Application\View\Renderer\PhpRenderer;
+use UnicaenAuth\Provider\Privilege\Privileges;
+use Laminas\Paginator\Paginator;
+
+/**
+ * @var PhpRenderer $this
+ * @var SearchResultPaginator $theses
+ * @var string      $text
+ * @var Role        $roleDirecteurThese
+ * @var bool        $displayEtablissement
+ * @var bool        $displayDateSoutenance
+ * @var string      $filtersRoute
+ *
+ * @see \These\Controller\TheseController::indexAction()
+ */
+
+$canExport = $this->isAllowed(Privileges::getResourceId(ThesePrivileges::THESE_EXPORT_CSV));
+$queryParams = $this->queryParams();
+
+$acteursFormatterDirecteurs = new ActeursFormatter();
+$acteursFormatterDirecteurs->asSeparated()
+    ->paramDisplay(['role' => false, 'complement' => false, "qualite" => false, "etablissement" => false,])
+    ->paramFilter((['role' => Role::CODE_DIRECTEUR_THESE]));
+$acteursFormatterCodirecteurs = new ActeursFormatter();
+$acteursFormatterCodirecteurs->asSeparated()
+    ->paramDisplay(['role' => false, 'complement' => false, "qualite" => false, "etablissement" => false,])
+    ->paramFilter((['role' => Role::CODE_CODIRECTEUR_THESE]));
+?>
+
+<?php $this->headTitle($this->translate("Thèses")); ?>
+
+<h1 class="page-header">
+    <?php echo $this->translate("Thèses"); ?>
+</h1>
+
+
+<!-- Formulaire de filtrage -->
+<div class="float-start">
+    <?php $loadFiltersUrl = $this->url($filtersRoute, [], ['query' => $this->queryParams()], true); ?>
+    <div class="filters" id="these-filters" data-url="<?php echo $loadFiltersUrl ?>">
+        <!-- Contenu chargé en AJAX -->
+    </div>
+</div>
+<div class="clearfix"></div>
+
+<?php if (count($theses) > 0): ?>
+
+    <p>
+        <?php
+            echo $theses->getTotalItemCount();
+            echo " ";
+            echo $this->translate("thèse(s) trouvée(s).");
+        ?>
+    </p>
+
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th>
+                <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_titre); ?>"
+                   title="<?php echo $this->translate("Titre de la thèse");?> ">
+                        <?php echo $this->translate("Titre"); ?>
+                </a> <?php echo $s->icon() ?>
+            </th>
+            <?php if ($displayEtablissement): ?>
+            <th>
+                <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_etablissement); ?>"
+                   title="<?php echo $this->translate("Établissement");?> ">
+                    <?php echo $this->translate("Étab."); ?>
+                </a> <?php echo $s->icon() ?>
+            </th>
+            <?php endif ?>
+            <th>
+                <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_etatThese); ?>"
+                   title="<?php echo $this->translate("État de la thèse");?> ">
+                    <?php echo $this->translate("État"); ?>
+                </a> <?php echo $s->icon() ?>
+            </th>
+            <th>
+                <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_numeroEtudiant); ?>"
+                   title="<?php echo $this->translate("Numéro étudiant"); ?>">
+                        <?php echo $this->translate("N°étud."); ?>
+                </a> <?php echo $s->icon() ?>
+            </th>
+            <th>
+                <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_doctorant); ?>"
+                   title="<?php echo $this->translate("Nom du doctorant"); ?>">
+                    <?php echo $this->translate("Doctorant"); ?>
+                </a> <?php echo $s->icon() ?>
+            </th>
+            <th>
+                <span title="<?php echo $this->translate("Liste des directeurs de thèse"); ?>">
+                    <?php echo $this->translate("Dir. de thèse"); ?>
+                </span>
+            </th>
+            <th>
+                <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_ecoleDoctorale); ?>"
+                   title="<?php echo $this->translate("École doctorale");?>">
+                    <?php echo $this->translate("École<br>doct.");?>
+                </a> <?php echo $s->icon() ?>
+            </th>
+            <th>
+                <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_uniteRecherche); ?>"
+                   title="<?php echo $this->translate("Unité de recherche"); ?>">
+                    <?php echo $this->translate("Unité<br>rech."); ?>
+                </a> <?php echo $s->icon() ?></th>
+            <th>
+                <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_datePremiereInscription); ?>"
+                   title="<?php echo $this->translate("Date de première inscription");?>">
+                    <?php echo $this->translate("Date 1ère<br>inscr."); ?>
+                </a> <?php echo $s->icon() ?>
+            </th>
+            <?php if ($displayDateSoutenance): ?>
+                <th>
+                    <a href="<?php echo $s = $this->sortable(TheseSorter::NAME_dateSoutenance); ?>"
+                       title="<?php echo $this->translate("Date de soutenance");?> ">
+                        <?php echo $this->translate("Date de<br>sout."); ?>
+                    </a> <?php echo $s->icon() ?>
+                </th>
+            <?php endif ?>
+        </tr>
+        </thead>
+
+        <tbody>
+        <?php /** @var These $these */
+        foreach ($theses as $these): ?>
+            <tr>
+                <td>
+                    <span title="<?php echo $these->getTitre() ?>">
+                        <a href="<?php echo $this->url('these/identite', ['these' => $these->getId()], [], true) ?>">
+                            <?php echo $this->partial('these/these/partial/titre', ['these' => $these, 'useTitreThese' => true]) ?>
+                        </a>
+                    </span>
+                </td>
+                <?php
+                    if ($displayEtablissement) {
+                        echo "<td>";
+                        echo "<abbr title='";
+                        echo $these->getEtablissement()->getStructure()->getLibelle();
+                        echo "'>";
+                        echo $these->getEtablissement()->getStructure()->getCode();
+                        echo "</abbr>";
+                        echo "</td>";
+                    }
+                ?>
+                <td><?php echo $these->getEtatThese() ?></td>
+                <td><?php echo $these->getDoctorant()->getNumeroEtudiant() ?></td>
+                <td><?php echo $these->getDoctorant()->getIndividu()->getNomComplet() ?></td>
+                <td class="acteurs">
+                    <?php
+                    $directeurs = $acteursFormatterDirecteurs->filter($these->getActeurs());
+                    foreach ($directeurs as $directeur) {
+                        echo $acteursFormatterDirecteurs->htmlifyActeur($directeur)."<br/>";
+                    }
+                    $codirecteurs = $acteursFormatterCodirecteurs->filter($these->getActeurs());
+                    foreach ($codirecteurs as $codirecteur) {
+                        echo $acteursFormatterCodirecteurs->htmlifyActeur($codirecteur)."<br/>";
+                    }
+                    ?>
+                </td>
+                <td>
+                    <?php if($these->getEcoleDoctorale()): ?>
+                        <abbr title="<?php echo $these->getEcoleDoctorale()->getStructure()->getLibelle() ?>">
+                            <?php echo $these->getEcoleDoctorale()->getStructure()->getSigle() ?: "Pas de sigle" ?>
+                        </abbr>
+                    <?php endif ?>
+                </td>
+                <td>
+                    <?php if($these->getUniteRecherche()): ?>
+                        <abbr title="<?php echo $these->getUniteRecherche()->getStructure()->getLibelle() ?>">
+                            <?php echo $these->getUniteRecherche()->getStructure()->getCode(); ?>
+                        </abbr>
+                    <?php endif ?>
+                </td>
+                <td><?php
+    //                echo $this->dateFormat($these->getDatePremiereInscription(),IntlDateFormatter::SHORT);
+                    if ($these->getDatePremiereInscription()) echo $these->getDatePremiereInscription()->format("d/m/Y");
+                    ?>
+                </td>
+                <?php
+                //Affichage de la date de soutenace ssi l'etat est à soutenue ou à tous
+                if ($displayDateSoutenance) {
+                    echo '<td>';
+                    if ($these->getDateSoutenance()) echo $these->getDateSoutenance()->format("d/m/Y");
+                    echo '</td>';
+                } ?>
+            </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
+
+    <?php echo $paginationControl = $this->paginationControl($theses, 'sliding', 'application/paginator.phtml', ['route' => 'these']) ?>
+
+    <?php if ($canExport): ?>
+        <a class="btn btn-secondary" href="<?php echo $this->url('export/csv', [], ['query' => $queryParams]) ?>">
+            <span class="icon icon-export"></span>
+            <?php echo $this->translate("Exporter ces thèses au format CSV"); ?>
+        </a>
+    <?php endif ?>
+
+<?php else: ?>
+
+    <?php if ($theses->containsRealSearchResult()): ?>
+        <p>Aucune thèse trouvée.</p>
+    <?php else: ?>
+        <p class="text-info text-center"><i class="fa fa-bullhorn"></i> Ajustez les filtres et lancez la recherche...</p>
+    <?php endif ?>
+
+<?php endif ?>
+
+<?php
+    $this->translate("Filtres");
+    $this->translate("État");
+    $this->translate("En cours");
+    $this->translate("Abandonnée");
+    $this->translate("Soutenue");
+    $this->translate("Transférée");
+    $this->translate("Tous");
+
+    $this->translate("Rechercher");
+    $this->translate("Vider");
+    $this->translate("Entrez 2 caractères au moins...");
+    $this->translate("Recherche possible sur<ul><li>le titre de la thèse</li><li>le numéro étudiant de l'auteur</li><li>le nom de l'auteur</li><li>le nom du directeur ou co-directeur de thèse</li><li>le code national de l'école doctorale concernée (ex: 181)</li><li>l'unité de recherche concernée (ex: umr6211)</li></ul>");
+?>
+
+
+<script>
+    $(function() {
+        $("#these-filters").addClass("loading").refresh(null, function() { $(this).removeClass("loading"); });
+    });
+</script>

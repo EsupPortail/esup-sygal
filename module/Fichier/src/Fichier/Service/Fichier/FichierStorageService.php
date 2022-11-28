@@ -2,19 +2,15 @@
 
 namespace Fichier\Service\Fichier;
 
-use Fichier\Exporter\PageFichierIntrouvablePdfExporterTrait;
-use InvalidArgumentException;
-use Structure\Entity\Db\EcoleDoctorale;
-use Structure\Entity\Db\Etablissement;
-use Structure\Entity\Db\Structure;
-use Structure\Entity\Db\StructureConcreteInterface;
-use Structure\Entity\Db\StructureInterface;
-use Structure\Entity\Db\UniteRecherche;
 use Fichier\Entity\Db\Fichier;
+use Fichier\Exporter\PageFichierIntrouvablePdfExporterTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\Storage\Adapter\StorageAdapterInterface;
 use Generator;
+use InvalidArgumentException;
 use RuntimeException;
+use Structure\Entity\Db\StructureInterface;
+use UnicaenApp\Util;
 
 class FichierStorageService
 {
@@ -87,16 +83,19 @@ class FichierStorageService
         $fileName = $this->computeFileNameForFichier($fichier);
         $dirPath = $this->storageAdapter->computeDirectoryPath($dirName);
 
+        $tmpFilePath = sys_get_temp_dir() . '/' . uniqid();
+
         try {
-            $this->storageAdapter->saveToFilesystem(
-                $dirPath,
-                $fileName,
-                $tmpFilePath = sys_get_temp_dir() . '/' . uniqid()
-            );
+            $this->storageAdapter->saveToFilesystem($dirPath, $fileName, $tmpFilePath);
         } catch (StorageAdapterException $e) {
-            // en cas de fichier introuvable dans le storage, génération éventuelle d'un PDF de substitution
+            // en cas de fichier introuvable dans le storage, génération éventuelle d'un fichier de substitution
             if ($this->genererFichierSubstitutionSiIntrouvable) {
-                $tmpFilePath = $this->generatePageFichierIntrouvable($e->getDirPath() . '/' . $e->getFileName());
+                $fichier->setPath($e->getDirPath() . '/' . $e->getFileName());
+                $substitutionFileContent = $this->createSubstitutionFileContentForFichier($fichier);
+                if ($substitutionFileContent === null ) {
+                    throw $e; // solution de facilité (todo: lancer une exception spécifique)
+                }
+                file_put_contents($tmpFilePath, $substitutionFileContent);
             } else {
                 throw $e;
             }
@@ -126,10 +125,14 @@ class FichierStorageService
         try {
             return $this->storageAdapter->getFileContent($dirPath, $fileName);
         } catch (StorageAdapterException $e) {
-            // en cas de fichier introuvable dans le storage, génération éventuelle d'un PDF de substitution
+            // en cas de fichier introuvable dans le storage, génération éventuelle d'un fichier de substitution
             if ($this->genererFichierSubstitutionSiIntrouvable) {
-                $tmpFilePath = $this->generatePageFichierIntrouvable($e->getDirPath() . '/' . $e->getFileName());
-                return file_get_contents($tmpFilePath);
+                $fichier->setPath($e->getDirPath() . '/' . $e->getFileName());
+                $substitutionFileContent = $this->createSubstitutionFileContentForFichier($fichier);
+                if ($substitutionFileContent === null ) {
+                    throw $e; // solution de facilité (todo: lancer une exception spécifique)
+                }
+                return $substitutionFileContent;
             } else {
                 throw $e;
             }
@@ -179,23 +182,16 @@ class FichierStorageService
      */
     private function computeDirectoryNameForLogoStructure(StructureInterface $structure): string
     {
+        $type = $structure->getTypeStructure();
         $dir = null;
 
         // sous-répertoire identifiant le type de structure
-        if ($structure instanceof EcoleDoctorale) {
-            $dir = self::DIR_ED;
-        } elseif ($structure instanceof UniteRecherche) {
-            $dir = self::DIR_UR;
-        } elseif ($structure instanceof Etablissement) {
+        if ($type->isEtablissement()) {
             $dir = self::DIR_ETAB;
-        } elseif ($structure instanceof Structure) {
-            if ($structure->getTypeStructure()->isEtablissement()) {
-                $dir = self::DIR_ETAB;
-            } elseif ($structure->getTypeStructure()->isEcoleDoctorale()) {
-                $dir = self::DIR_ED;
-            } elseif ($structure->getTypeStructure()->isUniteRecherche()) {
-                $dir = self::DIR_UR;
-            }
+        } elseif ($type->isEcoleDoctorale()) {
+            $dir = self::DIR_ED;
+        } elseif ($type->isUniteRecherche()) {
+            $dir = self::DIR_UR;
         }
         if ($dir === null) {
             throw new RuntimeException("Structure spécifiée imprévue.");
@@ -243,12 +239,6 @@ class FichierStorageService
 
         $name = $structure->getCode();
 
-        if ($structure instanceof StructureConcreteInterface) {
-            if ($type = $structure->getStructure()->getTypeStructure()) {
-                $name = $type->getCode() . '-' . $name;
-            }
-        }
-
         $name = str_replace(["'", ':'], '_', $name);
         $name = str_replace(' ', '', $name);
 
@@ -260,25 +250,50 @@ class FichierStorageService
      *
      * @param \Structure\Entity\Db\StructureInterface $structure Entité Structure concernée
      * @return string
-     * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
-     * @throws \UnexpectedValueException Si la structure ne possède aucun logo
+     * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException Fichier introuvable dans le storage
      */
-    public function getFileForLogoStructure(StructureInterface $structure): string
+    public function getFileForLogoStructure(StructureInterface $structure): ?string
     {
         if (!$structure->getCheminLogo()) {
-            throw new \UnexpectedValueException("La structure '$structure' ne possède aucun logo.");
+            return null;
         }
 
         $dirPath = $this->computeDirectoryPathForLogoStructure($structure);
         $fileName = $structure->getCheminLogo();
 
-        $this->storageAdapter->saveToFilesystem(
-            $dirPath,
-            $fileName,
-            $tmpFilePath = sys_get_temp_dir() . '/' . uniqid()
-        );
+        $tmpFilePath = sys_get_temp_dir() . '/' . uniqid();
+
+        try {
+            $this->storageAdapter->saveToFilesystem($dirPath, $fileName, $tmpFilePath);
+        } catch (StorageAdapterException $e) {
+            // en cas de fichier introuvable dans le storage, génération éventuelle d'un fichier de substitution
+            if ($this->genererFichierSubstitutionSiIntrouvable) {
+                $fichier = (new Fichier())
+                    ->setTypeMime('image/png')
+                    ->setPath($e->getDirPath() . '/' . $e->getFileName());
+                $substitutionFileContent = $this->createSubstitutionFileContentForFichier($fichier);
+                if ($substitutionFileContent === null ) {
+                    throw $e; // solution de facilité (todo: lancer une exception spécifique)
+                }
+                file_put_contents($tmpFilePath, $substitutionFileContent);
+            } else {
+                throw $e;
+            }
+        }
 
         return $tmpFilePath;
+    }
+
+    private function createSubstitutionFileContentForFichier(Fichier $fichier): ?string
+    {
+        if ($fichier->isTypeMimePdf()) {
+            $tmpFilePath = $this->generatePageFichierIntrouvable($fichier->getPath());
+            return file_get_contents($tmpFilePath);
+        } elseif ($fichier->isTypeMimeImage()) {
+            return Util::createImageWithText("Anomalie: Fichier|absent sur le storage. " . $fichier->getPath(), 200, 200);
+        } else {
+            return null;
+        }
     }
 
     /**

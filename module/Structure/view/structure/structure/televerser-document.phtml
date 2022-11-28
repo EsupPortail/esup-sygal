@@ -29,7 +29,7 @@ use Fichier\Entity\Db\NatureFichier;
                 <select class="form-control" id="etablissement" name="etablissement">
                     <option value="null">(Aucun)</option>
                     <?php foreach ($etablissements as $etablissement) : ?>
-                        <option value="<?php echo $etablissement->getId(); ?>"> <?php echo $etablissement->getLibelle(); ?> </option>
+                        <option value="<?php echo $etablissement->getId(); ?>"> <?php echo $etablissement->getStructure()->getLibelle(); ?> </option>
                     <?php endforeach; ?>
                 </select>
             </div>

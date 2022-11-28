@@ -96,7 +96,6 @@ class FichierController extends AbstractController
 
         // injection préalable du contenu du fichier pour pouvoir utiliser le plugin Uploader
         try {
-            $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(false);
             $contenuFichier = $this->fichierStorageService->getFileContentForFichier($fichier);
         } catch (StorageAdapterException $e) {
             throw new RuntimeException("Impossible d'obtenir le contenu du fichier", null, $e);

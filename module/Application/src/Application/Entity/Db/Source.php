@@ -10,16 +10,24 @@ use UnicaenDbImport\Entity\Db\AbstractSource;
  */
 class Source extends AbstractSource
 {
-    /**
-     * @var \Structure\Entity\Db\Etablissement
-     */
-    protected $etablissement;
+    protected ?Etablissement $etablissement = null;
 
     /**
-     * @return \Structure\Entity\Db\Etablissement|null
+     * Retourne l'éventuel établissement lié *ou son substitut le cas échéant*.
+     *
+     * **ATTENTION** : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
+     * '.etablissement' puis 'etablissement.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.etablissement'.
+     *
+     * @param bool $returnSubstitIfExists À true, retourne l'établissement substituant s'il y en a un ; sinon l'établissement d'origine.
+     * @see Etablissement::getEtablissementSubstituant()
+     * @return Etablissement|null
      */
-    public function getEtablissement(): ?Etablissement
+    public function getEtablissement(bool $returnSubstitIfExists = true): ?Etablissement
     {
+        if ($returnSubstitIfExists && $this->etablissement && ($sustitut = $this->etablissement->getEtablissementSubstituant())) {
+            return $sustitut;
+        }
+
         return $this->etablissement;
     }
 

@@ -43,6 +43,12 @@ class NotificationService extends NotifierService
         }
     }
 
+    public function triggerInscriptionsListePrincipale(Session $session) : void
+    {
+        $inscriptions = $session->getInscriptionsByListe(Inscription::LISTE_PRINCIPALE);
+        foreach ($inscriptions as $inscription) $this->triggerInscriptionListePrincipale($inscription);
+    }
+
     /**
      * @param Inscription $inscription
      * @return void
@@ -70,6 +76,12 @@ class NotificationService extends NotifierService
         }
     }
 
+    public function triggerInscriptionsListeComplementaire(Session $session) : void
+    {
+        $inscriptions = $session->getInscriptionsByListe(Inscription::LISTE_COMPLEMENTAIRE);
+        foreach ($inscriptions as $inscription) $this->triggerInscriptionListeComplementaire($inscription);
+    }
+
     /**
      * @param Inscription $inscription
      * @return void
@@ -81,6 +93,7 @@ class NotificationService extends NotifierService
             'doctorant' => $inscription->getDoctorant(),
             'formation' => $inscription->getSession()->getFormation(),
             'session'   => $inscription->getSession(),
+            'inscription' => $inscription,
         ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::INSCRIPTION_LISTE_COMPLEMENTAIRE, $vars);
@@ -104,7 +117,10 @@ class NotificationService extends NotifierService
      */
     public function triggerInscriptionEchec(Session $session) : void
     {
-        $inscriptions = $session->getListeComplementaire();
+        $complementaire = $session->getListeComplementaire();
+        $nonClasses = $session->getNonClasses();
+
+        $inscriptions = array_merge($complementaire, $nonClasses);
 
         foreach ($inscriptions as $inscription) {
             $vars = [

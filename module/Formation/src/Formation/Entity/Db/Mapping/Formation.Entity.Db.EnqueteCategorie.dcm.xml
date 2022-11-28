@@ -8,9 +8,9 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
-        <field name="libelle"             type="string"       length="1024"       column="LIBELLE"          nullable="false"/>
-        <field name="description"         type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
-        <field name="ordre"               type="integer"                          column="ORDRE"      nullable="true"/>
+        <field name="libelle"         type="string"         column="LIBELLE"      nullable="false"/>
+        <field name="description"     type="string"         column="DESCRIPTION"  nullable="true"/>
+        <field name="ordre"           type="integer"        column="ORDRE"        nullable="true"/>
 
         <one-to-many field="questions" target-entity="Formation\Entity\Db\EnqueteQuestion" mapped-by="categorie"/>
 

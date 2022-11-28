@@ -7,7 +7,7 @@ use Structure\Provider\Privilege\SubstitutionPrivileges;
 /**
   * @see \Soutenance\Controller\IndexController::indexStructureAction()
   * @var string $type
-  * @var StructureConcreteInterface[] $structures
+  * @var \Structure\Entity\Db\StructureInterface[] $structures
   */
 
  $libelle = 'Structure';
@@ -16,6 +16,8 @@ use Structure\Provider\Privilege\SubstitutionPrivileges;
         OR  $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_CONSULTATION_SA_STRUCTURE));
 $canEdit =  $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_MODIFICATION_TOUTES_STRUCTURES))
         OR  $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_MODIFICATION_SA_STRUCTURE));
+$canSubstitutionAutomatique = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUION_AUTOMATIQUE));
+
   switch($type) {
      case TypeStructure::CODE_ECOLE_DOCTORALE :
          $libelle   = 'École doctorale';
@@ -33,7 +35,7 @@ $canEdit =  $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionP
 
 <?php if ($canView): ?>
     <div class="box card">
-        <div class="card-header bg-info">
+        <div class="card-header bg-dark text-white">
             <h2>
                 <?php echo $libelle; ?>
                 <span class="badge bg-secondary">
@@ -56,6 +58,12 @@ $canEdit =  $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionP
                             Créer une structure de substitution
                         </button>
                     </a>
+
+                    <?php if ($canSubstitutionAutomatique): ?>
+                        <a href="<?php echo $this->url('substitution-automatique', ['type' => $type], [], true);?>" class="float-end" title="Recherche automatique de substitution">
+                            <button class="btn btn-secondary"><span class="fas fa-cog"></span> Recherche de substitutions possibles</button>
+                        </a>
+                    <?php endif; ?>
                 </p>
             <?php endif; ?>
 
@@ -84,10 +92,8 @@ $canEdit =  $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionP
                                 <?php if ($canEdit): ?>
                                         <span id="detruire"
                                               ref="<?php echo $structure->getId(); ?>"
-<!--                                              href="--><?php //echo $this->url('substitution-detruire', ['cible' => $structure->getId()], [], true); ?><!--"-->
                                               type="<?php echo $type; ?>"
                                               class="text-danger icon icon-delete iconly"
-
                                         ></span>
                                 <?php endif; ?>
                             </td>

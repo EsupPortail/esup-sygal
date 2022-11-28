@@ -4,7 +4,7 @@ namespace Application\Service\Validation;
 
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Repository\ValidationRepository;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\VSitu\DepotVersionCorrigeeValidationPresident;

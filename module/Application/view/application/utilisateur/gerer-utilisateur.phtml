@@ -7,14 +7,14 @@
  * @var Acteur[] $acteurs
  */
 
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
 
 ?>
 
 <h1 class="page-header">
-    Gérer un utilisateur
+    Gérer un compte utilisateur
 </h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
@@ -40,15 +40,15 @@ use Application\Entity\Db\Utilisateur;
                 <dd class="col-md-5"> <?php echo $individu->getEmail(); ?> </dd>
             </dl>
 
-            <h2> Information sur l'utilisateur </h2>
+            <h2> Information sur le compte utilisateur </h2>
 
             <?php if ($utilisateur !== null) : ?>
                 <dl class="row">
-                    <dt class="col-md-5"> Nom d'utilisateur </dt>
+                    <dt class="col-md-5"> Identifiant de connexion (username) </dt>
                     <dd class="col-md-5"> <?php echo $utilisateur->getUsername(); ?> </dd>
                     <dt class="col-md-5"> Email </dt>
                     <dd class="col-md-5"> <?php echo $utilisateur->getEmail(); ?> </dd>
-                    <dt class="col-md-5"> Est un compte local </dt>
+                    <dt class="col-md-5"> Compte local ?</dt>
                     <dd class="col-md-5"> <?php echo ($utilisateur->isLocal())?'Oui':'Non'; ?> </dd>
                 </dl>
             <?php else : ?>
@@ -85,7 +85,7 @@ use Application\Entity\Db\Utilisateur;
                         </td>
                         <td>
                             <?php if ($acteur->getEtablissement() !== null) : ?>
-                                <?php echo $acteur->getEtablissement()->getLibelle(); ?>
+                                <?php echo $acteur->getEtablissement()->getStructure()->getLibelle(); ?>
                             <?php else : ?>
                                 Aucun établissement
                             <?php endif; ?>

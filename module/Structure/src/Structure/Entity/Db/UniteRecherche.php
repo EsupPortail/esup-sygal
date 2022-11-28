@@ -3,13 +3,13 @@
 namespace Structure\Entity\Db;
 
 use Application\Entity\Db\DomaineScientifique;
-use Application\Entity\Db\These;
 use Application\Search\Filter\SearchFilterValueInterface;
-use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use These\Entity\Db\These;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
-use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
 /**
  * UniteRecherche
@@ -19,6 +19,7 @@ class UniteRecherche
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
+    use StructureAwareTrait;
 
     /**
      * @var string
@@ -41,21 +42,12 @@ class UniteRecherche
     protected $sourceCode;
 
     /**
-     * @var Structure
-     */
-    protected $structure;
-
-    /**
      * @var \Doctrine\Common\Collections\Collection
      */
     protected $domaines;
 
-
     /** @var string RNSR */
     protected $RNSR;
-    /**
-     * UniteRecherche constructor.
-     */
 
     /** @var These[] */
     private $theses;
@@ -111,65 +103,9 @@ class UniteRecherche
      *
      * @return string
      */
-    public function getSourceCode()
+    public function getSourceCode(): ?string
     {
         return $this->sourceCode;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCode(): ?string
-    {
-        return $this->structure->getCode();
-    }
-
-    /**
-     * @return string
-     */
-    public function getLibelle()
-    {
-        return $this->getStructure()->getLibelle();
-    }
-
-    /**
-     * @param string $libelle
-     */
-    public function setLibelle($libelle)
-    {
-        $this->getStructure()->setLibelle($libelle);
-    }
-
-    /**
-     * @return string
-     */
-    public function getCheminLogo()
-    {
-        return $this->getStructure()->getCheminLogo();
-    }
-
-    /**
-     * @param string $cheminLogo
-     */
-    public function setCheminLogo($cheminLogo)
-    {
-        $this->getStructure()->setCheminLogo($cheminLogo);
-    }
-
-    /**
-     * @return string
-     */
-    public function getSigle()
-    {
-        return $this->getStructure()->getSigle();
-    }
-
-    /**
-     * @param string $sigle
-     */
-    public function setSigle($sigle)
-    {
-        $this->getStructure()->setSigle($sigle);
     }
 
     /**
@@ -211,22 +147,20 @@ class UniteRecherche
     }
 
     /**
-     * @param Structure $structure
-     * @return UniteRecherche
+     * Retourne l'éventuelle unité de recherche substituant celle-ci.
+     *
+     * ATTENTION : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
+     * '.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.uniteRecherche'.
+     *
+     * @return \Structure\Entity\Db\UniteRecherche|null
      */
-    public function setStructure($structure)
+    public function getUniteRechercheSubstituante(): ?UniteRecherche
     {
-        $this->structure = $structure;
+        if ($substit = $this->structure->getStructureSubstituante()) {
+            return $substit->getUniteRecherche();
+        }
 
-        return $this;
-    }
-
-    /**
-     * @return Structure
-     */
-    public function getStructure()
-    {
-        return $this->structure;
+        return null;
     }
 
     /**
@@ -288,16 +222,16 @@ class UniteRecherche
      */
     public function createSearchFilterValueOption(): array
     {
-        $estFermee = $this->getStructure()->estFermee();
+        $estFermee = $this->structure->estFermee();
 
-        $subtext = $this->getLibelle();
+        $subtext = $this->structure->getLibelle();
         if ($estFermee) {
             $subtext .= " - FERMÉE";
         }
 
         return [
             'value' => $this->getSourceCode(),
-            'label' => $this->getSigle(),
+            'label' => $this->structure->getSigle(),
             'subtext' => $subtext,
             'class' => $estFermee ? 'fermee' : '',
         ];

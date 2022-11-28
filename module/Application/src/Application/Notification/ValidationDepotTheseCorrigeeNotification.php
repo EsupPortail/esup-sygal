@@ -2,8 +2,9 @@
 
 namespace Application\Notification;
 
+use Application\Entity\Db\Utilisateur;
 use Individu\Entity\Db\Individu;
-use Application\Entity\Db\Interfaces\TheseAwareTrait;
+use These\Entity\Db\Interfaces\TheseAwareTrait;
 use Notification\Notification;
 
 class ValidationDepotTheseCorrigeeNotification extends Notification
@@ -12,6 +13,8 @@ class ValidationDepotTheseCorrigeeNotification extends Notification
 
     protected $templatePath = 'application/notification/mail/notif-validation-depot-these-corrigee';
 
+    private ?Utilisateur $destinataire = null;
+
     /**
      * @return static
      */
@@ -19,7 +22,7 @@ class ValidationDepotTheseCorrigeeNotification extends Notification
     {
         /** @var Individu[] $unknownMails */
         $unknownMails = [];
-        $to = $this->these->getPresidentJuryEmail($unknownMails);
+        $to = $this->destinataire ? $this->destinataire->getEmail() : $this->these->getPresidentJuryEmail($unknownMails);
         $cc = $this->emailBdd;
 
         $infoMessage = sprintf(
@@ -70,5 +73,10 @@ class ValidationDepotTheseCorrigeeNotification extends Notification
         $this->emailBdd = $emailBdd;
 
         return $this;
+    }
+
+    public function setDestinataire($utilisateur)
+    {
+        $this->destinataire = $utilisateur;
     }
 }

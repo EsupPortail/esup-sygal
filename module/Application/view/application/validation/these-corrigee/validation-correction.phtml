@@ -2,7 +2,7 @@
 
 use Application\Assertion\BaseAssertion;
 use Application\Constants;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
@@ -27,7 +27,7 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_CORRE
 ?>
 
 <div class="card box">
-    <div class="card-header bg-info">
+    <div class="card-header bg-dark text-white">
         <h2><?php echo $typeValidation ?></h2>
     </div>
     <div class="card-body">

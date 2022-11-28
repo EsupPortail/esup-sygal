@@ -4,10 +4,10 @@
 namespace StepStar\Service\Zip;
 
 
-use Application\Entity\Db\FichierThese;
-use Application\Entity\Db\These;
+use These\Entity\Db\FichierThese;
+use These\Entity\Db\These;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use StepStar\Exception\ZipServiceException;
 use UnicaenApp\Exception\RuntimeException;

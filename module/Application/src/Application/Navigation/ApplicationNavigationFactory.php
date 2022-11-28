@@ -5,11 +5,11 @@ namespace Application\Navigation;
 use Doctorant\Entity\Db\Doctorant;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
 use Structure\Search\Etablissement\EtablissementSearchFilter;
 use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
-use Application\Service\These\TheseServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Interop\Container\ContainerInterface;
 use UnicaenApp\Util;
@@ -245,7 +245,7 @@ class ApplicationNavigationFactory extends NavigationFactory
         switch (true) {
             case $role->isEcoleDoctoraleDependant():
                 $ed = $role->getStructure()->getEcoleDoctorale();
-                $label = $ed->getSigle();
+                $label = $ed->getStructure()->getSigle();
                 $query = [EcoleDoctoraleSearchFilter::NAME => $ed->getSourceCode()];
                 break;
             case $role->isUniteRechercheDependant():
@@ -255,7 +255,7 @@ class ApplicationNavigationFactory extends NavigationFactory
                 break;
             case $role->isEtablissementDependant():
                 $etab = $role->getStructure()->getEtablissement();
-                $label = $etab->getCode();
+                $label = $etab->getStructure()->getCode();
                 $query = [EtablissementSearchFilter::NAME => $etab->getSourceCode()];
                 break;
             default:
@@ -290,6 +290,9 @@ class ApplicationNavigationFactory extends NavigationFactory
         $page = $protoPage;
         // label
         $page['label'] = "Soutenances " . $label;
+        // params
+        $page['query'] = $page['query'] ?? [];
+        $page['query'] = array_merge($page['query'], $query);
         $newPages[] = $page;
 
         return $newPages;

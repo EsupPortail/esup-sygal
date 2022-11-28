@@ -1,5 +1,6 @@
 <?php
 
+use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;
 use Structure\Provider\Privilege\StructurePrivileges;
 use Structure\Provider\Privilege\SubstitutionPrivileges;
@@ -26,15 +27,22 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
-<?php if ($canAjouter): ?>
+<p>
+    <?php if ($canAjouter): ?>
+        <a href="<?php echo $this->url('unite-recherche/ajouter', [], [], true) ?>"
+           class="btn btn-primary"
+           title="<?php echo $this->translate("Créer une nouvelle unité de recherche"); ?>">
+            <span class="icon icon-plus"></span>
+            <?php echo $this->translate("Ajouter une nouvelle unité de recherche"); ?>
+        </a>
+    <?php endif ?>
 
-    <a href="<?php echo $this->url('unite-recherche/ajouter', [], [], true) ?>"
-       class="btn btn-primary"
-       title="<?php echo $this->translate("Créer une nouvelle unité de recherche"); ?>">
-        <span class="icon icon-plus"></span>
-        <?php echo $this->translate("Ajouter une nouvelle unité de recherche"); ?>
+    <a href="<?php echo $this->url('substitution-index-structure', ['type' => TypeStructure::CODE_UNITE_RECHERCHE], [], true) ?>"
+       class="btn btn-outline-secondary float-end"
+       title="<?php echo $this->translate("Accéder à la page des substitutions d'unités de recherche");?>">
+        <?php echo $this->translate("Substitutions d'unités de recherche...");?>
     </a>
-<?php endif ?>
+</p>
 
 <div>
     <table class="table table-sm">
@@ -61,7 +69,7 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
             <tr>
                 <td>
                     <a href="<?php echo $this->url('unite-recherche/information', ['structure' => $unite->getStructure()->getId()], [], true); ?>">
-                        <?php echo $unite->getLibelle(); ?>
+                        <?php echo $unite->getStructure()->getLibelle(); ?>
                         <?php if ($unite->getStructure()->estFermee()) : ?>
                             &nbsp;<span class="badge bg-danger">Structure fermée</span>
                         <?php endif; ?>
@@ -73,7 +81,7 @@ $canSubstituer = $this->isAllowed(SubstitutionPrivileges::getResourceId(Substitu
                 <td>
                     <?php echo $unite->getStructure()->getCode(); ?>
                 </td>
-                <td> <?php echo $unite->getSigle(); ?> </td>
+                <td> <?php echo $unite->getStructure()->getSigle(); ?> </td>
                 <td> <?php echo $unite->getRNSR(); ?> </td>
 <!--                <td> --><?php //echo count($unite->getTheses()); ?><!-- </td>-->
                 <td>

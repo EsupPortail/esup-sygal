@@ -5,7 +5,6 @@ namespace Structure\Search\Etablissement;
 use Application\Search\Filter\SelectSearchFilter;
 use Doctrine\ORM\QueryBuilder;
 use Structure\Entity\Db\Etablissement;
-use Webmozart\Assert\Assert;
 
 /**
  * Filtre de type "établissement lié" (attribut : `sourceCode`).
@@ -35,13 +34,8 @@ class EtablissementSearchFilter extends SelectSearchFilter
         );
     }
 
-    /**
-     * @param QueryBuilder $qb
-     */
-    public function applyToQueryBuilder(QueryBuilder $qb)
+    protected function applyToQueryBuilderUsingWhereField(QueryBuilder $qb)
     {
-        $this->checkWhereField();
-
         /**
          * Pas de jointure en dur ici. Désormais, il faut :
          * - faire la jointure nécessaire dans {@see \Application\Search\SearchService::createQueryBuilder()} ;

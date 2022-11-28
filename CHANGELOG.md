@@ -1,7 +1,66 @@
 Journal des modifications
 =========================
 
-5.2.0
+5.2.5
+-----
+- Filtrage des propositions de soutenances par Etab, ED, UR, état.
+- Renommage de 'Utilisateurs' en 'Comptes utilisateurs'.
+- [FIX] Accueil doctorant : corrections autour du lien 'Ma thèse' (+ cosmétique).
+- [FIX] Erreur dans la recherche de doctroants par établissement et ED (plantage impactant les listes de diff).
+- [FIX] Recherche de rapports d'activités : restrictions par ED/UR selon le rôle endossé et ses privilèges.
+- [FIX] Doublons dans la recherche des établissements de rattachement d'une UR.
+- [FIX] Module Formation : correction des routes des paginators.
+- [FIX] Création/modification d'individu : erreur 'Adresse existante (Utilisateur)'.
+- [FIX] Masquage du message abscons 'Cette personne ne pourra pas utiliser l'application...' sur la fiche Thèse.
+- [FIX] Page Assistance : ne plante plus et affiche toutes les adresses possibles en cas d'adresse établissement introuvable.
+- [FIX] Enregistrement de la date de fin de confidentialité dans la Diffusion.
+
+5.2.4
+-----
+- [FIX] Correction du ViewHelper SelectHelper (ne suivant pas le lien de substitution)
+- Ajout de la modalité de formation mixte
+- Ajout d'une garde pour éviter les inscriptions répétées
+- Changement des notifications envoyées à propos des listes des formations
+- [FIX] priorisation de l'utilisateur pour les notifications au président depuis la page dédiée
+- [FIX] correction export csv des inscrits
+- [FIX] récupération des mappings manquants pour l'enquete des formations
+- Remplacement de \n en <br> pour conserver les sauts de ligne dans les titres sur la page de couverture.
+- [FIX] Corrections concernant la subsitution de structures.
+- Retrait du readonly sur les libellés et sigles des URs et des EDs
+- Calcul de la position sur la liste complémentaire + affichage + possibilité de macro pour les templates
+
+5.2.3
+-----
+- Substitution de structures : réalisation des jointures dans les requêtes Doctrine et suppression dans les vues SRC_*.
+- Module StepStar : envoi des thèses vers Step/Star.
+- [FIX] Module Formation : mise en commentaire provisoire des paginators problématiques.
+
+5.2.2
+-----
+- [FIX] exploitation de la récupération des chemins plutôt que des contenus pour la génération des convocations
+- Réorganisation des ménus latéraux de l'accueil du site
+- [FIX] Correction de bug dans les assertions du domaine Thèse.
+- [FIX] Correction de chemins de scripts de vues erronés déplacés dans le module These.
+- Renommage et réordonancement de menus.
+- Changement de l'assertion pour l'accès des rapporteurs à la proposition de soutenance
+- [FIX] Remise en place du menu de dépôt de rapport de pré-soutenance
+- Changement du libellé 'Aucun Site' => 'Multi-site' (module de formation)
+- Extension du mail "échec d'inscription" aux personnes non classées (module de formation)
+- Changements de libellés.
+
+5.2.1
+-----
+- [FIX] Téléchargement de rapport d'activité : message d'erreur en bonne et dûe forme en cas de signature/logo absent.  
+- [FIX] Passage à unicaen/db-import 5.2.2 pour corrections de dysfonctionnements dans l'import/synchro.
+- [FIX] Plantage de la recherche textuelle d'individus en cas de résultat vide. 
+- [FIX] Ajout de garde pour l'index des rapporteurs (cas où le membre est null qui bloquait les administrateurs)
+- Changement du lien dans le mail pour la validation des présidents : redirect + selection du rôle
+- [FIX] Amélioration de la robustesse de la proposition de soutenance pour les cas de th_se sans ED, sans UR ou sans ETAB
+- Ajout d'une vérification de la date de soutenance dans le formulaire pour prévenir des erreurs de saisie (p.e. 12/09/0022)
+- [FIX] Années universitaires d'inscription : les années historisées n'étaient pas écartées.
+- Couleur noire par défaut pour les headers des cards.
+
+5.2.0 
 -----
 - [FIX] Plantage du téléchargement d'un rapport d'activité validé dont la thèse n'est rattachée à aucune UR
 - [FIX] La même page de validation était appliquée sur tous les rapports d'activité téléchargés au format zip.

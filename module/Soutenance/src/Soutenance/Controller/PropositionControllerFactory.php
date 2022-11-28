@@ -2,7 +2,11 @@
 
 namespace Soutenance\Controller;
 
-use Application\Service\Acteur\ActeurService;
+use Information\Controller\InformationController;
+use Information\Service\InformationService;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use These\Service\Acteur\ActeurService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Role\RoleService;
 use Application\Service\UserContextService;
@@ -30,12 +34,15 @@ class PropositionControllerFactory
     /**
      * @param ContainerInterface $container
      * @return PropositionController
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container) : PropositionController
     {
         /**
          * @var ActeurService $acteurService
          * @var EcoleDoctoraleService $ecoleDoctoraleService
+         * @var InformationService $informationService
          * @var EvenementService $evenementService
          * @var MembreService $membreService
          * @var NotifierSoutenanceService $notificationSoutenanceService
@@ -49,6 +56,7 @@ class PropositionControllerFactory
         $acteurService = $container->get(ActeurService::class);
         $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
         $evenementService = $container->get(EvenementService::class);
+        $informationService = $container->get(InformationService::class);
         $membreService = $container->get(MembreService::class);
         $notificationSoutenanceService = $container->get(NotifierSoutenanceService::class);
         $propositionService = $container->get(PropositionService::class);
@@ -88,6 +96,7 @@ class PropositionControllerFactory
         $controller->setActeurService($acteurService);
         $controller->setEcoleDoctoraleService($ecoleDoctoraleService);
         $controller->setEvenementService($evenementService);
+        $controller->setInformationService($informationService);
         $controller->setMembreService($membreService);
         $controller->setNotifierSoutenanceService($notificationSoutenanceService);
         $controller->setPropositionService($propositionService);

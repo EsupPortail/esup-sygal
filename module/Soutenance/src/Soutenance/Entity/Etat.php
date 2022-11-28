@@ -2,10 +2,12 @@
 
 namespace Soutenance\Entity;
 
+use Application\Search\Filter\SearchFilterValueInterface;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class Etat implements HistoriqueAwareInterface {
+class Etat implements HistoriqueAwareInterface, SearchFilterValueInterface
+{
     use HistoriqueAwareTrait;
 
     const EN_COURS = 'EN_COURS';
@@ -64,4 +66,11 @@ class Etat implements HistoriqueAwareInterface {
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function createSearchFilterValueOption(): array
+    {
+        return ['value' => $this->getCode(), 'label' => $this->getLibelle()];
+    }
 }

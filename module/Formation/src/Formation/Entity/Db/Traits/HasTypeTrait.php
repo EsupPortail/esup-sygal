@@ -29,10 +29,20 @@ trait HasTypeTrait {
     }
 
     /**
+     * Retourne l'éventuelle structure liée *ou son substitut le cas échéant*.
+     *
+     * **ATTENTION** : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
+     * '.typeStructure' puis 'typeStructure.structureSubstituante'.
+     *
+     * @param bool $returnSubstitIfExists À true, retourne la structure substituante s'il y en a une. Sinon la structure d'origine.
      * @return Structure|null
      */
-    public function getTypeStructure(): ?Structure
+    public function getTypeStructure(bool $returnSubstitIfExists = true): ?Structure
     {
+        if ($returnSubstitIfExists && $this->typeStructure && ($sustitut = $this->typeStructure->getStructureSubstituante())) {
+            return $sustitut;
+        }
+
         return $this->typeStructure;
     }
 

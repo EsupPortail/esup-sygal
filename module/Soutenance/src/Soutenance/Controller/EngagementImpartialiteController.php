@@ -4,7 +4,7 @@ namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Validation;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Membre;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
@@ -33,7 +33,7 @@ class EngagementImpartialiteController extends AbstractController
     public function engagementImpartialiteAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         /** @var Validation $validation */
@@ -55,7 +55,7 @@ class EngagementImpartialiteController extends AbstractController
     public function notifierRapporteursEngagementImpartialiteAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
@@ -77,7 +77,7 @@ class EngagementImpartialiteController extends AbstractController
     public function notifierEngagementImpartialiteAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         if ($membre->getActeur()) {
@@ -93,7 +93,7 @@ class EngagementImpartialiteController extends AbstractController
     public function signerEngagementImpartialiteAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         $signature = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($these, $membre);
@@ -109,11 +109,11 @@ class EngagementImpartialiteController extends AbstractController
     public function refuserEngagementImpartialiteAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         $this->getEngagementImpartialiteService()->createRefus($membre, $these);
-        $this->getPropositionService()->annulerValidations($proposition);
+        $this->getPropositionService()->annulerValidationsForProposition($proposition);
         $this->getNotifierSoutenanceService()->triggerRefusEngagementImpartialite($these, $proposition, $membre);
 
 
@@ -123,7 +123,7 @@ class EngagementImpartialiteController extends AbstractController
     public function annulerEngagementImpartialiteAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         /** @var Validation[] $validations */

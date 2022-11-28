@@ -6,6 +6,8 @@ use Soutenance\Assertion\PropositionAssertion;
 use Soutenance\Assertion\PropositionAssertionFactory;
 use Soutenance\Controller\PropositionController;
 use Soutenance\Controller\PropositionControllerFactory;
+use Soutenance\Controller\PropositionRechercheController;
+use Soutenance\Controller\PropositionRechercheControllerFactory;
 use Soutenance\Form\Anglais\AnglaisForm;
 use Soutenance\Form\Anglais\AnglaisFormFactory;
 use Soutenance\Form\Anglais\AnglaisHydrator;
@@ -28,6 +30,8 @@ use Soutenance\Form\Membre\MembreHydratorFactory;
 use Soutenance\Form\Refus\RefusForm;
 use Soutenance\Form\Refus\RefusFormFactory;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Soutenance\Service\Proposition\PropositionSearchService;
+use Soutenance\Service\Proposition\PropositionSearchServiceFactory;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Proposition\PropositionServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -67,6 +71,16 @@ return [
         ],
         'guards' => [
             PrivilegeController::class => [
+                [
+                    'controller' => PropositionRechercheController::class,
+                    'action' => [
+                        'index',
+                        'filters',
+                        'notres',
+                        'notresFilters',
+                    ],
+                    'privileges' => PropositionPrivileges::PROPOSITION_VISUALISER,
+                ],
                 [
                     'controller' => PropositionController::class,
                     'action' => [
@@ -420,12 +434,14 @@ return [
     'service_manager' => [
         'factories' => [
             PropositionService::class => PropositionServiceFactory::class,
+            PropositionSearchService::class => PropositionSearchServiceFactory::class,
             PropositionAssertion::class => PropositionAssertionFactory::class,
         ],
     ],
     'controllers' => [
         'factories' => [
             PropositionController::class => PropositionControllerFactory::class,
+            PropositionRechercheController::class => PropositionRechercheControllerFactory::class,
         ],
     ],
 

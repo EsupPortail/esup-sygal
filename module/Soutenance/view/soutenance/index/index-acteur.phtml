@@ -6,7 +6,7 @@
  * @var These[] $theses
  */
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 
@@ -62,7 +62,7 @@ $canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceI
                             href="<?php echo $this->url('soutenance/proposition', ['these' => $theseLink->getId()], [], true); ?>">
                             <span class="badge bg-secondary"><?php echo $theseLink->getDoctorant(); ?></span>
                             <?php
-                                 echo $this->partial('application/these/partial/titre', ['these' => $theseLink, 'useTitreThese' => true, 'length' => 120, 'description' => false])
+                                 echo $this->partial('these/these/partial/titre', ['these' => $theseLink, 'useTitreThese' => true, 'length' => 120, 'description' => false])
                             ?>
                         </a>
                 <?php endforeach; ?>
@@ -92,7 +92,7 @@ $canVisualiser = $this->isAllowed(EngagementImpartialitePrivileges::getResourceI
 <!--                            href="--><?php //echo $this->url('soutenance/avancement', ['these' => $theseLink->getId()], [], true); ?><!--">-->
 <!--                            <span class="badge bg-secondary">--><?php //echo $theseLink->getDoctorant(); ?><!--</span>-->
 <!--                            --><?php
-//                            echo $this->partial('application/these/partial/titre', ['these' => $theseLink, 'useTitreThese' => true, 'length' => 120, 'description' => false])
+//                            echo $this->partial('these/these/partial/titre', ['these' => $theseLink, 'useTitreThese' => true, 'length' => 120, 'description' => false])
 //                            ?>
 <!--                        </a>-->
 <!--                --><?php //endforeach; ?>

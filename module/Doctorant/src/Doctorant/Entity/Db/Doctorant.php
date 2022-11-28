@@ -48,9 +48,9 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     private $theses;
 
     /**
-     * @var \Structure\Entity\Db\Etablissement
+     * @var \Structure\Entity\Db\Etablissement|null
      */
-    protected $etablissement;
+    protected ?Etablissement $etablissement = null;
 
     /**
      * @var string
@@ -58,10 +58,21 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     private $ine;
 
     /**
-     * @return \Structure\Entity\Db\Etablissement
+     * Retourne l'éventuel établissement lié *ou son substitut le cas échéant*.
+     *
+     * **ATTENTION** : veiller à bien faire les jointures suivantes en amont avant d'utiliser cet accesseur :
+     * '.etablissement' puis 'etablissement.structure' puis 'structure.structureSubstituante' puis 'structureSubstituante.etablissement'.
+     *
+     * @param bool $returnSubstitIfExists À true, retourne l'établissement substituant s'il y en a un ; sinon l'établissement d'origine.
+     * @see Etablissement::getEtablissementSubstituant()
+     * @return Etablissement|null
      */
-    public function getEtablissement()
+    public function getEtablissement(bool $returnSubstitIfExists = true): ?Etablissement
     {
+        if ($returnSubstitIfExists && $this->etablissement && ($sustitut = $this->etablissement->getEtablissementSubstituant())) {
+            return $sustitut;
+        }
+
         return $this->etablissement;
     }
 
@@ -401,7 +412,7 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     }
 
     /**
-     * @return \Application\Entity\Db\These[]
+     * @return \These\Entity\Db\These[]
      */
     public function getTheses()
     {

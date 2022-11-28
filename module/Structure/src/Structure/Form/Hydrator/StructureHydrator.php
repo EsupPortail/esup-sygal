@@ -15,10 +15,10 @@ abstract class StructureHydrator extends DoctrineObject
     {
         $data = parent::extract($structure);
 
-        $data['libelle'] = $structure->getLibelle();
+        $data['libelle'] = $structure->getStructure()->getLibelle();
         $data['code'] = $structure->getStructure()->getCode();
-        $data['sigle'] = $structure->getSigle();
-        $data['cheminLogo'] = $structure->getCheminLogo();
+        $data['sigle'] = $structure->getStructure()->getSigle();
+        $data['cheminLogo'] = $structure->getStructure()->getCheminLogo();
         $data['estFerme'] = $structure->getStructure()->estFermee();
         $data['id_ref'] = $structure->getStructure()->getIdRef();
         $data['id_hal'] = $structure->getStructure()->getIdHal();
@@ -36,12 +36,12 @@ abstract class StructureHydrator extends DoctrineObject
         /** @var StructureConcreteInterface $object */
         $object = parent::hydrate($data, $structure);
 
-        $object->setLibelle($data['libelle']);
-        $object->setSigle($data['sigle']);
+        $object->getStructure()->setLibelle($data['libelle']);
+        $object->getStructure()->setSigle($data['sigle']);
         $object->getStructure()->setCode($data['code']);
         $object->getStructure()->setIdRef($data['id_ref']);
         $object->getStructure()->setIdHal($data['id_hal']);
-        $object->setCheminLogo($data['cheminLogo']);
+        $object->getStructure()->setCheminLogo($data['cheminLogo']);
         $object->getStructure()->setEstFermee(isset($data['estFerme']) and $data['estFerme'] === "1");
 
         return $object;

@@ -4,7 +4,7 @@ namespace RapportActivite\Entity\Db;
 
 use Application\Entity\AnneeUniv;
 use Fichier\Entity\Db\Fichier;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\TypeRapport;
 use Application\Entity\Db\TypeValidation;
 use DateTime;
@@ -358,7 +358,7 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
         $these = $this->getThese();
 
         return sprintf('%s/%s/%s/%s',
-            $these->getEtablissement()->getCode(),
+            $these->getEtablissement()->getStructure()->getCode(),
             ($ed = $these->getEcoleDoctorale()) ? $ed->getStructure()->getCode() : "ED_inconnue",
             ($ur = $these->getUniteRecherche()) ? $ur->getStructure()->getCode() : "UR_inconnue",
             $this->getFichier()->getNom()

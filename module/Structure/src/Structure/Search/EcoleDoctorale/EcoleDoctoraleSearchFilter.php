@@ -5,7 +5,6 @@ namespace Structure\Search\EcoleDoctorale;
 use Application\Search\Filter\SelectSearchFilter;
 use Doctrine\ORM\QueryBuilder;
 use Structure\Entity\Db\EcoleDoctorale;
-use Webmozart\Assert\Assert;
 
 /**
  * Filtre de type "école doctorale liée" (attribut : `sourceCode`).
@@ -38,13 +37,8 @@ class EcoleDoctoraleSearchFilter extends SelectSearchFilter
         return $instance;
     }
 
-    /**
-     * @param QueryBuilder $qb
-     */
-    public function applyToQueryBuilder(QueryBuilder $qb)
+    protected function applyToQueryBuilderUsingWhereField(QueryBuilder $qb)
     {
-        $this->checkWhereField();
-
         /**
          * Pas de jointure en dur ici. Désormais, il faut :
          * - faire la jointure nécessaire dans {@see \Application\Search\SearchService::createQueryBuilder()} ;

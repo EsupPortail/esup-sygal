@@ -2,21 +2,11 @@
 
 namespace Retraitement;
 
-use Unicaen\Console\Adapter\AdapterInterface as Console;
-use Laminas\Mvc\ModuleRouteListener;
-use Laminas\Mvc\MvcEvent;
+use Laminas\Console\Adapter\AdapterInterface as Console;
+use Laminas\ModuleManager\Feature\ConsoleUsageProviderInterface;
 
-class Module
+class Module implements ConsoleUsageProviderInterface
 {
-    public function onBootstrap(MvcEvent $e)
-    {
-        $application = $e->getApplication();
-        $application->getServiceManager()->get('translator');
-        $eventManager = $application->getEventManager();
-        $moduleRouteListener = new ModuleRouteListener();
-        $moduleRouteListener->attach($eventManager);
-    }
-
     public function getConfig()
     {
         return include __DIR__ . '/config/module.config.php';

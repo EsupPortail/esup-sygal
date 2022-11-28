@@ -53,7 +53,7 @@ $navigationHelper = $this->navigation('navigation');
 
         <div class="container ">
             <?php
-            echo $navigationHelper->filAriane('navigation')->setRenderInvisible(false)->render() ?:
+            echo $navigationHelper->filAriane('navigation')->setRenderInvisible(true)->render() ?:
                  $this->navigation()->filAriane('Laminas\Navigation\Information')->setRenderInvisible(false)->render() ?>
         </div>
         

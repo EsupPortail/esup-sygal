@@ -84,6 +84,8 @@ class EnqueteReponseSearchService extends SearchService
             ->join("formateur.individu", 'indf')
             ->leftJoin("form.responsable", 'resp')
             ->leftJoin("form.site", 'site')
+            ->leftJoin("site.structure", 'site_structure')->addSelect('site_structure')
+            ->leftJoinStructureSubstituante('site_structure', 'site_structureSubstituante')
             ->andWhere('er.histoDestruction is null')
             ->addOrderBy('q.id');
     }
@@ -95,19 +97,21 @@ class EnqueteReponseSearchService extends SearchService
         return EtablissementSearchFilter::newInstance()
             ->setName(self::NAME_site)
             ->setLabel("Site")
-            ->setWhereField('site.sourceCode'); // cf. `join("f.site", 'site')` fait dans `createQueryBuilder()`
+            ->setQueryBuilderApplier(function(SearchFilter $filter, QueryBuilder $qb) {
+                $qb
+                    ->andWhere('site.sourceCode = :sourceCodeSite OR site_structureSubstituante.sourceCode = :sourceCodeSite')
+                    ->setParameter('sourceCodeSite', $filter->getValue());
+            });
     }
 
     private function createResponsableFilter(): SelectSearchFilter
     {
         $filter = new SelectSearchFilter("Responsable", self::NAME_responsable);
-        $filter->setQueryBuilderApplier(
-            function(SelectSearchFilter $filter, QueryBuilder $qb) {
-                $qb
-                    ->andWhere("resp = :responsable")
-                    ->setParameter('responsable', $filter->getValue());
-            }
-        );
+        $filter->setQueryBuilderApplier(function(SelectSearchFilter $filter, QueryBuilder $qb) {
+            $qb
+                ->andWhere("resp = :responsable")
+                ->setParameter('responsable', $filter->getValue());
+        });
 
         return $filter;
     }
@@ -139,19 +143,10 @@ class EnqueteReponseSearchService extends SearchService
 
     /********************************** SORTERS ****************************************/
 
-    /**
-     * @return SearchSorter
-     */
     public function createSiteSorter(): SearchSorter
     {
-        $sorter = new SearchSorter("Site", EtablissementSearchFilter::NAME);
-        $sorter->setQueryBuilderApplier(
-            function (SearchSorter $sorter, QueryBuilder $qb) {
-                $qb
-                    ->join('site.structure', 's_sort')
-                    ->addOrderBy('s_sort.code', $sorter->getDirection());
-            }
-        );
+        $sorter = new SearchSorter("Site", self::NAME_site);
+        $sorter->setOrderByField("site_structureSubstituante.code, site_structure.code");
 
         return $sorter;
     }
@@ -159,7 +154,7 @@ class EnqueteReponseSearchService extends SearchService
     private function createResponsableSorter(): SearchSorter
     {
         $sorter = new SearchSorter("Responsable", self::NAME_responsable);
-        $sorter->setOrderByField("resp.nomUsuel");
+        $sorter->setOrderByField("resp.nomUsuel, resp.prenom1");
 
         return $sorter;
     }
@@ -167,7 +162,7 @@ class EnqueteReponseSearchService extends SearchService
     private function createFormateurSorter(): SearchSorter
     {
         $sorter = new SearchSorter("Formateur", self::NAME_formateur);
-        $sorter->setOrderByField("indf.nomUsuel");
+        $sorter->setOrderByField("indf.nomUsuel, indf.prenom1");
 
         return $sorter;
     }
@@ -181,5 +176,6 @@ class EnqueteReponseSearchService extends SearchService
     private function createLibelleSorter(): SearchSorter
     {
         return new SearchSorter("Libellé", self::NAME_libelle);
+        // $sorter->setOrderByField() inutile car self::NAME_libelle === nom de l'attribut d'entité.
     }
 }

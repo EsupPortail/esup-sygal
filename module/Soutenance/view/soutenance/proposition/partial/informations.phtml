@@ -13,7 +13,7 @@
  * @var Acteur[] $directeurs
  */
 
-use Application\Entity\Db\Acteur;
+use These\Entity\Db\Acteur;
 use Individu\Entity\Db\IndividuRole;
 use Soutenance\Entity\Proposition;
 
@@ -73,7 +73,7 @@ $etablissement = $these->getEtablissement();
                             <?php if (!$unite) : ?>
                                 <strong class="text-danger">Aucune unité de recherche !</strong>
                             <?php else : ?>
-                                <?php echo $unite->getLibelle(); ?>
+                                <?php echo $unite->getStructure()->getLibelle(); ?>
                                     <?php if (empty($uniteResponsables)) : ?>
                                         <div class="alert alert-danger">
                                             <span class="icon icon-attention"></span> Aucun reponsable de site
@@ -95,7 +95,7 @@ $etablissement = $these->getEtablissement();
                             <?php if (!$ecole) : ?>
                                 <strong class="text-danger">Aucune école doctorale !</strong>
                             <?php else : ?>
-                                <?php echo $ecole->getLibelle(); ?>
+                                <?php echo $ecole->getStructure()->getLibelle(); ?>
                                 <?php if (empty($ecoleResponsables)) : ?>
                                     <div class="alert alert-danger">
                                         <span class="icon icon-attention"></span> Aucun reponsable de site
@@ -117,7 +117,7 @@ $etablissement = $these->getEtablissement();
                             <?php if (!$ecole) : ?>
                                 <strong class="text-danger">Aucun établissement !</strong>
                             <?php else : ?>
-                                <?php echo $etablissement->getLibelle(); ?>
+                                <?php echo $etablissement->getStructure()->getLibelle(); ?>
                                 <?php if (empty($etablissementResponsables)) : ?>
                                     <div class="alert alert-danger">
                                         <span class="icon icon-attention"></span> Aucun reponsable de site

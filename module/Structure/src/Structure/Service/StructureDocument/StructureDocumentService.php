@@ -3,22 +3,21 @@
 namespace Structure\Service\StructureDocument;
 
 use Application\Entity\DateTimeAwareTrait;
-use Structure\Entity\Db\Etablissement;
-use Fichier\Entity\Db\Fichier;
-use Fichier\Entity\Db\NatureFichier;
-use Structure\Entity\Db\Structure;
-use Structure\Entity\Db\StructureDocument;
-use Fichier\Service\Fichier\Exception\FichierServiceException;
-use Fichier\Service\Fichier\FichierServiceAwareTrait;
+use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Service\UserContextServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
-use Doctrine\ORM\QueryBuilder;
+use Fichier\Entity\Db\Fichier;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\Structure;
+use Structure\Entity\Db\StructureDocument;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Laminas\Mvc\Controller\AbstractActionController;
 use UnicaenApp\Util;
 
 class StructureDocumentService
@@ -136,17 +135,15 @@ class StructureDocumentService
 
     /** REQUETAGE *****************************************************************************************************/
 
-    /**
-     * @return QueryBuilder
-     */
-    public function createQueryBuilder() : QueryBuilder
+    public function createQueryBuilder() : DefaultQueryBuilder
     {
+        /** @var DefaultQueryBuilder $qb */
         $qb = $this->getEntityManager()->getRepository(StructureDocument::class)->createQueryBuilder('document')
             ->addSelect('nature')->join('document.nature', 'nature')
             ->addSelect('structure')->join('document.structure', 'structure')
             ->addSelect('etablissement')->leftjoin('document.etablissement', 'etablissement')
-            ->addSelect('fichier')->leftJoin('document.fichier', 'fichier')
-        ;
+            ->addSelect('fichier')->leftJoin('document.fichier', 'fichier');
+
         return $qb;
     }
 
@@ -157,29 +154,28 @@ class StructureDocumentService
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('document.histoDestruction IS NULL');
-        $result = $qb->getQuery()->getResult();
-        return $result;
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
      * @param Structure $structure
      * @return StructureDocument[]]
      */
-    public function getStructuresDocumentsByStructure(Structure  $structure) : array
+    public function getStructuresDocumentsByStructure(Structure $structure) : array
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('document.histoDestruction IS NULL')
-            ->andWhere('document.structure = :structure')
-            ->setParameter('structure', $structure);
-        $result = $qb->getQuery()->getResult();
-        return $result;
+            ->andWhereStructureOuSubstituanteIs($structure, 'structure');
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
-     * @param int|null $id
+     * @param int $id
      * @return StructureDocument|null
      */
-    public function getStructureDocument(?int $id) : ?StructureDocument
+    public function getStructureDocument(int $id) : ?StructureDocument
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('document.id = :id')
@@ -189,6 +185,7 @@ class StructureDocumentService
         } catch (NonUniqueResultException $e) {
             throw new RuntimeException("Plusieurs StructureDocument partagent le même id [".$id."]");
         }
+
         return $result;
     }
 
@@ -200,8 +197,8 @@ class StructureDocumentService
     public function getRequestedStructureDocument(AbstractActionController $controller, string $param = 'document') : ?StructureDocument
     {
         $id = $controller->params()->fromRoute($param);
-        $result = $this->getStructureDocument($id);
-        return $result;
+
+        return $this->getStructureDocument($id);
     }
 
     /** USAGE *********************************************************************************************************/
@@ -246,9 +243,9 @@ class StructureDocumentService
      * @param \Structure\Entity\Db\Etablissement $etablissement
      * @return \Fichier\Entity\Db\Fichier|null
      */
-    public function getDocumentFichierForStructureNatureAndEtablissement(Structure $structure,
-                                                                 string $nature_code,
-                                                                 Etablissement $etablissement): ?Fichier
+    public function findDocumentFichierForStructureNatureAndEtablissement(Structure     $structure,
+                                                                          string        $nature_code,
+                                                                          Etablissement $etablissement): ?Fichier
     {
         $documents = $this->getStructuresDocumentsByStructure($structure);
         foreach ($documents as $document) {
@@ -267,28 +264,9 @@ class StructureDocumentService
      * @return string|null
      * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
      */
-    public function getContenuFichier(Structure $structure, string $nature_code, Etablissement $etablissement): ?string
-    {
-        $fichier = $this->getDocumentFichierForStructureNatureAndEtablissement($structure, $nature_code, $etablissement);
-        if ($fichier === null) {
-            return null;
-        }
-
-        $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(false);
-
-        return $this->fichierStorageService->getFileContentForFichier($fichier);
-    }
-
-    /**
-     * @param Structure $structure
-     * @param string $nature_code
-     * @param Etablissement|null $etablissement
-     * @return string|null
-     * @throws \Fichier\Service\Storage\Adapter\Exception\StorageAdapterException
-     */
     public function getCheminFichier(Structure $structure, string $nature_code, ?Etablissement $etablissement = null): ?string
     {
-        $fichier = $this->getDocumentFichierForStructureNatureAndEtablissement($structure, $nature_code, $etablissement);
+        $fichier = $this->findDocumentFichierForStructureNatureAndEtablissement($structure, $nature_code, $etablissement);
         if ($fichier === null) {
             return null;
         }

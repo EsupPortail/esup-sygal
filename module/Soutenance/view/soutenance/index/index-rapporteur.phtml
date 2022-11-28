@@ -16,7 +16,7 @@
 
 use Application\Constants;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
@@ -26,7 +26,7 @@ use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 $canEngagement = true;
 $canTelecharger = true;
 $canAvis = true;
-$canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::AVIS_ANNULER);
+$canAnnuler = ($membre)?$this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::AVIS_ANNULER):false;
 ?>
 
 <?php /** Plusieurs thèses ont été trouvées, le rapporteurs doit alors sélectionner celle sur laquelle il veut travailler */ ?>
@@ -77,11 +77,11 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
 
 <h1 class="page-header">
     Index de la soutenance / Index of the PhD defense
-    <small><?php echo $this->partial('application/these/partial/titre') ?></small>
+    <small><?php echo $this->partial('these/these/partial/titre') ?></small>
 </h1>
 
 <div class="box card">
-    <div class="card-header bg-info">
+    <div class="card-header bg-dark text-white">
         <h2> Proposition de jury / Jury Proposal </h2>
     </div>
     <div class="card-body">
@@ -119,14 +119,14 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
 </div>
 
 <div class="box card">
-    <div class="card-header bg-info">
+    <div class="card-header bg-dark text-white">
         <h2> Engagement d'impartialité / Impartiality Commitement </h2>
     </div>
     <div class="card-body">
         <?php if ($engagement !== null) : ?>
             Vous avez signé l'engagement pour la thèse de <?php echo $these->getDoctorant(); ?>.
             <div class="card float-end">
-                <div class="card-header bg-secondary">
+                <div class="card-header bg-dark text-white">
                     Signature de l'engagment d'impartialité
                 </div>
                 <div class="card-body">
@@ -140,6 +140,7 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
             Pour être enregistré comme rapporteur de thèse, vous devez signer l'engagement d'impartialité. <br/>
             To be registered as external referee you must sign the impartiality commitment
 
+            <?php if ($membre) : ?>
             <a
                     <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::engagementImpartialiteAction() */?>
                     href="<?php echo $this->url('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true); ?>"
@@ -149,6 +150,8 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
 <!--                Signer / Sign-->
                 Accès à l'engagement d'impartialité / Access to the impartiality commitment
             </a>
+            <?php endif; ?>
+
         <?php endif; ?>
     </div>
 </div>
@@ -165,7 +168,7 @@ $canAnnuler = $this->isAllowed($membre->getActeur(), AvisSoutenancePrivileges::A
                 Vous pouvez télécharger la version électronique de la thèse via <?php echo $this->appInfos()->nom; ?>.
 
                 <a
-                    <?php /** @see \Application\Controller\TheseController::fusionAction() */ ?>
+                    <?php /** @see \These\Controller\TheseController::fusionAction() */ ?>
                     href="<?php echo $this->url("these/fusion", ["these" => $these->getId()], [], true); ?>"
                    class="btn btn-primary float-end"
                 >

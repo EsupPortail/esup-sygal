@@ -3,17 +3,13 @@
 namespace Soutenance\Service\Proposition;
 
 //TODO faire le repo aussi
-use Application\Entity\Db\Acteur;
-use Structure\Entity\Db\EcoleDoctorale;
-use Individu\Entity\Db\Individu;
+use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Application\QueryBuilder\DefaultQueryBuilder;
+use Application\Service\BaseService;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
@@ -22,9 +18,11 @@ use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use Doctrine\ORM\QueryBuilder;
 use Exception;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Individu\Entity\Db\Individu;
+use Laminas\Mvc\Controller\AbstractActionController;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -33,12 +31,16 @@ use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use These\Entity\Db\These;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Laminas\Mvc\Controller\AbstractActionController;
 
-class PropositionService {
+class PropositionService extends BaseService
+{
     use EntityManagerAwareTrait;
     use ActeurServiceAwareTrait;
     use ValidatationServiceAwareTrait;
@@ -51,6 +53,14 @@ class PropositionService {
     use MembreServiceAwareTrait;
     use UserContextServiceAwareTrait;
 
+    public function getRepository(): DefaultEntityRepository
+    {
+        /** @var DefaultEntityRepository $qb */
+        $qb = $this->getEntityManager()->getRepository(Proposition::class);
+
+        return $qb;
+    }
+
     /** GESTION DES ENTITES *******************************************************************************************/
 
     /**
@@ -60,7 +70,7 @@ class PropositionService {
     public function create(These $these) : Proposition
     {
         $proposition = new Proposition($these);
-        $proposition->setEtat($this->getPropositionEtatByCode(Etat::EN_COURS));
+        $proposition->setEtat($this->findPropositionEtatByCode(Etat::EN_COURS));
 
         try {
             $date = new DateTime();
@@ -174,12 +184,9 @@ class PropositionService {
 
     /** REQUETES ******************************************************************************************************/
 
-    /**
-     * @return QueryBuilder
-     */
-    public function createQueryBuilder(/*$alias = 'proposition'*/)
+    public function createQueryBuilder(): DefaultQueryBuilder
     {
-        $qb = $this->getEntityManager()->getRepository(Proposition::class)->createQueryBuilder("proposition")
+        return $this->getRepository()->createQueryBuilder("proposition")
             ->addSelect('etat')->join('proposition.etat', 'etat')
             ->addSelect('these')->join('proposition.these', 'these')
             ->addSelect('unite')->leftJoin('these.uniteRecherche', 'unite')
@@ -196,14 +203,14 @@ class PropositionService {
             ->andWhere('proposition.histoDestruction is null')
             //->addSelect('validation')->leftJoin('proposition.validations', 'validation')
         ;
-        return $qb;
     }
 
     /**
      * @param int $id
      * @return Proposition
      */
-    public function find($id) {
+    public function find($id): Proposition
+    {
         $qb = $this->createQueryBuilder()
             ->andWhere("proposition.id = :id")
             ->setParameter("id", $id)
@@ -213,46 +220,39 @@ class PropositionService {
         } catch (NonUniqueResultException $e) {
             throw new RuntimeException("De multiples propositions identifiées [".$id."] ont été trouvées !");
         }
+
         return $result;
     }
 
     /**
      * @param AbstractActionController $controller
      * @param string $param
-     * @return Proposition|null
-     */
-    public function getRequestedProposition(AbstractActionController $controller, string $param = 'proposition') : ?Proposition
-    {
-        $id = $controller->params()->fromRoute($param);
-        $result = $this->find($id);
-        return $result;
-    }
-    /**
-     * @param These $these
      * @return Proposition
      */
-    public function findByThese($these) {
+    public function getRequestedProposition(AbstractActionController $controller, string $param = 'proposition') : Proposition
+    {
+        $id = $controller->params()->fromRoute($param);
+
+        return $this->find($id);
+    }
+
+    /**
+     * @param These $these
+     * @return Proposition|null
+     */
+    public function findOneForThese(These $these): ?Proposition
+    {
         $qb = $this->createQueryBuilder()
             ->andWhere("proposition.these = :these")
             ->setParameter("these", $these)
         ;
-//        $qb = $this->getEntityManager()->getRepository(Proposition::class)->createQueryBuilder('proposition')
-//            ->andWhere("proposition.these = :these")
-//            ->setParameter("these", $these);
+
         try {
             $result = $qb->getQuery()->getOneOrNullResult();
         } catch (NonUniqueResultException $e) {
             throw new RuntimeException("De multiples propositions associé à la thèse [".$these->getId()."] ont été trouvées !");
         }
-        return $result;
-    }
 
-    /**
-     * @return Proposition[]
-     */
-    public function findAll() {
-        $qb = $this->createQueryBuilder();
-        $result = $qb->getQuery()->getResult();
         return $result;
     }
 
@@ -260,12 +260,14 @@ class PropositionService {
      * @param Proposition $proposition
      * @return Membre[]
      */
-    public function getRapporteurs($proposition) {
+    public function getRapporteurs(Proposition $proposition): array
+    {
         $rapporteurs = [];
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
             if($membre->estRapporteur()) $rapporteurs[] = $membre;
         }
+
         return $rapporteurs;
     }
 
@@ -274,7 +276,7 @@ class PropositionService {
      *
      * @param Proposition $proposition
      */
-    public function annulerValidations($proposition)
+    public function annulerValidationsForProposition(Proposition $proposition)
     {
         $these = $proposition->getThese();
         $validations = $this->getValidationService()->findValidationPropositionSoutenanceByThese($these);
@@ -300,10 +302,10 @@ class PropositionService {
     }
 
     /**
-     * @param Proposition $proposition
+     * @param Proposition|null $proposition
      * @return array
      */
-    public function computeIndicateur($proposition)
+    public function computeIndicateurForProposition(?Proposition $proposition): array
     {
         if ($proposition === null) return [];
 
@@ -397,14 +399,14 @@ class PropositionService {
     }
 
     /**
-     * @param Proposition $proposition
+     * @param Proposition|null $proposition
      * @param array $indicateurs
      * @return boolean
      */
-    public function juryOk($proposition, $indicateurs = [])
+    public function isJuryPropositionOk(?Proposition $proposition, array $indicateurs = []): bool
     {
         if ($proposition === null) return false;
-        if ($indicateurs === []) $indicateurs = $this->computeIndicateur($proposition);
+        if ($indicateurs === []) $indicateurs = $this->computeIndicateurForProposition($proposition);
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
             $email = $membre->getEmail();
@@ -422,9 +424,9 @@ class PropositionService {
      * @param array $indicateurs
      * @return boolean
      */
-    public function isOk(Proposition $proposition, $indicateurs = []) : bool
+    public function isPropositionOk(Proposition $proposition, array $indicateurs = []) : bool
     {
-        if ($indicateurs === []) $indicateurs = $this->computeIndicateur($proposition);
+        if ($indicateurs === []) $indicateurs = $this->computeIndicateurForProposition($proposition);
         if (!$indicateurs["valide"]) return false;
         if(! $proposition->getDate() || ! $proposition->getLieu()) return false;
         return true;
@@ -432,9 +434,9 @@ class PropositionService {
 
     /**
      * @param These $these
-     * @return array
+     * @return \Application\Entity\Db\Validation[]
      */
-    public function getValidationSoutenance($these)
+    public function findValidationSoutenanceForThese(These $these): array
     {
         $validations = [];
 
@@ -493,37 +495,42 @@ class PropositionService {
      * @var These $these
      * @return string
      */
-    public function generateLibelleSignaturePresidence($these)
+    public function generateLibelleSignaturePresidenceForThese(These $these): string
     {
+        $ETB_LIB_NOM_RESP = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB_NOM_RESP, $these->getEtablissement());
+        $ETB_LIB_TIT_RESP = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB_TIT_RESP, $these->getEtablissement());
+        $ETB_ART_ETB_LIB = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_ART_ETB_LIB, $these->getEtablissement());
+        $ETB_LIB = $this->variableService->getRepository()->findOneByCodeAndEtab(Variable::CODE_ETB_LIB, $these->getEtablissement());
+
         $libelle  = "";
-        $libelle .= $this->variableService->getRepository()->findByCodeAndEtab(Variable::CODE_ETB_LIB_NOM_RESP, $these->getEtablissement())->getValeur();
+        $libelle .= $ETB_LIB_NOM_RESP ? $ETB_LIB_NOM_RESP->getValeur() : "";
         $libelle .= ", ";
-        $libelle .= $this->variableService->getRepository()->findByCodeAndEtab(Variable::CODE_ETB_LIB_TIT_RESP, $these->getEtablissement())->getValeur();
+        $libelle .= $ETB_LIB_TIT_RESP ? $ETB_LIB_TIT_RESP->getValeur() : "(Variable ETB_LIB_TIT_RESP introuvable)";
         $libelle .= " de ";
-        $libelle .= $this->variableService->getRepository()->findByCodeAndEtab(Variable::CODE_ETB_ART_ETB_LIB, $these->getEtablissement())->getValeur();
-        $libelle .= $this->variableService->getRepository()->findByCodeAndEtab(Variable::CODE_ETB_LIB, $these->getEtablissement())->getValeur();
+        $libelle .= $ETB_ART_ETB_LIB ? $ETB_ART_ETB_LIB->getValeur() : "";
+        $libelle .= $ETB_LIB ? $ETB_LIB->getValeur() : "(Variable ETB_LIB introuvable)";
 
         return $libelle;
     }
 
     /**
      * @var These $these
-     * @return array
+     * @return string[]
      */
-    public function getLogos($these)
+    public function findLogosForThese(These $these): array
     {
         $logos = [];
         $logos['COMUE'] = null;
         if ($comue = $this->getEtablissementService()->fetchEtablissementComue()) {
             try {
-                $logos['COMUE'] = $this->fichierStorageService->getFileForLogoStructure($comue);
+                $logos['COMUE'] = $this->fichierStorageService->getFileForLogoStructure($comue->getStructure());
             } catch (StorageAdapterException $e) {
                 $logos['COMUE'] = null;
             }
         }
 
         try {
-            $logos['ETAB'] = $this->fichierStorageService->getFileForLogoStructure($these->getEtablissement());
+            $logos['ETAB'] = $this->fichierStorageService->getFileForLogoStructure($these->getEtablissement()->getStructure());
         } catch (StorageAdapterException $e) {
             $logos['ETAB'] = null;
         }
@@ -537,7 +544,7 @@ class PropositionService {
      * @param Role $currentRole
      * @return boolean
      */
-    public function isValidated($these, $currentIndividu, $currentRole)
+    public function isValidated(These $these, Individu $currentIndividu, Role $currentRole): bool
     {
         $validations = [];
         switch($currentRole->getCode()) {
@@ -565,7 +572,7 @@ class PropositionService {
      * @param Role $role
      * @return Proposition[]
      */
-    public function getPropositionsByRole($role)
+    public function findPropositionsByRole(Role $role): array
     {
         $qb = $this->createQueryBuilder()
             ->andWhere('these.etatThese = :encours')
@@ -575,34 +582,39 @@ class PropositionService {
 
         switch ($role->getCode()) {
             case Role::CODE_RESP_UR :
-                $qb = $qb ->andWhere('structure_ur.id = :unite')
-                    ->setParameter('unite', $role->getStructure()->getId())
+                $qb = $qb
+                    ->leftJoin('structure_ur.structureSubstituante', 'structureSubstituante')->addSelect('structureSubstituante')
+                    ->andWhere('structure_ur.id = :structure OR structureSubstituante = :structure')
+                    ->setParameter('structure', $role->getStructure(/*false*/)->getId())
                 ;
                 break;
             case Role::CODE_RESP_ED :
             case Role::CODE_GEST_ED :
-                $qb = $qb->andWhere('structure_ed.id = :ecole')
-                    ->setParameter('ecole', $role->getStructure()->getId())
+                $qb = $qb
+                    ->leftJoin('structure_ed.structureSubstituante', 'structureSubstituante')->addSelect('structureSubstituante')
+                    ->andWhere('structure_ed.id = :structure OR structureSubstituante = :structure')
+                    ->setParameter('structure', $role->getStructure(/*false*/)->getId())
                 ;
                 break;
             case Role::CODE_BDD :
-                $qb = $qb->andWhere('structure_etab.id = :etablissement')
-                    ->setParameter('etablissement', $role->getStructure()->getId())
+                $qb = $qb
+                    ->leftJoin('structure_etab.structureSubstituante', 'structureSubstituante')->addSelect('structureSubstituante')
+                    ->andWhere('structure_etab.id = :structure OR structureSubstituante = :structure')
+                    ->setParameter('structure', $role->getStructure(/*false*/)->getId())
                 ;
                 break;
             default:
                 break;
         }
 
-        $propositions = $qb->getQuery()->getResult();
-        return $propositions;
+        return $qb->getQuery()->getResult();
     }
 
     /**
-     * @param Proposition $proposition
-     * @return array
+     * @param \Soutenance\Entity\Proposition|null $proposition
+     * @return Membre[]
      */
-    public function getMembresAsOptions($proposition)
+    public function extractMembresAsOptionsFromProposition(?Proposition $proposition): array
     {
         $array = [];
 
@@ -613,57 +625,52 @@ class PropositionService {
                 $array[$membre->getId()] = $membre->getDenomination();
             }
         }
+
         return $array;
     }
 
     /**
      * @param EcoleDoctorale $ecole
-     * @return array
+     * @return \Soutenance\Entity\Proposition[]
      */
-    public function getSoutenancesAutoriseesByEcoleDoctorale(EcoleDoctorale $ecole) : array
+    public function findSoutenancesAutoriseesByEcoleDoctorale(EcoleDoctorale $ecole) : array
     {
         $qb = $this->createQueryBuilder()
-            ->andWhere('these.ecoleDoctorale = :ecole')
+            ->andWhereStructureOuSubstituanteIs($ecole->getStructure(/*false*/), 'structure_ed')
             ->andWhere('etat.code = :autorise')
             ->andWhere('these.dateSoutenance >= :date')
-            ->setParameter('ecole', $ecole)
             ->setParameter('autorise', Etat::VALIDEE)
             ->setParameter('date', new DateTime())
-            ->orderBy('these.dateSoutenance', 'ASC')
-        ;
-        $result = $qb->getQuery()->getResult();
-        return $result;
+            ->orderBy('these.dateSoutenance', 'ASC');
+
+        return $qb->getQuery()->getResult();
     }
+
     /** PROPOSTITION ETAT  ********************************************************************************************/
 
     /**
      * @return Etat[]
      */
-    public function getPropositionEtats() : array
+    public function findPropositionEtats() : array
     {
         $qb = $this->getEntityManager()->getRepository(Etat::class)->createQueryBuilder('etat')
-            ->orderBy('etat.id')
-        ;
+            ->orderBy('etat.id');
 
-        $result = $qb->getQuery()->getResult();
-        return $result;
-
+        return $qb->getQuery()->getResult();
     }
 
     /**
      * @param string $code
-     * @return Etat
+     * @return \Soutenance\Entity\Etat
      */
-    public function getPropositionEtatByCode($code)
+    public function findPropositionEtatByCode(string $code): Etat
     {
         $qb = $this->getEntityManager()->getRepository(Etat::class)->createQueryBuilder('etat')
             ->andWhere('etat.code = :code')
-            ->setParameter('code', $code)
-        ;
+            ->setParameter('code', $code);
 
         try {
-            $result = $qb->getQuery()->getOneOrNullResult();
-            return $result;
+            return $qb->getQuery()->getOneOrNullResult();
         } catch (ORMException $e) {
             throw new RuntimeException("Plusieurs ".Etat::class." partagent le même CODE [".$code."]", $e);
         }
@@ -682,7 +689,6 @@ class PropositionService {
         $these = $proposition->getThese();
         if ($these === null) throw new LogicException("Impossible d'ajout les directeurs comme membres : Aucun thèse de lié à la proposition id:" . $proposition->getId());
 
-        /** @var Acteur[] $encadrements */
         $encadrements = $this->getActeurService()->getRepository()->findEncadrementThese($these);
         foreach ($encadrements as $encadrement) {
             $this->getMembreService()->createMembre($proposition, $encadrement);

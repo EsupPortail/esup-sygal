@@ -6,7 +6,7 @@ use Doctorant\Entity\Db\Doctorant;
 use Doctrine\ORM\NonUniqueResultException;
 use Formation\Entity\Db\SessionStructureValide;
 use Individu\Entity\Db\Individu;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Formation\Entity\Db\Etat;
@@ -27,11 +27,10 @@ class SessionStructureValideRepository extends EntityRepository
      */
     public function createQB(string $alias) : QueryBuilder
     {
-        $qb = $this->createQueryBuilder($alias)
+        return $this->createQueryBuilder($alias)
             ->join($alias.".session", "session")->addSelect("session")
             ->join($alias.".structure", "structure")->addSelect("structure")
         ;
-        return $qb;
     }
 
     /**

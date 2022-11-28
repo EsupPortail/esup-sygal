@@ -7,7 +7,7 @@ use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\NatureFichier\NatureFichierService;
 use Application\Service\Notification\NotifierService;
-use Application\Service\PageDeCouverture\PageDeCouverturePdfExporter;
+use These\Service\PageDeCouverture\PageDeCouverturePdfExporter;
 use Application\Service\RapportValidation\RapportValidationService;
 use Application\Service\ValiditeFichier\ValiditeFichierService;
 use Fichier\Service\VersionFichier\VersionFichierService;

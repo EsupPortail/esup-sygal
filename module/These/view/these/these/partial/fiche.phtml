@@ -1,0 +1,96 @@
+<?php
+/**
+ * @var $this  PhpRenderer
+ * @var $these These
+ */
+
+use Application\Entity\Db\Role;
+use These\Entity\Db\These;
+use These\Filter\ActeursFormatter;
+use Application\View\Renderer\PhpRenderer;
+
+$acteursFormatter = new ActeursFormatter();
+$theseActeurs = $these->getActeurs();
+?>
+
+<table class="table table-sm these-fiche">
+    <tbody>
+    <tr>
+        <th>Doctorant</th>
+        <td>
+            <?php echo $these->getDoctorant()->getNomComplet(true, true, true) ?>
+            (<?php echo $these->getDoctorant()->getDateNaissanceToString() ?>) <br>
+            N°<?php echo $these->getDoctorant()->getNumeroEtudiant() ?> <br>
+            Nationalité: <?php echo $these->getDoctorant()->getNationalite() ?>
+        </td>
+    </tr>
+
+    <?php if ($theseActeurs->count()) {
+            $roles = [Role::CODE_DIRECTEUR_THESE, Role::CODE_CODIRECTEUR_THESE, Role::CODE_MEMBRE_JURY, Role::CODE_RAPPORTEUR_JURY];
+            foreach ($roles as $role) {
+                /** @var \These\Entity\Db\Acteur[] $acteurs */
+                $acteurs = $acteursFormatter->paramFilter(["role" => $role])->filter($theseActeurs);
+                if (count($acteurs) != 0) {
+                    $libelle = $acteurs[0]->getRole()->getLibelle();
+                    echo "<tr>";
+                    echo "<th>" . $libelle . "</th>";
+                    echo "<td>";
+                    echo implode("<br>", $acteurs);
+                    echo "</td>";
+                    echo "</tr>";
+                }
+            }
+        }
+    ?>
+
+    <tr>
+        <th>Établissement</th>
+        <td>
+            <?php
+                $etablissement = $these->getEtablissement();
+                if ($etablissement === null) echo "Non renseigné"; else echo $etablissement->getStructure()->getSigle();
+                echo " - ";
+                if ($etablissement === null) echo "Non renseigné"; else echo $etablissement->getStructure()->getLibelle();
+            ?>
+        </td>
+
+    </tr>
+
+    <tr>
+        <th>École doct.</th>
+        <td>
+            <?php if ($these->getEcoleDoctorale()): ?>
+                <?php echo $these->getEcoleDoctorale()->getStructure()->getSigle() . " - " . $these->getEcoleDoctorale()->getStructure()->getLibelle() ?>
+            <?php endif ?>
+        </td>
+    </tr>
+
+    <tr>
+        <th>Unité rech.</th>
+        <?php if ($these->getUniteRecherche()): ?>
+            <?php echo $these->getUniteRecherche()->getStructure()->getSigle() . " - " . $these->getUniteRecherche()->getStructure()->getLibelle() ?>
+        <?php endif ?>
+    </tr>
+
+    <tr>
+        <th>Titre</th>
+        <td><?php echo $these->getTitre() ?></td>
+    </tr>
+
+    <tr>
+        <th>Confidentialité</th>
+        <?php if ($these->etaitConfidentielle()): ?>
+            <td>Confidentielle, jusqu'au <?php echo $these->getDateFinConfidentialiteToString() ?></td>
+        <?php elseif ($these->estConfidentielle()): ?>
+            <td class="text-danger">Confidentielle, jusqu'au <?php echo $these->getDateFinConfidentialiteToString() ?></td>
+        <?php else: ?>
+            <td>Non confidentielle</td>
+        <?php endif ?>
+    </tr>
+
+    <tr>
+        <th>Discipline</th>
+        <td><?php echo $these->getLibelleDiscipline() ?: "Inconnue" ?></td>
+    </tr>
+    </tbody>
+</table>

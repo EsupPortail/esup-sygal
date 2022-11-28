@@ -4,7 +4,7 @@ namespace Application;
 
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
-use Application\Filter\ActeursFormatter;
+use These\Filter\ActeursFormatter;
 use Laminas\Paginator\Paginator as LaminasPaginator;
 use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
 use UnicaenAuth\Provider\Privilege\Privileges;
@@ -89,6 +89,7 @@ $this->headTitle($this->translate($title));
     <?php echo $this->paginationControl($paginator, 'sliding', 'application/paginator.phtml', ['route' => $routeName . '/recherche/index']) ?>
 
     <?php if ($canDlZip): ?>
+        <?php $queryParams['redirect'] = $this->url($routeName . '/recherche/index', [], ['query' => $queryParams], true); ?>
         <a class="btn btn-secondary" href="<?php echo $this->url($routeName . '/recherche/telecharger-zip', [], ['query' => $queryParams]) ?>"
            title="Télécharger tous ces rapports sous la forme d'une archive compressée (.zip)">
             <span class="icon icon-export"></span>

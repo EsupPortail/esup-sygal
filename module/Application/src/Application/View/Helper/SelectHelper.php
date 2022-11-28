@@ -2,9 +2,16 @@
 
 namespace Application\View\Helper;
 
+use Application\Entity\Db\DomaineScientifique;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\StructureConcreteInterface;
+
+/**
+ * @deprecated formatteur trop fourre tout
+ */
 class SelectHelper  extends AbstractHelper {
 
-    /** @var array */
+    /** @var Etablissement[]|DomaineScientifique[] */
     private $listing;
 
     /** @var string */
@@ -89,7 +96,12 @@ class SelectHelper  extends AbstractHelper {
         $texte .= '<select id="'.$this->elementId.'">';
         $texte .= '<option>'.$this->text.'</option>';
         foreach ($this->listing as $element) {
-            $texte .= '<option value="'.$element->getId().'">'.$element->getLibelle().'</option>';
+            if ($element instanceof StructureConcreteInterface) {
+                $libelle = $element->getStructure()->getLibelle();
+            } else {
+                $libelle = $element->getLibelle();
+            }
+            $texte .= '<option value="'.$element->getId().'">'.$libelle.'</option>';
         }
         $texte .= '</select>';
         return $texte;
@@ -104,9 +116,15 @@ class SelectHelper  extends AbstractHelper {
         ];
 
         foreach ($this->listing as $element) {
+            if ($element instanceof StructureConcreteInterface) {
+                $libelle = $element->getStructure()->getLibelle();
+            } else {
+                $libelle = $element->getLibelle();
+            }
+
             $data[] = [
                 'value' => $element->getId(),
-                'label' => $element->getLibelle(),
+                'label' => $libelle,
             ];
         }
         return $data;

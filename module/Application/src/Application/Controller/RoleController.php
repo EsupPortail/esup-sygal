@@ -16,7 +16,7 @@ class RoleController  extends AbstractController {
 
         $mappedRoles = [];
         foreach ($etablissementsMembres as $etablissement) {
-            $roles = $this->getRoleService()->getRepository()->findAllRolesTheseDependantByEtablissement($etablissement);
+            $roles = $this->getRoleService()->getRepository()->findAllRolesTheseDependantForStructureConcrete($etablissement);
             $mappedRoles[$etablissement->getStructure()->getCode()] = $roles;
         }
         return new ViewModel([

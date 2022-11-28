@@ -2,7 +2,7 @@
 
 namespace Application\Acl;
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\WfEtape;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 

@@ -10,17 +10,16 @@
 
         <many-to-one field="inscription" target-entity="Formation\Entity\Db\Inscription">
             <join-columns>
-                <join-column name="INSCRIPTION_ID" referenced-column-name="ID"/>
+                <join-column name="inscription_id" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
         <many-to-one field="question" target-entity="Formation\Entity\Db\EnqueteQuestion">
             <join-columns>
-                <join-column name="QUESTION_ID" referenced-column-name="ID"/>
+                <join-column name="question_id" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-
-        <field name="niveau"              type="integer"                          column="NIVEAU"           nullable="false"/>
-        <field name="description"         type="string"       length="9999"       column="DESCRIPTION"      nullable="true"/>
+        <field name="niveau"           type="integer"        column="NIVEAU"        nullable="false"/>
+        <field name="description"     type="string"         column="DESCRIPTION"  nullable="true"/>
 
         <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>

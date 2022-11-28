@@ -13,7 +13,7 @@
             </join-columns>
         </many-to-one>
 
-        <many-to-one field="fichier" target-entity="Application\Entity\Db\FichierThese">
+        <many-to-one field="fichier" target-entity="These\Entity\Db\FichierThese">
             <join-columns>
                 <join-column name="FICHIER_ID" referenced-column-name="ID"/>
             </join-columns>

@@ -8,8 +8,8 @@
  * @var string $urlRefuser
  */
 
-use Application\Entity\Db\Acteur;
-use Application\Entity\Db\These;
+use These\Entity\Db\Acteur;
+use These\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Provider\Validation\TypeValidation;
@@ -39,7 +39,7 @@ if (!empty($acteurs)) {
 $unite = "unité de recherche non renseignée";
 $ur = $these->getUniteRecherche();
 if ($ur !== null) {
-    $unite = $ur->getLibelle() . " (" . $ur->getSigle() . ")";
+    $unite = $ur->getStructure()->getLibelle() . " (" . $ur->getStructure()->getSigle() . ")";
 }
 
 $canValider = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER);

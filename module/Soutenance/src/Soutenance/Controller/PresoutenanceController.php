@@ -3,23 +3,24 @@
 namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\Acteur;
-use Structure\Entity\Db\Etablissement;
-use Individu\Entity\Db\Individu;
-use Fichier\Entity\Db\NatureFichier;
 use Application\Entity\Db\Profil;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Source;
 use Application\Entity\Db\TypeValidation;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
-use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
-use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Individu\Entity\Db\Individu;
+use Individu\Service\IndividuServiceAwareTrait;
+use Laminas\Http\Response;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Renderer\PhpRenderer;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Evenement;
@@ -30,23 +31,25 @@ use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Exporter\AvisSoutenance\AvisSoutenancePdfExporter;
-use Soutenance\Service\Exporter\RapportTechnique\RapportTechniquePdfExporter;
 use Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter;
 use Soutenance\Service\Exporter\ProcesVerbal\ProcesVerbalSoutenancePdfExporter;
+use Soutenance\Service\Exporter\RapportTechnique\RapportTechniquePdfExporter;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
+use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
+use These\Entity\Db\Acteur;
+use These\Entity\Db\These;
+use These\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
-use UnicaenAuthToken\Service\TokenServiceException;
-use Laminas\Http\Response;
-use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
-use Laminas\View\Model\ViewModel;
-use Laminas\View\Renderer\PhpRenderer;
 
 /** @method FlashMessenger flashMessenger() */
 
@@ -71,6 +74,7 @@ class PresoutenanceController extends AbstractController
     use StructureDocumentServiceAwareTrait;
     use TokenServiceAwareTrait;
     use SourceServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
 
     use DateRenduRapportFormAwareTrait;
     use AdresseSoutenanceFormAwareTrait;
@@ -89,7 +93,7 @@ class PresoutenanceController extends AbstractController
     public function presoutenanceAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $rapporteurs = $this->getPropositionService()->getRapporteurs($proposition);
         $nbRapporteurs = count($rapporteurs);
 
@@ -131,7 +135,7 @@ class PresoutenanceController extends AbstractController
     public function dateRenduRapportAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $form = $this->getDateRenduRapportForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/presoutenance/date-rendu-rapport', ['these' => $these->getId()], [], true));
@@ -163,7 +167,7 @@ class PresoutenanceController extends AbstractController
     public function associerJuryAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         /** @var Membre[] $membres */
         $membres = $proposition->getMembres();
@@ -287,7 +291,7 @@ class PresoutenanceController extends AbstractController
     public function notifierDemandeAvisSoutenanceAction() : Response
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         /** @var Membre[] $rapporteurs */
@@ -325,9 +329,9 @@ class PresoutenanceController extends AbstractController
     public function feuVertAction() : Response
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
-        $etat = $this->getPropositionService()->getPropositionEtatByCode(Etat::VALIDEE);
+        $etat = $this->getPropositionService()->findPropositionEtatByCode(Etat::VALIDEE);
         $proposition->setEtat($etat);
         $this->getPropositionService()->update($proposition);
 
@@ -344,9 +348,9 @@ class PresoutenanceController extends AbstractController
     public function stopperDemarcheAction() : Response
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
-        $etat = $this->getPropositionService()->getPropositionEtatByCode(Etat::REJETEE);
+        $etat = $this->getPropositionService()->findPropositionEtatByCode(Etat::REJETEE);
         $proposition->setEtat($etat);
         $this->getPropositionService()->update($proposition);
 
@@ -361,7 +365,7 @@ class PresoutenanceController extends AbstractController
     public function modifierAdresseAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $form = $this->getAdresseSoutenanceForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/presoutenance/modifier-adresse', ['these' => $these->getId()], [], true));
@@ -388,7 +392,7 @@ class PresoutenanceController extends AbstractController
     public function procesVerbalSoutenanceAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
@@ -405,7 +409,7 @@ class PresoutenanceController extends AbstractController
     public function avisSoutenanceAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
@@ -440,7 +444,7 @@ class PresoutenanceController extends AbstractController
      */
     private function getVille(Etablissement $etablissement) : string
     {
-        switch ($etablissement->getSigle()) {
+        switch ($etablissement->getStructure()->getSigle()) {
             case "UCN" :
                 $ville = "Caen";
                 break;
@@ -461,11 +465,8 @@ class PresoutenanceController extends AbstractController
     public function convocationsAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
-        $signature = $this->getStructureDocumentService()->getCheminFichier($these->getEcoleDoctorale()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
-        if ($signature === null) {
-            $signature = $this->getStructureDocumentService()->getCheminFichier($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
-        }
+        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $signature = $this->findSignatureEcoleDoctorale($these) ?: $this->findSignatureEtablissement($these);
 
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
@@ -490,11 +491,8 @@ class PresoutenanceController extends AbstractController
     public function convocationDoctorantAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
-        $signature = $this->getStructureDocumentService()->getCheminFichier($these->getEcoleDoctorale()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
-        if ($signature === null) {
-            $signature = $this->getStructureDocumentService()->getCheminFichier($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
-        }
+        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $signature = $this->findSignatureEcoleDoctorale($these) ?: $this->findSignatureEtablissement($these);
 
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
@@ -516,15 +514,50 @@ class PresoutenanceController extends AbstractController
         exit;
     }
 
+    private function findSignatureEtablissement(These $these): ?string
+    {
+        $fichier = $this->structureDocumentService->findDocumentFichierForStructureNatureAndEtablissement(
+            $these->getEtablissement()->getStructure(),
+            NatureFichier::CODE_SIGNATURE_CONVOCATION,
+            $these->getEtablissement());
+
+        if ($fichier === null) {
+            return null;
+        }
+
+        try {
+            $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(false);
+            return $this->fichierStorageService->getFileForFichier($fichier);
+        } catch (StorageAdapterException $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération de la signature de l'établissement !", 0, $e);
+        }
+    }
+
+    private function findSignatureEcoleDoctorale(These $these): ?string
+    {
+        $fichier = $this->structureDocumentService->findDocumentFichierForStructureNatureAndEtablissement(
+            $these->getEcoleDoctorale()->getStructure(),
+            NatureFichier::CODE_SIGNATURE_CONVOCATION,
+            $these->getEtablissement());
+
+        if ($fichier === null) {
+            return null;
+        }
+
+        try {
+            $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(false);
+            return $this->fichierStorageService->getFileForFichier($fichier);
+        } catch (StorageAdapterException $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération de la signature de l'ED !", 0, $e);
+        }
+    }
+
     public function convocationMembreAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
-        $signature = $this->getStructureDocumentService()->getCheminFichier($these->getEcoleDoctorale()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
-        if ($signature === null) {
-            $signature = $this->getStructureDocumentService()->getCheminFichier($these->getEtablissement()->getStructure(), NatureFichier::CODE_SIGNATURE_CONVOCATION, $these->getEtablissement());
-        }
+        $signature = $this->findSignatureEcoleDoctorale($these) ?: $this->findSignatureEtablissement($these);
 
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
@@ -550,7 +583,7 @@ class PresoutenanceController extends AbstractController
     public function envoyerConvocationAction() : Response
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
         $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
@@ -607,13 +640,13 @@ class PresoutenanceController extends AbstractController
     public function genererSimulationAction() : Response
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $membres = $proposition->getMembres();
 
         /** @var Role $rapporteur */
         /** @var Role $membreJury */
-        $rapporteur = $this->getRoleService()->getRepository()->findOneBy(['code' => 'R', 'structure' => $these->getEtablissement()->getStructure()]);
-        $membreJury = $this->getRoleService()->getRepository()->findOneBy(['code' => 'M', 'structure' => $these->getEtablissement()->getStructure()]);
+        $rapporteur = $this->getRoleService()->getRepository()->findOneByCodeAndStructureConcrete('R', $these->getEtablissement());
+        $membreJury = $this->getRoleService()->getRepository()->findOneByCodeAndStructureConcrete('M', $these->getEtablissement());
 
         /** @var Source $sygal */
         $sygal = $this->sourceService->getRepository()->findOneBy(['code' => 'SYGAL::sygal']);
@@ -675,7 +708,7 @@ class PresoutenanceController extends AbstractController
     public function nettoyerSimulationAction() : Response
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $membres = $proposition->getMembres();
 
         foreach ($membres as $membre) {

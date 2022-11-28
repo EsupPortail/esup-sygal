@@ -1,6 +1,6 @@
 <?php
 
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -64,7 +64,7 @@ $justification = true;
 
     <?php if ($panic) : ?>
         <p>
-            <strong>Aucun responsable de site n'a pu être trouvé pour le site '<?php echo $these->getEtablissement()->getLibelle(); ?>'</strong><span class=""></span>
+            <strong>Aucun responsable de site n'a pu être trouvé pour le site '<?php echo $these->getEtablissement()->getStructure()->getLibelle(); ?>'</strong><span class=""></span>
         </p>
     <?php endif; ?>
 

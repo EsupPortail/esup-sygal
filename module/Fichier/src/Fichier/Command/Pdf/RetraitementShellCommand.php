@@ -3,7 +3,7 @@
 namespace Fichier\Command\Pdf;
 
 use Application\Command\ShellCommand;
-use Application\Entity\Db\FichierThese;
+use These\Entity\Db\FichierThese;
 
 /**
  * Commande/script de retraitement d'un manuscrit de thèse pour le rendre archivable.
@@ -18,7 +18,7 @@ class RetraitementShellCommand extends ShellCommand
     protected $destinataires;
 
     /**
-     * @var \Application\Entity\Db\FichierThese
+     * @var \These\Entity\Db\FichierThese
      */
     protected $fichierThese;
 
@@ -33,7 +33,7 @@ class RetraitementShellCommand extends ShellCommand
     }
 
     /**
-     * @param \Application\Entity\Db\FichierThese $fichierThese
+     * @param \These\Entity\Db\FichierThese $fichierThese
      * @return self
      */
     public function setFichierThese(FichierThese $fichierThese): self

@@ -3,12 +3,13 @@
 namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\Acteur;
+use Information\Service\InformationServiceAwareTrait;
+use These\Entity\Db\Acteur;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
@@ -48,6 +49,7 @@ class PropositionController extends AbstractController
     use ActeurServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use EvenementServiceAwareTrait;
+    use InformationServiceAwareTrait;
     use JustificatifServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierSoutenanceServiceAwareTrait;
@@ -81,7 +83,7 @@ class PropositionController extends AbstractController
     public function propositionAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         if (!$proposition) {
             $proposition = $this->getPropositionService()->create($these);
@@ -108,10 +110,10 @@ class PropositionController extends AbstractController
         $currentRole = $this->userContextService->getSelectedIdentityRole();
 
         /** Indicateurs --------------------------------------------------------------------------------------------- */
-        $indicateurs = $this->getPropositionService()->computeIndicateur($proposition);
-        $juryOk = $this->getPropositionService()->juryOk($proposition, $indicateurs);
+        $indicateurs = $this->getPropositionService()->computeIndicateurForProposition($proposition);
+        $juryOk = $this->getPropositionService()->isJuryPropositionOk($proposition, $indicateurs);
         if ($juryOk === false) $indicateurs["valide"] = false;
-        $isOk = $this->getPropositionService()->isOk($proposition, $indicateurs);
+        $isOk = $this->getPropositionService()->isPropositionOk($proposition, $indicateurs);
 
         /** Justificatifs attendus ---------------------------------------------------------------------------------- */
         $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition);
@@ -122,16 +124,32 @@ class PropositionController extends AbstractController
 
         /** Collècte des informations sur les individus liés -------------------------------------------------------- */
         /** @var IndividuRole[] $ecoleResponsables */
-        $ecoleResponsables = $this->getRoleService()->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
-        $ecoleResponsables = array_filter($ecoleResponsables, function(IndividuRole $ir) use ($these) { return $ir->getIndividu()->getEtablissement() AND $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId(); });
+        $ecoleResponsables = [];
+        if ($these->getEcoleDoctorale() !== null) {
+            $ecoleResponsables = $this->getRoleService()->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
+            $ecoleResponsables = array_filter($ecoleResponsables, function (IndividuRole $ir) use ($these) {
+                return $ir->getIndividu()->getEtablissement() and $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId();
+            });
+        }
         /** @var IndividuRole[] $uniteResponsables */
-        $uniteResponsables = $this->getRoleService()->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
-        $uniteResponsables = array_filter($uniteResponsables, function(IndividuRole $ir) use ($these) { return $ir->getIndividu()->getEtablissement() AND $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId(); });
+        $uniteResponsables = [];
+        if ($these->getUniteRecherche() !== null) {
+            $uniteResponsables = $this->getRoleService()->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
+            $uniteResponsables = array_filter($uniteResponsables, function (IndividuRole $ir) use ($these) {
+                return $ir->getIndividu()->getEtablissement() and $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId();
+            });
+        }
         /** @var IndividuRole[] $etablissementResponsables */
-        $etablissementResponsables = $this->roleService->getIndividuRoleByStructure($these->getEtablissement()->getStructure());
-        $etablissementResponsables = array_filter($etablissementResponsables, function (IndividuRole $ir) { return $ir->getRole()->getCode() === Role::CODE_BDD;});
-        $etablissementResponsables = array_filter($etablissementResponsables, function(IndividuRole $ir) use ($these) { return $ir->getIndividu()->getEtablissement() AND $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId(); });
-
+        $etablissementResponsables = [];
+        if ($these->getEtablissement() !== null) {
+            $etablissementResponsables = $this->roleService->findIndividuRoleByStructure($these->getEtablissement()->getStructure());
+            $etablissementResponsables = array_filter($etablissementResponsables, function (IndividuRole $ir) {
+                return $ir->getRole()->getCode() === Role::CODE_BDD;
+            });
+            $etablissementResponsables = array_filter($etablissementResponsables, function (IndividuRole $ir) use ($these) {
+                return $ir->getIndividu()->getEtablissement() and $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId();
+            });
+        }
         $informationsOk = true;
         $directeurs = $this->getActeurService()->getRepository()->findEncadrementThese($these);
         foreach ($directeurs as $directeur) {
@@ -166,7 +184,7 @@ class PropositionController extends AbstractController
             'proposition' => $proposition,
             'doctorant' => $these->getDoctorant(),
             'directeurs' => $directeurs,
-            'validations' => $this->getPropositionService()->getValidationSoutenance($these),
+            'validations' => $this->getPropositionService()->findValidationSoutenanceForThese($these),
             'validationActeur' => $this->getPropositionService()->isValidated($these, $currentIndividu, $currentRole),
             'roleCode' => $currentRole,
             'urlFichierThese' => $this->urlFichierThese(),
@@ -194,7 +212,7 @@ class PropositionController extends AbstractController
     public function modifierDateLieuAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
         if ($autorisation !== null) return $autorisation;
@@ -207,7 +225,7 @@ class PropositionController extends AbstractController
         if ($request->isPost()) {
             $this->update($request, $form, $proposition);
             $this->getPropositionService()->initialisationDateRetour($proposition);
-            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($proposition);
+            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
         }
 
         $vm = new ViewModel();
@@ -222,7 +240,7 @@ class PropositionController extends AbstractController
     public function modifierMembreAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
         if ($autorisation !== null) return $autorisation;
@@ -249,7 +267,7 @@ class PropositionController extends AbstractController
                 } else {
                     $this->getMembreService()->create($membre);
                 }
-                if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($proposition);
+                if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
             }
         }
 
@@ -265,14 +283,14 @@ class PropositionController extends AbstractController
     public function effacerMembreAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
         if ($autorisation !== null) return $autorisation;
 
         $membre = $this->getMembreService()->getRequestedMembre($this);
         if ($membre) {
-            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($membre->getProposition());
+            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($membre->getProposition());
             $this->getMembreService()->delete($membre);
         }
 
@@ -282,7 +300,7 @@ class PropositionController extends AbstractController
     public function labelEuropeenAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
         if ($autorisation !== null) return $autorisation;
@@ -294,7 +312,7 @@ class PropositionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->update($request, $form, $proposition);
-            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($proposition);
+            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
         }
 
         $vm = new ViewModel();
@@ -309,7 +327,7 @@ class PropositionController extends AbstractController
     public function anglaisAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
         if ($autorisation !== null) return $autorisation;
@@ -321,7 +339,7 @@ class PropositionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->update($request, $form, $proposition);
-            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($proposition);
+            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
         }
 
         $vm = new ViewModel();
@@ -336,7 +354,7 @@ class PropositionController extends AbstractController
     public function confidentialiteAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
         if ($autorisation !== null) return $autorisation;
@@ -348,7 +366,7 @@ class PropositionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->update($request, $form, $proposition);
-            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($proposition);
+            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
         }
 
         $vm = new ViewModel();
@@ -364,7 +382,7 @@ class PropositionController extends AbstractController
     public function changementTitreAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
         if ($autorisation !== null) return $autorisation;
@@ -376,7 +394,7 @@ class PropositionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->update($request, $form, $proposition);
-            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidations($proposition);
+            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
         }
 
         $vm = new ViewModel();
@@ -391,7 +409,7 @@ class PropositionController extends AbstractController
     public function validerActeurAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR]);
         if ($autorisation !== null) return $autorisation;
@@ -422,7 +440,7 @@ class PropositionController extends AbstractController
     public function validerStructureAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_VALIDER_BDD, PropositionPrivileges::PROPOSITION_VALIDER_UR, PropositionPrivileges::PROPOSITION_VALIDER_ED]);
         if ($autorisation !== null) return $autorisation;
@@ -449,8 +467,8 @@ class PropositionController extends AbstractController
                 $this->getNotifierSoutenanceService()->triggerNotificationPropositionValidee($these);
                 $this->getNotifierSoutenanceService()->triggerNotificationPresoutenance($these);
 
-                $proposition = $this->getPropositionService()->findByThese($these);
-                $proposition->setEtat($this->getPropositionService()->getPropositionEtatByCode(Etat::ETABLISSEMENT));
+                $proposition = $this->getPropositionService()->findOneForThese($these);
+                $proposition->setEtat($this->getPropositionService()->findPropositionEtatByCode(Etat::ETABLISSEMENT));
                 $this->getPropositionService()->update($proposition);
                 break;
             default :
@@ -464,7 +482,7 @@ class PropositionController extends AbstractController
     public function refuserStructureAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_VALIDER_BDD, PropositionPrivileges::PROPOSITION_VALIDER_UR, PropositionPrivileges::PROPOSITION_VALIDER_ED]);
         if ($autorisation !== null) return $autorisation;
@@ -476,7 +494,7 @@ class PropositionController extends AbstractController
         if ($request->isPost()) {
             $data = $request->getPost();
             if ($data['motif'] !== null) {
-                $this->getPropositionService()->annulerValidations($proposition);
+                $this->getPropositionService()->annulerValidationsForProposition($proposition);
                 $currentUser = $this->userContextService->getIdentityIndividu();
                 /** @var RoleInterface $currentRole */
                 $currentRole = $this->userContextService->getSelectedIdentityRole();
@@ -495,7 +513,7 @@ class PropositionController extends AbstractController
     public function signaturePresidenceAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_PRESIDENCE]);
         if ($autorisation !== null) return $autorisation;
@@ -510,9 +528,9 @@ class PropositionController extends AbstractController
         $exporter = new SiganturePresidentPdfExporter($this->renderer, 'A4');
         $exporter->setVars([
             'proposition' => $proposition,
-            'validations' => $this->getPropositionService()->getValidationSoutenance($these),
-            'logos' => $this->getPropositionService()->getLogos($these),
-            'libelle' => $this->getPropositionService()->generateLibelleSignaturePresidence($these),
+            'validations' => $this->getPropositionService()->findValidationSoutenanceForThese($these),
+            'logos' => $this->getPropositionService()->findLogosForThese($these),
+            'libelle' => $this->getPropositionService()->generateLibelleSignaturePresidenceForThese($these),
             'nbCodirecteur' => count($codirecteurs),
         ]);
         $exporter->export('Document_pour_signature_-_'.$these->getId().'_-_'.str_replace(' ','_',$these->getDoctorant()->getIndividu()->getNomComplet()).'.pdf');
@@ -522,7 +540,7 @@ class PropositionController extends AbstractController
     public function toggleSursisAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
         if ($autorisation !== null) return $autorisation;
@@ -553,7 +571,7 @@ class PropositionController extends AbstractController
     public function suppressionAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_MODIFIER_GESTION]);
         if ($autorisation !== null) return $autorisation;
@@ -573,11 +591,12 @@ class PropositionController extends AbstractController
     public function afficherSoutenancesParEcoleDoctoraleAction() : ViewModel
     {
         $ecole = $this->getEcoleDoctoraleService()->getRequestedEcoleDoctorale($this);
-        $soutenances = $this->getPropositionService()->getSoutenancesAutoriseesByEcoleDoctorale($ecole);
+        $soutenances = $this->getPropositionService()->findSoutenancesAutoriseesByEcoleDoctorale($ecole);
 
         return new ViewModel([
             'ecole' => $ecole,
             'soutenances' => $soutenances,
+            'informations' => $this->informationService->getInformations(true),
         ]);
     }
 
@@ -586,7 +605,7 @@ class PropositionController extends AbstractController
     public function declarationNonPlagiatAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER, PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_REVOQUER]);
         if ($autorisation !== null) return $autorisation;
@@ -606,7 +625,7 @@ class PropositionController extends AbstractController
     public function validerDeclarationNonPlagiatAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER]);
         if ($autorisation !== null) return $autorisation;
@@ -620,7 +639,7 @@ class PropositionController extends AbstractController
     public function refuserDeclarationNonPlagiatAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER]);
         if ($autorisation !== null) return $autorisation;
@@ -634,7 +653,7 @@ class PropositionController extends AbstractController
     public function revoquerDeclarationNonPlagiatAction()
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $autorisation = $this->verifierAutorisation($proposition, [PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_REVOQUER]);
         if ($autorisation !== null) return $autorisation;
@@ -652,7 +671,7 @@ class PropositionController extends AbstractController
     public function generateViewDateLieuAction()  : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $parametres = $this->getParametreService()->getParametresAsArray();
 
         $vm = new ViewModel();
@@ -668,12 +687,12 @@ class PropositionController extends AbstractController
     public function generateViewJuryAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $parametres = $this->getParametreService()->getParametresAsArray();
 
         /** Indicateurs --------------------------------------------------------------------------------------------- */
-        $indicateurs = $this->getPropositionService()->computeIndicateur($proposition);
-        $juryOk = $this->getPropositionService()->juryOk($proposition, $indicateurs);
+        $indicateurs = $this->getPropositionService()->computeIndicateurForProposition($proposition);
+        $juryOk = $this->getPropositionService()->isJuryPropositionOk($proposition, $indicateurs);
         if ($juryOk === false) $indicateurs["valide"] = false;
         //$isOk = $this->getPropositionService()->isOk($proposition, $indicateurs);
 
@@ -691,7 +710,7 @@ class PropositionController extends AbstractController
     public function generateViewInformationsAction() : ViewModel
     {
         $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findByThese($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $parametres = $this->getParametreService()->getParametresAsArray();
 
 

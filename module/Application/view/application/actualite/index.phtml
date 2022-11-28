@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * @see \Application\Controller\ActualiteController::indexAction()
+ * @var Information[] $informations
+ * @var string|null $url
+ */
+
+
+use Application\Constants;
+use Information\Entity\Db\Information;
+
+$appName = $this->appInfos()->nom;
+$subtitle = $this->appInfos()->desc;
+?>
+
+<?php $this->headTitle($this->translate("Actualités")); ?>
+
+<?php echo $this->alertes()
+    ->withCode(Constants::ALERTE_FERMETURE_ESTIVALE)
+    ->withMatchingPlanning()
+    ->renderAsBootstrapToasts() ?>
+
+<?php
+echo $this->messenger()
+    ->addMessagesFromFlashMessengerWithNoNamespace()
+    ->addMessagesFromFlashMessengerWithNamespace('UnicaenAuth/*'); ?>
+
+<div class="row">
+
+    <div class="col-12 col-md-2">
+        <?php echo $this->partial('application/index/partial/informations', ['informations' => $informations]) ?>
+        <?php echo $this->partial('application/index/partial/menu-lateral', ['current' => 'actualite']) ?>
+    </div>
+
+    <div id="content" class="col-12 col-md-10">
+        <h1 class="page-header">
+            Actualité
+        </h1>
+
+        <?php if($url !== null) : ?>
+            <?php echo $this->actualite()->render() ?>
+        <?php else: ?>
+            <div class="alert alert-warning">
+                L'affichage des actualités est désactivé.
+            </div>
+        <?php endif; ?>
+    </div>
+</div>

@@ -12,6 +12,6 @@ class ValiditeFichierRepository extends DefaultEntityRepository
     /**
      * @var string
      */
-    protected $queryBuilderClassName = QueryBuilder::class;
+    protected string $queryBuilderClassName = QueryBuilder::class;
 
 }

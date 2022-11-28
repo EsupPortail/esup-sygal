@@ -7,14 +7,14 @@ use Doctorant\Entity\Db\Doctorant;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\Variable;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Email\EmailTheseServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use DateTime;
@@ -71,7 +71,7 @@ class NotifierSoutenanceService extends NotifierService
      */
     protected function fetchEmailBdd(These $these) : string
     {
-        $variable = $this->variableService->getRepository()->findByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
+        $variable = $this->variableService->getRepository()->findOneByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
         return $variable->getValeur();
     }
 
@@ -132,7 +132,7 @@ class NotifierSoutenanceService extends NotifierService
     protected function fetchEmailEcoleDoctorale(These $these) : array
     {
         /** @var IndividuRole[] $individuRoles */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
+        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
         return $this->fetchEmailsByEtablissement($individuRoles, $these);
     }
 
@@ -143,7 +143,7 @@ class NotifierSoutenanceService extends NotifierService
     protected function fetchEmailUniteRecherche(These $these) : array
     {
         /** @var IndividuRole[] $individuRoles */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
+        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
         return $this->fetchEmailsByEtablissement($individuRoles, $these);
     }
 
@@ -154,7 +154,7 @@ class NotifierSoutenanceService extends NotifierService
     protected function fetchEmailMaisonDuDoctorat(These $these) : array
     {
         /** @var IndividuRole[] $individuRoles */
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEtablissement()->getStructure());
+        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getEtablissement()->getStructure());
         $individuRoles = array_filter($individuRoles, function (IndividuRole $ir) { return $ir->getRole()->getCode() === Role::CODE_BDD;});
         return $this->fetchEmailsByEtablissement($individuRoles, $these);
     }
@@ -265,7 +265,7 @@ class NotifierSoutenanceService extends NotifierService
      */
     public function triggerNotificationUniteRechercheProposition(These $these)
     {
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
+        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
         $panic = !($this->emailTheseService->hasEmailsByEtablissement($individuRoles, $these));
         $emails = $this->emailTheseService->fetchEmailsByEtablissement($individuRoles, $these);
         //$emails = $this->emailService->fetchEmailUniteRecherche($these);
@@ -307,7 +307,7 @@ class NotifierSoutenanceService extends NotifierService
      */
     public function triggerNotificationEcoleDoctoraleProposition(These $these)
     {
-        $individuRoles = $this->roleService->getIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
+        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
         $panic = !($this->emailTheseService->hasEmailsByEtablissement($individuRoles, $these));
         $emails = $this->emailTheseService->fetchEmailsByEtablissement($individuRoles, $these);
         //$emails = $this->emailService->fetchEmailEcoleDoctorale($these);

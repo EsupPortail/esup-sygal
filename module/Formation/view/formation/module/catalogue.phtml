@@ -11,6 +11,7 @@ use Formation\Provider\Privilege\FormationPrivileges;
 
 
 $canFormationAfficher = $this->isAllowed(FormationPrivileges::getResourceId(FormationPrivileges::FORMATION_AFFICHER));
+
 ?>
 
 <h1 class="page-header">
@@ -34,7 +35,7 @@ $canFormationAfficher = $this->isAllowed(FormationPrivileges::getResourceId(Form
         <tbody>
         <?php /** @var Formation $formation */ ?>
         <?php foreach ($element['formations'] as $formation) : ?>
-            <tr>
+            <tr style="border-top:none;">
                 <td class="formation-libelle">
                     <?php if ($canFormationAfficher) : ?>
                         <a
@@ -58,21 +59,25 @@ $canFormationAfficher = $this->isAllowed(FormationPrivileges::getResourceId(Form
                         Responsable non communiqué·e
                     <?php endif; ?>
                 </td>
-                <td class="formation-infos">
+            </tr>
+            <tr style="border-bottom:none;">
+                <td></td>
+                <td colspan="2" >
                     <ul>
                         <?php /** @var Session $session */ ?>
                         <?php foreach ($formation->getSessions() as $session) : ?>
                             <li>
+                                <strong>Site :</strong> <?php echo $this->site($session,[ 'long' => true]); ?>
+                                <strong>Modalité :</strong> <?php echo $this->modalite($session); ?>
+                                <br/>
+                                <?php if ($session->getDateDebut() and $session->getDateFin()) : ?>
+                                    <strong>Durée :</strong> <?php echo $session->getDuree(); ?> h.
+                                <?php endif; ?>
+                                <strong>Période :</strong>
                                 <?php if ($session->getDateDebut() and $session->getDateFin()) : ?>
                                     <?php echo $session->getDateDebut()->format('d/m/Y à H:i'); ?> &rightarrow; <?php echo $session->getDateFin()->format('d/m/Y à H:i'); ?>
                                 <?php else : ?>
                                     À déterminer
-                                <?php endif; ?>
-                                <br/>
-                                <strong>Modalité :</strong> <?php echo $this->modalite($session); ?>
-                                <?php if ($session->getDateDebut() and $session->getDateFin()) : ?>
-                                    <br/>
-                                    <strong>Durée :</strong> <?php echo $session->getDuree(); ?> h.
                                 <?php endif; ?>
                             </li>
                         <?php endforeach; ?>

@@ -3,7 +3,7 @@
 namespace Application\Provider;
 
 use Application\Entity\UserWrapperFactory;
-use Application\Service\Acteur\ActeurService;
+use These\Service\Acteur\ActeurService;
 use Doctorant\Service\DoctorantService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementServiceLocateTrait;

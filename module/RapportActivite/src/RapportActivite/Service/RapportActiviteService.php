@@ -5,9 +5,12 @@ namespace RapportActivite\Service;
 use Application\Command\ShellCommandRunnerTrait;
 use Application\Entity\AnneeUniv;
 use Fichier\Entity\Db\NatureFichier;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\Entity\Db\TypeRapport;
 use Application\Service\BaseService;
+use RapportActivite\Service\Fichier\Exporter\PageValidationExportDataException;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Fichier\Service\Fichier\Exception\FichierServiceException;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
@@ -31,6 +34,7 @@ use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
 use RapportActivite\Service\Fichier\Exporter\PageValidationExportData;
 use RapportActivite\Service\Fichier\Exporter\PageValidationPdfExporterTrait;
 use RapportActivite\Service\Validation\RapportActiviteValidationServiceAwareTrait;
+use UnexpectedValueException;
 use UnicaenApp\Exception\RuntimeException;
 
 class RapportActiviteService extends BaseService
@@ -114,7 +118,7 @@ class RapportActiviteService extends BaseService
     /**
      * Retourne une nouvelle instance de {@see RapportActivite}, liée à la thèse spécifiée.
      *
-     * @param \Application\Entity\Db\These $these
+     * @param \These\Entity\Db\These $these
      * @return \RapportActivite\Entity\Db\RapportActivite
      */
     public function newRapportActivite(These $these): RapportActivite
@@ -226,7 +230,7 @@ class RapportActiviteService extends BaseService
     }
 
     /**
-     * @param \Application\Entity\Db\These $these
+     * @param \These\Entity\Db\These $these
      * @param bool $cacheable
      * @return RapportActivite[] [int => Rapport[]]
      */
@@ -264,11 +268,24 @@ class RapportActiviteService extends BaseService
         };
     }
 
-    public function createPageValidationData(RapportActivite $rapport): PageValidationExportData
+    /**
+     * @throws \RapportActivite\Service\Fichier\Exporter\PageValidationExportDataException Une structure n'a aucun logo
+     */
+    public function createPageValidationDataForRapport(RapportActivite $rapport): PageValidationExportData
     {
         $exportData = new PageValidationExportData();
 
         $these = $rapport->getThese();
+        $etablissement = $these->getEtablissement();
+        $ed = $these->getEcoleDoctorale();
+        $ur = $these->getUniteRecherche();
+
+        if ($ed === null) {
+            throw new PageValidationExportDataException("La thèse n'est rattachée à aucune école doctorale");
+        }
+        if ($ur === null) {
+            throw new PageValidationExportDataException("La thèse n'est rattachée à aucune unité de recherche");
+        }
 
         // généralités
         $exportData->titre = $these->getTitre();
@@ -280,36 +297,58 @@ class RapportActiviteService extends BaseService
         }
 
         // structures
-        $exportData->etablissement = $these->getEtablissement()->getLibelle();
-        $exportData->ecoleDoctorale = $these->getEcoleDoctorale()->getStructure()->getLibelle();
-        if ($these->getUniteRecherche()) {
-            $exportData->uniteRecherche = $these->getUniteRecherche()->getStructure()->getLibelle();
+        $exportData->etablissement = $etablissement->getStructure()->getLibelle();
+        $exportData->ecoleDoctorale = $ed->getStructure()->getLibelle();
+        $exportData->uniteRecherche = $ur->getStructure()->getLibelle();
+
+        $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(true);
+
+        // logo COMUE
+        $exportData->useCOMUE = false;
+        if ($comue = $this->etablissementService->fetchEtablissementComue()) {
+            $exportData->useCOMUE = true;
+            if (!$comue->getStructure()->getCheminLogo()) {
+                throw new PageValidationExportDataException("La COMUE '{$comue}' n'a aucun logo !");
+            }
+            try {
+                $exportData->logoCOMUE = $this->fichierStorageService->getFileForLogoStructure($comue->getStructure());
+            } catch (StorageAdapterException $e) {
+                throw new PageValidationExportDataException(
+                    "Accès impossible au logo de la COMUE '{$comue}' : " . $e->getMessage());
+            }
         }
 
-        // logos
-        if ($comue = $this->etablissementService->fetchEtablissementComue()) {
-            try {
-                $exportData->logoCOMUE = $this->fichierStorageService->getFileForLogoStructure($comue);
-            } catch (StorageAdapterException $e) {
-                $exportData->logoCOMUE = '';
-            }
+        // logo etablissement
+        if (!$etablissement->getStructure()->getCheminLogo()) {
+            throw new PageValidationExportDataException("L'établissement '{$etablissement}' n'a aucun logo !");
         }
         try {
-            $exportData->logoEtablissement = $this->fichierStorageService->getFileForLogoStructure($these->getEtablissement());
+            $exportData->logoEtablissement = $this->fichierStorageService->getFileForLogoStructure($etablissement->getStructure());
         } catch (StorageAdapterException $e) {
-            $exportData->logoEtablissement = '';
+            throw new PageValidationExportDataException(
+                "Accès impossible au logo de l'établissement '{$etablissement}' : " . $e->getMessage());
+        }
+
+        // logo ED
+        if (!$ed->getStructure()->getCheminLogo()) {
+            throw new PageValidationExportDataException("L'ED '{$ed}' n'a aucun logo !");
         }
         try {
-            $exportData->logoEcoleDoctorale = $this->fichierStorageService->getFileForLogoStructure($these->getEcoleDoctorale());
+            $exportData->logoEcoleDoctorale = $this->fichierStorageService->getFileForLogoStructure($ed->getStructure());
         } catch (StorageAdapterException $e) {
-            $exportData->logoEcoleDoctorale = '';
+            throw new PageValidationExportDataException(
+                "Accès impossible au logo de l'ED '{$ed}' : " . $e->getMessage());
         }
-        if ($these->getUniteRecherche() !== null) {
-            try {
-                $exportData->logoUniteRecherche = $this->fichierStorageService->getFileForLogoStructure($these->getUniteRecherche());
-            } catch (StorageAdapterException $e) {
-                $exportData->logoUniteRecherche = '';
-            }
+
+        // logo UR
+        if (!$ur->getStructure()->getCheminLogo()) {
+            throw new PageValidationExportDataException("L'UR '{$ur}' n'a aucun logo !");
+        }
+        try {
+            $exportData->logoUniteRecherche = $this->fichierStorageService->getFileForLogoStructure($ur->getStructure());
+        } catch (StorageAdapterException $e) {
+            throw new PageValidationExportDataException(
+                "Accès impossible au logo de l'UR '{$ur}' : " . $e->getMessage());
         }
 
         // avis
@@ -319,25 +358,32 @@ class RapportActiviteService extends BaseService
         $exportData->validation = $rapport->getRapportValidation();
 
         // signature ED
-        try {
-            $exportData->signatureEcoleDoctorale = $this->structureDocumentService->getCheminFichier(
-                $these->getEcoleDoctorale()->getStructure(),
-                NatureFichier::CODE_SIGNATURE_RAPPORT_ACTIVITE,
-                $these->getEtablissement()
-            );
-        } catch (StorageAdapterException $e) {
-            $exportData->signatureEcoleDoctorale = null;
-            $exportData->signatureEcoleDoctoraleAnomalie = $e->getMessage();
+        $signatureEcoleDoctorale = $this->findSignatureEcoleDoctorale($ed, $etablissement);
+        if ($signatureEcoleDoctorale === null) {
+            throw new PageValidationExportDataException("Aucune signature trouvée pour l'ED '$ed'.");
         }
-        if ($exportData->signatureEcoleDoctorale === null) {
-            $exportData->signatureEcoleDoctoraleAnomalie = sprintf(
-                "Aucun fichier de signature téléversé pour l'ED '%s' et l'établissement '%s'",
-                $these->getEcoleDoctorale()->getSigle(),
-                $these->getEtablissement()->getCode()
-            );
-        }
+        $exportData->signatureEcoleDoctorale = $signatureEcoleDoctorale;
 
         return $exportData;
+    }
+
+    private function findSignatureEcoleDoctorale(EcoleDoctorale $ed, Etablissement $etablissement): ?string
+    {
+        $fichier = $this->structureDocumentService->findDocumentFichierForStructureNatureAndEtablissement(
+            $ed->getStructure(),
+            NatureFichier::CODE_SIGNATURE_RAPPORT_ACTIVITE,
+            $etablissement);
+
+        if ($fichier === null) {
+            return null;
+        }
+
+        try {
+            $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(true);
+            return $this->fichierStorageService->getFileForFichier($fichier);
+        } catch (StorageAdapterException $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération de la signature de l'ED !", 0, $e);
+        }
     }
 
     private function triggerEvent(string $name, $target, array $params = []): RapportActiviteEvent

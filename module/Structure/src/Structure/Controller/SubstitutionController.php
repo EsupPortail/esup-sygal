@@ -3,17 +3,17 @@
 namespace Structure\Controller;
 
 use Application\Controller\AbstractController;
+use Application\SourceCodeStringHelperAwareTrait;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
 use Structure\Entity\Db\Structure;
 use Structure\Entity\Db\StructureConcreteInterface;
-use Structure\Entity\Db\StructureInterface;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
-use Application\SourceCodeStringHelperAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Laminas\View\Model\ViewModel;
 
 class SubstitutionController extends AbstractController
 {
@@ -25,15 +25,17 @@ class SubstitutionController extends AbstractController
     use SourceCodeStringHelperAwareTrait;
 
     /** Affiche l'index générale */
-    public function indexAction() {
+    public function indexAction()
+    {
         /**  l'ajax charge la page */
         return new ViewModel();
     }
 
     /** Affiche l'index d'un type de structure donnée */
-    public function indexStructureAction() {
+    public function indexStructureAction()
+    {
         $type = $this->params()->fromRoute("type");
-        $structures = $this->getStructureService()->getStructuresSubstituantes($type, 'libelle');
+        $structures = $this->getStructureService()->findStructuresSubstituantes($type, 'libelle');
 
         return new ViewModel([
             'type' => $type,
@@ -47,7 +49,7 @@ class SubstitutionController extends AbstractController
     public function creerAction()
     {
         $type = $this->params()->fromRoute('type');
-        $structures = $this->getStructureService()->getStructuresSubstituablesByType($type);
+        $structures = $this->getStructureService()->findStructuresSubstituablesByType($type);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -56,17 +58,17 @@ class SubstitutionController extends AbstractController
             // gestion des cas d'erreurs
             if (empty($data['sourceIds'])) {
                 $this->flashMessenger()->addErrorMessage("Impossible de créer une substitution sans structure source !");
-                return $this->redirect()->toRoute(null, [],[], true);
+                return $this->redirect()->toRoute(null, [], [], true);
             }
             if (empty($data['cible']['libelle'])) {
                 $this->flashMessenger()->addErrorMessage("Impossible de créer une substitution sans renseigner le libellé de la structure cible !");
-                return $this->redirect()->toRoute(null, [],[], true);
+                return $this->redirect()->toRoute(null, [], [], true);
             }
 
             // récupération des structures sources
             $sources = [];
-            foreach($data['sourceIds'] as $sourceId) {
-                $structureConcrete = $this->getStructureService()->getStructuresConcreteByTypeAndStructureId($type, $sourceId);
+            foreach ($data['sourceIds'] as $sourceId) {
+                $structureConcrete = $this->getStructureService()->findStructureConcreteByTypeAndStructureId($type, $sourceId);
                 $sources[] = $structureConcrete;
             }
 
@@ -82,8 +84,8 @@ class SubstitutionController extends AbstractController
                 $this->structureService->updateStructureSubstitutions($sources, $structureCible->getStructure());
             }
 
-            $message  = "La substitution <strong>".$structureCible->getLibelle()."</strong> vient d'être créée. Elle regroupe les structures : ";
-            $message .= implode(", ", array_map(function(StructureConcreteInterface $s) { return "<i>".$s->getLibelle()."</i>";}, $sources));
+            $message = "La structure substituante <strong>$structureCible</strong> a été créée. Elle regroupe les structures de type '$type' suivantes : ";
+            $message .= implode(", ", array_map(fn(StructureConcreteInterface $s) => sprintf("<i>%s (%d)</i>", $s, $s->getId()), $sources));
             $this->flashMessenger()->addSuccessMessage($message);
 
             return $this->redirect()->toRoute('substitution-modifier', ['cible' => $structureCible->getStructure()->getId()], [], true);
@@ -94,7 +96,6 @@ class SubstitutionController extends AbstractController
         }
 
         $vm = new ViewModel([
-//            'title' => "Création d'une substitution (".$type.")",
             'cible' => $cible,
             'structuresConcretesSubstituees' => $structuresConcretesSubstituees,
             'structuresConcretes' => $structures,
@@ -111,17 +112,10 @@ class SubstitutionController extends AbstractController
     {
         $idCible = $this->params()->fromRoute('cible');
         $structureCible = $this->getStructureService()->findStructureSubsitutionCibleById($idCible);
-        $type=$structureCible->getTypeStructure();
+        $type = $structureCible->getTypeStructure();
 
-        $structuresSubstituees = $structureCible->getStructuresSubstituees();
-
-        $structuresConcretesSubstituees = [];
-        foreach($structuresSubstituees as $structureSubstituee) {
-            $structureConcreteSubstituee = $this->getStructureService()->findStructureConcreteFromStructure($structureSubstituee);
-            $structuresConcretesSubstituees[] = $structureConcreteSubstituee;
-        }
-
-        $structures = $this->getStructureService()->getStructuresSubstituablesByType($type);
+        $structuresConcretesSubstituees = $structureCible->getStructuresConcretesSubstituees()->toArray();
+        $structures = $this->getStructureService()->findStructuresSubstituablesByType($type);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -130,41 +124,40 @@ class SubstitutionController extends AbstractController
             // récupération des structures sources
             $sources = [];
             foreach ($data['sourceIds'] as $sourceId) {
-                $structureConcrete = $this->getStructureService()->getStructuresConcreteByTypeAndStructureId($type, $sourceId);
+                $structureConcrete = $this->getStructureService()->findStructureConcreteByTypeAndStructureId($type, $sourceId);
                 $sources[] = $structureConcrete;
             }
 
             //mise à jour de la structureCible adequate
-            $this->structureService->updateFromPostData($structureCible,$data['cible']);
+            $this->structureService->updateFromPostData($structureCible, $data['cible']);
             $this->structureService->updateStructureSubstitutions($sources, $structureCible);
 
-            $message = "La substitution <strong>".$structureCible->getLibelle()."</strong> vient d'être mise à jour. Elle regroupe les structures : ";
-            $message .= implode(", ", array_map(function(StructureConcreteInterface $s) { return "<i>".$s->getLibelle()."</i>";}, $sources));
+            $message = "La structure substituante <strong>$structureCible</strong> a été mise à jour. Elle regroupe les structures de type '$type' suivantes : ";
+            $message .= implode(", ", array_map(fn(StructureConcreteInterface $s) => sprintf("<i>%s (%d)</i>", $s->getStructure(false)->getLibelle(), $s->getId()), $sources));
             $this->flashMessenger()->addSuccessMessage($message);
 
-            return $this->redirect()->toRoute(null, [],[], true);
+            return $this->redirect()->toRoute(null, [], [], true);
         }
 
         return new ViewModel([
-//            'title' => "Modification d'une substitution (".$type.")",
             'cible' => $structureCible,
             'structuresConcretes' => $structures,
             'structuresConcretesSubstituees' => $structuresConcretesSubstituees,
             'structureCibleLogoContent' => $this->structureService->getLogoStructureContent($structureCible),
-            'structuresConcretesSubstitueesLogosContents' => array_map(function(StructureInterface $structureConcreteSubstituee) {
-                return $this->structureService->getLogoStructureContent($structureConcreteSubstituee);
+            'structuresConcretesSubstitueesLogosContents' => array_map(function (StructureConcreteInterface $structureConcreteSubstituee) {
+                return $this->structureService->getLogoStructureContent($structureConcreteSubstituee->getStructure(false));
             }, $structuresConcretesSubstituees),
         ]);
     }
 
     /** Fonction de destruction */
-    public function detruireAction() {
+    public function detruireAction(): Response
+    {
         $idCible = $this->params()->fromRoute('cible');
         $structure = $this->structureService->findStructureById($idCible);
-        $cible = $this->structureService->findStructureConcreteFromStructure($structure);
-        $this->structureService->removeSubstitution($cible);
+        $this->structureService->removeSubstitution($structure->getStructureConcrete());
 
-        return $this->redirect()->toRoute('substitution-index', [],[], true);
+        return $this->redirect()->toRoute('substitution-index', [], [], true);
     }
 
     /** Fonction appelée pour construire la div associée à une structure source */
@@ -176,61 +169,43 @@ class SubstitutionController extends AbstractController
 
         return new ViewModel([
             'structure' => $structureConcrete,
-            'structureSourceLogoContent' => $this->structureService->getLogoStructureContent($structureConcrete),
+            'structureSourceLogoContent' => $this->structureService->getLogoStructureContent($structureConcrete->getStructure(false)),
         ]);
     }
 
     /** Fonction principale des substitutions (appelle checkStructure) */
-    public function substitutionAutomatiqueAction()
+    public function substitutionAutomatiqueAction(): ViewModel
     {
-        $substitutionsEcolesDoctorales  = $this->getStructureService()->checkStructure(TypeStructure::CODE_ECOLE_DOCTORALE);
-        $substitutionsEtablissements    = $this->getStructureService()->checkStructure(TypeStructure::CODE_ETABLISSEMENT);
-        $substitutionsUnitesRecherches  = $this->getStructureService()->checkStructure(TypeStructure::CODE_UNITE_RECHERCHE);
+        $typeStructure = $this->structureService->findOneTypeStructureForCode($this->params()->fromRoute('type'));
+
+        $substitutionsEcolesDoctorales = $typeStructure->isEcoleDoctorale() ?
+            $this->structureService->findStructuresSubstituablesSelonSourceCode($typeStructure->getCode()) :
+            null;
+        $substitutionsEtablissements = $typeStructure->isEtablissement() ?
+            $this->structureService->findStructuresSubstituablesSelonSourceCode($typeStructure->getCode()) :
+            null;
+        $substitutionsUnitesRecherches = $typeStructure->isUniteRecherche() ?
+            $this->structureService->findStructuresSubstituablesSelonSourceCode($typeStructure->getCode()) :
+            null;
 
         return new ViewModel([
+            'typeStructure' => $typeStructure,
             'substitutionsEcolesDoctorales' => $substitutionsEcolesDoctorales,
-            'substitutionsEtablissements'   => $substitutionsEtablissements,
+            'substitutionsEtablissements' => $substitutionsEtablissements,
             'substitutionsUnitesRecherches' => $substitutionsUnitesRecherches,
         ]);
     }
 
-    /** Enregistrer une substitution automatique (! créer une structure cible si aucune n'existe */
-    public function enregistrerAutomatiqueAction()
+    public function modifierAutomatiqueAction()
     {
         $type = $this->params()->fromRoute('type');
         $identifiant = $this->params()->fromRoute('identifiant');
 
-        $structures = $this->getStructureService()->getStructuresBySuffixe($identifiant, $type);
-
         $dictionnary = $this->getStructureService()->getSubstitutionDictionnary($identifiant, $type);
         $sources = $dictionnary["sources"];
         $cible = $dictionnary["cible"];
 
-        if ($cible != null) {
-            $this->structureService->updateStructureSubstitutions($sources, $cible);
-        }
-        else {
-            /** @var StructureConcreteInterface $cible */
-            $cible = $this->getStructureService()->createStructureConcrete($type);
-            $cible->getStructure()->setLibelle($sources[0]->getLibelle());
-            $cible->getStructure()->setSigle($sources[0]->getSigle());
-            $cible->getStructure()->setCode($sources[0]->getCode());
-            $this->getStructureService()->createStructureSubstitutions($sources, $cible);
-        }
-
-        return new ViewModel();
-    }
-
-    public function modifierAutomatiqueAction()
-    {
-        $type           = $this->params()->fromRoute('type');
-        $identifiant    = $this->params()->fromRoute('identifiant');
-
-        $dictionnary = $this->getStructureService()->getSubstitutionDictionnary($identifiant, $type);
-        $sources = $dictionnary["sources"];
-        $cible = $dictionnary["cible"];
-
-        $structures = $this->getStructureService()->getAllStructuresAffichablesByType($type);
+        $structures = $this->getStructureService()->findStructuresSubstituablesByType($type);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -245,20 +220,22 @@ class SubstitutionController extends AbstractController
             if ($cible === null) {
                 /** @var StructureConcreteInterface $cible */
                 $cible = $this->getStructureService()->createStructureConcrete($type);
-                $cible->getStructure()->setLibelle($sources[0]->getLibelle());
-                $cible->getStructure()->setSigle($sources[0]->getSigle());
-                $cible->getStructure()->setCode($sources[0]->getCode());
+                $cible->getStructure()->setLibelle($sources[0]->getStructure(false)->getLibelle());
+                $cible->getStructure()->setSigle($sources[0]->getStructure(false)->getSigle());
+                $cible->getStructure()->setCode($sources[0]->getStructure(false)->getCode());
                 $this->getStructureService()->createStructureSubstitutions($sources, $cible);
             } else {
-                $this->structureService->updateFromPostData($cible,$data['cible']);
+                $this->structureService->updateFromPostData($cible, $data['cible']);
                 $this->structureService->updateStructureSubstitutions($sources, $cible->getStructure());
             }
 
-            $message = "La substitution <strong>".$cible->getLibelle()."</strong> vient d'être mise à jour. Elle regroupe les structures : ";
-            $message .= implode(", ", array_map(function(StructureConcreteInterface $s) { return "<i>".$s->getLibelle()."</i>";}, $sources));
+            $message = "La substitution <strong>" . $cible->getStructure()->getLibelle() . "</strong> vient d'être mise à jour. Elle regroupe les structures : ";
+            $message .= implode(", ", array_map(function (StructureConcreteInterface $s) {
+                return "<i>" . $s->getStructure(false)->getLibelle() . "</i>";
+            }, $sources));
             $this->flashMessenger()->addSuccessMessage($message);
 
-            return $this->redirect()->toRoute(null, [],[], true);
+            return $this->redirect()->toRoute(null, [], [], true);
         }
 
         if ($cible === null) {
@@ -274,7 +251,7 @@ class SubstitutionController extends AbstractController
             'identifiant' => $identifiant,
             'structuresConcretes' => $structures,
             'structuresConcretesSubstituees' => $sources,
-            'structureCibleLogoContent' => $this->structureService->getLogoStructureContent($cible),
+            'structureCibleLogoContent' => $this->structureService->getLogoStructureContent($cible->getStructure(false)),
         ]);
         $vm->setTemplate('structure/substitution/modifier');
         return $vm;

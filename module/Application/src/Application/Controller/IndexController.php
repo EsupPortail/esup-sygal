@@ -2,31 +2,27 @@
 
 namespace Application\Controller;
 
-use Structure\Entity\Db\Etablissement;
-use Application\Entity\Db\Role;
 use Application\Entity\Db\Variable;
 use Application\Entity\UserWrapper;
-use Application\Exception\DomainException;
-use Application\Service\Actualite\ActualiteServiceAwareTrait;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Information\Service\InformationServiceAwareTrait;
-use UnicaenApp\Exception\RuntimeException;
 use Laminas\Authentication\AuthenticationServiceInterface;
 use Laminas\Http\Response;
-use Laminas\Validator\EmailAddress as EmailAddressValidator;
 use Laminas\View\Model\ViewModel;
+use Structure\Entity\Db\Etablissement;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use These\Entity\Db\These;
+use These\Service\These\TheseServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
 
 class IndexController extends AbstractController
 {
     use VariableServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
-    use TheseServiceAwareTrait;
-    use ActualiteServiceAwareTrait;
     use InformationServiceAwareTrait;
+    use TheseServiceAwareTrait;
 
     /**
      * @var AuthenticationServiceInterface
@@ -77,9 +73,6 @@ class IndexController extends AbstractController
             'role' => $this->userContextService->getSelectedIdentityRole(),
             'roles' => $this->userContextService->getSelectableIdentityRoles(),
             'estDoctorant' => (bool) $this->userContextService->getIdentityDoctorant(),
-            'url' => $this->actualiteService->isActif() ? $this->actualiteService->getUrl() : null,
-            'offre' => $this->actualiteService->isOffre() ? $this->getEcoleDoctoraleService()->getOffre() : null,
-            'ecoles' => $this->getEcoleDoctoraleService()->getRepository()->findAll(true),
             'informations' => $this->informationService->getInformations(true),
         ]);
 
@@ -121,9 +114,7 @@ EOS
                     "Anomalie: le rôle '{$role->getRoleId()}' est sélectionné mais les données d'identité associées sont vides");
             }
 
-            $qb = $this->theseService->getRepository()->createQueryBuilder('t')
-                ->andWhereDoctorantIs($doctorant);
-            $theses = $qb->getQuery()->getResult();
+            $theses = $this->theseService->getRepository()->findThesesByDoctorant($doctorant, [These::ETAT_EN_COURS, These::ETAT_SOUTENUE]);
 
             /**
              * Si aucune thèse n'a été trouvée pour le doctorant connecté, on le déconnecte!
@@ -201,27 +192,22 @@ EOS
 
         $etablissement = $this->findEtablissementUtilisateur($userWrapper);
 
+        $repo = $this->variableService->getRepository();
+        $variables = [];
         if ($etablissement !== null) {
-            $repo = $this->variableService->getRepository();
-            $variable = $repo->findByCodeAndEtab(Variable::CODE_EMAIL_ASSISTANCE, $etablissement);
-            if ($variable === null) {
-                throw new RuntimeException(
-                    "Anomalie: aucune adresse d'assistance trouvée dans les Variables pour l'établissement '$etablissement'.");
+            // recherche de l'adresse d'assistance associé à l'établissement en question
+            if ($variable = $repo->findOneByCodeAndEtab(Variable::CODE_EMAIL_ASSISTANCE, $etablissement)) {
+                $variables[] = $variable;
             }
-
-            $contact = $variable->getValeur();
-
-            $v = new EmailAddressValidator();
-            $contactValide = $v->isValid($contact);
-        } else {
-            $contact = null;
-            $contactValide = false;
+        }
+        // si aucune variable trouvée, recherche des toutes les adresses d'assistance possibles
+        if (empty($variables)) {
+            $variables = $repo->findByCode(Variable::CODE_EMAIL_ASSISTANCE);
         }
 
         return [
             'etablissement' => $etablissement,
-            'contact' => $contact,
-            'contactValide' => $contactValide,
+            'variables' => $variables,
             'individu' => $this->userContextService->getIdentityIndividu(),
             'utilisateur' => $this->userContextService->getIdentityDb(),
             'role' => $this->userContextService->getSelectedIdentityRole(),

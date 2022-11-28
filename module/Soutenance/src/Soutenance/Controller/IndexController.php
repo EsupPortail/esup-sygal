@@ -4,11 +4,11 @@ namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
-use Application\Service\Acteur\ActeurServiceAwareTrait;
+use These\Entity\Db\These;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\These\TheseServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Soutenance\Entity\Membre;
@@ -89,7 +89,7 @@ class IndexController extends AbstractController
 
         if ($these !== null) {
             /** @var These $these */
-            $proposition = $this->getPropositionService()->findByThese($these);
+            $proposition = $this->getPropositionService()->findOneForThese($these);
             /** @var Membre[] $membres */
             $membres = $proposition->getMembres()->toArray();
             $membre = null;
@@ -99,13 +99,13 @@ class IndexController extends AbstractController
                 }
             }
 
-            $engagement = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($these, $membre);
-            $avis = $this->getAvisService()->getAvisByMembre($membre);
+            $engagement = ($membre)?$this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($these, $membre):null;
+            $avis = ($membre)?$this->getAvisService()->getAvisByMembre($membre):null;
 
             return new ViewModel([
                 'these' => $these,
                 'membre' => $membre,
-                'proposition' => $membre->getProposition(),
+                'proposition' => $proposition,
                 'depot' => $these->hasVersionInitiale(),
                 'engagement' => $engagement,
                 'avis' => $avis,
@@ -129,16 +129,16 @@ class IndexController extends AbstractController
 
     public function indexStructureAction()
     {
+        $etablissement = $this->params()->fromQuery('etablissement');
         $role = $this->userContextService->getSelectedIdentityRole();
-        $propositions = $this->getPropositionService()->getPropositionsByRole($role);
-
+        $propositions = $this->getPropositionService()->findPropositionsByRole($role);
 
         $etablissementId = $this->params()->fromQuery('etablissement');
         $ecoleDoctoraleId = $this->params()->fromQuery('ecoledoctorale');
         $uniteRechercheId = $this->params()->fromQuery('uniterecherche');
         $etatId = $this->params()->fromQuery('etat');
 
-        if ($etablissementId != '') $propositions = array_filter($propositions, function($proposition) use ($etablissementId) { return $proposition->getThese()->getEtablissement()->getId() == $etablissementId; });
+        if ($etablissementId != '') $propositions = array_filter($propositions, function($proposition) use ($etablissementId) { return $proposition->getThese()->getEtablissement()->getStructure()->getCode() == $etablissementId; });
         if ($ecoleDoctoraleId != '') $propositions = array_filter($propositions, function($proposition) use ($ecoleDoctoraleId) { return $proposition->getThese()->getEcoleDoctorale()->getId() == $ecoleDoctoraleId; });
         if ($uniteRechercheId != '') $propositions = array_filter($propositions, function($proposition) use ($uniteRechercheId) { return $proposition->getThese()->getUniteRecherche()->getId() == $uniteRechercheId; });
         if ($etatId != '') $propositions = array_filter($propositions, function($proposition) use ($etatId) { return $proposition->getEtat()->getId() == $etatId; });
@@ -154,9 +154,9 @@ class IndexController extends AbstractController
             'uniteRechercheId' => $uniteRechercheId,
             'etatId' => $etatId,
             'etablissements' => $this->getEtablissementService()->getRepository()->findAllEtablissementsMembres(),
-            'ecoles' => $this->getEcoleDoctoraleService()->getRepository()->findAll(true),
-            'unites' => $this->getUniteRechercheService()->getRepository()->findAll(true),
-            'etats' =>  $this->getPropositionService()->getPropositionEtats(),
+            'ecoles' => $this->getEcoleDoctoraleService()->getRepository()->findAll(),
+            'unites' => $this->getUniteRechercheService()->getRepository()->findAll(),
+            'etats' =>  $this->getPropositionService()->findPropositionEtats(),
         ]);
     }
 }

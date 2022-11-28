@@ -1,7 +1,7 @@
 <?php
 
 use Structure\Entity\Db\Etablissement;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -25,7 +25,7 @@ $paramEtablissements = [];
 $paramEtablissements[] = ['value' => '',                             'label' => $this->translate("Tous") ];
 /** @var Etablissement[] $etablissements */
 foreach ($etablissements as $etablissement) {
-    $paramEtablissements[] = ['value' => $v = $etablissement->getStructure()->getCode(), 'label' => $etablissement->getSigle() ];
+    $paramEtablissements[] = ['value' => $v = $etablissement->getStructure()->getCode(), 'label' => $etablissement->getStructure()->getSigle() ];
 }
 
 echo $this->filterPanel([

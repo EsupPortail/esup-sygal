@@ -3,55 +3,54 @@
 namespace Structure\Entity\Db\Repository;
 
 use Application\Entity\Db\Repository\DefaultEntityRepository;
-use Structure\Entity\Db\UniteRecherche;
+use Application\QueryBuilder\DefaultQueryBuilder;
 use Doctrine\ORM\NonUniqueResultException;
+use Structure\Entity\Db\UniteRecherche;
 use UnicaenApp\Exception\RuntimeException;
 
 class UniteRechercheRepository extends DefaultEntityRepository
 {
+    use StructureConcreteRepositoryTrait;
 
-    /**
-     * @param bool $ouverte
-     * @return UniteRecherche[]
-     */
-    public function findAll(bool $ouverte = false)
+    public function createQueryBuilder($alias, $indexBy = null): DefaultQueryBuilder
     {
-        /** @var UniteRecherche[] $unites */
-        $qb = $this->getEntityManager()->getRepository(UniteRecherche::class)->createQueryBuilder("ur");
+        $qb = $this->_createQueryBuilder($alias);
         $qb
-            ->leftJoin("ur.structure", "str", "WITH", "ur.structure = str.id")
-            ->leftJoin("str.structuresSubstituees", "sub")
-            ->leftJoin("str.typeStructure", "typ")
-            ->addSelect("str, sub, typ")
-            ->orderBy("str.libelle");
+            ->addSelect('uniteRechercheSubstituante')
+            ->leftJoin("structureSubstituante.uniteRecherche", 'uniteRechercheSubstituante');
 
-        if ($ouverte) {
-            $qb = $qb->andWhere('str.estFermee = false')
-                ->leftJoin('str.structureSubstituante', 'substitutionTo')
-                ->andWhere('substitutionTo IS NULL')
-                ->orderBy('str.sigle')
-            ;
-        }
-        $unites = $qb->getQuery()->getResult();
-
-        return $unites;
+        return $qb;
     }
 
-    public function findByStructureId($id)
+    /**
+     * @return UniteRecherche[]
+     */
+    public function findAll(): array
     {
-        /** @var UniteRecherche $unite */
-        $qb = $this->createQueryBuilder("u")
-            ->addSelect("s")
-            ->leftJoin("u.structure", "s")
-            ->andWhere("s.id = :id")
-            ->setParameter("id", $id);
-        try {
-            $unite = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("UniteRechercheRepository::findByStructureId(".$id.") retourne de multiples unités de recherches !");
-        }
+        $qb = $this->createQueryBuilder("ur");
 
-        return $unite;
+        return $this->_findAll($qb);
+    }
+
+    /**
+     * @return UniteRecherche[]
+     */
+    public function findSubstituables(): array
+    {
+        $qb = $this->createQueryBuilder("ur");
+
+        return $this->_findSubstituables($qb);
+    }
+
+    /**
+     * @param $structureId
+     * @return \Structure\Entity\Db\UniteRecherche|null
+     */
+    public function findByStructureId($structureId): ?UniteRecherche
+    {
+        $qb = $this->createQueryBuilder("ur");
+
+        return $this->_findByStructureId($qb, $structureId);
     }
 
     /**
@@ -60,17 +59,25 @@ class UniteRechercheRepository extends DefaultEntityRepository
      */
     public function findByText(?string $term) : array
     {
+        $qb = $this->createQueryBuilder("ur");
+
+        return $this->_findByText($qb, $term);
+    }
+
+    public function find($id, $lockMode = null, $lockVersion = null) : ?UniteRecherche
+    {
+        /** @var UniteRecherche $unite */
         $qb = $this->createQueryBuilder("u")
-            ->addSelect("s")->leftJoin("u.structure", "s")
-            ->andWhere('lower(s.libelle) like :term or lower(s.sigle) like :term')
-            ->setParameter('term', '%'.strtolower($term).'%')
-            ->andWhere('u.histoDestruction is null')
-            ->andWhere('s.estFermee = :false')
-            ->setParameter('false', false)
-            ->leftJoin('s.structureSubstituante', 'substitutionTo')
-            ->andWhere('substitutionTo IS NULL')
-        ;
-        $result = $qb->getQuery()->getResult();
-        return $result;
+            ->addSelect("s")
+            ->leftJoin("u.structure", "s")
+            ->andWhere("u.id = :id")
+            ->setParameter("id", $id);
+        try {
+            $unite = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("UniteRechercheRepository::find(".$id.") retourne de multiples unités de recherches !");
+        }
+
+        return $unite;
     }
 }

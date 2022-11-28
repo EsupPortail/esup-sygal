@@ -3,9 +3,10 @@
 namespace Structure\Entity\Db\Repository;
 
 use Application\Entity\Db\Repository\DefaultEntityRepository;
-use Structure\Entity\Db\Etablissement;
 use Application\Entity\UserWrapper;
+use Application\QueryBuilder\DefaultQueryBuilder;
 use Doctrine\ORM\NonUniqueResultException;
+use Structure\Entity\Db\Etablissement;
 use UnicaenApp\Exception\RuntimeException;
 
 /**
@@ -13,15 +14,69 @@ use UnicaenApp\Exception\RuntimeException;
  */
 class EtablissementRepository extends DefaultEntityRepository
 {
+    use StructureConcreteRepositoryTrait;
+
+    public function createQueryBuilder($alias, $indexBy = null): DefaultQueryBuilder
+    {
+        $qb = $this->_createQueryBuilder($alias);
+        $qb
+            ->addSelect('etablissementSubstituant')
+            ->leftJoin("structureSubstituante.etablissement", 'etablissementSubstituant');
+
+        return $qb;
+    }
+
+    /**
+     * @return Etablissement[]
+     */
+    public function findAll(): array
+    {
+        $qb = $this->createQueryBuilder("e");
+
+        return $this->_findAll($qb);
+    }
+
+    /**
+     * @return Etablissement[]
+     */
+    public function findSubstituables(): array
+    {
+        $qb = $this->createQueryBuilder("e");
+
+        return $this->_findSubstituables($qb);
+    }
+
+    /**
+     * @param $structureId
+     * @return \Structure\Entity\Db\Etablissement|null
+     */
+    public function findByStructureId($structureId): ?Etablissement
+    {
+        $qb = $this->createQueryBuilder("e");
+
+        return $this->_findByStructureId($qb, $structureId);
+    }
+
+    /**
+     * @param string|null $term
+     * @return Etablissement[]
+     */
+    public function findByText(?string $term) : array
+    {
+        $qb = $this->createQueryBuilder("e");
+
+        return $this->_findByText($qb, $term);
+    }
+
     /**
      * Retourne l'établissement "inconnu".
      *
      * Cet établissement est utilisé pour rattacher un individu utilisateur à un établissement lorsque
      * son EPPN contient un domaine inconnu.
      *
-     * @return Etablissement|null
+     * @return Etablissement
      */
-    public function fetchEtablissementInconnu()
+    public function fetchEtablissementInconnu(): Etablissement
     {
         $etab = $this->findOneBySourceCode($sourceCode = Etablissement::SOURCE_CODE_ETABLISSEMENT_INCONNU);
         if ($etab === null) {
@@ -32,70 +87,18 @@ class EtablissementRepository extends DefaultEntityRepository
     }
 
     /**
-     * Recherche un établissement par son code de structure.
-     *
-     * @param string $code Ex: 'ENSICAEN'
-     * @return Etablissement|null
-     */
-    public function findOneByCodeStructure($code)
-    {
-        $qb = $this->getEntityManager()->getRepository(Etablissement::class)->createQueryBuilder("e")
-            ->join("e.structure","structure")
-            ->andWhere("structure.code = :code")
-            ->setParameter("code", $code);
-
-        /** @var Etablissement $entity */
-        try {
-            $entity = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Anomalie: plusieurs établissements ont le même code structure.");
-        }
-
-        return $entity;
-    }
-
-//    /**
-//     * @param int $id
-//     * @return null|Etablissement
-//     */
-//    public function find($id) {
-//        /** @var Etablissement $etablissement */
-//        $etablissement = $this->findOneBy(["id" => $id]);
-//        return $etablissement;
-//    }
-
-    /**
-     * @return Etablissement[]
-     */
-    public function findAll()
-    {
-        /** @var Etablissement[] $etablissments */
-        $qb = $this->createQueryBuilder("et")
-            ->join("et.structure", "str")
-            ->leftJoin("str.structuresSubstituees", "sub")
-            ->leftJoin("str.typeStructure", "typ")
-            ->addSelect("str, sub, typ")
-            ->orderBy("str.libelle");
-
-        $etablissements = $qb->getQuery()->getResult();
-
-        return $etablissements;
-    }
-
-    /**
      * @param string source
      * @param boolean $include (si 'true' alors seulement la source sinon tous sauf la source)
      * @return Etablissement[]
      */
-    public function findAllBySource($source, $include = true)
+    public function findAllBySource($source, bool $include = true): array
     {
         $qb = $this->createQueryBuilder("e")
             ->join("e.source", "s")
-            ->join("e.structure", "str")
-            ->leftJoin("str.structuresSubstituees", "sub")
-            ->leftJoin("str.typeStructure", "typ")
-            ->addSelect("str, sub, typ")
-            ->orderBy("str.libelle");
+            ->leftJoin("structure.structuresSubstituees", "sub")
+            ->leftJoin("structure.typeStructure", "typ")
+            ->addSelect("sub, typ")
+            ->orderBy("structure.libelle");
 
         if ($include) {
             $qb->andWhere("s.code = :source");
@@ -104,10 +107,7 @@ class EtablissementRepository extends DefaultEntityRepository
         }
         $qb->setParameter("source", $source);
 
-        /** @var Etablissement[] $etablissments */
-        $etablissments = $qb->getQuery()->execute();
-
-        return $etablissments;
+        return $qb->getQuery()->execute();
     }
 
     /**
@@ -116,7 +116,7 @@ class EtablissementRepository extends DefaultEntityRepository
      * @param string $domaine Ex: "unicaen.fr"
      * @return Etablissement|null
      */
-    public function findOneByDomaine($domaine)
+    public function findOneByDomaine(string $domaine): ?Etablissement
     {
         $qb = $this->createQueryBuilder('e')
             ->where('e.domaine = :domaine')
@@ -154,7 +154,7 @@ class EtablissementRepository extends DefaultEntityRepository
      * @param string $sourceCode Ex: 'UCN::CRHEA'
      * @return Etablissement|null
      */
-    public function findOneBySourceCode($sourceCode)
+    public function findOneBySourceCode(string $sourceCode): ?Etablissement
     {
         $qb = $this->createQueryBuilder('e')
             ->where('e.sourceCode = :sourceCode')
@@ -170,49 +170,14 @@ class EtablissementRepository extends DefaultEntityRepository
         return $etab;
     }
 
-    public function findByStructureId($structureId)
-    {
-        $qb = $this->createQueryBuilder("e")
-            ->addSelect("s")
-            ->join("e.structure", "s")
-            ->andWhere("s.id = :structureId")
-            ->setParameter("structureId", $structureId);
-        try {
-            $etablissement = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Anomalie plusieurs établissements avec le même id.", 0, $e);
-        }
-
-        return $etablissement;
-    }
-
-    public function findOneByLibelle($libelle)
-    {
-        $qb = $this->createQueryBuilder("e")
-            ->addSelect("s")
-            ->join("e.structure", "s")
-            ->andWhere("s.libelle = :structureId")
-            ->setParameter("structureId", $libelle);
-        try {
-            $etablissement = $qb->getQuery()->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            throw new RuntimeException("Anomalie plusieurs établissements avec le même id.", 0, $e);
-        }
-
-        return $etablissement;
-    }
-
     /**
      * @return Etablissement[]
      */
-    public function findAllEtablissementsMembres()
+    public function findAllEtablissementsMembres(): array
     {
         $qb = $this->createQueryBuilder("e")
-            ->addSelect("s")
-            ->join("e.structure", "s")
             ->andWhere("e.estMembre = true")
-            ->orderBy('s.libelle')
-        ;
+            ->orderBy('structure.libelle');
 
         return  $qb->getQuery()->getResult();
     }
@@ -221,37 +186,15 @@ class EtablissementRepository extends DefaultEntityRepository
      * @param bool $cacheable
      * @return Etablissement[]
      */
-    public function findAllEtablissementsInscriptions($cacheable = false)
+    public function findAllEtablissementsInscriptions(bool $cacheable = false): array
     {
         $qb = $this->createQueryBuilder("e")
-            ->addSelect("s")
-            ->join("e.structure", "s")
             ->andWhere("e.estInscription = true")
-            ->orderBy('s.libelle')
-        ;
+            ->orderBy('structure.libelle')
+            ->andWhereStructureEstNonSubstituee('structure');
 
         $qb->setCacheable($cacheable);
 
         return  $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @param string|null $term
-     * @return Etablissement[]
-     */
-    public function findByText(?string $term) : array
-    {
-        $qb = $this->createQueryBuilder("e")
-            ->addSelect("s")->leftJoin("e.structure", "s")
-            ->andWhere('lower(s.libelle) like :term or lower(s.sigle) like :term')
-            ->setParameter('term', '%'.strtolower($term).'%')
-            ->andWhere('e.histoDestruction is null')
-            ->andWhere('s.estFermee = :false')
-            ->setParameter('false', false)
-            ->leftJoin('s.structureSubstituante', 'substitutionTo')
-            ->andWhere('substitutionTo IS NULL')
-        ;
-        $result = $qb->getQuery()->getResult();
-        return $result;
     }
 }

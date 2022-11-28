@@ -1,9 +1,9 @@
 <?php
 
-use Application\Entity\Db\Acteur;
-use Application\Entity\Db\These;
+use These\Entity\Db\Acteur;
+use These\Entity\Db\These;
 use Application\Entity\Db\Validation;
-use Application\Service\FichierThese\PdcData;
+use These\Service\FichierThese\PdcData;
 use Application\View\Renderer\PhpRenderer;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -105,7 +105,7 @@ Par décision en date du
                 Date manquante,
         </span>
 <?php endif; ?>
-le chef de l'établissement <?php echo  $these->getEtablissement()->getLibelle(); ?> vous a désigné<?php if($civilite==="Madame") echo "e"; ?>
+le chef de l'établissement <?php echo  $these->getEtablissement()->getStructure()->getLibelle(); ?> vous a désigné<?php if($civilite==="Madame") echo "e"; ?>
  pour participer au jury devant examiner les travaux de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(true); ?>
  en vue de l'obtention du diplôme : <br/>
 Doctorat en <?php echo $these->getLibelleDiscipline(); ?>.
@@ -172,7 +172,7 @@ $texte_directeur = implode(" et ", $encadrement);
             <br/>
             <br/>
             Visa de l'établissement d'inscription du doctorant,<br/>
-            <?php echo $these->getEtablissement()->getLibelle(); ?>
+            <?php echo $these->getEtablissement()->getStructure()->getLibelle(); ?>
         </td>
     </tr>
     <tr>

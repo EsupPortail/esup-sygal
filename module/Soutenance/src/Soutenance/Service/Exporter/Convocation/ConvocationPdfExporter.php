@@ -3,7 +3,7 @@
 namespace Soutenance\Service\Exporter\Convocation;
 
 use Application\Entity\Db\Role;
-use Application\Entity\Db\These;
+use These\Entity\Db\These;
 use Soutenance\Entity\Membre;
 use UnicaenApp\Exporter\Pdf as PdfExporter;
 use Laminas\View\Renderer\PhpRenderer;
@@ -26,8 +26,8 @@ class ConvocationPdfExporter extends PdfExporter
         parent::__construct($renderer, $format, $orientationPaysage, $defaultFontSize);
         $resolver = $renderer->resolver();
         $resolver->attach(new TemplatePathStack(['script_paths' => [__DIR__]]));
-        $this->allow_charset_conversion = true;
-        $this->charset_in='UTF-8';
+//        $this->allow_charset_conversion = true;
+//        $this->charset_in='UTF-8';
     }
 
     public function export($filename = null, $destination = self::DESTINATION_BROWSER, $memoryLimit = null)
