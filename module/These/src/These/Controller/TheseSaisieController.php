@@ -3,18 +3,18 @@
 namespace These\Controller;
 
 use Application\Controller\AbstractController;
-use Structure\Entity\Db\Etablissement;
-use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Role;
+use Individu\Entity\Db\Individu;
+use Individu\Service\IndividuServiceAwareTrait;
+use Laminas\View\Model\ViewModel;
+use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
+use Structure\Entity\Db\Etablissement;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\These;
 use These\Form\TheseSaisie\TheseSaisieForm;
 use These\Form\TheseSaisie\TheseSaisieFormAwareTrait;
 use These\Service\Acteur\ActeurServiceAwareTrait;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Individu\Service\IndividuServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
-use Laminas\View\Model\ViewModel;
-use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
 class TheseSaisieController extends AbstractController {

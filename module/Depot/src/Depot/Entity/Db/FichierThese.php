@@ -9,7 +9,7 @@ use These\Entity\Db\These;
 /**
  * Classe représentant un fichier lié *à une thèse*.
  *
- * @todo : supprimer de cette classe ce qui concerne le retraitement et la conformité.
+ * @todo : déplacer de cette classe ce qui concerne le retraitement et la conformité.
  */
 class FichierThese implements ResourceInterface
 {

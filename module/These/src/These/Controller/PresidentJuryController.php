@@ -3,17 +3,17 @@
 namespace These\Controller;
 
 use Application\Entity\Db\Utilisateur;
-use Depot\Service\These\DepotServiceAwareTrait;
-use These\Entity\Db\Acteur;
 use Application\Form\AdresseMail\AdresseMailFormAwareTrait;
-use These\Service\Acteur\ActeurServiceAwareTrait;
-use These\Service\These\TheseServiceAwareTrait;
 use DateInterval;
 use DateTime;
-use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use Depot\Service\These\DepotServiceAwareTrait;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\View\Model\ViewModel;
+use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use These\Entity\Db\Acteur;
+use These\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 
 /** @method FlashMessenger flashMessenger() **/
 

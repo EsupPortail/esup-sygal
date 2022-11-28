@@ -3,8 +3,8 @@
 namespace Depot\Notification;
 
 use Individu\Entity\Db\Individu;
-use These\Entity\Db\Interfaces\TheseAwareTrait;
 use Notification\Notification;
+use These\Entity\Db\Interfaces\TheseAwareTrait;
 use UnicaenApp\Exception\LogicException;
 
 class ValidationPageDeCouvertureNotification extends Notification

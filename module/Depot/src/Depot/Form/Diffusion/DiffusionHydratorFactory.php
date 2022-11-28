@@ -2,7 +2,6 @@
 
 namespace Depot\Form\Diffusion;
 
-use Depot\Form\Diffusion\DiffusionHydrator;
 use Interop\Container\ContainerInterface;
 
 class DiffusionHydratorFactory

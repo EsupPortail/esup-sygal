@@ -3,7 +3,6 @@
 namespace Depot\Entity\Db;
 
 use Depot\Entity\VWorkflowNull;
-use Depot\Entity\Db\WfEtape;
 use These\Entity\Db\These;
 
 /**

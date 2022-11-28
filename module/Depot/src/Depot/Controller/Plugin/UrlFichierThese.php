@@ -2,14 +2,14 @@
 
 namespace Depot\Controller\Plugin;
 
-use Fichier\Entity\Db\Fichier;
-use Depot\Entity\Db\FichierThese;
-use Fichier\Entity\Db\NatureFichier;
-use These\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
-use Fichier\Entity\Db\VersionFichier;
 use Application\Filter\IdifyFilterAwareTrait;
+use Depot\Entity\Db\FichierThese;
+use Fichier\Entity\Db\Fichier;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\VersionFichier;
 use Laminas\Mvc\Controller\Plugin\Url as UrlPlugin;
+use These\Entity\Db\These;
 
 class UrlFichierThese extends UrlPlugin
 {

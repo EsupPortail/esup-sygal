@@ -3,54 +3,45 @@
 namespace Depot\Service\These;
 
 use Application\Entity\Db\Utilisateur;
-use Depot\Controller\FichierTheseController;
-use Notification\Exception\NotificationException;
-use Notification\Exception\NotificationImpossibleException;
-use These\Entity\Db\Acteur;
-use Depot\Entity\Db\Attestation;
-use Depot\Entity\Db\Diffusion;
-use Individu\Entity\Db\Individu;
-use Depot\Entity\Db\MetadonneeThese;
-use Fichier\Entity\Db\NatureFichier;
-use Depot\Entity\Db\RdvBu;
-use These\Entity\Db\Repository\TheseRepository;
-use Application\Entity\Db\Role;
-use These\Entity\Db\These;
-use Fichier\Entity\Db\VersionFichier;
-use Depot\Notification\ValidationRdvBuNotification;
-use Depot\Rule\AutorisationDiffusionRule;
-use Depot\Rule\SuppressionAttestationsRequiseRule;
-use These\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\AuthorizeServiceAwareTrait;
 use Application\Service\BaseService;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
-use These\Service\FichierThese\MembreData;
-use These\Service\FichierThese\PdcData;
-use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
-use Depot\Service\Validation\DepotValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Assert\Assertion;
 use DateTime;
+use Depot\Controller\FichierTheseController;
+use Depot\Entity\Db\Attestation;
+use Depot\Entity\Db\Diffusion;
+use Depot\Entity\Db\MetadonneeThese;
+use Depot\Entity\Db\RdvBu;
+use Depot\Notification\ValidationRdvBuNotification;
+use Depot\Rule\AutorisationDiffusionRule;
+use Depot\Rule\SuppressionAttestationsRequiseRule;
+use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Depot\Service\Validation\DepotValidationServiceAwareTrait;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
-use Soutenance\Entity\Proposition;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\VersionFichier;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Laminas\EventManager\Event;
+use Laminas\EventManager\EventManagerInterface;
+use Laminas\EventManager\ListenerAggregateInterface;
+use Laminas\EventManager\ListenerAggregateTrait;
+use Notification\Exception\NotificationImpossibleException;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use These\Entity\Db\Repository\TheseRepository;
+use These\Entity\Db\These;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
-use Laminas\EventManager\Event;
-use Laminas\EventManager\EventManagerInterface;
-use Laminas\EventManager\ListenerAggregateInterface;
-use Laminas\EventManager\ListenerAggregateTrait;
-use Laminas\Mvc\Controller\AbstractActionController;
 
 class DepotService extends BaseService implements ListenerAggregateInterface
 {
@@ -120,27 +111,6 @@ class DepotService extends BaseService implements ListenerAggregateInterface
     {
         return $this->theseService->getRepository();
     }
-
-//    public function create(These $these) : These
-//    {
-//        try {
-//            $this->getEntityManager()->persist($these);
-//            $this->getEntityManager()->flush($these);
-//        } catch (ORMException $e) {
-//            throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !",0,$e);
-//        }
-//        return $these;
-//    }
-//
-//    public function update(These $these) : These
-//    {
-//        try {
-//            $this->getEntityManager()->flush($these);
-//        } catch (ORMException $e) {
-//            throw new RuntimeException("Un problème est survenu lors de l'enregistrement en BD !",0,$e);
-//        }
-//        return $these;
-//    }
 
     /**
      * Met à jour le témoin de correction autorisée forcée.
@@ -465,216 +435,6 @@ class DepotService extends BaseService implements ListenerAggregateInterface
         }
     }
 
-//    /**
-//     * Cette fonction a pour vocation de récupérer les informations utile pour la génération de la page de couverture.
-//     * Si une clef est vide cela indique un problème associé à la thèse
-//     *
-//     * @param These $these
-//     * @return PdcData
-//     */
-//    public function fetchInformationsPageDeCouverture(These $these) : PdcData
-//    {
-//        $pdcData = new PdcData();
-//        $propositions = $these->getPropositions()->toArray();
-//        /** @var Proposition $proposition */
-//        $proposition = end($propositions);
-//
-//        if ($these->getDateSoutenance() !== null) {
-//            $mois = (int) $these->getDateSoutenance()->format('m');
-//            $annee = (int) $these->getDateSoutenance()->format('Y');
-//
-//            if ($mois > 9)  $anneeUniversitaire = $annee . "/" . ($annee + 1);
-//            else            $anneeUniversitaire = ($annee - 1) . "/" . $annee;
-//            $pdcData->setAnneeUniversitaire($anneeUniversitaire);
-//        }
-//
-//        /** informations générales */
-//        $titre = $these->getTitre();
-//        $titre = str_replace("\n","<br/>", $titre);
-//        $pdcData->setTitre($titre);
-//        $pdcData->setSpecialite($these->getLibelleDiscipline());
-//        if ($these->getEtablissement()) {
-//            $pdcData->setEtablissement($these->getEtablissement()->getStructure()->getLibelle());
-//        }
-//        if ($these->getDoctorant()) {
-//            $pdcData->setDoctorant(strtoupper($these->getDoctorant()->getIndividu()->getNomComplet(false, true, false, true, true, false)));
-//        }
-//        if ($these->getDateSoutenance()) $pdcData->setDate($these->getDateSoutenance()->format("d/m/Y"));
-//
-//        /** cotutelle */
-//        $pdcData->setCotutuelle(false);
-//        if ($these->getLibelleEtabCotutelle() !== null && $these->getLibelleEtabCotutelle() !== "") {
-//            $pdcData->setCotutuelle(true);
-//            $pdcData->setCotutuelleLibelle($these->getLibelleEtabCotutelle());
-//            if ($these->getLibellePaysCotutelle()) $pdcData->setCotutuellePays($these->getLibellePaysCotutelle());
-//        }
-//
-//        /** Huis Clos */
-//        if ($proposition AND $proposition->isHuitClos()) {
-//            $pdcData->setHuisClos(true);
-//        } else {
-//            $pdcData->setHuisClos(false);
-//        }
-//
-//        /** confidentialité */
-//        $pdcData->setDateFinConfidentialite($these->getDateFinConfidentialite());
-//        /** Jury de thèses */
-//        $acteurs = $these->getActeurs()->toArray();
-//
-//        $jury = array_filter($acteurs, function (Acteur $a) {
-//           return $a->estMembreDuJury();
-//        });
-//
-//        $rapporteurs = array_filter($acteurs, function (Acteur $a) {
-//            return $a->estRapporteur();
-//        });
-//        $pdcData->setRapporteurs($rapporteurs);
-//        $directeurs = array_filter($acteurs, function (Acteur $a) {
-//            return $a->estDirecteur();
-//        });
-//        $pdcData->setDirecteurs($directeurs);
-//        $codirecteurs = array_filter($acteurs, function (Acteur $a) {
-//            return $a->estCodirecteur();
-//        });
-//        $pdcData->setCodirecteurs($codirecteurs);
-//        $coencadrants = array_filter($acteurs, function (Acteur $a) {
-//            return $a->estCoEncadrant();
-//        });
-//        $pdcData->setCoencadrants($coencadrants);
-//        $president = array_filter($acteurs, function (Acteur $a) {
-//            return $a->estPresidentJury();
-//        });
-//        $coencadrants = array_filter($acteurs, function (Acteur $a) {
-//            return $a->estCoEncadrant();
-//        });
-//
-//        $rapporteurs = array_diff($rapporteurs, $president);
-//        $membres = array_diff($acteurs, $rapporteurs, $directeurs, $codirecteurs, $president);
-//        $pdcData->setMembres($membres);
-//
-//        $jury = array_filter($acteurs, function (Acteur $a) {
-//            return $a->getRole()->getCode() === Role::CODE_MEMBRE_JURY;
-//        });
-//        $pdcData->setJury($jury);
-//
-//        /** associée */
-//        $pdcData->setAssocie(false);
-//        /** @var Acteur $directeur */
-//        foreach (array_merge($directeurs, $codirecteurs) as $directeur) {
-//            if ($directeur->getEtablissement()) {
-//                if ($directeur->getEtablissement()->estAssocie()) {
-//                    $pdcData->setAssocie(true);
-//                    try {
-//                        $pdcData->setLogoAssocie($this->fichierStorageService->getFileForLogoStructure($directeur->getEtablissement()->getStructure()));
-//                    } catch (StorageAdapterException $e) {
-//                        $pdcData->setLogoAssocie(null);
-//                    }
-//                    $pdcData->setLibelleAssocie($directeur->getEtablissement()->getStructure()->getLibelle());
-//                }
-//            }
-//        }
-//
-//        $acteursEnCouverture = array_merge($rapporteurs, $directeurs, $codirecteurs, $president, $membres);
-//        usort($acteursEnCouverture, Acteur::getComparisonFunction());
-//        $acteursEnCouverture = array_unique($acteursEnCouverture);
-//
-//        /** @var Acteur $acteur */
-//        foreach ($acteursEnCouverture as $acteur) {
-//            $individu = $acteur->getIndividu();
-//
-//            $acteursLies = array_filter($these->getActeurs()->toArray(), function (Acteur $a) use ($individu) { return $a->getIndividu() === $individu;});
-//
-//            $acteurData = new MembreData();
-//            $acteurData->setDenomination(strtoupper($acteur->getIndividu()->getNomComplet(true, false, false, true, true)));
-//            $acteurData->setQualite($acteur->getQualite());
-//
-//            $estMembre = !empty(array_filter($jury, function (Acteur $a) use ($acteur) {return $a->getIndividu() === $acteur->getIndividu();}));
-//
-//            /** GESTION DES RÔLES SPÉCIAUX ****************************************************************************/
-//            if (!$acteur->estPresidentJury()) {
-//                $acteurData->setRole($acteur->getRole()->getLibelle());
-//
-//                //patch rapporteur non membre ...
-//                if ($acteur->getRole()->getCode() === Role::CODE_RAPPORTEUR_JURY && !$estMembre) {
-//                    $acteurData->setRole("Rapporteur non membre du jury");
-//                }
-//            } else {
-//                $acteurData->setRole(Role::LIBELLE_PRESIDENT);
-//            }
-//
-//            foreach ($acteursLies as $acteurLie) {
-//                if ($acteurLie->estCoEncadrant()) {
-//                    if ($acteur->getIndividu()->estUneFemme()) $acteurData->setRole($acteurData->getRole() . "<br/> Co-encadrante");
-//                    else $acteurData->setRole($acteurData->getRole() . "<br/> Co-encadrant");
-//                    break;
-//                }
-//            }
-//
-//            /** GESTION DES ETABLISSEMENTS ****************************************************************************/
-//            if ($acteur->getEtablissement()) {
-//                $acteurData->setEtablissement($acteur->getEtablissement()->getStructure()->getLibelle());
-//            } else {
-//                foreach ($acteursLies as $acteurLie) {
-//                    $membre = $this->getMembreService()->getMembreByActeur($acteurLie);
-//                    if ($membre) {
-//                        $acteurData->setEtablissement($membre->getEtablissement());
-//                        break;
-//                    }
-//                }
-//            }
-//
-//            if ($estMembre) $pdcData->addActeurEnCouverture($acteurData);
-//        }
-//
-//        /** Directeurs de thèses */
-//        $nomination = [];
-//        foreach ($directeurs as $directeur) {
-//            $current = strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true, true));
-//            $structure = ($these->getUniteRecherche())?:$directeur->getIndividu()->getUniteRecherche()?:$directeur->getIndividu()->getEtablissement();
-//            if ($structure !== null) $current .= " (". $structure->getStructure()->getLibelle() .")";
-//            $nomination[] = $current;
-//        }
-//        foreach ($codirecteurs as $directeur) {
-//            $current = strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true, true));
-//            $structure = ($directeur->getIndividu()->getUniteRecherche())?:$directeur->getIndividu()->getEtablissement();
-//            if ($structure !== null) $current .= " (". $structure->getStructure()->getLibelle() .")";
-//            $nomination[] = $current;
-//        }
-//        $pdcData->setListing(implode(" et ", $nomination));
-//        if ($these->getUniteRecherche()) $pdcData->setUniteRecherche($these->getUniteRecherche()->getStructure()->getLibelle());
-//        if ($these->getEcoleDoctorale()) $pdcData->setEcoleDoctorale($these->getEcoleDoctorale()->getStructure()->getLibelle());
-//
-//        // chemins vers les logos
-//        if ($comue = $this->etablissementService->fetchEtablissementComue()) {
-//            try {
-//                $pdcData->setLogoCOMUE($this->fichierStorageService->getFileForLogoStructure($comue->getStructure()));
-//            } catch (StorageAdapterException $e) {
-//                $pdcData->setLogoCOMUE(null);
-//            }
-//        }
-//        try {
-//            $pdcData->setLogoEtablissement($this->fichierStorageService->getFileForLogoStructure($these->getEtablissement()->getStructure()));
-//        } catch (StorageAdapterException $e) {
-//            $pdcData->setLogoEtablissement(null);
-//        }
-//        if ($these->getEcoleDoctorale() !== null) {
-//            try {
-//                $pdcData->setLogoEcoleDoctorale($this->fichierStorageService->getFileForLogoStructure($these->getEcoleDoctorale()->getStructure()));
-//            } catch (StorageAdapterException $e) {
-//                $pdcData->setLogoEcoleDoctorale(null);
-//            }
-//        }
-//        if ($these->getUniteRecherche() !== null) {
-//            try {
-//                $pdcData->setLogoUniteRecherche($this->fichierStorageService->getFileForLogoStructure($these->getUniteRecherche()->getStructure()));
-//            } catch (StorageAdapterException $e) {
-//                $pdcData->setLogoUniteRecherche(null);
-//            }
-//        }
-//
-//        return $pdcData;
-//    }
-
     /**
      * Transfère toutes les données saisies sur une thèse *historisée* vers une autre thèse.
      *
@@ -706,37 +466,6 @@ EOS;
             throw new RuntimeException("Erreur rencontrée lors des updates en bdd.", null, $e);
         }
     }
-
-//    /**
-//     * Si le fichier de la thèse originale est une version corrigée, on est dans le cadre d'un dépôt d'une version
-//     * corrigée et cette fonction retourne true.
-//     *
-//     * @param These $these
-//     * @return bool
-//     */
-//    public function existeVersionCorrigee(These $these)
-//    {
-//        $fichierTheses = $this->fichierTheseService->getRepository()->fetchFichierTheses(
-//            $these,
-//            NatureFichier::CODE_THESE_PDF,
-//            VersionFichier::CODE_ORIG_CORR);
-//
-//        return !empty($fichierTheses);
-//    }
-//
-//    /**
-//     * @param AbstractActionController $controller
-//     * @param string $param
-//     * @return These
-//     */
-//    public function getRequestedThese(AbstractActionController $controller, string $param='these')
-//    {
-//        $id = $controller->params()->fromRoute($param);
-//
-//        /** @var These $these */
-//        $these = $this->getRepository()->find($id);
-//        return $these;
-//    }
 
     /**
      * @param These $these
@@ -782,46 +511,6 @@ EOS;
             }
         }
     }
-
-//    /** PREDICATS *****************************************************************************************************/
-//
-//    /**
-//     * @param These $these
-//     * @param Individu $individu
-//     * @return bool
-//     */
-//    public function isDoctorant(These $these, Individu $individu) : bool
-//    {
-//        return ($these->getDoctorant()->getIndividu() === $individu);
-//    }
-//
-//    /**
-//     * @param These $these
-//     * @param Individu $individu
-//     * @return bool
-//     */
-//    public function isDirecteur(These $these, Individu $individu) : bool
-//    {
-//        $directeurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, 'D');
-//        foreach ($directeurs as $directeur) {
-//            if ($directeur->getIndividu() === $individu) return true;
-//        }
-//        return false;
-//    }
-//
-//    /**
-//     * @param These $these
-//     * @param Individu $individu
-//     * @return bool
-//     */
-//    public function isCoDirecteur(These $these, Individu $individu) : bool
-//    {
-//        $directeurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, 'K');
-//        foreach ($directeurs as $directeur) {
-//            if ($directeur->getIndividu() === $individu) return true;
-//        }
-//        return false;
-//    }
 
     /**
      * Fixe la date butoir de dépôt de la version corrigée de la thèse spécifiée.

@@ -4,31 +4,12 @@ namespace Depot\Service\Url;
 
 use Application\Service\Url\UrlService;
 use Fichier\Entity\Db\NatureFichier;
-use These\Entity\Db\These;
 use Fichier\Entity\Db\VersionFichier;
+use These\Entity\Db\These;
 use UnicaenApp\Exception\LogicException;
 
 class UrlDepotService extends UrlService
 {
-//    /**
-//     * @param These  $these
-//     * @param string $redirect URL éventuelle où rediriger ensuite
-//     * @return string
-//     */
-//    public function refreshTheseUrl(These $these, $redirect = null)
-//    {
-//        $options = $this->options;
-//
-//        if ($redirect !== null) {
-//            $options = array_merge_recursive($options, ['query' => ['redirect' => $redirect] ]);
-//        }
-//
-//        return $this->fromRoute('these/refresh-these',
-//            ['these' => $this->idify($these)],
-//            $options
-//        );
-//    }
-
     /**
      * @param These $these
      * @return string

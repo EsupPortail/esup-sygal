@@ -2,7 +2,6 @@
 
 namespace Depot\Form\Attestation;
 
-use Depot\Form\Attestation\AttestationHydrator;
 use Interop\Container\ContainerInterface;
 
 class AttestationHydratorFactory

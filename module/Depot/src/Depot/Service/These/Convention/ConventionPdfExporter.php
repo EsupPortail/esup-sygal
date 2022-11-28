@@ -2,11 +2,11 @@
 
 namespace Depot\Service\These\Convention;
 
-use UnicaenApp\Exception\RuntimeException;
-use UnicaenApp\Exporter\Pdf as PdfExporter;
 use Laminas\View\Renderer\PhpRenderer;
 use Laminas\View\Resolver\AggregateResolver;
 use Laminas\View\Resolver\TemplatePathStack;
+use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Exporter\Pdf as PdfExporter;
 
 class ConventionPdfExporter extends PdfExporter
 {

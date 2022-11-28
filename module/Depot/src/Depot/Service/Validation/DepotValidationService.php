@@ -4,14 +4,14 @@ namespace Depot\Service\Validation;
 
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
-use Depot\Entity\Db\VSitu\DepotVersionCorrigeeValidationPresident;
 use Application\Service\UserContextServiceAwareTrait;
+use Application\Service\Validation\ValidationServiceAwareTrait;
+use Depot\Entity\Db\VSitu\DepotVersionCorrigeeValidationPresident;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Individu\Entity\Db\Individu;
 use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
-use Application\Service\Validation\ValidationServiceAwareTrait;
 
 class DepotValidationService
 {

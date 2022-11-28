@@ -2,7 +2,6 @@
 
 namespace Depot\Assertion;
 
-use Depot\Acl\WfEtapeResource;
 use Application\Assertion\AbstractAssertion;
 use Application\Service\UserContextService;
 use Depot\Service\Workflow\WorkflowServiceAwareInterface;

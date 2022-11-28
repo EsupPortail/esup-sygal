@@ -2,7 +2,6 @@
 
 namespace Depot\Entity\Db;
 
-use Depot\Entity\Db\WfEtape;
 use These\Entity\Db\These;
 
 /**

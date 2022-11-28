@@ -2,58 +2,40 @@
 
 namespace Depot;
 
-use Application\Controller\Rapport\RapportCsiController;
-use Application\Controller\Rapport\RapportMiparcoursController;
-use Depot\Entity\Db\WfEtape;
 use Application\Form\Factory\PointsDeVigilanceFormFactory;
 use Application\Form\Factory\PointsDeVigilanceHydratorFactory;
 use Application\Form\Factory\RdvBuHydratorFactory;
 use Application\Form\Factory\RdvBuTheseDoctorantFormFactory;
 use Application\Form\Factory\RdvBuTheseFormFactory;
 use Application\Navigation\ApplicationNavigationFactory;
-use Application\Service\Financement\FinancementService;
-use Application\Service\Financement\FinancementServiceFactory;
 use Application\Service\Message\DiffusionMessages;
-use Application\Service\ServiceAwareInitializer;
 use Depot\Assertion\These\TheseAssertion;
 use Depot\Assertion\These\TheseAssertionFactory;
 use Depot\Assertion\These\TheseEntityAssertion;
 use Depot\Assertion\These\TheseEntityAssertionFactory;
+use Depot\Controller\ConsoleController;
 use Depot\Controller\DepotController;
+use Depot\Controller\Factory\ConsoleControllerFactory;
 use Depot\Controller\Factory\DepotControllerFactory;
 use Depot\Controller\Factory\ObserverControllerFactory;
-use Depot\Controller\Plugin\Url\UrlDepotPluginFactory;
 use Depot\Controller\ObserverController;
-use Depot\Service\These\DepotService;
-use Depot\Service\These\Factory\DepotServiceFactory;
-use Depot\Service\Url\UrlDepotService;
-use Depot\Service\Url\UrlDepotServiceFactory;
-use Depot\View\Helper\Url\UrlDepotHelperFactory;
-use Soutenance\Controller\IndexController;
-use Depot\Controller\Factory\ConsoleControllerFactory;
-use These\Controller\Factory\TheseControllerFactory;
-use These\Controller\Factory\TheseRechercheControllerFactory;
-use These\Controller\Plugin\Url\UrlThesePluginFactory;
-use Depot\Controller\ConsoleController;
-use These\Controller\TheseRechercheController;
+use Depot\Controller\Plugin\Url\UrlDepotPluginFactory;
 use Depot\Entity\Db\Diffusion;
+use Depot\Entity\Db\WfEtape;
 use Depot\Form\Attestation\AttestationHydratorFactory;
 use Depot\Form\Attestation\AttestationTheseFormFactory;
 use Depot\Form\Diffusion\DiffusionHydratorFactory;
 use Depot\Form\Diffusion\DiffusionTheseFormFactory;
 use Depot\Form\Metadonnees\MetadonneeTheseFormFactory;
 use Depot\Provider\Privilege\DepotPrivileges;
-use These\Provider\Privilege\ThesePrivileges;
-use These\Service\Acteur\ActeurService;
-use These\Service\Acteur\ActeurServiceFactory;
 use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporter;
 use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporterFactory;
-use These\Service\These\Factory\TheseSearchServiceFactory;
-use These\Service\These\Factory\TheseServiceFactory;
-use These\Service\These\TheseSearchService;
-use These\Service\These\TheseService;
-use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
-use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceFactory;
+use Depot\Service\These\DepotService;
+use Depot\Service\These\Factory\DepotServiceFactory;
+use Depot\Service\Url\UrlDepotService;
+use Depot\Service\Url\UrlDepotServiceFactory;
+use Depot\View\Helper\Url\UrlDepotHelperFactory;
+use These\Provider\Privilege\ThesePrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
@@ -129,13 +111,6 @@ return [
                     ],
                     'assertion' => TheseAssertion::class,
                 ],
-//                [
-//                    'controller' => DepotController::class,
-//                    'action' => [
-//                        'refresh-these',
-//                    ],
-//                    'privileges' => ThesePrivileges::THESE_REFRESH,
-//                ],
                 [
                     'controller' => DepotController::class,
                     'action' => [
@@ -333,59 +308,7 @@ return [
                 'may_terminate' => true,
             ],
             'these' => [
-//                'type' => 'Literal',
-//                'options' => [
-//                    'route' => '/these',
-//                    'defaults' => [
-//                        'controller' => TheseRechercheController::class,
-//                        'action' => 'index',
-//                    ],
-//                ],
-//                'may_terminate' => true,
                 'child_routes' => [
-//                    'recherche' => [
-//                        'type' => 'Literal',
-//                        'options' => [
-//                            'route' => '/recherche',
-//                            'defaults' => [
-//                                'controller' => TheseRechercheController::class,
-//                                'action' => 'index',
-//                            ],
-//                        ],
-//                        'may_terminate' => true,
-//                        'child_routes' => [
-//                            'filters' => [
-//                                'type' => 'Literal',
-//                                'options' => [
-//                                    'route' => '/filters',
-//                                    'defaults' => [
-//                                        'action' => 'filters',
-//                                    ],
-//                                ],
-//                            ],
-//                            'notres' => [
-//                                'type' => 'Literal',
-//                                'options' => [
-//                                    'route' => '/notres',
-//                                    'defaults' => [
-//                                        'action' => 'notres',
-//                                    ],
-//                                ],
-//                                'may_terminate' => true,
-//                                'child_routes' => [
-//                                    'filters' => [
-//                                        'type' => 'Literal',
-//                                        'options' => [
-//                                            'route' => '/filters',
-//                                            'defaults' => [
-//                                                'action' => 'notresFilters',
-//                                            ],
-//                                        ],
-//                                    ],
-//                                ],
-//                            ],
-//                        ],
-//                    ],
                     'roadmap' => [
                         'type' => 'Segment',
                         'options' => [
@@ -399,19 +322,6 @@ return [
                             ],
                         ],
                     ],
-//                    'identite' => [
-//                        'type' => 'Segment',
-//                        'options' => [
-//                            'route' => '/identite/:these',
-//                            'constraints' => [
-//                                'these' => '\d+',
-//                            ],
-//                            'defaults' => [
-//                                'controller' => DepotController::class,
-//                                'action' => 'detail-identite',
-//                            ],
-//                        ],
-//                    ],
                     'fusion' => [
                         'type' => 'Segment',
                         'options' => [
@@ -879,99 +789,13 @@ return [
             'home' => [
                 'pages' => [
 
-//                    /**
-//                     * Annuaire des thèses
-//                     */
-//                    // DEPTH = 1
-//                    'annuaire' => [
-//                        'order' => -50,
-//                        'label' => 'Annuaire des thèses',
-//                        'route' => 'these',
-//                        'params' => [],
-//                        'query' => ['etatThese' => 'E'],
-//                        'resource' => PrivilegeController::getResourceId(DepotController::class, 'index'),
-//                        'pages' => [
-//                            // PAS de pages filles sinon le menu disparaît ! :-/
-//                        ]
-//                    ],
-
                     /**
                      * Navigation pour LA thèse "sélectionnée".
                      */
                     // DEPTH = 1
                     ApplicationNavigationFactory::THESE_SELECTIONNEE_PAGE_ID => [
-//                        'label' => 'Thèse sélectionnée',
-//                        'route' => 'these/identite',
-//                        'withtarget' => true,
-//                        'paramsInject' => [
-//                            'these',
-//                        ],
-//                        'resource' => PrivilegeController::getResourceId(DepotController::class, 'index'),
                         'pages' => $thesePages = [
                             // DEPTH = 3
-//                            'identite' => [
-//                                'label' => 'Fiche',
-//                                'order' => 10,
-//                                'route' => 'these/identite',
-//                                'withtarget' => true,
-//                                'paramsInject' => [
-//                                    'these',
-//                                ],
-//                                'icon' => 'fas fa-info-circle',
-//                                'resource' => PrivilegeController::getResourceId(DepotController::class, 'detail-identite'),
-//                                'etape' => null,
-//                                'visible' => TheseAssertion::class,
-//                            ],
-//                            'divider-1' => [
-//                                'label' => null,
-//                                'order' => 15,
-//                                'uri' => '',
-//                                'class' => 'divider',
-//                                'separator' => true,
-//                            ],
-//                            //---------------------------------------------------
-//                            'rapport-csi' => [
-//                                'label' => 'Rapports CSI',
-//                                'order' => 30,
-//                                'route' => 'rapport-csi/consulter',
-//                                'withtarget' => true,
-//                                'paramsInject' => [
-//                                    'these',
-//                                ],
-//                                'resource' => PrivilegeController::getResourceId(RapportCsiController::class, 'consulter'),
-//                                'visible' => 'Assertion\\Rapport',
-//                            ],
-//                            'rapport-miparcours' => [
-//                                'label' => 'Rapports mi-parcours',
-//                                'order' => 30,
-//                                'route' => 'rapport-miparcours/consulter',
-//                                'withtarget' => true,
-//                                'paramsInject' => [
-//                                    'these',
-//                                ],
-//                                'resource' => PrivilegeController::getResourceId(RapportMiparcoursController::class, 'consulter'),
-//                                'visible' => 'Assertion\\Rapport',
-//                            ],
-//                            'divider-2' => [
-//                                'label' => null,
-//                                'order' => 45,
-//                                'uri' => '',
-//                                'class' => 'divider',
-//                                'separator' => true,
-//                            ],
-////                            //---------------------------------------------------
-//                            'page-rapporteur' => [
-//                                'order' => 60,
-//                                'label' => 'Dépôt du rapport',
-//                                'route' => 'soutenance/index-rapporteur',
-//                                'withtarget' => true,
-//                                'paramsInject' => [
-//                                    'these',
-//                                ],
-//                                'icon' => 'fas fa-clipboard',
-//                                'resource' => PrivilegeController::getResourceId(IndexController::class, 'index-rapporteur'),
-//                            ],
-//                            //---------------------------------------------------
                             'depot' => [
                                 'label' => 'Dépôt de la thèse',
                                 'order' => 60,
@@ -1189,13 +1013,6 @@ return [
                      */
                     // DEPTH = 1
                     ApplicationNavigationFactory::MA_THESE_PAGE_ID => [
-//                        'order' => -200,
-//                        'label' => 'Ma thèse',
-//                        'route' => 'these/identite',
-//                        'params' => [
-//                            'these' => 0,
-//                        ],
-//                        'resource' => PrivilegeController::getResourceId(DepotController::class, 'index'),
                         'pages' => $thesePages,
                     ],
 
@@ -1206,46 +1023,14 @@ return [
                      */
                     // DEPTH = 1
                     ApplicationNavigationFactory::MES_THESES_PAGE_ID => [
-//                        'order' => -200,
-//                        'label' => 'Mes thèses',
-//                        'uri' => '',
-//                        'resource' => PrivilegeController::getResourceId(DepotController::class, 'index'),
                         'pages' => [
                             // DEPTH = 2
                             // Déclinée en 'these-1', 'these-2', etc.
                             'THESE' => [
-//                                'label' => '(Doctorant)',
-//                                'route' => 'these/identite',
-//                                'params' => [
-//                                    'these' => 0,
-//                                ],
-//                                'resource' => PrivilegeController::getResourceId(DepotController::class, 'index'),
                                 'pages' => $thesePages,
                             ]
                         ]
                     ],
-
-//                    /**
-//                     * Cette page aura une page fille 'these-1', 'these-2', etc. générées automatiquement.
-//                     * @see ApplicationNavigationFactory::processPage()
-//                     */
-//                    // DEPTH = 1
-//                    ApplicationNavigationFactory::NOS_THESES_PAGE_ID => [
-//                        'order' => -200,
-//                        'label' => 'Nos thèses',
-//                        'route' => 'these/recherche/notres',
-//                        'resource' => PrivilegeController::getResourceId(DepotController::class, 'index'),
-//                        'pages' => [
-//                            // DEPTH = 2
-//                            'THESES' => [
-//                                'label' => '(Thèses Structure)',
-//                                'route' => 'these/recherche/notres',
-//                                'params' => [],
-//                                'query' => ['etatThese' => 'E'], // injection automatique du filtre "structure"
-//                                'resource' => PrivilegeController::getResourceId(DepotController::class, 'index'),
-//                            ],
-//                        ],
-//                    ],
 
                 ],
             ],
@@ -1260,9 +1045,6 @@ return [
             'RdvBuTheseDoctorantForm' => RdvBuTheseDoctorantFormFactory::class,
             'PointsDeVigilanceForm' => PointsDeVigilanceFormFactory::class,
         ],
-//        'initializers' => [
-//            ServiceAwareInitializer::class,
-//        ]
     ],
     'hydrators' => [
         'factories' => [
@@ -1275,26 +1057,15 @@ return [
     'service_manager' => [
         'factories' => [
             UrlDepotService::class => UrlDepotServiceFactory::class,
-
-//            ActeurService::class => ActeurServiceFactory::class,
             DepotService::class => DepotServiceFactory::class,
-//            TheseSearchService::class => TheseSearchServiceFactory::class,
-//            'TheseObserverService' => TheseObserverServiceFactory::class,
-//            FinancementService::class => FinancementServiceFactory::class,
-//            TheseAnneeUnivService::class => TheseAnneeUnivServiceFactory::class,
             PageDeCouverturePdfExporter::class => PageDeCouverturePdfExporterFactory::class,
-//
             TheseAssertion::class => TheseAssertionFactory::class,
             TheseEntityAssertion::class => TheseEntityAssertionFactory::class,
         ],
-//        'aliases' => [
-//            TheseService::class => 'TheseService',
-//        ]
     ],
     'controllers' => [
         'factories' => [
             DepotController::class => DepotControllerFactory::class,
-//            TheseRechercheController::class => TheseRechercheControllerFactory::class,
             ConsoleController::class => ConsoleControllerFactory::class,
             ObserverController::class => ObserverControllerFactory::class,
         ],

@@ -2,9 +2,8 @@
 
 namespace Depot\Entity;
 
-use Depot\Entity\WfEtapeNull;
-use These\Entity\Db\These;
 use Depot\Entity\Db\VWorkflow;
+use These\Entity\Db\These;
 
 /**
  * Null Object Pattern.

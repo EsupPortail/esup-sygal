@@ -2,8 +2,6 @@
 
 namespace Depot\Service\Workflow;
 
-use Depot\Service\Workflow\WorkflowService;
-
 trait WorkflowServiceAwareTrait
 {
     /**

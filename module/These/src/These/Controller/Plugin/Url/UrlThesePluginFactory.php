@@ -2,8 +2,8 @@
 
 namespace These\Controller\Plugin\Url;
 
-use These\Service\Url\UrlTheseService;
 use Interop\Container\ContainerInterface;
+use These\Service\Url\UrlTheseService;
 
 class UrlThesePluginFactory
 {

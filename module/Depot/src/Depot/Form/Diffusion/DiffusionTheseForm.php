@@ -2,20 +2,20 @@
 
 namespace Depot\Form\Diffusion;
 
+use Application\Service\Message\DiffusionMessages;
 use Depot\Entity\Db\Diffusion;
-use Fichier\Entity\Db\NatureFichier;
-use Fichier\Entity\Db\VersionFichier;
 use Depot\Service\FichierThese\FichierTheseServiceAwareInterface;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
-use Application\Service\Message\DiffusionMessages;
-use UnicaenApp\Exception\LogicException;
-use UnicaenApp\Form\Element\Date;
-use UnicaenApp\Message\MessageServiceAwareInterface;
-use UnicaenApp\Message\MessageServiceAwareTrait;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\VersionFichier;
 use Laminas\Form\Form;
 use Laminas\Form\FormInterface;
 use Laminas\InputFilter\InputFilterProviderInterface;
 use Laminas\Validator\Callback;
+use UnicaenApp\Exception\LogicException;
+use UnicaenApp\Form\Element\Date;
+use UnicaenApp\Message\MessageServiceAwareInterface;
+use UnicaenApp\Message\MessageServiceAwareTrait;
 
 class DiffusionTheseForm extends Form
     implements InputFilterProviderInterface, MessageServiceAwareInterface, FichierTheseServiceAwareInterface
@@ -277,9 +277,6 @@ class DiffusionTheseForm extends Form
     }
 
     /**
-     * Should return an array specification compatible with
-     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
-     *
      * @return array
      */
     public function getInputFilterSpecification()

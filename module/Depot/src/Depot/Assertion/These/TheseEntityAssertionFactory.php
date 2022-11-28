@@ -3,10 +3,10 @@
 namespace Depot\Assertion\These;
 
 use Application\Service\Validation\ValidationService;
+use Depot\Service\FichierThese\FichierTheseService;
 use Depot\Service\These\DepotService;
 use Depot\Service\Validation\DepotValidationService;
 use Psr\Container\ContainerInterface;
-use Depot\Service\FichierThese\FichierTheseService;
 use These\Service\These\TheseService;
 
 class TheseEntityAssertionFactory

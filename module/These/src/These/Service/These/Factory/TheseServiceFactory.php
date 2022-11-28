@@ -2,21 +2,20 @@
 
 namespace These\Service\These\Factory;
 
-use These\Service\Acteur\ActeurService;
-use Structure\Service\Etablissement\EtablissementService;
-use Depot\Service\FichierThese\FichierTheseService;
-use Fichier\Service\Fichier\FichierStorageService;
 use Application\Service\Notification\NotifierService;
-use These\Service\These\TheseService;
 use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
+use Depot\Service\FichierThese\FichierTheseService;
+use Fichier\Service\Fichier\FichierStorageService;
 use Interop\Container\ContainerInterface;
 use Soutenance\Service\Membre\MembreService;
+use Structure\Service\Etablissement\EtablissementService;
+use These\Service\Acteur\ActeurService;
+use These\Service\These\TheseService;
 use UnicaenAuth\Service\AuthorizeService;
 use UnicaenAuth\Service\User as UserService;
-use Webmozart\Assert\Assert;
 
 class TheseServiceFactory
 {

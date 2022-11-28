@@ -2,13 +2,13 @@
 
 namespace Depot\Service\Workflow;
 
-use These\Entity\Db\These;
+use Application\Entity\Db\Repository\DefaultEntityRepository;
+use Application\Service\BaseService;
 use Depot\Entity\Db\VWorkflow;
 use Depot\Entity\Db\WfEtape;
 use Depot\Entity\VWorkflowNull;
-use Application\Service\BaseService;
-use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Doctrine\ORM\Query;
+use These\Entity\Db\These;
 
 /**
  * Class WorkflowService

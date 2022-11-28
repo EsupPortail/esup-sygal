@@ -2,14 +2,14 @@
 
 namespace These\Form\TheseSaisie;
 
-use Structure\Entity\Db\EcoleDoctorale;
 use Application\Service\Discipline\DisciplineService;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Structure\Service\Etablissement\EtablissementService;
-use Structure\Service\UniteRecherche\UniteRechercheService;
 use Application\View\Renderer\PhpRenderer;
 use Interop\Container\ContainerInterface;
 use Soutenance\Service\Qualite\QualiteService;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\Etablissement\EtablissementService;
+use Structure\Service\UniteRecherche\UniteRechercheService;
 
 class TheseSaisieFormFactory {
 

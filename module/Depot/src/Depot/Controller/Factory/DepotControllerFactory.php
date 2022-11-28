@@ -2,25 +2,16 @@
 
 namespace Depot\Controller\Factory;
 
-use Depot\Controller\DepotController;
-use Depot\Service\These\DepotService;
-use Depot\Form\Attestation\AttestationTheseForm;
-use Depot\Form\Diffusion\DiffusionTheseForm;
-use Depot\Form\Metadonnees\MetadonneeTheseForm;
-use Depot\Form\PointsDeVigilanceForm;
-use Depot\Form\RdvBuTheseDoctorantForm;
-use Depot\Form\RdvBuTheseForm;
-use Depot\Service\Validation\DepotValidationService;
-use These\Service\Acteur\ActeurService;
-use Depot\Service\FichierThese\FichierTheseService;
 use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
-use These\Service\These\TheseService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
-use Depot\Service\Workflow\WorkflowService;
+use Depot\Controller\DepotController;
+use Depot\Service\FichierThese\FichierTheseService;
+use Depot\Service\These\DepotService;
+use Depot\Service\Validation\DepotValidationService;
 use Doctrine\ORM\EntityManager;
 use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\VersionFichier\VersionFichierService;
@@ -29,6 +20,8 @@ use Interop\Container\ContainerInterface;
 use Laminas\View\Renderer\PhpRenderer;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
+use These\Service\Acteur\ActeurService;
+use These\Service\These\TheseService;
 
 class DepotControllerFactory
 {

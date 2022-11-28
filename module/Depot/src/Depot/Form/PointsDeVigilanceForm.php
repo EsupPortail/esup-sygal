@@ -2,10 +2,9 @@
 
 namespace Depot\Form;
 
-use Laminas\Form\Form;
-use Laminas\Form\Element\Text;
-use Laminas\Form\Element\Textarea;
 use Laminas\Form\Element\Submit;
+use Laminas\Form\Element\Textarea;
+use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
 
 class PointsDeVigilanceForm extends Form

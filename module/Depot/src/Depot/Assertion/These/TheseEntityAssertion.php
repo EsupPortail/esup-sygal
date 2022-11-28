@@ -7,14 +7,14 @@ use Application\Entity\Db\TypeValidation;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareInterface;
 use Application\Service\Validation\ValidationServiceAwareTrait;
+use Depot\Service\FichierThese\FichierTheseServiceAwareInterface;
+use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Depot\Service\These\DepotServiceAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
 use These\Entity\Db\These;
-use Depot\Service\FichierThese\FichierTheseServiceAwareInterface;
-use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
 use These\Service\These\TheseServiceAwareInterface;
 use These\Service\These\TheseServiceAwareTrait;
 

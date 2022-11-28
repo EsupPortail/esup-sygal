@@ -2,10 +2,10 @@
 
 namespace These\Form\CoEncadrant;
 
-use UnicaenApp\Form\Element\SearchAndSelect;
 use Laminas\Form\Element\Button;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
+use UnicaenApp\Form\Element\SearchAndSelect;
 
 class RechercherCoEncadrantForm extends Form {
 

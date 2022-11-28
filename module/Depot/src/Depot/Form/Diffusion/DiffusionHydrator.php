@@ -2,8 +2,8 @@
 
 namespace Depot\Form\Diffusion;
 
-use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Depot\Entity\Db\Diffusion;
+use Doctrine\Laminas\Hydrator\DoctrineObject;
 use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 

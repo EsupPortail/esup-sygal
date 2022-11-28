@@ -2,9 +2,9 @@
 
 namespace These\Service\FichierThese;
 
-use These\Entity\Db\Acteur;
-use Individu\Entity\Db\Individu;
 use DateTime;
+use Individu\Entity\Db\Individu;
+use These\Entity\Db\Acteur;
 
 /** Les informations ici sont des chaines de caractères */
 class PdcData

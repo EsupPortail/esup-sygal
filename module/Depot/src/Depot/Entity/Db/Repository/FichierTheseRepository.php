@@ -3,14 +3,14 @@
 namespace Depot\Entity\Db\Repository;
 
 use Application\Entity\Db\Repository\DefaultEntityRepository;
-use Depot\Entity\Db\FichierThese;
-use Fichier\Entity\Db\NatureFichier;
-use These\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\ValiditeFichier;
-use Fichier\Entity\Db\VersionFichier;
+use Depot\Entity\Db\FichierThese;
 use Depot\QueryBuilder\FichierTheseQueryBuilder;
 use Doctrine\ORM\Query\Expr;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\VersionFichier;
+use These\Entity\Db\These;
 
 /**
  * @method FichierTheseQueryBuilder createQueryBuilder($alias, $indexBy = null)

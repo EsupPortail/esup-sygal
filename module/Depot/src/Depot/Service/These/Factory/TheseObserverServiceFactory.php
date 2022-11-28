@@ -4,8 +4,8 @@ namespace Depot\Service\These\Factory;
 
 use Application\Service\Notification\NotifierService;
 use Depot\Service\These\TheseObserverService;
-use These\Service\These\TheseService;
 use Laminas\ServiceManager\ServiceManager;
+use These\Service\These\TheseService;
 
 class TheseObserverServiceFactory
 {

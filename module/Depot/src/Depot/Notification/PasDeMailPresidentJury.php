@@ -2,10 +2,10 @@
 
 namespace Depot\Notification;
 
-use These\Entity\Db\Acteur;
 use Individu\Entity\Db\Individu;
-use These\Entity\Db\Interfaces\TheseAwareTrait;
 use Notification\Notification;
+use These\Entity\Db\Acteur;
+use These\Entity\Db\Interfaces\TheseAwareTrait;
 
 class PasDeMailPresidentJury extends Notification
 {

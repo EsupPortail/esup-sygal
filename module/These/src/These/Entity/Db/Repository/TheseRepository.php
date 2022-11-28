@@ -3,17 +3,17 @@
 namespace These\Entity\Db\Repository;
 
 use Application\Entity\Db\Repository\DefaultEntityRepository;
+use Application\Entity\Db\Role;
+use Application\ORM\Query\Functions\Year;
 use Doctorant\Entity\Db\Doctorant;
+use Doctrine\ORM\Query\Expr\Join;
+use Individu\Entity\Db\Individu;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
-use Individu\Entity\Db\Individu;
-use Application\Entity\Db\Role;
 use Structure\Entity\Db\StructureConcreteInterface;
-use These\Entity\Db\These;
 use Structure\Entity\Db\UniteRecherche;
-use Application\ORM\Query\Functions\Year;
+use These\Entity\Db\These;
 use These\QueryBuilder\TheseQueryBuilder;
-use Doctrine\ORM\Query\Expr\Join;
 
 /**
  * @method TheseQueryBuilder createQueryBuilder($alias, $indexBy = null)

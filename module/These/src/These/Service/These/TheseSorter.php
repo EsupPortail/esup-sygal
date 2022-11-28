@@ -4,7 +4,6 @@ namespace These\Service\These;
 
 use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\View\Helper\Sortable;
-use Doctrine\ORM\QueryBuilder;
 use UnicaenApp\Exception\LogicException;
 
 /**

@@ -2,16 +2,15 @@
 
 namespace Depot\Service\FichierThese;
 
-use Structure\Service\Etablissement\EtablissementService;
-use Fichier\Service\Fichier\FichierService;
-use Fichier\Service\Fichier\FichierStorageService;
 use Application\Service\Notification\NotifierService;
 use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporter;
-use Fichier\Service\ValiditeFichier\ValiditeFichierService;
+use Fichier\Service\Fichier\FichierService;
+use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\VersionFichier\VersionFichierService;
 use Fichier\Validator\FichierCinesValidator;
 use Interop\Container\ContainerInterface;
 use Retraitement\Service\RetraitementService;
+use Structure\Service\Etablissement\EtablissementService;
 
 class FichierTheseServiceFactory
 {

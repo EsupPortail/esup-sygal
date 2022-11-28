@@ -3,9 +3,9 @@
 namespace Depot\Controller\Plugin\Url;
 
 use Depot\Service\Url\UrlDepotService;
-use These\Entity\Db\These;
 use Fichier\Entity\Db\VersionFichier;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
+use These\Entity\Db\These;
 
 /**
  * Aide de vue de génération d'URL.

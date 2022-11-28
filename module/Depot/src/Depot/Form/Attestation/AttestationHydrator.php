@@ -2,7 +2,6 @@
 
 namespace Depot\Form\Attestation;
 
-use Depot\Entity\Db\Attestation;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 
 class AttestationHydrator extends DoctrineObject

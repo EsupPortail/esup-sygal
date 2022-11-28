@@ -128,7 +128,7 @@ class Attestation implements HistoriqueAwareInterface
 
     /**
      * @param bool $creationAuto
-     * @return Diffusion
+     * @return self
      */
     public function setCreationAuto($creationAuto)
     {

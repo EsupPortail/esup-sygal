@@ -4,24 +4,24 @@ namespace Depot\Controller;
 
 use Application\Command\Exception\TimedOutCommandException;
 use Application\Controller\AbstractController;
+use Application\Entity\Db\MailConfirmation;
+use Application\Entity\Db\Role;
+use Application\Entity\Db\TypeValidation;
+use Application\Entity\Db\Variable;
+use Application\Filter\IdifyFilterAwareTrait;
+use Application\Service\MailConfirmationServiceAwareTrait;
+use Application\Service\Notification\NotifierServiceAwareTrait;
+use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\UserContextServiceAwareTrait;
+use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
-use Depot\Service\These\DepotServiceAwareTrait;
+use Application\Service\Variable\VariableServiceAwareTrait;
 use Depot\Entity\Db\Attestation;
 use Depot\Entity\Db\Diffusion;
 use Depot\Entity\Db\FichierThese;
-use Individu\Entity\Db\Individu;
-use Application\Entity\Db\MailConfirmation;
 use Depot\Entity\Db\MetadonneeThese;
-use Fichier\Entity\Db\NatureFichier;
 use Depot\Entity\Db\RdvBu;
-use Application\Entity\Db\Role;
-use Notification\Exception\NotificationImpossibleException;
-use These\Entity\Db\These;
-use Application\Entity\Db\TypeValidation;
-use Application\Entity\Db\Variable;
-use Fichier\Entity\Db\VersionFichier;
 use Depot\Entity\Db\WfEtape;
-use Application\Filter\IdifyFilterAwareTrait;
 use Depot\Form\Attestation\AttestationTheseForm;
 use Depot\Form\ConformiteFichierForm;
 use Depot\Form\Diffusion\DiffusionTheseForm;
@@ -29,39 +29,35 @@ use Depot\Form\Metadonnees\MetadonneeTheseForm;
 use Depot\Form\PointsDeVigilanceForm;
 use Depot\Form\RdvBuTheseDoctorantForm;
 use Depot\Form\RdvBuTheseForm;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Depot\Service\FichierThese\Exception\ValidationImpossibleException;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
-use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
-use Application\Service\MailConfirmationServiceAwareTrait;
-use Application\Service\Notification\NotifierServiceAwareTrait;
-use Application\Service\Role\RoleServiceAwareTrait;
 use Depot\Service\These\Convention\ConventionPdfExporter;
-use These\Service\These\TheseServiceAwareTrait;
-use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
-use Application\Service\UserContextServiceAwareTrait;
-use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
+use Depot\Service\These\DepotServiceAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
-use Application\Service\Variable\VariableServiceAwareTrait;
-use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
-use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Depot\Service\Workflow\WorkflowServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
-use UnicaenApp\Exception\RuntimeException;
-use UnicaenApp\Service\EntityManagerAwareTrait;
-use UnicaenApp\Service\MessageCollectorAwareTrait;
-use UnicaenApp\Traits\MessageAwareInterface;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\VersionFichier;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\Form;
 use Laminas\Http\Response;
 use Laminas\InputFilter\InputFilter;
-use Laminas\Log\Logger;
-use Laminas\Log\Writer\Noop;
 use Laminas\Stdlib\ParametersInterface;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use These\Entity\Db\These;
+use These\Service\These\TheseServiceAwareTrait;
+use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Service\EntityManagerAwareTrait;
+use UnicaenApp\Service\MessageCollectorAwareTrait;
+use UnicaenApp\Traits\MessageAwareInterface;
 
 class DepotController extends AbstractController
 {
@@ -177,14 +173,6 @@ class DepotController extends AbstractController
     {
         $this->renderer = $renderer;
     }
-
-//    /**
-//     * @see TheseRechercheController::indexAction()
-//     */
-//    public function indexAction(): Response
-//    {
-//        return $this->redirect()->toRoute('these/recherche', [], [], true);
-//    }
 
     /**
      * Action servant l'accueil du menu Dépôt :
@@ -314,14 +302,6 @@ class DepotController extends AbstractController
 
         return $view;
     }
-
-//    /**
-//     * Import forcé d'une thèse et des inf.
-//     */
-//    public function refreshTheseAction()
-//    {
-//        throw new \BadMethodCallException("Cette action n'est plus fonctionnelle !");
-//    }
 
     /**
      * @return ViewModel

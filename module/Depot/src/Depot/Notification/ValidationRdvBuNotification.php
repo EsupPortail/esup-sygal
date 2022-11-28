@@ -2,8 +2,8 @@
 
 namespace Depot\Notification;
 
-use These\Entity\Db\Interfaces\TheseAwareTrait;
 use Notification\Notification;
+use These\Entity\Db\Interfaces\TheseAwareTrait;
 
 class ValidationRdvBuNotification extends Notification
 {

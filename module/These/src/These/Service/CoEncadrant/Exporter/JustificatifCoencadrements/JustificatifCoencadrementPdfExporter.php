@@ -2,9 +2,9 @@
 
 namespace These\Service\CoEncadrant\Exporter\JustificatifCoencadrements;
 
-use UnicaenApp\Exporter\Pdf as PdfExporter;
 use Laminas\View\Renderer\PhpRenderer;
 use Laminas\View\Resolver\TemplatePathStack;
+use UnicaenApp\Exporter\Pdf as PdfExporter;
 
 class JustificatifCoencadrementPdfExporter extends PdfExporter
 {

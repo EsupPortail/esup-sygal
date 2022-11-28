@@ -4,11 +4,11 @@ namespace Depot\Form\Hydrator;
 
 use Depot\Entity\Db\Diffusion;
 use Depot\Entity\Db\RdvBu;
-use Fichier\Entity\Db\VersionFichier;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
+use Fichier\Entity\Db\VersionFichier;
 use UnicaenApp\Exception\RuntimeException;
 
 /**

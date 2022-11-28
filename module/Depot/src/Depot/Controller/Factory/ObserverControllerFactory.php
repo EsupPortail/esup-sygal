@@ -2,21 +2,15 @@
 
 namespace Depot\Controller\Factory;
 
-use These\Controller\TheseObserverController;
 use Application\EventRouterReplacer;
+use Depot\Controller\ObserverController;
 use Depot\Service\These\TheseObserverService;
 use Interop\Container\ContainerInterface;
 use Laminas\Router\Http\TreeRouteStack;
 
 class ObserverControllerFactory
 {
-    /**
-     * Create service
-     *
-     * @param ContainerInterface $container
-     * @return TheseObserverController
-     */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): ObserverController
     {
         /** @var TreeRouteStack $httpRouter */
         $httpRouter = $container->get('HttpRouter');
@@ -26,24 +20,20 @@ class ObserverControllerFactory
         /** @var TheseObserverService $theseObserverService */
         $theseObserverService = $container->get('TheseObserverService');
 
-        $controller = new TheseObserverController();
+        $controller = new ObserverController();
         $controller->setEventRouterReplacer($routerReplacer);
         $controller->setTheseObserverService($theseObserverService);
 
         return $controller;
     }
 
-    /**
-     * @param ContainerInterface $container
-     * @return array
-     */
-    private function getCliConfig(ContainerInterface $container)
+    private function getCliConfig(ContainerInterface $container): array
     {
         $config = $container->get('Config');
 
         return [
-            'domain' => isset($config['cli_config']['domain']) ? $config['cli_config']['domain'] : null,
-            'scheme' => isset($config['cli_config']['scheme']) ? $config['cli_config']['scheme'] : null,
+            'domain' => $config['cli_config']['domain'] ?? null,
+            'scheme' => $config['cli_config']['scheme'] ?? null,
         ];
     }
 }

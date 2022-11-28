@@ -2,43 +2,41 @@
 
 namespace Depot\Service\FichierThese;
 
-use Application\Command\Exception\TimedOutCommandException;
+use Application\Command\ShellCommandRunner;
+use Application\Command\ShellCommandRunnerTrait;
+use Application\Entity\Db\ValiditeFichier;
+use Application\Service\BaseService;
+use Application\Service\Notification\NotifierServiceAwareTrait;
+use Depot\Entity\Db\FichierThese;
+use Depot\Entity\Db\Repository\FichierTheseRepository;
+use Depot\Filter\NomFichierTheseFormatter;
+use Depot\Service\FichierThese\Exception\DepotImpossibleException;
+use Depot\Service\FichierThese\Exception\ValidationImpossibleException;
+use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporterAwareTrait;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Fichier\Command\MergeShellCommand;
 use Fichier\Command\Pdf\AjoutPdcShellCommandQpdf;
 use Fichier\Command\Pdf\RetraitementShellCommand;
-use Application\Command\ShellCommandRunner;
-use Application\Command\ShellCommandRunnerTrait;
 use Fichier\Entity\Db\Fichier;
-use Depot\Entity\Db\FichierThese;
 use Fichier\Entity\Db\NatureFichier;
-use Depot\Entity\Db\Repository\FichierTheseRepository;
-use These\Entity\Db\These;
-use Application\Entity\Db\ValiditeFichier;
 use Fichier\Entity\Db\VersionFichier;
-use Depot\Filter\NomFichierTheseFormatter;
-use Application\Service\BaseService;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Fichier\FileUtils;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use Depot\Service\FichierThese\Exception\DepotImpossibleException;
-use Depot\Service\FichierThese\Exception\ValidationImpossibleException;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
-use Application\Service\Notification\NotifierServiceAwareTrait;
-use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporterAwareTrait;
-use Fichier\Service\ValiditeFichier\ValiditeFichierServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Fichier\Service\ValiditeFichier\ValiditeFichierServiceAwareTrait;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Fichier\Validator\Exception\CinesErrorException;
 use Fichier\Validator\FichierCinesValidator;
-use Doctrine\ORM\OptimisticLockException;
+use Laminas\Http\Response;
 use Retraitement\Service\RetraitementServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use These\Entity\Db\These;
 use These\Service\FichierThese\PdcData;
-use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Exporter\Pdf;
 use UnicaenApp\Util;
-use Laminas\Http\Response;
 
 class FichierTheseService extends BaseService
 {

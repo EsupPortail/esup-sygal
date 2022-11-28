@@ -4,7 +4,6 @@ namespace Depot\Entity\Db;
 
 use Application\Entity\Db\Interfaces\EtapeEtatAwareInterface;
 use Application\Entity\Db\Interfaces\EtapeEtatAwareTrait;
-use Depot\Entity\WfEtapeNull;
 
 /**
  * WfEtape

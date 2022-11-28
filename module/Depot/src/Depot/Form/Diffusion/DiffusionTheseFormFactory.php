@@ -2,8 +2,6 @@
 
 namespace Depot\Form\Diffusion;
 
-use Depot\Form\Diffusion\DiffusionTheseForm;
-use Depot\Form\Diffusion\DiffusionHydrator;
 use Interop\Container\ContainerInterface;
 use UnicaenApp\Message\MessageService;
 

@@ -2,21 +2,21 @@
 
 namespace Depot\Controller\Factory;
 
-use Depot\Service\These\DepotService;
-use Depot\Controller\FichierTheseController;
 use Application\EventRouterReplacer;
+use Application\Service\Notification\NotifierService;
+use Application\Service\Validation\ValidationService;
+use Depot\Controller\FichierTheseController;
+use Depot\Service\FichierThese\FichierTheseService;
+use Depot\Service\These\DepotService;
 use Depot\Service\Validation\DepotValidationService;
 use Fichier\Service\Fichier\FichierService;
-use Depot\Service\FichierThese\FichierTheseService;
-use Individu\Service\IndividuService;
-use Application\Service\Notification\NotifierService;
-use These\Service\These\TheseService;
-use Application\Service\Validation\ValidationService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\VersionFichier\VersionFichierService;
+use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use Laminas\EventManager\EventManager;
 use Laminas\Router\Http\TreeRouteStack;
+use These\Service\These\TheseService;
 
 class FichierTheseControllerFactory
 {

@@ -2,13 +2,13 @@
 
 namespace Depot\Controller\Factory;
 
-use Depot\Service\These\DepotService;
 use Depot\Controller\ConsoleController;
-use These\Service\These\TheseService;
+use Depot\Service\These\DepotService;
 use Interop\Container\ContainerInterface;
 use Laminas\Log\Logger;
 use Laminas\Log\LoggerInterface;
 use Laminas\Log\Writer\Stream;
+use These\Service\These\TheseService;
 
 class ConsoleControllerFactory
 {

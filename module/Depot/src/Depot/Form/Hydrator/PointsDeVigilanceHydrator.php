@@ -3,9 +3,9 @@
 namespace Depot\Form\Hydrator;
 
 use Depot\Entity\Db\RdvBu;
+use Laminas\Hydrator\HydratorInterface;
 use UnicaenApp\Service\EntityManagerAwareInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Laminas\Hydrator\HydratorInterface;
 
 class PointsDeVigilanceHydrator implements HydratorInterface, EntityManagerAwareInterface
 {

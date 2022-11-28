@@ -2,8 +2,8 @@
 
 namespace Depot\Controller\Plugin;
 
-use These\Entity\Db\These;
 use Laminas\Mvc\Controller\Plugin\Url as UrlPlugin;
+use These\Entity\Db\These;
 
 class UrlWorkflow extends UrlPlugin
 {

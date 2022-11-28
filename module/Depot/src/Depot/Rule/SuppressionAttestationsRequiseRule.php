@@ -3,8 +3,8 @@
 namespace Depot\Rule;
 
 use Application\Rule\RuleInterface;
-use These\Entity\Db\These;
 use Fichier\Entity\Db\VersionFichier;
+use These\Entity\Db\These;
 use UnicaenApp\Exception\LogicException;
 
 /**

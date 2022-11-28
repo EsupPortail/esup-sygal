@@ -3,9 +3,9 @@
 namespace Depot\Form\Attestation;
 
 use Depot\Entity\Db\Attestation;
-use These\Entity\Db\These;
 use Laminas\Form\Form;
 use Laminas\InputFilter\InputFilterProviderInterface;
+use These\Entity\Db\These;
 
 class AttestationTheseForm extends Form implements InputFilterProviderInterface
 {

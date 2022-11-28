@@ -2,8 +2,8 @@
 
 namespace These\Notification;
 
-use These\Entity\Db\Interfaces\TheseAwareTrait;
 use Notification\Notification;
+use These\Entity\Db\Interfaces\TheseAwareTrait;
 
 class ChangementsResultatsThesesNotification extends Notification
 {

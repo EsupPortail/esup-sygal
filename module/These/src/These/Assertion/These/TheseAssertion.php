@@ -2,22 +2,22 @@
 
 namespace These\Assertion\These;
 
-use Depot\Acl\WfEtapeResource;
 use Application\Assertion\AbstractAssertion;
 use Application\Assertion\Exception\FailedAssertionException;
 use Application\Entity\Db\Role;
-use Depot\Entity\Db\WfEtape;
-use Depot\Provider\Privilege\ValidationPrivileges;
 use Application\RouteMatch;
 use Application\Service\UserContextService;
 use Application\Service\UserContextServiceAwareTrait;
+use Depot\Acl\WfEtapeResource;
+use Depot\Entity\Db\WfEtape;
+use Depot\Provider\Privilege\DepotPrivileges;
+use Depot\Provider\Privilege\ValidationPrivileges;
 use Depot\Service\Workflow\WorkflowServiceAwareInterface;
 use Depot\Service\Workflow\WorkflowServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use These\Controller\TheseController;
 use These\Entity\Db\These;
-use Depot\Provider\Privilege\DepotPrivileges;
 use These\Provider\Privilege\ThesePrivileges;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\MessageCollectorAwareTrait;

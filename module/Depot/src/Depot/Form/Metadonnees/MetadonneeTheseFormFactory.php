@@ -2,7 +2,6 @@
 
 namespace Depot\Form\Metadonnees;
 
-use Depot\Form\Metadonnees\MetadonneeTheseForm;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Interop\Container\ContainerInterface;
 

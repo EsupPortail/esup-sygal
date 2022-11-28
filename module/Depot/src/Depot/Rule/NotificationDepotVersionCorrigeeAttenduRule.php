@@ -4,10 +4,10 @@ namespace Depot\Rule;
 
 use Application\Constants;
 use Application\Rule\RuleInterface;
-use These\Entity\Db\These;
 use DateInterval;
 use DateTime;
 use DomainException;
+use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareTrait;
 

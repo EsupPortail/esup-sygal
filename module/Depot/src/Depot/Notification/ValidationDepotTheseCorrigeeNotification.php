@@ -4,8 +4,8 @@ namespace Depot\Notification;
 
 use Application\Entity\Db\Utilisateur;
 use Individu\Entity\Db\Individu;
-use These\Entity\Db\Interfaces\TheseAwareTrait;
 use Notification\Notification;
+use These\Entity\Db\Interfaces\TheseAwareTrait;
 
 class ValidationDepotTheseCorrigeeNotification extends Notification
 {

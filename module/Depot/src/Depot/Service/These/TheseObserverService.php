@@ -3,7 +3,7 @@
 namespace Depot\Service\These;
 
 use Application\Service\Notification\NotifierServiceAwareTrait;
-use Laminas\View\Model\ViewModel;
+use These\Service\These\TheseServiceAwareTrait;
 
 class TheseObserverService
 {
