@@ -22,7 +22,6 @@
         "ext-json": "*",
         "ext-libxml": "*",
         "ext-readline": "*",
-        "ext-saxonc": "*",
         "ext-simplexml": "*",
         "ext-soap": "*",
         "ext-xmlwriter": "*",
