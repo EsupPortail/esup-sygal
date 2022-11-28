@@ -593,16 +593,9 @@ class PresoutenanceController extends AbstractController
         foreach ($proposition->getAvis() as $avis) {
             if ($avis->estNonHistorise()) {
                 $denomination = $avis->getMembre()->getDenomination();
-//                $lien = $this->url()->fromRoute('fichier/these/telecharger', [
-//                    'these'      => $these->getId(),
-//                    'fichier'    => $avis->getFichier()->getUuid(),
-//                    'fichierNom' => $avis->getFichier()->getNom(),
-//                ], [
-//                    'force_canonical'=>true
-//                ],true);
                 $lien = $this->url()->fromRoute('soutenance/avis-soutenance/telecharger', [
                     'these' => $these->getId(),
-                    'membre' => $avis->getMembre()->getId()
+                    'rapporteur' => $avis->getMembre()->getId()
                     ], [
                         'force_canonical'=>true
                     ], true);
