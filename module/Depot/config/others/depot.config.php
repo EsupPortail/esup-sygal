@@ -35,9 +35,12 @@ use Depot\Service\These\Factory\DepotServiceFactory;
 use Depot\Service\Url\UrlDepotService;
 use Depot\Service\Url\UrlDepotServiceFactory;
 use Depot\View\Helper\Url\UrlDepotHelperFactory;
+use Fichier\Entity\Db\NatureFichier;
 use These\Provider\Privilege\ThesePrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+
+$depotFichierDiversRoutesConfig = generateDepotFichierDiversRoutesConfig();
 
 return [
     'bjyauthorize' => [
@@ -133,15 +136,10 @@ return [
                 ],
                 [
                     'controller' => DepotController::class,
-                    'action' => [
-                        'depot-pv-soutenance',
-                        'depot-rapport-soutenance',
-                        'depot-pre-rapport-soutenance',
-                        'depot-demande-confident',
-                        'depot-prolong-confident',
-                        'depot-conv-mise-en-ligne',
-                        'depot-avenant-conv-mise-en-ligne',
-                    ],
+                    'action' => array_map(
+                        fn(array $item) => $item['options']['defaults']['action'],
+                        $depotFichierDiversRoutesConfig
+                    ),
                     'privileges' => DepotPrivileges::THESE_FICHIER_DIVERS_CONSULTER,
                     'assertion' => TheseAssertion::class,
                 ],
@@ -429,68 +427,16 @@ return [
                                 ],
                             ],
 
-                            'pv-soutenance' => [
+                            'divers' => [
                                 'type' => 'Literal',
                                 'options' => [
-                                    'route' => '/pv-soutenance',
-                                    'defaults' => [
-                                        'action' => 'depot-pv-soutenance',
-                                    ],
+                                    'route' => '/divers',
                                 ],
-                            ],
-                            'rapport-soutenance' => [
-                                'type' => 'Literal',
-                                'options' => [
-                                    'route' => '/rapport-soutenance',
-                                    'defaults' => [
-                                        'action' => 'depot-rapport-soutenance',
-                                    ],
-                                ],
-                            ],
-                            'pre-rapport-soutenance' => [
-                                'type' => 'Literal',
-                                'options' => [
-                                    'route' => '/pre-rapport-soutenance',
-                                    'defaults' => [
-                                        'action' => 'depot-pre-rapport-soutenance',
-                                    ],
-                                ],
-                            ],
-                            'demande-confident' => [
-                                'type' => 'Literal',
-                                'options' => [
-                                    'route' => '/demande-confident',
-                                    'defaults' => [
-                                        'action' => 'depot-demande-confident',
-                                    ],
-                                ],
-                            ],
-                            'prolong-confident' => [
-                                'type' => 'Literal',
-                                'options' => [
-                                    'route' => '/prolong-confident',
-                                    'defaults' => [
-                                        'action' => 'depot-prolong-confident',
-                                    ],
-                                ],
-                            ],
-                            'conv-mise-en-ligne' => [
-                                'type' => 'Literal',
-                                'options' => [
-                                    'route' => '/conv-mise-en-ligne',
-                                    'defaults' => [
-                                        'action' => 'depot-conv-mise-en-ligne',
-                                    ],
-                                ],
-                            ],
-                            'avenant-conv-mise-en-ligne' => [
-                                'type' => 'Literal',
-                                'options' => [
-                                    'route' => '/avenant-conv-mise-en-ligne',
-                                    'defaults' => [
-                                        'action' => 'depot-avenant-conv-mise-en-ligne',
-                                    ],
-                                ],
+                                'may_terminate' => false,
+                                'child_routes' => array_combine(
+                                    array_keys($depotFichierDiversRoutesConfig),
+                                    $depotFichierDiversRoutesConfig
+                                ),
                             ],
                         ],
                     ],
@@ -1339,3 +1285,23 @@ return [
         ],
     ],
 ];
+
+
+function generateDepotFichierDiversRoutesConfig(): array
+{
+    $config = [];
+    foreach (NatureFichier::CODES_FICHIERS_DIVERS as $code) {
+        $key = (new NatureFichier())->setCode($code)->getCodeToLowerAndDash();
+        $config[$key] = [
+            'type' => 'Literal',
+            'options' => [
+                'route' => '/' . $key,
+                'defaults' => [
+                    'action' => 'depot-' . $key,
+                ],
+            ],
+        ];
+    }
+
+    return $config;
+}

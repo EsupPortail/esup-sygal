@@ -30,7 +30,7 @@ class UrlDepotService extends UrlService
      * @param array                 $queryParams
      * @return string
      */
-    public function depotFichiers(These $these, $nature, $version = null, $retraite = false, array $queryParams = [])
+    public function depotFichiers(These $these, $nature, $version = null, bool $retraite = false, array $queryParams = []): string
     {
         $nature = $this->idify($nature);
 
@@ -42,35 +42,33 @@ class UrlDepotService extends UrlService
             $queryParams['retraite'] = $retraite;
         }
 
-        switch ($nature) {
-            case NatureFichier::CODE_THESE_PDF:
+        switch (true) {
+            case $nature === NatureFichier::CODE_THESE_PDF:
                 if ($retraite === true) {
                     $route = 'these/depot/these-retraitee';
                 } else {
                     $route = 'these/depot/these';
                 }
                 break;
-            case NatureFichier::CODE_FICHIER_NON_PDF:
+            case $nature === NatureFichier::CODE_FICHIER_NON_PDF:
                 $route = 'these/depot/annexes';
                 break;
-            case NatureFichier::CODE_PV_SOUTENANCE:
-            case NatureFichier::CODE_RAPPORT_SOUTENANCE:
-            case NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE:
-            case NatureFichier::CODE_DEMANDE_CONFIDENT:
-            case NatureFichier::CODE_PROLONG_CONFIDENT:
-            case NatureFichier::CODE_CONV_MISE_EN_LIGNE:
-            case NatureFichier::CODE_AVENANT_CONV_MISE_EN_LIGNE:
-                $route = 'these/depot/' . (new NatureFichier)->setCode($nature)->getCodeToLowerAndDash();
+            case in_array($nature, NatureFichier::CODES_FICHIERS_DIVERS):
+                $route = 'these/depot/divers/' . $this->getRouteNameFromNatureFichier($nature);
                 break;
             default:
-                throw new LogicException("Nature spécifiée inattendue");
-                break;
+                throw new LogicException("Nature de fichier spécifiée inattendue");
         }
 
         return $this->fromRoute($route,
             ['these' => $this->idify($these)],
             ['query' => $queryParams]
         );
+    }
+
+    private function getRouteNameFromNatureFichier(string $code): string
+    {
+        return (new NatureFichier)->setCode($code)->getCodeToLowerAndDash();
     }
 
     public function identiteThese(These $these)

@@ -1,33 +1,36 @@
 <?php
 
-use These\Controller\TheseController;
-use These\Entity\Db\These;
-use Depot\Provider\Privilege\DepotPrivileges;
 use Application\View\Renderer\PhpRenderer;
+use Depot\Provider\Privilege\DepotPrivileges;
+use These\Entity\Db\These;
 
 /**
  * Dépot de fichiers divers liés à une thèse.
  *
  * @var PhpRenderer $this
- * @var These       $these
- * @var string      $pvSoutenanceUrl
- * @var string      $rapportSoutenanceUrl
- * @var string      $preRapportSoutenanceUrl
- * @var string      $demandeConfidentUrl
- * @var string      $prolongConfidentUrl
- * @var string      $convMiseEnLigneUrl
- * @var string      $avenantConvMiseEnLigneUrl
+ * @var These $these
+ * @var string $pvSoutenanceUrl
+ * @var string $rapportSoutenanceUrl
+ * @var string $preRapportSoutenanceUrl
+ * @var string $demandeConfidentUrl
+ * @var string $prolongConfidentUrl
+ * @var string $convMiseEnLigneUrl
+ * @var string $convMiseEnLigneAvenantUrl
+ * @var string $charteDoctoratUrl
+ * @var string $charteDoctoratAvenantUrl
+ * @var string $convFormationDoctoraleUrl
+ * @var string $convFormationDoctoraleAvenantUrl
  *
- * @see TheseController::detailDepotDiversAction()
+ * @see \Depot\Controller\DepotController::detailDepotDiversAction()
  */
 
 ?>
 
-<?php $this->headTitle($this->translate($title = "Dépôt de fichiers divers"))
+<?php $this->headTitle($this->translate("Fichiers divers"))
     ->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
 
 <h1 class="page-header">
-    <?php echo $this->translate($title); ?>
+    <?php echo $this->translate("Dépôt de fichiers divers"); ?>
     <small><?php echo $this->partial('these/these/partial/titre') ?></small>
 </h1>
 
@@ -37,6 +40,57 @@ use Application\View\Renderer\PhpRenderer;
 </p>
 
 <?php if ($this->isAllowed($these, DepotPrivileges::THESE_FICHIER_DIVERS_CONSULTER)): ?>
+
+    <h2>Charte</h2>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div id="charteDoctoratDiv" class="" data-url="<?php echo $charteDoctoratUrl ?>">
+                <!-- màj via ajax -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div id="charteDoctoratAvenantDiv" class="" data-url="<?php echo $charteDoctoratAvenantUrl ?>">
+                <!-- màj via ajax -->
+            </div>
+        </div>
+    </div>
+
+    <h2>Confidentialité</h2>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div id="demandeConfidentDiv" class="" data-url="<?php echo $demandeConfidentUrl ?>">
+                <!-- màj via ajax -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div id="prolongConfidentDiv" class="" data-url="<?php echo $prolongConfidentUrl ?>">
+                <!-- màj via ajax -->
+            </div>
+        </div>
+    </div>
+
+    <h2>Formation doctorale</h2>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div id="convFormationDoctoraleDiv" class="" data-url="<?php echo $convFormationDoctoraleUrl ?>">
+                <!-- màj via ajax -->
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div id="convFormationDoctoraleAvenantDiv" class="" data-url="<?php echo $convFormationDoctoraleAvenantUrl ?>">
+                <!-- màj via ajax -->
+            </div>
+        </div>
+    </div>
+
+    <h2>Soutenance</h2>
+
     <div class="row">
         <div class="col-md-4">
             <div id="pvSoutenanceDiv" class="" data-url="<?php echo $pvSoutenanceUrl ?>">
@@ -57,19 +111,7 @@ use Application\View\Renderer\PhpRenderer;
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <div id="demandeConfidentDiv" class="" data-url="<?php echo $demandeConfidentUrl ?>">
-                <!-- màj via ajax -->
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div id="prolongConfidentDiv" class="" data-url="<?php echo $prolongConfidentUrl ?>">
-                <!-- màj via ajax -->
-            </div>
-        </div>
-    </div>
+    <h2>Mise en ligne</h2>
 
     <div class="row">
         <div class="col-md-4">
@@ -79,7 +121,7 @@ use Application\View\Renderer\PhpRenderer;
         </div>
 
         <div class="col-md-4">
-            <div id="avenantConvMiseEnLigneDiv" class="" data-url="<?php echo $avenantConvMiseEnLigneUrl ?>">
+            <div id="convMiseEnLigneAvenantDiv" class="" data-url="<?php echo $convMiseEnLigneAvenantUrl ?>">
                 <!-- màj via ajax -->
             </div>
         </div>
@@ -108,18 +150,33 @@ use Application\View\Renderer\PhpRenderer;
 
         var demandeConfidentLoader = loaderFactory("demandeConfidentDiv");
         var prolongConfidentLoader = loaderFactory("prolongConfidentDiv");
+
         var convMiseEnLigneLoader = loaderFactory("convMiseEnLigneDiv");
-        var avenantConvMiseEnLigneLoader = loaderFactory("avenantConvMiseEnLigneDiv");
+        var convMiseEnLigneAvenantLoader = loaderFactory("convMiseEnLigneAvenantDiv");
+
+        var charteDoctoratLoader = loaderFactory("charteDoctoratDiv");
+        var charteDoctoratAvenantLoader = loaderFactory("charteDoctoratAvenantDiv");
+
+        var convFormationDoctoraleLoader = loaderFactory("convFormationDoctoraleDiv");
+        var convFormationDoctoraleAvenantLoader = loaderFactory("convFormationDoctoraleAvenantDiv");
 
         // Au chargement de la page, on actualise les div
         runInCascade([
+            charteDoctoratLoader,
+            charteDoctoratAvenantLoader,
+
+            demandeConfidentLoader,
+            prolongConfidentLoader,
+
+            convFormationDoctoraleLoader,
+            convFormationDoctoraleAvenantLoader,
+
             pvSoutenanceLoader,
             preRapportSoutenanceLoader,
             rapportSoutenanceLoader,
-            demandeConfidentLoader,
-            prolongConfidentLoader,
+
             convMiseEnLigneLoader,
-            avenantConvMiseEnLigneLoader
+            convMiseEnLigneAvenantLoader,
         ], self);
     });
 </script>
