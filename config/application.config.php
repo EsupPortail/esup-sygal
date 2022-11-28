@@ -1,5 +1,7 @@
 <?php
 
+define('APPLICATION_DIR', realpath(__DIR__ . '/..'));
+
 return [
     'modules' => [
         'Laminas\Cache',
