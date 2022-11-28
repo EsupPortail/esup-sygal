@@ -86,7 +86,10 @@ class SessionRepository extends DefaultEntityRepository
             ->setParameter('preparation', Etat::CODE_PREPARATION)
         ;
 
-        return $qb->getQuery()->getResult();
+        $result =  $qb->getQuery()->getResult();
+        usort($result, function (Session $a, Session $b) { return $a->getDateDebut(true) > $b->getDateDebut(true);});
+
+        return $result;
     }
 
     /**

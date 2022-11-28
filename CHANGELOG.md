@@ -6,6 +6,7 @@ Journal des modifications
 - Ajout d'une date de fermeture (indicative) pour les sessions de formation
 - Dépôts de nouveaux fichiers divers : charte du doctorat et convention de formation doctorale.
 - Extraction d'un module Depot (dépôt du manuscrit de thèse).
+- Amélioration de l'index doctorant du module formation
 - [FIX] Retrait de la liste complémentaire du mail d'echec
 - [FIX] Ordonnancement des séances sur les index des formations et des sessions 
 - [FIX] Correction paramètre de route erronée + suppression bouton inactif 

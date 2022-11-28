@@ -119,23 +119,34 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
         <table class="table table-sm">
             <thead>
             <tr>
-                <th> Module de formation </th>
-                <th> Session </th>
-                <th> Formateur&middot;trice&middot;s </th>
+                <th> Formation </th>
+                <th class="w-12"> Formateur&middot;trice&middot;s </th>
                 <th> Site </th>
-                <th> Dates et lieux </th>
+                <th class="w-12"> Dates et lieux </th>
                 <th> Modalité </th>
                 <th> Type </th>
                 <th> État </th>
                 <th> Limite d’inscription </th>
-                <th> Action </th>
+                <th class="w-10"> Action </th>
             </tr>
             </thead>
             <tbody>
             <?php foreach ($ouvertes as $session) : ?>
+                <?php
+                    $formation = $session->getFormation();
+                    $module = $formation->getModule();
+                ?>
                 <tr>
-                    <td> <?php echo $session->getFormation()->getLibelle(); ?> </td>
-                    <td> <?php echo $session->getIndex(); ?> </td>
+                    <td>
+                        <span class="formation-typage">Formation</span>
+                            <?php echo $formation->getLibelle(); ?>
+                        <br/>
+                        <span class="formation-typage">Session</span> <?php echo $session->getIndex(); ?>
+                        <?php if ($module) : ?>
+                            <br/>
+                            <span class="formation-typage">Module</span> <?php echo $module->getLibelle(); ?>
+                        <?php endif; ?>
+                    </td>
                     <td> <?php echo $this->formateurs($session); ?> </td>
                     <td> <?php echo $this->site($session); ?> </td>
                     <td>
@@ -160,11 +171,34 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
                         }
                         ?>
                         <br/>
-                        Liste principale :  <?php echo ($session->getTailleListePrincipale())?:"N.C."; ?>
+                        Liste principale&nbsp;:
+                        <?php if ($session->isListePrincipaleComplete()) : ?>
+                            <div style="display: inline-block;">
+                                <strong><span class="text-danger"> Complète </span></strong>
+                            </div>
+                        <?php else : ?>
+                            <div style="display: inline-block;">
+                                <strong><span class="text-success"> Non complète </span></strong>
+                            </div>
+                        <?php endif; ?>
                         <br/>
-                        Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
+                        Liste complémentaire&nbsp;:
+                        <?php if ($session->isListeComplementaireComplete()) : ?>
+                            <div style="display: inline-block;">
+                                <strong><span class="text-danger"> Complète </span></strong>
+                            </div>
+                        <?php else : ?>
+                            <div style="display: inline-block;">
+                                <strong><span class="text-success"> Non complète </span></strong>
+                            </div>
+                        <?php endif; ?>
                     </td>
                     <td>
+                        <?php /** @see \Formation\Controller\SessionController::afficherFicheAction() */ ?>
+                        <a href="<?php echo $this->url("formation/session/afficher-fiche",["session" => $session->getId()], [], true); ?>"
+                           class="ajax-modal">
+                            <span class="icon icon-voir"></span> Afficher les informations </a>
+                        <br/>
                         <?php $inscrit = $session->estInscrit($doctorant); ?>
                         <?php if ($canAjouterInscription and !$inscrit) : ?>
                             <?php /** @see \Formation\Controller\InscriptionController::ajouterAction() */ ?>
@@ -172,10 +206,10 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
                             >
                             <span class="icon icon-ajouter"
                                   title="M'inscrire" data-bs-toggle="tooltip" data-bs-html="true"
-                            ></span></a>
+                            ></span>&nbsp;M'inscrire</a>
                         <?php endif; ?>
                         <?php if ($inscrit) : ?>
-                                <span class="icon icon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
+                                <span class="icon icon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"> Inscrit·e</span>
                         <?php endif; ?>
                     </td>
                 </tr>
@@ -190,8 +224,7 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
         <table class="table table-sm">
             <thead>
             <tr>
-                <th> Module de formation </th>
-                <th> Session </th>
+                <th> Formation </th>
                 <th> Formateur&middot;trice&middot;s </th>
                 <th> Site </th>
                 <th> Dates et lieux </th>
@@ -204,9 +237,19 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
             </thead>
             <tbody>
             <?php foreach ($preparations as $session) : ?>
+                <?php
+                    $formation = $session->getFormation();
+                    $module = $formation->getModule();
+                ?>
                 <tr>
-                    <td> <?php echo $session->getFormation()->getLibelle(); ?> </td>
-                    <td> <?php echo $session->getIndex(); ?> </td>
+                    <td>
+                        <span class="formation-typage">Formation</span> <?php echo $formation->getLibelle(); ?> <br/>
+                        <span class="formation-typage">Session</span> <?php echo $session->getIndex(); ?>
+                        <?php if ($module) : ?>
+                            <br/>
+                            <span class="formation-typage">Module</span> <?php echo $module->getLibelle(); ?>
+                        <?php endif; ?>
+                    </td>
                     <td> <?php echo $this->formateurs($session); ?> </td>
                     <td> <?php echo $this->site($session); ?> </td>
                     <td> <?php echo $this->seances($session); ?> </td>
@@ -224,17 +267,19 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
                         }
                         ?>
                         <br/>
-                        Liste principale :  <?php echo ($session->getTailleListePrincipale())?:"N.C."; ?>
-                        <br/>
-                        Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
                     </td>
                     <td>
-                        <?php $inscrit = $session->estInscrit($doctorant); ?>
-                        <?php if ($inscrit) : ?>
-                            <span class="icon icon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>
-                        <?php else : ?>
-                            <span class="icon icon-info" title="Les inscriptions ne sont pas ouvertes"></span>
-                        <?php endif; ?>
+                        <?php /** @see \Formation\Controller\SessionController::afficherFicheAction() */ ?>
+                        <a href="<?php echo $this->url("formation/session/afficher-fiche",["session" => $session->getId()], [], true); ?>"
+                           class="ajax-modal">
+                            <span class="icon icon-voir"></span> Afficher les informations </a>
+                        <br/>
+<!--                        --><?php //$inscrit = $session->estInscrit($doctorant); ?>
+<!--                        --><?php //if ($inscrit) : ?>
+<!--                            <span class="icon icon-ok" style="color:darkgreen;" title="Vous êtes déjà inscrit"></span>-->
+<!--                        --><?php //else : ?>
+<!--                            <span class="icon icon-info" title="Les inscriptions ne sont pas ouvertes"></span>-->
+<!--                        --><?php //endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -247,9 +292,9 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
         <table class="table table-sm">
             <thead>
             <tr>
-                <th> Module de formation </th>
+                <th> Formation </th>
                 <th> Session </th>
-                <th> Formateur&middot;trice&middot;s </th>
+                <th > Formateur&middot;trice&middot;s </th>
                 <th> Site </th>
                 <th> Dates et lieux </th>
                 <th> Modalité </th>
@@ -261,9 +306,17 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
             </thead>
             <tbody>
             <?php foreach ($encours as $inscription) : ?>
-                <?php $session = $inscription->getSession(); ?>
+                <?php $session = $inscription->getSession(); $formation = $session->getFormation(); $module = $formation->getModule(); ?>
                 <tr>
-                    <td> <?php echo $session->getFormation()->getLibelle(); ?> </td>
+                    <td> <span class="formation-typage">Formation</span>
+                        <?php echo $formation->getLibelle(); ?>
+                        <br/>
+                        <span class="formation-typage">Session</span> <?php echo $session->getIndex(); ?>
+                        <?php if ($module) : ?>
+                            <br/>
+                            <span class="formation-typage">Module</span> <?php echo $module->getLibelle(); ?>
+                        <?php endif; ?>
+                    </td>
                     <td> <?php echo $session->getIndex(); ?> </td>
                     <td> <?php echo $this->formateurs($session); ?> </td>
                     <td> <?php echo $this->site($session); ?> </td>
@@ -280,25 +333,31 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
                         <?php endif; ?>
                     </td>
                     <td>
+                        <?php /** @see \Formation\Controller\SessionController::afficherFicheAction() */ ?>
+                        <a href="<?php echo $this->url("formation/session/afficher-fiche",["session" => $session->getId()], [], true); ?>"
+                           class="ajax-modal">
+                            <span class="icon icon-voir"></span> Afficher les informations </a>
+                        <br/>
                         <?php if ($canSupprimerInscription) : ?>
                             <?php /** @see \Formation\Controller\InscriptionController::desinscriptionAction() */ ?>
                             <a href="<?php echo $this->url('formation/inscription/desinscription', ['inscription' => $inscription->getId()], [], true); ?>"
                                class="ajax-modal" data-event="modification"
                             >
-                        <span class="icon icon-supprimer"
+                        <span class="icon icon-unchecked"
                               title="Annuler mon inscription" data-bs-toggle="tooltip" data-bs-html="true"
-                        ></span></a>
+                        ></span> Annuler mon inscription</a>
                         <?php endif; ?>
+                        <br/>
                         <?php if ($canConvocationInscription) : ?>
                             <?php if ($inscription->getListe() === Inscription::LISTE_PRINCIPALE) : ?>
                                 <?php /** @see \Formation\Controller\InscriptionController::genererConvocationAction() */?>
                                 <a href="<?php echo $this->url('formation/inscription/generer-convocation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
-                                    <span class="icon icon-pdf" title="Télécharger la convocation" data-bs-toggle="tooltip" data-bs-html="true"></span>
+                                    <span class="icon icon-pdf" title="Télécharger la convocation" data-bs-toggle="tooltip" data-bs-html="true"></span> Télécharger la convocation
                                 </a>
                             <?php else: ?>
                                 <span class="icon icon-pdf" style="color: lightgrey;"
                                       title="La convocation n'est disponible que pour les inscrits en liste principale">
-                                </span>
+                                </span> convocation
                             <?php endif; ?>
                         <?php endif; ?>
                     </td>
@@ -315,7 +374,7 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
         <table class="table table-sm">
             <thead>
             <tr>
-                <th> Module de formation </th>
+                <th> Formation </th>
                 <th> Session </th>
                 <th> Formateur&middot;trice&middot;s </th>
                 <th> Site </th>
@@ -329,9 +388,17 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
             </thead>
             <tbody>
             <?php foreach ($terminees as $inscription) : ?>
-                <?php $session = $inscription->getSession(); ?>
+                <?php $session = $inscription->getSession(); $formation = $session->getFormation(); $module = $formation->getModule(); ?>
                 <tr>
-                    <td> <?php echo $session->getFormation()->getLibelle(); ?> </td>
+                    <td> <span class="formation-typage">Formation</span>
+                        <?php echo $formation->getLibelle(); ?>
+                        <br/>
+                        <span class="formation-typage">Session</span> <?php echo $session->getIndex(); ?>
+                        <?php if ($module) : ?>
+                            <br/>
+                            <span class="formation-typage">Module</span> <?php echo $module->getLibelle(); ?>
+                        <?php endif; ?>
+                    </td>
                     <td> <?php echo $session->getIndex(); ?> </td>
                     <td> <?php echo $this->formateurs($session); ?> </td>
                     <td> <?php echo $this->site($session); ?> </td>
@@ -355,6 +422,11 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
                         Liste complémentaire : <?php echo ($session->getTailleListeComplementaire())?:"N.C."; ?>
                     </td>
                     <td>
+                        <?php /** @see \Formation\Controller\SessionController::afficherFicheAction() */ ?>
+                        <a href="<?php echo $this->url("formation/session/afficher-fiche",["session" => $session->getId()], [], true); ?>"
+                           class="ajax-modal">
+                            <span class="icon icon-voir"></span> Afficher les informations </a>
+                        <br/>
                         <?php if ($inscription->computeDureePresence() > 0) : ?>
                             <?php if ($canRepondreEnquete AND $inscription->getValidationEnquete() === null) : ?>
                                 <?php /** @see \Formation\Controller\EnqueteQuestionController::repondreQuestionsAction() */?>
@@ -408,3 +480,8 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
         });
     });
 </script>
+
+<style>
+    .w-10 { min-width: 10rem; }
+    .w-12 { min-width: 12rem; }
+</style>

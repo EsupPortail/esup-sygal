@@ -70,6 +70,15 @@ class SessionController extends AbstractController
         ]);
     }
 
+    public function afficherFicheAction() : ViewModel
+    {
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
+        return new ViewModel([
+            'title' => "Information sur la session #".$session->getIndex(). " - ". $session->getFormation()->getLibelle(),
+            'session' => $session,
+        ]);
+    }
+
     public function ajouterAction() : ViewModel
     {
         $formation = $this->getFormationService()->getRepository()->getRequestedFormation($this);

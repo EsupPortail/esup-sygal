@@ -1,0 +1,186 @@
+<?php
+
+use Formation\Entity\Db\Formateur;
+use Formation\Entity\Db\Seance;
+use Formation\Entity\Db\Session;
+use Formation\Entity\Db\SessionStructureValide;
+
+/**
+ * @see \Formation\Controller\SessionController::afficherFicheAction()
+ * @var Session $session
+ */
+
+$formation = $session->getFormation();
+$module = $formation->getModule();
+$seances = $session->getSeances()->toArray();
+usort($seances, function(Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
+
+/** @var Formateur[] $formateurs */
+$formateurs = $session->getFormateurs()->toArray();
+usort($formateurs, function (Formateur $a, Formateur $b) { return $a->getIndividu()->getNomComplet() > $b->getIndividu()->getNomComplet();});
+
+$pageTitle = '' . $formation->getLibelle() . ' #'.$session->getIndex();
+$this->headTitle($pageTitle);
+?>
+
+
+<h2> Informations sur la session de formation </h2>
+<div class="row">
+    <div class="col-md-7">
+        <div class="index-result">
+        <dl class="row">
+            <dt class="col-md-3"> Module </dt>
+            <dd class="col-md-9">
+                <?php if ($module !== null) : ?>
+                        <?php echo $module->getLibelle(); ?>
+                <?php else : ?>
+                    <i> Aucun module associé à la formation</i>
+                <?php endif; ?>
+            </dd>
+            <dt class="col-md-3"> Formation </dt>
+            <dd class="col-md-9">
+                    <?php echo $formation->getLibelle(); ?>
+            </dd>
+            <?php if ($session->getDescription() !== null) : ?>
+                <dt class="col-md-3"> Description </dt>
+                <dd class="col-md-9"> <?php echo $session->getDescription(); ?> </dd>
+            <?php endif; ?>
+            <dt class="col-md-3"> Code </dt>
+            <dd class="col-md-9"> <code><?php echo $session->getCode(); ?></code></dd>
+            <dt class="col-md-3"> État </dt>
+            <dd class="col-md-9"> <?php echo $this->etat($session); ?> </dd>
+            <dt class="col-md-3"> Site organisateur </dt>
+            <dd class="col-md-9"> <?php echo $this->site($session); ?> </dd>
+            <dt class="col-md-3"> Responsable </dt>
+            <dd class="col-md-9">
+                <?php if ($session->getResponsable()) : ?>
+                    <?php echo $session->getResponsable()->getNomComplet(); ?>
+                <?php else : ?>
+                    Aucun responsable
+                <?php endif; ?>
+            </dd>
+            <dt class="col-md-3"> Modalité </dt>
+            <dd class="col-md-9"> <?php echo $this->modalite($session); ?> </dd>
+            <dt class="col-md-3"> Type </dt>
+            <dd class="col-md-9"> <?php echo $this->type($session); ?> </dd>
+
+            <dt class="col-md-3"> Liste principale </dt>
+            <dd class="col-md-9">
+                <?php if ($session->isListePrincipaleComplete()) : ?>
+                    <div style="display: inline-block;">
+                        <strong><span class="text-danger"> Complète </span></strong>
+                    </div>
+                <?php else : ?>
+                    <div style="display: inline-block;">
+                        <strong><span class="text-success"> Non complète </span></strong>
+                    </div>
+                <?php endif; ?>
+            </dd>
+            <dt class="col-md-3"> Liste complémentaire </dt>
+            <dd class="col-md-9">
+                <?php if ($session->isListeComplementaireComplete()) : ?>
+                    <div style="display: inline-block;">
+                        <strong><span class="text-danger"> Complète </span></strong>
+                    </div>
+                <?php else : ?>
+                    <div style="display: inline-block;">
+                        <strong><span class="text-success"> Non complète </span></strong>
+                    </div>
+                <?php endif; ?>
+            </dd>
+            <?php if ($session->getDateClotureInscription()) : ?>
+                <dt class="col-md-3"> Date de clôture des inscriptions </dt>
+                <dd class="col-md-9"> <?php echo $session->getDateClotureInscription()->format('d/m/Y'); ?></dd>
+            <?php endif; ?>
+        </dl>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2> Structure·s valide·s pour l'inscription </h2>
+
+        <div class="index-result">
+        <?php if (empty($session->getStructuresValides()->toArray())) : ?>
+            <em> Aucune structure complémentaire</em>
+        <?php else : ?>
+            <ul>
+                    <?php /** @var SessionStructureValide $structureComplemenaire */ ?>
+                    <?php foreach ($session->getStructuresValides() as $structureComplemenaire) : ?>
+                        <li>
+                            <span class=" <?php if ($structureComplemenaire->estHistorise()) echo " historise text-danger "; ?> ">
+                                <span class="formation-typage">Structure</span>
+                                <?php echo $structureComplemenaire->getStructure()->getLibelle(); ?>
+                                <?php if ($structureComplemenaire->getLieu() !== null) : ?>
+                                    <br/>
+                                    <span class="formation-typage">Adresse </span>
+                                    <?php echo $structureComplemenaire->getLieu(); ?>
+                                <?php endif; ?>
+                                </span>
+                        </li>
+                    <?php endforeach; ?>
+                    </ul>
+        <?php endif; ?>
+        </div>
+    </div>
+    <div class="col-md-6">
+
+        <h2> Formateur·trice·s </h2>
+
+
+        <div class="index-result">
+        <?php if (empty($formateurs)) : ?>
+            <em>Aucun·e formateur·trice d'associé·e à cette session.</em>
+        <?php else : ?>
+            <ul>
+            <?php foreach ($formateurs as $formateur) : ?>
+                <li>
+                    <?php echo $formateur->getIndividu()->getNomComplet(); ?>
+                </li>
+            <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<h2> Séances </h2>
+
+<div class="index-result">
+<?php if (empty($seances)) : ?>
+    <em>Aucune séance pour cette session de formation.</em>
+<?php else : ?>
+    <table class="table table-sm table-hover">
+    <thead>
+    <tr>
+        <th> Lieu </th>
+        <th> Jour </th>
+        <th> Début </th>
+        <th> Fin </th>
+        <th> Durée </th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($seances as $seance) : ?>
+        <tr>
+            <td>
+                <span class=" <?php if ($seance->estHistorise()) echo " historise text-danger "; ?>">
+                    <?php echo $seance->getLieu(); ?>
+                    <?php if ($seance->getDescription() !== null) : ?>
+                        <span class="icon icon-information"
+                              title="<?php echo $seance->getDescription(); ?>" data-bs-toggle="tooltip" data-bs-html="true"
+                        ></span>
+                    <?php endif; ?>
+                </span>
+            </td>
+            <td> <?php echo $seance->getDebut()->format('d/m/Y'); ?> </td>
+            <td> <?php echo $seance->getDebut()->format('H:i'); ?> </td>
+            <td> <?php echo $seance->getFin()->format('H:i'); ?> </td>
+            <td> <?php echo $seance->getDuree(); ?> h. </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+<?php endif ?>
+</div>
