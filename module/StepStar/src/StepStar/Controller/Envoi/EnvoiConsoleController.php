@@ -3,7 +3,7 @@
 namespace StepStar\Controller\Envoi;
 
 use InvalidArgumentException;
-use Laminas\Mvc\Console\Controller\AbstractConsoleController;
+use Unicaen\Console\Controller\AbstractConsoleController;
 use StepStar\Facade\EnvoiFacadeAwareTrait;
 use StepStar\Service\Fetch\FetchServiceAwareTrait;
 

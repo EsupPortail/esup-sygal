@@ -2,7 +2,7 @@
 
 namespace StepStar\Controller\Oai;
 
-use Laminas\Mvc\Console\Controller\AbstractConsoleController;
+use Unicaen\Console\Controller\AbstractConsoleController;
 use StepStar\Service\Oai\OaiServiceAwareTrait;
 
 class OaiConsoleController extends AbstractConsoleController

@@ -3,7 +3,7 @@
 namespace Notification\Service;
 
 use Interop\Container\ContainerInterface;
-use Laminas\Mvc\Console\View\ViewManager as ConsoleViewManager;
+use Unicaen\Console\View\ViewManager as ConsoleViewManager;
 use Laminas\Mvc\View\Http\ViewManager as HttpViewManager;
 
 /**

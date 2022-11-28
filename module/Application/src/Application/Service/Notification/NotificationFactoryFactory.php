@@ -7,7 +7,7 @@ use Structure\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Variable\VariableService;
 use Interop\Container\ContainerInterface;
 use UnicaenApp\Options\ModuleOptions;
-use Laminas\Mvc\Console\View\ViewManager as ConsoleViewManager;
+use Unicaen\Console\View\ViewManager as ConsoleViewManager;
 use Laminas\Mvc\View\Http\ViewManager as HttpViewManager;
 use Laminas\View\Helper\Url as UrlHelper;
 

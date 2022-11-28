@@ -20,7 +20,7 @@ use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierServiceFactory;
 use Fichier\Service\NatureFichier\NatureFichierService;
 use Fichier\Service\VersionFichier\VersionFichierService;
-use Laminas\Mvc\Console\Router\Simple;
+use Unicaen\Console\Router\Simple;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 

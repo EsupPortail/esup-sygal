@@ -8,7 +8,7 @@ use Import\Filter\PrefixEtabColumnValueFilter;
 use Import\Filter\PrefixEtabColumnValueFilterFactory;
 use Import\Model\Service\ImportObservResultService;
 use Import\Model\Service\ImportObservResultServiceFactory;
-use Laminas\Mvc\Console\Router\Simple;
+use Unicaen\Console\Router\Simple;
 use Laminas\Router\Http\Segment;
 use UnicaenAuth\Guard\PrivilegeController;
 
