@@ -8977,7 +8977,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/console.git",
-                "reference": "83543c8ae6232d01723954feede3b0706d5c0b4f"
+                "reference": "4d52eee8c0b2ae238aec8fa692685de455eaf7ca"
             },
             "require": {
                 "laminas/laminas-stdlib": "^3.2",
@@ -9017,7 +9017,7 @@
                 ]
             },
             "description": "Build console applications using getopt syntax or routing, complete with prompts",
-            "time": "2022-01-10T08:49:31+00:00"
+            "time": "2022-11-28T12:26:08+00:00"
         },
         {
             "name": "unicaen/db-anonym",
@@ -9025,7 +9025,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/db-anonym.git",
-                "reference": "df6cd1d692e72a4e2d7cc4213429c36151daf44c"
+                "reference": "58f9782700ec5b744fb83bf9e73685c9915f2609"
             },
             "require": {
                 "fakerphp/faker": "^1.20",
@@ -9047,7 +9047,7 @@
                 ]
             },
             "description": "Module pour anonymiser les données d'une bdd",
-            "time": "2022-09-01T12:59:39+00:00"
+            "time": "2022-11-28T12:30:20+00:00"
         },
         {
             "name": "unicaen/db-import",
@@ -9055,7 +9055,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/db-import.git",
-                "reference": "687ac48133cee6507ab1b9fe620c888e961bf9c7"
+                "reference": "a2ddd8dceca359261cffd469fae2edd5404cc5ad"
             },
             "require": {
                 "beberlei/assert": "^3.3",
@@ -9087,7 +9087,7 @@
                 }
             },
             "description": "Module d'import entre bases de données",
-            "time": "2022-09-01T12:59:49+00:00"
+            "time": "2022-11-28T12:31:38+00:00"
         },
         {
             "name": "unicaen/faq",
@@ -9162,7 +9162,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/livelog.git",
-                "reference": "93e63088b3b39ad55899396057301e9d8667f061"
+                "reference": "a626acb97c95020668e325931cf32c1961f8c7f3"
             },
             "require": {
                 "cboden/ratchet": "^0.4.4",
@@ -9185,7 +9185,7 @@
                 ]
             },
             "description": "Module permettant d'afficher des logs en live à l'aide d'une websocket (et d'une socket)",
-            "time": "2022-09-01T13:00:01+00:00"
+            "time": "2022-11-28T12:32:25+00:00"
         },
         {
             "name": "unicaen/pdf",
