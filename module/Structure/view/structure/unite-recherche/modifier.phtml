@@ -28,7 +28,7 @@ $unite = $form->getObject();
 $idUniteRecherche = $unite->getStructure()->getId();
 $isNew = $unite->getId() === null;
 $estSubstituee = $unite->getStructure()->estSubstituee();
-$estModifiable = !($unite->getSource()->getImportable());
+$estModifiable = !($unite->getSource() !== null AND $unite->getSource()->getImportable());
 $fcg = $this->formControlGroup();
 $this->headTitle("Modification de l'UR " . $unite->getStructure()->getCode());
 

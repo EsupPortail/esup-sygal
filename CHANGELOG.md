@@ -7,6 +7,7 @@ Journal des modifications
 - Dépôts de nouveaux fichiers divers : charte du doctorat et convention de formation doctorale.
 - Extraction d'un module Depot (dépôt du manuscrit de thèse).
 - Amélioration de l'index doctorant du module formation
+- Ajout de la possibilité d'enregistrer et de valider l'enquête de retour de formation
 - [FIX] Retrait de la liste complémentaire du mail d'echec
 - [FIX] Ordonnancement des séances sur les index des formations et des sessions 
 - [FIX] Correction paramètre de route erronée + suppression bouton inactif 
