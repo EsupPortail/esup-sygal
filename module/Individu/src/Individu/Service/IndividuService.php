@@ -112,7 +112,7 @@ class IndividuService extends BaseService
         $individu->setNomUsuel($data['nomUsuel']);
         $individu->setNomPatronymique($data['nomPatronymique'] ?? null);
         $individu->setPrenom1($data['prenom1'] ?? $data['prenom']);
-        $individu->setEmail($data['email']);
+        $individu->setEmailPro($data['email']);
         $individu->setSourceCode($sourceCode);
 
         return $individu;

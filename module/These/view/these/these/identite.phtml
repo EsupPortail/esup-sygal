@@ -1,32 +1,30 @@
 <?php
 
 use Application\Constants;
-use These\Controller\TheseController;
-use These\Entity\Db\Acteur;
-use Structure\Entity\Db\EtablissementRattachement;
-use Application\Entity\Db\MailConfirmation;
-use These\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
-use These\Filter\ActeursFormatter;
 use Application\Filter\FinancementFormatter;
-use These\Provider\Privilege\CoEncadrantPrivileges;
-use Doctorant\Provider\Privilege\DoctorantPrivileges;
-use Depot\Provider\Privilege\DepotPrivileges;
 use Application\Provider\Privilege\UtilisateurPrivileges;
-use Individu\View\Helper\IndividuUsurpationHelper;
 use Application\View\Renderer\PhpRenderer;
+use Depot\Provider\Privilege\DepotPrivileges;
+use Doctorant\Provider\Privilege\DoctorantPrivileges;
+use Individu\View\Helper\IndividuUsurpationHelper;
+use Structure\Entity\Db\EtablissementRattachement;
+use These\Controller\TheseController;
+use These\Entity\Db\Acteur;
+use These\Entity\Db\These;
+use These\Filter\ActeursFormatter;
+use These\Provider\Privilege\CoEncadrantPrivileges;
 
 /**
  * @var PhpRenderer  $this
  * @var These        $these
- * @var string       $modifierPersopassUrl
+ * @var string       $modifierEmailContactUrl
+ * @var string       $modifierEmailContactConsentUrl
  * @var bool         $estDoctorant
  * @var string       $modifierCorrecAutorUrl
  * @var string       $accorderSursisCorrecUrl
  * @var string       $nextStepUrl
- * @var string       $mailContact
- * @var string       $etatMailContact
  * @var Validation[] $validationsDesCorrectionsEnAttente
  * @var Utilisateur[] $utilisateurs
  * @var EtablissementRattachement[] $rattachements
@@ -34,10 +32,11 @@ use Application\View\Renderer\PhpRenderer;
  * @see TheseController::detailIdentiteAction()
  */
 
-$canVoirEmailContact = $this->isAllowed($these,DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT);
-$canEditPersopass = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFICATION_PERSOPASS);
-$canEditPersopass = $canEditPersopass && (!$estDoctorant || !$these->getDoctorant()->getPersopass());
-$persopassModifiedEvent = 'persopass-modified-event';
+$canVoirEmailContact = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT);
+$canEditEmailContact = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT);
+$canEditEmailContactConsent = $this->isAllowed($these, DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT);
+$emailContactModifiedEvent = 'email-contact-modified-event';
+$emailContactConsentModifiedEvent = 'email-contact-consent-modified-event';
 $canCreate = $this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_CREATE_FROM_INDIVIDU));
 
 $canCoEncadrantAfficher = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_AFFICHER));
@@ -108,39 +107,41 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 <?php echo $these->getDoctorant()->getNumeroEtudiant() ?> <br>
 
                 <strong>
-                    <?php echo $this->translate("Adresse électronique institutionnelle :"); ?>
+                    <?php echo $this->translate("Adresse institutionnelle :"); ?>
                 </strong>
-                <?php if ($email = $these->getDoctorant()->getIndividu()->getEmail()): ?>
+                <?php if ($email = $these->getDoctorant()->getIndividu()->getEmailPro()): ?>
                     <a href="mailto: <?php echo $email ?>"><?php echo $email ?></a>
                 <?php else: ?>
                     <?php echo $this->translate("(Inconnu)"); ?>
                 <?php endif ?>
 
                 <?php if ($canVoirEmailContact) : ?>
-                    <br/>
-
+                    <br>
                     <strong>
-                        <?php echo $this->translate("Adresse électronique de contact :"); ?>
+                        <?php echo $this->translate("Adresse de contact :"); ?>
                     </strong>
-                    <?php
-                    if ($mailContact === null) {
-                        echo "(Non renseigné) ";
-                    } else {
-                        echo $mailContact;
-                        if ($etatMailContact === MailConfirmation::ENVOYE) {
-                            echo " (en attente) ";
-                        }
-                    }
-                    ?>
+                    <?php if ($mailContact = $these->getDoctorant()->getIndividu()->getEmailContact()): ?>
+                        <a href="mailto: <?php echo $mailContact = $these->getDoctorant()->getIndividu()->getEmailContact() ?>"><?php echo $mailContact ?></a>
+                    <?php else: ?>
+                        (Non renseignée)
+                    <?php endif; ?>
+                    <?php if ($canEditEmailContact): ?>
+                        <a href="<?php echo $modifierEmailContactUrl ?>"
+                           title="Modifer l'adresse de contact"
+                           data-event="<?php echo $emailContactModifiedEvent ?>"
+                           class="btn btn-secondary btn-sm ajax-modal">
+                            <?php echo $this->translate(($mailContact ? "Modifier" : "Renseigner") .  " l'adresse de contact"); ?>
+                        </a>
+                    <?php endif ?>
+                    <?php if ($canEditEmailContactConsent): ?>
+                        <a href="<?php echo $modifierEmailContactConsentUrl ?>"
+                           title="Votre consentement à utiliser l'adresse de contact"
+                           data-event="<?php echo $emailContactConsentModifiedEvent ?>"
+                           class="btn btn-secondary btn-sm ajax-modal">
+                            <?php echo $this->translate("Consentement"); ?>
+                        </a>
+                    <?php endif ?>
                 <?php endif; ?>
-                <?php if ($canEditPersopass): ?>
-                    <a href="<?php echo $modifierPersopassUrl ?>"
-                       data-event="<?php echo $persopassModifiedEvent ?>"
-                       class="btn btn-secondary btn-sm ajax-modal">
-                        <span class="icon icon-edit"></span>
-                        <?php echo $this->translate("Modifier"); ?>
-                    </a>
-                <?php endif ?>
             </dd>
 
             <?php
@@ -482,47 +483,22 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
     $(function () {
         var body = $("body");
 
-        body.one("<?php echo $persopassModifiedEvent ?>", function (event, data) {
-            // Le persopass vient d'être modifié.
+        body.on("<?php echo $emailContactModifiedEvent ?>", function (event, data) {
+            // L'email de contact vient d'être modifié.
             event.div.modal('hide'); // ferme la fenêtre modale
             window.location.reload();
         });
-        body.one("event-correction-autorisee-forcee-modified", function (event) {
+        body.on("<?php echo $emailContactConsentModifiedEvent ?>", function (event, data) {
+            // Le consentement vient d'être modifié.
+            event.div.modal('hide'); // ferme la fenêtre modale
+        });
+        body.on("event-correction-autorisee-forcee-modified", function (event) {
             event.div.modal('hide'); // ferme la fenêtre modale
             window.location.reload();
         });
-        body.one("event-sursis-correction-modified", function (event) {
+        body.on("event-sursis-correction-modified", function (event) {
             event.div.modal('hide'); // ferme la fenêtre modale
             window.location.reload();
         });
-
-        // $(window).on("load", function () {
-        //     $(".photo-placeholder").each(function () {
-        //         loadPhoto(this);
-        //     });
-        // });
     });
-
-    // function loadPhoto(photoPlaceholder) {
-    //     debugger;
-    //     var photoUrl = $(photoPlaceholder).data('src');
-    //
-    //     //create image to preload:
-    //     var imgPreload = new Image();
-    //     $(imgPreload).on("load", function (response, status, xhr) {
-    //         if (status == 'error') {
-    //             imgPreload = null;
-    //         }
-    //         insertResult();
-    //     });
-    //     $(imgPreload).attr({
-    //         src: photoUrl,
-    //         width: $(photoPlaceholder).css('width')
-    //     });
-    //
-    //     function insertResult() {
-    //         var content = imgPreload ? $(imgPreload) : $("<span />").html("Erreur!");
-    //         $(photoPlaceholder).removeClass('loading').replaceWith(content);
-    //     }
-    // }
 </script>

@@ -398,8 +398,8 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu, $isLocal = true); // done
         // NB: findByIndividu() avec $isLocal = true renverra 1 utilisateur au maximum
         $utilisateur = $utilisateurs ? current($utilisateurs) : null;
-        if ($utilisateur === null and $individu->getEmail() !== null) {
-            $utilisateur = $this->utilisateurService->getRepository()->findByUsername($individu->getEmail());
+        if ($utilisateur === null and $individu->getEmailPro() !== null) {
+            $utilisateur = $this->utilisateurService->getRepository()->findByUsername($individu->getEmailPro());
         }
 
         return new ViewModel([
@@ -415,7 +415,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $utilisateurs = $this->utilisateurService->getRepository()->findByIndividu($individu); // done
 
         if (empty($utilisateurs)) {
-            $user = $this->utilisateurService->createFromIndividu($individu, $individu->getEmail(), 'none');
+            $user = $this->utilisateurService->createFromIndividu($individu, $individu->getEmailPro(), 'none');
             $this->userService->updateUserPasswordResetToken($user);
             $url = $this->url()->fromRoute('utilisateur/init-compte', ['token' => $user->getPasswordResetToken()], ['force_canonical' => true], true);
             $this->notifierService->triggerInitialisationCompte($user, $url);

@@ -26,7 +26,7 @@ class MailConfirmationService
      * @param $individu
      * @return null|MailConfirmation
      */
-    public function fetchMailConfirmationsForIndividu($individu): ?MailConfirmation
+    public function fetchMailConfirmationForIndividu($individu): ?MailConfirmation
     {
         /** @var MailConfirmation[] $mailConfirmations */
         $mailConfirmations = $this->getEntityManager()->getRepository(MailConfirmation::class)

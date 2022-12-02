@@ -1,23 +1,26 @@
 <?php
 
-use Application\View\Renderer\PhpRenderer;
 use Application\Entity\Db\MailConfirmation;
+use Application\View\Renderer\PhpRenderer;
+use UnicaenApp\Traits\MessageAwareInterface;
 
 /**
  * @var PhpRenderer      $this
  * @var MailConfirmation $mailConfirmation
+ *
+ * @see \Application\Controller\MailConfirmationController::receptionAction()
  */
 
 $appName = $this->appInfos()->nom;
 ?>
 
-<h1 class="page-header"> Adresse électronique de contact</h1>
+<h1 class="page-header">Adresse électronique de contact</h1>
 
 <?php if ($mailConfirmation->estConfirme()): ?>
     <p>
         <?php
         $message = sprintf("Votre adresse électronique <strong>%s</strong> est maintenant confirmée, merci.", $mailConfirmation->getEmail());
-        echo $this->messenger()->setMessage($message, \UnicaenApp\View\Helper\Messenger::SUCCESS);
+        echo $this->messenger()->setMessage($message, MessageAwareInterface::SUCCESS);
         ?>
     </p>
     <p>

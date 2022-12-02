@@ -2,7 +2,6 @@
 
 namespace Application;
 
-use UnicaenApp\Exception\LogicException;
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\ListenerAggregateInterface;
 use Laminas\EventManager\ListenerAggregateTrait;
@@ -10,10 +9,11 @@ use Laminas\Http\PhpEnvironment\Request;
 use Laminas\Http\Request as HttpRequest;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\Mvc\MvcEvent;
+use UnicaenApp\Exception\LogicException;
 
 /**
- * Composant permettant de détourner (deflect) une requête lorsque sa route correspond à un motif donné.
- * Le détournement se fait vers une autre route et l'URL initialement demandée est transmise par le pramaètre GET 'return'.
+ * Composant permettant de détourner (deflect, in english) une requête lorsque sa route correspond à un motif donné.
+ * Le détournement se fait vers une autre route et l'URL initialement demandée est transmise par le paramètre GET 'return'.
  */
 class RouteDeflector implements ListenerAggregateInterface
 {
@@ -22,25 +22,27 @@ class RouteDeflector implements ListenerAggregateInterface
     /**
      * @var string
      */
-    protected $matchedRouteNamePattern;
+    protected string $matchedRouteNamePattern;
 
     /**
      * @var array
      */
-    protected $redirect;
+    protected array $redirect;
 
     /**
      * @var MvcEvent
      */
-    protected $event;
+    protected MvcEvent $event;
 
     /**
-     * Interceptor constructor.
+     * Constructeur.
      *
-     * @param string $matchedRouteNamePattern Expression régulière spécifiant la ou les routes à intercepter
-     * @param array  $redirect                Route vers laquelle rediriger l'utilisateur
+     * @param string $matchedRouteNamePattern Expression régulière spécifiant la ou les routes à intercepter,
+     * appliquée sur le {@see \Laminas\Router\RouteMatch::getMatchedRouteName()}
+     * @param array $redirect Spécification de la route vers laquelle rediriger l'utilisateur, dans un format
+     * compris par {@see \Laminas\Router\RouteInterface::assemble()}
      */
-    public function __construct($matchedRouteNamePattern, array $redirect)
+    public function __construct(string $matchedRouteNamePattern, array $redirect)
     {
         $redirect = $this->normalizeRedirect($redirect);
 
@@ -48,7 +50,7 @@ class RouteDeflector implements ListenerAggregateInterface
         $this->redirect = $redirect;
     }
 
-    protected function normalizeRedirect(array $redirect)
+    protected function normalizeRedirect(array $redirect): array
     {
         if (!array_key_exists('params', $redirect)) {
             $redirect['params'] = [];
@@ -105,7 +107,7 @@ class RouteDeflector implements ListenerAggregateInterface
     /**
      * @return bool
      */
-    protected function routeMatches()
+    protected function routeMatches(): bool
     {
         $routeName = $this->event->getRouteMatch()->getMatchedRouteName();
 
@@ -117,7 +119,7 @@ class RouteDeflector implements ListenerAggregateInterface
      *
      * @return bool
      */
-    protected function isActivated()
+    protected function isActivated(): bool
     {
         return true;
     }
@@ -132,7 +134,7 @@ class RouteDeflector implements ListenerAggregateInterface
      *
      * @return $this
      */
-    protected function prepareRedirectArgument()
+    protected function prepareRedirectArgument(): self
     {
         return $this;
     }
@@ -140,10 +142,10 @@ class RouteDeflector implements ListenerAggregateInterface
     /**
      * Génère l'URL de redirection à partir des caractéristiques de l'arguement 'redirect'.
      *
-     * @param string $returnUri URL de retour éventuelle
+     * @param string|null $returnUri URL de retour éventuelle
      * @return string
      */
-    protected function assembleRedirectUri($returnUri = null)
+    protected function assembleRedirectUri(?string $returnUri = null): string
     {
         $options = $this->redirect['options'];
 

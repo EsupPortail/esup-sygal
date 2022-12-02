@@ -13,7 +13,7 @@
                 <join-column name="individu_id" referenced-column-name="ID"/>
             </join-columns>
         </many-to-one>
-        <field name="email" column="email" type="string" length="1024" nullable="false"/>
+        <field name="emailPro" column="email" type="string" length="1024" nullable="false"/>
 
         <many-to-one field="etablissement" target-entity="Structure\Entity\Db\Etablissement">
             <join-columns>

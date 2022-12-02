@@ -18,7 +18,7 @@ $denomination = $doctorant->getIndividu()->getNomComplet(false, false,false,true
 $responsable = null;
 if ($individu = $session->getResponsable()) {
     $nom = $individu->getNomComplet(false, false,false,true);
-    $email = $individu->getEmail();
+    $email = $individu->getEmailPro();
     $responsable = $nom;
     if ($email) $responsable .= " <i>" .$email."</i>";
 }

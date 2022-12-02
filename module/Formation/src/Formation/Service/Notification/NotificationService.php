@@ -30,7 +30,7 @@ class NotificationService extends NotifierService
         ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::INSCRIPTION_ENREGISTREE, $vars);
-        $mail = $inscription->getDoctorant()->getIndividu()->getEmail();
+        $mail = $inscription->getDoctorant()->getIndividu()->getEmailPro();
 
         if ($mail !== null) {
             $notif = new Notification();
@@ -63,7 +63,7 @@ class NotificationService extends NotifierService
         ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::INSCRIPTION_LISTE_PRINCIPALE, $vars);
-        $mail = $inscription->getDoctorant()->getIndividu()->getEmail();
+        $mail = $inscription->getDoctorant()->getIndividu()->getEmailPro();
 
         if ($mail !== null) {
             $notif = new Notification();
@@ -97,7 +97,7 @@ class NotificationService extends NotifierService
         ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::INSCRIPTION_LISTE_COMPLEMENTAIRE, $vars);
-        $mail = $inscription->getDoctorant()->getIndividu()->getEmail();
+        $mail = $inscription->getDoctorant()->getIndividu()->getEmailPro();
 
         if ($mail !== null) {
             $notif = new Notification();

@@ -398,11 +398,13 @@ class RapportActiviteService extends BaseService
     public function newRapportActiviteSupprimeNotification(RapportActivite $rapportActivite): RapportActiviteSupprimeNotification
     {
         $doctorant = $rapportActivite->getThese()->getDoctorant();
+        $individu = $doctorant->getIndividu();
+        $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
 
         $notif = new RapportActiviteSupprimeNotification();
         $notif->setRapportActivite($rapportActivite);
         $notif->setSubject("Rapport d'activité supprimé");
-        $notif->setTo([$doctorant->getEmail() => $doctorant->getIndividu()->getNomComplet()]);
+        $notif->setTo([$email => $doctorant->getIndividu()->getNomComplet()]);
 
         return $notif;
     }

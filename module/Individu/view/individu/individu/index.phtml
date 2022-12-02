@@ -72,7 +72,7 @@ $canAjouter = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::IND
                         <?php echo implode(', ', array_filter([$individu->getPrenom2(), $individu->getPrenom3()])) ?>
                     </span>
                 </td>
-                <td><?php echo $individu->getEmail() ?></td>
+                <td><?php echo $individu->getEmailPro() ?></td>
                 <td><?php echo $individu->getDateNaissanceToString() ?></td>
                 <td>
                     <?php if ($complement = $individu->getComplement()): ?>

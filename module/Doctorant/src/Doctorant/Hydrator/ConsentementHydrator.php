@@ -1,22 +1,21 @@
 <?php
 
-namespace Application\Form\Hydrator;
+namespace Doctorant\Hydrator;
 
 use Application\Entity\Db\MailConfirmation;
-use Doctrine\Laminas\Hydrator\DoctrineObject;
-use Individu\Entity\Db\Individu;
-use Individu\Service\IndividuServiceAwareTrait;
+use Laminas\Hydrator\AbstractHydrator;
+use Webmozart\Assert\Assert;
 
-class MailConfirmationHydrator extends DoctrineObject
+class ConsentementHydrator extends AbstractHydrator
 {
-    use IndividuServiceAwareTrait;
-
     /**
      * @param MailConfirmation $object
      * @return array
      */
     public function extract($object): array
     {
+        Assert::isInstanceOf($object, MailConfirmation::class);
+
         $data = [];
         $data['idIndividu'] = $object->getIndividu()->getId();
         $data['individu'] = $object->getIndividu();
@@ -33,11 +32,6 @@ class MailConfirmationHydrator extends DoctrineObject
      */
     public function hydrate(array $data, $object): MailConfirmation
     {
-        /** @var Individu $individu */
-        $individu = $this->individuService->getRepository()->find($data['idIndividu']);
-
-        $object->setIndividu($individu);
-        $object->setEmail($data['email']);
         $object->setRefusListeDiff((bool)$data['refusListeDiff']);
 
         return $object;

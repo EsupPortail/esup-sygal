@@ -1584,7 +1584,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
         /** @var Acteur $acteur */
         foreach ($encadrements as $acteur) {
-            $email = $acteur->getIndividu()->getEmail();
+            $email = $acteur->getIndividu()->getEmailPro();
             $name = (string) $acteur->getIndividu();
             if (! $email) {
                 $individusSansMail[$name] = $acteur->getIndividu();

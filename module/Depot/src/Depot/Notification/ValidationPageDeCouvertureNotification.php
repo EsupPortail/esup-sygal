@@ -62,7 +62,8 @@ class ValidationPageDeCouvertureNotification extends Notification
         $individusSansMail = [];
         $emailsDirecteurs = $this->these->getDirecteursTheseEmails($individusSansMail);
 
-        $to = $this->these->getDoctorant()->getEmail();
+        $individu = $this->these->getDoctorant()->getIndividu();
+        $to = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
         $cc = array_merge(
             $emailsDirecteurs,
             [$this->emailBu => $this->emailBu]

@@ -37,7 +37,7 @@ class EmailTheseService
         foreach ($individuRoles as $individuRole) {
             $individu = $individuRole->getIndividu();
             if ($individu->getEtablissement() === $these->getEtablissement()) {
-                if ($individu->getEmail() !== null) return true;
+                if ($individu->getEmailPro() !== null) return true;
             }
         }
         return false;
@@ -55,10 +55,10 @@ class EmailTheseService
         foreach ($individuRoles as $individuRole) {
             $individu = $individuRole->getIndividu();
             if ($individu->getEtablissement() === $these->getEtablissement()) {
-                if ($individu->getEmail() !== null) {
+                if ($individu->getEmailPro() !== null) {
                     {
-                        $emails[] = $individu->getEmail();
-                        $allEmails[] = $individu->getEmail();
+                        $emails[] = $individu->getEmailPro();
+                        $allEmails[] = $individu->getEmailPro();
                     }
 
                 } else {

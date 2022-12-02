@@ -8,6 +8,8 @@ Journal des modifications
 - Extraction d'un module Depot (dépôt du manuscrit de thèse).
 - Amélioration de l'index doctorant du module formation
 - Ajout de la possibilité d'enregistrer et de valider l'enquête de retour de formation
+- Doctorant : peut refuser de recevoir sur son adresse électronique de contact les messages des listes de diffusion
+- Suppression du menu 'Mes données' : la modif de l'adresse de contact et du consentement associé est désormais sur la fiche Thèse 
 - [FIX] Retrait de la liste complémentaire du mail d'echec
 - [FIX] Ordonnancement des séances sur les index des formations et des sessions 
 - [FIX] Correction paramètre de route erronée + suppression bouton inactif 

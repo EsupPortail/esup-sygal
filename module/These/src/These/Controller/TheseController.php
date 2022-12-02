@@ -33,7 +33,7 @@ class TheseController extends AbstractController
         return $this->redirect()->toRoute('these/recherche', [], [], true);
     }
 
-    public function detailIdentiteAction()
+    public function detailIdentiteAction(): ViewModel
     {
         $these = $this->requestedThese();
         $etablissement = $these->getEtablissement();
@@ -41,23 +41,6 @@ class TheseController extends AbstractController
         $validationsDesCorrectionsEnAttente = null;
         if ($these->getCorrectionAutorisee() && $these->getPresidentJury()) {
             $validationsDesCorrectionsEnAttente = $this->depotValidationService->getValidationsAttenduesPourCorrectionThese($these);
-        }
-
-        $individu = $these->getDoctorant()->getIndividu();
-        $mailConfirmation = $this->mailConfirmationService->fetchMailConfirmationsForIndividu($individu);
-
-        $mailContact = null;
-        $etatMailContact = null;
-
-        switch(true) {
-            case($mailConfirmation && $mailConfirmation->estEnvoye()) :
-                $mailContact = $mailConfirmation->getEmail();
-                $etatMailContact = MailConfirmation::ENVOYE;
-                break;
-            case($mailConfirmation && $mailConfirmation->estConfirme()) :
-                $mailContact = $mailConfirmation->getEmail();
-                $etatMailContact = MailConfirmation::CONFIRME;
-                break;
         }
 
         $unite = $these->getUniteRecherche();
@@ -72,24 +55,22 @@ class TheseController extends AbstractController
             $utilisateurs[$acteur->getId()] = $utilisateursTrouves;
         }
 
-        //TODO JP remplacer dans modifierPersopassUrl();
-        $urlModification = $this->url()->fromRoute('doctorant/modifier-email-contact',['back' => 1, 'doctorant' => $these->getDoctorant()->getId()], [], true);
-
         $view = new ViewModel([
-            'these'                     => $these,
-            'etablissement'             => $etablissement,
-            'estDoctorant'              => (bool)$this->userContextService->getSelectedRoleDoctorant(),
-            'modifierPersopassUrl'      => $urlModification,
-            'modifierCorrecAutorUrl'    => $this->urlDepot()->modifierCorrecAutoriseeForceeUrl($these),
-            'accorderSursisCorrecUrl'   => $this->urlDepot()->accorderSursisCorrecUrl($these),
-            'nextStepUrl'               => $this->urlWorkflow()->nextStepBox($these, null, [
+            'these' => $these,
+            'etablissement' => $etablissement,
+            'estDoctorant' => (bool)$this->userContextService->getSelectedRoleDoctorant(),
+            'modifierEmailContactUrl' => $this->urlDoctorant()->modifierEmailContactUrl($these->getDoctorant(), true),
+            'modifierEmailContactConsentUrl' => $this->urlDoctorant()->modifierEmailContactConsentUrl(
+                $these->getDoctorant(),
+                $this->url()->fromRoute(null, [], [], true)),
+            'modifierCorrecAutorUrl' => $this->urlDepot()->modifierCorrecAutoriseeForceeUrl($these),
+            'accorderSursisCorrecUrl' => $this->urlDepot()->accorderSursisCorrecUrl($these),
+            'nextStepUrl' => $this->urlWorkflow()->nextStepBox($these, null, [
                 WfEtape::PSEUDO_ETAPE_FINALE,
             ]),
-            'mailContact'               => $mailContact,
-            'etatMailContact'           => $etatMailContact,
-            'rattachements'             => $rattachements,
+            'rattachements' => $rattachements,
             'validationsDesCorrectionsEnAttente' => $validationsDesCorrectionsEnAttente,
-            'utilisateurs'              => $utilisateurs,
+            'utilisateurs' => $utilisateurs,
         ]);
         $view->setTemplate('these/these/identite');
 
