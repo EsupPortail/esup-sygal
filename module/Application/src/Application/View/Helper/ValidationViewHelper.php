@@ -23,7 +23,7 @@ class ValidationViewHelper extends AbstractHelper
 
         if ($individu = $validation->getIndividu()) {
             $auteur = (string) $validation->getIndividu();
-            if ($email = $validation->getIndividu()->getEmail()) {
+            if ($email = $validation->getIndividu()->getEmailPro()) {
                 $auteur .= sprintf(' (<a href="mailto: %s">%s</a>)', $email, $email);
             }
 

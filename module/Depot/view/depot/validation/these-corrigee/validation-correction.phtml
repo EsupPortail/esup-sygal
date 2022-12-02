@@ -65,7 +65,7 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_CORRE
                                     Cet utilisateur utilise un compte local
                             </small></p>
                         <?php endif; ?>
-                    <?php elseif (! $i->getEmail()): ?>
+                    <?php elseif (! $i->getEmailPro()): ?>
                         <?php
                         $message = sprintf(
                             "L'application n'a pas pu notifier cette personne car son email n'est pas connu dans %s (source code '%s').",

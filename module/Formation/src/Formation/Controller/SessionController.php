@@ -326,7 +326,7 @@ class SessionController extends AbstractController
             $entry = [
                 'Liste' => $inscription->getListe(),
                 'Dénomination étudiant' => $doctorant->getIndividu()->getNomComplet(),
-                'Adresse électronique' => $doctorant->getIndividu()->getEmail(),
+                'Adresse électronique' => $doctorant->getIndividu()->getEmailPro(),
                 'Année de thèse' => current($theses)->getNbInscription($annee),
                 'Établissement' => implode("/",$etablissements),
                 'École doctorale' => implode("/",$ecoles),

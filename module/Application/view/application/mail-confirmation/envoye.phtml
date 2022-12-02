@@ -1,14 +1,16 @@
 <?php
 /**
- * @var string $email
+ * @var \Application\Entity\Db\MailConfirmation $mailConfirmation
+ *
+ * @see \Application\Controller\MailConfirmationController::envoyeAction()
  */
 
 $appName = $this->appInfos()->nom;
 ?>
 
-<h1 class="page-header">Modification d'adresse électronique en attente de confirmation</h1>
+<h1 class="page-header">Adresse électronique en attente de confirmation</h1>
 
 <p class="lead">
-    Un mail vient de vous être envoyé à l'adresse <strong><?php echo $email ?> </strong>. <br>
+    Un mail vient de vous être envoyé à l'adresse <strong><?php echo $mailConfirmation->getEmail() ?> </strong>. <br>
     Veuillez cliquer sur le lien qu'il contient pour finaliser votre demande d'enregistrement d'adresse électronique de contact.
 </p>

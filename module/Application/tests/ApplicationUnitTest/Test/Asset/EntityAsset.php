@@ -198,7 +198,7 @@ class EntityAsset
         $e = new Individu();
         $e
             ->setCivilite('Mme')
-            ->setEmail('indi.vidu@unicaen.fr')
+            ->setEmailPro('indi.vidu@unicaen.fr')
             ->setNomUsuel("Hochon")
             ->setPrenom("Paule")
             ->setSourceCode(uniqid())

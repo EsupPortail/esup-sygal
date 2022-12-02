@@ -2,8 +2,8 @@
 
 namespace Application\Filter;
 
+use Doctorant\Entity\Db\Doctorant;
 use Individu\Entity\Db\Individu;
-use Doctorant\Entity\Db\Interfaces\DoctorantInterface;
 use Laminas\Filter\AbstractFilter;
 use UnicaenApp\Entity\Ldap\People;
 use Application\Entity\Db\Utilisateur;
@@ -60,12 +60,11 @@ class NomCompletFormatter extends AbstractFilter
             $prenom   = $value->getPrenom($this->tousLesPrenoms);
             $civilite = $value->getCiviliteToString();
         }
-        elseif ($value instanceof DoctorantInterface) {
-            /* @var $value DoctorantInterface */
-            $nomUsuel = $value->getNomUsuel();
-            $nomPatro = $value->getNomPatronymique();
-            $prenom   = $value->getPrenom($this->tousLesPrenoms);
-            $civilite = $value->getCiviliteToString();
+        elseif ($value instanceof Doctorant) {
+            $nomUsuel = $value->getIndividu()->getNomUsuel();
+            $nomPatro = $value->getIndividu()->getNomPatronymique();
+            $prenom   = $value->getIndividu()->getPrenom($this->tousLesPrenoms);
+            $civilite = $value->getIndividu()->getCiviliteToString();
         }
         elseif ($value instanceof People) {
             /* @var $value People */

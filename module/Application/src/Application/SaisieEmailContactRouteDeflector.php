@@ -7,13 +7,11 @@ use Application\Service\UserContextService;
 use Doctorant\Entity\Db\Doctorant;
 
 /**
- * Class SaisiePersopassRouteDeflector
- *
- * @package Application
+ * Détournement de la requête en fonction de la connaissance de l'adresse email de contact du doctorant.
  */
-class SaisiePersopassRouteDeflector extends RouteDeflector
+class SaisieEmailContactRouteDeflector extends RouteDeflector
 {
-    protected $doctorant;
+    protected ?Doctorant $doctorant = null;
 
     protected function isActivated(): bool
     {
@@ -24,7 +22,9 @@ class SaisiePersopassRouteDeflector extends RouteDeflector
 
         /** @var MailConfirmationService $mailConfirmationService */
         $mailConfirmationService = $this->event->getApplication()->getServiceManager()->get('MailConfirmationService');
-        $mailConfirmation = $mailConfirmationService->fetchMailConfirmationsForIndividu($doctorant->getIndividu());
+        $mailConfirmation = $mailConfirmationService->fetchMailConfirmationForIndividu($doctorant->getIndividu());
+
+        // pas de détournement de la requête si l'email a été confirmé
         if ($mailConfirmation && $mailConfirmation->estConfirme()) {
             return false;
         }
@@ -40,9 +40,6 @@ class SaisiePersopassRouteDeflector extends RouteDeflector
         return $this;
     }
 
-    /**
-     * @return Doctorant|null
-     */
     protected function getDoctorant(): ?Doctorant
     {
         if ($this->doctorant !== null) {

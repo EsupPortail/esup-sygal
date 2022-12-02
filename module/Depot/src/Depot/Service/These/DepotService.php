@@ -492,12 +492,12 @@ EOS;
         else {
             // Recupération du "meilleur" email
             $email = null;
-            if ($email === null and $president->getIndividu() !== null and $president->getIndividu()->getEmail()) $email = $president->getIndividu()->getEmail();
+            if ($email === null and $president->getIndividu() !== null and $president->getIndividu()->getEmailPro()) $email = $president->getIndividu()->getEmailPro();
             if ($email === null and $president->getMembre() !== null and $president->getMembre()->getEmail()) $email = $president->getMembre()->getEmail();
 
             if ($email) {
                 // Creation du compte local puis notification (si mail)
-                $individu->setEmail($email);
+                $individu->setEmailPro($email);
                 $username = ($individu->getNomUsuel() ?: $individu->getNomPatronymique()) . "_" . $president->getId();
                 $user = $this->utilisateurService->createFromIndividu($individu, $username, 'none');
                 $token = $this->userService->updateUserPasswordResetToken($user);

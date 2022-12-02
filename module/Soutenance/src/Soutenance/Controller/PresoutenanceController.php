@@ -605,7 +605,7 @@ class PresoutenanceController extends AbstractController
 
         //doctorant
         $doctorant = $these->getDoctorant();
-        $email = $doctorant->getIndividu()->getEmail();
+        $email = $doctorant->getIndividu()->getEmailPro();
         /** @see PresoutenanceController::convocationDoctorantAction() */
         $url = $this->url()->fromRoute('soutenance/presoutenance/convocation-doctorant', ['proposition' => $proposition->getId()], ['force_canonical' => true], true);
         $this->getNotifierSoutenanceService()->triggerEnvoiConvocationDoctorant($doctorant, $proposition, $dateValidation, $email, $url, $avisArray);
@@ -614,7 +614,7 @@ class PresoutenanceController extends AbstractController
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
             if ($membre->estMembre()) {
-                $email = ($membre->getIndividu() and $membre->getIndividu()->getEmail()) ? $membre->getIndividu()->getEmail() : $membre->getEmail();
+                $email = ($membre->getIndividu() and $membre->getIndividu()->getEmailPro()) ? $membre->getIndividu()->getEmailPro() : $membre->getEmail();
                 /** @see PresoutenanceController::convocationMembreAction() */
                 $url = $this->url()->fromRoute('soutenance/presoutenance/convocation-membre', ['proposition' => $proposition->getId(), 'membre' => $membre->getId()], ['force_canonical' => true], true);
                 $this->getNotifierSoutenanceService()->triggerEnvoiConvocationMembre($membre, $proposition, $dateValidation, $email, $url, $avisArray);
@@ -659,7 +659,7 @@ class PresoutenanceController extends AbstractController
                 $individu = new Individu();
                 $individu->setPrenom($membre->getPrenom());
                 $individu->setNomUsuel($membre->getNom());
-                $individu->setEmail($membre->getEmail());
+                $individu->setEmailPro($membre->getEmail());
                 $individu->setSource($sygal);
                 $individu->setSourceCode($source_code_individu);
                 $this->getIndividuService()->getEntityManager()->persist($individu);

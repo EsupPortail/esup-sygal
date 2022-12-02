@@ -4,7 +4,6 @@ namespace Doctorant\Entity\Db;
 
 use Structure\Entity\Db\Etablissement;
 use Individu\Entity\Db\Individu;
-use Doctorant\Entity\Db\Interfaces\DoctorantInterface;
 use Individu\Entity\Db\IndividuAwareInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -17,7 +16,7 @@ use Laminas\Permissions\Acl\Resource\ResourceInterface;
 /**
  * Doctorant
  */
-class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, ResourceInterface, IndividuAwareInterface
+class Doctorant implements HistoriqueAwareInterface, ResourceInterface, IndividuAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
@@ -182,16 +181,6 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
         $this->getIndividu()->setNationalite($nationalite);
 
         return $this;
-    }
-
-    /**
-     * Retourne l'adresse mail de ce doctorant.
-     *
-     * @return string|null
-     */
-    public function getEmail(): ?string
-    {
-        return $this->getEmailPro() ?: $this->getIndividu()->getEmailBestOf();
     }
 
     /**
@@ -418,38 +407,6 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     {
         return $this->theses->toArray();
     }
-
-    /**
-     * Convenient method for $this->getComplement()->getPersopass()
-     *
-     * @return null|string
-     */
-    public function getPersopass()
-    {
-        if (!($complement = $this->getComplement())) {
-            return null;
-        }
-
-        return $complement->getPersopass();
-    }
-
-    /**
-     * Convenient method for $this->getComplement()->getEmailPro()
-     *
-     * @return null|string
-     *
-     * @deprecated Il faudrait abandonner la table DOCTORANT_COMPL car elle n'est plus alimentée mais elle contient
-     *             les adresses mails des doctorants ayant déposé jusqu'en 2018.
-     */
-    public function getEmailPro(): ?string
-    {
-        if (!($complement = $this->getComplement())) {
-            return null;
-        }
-
-        return $complement->getEmailPro();
-    }
-
 
     /**
      * Returns the string identifier of the Resource

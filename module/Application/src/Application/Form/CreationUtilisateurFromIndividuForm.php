@@ -60,9 +60,9 @@ class CreationUtilisateurFromIndividuForm extends Form implements InputFilterPro
 
         $this->get('individuId')->setValue($this->individu->getId());
 
-        if ($this->individu->getEmail()) {
+        if ($this->individu->getEmailPro()) {
             $this->get('email')
-                ->setValue($this->individu->getEmail())
+                ->setValue($this->individu->getEmailPro())
                 ->setAttribute('disabled', true);
         } else {
             $this->get('email')
@@ -81,7 +81,7 @@ class CreationUtilisateurFromIndividuForm extends Form implements InputFilterPro
         return [
             'email' => [
                 'name' => 'email',
-                'required' => ! $this->individu->getEmail(),
+                'required' => ! $this->individu->getEmailPro(),
                 'validators' => [
                     [
                         'name' => NewEmailValidator::class,

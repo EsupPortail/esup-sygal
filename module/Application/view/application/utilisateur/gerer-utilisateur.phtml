@@ -37,7 +37,7 @@ use Application\Entity\Db\Utilisateur;
                 <dt class="col-md-5"> Prénom </dt>
                 <dd class="col-md-5"> <?php echo $individu->getPrenoms(); ?></dd>
                 <dt class="col-md-5"> Email</dt>
-                <dd class="col-md-5"> <?php echo $individu->getEmail(); ?> </dd>
+                <dd class="col-md-5"> <?php echo $individu->getEmailPro(); ?> </dd>
             </dl>
 
             <h2> Information sur le compte utilisateur </h2>
@@ -101,7 +101,7 @@ use Application\Entity\Db\Utilisateur;
     <?php if ($utilisateur) : ?>
         <?php if ($utilisateur->isLocal()) : ?>
 
-            <?php if ($utilisateur->getEmail() === null AND $acteur->getIndividu()->getEmail() === null) : ?>
+            <?php if ($utilisateur->getEmail() === null AND $acteur->getIndividu()->getEmailPro() === null) : ?>
                 <div class="alert alert-warning">
                     <strong>
                         <span class="fas fa-exclamation-triangle"></span>
@@ -123,7 +123,7 @@ use Application\Entity\Db\Utilisateur;
             Le compte utilisateur existe et est non local.
         <?php endif; ?>
     <?php else : ?>
-        <?php if ($acteur->getIndividu()->getEmail() === null) : ?>
+        <?php if ($acteur->getIndividu()->getEmailPro() === null) : ?>
             <div class="alert alert-warning">
                 <strong>
                     <span class="fas fa-exclamation-triangle"></span>

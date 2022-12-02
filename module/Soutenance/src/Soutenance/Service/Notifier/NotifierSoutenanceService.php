@@ -85,7 +85,7 @@ class NotifierSoutenanceService extends NotifierService
         foreach ($individuRoles as $individuRole) {
             $individu = $individuRole->getIndividu();
             if ($individu->getEtablissement() === $these->getEtablissement()) {
-                if ($individu->getEmail() !== null) return true;
+                if ($individu->getEmailPro() !== null) return true;
             }
         }
         return false;
@@ -103,10 +103,10 @@ class NotifierSoutenanceService extends NotifierService
         foreach ($individuRoles as $individuRole) {
             $individu = $individuRole->getIndividu();
             if ($individu->getEtablissement() === $these->getEtablissement()) {
-                if ($individu->getEmail() !== null) {
+                if ($individu->getEmailPro() !== null) {
                     {
-                        $emails[] = $individu->getEmail();
-                        $allEmails[] = $individu->getEmail();
+                        $emails[] = $individu->getEmailPro();
+                        $allEmails[] = $individu->getEmailPro();
                     }
 
                 } else {
@@ -169,7 +169,7 @@ class NotifierSoutenanceService extends NotifierService
         $encadrants = $this->getActeurService()->getRepository()->findEncadrementThese($these);
         foreach ($encadrants as $encadrant) {
             //tentative dans individu
-            $email = $encadrant->getIndividu()->getEmail();
+            $email = $encadrant->getIndividu()->getEmailPro();
             //tentative dans membre
             if ($email === null) {
                 $membre = $this->getMembreService()->getMembreByActeur($encadrant);
@@ -199,7 +199,7 @@ class NotifierSoutenanceService extends NotifierService
     protected function fetchEmailActeursDirects(These $these) : array
     {
         $emails = [];
-        $emails[] = $these->getDoctorant()->getIndividu()->getEmail();
+        $emails[] = $these->getDoctorant()->getIndividu()->getEmailPro();
 
         $encadrants = $this->fetchEmailEncadrants($these);
         foreach ($encadrants as $encadrant) {
@@ -214,7 +214,7 @@ class NotifierSoutenanceService extends NotifierService
      */
     public function triggerDevalidationProposition($validation)
     {
-        $mail = $validation->getIndividu()->getEmail();
+        $mail = $validation->getIndividu()->getEmailPro();
         $these = $validation->getThese();
 
         if ($mail !== null) {

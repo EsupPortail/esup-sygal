@@ -30,12 +30,10 @@
     <dd class="col-md-5"><?php echo $individu->getDateNaissanceToString() ?: "(Non renseignée)" ?></dd>
 
     <dt class="col-md-5">Adresse électronique</dt>
-    <dd class="col-md-5"><?php echo $individu->getEmail() ?: "(Non renseignée)" ?></dd>
+    <dd class="col-md-5"><?php echo $individu->getEmailPro() ?: "(Non renseignée)" ?></dd>
 
-    <?php if ($individu->getEmailContact() && $individu->getEmailContact() !== $individu->getEmail()): ?>
-        <dt class="col-md-5">Adresse électronique de contact</dt>
-        <dd class="col-md-5"><?php echo $individu->getEmailContact() ?: "(Non renseignée)" ?></dd>
-    <?php endif ?>
+    <dt class="col-md-5">Adresse électronique de contact</dt>
+    <dd class="col-md-5"><?php echo $individu->getEmailContact() ?: "(Non renseignée)" ?></dd>
 
     <?php if ($verbose): ?>
         <dt class="col-md-5">Nationalité</dt>

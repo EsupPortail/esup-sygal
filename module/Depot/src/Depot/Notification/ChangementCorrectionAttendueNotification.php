@@ -28,7 +28,8 @@ class ChangementCorrectionAttendueNotification extends Notification
             $directeursTheseEnCopie = true;
         }
 
-        $to = $this->these->getDoctorant()->getEmail();
+        $individu = $this->these->getDoctorant()->getIndividu();
+        $to = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
 
         $cc = null;
         if ($directeursTheseEnCopie) {

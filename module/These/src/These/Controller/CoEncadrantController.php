@@ -75,7 +75,7 @@ class CoEncadrantController extends AbstractActionController {
             foreach ($acteurs as $acteur) {
                 // mise en forme attendue par l'aide de vue FormSearchAndSelect
                 $label = $acteur->getIndividu()->getPrenom() . ' ' . $acteur->getIndividu()->getNomUsuel();
-                $extra = ($acteur->getIndividu()->getEmail())?:$acteur->getIndividu()->getSourceCode();
+                $extra = ($acteur->getIndividu()->getEmailPro())?:$acteur->getIndividu()->getSourceCode();
                 $result[$acteur->getIndividu()->getId()] = array(
                     'id' => $acteur->getId(),   // identifiant unique de l'item
                     'label' => $label,          // libellé de l'item

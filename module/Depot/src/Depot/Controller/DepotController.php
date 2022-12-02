@@ -4,7 +4,6 @@ namespace Depot\Controller;
 
 use Application\Command\Exception\TimedOutCommandException;
 use Application\Controller\AbstractController;
-use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Variable;
@@ -219,69 +218,6 @@ class DepotController extends AbstractController
             'these' => $these,
         ]);
         $view->setTemplate('depot/depot/roadmap');
-
-        return $view;
-    }
-
-    public function detailIdentiteAction()
-    {
-        $these = $this->requestedThese();
-        $etablissement = $these->getEtablissement();
-
-        $validationsDesCorrectionsEnAttente = null;
-        if ($these->getCorrectionAutorisee() && $these->getPresidentJury()) {
-            $validationsDesCorrectionsEnAttente = $this->depotValidationService->getValidationsAttenduesPourCorrectionThese($these);
-        }
-
-        $individu = $these->getDoctorant()->getIndividu();
-        $mailConfirmation = $this->mailConfirmationService->fetchMailConfirmationsForIndividu($individu);
-
-        $mailContact = null;
-        $etatMailContact = null;
-
-        switch(true) {
-            case($mailConfirmation && $mailConfirmation->estEnvoye()) :
-                $mailContact = $mailConfirmation->getEmail();
-                $etatMailContact = MailConfirmation::ENVOYE;
-                break;
-            case($mailConfirmation && $mailConfirmation->estConfirme()) :
-                $mailContact = $mailConfirmation->getEmail();
-                $etatMailContact = MailConfirmation::CONFIRME;
-                break;
-        }
-
-        $unite = $these->getUniteRecherche();
-        $rattachements = [];
-        if ($unite !== null) {
-            $rattachements = $this->getUniteRechercheService()->findEtablissementRattachement($unite);
-        }
-
-        $utilisateurs = [];
-        foreach ($these->getActeurs() as $acteur) {
-            $utilisateursTrouves = $this->utilisateurService->getRepository()->findByIndividu($acteur->getIndividu()); // ok
-            $utilisateurs[$acteur->getId()] = $utilisateursTrouves;
-        }
-
-        //TODO JP remplacer dans modifierPersopassUrl();
-        $urlModification = $this->url()->fromRoute('doctorant/modifier-email-contact',['back' => 1, 'doctorant' => $these->getDoctorant()->getId()], [], true);
-
-        $view = new ViewModel([
-            'these'                     => $these,
-            'etablissement'             => $etablissement,
-            'estDoctorant'              => (bool)$this->userContextService->getSelectedRoleDoctorant(),
-            'modifierPersopassUrl'      => $urlModification,
-            'modifierCorrecAutorUrl'    => $this->urlDepot()->modifierCorrecAutoriseeForceeUrl($these),
-            'accorderSursisCorrecUrl'   => $this->urlDepot()->accorderSursisCorrecUrl($these),
-            'nextStepUrl'               => $this->urlWorkflow()->nextStepBox($these, null, [
-                WfEtape::PSEUDO_ETAPE_FINALE,
-            ]),
-            'mailContact'               => $mailContact,
-            'etatMailContact'           => $etatMailContact,
-            'rattachements'             => $rattachements,
-            'validationsDesCorrectionsEnAttente' => $validationsDesCorrectionsEnAttente,
-            'utilisateurs'              => $utilisateurs,
-        ]);
-        $view->setTemplate('these/these/identite');
 
         return $view;
     }

@@ -23,13 +23,14 @@ class ValidationRdvBuNotification extends Notification
         $emailBU = $this->emailBu;
 
         $doctorant = $this->these->getDoctorant();
+        $individu = $doctorant->getIndividu();
 
         if ($this->estDevalidation) {
             $to = $emailBU;
             $cc = $emailBDD;
         } else {
             if ($this->notifierDoctorant) {
-                $emailDoctorant = $doctorant->getEmail();;
+                $emailDoctorant = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
                 if ($emailDoctorant) {
                     $to = $emailDoctorant;
                     $cc = $emailBDD;

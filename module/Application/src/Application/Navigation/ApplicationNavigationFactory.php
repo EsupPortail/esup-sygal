@@ -2,18 +2,18 @@
 
 namespace Application\Navigation;
 
+use Application\Entity\Db\Role;
+use Application\Service\UserContextServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Individu\Entity\Db\Individu;
-use Application\Entity\Db\Role;
-use These\Entity\Db\These;
+use Interop\Container\ContainerInterface;
+use Laminas\Router\RouteMatch;
 use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
 use Structure\Search\Etablissement\EtablissementSearchFilter;
 use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
+use These\Entity\Db\These;
 use These\Service\These\TheseServiceAwareTrait;
-use Application\Service\UserContextServiceAwareTrait;
-use Interop\Container\ContainerInterface;
 use UnicaenApp\Util;
-use Laminas\Router\RouteMatch;
 
 /**
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
@@ -102,19 +102,6 @@ class ApplicationNavigationFactory extends NavigationFactory
      */
     protected function handleDynamicPage(array &$page)
     {
-        /**
-         * Mes données
-         */
-        // Rôle Doctorant : génération d'une page "Mes données"
-        if ($protoPage = $page['pages'][$key = self::MES_DONNEES_PAGE_ID] ?? null) {
-            if ($this->doctorant !== null) {
-                $this->setParamInPage($page, 'doctorant', $this->doctorant->getId());
-                $page['visible'] = true;
-            } else {
-                unset($page['pages'][$key]);
-            }
-        }
-
         /**
          * Ma thèse
          */

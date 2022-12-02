@@ -9,6 +9,7 @@ use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
+use Doctorant\Controller\Plugin\UrlDoctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Doctrine\ORM\Query\Expr\Join;
 use Individu\Entity\Db\Individu;
@@ -29,6 +30,7 @@ use These\Service\Acteur\ActeurServiceAwareTrait;
 /**
  * @property \Individu\Service\Search\IndividuSearchService $searchService
  * @method FlashMessenger flashMessenger()
+ * @method UrlDoctorant urlDoctorant()
  */
 class IndividuController extends AbstractActionController implements SearchControllerInterface
 {

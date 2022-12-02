@@ -153,27 +153,27 @@ class PropositionController extends AbstractController
         $informationsOk = true;
         $directeurs = $this->getActeurService()->getRepository()->findEncadrementThese($these);
         foreach ($directeurs as $directeur) {
-            if ($directeur->getIndividu()->getEmail() === null AND $directeur->getIndividu()->getComplement() === null) {
+            if ($directeur->getIndividu()->getEmailPro() === null AND $directeur->getIndividu()->getComplement() === null) {
                 $informationsOk = false;
                 break;
             }
         }
         if (empty($uniteResponsables)) $informationsOk = false;
         foreach ($uniteResponsables as $uniteResponsable) {
-            if ($uniteResponsable->getIndividu()->getEmail() === null) { $informationsOk = false; break;}
+            if ($uniteResponsable->getIndividu()->getEmailPro() === null) { $informationsOk = false; break;}
         }
         if (empty($ecoleResponsables)) $informationsOk = false;
         foreach ($ecoleResponsables as $ecoleResponsable) {
-            if ($ecoleResponsable->getIndividu()->getEmail() === null) { $informationsOk = false; break;}
+            if ($ecoleResponsable->getIndividu()->getEmailPro() === null) { $informationsOk = false; break;}
         }
         if (empty($etablissementResponsables)) $informationsOk = false;
         foreach ($etablissementResponsables as $etablissementResponsable) {
-            if ($etablissementResponsable->getIndividu()->getEmail() === null) { $informationsOk = false; break;}
+            if ($etablissementResponsable->getIndividu()->getEmailPro() === null) { $informationsOk = false; break;}
         }
         /** @var Individu $individu */
         foreach (array_merge($ecoleResponsables, $uniteResponsables, $etablissementResponsables) as $ecoleResponsable) {
             $individu = $ecoleResponsable->getIndividu();
-            if ($individu->getEmail() === null AND $individu->getComplement() === null) {
+            if ($individu->getEmailPro() === null AND $individu->getComplement() === null) {
                 $informationsOk = false;
                 break;
             }
