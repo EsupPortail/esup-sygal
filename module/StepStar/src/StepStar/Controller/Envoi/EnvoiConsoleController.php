@@ -32,7 +32,7 @@ class EnvoiConsoleController extends AbstractConsoleController
             throw new InvalidArgumentException("Aucune these trouvee avec les criteres specifies");
         }
 
-        $this->envoiFacade->setSaveLog(true);
+        $this->envoiFacade->setSaveLogs(true);
         $logs = $this->envoiFacade->envoyerTheses($theses, $force, $command);
 
         /** @var \StepStar\Entity\Db\Log $log */

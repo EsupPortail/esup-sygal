@@ -32,16 +32,16 @@ class EnvoiFacade
     private string $tefResultDocumentHrefTheseIdPregMatchPattern = '/^.+_(.+)_.+_.+\.tef\.xml$/U';
     private string $listXmlFilesInDirectoryGlobPattern = '*.tef.xml';
 
-    private bool $saveLog;
+    private bool $saveLogs = true;
 
     /**
      * Active ou non l'enregistrement des logs en BDD.
      *
-     * @param bool $saveLog
+     * @param bool $saveLogs
      */
-    public function setSaveLog(bool $saveLog): void
+    public function setSaveLogs(bool $saveLogs): void
     {
-        $this->saveLog = $saveLog;
+        $this->saveLogs = $saveLogs;
     }
 
     /**
@@ -69,9 +69,8 @@ class EnvoiFacade
             $this->appendExceptionToLog($e);
             $success = false;
         }
-        if ($this->saveLog) {
-            $this->saveLogWithStatus($success);
-        }
+        $this->log->setSuccess($success);
+        $this->saveCurrentLog();
         yield $this->log;
 
         if (!$success) {
@@ -83,9 +82,9 @@ class EnvoiFacade
          * (Un Log par thèse est créé.)
          */
         $operation = Log::OPERATION__ENVOI;
-        $this->newLog($operation, $command);
-        $this->appendToLog("Envoi vers STEP/STAR des fichiers TEF presents dans $outputDir :");
-        yield $this->log;
+//        $this->newLog($operation, $command);
+//        $this->appendToLog("Envoi vers STEP/STAR des fichiers TEF presents dans $outputDir :");
+//        yield $this->log;
         $tefFilesPaths = $this->listXmlFilesInDirectory($outputDir);
         foreach ($tefFilesPaths as $i => $tefFilePath) {
             $theseId = $this->extractTheseIdFromTefFilePath($tefFilePath);
@@ -114,10 +113,16 @@ class EnvoiFacade
                         $lastLog->getStartedOnToString()
                     ));
             }
-            if ($this->saveLog) {
-                $this->saveLogWithStatus($success);
-            }
+            $this->log->setSuccess($success);
+            $this->saveCurrentLog();
             yield $this->log;
+        }
+    }
+
+    private function saveCurrentLog()
+    {
+        if ($this->saveLogs) {
+            $this->saveLog();
         }
     }
 

@@ -16,7 +16,7 @@ class EnvoiForm extends Form implements InputFilterProviderInterface
         parent::init();
 
         $this->add((new Text('these'))
-            ->setLabel("Numéro de la thèse :")
+            ->setLabel("Numéros de thèses (séparés par une virgule) :")
         );
 
         $this->add((new Checkbox('force'))

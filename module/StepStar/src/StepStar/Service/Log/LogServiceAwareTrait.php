@@ -65,13 +65,10 @@ trait LogServiceAwareTrait
 
     /**
      * Enregistre le Log courant en bdd avec le statut spécifié.
-     *
-     * @param bool $success
-     * @param bool $hasProblems
      */
-    protected function saveLogWithStatus(bool $success, bool $hasProblems = false)
+    protected function saveLog()
     {
-        $this->logService->saveLogWithStatus($this->log, $success, $hasProblems);
+        $this->logService->saveLog($this->log);
     }
 
     /**

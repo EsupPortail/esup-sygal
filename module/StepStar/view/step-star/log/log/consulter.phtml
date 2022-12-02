@@ -5,8 +5,9 @@
  * @see \StepStar\Controller\Log\LogController::consulterAction()
  */
 
+use StepStar\Module;
 use StepStar\Provider\StepStarPrivileges;
-use const StepStar\STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES;
+
 ?>
 
 <h1 class="page-header">Module STEP-STAR</h1>
@@ -50,7 +51,7 @@ use const StepStar\STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES;
 
         <?php if (!$log->isSuccess()): ?>
             <dt>Commande à rejouer</dt>
-            <dd><pre><?php echo STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES . ' --these ' . $theseId ?></pre></dd>
+            <dd><pre><?php echo Module::STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES . ' --these ' . $theseId ?></pre></dd>
         <?php endif ?>
     </dl>
 

@@ -2,11 +2,11 @@
 
 namespace StepStar\Service\Log;
 
-use These\Service\These\TheseServiceAwareTrait;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\ORMException;
 use DoctrineModule\Persistence\ProvidesObjectManager;
 use StepStar\Entity\Db\Log;
+use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 
 /**
@@ -94,26 +94,9 @@ class LogService
     }
 
     /**
-     * Enregistre le Log courant en bdd avec le statut spécifié.
+     * Enregistre le Log spécifié en bdd.
      *
      * @param \StepStar\Entity\Db\Log $log
-     * @param bool $success
-     * @param bool $hasProblems
-     */
-    public function saveLogWithStatus(Log $log, bool $success, bool $hasProblems = false)
-    {
-        $log->setSuccess($success);
-        $log->setHasProblems($hasProblems);
-        $log->setEndedOn();
-        try {
-            $this->saveLog($log);
-        } catch (ORMException $e) {
-            throw new RuntimeException("Erreur rencontrée pendant l'enregistrement du log", null, $e);
-        }
-    }
-
-    /**
-     * @throws \Doctrine\ORM\ORMException
      */
     public function saveLog(Log $log)
     {
@@ -125,7 +108,13 @@ class LogService
             }
         }
 
-        $this->objectManager->persist($log);
-        $this->objectManager->flush($log);
+        $log->setEndedOn();
+
+        try {
+            $this->objectManager->persist($log);
+            $this->objectManager->flush($log);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Erreur rencontrée pendant l'enregistrement du log", null, $e);
+        }
     }
 }
