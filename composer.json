@@ -8,8 +8,9 @@
         }
     ],
     "require-dev": {
-        "unicaen/test": "^4.0",
-        "laminas/laminas-developer-tools": "^1.0"
+        "laminas/laminas-developer-tools": "^2.0",
+        "unicaen/code": "^7.1",
+        "unicaen/test": "^4.0"
     },
     "require": {
         "php": "^7.4.0",
