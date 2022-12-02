@@ -5,10 +5,11 @@ namespace These\Assertion\These;
 /**
  * Classe mère d'Assertion.
  *
- * Générée à partir du fichier /app/module/These/data/TheseEntityAssertion.csv.
+ * Générée à partir du fichier
+ * /home/gauthierb/workspace/sygal/module/These/data/TheseEntityAssertion.csv.
  *
  * @author Application\Assertion\Generator\AssertionGenerator
- * @date 21/11/2022 10:32:48
+ * @date 29/11/2022 10:42:11
  */
 abstract class GeneratedTheseEntityAssertion
 {
@@ -53,20 +54,6 @@ abstract class GeneratedTheseEntityAssertion
             }
         }
 
-        if ($privilege === \Doctorant\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT) {
-        //--------------------------------------------------------------------------------------
-            /* line 81 */
-            $this->linesTrace[] = '/* line 81 */';
-            if ($this->isRoleDoctorantSelected() /* test 1 */ && 
-                ! $this->isUtilisateurEstAuteurDeLaThese() /* test 22 */) {
-                $this->failureMessage = "Vous ne pouvez pas visualiser l’adresse de contact car vous n’êtes pas l’auteur de la thèse";
-                return false;
-            }
-            /* line 82 */
-            $this->linesTrace[] = '/* line 82 */';
-            return true;
-        }
-
         throw new \Application\Assertion\Exception\UnexpectedPrivilegeException(
             "Le privilège spécifié n'est pas couvert par l'assertion: $privilege. Trace : " . PHP_EOL . implode(PHP_EOL, $this->linesTrace));
     }
@@ -105,8 +92,6 @@ line;enabled;privilege;isRoleDoctorantSelected;;isStructureDuRoleRespectee;;isTh
 1;1;\These\Provider\Privilege\ThesePrivileges::THESE_TOUT_FAIRE;;;;;;;;;;1;
 2;1;*;1:1;;;;;;;2:0;;0;Cette thèse n'est pas la vôtre.
 3;1;*;;;1:0;;;;;;;0;Votre profil dans l’application ne vous permet pas d’agir sur cette thèse.
-81;1;\Doctorant\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT;1:1;;;;;;;2:0;;0;Vous ne pouvez pas visualiser l’adresse de contact car vous n’êtes pas l’auteur de la thèse
-82;1;\Doctorant\Provider\Privilege\DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT;;;;;;;;;;1;
 EOT;
     }
 
