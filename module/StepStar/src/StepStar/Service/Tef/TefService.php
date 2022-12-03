@@ -45,6 +45,8 @@ class TefService
     /**
      * Transforme, à l'aide d'un fichier XSL, les fichiers XML placés dans un répertoire, pour produire les fichiers TEF.
      *
+     * NB : ne requiert pas le module PHP SaxonC.
+     *
      * @param string $inputDirPath
      * @param string $xslFilePath
      * @throws \StepStar\Exception\TefServiceException
@@ -82,6 +84,8 @@ class TefService
 
     /**
      * Transforme, à l'aide d'un fichier XSL, le fichier XML spécifié, pour produire les fichiers TEF.
+     *
+     * ATTENTION : requiert le module PHP SaxonC (https://www.saxonica.com/download/c.xml).
      *
      * @param string $xmlFilePath
      * @param string $xslFilePath

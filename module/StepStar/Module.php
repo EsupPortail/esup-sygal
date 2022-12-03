@@ -13,6 +13,7 @@ class Module implements ConsoleBannerProviderInterface, ConsoleUsageProviderInte
 {
     // Nom du module
     const NAME = __NAMESPACE__;
+    const STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES = 'step-star:envoyer-theses';
 
     public function getConfig()
     {
@@ -64,7 +65,7 @@ class Module implements ConsoleBannerProviderInterface, ConsoleUsageProviderInte
             /**
              * @see EnvoiConsoleController::envoyerThesesAction()
              */
-            STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES . ' [--these=<id>] [--etat=<etat>] [--etablissement=<etab>] [--force]' =>
+            self::STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES . ' [--these=<id>] [--etat=<etat>] [--etablissement=<etab>] [--force]' =>
                 "Pour chaque thèse spécifiée, génère le fichier XML intermédiaire puis le fichier TEF puis envoie ce dernier vers STEP/STAR.",
             [ '<id>', "Ids des thèses concernées, séparées par une virgule.", "Facultatif"],
             [ '<etat>', "États des thèses, séparés par une virgule, ex : 'E,S'.", "Facultatif"],

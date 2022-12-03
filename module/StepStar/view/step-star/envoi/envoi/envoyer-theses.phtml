@@ -1,6 +1,8 @@
 <?php
 /**
  * @var \StepStar\Form\EnvoiForm $form
+ *
+ * @see \StepStar\Controller\Envoi\EnvoiController::envoyerThesesAction()
  */
 
 $form->prepare();
@@ -11,7 +13,7 @@ $form->prepare();
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-5">
         <?php echo $this->form($form) ?>
     </div>
 </div>

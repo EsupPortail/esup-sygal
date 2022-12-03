@@ -16,7 +16,7 @@ class Log
     private string $command;
     private ?string $tefFileContentHash;
     private ?string $tefFileContent;
-    private bool $success;
+    private bool $success = false;
     private string $log = '';
     private DateTime $startedOn;
     private DateTime $endedOn;
