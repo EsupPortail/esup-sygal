@@ -45,24 +45,23 @@ class EnvoiFacade
     }
 
     /**
-     * @param array $theses
-     * @param bool $force
-     * @param string $command
+     * @param array $theses Thèses à envoyer
+     * @param bool $force Forcer l'envoi même si le contenu du TEF est identique au précédent envoi ?
+     * @param string $command Commande ayant déclenché l'envoi, inscrite dans les logs
+     * @param string|null $tag Eventuel tag commun à l'ensemble des logs qui seront produits
      * @return \Generator
      */
-    public function envoyerTheses(array $theses, bool $force, string $command): Generator
+    public function envoyerTheses(array $theses, bool $force, string $command, ?string $tag = null): Generator
     {
         $inputDir = sys_get_temp_dir() . '/' . uniqid('sygal_xml_input_');
         $outputDir = sys_get_temp_dir() . '/' . uniqid('sygal_xml_output_');
-
-        $logTag = uniqid(); // tag commun à l'ensemble des logs produits ici
 
         /**
          * Generation du fichier XML intermediaire (1 pour N theses) & des fichiers TEF (1 par these).
          * (Un Log unique est créé pour cette opération.)
          */
         $operation = Log::OPERATION__GENERATION_XML;
-        $this->newLog($operation, $command, $logTag);
+        $this->newLog($operation, $command, $tag);
         $success = true;
         try {
             $this->genererXmlForThesesInDir($theses, $inputDir);
@@ -89,7 +88,7 @@ class EnvoiFacade
             $theseId = $this->extractTheseIdFromTefFilePath($tefFilePath);
             $these = $theses[$theseId];
             $lastLog = $this->findLastLogForTheseAndOperation($theseId, $operation);
-            $this->newLogForThese($theseId, $operation, $command, $logTag);
+            $this->newLogForThese($theseId, $operation, $command, $tag);
             $this->log->setTefFileContentHash(md5_file($tefFilePath));
             $success = true;
             $doctorantIdentite = $these['doctorant']['individu']['nomUsuel'] . ' ' . $these['doctorant']['individu']['prenom1'];

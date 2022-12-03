@@ -28,6 +28,7 @@ trait LogServiceAwareTrait
      * @param int $theseId
      * @param string $operation
      * @param string $command
+     * @param string|null $tag
      */
     protected function newLogForThese(int $theseId, string $operation, string $command, ?string $tag = null)
     {

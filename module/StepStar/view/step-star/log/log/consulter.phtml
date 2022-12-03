@@ -53,6 +53,9 @@ use StepStar\Provider\StepStarPrivileges;
             <dt>Commande à rejouer</dt>
             <dd><pre><?php echo Module::STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES . ' --these ' . $theseId ?></pre></dd>
         <?php endif ?>
+
+        <dt>Tag</dt>
+        <dd><?php echo $log->getTag() ?></dd>
     </dl>
 
     <dl class="col-md-8">

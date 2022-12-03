@@ -23,6 +23,10 @@ class EnvoiForm extends Form implements InputFilterProviderInterface
             ->setLabel("Envoyer même si le TEF n'a pas changé depuis le dernier envoi")
         );
 
+        $this->add((new Text('tag'))
+            ->setLabel("Tag éventuel (pour retrouver facilement un ensemble de logs) :")
+        );
+
         $this->add((new Submit('submit'))
             ->setValue("Envoyer")
             ->setAttribute('class', 'btn btn-primary')
@@ -44,6 +48,10 @@ class EnvoiForm extends Form implements InputFilterProviderInterface
             ],
             'force' => [
                 'name' => 'force',
+                'required' => false,
+            ],
+            'tag' => [
+                'name' => 'tag',
                 'required' => false,
             ],
         ];

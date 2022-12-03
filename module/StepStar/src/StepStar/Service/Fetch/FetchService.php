@@ -2,6 +2,8 @@
 
 namespace StepStar\Service\Fetch;
 
+use DateInterval;
+use DateTime;
 use These\QueryBuilder\TheseQueryBuilder;
 use These\Service\These\TheseServiceAwareTrait;
 use Doctrine\ORM\Query\Expr\Join;
@@ -9,6 +11,7 @@ use Doctrine\ORM\Query\QueryException;
 use InvalidArgumentException;
 use LogicException;
 use RuntimeException;
+use Webmozart\Assert\Assert;
 
 class FetchService
 {
@@ -52,6 +55,7 @@ class FetchService
 
         $these = $criteria['these'] ?? null; // ex : '12345' ou '12345,12346'
         $etat = $criteria['etat'] ?? null; // ex : 'E' ou 'E,S'
+        $dateSoutenanceMin = $criteria['dateSoutenanceMin'] ?? null; // ex : '2022-03-11' ou '6m'
         $etablissement = $criteria['etablissement'] ?? null; // ex : 'UCN' ou 'UCN,URN'
 
         $qb = $this->createQueryBuilder();
@@ -63,6 +67,16 @@ class FetchService
             if ($etat !== null) {
                 $etats = array_map('trim', explode(',', $etat));
                 $qb->andWhereEtatIn($etats);
+            }
+            if ($dateSoutenanceMin !== null) {
+                // la contrainte sur la date de soutenance peut être de la forme '{entier}m',
+                // ex : '6m' est traduit en "date de soutenance passée de 6 mois maxi"
+                if ($months = strstr($dateSoutenanceMin, 'm', true)) {
+                    Assert::integerish($months, "La valeur précédent 'm' doit être un entier, ex : '6m'");
+                    $period = new DateInterval("P{$months}M");
+                    $dateSoutenanceMin = (new DateTime('today'))->sub($period)->format('Y-m-d');
+                }
+                $qb->andWhere('t.dateSoutenance >= :dateSoutMin')->setParameter('dateSoutMin', $dateSoutenanceMin);
             }
             if ($etablissement !== null) {
                 $codesEtabs = array_map('trim', explode(',', $etablissement));

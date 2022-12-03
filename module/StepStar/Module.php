@@ -65,12 +65,17 @@ class Module implements ConsoleBannerProviderInterface, ConsoleUsageProviderInte
             /**
              * @see EnvoiConsoleController::envoyerThesesAction()
              */
-            self::STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES . ' [--these=<id>] [--etat=<etat>] [--etablissement=<etab>] [--force]' =>
+            self::STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES . ' [--these=<id>] [--etat=<etat>] [--date-soutenance-min=<date-soutenance-min>] [--etablissement=<etablissement>] [--tag=<tag>] [--force]' =>
                 "Pour chaque thèse spécifiée, génère le fichier XML intermédiaire puis le fichier TEF puis envoie ce dernier vers STEP/STAR.",
             [ '<id>', "Ids des thèses concernées, séparées par une virgule.", "Facultatif"],
             [ '<etat>', "États des thèses, séparés par une virgule, ex : 'E,S'.", "Facultatif"],
-            [ '<etab>', "Codes des établissements d'inscription, séparés par une virgule, ex : 'UCN,URN'.", "Facultatif"],
+            [ '<date-soutenance-min>',
+                "Si la valeur spécifiée est de la forme 'AAAA-MM-DD' : les thèses dont la date réelle de soutenance se situe avant cette date seront écartées, ex : '2022-03-11'. " .
+                "Si elle est de la forme 'Nm' : les thèses dont la date réelle de soutenance est passée de plus de N mois seront écartées, ex : '6m'.",
+                "Facultatif"],
+            [ '<etablissement>', "Codes des établissements d'inscription, séparés par une virgule, ex : 'UCN,URN'.", "Facultatif"],
             [ '--force', "Réalise l'envoi même si le contenu du fichier TEF est le même qu'au dernier envoi.", "Facultatif"],
+            [ '<tag>', "Tag éventuel permettant de retrouver facilement un ensemble de logs, ex : 'cron-2022-03-11'.", "Facultatif"],
         ];
     }
 }
