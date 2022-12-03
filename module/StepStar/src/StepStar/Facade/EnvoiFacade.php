@@ -93,11 +93,11 @@ class EnvoiFacade
             $this->log->setTefFileContentHash(md5_file($tefFilePath));
             $success = true;
             $doctorantIdentite = $these['doctorant']['individu']['nomUsuel'] . ' ' . $these['doctorant']['individu']['prenom1'];
-            $message = sprintf(
-                "> Envoi %d/%d : These %d (%s) - Fichier '%s'",
-                $i + 1, count($tefFilesPaths), $theseId, $doctorantIdentite, $tefFilePath
-            );
             if ($force || $this->isEnvoiNecessaire($lastLog, $tefFilePath)) {
+                $message = sprintf(
+                    "> Envoi %d/%d : These %d (%s) - Fichier '%s'",
+                    $i + 1, count($tefFilesPaths), $theseId, $doctorantIdentite, $tefFilePath
+                );
                 $this->appendToLog($message);
                 try {
                     $this->envoyer($tefFilePath);
@@ -107,10 +107,11 @@ class EnvoiFacade
                     $this->log->setTefFileContent(file_get_contents($tefFilePath)); // conservation du TEF envoyé
                 }
             } else {
-                $this->appendToLog($message . ' - ' . sprintf(
-                        "Inutile car identique au dernier envoi du %s.",
-                        $lastLog->getStartedOnToString()
-                    ));
+                $message = sprintf(
+                    "> Envoi %d/%d inutile : These %d (%s) - Fichier '%s' - Inutile car identique au dernier envoi du %s.",
+                    $i + 1, count($tefFilesPaths), $theseId, $doctorantIdentite, $tefFilePath, $lastLog->getStartedOnToString()
+                );
+                $this->appendToLog($message);
             }
             $this->log->setSuccess($success);
             $this->saveCurrentLog();
