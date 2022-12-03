@@ -55,12 +55,14 @@ class EnvoiFacade
         $inputDir = sys_get_temp_dir() . '/' . uniqid('sygal_xml_input_');
         $outputDir = sys_get_temp_dir() . '/' . uniqid('sygal_xml_output_');
 
+        $logTag = uniqid(); // tag commun à l'ensemble des logs produits ici
+
         /**
          * Generation du fichier XML intermediaire (1 pour N theses) & des fichiers TEF (1 par these).
          * (Un Log unique est créé pour cette opération.)
          */
         $operation = Log::OPERATION__GENERATION_XML;
-        $this->newLog($operation, $command);
+        $this->newLog($operation, $command, $logTag);
         $success = true;
         try {
             $this->genererXmlForThesesInDir($theses, $inputDir);
@@ -82,15 +84,12 @@ class EnvoiFacade
          * (Un Log par thèse est créé.)
          */
         $operation = Log::OPERATION__ENVOI;
-//        $this->newLog($operation, $command);
-//        $this->appendToLog("Envoi vers STEP/STAR des fichiers TEF presents dans $outputDir :");
-//        yield $this->log;
         $tefFilesPaths = $this->listXmlFilesInDirectory($outputDir);
         foreach ($tefFilesPaths as $i => $tefFilePath) {
             $theseId = $this->extractTheseIdFromTefFilePath($tefFilePath);
             $these = $theses[$theseId];
             $lastLog = $this->findLastLogForTheseAndOperation($theseId, $operation);
-            $this->newLogForThese($theseId, $operation, $command);
+            $this->newLogForThese($theseId, $operation, $command, $logTag);
             $this->log->setTefFileContentHash(md5_file($tefFilePath));
             $success = true;
             $doctorantIdentite = $these['doctorant']['individu']['nomUsuel'] . ' ' . $these['doctorant']['individu']['prenom1'];

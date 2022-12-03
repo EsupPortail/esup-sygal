@@ -18,6 +18,7 @@
         <field name="tefFileContentHash" column="TEF_FILE_CONTENT_HASH"/>
         <field name="tefFileContent" column="TEF_FILE_CONTENT"/>
         <field name="hasProblems" type="boolean" column="HAS_PROBLEMS"/>
+        <field name="tag" column="TAG"/>
 
         <many-to-one field="these" target-entity="These\Entity\Db\These">
             <join-columns>

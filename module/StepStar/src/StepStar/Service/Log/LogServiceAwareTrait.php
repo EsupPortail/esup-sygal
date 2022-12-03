@@ -15,10 +15,11 @@ trait LogServiceAwareTrait
      *
      * @param string|null $operation
      * @param string|null $command
+     * @param string|null $tag
      */
-    protected function newLog(?string $operation = null, ?string $command = null)
+    protected function newLog(?string $operation = null, ?string $command = null, ?string $tag = null)
     {
-        $this->log = $this->logService->newLog($operation, $command);
+        $this->log = $this->logService->newLog($operation, $command, $tag);
     }
 
     /**
@@ -28,9 +29,9 @@ trait LogServiceAwareTrait
      * @param string $operation
      * @param string $command
      */
-    protected function newLogForThese(int $theseId, string $operation, string $command)
+    protected function newLogForThese(int $theseId, string $operation, string $command, ?string $tag = null)
     {
-        $this->log = $this->logService->newLogForThese($theseId, $operation, $command);
+        $this->log = $this->logService->newLogForThese($theseId, $operation, $command, $tag);
     }
 
     /**

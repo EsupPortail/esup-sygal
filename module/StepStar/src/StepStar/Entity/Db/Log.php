@@ -21,6 +21,7 @@ class Log
     private DateTime $startedOn;
     private DateTime $endedOn;
     private bool $hasProblems = false;
+    private ?string $tag = null;
 
     private ?int $theseId = null;
     private ?These $these = null;
@@ -254,6 +255,22 @@ class Log
     public function setHasProblems(bool $hasProblems): void
     {
         $this->hasProblems = $hasProblems;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTag(): ?string
+    {
+        return $this->tag;
+    }
+
+    /**
+     * @param string|null $tag
+     */
+    public function setTag(?string $tag): void
+    {
+        $this->tag = $tag;
     }
 
     /**
