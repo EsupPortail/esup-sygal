@@ -2,7 +2,6 @@
 
 namespace StepStar\Service\Log\Recherche;
 
-use These\Entity\Db\These;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Search\Filter\TextSearchFilter;
 use Application\Search\SearchService;
@@ -13,6 +12,7 @@ use StepStar\Service\Log\LogServiceAwareTrait;
 use Structure\Entity\Db\Etablissement;
 use Structure\Search\Etablissement\EtablissementSearchFilter;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use These\Entity\Db\These;
 
 class LogSearchService extends SearchService
 {
@@ -55,6 +55,11 @@ class LogSearchService extends SearchService
                     1 => 'Oui',
                     0 => 'Non',
                 ])
+        );
+        $this->addFilter(
+            (new TextSearchFilter("Tag", 'tag'))
+                ->setUseLikeOperator()
+                ->setWhereField('log.tag')
         );
     }
 

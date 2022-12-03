@@ -131,11 +131,12 @@ class Log
     }
 
     /**
+     * @param int $length
      * @return string
      */
-    public function getTruncatedLog(): string
+    public function getTruncatedLog(int $length = 120): string
     {
-        return mb_substr($this->log, 0, 120);
+        return mb_substr($this->log, 0, $length);
     }
 
     /**

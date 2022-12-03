@@ -68,6 +68,9 @@ $this->headTitle("Logs");
             <th>
                 Log
             </th>
+            <th>
+                Tag
+            </th>
             <th class="action">
                 Action
             </th>
@@ -124,7 +127,11 @@ $this->headTitle("Logs");
                         </td>
 
                         <td class="<?php echo $log->isSuccess() ? '' : 'text-danger' ?>">
-                            <?php echo $log->getTruncatedLog() ?>
+                            <?php echo $log->getTruncatedLog(80) ?>
+                        </td>
+
+                        <td>
+                            <?php echo $log->getTag() ?>
                         </td>
 
                         <td class="action">
