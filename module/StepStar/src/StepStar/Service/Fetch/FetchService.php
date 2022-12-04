@@ -4,14 +4,14 @@ namespace StepStar\Service\Fetch;
 
 use DateInterval;
 use DateTime;
-use These\QueryBuilder\TheseQueryBuilder;
-use These\Service\These\TheseServiceAwareTrait;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\QueryException;
+use Exception;
 use InvalidArgumentException;
 use LogicException;
 use RuntimeException;
-use Webmozart\Assert\Assert;
+use These\QueryBuilder\TheseQueryBuilder;
+use These\Service\These\TheseServiceAwareTrait;
 
 class FetchService
 {
@@ -69,11 +69,15 @@ class FetchService
                 $qb->andWhereEtatIn($etats);
             }
             if ($dateSoutenanceMin !== null) {
-                // la contrainte sur la date de soutenance peut être de la forme '{entier}m',
-                // ex : '6m' est traduit en "date de soutenance passée de 6 mois maxi"
-                if ($months = strstr($dateSoutenanceMin, 'm', true)) {
-                    Assert::integerish($months, "La valeur précédent 'm' doit être un entier, ex : '6m'");
-                    $period = new DateInterval("P{$months}M");
+                // la contrainte sur la date de soutenance peut commencer par 'P', auquel cas on construit un DateInterval avec,
+                // ex : 'P6M' est traduit en "date de soutenance passée de 6 mois maxi"
+                if (stripos($dateSoutenanceMin, 'P') === 0) {
+                    try {
+                        $period = new DateInterval($dateSoutenanceMin);
+                    } catch (Exception $e) {
+                        throw new InvalidArgumentException(
+                            "La valeur '$dateSoutenanceMin' ne permet pas de construire un DateInterval", null, $e);
+                    }
                     $dateSoutenanceMin = (new DateTime('today'))->sub($period)->format('Y-m-d');
                 }
                 $qb->andWhere('t.dateSoutenance >= :dateSoutMin')->setParameter('dateSoutMin', $dateSoutenanceMin);
