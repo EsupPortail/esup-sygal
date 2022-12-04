@@ -14,10 +14,10 @@ trait LogServiceAwareTrait
      * Instancie un nouveau Log tout nu, qui devient le Log courant.
      *
      * @param string|null $operation
-     * @param string|null $command
+     * @param string $command
      * @param string|null $tag
      */
-    protected function newLog(?string $operation = null, ?string $command = null, ?string $tag = null)
+    protected function newLog(?string $operation = null, string $command = '', ?string $tag = null)
     {
         $this->log = $this->logService->newLog($operation, $command, $tag);
     }

@@ -83,6 +83,7 @@ class EnvoiFacade
          * (Un Log par thèse est créé.)
          */
         $operation = Log::OPERATION__ENVOI;
+        $nbEnvoisReussis = $nbEnvoisEchoues = $nbEnvoisInutiles = 0;
         $tefFilesPaths = $this->listXmlFilesInDirectory($outputDir);
         foreach ($tefFilesPaths as $i => $tefFilePath) {
             $theseId = $this->extractTheseIdFromTefFilePath($tefFilePath);
@@ -100,12 +101,15 @@ class EnvoiFacade
                 $this->appendToLog($message);
                 try {
                     $this->envoyer($tefFilePath);
+                    $nbEnvoisReussis++;
                 } catch (Exception $e) {
+                    $nbEnvoisEchoues++;
                     $success = false;
                     $this->appendToLog("  :-( " . $e->getMessage());
                     $this->log->setTefFileContent(file_get_contents($tefFilePath)); // conservation du TEF envoyé
                 }
             } else {
+                $nbEnvoisInutiles++;
                 $message = sprintf(
                     "> Envoi %d/%d inutile : These %d (%s) - Fichier '%s' - Inutile car identique au dernier envoi du %s.",
                     $i + 1, count($tefFilesPaths), $theseId, $doctorantIdentite, $tefFilePath, $lastLog->getStartedOnToString()
@@ -116,6 +120,17 @@ class EnvoiFacade
             $this->saveCurrentLog();
             yield $this->log;
         }
+
+        $operation = Log::OPERATION__SYNTHESE;
+        $this->newLog($operation, $command, $tag);
+        $this->log->setSuccess(true);
+        $message = sprintf(
+            "Synthèse des envois : %d envois prévus / %d envois réussis / %d envois échoués / %d envois inutiles.",
+            count($tefFilesPaths), $nbEnvoisReussis, $nbEnvoisEchoues, $nbEnvoisInutiles
+        );
+        $this->appendToLog($message);
+        $this->saveCurrentLog();
+        yield $this->log;
     }
 
     private function saveCurrentLog()

@@ -33,13 +33,13 @@ class LogService
     public function newLog(?string $operation = null, ?string $command = null, ?string $tag = null): Log
     {
         $log = new Log();
-        if ($operation) {
+        if ($operation !== null) {
             $log->setOperation($operation);
         }
-        if ($command) {
+        if ($command !== null) {
             $log->setCommand($command);
         }
-        if ($tag) {
+        if ($tag !== null) {
             $log->setTag($tag);
         }
         $log->setStartedOn();
