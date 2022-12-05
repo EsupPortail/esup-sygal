@@ -35,6 +35,8 @@ class LogSearchService extends SearchService
         );
         $this->addFilter(
             EtablissementSearchFilter::newInstance()
+                ->setLabel("Étab. Thèse")
+                ->setWhereField('etab_structure.code')
                 ->setDataProvider(fn() => $this->fetchEtablissements())
         );
         $this->addFilter(
@@ -77,6 +79,8 @@ class LogSearchService extends SearchService
         return $this->logService->getRepository()->createQueryBuilder('log')
             ->leftJoin('log.these', 'these')
             ->leftJoin('these.doctorant', 'doctorant')
+            ->leftJoin('these.etablissement', 'etab')
+            ->leftJoin('etab.structure', 'etab_structure')
             ->orderBy('log.id', 'desc');
     }
 
