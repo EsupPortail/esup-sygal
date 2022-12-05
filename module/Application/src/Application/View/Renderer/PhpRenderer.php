@@ -108,7 +108,7 @@ use UnicaenApp\View\Helper\AppInfos;
  * @method \UnicaenApp\View\Helper\ConfirmHelper                     confirm($message = null)
  * @method \UnicaenApp\View\Helper\ToggleDetails                     toggledetails($detailsDivId, $title = null, $iconClass = null)
  * @method string                                                    multipageformfieldset()
- * @method string                                                    multipageformnav(\UnicaenApp\Form\Element\MultipageFormNav $element)
+ * @method string                                                    multipageformnav(\UnicaenApp\Form\View\Helper\MultipageFormNav $element)
  * @method \UnicaenApp\Form\View\Helper\MultipageFormRow             multipageformrow(\Laminas\Form\ElementInterface $element = null, $labelPosition = null, $renderErrors = null, $partial = null)
  * @method string                                                    multipageformrecap()
  * @method \UnicaenApp\Form\View\Helper\FormControlGroup|string      formControlGroup(\Laminas\Form\ElementInterface $element = null, $pluginClass = 'formElement')

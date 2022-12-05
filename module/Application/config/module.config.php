@@ -50,16 +50,6 @@ return array(
             ],
             \UnicaenAuth\Guard\PrivilegeController::class => [
                 [
-                    'controller' => \UnicaenOracle\Controller\IndexController::class,
-                    'action'     => [
-                        'generateScriptForSchemaClearingConsole',
-                        'generateScriptForSchemaCreationConsole',
-                        'generateScriptForRefConstraintsCreationConsole',
-                        'generateScriptsForDataInsertsConsole',
-                    ],
-                    'roles' => [], // pas d'authentification requise
-                ],
-                [
                     'controller' => 'DoctrineModule\Controller\Cli',
                     'roles' => [],
                 ],

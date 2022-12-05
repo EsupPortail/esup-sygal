@@ -50,7 +50,7 @@ class ConsentementForm extends Form implements InputFilterProviderInterface
             ],
         ]);
 
-        $this->bind(new Consentement());
+        //$this->bind(new Consentement());
     }
 
     /**

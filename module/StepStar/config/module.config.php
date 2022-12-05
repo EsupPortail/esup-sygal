@@ -2,7 +2,7 @@
 
 namespace StepStar;
 
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Unicaen\Console\Router\Simple;
 use StepStar\Controller\Envoi\EnvoiConsoleController;

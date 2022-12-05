@@ -5,7 +5,6 @@ namespace UnicaenAvis\Service;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
-use Doctrine\PersistenceEntityRepository ;
 use DoctrineModule\Persistence\ProvidesObjectManager;
 use RuntimeException;
 use UnicaenAvis\Entity\Db\Avis;
