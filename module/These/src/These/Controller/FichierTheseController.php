@@ -500,6 +500,7 @@ class FichierTheseController extends AbstractController
         }
 
         $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
+        $outputFilePath = null;
         try {
             $outputFilePath = $this->fichierTheseService->fusionnerPdcEtThese($these, $pdcData, $versionFichier, $removeFirstPage);
         } catch (TimedOutCommandException $e) {

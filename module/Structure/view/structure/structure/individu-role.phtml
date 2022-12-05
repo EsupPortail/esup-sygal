@@ -9,7 +9,7 @@ use Structure\Provider\Privilege\StructurePrivileges;
  * @var string                          $type                  (etablissment|ecole-doctorale|unite-recherche)
  * @var Role[]                          $roles              (la liste des roles associés à la structure)
  * @var Individu[]                      $membres             (la liste des individus associés à la structure)
- * @var array(string => Individu[])     $repartition        (la liste des roles avec les individus associés)
+ * @var Individu[][]                    $repartition        (la liste des roles avec les individus associés)
  */
 
 $structure = $roles[0]->getStructure();

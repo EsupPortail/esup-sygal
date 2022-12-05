@@ -1,4 +1,8 @@
-<?php 
+<?php
+/**
+ * @var string $url
+ */
+
 $fichier = $this->fichier; /* @var $fichier UnicaenApp\Controller\Plugin\Upload\UploadedFileInterface */
 $file    = sprintf("%s (<abbr title=\"%s octets\">%s</abbr>)", $fichier->getNom(), $fichier->getTaille(), $fichier->getTailleToString());
 $id      = uniqid('a-');

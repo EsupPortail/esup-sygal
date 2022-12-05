@@ -38,6 +38,7 @@ class PresidentJuryController extends AbstractActionController {
         $president = $this->getActeurService()->getRequestedActeur($this, 'president');
         $utilisateurId = $this->params()->fromQuery('utilisateur');
 
+        $utilisateur = null;
         if ($utilisateurId) $utilisateur = $this->getActeurService()->getEntityManager()->getRepository(Utilisateur::class)->find($utilisateurId);
 
 

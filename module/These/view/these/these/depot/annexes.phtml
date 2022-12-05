@@ -16,6 +16,9 @@ use Laminas\Form\Element\Hidden;
  * @var string         $annexesListUrl
  * @var NatureFichier  $nature
  * @var VersionFichier $versionFichier
+ * @var string $titre
+ * @var bool $hasFichierThese
+ * @var bool $hasFichiersAnnexesThese
  */
 
 $canEdit = $this->isAllowed($these, FichierPrivileges::privilegeTeleverserFor($nature, $versionFichier));
