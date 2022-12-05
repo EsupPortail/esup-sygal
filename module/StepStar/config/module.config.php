@@ -47,8 +47,6 @@ use StepStar\Service\Zip\ZipService;
 use StepStar\Service\Zip\ZipServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 
-const STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES = 'step-star:envoyer-theses';
-
 return [
     'step_star' => [
         'xml' => [
@@ -306,7 +304,7 @@ return [
                 'envoyer-theses' => [
                     'type' => Simple::class,
                     'options' => [
-                        'route' => STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES . ' [--these=] [--etat=] [--etablissement=] [--force]',
+                        'route' => Module::STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES . ' [--these=] [--etat=] [--date-soutenance-min=] [--etablissement=] [--tag=] [--force]',
                         'defaults' => [
                             /**
                              * @see EnvoiConsoleController::envoyerThesesAction()

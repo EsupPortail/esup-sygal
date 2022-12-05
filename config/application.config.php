@@ -49,6 +49,7 @@ return [
         'Retraitement',
         'Soutenance',
         'Formation',
+        'ComiteSuiviIndividuel',
         'RapportActivite',
         'Notification',
         'Information',

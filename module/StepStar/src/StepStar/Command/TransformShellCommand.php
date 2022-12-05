@@ -52,7 +52,7 @@ class TransformShellCommand extends ShellCommand
         $parts = [
             $this->executable,
             $this->verbose ? '-t' : null,
-            sprintf("-s:'%s' -xsl:'%s' -o:'%s'", $this->inputFilePath, $this->xslFilePath, $this->outputFilePath),
+            sprintf("-s:'%s' -xsl:'%s' -o:'%s' 2>&1", $this->inputFilePath, $this->xslFilePath, $this->outputFilePath),
         ];
 
         $this->commandLine = implode(' ', array_filter($parts));

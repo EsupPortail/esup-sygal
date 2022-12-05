@@ -12,6 +12,7 @@ use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilter;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Form\Rapport\RapportForm;
+use ComiteSuiviIndividuel\Service\Membre\MembreServiceAwareTrait;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;

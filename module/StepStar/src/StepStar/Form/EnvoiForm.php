@@ -16,11 +16,15 @@ class EnvoiForm extends Form implements InputFilterProviderInterface
         parent::init();
 
         $this->add((new Text('these'))
-            ->setLabel("Numéro de la thèse :")
+            ->setLabel("Numéros de thèses (séparés par une virgule) :")
         );
 
         $this->add((new Checkbox('force'))
             ->setLabel("Envoyer même si le TEF n'a pas changé depuis le dernier envoi")
+        );
+
+        $this->add((new Text('tag'))
+            ->setLabel("Tag éventuel (pour retrouver facilement un ensemble de logs) :")
         );
 
         $this->add((new Submit('submit'))
@@ -44,6 +48,10 @@ class EnvoiForm extends Form implements InputFilterProviderInterface
             ],
             'force' => [
                 'name' => 'force',
+                'required' => false,
+            ],
+            'tag' => [
+                'name' => 'tag',
                 'required' => false,
             ],
         ];

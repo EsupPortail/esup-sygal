@@ -12,6 +12,7 @@ use Doctrine\ORM\QueryBuilder;
 class TextSearchFilter extends SearchFilter
 {
     protected bool $useLikeOperator = false;
+    protected string $likeOperator = 'LIKE';
 
     /**
      * @param bool $useLikeOperator
@@ -23,9 +24,19 @@ class TextSearchFilter extends SearchFilter
         return $this;
     }
 
+    /**
+     * @param string $likeOperator
+     * @return self
+     */
+    public function setLikeOperator(string $likeOperator): self
+    {
+        $this->likeOperator = $likeOperator;
+        return $this;
+    }
+
     protected function canApplyToQueryBuilder(): bool
     {
-        $filterValue = $this->getValue();
+        $filterValue = trim($this->getValue());
 
         return $filterValue !== null && strlen($filterValue) > 1;
     }
@@ -47,12 +58,12 @@ class TextSearchFilter extends SearchFilter
 
     protected function getOperator(): string
     {
-        return $this->useLikeOperator ? 'LIKE' : '=';
+        return $this->useLikeOperator ? $this->likeOperator : '=';
     }
 
     public function getComparisonValue(): string
     {
-        $filterValue = $this->getValue();
+        $filterValue = trim($this->getValue());
 
         return $this->useLikeOperator ? "%$filterValue%" : $filterValue;
     }

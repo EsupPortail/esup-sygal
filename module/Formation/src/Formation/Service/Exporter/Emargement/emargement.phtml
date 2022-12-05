@@ -10,6 +10,7 @@ use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Seance;
 
 $session = $seance->getSession();
+$annee = $session->getAnneeScolaire();
 $inscriptions = $session->getListePrincipale();
 usort($inscriptions, function(Inscription $a, Inscription $b) { return $a->getDoctorant()->getIndividu()->getNomComplet() > $b->getDoctorant()->getIndividu()->getNomComplet();});
 
@@ -58,21 +59,26 @@ $formateurs = $session->getFormateurs();
     <?php foreach ($inscriptions as $inscription) : ?>
         <?php
             $theses = $inscription->getDoctorant()->getTheses();
-            $theses = array_filter($theses, function(These $t) { return $t->getEtatThese() === These::ETAT_EN_COURS;});
-            $etablissements = []; $ecoles = []; $unites = [];
-            foreach ($theses as $these) {
+            $theses = array_filter($theses, function(These $t) { return ($t->getEtatThese() === These::ETAT_EN_COURS AND $t->estNonHistorise());});
+            $etablissements = []; $ecoles = []; $unites = []; $anneets = [];
+            /** @var These $these */
+        foreach ($theses as $these) {
                 $etablissement = ($these->getEtablissement())?$these->getEtablissement()->getStructure()->getSigle():"Établissement non renseigné";
                 $etablissements[$etablissement] = $etablissement;
                 $ecole = ($these->getEcoleDoctorale())?$these->getEcoleDoctorale()->getStructure()->getSigle():"École doctorale non renseignée";
                 $ecoles[$ecole] = $ecole;
                 $unite = ($these->getUniteRecherche())?$these->getUniteRecherche()->getStructure()->getSigle():"Unité de recherche non renseignée";
                 $unites[$unite] = $unite;
+                $anneet = $these->getNbInscription($annee);
+                $anneets[$these->getId()] = $anneet;
             }
         ?>
         <tr>
             <td>
                 <strong> <?php echo $inscription->getDoctorant()->getIndividu()->getNomComplet(); ?> </strong>
                 <br/>
+                D<?php echo implode(", ",$anneets); ?>
+                -
                 <?php echo implode(", ",$etablissements); ?>
                 -
                 <?php echo implode(", ",$ecoles); ?>

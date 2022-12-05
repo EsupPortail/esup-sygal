@@ -7,7 +7,6 @@
  */
 
 use These\Entity\Db\These;
-use These\Entity\Db\TheseAnneeUniv;
 use Formation\Entity\Db\Inscription;
 
 $actionListePrincipale = (!isset($options['action-liste-principale']) OR $options['action-liste-principale'] !== false);
@@ -17,13 +16,12 @@ $actionSupprimer = (!isset($options['action-supprimer']) OR $options['action-sup
 
 $doctorant = $inscription->getDoctorant();
 $session = $inscription->getSession();
+$annee = $session->getAnneeScolaire();
 //todo trouver solution pour récupèrer la bonne thèse dans le cas des thèses multiples
 
 /** @var These $these */
 $these = current($doctorant->getTheses());
 //todo faire fonction pour le calcul dans l'entité
-$annee = ((int) "2021");
-$inscriptions = array_filter($these->getAnneesUnivInscription()->toArray(), function (TheseAnneeUniv $a) use ($annee) { return $a->getAnneeUniv() <= $annee; });
 
 ?>
 
@@ -33,7 +31,7 @@ $inscriptions = array_filter($these->getAnneesUnivInscription()->toArray(), func
     echo $doctorant->getIndividu()->getNomComplet(); ?>
     <span class=" <?php if ($inscription->estHistorise()) echo "historisee"; ?> " title="<?php echo $inscription->getDescription(); ?>">
     <?php foreach ($doctorant->getTheses() as $these) {
-        if ($these->getEtatThese() === These::ETAT_EN_COURS) {
+        if ($these->getEtatThese() === These::ETAT_EN_COURS AND $these->estNonHistorise()) {
             echo "<br/>";
             echo $this->site($these->getEtablissement());
             echo " - ";
@@ -41,7 +39,7 @@ $inscriptions = array_filter($these->getAnneesUnivInscription()->toArray(), func
             echo " - ";
             echo $this->site($these->getUniteRecherche());
             echo " - ";
-            echo "D" . count($inscriptions);
+            echo "D" . $these->getNbInscription($annee);
         }
     }
     ?>

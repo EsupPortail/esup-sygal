@@ -14,11 +14,12 @@ trait LogServiceAwareTrait
      * Instancie un nouveau Log tout nu, qui devient le Log courant.
      *
      * @param string|null $operation
-     * @param string|null $command
+     * @param string $command
+     * @param string|null $tag
      */
-    protected function newLog(?string $operation = null, ?string $command = null)
+    protected function newLog(?string $operation = null, string $command = '', ?string $tag = null)
     {
-        $this->log = $this->logService->newLog($operation, $command);
+        $this->log = $this->logService->newLog($operation, $command, $tag);
     }
 
     /**
@@ -27,10 +28,11 @@ trait LogServiceAwareTrait
      * @param int $theseId
      * @param string $operation
      * @param string $command
+     * @param string|null $tag
      */
-    protected function newLogForThese(int $theseId, string $operation, string $command)
+    protected function newLogForThese(int $theseId, string $operation, string $command, ?string $tag = null)
     {
-        $this->log = $this->logService->newLogForThese($theseId, $operation, $command);
+        $this->log = $this->logService->newLogForThese($theseId, $operation, $command, $tag);
     }
 
     /**
@@ -65,13 +67,10 @@ trait LogServiceAwareTrait
 
     /**
      * Enregistre le Log courant en bdd avec le statut spécifié.
-     *
-     * @param bool $success
-     * @param bool $hasProblems
      */
-    protected function saveLogWithStatus(bool $success, bool $hasProblems = false)
+    protected function saveLog()
     {
-        $this->logService->saveLogWithStatus($this->log, $success, $hasProblems);
+        $this->logService->saveLog($this->log);
     }
 
     /**

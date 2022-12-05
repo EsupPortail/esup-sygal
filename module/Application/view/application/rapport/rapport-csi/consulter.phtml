@@ -3,6 +3,7 @@
 namespace Application;
 
 use Application\Entity\Db\Rapport;
+use ComiteSuiviIndividuel\Entity\Db\Membre;
 use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Form\RapportCsiForm;
@@ -16,6 +17,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var RapportCsiForm $form
  * @var bool $isTeleversementPossible
  * @var TypeValidation $typeValidation
+ * @var Membre[] $membres
  *
  * @see \Application\Controller\Rapport\RapportCsiController::consulterAction()
  */
@@ -34,6 +36,8 @@ $canAdd = $this->isAllowed($rapportProto, $privilege_TELEVERSER_TOUT) || $this->
 if (!$isTeleversementPossible) {
     $canAdd = false;
 }
+
+$canModifier = ($privilege_TELEVERSER_SIEN OR $privilege_TELEVERSER_TOUT);
 ?>
 
 <?php $this->headTitle($this->translate($title = "Rapports CSI"))
@@ -50,6 +54,95 @@ if (!$isTeleversementPossible) {
     Cette page est consacrée au téléversement des rapports CSI.
 </p>
 
+<div class="row">
+    <div class="col-md-11">
+
+        <h2>Membres du comité</h2>
+
+        <?php if ($membres AND !empty($membres)) : ?>
+            <table class="table table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th> Civilité </th>
+                        <th> Prénom </th>
+                        <th> Nom </th>
+                        <th> Adresse électronique </th>
+                        <th> Qualité </th>
+                        <th> Rang </th>
+                        <th> Extérieur </th>
+                        <th> Établissement </th>
+                        <th> Rôle </th>
+                        <th> En visio </th>
+                        <?php if ($canModifier) : ?>
+                            <th> Action</th>
+                        <?php endif; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($membres as $membre) : ?>
+                    <tr>
+                        <td> <?php echo ($membre->getGenre()==='F')?"Madame":"Monsieur"; ?> </td>
+                        <td> <?php echo $membre->getPrenom(); ?> </td>
+                        <td> <?php echo $membre->getNom(); ?> </td>
+                        <td> <?php echo ($membre->getEmail() !== null)?$membre->getEmail():"<strong><span class='text-danger'><span class='fas fa-exclamation-triangle'></span> AUCUN MAIL</span></strong>"; ?> </td>
+                        <td> <?php echo ($membre->getQualite())?$membre->getQualite()->getLibelle():"Non définie"; ?> </td>
+                        <td> <?php echo $membre->getRang(); ?> </td>
+                        <td>
+                            <?php if ($membre->isExterieur()): ?>
+                                <span class="icon icon-oui iconly text-success"></span>
+                            <?php else: ?>
+                                <span class="icon icon-non iconly text-danger"></span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?php echo $membre->getEtablissement(); ?> <br/>
+                        </td>
+                        <td> <?php echo $membre->getRole(); ?> </td>
+                        <td>
+                            <?php if ($membre->isVisio()): ?>
+                                <span class="icon icon-oui iconly text-success"></span>
+                                <?php $hasVisio = true; ?>
+                            <?php else: ?>
+                                <span class="icon icon-non iconly text-danger"></span>
+                            <?php endif; ?>
+                        </td>
+                        <?php if ($canModifier) : ?>
+                            <td>
+                                <a  <?php /** @see \ComiteSuiviIndividuel\Controller\MembreController::modifierAction(); */ ?>
+                                        href="<?php echo $this->url('comite-suivi-individuel/membre/modifier', ['membre' => $membre->getId()], [] ,true); ?>"
+                                        class="ajax-modal"
+                                        data-event="modification">
+                                    <span class="icon icon-edit iconly"></span>
+                                </a>
+                                <a  <?php /** @see \ComiteSuiviIndividuel\Controller\MembreController::supprimerAction(); */ ?>
+                                        href="<?php echo $this->url('comite-suivi-individuel/membre/supprimer', ['membre' => $membre->getId()], [] ,true); ?>"
+                                        class="ajax-modal"
+                                        data-event="modification">
+                                    <span class="icon icon-delete iconly"></span>
+                                </a>
+                            </td>
+                        <?php endif; ?>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else : ?>
+            <p>
+            Aucun membre de désigné
+            </p>
+        <?php endif; ?>
+
+        <?php if ($canModifier) : ?>
+            <a  <?php /** @see \ComiteSuiviIndividuel\Controller\MembreController::ajouterAction(); */ ?>
+                href="<?php echo $this->url('comite-suivi-individuel/membre/ajouter', ['these' => $these->getId()]); ?>"
+                class="btn btn-primary ajax-modal" data-event="modification"
+            >
+                <span class="icon icon-user-add"></span>
+                Ajouter une membre du comité
+            </a>
+        <?php endif; ?>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-11">
 
@@ -146,9 +239,9 @@ if (!$isTeleversementPossible) {
 
 <script>
     $(function() {
-        var $ajouterBtn = $("#ajouterBtn");
-        var $annulerBtn = $("#annulerBtn");
-        var $ajouterForm = $("#ajouterForm");
+        let $ajouterBtn = $("#ajouterBtn");
+        let $annulerBtn = $("#annulerBtn");
+        let $ajouterForm = $("#ajouterForm");
 
         $ajouterBtn.on('click', function() {
             $ajouterForm.show();
@@ -160,5 +253,11 @@ if (!$isTeleversementPossible) {
             $ajouterBtn.show();
             return false;
         });
+
+        $("body").on("modification", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
     });
+
 </script>

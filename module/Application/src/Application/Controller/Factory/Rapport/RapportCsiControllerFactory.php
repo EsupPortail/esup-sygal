@@ -7,6 +7,7 @@ use Application\Entity\Db\TypeRapport;
 use Application\Entity\Db\TypeValidation;
 use Application\Form\Rapport\RapportForm;
 use Application\Form\RapportCsiForm;
+use ComiteSuiviIndividuel\Service\Membre\MembreService;
 use Fichier\Service\Fichier\FichierService;
 use Individu\Service\IndividuService;
 use Application\Service\Notification\NotifierService;
@@ -36,6 +37,8 @@ class RapportCsiControllerFactory
          * @var IndividuService       $individuService
          * @var ValidationService     $validationService
          * @var RapportForm           $rapportForm
+         *
+         * @var MembreService $membreService
          */
         $theseService = $container->get('TheseService');
         $fichierService = $container->get(FichierService::class);
@@ -49,6 +52,8 @@ class RapportCsiControllerFactory
         $typeRapport = $rapportService->findTypeRapportByCode(TypeRapport::RAPPORT_CSI);
         $typeValidation = $validationService->findTypeValidationByCode(TypeValidation::CODE_RAPPORT_CSI);
 
+        $membreService = $container->get(MembreService::class);
+
         $controller = new RapportCsiController();
         $controller->setTheseService($theseService);
         $controller->setRapportService($rapportService);
@@ -61,6 +66,7 @@ class RapportCsiControllerFactory
         $controller->setAnneesUnivs($theseAnneeUnivService);
         $controller->setTypeRapport($typeRapport);
         $controller->setTypeValidation($typeValidation);
+        $controller->setMembreService($membreService);
 
         $theseService->attach($controller->getEventManager());
 

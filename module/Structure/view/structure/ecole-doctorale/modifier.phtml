@@ -19,13 +19,14 @@ use Application\View\Renderer\PhpRenderer;
 /** @var EcoleDoctorale $ecole */
 $ecole = $form->getObject();
 $isNew = $ecole->getId() === null;
-$estSubstituante = $ecole->getStructure()->estStructureSubstituante();
+$estSubstituee = $ecole->getStructure()->estSubstituee();
+$estModifiable = !($ecole->getSource()->getImportable());
 $fcg = $this->formControlGroup();
 $this->headTitle("Modification de l'école doctorale ".$ecole->getStructure()->getCode());
 
-$editable = $isNew || $estSubstituante;
-//$form->get('libelle')->setAttribute('readonly', !$editable);
-//$form->get('sigle')->setAttribute('readonly', !$editable);
+$editable = $isNew || (!$estSubstituee AND $estModifiable);
+$form->get('libelle')->setAttribute('readonly', !$editable);
+$form->get('sigle')->setAttribute('readonly', !$editable);
 $form->get('code')->setAttribute('readonly', !$editable);
 ?>
 
@@ -36,6 +37,27 @@ $form->get('code')->setAttribute('readonly', !$editable);
         Modification de l'école doctorale &laquo; <?php echo $ecole->getStructure()->getLibelle(); ?> &raquo;
     <?php endif ?>
 </h1>
+
+<?php if (!$editable) : ?>
+<div class="alert alert-warning">
+        <p>
+        <?php if (!$estModifiable) : ?>
+            <span class="icon icon-attention"></span>
+            <strong>La source (<?php echo $ecole->getSource()->getLibelle(); ?>) ne permet pas de modification.</strong>
+            <br/>
+        <?php endif; ?>
+        <?php if ($estSubstituee) : ?>
+            <span class="icon icon-attention"></span>
+            <strong>La structure est substituée et ne doit pas être modifiée.</strong>
+            <br/>
+        <?php endif; ?>
+        </p>
+
+    <p>
+        Par conséquent, vous ne pouvez pas modifier les champs : libellé, sigle et code.
+    </p>
+</div>
+<?php endif; ?>
 
 <?php echo $this->form()->openTag($form->prepare()->setAttribute('class', 'ecole-doctorale')) ?>
 <div class="row">

@@ -2,11 +2,11 @@
 
 namespace StepStar\Service\Log;
 
-use These\Service\These\TheseServiceAwareTrait;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\ORMException;
 use DoctrineModule\Persistence\ProvidesObjectManager;
 use StepStar\Entity\Db\Log;
+use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 
 /**
@@ -27,16 +27,20 @@ class LogService
      *
      * @param string|null $operation
      * @param string|null $command
+     * @param string|null $tag
      * @return \StepStar\Entity\Db\Log
      */
-    public function newLog(?string $operation = null, ?string $command = null): Log
+    public function newLog(?string $operation = null, ?string $command = null, ?string $tag = null): Log
     {
         $log = new Log();
-        if ($operation) {
+        if ($operation !== null) {
             $log->setOperation($operation);
         }
-        if ($command) {
+        if ($command !== null) {
             $log->setCommand($command);
+        }
+        if ($tag !== null) {
+            $log->setTag($tag);
         }
         $log->setStartedOn();
 
@@ -49,11 +53,12 @@ class LogService
      * @param int $theseId
      * @param string|null $operation
      * @param string|null $command
+     * @param string|null $tag
      * @return \StepStar\Entity\Db\Log
      */
-    public function newLogForThese(int $theseId, ?string $operation = null, ?string $command = null): Log
+    public function newLogForThese(int $theseId, ?string $operation = null, ?string $command = null, ?string $tag = null): Log
     {
-        $log = $this->newLog($operation, $command);
+        $log = $this->newLog($operation, $command, $tag);
         $log->setTheseId($theseId);
 
         return $log;
@@ -94,26 +99,9 @@ class LogService
     }
 
     /**
-     * Enregistre le Log courant en bdd avec le statut spécifié.
+     * Enregistre le Log spécifié en bdd.
      *
      * @param \StepStar\Entity\Db\Log $log
-     * @param bool $success
-     * @param bool $hasProblems
-     */
-    public function saveLogWithStatus(Log $log, bool $success, bool $hasProblems = false)
-    {
-        $log->setSuccess($success);
-        $log->setHasProblems($hasProblems);
-        $log->setEndedOn();
-        try {
-            $this->saveLog($log);
-        } catch (ORMException $e) {
-            throw new RuntimeException("Erreur rencontrée pendant l'enregistrement du log", null, $e);
-        }
-    }
-
-    /**
-     * @throws \Doctrine\ORM\ORMException
      */
     public function saveLog(Log $log)
     {
@@ -125,7 +113,13 @@ class LogService
             }
         }
 
-        $this->objectManager->persist($log);
-        $this->objectManager->flush($log);
+        $log->setEndedOn();
+
+        try {
+            $this->objectManager->persist($log);
+            $this->objectManager->flush($log);
+        } catch (ORMException $e) {
+            throw new RuntimeException("Erreur rencontrée pendant l'enregistrement du log", null, $e);
+        }
     }
 }

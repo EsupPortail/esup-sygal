@@ -10,17 +10,19 @@ class Log
 {
     const OPERATION__ENVOI = 'ENVOI';
     const OPERATION__GENERATION_XML = 'GENERATION_XML';
+    const OPERATION__SYNTHESE = 'SYNTHESE';
 
     private int $id;
     private string $operation;
     private string $command;
     private ?string $tefFileContentHash;
     private ?string $tefFileContent;
-    private bool $success;
+    private bool $success = false;
     private string $log = '';
     private DateTime $startedOn;
     private DateTime $endedOn;
     private bool $hasProblems = false;
+    private ?string $tag = null;
 
     private ?int $theseId = null;
     private ?These $these = null;
@@ -130,11 +132,12 @@ class Log
     }
 
     /**
+     * @param int $length
      * @return string
      */
-    public function getTruncatedLog(): string
+    public function getTruncatedLog(int $length = 120): string
     {
-        return mb_substr($this->log, 0, 120);
+        return mb_substr($this->log, 0, $length);
     }
 
     /**
@@ -254,6 +257,22 @@ class Log
     public function setHasProblems(bool $hasProblems): void
     {
         $this->hasProblems = $hasProblems;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTag(): ?string
+    {
+        return $this->tag;
+    }
+
+    /**
+     * @param string|null $tag
+     */
+    public function setTag(?string $tag): void
+    {
+        $this->tag = $tag;
     }
 
     /**

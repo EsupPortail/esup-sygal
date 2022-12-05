@@ -95,7 +95,7 @@ class Membre implements HistoriqueAwareInterface {
      */
     public function getDenomination()
     {
-        return $this->prenom." ".$this->getNom();
+        return (($this->getGenre()==='F')?"Mme":"M").' '.$this->prenom." ".strtoupper($this->getNom());
     }
 
     /**

@@ -22,18 +22,20 @@ class EnvoiConsoleController extends AbstractConsoleController
 
         $these = $this->params()->fromRoute('these'); // ex : '12345' ou '12345,12346'
         $etat = $this->params()->fromRoute('etat'); // ex : 'E' ou 'E,S'
+        $dateSoutenanceMin = $this->params()->fromRoute('date-soutenance-min'); // ex : '2022-03-11' ou '6m'
         $etablissement = $this->params()->fromRoute('etablissement'); // ex : 'UCN' ou 'UCN,URN'
         $force = (bool) $this->params()->fromRoute('force');
+        $logTag = $this->params()->fromRoute('tag');
 
-        $criteria = array_filter(compact('these', 'etat', 'etablissement'));
+        $criteria = array_filter(compact('these', 'etat', 'dateSoutenanceMin', 'etablissement'));
 
         $theses = $this->fetchService->fetchThesesByCriteria($criteria);
         if (empty($theses)) {
             throw new InvalidArgumentException("Aucune these trouvee avec les criteres specifies");
         }
 
-        $this->envoiFacade->setSaveLog(true);
-        $logs = $this->envoiFacade->envoyerTheses($theses, $force, $command);
+        $this->envoiFacade->setSaveLogs(true);
+        $logs = $this->envoiFacade->envoyerTheses($theses, $force, $command, $logTag);
 
         /** @var \StepStar\Entity\Db\Log $log */
         foreach ($logs as $log) {
