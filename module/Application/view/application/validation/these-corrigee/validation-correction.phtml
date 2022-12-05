@@ -102,4 +102,4 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_CORRE
 
 <?php echo $this->messenger()
     ->setContainerClassesToAdd('alert-md')
-    ->addMessagesFromFlashMessenger($typeValidation->getCode() . '/*') ?>
+    ->addMessagesFromFlashMessengerWithNamespace($typeValidation->getCode() . '/*') ?>

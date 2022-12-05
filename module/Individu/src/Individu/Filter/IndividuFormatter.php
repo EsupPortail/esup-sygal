@@ -87,7 +87,6 @@ class IndividuFormatter extends AbstractFilter {
     private function doFormatUnorderedList($individus) {
         $individus = array_map([$this, 'htmlifyActeur'], $individus);
         $helper = new HtmlList();
-        $helper->setView(new PhpRenderer());
         $results = $helper($individus, $ordered = false, $attribs = false, $escape = false);
         return $results;
     }

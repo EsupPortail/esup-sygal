@@ -33,7 +33,7 @@ or $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges
 
 <?php
 $messenger = $this->messenger();
-echo $messenger->addMessagesFromFlashMessenger();
+echo $messenger->addMessagesFromFlashMessengerWithNoNamespace()();
 ?>
 
 <p>

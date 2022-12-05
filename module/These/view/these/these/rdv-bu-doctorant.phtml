@@ -22,7 +22,7 @@ $canEdit = $this->isAllowed($these, ThesePrivileges::THESE_SAISIE_RDV_BU);
 $rdvBu = $these->getRdvBu();
 ?>
 
-<?php $this->headTitle("Rendez-vous avec la bibliothèque universitaire")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+<?php $this->headTitle("Rendez-vous avec la bibliothèque universitaire")->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
 
 <h1 class="page-header">Rendez-vous avec la bibliothèque universitaire
     <small><?php echo $this->partial('these/these/partial/titre') ?></small>

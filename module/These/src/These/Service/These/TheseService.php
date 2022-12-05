@@ -33,7 +33,7 @@ use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Assert\Assertion;
 use DateTime;
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;

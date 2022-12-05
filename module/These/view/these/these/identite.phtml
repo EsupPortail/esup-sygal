@@ -51,7 +51,7 @@ $financementFormatter->setSortBy(FinancementFormatter::SORT_BY_DATE);
 $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 ?>
 
-<?php $this->headTitle($this->translate("Thèse"))->prepend($these->getDoctorant()->getNomUsuel()) ?>
+<?php $this->headTitle($this->translate("Thèse"))->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
 
 <?php echo $this->alertes()
     ->withCode(Constants::ALERTE_FERMETURE_ESTIVALE)

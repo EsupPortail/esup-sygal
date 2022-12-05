@@ -28,7 +28,7 @@ $canEdit = $this->isAllowed($these, $privilege);
 $pageDepotThese = $this->navigation('navigation')->getContainer()->findOneBy('id', 'depot');
 ?>
 
-<?php $this->headTitle("Archivage")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+<?php $this->headTitle("Archivage")->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
 
 <h1 class="page-header">Archivage
     <small><?php echo $this->partial('these/these/partial/titre') ?></small>

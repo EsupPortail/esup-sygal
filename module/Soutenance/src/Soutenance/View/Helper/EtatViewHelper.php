@@ -17,7 +17,7 @@ class EtatViewHelper extends AbstractHelper
     public function render($etat, $options = []) {
 
         /** @var PhpRenderer $view */
-        $view = $this->getView();
+        $view = $this->view;
         $view->resolver()->attach(new TemplatePathStack(['script_paths' => [__DIR__ . "/partial"]]));
         $texte = $view->partial('etat', ['etat' => $etat, 'options' => $options]);
         return $texte;

@@ -31,7 +31,6 @@ use UnicaenApp\View\Helper\AppInfos;
  * @method \Laminas\View\Helper\EscapeJs                                escapejs($value, $recurse = 0)
  * @method \Laminas\View\Helper\EscapeCss                               escapecss($value, $recurse = 0)
  * @method \Laminas\View\Helper\EscapeUrl                               escapeurl($value, $recurse = 0)
- * @method \Laminas\View\Helper\Gravatar                                gravatar($email = '', $options = [], $attribs = [])
  * @method \Laminas\View\Helper\HtmlTag                                 htmltag(array $attribs = [])
  * @method \Laminas\View\Helper\HeadMeta                                headmeta($content = null, $keyValue = null, $keyType = 'name', $modifiers = [], $placement = 'APPEND')
  * @method \Laminas\View\Helper\HeadStyle                               headstyle($content = null, $placement = 'APPEND', $attributes = [])

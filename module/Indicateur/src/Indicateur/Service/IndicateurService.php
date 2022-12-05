@@ -2,7 +2,7 @@
 
 namespace Indicateur\Service;
 
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Indicateur\Model\Indicateur;
@@ -51,8 +51,7 @@ class IndicateurService {
         try {
             $sql = "SELECT * FROM MV_INDICATEUR_" . $id;
             $query = $this->getEntityManager()->getConnection()->prepare($sql);
-            $query->execute();
-            return $query->fetchAll();
+            return $query->executeQuery()->fetchAllAssociative();
         } catch(\Exception $e) {
             throw new RuntimeException("Erreur lors de la récupération de l'indiciateur #".$id, 0, $e);
         }
@@ -125,7 +124,7 @@ class IndicateurService {
         } catch (DBALException $e) {
             throw new RuntimeException("Un problème s'est produit lors de création de la vue matérialisée.");
         }
-        $stmt->execute(null);
+        $stmt->executeQuery();
     }
 
     /**
@@ -139,7 +138,7 @@ class IndicateurService {
         } catch (DBALException $e) {
             throw new RuntimeException("Un problème s'est produit lors de destruction de la vue matérialisée.");
         }
-        $stmt->execute(null);
+        $stmt->executeQuery();
     }
     /**
      * @param Indicateur $indicateur

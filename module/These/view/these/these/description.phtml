@@ -15,7 +15,7 @@ $privilege = ThesePrivileges::THESE_SAISIE_DESCRIPTION_($these->getCorrectionAut
 $canEdit = $this->isAllowed($these, $privilege);
 ?>
 
-<?php $this->headTitle("Signalement")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+<?php $this->headTitle("Signalement")->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
 
 <h1 class="page-header">Signalement <small><?php echo $this->partial('these/these/partial/titre') ?></small></h1>
 

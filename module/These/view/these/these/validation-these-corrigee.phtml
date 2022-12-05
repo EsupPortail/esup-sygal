@@ -25,7 +25,7 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_DEPOT
 
 ?>
 
-<?php $this->headTitle("Validations")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+<?php $this->headTitle("Validations")->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
 
 <h1 class="page-header">Validations
     <small><?php echo $this->partial('these/these/partial/titre') ?></small>

@@ -23,7 +23,7 @@ $justification = true;
     Bonjour,
 </p>
 <p>
-    Vous pouvez commencer à examiner les travaux thèse de <strong><?php echo $these->getDoctorant()->getNomComplet(); ?></strong>,
+    Vous pouvez commencer à examiner les travaux thèse de <strong><?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?></strong>,
     ayant pour titre <strong><?php echo $these->getTitre(); ?></strong>.
     Par la suite, vous devez établir un rapport incluant votre avis sur la soutenance et votre signature au moins 14 jours
     avant la date de soutenance, puis le déposer sur la plateforme <?php echo $this->appInfos()->nom ?> à l’adresse
@@ -50,7 +50,7 @@ $justification = true;
 </p>
 <p>
     Since you have signed the "impartiality commitment", you can start the evaluation of the PhD thesis presented by
-    <strong><?php echo $these->getDoctorant()->getNomComplet(); ?></strong>, entitled <strong><?php echo $these->getTitre(); ?></strong>.
+    <strong><?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?></strong>, entitled <strong><?php echo $these->getTitre(); ?></strong>.
     Then, you must give your opinion about the PhD thesis and upload your signed PhD report at least 14 days before the
     date of the PhD defense at : <strong><a href="<?php echo $url; ?>">Access your SyGAL dashboard</a></strong>.
 </p>

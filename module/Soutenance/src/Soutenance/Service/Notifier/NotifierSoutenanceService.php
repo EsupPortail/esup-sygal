@@ -886,7 +886,7 @@ class NotifierSoutenanceService extends NotifierService
 
         $notif = new Notification();
         $notif
-            ->setSubject("Convocation pour la soutenance de thèse de  " . $doctorant->getNomComplet())
+            ->setSubject("Convocation pour la soutenance de thèse de  " . $doctorant->getIndividu()->getNomComplet())
             ->setTo($email)
             ->setTemplatePath('soutenance/notification/convocation-doctorant')
             ->setTemplateVariables([
@@ -921,7 +921,7 @@ class NotifierSoutenanceService extends NotifierService
 
         $notif = new Notification();
         $notif
-            ->setSubject("Convocation pour la soutenance de thèse de  " . $doctorant->getNomComplet())
+            ->setSubject("Convocation pour la soutenance de thèse de  " . $doctorant->getIndividu()->getNomComplet())
             ->setTo($email)
             ->setTemplatePath('soutenance/notification/convocation-membre')
             ->setTemplateVariables([

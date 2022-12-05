@@ -2,7 +2,7 @@
 
 namespace Application\Filter;
 
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use UnicaenApp\Exception\RuntimeException;
 use Laminas\Filter\AbstractFilter;
 

@@ -99,7 +99,6 @@ class RolesUtilisateurFormatter extends AbstractFilter
     {
         if ($this->asUl) {
             $helper = new HtmlList();
-            $helper->setView(new PhpRenderer());
             $result = $helper($roles, $ordered = false, $attribs = false, $escape = false);
         }
         elseif ($this->asSeparated) {

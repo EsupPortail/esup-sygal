@@ -46,8 +46,8 @@ use Application\View\Renderer\PhpRenderer;
     et l’auteur identifié ci-dessous :
 </p>
 <p>
-    <strong>Nom :</strong> <?php echo $these->getDoctorant()->getNomUsuel() ?> <br>
-    <strong>Prénom :</strong> <?php echo $these->getDoctorant()->getPrenom() ?> <br>
+    <strong>Nom :</strong> <?php echo $these->getDoctorant()->getIndividu()->getNomUsuel() ?> <br>
+    <strong>Prénom :</strong> <?php echo $these->getDoctorant()->getIndividu()->getPrenom() ?> <br>
     <strong>Etablissement de préparation :</strong> <?php echo $libEtablissement ?> <br>
 
     <?php if ($these->getDateSoutenance()): ?>
