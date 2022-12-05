@@ -2,6 +2,7 @@
 
 namespace Soutenance\Service\Validation;
 
+use Doctrine\ORM\EntityRepository;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Repository\ValidationRepository;
 use These\Entity\Db\These;
@@ -15,6 +16,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use UnicaenAvis\Entity\Db\AvisTypeValeur;
 
 class ValidationService
 {
@@ -27,7 +29,9 @@ class ValidationService
      */
     public function getRepository()
     {
-        return $this->entityManager->getRepository(Validation::class);
+        /** @var ValidationRepository $repo */
+        $repo = $this->entityManager->getRepository(Validation::class);
+        return $repo;
     }
 
     /**

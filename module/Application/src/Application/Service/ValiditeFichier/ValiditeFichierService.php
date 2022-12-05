@@ -2,10 +2,10 @@
 
 namespace Application\Service\ValiditeFichier;
 
-use Application\Entity\Db\ValiditeFichier;
-use These\Entity\Db\FichierThese;
 use Application\Entity\Db\Repository\ValiditeFichierRepository;
+use Application\Entity\Db\ValiditeFichier;
 use Application\Service\BaseService;
+use These\Entity\Db\FichierThese;
 
 /**
  * Created by PhpStorm.
@@ -20,7 +20,9 @@ class ValiditeFichierService extends BaseService
      */
     public function getRepository()
     {
-        return $this->entityManager->getRepository(ValiditeFichier::class);
+        /** @var ValiditeFichierRepository $repo */
+        $repo = $this->entityManager->getRepository(ValiditeFichier::class);
+        return $repo;
     }
 
     /**

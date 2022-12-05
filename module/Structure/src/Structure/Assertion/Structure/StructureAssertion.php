@@ -82,6 +82,7 @@ class StructureAssertion extends AbstractAssertion
     protected function getRouteMatch(): RouteMatch
     {
         /** @var \Application\RouteMatch $rm */
-        return $this->getMvcEvent()->getRouteMatch();
+        $rm = $this->getMvcEvent()->getRouteMatch();
+        return $rm;
     }
 }

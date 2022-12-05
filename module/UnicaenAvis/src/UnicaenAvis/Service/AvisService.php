@@ -19,22 +19,30 @@ class AvisService
 
     protected function getAvisTypeRepository(): EntityRepository
     {
-        return $this->objectManager->getRepository(AvisType::class);
+        /** @var EntityRepository $repo */
+        $repo = $this->objectManager->getRepository(AvisType::class);
+        return $repo;
     }
 
     protected function getAvisValeurRepository(): EntityRepository
     {
-        return $this->objectManager->getRepository(AvisValeur::class);
+        /** @var EntityRepository $repo */
+        $repo = $this->objectManager->getRepository(AvisValeur::class);
+        return $repo;
     }
 
     protected function getAvisTypeValeurRepository(): EntityRepository
     {
-        return $this->objectManager->getRepository(AvisTypeValeur::class);
+        /** @var EntityRepository $repo */
+        $repo = $this->objectManager->getRepository(AvisTypeValeur::class);
+        return $repo;
     }
 
     protected function getAvisTypeValeurComplemRepository(): EntityRepository
     {
-        return $this->objectManager->getRepository(AvisTypeValeurComplem::class);
+        /** @var EntityRepository $repo */
+        $repo = $this->objectManager->getRepository(AvisTypeValeurComplem::class);
+        return $repo;
     }
 
     /**
