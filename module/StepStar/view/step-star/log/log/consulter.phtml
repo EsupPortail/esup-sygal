@@ -43,9 +43,6 @@ use StepStar\Provider\StepStarPrivileges;
             <?php endif ?>
         </dd>
 
-        <dt>Commande</dt>
-        <dd><pre><?php echo $log->getCommand() ?></pre></dd>
-
         <dt>Succès ?</dt>
         <dd><?php echo $log->isSuccessToString() ?></dd>
 
@@ -53,9 +50,15 @@ use StepStar\Provider\StepStarPrivileges;
             <dt>Commande à rejouer</dt>
             <dd><pre><?php echo Module::STEP_STAR__CONSOLE_ROUTE__ENVOYER_THESES . ' --these ' . $theseId ?></pre></dd>
         <?php endif ?>
+
+        <dt>Tag</dt>
+        <dd><?php echo $log->getTag() ?></dd>
     </dl>
 
     <dl class="col-md-8">
+        <dt>Commande</dt>
+        <dd><pre><?php echo $log->getCommand() ?></pre></dd>
+
         <dt>Log</dt>
         <dd class="<?php echo $log->isSuccess() ? '' : 'text-danger' ?>"><?php echo $log->getLogToHtml() ?></dd>
 

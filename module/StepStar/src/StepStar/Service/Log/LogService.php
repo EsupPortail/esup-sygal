@@ -27,16 +27,20 @@ class LogService
      *
      * @param string|null $operation
      * @param string|null $command
+     * @param string|null $tag
      * @return \StepStar\Entity\Db\Log
      */
-    public function newLog(?string $operation = null, ?string $command = null): Log
+    public function newLog(?string $operation = null, ?string $command = null, ?string $tag = null): Log
     {
         $log = new Log();
-        if ($operation) {
+        if ($operation !== null) {
             $log->setOperation($operation);
         }
-        if ($command) {
+        if ($command !== null) {
             $log->setCommand($command);
+        }
+        if ($tag !== null) {
+            $log->setTag($tag);
         }
         $log->setStartedOn();
 
@@ -49,11 +53,12 @@ class LogService
      * @param int $theseId
      * @param string|null $operation
      * @param string|null $command
+     * @param string|null $tag
      * @return \StepStar\Entity\Db\Log
      */
-    public function newLogForThese(int $theseId, ?string $operation = null, ?string $command = null): Log
+    public function newLogForThese(int $theseId, ?string $operation = null, ?string $command = null, ?string $tag = null): Log
     {
-        $log = $this->newLog($operation, $command);
+        $log = $this->newLog($operation, $command, $tag);
         $log->setTheseId($theseId);
 
         return $log;

@@ -45,12 +45,13 @@ class EnvoiFacade
     }
 
     /**
-     * @param array $theses
-     * @param bool $force
-     * @param string $command
+     * @param array $theses Thèses à envoyer
+     * @param bool $force Forcer l'envoi même si le contenu du TEF est identique au précédent envoi ?
+     * @param string $command Commande ayant déclenché l'envoi, inscrite dans les logs
+     * @param string|null $tag Eventuel tag commun à l'ensemble des logs qui seront produits
      * @return \Generator
      */
-    public function envoyerTheses(array $theses, bool $force, string $command): Generator
+    public function envoyerTheses(array $theses, bool $force, string $command, ?string $tag = null): Generator
     {
         $inputDir = sys_get_temp_dir() . '/' . uniqid('sygal_xml_input_');
         $outputDir = sys_get_temp_dir() . '/' . uniqid('sygal_xml_output_');
@@ -60,7 +61,7 @@ class EnvoiFacade
          * (Un Log unique est créé pour cette opération.)
          */
         $operation = Log::OPERATION__GENERATION_XML;
-        $this->newLog($operation, $command);
+        $this->newLog($operation, $command, $tag);
         $success = true;
         try {
             $this->genererXmlForThesesInDir($theses, $inputDir);
@@ -82,41 +83,54 @@ class EnvoiFacade
          * (Un Log par thèse est créé.)
          */
         $operation = Log::OPERATION__ENVOI;
-//        $this->newLog($operation, $command);
-//        $this->appendToLog("Envoi vers STEP/STAR des fichiers TEF presents dans $outputDir :");
-//        yield $this->log;
+        $nbEnvoisReussis = $nbEnvoisEchoues = $nbEnvoisInutiles = 0;
         $tefFilesPaths = $this->listXmlFilesInDirectory($outputDir);
         foreach ($tefFilesPaths as $i => $tefFilePath) {
             $theseId = $this->extractTheseIdFromTefFilePath($tefFilePath);
             $these = $theses[$theseId];
             $lastLog = $this->findLastLogForTheseAndOperation($theseId, $operation);
-            $this->newLogForThese($theseId, $operation, $command);
+            $this->newLogForThese($theseId, $operation, $command, $tag);
             $this->log->setTefFileContentHash(md5_file($tefFilePath));
             $success = true;
             $doctorantIdentite = $these['doctorant']['individu']['nomUsuel'] . ' ' . $these['doctorant']['individu']['prenom1'];
-            $message = sprintf(
-                "> Envoi %d/%d : These %d (%s) - Fichier '%s'",
-                $i + 1, count($tefFilesPaths), $theseId, $doctorantIdentite, $tefFilePath
-            );
             if ($force || $this->isEnvoiNecessaire($lastLog, $tefFilePath)) {
+                $message = sprintf(
+                    "> Envoi %d/%d : These %d (%s) - Fichier '%s'",
+                    $i + 1, count($tefFilesPaths), $theseId, $doctorantIdentite, $tefFilePath
+                );
                 $this->appendToLog($message);
                 try {
                     $this->envoyer($tefFilePath);
+                    $nbEnvoisReussis++;
                 } catch (Exception $e) {
+                    $nbEnvoisEchoues++;
                     $success = false;
                     $this->appendToLog("  :-( " . $e->getMessage());
                     $this->log->setTefFileContent(file_get_contents($tefFilePath)); // conservation du TEF envoyé
                 }
             } else {
-                $this->appendToLog($message . ' - ' . sprintf(
-                        "Inutile car identique au dernier envoi du %s.",
-                        $lastLog->getStartedOnToString()
-                    ));
+                $nbEnvoisInutiles++;
+                $message = sprintf(
+                    "> Envoi %d/%d inutile : These %d (%s) - Fichier '%s' - Inutile car identique au dernier envoi du %s.",
+                    $i + 1, count($tefFilesPaths), $theseId, $doctorantIdentite, $tefFilePath, $lastLog->getStartedOnToString()
+                );
+                $this->appendToLog($message);
             }
             $this->log->setSuccess($success);
             $this->saveCurrentLog();
             yield $this->log;
         }
+
+        $operation = Log::OPERATION__SYNTHESE;
+        $this->newLog($operation, $command, $tag);
+        $this->log->setSuccess(true);
+        $message = sprintf(
+            "Synthèse des envois : %d envois prévus / %d envois réussis / %d envois échoués / %d envois inutiles.",
+            count($tefFilesPaths), $nbEnvoisReussis, $nbEnvoisEchoues, $nbEnvoisInutiles
+        );
+        $this->appendToLog($message);
+        $this->saveCurrentLog();
+        yield $this->log;
     }
 
     private function saveCurrentLog()

@@ -2,7 +2,6 @@
 
 namespace StepStar\Service\Log\Recherche;
 
-use These\Entity\Db\These;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Search\Filter\TextSearchFilter;
 use Application\Search\SearchService;
@@ -13,6 +12,7 @@ use StepStar\Service\Log\LogServiceAwareTrait;
 use Structure\Entity\Db\Etablissement;
 use Structure\Search\Etablissement\EtablissementSearchFilter;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use These\Entity\Db\These;
 
 class LogSearchService extends SearchService
 {
@@ -35,6 +35,8 @@ class LogSearchService extends SearchService
         );
         $this->addFilter(
             EtablissementSearchFilter::newInstance()
+                ->setLabel("Étab. Thèse")
+                ->setWhereField('etab_structure.code')
                 ->setDataProvider(fn() => $this->fetchEtablissements())
         );
         $this->addFilter(
@@ -46,15 +48,26 @@ class LogSearchService extends SearchService
                 ->setData([
                     Log::OPERATION__GENERATION_XML => Log::OPERATION__GENERATION_XML,
                     Log::OPERATION__ENVOI => Log::OPERATION__ENVOI,
+                    Log::OPERATION__SYNTHESE => Log::OPERATION__SYNTHESE,
                 ])
         );
         $this->addFilter(
             (new SelectSearchFilter("Succès ?", 'success'))
                 ->setWhereField('log.success')
                 ->setData([
-                    1 => 'Oui',
-                    0 => 'Non',
+                    '1' => 'Oui',
+                    '0' => 'Non',
                 ])
+        );
+        $this->addFilter(
+            (new TextSearchFilter("Log", 'log'))
+                ->setUseLikeOperator()
+                ->setWhereField('log.log')
+        );
+        $this->addFilter(
+            (new TextSearchFilter("Tag", 'tag'))
+                ->setUseLikeOperator()
+                ->setWhereField('log.tag')
         );
     }
 
@@ -66,6 +79,8 @@ class LogSearchService extends SearchService
         return $this->logService->getRepository()->createQueryBuilder('log')
             ->leftJoin('log.these', 'these')
             ->leftJoin('these.doctorant', 'doctorant')
+            ->leftJoin('these.etablissement', 'etab')
+            ->leftJoin('etab.structure', 'etab_structure')
             ->orderBy('log.id', 'desc');
     }
 

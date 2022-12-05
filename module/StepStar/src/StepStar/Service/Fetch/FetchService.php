@@ -2,13 +2,16 @@
 
 namespace StepStar\Service\Fetch;
 
-use These\QueryBuilder\TheseQueryBuilder;
-use These\Service\These\TheseServiceAwareTrait;
+use DateInterval;
+use DateTime;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\QueryException;
+use Exception;
 use InvalidArgumentException;
 use LogicException;
 use RuntimeException;
+use These\QueryBuilder\TheseQueryBuilder;
+use These\Service\These\TheseServiceAwareTrait;
 
 class FetchService
 {
@@ -52,6 +55,7 @@ class FetchService
 
         $these = $criteria['these'] ?? null; // ex : '12345' ou '12345,12346'
         $etat = $criteria['etat'] ?? null; // ex : 'E' ou 'E,S'
+        $dateSoutenanceMin = $criteria['dateSoutenanceMin'] ?? null; // ex : '2022-03-11' ou '6m'
         $etablissement = $criteria['etablissement'] ?? null; // ex : 'UCN' ou 'UCN,URN'
 
         $qb = $this->createQueryBuilder();
@@ -63,6 +67,20 @@ class FetchService
             if ($etat !== null) {
                 $etats = array_map('trim', explode(',', $etat));
                 $qb->andWhereEtatIn($etats);
+            }
+            if ($dateSoutenanceMin !== null) {
+                // la contrainte sur la date de soutenance peut commencer par 'P', auquel cas on construit un DateInterval avec,
+                // ex : 'P6M' est traduit en "date de soutenance passée de 6 mois maxi"
+                if (stripos($dateSoutenanceMin, 'P') === 0) {
+                    try {
+                        $period = new DateInterval($dateSoutenanceMin);
+                    } catch (Exception $e) {
+                        throw new InvalidArgumentException(
+                            "La valeur '$dateSoutenanceMin' ne permet pas de construire un DateInterval", null, $e);
+                    }
+                    $dateSoutenanceMin = (new DateTime('today'))->sub($period)->format('Y-m-d');
+                }
+                $qb->andWhere('t.dateSoutenance >= :dateSoutMin')->setParameter('dateSoutMin', $dateSoutenanceMin);
             }
             if ($etablissement !== null) {
                 $codesEtabs = array_map('trim', explode(',', $etablissement));

@@ -5,7 +5,7 @@ namespace Doctorant\Search;
 use Application\Search\Filter\TextSearchFilter;
 use Doctrine\ORM\QueryBuilder;
 
-class DoctorantSearchFilter extends TextSearchFilter
+class DoctorantSearchFilter extends TextSearchFilter // todo : hériter de StrReducedTextSearchFilter
 {
     const NAME = 'doctorant';
 

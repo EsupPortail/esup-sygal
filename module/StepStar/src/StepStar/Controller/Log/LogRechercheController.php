@@ -10,6 +10,9 @@ use Laminas\Http\Response;
 use Laminas\Paginator\Paginator as LaminasPaginator;
 use Laminas\View\Model\ViewModel;
 
+/**
+ * @property \StepStar\Service\Log\Recherche\LogSearchService $searchService
+ */
 class LogRechercheController extends AbstractController implements SearchControllerInterface
 {
     use SearchControllerTrait;
