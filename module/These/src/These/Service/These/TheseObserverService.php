@@ -3,7 +3,6 @@
 namespace These\Service\These;
 
 use Application\Service\Notification\NotifierServiceAwareTrait;
-use Laminas\View\Model\ViewModel;
 
 class TheseObserverService
 {

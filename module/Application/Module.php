@@ -6,6 +6,10 @@ use Application\Event\UserAuthenticatedEventListener;
 use Application\Event\UserRoleSelectedEventListener;
 use Application\View\Helper\Navigation\MenuSecondaire;
 use Laminas\Config\Factory as ConfigFactory;
+use Laminas\EventManager\EventInterface;
+use Laminas\ModuleManager\Feature\AutoloaderProviderInterface;
+use Laminas\ModuleManager\Feature\BootstrapListenerInterface;
+use Laminas\ModuleManager\Feature\ConfigProviderInterface;
 use Unicaen\Console\Adapter\AdapterInterface as Console;
 use Laminas\Http\Request as HttpRequest;
 use Laminas\Mvc\MvcEvent;
@@ -13,9 +17,14 @@ use Laminas\Stdlib\Glob;
 use Laminas\View\Helper\Navigation;
 use Laminas\View\HelperPluginManager;
 
-class Module
+class Module implements BootstrapListenerInterface, AutoloaderProviderInterface, ConfigProviderInterface
 {
-    public function onBootstrap(MvcEvent $e)
+    /**
+     * @param MvcEvent $e
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    public function onBootstrap(EventInterface $e)
     {
         $application = $e->getApplication();
         $application->getServiceManager()->get('translator');
@@ -75,7 +84,7 @@ class Module
         return ConfigFactory::fromFiles($paths);
     }
 
-    public function getAutoloaderConfig()
+    public function getAutoloaderConfig(): array
     {
         return [
             'Laminas\Loader\StandardAutoloader' => [

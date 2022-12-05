@@ -3,7 +3,6 @@
 namespace Application\Form;
 
 use Laminas\Form\Form;
-use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Textarea;
 use Laminas\Form\Element\Submit;
 use Laminas\InputFilter\Factory;

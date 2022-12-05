@@ -10,7 +10,6 @@ use Application\Entity\Db\Role;
 use These\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
-use Application\Entity\UserWrapperFactory;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;

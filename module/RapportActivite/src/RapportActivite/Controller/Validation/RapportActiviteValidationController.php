@@ -5,7 +5,6 @@ namespace RapportActivite\Controller\Validation;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\TypeValidation;
 use Application\Service\Validation\ValidationServiceAwareTrait;
-use Doctrine\ORM\NoResultException;
 use Laminas\Http\Response;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Entity\Db\RapportActiviteValidation;

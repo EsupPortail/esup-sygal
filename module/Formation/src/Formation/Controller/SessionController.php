@@ -14,7 +14,6 @@ use Formation\Service\SessionStructureValide\SessionStructureValideServiceAwareT
 use Laminas\Http\Response;
 use Notification\Exception\NotificationException;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Fichier\Service\Fichier\FichierStorageService;
 use DateTime;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;

@@ -2,7 +2,6 @@
 
 namespace These\Form\Attestation;
 
-use These\Entity\Db\Attestation;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 
 class AttestationHydrator extends DoctrineObject

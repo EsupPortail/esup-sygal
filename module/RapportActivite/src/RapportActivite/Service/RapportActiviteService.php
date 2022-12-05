@@ -12,7 +12,6 @@ use RapportActivite\Service\Fichier\Exporter\PageValidationExportDataException;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Fichier\Service\Fichier\Exception\FichierServiceException;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
@@ -34,7 +33,6 @@ use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
 use RapportActivite\Service\Fichier\Exporter\PageValidationExportData;
 use RapportActivite\Service\Fichier\Exporter\PageValidationPdfExporterTrait;
 use RapportActivite\Service\Validation\RapportActiviteValidationServiceAwareTrait;
-use UnexpectedValueException;
 use UnicaenApp\Exception\RuntimeException;
 
 class RapportActiviteService extends BaseService

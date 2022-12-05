@@ -13,7 +13,6 @@ use Doctrine\Common\Collections\Collection;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenAvis\Entity\Db\AvisType;
 
 class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
 {

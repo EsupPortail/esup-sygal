@@ -12,7 +12,6 @@ use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Notifier\NotifierSoutenanceService;
 use Soutenance\Service\Proposition\PropositionService;
 use UnicaenAuthToken\Service\TokenService;
-use UnicaenAuthToken\Service\TokenServiceAwareTrait;
 use UnicaenRenderer\Service\Rendu\RenduService;
 
 class EngagementImpartialiteControllerFactory

@@ -5,7 +5,6 @@ namespace These\Filter;
 use These\Entity\Db\Acteur;
 use Laminas\View\Helper\HtmlList;
 use Laminas\Filter\AbstractFilter;
-use Laminas\View\Renderer\PhpRenderer;
 
 /** --- Class ActeursFormatteur ---
  * @var bool $asUl                      returned data type as unordered list (html)

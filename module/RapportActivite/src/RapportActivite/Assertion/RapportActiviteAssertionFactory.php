@@ -5,7 +5,6 @@ namespace RapportActivite\Assertion;
 use Application\Assertion\AbstractAssertion;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Psr\Container\ContainerInterface;
-use RapportActivite\Assertion\RapportActiviteAssertion;
 use RapportActivite\Rule\Televersement\RapportActiviteTeleversementRule;
 use RapportActivite\Service\RapportActiviteService;
 

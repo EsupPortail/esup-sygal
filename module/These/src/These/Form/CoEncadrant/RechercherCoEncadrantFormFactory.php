@@ -2,7 +2,6 @@
 
 namespace These\Form\CoEncadrant;
 
-use These\Form\CoEncadrant\RechercherCoEncadrantForm;
 use Interop\Container\ContainerInterface;
 
 class RechercherCoEncadrantFormFactory {

@@ -5,7 +5,6 @@ namespace Individu\Filter;
 use Individu\Entity\Db\Individu;
 use Laminas\View\Helper\HtmlList;
 use Laminas\Filter\AbstractFilter;
-use Laminas\View\Renderer\PhpRenderer;
 
 class IndividuFormatter extends AbstractFilter {
 

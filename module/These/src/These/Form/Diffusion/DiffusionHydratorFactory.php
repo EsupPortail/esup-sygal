@@ -2,7 +2,6 @@
 
 namespace These\Form\Diffusion;
 
-use These\Form\Diffusion\DiffusionHydrator;
 use Interop\Container\ContainerInterface;
 
 class DiffusionHydratorFactory

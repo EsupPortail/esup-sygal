@@ -2,8 +2,6 @@
 
 namespace These\Form\CoEncadrant;
 
-use These\Form\CoEncadrant\RechercherCoEncadrantForm;
-
 trait RechercherCoEncadrantFormAwareTrait {
 
     /** @var RechercherCoEncadrantForm */

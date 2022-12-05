@@ -2,7 +2,6 @@
 
 namespace These\Form\Metadonnees;
 
-use These\Form\Metadonnees\MetadonneeTheseForm;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Interop\Container\ContainerInterface;
 

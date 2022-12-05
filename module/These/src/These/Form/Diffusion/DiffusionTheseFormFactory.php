@@ -2,8 +2,6 @@
 
 namespace These\Form\Diffusion;
 
-use These\Form\Diffusion\DiffusionTheseForm;
-use These\Form\Diffusion\DiffusionHydrator;
 use Interop\Container\ContainerInterface;
 use UnicaenApp\Message\MessageService;
 

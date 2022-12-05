@@ -3,9 +3,6 @@
 namespace These\Controller\Factory;
 
 use These\Controller\TheseController;
-use These\Form\Attestation\AttestationTheseForm;
-use These\Form\Diffusion\DiffusionTheseForm;
-use These\Form\Metadonnees\MetadonneeTheseForm;
 use Application\Form\PointsDeVigilanceForm;
 use Application\Form\RdvBuTheseDoctorantForm;
 use Application\Form\RdvBuTheseForm;

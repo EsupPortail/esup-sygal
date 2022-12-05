@@ -6,7 +6,6 @@ use Application\QueryBuilder\DefaultQueryBuilder;
 use Doctorant\Entity\Db\Doctorant;
 use These\Entity\Db\These;
 use Application\QueryBuilder\Expr\AndWhereDoctorantIs;
-use Doctrine\ORM\Query\Expr\Join;
 
 /**
  * Class TheseQueryBuilder

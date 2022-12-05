@@ -4,7 +4,6 @@ namespace RapportActivite\Assertion\Avis;
 
 use Application\Assertion\AbstractAssertion;
 use Psr\Container\ContainerInterface;
-use RapportActivite\Assertion\Avis\RapportActiviteAvisAssertion;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
 use RapportActivite\Service\RapportActiviteService;
 

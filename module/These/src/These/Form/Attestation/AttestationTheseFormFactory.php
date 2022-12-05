@@ -2,8 +2,6 @@
 
 namespace These\Form\Attestation;
 
-use These\Form\Attestation\AttestationTheseForm;
-use These\Form\Attestation\AttestationHydrator;
 use Interop\Container\ContainerInterface;
 
 class AttestationTheseFormFactory

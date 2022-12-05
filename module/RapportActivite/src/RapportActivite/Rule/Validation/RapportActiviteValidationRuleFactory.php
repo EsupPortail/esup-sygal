@@ -3,7 +3,6 @@
 namespace RapportActivite\Rule\Validation;
 
 use Psr\Container\ContainerInterface;
-use RapportActivite\Rule\Validation\RapportActiviteValidationRule;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
 
 class RapportActiviteValidationRuleFactory

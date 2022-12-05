@@ -4,7 +4,6 @@ namespace Individu\Form;
 
 use Application\Form\Validator\NewEmailValidator;
 use Individu\Entity\Db\Individu;
-use Laminas\Filter\StringTrim;
 use Laminas\Filter\ToNull;
 use Laminas\Form\Element\Date;
 use Laminas\Form\Element\Hidden;

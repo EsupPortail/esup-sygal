@@ -2,7 +2,6 @@
 
 namespace These\Service\FichierThese;
 
-use Application\Command\Exception\TimedOutCommandException;
 use Doctrine\ORM\ORMException;
 use Fichier\Command\MergeShellCommand;
 use Fichier\Command\Pdf\AjoutPdcShellCommandQpdf;

@@ -4,10 +4,7 @@ namespace Application\QueryBuilder;
 
 use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
-use Application\Entity\Db\Validation;
 use Application\QueryBuilder\Expr\AndWhereTheseIs;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query\Expr\Join;
 
 class ValidationQueryBuilder extends DefaultQueryBuilder
 {

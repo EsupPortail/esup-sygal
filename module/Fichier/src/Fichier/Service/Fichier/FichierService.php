@@ -16,7 +16,6 @@ use Fichier\Service\Fichier\Exception\FichierServiceException;
 use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
-use Laminas\Filter\FilterInterface;
 use UnicaenApp\Exception\RuntimeException;
 use ZipArchive;
 

@@ -3,7 +3,6 @@
 namespace Retraitement\Filter\Command;
 
 use Application\Command\Exception\ShellCommandException;
-use UnicaenApp\Exception\RuntimeException;
 
 /**
  * Ligne de commande inspirée de celle fournie par Alexandre Granier (04 67 14 14 14, svp@cines.fr)

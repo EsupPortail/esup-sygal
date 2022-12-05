@@ -1,7 +1,6 @@
 <?php
 
 use Application\Navigation\ApplicationNavigationFactory;
-use Doctorant\Controller\DoctorantController;
 use Doctorant\Controller\DoctorantControllerFactory;
 use Doctorant\Provider\Privilege\DoctorantPrivileges;
 use Doctorant\Service\DoctorantService;

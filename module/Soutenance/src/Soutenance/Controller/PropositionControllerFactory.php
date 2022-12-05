@@ -2,7 +2,6 @@
 
 namespace Soutenance\Controller;
 
-use Information\Controller\InformationController;
 use Information\Service\InformationService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;

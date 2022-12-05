@@ -2,7 +2,6 @@
 
 use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Role;
-use Application\Service\Role\RoleService;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Privilege\Privileges;
 

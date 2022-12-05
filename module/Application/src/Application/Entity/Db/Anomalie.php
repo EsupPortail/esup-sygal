@@ -2,12 +2,6 @@
 
 namespace Application\Entity\Db;
 
-use UnicaenApp\Entity\HistoriqueAwareInterface;
-use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
-use Laminas\Form\Annotation;
-use Laminas\Permissions\Acl\Resource\ResourceInterface;
-
 /**
  * --- Class Anomalie ---
  */

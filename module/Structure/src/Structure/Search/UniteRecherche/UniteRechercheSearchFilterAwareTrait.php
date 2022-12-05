@@ -2,8 +2,6 @@
 
 namespace Structure\Search\UniteRecherche;
 
-use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
-
 trait UniteRechercheSearchFilterAwareTrait
 {
     /**

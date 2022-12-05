@@ -6,7 +6,6 @@ use Application\Entity\Db\Financement;
 use Application\Entity\Db\OrigineFinancement;
 use Application\Provider\Privilege\FinancementPrivileges;
 use Application\Service\AuthorizeServiceAwareTrait;
-use Application\View\Helper\FinancementFormatterHelper;
 use UnicaenApp\Exception\LogicException;
 use UnicaenAuth\Service\AuthorizeService;
 

@@ -4,7 +4,6 @@ namespace Structure\Controller;
 
 use Application\Controller\AbstractController;
 use Structure\Entity\Db\EcoleDoctorale;
-use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
 use Structure\Entity\Db\Etablissement;

@@ -2,7 +2,6 @@
 
 namespace Doctorant\Form;
 
-use Application\Entity\Db\Rapport;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Radio;
@@ -49,8 +48,6 @@ class ConsentementForm extends Form implements InputFilterProviderInterface
                 'value' => 'Enregistrer',
             ],
         ]);
-
-        //$this->bind(new Consentement());
     }
 
     /**

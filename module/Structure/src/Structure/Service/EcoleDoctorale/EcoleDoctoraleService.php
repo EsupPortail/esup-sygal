@@ -5,7 +5,6 @@ namespace Structure\Service\EcoleDoctorale;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
 use Application\SourceCodeStringHelperAwareTrait;
-use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Structure\Entity\Db\EcoleDoctorale;

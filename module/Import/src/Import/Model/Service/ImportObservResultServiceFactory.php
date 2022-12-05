@@ -6,7 +6,6 @@ use Application\Service\Notification\NotifierService;
 use These\Service\These\TheseService;
 use Application\Service\Variable\VariableService;
 use Doctrine\ORM\EntityManager;
-use Import\Model\Service\ImportObservResultService;
 use Interop\Container\ContainerInterface;
 use UnicaenDbImport\Config\Config;
 use Unicaen\Console\Request as ConsoleRequest;

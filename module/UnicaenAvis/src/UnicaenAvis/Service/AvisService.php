@@ -42,6 +42,7 @@ class AvisService
     {
         /** @var EntityRepository $repo */
         $repo = $this->objectManager->getRepository(AvisTypeValeurComplem::class);
+
         return $repo;
     }
 

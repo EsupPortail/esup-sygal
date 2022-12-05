@@ -2,8 +2,6 @@
 
 namespace Structure\Search\Etablissement;
 
-use Structure\Search\Etablissement\EtablissementSearchFilter;
-
 trait EtablissementInscSearchFilterAwareTrait
 {
     /**

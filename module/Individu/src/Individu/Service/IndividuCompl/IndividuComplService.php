@@ -3,13 +3,11 @@
 namespace Individu\Service\IndividuCompl;
 
 use Application\Service\BaseService;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\ORMException;
 use Individu\Entity\Db\IndividuCompl;
 use Individu\Entity\Db\Repository\IndividuComplRepository;
 use Laminas\Mvc\Controller\AbstractActionController;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenAvis\Entity\Db\AvisTypeValeur;
 
 class IndividuComplService extends BaseService
 {

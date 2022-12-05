@@ -3,7 +3,6 @@
 namespace Soutenance\Entity;
 
 use DateTime;
-use Soutenance\Entity\Proposition;
 
 class Evenement {
 

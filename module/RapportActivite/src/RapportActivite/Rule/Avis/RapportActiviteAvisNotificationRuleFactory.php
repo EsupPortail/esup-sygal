@@ -3,7 +3,6 @@
 namespace RapportActivite\Rule\Avis;
 
 use Psr\Container\ContainerInterface;
-use RapportActivite\Rule\Avis\RapportActiviteAvisNotificationRule;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
 
 class RapportActiviteAvisNotificationRuleFactory

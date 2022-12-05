@@ -6,10 +6,8 @@ use Application\Entity\AnneeUniv;
 use Structure\Entity\Db\Etablissement;
 use These\Entity\Db\TheseAnneeUniv;
 use Application\Service\BaseService;
-use DateTime;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-use stdClass;
 
 class TheseAnneeUnivService extends BaseService
 {

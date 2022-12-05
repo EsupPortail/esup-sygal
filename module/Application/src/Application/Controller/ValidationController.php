@@ -5,8 +5,6 @@ namespace Application\Controller;
 use These\Entity\Db\Acteur;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
-use Application\Notification\ValidationDepotTheseCorrigeeNotification;
-use These\Notification\ValidationPageDeCouvertureNotification;
 use Application\Notification\ValidationRdvBuNotification;
 use Application\Provider\Privilege\ValidationPrivileges;
 use Application\Service\Notification\NotifierServiceAwareTrait;

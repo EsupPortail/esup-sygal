@@ -15,7 +15,6 @@ use DateTime;
 use Indicateur\Form\IndicateurForm;
 use Indicateur\Model\Indicateur;
 use Indicateur\Service\IndicateurServiceAwareTrait;
-use Laminas\View\Model\JsonModel;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\View\Model\CsvModel;
 use Laminas\Http\Request;

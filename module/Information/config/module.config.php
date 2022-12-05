@@ -1,7 +1,6 @@
 <?php
 
 use Application\Entity\Db\Repository\DefaultEntityRepository;
-use Fichier\Provider\Privilege\FichierPrivileges;
 use Information\Controller\FichierController;
 use Information\Controller\FichierControllerFactory;
 use Information\Controller\InformationController;
@@ -18,7 +17,6 @@ use Information\Service\InformationLangue\InformationLangueService;
 use Information\Service\InformationLangue\InformationLangueServiceFactory;
 use Information\Service\InformationService;
 use Information\Service\InformationServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 use Laminas\Navigation\Service\NavigationAbstractServiceFactory;

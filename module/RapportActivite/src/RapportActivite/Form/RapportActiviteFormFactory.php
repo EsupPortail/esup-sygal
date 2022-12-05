@@ -3,7 +3,6 @@
 namespace RapportActivite\Form;
 
 use RapportActivite\Hydrator\RapportActiviteHydrator;
-use RapportActivite\Form\RapportActiviteForm;
 use Doctrine\ORM\EntityManager;
 use Psr\Container\ContainerInterface;
 

@@ -3,7 +3,6 @@
 namespace Notification\Service;
 
 use DateTime;
-use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Notification\Entity\NotifMail;
 use Notification\Entity\Service\NotifEntityServiceAwareTrait;

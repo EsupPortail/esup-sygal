@@ -3,11 +3,8 @@
 namespace These\Controller;
 
 use Application\Controller\AbstractController;
-use Structure\Entity\Db\EcoleDoctorale;
-use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\Role;
 use These\Entity\Db\These;
-use Structure\Entity\Db\UniteRecherche;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchResultPaginator;

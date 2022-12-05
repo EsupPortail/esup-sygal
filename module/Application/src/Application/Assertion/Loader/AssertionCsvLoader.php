@@ -2,7 +2,6 @@
 
 namespace Application\Assertion\Loader;
 
-use Application\Assertion\Loader\AssertionCsvLoaderResult;
 use UnicaenApp\Exception\LogicException;
 
 class AssertionCsvLoader

@@ -3,7 +3,6 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\IndexController;
-use Application\Service\Actualite\ActualiteService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;

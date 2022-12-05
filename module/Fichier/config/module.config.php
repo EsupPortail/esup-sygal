@@ -8,7 +8,6 @@ use Fichier\Controller\ConsoleController;
 use Fichier\Controller\Factory\ConsoleControllerFactory;
 use Fichier\Controller\IndexController;
 use Fichier\Controller\Factory\IndexControllerFactory;
-use Unicaen\Console\Router\Simple;
 
 return [
     'doctrine' => [
