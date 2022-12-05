@@ -43,9 +43,6 @@ use StepStar\Provider\StepStarPrivileges;
             <?php endif ?>
         </dd>
 
-        <dt>Commande</dt>
-        <dd><pre><?php echo $log->getCommand() ?></pre></dd>
-
         <dt>Succès ?</dt>
         <dd><?php echo $log->isSuccessToString() ?></dd>
 
@@ -59,6 +56,9 @@ use StepStar\Provider\StepStarPrivileges;
     </dl>
 
     <dl class="col-md-8">
+        <dt>Commande</dt>
+        <dd><pre><?php echo $log->getCommand() ?></pre></dd>
+
         <dt>Log</dt>
         <dd class="<?php echo $log->isSuccess() ? '' : 'text-danger' ?>"><?php echo $log->getLogToHtml() ?></dd>
 
