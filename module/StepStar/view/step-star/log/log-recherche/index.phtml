@@ -127,11 +127,11 @@ $this->headTitle("Logs");
                         </td>
 
                         <td class="<?php echo $log->isSuccess() ? '' : 'text-danger' ?>">
-                            <?php echo $log->getTruncatedLog(80) ?>
+                            <?php echo $log->getTruncatedLog(100) ?>
                         </td>
 
                         <td>
-                            <?php echo $log->getTag() ?>
+                            <span class="badge bg-secondary"><?php echo $log->getTag() ?></span>
                         </td>
 
                         <td class="action">

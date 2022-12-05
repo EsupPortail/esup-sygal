@@ -46,15 +46,21 @@ class LogSearchService extends SearchService
                 ->setData([
                     Log::OPERATION__GENERATION_XML => Log::OPERATION__GENERATION_XML,
                     Log::OPERATION__ENVOI => Log::OPERATION__ENVOI,
+                    Log::OPERATION__SYNTHESE => Log::OPERATION__SYNTHESE,
                 ])
         );
         $this->addFilter(
             (new SelectSearchFilter("Succès ?", 'success'))
                 ->setWhereField('log.success')
                 ->setData([
-                    1 => 'Oui',
-                    0 => 'Non',
+                    '1' => 'Oui',
+                    '0' => 'Non',
                 ])
+        );
+        $this->addFilter(
+            (new TextSearchFilter("Log", 'log'))
+                ->setUseLikeOperator()
+                ->setWhereField('log.log')
         );
         $this->addFilter(
             (new TextSearchFilter("Tag", 'tag'))
