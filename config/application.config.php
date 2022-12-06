@@ -37,7 +37,6 @@ return [
         'UnicaenDbImport',
         'UnicaenFaq',
         'UnicaenLivelog',
-        'UnicaenPdf',
         'UnicaenRenderer',
         'Unicaen\Console',
         'Structure',
