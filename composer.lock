@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "95f3842b23e13c458442d860c4f2928b",
+    "content-hash": "be4028c2cbd21d7ba65ec5614844da48",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -8584,7 +8584,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/app.git",
-                "reference": "c89c04fd569e85ced47093441479ae1695984d65"
+                "reference": "2861477e54e9d7a3c5166301fd25260d5380335f"
             },
             "require": {
                 "beberlei/assert": "^3.3",
@@ -8641,7 +8641,7 @@
                 ]
             },
             "description": "Module de base des applications unicaen",
-            "time": "2022-11-18T15:45:01+00:00"
+            "time": "2022-12-06T20:03:19+00:00"
         },
         {
             "name": "unicaen/auth",
@@ -8999,7 +8999,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/privilege.git",
-                "reference": "cd3c2b03e5d1fe0baf4e16ac7b8397f4f77b9bbf"
+                "reference": "2a6c1c052596049a06f1d131c968b7351cb4dc2c"
             },
             "require": {
                 "laminas/laminas-dependency-plugin": "^2.2",
@@ -9018,7 +9018,7 @@
                 ]
             },
             "description": "Module reprenant la gestion des privileges  - Version laminas",
-            "time": "2022-12-06T11:30:56+00:00"
+            "time": "2022-12-06T19:45:33+00:00"
         },
         {
             "name": "unicaen/renderer",

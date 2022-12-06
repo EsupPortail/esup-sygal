@@ -49,7 +49,7 @@
         "unicaen/faq": "^6.0",
         "unicaen/ldap": "dev-bg-php8",
         "unicaen/livelog": "^2.0",
-        "unicaen/renderer": "dev-bg-php8",
+        "unicaen/renderer": "dev-bg-php8"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
