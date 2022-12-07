@@ -3,13 +3,10 @@
 namespace StepStar;
 
 use Laminas\Config\Factory as ConfigFactory;
-use Laminas\Console\Adapter\AdapterInterface;
-use Laminas\ModuleManager\Feature\ConsoleBannerProviderInterface;
-use Laminas\ModuleManager\Feature\ConsoleUsageProviderInterface;
 use Laminas\Stdlib\Glob;
 use StepStar\Controller\Envoi\EnvoiConsoleController;
 
-class Module implements ConsoleBannerProviderInterface, ConsoleUsageProviderInterface
+class Module
 {
     // Nom du module
     const NAME = __NAMESPACE__;
@@ -39,7 +36,7 @@ class Module implements ConsoleBannerProviderInterface, ConsoleUsageProviderInte
     /**
      * @inheritDoc
      */
-    public function getConsoleBanner(AdapterInterface $console): ?string
+    public function getConsoleBanner(): ?string
     {
         return "StepStar Module";
     }
@@ -47,7 +44,7 @@ class Module implements ConsoleBannerProviderInterface, ConsoleUsageProviderInte
     /**
      * @inheritDoc
      */
-    public function getConsoleUsage(AdapterInterface $console)
+    public function getConsoleUsage()
     {
         return [
             /**

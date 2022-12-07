@@ -7,11 +7,10 @@ use Application\Event\UserRoleSelectedEventListener;
 use Application\View\Helper\Navigation\MenuSecondaire;
 use Laminas\Config\Factory as ConfigFactory;
 use Laminas\EventManager\EventInterface;
+use Laminas\Http\Request as HttpRequest;
 use Laminas\ModuleManager\Feature\AutoloaderProviderInterface;
 use Laminas\ModuleManager\Feature\BootstrapListenerInterface;
 use Laminas\ModuleManager\Feature\ConfigProviderInterface;
-use Unicaen\Console\Adapter\AdapterInterface as Console;
-use Laminas\Http\Request as HttpRequest;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Stdlib\Glob;
 use Laminas\View\Helper\Navigation;
@@ -95,7 +94,7 @@ class Module implements BootstrapListenerInterface, AutoloaderProviderInterface,
         ];
     }
 
-    public function getConsoleUsage(Console $console)
+    public function getConsoleUsage()
     {
         return [
             // Describe available commands

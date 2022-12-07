@@ -3,7 +3,6 @@
 namespace These;
 
 use Laminas\Config\Factory as ConfigFactory;
-use Laminas\Console\Adapter\AdapterInterface as Console;
 use Laminas\Stdlib\Glob;
 
 class Module
@@ -29,7 +28,7 @@ class Module
         ];
     }
 
-    public function getConsoleUsage(Console $console): array
+    public function getConsoleUsage(): array
     {
         return [
             // Describe available commands
