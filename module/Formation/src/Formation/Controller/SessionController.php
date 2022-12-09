@@ -323,11 +323,12 @@ class SessionController extends AbstractController
             $etablissements = array_map(function (These $t) { return ($t->getEtablissement())?$t->getEtablissement()->getStructure()->getLibelle():"Établissement non renseigné";}, $theses);
             $ecoles = array_map(function (These $t) { return ($t->getEcoleDoctorale())?$t->getEcoleDoctorale()->getStructure()->getLibelle():"École doctorale non renseignée";}, $theses);
             $unites = array_map(function (These $t) { return ($t->getUniteRecherche())?$t->getUniteRecherche()->getStructure()->getLibelle():"Unité de recherche non renseignée";}, $theses);
+            $nbInscription = (!empty($theses))?current($theses)->getNbInscription($annee):"---";
             $entry = [
                 'Liste' => $inscription->getListe(),
                 'Dénomination étudiant' => $doctorant->getIndividu()->getNomComplet(),
-                'Adresse électronique' => $doctorant->getIndividu()->getEmailPro(),
-                'Année de thèse' => current($theses)->getNbInscription($annee),
+                'Adresse électronique' => $doctorant->getIndividu()->getEmail(),
+                'Année de thèse' => $nbInscription,
                 'Établissement' => implode("/",$etablissements),
                 'École doctorale' => implode("/",$ecoles),
                 'Unité de recherche' => implode("/",$unites),

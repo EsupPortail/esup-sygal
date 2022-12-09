@@ -86,7 +86,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
         <?php
         $content = $logoContent;
         if ($content === null) {
-            $form->getObject()->setCheminLogo(null);
+            $form->getObject()->getStructure()->setCheminLogo(null);
         }
         ?>
         <table>

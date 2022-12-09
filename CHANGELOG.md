@@ -14,6 +14,7 @@ Journal des modifications
 - [FIX] Retrait de la liste complémentaire du mail d'echec
 - [FIX] Ordonnancement des séances sur les index des formations et des sessions 
 - [FIX] Correction paramètre de route erronée + suppression bouton inactif 
+- [FIX] Correction du bug de comptage d'année si pas de thèse
 
 5.2.6
 -----
