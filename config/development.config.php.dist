@@ -3,12 +3,16 @@
 return [
     // Development time modules
     'modules' => [
+        'Laminas\ApiTools\Admin',
+        'Laminas\ApiTools\Configuration',
+
         'Laminas\DeveloperTools',
 //        'UnicaenCode',
         'UnicaenTest',
     ],
 
     'module_listener_options' => [
+        'config_glob_paths' => ['config/autoload/{,*.}{global,local}-development.php'],
         'config_cache_enabled'     => false,
         'module_map_cache_enabled' => false,
         'check_dependencies'       => true,

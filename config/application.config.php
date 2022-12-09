@@ -25,8 +25,26 @@ return [
 
         'DoctrineModule',
         'DoctrineORMModule',
+
+        'ApiSkeletons\DoctrineORMHydrationModule',
+        'Laminas\ApiTools',
+        'Laminas\ApiTools\Provider',
+        'Laminas\ApiTools\Doctrine\Server',
+        'Laminas\ApiTools\Doctrine\QueryBuilder',
+        'Laminas\ApiTools\Documentation',
+        'Laminas\ApiTools\Documentation\Swagger',
+        'Laminas\ApiTools\ApiProblem',
+        'Laminas\ApiTools\MvcAuth',
+        'Laminas\ApiTools\OAuth2',
+        'Laminas\ApiTools\Hal',
+        'Laminas\ApiTools\ContentNegotiation',
+        'Laminas\ApiTools\ContentValidation',
+        'Laminas\ApiTools\Rest',
+        'Laminas\ApiTools\Rpc',
+        'Laminas\ApiTools\Versioning',
+
         'ZfcUser',
-        'BjyAuthorize' => 'BjyAuthorize',
+        'BjyAuthorize',
         'UnicaenApp',
         'UnicaenAlerte',
         'UnicaenAuth',
@@ -42,6 +60,7 @@ return [
         'UnicaenRenderer',
         'Unicaen\Console',
         'UnicaenParametre',
+
         'Horodatage',
         'Structure',
         'These',
@@ -60,6 +79,7 @@ return [
         'Doctorant',
         'StepStar',
         'Application',
+        'Api',
     ],
     'module_listener_options' => [
         'config_glob_paths'    => [
