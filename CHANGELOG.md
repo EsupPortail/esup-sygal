@@ -15,7 +15,7 @@ Journal des modifications
 - [FIX] Ordonnancement des séances sur les index des formations et des sessions 
 - [FIX] Correction paramètre de route erronée + suppression bouton inactif 
 - [FIX] Correction du bug de comptage d'année si pas de thèse
-
+- [FIX] Ouverture de l'acces aux gestionnaires d'UR sur les popositions de soutenance
 5.2.6
 -----
 - Déclaration des membres du comite de suivi individuel

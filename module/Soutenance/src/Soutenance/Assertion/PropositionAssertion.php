@@ -112,6 +112,7 @@ class PropositionAssertion implements  AssertionInterface {
                     case Role::CODE_GEST_ED :
                         return $structure === $these->getEcoleDoctorale()->getStructure();
                     case Role::CODE_RESP_UR :
+                    case Role::CODE_GEST_UR :
                         return $structure === $these->getUniteRecherche()->getStructure();
                     case Role::CODE_DOCTORANT :
                         return $doctorant->getId() === $individu->getId();
