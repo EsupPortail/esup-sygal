@@ -4,6 +4,9 @@ namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
 use Information\Service\InformationServiceAwareTrait;
+use Soutenance\Provider\Template\PdfTemplates;
+use Soutenance\Service\Avis\AvisServiceAwareTrait;
+use Soutenance\Service\Exporter\SermentExporter\SermentPdfExporter;
 use These\Entity\Db\Acteur;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuRole;
@@ -42,11 +45,13 @@ use Soutenance\Service\SignaturePresident\SiganturePresidentPdfExporter;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Db\RoleInterface;
+use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 /** @method boolean isAllowed($resource, $privilege = null) */
 class PropositionController extends AbstractController
 {
     use ActeurServiceAwareTrait;
+    use AvisServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use EvenementServiceAwareTrait;
     use InformationServiceAwareTrait;
@@ -57,6 +62,7 @@ class PropositionController extends AbstractController
     use PropositionServiceAwareTrait;
     use RoleServiceAwareTrait;
     use UserContextServiceAwareTrait;
+    use RenduServiceAwareTrait;
     use ValidatationServiceAwareTrait;
 
     use DateLieuFormAwareTrait;
@@ -199,13 +205,13 @@ class PropositionController extends AbstractController
             'uniteResponsables' => $uniteResponsables,
             'etablissementResponsables' => $etablissementResponsables,
             'informationsOk' => $informationsOk,
+            'avis' => $this->getAvisService()->getAvisByThese($these),
 
             'FORMULAIRE_DELOCALISATION' => $parametres[Parametre::CODE_FORMULAIRE_DELOCALISATION],
             'FORMULAIRE_DELEGUATION' => $parametres[Parametre::CODE_FORMULAIRE_DELEGUATION],
             'FORMULAIRE_DEMANDE_LABEL' => $parametres[Parametre::CODE_FORMULAIRE_LABEL_EUROPEEN],
             'FORMULAIRE_DEMANDE_ANGLAIS' => $parametres[Parametre::CODE_FORMULAIRE_THESE_ANGLAIS],
             'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $parametres[Parametre::CODE_FORMULAIRE_CONFIDENTIALITE],
-
         ]);
     }
 
@@ -749,5 +755,27 @@ class PropositionController extends AbstractController
             return $vm;
         }
         return null;
+    }
+
+    /** Document pour le serment du docteur */
+    public function genererSermentAction()
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findOneForThese($these);
+
+        $vars = [
+            'doctorant' => $these->getDoctorant(),
+            'proposition' => $proposition,
+            'these' => $these,
+        ];
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(PdfTemplates::SERMENT_DU_DOCTEUR, $vars);
+
+        $exporter = new SermentPdfExporter($this->renderer, 'A4');
+        $exporter->getMpdf()->SetMargins(0,0,50);
+        $exporter->setVars([
+            'texte' => $rendu->getCorps(),
+        ]);
+        $exporter->export($these->getId() . '_serment.pdf');
+        exit;
     }
 }

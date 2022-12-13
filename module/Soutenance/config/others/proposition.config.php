@@ -92,6 +92,7 @@ return [
                     'controller' => PropositionController::class,
                     'action' => [
                         'proposition',
+                        'generer-serment',
                         'generate-view-date-lieu',
                         'generate-view-jury',
                         'generate-view-informations',
@@ -202,6 +203,17 @@ return [
                             ],
                         ],
                         'child_routes' => [
+                            'generer-serment' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/generer-serment',
+                                    'defaults' => [
+                                        'controller' => PropositionController::class,
+                                        'action' => 'generer-serment',
+                                    ],
+                                ],
+                            ],
                             'generate-view-date-lieu' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,

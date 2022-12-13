@@ -1,12 +1,12 @@
 <?php
 
-namespace Soutenance\Service\Exporter\RapportTechnique;
+namespace Soutenance\Service\Exporter\SermentExporter;
 
 use UnicaenApp\Exporter\Pdf as PdfExporter;
 use Laminas\View\Renderer\PhpRenderer;
 use Laminas\View\Resolver\TemplatePathStack;
 
-class RapportTechniquePdfExporter extends PdfExporter
+class SermentPdfExporter extends PdfExporter
 {
     private array $vars = [];
 
@@ -25,12 +25,11 @@ class RapportTechniquePdfExporter extends PdfExporter
         $resolver->attach(new TemplatePathStack(['script_paths' => [__DIR__]]));
     }
 
-    public function export($filename = null, $destination = self::DESTINATION_BROWSER, $memoryLimit = null)
+    public function export($filename = null, $destination = self::DESTINATION_BROWSER, $memoryLimit = null) : string
     {
-//        $this->addBodyHtml('<style>' . file_get_contents(APPLICATION_DIR . '/public/css/page-unicaen.css') . '</style>');
-        $this->setHeaderScript('empty.phtml');
+        $this->addBodyScript('serment.phtml', false, $this->vars);
+        $this->setHeaderScript('header.phtml');
         $this->setFooterScript('footer.phtml');
-        $this->addBodyScript('rapport-technique.phtml', false, $this->vars);
         return PdfExporter::export($filename, $destination, $memoryLimit);
     }
 }

@@ -6,6 +6,7 @@ use Information\Controller\InformationController;
 use Information\Service\InformationService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Soutenance\Service\Avis\AvisService;
 use These\Service\Acteur\ActeurService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Role\RoleService;
@@ -27,6 +28,7 @@ use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
 use Laminas\View\Renderer\PhpRenderer;
+use UnicaenRenderer\Service\Rendu\RenduService;
 
 class PropositionControllerFactory
 {
@@ -41,6 +43,7 @@ class PropositionControllerFactory
     {
         /**
          * @var ActeurService $acteurService
+         * @var AvisService $avisService
          * @var EcoleDoctoraleService $ecoleDoctoraleService
          * @var InformationService $informationService
          * @var EvenementService $evenementService
@@ -52,8 +55,10 @@ class PropositionControllerFactory
          * @var ValidationService $validationService
          * @var JustificatifService $justificatifService
          * @var ParametreService $parametreService
+         * @var RenduService $renduService
          */
         $acteurService = $container->get(ActeurService::class);
+        $avisService = $container->get(AvisService::class);
         $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
         $evenementService = $container->get(EvenementService::class);
         $informationService = $container->get(InformationService::class);
@@ -65,6 +70,7 @@ class PropositionControllerFactory
         $validationService = $container->get(ValidationService::class);
         $justificatifService = $container->get(JustificatifService::class);
         $parametreService = $container->get(ParametreService::class);
+        $renduService = $container->get(RenduService::class);
 
         /**
          * @var DateLieuForm $dateLieuForm
@@ -94,6 +100,7 @@ class PropositionControllerFactory
         $controller = new PropositionController();
 
         $controller->setActeurService($acteurService);
+        $controller->setAvisService($avisService);
         $controller->setEcoleDoctoraleService($ecoleDoctoraleService);
         $controller->setEvenementService($evenementService);
         $controller->setInformationService($informationService);
@@ -105,6 +112,7 @@ class PropositionControllerFactory
         $controller->setValidationService($validationService);
         $controller->setJustificatifService($justificatifService);
         $controller->setParametreService($parametreService);
+        $controller->setRenduService($renduService);
 
         $controller->setDateLieuForm($dateLieuForm);
         $controller->setMembreForm($membreForm);

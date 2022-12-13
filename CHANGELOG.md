@@ -11,6 +11,8 @@ Journal des modifications
 - Doctorant : peut refuser de recevoir sur son adresse électronique de contact les messages des listes de diffusion
 - Suppression du menu 'Mes données' : la modif de l'adresse de contact et du consentement associé est désormais sur la fiche Thèse
 - Abandon (avant suppression) de la table obsolète doctorant_compl.
+- Ajout d'un bloc dans l'ecran de proposition de soutenance pour le téléchargement des pré-rapport et du serment
+- Nouveau document "Serment du docteur"
 - [FIX] Retrait de la liste complémentaire du mail d'echec
 - [FIX] Ordonnancement des séances sur les index des formations et des sessions 
 - [FIX] Correction paramètre de route erronée + suppression bouton inactif 

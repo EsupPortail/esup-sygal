@@ -1,0 +1,73 @@
+<?php
+
+/**
+ * @var These $these
+ * @var Avis[] $avis
+ */
+
+use Soutenance\Entity\Avis;
+use These\Entity\Db\These;
+
+?>
+
+<div class="box card">
+    <div class="card-header bg-dark text-white">
+        <h2> Serment du docteur et pré-rapports de soutenance</h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-8">
+                Vous pouvez télécharger le serment du docteur que vous pourrez préter à l'issue de votre soutenance
+            </div>
+            <div class="col-md-4">
+                <?php /** @see \Soutenance\Controller\PropositionController::genererSermentAction() */ ?>
+                <a href="<?php echo $this->url('soutenance/proposition/generer-serment', ['these' => $these->getId()], [], true); ?>" class="btn btn-secondary" target="_blank">
+                    <span class="icon icon-pdf"></span>
+                    Télécharger le serment du docteur
+                </a>
+            </div>
+        </div>
+        <div>
+            <?php if (empty($avis)) : ?>
+                <div class="alert alert-info">
+                    Aucun pré-rapport de déposer pour le moment.
+                </div>
+            <?php else : ?>
+            <table class="table table-condensed">
+                <thead>
+                <tr>
+                    <th> Rapporteur </th>
+                    <th> Avis </th>
+                    <th> Pré-rapport </th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($avis as $avi) : ?>
+                    <tr>
+                        <td> <?php echo $avi->getMembre()->getDenomination(); ?> </td>
+                        <td>
+                            <?php if ($avi->getAvis() === Avis::FAVORABLE) : ?>
+                                <span class="text-success">
+                                    <span class="icon icon-ok"></span>
+                                    Avis favorable
+                                </span>
+                            <?php else : ?>
+                                <span class="text-danger">
+                                    <span class="icon icon-kk"></span>
+                                    Avis défavorable
+                                </span>
+                            <?php endif; ?>
+                        <td>
+                            <?php /** @see \Soutenance\Controller\AvisController::telechargerAction() ?> */?>
+                            <a href="<?php echo $this->url('soutenance/avis-soutenance/telecharger', ['these' => $these->getId(), 'rapporteur' => $avi->getMembre()->getId()]); ?>">
+                                <span class="icon icon-pdf"></span> Télécharger le pré-rapport
+                            </a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>

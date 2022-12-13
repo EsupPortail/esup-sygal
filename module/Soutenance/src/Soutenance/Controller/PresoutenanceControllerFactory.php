@@ -2,6 +2,8 @@
 
 namespace Soutenance\Controller;
 
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use These\Service\Acteur\ActeurService;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
@@ -26,14 +28,17 @@ use Soutenance\Service\Validation\ValidationService;
 use UnicaenAuth\Service\User as UserService;
 use UnicaenAuthToken\Service\TokenService;
 use Laminas\View\Renderer\PhpRenderer;
+use UnicaenRenderer\Service\Rendu\RenduService;
 
 class PresoutenanceControllerFactory
 {
     /**
      * @param ContainerInterface $container
      * @return PresoutenanceController
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container) : PresoutenanceController
     {
         /**
          * @var PropositionService $propositionService
@@ -88,7 +93,6 @@ class PresoutenanceControllerFactory
         /* @var $renderer PhpRenderer */
         $renderer = $container->get('ViewRenderer');
 
-        /** @var PresoutenanceController $controller */
         $controller = new PresoutenanceController();
         $controller->setEvenementService($evenementService);
         $controller->setPropositionService($propositionService);
