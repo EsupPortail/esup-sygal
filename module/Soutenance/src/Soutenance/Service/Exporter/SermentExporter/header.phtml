@@ -1,7 +1,16 @@
 <?php
 
+/**
+ * @var string|null $cheminLogoComue
+ * @var string|null $cheminLogoEtablissement
+ */
+
 ?>
 
 
-if comue logo comue
-if etablissement logo etab
+<?php if ($cheminLogoComue !== null) : ?>
+    <img src="<?php echo $cheminLogoComue; ?>" style="height:30mm;"/>
+<?php endif; ?>
+<?php if ($cheminLogoEtablissement !== null) : ?>
+    <img src="<?php echo $cheminLogoEtablissement; ?>" style="height:30mm;"/>
+<?php endif; ?>

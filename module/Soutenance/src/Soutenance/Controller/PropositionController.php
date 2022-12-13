@@ -3,10 +3,13 @@
 namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Information\Service\InformationServiceAwareTrait;
 use Soutenance\Provider\Template\PdfTemplates;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\Exporter\SermentExporter\SermentPdfExporter;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
 use These\Entity\Db\Acteur;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuRole;
@@ -54,6 +57,8 @@ class PropositionController extends AbstractController
     use AvisServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use EvenementServiceAwareTrait;
+    use EtablissementServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use InformationServiceAwareTrait;
     use JustificatifServiceAwareTrait;
     use MembreServiceAwareTrait;
@@ -769,11 +774,18 @@ class PropositionController extends AbstractController
             'these' => $these,
         ];
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(PdfTemplates::SERMENT_DU_DOCTEUR, $vars);
+        $comue = $this->etablissementService->fetchEtablissementComue();
+
+        $cheminLogoComue = ($comue)?$this->fichierStorageService->getFileForLogoStructure($comue->getStructure()):null;
+        $cheminLogoEtablissement = ($these->getEtablissement())?$this->fichierStorageService->getFileForLogoStructure($these->getEtablissement()->getStructure()):null;
 
         $exporter = new SermentPdfExporter($this->renderer, 'A4');
         $exporter->getMpdf()->SetMargins(0,0,50);
         $exporter->setVars([
             'texte' => $rendu->getCorps(),
+            'comue' => $comue,
+            'cheminLogoComue' => $cheminLogoComue,
+            'cheminLogoEtablissement' => $cheminLogoEtablissement,
         ]);
         $exporter->export($these->getId() . '_serment.pdf');
         exit;

@@ -2,11 +2,13 @@
 
 namespace Soutenance\Controller;
 
+use Fichier\Service\Fichier\FichierStorageService;
 use Information\Controller\InformationController;
 use Information\Service\InformationService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Soutenance\Service\Avis\AvisService;
+use Structure\Service\Etablissement\EtablissementService;
 use These\Service\Acteur\ActeurService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Role\RoleService;
@@ -45,8 +47,10 @@ class PropositionControllerFactory
          * @var ActeurService $acteurService
          * @var AvisService $avisService
          * @var EcoleDoctoraleService $ecoleDoctoraleService
+         * @var EtablissementService $etablissementService
          * @var InformationService $informationService
          * @var EvenementService $evenementService
+         * @var FichierStorageService $fichierStorageService
          * @var MembreService $membreService
          * @var NotifierSoutenanceService $notificationSoutenanceService
          * @var PropositionService $propositionService
@@ -60,7 +64,9 @@ class PropositionControllerFactory
         $acteurService = $container->get(ActeurService::class);
         $avisService = $container->get(AvisService::class);
         $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
+        $etablissementService = $container->get(EtablissementService::class);
         $evenementService = $container->get(EvenementService::class);
+        $fichierStorageService = $container->get(FichierStorageService::class);
         $informationService = $container->get(InformationService::class);
         $membreService = $container->get(MembreService::class);
         $notificationSoutenanceService = $container->get(NotifierSoutenanceService::class);
@@ -102,7 +108,9 @@ class PropositionControllerFactory
         $controller->setActeurService($acteurService);
         $controller->setAvisService($avisService);
         $controller->setEcoleDoctoraleService($ecoleDoctoraleService);
+        $controller->setEtablissementService($etablissementService);
         $controller->setEvenementService($evenementService);
+        $controller->setFichierStorageService($fichierStorageService);
         $controller->setInformationService($informationService);
         $controller->setMembreService($membreService);
         $controller->setNotifierSoutenanceService($notificationSoutenanceService);
