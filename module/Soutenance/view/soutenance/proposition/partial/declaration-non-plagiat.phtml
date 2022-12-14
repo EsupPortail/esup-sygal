@@ -26,9 +26,11 @@ $canRevoquer = $this->isAllowed($these,PropositionPrivileges::PROPOSITION_DECLAR
     if ($isValider === false) echo " bg-danger";
     ?>
 ">
-        <h2> Déclaration sur l'honneur de non plagiat </h2>
+
+    <h2> Intégrité scientifique </h2>
     </div>
     <div class="card-body">
+        <h3> Déclaration sur l'honneur de non plagiat</h3>
         <div class="col-md-8">
             Afin de pouvoir valider votre proposition vous devez accepter la déclaration sur l'honneur de non plagiat.
         </div>
@@ -46,33 +48,56 @@ $canRevoquer = $this->isAllowed($these,PropositionPrivileges::PROPOSITION_DECLAR
         <?php endif; ?>
         </div>
 
-        <div style="width:80%;margin:0 auto; ">
-        <?php if ($isValider === true) : ?>
-            Déclaration sur l'honneur faite <br/>
-            <div class="panel panel-success">
-                <div class="panel-heading">
-                    <?php echo $this->validation(current($validation)); ?>
+        <div class="row">
+            <div class="col-md-9">
+                <div style="width:80%;margin:0 auto; ">
+                <?php if ($isValider === true) : ?>
+                    Déclaration sur l'honneur faite <br/>
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <?php echo $this->validation(current($validation)); ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                <?php if ($isValider === false) : ?>
+                    Déclaration sur l'honneur refusée <br/>
+                    <div class="panel panel-danger">
+                        <div class="panel-heading">
+                            <?php echo $this->validation(current($refus)); ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
                 </div>
             </div>
-        <?php endif; ?>
-        <?php if ($isValider === false) : ?>
-            Déclaration sur l'honneur refusée <br/>
-            <div class="panel panel-danger">
-                <div class="panel-heading">
-                    <?php echo $this->validation(current($refus)); ?>
-                </div>
+            <div class="col-md-3">
+                <?php if ($isValider !== null AND $canRevoquer) : ?>
+                    <?php /** @see \Soutenance\Controller\PropositionController::revoquerDeclarationNonPlagiatAction() */ ?>
+                    <a href="<?php echo $this->url('soutenance/proposition/declaration-non-plagiat/revoquer', ['these' => $these->getId()], [], true); ?>"
+                       class="btn btn-danger"
+                   >
+                        <span class="icon icon-unchecked"></span>
+                        Révoquer la déclaration
+                    </a>
+                <?php endif; ?>
             </div>
-        <?php endif; ?>
         </div>
 
-        <?php if ($isValider !== null AND $canRevoquer) : ?>
-            <?php /** @see \Soutenance\Controller\PropositionController::revoquerDeclarationNonPlagiatAction() */ ?>
-            <a href="<?php echo $this->url('soutenance/proposition/declaration-non-plagiat/revoquer', ['these' => $these->getId()], [], true); ?>"
-               class="btn btn-danger"
-           >
-                <span class="glyphicon glyphicon-remove"></span>
-                Révoquer la déclaration
-            </a>
-        <?php endif; ?>
+        <br/>
+
+        <h3> Serment du docteur </h3>
+
+        <div class="row">
+            <div class="col-md-8">
+                Vous pouvez télécharger le serment du docteur que vous pourrez préter à l'issue de votre soutenance
+            </div>
+            <div class="col-md-4">
+                <?php /** @see \Soutenance\Controller\PropositionController::genererSermentAction() */ ?>
+                <a href="<?php echo $this->url('soutenance/proposition/generer-serment', ['these' => $these->getId()], [], true); ?>" class="btn btn-secondary" target="_blank">
+                    <span class="icon icon-pdf"></span>
+                    Télécharger le serment du docteur
+                </a>
+            </div>
+        </div>
+
     </div>
 </div>

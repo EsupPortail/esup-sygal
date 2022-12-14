@@ -150,7 +150,7 @@ class NotificationService extends NotifierService
         $complementaire = $session->getListeComplementaire();
         $nonClasses = $session->getNonClasses();
 
-        $inscriptions = array_merge($complementaire, $nonClasses);
+        $inscriptions = array_merge($nonClasses, $complementaire);
 
         foreach ($inscriptions as $inscription) {
             $vars = [
