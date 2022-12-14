@@ -389,7 +389,7 @@ class PdcData
     /**
      * @return Acteur[]
      */
-    public function getMembres()
+    public function getMembres() : array
     {
         return $this->membres;
     }
@@ -631,4 +631,6 @@ class PdcData
 
         return $signataires;
     }
+
+
 }

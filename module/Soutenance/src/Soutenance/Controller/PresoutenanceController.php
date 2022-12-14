@@ -33,6 +33,7 @@ use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Exporter\AvisSoutenance\AvisSoutenancePdfExporter;
 use Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter;
 use Soutenance\Service\Exporter\ProcesVerbal\ProcesVerbalSoutenancePdfExporter;
+use Soutenance\Service\Exporter\RapportSoutenance\RapportSoutenancePdfExporter;
 use Soutenance\Service\Exporter\RapportTechnique\RapportTechniquePdfExporter;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
@@ -419,6 +420,23 @@ class PresoutenanceController extends AbstractController
             'informations' => $pdcData,
         ]);
         $exporter->export($these->getId() . '_avis_soutenance.pdf');
+        exit;
+    }
+
+    public function rapportSoutenanceAction()
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findOneForThese($these);
+
+        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+
+        $exporter = new RapportSoutenancePdfExporter($this->renderer, 'A4');
+        $exporter->setVars([
+            'proposition' => $proposition,
+            'these' => $these,
+            'informations' => $pdcData,
+        ]);
+        $exporter->export($these->getId() . '_rapport_soutenance.pdf');
         exit;
     }
 

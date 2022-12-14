@@ -1,0 +1,27 @@
+<?php
+
+/** @var \These\Service\FichierThese\PdcData $data */
+
+use These\Entity\Db\Acteur;
+
+$membres = $data->getMembres();
+$position = 0;
+$nbPerLine = 4;
+?>
+
+Fait à ........................................, le ........................................
+
+<table style="width: 100%;">
+    <tr>
+        <?php foreach ($membres as $membre) : ?>
+            <td>
+                <?php echo $membre->getIndividu()->getNomComplet(); ?>
+                <br/>&nbsp;<br/>&nbsp;<br/>&nbsp;
+                <?php $position += 1; ?>
+            </td>
+            <?php if ($position % $nbPerLine === 0) : ?>
+                </tr><tr>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    </tr>
+</table>
