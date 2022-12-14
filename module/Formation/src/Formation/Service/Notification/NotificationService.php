@@ -115,9 +115,39 @@ class NotificationService extends NotifierService
      * @return void
      * @throws NotificationException
      */
+    public function triggerInscriptionClose(Session $session) : void
+    {
+        $nonClasses = $session->getNonClasses();
+
+        foreach ($nonClasses as $inscription) {
+            $vars = [
+                'doctorant' => $inscription->getDoctorant(),
+                'formation' => $inscription->getSession()->getFormation(),
+                'session'   => $inscription->getSession(),
+            ];
+            $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::INSCRIPTION_CLOSE, $vars);
+            $mail = $inscription->getDoctorant()->getIndividu()->getEmail();
+
+            if ($mail !== null) {
+                $notif = new Notification();
+                $notif
+                    ->setTo($mail)
+                    ->setSubject($rendu->getSujet())
+                    ->setBody($rendu->getCorps())
+                ;
+                $this->trigger($notif);
+            }
+        }
+    }
+
+    /**
+     * @param Session $session
+     * @return void
+     * @throws NotificationException
+     */
     public function triggerInscriptionEchec(Session $session) : void
     {
-        $complementaire = []; //$session->getListeComplementaire();
+        $complementaire = $session->getListeComplementaire();
         $nonClasses = $session->getNonClasses();
 
         $inscriptions = array_merge($complementaire, $nonClasses);

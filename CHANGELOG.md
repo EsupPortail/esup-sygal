@@ -13,6 +13,7 @@ Journal des modifications
 - Abandon (avant suppression) de la table obsolète doctorant_compl.
 - Ajout d'un bloc dans l'ecran de proposition de soutenance pour le téléchargement des pré-rapport et du serment
 - Nouveau document "Serment du docteur"
+- Ajout d'un nouvel mail intermediare à la clôture des inscriptions + deplacement du mail d'echec d'inscription
 - [FIX] Retrait de la liste complémentaire du mail d'echec
 - [FIX] Ordonnancement des séances sur les index des formations et des sessions 
 - [FIX] Correction paramètre de route erronée + suppression bouton inactif 
