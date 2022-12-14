@@ -141,10 +141,9 @@ use These\Service\FichierThese\PdcData;
 </h2>
 
 
-<p>
     <table class="jury">
         <tr>
-            <td style="width:33%;"> Nom du candidat </td>
+            <td style="width:50%;"> Nom du candidat </td>
             <td> <?php echo $informations->getDoctorant(); ?> </td>
         </tr>
     <tr>
@@ -157,21 +156,36 @@ use These\Service\FichierThese\PdcData;
         </span>
             <?php endif; ?> </td>
     </tr>
-</table>
-</p>
-
-
-<p>
+    </table>
     <table class="jury">
         <tr>
-            <td style="width:33%;"> Résultat </td>
-            <td>
-                &#9744; Admis&middot;e <br/>
-                &#9744; Ajourné&middot;e
-            </td>
+            <td style="width:50%;"> Résultat </td>
+            <td style=""> &#9744; Admis&middot;e </td>
+            <td style=""> &#9744; Ajourné&middot;e </td>
         </tr>
     </table>
-</p>
+    <table class="jury">
+        <tr>
+            <td style="width:50%;"> Le jury accorde la qualification de Label «&nbsp;Doctorat&nbsp;Européen&nbsp;» </td>
+            <td style=""> &#9744; Oui </td>
+            <td style=""> &#9744; Non </td>
+        </tr>
+    </table>
+    <table class="jury">
+        <tr><td colspan="3">
+                <small>
+                    En application de l'article L612-7 du code de l'éducation, les établissements d’enseignement supérieur et de recherche mettent en œuvre, dans le cadre des soutenances de leurs doctorantes et doctorants, une prestation de serment d’intégrité scientifique.
+                    Cette disposition est inscrite dans l'article 19bis de l'arrêté de la formation doctorale (évolution introduite par l'arrêté du 26 août 2022 modifiant l'arrêté du 25 mai 2016).<br/>
+                    <strong>Cf annexe « Serment doctoral d’intégrité scientifique » à transmettre à l’issue de la soutenance au nouveau docteur.</strong>
+                </small>
+        </td></tr>
+        <tr>
+            <td style="width:50%;"> Le docteur a prêté serment&nbsp;: </td>
+            <td style=""> &#9744; Oui </td>
+            <td style=""> &#9744; Non </td>
+        </tr>
+    </table>
+
 
 <p>
 <table class="jury">
@@ -187,8 +201,8 @@ use These\Service\FichierThese\PdcData;
 <table class="jury">
     <tr>
         <td>
-            <strong>Avis de reproduction de la thèse</strong>
-            Status du dépôt effectué avant la soutenance
+            <strong>Avis de reproduction de la thèse</strong> Status du dépôt effectué avant la soutenance.<br/>
+            <strong style="color:darkred;">Un deuxième dépôt ne sera pas autorisé s’il n’y a pas de corrections indiquées sur le PV.</strong>
 
     <br/>
     <br/>
