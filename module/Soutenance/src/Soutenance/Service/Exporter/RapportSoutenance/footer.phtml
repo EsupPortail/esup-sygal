@@ -1,12 +1,13 @@
 <?php
 
-/** @var \These\Service\FichierThese\PdcData $data */
+/** @var PdcData $informations */
 
-use These\Entity\Db\Acteur;
+use These\Service\FichierThese\PdcData;
 
-$membres = $data->getMembres();
+$membres = $informations->getJury();
 $position = 0;
 $nbPerLine = 4;
+$width = (100 / $nbPerLine);
 ?>
 
 Fait à ........................................, le ........................................
@@ -14,7 +15,7 @@ Fait à ........................................, le ...........................
 <table style="width: 100%;">
     <tr>
         <?php foreach ($membres as $membre) : ?>
-            <td>
+            <td style="width:<?php echo $width; ?>%">
                 <?php echo $membre->getIndividu()->getNomComplet(); ?>
                 <br/>&nbsp;<br/>&nbsp;<br/>&nbsp;
                 <?php $position += 1; ?>

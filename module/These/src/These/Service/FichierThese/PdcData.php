@@ -632,5 +632,4 @@ class PdcData
         return $signataires;
     }
 
-
 }
