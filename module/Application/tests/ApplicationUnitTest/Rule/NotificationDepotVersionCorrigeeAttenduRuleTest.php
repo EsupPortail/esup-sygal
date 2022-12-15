@@ -3,7 +3,7 @@
 namespace ApplicationTest\Rule;
 
 use These\Entity\Db\These;
-use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
+use Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use DateTime;
 use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophet;
@@ -220,7 +220,7 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
 
         $these = $this->theseMock($correctionAutorisee, $dateButoir);
 
-        $rule = new NotificationDepotVersionCorrigeeAttenduRule();
+        $rule = new \Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule();
         $rule->setThese($these);
         $rule->setDateDerniereNotif($dateDerniereNotif);
         $rule->setDateAujourdhui($aujourdhui);

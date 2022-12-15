@@ -2,27 +2,27 @@
 
 namespace These\Controller;
 
-use These\Entity\Db\Acteur;
-use Structure\Entity\Db\EcoleDoctorale;
-use Individu\Entity\Db\Individu;
-use These\Entity\Db\These;
-use Structure\Entity\Db\UniteRecherche;
-use These\Form\CoEncadrant\RechercherCoEncadrantFormAwareTrait;
-use These\Service\Acteur\ActeurServiceAwareTrait;
-use These\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
-use These\Service\CoEncadrant\Exporter\JustificatifCoencadrements\JustificatifCoencadrementPdfExporter;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
-use Individu\Service\IndividuServiceAwareTrait;
-use These\Service\These\TheseServiceAwareTrait;
-use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use DateTime;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
-use UnicaenApp\View\Model\CsvModel;
+use Individu\Entity\Db\Individu;
+use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\UniteRecherche;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use These\Entity\Db\Acteur;
+use These\Entity\Db\These;
+use These\Form\CoEncadrant\RechercherCoEncadrantFormAwareTrait;
+use These\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
+use These\Service\CoEncadrant\Exporter\JustificatifCoencadrements\JustificatifCoencadrementPdfExporter;
+use These\Service\These\TheseServiceAwareTrait;
+use UnicaenApp\View\Model\CsvModel;
 
 class CoEncadrantController extends AbstractActionController {
     use ActeurServiceAwareTrait;
@@ -75,7 +75,7 @@ class CoEncadrantController extends AbstractActionController {
             foreach ($acteurs as $acteur) {
                 // mise en forme attendue par l'aide de vue FormSearchAndSelect
                 $label = $acteur->getIndividu()->getPrenom() . ' ' . $acteur->getIndividu()->getNomUsuel();
-                $extra = ($acteur->getIndividu()->getEmail())?:$acteur->getIndividu()->getSourceCode();
+                $extra = ($acteur->getIndividu()->getEmailPro())?:$acteur->getIndividu()->getSourceCode();
                 $result[$acteur->getIndividu()->getId()] = array(
                     'id' => $acteur->getId(),   // identifiant unique de l'item
                     'label' => $label,          // libellé de l'item

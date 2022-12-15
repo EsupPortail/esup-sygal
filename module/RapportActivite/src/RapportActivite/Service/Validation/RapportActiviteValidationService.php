@@ -152,11 +152,13 @@ class RapportActiviteValidationService extends BaseService
         RapportActiviteAvis $rapportActiviteAvis): RapportActiviteValidationNotification
     {
         $these = $rapportActiviteAvis->getRapportActivite()->getThese();
+        $individu = $these->getDoctorant()->getIndividu();
+        $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
 
         $notif = new RapportActiviteValidationNotification();
         $notif->setRapportActiviteValidation($rapportActiviteValidation);
         $notif->setRapportActiviteAvis($rapportActiviteAvis);
-        $notif->setTo([$these->getDoctorant()->getEmail() => $these->getDoctorant()->getIndividu()->getNomComplet()]);
+        $notif->setTo([$email => $these->getDoctorant()->getIndividu()->getNomComplet()]);
         $notif->setCc($these->getDirecteursTheseEmails());
         $notif->setSubject("Rapport d'activité validé");
 

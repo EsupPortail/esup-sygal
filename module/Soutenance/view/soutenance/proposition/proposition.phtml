@@ -1,7 +1,8 @@
 <?php
 
 use Application\Constants;
-use These\Controller\Plugin\UrlFichierThese;
+use Depot\Controller\Plugin\UrlFichierThese;
+use Soutenance\Entity\Avis;
 use These\Entity\Db\Acteur;
 use Individu\Entity\Db\IndividuRole;
 use Doctorant\Entity\Db\Doctorant;
@@ -25,6 +26,7 @@ use Soutenance\Provider\Validation\TypeValidation;
  * @var Validation[] $validations
  * @var Doctorant $doctorant
  * @var Acteur[] $directeurs
+ * @var Avis[] $avis
  * @var array $indicateurs
  * @var boolean $isOk
  * @var boolean $juryOk
@@ -167,6 +169,13 @@ echo $this->partial('partial/informations', [
         'canPresidence' => $canPresidence,
         'signatures' => $signatures,
     ]); ?>
+
+<?php
+    echo $this->partial('partial/pre-rapports', [
+        'these' => $these,
+        'avis' => $avis,
+    ]);
+?>
 
 <?php
     $validationMDD = null;

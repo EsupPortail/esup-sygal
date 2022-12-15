@@ -33,6 +33,7 @@ use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Exporter\AvisSoutenance\AvisSoutenancePdfExporter;
 use Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter;
 use Soutenance\Service\Exporter\ProcesVerbal\ProcesVerbalSoutenancePdfExporter;
+use Soutenance\Service\Exporter\RapportSoutenance\RapportSoutenancePdfExporter;
 use Soutenance\Service\Exporter\RapportTechnique\RapportTechniquePdfExporter;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
@@ -40,7 +41,6 @@ use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
-use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use These\Entity\Db\Acteur;
@@ -423,6 +423,23 @@ class PresoutenanceController extends AbstractController
         exit;
     }
 
+    public function rapportSoutenanceAction()
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findOneForThese($these);
+
+        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+
+        $exporter = new RapportSoutenancePdfExporter($this->renderer, 'A4');
+        $exporter->setVars([
+            'proposition' => $proposition,
+            'these' => $these,
+            'informations' => $pdcData,
+        ]);
+        $exporter->export($these->getId() . '_rapport_soutenance.pdf');
+        exit;
+    }
+
     public function rapportTechniqueAction()
     {
         $these = $this->requestedThese();
@@ -593,16 +610,9 @@ class PresoutenanceController extends AbstractController
         foreach ($proposition->getAvis() as $avis) {
             if ($avis->estNonHistorise()) {
                 $denomination = $avis->getMembre()->getDenomination();
-//                $lien = $this->url()->fromRoute('fichier/these/telecharger', [
-//                    'these'      => $these->getId(),
-//                    'fichier'    => $avis->getFichier()->getUuid(),
-//                    'fichierNom' => $avis->getFichier()->getNom(),
-//                ], [
-//                    'force_canonical'=>true
-//                ],true);
                 $lien = $this->url()->fromRoute('soutenance/avis-soutenance/telecharger', [
                     'these' => $these->getId(),
-                    'membre' => $avis->getMembre()->getId()
+                    'rapporteur' => $avis->getMembre()->getId()
                     ], [
                         'force_canonical'=>true
                     ], true);
@@ -612,7 +622,9 @@ class PresoutenanceController extends AbstractController
 
         //doctorant
         $doctorant = $these->getDoctorant();
-        $email = $doctorant->getIndividu()->getEmail();
+        $email = $doctorant->getIndividu()->getEmailContact() ?:
+            $doctorant->getIndividu()->getEmailPro() ?:
+            $doctorant->getIndividu()->getEmailUtilisateur();
         /** @see PresoutenanceController::convocationDoctorantAction() */
         $url = $this->url()->fromRoute('soutenance/presoutenance/convocation-doctorant', ['proposition' => $proposition->getId()], ['force_canonical' => true], true);
         $this->getNotifierSoutenanceService()->triggerEnvoiConvocationDoctorant($doctorant, $proposition, $dateValidation, $email, $url, $avisArray);
@@ -621,7 +633,7 @@ class PresoutenanceController extends AbstractController
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
             if ($membre->estMembre()) {
-                $email = ($membre->getIndividu() and $membre->getIndividu()->getEmail()) ? $membre->getIndividu()->getEmail() : $membre->getEmail();
+                $email = ($membre->getIndividu() and $membre->getIndividu()->getEmailPro()) ? $membre->getIndividu()->getEmailPro() : $membre->getEmail();
                 /** @see PresoutenanceController::convocationMembreAction() */
                 $url = $this->url()->fromRoute('soutenance/presoutenance/convocation-membre', ['proposition' => $proposition->getId(), 'membre' => $membre->getId()], ['force_canonical' => true], true);
                 $this->getNotifierSoutenanceService()->triggerEnvoiConvocationMembre($membre, $proposition, $dateValidation, $email, $url, $avisArray);
@@ -666,7 +678,7 @@ class PresoutenanceController extends AbstractController
                 $individu = new Individu();
                 $individu->setPrenom($membre->getPrenom());
                 $individu->setNomUsuel($membre->getNom());
-                $individu->setEmail($membre->getEmail());
+                $individu->setEmailPro($membre->getEmail());
                 $individu->setSource($sygal);
                 $individu->setSourceCode($source_code_individu);
                 $this->getIndividuService()->getEntityManager()->persist($individu);

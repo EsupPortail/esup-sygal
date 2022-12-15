@@ -70,6 +70,11 @@ $canFormationAfficher = $this->isAllowed(FormationPrivileges::getResourceId(Form
                                 <strong>Site :</strong> <?php echo $this->site($session,[ 'long' => true]); ?>
                                 <strong>Modalité :</strong> <?php echo $this->modalite($session); ?>
                                 <br/>
+                                <?php if ($session->getDateClotureInscription()) : ?>
+                                    <strong>Date de fermeture des inscriptions :</strong>
+                                    <?php echo $session->getDateClotureInscription()->format('d/m/Y'); ?>
+                                    <br/>
+                                <?php endif; ?>
                                 <?php if ($session->getDateDebut() and $session->getDateFin()) : ?>
                                     <strong>Durée :</strong> <?php echo $session->getDuree(); ?> h.
                                 <?php endif; ?>

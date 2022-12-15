@@ -10,6 +10,7 @@
         <field name="email"     column="EMAIL"      nullable="false"    type="string"   length="256"/>
         <field name="etat"      column="ETAT"       nullable="false"    type="string"   length="1"/>
         <field name="code"      column="CODE"       nullable="true"     type="string"   length="19"/>
+        <field name="refusListeDiff" column="REFUS_LISTE_DIFF" nullable="false" type="boolean"/>
 
         <many-to-one field="individu" target-entity="Individu\Entity\Db\Individu">
             <join-columns>

@@ -2,15 +2,20 @@
 
 namespace Doctorant\Controller\Plugin;
 
-use These\Entity\Db\These;
+use Doctorant\Entity\Db\Doctorant;
 use Laminas\Mvc\Controller\Plugin\Url as UrlPlugin;
 
 class UrlDoctorant extends UrlPlugin
 {
-    public function modifierPersopassUrl(These $these)
+    public function modifierEmailContactUrl(Doctorant $doctorant, bool $force = false): string
     {
         return $this->fromRoute('doctorant/modifier-email-contact',
-            ['doctorant' => $these->getDoctorant()->getId(), 'back' => 0],[], true
-        );
+            ['doctorant' => $doctorant->getId()], ['query' => ['force' => $force]], true);
+    }
+
+    public function modifierEmailContactConsentUrl(Doctorant $doctorant, ?string $redirect = null): string
+    {
+        return $this->fromRoute('doctorant/modifier-email-contact-consent',
+            ['doctorant' => $doctorant->getId()], ['query' => ['redirect' => $redirect]], true);
     }
 }

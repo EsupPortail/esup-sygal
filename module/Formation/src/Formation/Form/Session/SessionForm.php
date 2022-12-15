@@ -3,8 +3,10 @@
 namespace Formation\Form\Session;
 
 use Formation\Entity\Db\Interfaces\HasModaliteInterface;
+use Laminas\Form\Element\DateTime;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
+use UnicaenApp\Form\Element\Date;
 use UnicaenApp\Form\Element\SearchAndSelect;
 use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Number;
@@ -158,6 +160,24 @@ class SessionForm extends Form {
             ],
         ]);
 
+        //jour
+        $this->add([
+            'name' => 'date_fermeture_inscription',
+            'type' => Date::class,
+            'options' => [
+                'label' => "Date de fermeture des inscriptions <span class='icon icon-info text-info'  title='La date est seulement informative'></span> :",
+                'label_options' => [ 'disable_html_escape' => true, ],
+                'label_attributes' => [
+                    'class' => 'control-label',
+                ],
+                'format' => 'd/m/Y',
+            ],
+            'attributes' => [
+                'id' => 'date_fermeture_inscription',
+                'class' => 'form-control',
+            ],
+        ]);
+
         //submit
         $this->add([
             'type' => Button::class,
@@ -185,6 +205,7 @@ class SessionForm extends Form {
             'type_structure'=> [ 'required' => false, ],
             'taille_liste_principale'=> [ 'required' => true, ],
             'taille_liste_complementaire'=> [ 'required' => true, ],
+            'date_fermeture_inscription'=> [ 'required' => false, ],
         ]));
     }
 }

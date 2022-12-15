@@ -3,7 +3,13 @@
 namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Information\Service\InformationServiceAwareTrait;
+use Soutenance\Provider\Template\PdfTemplates;
+use Soutenance\Service\Avis\AvisServiceAwareTrait;
+use Soutenance\Service\Exporter\SermentExporter\SermentPdfExporter;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
 use These\Entity\Db\Acteur;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuRole;
@@ -42,13 +48,17 @@ use Soutenance\Service\SignaturePresident\SiganturePresidentPdfExporter;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Db\RoleInterface;
+use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 /** @method boolean isAllowed($resource, $privilege = null) */
 class PropositionController extends AbstractController
 {
     use ActeurServiceAwareTrait;
+    use AvisServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use EvenementServiceAwareTrait;
+    use EtablissementServiceAwareTrait;
+    use FichierStorageServiceAwareTrait;
     use InformationServiceAwareTrait;
     use JustificatifServiceAwareTrait;
     use MembreServiceAwareTrait;
@@ -57,6 +67,7 @@ class PropositionController extends AbstractController
     use PropositionServiceAwareTrait;
     use RoleServiceAwareTrait;
     use UserContextServiceAwareTrait;
+    use RenduServiceAwareTrait;
     use ValidatationServiceAwareTrait;
 
     use DateLieuFormAwareTrait;
@@ -153,27 +164,27 @@ class PropositionController extends AbstractController
         $informationsOk = true;
         $directeurs = $this->getActeurService()->getRepository()->findEncadrementThese($these);
         foreach ($directeurs as $directeur) {
-            if ($directeur->getIndividu()->getEmail() === null AND $directeur->getIndividu()->getComplement() === null) {
+            if ($directeur->getIndividu()->getEmailPro() === null AND $directeur->getIndividu()->getComplement() === null) {
                 $informationsOk = false;
                 break;
             }
         }
         if (empty($uniteResponsables)) $informationsOk = false;
         foreach ($uniteResponsables as $uniteResponsable) {
-            if ($uniteResponsable->getIndividu()->getEmail() === null) { $informationsOk = false; break;}
+            if ($uniteResponsable->getIndividu()->getEmailPro() === null) { $informationsOk = false; break;}
         }
         if (empty($ecoleResponsables)) $informationsOk = false;
         foreach ($ecoleResponsables as $ecoleResponsable) {
-            if ($ecoleResponsable->getIndividu()->getEmail() === null) { $informationsOk = false; break;}
+            if ($ecoleResponsable->getIndividu()->getEmailPro() === null) { $informationsOk = false; break;}
         }
         if (empty($etablissementResponsables)) $informationsOk = false;
         foreach ($etablissementResponsables as $etablissementResponsable) {
-            if ($etablissementResponsable->getIndividu()->getEmail() === null) { $informationsOk = false; break;}
+            if ($etablissementResponsable->getIndividu()->getEmailPro() === null) { $informationsOk = false; break;}
         }
         /** @var Individu $individu */
         foreach (array_merge($ecoleResponsables, $uniteResponsables, $etablissementResponsables) as $ecoleResponsable) {
             $individu = $ecoleResponsable->getIndividu();
-            if ($individu->getEmail() === null AND $individu->getComplement() === null) {
+            if ($individu->getEmailPro() === null AND $individu->getComplement() === null) {
                 $informationsOk = false;
                 break;
             }
@@ -199,13 +210,13 @@ class PropositionController extends AbstractController
             'uniteResponsables' => $uniteResponsables,
             'etablissementResponsables' => $etablissementResponsables,
             'informationsOk' => $informationsOk,
+            'avis' => $this->getAvisService()->getAvisByThese($these),
 
             'FORMULAIRE_DELOCALISATION' => $parametres[Parametre::CODE_FORMULAIRE_DELOCALISATION],
             'FORMULAIRE_DELEGUATION' => $parametres[Parametre::CODE_FORMULAIRE_DELEGUATION],
             'FORMULAIRE_DEMANDE_LABEL' => $parametres[Parametre::CODE_FORMULAIRE_LABEL_EUROPEEN],
             'FORMULAIRE_DEMANDE_ANGLAIS' => $parametres[Parametre::CODE_FORMULAIRE_THESE_ANGLAIS],
             'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $parametres[Parametre::CODE_FORMULAIRE_CONFIDENTIALITE],
-
         ]);
     }
 
@@ -749,5 +760,34 @@ class PropositionController extends AbstractController
             return $vm;
         }
         return null;
+    }
+
+    /** Document pour le serment du docteur */
+    public function genererSermentAction()
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findOneForThese($these);
+
+        $vars = [
+            'doctorant' => $these->getDoctorant(),
+            'proposition' => $proposition,
+            'these' => $these,
+        ];
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(PdfTemplates::SERMENT_DU_DOCTEUR, $vars);
+        $comue = $this->etablissementService->fetchEtablissementComue();
+
+        $cheminLogoComue = ($comue)?$this->fichierStorageService->getFileForLogoStructure($comue->getStructure()):null;
+        $cheminLogoEtablissement = ($these->getEtablissement())?$this->fichierStorageService->getFileForLogoStructure($these->getEtablissement()->getStructure()):null;
+
+        $exporter = new SermentPdfExporter($this->renderer, 'A4');
+        $exporter->getMpdf()->SetMargins(0,0,50);
+        $exporter->setVars([
+            'texte' => $rendu->getCorps(),
+            'comue' => $comue,
+            'cheminLogoComue' => $cheminLogoComue,
+            'cheminLogoEtablissement' => $cheminLogoEtablissement,
+        ]);
+        $exporter->export($these->getId() . '_serment.pdf');
+        exit;
     }
 }

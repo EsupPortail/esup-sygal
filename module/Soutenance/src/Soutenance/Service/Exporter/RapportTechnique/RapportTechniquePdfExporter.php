@@ -8,7 +8,7 @@ use Laminas\View\Resolver\TemplatePathStack;
 
 class RapportTechniquePdfExporter extends PdfExporter
 {
-    private $vars;
+    private array $vars = [];
 
     public function setVars(array $vars)
     {

@@ -91,7 +91,10 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
      */
     private Collection $structuresSubstituees;
 
-    private Collection $structureSubstituante;
+    /**
+     * @var ArrayCollection|Structure[]
+     */
+    private  $structureSubstituante;
 
     /** @var ArrayCollection StructureDocument */
     private $documents;

@@ -2,8 +2,8 @@
 
 namespace These\Notification;
 
-use These\Entity\Db\Interfaces\TheseAwareTrait;
 use Notification\Notification;
+use These\Entity\Db\Interfaces\TheseAwareTrait;
 
 class ResultatTheseAdmisNotification extends Notification
 {
@@ -35,7 +35,8 @@ class ResultatTheseAdmisNotification extends Notification
      */
     public function prepare()
     {
-        $to = $this->these->getDoctorant()->getEmail();
+        $individu = $this->these->getDoctorant()->getIndividu();
+        $to = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
 
         $this->emailDoctorantAbsent = false;
         if (! $to) {

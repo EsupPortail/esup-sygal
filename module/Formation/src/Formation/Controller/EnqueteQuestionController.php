@@ -286,7 +286,7 @@ class EnqueteQuestionController extends AbstractController {
 
     /** REPONSES ******************************************************************************************************/
 
-    public function repondreQuestionsAction() : ViewModel
+    public function repondreQuestionsAction()
     {
         $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
 
@@ -326,6 +326,12 @@ class EnqueteQuestionController extends AbstractController {
                     [$question, $reponse] = $element;
                     if ($reponse->getHistoCreation()) $this->getEnqueteReponseService()->update($reponse);
                     else $this->getEnqueteReponseService()->create($reponse);
+                }
+
+                if (isset($data['enregistrer_valider'])) {
+                    $inscription->setValidationEnquete(new DateTime());
+                    $this->getInscriptionService()->update($inscription);
+                    return $this->redirect()->toRoute('formation/index-doctorant', ['doctorant' => $inscription->getDoctorant()->getId()], [], true);
                 }
             }
         }

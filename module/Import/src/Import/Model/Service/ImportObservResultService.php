@@ -6,7 +6,7 @@ use Application\Constants;
 use Import\Model\ImportObserv;
 use Import\Model\ImportObservResult;
 use These\Entity\Db\These;
-use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
+use Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Application\Service\Notification\NotifierServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;

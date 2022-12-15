@@ -1,0 +1,30 @@
+<?php
+
+use These\Entity\Db\These;
+use Depot\Form\RdvBuTheseDoctorantForm;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var                    $this PhpRenderer
+ * @var These              $these
+ * @var string             $title
+ * @var RdvBuTheseDoctorantForm $form
+ *
+ * @method string formControlGroup()
+ */
+
+$fcg = $this->formControlGroup();
+?>
+
+<?php echo $this->form()->openTag($form->prepare()->setAttribute('class', 'rdv-bu')) ?>
+<div class="row">
+    <div class="col-md-6">
+        <?php echo $fcg($form->get('coordDoctorant')) ?>
+    </div>
+    <div class="col-md-6">
+        <?php echo $fcg($form->get('dispoDoctorant')) ?>
+    </div>
+</div>
+<?php echo $this->formElement($form->get('submit')) ?>
+<?php echo $this->form()->closeTag() ?>
+

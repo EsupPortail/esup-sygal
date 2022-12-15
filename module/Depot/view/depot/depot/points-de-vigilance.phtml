@@ -1,0 +1,62 @@
+<?php
+
+use Application\Form\Factory\PointsDeVigilanceFormFactory;
+
+use These\Entity\Db\These;
+use Depot\Form\PointsDeVigilanceForm;
+use Application\Entity\Db\Validation;
+use Depot\Entity\Db\WfEtape;
+use Depot\Provider\Privilege\DepotPrivileges;
+use Depot\Provider\Privilege\ValidationPrivileges;
+use Application\View\Renderer\PhpRenderer;
+use UnicaenApp\Service\MessageCollector;
+use Depot\Entity\Db\Repository\FichierTheseRepository;
+
+/**
+ * @var These               $these
+ * @var PointsDeVigilanceForm         $form
+ *
+ * @see
+ */
+
+
+$recap = new \Depot\Form\PointsDeVigilanceForm();
+?>
+
+<?php $this->headTitle("Récapitulatif de la bibliothèque universitaire")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+
+<h1 class="page-header">Points de vigilance
+    <small><?php echo $this->partial('these/these/partial/titre') ?></small>
+</h1>
+
+<?php
+$messenger = $this->messenger();
+echo $messenger->addMessagesFromFlashMessenger();
+?>
+
+<?php if ($form !== null): ?>
+<!--    <div class="row">-->
+<!--        <div class="col-md-6">-->
+<fieldset>
+    <legend>Points de vigilance</legend>
+    <div class="row">
+        <div class="col-md-6">
+            <?php
+            $fcg = $this->formControlGroup();
+            $form->prepare();
+            echo $this->form()->openTag($form->setAttribute('class', 'attestations'));
+            echo $fcg($form->get('vigilance'));
+            echo $this->formElement($form->get('submit'));
+            echo $this->form()->closeTag()
+            ?>
+        </div>
+    </div>
+</fieldset>
+<?php else:?>
+<p>
+    L'accés au récapitulatif est disponible une fois les informations de diffusion et du rendez-vous bu saisies.
+</p>
+<?php endif; ?>
+
+
+

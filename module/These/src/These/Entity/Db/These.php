@@ -5,33 +5,37 @@ namespace These\Entity\Db;
 use Application\Constants;
 use Application\Entity\Db\Financement;
 use Application\Entity\Db\Rapport;
-use Application\Entity\Db\RdvBu;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TitreAcces;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
-use These\Filter\TitreApogeeFilter;
 use Assert\Assertion;
 use BadMethodCallException;
 use DateInterval;
 use DateTime;
+use Depot\Entity\Db\Attestation;
+use Depot\Entity\Db\Diffusion;
+use Depot\Entity\Db\FichierThese;
+use Depot\Entity\Db\MetadonneeThese;
+use Depot\Entity\Db\RdvBu;
 use Doctorant\Entity\Db\Doctorant;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Individu\Entity\Db\Individu;
-use Structure\Entity\Db\EcoleDoctorale;
-use Structure\Entity\Db\Etablissement;
-use Structure\Entity\Db\UniteRecherche;
 use Fichier\Entity\Db\Fichier;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
+use Individu\Entity\Db\Individu;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\UniteRecherche;
+use These\Filter\TitreApogeeFilter;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Util;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
-use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * These
@@ -1222,10 +1226,10 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
-     * @param RdvBu $rdvBu
+     * @param \Depot\Entity\Db\RdvBu $rdvBu
      * @return $this
      */
-    public function addRdvBu(RdvBu $rdvBu)
+    public function addRdvBu(\Depot\Entity\Db\RdvBu $rdvBu)
     {
         $this->rdvBus->add($rdvBu);
         return $this;
@@ -1580,7 +1584,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
         /** @var Acteur $acteur */
         foreach ($encadrements as $acteur) {
-            $email = $acteur->getIndividu()->getEmail();
+            $email = $acteur->getIndividu()->getEmailPro();
             $name = (string) $acteur->getIndividu();
             if (! $email) {
                 $individusSansMail[$name] = $acteur->getIndividu();

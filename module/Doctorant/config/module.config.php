@@ -1,8 +1,14 @@
 <?php
 
-use Application\Navigation\ApplicationNavigationFactory;
-use Doctorant\Controller\DoctorantController;
+namespace Doctorant;
+
+use Doctorant\Assertion\These\TheseAssertion;
+use Doctorant\Assertion\These\TheseAssertionFactory;
+use Doctorant\Assertion\These\TheseEntityAssertion;
+use Doctorant\Assertion\These\TheseEntityAssertionFactory;
 use Doctorant\Controller\DoctorantControllerFactory;
+use Doctorant\Form\MailConsentementForm;
+use Doctorant\Form\MailConsentementFormFactory;
 use Doctorant\Provider\Privilege\DoctorantPrivileges;
 use Doctorant\Service\DoctorantService;
 use Doctorant\Service\DoctorantServiceFactory;
@@ -10,6 +16,7 @@ use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Laminas\Router\Http\Segment;
 use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'doctrine' => [
@@ -30,31 +37,30 @@ return [
         ],
     ],
     'bjyauthorize' => [
-//        'rule_providers'     => [
-//            PrivilegeRuleProvider::class => [
-//                'allow' => [
-//                    [],
-//                ],
-//            ],
-//        ],
+        'rule_providers'     => [
+            PrivilegeRuleProvider::class => [
+                'allow' => [
+                    [
+                        'privileges' => [
+                            DoctorantPrivileges::DOCTORANT_AFFICHER_EMAIL_CONTACT,
+                            DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT,
+                        ],
+                        'resources' => ['These'],
+                        'assertion' => TheseAssertion::class,
+                    ],
+                ],
+            ],
+        ],
         'guards' => [
             PrivilegeController::class => [
                 [
                     'controller' => 'Application\Controller\Doctorant',
                     'action' => [
-                        'email-contact',
                         'modifier-email-contact',
+                        'modifier-email-contact-consent',
                     ],
-                    'privileges' => DoctorantPrivileges::DOCTORANT_MODIFICATION_PERSOPASS,
-//                    'assertion'  => TheseAssertion::class,
-                ],
-                [
-                    'controller' => 'Application\Controller\Doctorant',
-                    'action' => [
-                        'consentement',
-                    ],
-                    'privileges' => DoctorantPrivileges::DOCTORANT_MODIFICATION_PERSOPASS,
-//                    'assertion'  => TheseAssertion::class,
+                    'privileges' => DoctorantPrivileges::DOCTORANT_MODIFIER_EMAIL_CONTACT,
+                    'assertion'  => TheseAssertion::class,
                 ],
                 [
                     'controller' => 'Application\Controller\Doctorant',
@@ -92,28 +98,27 @@ return [
                 ],
                 'may_terminate' => false,
                 'child_routes' => [
-                    'email-contact' => [
-                        'type' => 'Literal',
-                        'options' => [
-                            'route' => '/email-contact',
-                            'defaults' => [
-                                /**
-                                 * @see \Doctorant\Controller\DoctorantController::emailContactAction()
-                                 */
-                                'action' => 'email-contact',
-                            ],
-                        ],
-                    ],
                     'modifier-email-contact' => [
                         'type' => 'Segment',
                         'options' => [
-                            'route' => '/modifier-email-contact[/:back]',
+                            'route' => '/modifier-email-contact',
                             'defaults' => [
                                 /**
                                  * @see \Doctorant\Controller\DoctorantController::modifierEmailContactAction()
                                  */
                                 'action' => 'modifier-email-contact',
-                                'back' => 0
+                            ],
+                        ],
+                    ],
+                    'modifier-email-contact-consent' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route' => '/modifier-email-contact-consent',
+                            'defaults' => [
+                                /**
+                                 * @see \Doctorant\Controller\DoctorantController::modifierEmailContactConsentAction()
+                                 */
+                                'action' => 'modifier-email-contact-consent',
                             ],
                         ],
                     ],
@@ -137,34 +142,14 @@ return [
         'default' => [
             'home' => [
                 'pages' => [
-                    /**
-                     * Page pour Doctorant.
-                     * @see ApplicationNavigationFactory::processPage()
-                     */
-                    // DEPTH = 1
-                    ApplicationNavigationFactory::MES_DONNEES_PAGE_ID => [
-                        'order' => -150,
-                        'label' => 'Mes données',
-                        'route' => 'doctorant/email-contact',
-                        //'resource' => PrivilegeController::getResourceId('Doctorant\Controller\Doctorant', 'donnees-perso'),
-                        'pages' => [
-                            'email-contact' => [
-                                'label' => 'Email de contact',
-                                'route' => 'doctorant/email-contact',
-                                'icon' => 'icon icon-notifier',
-                                //'resource' => PrivilegeController::getResourceId('Doctorant\Controller\Doctorant', 'modifier-email-contact'),
-                                //'visible' => TheseAssertion::class,
-                            ],
-                        ],
-                    ],
+
                 ],
             ],
         ],
     ],
     'form_elements' => [
-        'invokables' => [
-        ],
         'factories' => [
+            MailConsentementForm::class => MailConsentementFormFactory::class,
         ],
     ],
     'hydrators' => array(
@@ -173,6 +158,8 @@ return [
     'service_manager' => [
         'factories' => [
             'DoctorantService' => DoctorantServiceFactory::class,
+            TheseAssertion::class => TheseAssertionFactory::class,
+            TheseEntityAssertion::class => TheseEntityAssertionFactory::class,
         ],
         'aliases' => [
             DoctorantService::class => 'DoctorantService',

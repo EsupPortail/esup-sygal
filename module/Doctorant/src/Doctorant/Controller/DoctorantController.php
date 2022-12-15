@@ -2,17 +2,18 @@
 
 namespace Doctorant\Controller;
 
+use Application\Constants;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\MailConfirmation;
 use Application\Form\MailConfirmationForm;
 use Application\RouteMatch;
 use Application\Service\MailConfirmationService;
 use Doctorant\Entity\Db\Doctorant;
-use Doctorant\Form\ConsentementForm;
+use Doctorant\Form\MailConsentementForm;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Laminas\View\Model\JsonModel;
-use UnicaenAuth\Authentication\Adapter\Ldap as LdapAuthAdapter;
 use Laminas\View\Model\ViewModel;
+use UnicaenAuth\Authentication\Adapter\Ldap as LdapAuthAdapter;
 
 class DoctorantController extends AbstractController
 {
@@ -21,20 +22,13 @@ class DoctorantController extends AbstractController
     /** @var MailConfirmationService $mailConfirmationService */
     private $mailConfirmationService;
 
-    /**
-     * @var MailConfirmationForm
-     */
-    private $mailConfirmationForm;
+    private MailConfirmationForm $mailConfirmationForm;
+    private MailConsentementForm $mailConsentementForm;
 
     /**
      * @var LdapAuthAdapter
      */
     private $ldapAuthAdapter;
-
-    /**
-     * @var \Doctorant\Form\ConsentementForm
-     */
-    private $donneesPersoForm;
 
     /**
      * @param MailConfirmationService $mailConfirmationService
@@ -52,30 +46,9 @@ class DoctorantController extends AbstractController
         $this->mailConfirmationForm = $mailConfirmationForm;
     }
 
-    public function setDonneesPersoForm(ConsentementForm $donneesPersoForm)
+    public function setMailConsentementForm(MailConsentementForm $mailConsentementForm)
     {
-        $this->donneesPersoForm = $donneesPersoForm;
-    }
-
-    /**
-     * @return \Laminas\View\Model\ViewModel
-     */
-    public function emailContactAction(): ViewModel
-    {
-        $doctorant = $this->requestDoctorant();
-
-        // Si on a une demande en attente
-        $mailConfirmation = $this->mailConfirmationService->fetchMailConfirmationsForIndividu($doctorant->getIndividu());
-        if ($mailConfirmation && $mailConfirmation->estEnvoye()) {
-            return $this->changementEmailContactEnCours($doctorant, $mailConfirmation);
-        }
-
-        $mailConfirmation = $this->mailConfirmationService->fetchMailConfirmationsForIndividu($doctorant->getIndividu());
-
-        return new ViewModel([
-            'doctorant' => $doctorant,
-            'mailConfirmation' => $mailConfirmation,
-        ]);
+        $this->mailConsentementForm = $mailConsentementForm;
     }
 
     /**
@@ -86,45 +59,99 @@ class DoctorantController extends AbstractController
         $doctorant = $this->requestDoctorant();
         $force = (bool) $this->params()->fromQuery('force', false);
 
-        // Si on a déjà une demande confirmée...
-        $mailConfirmation = $this->mailConfirmationService->fetchMailConfirmationsForIndividu($doctorant->getIndividu());
-        if ($mailConfirmation && $mailConfirmation->estConfirme() && !$force) {
-            return $this->changementEmailContactConfirme($mailConfirmation);
-        }
+        $lastMailConfirmation = $this->mailConfirmationService->fetchMailConfirmationForIndividu($doctorant->getIndividu());
 
-        // Si on a déjà une demande en attente...
-        $mailConfirmation = $this->mailConfirmationService->fetchMailConfirmationsForIndividu($doctorant->getIndividu());
-        if ($mailConfirmation && $mailConfirmation->estEnvoye() && !$force) {
-            return $this->changementEmailContactEnCours($doctorant, $mailConfirmation);
+        if (!$force && $lastMailConfirmation) {
+            // Si on a déjà une demande en attente...
+            if ($lastMailConfirmation->estEnvoye()) {
+                return $this->changementEmailContactEnCours($doctorant, $lastMailConfirmation);
+            }
+            // Si on a déjà une demande confirmée et que le consentement a été fourni...
+            if ($lastMailConfirmation->estConfirme()) {
+                return $this->changementEmailContactConfirme($lastMailConfirmation);
+            }
         }
 
         $mailConfirmation = new MailConfirmation();
         $mailConfirmation->setIndividu($doctorant->getIndividu());
-        $mailConfirmation->setEtat(MailConfirmation::ENVOYE);
+        // inti avec précédent mail renseigné
+        if ($lastMailConfirmation) {
+            $mailConfirmation->setEmail($lastMailConfirmation->getEmail());
+            $mailConfirmation->setRefusListeDiff($lastMailConfirmation->getRefusListeDiff());
+        }
+
+        $this->mailConfirmationForm->bind($mailConfirmation);
+
+        $emailInstitutionnel = $doctorant->getIndividu()->getEmailPro();
+        if (!$emailInstitutionnel) {
+            $this->mailConfirmationForm->setRefusListeDiffInterdit(true);
+        }
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
-            $email = $data['email'];
-            if (filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-                $mailConfirmation->setEmail($email);
+            $this->mailConfirmationForm->setData($data);
+            if ($this->mailConfirmationForm->isValid()) {
+                $mailConfirmation->setEtat(MailConfirmation::ENVOYE);
                 $id = $this->mailConfirmationService->save($mailConfirmation);
                 $this->mailConfirmationService->generateCode($id);
 
-                return $this->redirect()->toRoute('mail-confirmation-envoie', ['id' => $id], [], true);
-            } else {
-                $this->flashMessenger()->addErrorMessage("L'adresse électronique fournie n'est pas valide : " . $email);
+                return $this->redirect()->toRoute('mail-confirmation/envoie', ['id' => $id], [], true);
             }
         }
 
         $this->mailConfirmationForm->setAttribute('action',
-            $this->url()->fromRoute('doctorant/modifier-email-contact', [], ['query' => ['force' => (int)$force]], true));
-        $this->mailConfirmationForm->bind($mailConfirmation);
+            $this->urlDoctorant()->modifierEmailContactUrl($doctorant, $force));
 
         return new ViewModel([
             'doctorant' => $doctorant,
+            'emailInstitutionnel' => $emailInstitutionnel,
             'form' => $this->mailConfirmationForm,
-            'title' => "Saisie de l'adresse électronique de contact",
+            'title' => "Adresse électronique de contact et consentement",
+        ]);
+    }
+
+    /**
+     * @return \Laminas\Http\Response|\Laminas\View\Model\ViewModel
+     */
+    public function modifierEmailContactConsentAction()
+    {
+        $doctorant = $this->requestDoctorant();
+        $redirect = $this->params()->fromQuery('redirect', '/');
+
+        $lastMailConfirmation = $this->mailConfirmationService->fetchMailConfirmationForIndividu($doctorant->getIndividu());
+        if ($lastMailConfirmation === null || !$lastMailConfirmation->estConfirme()) {
+            return $this->modifierEmailContactAction();
+        }
+
+        $this->mailConsentementForm->bind($lastMailConfirmation);
+
+        $emailInstitutionnel = $doctorant->getIndividu()->getEmailPro();
+        if (!$emailInstitutionnel) {
+            // si aucun email pro trouvé : pas possible de refuser la réception sur le mail de contact
+            $this->mailConsentementForm->setRefusInterdit(true);
+        }
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            $this->mailConsentementForm->setData($data);
+            if ($this->mailConsentementForm->isValid()) {
+                $this->mailConfirmationService->save($lastMailConfirmation);
+
+                if (!$request->isXmlHttpRequest()) {
+                    return $this->redirect()->toUrl($redirect);
+                }
+            }
+        }
+
+        $this->mailConsentementForm->setAttribute('action', $this->url()->fromRoute(null, [], [], true));
+
+        return new ViewModel([
+            'doctorant' => $doctorant,
+            'emailInstitutionnel' => $emailInstitutionnel,
+            'form' => $this->mailConsentementForm,
+            'title' => "Consentement",
         ]);
     }
 
@@ -157,12 +184,6 @@ class DoctorantController extends AbstractController
         $viewmodel->setTemplate('doctorant/doctorant/demande-encours');
 
         return $viewmodel;
-    }
-
-    public function consentementAction()
-    {
-        $doctorant = $this->requestDoctorant();
-
     }
 
     /**

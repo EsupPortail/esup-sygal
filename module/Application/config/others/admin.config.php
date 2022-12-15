@@ -1,20 +1,15 @@
 <?php
 
 use Application\Controller\AdminController;
-use Application\Controller\Factory\MailConfirmationControllerFactory;
+use Application\Controller\Factory\PrivilegeControllerFactory;
 use Application\Controller\Factory\RoleControllerFactory;
-use Application\Controller\MailConfirmationController;
 use Application\Controller\RoleController;
-use Application\Form\Factory\MailConfirmationFormFactory;
-use Application\Form\Factory\MailConfirmationHydratorFactory;
-use Structure\Provider\Privilege\StructurePrivileges;
-use These\Provider\Privilege\ThesePrivileges;
 use Application\Provider\Privilege\UtilisateurPrivileges;
-use Application\Service\MailConfirmationServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Privilege\Privileges;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
+use Structure\Provider\Privilege\StructurePrivileges;
+use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenAuth\Provider\Privilege\Privileges;
 
 return [
     'bjyauthorize'    => [
@@ -67,27 +62,6 @@ return [
                         'test-envoi-mail',
                     ],
                     'privileges' => UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
-                ],
-                [
-                    'controller' => MailConfirmationController::class,
-                    'action'     => [
-                        'index',
-                        'envoie',
-                        'envoye',
-                        'reception',
-                        'swap',
-                        'remove'
-                    ],
-                    'privileges' => UtilisateurPrivileges::UTILISATEUR_ATTRIBUTION_ROLE,
-                ],
-                [
-                    'controller' => MailConfirmationController::class,
-                    'action'     => [
-                        'envoie',
-                        'envoye',
-                        'reception',
-                    ],
-                    'privileges' => ThesePrivileges::THESE_CONSULTATION_FICHE,
                 ],
             ],
         ],
@@ -147,66 +121,6 @@ return [
                         ],
                     ],
                 ]
-            ],
-            'mail-confirmation-acceuil' => [
-                'type' => Segment::class,
-                'options' => [
-                    'route' => '/mail-confirmation-acceuil[/:id]',
-                    'defaults' =>[
-                        'controller' => MailConfirmationController::class,
-                        'action' => 'index',
-                    ],
-                ],
-            ],
-            'mail-confirmation-swap' => [
-                'type' => Segment::class,
-                'options' => [
-                    'route' => '/mail-confirmation-swap/:id',
-                    'defaults' =>[
-                        'controller' => MailConfirmationController::class,
-                        'action' => 'swap',
-                    ],
-                ],
-            ],
-            'mail-confirmation-remove' => [
-                'type' => Segment::class,
-                'options' => [
-                    'route' => '/mail-confirmation-remove/:id',
-                    'defaults' =>[
-                        'controller' => MailConfirmationController::class,
-                        'action' => 'remove',
-                    ],
-                ],
-            ],
-            'mail-confirmation-envoie' => [
-                'type' => Segment::class,
-                'options' => [
-                    'route' => '/mail-confirmation-envoie/:id',
-                    'defaults' =>[
-                        'controller' => MailConfirmationController::class,
-                        'action' => 'envoie',
-                    ],
-                ],
-            ],
-            'mail-confirmation-envoye' => [
-                'type' => Segment::class,
-                'options' => [
-                    'route' => '/mail-confirmation-envoye/:id',
-                    'defaults' =>[
-                        'controller' => MailConfirmationController::class,
-                        'action' => 'envoye',
-                    ],
-                ],
-            ],
-            'mail-confirmation-reception' => [
-                'type' => Segment::class,
-                'options' => [
-                    'route' => '/mail-confirmation-reception/:id/:code',
-                    'defaults' =>[
-                        'controller' => MailConfirmationController::class,
-                        'action' => 'reception',
-                    ],
-                ],
             ],
             'modifier-privilege' => [
                 'type'          => Segment::class,
@@ -268,36 +182,15 @@ return [
             ],
         ],
     ],
-
-    'service_manager' => [
-        'invokables' => [],
-        'factories' => [
-            'MailConfirmationService' => MailConfirmationServiceFactory::class,
-        ],
-    ],
     'controllers'     => [
         'invokables' => [
             'Application\Controller\Admin' => AdminController::class,
 
         ],
         'factories' => [
-            \Application\Controller\PrivilegeController::class =>  \Application\Controller\Factory\PrivilegeControllerFactory::class,
-            MailConfirmationController::class => MailConfirmationControllerFactory::class,
+            \Application\Controller\PrivilegeController::class =>  PrivilegeControllerFactory::class,
             RoleController::class => RoleControllerFactory::class,
         ],
-    ],
-
-    'form_elements'   => [
-        'invokables' => [
-        ],
-        'factories' => [
-            'MailConfirmationForm' => MailConfirmationFormFactory::class,
-        ],
-    ],
-    'hydrators' => [
-        'factories' => [
-            'MailConfirmationHydrator' => MailConfirmationHydratorFactory::class,
-        ]
     ],
 
 ];

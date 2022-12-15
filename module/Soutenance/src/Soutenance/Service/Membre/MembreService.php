@@ -247,7 +247,7 @@ class MembreService {
         $membre->setEtablissement(($acteur->getEtablissement())?$acteur->getEtablissement()->getStructure()->getLibelle():"Etablissement inconnu");
         $membre->setRole(Membre::MEMBRE_JURY);
         $membre->setExterieur("non");
-        $membre->setEmail($acteur->getIndividu()->getEmail());
+        $membre->setEmail($acteur->getIndividu()->getEmailPro());
         $membre->setActeur($acteur);
         $membre->setVisio(false);
         $this->create($membre);

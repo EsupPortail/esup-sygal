@@ -2,11 +2,11 @@
 
 namespace These\Controller\Factory;
 
-use These\Controller\TheseRechercheController;
 use Application\Service\Role\RoleService;
+use Interop\Container\ContainerInterface;
+use These\Controller\TheseRechercheController;
 use These\Service\These\TheseSearchService;
 use These\Service\These\TheseService;
-use Interop\Container\ContainerInterface;
 
 class TheseRechercheControllerFactory
 {

@@ -7,8 +7,6 @@ use Application\Cache\MemcachedFactory;
 use Application\Controller\Factory\IndexControllerFactory;
 use Application\Controller\Plugin\Forward;
 use Application\Controller\Plugin\ForwardFactory;
-use Application\ORM\Query\Functions\ToNumber;
-use Fichier\Controller\Plugin\Uploader\UploaderPluginFactory;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Entity\UserWrapperFactory;
 use Application\Entity\UserWrapperFactoryFactory;
@@ -16,6 +14,8 @@ use Application\Event\UserAuthenticatedEventListenerFactory;
 use Application\Event\UserRoleSelectedEventListener;
 use Application\Navigation\NavigationFactoryFactory;
 use Application\ORM\Query\Functions\StrReduce;
+use Application\ORM\Query\Functions\ToNumber;
+use Application\ORM\Query\Functions\Year;
 use Application\Service\AuthorizeServiceAwareInitializer;
 use Application\Service\Role\RoleService;
 use Application\Service\Role\RoleServiceFactory;
@@ -28,11 +28,12 @@ use Application\View\Helper\EscapeTextHelper;
 use Application\View\Helper\FiltersPanel\FiltersPanelHelper;
 use Application\View\Helper\Sortable;
 use Application\View\Helper\SortableHelperFactory;
-use Fichier\View\Helper\Uploader\UploaderHelper;
-use Fichier\View\Helper\Uploader\UploaderHelperFactory;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\PDO\PgSQL\Driver as PgSQL;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Fichier\Controller\Plugin\Uploader\UploaderPluginFactory;
+use Fichier\View\Helper\Uploader\UploaderHelper;
+use Fichier\View\Helper\Uploader\UploaderHelperFactory;
 use Laminas\Navigation\Navigation;
 use Structure\Form\Factory\EcoleDoctoraleFormFactory;
 use UnicaenApp\Controller\ConsoleController;
@@ -49,16 +50,6 @@ return array(
                 ['controller' => ConsoleController::class, 'action' => 'runSQLQuery', 'roles' => []],
             ],
             \UnicaenAuth\Guard\PrivilegeController::class => [
-                [
-                    'controller' => \UnicaenOracle\Controller\IndexController::class,
-                    'action'     => [
-                        'generateScriptForSchemaClearingConsole',
-                        'generateScriptForSchemaCreationConsole',
-                        'generateScriptForRefConstraintsCreationConsole',
-                        'generateScriptsForDataInsertsConsole',
-                    ],
-                    'roles' => [], // pas d'authentification requise
-                ],
                 [
                     'controller' => 'DoctrineModule\Controller\Cli',
                     'roles' => [],
@@ -80,7 +71,6 @@ return array(
                 'class'   => MappingDriverChain::class,
                 'drivers' => [
                     'Application\Entity\Db' => 'orm_default_xml_driver',
-                    'Application\Entity\Db\VSitu' => 'orm_default_xml_driver',
                 ],
             ],
             'orm_default_xml_driver' => [
@@ -88,7 +78,6 @@ return array(
                 'cache' => 'array',
                 'paths' => [
                     __DIR__ . '/../src/Application/Entity/Db/Mapping',
-                    __DIR__ . '/../src/Application/Entity/Db/Mapping/VSitu',
                 ],
             ],
         ],
@@ -110,6 +99,7 @@ return array(
                 'string_functions' => [
                     'strReduce' => StrReduce::class,
                     'toNumber' => ToNumber::class,
+                    'year' => Year::class,
                 ],
             ]
         ],

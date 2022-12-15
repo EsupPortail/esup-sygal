@@ -14,12 +14,12 @@ $this->headTitle("Gestion des comptes associés aux présidents du jury");
 
 function afficherActeur(Acteur $a) {
 
-    $mailIndividu = $a->getIndividu()->getEmail();
+    $mailIndividu = $a->getIndividu()->getEmailPro();
 
     $title  = "<table>";
     $title .= "<tr><th>ActeurId</th><td>".$a->getId() . "</td></tr>";
     $title .= "<tr><th>IndividuId</th><td>".$a->getIndividu()->getId()."</td></tr>";
-    if ($a->getIndividu()->getEmail()) {
+    if ($a->getIndividu()->getEmailPro()) {
         $title .= "<tr><th>Email</th><td>" . $mailIndividu . "</td></tr>";
     }
     $title .= "</table>";
@@ -47,10 +47,10 @@ function afficherUtilisateur(Acteur $a) {
 }
 
 function afficherMailIndividu(Acteur $a) {
-    if ($a->getIndividu() !== null AND $a->getIndividu()->getEmail() !== null) {
+    if ($a->getIndividu() !== null AND $a->getIndividu()->getEmailPro() !== null) {
         return "<span class='icon icon-oui' style='color:darkgreen;' 
                     title='IndividuId:". $a->getIndividu()->getId(). "<br/>".
-                    $a->getIndividu()->getEmail() ."'
+                    $a->getIndividu()->getEmailPro() ."'
                     data-bs-toggle='tooltip' data-bs-html='true'></span>";
     }
     return "<span class='icon icon-non iconly' style='color:darkred;' title='Pas d email lié à l individu'></span>";
@@ -223,10 +223,10 @@ $canNotifierPresident     = $this->isAllowed(PresidentJuryPrivileges::getResourc
                             <?php endif; ?>
 
                             <?php if ($canNotifierPresident) : ?>
-                                <?php if (!empty($utilisateurs) OR ($president->getIndividu() AND $president->getIndividu()->getEmail()) OR ($president->getMembre() AND $president->getMembre()->getEmail())) : ?>
+                                <?php if (!empty($utilisateurs) OR ($president->getIndividu() AND $president->getIndividu()->getEmailPro()) OR ($president->getMembre() AND $president->getMembre()->getEmail())) : ?>
                                     <?php /** @see \These\Controller\PresidentJuryController::notifierCorrectionAction() */ ?>
                                     <a href="<?php
-                                        if (!empty($utilisateurs) AND ($president->getIndividu() === null OR $president->getIndividu()->getEmail() === null) AND ($president->getMembre() === null OR $president->getMembre()->getEmail() === null)) {
+                                        if (!empty($utilisateurs) AND ($president->getIndividu() === null OR $president->getIndividu()->getEmailPro() === null) AND ($president->getMembre() === null OR $president->getMembre()->getEmail() === null)) {
                                             echo $this->url('president-jury/notifier-correction', ['president' => $president->getId()], ['query' => ['utilisateur' => end($utilisateurs)->getId()]], true);
                                         } else {
                                             echo $this->url('president-jury/notifier-correction', ['president' => $president->getId()], [], true);

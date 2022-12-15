@@ -49,6 +49,15 @@ return [
                 [
                     'controller' => SessionController::class,
                     'action' => [
+                        'afficher-fiche',
+                    ],
+                    'roles' => [
+                        'user',
+                    ],
+                ],
+                [
+                    'controller' => SessionController::class,
+                    'action' => [
                         'ajouter',
                     ],
                     'privileges' => [
@@ -156,6 +165,17 @@ return [
                                     'defaults' => [
                                         'controller' => SessionController::class,
                                         'action'     => 'afficher',
+                                    ],
+                                ],
+                            ],
+                            'afficher-fiche' => [
+                                'type'  => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route'    => '/afficher-fiche/:session',
+                                    'defaults' => [
+                                        'controller' => SessionController::class,
+                                        'action'     => 'afficher-fiche',
                                     ],
                                 ],
                             ],

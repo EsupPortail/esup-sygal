@@ -33,7 +33,11 @@
             </join-table>
         </many-to-many>
 
-        <one-to-many target-entity="Application\Entity\Db\MailConfirmation" mapped-by="individu" field="mailsConfirmations"/>
+        <one-to-many target-entity="Application\Entity\Db\MailConfirmation" mapped-by="individu" field="mailsConfirmations">
+            <order-by>
+                <order-by-field name="id" direction="DESC"/>
+            </order-by>
+        </one-to-many>
         <one-to-many target-entity="Application\Entity\Db\Utilisateur" mapped-by="individu" field="utilisateurs"/>
         <one-to-many target-entity="Individu\Entity\Db\IndividuCompl" mapped-by="individu" field="complements"/>
 

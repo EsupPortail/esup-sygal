@@ -70,6 +70,15 @@ class SessionController extends AbstractController
         ]);
     }
 
+    public function afficherFicheAction() : ViewModel
+    {
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
+        return new ViewModel([
+            'title' => "Information sur la session #".$session->getIndex(). " - ". $session->getFormation()->getLibelle(),
+            'session' => $session,
+        ]);
+    }
+
     public function ajouterAction() : ViewModel
     {
         $formation = $this->getFormationService()->getRepository()->getRequestedFormation($this);
@@ -217,10 +226,11 @@ class SessionController extends AbstractController
                     case Etat::CODE_FERME :
                         $this->getNotificationService()->triggerInscriptionsListePrincipale($session);
                         $this->getNotificationService()->triggerInscriptionsListeComplementaire($session);
-                        $this->getNotificationService()->triggerInscriptionEchec($session);
+                        $this->getNotificationService()->triggerInscriptionClose($session);
                         break;
                     case Etat::CODE_IMMINENT :
                         $this->getNotificationService()->triggerSessionImminente($session);
+                        $this->getNotificationService()->triggerInscriptionEchec($session);
                         break;
                     case Etat::CODE_CLOTURER :
                         $this->getNotificationService()->triggerSessionTerminee($session);
@@ -314,11 +324,12 @@ class SessionController extends AbstractController
             $etablissements = array_map(function (These $t) { return ($t->getEtablissement())?$t->getEtablissement()->getStructure()->getLibelle():"Établissement non renseigné";}, $theses);
             $ecoles = array_map(function (These $t) { return ($t->getEcoleDoctorale())?$t->getEcoleDoctorale()->getStructure()->getLibelle():"École doctorale non renseignée";}, $theses);
             $unites = array_map(function (These $t) { return ($t->getUniteRecherche())?$t->getUniteRecherche()->getStructure()->getLibelle():"Unité de recherche non renseignée";}, $theses);
+            $nbInscription = (!empty($theses))?current($theses)->getNbInscription($annee):"---";
             $entry = [
                 'Liste' => $inscription->getListe(),
                 'Dénomination étudiant' => $doctorant->getIndividu()->getNomComplet(),
-                'Adresse électronique' => $doctorant->getIndividu()->getEmail(),
-                'Année de thèse' => current($theses)->getNbInscription($annee),
+                'Adresse électronique' => $doctorant->getIndividu()->getEmailUtilisateur(),
+                'Année de thèse' => $nbInscription,
                 'Établissement' => implode("/",$etablissements),
                 'École doctorale' => implode("/",$ecoles),
                 'Unité de recherche' => implode("/",$unites),

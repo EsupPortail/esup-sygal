@@ -2,12 +2,7 @@
 
 namespace These\Service\Acteur;
 
-use These\Entity\Db\Acteur;
-use Structure\Entity\Db\Etablissement;
-use Individu\Entity\Db\Individu;
-use These\Entity\Db\Repository\ActeurRepository;
 use Application\Entity\Db\Role;
-use These\Entity\Db\These;
 use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
@@ -15,9 +10,14 @@ use Application\Service\UserContextServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use DateTime;
 use Doctrine\ORM\ORMException;
-use Soutenance\Entity\Qualite;
-use UnicaenApp\Exception\RuntimeException;
+use Individu\Entity\Db\Individu;
 use Laminas\Mvc\Controller\AbstractActionController;
+use Soutenance\Entity\Qualite;
+use Structure\Entity\Db\Etablissement;
+use These\Entity\Db\Acteur;
+use These\Entity\Db\Repository\ActeurRepository;
+use These\Entity\Db\These;
+use UnicaenApp\Exception\RuntimeException;
 
 class ActeurService extends BaseService
 {

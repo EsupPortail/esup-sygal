@@ -2,10 +2,13 @@
 
 namespace Soutenance\Controller;
 
+use Fichier\Service\Fichier\FichierStorageService;
 use Information\Controller\InformationController;
 use Information\Service\InformationService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Soutenance\Service\Avis\AvisService;
+use Structure\Service\Etablissement\EtablissementService;
 use These\Service\Acteur\ActeurService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Role\RoleService;
@@ -27,6 +30,7 @@ use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
 use Laminas\View\Renderer\PhpRenderer;
+use UnicaenRenderer\Service\Rendu\RenduService;
 
 class PropositionControllerFactory
 {
@@ -41,9 +45,12 @@ class PropositionControllerFactory
     {
         /**
          * @var ActeurService $acteurService
+         * @var AvisService $avisService
          * @var EcoleDoctoraleService $ecoleDoctoraleService
+         * @var EtablissementService $etablissementService
          * @var InformationService $informationService
          * @var EvenementService $evenementService
+         * @var FichierStorageService $fichierStorageService
          * @var MembreService $membreService
          * @var NotifierSoutenanceService $notificationSoutenanceService
          * @var PropositionService $propositionService
@@ -52,10 +59,14 @@ class PropositionControllerFactory
          * @var ValidationService $validationService
          * @var JustificatifService $justificatifService
          * @var ParametreService $parametreService
+         * @var RenduService $renduService
          */
         $acteurService = $container->get(ActeurService::class);
+        $avisService = $container->get(AvisService::class);
         $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
+        $etablissementService = $container->get(EtablissementService::class);
         $evenementService = $container->get(EvenementService::class);
+        $fichierStorageService = $container->get(FichierStorageService::class);
         $informationService = $container->get(InformationService::class);
         $membreService = $container->get(MembreService::class);
         $notificationSoutenanceService = $container->get(NotifierSoutenanceService::class);
@@ -65,6 +76,7 @@ class PropositionControllerFactory
         $validationService = $container->get(ValidationService::class);
         $justificatifService = $container->get(JustificatifService::class);
         $parametreService = $container->get(ParametreService::class);
+        $renduService = $container->get(RenduService::class);
 
         /**
          * @var DateLieuForm $dateLieuForm
@@ -94,8 +106,11 @@ class PropositionControllerFactory
         $controller = new PropositionController();
 
         $controller->setActeurService($acteurService);
+        $controller->setAvisService($avisService);
         $controller->setEcoleDoctoraleService($ecoleDoctoraleService);
+        $controller->setEtablissementService($etablissementService);
         $controller->setEvenementService($evenementService);
+        $controller->setFichierStorageService($fichierStorageService);
         $controller->setInformationService($informationService);
         $controller->setMembreService($membreService);
         $controller->setNotifierSoutenanceService($notificationSoutenanceService);
@@ -105,6 +120,7 @@ class PropositionControllerFactory
         $controller->setValidationService($validationService);
         $controller->setJustificatifService($justificatifService);
         $controller->setParametreService($parametreService);
+        $controller->setRenduService($renduService);
 
         $controller->setDateLieuForm($dateLieuForm);
         $controller->setMembreForm($membreForm);

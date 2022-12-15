@@ -71,6 +71,7 @@ return [
                         'proces-verbal-soutenance',
                         'modifier-adresse',
                         'envoyer-convocation',
+                        'rapport-soutenance',
                         'rapport-technique',
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION,
@@ -173,6 +174,17 @@ return [
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
                                         'action' => 'avis-soutenance',
+                                    ],
+                                ],
+                            ],
+                            'rapport-soutenance' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/rapport-soutenance',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action' => 'rapport-soutenance',
                                     ],
                                 ],
                             ],

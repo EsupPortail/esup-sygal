@@ -7,7 +7,7 @@ use Application\Entity\Db\Financement;
 use Application\Entity\Db\Role;
 use These\Entity\Db\These;
 use Application\Provider\Privilege\FinancementPrivileges;
-use These\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
 use These\Service\These\TheseSearchServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;

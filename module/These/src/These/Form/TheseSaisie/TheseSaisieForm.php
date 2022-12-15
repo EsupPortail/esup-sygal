@@ -3,9 +3,6 @@
 namespace These\Form\TheseSaisie;
 
 use Application\Service\Discipline\DisciplineServiceAwareTrait;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Laminas\Form\Element\Button;
 use Laminas\Form\Element\Date;
 use Laminas\Form\Element\Radio;
@@ -14,6 +11,9 @@ use Laminas\Form\Element\Textarea;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
 class TheseSaisieForm extends Form

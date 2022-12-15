@@ -24,7 +24,7 @@ $etablissement = $form->getObject();
 $idEtablissement = $etablissement->getStructure()->getId();
 $isNew = $etablissement->getId() === null;
 $estSubstituee = $etablissement->getStructure()->estSubstituee();
-$estModifiable = !($etablissement->getSource()->getImportable());
+$estModifiable = !($etablissement->getSource() !== null AND $etablissement->getSource()->getImportable());
 $fcg = $this->formControlGroup();
 
 $editable = $isNew || (!$estSubstituee AND $estModifiable);
@@ -86,7 +86,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
         <?php
         $content = $logoContent;
         if ($content === null) {
-            $form->getObject()->setCheminLogo(null);
+            $form->getObject()->getStructure()->setCheminLogo(null);
         }
         ?>
         <table>

@@ -2,17 +2,17 @@
 
 namespace These\Controller\Factory;
 
+use Fichier\Service\Fichier\FichierStorageService;
+use Individu\Service\IndividuService;
+use Interop\Container\ContainerInterface;
+use Laminas\View\Renderer\PhpRenderer;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\UniteRecherche\UniteRechercheService;
 use These\Controller\CoEncadrantController;
 use These\Form\CoEncadrant\RechercherCoEncadrantForm;
 use These\Service\Acteur\ActeurService;
 use These\Service\CoEncadrant\CoEncadrantService;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Fichier\Service\Fichier\FichierStorageService;
-use Individu\Service\IndividuService;
 use These\Service\These\TheseService;
-use Structure\Service\UniteRecherche\UniteRechercheService;
-use Interop\Container\ContainerInterface;
-use Laminas\View\Renderer\PhpRenderer;
 
 class CoEncadrantControllerFactory {
 

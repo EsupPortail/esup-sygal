@@ -2,32 +2,30 @@
 
 namespace Application\Controller;
 
-use Individu\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
 use Application\Form\MailConfirmationForm;
-use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\MailConfirmationService;
 use Application\Service\Notification\NotifierServiceAwareTrait;
+use Individu\Entity\Db\Individu;
+use Individu\Service\IndividuServiceAwareTrait;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
 use Notification\Exception\NotificationException;
 use UnicaenApp\Exception\RuntimeException;
-use Laminas\View\Model\ViewModel;
 
-class MailConfirmationController extends AbstractController {
+class MailConfirmationController extends AbstractController
+{
     use NotifierServiceAwareTrait;
     use IndividuServiceAwareTrait;
 
-    /** @var MailConfirmationService $mailConfirmationService */
-    private $mailConfirmationService;
+    private MailConfirmationService $mailConfirmationService;
 
     public function setMailConfirmationService(MailConfirmationService $service)
     {
         $this->mailConfirmationService = $service;
     }
 
-    /**
-     * @var MailConfirmationForm
-     */
-    private $mailConfirmationForm;
+    private MailConfirmationForm $mailConfirmationForm;
 
     /**
      * @param MailConfirmationForm $mailConfirmationForm
@@ -37,7 +35,7 @@ class MailConfirmationController extends AbstractController {
         $this->mailConfirmationForm = $mailConfirmationForm;
     }
 
-    public function indexAction()
+    public function indexAction(): ViewModel
     {
         $request = $this->getRequest();
         $id = $this->params()->fromRoute('id');
@@ -73,7 +71,7 @@ class MailConfirmationController extends AbstractController {
                             $id = $this->mailConfirmationService->save($mailConfirmation);
                             $this->mailConfirmationService->generateCode($id);
 
-                            $this->redirect()->toRoute('mail-confirmation-envoie', ['id' => $id], [], true);
+                            $this->redirect()->toRoute('mail-confirmation/envoie', ['id' => $id], [], true);
                             $form = null;
                         } else {
                             $this->flashMessenger()->addErrorMessage("MailConfirmation: Votre email n'est pas valide");
@@ -99,7 +97,7 @@ class MailConfirmationController extends AbstractController {
         ]);
     }
 
-    public function envoieAction()
+    public function envoieAction(): Response
     {
         $id = $this->params()->fromRoute('id');
 
@@ -107,7 +105,7 @@ class MailConfirmationController extends AbstractController {
         $mailConfirmation = $this->mailConfirmationService->fetchMailConfirmationById($id);
 
         $confirmUrl = $this->url()->fromRoute(
-            'mail-confirmation-reception',
+            'mail-confirmation/reception',
             ['id' => $mailConfirmation->getId(), 'code' => $mailConfirmation->getCode()],
             ['force_canonical' => true] ,
             true
@@ -118,7 +116,7 @@ class MailConfirmationController extends AbstractController {
             throw new RuntimeException("Erreur lors de l'envoi de la notification", null, $e);
         }
 
-        return $this->redirect()->toRoute('mail-confirmation-envoye', [], [], true);
+        return $this->redirect()->toRoute('mail-confirmation/envoye', [], [], true);
     }
 
     public function envoyeAction()
@@ -127,15 +125,19 @@ class MailConfirmationController extends AbstractController {
 
         /** @var MailConfirmation $mailConfirmation */
         $mailConfirmation = $this->mailConfirmationService->fetchMailConfirmationById($id);
+        if ($mailConfirmation === null) {
+            throw new RuntimeException("Aucun résultat trouvé");
+        }
+
+        if ($mailConfirmation->estConfirme()) {
+            return $this->redirect()->toRoute('mail-confirmation/reception', ['code' => $mailConfirmation->getCode()], [], true);
+        }
 
         return new ViewModel([
-            'email' => $mailConfirmation->getEmail(),
+            'mailConfirmation' => $mailConfirmation,
         ]);
     }
 
-    /**
-     * @return ViewModel
-     */
     public function receptionAction(): ViewModel
     {
         /**
@@ -156,21 +158,18 @@ class MailConfirmationController extends AbstractController {
         ]);
     }
 
-    /**
-     * @throws \Doctrine\ORM\OptimisticLockException
-     */
     public function swapAction()
     {
         $id = $this->params()->fromRoute('id');
         $this->mailConfirmationService->swapEtat($id);
 
-        $this->redirect()->toRoute('mail-confirmation-acceuil');
+        $this->redirect()->toRoute('mail-confirmation/acceuil');
     }
 
     public function removeAction() {
         $id = $this->params()->fromRoute('id');
         $this->mailConfirmationService->remove($id);
 
-        $this->redirect()->toRoute('mail-confirmation-acceuil');
+        $this->redirect()->toRoute('mail-confirmation/acceuil');
     }
 }

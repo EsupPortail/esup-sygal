@@ -3,7 +3,7 @@
 namespace Application\Controller\Factory;
 
 use Application\Controller\ExportController;
-use These\Service\FichierThese\FichierTheseService;
+use Depot\Service\FichierThese\FichierTheseService;
 use These\Service\These\TheseSearchService;
 use These\Service\These\TheseService;
 use Application\SourceCodeStringHelper;

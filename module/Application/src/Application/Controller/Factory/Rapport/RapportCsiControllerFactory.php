@@ -68,7 +68,7 @@ class RapportCsiControllerFactory
         $controller->setTypeValidation($typeValidation);
         $controller->setMembreService($membreService);
 
-        $theseService->attach($controller->getEventManager());
+//        $theseService->attach($controller->getEventManager());
 
         return $controller;
     }

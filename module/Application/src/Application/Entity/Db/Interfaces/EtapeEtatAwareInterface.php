@@ -2,7 +2,7 @@
 
 namespace Application\Entity\Db\Interfaces;
 
-use Application\Entity\Db\WfEtape;
+use Depot\Entity\Db\WfEtape;
 
 /**
  * Trait spécifiant les propriétés et accesseurs utiles pour obtenir l'état d'une étape de workflow.

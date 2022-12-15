@@ -1,6 +1,25 @@
 Journal des modifications
 =========================
 
+5.2.7
+-----
+- Ajout d'une date de fermeture (indicative) pour les sessions de formation
+- Dépôts de nouveaux fichiers divers : charte du doctorat et convention de formation doctorale.
+- Extraction d'un module Depot (dépôt du manuscrit de thèse).
+- Amélioration de l'index doctorant du module formation
+- Ajout de la possibilité d'enregistrer et de valider l'enquête de retour de formation
+- Doctorant : peut refuser de recevoir sur son adresse électronique de contact les messages des listes de diffusion
+- Suppression du menu 'Mes données' : la modif de l'adresse de contact et du consentement associé est désormais sur la fiche Thèse
+- Abandon (avant suppression) de la table obsolète doctorant_compl.
+- Ajout d'un bloc dans l'écran de proposition de soutenance pour le téléchargement des pré-rapports et du serment
+- Nouveau document "Serment du docteur"
+- Modification du pv de soutenance
+- Ajout d'un nouvel mail intermediare à la clôture des inscriptions + deplacement du mail d'echec d'inscription
+- [FIX] Module Formation : Ordonnancement des séances sur les index des formations et des sessions
+- [FIX] Module Formation : Correction du bug de comptage d'année si pas de thèse
+- [FIX] Module Soutenance : Correction paramètre de route erronée + suppression bouton inactif
+- [FIX] Module Soutenance : Ouverture de l'acces aux gestionnaires d'UR sur les popositions de soutenance
+
 5.2.6
 -----
 - Déclaration des membres du comite de suivi individuel

@@ -2,22 +2,20 @@
 
 namespace Doctorant\Entity\Db;
 
-use Structure\Entity\Db\Etablissement;
-use Individu\Entity\Db\Individu;
-use Doctorant\Entity\Db\Interfaces\DoctorantInterface;
-use Individu\Entity\Db\IndividuAwareInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use LogicException;
+use Individu\Entity\Db\Individu;
+use Individu\Entity\Db\IndividuAwareInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Structure\Entity\Db\Etablissement;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
-use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * Doctorant
  */
-class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, ResourceInterface, IndividuAwareInterface
+class Doctorant implements HistoriqueAwareInterface, ResourceInterface, IndividuAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
@@ -36,11 +34,6 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
      * @var \Individu\Entity\Db\Individu
      */
     private $individu;
-
-    /**
-     * @var Collection
-     */
-    private $complements;
 
     /**
      * @var Collection
@@ -89,7 +82,6 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
      */
     public function __construct()
     {
-        $this->complements = new ArrayCollection();
         $this->theses = new ArrayCollection();
     }
 
@@ -182,16 +174,6 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
         $this->getIndividu()->setNationalite($nationalite);
 
         return $this;
-    }
-
-    /**
-     * Retourne l'adresse mail de ce doctorant.
-     *
-     * @return string|null
-     */
-    public function getEmail(): ?string
-    {
-        return $this->getEmailPro() ?: $this->getIndividu()->getEmailBestOf();
     }
 
     /**
@@ -387,69 +369,12 @@ class Doctorant implements DoctorantInterface, HistoriqueAwareInterface, Resourc
     }
 
     /**
-     * @return DoctorantCompl|null
-     */
-    public function getComplement()
-    {
-        return $this->complements->first() ?: null;
-    }
-
-    /**
-     * @param DoctorantCompl $complement
-     * @return static
-     * @throws LogicException S'il existe déjà un complément lié
-     */
-    public function setComplement(DoctorantCompl $complement)
-    {
-        // NB: le to-many 'complements' est utilisé comme un to-one
-        if ($this->complements->count() > 0) {
-            throw new LogicException(sprintf("Il existe déjà un enregistrement '%s' lié", get_class($this->getComplement())));
-        }
-
-        $this->complements->add($complement);
-
-        return $this;
-    }
-
-    /**
      * @return \These\Entity\Db\These[]
      */
     public function getTheses()
     {
         return $this->theses->toArray();
     }
-
-    /**
-     * Convenient method for $this->getComplement()->getPersopass()
-     *
-     * @return null|string
-     */
-    public function getPersopass()
-    {
-        if (!($complement = $this->getComplement())) {
-            return null;
-        }
-
-        return $complement->getPersopass();
-    }
-
-    /**
-     * Convenient method for $this->getComplement()->getEmailPro()
-     *
-     * @return null|string
-     *
-     * @deprecated Il faudrait abandonner la table DOCTORANT_COMPL car elle n'est plus alimentée mais elle contient
-     *             les adresses mails des doctorants ayant déposé jusqu'en 2018.
-     */
-    public function getEmailPro(): ?string
-    {
-        if (!($complement = $this->getComplement())) {
-            return null;
-        }
-
-        return $complement->getEmailPro();
-    }
-
 
     /**
      * Returns the string identifier of the Resource

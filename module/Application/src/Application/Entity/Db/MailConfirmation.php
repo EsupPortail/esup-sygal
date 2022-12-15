@@ -2,12 +2,13 @@
 
 namespace Application\Entity\Db;
 
-class MailConfirmation {
+use Individu\Entity\Db\Individu;
 
+class MailConfirmation
+{
     const ENVOYE = 'E';
     const CONFIRME = 'C';
 
-    /** @var int $id */
     private $id;
     /** @var \Individu\Entity\Db\Individu $individu */
     protected $individu;
@@ -17,48 +18,47 @@ class MailConfirmation {
     protected $etat;
     /** @var string code */
     protected $code;
+    protected bool $refusListeDiff = false;
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return \Individu\Entity\Db\Individu
-     */
-    public function getIndividu()
+    public function getIndividu(): Individu
     {
         return $this->individu;
     }
 
-    /**
-     * @param \Individu\Entity\Db\Individu $individu
-     * @return MailConfirmation
-     */
-    public function setIndividu($individu)
+    public function setIndividu(Individu $individu): self
     {
         $this->individu = $individu;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getEmail()
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    /**
-     * @param string $email
-     * @return MailConfirmation
-     */
-    public function setEmail($email)
+    public function setEmail(string $email): self
     {
         $this->email = $email;
+        return $this;
+    }
+
+    public function getRefusListeDiff(): bool
+    {
+        return $this->refusListeDiff;
+    }
+
+    /**
+     * @param bool|null $refusListeDiff
+     * @return self
+     */
+    public function setRefusListeDiff(?bool $refusListeDiff = true): self
+    {
+        $this->refusListeDiff = $refusListeDiff;
         return $this;
     }
 

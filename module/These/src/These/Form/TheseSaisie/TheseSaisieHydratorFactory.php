@@ -2,13 +2,13 @@
 
 namespace These\Form\TheseSaisie;
 
-use These\Service\Acteur\ActeurService;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Structure\Service\Etablissement\EtablissementService;
-use Structure\Service\UniteRecherche\UniteRechercheService;
 use Doctorant\Service\DoctorantService;
 use Interop\Container\ContainerInterface;
 use Soutenance\Service\Qualite\QualiteService;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\Etablissement\EtablissementService;
+use Structure\Service\UniteRecherche\UniteRechercheService;
+use These\Service\Acteur\ActeurService;
 
 class TheseSaisieHydratorFactory {
 

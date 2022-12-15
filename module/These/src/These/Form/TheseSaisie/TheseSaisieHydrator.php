@@ -2,21 +2,21 @@
 
 namespace These\Form\TheseSaisie;
 
-use These\Entity\Db\Acteur;
-use Structure\Entity\Db\EcoleDoctorale;
-use Structure\Entity\Db\Etablissement;
 use Application\Entity\Db\Role;
-use These\Entity\Db\These;
-use Structure\Entity\Db\UniteRecherche;
-use These\Service\Acteur\ActeurServiceAwareTrait;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use DateTime;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Laminas\Hydrator\HydratorInterface;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\UniteRecherche;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use These\Entity\Db\Acteur;
+use These\Entity\Db\These;
+use These\Service\Acteur\ActeurServiceAwareTrait;
 
 class TheseSaisieHydrator implements HydratorInterface
 {

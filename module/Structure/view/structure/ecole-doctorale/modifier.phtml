@@ -20,7 +20,7 @@ use Application\View\Renderer\PhpRenderer;
 $ecole = $form->getObject();
 $isNew = $ecole->getId() === null;
 $estSubstituee = $ecole->getStructure()->estSubstituee();
-$estModifiable = !($ecole->getSource()->getImportable());
+$estModifiable = !($ecole->getSource() !== null AND $ecole->getSource()->getImportable());
 $fcg = $this->formControlGroup();
 $this->headTitle("Modification de l'école doctorale ".$ecole->getStructure()->getCode());
 
