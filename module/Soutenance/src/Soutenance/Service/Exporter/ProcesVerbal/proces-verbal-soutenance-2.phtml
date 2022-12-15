@@ -258,17 +258,15 @@ use These\Service\FichierThese\PdcData;
     foreach ($informations->getSignataires() as $signataire) :
     ?>
 
-    <?php if ($position % 2 == 0 and $position !== 0) : ?>
+    <?php if ($position % 3 == 0 and $position !== 0) : ?>
         </tr>
     <?php endif; ?>
-    <?php if ($position % 2 == 0) : ?>
+    <?php if ($position % 3 == 0) : ?>
         <tr>
     <?php endif; ?>
 
         <td>
             <?php echo $signataire->getNomComplet(true, true, false, true); ?>
-            <br/>
-            <br/>
             <br/>
             <br/>
             <br/>
