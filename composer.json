@@ -75,10 +75,10 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "ApplicationUnitTest\\": "module/Application/tests/ApplicationUnitTest",
             "ApplicationFunctionalTest\\": "module/Application/tests/ApplicationFunctionalTest",
-            "RetraitementTest\\": "module/Retraitement/test/RetraitementTest",
-            "ImportTest\\": "module/Import/tests/ImportTest"
+            "ApplicationUnitTest\\": "module/Application/tests/ApplicationUnitTest",
+            "ImportTest\\": "module/Import/tests/ImportTest",
+            "RetraitementTest\\": "module/Retraitement/test/RetraitementTest"
         }
     },
     "scripts": {
