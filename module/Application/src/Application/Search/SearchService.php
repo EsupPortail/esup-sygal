@@ -335,7 +335,7 @@ abstract class SearchService implements SearchServiceInterface
         $qb = $this->createQueryBuilder();
 
         foreach ($this->filters as $filter) {
-            if ($filter->getValue() !== null) {
+            if ($filter->canApplyToQueryBuilder()) {
                 $filter->applyToQueryBuilder($qb);
             }
         }

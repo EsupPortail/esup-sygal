@@ -34,7 +34,7 @@ class TextSearchFilter extends SearchFilter
         return $this;
     }
 
-    protected function canApplyToQueryBuilder(): bool
+    public function canApplyToQueryBuilder(): bool
     {
         $filterValue = trim($this->getValue());
 
