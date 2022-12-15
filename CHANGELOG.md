@@ -1,6 +1,11 @@
 Journal des modifications
 =========================
 
+5.2.8
+-----
+- [FIX] Module formation : récupération du doctorant via l'utilisateur si aucun n'est fourni
+
+
 5.2.7
 -----
 - Ajout d'une date de fermeture (indicative) pour les sessions de formation

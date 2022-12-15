@@ -2,11 +2,14 @@
 
 namespace Doctorant\Service;
 
+use Application\Entity\Db\Utilisateur;
 use Application\Entity\UserWrapper;
 use Application\Service\BaseService;
 use Application\SourceCodeStringHelperAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Entity\Db\Repository\DoctorantRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use RuntimeException;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 
 class DoctorantService extends BaseService
@@ -69,5 +72,25 @@ class DoctorantService extends BaseService
             ->setParameter('search', $seach);
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function getDoctorantsByUser(?Utilisateur $user) : ?Doctorant
+    {
+        if ($user === null OR $user->getIndividu() === null) return null;
+
+        $qb = $this->getEntityManager()->getRepository(Doctorant::class)->createQueryBuilder('doctorant')
+            ->leftJoin('doctorant.individu','individu')
+            ->andWhere('individu.id = :id')->setParameter('id', $user->getIndividu()->getId());
+        ;
+
+        /** @var Doctorant $result */
+        try {
+            $result = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Plusieurs doctorants sont liés au mếme individu [".$user->getIndividu()->getId()."]");
+        }
+        return $result;
+
+
     }
 }
