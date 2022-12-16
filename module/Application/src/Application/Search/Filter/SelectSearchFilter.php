@@ -91,6 +91,11 @@ class SelectSearchFilter extends SearchFilter
         return $this->dataProvider;
     }
 
+    public function canApplyToQueryBuilder(): bool
+    {
+        return $this->getValue() !== null; // '0' est une valeur valide
+    }
+
     /**
      * Application de ce filtre au query builder spécifié, en utilisant le champ de condition.
      *

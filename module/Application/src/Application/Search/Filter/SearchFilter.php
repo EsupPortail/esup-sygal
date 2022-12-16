@@ -125,10 +125,6 @@ abstract class SearchFilter implements SearchFilterInterface
      */
     public function applyToQueryBuilder(QueryBuilder $qb)
     {
-        if (!$this->canApplyToQueryBuilder()) {
-            return;
-        }
-
         if ($this->applyToQueryBuilderCallable !== null) {
             $this->applyToQueryBuilderUsingCallable($qb);
             return;
@@ -182,9 +178,9 @@ abstract class SearchFilter implements SearchFilterInterface
     /**
      * @return bool
      */
-    protected function canApplyToQueryBuilder(): bool
+    public function canApplyToQueryBuilder(): bool
     {
-        return true;
+        return (bool) $this->getValue();
     }
 
     /**
