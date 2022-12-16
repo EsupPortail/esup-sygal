@@ -1,0 +1,87 @@
+{
+  "id": "{{ id }}",
+  "instancePegase": "{{ instance_pegase }}",
+  "apprenant": {
+    "code": "{{ apprenant_code }}",
+    "INE": "{{ apprenant_INE }}",
+    "deuxiemePrenom": "{{ apprenant_deuxiemePrenom }}",
+    "genre": "{{ apprenant_genre }}",
+    "mailPersonnel": "{{ apprenant_mailPersonnel }}",
+    "mailUrgence": null,
+    "nomDeNaissance": "{{ apprenant_nomDeNaissance }}",
+    "nomUsuel": "{{ apprenant_nomUsuel }}",
+    "prenom": "{{ apprenant_prenom }}",
+    "prenomUsage": "{{ apprenant_prenomUsage }}",
+    "telephonePersonnel": "0123456789",
+    "telephoneUrgence": "",
+    "troisiemePrenom": "",
+    "naissance": {
+      "communeDeNaissance": "67482",
+      "communeDeNaissanceEtranger": "",
+      "dateDObtentionDeLaDeuxiemeNationalite": null,
+      "dateDeNaissance": "2000-01-01",
+      "deuxiemeNationalite": null,
+      "libelleCommuneDeNaissance": "Strasbourg",
+      "libelleDeuxiemeNationalite": "eiusmod aute ullamco id",
+      "libelleNationalite": "Française",
+      "libellePaysDeNaissance": "France",
+      "nationalite": "FR",
+      "paysDeNaissance": "FR"
+    },
+    "adresseResidenceUniversitaire": {
+      "codeInsee": "1234",
+      "codePostal": "67482",
+      "libelleCommune": "Strasbourg",
+      "libellePays": "France",
+      "ligne1OuEtage": "",
+      "ligne2OuBatiment": "",
+      "ligne3OuVoie": "",
+      "ligne4OuComplement": "",
+      "ligne5Etranger": "",
+      "pays": "FR"
+    },
+    "adresseFixeHorsPeriodeUniversitaire": {
+      "codeInsee": "1234",
+      "codePostal": "67482",
+      "libelleCommune": "Strasbourg",
+      "libellePays": "France",
+      "ligne1OuEtage": "",
+      "ligne2OuBatiment": "",
+      "ligne3OuVoie": "",
+      "ligne4OuComplement": "",
+      "ligne5Etranger": "",
+      "pays": "FR"
+    }
+  },
+  "inscription": {
+    "ecoleDoctorale": "{{ inscription_ecoleDoctorale }}",
+    "noCandidat": "1234",
+    "origine": "ecandidat",
+    "formation": "ut Excepteur",
+    "statutInscription": "valide",
+    "regimeInscription": {
+      "code": "1234",
+      "libelle": "sdfsfjmsdqfjmjklh"
+    },
+    "chemin": "{{ inscription_chemin }}",
+    "codeStructureEtablissementDuChemin": "{{ inscription_codeStructureEtablissementDuChemin }}",
+    "principale": true,
+    "cesure": "SANS",
+    "mobilite": "SANS",
+    "periode": {
+      "code": "{{ inscription_periode_code }}",
+      "libelle": "Lorem ut adipisicing do",
+      "dateDebut": "2022-09-01",
+      "dateFin": "2023-08-31",
+      "anneeUniversitaire": 2022
+    },
+    "boursesEtAides": [
+      {
+        "code": "HJFJHFG",
+        "libelle": "cillum"
+      }
+    ],
+    "dateInscription": "2022-09-01",
+    "dateAnnulation": null
+  }
+}

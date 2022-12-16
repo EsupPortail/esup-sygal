@@ -19,55 +19,55 @@ class PrefixEtabColumnValueFilter extends AbstractColumnValueFilter
     /**
      * @var string[]
      */
-    protected $columnsToTransform = [
-        'sourceCode',
-        'sourceId',
-        'individuId',
-        'roleId',
-        'theseId',
-        'doctorantId',
-        'structureId',
-        'ecoleDoctId',
-        'uniteRechId',
-        'acteurEtablissementId',
-        'origineFinancementId',
+    protected array $columnsToTransform = [
+        'sourceCode', 'source_code',
+        'sourceId', 'source_id',
+        'individuId', 'individu_id',
+        'roleId', 'role_id',
+        'theseId', 'these_id',
+        'doctorantId', 'doctorant_id',
+        'structureId', 'structure_id',
+        'ecoleDoctId', 'ecole_doct_id',
+        'uniteRechId', 'unite_rech_id',
+        'acteurEtablissementId', 'acteur_etablissement_id',
+        'origineFinancementId', 'origine_financement_id',
     ];
 
-    /**
-     * @var string
-     */
-    protected $codeEtablissement;
+    protected ?string $codeEtablissement = null;
 
-    /**
-     * @inheritDoc
-     */
+    public function __construct(?array $columnsToTransform = null)
+    {
+        if ($columnsToTransform !== null) {
+            $this->columnsToTransform = $columnsToTransform;
+        }
+    }
+
     public function __toString(): string
     {
         return "Préfixage par le code établissement des colonnes/attributs suivants : " . PHP_EOL .
             implode(', ', $this->columnsToTransform);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function setParams(array $params)
     {
-        if (!isset($params[$key = self::PARAM_CODE_ETABLISSEMENT])) {
-            throw new InvalidArgumentException("La clé '$key' doit exister dans les paramètres transmis");
+        if (array_key_exists($key = self::PARAM_CODE_ETABLISSEMENT, $params)) {
+            $this->codeEtablissement = $params[self::PARAM_CODE_ETABLISSEMENT];
         }
-
-        $this->codeEtablissement = $params[$key];
 
         parent::setParams($params);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function filter(string $name, $value)
     {
         if ($value === null) {
             return null;
+        }
+
+        if ($this->codeEtablissement === null) {
+            throw new InvalidArgumentException(sprintf(
+                "Le paramètre '%s' n'a pas été fourni",
+                self::PARAM_CODE_ETABLISSEMENT
+            ));
         }
 
         if (in_array($name, $this->columnsToTransform)) {

@@ -1,0 +1,20 @@
+<?php
+
+use Laminas\Log\Logger;
+
+return [
+    'psr_log' => [
+        'inscription_resource_logger' => [
+            'writers' => [
+                'stream' => [
+                    'name' => 'stream',
+                    'priority' => 1,
+                    'options' => [
+                        'stream' => '/path/to/inscription_resource_logger.log',
+                        'filters' => Logger::INFO,
+                    ],
+                ],
+            ],
+        ],
+    ],
+];

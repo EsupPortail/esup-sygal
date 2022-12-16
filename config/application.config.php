@@ -1,28 +1,11 @@
 <?php
 
-define('APPLICATION_DIR', realpath(__DIR__ . '/..'));
+if (!defined('APPLICATION_DIR')) {
+    define('APPLICATION_DIR', realpath(__DIR__ . '/../'));
+}
 
 return [
     'modules' => [
-        'Laminas\Cache',
-        'Laminas\Filter',
-        'Laminas\Form',
-        'Laminas\Hydrator',
-        'Laminas\I18n',
-        'Laminas\InputFilter',
-        'Laminas\Log',
-        'Laminas\Mail',
-        'Laminas\Mvc\I18n',
-        'Laminas\Mvc\Plugin\FilePrg',
-        'Laminas\Mvc\Plugin\FlashMessenger',
-        'Laminas\Mvc\Plugin\Identity',
-        'Laminas\Mvc\Plugin\Prg',
-        'Laminas\Navigation',
-        'Laminas\Paginator',
-        'Laminas\Router',
-        'Laminas\Session',
-        'Laminas\Validator',
-
         'DoctrineModule',
         'DoctrineORMModule',
 
@@ -42,6 +25,25 @@ return [
         'Laminas\ApiTools\Rest',
         'Laminas\ApiTools\Rpc',
         'Laminas\ApiTools\Versioning',
+
+        'Laminas\Cache',
+        'Laminas\Filter',
+        'Laminas\Form',
+        'Laminas\Hydrator',
+        'Laminas\I18n',
+        'Laminas\InputFilter',
+        'Laminas\Log',
+        'Laminas\Mail',
+        'Laminas\Mvc\I18n',
+        'Laminas\Mvc\Plugin\FilePrg',
+        'Laminas\Mvc\Plugin\FlashMessenger',
+        'Laminas\Mvc\Plugin\Identity',
+        'Laminas\Mvc\Plugin\Prg',
+        'Laminas\Navigation',
+        'Laminas\Paginator',
+        'Laminas\Router',
+        'Laminas\Session',
+        'Laminas\Validator',
 
         'ZfcUser',
         'BjyAuthorize',
@@ -78,8 +80,10 @@ return [
         'Information',
         'Doctorant',
         'StepStar',
+//        'InscriptionAdministrative',
         'Application',
-        'Api',
+        'SygalApi',
+        'SygalApiImpl',
     ],
     'module_listener_options' => [
         'config_glob_paths'    => [

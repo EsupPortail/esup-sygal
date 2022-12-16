@@ -45,6 +45,8 @@ services:
      - /tmp:/tmp
      - /tmp/upload:/tmp/upload
      - $HOME/.ssh:/root/.ssh
+     - $HOME/.cache/composer:/root/.cache/composer
+     - ../sygal-pegase-connect/vendor/unicaen/sygal-api:/sygal-api
      - ./docker/apache/livelog.conf:/etc/apache2/conf-available/livelog.conf
      - ./docker/entrypoint.d/009_livelog:/entrypoint.d/009_livelog
     working_dir: /app

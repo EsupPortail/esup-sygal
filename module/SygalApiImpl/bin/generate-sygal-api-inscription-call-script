@@ -1,0 +1,84 @@
+#!/usr/bin/env php
+<?php
+
+use Laminas\Stdlib\Glob;
+
+require_once __DIR__ . '/../../../vendor/autoload.php';
+
+$host = $_SERVER['HOST'] ?? 'localhost';
+$port = $_SERVER['PORT'] ?? null;
+$user = $_SERVER['USER'] ?? null;
+$password = $_SERVER['PASSWORD'] ?? null;
+$version = $_SERVER['VERSION'] ?? 'v1';
+$n = $_SERVER['N'] ?? 1;
+
+if ($port === null) {
+    echo "Le port doit être spécifié via la variable d'env PORT" . PHP_EOL;
+    exit(1);
+}
+if ($user === null) {
+    echo "Le user doit être spécifié via la variable d'env USER" . PHP_EOL;
+    exit(1);
+}
+if ($password === null) {
+    echo "Le password doit être spécifié via la variable d'env PASSWORD" . PHP_EOL;
+    exit(1);
+}
+
+$sourceDataDirPath = '/tmp/api-data';
+$outputScriptDirPath = '/tmp/api-bin';
+$outputScriptFileName = 'call-sygal-api-inscription.sh';
+
+if (!file_exists($outputScriptDirPath)) {
+    echo "Répertoire destination introuvable : $outputScriptDirPath" . PHP_EOL;
+    exit(1);
+}
+if (!file_exists($sourceDataDirPath)) {
+    echo "Répertoire source introuvable : $sourceDataDirPath" . PHP_EOL;
+    exit(1);
+}
+
+$argv = $_SERVER['argv'];
+$jsonFileName = $argv[1] ?? null;
+
+$filePaths = [];
+if ($jsonFileName) {
+    $dataFilePath = $sourceDataDirPath . '/' . $jsonFileName;
+    if (!file_exists($dataFilePath)) {
+        echo "Fichier JSON introuvable : $dataFilePath" . PHP_EOL;
+        exit(1);
+    }
+    $filePaths[] = $dataFilePath;
+} else {
+    $dataFilePaths = Glob::glob($sourceDataDirPath . '/inscr-admin-*.json');
+    $filePaths = array_slice($dataFilePaths, 0, $n);
+    if (count($filePaths) < $n) {
+        echo "Pas assez de fichiers JSON dans $sourceDataDirPath" . PHP_EOL;
+        exit(1);
+    }
+}
+
+exec(sprintf('echo -n "%s:%s" | base64', $user, $password), $out);
+$token = trim(implode($out));
+
+$cmdTemplate = <<<EOT
+curl \
+--no-progress-meter \
+--insecure \
+-H "Accept: application/json" \
+-H "Content-Type: application/json" \
+-H "Authorization: Basic $token" \
+-X POST \
+--data-binary "@%s" \
+https://$host:$port/$version/inscription-administrative \
+-b XDEBUG_SESSION=PHPSTORM
+EOT;
+
+$content = '';
+foreach ($filePaths as $filePath) {
+    //echo "$filePath" . PHP_EOL;
+    $cmd = sprintf($cmdTemplate, $filePath);
+    $content .= $cmd . PHP_EOL . PHP_EOL;
+}
+
+echo $content;

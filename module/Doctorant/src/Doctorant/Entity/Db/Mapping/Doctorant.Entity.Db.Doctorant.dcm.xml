@@ -9,6 +9,7 @@
         </id>
 
         <field name="sourceCode" type="string" column="SOURCE_CODE" length="100" nullable="true"/>
+        <field name="codeApprenantInSource" type="string" column="CODE_APPRENANT_IN_SOURCE" length="64" nullable="true"/>
 
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>

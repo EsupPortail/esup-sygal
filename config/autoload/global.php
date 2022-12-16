@@ -10,6 +10,21 @@ use Import\Model\ImportObservResult;
 use Retraitement\Filter\Command\RetraitementShellCommandMines;
 
 $config = [
+    'api-tools-content-negotiation' => [
+        'selectors' => [],
+    ],
+    'db' => [
+        'adapters' => [
+            'dummy' => [],
+        ],
+    ],
+    'api-tools-mvc-auth' => [
+        'authentication' => [
+            'map' => [
+                'Api\\V1' => 'basic',
+            ],
+        ],
+    ],
     'translator' => [
         'locale' => 'fr_FR',
     ],
@@ -653,7 +668,6 @@ const CONFIG_SYNCHROS = [
             'table' => 'STRUCTURE',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'intermediate_table_auto_drop' => false,
         ],
     ],
     [
@@ -671,7 +685,6 @@ const CONFIG_SYNCHROS = [
             'table' => 'ETABLISSEMENT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'intermediate_table_auto_drop' => false,
         ],
     ],
     [
@@ -689,7 +702,6 @@ const CONFIG_SYNCHROS = [
             'table' => 'ECOLE_DOCT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'intermediate_table_auto_drop' => false,
         ],
     ],
     [
@@ -707,7 +719,6 @@ const CONFIG_SYNCHROS = [
             'table' => 'UNITE_RECH',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'intermediate_table_auto_drop' => false,
         ],
     ],
     [
@@ -725,8 +736,6 @@ const CONFIG_SYNCHROS = [
             'table' => 'INDIVIDU',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-//            'where'              => "d.source_code like 'UCN::%'", // todo: à virer
-            'intermediate_table_auto_drop' => false,
         ],
     ],
     [
@@ -744,7 +753,6 @@ const CONFIG_SYNCHROS = [
             'table' => 'DOCTORANT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'intermediate_table_auto_drop' => false,
         ],
     ],
     [
@@ -762,7 +770,6 @@ const CONFIG_SYNCHROS = [
             'table' => 'THESE',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'intermediate_table_auto_drop' => false,
         ],
     ],
     [
@@ -780,7 +787,6 @@ const CONFIG_SYNCHROS = [
             'table' => 'THESE_ANNEE_UNIV',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'intermediate_table_auto_drop' => false,
         ],
     ],
     [
@@ -798,7 +804,6 @@ const CONFIG_SYNCHROS = [
             'table' => 'ROLE',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'intermediate_table_auto_drop' => false,
         ],
     ],
     [
@@ -816,7 +821,6 @@ const CONFIG_SYNCHROS = [
             'table' => 'ACTEUR',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'intermediate_table_auto_drop' => false,
         ],
     ],
     [
@@ -834,7 +838,6 @@ const CONFIG_SYNCHROS = [
             'table' => 'ORIGINE_FINANCEMENT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'intermediate_table_auto_drop' => false,
         ],
     ],
     [
@@ -852,7 +855,6 @@ const CONFIG_SYNCHROS = [
             'table' => 'FINANCEMENT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'intermediate_table_auto_drop' => false,
         ],
     ],
     [
@@ -870,7 +872,6 @@ const CONFIG_SYNCHROS = [
             'table' => 'TITRE_ACCES',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'intermediate_table_auto_drop' => false,
         ],
     ],
     [
@@ -888,7 +889,6 @@ const CONFIG_SYNCHROS = [
             'table' => 'VARIABLE',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
-            'intermediate_table_auto_drop' => false,
         ],
     ],
 ];
@@ -951,7 +951,14 @@ function generateNameForEtab(string $nameTemplate, string $codeEtablissement): s
  */
 function generateWhereForEtab(string $codeEtablissement): string
 {
-    return sprintf("d.source_id = (select id from source where code like '%s::%%')", $codeEtablissement);
+    return <<<EOS
+d.source_id in (
+    select source.id from source 
+    join etablissement on source.etablissement_id = etablissement.id
+    join structure on etablissement.structure_id = structure.id
+    where structure.code = '$codeEtablissement'
+)
+EOS;
 }
 
 

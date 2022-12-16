@@ -1,0 +1,9 @@
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Lignes ajoutées à www.conf ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+catch_workers_output = yes
+
+php_flag[display_errors] = on
+php_admin_value[error_log] = /var/log/php-fpm.log
+php_admin_flag[log_errors] = on

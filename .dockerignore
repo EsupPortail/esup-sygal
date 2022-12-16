@@ -6,7 +6,6 @@
 /vendor
 
 /tmp/
-/docker/
 /migration/
 
 .DS_Store

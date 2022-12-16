@@ -1,0 +1,86 @@
+{
+  "instancePegase": "PEGASE_INSTANCE_INSA",
+  "apprenant": {
+    "code": "CODE_PEGASE_fqdsf54qdf54q6",
+    "INE": "3213132165",
+    "deuxiemePrenom": "Alex",
+    "genre": "",
+    "mailPersonnel": "adresse@mail.fr",
+    "mailUrgence": "adresse@mail.fr",
+    "nomDeNaissance": "Térieur",
+    "nomUsuel": "Térieur",
+    "prenom": "Alain",
+    "prenomUsage": "Alain",
+    "telephonePersonnel": "0123456789",
+    "telephoneUrgence": "",
+    "troisiemePrenom": "",
+    "naissance": {
+      "communeDeNaissance": "67482",
+      "communeDeNaissanceEtranger": "",
+      "dateDObtentionDeLaDeuxiemeNationalite": "consequat culpa",
+      "dateDeNaissance": "2000-01-01",
+      "deuxiemeNationalite": "sed commodo elit officia dolor",
+      "libelleCommuneDeNaissance": "Strasbourg",
+      "libelleDeuxiemeNationalite": "eiusmod aute ullamco id",
+      "libelleNationalite": "Française",
+      "libellePaysDeNaissance": "France",
+      "nationalite": "fr",
+      "paysDeNaissance": "fr"
+    },
+    "adresseResidenceUniversitaire": {
+      "codeInsee": "1234",
+      "codePostal": "67482",
+      "libelleCommune": "Strasbourg",
+      "libellePays": "France",
+      "ligne1OuEtage": "",
+      "ligne2OuBatiment": "",
+      "ligne3OuVoie": "",
+      "ligne4OuComplement": "",
+      "ligne5Etranger": "",
+      "pays": "FR"
+    },
+    "adresseFixeHorsPeriodeUniversitaire": {
+      "codeInsee": "1234",
+      "codePostal": "67482",
+      "libelleCommune": "Strasbourg",
+      "libellePays": "France",
+      "ligne1OuEtage": "",
+      "ligne2OuBatiment": "",
+      "ligne3OuVoie": "",
+      "ligne4OuComplement": "",
+      "ligne5Etranger": "",
+      "pays": "FR"
+    }
+  },
+  "inscription": {
+    "ecoleDoctorale": "497",
+    "noCandidat": "1234",
+    "origine": "ecandidat",
+    "formation": "ut Excepteur",
+    "statutInscription": "valide",
+    "regimeInscription": {
+      "code": "1234",
+      "libelle": "sdfsfjmsdqfjmjklh"
+    },
+    "chemin": "LICENCE_MAI>LICENCE-MAI-L1",
+    "codeStructureEtablissementDuChemin": "CODE_UAI",
+    "principale": true,
+    "cesure": "SANS",
+    "mobilite": "SANS",
+    "periode": {
+      "code": "GHJGHGJHG",
+      "libelle": "Lorem ut adipisicing do",
+      "dateFin": "2022-09-01",
+      "dateDebut": "2023-08-31",
+      "anneeUniversitaire": 2022
+    },
+    "boursesEtAides": [
+      {
+        "code": "HJFJHFG",
+        "libelle": "cillum"
+      }
+    ],
+    "dateInscription": "",
+    "dateAnnulation": ""
+  }
+}

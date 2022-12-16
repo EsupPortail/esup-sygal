@@ -30,6 +30,8 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
      */
     protected $sourceCode;
 
+    protected ?string $codeApprenantInSource = null;
+
     /**
      * @var Individu
      */
@@ -111,6 +113,17 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
     public function getSourceCode()
     {
         return $this->sourceCode;
+    }
+
+    public function getCodeApprenantInSource(): ?string
+    {
+        return $this->codeApprenantInSource;
+    }
+
+    public function setCodeApprenantInSource(?string $codeApprenantInSource): self
+    {
+        $this->codeApprenantInSource = $codeApprenantInSource;
+        return $this;
     }
 
     /**
