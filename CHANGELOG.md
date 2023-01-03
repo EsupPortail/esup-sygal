@@ -4,7 +4,8 @@ Journal des modifications
 5.2.8
 -----
 - [FIX] Module formation : récupération du doctorant via l'utilisateur si aucun n'est fourni
-- [FIX] Filtres de recherche réutilisables : nouvelle stratégie de prise en compte ou non des filtres. 
+- [FIX] Filtres de recherche réutilisables : nouvelle stratégie de prise en compte ou non des filtres.
+- [FIX] Changement des fonctions de récupération des emails dans la partie exportation
 
 5.2.7
 -----
