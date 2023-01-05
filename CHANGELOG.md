@@ -6,6 +6,7 @@ Journal des modifications
 - [FIX] Module formation : récupération du doctorant via l'utilisateur si aucun n'est fourni
 - [FIX] Filtres de recherche réutilisables : nouvelle stratégie de prise en compte ou non des filtres.
 - [FIX] Changement des fonctions de récupération des emails dans la partie exportation
+- [FIX] Correction De la taille des logos dans le serment du docteur
 
 5.2.7
 -----
