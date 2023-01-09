@@ -496,9 +496,9 @@ class DepotController extends AbstractController
         $valeurCorrectionAutoriseeFromImport = $these->getCorrectionAutorisee(false);
 
         $radioOptions = [
-            These::CORRECTION_AUTORISEE_FORCAGE_AUCUNE      => "Forcer à &laquo; <strong>Aucune correction attendue</strong> &raquo;.",
-            These::CORRECTION_AUTORISEE_FORCAGE_FACULTATIVE => "Forcer à &laquo; <strong>Corrections facultatives attendues</strong> &raquo;.",
-            These::CORRECTION_AUTORISEE_FORCAGE_OBLIGATOIRE => "Forcer à &laquo; <strong>Corrections obligatoires attendues</strong> &raquo;.",
+            These::$CORRECTION_AUTORISEE_FORCAGE_AUCUNE      => "Forcer à &laquo; <strong>Aucune correction attendue</strong> &raquo;.",
+            These::$CORRECTION_AUTORISEE_FORCAGE_FACULTATIVE => "Forcer à &laquo; <strong>Corrections facultatives attendues</strong> &raquo;.",
+            These::$CORRECTION_AUTORISEE_FORCAGE_OBLIGATOIRE => "Forcer à &laquo; <strong>Corrections obligatoires attendues</strong> &raquo;.",
         ];
 
         if ($isCorrectionAutoriseeFromImport) {
@@ -506,7 +506,7 @@ class DepotController extends AbstractController
             unset($radioOptions[$valeurCorrectionAutoriseeFromImport]);
         } else {
             $correctionAttendueImportee = "Aucune correction attendue";
-            unset($radioOptions[These::CORRECTION_AUTORISEE_FORCAGE_AUCUNE]);
+            unset($radioOptions[These::$CORRECTION_AUTORISEE_FORCAGE_AUCUNE]);
         }
 
         $radioOptions = array_merge(
@@ -549,7 +549,7 @@ class DepotController extends AbstractController
         $result = $this->confirm()->execute();
 
         $these = $this->requestedThese();
-        $dateButoirDepotVersionCorrigeeAvecSursis = $these->computeDateButoirDepotVersionCorrigeeAvecSursis();
+        $dateButoirDepotVersionCorrigeeAvecSursis = $these->computeDateButoirDepotVersionCorrigeeAvecSursis($these->getDateSoutenance());
 
         // si un tableau est retourné par le plugin Confirm, l'opération a été confirmée
         if (is_array($result)) {

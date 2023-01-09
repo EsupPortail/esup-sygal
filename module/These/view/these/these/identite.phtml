@@ -402,7 +402,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 
             if ($these->isCorrectionAutorisee()) {
                 $dateButoirDepassee =
-                    $these->isDateButoirDepotVersionCorrigeeDepassee() &&
+                    $these->isDateButoirDepotVersionCorrigeeDepassee($these->getDateSoutenance()) &&
                     ! empty($validationsDesCorrectionsEnAttente);
 
                 if ($these->getCorrectionAutoriseeEstFacultative()) {

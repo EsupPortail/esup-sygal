@@ -122,9 +122,9 @@ class DepotService extends BaseService implements ListenerAggregateInterface
     {
         if ($forcage !== null) {
             Assertion::inArray($forcage, [
-                These::CORRECTION_AUTORISEE_FORCAGE_AUCUNE,
-                These::CORRECTION_AUTORISEE_FORCAGE_FACULTATIVE,
-                These::CORRECTION_AUTORISEE_FORCAGE_OBLIGATOIRE,
+                These::$CORRECTION_AUTORISEE_FORCAGE_AUCUNE,
+                These::$CORRECTION_AUTORISEE_FORCAGE_FACULTATIVE,
+                These::$CORRECTION_AUTORISEE_FORCAGE_OBLIGATOIRE,
             ]);
         }
 
