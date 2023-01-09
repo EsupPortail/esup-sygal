@@ -8,7 +8,8 @@ Journal des modifications
 - [FIX] Filtres de recherche réutilisables : nouvelle stratégie de prise en compte ou non des filtres.
 - [FIX] Changement des fonctions de récupération des emails dans la partie exportation
 - [FIX] Correction De la taille des logos dans le serment du docteur
-
+- [FIX] Correction de la fonction getDoctorantsByUser
+- 
 5.2.7
 -----
 - Ajout d'une date de fermeture (indicative) pour les sessions de formation

@@ -85,7 +85,9 @@ class DoctorantService extends BaseService
 
         $qb = $this->getEntityManager()->getRepository(Doctorant::class)->createQueryBuilder('doctorant')
             ->leftJoin('doctorant.individu','individu')
-            ->andWhere('individu.id = :id')->setParameter('id', $user->getIndividu()->getId());
+            ->andWhere('individu.id = :id')->setParameter('id', $user->getIndividu()->getId())
+            ->andWhere('individu.histoDestruction IS NULL')
+            ->andWhere('doctorant.histoDestruction IS NULL')
         ;
 
         /** @var Doctorant $result */
