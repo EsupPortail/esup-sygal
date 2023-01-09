@@ -29,6 +29,11 @@ class DoctorantService extends BaseService
     }
 
     /**
+     * On recherche un doctorant dont le SOURCE_CODE égale '{PREFIX_ETAB}::{supannId}, où :
+     * - {PREFIX_ETAB} (ex : 'INSA') : code de l'établissement/structure dont le domaine égale celui extrait de l'EPPN (ex: 'insa-rouen.fr') ;
+     * - {supannId} (ex : '000020533') : supannEtuId, supannEmpId ou autre (cf. {@see \UnicaenAuth\Service\ShibService::extractShibUserIdValueForDomainFromShibData()}
+     *   issue des données d'identité.
+     *
      * @param UserWrapper $user
      * @return Doctorant|null
      */
