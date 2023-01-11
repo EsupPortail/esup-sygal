@@ -53,7 +53,7 @@ class RapportServiceFactory implements FactoryInterface
         $service->setFichierStorageService($fileService);
         $service->setVersionFichierService($versionFichierService);
         $service->setEtablissementService($etablissementService);
-        $service->setNotifierService($notifierService);
+        $service->setApplicationNotifierService($notifierService);
         $service->setNatureFichierService($natureFichierService);
         $service->setRapportValidationService($rapportValidationService);
         $service->setPageDeCouverturePdfExporter($pdcPdfExporter);

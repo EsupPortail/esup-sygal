@@ -2,32 +2,28 @@
 
 namespace Soutenance\Service\Notifier;
 
-use These\Service\Acteur\ActeurService;
 use Application\Service\Email\EmailTheseService;
-use Application\Service\Notification\NotificationFactory;
 use Application\Service\Role\RoleService;
-use These\Service\These\TheseService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Variable\VariableService;
+use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
-use Laminas\Mvc\Console\View\ViewManager as ConsoleViewManager;
-use Laminas\Mvc\View\Http\ViewManager as HttpViewManager;
 use Laminas\View\Helper\Url as UrlHelper;
-use Notification\Service\NotifierServiceFactory;
 use Soutenance\Service\Membre\MembreService;
+use These\Service\Acteur\ActeurService;
+use These\Service\These\TheseService;
 
-class NotifierSoutenanceServiceFactory extends NotifierServiceFactory
+class NotifierServiceFactory extends \Notification\Service\NotifierServiceFactory
 {
-
-    protected $notifierServiceClass = NotifierSoutenanceService::class;
+    protected string $notifierServiceClass = NotifierService::class;
 
     /**
-     * @param ContainerInterface $container
-     * @return NotifierSoutenanceService
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): NotifierService
     {
-        /** @var NotifierSoutenanceService $service */
+        /** @var NotifierService $service */
         $service = parent::__invoke($container);
 
         /**
@@ -37,29 +33,25 @@ class NotifierSoutenanceServiceFactory extends NotifierServiceFactory
          * @var VariableService $variableService
          * @var TheseService $theseService
          * @var UtilisateurService $utilisateurService
+         * @var \Individu\Service\IndividuService $individuService
          */
         $acteurService = $container->get(ActeurService::class);
         $membreService = $container->get(MembreService::class);
         $roleService = $container->get('RoleService');
         $theseService = $container->get('TheseService');
         $emailTheseService = $container->get(EmailTheseService::class);
+        $individuService = $container->get(IndividuService::class);
 
-        /** @var HttpViewManager|ConsoleViewManager $vm */
-        $vm = $container->get('ViewManager');
         /** @var UrlHelper $urlHelper */
-//        $urlHelper = $vm->getHelperManager()->get('Url');
         $urlHelper = $container->get('ViewHelperManager')->get('Url');
 
-        /** @var NotificationFactory $notificationFactory */
-        $notificationFactory = $container->get(NotificationFactory::class);
-
-        $service->setNotificationFactory($notificationFactory);
         $service->setUrlHelper($urlHelper);
         $service->setActeurService($acteurService);
         $service->setMembreService($membreService);
         $service->setRoleService($roleService);
         $service->setTheseService($theseService);
         $service->setEmailTheseService($emailTheseService);
+        $service->setIndividuService($individuService);
 
         return $service;
     }

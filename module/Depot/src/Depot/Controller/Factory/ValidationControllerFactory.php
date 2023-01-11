@@ -2,11 +2,11 @@
 
 namespace Depot\Controller\Factory;
 
-use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Validation\ValidationService;
 use Depot\Controller\ValidationController;
+use Depot\Service\Notification\NotifierService;
 use Depot\Service\These\DepotService;
 use Depot\Service\Validation\DepotValidationService;
 use Interop\Container\ContainerInterface;
@@ -29,7 +29,7 @@ class ValidationControllerFactory implements FactoryInterface
 
         $controller = new ValidationController();
         $controller->setValidationService($validationService);
-        $controller->setNotifierService($notifierService);
+        $controller->setDepotNotifierService($notifierService);
         $controller->setRoleService($roleService);
         $controller->setUtilisateurService($utilisateurService);
 

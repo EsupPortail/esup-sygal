@@ -16,12 +16,10 @@ class NotificationFactory
     use NotifEntityServiceAwareTrait;
 
     /**
-     * @param string $code
-     * @return Notification
+     * Instancie et initialise une nouvelle notification.
      */
-    public function createNotification($code = null)
+    public function createNotification(?string $code = null): Notification
     {
-        /** @var Notification $notification */
         $notification = new Notification($code);
 
         $this->initNotification($notification);
@@ -31,8 +29,6 @@ class NotificationFactory
 
     /**
      * Initialisation indispensable d'une notification.
-     *
-     * @param Notification $notification
      */
     public function initNotification(Notification $notification)
     {

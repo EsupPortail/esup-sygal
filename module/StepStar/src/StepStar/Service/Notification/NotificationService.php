@@ -27,6 +27,6 @@ class NotificationService
      */
     public function sendEnvoisEnErreurNotification(EnvoisEnErreurNotification $notif)
     {
-        $this->notifierService->trigger($notif);
+        $this->applicationNotifierService->trigger($notif);
     }
 }

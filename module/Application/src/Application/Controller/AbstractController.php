@@ -2,26 +2,27 @@
 
 namespace Application\Controller;
 
-use Fichier\Controller\Plugin\Uploader\UploaderPlugin;
-use Depot\Controller\Plugin\Url\UrlDepotPlugin;
-use These\Controller\Plugin\Url\UrlThesePlugin;
-use Doctorant\Controller\Plugin\UrlDoctorant;
-use Fichier\Controller\Plugin\UrlFichier;
-use Depot\Controller\Plugin\UrlFichierThese;
-use Depot\Controller\Plugin\UrlWorkflow;
-use These\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\RouteMatch;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
 use BjyAuthorize\Exception\UnAuthorizedException;
+use Depot\Controller\Plugin\Url\UrlDepotPlugin;
+use Depot\Controller\Plugin\UrlFichierThese;
+use Depot\Controller\Plugin\UrlWorkflow;
+use Doctorant\Controller\Plugin\UrlDoctorant;
+use Fichier\Controller\Plugin\Uploader\UploaderPlugin;
+use Fichier\Controller\Plugin\UrlFichier;
+use Laminas\EventManager\EventInterface;
+use Laminas\Http\Request as HttpRequest;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use These\Controller\Plugin\Url\UrlThesePlugin;
+use These\Entity\Db\These;
 use UnicaenApp\Controller\Plugin\AppInfos;
 use UnicaenApp\Controller\Plugin\ConfirmPlugin;
 use UnicaenApp\Controller\Plugin\Mail;
 use UnicaenApp\Exception\RuntimeException;
-use Laminas\Http\Request as HttpRequest;
-use Laminas\Mvc\Controller\AbstractActionController;
-use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use ZfcUser\Controller\Plugin\ZfcUserAuthentication;
 
 /**
@@ -98,5 +99,20 @@ class AbstractController extends AbstractActionController
         $this->utilisateurApplication = $utilisateurApplication;
 
         return $this;
+    }
+
+    /**
+     * Alimente le flashMessenger avec les éventuels messages/logs présents dans les paramètres de l'événement.
+     *
+     * @param \Laminas\EventManager\EventInterface $event Evénement en question
+     * @param string $paramName Nom du paramètre contenant potentiellement les messages/logs
+     */
+    protected function flashMessengerAddMessagesFromEvent(EventInterface $event, string $paramName = 'logs')
+    {
+        if ($messages = $event->getParam($paramName, [])) {
+            foreach ($messages as $namespace => $message) {
+                $this->flashMessenger()->addMessage($message, $namespace);
+            }
+        }
     }
 }

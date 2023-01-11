@@ -1,28 +1,44 @@
 # Fonctionnement du fichier CSV
 
-## Interprétation
+Un fichier CSV est utilisé pour spécifier de manière "visuelle" à quelles conditions "métier" un privilège est accordé 
+ou non. (L'ambition initiale était aussi de permettre de déléguer ces spécifications à des non développeurs, mais cela
+n'a pas été mis en place.)
+
+Si un module utilise un fichier CSV, il est placé dans son répertoire `data`.
+Exemple : `module/Depot/data/TheseEntityAssertion.csv`.
+
+Ce fichier est utilisé pour générer une classe d'assertion abstraite que le développeur devra sous-classer afin
+d'implémenter les méthodes abstraites mises en jeu.
+Exemple : `module/Depot/src/Depot/Assertion/These/GeneratedTheseEntityAssertion.php`
+
+C'est le script `bin/assertions/generate-assertion` qui réalise cette opération.
+
+
+## Description du fichier CSV
+
+Le format d'un fichier CSV de spécifications est précis.
 
 - La ligne 1 désigne la classe d'assertion qui sera générée à partir du fichier CSV.
-Par exemple, `class;Depot\Assertion\These\GeneratedTheseEntityAssertion` pour la classe `GeneratedTheseEntityAssertion`.
+  Par exemple, `class;Depot\Assertion\These\GeneratedTheseEntityAssertion` pour la classe `GeneratedTheseEntityAssertion`.
 
-- La ligne 2 liste des prédicats qui peuvent être utilisés et qui doivent être définis dans la 
-classe mère `TheseEntityAssertion`.
- 
-- La colonne A correspond à des références de lignes qui seront inscrites dans le PHP généré sous 
-la forme `/* line N */`.
- 
-- La colonne B correspond aux témoins indiquant si la ligne concernée doit être prise en compte (valeur `1`) 
-ou non (valeur `0`).
- 
+- La ligne 2 liste des prédicats qui peuvent être utilisés et qui doivent être définis dans la
+  classe mère `TheseEntityAssertion`.
+
+- La colonne A correspond à des références de lignes qui seront inscrites dans le PHP généré sous
+  la forme `/* line N */`.
+
+- La colonne B correspond aux témoins indiquant si la ligne concernée doit être prise en compte (valeur `1`)
+  ou non (valeur `0`).
+
 - La colonne C correspond aux privilèges concernés (FQDN de la constante PHP).
- 
+
 - Les colonnes suivantes `isXxxxxx` permettent de lister les prédicats (méthodes `isXxxxxx()` de la classe d'assertion
-spécifiée en ligne 1) et de spécifier comment chacun est utilisé en fonction du privilège concerné.
+  spécifiée en ligne 1) et de spécifier comment chacun est utilisé en fonction du privilège concerné.
 
 - La colonne `return` contient la valeur que retournera l'assertion à l'issue des interrogations des prédicats.
- 
+
 - Chaque ligne faisant référence à un privilège générera un `if` dans l'assertion générée.
-Si un même privilège figure 3 fois, 3 `if` seront générés.
+  Si un même privilège figure 3 fois, 3 `if` seront générés.
 
 ### Exemple d'interprétation
 
@@ -38,25 +54,25 @@ Si un même privilège figure 3 fois, 3 `if` seront générés.
 
 #### Privilège `THESE_DEPOT_VERSION_INITIALE`
 
-- Line 4 : 
-  - La cellule au croisement du privilège `THESE_DEPOT_VERSION_INITIALE` et du prédicat `isTheseEnCours` vaut `1:0`.
-  - La cellule dans la colonne `return` mentionne un `0`.
-  - Cela s'interprète : "Si `isTheseEnCours` est faux (`:0`) alors l'assertion retourne faux (`0`)".
+- Line 4 :
+    - La cellule au croisement du privilège `THESE_DEPOT_VERSION_INITIALE` et du prédicat `isTheseEnCours` vaut `1:0`.
+    - La cellule dans la colonne `return` mentionne un `0`.
+    - Cela s'interprète : "Si `isTheseEnCours` est faux (`:0`) alors l'assertion retourne faux (`0`)".
 
-- Line 5 : 
-  - La cellule au croisement de `THESE_DEPOT_VERSION_INITIALE` et de `isTheseSoutenue` vaut `1:1`.
-  - La cellule dans la colonne `return` mentionne un `0`.
-  - Cela s'interprète : "Si `isTheseSoutenue` est vrai (`:1`) alors l'assertion retourne faux (`0`)".
+- Line 5 :
+    - La cellule au croisement de `THESE_DEPOT_VERSION_INITIALE` et de `isTheseSoutenue` vaut `1:1`.
+    - La cellule dans la colonne `return` mentionne un `0`.
+    - Cela s'interprète : "Si `isTheseSoutenue` est vrai (`:1`) alors l'assertion retourne faux (`0`)".
 
-- Line 6 : 
-  - La ligne ne spécifie aucune valeur en face des prédicats et un `1` dans la colonne `return`.
-  - La cellule dans la colonne `return` mentionne un `1`.
-  - Cela s'interprète : "Sinon, l'assertion retourne vrai (`1`)".
+- Line 6 :
+    - La ligne ne spécifie aucune valeur en face des prédicats et un `1` dans la colonne `return`.
+    - La cellule dans la colonne `return` mentionne un `1`.
+    - Cela s'interprète : "Sinon, l'assertion retourne vrai (`1`)".
 
 Voici le PHP que ces 3 lignes généreraient dans la classe d'assertion :
 
 ```php
-if ($privilege === \Depot\Provider\Privilege\ThesePrivileges::THESE_DEPOT_VERSION_INITIALE) {
+if ($privilege === \Depot\Provider\Privilege\DepotPrivileges::THESE_DEPOT_VERSION_INITIALE) {
         //--------------------------------------------------------------------------------------
             /* line 4 */
             $this->linesTrace[] = '/* line 4 */';
@@ -99,17 +115,33 @@ if ($privilege === \Doctorant\Provider\Privilege\DoctorantPrivileges::DOCTORANT_
 ```
 
 
+## Génération de la classe d'assertion abstraite
+
+Le fichier CSV est utilisé pour générer une classe d'assertion abstraite.
+
+Pour cela, une fois les modifications effectuées sur le fichier CSV, il faut (re)générer la classe d'assertion 
+abstraite en utilisant le script `bin/assertions/generate-assertion`.
+
+Exemple :
+```bash
+bin/assertions/generate-assertion --file module/Depot/data/TheseEntityAssertion.csv
+```
+
+
+## Implémentation de la classe d'assertion
+
+Le fichier CSV est utilisé pour générer une classe d'assertion abstraite que le développeur devra sous-classer afin
+d'implémenter les méthodes abstraites mises en jeu.
+
+Par exemple, la classe `module/Depot/src/Depot/Assertion/These/TheseEntityAssertion.php` hérite de la classe générée
+`module/Depot/src/Depot/Assertion/These/GeneratedTheseEntityAssertion.php` et se doit donc d'implémenter toutes les 
+méthodes abstraites utilisées (`isTheseEnCours()`, `isTheseSoutenue()`, `isUtilisateurEstAuteurDeLaThese()`, 
+`isExisteValidationRdvBu()`, etc.)
+
+ 
 ## Ajouter une nouvelle assertion
 
 ***TODO***
- 
-## Générer le nouveau ficher assertion
 
-Une fois les modifications effectuées sur le fichier CSV, il faut se positionner dans le repertoire `data/assertions`
-et regénérer la classe d'assertion en utilisanr la commande `generate-assertion`.
-Exemple : 
- 
-```bash
-cd data/assertions 
-./generate-assertion --file ./TheseEntityAssertion.csv
-```
+
+## Générer la classe d'assertion à partir d'un fichier CSV

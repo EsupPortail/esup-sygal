@@ -9,7 +9,7 @@ use Interop\Container\ContainerInterface;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
 use Soutenance\Service\Evenement\EvenementService;
 use Soutenance\Service\Membre\MembreService;
-use Soutenance\Service\Notifier\NotifierSoutenanceService;
+use Soutenance\Service\Notifier\NotifierService;
 use Soutenance\Service\Proposition\PropositionService;
 use UnicaenAuthToken\Service\TokenService;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
@@ -30,7 +30,7 @@ class EngagementImpartialiteControllerFactory
          * @var EvenementService $evenementService
          * @var PropositionService $propositionService
          * @var MembreService $membreService
-         * @var NotifierSoutenanceService $notifierService
+         * @var NotifierService $notifierService
          * @var EngagementImpartialiteService $engagementImpartialiteService
          * @var RenduService $renduService
          * @var TokenService $tokenService
@@ -39,7 +39,7 @@ class EngagementImpartialiteControllerFactory
         $evenementService               = $container->get(EvenementService::class);
         $propositionService             = $container->get(PropositionService::class);
         $membreService                  = $container->get(MembreService::class);
-        $notifierService                = $container->get(NotifierSoutenanceService::class);
+        $notifierService                = $container->get(NotifierService::class);
         $engagementImpartialiteService  = $container->get(EngagementImpartialiteService::class);
         $renduService                   = $container->get(RenduService::class);
         $tokenService                   = $container->get(TokenService::class);
@@ -49,7 +49,7 @@ class EngagementImpartialiteControllerFactory
         $controller->setEvenementService($evenementService);
         $controller->setPropositionService($propositionService);
         $controller->setMembreService($membreService);
-        $controller->setNotifierSoutenanceService($notifierService);
+        $controller->setSoutenanceNotifierService($notifierService);
         $controller->setEngagementImpartialiteService($engagementImpartialiteService);
         $controller->setRenduService($renduService);
         $controller->setTokenService($tokenService);

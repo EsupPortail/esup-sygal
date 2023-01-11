@@ -21,8 +21,8 @@ use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Formation\Provider\IdentityProvider;
 use Formation\Provider\IdentityProviderFactory;
-use Formation\Service\Notification\NotificationService;
-use Formation\Service\Notification\NotificationServiceFactory;
+use Formation\Service\Notification\NotifierService;
+use Formation\Service\Notification\NotifierServiceFactory;
 use Formation\View\Helper\EtatViewHelper;
 use Formation\View\Helper\FormateursViewHelper;
 use Formation\View\Helper\ModaliteViewHelper;
@@ -38,8 +38,6 @@ use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Membre\MembreServiceFactory;
-use Soutenance\Service\Notifier\NotifierSoutenanceService;
-use Soutenance\Service\Notifier\NotifierSoutenanceServiceFactory;
 use Soutenance\Service\Validation\ValidationService;
 use Soutenance\Service\Validation\ValidationServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -87,7 +85,7 @@ return array(
 
     'service_manager' => [
         'factories' => [
-            NotificationService::class => NotificationServiceFactory::class,
+            NotifierService::class => NotifierServiceFactory::class,
             IdentityProvider::class => IdentityProviderFactory::class,
         ],
     ],

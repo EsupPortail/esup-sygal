@@ -20,7 +20,7 @@ class RapportAvisServiceFactory
         $service = new RapportAvisService();
 
         $service->setEtablissementService($etablissementService);
-        $service->setNotifierService($notifierService);
+        $service->setApplicationNotifierService($notifierService);
 
         return $service;
     }

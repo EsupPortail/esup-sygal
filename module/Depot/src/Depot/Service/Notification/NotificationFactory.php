@@ -1,18 +1,18 @@
 <?php
 
-namespace Application\Service\Notification;
+namespace Depot\Service\Notification;
 
-use Depot\Entity\Db\FichierThese;
-use These\Entity\Db\These;
 use Application\Entity\Db\ValiditeFichier;
-use Application\Entity\Db\Variable;
+use Application\Service\Email\EmailTheseServiceAwareTrait;
+use Application\Service\Variable\VariableServiceAwareTrait;
+use Depot\Entity\Db\FichierThese;
 use Fichier\Entity\Db\VersionFichier;
+use Laminas\View\Helper\Url as UrlHelper;
+use Notification\Notification;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
-use Application\Service\Variable\VariableServiceAwareTrait;
-use Notification\Notification;
+use These\Entity\Db\These;
 use UnicaenApp\Options\ModuleOptions;
-use Laminas\View\Helper\Url as UrlHelper;
 
 /**
  * Classe de construction de notifications par mail.
@@ -24,16 +24,33 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
     use VariableServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
+    use EmailTheseServiceAwareTrait;
 
     /**
      * @var UrlHelper
      */
-    protected $urlHelper;
+    protected UrlHelper $urlHelper;
 
     /**
      * @var ModuleOptions
      */
-    private $appModuleOptions;
+    private ModuleOptions $appModuleOptions;
+
+    /**
+     * @param UrlHelper $urlHelper
+     */
+    public function setUrlHelper(UrlHelper $urlHelper)
+    {
+        $this->urlHelper = $urlHelper;
+    }
+
+    /**
+     * @param ModuleOptions $options
+     */
+    public function setAppModuleOptions(ModuleOptions $options)
+    {
+        $this->appModuleOptions = $options;
+    }
 
     /**
      * {@inheritdoc}
@@ -87,7 +104,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
     public function createNotificationForRdvBuSaisiParDoctorant(These $these, $estLaPremiereSaisie)
     {
         $subject = sprintf("%s Saisie des informations pour la prise de rendez-vous avec la bibliothèque universitaire", $these->getLibelleDiscipline());
-        $to = $this->fetchEmailBu($these);
+        $to = $this->emailTheseService->fetchEmailBu($these);
 
         $notif = $this->createNotification();
         $notif
@@ -114,7 +131,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
      */
     public function createNotificationForTheseTeleversee(These $these, VersionFichier $version)
     {
-        $to = $this->fetchEmailBdd($these);
+        $to = $this->emailTheseService->fetchEmailBdd($these);
 
         $notif = $this->createNotification('notif-depot-these');
         $notif
@@ -137,7 +154,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
      */
     public function createNotificationForFichierTeleverse(These $these)
     {
-        $to = $this->fetchEmailBdd($these);
+        $to = $this->emailTheseService->fetchEmailBdd($these);
 
         $notif = $this->createNotification();
         $notif
@@ -151,40 +168,28 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
 
     /**
      * @param These $these
-     * @return string
+     * @return Notification
      */
-    private function fetchEmailBdd(These $these)
+    public function createNotificationForAccordSursisCorrection(These $these): Notification
     {
-        $variable = $this->variableService->getRepository()->findOneByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
+        $emailBDD = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
+        $emailBU = $this->emailTheseService->fetchEmailBibliothequeUniv($these);
+        $emailsDirecteurs = $this->emailTheseService->fetchEmailEncadrants($these);
 
-        return $variable->getValeur();
-    }
+        $toLabel = "Maison du doctorat, Bibliothèque Universitaire et (co)directeur de thèse";
+        $to = array_merge(
+            $emailBDD,
+            $emailBU,
+            $emailsDirecteurs,
+        );
 
-    /**
-     * @param These $these
-     * @return string
-     */
-    private function fetchEmailBu(These $these)
-    {
-        $variable = $this->variableService->getRepository()->findOneByCodeAndThese(Variable::CODE_EMAIL_BU, $these);
-
-        return $variable->getValeur();
-    }
-
-    /**
-     * @param UrlHelper $urlHelper
-     */
-    public function setUrlHelper(UrlHelper $urlHelper)
-    {
-        $this->urlHelper = $urlHelper;
-    }
-
-    /**
-     * @param ModuleOptions $options
-     */
-    public function setAppModuleOptions(ModuleOptions $options)
-    {
-        $this->appModuleOptions = $options;
+        return $this->createNotification()
+            ->setTo($to)
+            ->setToLabel($toLabel)
+            ->setSubject("Sursis accordé pour les corrections de thèse")
+            ->setInfoMessages("Un mail de notification vient d'être envoyé aux destinataires suivants : $toLabel")
+            ->setTemplatePath('depot/depot/mail/notif-sursis-correction-accorde')
+            ->setTemplateVariables(compact('these'));
     }
 
     /**

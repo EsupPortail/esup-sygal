@@ -35,7 +35,7 @@ class RapportActiviteAvisControllerFactory
         $controller->setRapportActiviteAvisService($rapportAvisService);
         $controller->setRapportActiviteValidationService($rapportValidationService);
         $controller->setValidationService($validationService);
-        $controller->setNotifierService($notifierService);
+        $controller->setApplicationNotifierService($notifierService);
 
         $controller->setForm($avisForm);
 

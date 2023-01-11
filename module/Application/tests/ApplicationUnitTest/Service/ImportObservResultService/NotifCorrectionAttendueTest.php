@@ -223,7 +223,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
         $this->service = new ImportObservResultService();
         $this->service->setEntityManager($em);
         $this->service->setTheseService($theseService);
-        $this->service->setNotifierService($this->notificationServiceMock);
+        $this->service->setApplicationNotifierService($this->notificationServiceMock);
         $this->service->setRepository($repository);
         $this->service->setNotificationDepotVersionCorrigeeAttenduRule($this->ruleMock);
     }

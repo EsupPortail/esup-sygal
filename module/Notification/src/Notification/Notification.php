@@ -59,6 +59,10 @@ class Notification
      */
     protected $bcc;
 
+    protected ?string $toLabel = null;
+    protected ?string $ccLabel = null;
+    protected ?string $bccLabel = null;
+
     /**
      * @var string[]
      */
@@ -236,6 +240,36 @@ class Notification
     }
 
     /**
+     * Fournit un libellé explicitant qui sont les destinataires, ex : "Direction de thèse et Maison du doctorat".
+     */
+    public function setToLabel(string $toLabel): self
+    {
+        $this->toLabel = $toLabel;
+
+        return $this;
+    }
+
+    /**
+     * Fournit un libellé explicitant qui sont les destinataires, ex : "Direction de thèse et Maison du doctorat".
+     */
+    public function setCcLabel(string $ccLabel): self
+    {
+        $this->ccLabel = $ccLabel;
+
+        return $this;
+    }
+
+    /**
+     * Fournit un libellé explicitant qui sont les destinataires, ex : "Direction de thèse et Maison du doctorat".
+     */
+    public function setBccLabel(string $bccLabel): self
+    {
+        $this->bccLabel = $bccLabel;
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getSubject()
@@ -322,6 +356,9 @@ class Notification
     }
 
     /**
+     * Spécifie les éventuels messages d'avertissement signalés par cette notification
+     * et pouvant être affichés une fois la notification envoyée.
+     *
      * @param string|string[] $warningMessages
      * @return self
      */
@@ -333,6 +370,9 @@ class Notification
     }
 
     /**
+     * Spécifie les éventuels messages d'information signalés par cette notification
+     * et pouvant être affichés une fois la notification envoyée.
+     *
      * @param string|string[] $infoMessages
      * @return self
      */

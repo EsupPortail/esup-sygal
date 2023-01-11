@@ -10,7 +10,6 @@ use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
 use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Service\BaseService;
-use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use DateInterval;
@@ -28,7 +27,7 @@ use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Validation\TypeValidation as TypeValidationSoutenance;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
+use Soutenance\Service\Notifier\NotifierServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use Structure\Entity\Db\EcoleDoctorale;
@@ -45,7 +44,6 @@ class PropositionService extends BaseService
     use ActeurServiceAwareTrait;
     use ValidatationServiceAwareTrait;
     use NotifierServiceAwareTrait;
-    use NotifierSoutenanceServiceAwareTrait;
     use ParametreServiceAwareTrait;
     use VariableServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
@@ -282,22 +280,22 @@ class PropositionService extends BaseService
         $validations = $this->getValidationService()->findValidationPropositionSoutenanceByThese($these);
         foreach ($validations as $validation) {
             $this->getValidationService()->historise($validation);
-            $this->getNotifierSoutenanceService()->triggerDevalidationProposition($validation);
+            $this->getSoutenanceNotifierService()->triggerDevalidationProposition($validation);
         }
         $validationED = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these));
         if ($validationED) {
             $this->getValidationService()->historise($validationED);
-            $this->getNotifierSoutenanceService()->triggerDevalidationProposition($validationED);
+            $this->getSoutenanceNotifierService()->triggerDevalidationProposition($validationED);
         }
         $validationUR = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these));
         if ($validationUR) {
             $this->getValidationService()->historise($validationUR);
-            $this->getNotifierSoutenanceService()->triggerDevalidationProposition($validationUR);
+            $this->getSoutenanceNotifierService()->triggerDevalidationProposition($validationUR);
         }
         $validationBDD = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these));
         if ($validationBDD) {
             $this->getValidationService()->historise($validationBDD);
-            $this->getNotifierSoutenanceService()->triggerDevalidationProposition($validationBDD);
+            $this->getSoutenanceNotifierService()->triggerDevalidationProposition($validationBDD);
         }
     }
 

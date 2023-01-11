@@ -64,7 +64,7 @@ class RapportActiviteEventListener implements ListenerAggregateInterface
 
         $notif = $this->rapportActiviteService->newRapportActiviteSupprimeNotification($rapportActivite);
         try {
-            $this->notifierService->trigger($notif);
+            $this->applicationNotifierService->trigger($notif);
         } catch (NotificationException $e) {
             throw new RuntimeException("Impossible d'envoyer le mail de notification", null, $e);
         }

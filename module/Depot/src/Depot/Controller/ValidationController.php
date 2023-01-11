@@ -5,12 +5,12 @@ namespace Depot\Controller;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
-use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Depot\Notification\ValidationRdvBuNotification;
 use Depot\Provider\Privilege\ValidationPrivileges;
+use Depot\Service\Notification\NotifierServiceAwareTrait;
 use Depot\Service\These\DepotServiceAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
 use Laminas\View\Model\ViewModel;
@@ -42,7 +42,7 @@ class ValidationController extends AbstractController
                 $successMessage = "Validation de la page de couverture enregistrée avec succès.";
 
                 // notification
-                $this->notifierService->triggerValidationPageDeCouvertureNotification($these, $action);
+                $this->depotNotifierService->triggerValidationPageDeCouvertureNotification($these, $action);
             }
             elseif ($action === 'devalider') {
                 $this->depotValidationService->unvalidatePageDeCouverture($these);
@@ -98,7 +98,7 @@ class ValidationController extends AbstractController
                 // notification (doctorant: à la 1ere validation seulement)
                 $notifierDoctorant = ! $this->depotValidationService->existsValidationRdvBuHistorisee($these);
                 $notification->setNotifierDoctorant($notifierDoctorant);
-                $this->notifierService->triggerValidationRdvBu($notification);
+                $this->depotNotifierService->triggerValidationRdvBu($notification);
             }
             elseif ($action === 'devalider') {
                 $this->depotValidationService->unvalidateRdvBu($these);
@@ -107,7 +107,7 @@ class ValidationController extends AbstractController
                 // notification
                 $notification->setEstDevalidation(true);
                 $notification->setNotifierDoctorant(false);
-                $this->notifierService->triggerValidationRdvBu($notification);
+                $this->depotNotifierService->triggerValidationRdvBu($notification);
             }
             else {
                 throw new RuntimeException("Action inattendue!");
@@ -202,7 +202,7 @@ class ValidationController extends AbstractController
                 throw new RuntimeException("Action inattendue!");
             }
 
-            $notificationLogs = $this->notifierService->getLogs();
+            $notificationLogs = $this->depotNotifierService->getLogs();
 
             $tvCode = $validation->getTypeValidation()->getCode();
             $this->flashMessenger()->addMessage($successMessage, "$tvCode/success");
@@ -255,9 +255,9 @@ class ValidationController extends AbstractController
                             'url' => $this->url()->fromRoute('these/depot', ['these' => $these->getId()], ['force_canonical' => true]),
                         ]);
                     // notification du BDD
-                    $this->notifierService->triggerValidationCorrectionThese($notif, $these);
+                    $this->depotNotifierService->triggerValidationCorrectionThese($notif, $these);
                     // notification du doctorant
-                    $this->notifierService->triggerValidationCorrectionTheseEtudiant($notif, $these);
+                    $this->depotNotifierService->triggerValidationCorrectionTheseEtudiant($notif, $these);
 
                     //todo mail pour etudiant
                 }
@@ -274,7 +274,7 @@ class ValidationController extends AbstractController
                 throw new RuntimeException("Action inattendue!");
             }
 
-            $notificationLogs = $this->notifierService->getLogs();
+            $notificationLogs = $this->depotNotifierService->getLogs();
 
             $tvCode = $validation->getTypeValidation()->getCode();
             $this->flashMessenger()->addMessage($successMessage, "$tvCode/success");

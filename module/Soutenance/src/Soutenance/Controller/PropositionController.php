@@ -41,7 +41,7 @@ use Soutenance\Provider\Validation\TypeValidation;
 use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
+use Soutenance\Service\Notifier\NotifierServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\SignaturePresident\SiganturePresidentPdfExporter;
@@ -62,7 +62,7 @@ class PropositionController extends AbstractController
     use InformationServiceAwareTrait;
     use JustificatifServiceAwareTrait;
     use MembreServiceAwareTrait;
-    use NotifierSoutenanceServiceAwareTrait;
+    use NotifierServiceAwareTrait;
     use ParametreServiceAwareTrait;
     use PropositionServiceAwareTrait;
     use RoleServiceAwareTrait;
@@ -426,7 +426,7 @@ class PropositionController extends AbstractController
         if ($autorisation !== null) return $autorisation;
 
         $validation = $this->getValidationService()->validatePropositionSoutenance($these);
-        $this->getNotifierSoutenanceService()->triggerValidationProposition($these, $validation);
+        $this->getSoutenanceNotifierService()->triggerValidationProposition($these, $validation);
 
         $doctorant = $these->getDoctorant();
 
@@ -442,7 +442,7 @@ class PropositionController extends AbstractController
                 break;
             }
         }
-        if ($allValidated) $this->getNotifierSoutenanceService()->triggerNotificationUniteRechercheProposition($these);
+        if ($allValidated) $this->getSoutenanceNotifierService()->triggerNotificationUniteRechercheProposition($these);
 
         return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
 
@@ -466,17 +466,17 @@ class PropositionController extends AbstractController
         switch ($role->getCode()) {
             case Role::CODE_RESP_UR :
                 $this->getValidationService()->validateValidationUR($these, $individu);
-                $this->getNotifierSoutenanceService()->triggerNotificationEcoleDoctoraleProposition($these);
+                $this->getSoutenanceNotifierService()->triggerNotificationEcoleDoctoraleProposition($these);
                 break;
             case Role::CODE_RESP_ED :
             case Role::CODE_GEST_ED :
                 $this->getValidationService()->validateValidationED($these, $individu);
-                $this->getNotifierSoutenanceService()->triggerNotificationBureauDesDoctoratsProposition($these);
+                $this->getSoutenanceNotifierService()->triggerNotificationBureauDesDoctoratsProposition($these);
                 break;
             case Role::CODE_BDD :
                 $this->getValidationService()->validateValidationBDD($these, $individu);
-                $this->getNotifierSoutenanceService()->triggerNotificationPropositionValidee($these);
-                $this->getNotifierSoutenanceService()->triggerNotificationPresoutenance($these);
+                $this->getSoutenanceNotifierService()->triggerNotificationPropositionValidee($these);
+                $this->getSoutenanceNotifierService()->triggerNotificationPresoutenance($these);
 
                 $proposition = $this->getPropositionService()->findOneForThese($these);
                 $proposition->setEtat($this->getPropositionService()->findPropositionEtatByCode(Etat::ETABLISSEMENT));
@@ -509,7 +509,7 @@ class PropositionController extends AbstractController
                 $currentUser = $this->userContextService->getIdentityIndividu();
                 /** @var RoleInterface $currentRole */
                 $currentRole = $this->userContextService->getSelectedIdentityRole();
-                $this->getNotifierSoutenanceService()->triggerRefusPropositionSoutenance($these, $currentUser, $currentRole, $data['motif']);
+                $this->getSoutenanceNotifierService()->triggerRefusPropositionSoutenance($these, $currentUser, $currentRole, $data['motif']);
             }
         }
 

@@ -37,7 +37,7 @@ class ImportObservResultServiceFactory
         $service->setEntityManager($em);
         $service->setEntityClass($config->getImportObservResultEntityClass());
         $service->setTheseService($theseService);
-        $service->setNotifierService($notifierService);
+        $service->setApplicationNotifierService($notifierService);
         $service->setVariableService($variableService);
 
         if ($logger = $this->getLogger($container)) {

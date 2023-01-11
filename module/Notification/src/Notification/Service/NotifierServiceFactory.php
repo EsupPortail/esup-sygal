@@ -12,13 +12,11 @@ use UnicaenApp\Service\Mailer\MailerService;
  */
 class NotifierServiceFactory
 {
-    protected $notifierServiceClass = NotifierService::class;
+    protected string $notifierServiceClass = NotifierService::class;
 
     /**
-     * Create service.
-     *
-     * @param ContainerInterface $container
-     * @return NotifierService
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container)
     {
@@ -49,10 +47,10 @@ class NotifierServiceFactory
     }
 
     /**
-     * @param ContainerInterface $container
-     * @return array
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    private function getOptions(ContainerInterface $container)
+    private function getOptions(ContainerInterface $container): array
     {
         $config = $container->get('config');
 

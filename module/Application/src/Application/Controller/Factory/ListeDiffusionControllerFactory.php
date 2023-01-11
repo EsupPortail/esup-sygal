@@ -41,7 +41,7 @@ class ListeDiffusionControllerFactory
          * @var NotifierService $notifierService
          */
         $notifierService = $container->get(NotifierService::class);
-        $controller->setNotifierService($notifierService);
+        $controller->setApplicationNotifierService($notifierService);
 
         /**
          * @var RoleService $roleService

@@ -1,7 +1,8 @@
 <?php
 
-namespace Application\Service\Notification;
+namespace Depot\Service\Notification;
 
+use Application\Service\Email\EmailTheseService;
 use Application\Service\Role\RoleService;
 use Application\Service\Variable\VariableService;
 use Individu\Service\IndividuService;
@@ -26,28 +27,37 @@ class NotifierServiceFactory extends \Notification\Service\NotifierServiceFactor
         /** @var NotifierService $service */
         $service = parent::__invoke($container);
 
-        /**
-         * @var VariableService         $variableService
-         * @var EcoleDoctoraleService   $ecoleDoctoraleService
-         * @var UniteRechercheService   $uniteRechercheService
-         * @var IndividuService         $individuService
-         * @var RoleService             $roleService
-         */
+        /** @var VariableService $variableService */
         $variableService = $container->get('VariableService');
+        $service->setVariableService($variableService);
+
+        /** @var EcoleDoctoraleService $ecoleDoctoraleService */
         $ecoleDoctoraleService = $container->get('EcoleDoctoraleService');
+        $service->setEcoleDoctoraleService($ecoleDoctoraleService);
+
+        /** @var UniteRechercheService $uniteRechercheService */
         $uniteRechercheService = $container->get('UniteRechercheService');
+        $service->setUniteRechercheService($uniteRechercheService);
+
+        /** @var IndividuService $individuService */
         $individuService = $container->get(IndividuService::class);
+        $service->setIndividuService($individuService);
+
+        /** @var RoleService $roleService */
         $roleService = $container->get('RoleService');
+        $service->setRoleService($roleService);
 
         /** @var UrlHelper $urlHelper */
         $urlHelper = $container->get('ViewHelperManager')->get('Url');
-
-        $service->setVariableService($variableService);
-        $service->setEcoleDoctoraleService($ecoleDoctoraleService);
-        $service->setUniteRechercheService($uniteRechercheService);
         $service->setUrlHelper($urlHelper);
-        $service->setIndividuService($individuService);
-        $service->setRoleService($roleService);
+
+        /** @var NotificationFactory $notificationFactory */
+        $notificationFactory = $container->get(NotificationFactory::class);
+        $service->setNotificationFactory($notificationFactory);
+
+        /** @var EmailTheseService $emailTheseService */
+        $emailTheseService = $container->get(EmailTheseService::class);
+        $service->setEmailTheseService($emailTheseService);
 
         return $service;
     }

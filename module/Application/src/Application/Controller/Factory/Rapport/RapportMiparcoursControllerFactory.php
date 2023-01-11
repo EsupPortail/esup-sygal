@@ -54,7 +54,7 @@ class RapportMiparcoursControllerFactory
         $controller->setRapportService($rapportService);
         $controller->setFichierService($fichierService);
         $controller->setVersionFichierService($versionFichierService);
-        $controller->setNotifierService($notificationService);
+        $controller->setApplicationNotifierService($notificationService);
         $controller->setIndividuService($individuService);
         $controller->setForm($rapportForm);
         $controller->setValidationService($validationService);

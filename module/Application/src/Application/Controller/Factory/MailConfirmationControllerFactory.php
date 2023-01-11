@@ -34,7 +34,7 @@ class MailConfirmationControllerFactory
         $controller = new MailConfirmationController();
         $controller->setMailConfirmationService($mailConfirmationService);
         $controller->setIndividuService($individuService);
-        $controller->setNotifierService($notifierService);
+        $controller->setApplicationNotifierService($notifierService);
         $controller->setMailConfirmationForm($mailConfirmationForm);
 
         return $controller;

@@ -12,7 +12,7 @@ use Formation\Provider\NatureFichier\NatureFichier;
 use Formation\Service\Exporter\Attestation\AttestationExporter;
 use Formation\Service\Exporter\Convocation\ConvocationExporter;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
-use Formation\Service\Notification\NotificationServiceAwareTrait;
+use Formation\Service\Notification\NotifierServiceAwareTrait;
 use Formation\Service\Presence\PresenceServiceAwareTrait;
 use Formation\Service\Session\SessionServiceAwareTrait;
 use Individu\Entity\Db\Individu;
@@ -34,7 +34,7 @@ class InscriptionController extends AbstractController
     use FichierStorageServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use InscriptionServiceAwareTrait;
-    use NotificationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
     use PresenceServiceAwareTrait;
     use SessionServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
@@ -84,7 +84,7 @@ class InscriptionController extends AbstractController
             } else {
                 $this->getInscriptionService()->create($inscription);
                 $this->flashMessenger()->addSuccessMessage("Inscription à la formation <strong>".$libelle."</strong> faite.");
-                $this->getNotificationService()->triggerInscriptionEnregistree($inscription);
+                $this->getNotifierService()->triggerInscriptionEnregistree($inscription);
             }
 
             $retour=$this->params()->fromQuery('retour');
@@ -174,7 +174,7 @@ class InscriptionController extends AbstractController
         if (count($listePrincipale) < $session->getTailleListePrincipale()) {
             $inscription->setListe(Inscription::LISTE_PRINCIPALE);
             $this->getInscriptionService()->update($inscription);
-            if ($session->isFinInscription()) $this->getNotificationService()->triggerInscriptionListePrincipale($inscription);
+            if ($session->isFinInscription()) $this->getNotifierService()->triggerInscriptionListePrincipale($inscription);
         } else {
             $this->flashMessenger()->addErrorMessage('La liste principale est déjà complète.');
         }
@@ -193,7 +193,7 @@ class InscriptionController extends AbstractController
         if (count($listePrincipale) < $session->getTailleListeComplementaire()) {
             $inscription->setListe(Inscription::LISTE_COMPLEMENTAIRE);
             $this->getInscriptionService()->update($inscription);
-            if ($session->isFinInscription()) $this->getNotificationService()->triggerInscriptionListeComplementaire($inscription);
+            if ($session->isFinInscription()) $this->getNotifierService()->triggerInscriptionListeComplementaire($inscription);
         } else {
             $this->flashMessenger()->addErrorMessage('La liste complémentaire est déjà complète.');
         }

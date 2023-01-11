@@ -12,8 +12,8 @@ use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Membre\MembreServiceFactory;
-use Soutenance\Service\Notifier\NotifierSoutenanceService;
-use Soutenance\Service\Notifier\NotifierSoutenanceServiceFactory;
+use Soutenance\Service\Notifier\NotifierService;
+use Soutenance\Service\Notifier\NotifierServiceFactory;
 use Soutenance\Service\Validation\ValidationService;
 use Soutenance\Service\Validation\ValidationServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -202,7 +202,7 @@ return array(
         'factories' => [
             //service
             MembreService::class => MembreServiceFactory::class,
-            NotifierSoutenanceService::class => NotifierSoutenanceServiceFactory::class,
+            NotifierService::class => NotifierServiceFactory::class,
             ValidationService::class => ValidationServiceFactory::class,
         ],
     ],

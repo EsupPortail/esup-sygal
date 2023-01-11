@@ -11,7 +11,7 @@ use Soutenance\Entity\Membre;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
+use Soutenance\Service\Notifier\NotifierServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
 use Laminas\View\Model\ViewModel;
@@ -28,7 +28,7 @@ class EngagementImpartialiteController extends AbstractController
     use EvenementServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;
     use MembreServiceAwareTrait;
-    use NotifierSoutenanceServiceAwareTrait;
+    use NotifierServiceAwareTrait;
     use PropositionServiceAwareTrait;
     use RenduServiceAwareTrait;
     use TokenServiceAwareTrait;
@@ -73,7 +73,7 @@ class EngagementImpartialiteController extends AbstractController
                     $token = $this->getMembreService()->retrieveOrCreateToken($membre);
                     $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
                     $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $membre->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
-                    $this->getNotifierSoutenanceService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre, $url);
+                    $this->getSoutenanceNotifierService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre, $url);
                 }
             }
         }
@@ -92,7 +92,7 @@ class EngagementImpartialiteController extends AbstractController
             $token = $this->getMembreService()->retrieveOrCreateToken($membre);
             $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
             $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $membre->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
-            $this->getNotifierSoutenanceService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre, $url);
+            $this->getSoutenanceNotifierService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre, $url);
         }
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
@@ -107,7 +107,7 @@ class EngagementImpartialiteController extends AbstractController
         $signature = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($these, $membre);
         if ($signature === null) {
             $this->getEngagementImpartialiteService()->create($membre, $these);
-            $this->getNotifierSoutenanceService()->triggerSignatureEngagementImpartialite($these, $proposition, $membre);
+            $this->getSoutenanceNotifierService()->triggerSignatureEngagementImpartialite($these, $proposition, $membre);
 //            $this->getNotifierSoutenanceService()->triggerDemandeAvisSoutenance($these, $proposition, $membre);
         }
 
@@ -122,7 +122,7 @@ class EngagementImpartialiteController extends AbstractController
 
         $this->getEngagementImpartialiteService()->createRefus($membre, $these);
         $this->getPropositionService()->annulerValidationsForProposition($proposition);
-        $this->getNotifierSoutenanceService()->triggerRefusEngagementImpartialite($these, $proposition, $membre);
+        $this->getSoutenanceNotifierService()->triggerRefusEngagementImpartialite($these, $proposition, $membre);
 
 
         $this->redirect()->toRoute('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);
@@ -136,7 +136,7 @@ class EngagementImpartialiteController extends AbstractController
 
         /** @var Validation[] $validations */
         $this->getEngagementImpartialiteService()->delete($membre);
-        $this->getNotifierSoutenanceService()->triggerAnnulationEngagementImpartialite($these, $proposition, $membre);
+        $this->getSoutenanceNotifierService()->triggerAnnulationEngagementImpartialite($these, $proposition, $membre);
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }

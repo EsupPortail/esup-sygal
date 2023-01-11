@@ -2,11 +2,12 @@
 
 namespace Depot\Service\These\Factory;
 
-use Application\Service\Notification\NotifierService;
+use Application\Service\Notification\NotifierService as ApplicationNotifierService;
 use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Variable\VariableService;
 use Depot\Service\FichierThese\FichierTheseService;
+use Depot\Service\Notification\NotifierService as DepotNotifierService;
 use Depot\Service\These\DepotService;
 use Depot\Service\Validation\DepotValidationService;
 use Fichier\Service\Fichier\FichierStorageService;
@@ -22,10 +23,8 @@ use Webmozart\Assert\Assert;
 class DepotServiceFactory
 {
     /**
-     * Create service
-     *
-     * @param ContainerInterface $container
-     * @return DepotService
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container): DepotService
     {
@@ -33,7 +32,8 @@ class DepotServiceFactory
          * @var ActeurService $acteurService
          * @var DepotValidationService $depotValidationService
          * @var MembreService $membreService
-         * @var NotifierService $notifierService
+         * @var DepotNotifierService $depotNotifierService
+         * @var ApplicationNotifierService $applicationNotifierService
          * @var FichierTheseService $fichierTheseService
          * @var VariableService $variableService
          * @var UserContextService $userContextService
@@ -44,7 +44,8 @@ class DepotServiceFactory
         $acteurService = $container->get(ActeurService::class);
         $depotValidationService = $container->get(DepotValidationService::class);
         $membreService = $container->get(MembreService::class);
-        $notifierService = $container->get(NotifierService::class);
+        $depotNotifierService = $container->get(DepotNotifierService::class);
+        $applicationNotifierService = $container->get(ApplicationNotifierService::class);
         $fichierTheseService = $container->get('FichierTheseService');
         $variableService = $container->get('VariableService');
         $userContextService = $container->get('UserContextService');
@@ -62,7 +63,8 @@ class DepotServiceFactory
         $service->setActeurService($acteurService);
         $service->setDepotValidationService($depotValidationService);
         $service->setMembreService($membreService);
-        $service->setNotifierService($notifierService);
+        $service->setApplicationNotifierService($applicationNotifierService);
+        $service->setDepotNotifierService($depotNotifierService);
         $service->setFichierTheseService($fichierTheseService);
         $service->setVariableService($variableService);
         $service->setUserContextService($userContextService);

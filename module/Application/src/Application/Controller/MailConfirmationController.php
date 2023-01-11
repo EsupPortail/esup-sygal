@@ -111,7 +111,7 @@ class MailConfirmationController extends AbstractController
             true
         );
         try {
-            $this->notifierService->triggerMailConfirmation($mailConfirmation, $confirmUrl);
+            $this->applicationNotifierService->triggerMailConfirmation($mailConfirmation, $confirmUrl);
         } catch (NotificationException $e) {
             throw new RuntimeException("Erreur lors de l'envoi de la notification", null, $e);
         }

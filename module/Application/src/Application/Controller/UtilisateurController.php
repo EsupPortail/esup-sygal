@@ -267,7 +267,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
                     $utilisateur = $this->utilisateurService->createFromFormData($data->toArray());
                 }
                 $this->userService->updateUserPasswordResetToken($utilisateur);
-                $this->notifierService->triggerInitialisationCompte($utilisateur, $utilisateur->getPasswordResetToken());
+                $this->applicationNotifierService->triggerInitialisationCompte($utilisateur, $utilisateur->getPasswordResetToken());
                 $this->flashMessenger()->addSuccessMessage("Utilisateur <strong>{$utilisateur->getUsername()}</strong> créé avec succès.");
 
                 return $this->redirect()->toRoute('utilisateur');
@@ -366,7 +366,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $role = $this->getRoleService()->getRepository()->find($roleId);
 
             $this->roleService->removeRole($individuId, $roleId);
-            $this->notifierService->triggerChangementRole("retrait", $role, $individu);
+            $this->applicationNotifierService->triggerChangementRole("retrait", $role, $individu);
         }
 
         return new ViewModel([]);
@@ -386,7 +386,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $role = $this->getRoleService()->getRepository()->find($roleId);
 
             $this->roleService->addRole($individuId, $roleId);
-            $this->notifierService->triggerChangementRole("ajout", $role, $individu);
+            $this->applicationNotifierService->triggerChangementRole("ajout", $role, $individu);
         }
         return false;
     }
@@ -418,7 +418,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $user = $this->utilisateurService->createFromIndividu($individu, $individu->getEmailPro(), 'none');
             $this->userService->updateUserPasswordResetToken($user);
             $url = $this->url()->fromRoute('utilisateur/init-compte', ['token' => $user->getPasswordResetToken()], ['force_canonical' => true], true);
-            $this->notifierService->triggerInitialisationCompte($user, $url);
+            $this->applicationNotifierService->triggerInitialisationCompte($user, $url);
         } else {
             $this->flashMessenger()->addErrorMessage('Impossible de créer le compte local car un utilisateur est déjà lié à cet individu.');
         }
@@ -436,7 +436,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         if ($utilisateur !== null) {
             $this->userService->updateUserPasswordResetToken($utilisateur);
             $url = $this->url()->fromRoute('utilisateur/init-compte', ['token' => $utilisateur->getPasswordResetToken()], ['force_canonical' => true], true);
-            $this->notifierService->triggerResetCompte($utilisateur, $url);
+            $this->applicationNotifierService->triggerResetCompte($utilisateur, $url);
         } else {
             $this->flashMessenger()->addErrorMessage('Impossible de réinitiliser la mot de passe car aucun utilisateur est lié');
         }

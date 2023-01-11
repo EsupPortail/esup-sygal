@@ -13,7 +13,7 @@ class NotificationFactoryFactory
     /**
      * @var string
      */
-    protected $class = NotificationFactory::class;
+    protected string $class = NotificationFactory::class;
 
     /**
      * Create service.

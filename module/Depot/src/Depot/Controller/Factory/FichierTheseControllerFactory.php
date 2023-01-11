@@ -3,10 +3,10 @@
 namespace Depot\Controller\Factory;
 
 use Application\EventRouterReplacer;
-use Application\Service\Notification\NotifierService;
 use Application\Service\Validation\ValidationService;
 use Depot\Controller\FichierTheseController;
 use Depot\Service\FichierThese\FichierTheseService;
+use Depot\Service\Notification\NotifierService;
 use Depot\Service\These\DepotService;
 use Depot\Service\Validation\DepotValidationService;
 use Fichier\Service\Fichier\FichierService;
@@ -54,20 +54,22 @@ class FichierTheseControllerFactory
         $controller->setFichierService($fichierService);
         $controller->setFichierStorageService($fileService);
         $controller->setVersionFichierService($versionFichierService);
-        $controller->setNotifierService($notificationService);
+        $controller->setDepotNotifierService($notificationService);
         $controller->setIndividuService($individuService);
         $controller->setValidationService($validationService);
         $controller->setEventRouterReplacer($eventRouterReplacer);
-        $controller->setEventManager($eventManager);
 
         /** @var DepotService $depotService */
         $depotService = $container->get(DepotService::class);
-        $depotService->attach($eventManager);
         $controller->setDepotService($depotService);
 
         /** @var \Depot\Service\Validation\DepotValidationService $depotValidationService */
         $depotValidationService = $container->get(DepotValidationService::class);
         $controller->setDepotValidationService($depotValidationService);
+
+        // gestion d'événements : DepotService écoute certains événement de FichierTheseController
+        $controller->setEventManager($eventManager);
+        $depotService->attach($eventManager);
 
         return $controller;
     }

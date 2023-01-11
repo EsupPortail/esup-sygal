@@ -5,21 +5,22 @@ namespace Depot\Service\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\AuthorizeServiceAwareTrait;
 use Application\Service\BaseService;
-use Application\Service\Notification\NotifierServiceAwareTrait;
+use Application\Service\Notification\NotifierServiceAwareTrait as ApplicationNotifierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Assert\Assertion;
 use DateTime;
-use Depot\Controller\FichierTheseController;
 use Depot\Entity\Db\Attestation;
 use Depot\Entity\Db\Diffusion;
 use Depot\Entity\Db\MetadonneeThese;
 use Depot\Entity\Db\RdvBu;
+use Depot\Event\EventsInterface;
 use Depot\Notification\ValidationRdvBuNotification;
 use Depot\Rule\AutorisationDiffusionRule;
 use Depot\Rule\SuppressionAttestationsRequiseRule;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Depot\Service\Notification\NotifierServiceAwareTrait as DepotNotifierServiceAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\OptimisticLockException;
@@ -48,7 +49,8 @@ class DepotService extends BaseService implements ListenerAggregateInterface
     use TheseServiceAwareTrait;
     use ListenerAggregateTrait;
     use DepotValidationServiceAwareTrait;
-    use NotifierServiceAwareTrait;
+    use ApplicationNotifierServiceAwareTrait;
+    use DepotNotifierServiceAwareTrait;
     use FichierTheseServiceAwareTrait;
     use VariableServiceAwareTrait;
     use UserContextServiceAwareTrait;
@@ -99,8 +101,8 @@ class DepotService extends BaseService implements ListenerAggregateInterface
      */
     public function attach(EventManagerInterface $events, $priority = 1)
     {
-        // réaction à l'événement de dépôt d'un fichier de thèse
-        $events->attach(FichierTheseController::FICHIER_THESE_TELEVERSE, [$this, 'onFichierTheseTeleverse']);
+        $events->attach(EventsInterface::EVENT__FICHIER_THESE_TELEVERSE, [$this, 'onFichierTheseTeleverse']);
+        $events->attach(EventsInterface::EVENT__SURSIS_CORRECTION_ACCORDE, [$this, 'onSursisCorrectionAccorde']);
     }
 
     /**
@@ -176,6 +178,17 @@ class DepotService extends BaseService implements ListenerAggregateInterface
         if ($version->estVersionOriginale() && $version->estVersionCorrigee()) {
             $this->onFichierTheseTeleverseVersionCorrigee($these);
         }
+    }
+
+    public function onSursisCorrectionAccorde(Event $event)
+    {
+        /** @var \These\Entity\Db\These $these */
+        $these = $event->getTarget();
+
+        $notif = $this->depotNotifierService->getNotificationFactory()->createNotificationForAccordSursisCorrection($these);
+        $this->depotNotifierService->trigger($notif);
+
+        $event->setParam('logs', $this->depotNotifierService->getLogs());
     }
 
     /**
@@ -427,7 +440,7 @@ class DepotService extends BaseService implements ListenerAggregateInterface
             $notification = new ValidationRdvBuNotification();
             $notification->setThese($these);
             $notification->setNotifierDoctorant($notifierDoctorant);
-            $this->notifierService->triggerValidationRdvBu($notification);
+            $this->depotNotifierService->triggerValidationRdvBu($notification);
 //            $notificationLog = $this->notifierService->getMessage('<br>', 'info');
 
             $this->addMessage($successMessage, MessageAwareInterface::SUCCESS);
@@ -486,7 +499,7 @@ EOS;
 
         // Notification directe de l'utilisateur déjà existant
         if (!empty($utilisateurs)) {
-            $this->getNotifierService()->triggerValidationDepotTheseCorrigee($these, end($utilisateurs));
+            $this->depotNotifierService->triggerValidationDepotTheseCorrigee($these, end($utilisateurs));
             return ['success', "Notification des corrections faite à <strong>".end($utilisateurs)->getEmail()."</strong>"];
         }
         else {
@@ -501,12 +514,12 @@ EOS;
                 $username = ($individu->getNomUsuel() ?: $individu->getNomPatronymique()) . "_" . $president->getId();
                 $user = $this->utilisateurService->createFromIndividu($individu, $username, 'none');
                 $token = $this->userService->updateUserPasswordResetToken($user);
-                $this->getNotifierService()->triggerInitialisationCompte($user, $token);
-                $this->getNotifierService()->triggerValidationDepotTheseCorrigee($these);
+                $this->applicationNotifierService->triggerInitialisationCompte($user, $token);
+                $this->depotNotifierService->triggerValidationDepotTheseCorrigee($these);
                 return ['success', "Création de compte initialisée et notification des corrections faite à <strong>" . $email . "</strong>"];
             } else {
                 // Echec (si aucun mail, faudra le renseigner dans un membre fictif par exemple)
-                $this->getNotifierService()->triggerPasDeMailPresidentJury($these, $president);
+                $this->applicationNotifierService->triggerPasDeMailPresidentJury($these, $president);
                 return ['error', "Aucune action de réalisée car aucun email de trouvé."];
             }
         }

@@ -27,7 +27,7 @@ class RapportActiviteEventListenerFactory
 
         /** @var \Application\Service\Notification\NotifierService $notifierService */
         $notifierService = $container->get(NotifierService::class);
-        $listener->setNotifierService($notifierService);
+        $listener->setApplicationNotifierService($notifierService);
 
         return $listener;
     }

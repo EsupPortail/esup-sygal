@@ -37,7 +37,7 @@ use Soutenance\Service\Exporter\RapportSoutenance\RapportSoutenancePdfExporter;
 use Soutenance\Service\Exporter\RapportTechnique\RapportTechniquePdfExporter;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
+use Soutenance\Service\Notifier\NotifierServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
@@ -59,7 +59,7 @@ class PresoutenanceController extends AbstractController
     use TheseServiceAwareTrait;
     use MembreServiceAwareTrait;
     use IndividuServiceAwareTrait;
-    use NotifierSoutenanceServiceAwareTrait;
+    use NotifierServiceAwareTrait;
     use PropositionServiceAwareTrait;
     use ActeurServiceAwareTrait;
     use ValidatationServiceAwareTrait;
@@ -245,7 +245,7 @@ class PresoutenanceController extends AbstractController
                 $token = $this->getMembreService()->retrieveOrCreateToken($membre);
                 $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
                 $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $acteur->getRole()->getRoleId()], 'force_canonical' => true], true);
-                $this->getNotifierSoutenanceService()->triggerConnexionRapporteur($proposition, $user, $url);
+                $this->getSoutenanceNotifierService()->triggerConnexionRapporteur($proposition, $user, $url);
             }
         }
 
@@ -308,7 +308,7 @@ class PresoutenanceController extends AbstractController
                 $token = $this->getMembreService()->retrieveOrCreateToken($rapporteur);
                 $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
                 $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $rapporteur->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
-                $this->getNotifierSoutenanceService()->triggerDemandeAvisSoutenance($these, $proposition, $rapporteur, $url);
+                $this->getSoutenanceNotifierService()->triggerDemandeAvisSoutenance($these, $proposition, $rapporteur, $url);
             }
         }
 
@@ -337,7 +337,7 @@ class PresoutenanceController extends AbstractController
 
         $avis = $this->getAvisService()->getAvisByThese($these);
 
-        $this->getNotifierSoutenanceService()->triggerFeuVertSoutenance($these, $proposition, $avis);
+        $this->getSoutenanceNotifierService()->triggerFeuVertSoutenance($these, $proposition, $avis);
         $this->flashMessenger()
             //->setNamespace('presoutenance')
             ->addSuccessMessage("Notifications d'accord de soutenance envoyées");
@@ -354,7 +354,7 @@ class PresoutenanceController extends AbstractController
         $proposition->setEtat($etat);
         $this->getPropositionService()->update($proposition);
 
-        $this->getNotifierSoutenanceService()->triggerStopperDemarcheSoutenance($these, $proposition);
+        $this->getSoutenanceNotifierService()->triggerStopperDemarcheSoutenance($these, $proposition);
         $this->flashMessenger()
             //->setNamespace('presoutenance')
             ->addSuccessMessage("Notifications d'arrêt des démarches de soutenance soutenance envoyées");
@@ -627,7 +627,7 @@ class PresoutenanceController extends AbstractController
             $doctorant->getIndividu()->getEmailUtilisateur();
         /** @see PresoutenanceController::convocationDoctorantAction() */
         $url = $this->url()->fromRoute('soutenance/presoutenance/convocation-doctorant', ['proposition' => $proposition->getId()], ['force_canonical' => true], true);
-        $this->getNotifierSoutenanceService()->triggerEnvoiConvocationDoctorant($doctorant, $proposition, $dateValidation, $email, $url, $avisArray);
+        $this->getSoutenanceNotifierService()->triggerEnvoiConvocationDoctorant($doctorant, $proposition, $dateValidation, $email, $url, $avisArray);
 
         //membres
         /** @var Membre $membre */
@@ -636,7 +636,7 @@ class PresoutenanceController extends AbstractController
                 $email = ($membre->getIndividu() and $membre->getIndividu()->getEmailPro()) ? $membre->getIndividu()->getEmailPro() : $membre->getEmail();
                 /** @see PresoutenanceController::convocationMembreAction() */
                 $url = $this->url()->fromRoute('soutenance/presoutenance/convocation-membre', ['proposition' => $proposition->getId(), 'membre' => $membre->getId()], ['force_canonical' => true], true);
-                $this->getNotifierSoutenanceService()->triggerEnvoiConvocationMembre($membre, $proposition, $dateValidation, $email, $url, $avisArray);
+                $this->getSoutenanceNotifierService()->triggerEnvoiConvocationMembre($membre, $proposition, $dateValidation, $email, $url, $avisArray);
             }
         }
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
@@ -650,7 +650,7 @@ class PresoutenanceController extends AbstractController
         $url = $this->url()->fromRoute('soutenances/index-rapporteur', [], ['force_canonical' => true], true);
 
         foreach ($membres as $membre) {
-            $this->getNotifierSoutenanceService()->triggerNotificationRapporteurRetard($membre, $url);
+            $this->getSoutenanceNotifierService()->triggerNotificationRapporteurRetard($membre, $url);
         }
         exit();
     }

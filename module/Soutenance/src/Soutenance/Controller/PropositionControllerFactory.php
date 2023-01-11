@@ -25,7 +25,7 @@ use Soutenance\Form\Refus\RefusForm;
 use Soutenance\Service\Evenement\EvenementService;
 use Soutenance\Service\Justificatif\JustificatifService;
 use Soutenance\Service\Membre\MembreService;
-use Soutenance\Service\Notifier\NotifierSoutenanceService;
+use Soutenance\Service\Notifier\NotifierService;
 use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
@@ -52,7 +52,7 @@ class PropositionControllerFactory
          * @var EvenementService $evenementService
          * @var FichierStorageService $fichierStorageService
          * @var MembreService $membreService
-         * @var NotifierSoutenanceService $notificationSoutenanceService
+         * @var NotifierService $notificationSoutenanceService
          * @var PropositionService $propositionService
          * @var RoleService $roleService
          * @var UserContextService $userContextService
@@ -69,7 +69,7 @@ class PropositionControllerFactory
         $fichierStorageService = $container->get(FichierStorageService::class);
         $informationService = $container->get(InformationService::class);
         $membreService = $container->get(MembreService::class);
-        $notificationSoutenanceService = $container->get(NotifierSoutenanceService::class);
+        $notificationSoutenanceService = $container->get(NotifierService::class);
         $propositionService = $container->get(PropositionService::class);
         $roleService = $container->get(RoleService::class);
         $userContextService = $container->get('UserContextService');
@@ -113,7 +113,7 @@ class PropositionControllerFactory
         $controller->setFichierStorageService($fichierStorageService);
         $controller->setInformationService($informationService);
         $controller->setMembreService($membreService);
-        $controller->setNotifierSoutenanceService($notificationSoutenanceService);
+        $controller->setSoutenanceNotifierService($notificationSoutenanceService);
         $controller->setPropositionService($propositionService);
         $controller->setRoleService($roleService);
         $controller->setUserContextService($userContextService);

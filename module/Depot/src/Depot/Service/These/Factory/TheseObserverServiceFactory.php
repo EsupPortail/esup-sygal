@@ -26,7 +26,7 @@ class TheseObserverServiceFactory
 
         $service = new TheseObserverService();
         $service->setTheseService($theseService);
-        $service->setNotifierService($notifierService);
+        $service->setApplicationNotifierService($notifierService);
 
         return $service;
     }

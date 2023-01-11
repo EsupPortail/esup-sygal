@@ -4,26 +4,10 @@ namespace Application\Service\Notification;
 
 trait NotifierServiceAwareTrait
 {
-    /**
-     * @var NotifierService
-     */
-    protected $notifierService;
+    protected NotifierService $applicationNotifierService;
 
-    /**
-     * @param NotifierService $notifierService
-     */
-    public function setNotifierService(NotifierService $notifierService)
+    public function setApplicationNotifierService(NotifierService $applicationNotifierService)
     {
-        $this->notifierService = $notifierService;
+        $this->applicationNotifierService = $applicationNotifierService;
     }
-
-    /**
-     * @return NotifierService
-     */
-    public function getNotifierService()
-    {
-        return $this->notifierService;
-    }
-
-
 }

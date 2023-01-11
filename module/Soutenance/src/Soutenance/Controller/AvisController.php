@@ -14,7 +14,7 @@ use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Form\Avis\AvisFormAwareTrait;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
+use Soutenance\Service\Notifier\NotifierServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use Laminas\Http\Request;
@@ -26,7 +26,7 @@ class AvisController extends AbstractController
     use ActeurServiceAwareTrait;
     use AvisServiceAwareTrait;
     use MembreServiceAwareTrait;
-    use NotifierSoutenanceServiceAwareTrait;
+    use NotifierServiceAwareTrait;
     use PropositionServiceAwareTrait;
     use TheseServiceAwareTrait;
     use ValidatationServiceAwareTrait;
@@ -90,15 +90,15 @@ class AvisController extends AbstractController
                 $allRapporteurs = $this->getMembreService()->getRapporteursByProposition($proposition);
 
                 if ($avis->getAvis() === Avis::FAVORABLE) {
-                    $this->getNotifierSoutenanceService()->triggerAvisFavorable($these, $avis);
+                    $this->getSoutenanceNotifierService()->triggerAvisFavorable($these, $avis);
                 }
                 if ($avis->getAvis() === Avis::DEFAVORABLE) {
-                    $this->getNotifierSoutenanceService()->triggerAvisDefavorable($these, $avis);
+                    $this->getSoutenanceNotifierService()->triggerAvisDefavorable($these, $avis);
                 }
 
                 /** TODO ajouter un prédicat dans thèse ou soutenance ??? */
                 if (count($allAvis) === count($allRapporteurs)) {
-                    $this->getNotifierSoutenanceService()->triggerAvisRendus($these);
+                    $this->getSoutenanceNotifierService()->triggerAvisRendus($these);
                 }
 
                 $this->redirect()->toRoute('soutenance/avis-soutenance/afficher', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);

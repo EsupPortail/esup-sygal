@@ -1,6 +1,8 @@
 <?php
 
-namespace Application\Service\Notification;
+namespace Depot\Service\Notification;
+
+use Depot\Service\Notification\NotificationFactory;
 
 trait NotificationFactoryAwareTrait
 {

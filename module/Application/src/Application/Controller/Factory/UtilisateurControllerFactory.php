@@ -94,7 +94,7 @@ class UtilisateurControllerFactory
         $controller->setEcoleDoctoraleService($ecoleService);
         $controller->setEtablissementService($etablissementService);
         $controller->setStructureService($structureService);
-        $controller->setNotifierService($notifierService);
+        $controller->setApplicationNotifierService($notifierService);
         $controller->setEntityManager($entityManager);
         $controller->setUserContextService($userContextService);
         $controller->setServiceUserContext($userContextService);

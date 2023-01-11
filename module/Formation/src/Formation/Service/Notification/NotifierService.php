@@ -7,10 +7,9 @@ use Formation\Entity\Db\Session;
 use Formation\Provider\Template\MailTemplates;
 use Notification\Exception\NotificationException;
 use Notification\Notification;
-use Notification\Service\NotifierService;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
-class NotificationService extends NotifierService
+class NotifierService extends \Notification\Service\NotifierService
 {
     use RenduServiceAwareTrait;
 

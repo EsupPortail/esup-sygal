@@ -395,7 +395,7 @@ class ListeDiffusionController extends AbstractController
 
         // Envoi d'une notif aux admin tech
         $to = $this->fetchAdminTechEmails();
-        $this->notifierService->triggerAbonnesListeDiffusionSansAdresse(
+        $this->applicationNotifierService->triggerAbonnesListeDiffusionSansAdresse(
             $to,
             $this->liste,
             $individusAvecAdresse,

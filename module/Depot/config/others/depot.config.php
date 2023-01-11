@@ -263,13 +263,6 @@ return [
                     'roles' => 'user',
                 ],
                 [
-                    'controller' => ObserverController::class,
-                    'action' => [
-                        'notify-date-butoir-correction-depassee',
-                    ],
-                    'roles' => [],
-                ],
-                [
                     'controller' => DepotController::class,
                     'action' => [
                         'depot-papier-final',
@@ -708,15 +701,6 @@ return [
     'console' => [
         'router' => [
             'routes' => [
-                'notify-date-butoir-correction-depassee' => [
-                    'options' => [
-                        'route' => 'notify-date-butoir-correction-depassee',
-                        'defaults' => [
-                            'controller' => ObserverController::class,
-                            'action' => 'notify-date-butoir-correction-depassee',
-                        ],
-                    ],
-                ],
                 'transfer-these-data' => [
                     'options' => [
                         'route' => 'transfer-these-data --source-id= --destination-id=',

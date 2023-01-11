@@ -58,7 +58,7 @@ class RapportActiviteServiceFactory
         $service->setFichierStorageService($fileService);
         $service->setVersionFichierService($versionFichierService);
         $service->setEtablissementService($etablissementService);
-        $service->setNotifierService($notifierService);
+        $service->setApplicationNotifierService($notifierService);
         $service->setNatureFichierService($natureFichierService);
         $service->setRapportActiviteAvisService($rapportActiviteAvisService);
         $service->setRapportActiviteValidationService($rapportValidationService);

@@ -23,7 +23,7 @@ use Formation\Entity\Db\Session;
 use Formation\Form\Session\SessionFormAwareTrait;
 use Formation\Service\Exporter\Emargement\EmargementExporter;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
-use Formation\Service\Notification\NotificationServiceAwareTrait;
+use Formation\Service\Notification\NotifierServiceAwareTrait;
 use Formation\Service\Session\SessionServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\View\Model\ViewModel;
@@ -37,7 +37,7 @@ class SessionController extends AbstractController
     use FichierStorageServiceAwareTrait;
     use FormationServiceAwareTrait;
     use InscriptionServiceAwareTrait;
-    use NotificationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
     use PresenceServiceAwareTrait;
     use SessionServiceAwareTrait;
     use SessionStructureValideServiceAwareTrait;
@@ -224,19 +224,19 @@ class SessionController extends AbstractController
 
                 switch ($session->getEtat()->getCode()) {
                     case Etat::CODE_FERME :
-                        $this->getNotificationService()->triggerInscriptionsListePrincipale($session);
-                        $this->getNotificationService()->triggerInscriptionsListeComplementaire($session);
-                        $this->getNotificationService()->triggerInscriptionClose($session);
+                        $this->getNotifierService()->triggerInscriptionsListePrincipale($session);
+                        $this->getNotifierService()->triggerInscriptionsListeComplementaire($session);
+                        $this->getNotifierService()->triggerInscriptionClose($session);
                         break;
                     case Etat::CODE_IMMINENT :
-                        $this->getNotificationService()->triggerSessionImminente($session);
-                        $this->getNotificationService()->triggerInscriptionEchec($session);
+                        $this->getNotifierService()->triggerSessionImminente($session);
+                        $this->getNotifierService()->triggerInscriptionEchec($session);
                         break;
                     case Etat::CODE_CLOTURER :
-                        $this->getNotificationService()->triggerSessionTerminee($session);
+                        $this->getNotifierService()->triggerSessionTerminee($session);
                         break;
                     case Etat::CODE_ANNULEE :
-                        $this->getNotificationService()->triggerSessionAnnulee($session);
+                        $this->getNotifierService()->triggerSessionAnnulee($session);
                         break;
                 }
             }
@@ -273,13 +273,13 @@ class SessionController extends AbstractController
             if ($positionPrincipale < $session->getTailleListePrincipale()) {
                 $inscription->setListe(Inscription::LISTE_PRINCIPALE);
                 $this->getInscriptionService()->update($inscription);
-                if ($session->isFinInscription()) $this->getNotificationService()->triggerInscriptionListePrincipale($inscription);
+                if ($session->isFinInscription()) $this->getNotifierService()->triggerInscriptionListePrincipale($inscription);
                 $positionPrincipale++;
             } else {
                 if ($positionComplementaire < $session->getTailleListeComplementaire()) {
                     $inscription->setListe(Inscription::LISTE_COMPLEMENTAIRE);
                     $this->getInscriptionService()->update($inscription);
-                    if ($session->isFinInscription()) $this->getNotificationService()->triggerInscriptionListeComplementaire($inscription);
+                    if ($session->isFinInscription()) $this->getNotifierService()->triggerInscriptionListeComplementaire($inscription);
                     $positionComplementaire++;
                 }
                 else {

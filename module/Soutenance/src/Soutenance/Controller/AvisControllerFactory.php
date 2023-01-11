@@ -12,7 +12,7 @@ use Interop\Container\ContainerInterface;
 use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Membre\MembreService;
-use Soutenance\Service\Notifier\NotifierSoutenanceService;
+use Soutenance\Service\Notifier\NotifierService;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
 
@@ -31,7 +31,7 @@ class AvisControllerFactory
          * @var ActeurService $acteurService
          * @var AvisService $avisService
          * @var MembreService $membreService
-         * @var NotifierSoutenanceService $notifierSoutenanceService
+         * @var NotifierService $notifierSoutenanceService
          * @var PropositionService $propositionService
          * @var TheseService $theseService
          * @var ValidationService $validationService
@@ -39,7 +39,7 @@ class AvisControllerFactory
         $acteurService              = $container->get(ActeurService::class);
         $avisService                = $container->get(AvisService::class);
         $membreService              = $container->get(MembreService::class);
-        $notifierSoutenanceService  = $container->get(NotifierSoutenanceService::class);
+        $notifierSoutenanceService  = $container->get(NotifierService::class);
         $propositionService         = $container->get(PropositionService::class);
         $theseService               = $container->get('TheseService');
         $validationService          = $container->get(ValidationService::class);
@@ -59,7 +59,7 @@ class AvisControllerFactory
         $controller->setTheseService($theseService);
         $controller->setValidationService($validationService);
         $controller->setActeurService($acteurService);
-        $controller->setNotifierSoutenanceService($notifierSoutenanceService);
+        $controller->setSoutenanceNotifierService($notifierSoutenanceService);
         $controller->setPropositionService($propositionService);
         $controller->setAvisService($avisService);
         $controller->setMembreService($membreService);

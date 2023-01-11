@@ -1,15 +1,14 @@
 <?php
 
-namespace Application\Service\Notification;
+namespace Depot\Service\Notification;
 
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
-use Structure\Service\UniteRecherche\UniteRechercheService;
+use Application\Service\Email\EmailTheseService;
 use Application\Service\Variable\VariableService;
 use Interop\Container\ContainerInterface;
-use UnicaenApp\Options\ModuleOptions;
-use Laminas\Mvc\Console\View\ViewManager as ConsoleViewManager;
-use Laminas\Mvc\View\Http\ViewManager as HttpViewManager;
 use Laminas\View\Helper\Url as UrlHelper;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\UniteRecherche\UniteRechercheService;
+use UnicaenApp\Options\ModuleOptions;
 
 /**
  * @author Unicaen
@@ -19,15 +18,13 @@ class NotificationFactoryFactory extends \Notification\Service\NotificationFacto
     /**
      * @var string
      */
-    protected $class = NotificationFactory::class;
+    protected string $class = NotificationFactory::class;
 
     /**
-     * Create service.
-     *
-     * @param ContainerInterface $container
-     * @return NotificationFactory
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): NotificationFactory
     {
         /** @var NotificationFactory $factory */
         $factory = parent::__invoke($container);
@@ -41,10 +38,7 @@ class NotificationFactoryFactory extends \Notification\Service\NotificationFacto
         $ecoleDoctoraleService = $container->get('EcoleDoctoraleService');
         $uniteRechercheService = $container->get('UniteRechercheService');
 
-        /** @var HttpViewManager|ConsoleViewManager $vm */
-        $vm = $container->get('ViewManager');
         /** @var UrlHelper $urlHelper */
-//        $urlHelper = $vm->getHelperManager()->get('Url');
         $urlHelper = $container->get('ViewHelperManager')->get('Url');
 
         /* @var ModuleOptions $moduleOptions */
@@ -55,6 +49,10 @@ class NotificationFactoryFactory extends \Notification\Service\NotificationFacto
         $factory->setUniteRechercheService($uniteRechercheService);
         $factory->setUrlHelper($urlHelper);
         $factory->setAppModuleOptions($moduleOptions);
+
+        /** @var EmailTheseService $emailTheseService */
+        $emailTheseService = $container->get(EmailTheseService::class);
+        $factory->setEmailTheseService($emailTheseService);
 
         return $factory;
     }

@@ -108,10 +108,10 @@ class ImportObservResultService extends \UnicaenDbImport\Entity\Db\Service\Impor
         }
 
         // Notification des doctorants dont le résultat de la thèse est passé à Admis.
-        $notifs = $this->notifierService->triggerChangementResultatThesesAdmis($data);
+        $notifs = $this->applicationNotifierService->triggerChangementResultatThesesAdmis($data);
         $this->logAboutNotifications($notifs);
         // Notification concernant l'évolution des résultats de thèses.
-        $notif = $this->notifierService->triggerChangementResultatTheses($data);
+        $notif = $this->applicationNotifierService->triggerChangementResultatTheses($data);
         $this->logAboutNotifications([$notif]);
 
         // Enregistrement de la date de dernière notification
@@ -253,7 +253,7 @@ class ImportObservResultService extends \UnicaenDbImport\Entity\Db\Service\Impor
             $these->setCorrectionAutorisee($ior->getImportObserv()->getToValue()); // anticipation nécessaire !
 
             // notification
-            $notif = $this->notifierService->triggerCorrectionAttendue($ior, $these, $message);
+            $notif = $this->applicationNotifierService->triggerCorrectionAttendue($ior, $these, $message);
             if ($notif === null) {
                 $this->logger->info(sprintf("Aucune notif n'est nécessaire pour la thèse '%s'. ", $these->getSourceCode()) . $message);
                 continue; // si le service de notif renvoie null, aucune notif n'était nécessaire, on passe au suivant

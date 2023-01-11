@@ -21,7 +21,7 @@ class RapportActiviteAvisEventListenerFactory
         $rapportActiviteAvisService = $container->get(RapportActiviteAvisService::class);
         /** @var \RapportActivite\Service\Validation\RapportActiviteValidationService $rapportActiviteValidationService */
         $rapportActiviteValidationService = $container->get(RapportActiviteValidationService::class);
-        /** @var \Notification\Service\NotifierService $notifierService */
+        /** @var \Application\Service\Notification\NotifierService $notifierService */
         $notifierService = $container->get(NotifierService::class);
 
         /** @var RapportActiviteValidationRule $rapportActiviteValidationRule */
@@ -34,7 +34,7 @@ class RapportActiviteAvisEventListenerFactory
         $listener->setRapportActiviteValidationService($rapportActiviteValidationService);
         $listener->setRapportActiviteValidationRule($rapportActiviteValidationRule);
         $listener->setRapportActiviteAvisNotificationRule($rapportActiviteNotificationRule);
-        $listener->setNotifierService($notifierService);
+        $listener->setApplicationNotifierService($notifierService);
 
         return $listener;
     }

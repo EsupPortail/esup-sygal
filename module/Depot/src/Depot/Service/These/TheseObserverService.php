@@ -21,7 +21,7 @@ class TheseObserverService
 //            $viewModel = new ViewModel([
 //                'subject' => "Corrections " . lcfirst($these->getCorrectionAutoriseeToString(true)) . " non faites",
 //            ]);
-            $this->notifierService->triggerDateButoirCorrectionDepassee($these);
+            $this->applicationNotifierService->triggerDateButoirCorrectionDepassee($these);
         }
     }
 }

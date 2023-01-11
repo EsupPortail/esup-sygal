@@ -2,36 +2,34 @@
 
 namespace Soutenance\Service\Notifier;
 
-use Individu\Service\IndividuServiceAwareTrait;
-use Doctorant\Entity\Db\Doctorant;
-use Individu\Entity\Db\Individu;
-use Individu\Entity\Db\IndividuRole;
 use Application\Entity\Db\Role;
-use These\Entity\Db\These;
-use Application\Entity\Db\Variable;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
-use These\Service\Acteur\ActeurServiceAwareTrait;
+use Application\Entity\Db\Variable;
 use Application\Service\Email\EmailTheseServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
-use These\Service\These\TheseServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use DateTime;
+use Doctorant\Entity\Db\Doctorant;
+use Individu\Entity\Db\Individu;
+use Individu\Service\IndividuServiceAwareTrait;
 use InvalidArgumentException;
 use Laminas\View\Helper\Url as UrlHelper;
 use Notification\Exception\NotificationException;
 use Notification\Notification;
-use Notification\Service\NotifierService;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use These\Entity\Db\These;
+use These\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Db\RoleInterface;
 
-class NotifierSoutenanceService extends NotifierService
+class NotifierService extends \Notification\Service\NotifierService
 {
     use ActeurServiceAwareTrait;
     use IndividuServiceAwareTrait;
@@ -76,139 +74,6 @@ class NotifierSoutenanceService extends NotifierService
     }
 
     /**
-     * @param IndividuRole[] $individuRoles
-     * @param These $these
-     * @return bool
-     */
-    protected function hasEmailsByEtablissement(array $individuRoles, These $these) : bool
-    {
-        foreach ($individuRoles as $individuRole) {
-            $individu = $individuRole->getIndividu();
-            if ($individu->getEtablissement() === $these->getEtablissement()) {
-                if ($individu->getEmailPro() !== null) return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @param IndividuRole[] $individuRoles
-     * @param These $these
-     * @return array
-     */
-    protected function fetchEmailsByEtablissement(array $individuRoles, These $these) : array
-    {
-        $allEmails = [];
-        $emails = [];
-        foreach ($individuRoles as $individuRole) {
-            $individu = $individuRole->getIndividu();
-            if ($individu->getEtablissement() === $these->getEtablissement()) {
-                if ($individu->getEmailPro() !== null) {
-                    {
-                        $emails[] = $individu->getEmailPro();
-                        $allEmails[] = $individu->getEmailPro();
-                    }
-
-                } else {
-                    $utilisateurs = $this->getUtilisateurService()->getRepository()->findByIndividu($individu);
-                    foreach ($utilisateurs as $utilisateur) {
-                        if ($utilisateur->getEmail()) {
-                            $emails[] = $utilisateur->getEmail();
-                            $allEmails[] = $utilisateur->getEmail();
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        if (! empty($emails)) return $emails;
-        return $allEmails;
-    }
-
-    /**
-     * @param These $these
-     * @return string[]
-     */
-    protected function fetchEmailEcoleDoctorale(These $these) : array
-    {
-        /** @var IndividuRole[] $individuRoles */
-        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
-        return $this->fetchEmailsByEtablissement($individuRoles, $these);
-    }
-
-    /**
-     * @param These $these
-     * @return string[]
-     */
-    protected function fetchEmailUniteRecherche(These $these) : array
-    {
-        /** @var IndividuRole[] $individuRoles */
-        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
-        return $this->fetchEmailsByEtablissement($individuRoles, $these);
-    }
-
-    /**
-     * @param These $these
-     * @return string[]
-     */
-    protected function fetchEmailMaisonDuDoctorat(These $these) : array
-    {
-        /** @var IndividuRole[] $individuRoles */
-        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getEtablissement()->getStructure());
-        $individuRoles = array_filter($individuRoles, function (IndividuRole $ir) { return $ir->getRole()->getCode() === Role::CODE_BDD;});
-        return $this->fetchEmailsByEtablissement($individuRoles, $these);
-    }
-
-    /**
-     * @param These $these
-     * @return string[]
-     */
-    protected function fetchEmailEncadrants(These $these) : array
-    {
-        $emails = [];
-        $encadrants = $this->getActeurService()->getRepository()->findEncadrementThese($these);
-        foreach ($encadrants as $encadrant) {
-            //tentative dans individu
-            $email = $encadrant->getIndividu()->getEmailPro();
-            //tentative dans membre
-            if ($email === null) {
-                $membre = $this->getMembreService()->getMembreByActeur($encadrant);
-                if ($membre) $email = $membre->getEmail();
-            }
-            //tentative dans utilisateur
-            if ($email === null) {
-                $utilisateurs = $this->getUtilisateurService()->getRepository()->findByIndividu($encadrant->getIndividu());
-                foreach ($utilisateurs as $utilisateur) {
-                    $email = $utilisateur->getEmail();
-                    if ($email !== null) break;
-                }
-            }
-            // echec ...
-            if ($email === null) {
-                throw new InvalidArgumentException("Pas de mail pour l'encadrant de thèse [".$encadrant->getIndividu()->getNomComplet()."]");
-            }
-            $emails[] = $email;
-        }
-        return $emails;
-    }
-
-    /**
-     * @param These $these
-     * @return array
-     */
-    protected function fetchEmailActeursDirects(These $these) : array
-    {
-        $emails = [];
-        $emails[] = $these->getDoctorant()->getIndividu()->getEmailPro();
-
-        $encadrants = $this->fetchEmailEncadrants($these);
-        foreach ($encadrants as $encadrant) {
-            $emails[] = $encadrant;
-        }
-        return $emails;
-    }
-
-    /**
      * @param Validation $validation
      * @see Application/view/soutenance/notification/devalidation.phtml
      */
@@ -238,7 +103,7 @@ class NotifierSoutenanceService extends NotifierService
      */
     public function triggerValidationProposition(These $these, Validation $validation)
     {
-        $emails = $this->fetchEmailActeursDirects($these);
+        $emails = $this->emailTheseService->fetchEmailActeursDirects($these);
 
         $emails = array_filter($emails, function ($s) {
             return $s !== null;
@@ -284,7 +149,7 @@ class NotifierSoutenanceService extends NotifierService
             $this->trigger($notif);
         } else {
             $emailsAdmin = $this->getEmailAdministrateurTechnique();
-            $emailsMdd = $this->fetchEmailMaisonDuDoctorat($these);
+            $emailsMdd = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
             $emails = array_merge($emailsAdmin, $emailsMdd);
 
             $notif = new Notification();
@@ -326,7 +191,7 @@ class NotifierSoutenanceService extends NotifierService
             $this->trigger($notif);
         } else {
             $emailsAdmin = $this->getEmailAdministrateurTechnique();
-            $emailsMdd = $this->fetchEmailMaisonDuDoctorat($these);
+            $emailsMdd = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
             $emails = array_merge($emailsAdmin, $emailsMdd);
 
             $notif = new Notification();
@@ -365,7 +230,7 @@ class NotifierSoutenanceService extends NotifierService
             $this->trigger($notif);
         } else {
             $emailsAdmin = $this->getEmailAdministrateurTechnique();
-            $emailsMdd = $this->fetchEmailMaisonDuDoctorat($these);
+            $emailsMdd = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
             $emails = array_merge($emailsAdmin, $emailsMdd);
 
             $notif = new Notification();
@@ -388,7 +253,7 @@ class NotifierSoutenanceService extends NotifierService
         $emailsBDD = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
         $emailsED = $this->emailTheseService->fetchEmailEcoleDoctorale($these);
         $emailsUR = $this->emailTheseService->fetchEmailUniteRecherche($these);
-        $emailsActeurs = $this->fetchEmailActeursDirects($these);
+        $emailsActeurs = $this->emailTheseService->fetchEmailActeursDirects($these);
         $emails = array_merge($emailsBDD, $emailsED, $emailsUR, $emailsActeurs);
 
         $emails = array_filter($emails, function ($s) {
@@ -438,7 +303,7 @@ class NotifierSoutenanceService extends NotifierService
      */
     public function triggerRefusPropositionSoutenance($these, $currentUser, $currentRole, $motif)
     {
-        $emails = $this->fetchEmailActeursDirects($these);
+        $emails = $this->emailTheseService->fetchEmailActeursDirects($these);
 
         $emails = array_filter($emails, function ($s) {
             return $s !== null;
@@ -529,7 +394,7 @@ class NotifierSoutenanceService extends NotifierService
     public function triggerRefusEngagementImpartialite($these, $proposition, $membre)
     {
 
-        $emailsAD = $this->fetchEmailActeursDirects($these);
+        $emailsAD = $this->emailTheseService->fetchEmailActeursDirects($these);
         $emailsBDD = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
         $emails = array_merge($emailsAD, $emailsBDD);
 
@@ -642,7 +507,7 @@ class NotifierSoutenanceService extends NotifierService
     public function triggerAvisFavorable($these, $avis, $url = null)
     {
         $emailBDD = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
-        $emailsDirecteurs = $this->fetchEmailEncadrants($these);
+        $emailsDirecteurs = $this->emailTheseService->fetchEmailEncadrants($these);
         $emailsED = $this->emailTheseService->fetchEmailEcoleDoctorale($these);
         $emailsUR = $this->emailTheseService->fetchEmailUniteRecherche($these);
         $emails = array_merge($emailBDD, $emailsDirecteurs, $emailsED, $emailsUR);
@@ -676,7 +541,7 @@ class NotifierSoutenanceService extends NotifierService
      */
     public function triggerAvisDefavorable($these, $avis, $url = null)
     {
-        $emailsDirecteurs = $this->fetchEmailEncadrants($these);
+        $emailsDirecteurs = $this->emailTheseService->fetchEmailEncadrants($these);
         $emailsED = $this->emailTheseService->fetchEmailEcoleDoctorale($these);
         $emailsUR = $this->emailTheseService->fetchEmailUniteRecherche($these);
         $emails = array_merge($emailsDirecteurs, $emailsED, $emailsUR);
@@ -712,7 +577,7 @@ class NotifierSoutenanceService extends NotifierService
     public function triggerFeuVertSoutenance($these, $proposition, $avis)
     {
 
-        $emailsActeurs = $this->fetchEmailActeursDirects($these);
+        $emailsActeurs = $this->emailTheseService->fetchEmailActeursDirects($these);
         $emailsED = $this->emailTheseService->fetchEmailEcoleDoctorale($these);
         $emailsUR = $this->emailTheseService->fetchEmailUniteRecherche($these);
         $emails = array_merge($emailsActeurs, $emailsED, $emailsUR);
@@ -746,7 +611,7 @@ class NotifierSoutenanceService extends NotifierService
     public function triggerStopperDemarcheSoutenance($these, $proposition)
     {
 
-        $emailsActeurs = $this->fetchEmailActeursDirects($these);
+        $emailsActeurs = $this->emailTheseService->fetchEmailActeursDirects($these);
         $emailsED = $this->emailTheseService->fetchEmailEcoleDoctorale($these);
         $emailsUR = $this->emailTheseService->fetchEmailUniteRecherche($these);
         $emails = array_merge($emailsActeurs, $emailsED, $emailsUR);

@@ -3,6 +3,7 @@ Journal des modifications
 
 5.2.8
 -----
+- Second dépôt (correction de thèse) : améliorations et nouvelle notification (MDD, BU, DT).
 - Fiche Thèse : bouton usurper pour le rôle Président du jury
 - [FIX] Module formation : récupération du doctorant via l'utilisateur si aucun n'est fourni
 - [FIX] Filtres de recherche réutilisables : nouvelle stratégie de prise en compte ou non des filtres.

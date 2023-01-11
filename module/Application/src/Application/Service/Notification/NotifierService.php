@@ -2,39 +2,29 @@
 
 namespace Application\Service\Notification;
 
-use These\Entity\Db\Acteur;
-use Individu\Entity\Db\Individu;
 use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\Role;
-use These\Entity\Db\These;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Variable;
-use Depot\Notification\ChangementCorrectionAttendueNotification;
-use These\Notification\ChangementsResultatsThesesNotification;
-use Depot\Notification\PasDeMailPresidentJury;
-use These\Notification\ResultatTheseAdmisNotification;
-use Depot\Notification\ValidationDepotTheseCorrigeeNotification;
-use Depot\Notification\ValidationPageDeCouvertureNotification;
-use Depot\Notification\ValidationRdvBuNotification;
-use Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
-use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
-use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
+use Depot\Notification\ChangementCorrectionAttendueNotification;
+use Depot\Notification\PasDeMailPresidentJury;
+use Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Import\Model\ImportObservResult;
-use Notification\Notification;
-use UnicaenApp\Exception\LogicException;
+use Individu\Entity\Db\Individu;
+use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\View\Helper\Url as UrlHelper;
+use Notification\Notification;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
+use These\Entity\Db\Acteur;
+use These\Entity\Db\These;
+use These\Notification\ChangementsResultatsThesesNotification;
+use These\Notification\ResultatTheseAdmisNotification;
+use UnicaenApp\Exception\LogicException;
 
-/**
- * Service d'envoi de notifications par mail.
- *
- * @method NotificationFactory getNotificationFactory()
- *
- * @author Unicaen
- */
 class NotifierService extends \Notification\Service\NotifierService
 {
     use VariableServiceAwareTrait;
@@ -49,42 +39,11 @@ class NotifierService extends \Notification\Service\NotifierService
     protected $urlHelper;
 
     /**
-     * Notification à l'issue de la validation de la page de couverture.
-     *
-     * @param \These\Entity\Db\These $these
-     * @param string $action
-     * @throws \Notification\Exception\NotificationException
-     */
-    public function triggerValidationPageDeCouvertureNotification(These $these, string $action)
-    {
-        $notification = new ValidationPageDeCouvertureNotification();
-        $notification->setThese($these);
-        $notification->setAction($action);
-        $notification->setEmailBu($this->fetchEmailBu($these));
-
-        $this->trigger($notification);
-    }
-
-    /**
-     * Notification concernant la validation à l'issue du RDV BU.
-     *
-     * @param \Depot\Notification\ValidationRdvBuNotification $notification
-     */
-    public function triggerValidationRdvBu(ValidationRdvBuNotification $notification)
-    {
-        $these = $notification->getThese();
-
-        $notification->setEmailBdd($this->fetchEmailBdd($these));
-        $notification->setEmailBu($this->fetchEmailBu($these));
-
-        $this->trigger($notification);
-    }
-
-    /**
      * Notification concernant des changements quelconques de résultats de thèses.
      *
      * @param array $data Données concernant les thèses dont le résultat a changé
      * @return ChangementsResultatsThesesNotification
+     * @throws \Notification\Exception\NotificationException
      */
     public function triggerChangementResultatTheses(array $data): ChangementsResultatsThesesNotification
     {
@@ -107,6 +66,7 @@ class NotifierService extends \Notification\Service\NotifierService
      *
      * @param array $data
      * @return ResultatTheseAdmisNotification[]
+     * @throws \Notification\Exception\NotificationException
      */
     public function triggerChangementResultatThesesAdmis(array $data): array
     {
@@ -137,6 +97,7 @@ class NotifierService extends \Notification\Service\NotifierService
      * @param These $these
      * @param string $message
      * @return ChangementCorrectionAttendueNotification|null
+     * @throws \Notification\Exception\NotificationException
      */
     public function triggerCorrectionAttendue(ImportObservResult $record, These $these, &$message = null): ?ChangementCorrectionAttendueNotification
     {
@@ -175,6 +136,7 @@ class NotifierService extends \Notification\Service\NotifierService
      * Notification à propos du dépassement de la date butoir de dépôt de la version corrigée de la thèse.
      *
      * @param These $these
+     * @throws \Notification\Exception\NotificationException
      */
     public function triggerDateButoirCorrectionDepassee(These $these)
     {
@@ -193,47 +155,11 @@ class NotifierService extends \Notification\Service\NotifierService
     }
 
     /**
-     * Notification pour inviter à valider les corrections.
-     *
-     * @param These $these
-     */
-    public function triggerValidationDepotTheseCorrigee(These $these, ?Utilisateur $utilisateur)
-    {
-        $targetedUrl = $this->urlHelper->__invoke( 'these/validation-these-corrigee', ['these' => $these->getId()], ['force_canonical' => true]);
-        $president = $this->getRoleService()->getRepository()->findOneByCodeAndStructureConcrete(Role::CODE_PRESIDENT_JURY, $these->getEtablissement());
-        $url = $this->urlHelper->__invoke('zfcuser/login', ['type' => 'local'], ['query' => ['redirect' => $targetedUrl, 'role' => $president->getRoleId()], 'force_canonical' => true], true);
-
-        // envoi de mail aux directeurs de thèse
-        $notif = new ValidationDepotTheseCorrigeeNotification();
-        $notif
-            ->setThese($these)
-            ->setEmailBdd($this->fetchEmailBdd($these))
-            ->setTemplateVariables([
-                'these' => $these,
-                'url'   => $url,
-            ]);
-        if ($utilisateur !== null) {
-            $notif->setDestinataire($utilisateur);
-        }
-
-        $this->trigger($notif);
-
-        $infoMessages = $notif->getInfoMessages();
-        $this->messageContainer->setMessages([
-            'info' => $infoMessages[0],
-        ]);
-        if ($errorMessages = $notif->getWarningMessages()) {
-            $this->messageContainer->addMessages([
-                'danger' => $errorMessages[0],
-            ]);
-        }
-    }
-
-    /**
      * Notification à propos de l'absence de mail connu pour le président du jury.
      *
      * @param These $these
      * @param Acteur|null $president
+     * @throws \Notification\Exception\NotificationException
      */
     public function triggerPasDeMailPresidentJury(These $these, ?Acteur $president)
     {
@@ -257,53 +183,6 @@ class NotifierService extends \Notification\Service\NotifierService
             $this->messageContainer->addMessages([
                 'danger' => $errorMessages[0],
             ]);
-        }
-    }
-
-    /**
-     * Notification à propos de la validation des corrections attendues.
-     *
-     * @param Notification $notif
-     * @param These        $these
-     */
-    public function triggerValidationCorrectionThese(Notification $notif, These $these)
-    {
-        $to = $this->fetchEmailBdd($these);
-        $notif
-            ->setTo($to)
-            ->setTemplateVariables([
-                'these' => $these,
-            ]);
-
-        $this->trigger($notif);
-
-        $infoMessage = sprintf("Un mail de notification vient d'être envoyé à la Maison du doctorat (%s)", $to);
-        $this->messageContainer->setMessage($infoMessage, 'info');
-    }
-
-    /**
-     * @param Notification $notif
-     * @param These        $these
-     */
-    public function triggerValidationCorrectionTheseEtudiant(Notification $notif, These $these)
-    {
-        $individu = $these->getDoctorant()->getIndividu();
-        $to = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
-        if (!$to) {
-            $this->messageContainer->setMessage("Impossible d'envoyer un mail à {$these->getDoctorant()} car son adresse est inconnue", 'danger');
-
-            return;
-        }
-        $notif->setTo($to);
-
-        $this->trigger($notif);
-
-        $infoMessage = sprintf("Un mail de notification vient d'être envoyé au doctorant (%s)", $to);
-        if ($this->messageContainer->getMessage()) {
-            $new_message = "<ul><li>" . $this->messageContainer->getMessage() . "</li><li>" . $infoMessage . "</li></ul>";
-            $this->messageContainer->setMessage($new_message, 'info');
-        } else {
-            $this->messageContainer->setMessage($infoMessage, 'info');
         }
     }
 

@@ -51,7 +51,7 @@ class FichierTheseServiceFactory
         $service->setValiditeFichierService($validiteFichierService);
         $service->setRetraitementService($retraitementService);
         $service->setEtablissementService($etablissementService);
-        $service->setNotifierService($notifierService);
+        $service->setApplicationNotifierService($notifierService);
         $service->setPageDeCouverturePdfExporter($pdcPdfExporter);
 
         return $service;

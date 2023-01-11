@@ -17,7 +17,7 @@ class NotificationServiceFactory
         $notifierService = $container->get(NotifierService::class);
 
         $service = new NotificationService();
-        $service->setNotifierService($notifierService);
+        $service->setApplicationNotifierService($notifierService);
 
         return $service;
     }

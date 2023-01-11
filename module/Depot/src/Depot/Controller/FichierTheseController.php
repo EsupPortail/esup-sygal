@@ -7,13 +7,14 @@ use Application\Controller\AbstractController;
 use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\RouteMatch;
-use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use Depot\Entity\Db\FichierThese;
+use Depot\Event\EventsInterface;
 use Depot\Service\FichierThese\Exception\DepotImpossibleException;
 use Depot\Service\FichierThese\Exception\ValidationImpossibleException;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Depot\Service\Notification\NotifierServiceAwareTrait;
 use Depot\Service\These\DepotServiceAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
@@ -51,8 +52,6 @@ class FichierTheseController extends AbstractController
     use ValidationServiceAwareTrait;
     use DepotValidationServiceAwareTrait;
     use EventRouterReplacerAwareTrait;
-
-    const FICHIER_THESE_TELEVERSE = 'FICHIER_THESE_DEPOSE';
 
     public function deposesAction()
     {
@@ -270,7 +269,7 @@ class FichierTheseController extends AbstractController
 
             // déclenchement d'un événement "fichier de thèse téléversé"
             $this->events->trigger(
-                self::FICHIER_THESE_TELEVERSE,
+                EventsInterface::EVENT__FICHIER_THESE_TELEVERSE,
                 $these, [
                     'nature' => $nature,
                     'version' => $version,
@@ -280,9 +279,9 @@ class FichierTheseController extends AbstractController
             // si une thèse est déposée, on notifie de BdD
             // todo: déplacer ceci dans un service écoutant l'événement "fichier de thèse téléversé" déclenché ci-dessus
             if ($nature->estThesePdf()) {
-                $notif = $this->notifierService->getNotificationFactory()->createNotificationForTheseTeleversee($these, $version);
+                $notif = $this->depotNotifierService->getNotificationFactory()->createNotificationForTheseTeleversee($these, $version);
                 try {
-                    $this->notifierService->trigger($notif);
+                    $this->depotNotifierService->trigger($notif);
                 } catch (NotificationException $e) {
                     return new JsonModel([
                         'errors' => array_filter([
@@ -296,12 +295,12 @@ class FichierTheseController extends AbstractController
             // si un rapport de soutenance est déposé, on notifie de BdD
             // todo: déplacer ceci dans un service écoutant l'événement "fichier de thèse téléversé" déclenché ci-dessus
             if ($nature->estRapportSoutenance()) {
-                $notif = $this->notifierService->getNotificationFactory()->createNotificationForFichierTeleverse($these);
+                $notif = $this->depotNotifierService->getNotificationFactory()->createNotificationForFichierTeleverse($these);
                 $notif
                     ->setSubject("Dépôt du rapport de soutenance")
                     ->setTemplatePath('depot/depot/mail/notif-depot-rapport-soutenance');
                 try {
-                    $this->notifierService->trigger($notif);
+                    $this->depotNotifierService->trigger($notif);
                 } catch (NotificationException $e) {
                     return new JsonModel([
                         'errors' => array_filter([
@@ -521,8 +520,8 @@ class FichierTheseController extends AbstractController
 
         if ($notifier) {
             $destinataires = $notifier;
-            $notif = $this->notifierService->getNotificationFactory()->createNotificationFusionFini($destinataires, $these, $outputFilePath);
-            $this->notifierService->trigger($notif);
+            $notif = $this->depotNotifierService->getNotificationFactory()->createNotificationFusionFini($destinataires, $these, $outputFilePath);
+            $this->depotNotifierService->trigger($notif);
             echo "Destinataires du courriel envoyé: " . implode(",",$notif->getTo());
             echo PHP_EOL;
         }
