@@ -37,6 +37,7 @@ use Soutenance\Service\Exporter\RapportSoutenance\RapportSoutenancePdfExporter;
 use Soutenance\Service\Exporter\RapportTechnique\RapportTechniquePdfExporter;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use Soutenance\Service\Notification\NotificationServiceAwareTrait;
 use Soutenance\Service\Notifier\NotifierServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
@@ -75,6 +76,7 @@ class PresoutenanceController extends AbstractController
     use TokenServiceAwareTrait;
     use SourceServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
+    use NotificationServiceAwareTrait;
 
     use DateRenduRapportFormAwareTrait;
     use AdresseSoutenanceFormAwareTrait;
@@ -654,6 +656,18 @@ class PresoutenanceController extends AbstractController
         }
         exit();
     }
+
+    public function transmettreDocumentsDirectionTheseAction() : Response
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findOneForThese($these);
+
+        $this->getNotificationService()->triggerTransmettreDocumentsDirectionThese($these, $proposition);
+
+        return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+    }
+
+    /** SIMULATION DE JURY ********************************************************************************************/
 
     public function genererSimulationAction() : Response
     {

@@ -4,6 +4,7 @@ namespace Soutenance\Controller;
 
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Soutenance\Service\Notification\NotificationService;
 use These\Service\Acteur\ActeurService;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
@@ -61,6 +62,7 @@ class PresoutenanceControllerFactory
          * @var SourceService $sourceService
          * @var JustificatifService $justificatifService
          * @var FichierStorageService $fichierStorageService
+         * @var NotificationService $notificationService
          */
         $evenementService = $container->get(EvenementService::class);
         $propositionService = $container->get(PropositionService::class);
@@ -82,6 +84,7 @@ class PresoutenanceControllerFactory
         $sourceService = $container->get(SourceService::class);
         $justificatifService = $container->get(JustificatifService::class);
         $fichierStorageService = $container->get(FichierStorageService::class);
+        $notificationService = $container->get(NotificationService::class);
 
         /**
          * @var DateRenduRapportForm $dateRenduRapportForm
@@ -114,6 +117,7 @@ class PresoutenanceControllerFactory
         $controller->setTokenService($tokenService);
         $controller->setJustificatifService($justificatifService);
         $controller->setFichierStorageService($fichierStorageService);
+        $controller->setNotificationService($notificationService);
 
         $controller->setDateRenduRapportForm($dateRenduRapportForm);
         $controller->setAdresseSoutenanceForm($adresseSoutenanceForm);

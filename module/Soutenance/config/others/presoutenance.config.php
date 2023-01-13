@@ -68,11 +68,10 @@ return [
                         'stopper-demarche',
                         'avis-soutenance',
                         'convocations',
-                        'proces-verbal-soutenance',
                         'modifier-adresse',
                         'envoyer-convocation',
-                        'rapport-soutenance',
                         'rapport-technique',
+                        'transmettre-documents-direction-these',
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION,
                 ],
@@ -81,6 +80,8 @@ return [
                     'action' => [
                         'convocation-doctorant',
                         'convocation-membre',
+                        'proces-verbal-soutenance',
+                        'rapport-soutenance',
                     ],
                     'roles' => [],
                 ],
@@ -251,6 +252,17 @@ return [
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
                                         'action' => 'proces-verbal-soutenance',
+                                    ],
+                                ],
+                            ],
+                            'transmettre-documents-direction-these' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/transmettre-documents-direction-these',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action' => 'transmettre-documents-direction-these',
                                     ],
                                 ],
                             ],
