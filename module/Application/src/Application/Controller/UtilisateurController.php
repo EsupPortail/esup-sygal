@@ -218,7 +218,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
      * @param string|null $type => permet de spécifier un type d'acteur ...
      * @return JsonModel
      */
-    public function rechercherIndividuAction(?string $type = null)
+    public function rechercherIndividuAction(?string $type = null) : JsonModel
     {
         $type = $this->params()->fromQuery('type');
         if (($term = $this->params()->fromQuery('term'))) {
