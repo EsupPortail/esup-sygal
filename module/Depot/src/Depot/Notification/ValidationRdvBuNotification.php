@@ -122,10 +122,10 @@ class ValidationRdvBuNotification extends Notification
     private $emailBdd;
 
     /**
-     * @param string $emailBdd
+     * @param string[] $emailBdd
      * @return self
      */
-    public function setEmailBdd($emailBdd)
+    public function setEmailBdd(array $emailBdd)
     {
         $this->emailBdd = $emailBdd;
 
@@ -138,10 +138,10 @@ class ValidationRdvBuNotification extends Notification
     private $emailBu;
 
     /**
-     * @param string $emailBu
+     * @param string[] $emailBu
      * @return self
      */
-    public function setEmailBu($emailBu)
+    public function setEmailBu(array $emailBu)
     {
         $this->emailBu = $emailBu;
 

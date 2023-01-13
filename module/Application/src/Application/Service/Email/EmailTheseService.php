@@ -24,28 +24,6 @@ class EmailTheseService
     use MembreServiceAwareTrait;
 
     /**
-     * @param These $these
-     * @return string
-     * @deprecated Utiliser fetchEmailMaisonDuDoctorat() à la place.
-     */
-    public function fetchEmailBdd(These $these) : string
-    {
-        $variable = $this->variableService->getRepository()->findOneByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
-        return $variable->getValeur();
-    }
-
-    /**
-     * @param These $these
-     * @return string
-     * @deprecated Utiliser fetchEmailBibliothequeUniv() à la place.
-     */
-    public function fetchEmailBu(These $these) : string
-    {
-        $variable = $this->variableService->getRepository()->findOneByCodeAndThese(Variable::CODE_EMAIL_BU, $these);
-        return $variable->getValeur();
-    }
-
-    /**
      * @param IndividuRole[] $individuRoles
      * @param These $these
      * @return bool

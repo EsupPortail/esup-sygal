@@ -2,11 +2,14 @@
 
 namespace Application\Service\Notification;
 
+use Application\Service\Email\EmailTheseService;
 use Application\Service\Role\RoleService;
 use Application\Service\Variable\VariableService;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use Laminas\View\Helper\Url as UrlHelper;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 
@@ -18,8 +21,8 @@ class NotifierServiceFactory extends \Notification\Service\NotifierServiceFactor
     protected string $notifierServiceClass = NotifierService::class;
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container): NotifierService
     {
@@ -29,12 +32,14 @@ class NotifierServiceFactory extends \Notification\Service\NotifierServiceFactor
         /**
          * @var VariableService         $variableService
          * @var EcoleDoctoraleService   $ecoleDoctoraleService
+         * @var EmailTheseService       $emailTheseService
          * @var UniteRechercheService   $uniteRechercheService
          * @var IndividuService         $individuService
          * @var RoleService             $roleService
          */
         $variableService = $container->get('VariableService');
         $ecoleDoctoraleService = $container->get('EcoleDoctoraleService');
+        $emailTheseService =  $container->get(EmailTheseService::class);
         $uniteRechercheService = $container->get('UniteRechercheService');
         $individuService = $container->get(IndividuService::class);
         $roleService = $container->get('RoleService');
@@ -44,6 +49,7 @@ class NotifierServiceFactory extends \Notification\Service\NotifierServiceFactor
 
         $service->setVariableService($variableService);
         $service->setEcoleDoctoraleService($ecoleDoctoraleService);
+        $service->setEmailTheseService($emailTheseService);
         $service->setUniteRechercheService($uniteRechercheService);
         $service->setUrlHelper($urlHelper);
         $service->setIndividuService($individuService);

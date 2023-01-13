@@ -104,7 +104,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
     public function createNotificationForRdvBuSaisiParDoctorant(These $these, $estLaPremiereSaisie)
     {
         $subject = sprintf("%s Saisie des informations pour la prise de rendez-vous avec la bibliothèque universitaire", $these->getLibelleDiscipline());
-        $to = $this->emailTheseService->fetchEmailBu($these);
+        $to = $this->emailTheseService->fetchEmailBibliothequeUniv($these);
 
         $notif = $this->createNotification();
         $notif
@@ -131,7 +131,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
      */
     public function createNotificationForTheseTeleversee(These $these, VersionFichier $version)
     {
-        $to = $this->emailTheseService->fetchEmailBdd($these);
+        $to = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
 
         $notif = $this->createNotification('notif-depot-these');
         $notif
@@ -154,7 +154,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
      */
     public function createNotificationForFichierTeleverse(These $these)
     {
-        $to = $this->emailTheseService->fetchEmailBdd($these);
+        $to = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
 
         $notif = $this->createNotification();
         $notif

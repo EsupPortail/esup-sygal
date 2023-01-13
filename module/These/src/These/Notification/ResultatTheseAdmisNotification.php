@@ -67,7 +67,7 @@ class ResultatTheseAdmisNotification extends Notification
      * @param string $emailBdd
      * @return self
      */
-    public function setEmailBdd($emailBdd)
+    public function setEmailBdd(array $emailBdd)
     {
         $this->emailBdd = $emailBdd;
 

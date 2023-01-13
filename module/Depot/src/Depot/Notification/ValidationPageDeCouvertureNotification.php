@@ -24,10 +24,10 @@ class ValidationPageDeCouvertureNotification extends Notification
     private $emailBu;
 
     /**
-     * @param string $emailBu
+     * @param string[] $emailBu
      * @return self
      */
-    public function setEmailBu(string $emailBu): self
+    public function setEmailBu(array $emailBu): self
     {
         $this->emailBu = $emailBu;
 

@@ -9,6 +9,8 @@ use Application\Service\Variable\VariableService;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use Laminas\View\Helper\Url as UrlHelper;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Soutenance\Service\Membre\MembreService;
 use These\Service\Acteur\ActeurService;
 use These\Service\These\TheseService;
@@ -18,8 +20,8 @@ class NotifierServiceFactory extends \Notification\Service\NotifierServiceFactor
     protected string $notifierServiceClass = NotifierService::class;
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container): NotifierService
     {
@@ -28,18 +30,19 @@ class NotifierServiceFactory extends \Notification\Service\NotifierServiceFactor
 
         /**
          * @var ActeurService $acteurService
+         * @var EmailTheseService $emailTheseService
          * @var MembreService $membreService
          * @var RoleService $roleService
          * @var VariableService $variableService
          * @var TheseService $theseService
          * @var UtilisateurService $utilisateurService
-         * @var \Individu\Service\IndividuService $individuService
+         * @var IndividuService $individuService
          */
         $acteurService = $container->get(ActeurService::class);
+        $emailTheseService = $container->get(EmailTheseService::class);
         $membreService = $container->get(MembreService::class);
         $roleService = $container->get('RoleService');
         $theseService = $container->get('TheseService');
-        $emailTheseService = $container->get(EmailTheseService::class);
         $individuService = $container->get(IndividuService::class);
 
         /** @var UrlHelper $urlHelper */
@@ -47,10 +50,10 @@ class NotifierServiceFactory extends \Notification\Service\NotifierServiceFactor
 
         $service->setUrlHelper($urlHelper);
         $service->setActeurService($acteurService);
+        $service->setEmailTheseService($emailTheseService);
         $service->setMembreService($membreService);
         $service->setRoleService($roleService);
         $service->setTheseService($theseService);
-        $service->setEmailTheseService($emailTheseService);
         $service->setIndividuService($individuService);
 
         return $service;

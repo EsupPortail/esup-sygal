@@ -15,8 +15,6 @@ class Variable implements HistoriqueAwareInterface
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
 
-    const CODE_EMAIL_BDD                     = 'EMAIL_BDD';
-    const CODE_EMAIL_BU                      = 'EMAIL_BU';
     const CODE_EMAIL_ASSISTANCE              = 'EMAIL_ASSISTANCE';
     const CODE_ETB_ART_ETB_LIB               = 'ETB_ART_ETB_LIB';   // Ex: "L'"
     const CODE_ETB_LIB                       = 'ETB_LIB';           // Ex: "Université de Caen Normandie"

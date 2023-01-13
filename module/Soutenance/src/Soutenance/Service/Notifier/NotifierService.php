@@ -5,11 +5,9 @@ namespace Soutenance\Service\Notifier;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
-use Application\Entity\Db\Variable;
 use Application\Service\Email\EmailTheseServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
-use Application\Service\Variable\VariableServiceAwareTrait;
 use DateTime;
 use Doctorant\Entity\Db\Doctorant;
 use Individu\Entity\Db\Individu;
@@ -32,10 +30,10 @@ use UnicaenAuth\Entity\Db\RoleInterface;
 class NotifierService extends \Notification\Service\NotifierService
 {
     use ActeurServiceAwareTrait;
+    use EmailTheseServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use MembreServiceAwareTrait;
     use RoleServiceAwareTrait;
-    use VariableServiceAwareTrait;
     use TheseServiceAwareTrait;
     use EmailTheseServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
@@ -62,15 +60,6 @@ class NotifierService extends \Notification\Service\NotifierService
             if ($email) $emails[] = $email;
         }
         return $emails;
-    }
-    /**
-     * @param These $these
-     * @return string
-     */
-    protected function fetchEmailBdd(These $these) : string
-    {
-        $variable = $this->variableService->getRepository()->findOneByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
-        return $variable->getValeur();
     }
 
     /**

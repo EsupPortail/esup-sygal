@@ -6,6 +6,7 @@ use Application\Entity\Db\MailConfirmation;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Variable;
+use Application\Service\Email\EmailTheseServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Depot\Notification\ChangementCorrectionAttendueNotification;
@@ -16,6 +17,7 @@ use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\View\Helper\Url as UrlHelper;
+use Notification\Exception\NotificationException;
 use Notification\Notification;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
@@ -32,6 +34,7 @@ class NotifierService extends \Notification\Service\NotifierService
     use UniteRechercheServiceAwareTrait;
     use RoleServiceAwareTrait;
     use IndividuServiceAwareTrait;
+    use EmailTheseServiceAwareTrait;
 
     /**
      * @var UrlHelper
@@ -43,14 +46,14 @@ class NotifierService extends \Notification\Service\NotifierService
      *
      * @param array $data Données concernant les thèses dont le résultat a changé
      * @return ChangementsResultatsThesesNotification
-     * @throws \Notification\Exception\NotificationException
+     * @throws NotificationException
      */
     public function triggerChangementResultatTheses(array $data): ChangementsResultatsThesesNotification
     {
         $these = current($data)['these'];
 
-        $emailBdd = $this->fetchEmailBdd($these);
-        $emailBu = $this->fetchEmailBu($these);
+        $emailBdd = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
+        $emailBu = $this->emailTheseService->fetchEmailBibliothequeUniv($these);
 
         $notif = new ChangementsResultatsThesesNotification();
         $notif->setData($data);
@@ -66,7 +69,7 @@ class NotifierService extends \Notification\Service\NotifierService
      *
      * @param array $data
      * @return ResultatTheseAdmisNotification[]
-     * @throws \Notification\Exception\NotificationException
+     * @throws NotificationException
      */
     public function triggerChangementResultatThesesAdmis(array $data): array
     {
@@ -76,7 +79,7 @@ class NotifierService extends \Notification\Service\NotifierService
             $these = $array['these'];
             /* @var These $these */
 
-            $emailBdd = $this->fetchEmailBdd($these);
+            $emailBdd = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
 
             $notif = new ResultatTheseAdmisNotification();
             $notif->setThese($these);
@@ -97,7 +100,7 @@ class NotifierService extends \Notification\Service\NotifierService
      * @param These $these
      * @param string $message
      * @return ChangementCorrectionAttendueNotification|null
-     * @throws \Notification\Exception\NotificationException
+     * @throws NotificationException
      */
     public function triggerCorrectionAttendue(ImportObservResult $record, These $these, &$message = null): ?ChangementCorrectionAttendueNotification
     {
@@ -136,11 +139,11 @@ class NotifierService extends \Notification\Service\NotifierService
      * Notification à propos du dépassement de la date butoir de dépôt de la version corrigée de la thèse.
      *
      * @param These $these
-     * @throws \Notification\Exception\NotificationException
+     * @throws NotificationException
      */
     public function triggerDateButoirCorrectionDepassee(These $these)
     {
-        $to = $this->fetchEmailBdd($these);
+        $to = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
 
         $notif = new Notification();
         $notif
@@ -159,14 +162,14 @@ class NotifierService extends \Notification\Service\NotifierService
      *
      * @param These $these
      * @param Acteur|null $president
-     * @throws \Notification\Exception\NotificationException
+     * @throws NotificationException
      */
     public function triggerPasDeMailPresidentJury(These $these, ?Acteur $president)
     {
         $notif = new PasDeMailPresidentJury();
         $notif
             ->setThese($these)
-            ->setEmailBdd($this->fetchEmailBdd($these))
+            ->setEmailBdd($this->emailTheseService->fetchEmailMaisonDuDoctorat($these))
             ->setPresident($president)
             ->setTemplateVariables([
                 'these' => $these,
@@ -191,7 +194,7 @@ class NotifierService extends \Notification\Service\NotifierService
      *
      * @param MailConfirmation $mailConfirmation
      * @param string $confirmUrl
-     * @throws \Notification\Exception\NotificationException
+     * @throws NotificationException
      */
     public function triggerMailConfirmation(MailConfirmation $mailConfirmation, string $confirmUrl)
     {
@@ -206,28 +209,6 @@ class NotifierService extends \Notification\Service\NotifierService
             ]);
 
         $this->trigger($notif);
-    }
-
-    /**
-     * @param These $these
-     * @return string
-     */
-    protected function fetchEmailBdd(These $these)
-    {
-        $variable = $this->variableService->getRepository()->findOneByCodeAndThese(Variable::CODE_EMAIL_BDD, $these);
-
-        return $variable->getValeur();
-    }
-
-    /**
-     * @param These $these
-     * @return string
-     */
-    protected function fetchEmailBu(These $these)
-    {
-        $variable = $this->variableService->getRepository()->findOneByCodeAndThese(Variable::CODE_EMAIL_BU, $these);
-
-        return $variable->getValeur();
     }
 
     /**
@@ -260,7 +241,7 @@ class NotifierService extends \Notification\Service\NotifierService
      * @var string $type
      * @var Role $role
      * @var Individu $individu
-     * @throws \Notification\Exception\NotificationException
+     * @throws NotificationException
      */
     public function triggerChangementRole($type, $role, $individu)
     {

@@ -54,7 +54,7 @@ class NotifierService extends \Notification\Service\NotifierService
         $notification = new ValidationPageDeCouvertureNotification();
         $notification->setThese($these);
         $notification->setAction($action);
-        $notification->setEmailBu($this->emailTheseService->fetchEmailBu($these));
+        $notification->setEmailBu($this->emailTheseService->fetchEmailBibliothequeUniv($these));
 
         $this->trigger($notification);
     }
@@ -69,8 +69,8 @@ class NotifierService extends \Notification\Service\NotifierService
     {
         $these = $notification->getThese();
 
-        $notification->setEmailBdd($this->emailTheseService->fetchEmailBdd($these));
-        $notification->setEmailBu($this->emailTheseService->fetchEmailBu($these));
+        $notification->setEmailBdd($this->emailTheseService->fetchEmailMaisonDuDoctorat($these));
+        $notification->setEmailBu($this->emailTheseService->fetchEmailBibliothequeUniv($these));
 
         $this->trigger($notification);
     }
@@ -92,7 +92,7 @@ class NotifierService extends \Notification\Service\NotifierService
         $notif = new ValidationDepotTheseCorrigeeNotification();
         $notif
             ->setThese($these)
-            ->setEmailBdd($this->emailTheseService->fetchEmailBdd($these))
+            ->setEmailBdd($this->emailTheseService->fetchEmailMaisonDuDoctorat($these))
             ->setTemplateVariables([
                 'these' => $these,
                 'url'   => $url,
@@ -123,7 +123,7 @@ class NotifierService extends \Notification\Service\NotifierService
      */
     public function triggerValidationCorrectionThese(Notification $notif, These $these)
     {
-        $to = $this->emailTheseService->fetchEmailBdd($these);
+        $to = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
         $notif
             ->setTo($to)
             ->setTemplateVariables([
