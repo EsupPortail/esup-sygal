@@ -12,7 +12,8 @@ use Formation\Provider\NatureFichier\NatureFichier;
 use Formation\Service\Exporter\Attestation\AttestationExporter;
 use Formation\Service\Exporter\Convocation\ConvocationExporter;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
-use Formation\Service\Notification\NotifierServiceAwareTrait;
+use Formation\Service\Notification\FormationNotificationFactoryAwareTrait;
+use Notification\Service\NotifierServiceAwareTrait;
 use Formation\Service\Presence\PresenceServiceAwareTrait;
 use Formation\Service\Session\SessionServiceAwareTrait;
 use Individu\Entity\Db\Individu;
@@ -35,6 +36,7 @@ class InscriptionController extends AbstractController
     use IndividuServiceAwareTrait;
     use InscriptionServiceAwareTrait;
     use NotifierServiceAwareTrait;
+    use FormationNotificationFactoryAwareTrait;
     use PresenceServiceAwareTrait;
     use SessionServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
@@ -84,7 +86,12 @@ class InscriptionController extends AbstractController
             } else {
                 $this->getInscriptionService()->create($inscription);
                 $this->flashMessenger()->addSuccessMessage("Inscription à la formation <strong>".$libelle."</strong> faite.");
-                $this->getNotifierService()->triggerInscriptionEnregistree($inscription);
+                try {
+                    $notif = $this->formationNotificationFactory->createNotificationInscriptionEnregistree($inscription);
+                    $this->notifierService->trigger($notif);
+                } catch (\Notification\Exception\RuntimeException $e) {
+                    // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
+                }
             }
 
             $retour=$this->params()->fromQuery('retour');
@@ -174,7 +181,14 @@ class InscriptionController extends AbstractController
         if (count($listePrincipale) < $session->getTailleListePrincipale()) {
             $inscription->setListe(Inscription::LISTE_PRINCIPALE);
             $this->getInscriptionService()->update($inscription);
-            if ($session->isFinInscription()) $this->getNotifierService()->triggerInscriptionListePrincipale($inscription);
+            if ($session->isFinInscription()) {
+                try {
+                    $notif = $this->formationNotificationFactory->createNotificationInscriptionListePrincipale($inscription);
+                    $this->notifierService->trigger($notif);
+                } catch (\Notification\Exception\RuntimeException $e) {
+                    // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
+                }
+            }
         } else {
             $this->flashMessenger()->addErrorMessage('La liste principale est déjà complète.');
         }
@@ -193,7 +207,14 @@ class InscriptionController extends AbstractController
         if (count($listePrincipale) < $session->getTailleListeComplementaire()) {
             $inscription->setListe(Inscription::LISTE_COMPLEMENTAIRE);
             $this->getInscriptionService()->update($inscription);
-            if ($session->isFinInscription()) $this->getNotifierService()->triggerInscriptionListeComplementaire($inscription);
+            if ($session->isFinInscription()) {
+                try {
+                    $notif = $this->formationNotificationFactory->createNotificationInscriptionListeComplementaire($inscription);
+                    $this->notifierService->trigger($notif);
+                } catch (\Notification\Exception\RuntimeException $e) {
+                    // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
+                }
+            }
         } else {
             $this->flashMessenger()->addErrorMessage('La liste complémentaire est déjà complète.');
         }

@@ -2,7 +2,6 @@
 
 namespace Depot\Service\FichierThese;
 
-use Application\Service\Notification\NotifierService;
 use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporter;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
@@ -31,7 +30,6 @@ class FichierTheseServiceFactory
          * @var \Fichier\Service\ValiditeFichier\ValiditeFichierService $validiteFichierService
          * @var RetraitementService $retraitementService
          * @var EtablissementService $etablissementService
-         * @var NotifierService $notifierService
          */
         $fichierService = $container->get(FichierService::class);
         $fileService = $container->get(FichierStorageService::class);
@@ -39,7 +37,6 @@ class FichierTheseServiceFactory
         $validiteFichierService = $container->get('ValiditeFichierService');
         $retraitementService = $container->get('RetraitementService');
         $etablissementService = $container->get('EtablissementService');
-        $notifierService = $container->get(NotifierService::class);
         $pdcPdfExporter = $this->createPageDeCouverturePdfExporter($container);
 
         $service = new FichierTheseService();
@@ -51,7 +48,6 @@ class FichierTheseServiceFactory
         $service->setValiditeFichierService($validiteFichierService);
         $service->setRetraitementService($retraitementService);
         $service->setEtablissementService($etablissementService);
-        $service->setApplicationNotifierService($notifierService);
         $service->setPageDeCouverturePdfExporter($pdcPdfExporter);
 
         return $service;

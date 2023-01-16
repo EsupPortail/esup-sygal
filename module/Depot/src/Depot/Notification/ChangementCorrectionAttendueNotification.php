@@ -2,6 +2,7 @@
 
 namespace Depot\Notification;
 
+use Notification\Exception\RuntimeException;
 use Notification\Notification;
 use These\Entity\Db\Interfaces\TheseAwareTrait;
 use UnicaenApp\Exception\LogicException;
@@ -10,7 +11,7 @@ class ChangementCorrectionAttendueNotification extends Notification
 {
     use TheseAwareTrait;
 
-    protected $templatePath = 'depot/depot/mail/notif-depot-version-corrigee-attendu';
+    protected ?string $templatePath = 'depot/depot/mail/notif-depot-version-corrigee-attendu';
 
     /**
      * Initialisation, préparation, etc. nécessaires avant de pouvoir envoyer la notification.
@@ -30,6 +31,10 @@ class ChangementCorrectionAttendueNotification extends Notification
 
         $individu = $this->these->getDoctorant()->getIndividu();
         $to = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
+
+        if (!$to) {
+            throw new RuntimeException("Aucune adresse mail trouvée pour le doctorant {$this->these->getDoctorant()}");
+        }
 
         $cc = null;
         if ($directeursTheseEnCopie) {

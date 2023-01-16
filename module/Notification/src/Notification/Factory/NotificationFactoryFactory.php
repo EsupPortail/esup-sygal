@@ -1,9 +1,9 @@
 <?php
 
-namespace Notification\Service;
+namespace Notification\Factory;
 
-use Interop\Container\ContainerInterface;
 use Notification\Entity\Service\NotifEntityService;
+use Psr\Container\ContainerInterface;
 
 /**
  * @author Unicaen
@@ -16,12 +16,10 @@ class NotificationFactoryFactory
     protected string $class = NotificationFactory::class;
 
     /**
-     * Create service.
-     *
-     * @param ContainerInterface $container
-     * @return NotificationFactory
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): NotificationFactory
     {
         /** @var NotifEntityService $notifEntityService */
         $notifEntityService = $container->get(NotifEntityService::class);

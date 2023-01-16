@@ -2,7 +2,7 @@
 
 namespace RapportActivite\Event\Avis;
 
-use Application\Service\Notification\NotifierService;
+use Notification\Service\NotifierService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Rule\Avis\RapportActiviteAvisNotificationRule;
 use RapportActivite\Rule\Validation\RapportActiviteValidationRule;
@@ -21,7 +21,7 @@ class RapportActiviteAvisEventListenerFactory
         $rapportActiviteAvisService = $container->get(RapportActiviteAvisService::class);
         /** @var \RapportActivite\Service\Validation\RapportActiviteValidationService $rapportActiviteValidationService */
         $rapportActiviteValidationService = $container->get(RapportActiviteValidationService::class);
-        /** @var \Application\Service\Notification\NotifierService $notifierService */
+        /** @var \Notification\Service\NotifierService $notifierService */
         $notifierService = $container->get(NotifierService::class);
 
         /** @var RapportActiviteValidationRule $rapportActiviteValidationRule */
@@ -34,7 +34,7 @@ class RapportActiviteAvisEventListenerFactory
         $listener->setRapportActiviteValidationService($rapportActiviteValidationService);
         $listener->setRapportActiviteValidationRule($rapportActiviteValidationRule);
         $listener->setRapportActiviteAvisNotificationRule($rapportActiviteNotificationRule);
-        $listener->setApplicationNotifierService($notifierService);
+        $listener->setNotifierService($notifierService);
 
         return $listener;
     }

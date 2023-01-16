@@ -4,6 +4,7 @@ namespace Formation\Controller;
 
 use Fichier\Service\Fichier\FichierStorageService;
 use Formation\Service\Formation\FormationService;
+use Formation\Service\Notification\FormationNotificationFactory;
 use Formation\Service\Presence\PresenceService;
 use Formation\Service\SessionStructureValide\SessionStructureValideService;
 use Psr\Container\ContainerExceptionInterface;
@@ -12,7 +13,7 @@ use Structure\Service\Etablissement\EtablissementService;
 use Doctrine\ORM\EntityManager;
 use Formation\Form\Session\SessionForm;
 use Formation\Service\Inscription\InscriptionService;
-use Formation\Service\Notification\NotifierService;
+use Notification\Service\NotifierService;
 use Formation\Service\Session\SessionService;
 use Interop\Container\ContainerInterface;
 use Laminas\View\Renderer\PhpRenderer;
@@ -71,6 +72,10 @@ class SessionControllerFactory {
         $controller->setSessionForm($sessionForm);
         /** Autre *****************************************************************************************************/
         $controller->setRenderer($renderer);
+
+        /** @var \Formation\Service\Notification\FormationNotificationFactory $formationNotificationFactory */
+        $formationNotificationFactory = $container->get(FormationNotificationFactory::class);
+        $controller->setFormationNotificationFactory($formationNotificationFactory);
 
         return $controller;
     }

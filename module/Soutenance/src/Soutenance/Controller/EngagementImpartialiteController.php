@@ -4,14 +4,16 @@ namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Validation;
+use Notification\Exception\RuntimeException;
 use Soutenance\Provider\Template\TexteTemplates;
+use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Membre;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Soutenance\Service\Notifier\NotifierServiceAwareTrait;
+use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
 use Laminas\View\Model\ViewModel;
@@ -29,6 +31,7 @@ class EngagementImpartialiteController extends AbstractController
     use EngagementImpartialiteServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierServiceAwareTrait;
+    use SoutenanceNotificationFactoryAwareTrait;
     use PropositionServiceAwareTrait;
     use RenduServiceAwareTrait;
     use TokenServiceAwareTrait;
@@ -73,7 +76,12 @@ class EngagementImpartialiteController extends AbstractController
                     $token = $this->getMembreService()->retrieveOrCreateToken($membre);
                     $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
                     $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $membre->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
-                    $this->getSoutenanceNotifierService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre, $url);
+                    try {
+                        $notif = $this->soutenanceNotificationFactory->createNotificationDemandeSignatureEngagementImpartialite($these, $proposition, $membre, $url);
+                        $this->notifierService->trigger($notif);
+                    } catch (RuntimeException $e) {
+                        // aucun destintaire, todo : cas à gérer !
+                    }
                 }
             }
         }
@@ -92,7 +100,12 @@ class EngagementImpartialiteController extends AbstractController
             $token = $this->getMembreService()->retrieveOrCreateToken($membre);
             $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
             $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $membre->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
-            $this->getSoutenanceNotifierService()->triggerDemandeSignatureEngagementImpartialite($these, $proposition, $membre, $url);
+            try {
+                $notif = $this->soutenanceNotificationFactory->createNotificationDemandeSignatureEngagementImpartialite($these, $proposition, $membre, $url);
+                $this->notifierService->trigger($notif);
+            } catch (RuntimeException $e) {
+                // aucun destintaire, todo : cas à gérer !
+            }
         }
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
@@ -107,8 +120,12 @@ class EngagementImpartialiteController extends AbstractController
         $signature = $this->getEngagementImpartialiteService()->getEngagementImpartialiteByMembre($these, $membre);
         if ($signature === null) {
             $this->getEngagementImpartialiteService()->create($membre, $these);
-            $this->getSoutenanceNotifierService()->triggerSignatureEngagementImpartialite($these, $proposition, $membre);
-//            $this->getNotifierSoutenanceService()->triggerDemandeAvisSoutenance($these, $proposition, $membre);
+            try {
+                $notif = $this->soutenanceNotificationFactory->createNotificationSignatureEngagementImpartialite($these, $proposition, $membre);
+                $this->notifierService->trigger($notif);
+            } catch (RuntimeException $e) {
+                // aucun destintaire, todo : cas à gérer !
+            }
         }
 
         $this->redirect()->toRoute('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);
@@ -122,7 +139,12 @@ class EngagementImpartialiteController extends AbstractController
 
         $this->getEngagementImpartialiteService()->createRefus($membre, $these);
         $this->getPropositionService()->annulerValidationsForProposition($proposition);
-        $this->getSoutenanceNotifierService()->triggerRefusEngagementImpartialite($these, $proposition, $membre);
+        try {
+            $notif = $this->soutenanceNotificationFactory->createNotificationRefusEngagementImpartialite($these, $proposition, $membre);
+            $this->notifierService->trigger($notif);
+        } catch (RuntimeException $e) {
+            // aucun destintaire, todo : cas à gérer !
+        }
 
 
         $this->redirect()->toRoute('soutenance/engagement-impartialite', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);
@@ -136,7 +158,12 @@ class EngagementImpartialiteController extends AbstractController
 
         /** @var Validation[] $validations */
         $this->getEngagementImpartialiteService()->delete($membre);
-        $this->getSoutenanceNotifierService()->triggerAnnulationEngagementImpartialite($these, $proposition, $membre);
+        try {
+            $notif = $this->soutenanceNotificationFactory->createNotificationAnnulationEngagementImpartialite($these, $proposition, $membre);
+            $this->notifierService->trigger($notif);
+        } catch (RuntimeException $e) {
+            // aucun destintaire, todo : cas à gérer !
+        }
 
         $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }

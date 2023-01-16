@@ -2,7 +2,7 @@
 
 namespace ApplicationUnitTest\Test\Provider;
 
-use Application\Service\Notification\NotifierService;
+use Notification\Service\NotifierService;
 use These\Service\These\TheseService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;

@@ -2,17 +2,15 @@
 
 namespace RapportActivite\Event\Validation;
 
-use Application\Service\Notification\NotifierServiceAwareTrait;
+use Notification\Service\NotifierServiceAwareTrait;
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\ListenerAggregateInterface;
 use Laminas\EventManager\ListenerAggregateTrait;
-use Notification\Exception\NotificationException;
 use RapportActivite\Entity\Db\RapportActiviteAvis;
 use RapportActivite\Entity\Db\RapportActiviteValidation;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
 use RapportActivite\Service\Validation\RapportActiviteValidationService;
 use RapportActivite\Service\Validation\RapportActiviteValidationServiceAwareTrait;
-use UnicaenApp\Exception\RuntimeException;
 use Webmozart\Assert\Assert;
 
 class RapportActiviteValidationEventListener implements ListenerAggregateInterface
@@ -104,14 +102,10 @@ class RapportActiviteValidationEventListener implements ListenerAggregateInterfa
             $rapportActiviteAvis
         );
 
-        try {
-            $this->applicationNotifierService->trigger($notif);
-        } catch (NotificationException $e) {
-            throw new RuntimeException("Impossible d'envoyer le mail de notification", null, $e);
-        }
+        $this->notifierService->trigger($notif);
 
-        $messages['info'] = ($notif->getInfoMessages()[0] ?? null);
-        $messages['warning'] = ($notif->getWarningMessages()[0] ?? null);
+        $messages['info'] = ($notif->getSuccessMessages()[0] ?? null);
+        $messages['warning'] = ($notif->getErrorMessages()[0] ?? null);
         $event->setMessages(array_filter($messages));
     }
 }

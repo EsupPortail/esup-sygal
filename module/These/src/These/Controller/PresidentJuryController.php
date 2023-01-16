@@ -37,23 +37,17 @@ class PresidentJuryController extends AbstractActionController
     }
 
     /**
-     * @throws \Notification\Exception\NotificationImpossibleException
      * @todo : déplacer dans la module Depot.
      */
     public function notifierCorrectionAction()
     {
         $president = $this->getActeurService()->getRequestedActeur($this, 'president');
-        $utilisateurId = $this->params()->fromQuery('utilisateur');
-
-        if ($utilisateurId) $utilisateur = $this->getActeurService()->getEntityManager()->getRepository(Utilisateur::class)->find($utilisateurId);
-
-
         $these = $president->getThese();
 
-        $message = $this->depotService->notifierCorrectionsApportees($these, $utilisateur);
-        if ($message[0] === 'success') $this->flashMessenger()->addSuccessMessage($message[1]);
-        if ($message[0] === 'error')   $this->flashMessenger()->addErrorMessage($message[1]);
+        $resultArray = $this->depotService->notifierCorrectionsApportees($these);
 
+        if ($resultArray[0] === 'success') $this->flashMessenger()->addSuccessMessage($resultArray[1]);
+        if ($resultArray[0] === 'error')   $this->flashMessenger()->addErrorMessage($resultArray[1]);
 
         return $this->redirect()->toRoute('president-jury', [], [], true);
     }

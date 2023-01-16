@@ -2,10 +2,8 @@
 
 namespace Notification;
 
-use Depot\Notification\ValidationDepotTheseCorrigeeNotification;
-use Depot\Notification\ValidationRdvBuNotification;
-use Notification\Entity\NotifEntity;
 use Laminas\View\Model\ViewModel;
+use Notification\Entity\NotifEntity;
 
 /**
  * Classe représentant une notification.
@@ -14,51 +12,15 @@ use Laminas\View\Model\ViewModel;
  */
 class Notification
 {
-    /**
-     * @var string
-     */
-    protected $code;
-
-    /**
-     * @var NotifEntity
-     */
-    protected $notifEntity;
-
-    /**
-     * @var string
-     */
-    protected $templatePath;
-
-    /**
-     * @var array
-     */
-    protected $templateVariables = [];
-
-    /**
-     * @var string
-     */
-    protected $subject;
-
-    /**
-     * @var string
-     */
-    protected $body = null;
-
-    /**
-     * @var array
-     */
-    protected $to;
-
-    /**
-     * @var array
-     */
-    protected $cc;
-
-    /**
-     * @var array
-     */
-    protected $bcc;
-
+    protected ?string $code = null;
+    protected ?NotifEntity $notifEntity = null;
+    protected ?string $templatePath = null;
+    protected array $templateVariables = [];
+    protected string $subject;
+    protected ?string $body = null;
+    protected array $to = [];
+    protected array $cc = [];
+    protected array $bcc = [];
     protected ?string $toLabel = null;
     protected ?string $ccLabel = null;
     protected ?string $bccLabel = null;
@@ -66,24 +28,28 @@ class Notification
     /**
      * @var string[]
      */
-    protected $warningMessages = [];
+    protected array $errorMessages = [];
 
     /**
      * @var string[]
      */
-    protected $infoMessages = [];
+    protected array $successMessages = [];
+
+    /**
+     * @var string[]
+     */
+    protected array $informationMessages = [];
 
     /**
      * @var \DateTime
+     * @deprecated
      */
     protected $sendDate;
 
     /**
      * Notification constructor.
-     *
-     * @param string|null $code
      */
-    public function __construct($code = null)
+    public function __construct(?string $code = null)
     {
         $this->code = $code;
     }
@@ -122,7 +88,7 @@ class Notification
     /**
      * @return array
      */
-    private function createTemplateVariables()
+    private function createTemplateVariables(): array
     {
         $variables = [];
 
@@ -131,9 +97,7 @@ class Notification
         $variables['cc'] = $this->getCc();
         $variables['bcc'] = $this->getBcc();
 
-        $variables = array_merge($variables, $this->getTemplateVariables());
-
-        return $variables;
+        return array_merge($variables, $this->getTemplateVariables());
     }
 
     /**
@@ -141,7 +105,7 @@ class Notification
      *
      * @return ViewModel
      */
-    public function createViewModel()
+    public function createViewModel(): ViewModel
     {
         $variables = $this->createTemplateVariables();
 
@@ -152,11 +116,7 @@ class Notification
         return $viewModel;
     }
 
-    /**
-     * @param string $code
-     * @return static
-     */
-    public function setCode($code)
+    public function setCode(string $code): self
     {
         $this->code = $code;
         $this->notifEntity = null;
@@ -164,43 +124,30 @@ class Notification
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCode()
+    public function getCode(): ?string
     {
         return $this->code;
     }
 
-    /**
-     * @param NotifEntity $notifEntity
-     */
-    public function setNotifEntity(NotifEntity $notifEntity = null)
+    public function setNotifEntity(?NotifEntity $notifEntity = null)
     {
         $this->notifEntity = $notifEntity;
         $this->code = $notifEntity ? $notifEntity->getCode() : null;
     }
 
-    /**
-     * @return NotifEntity
-     */
-    public function getNotifEntity()
+    public function getNotifEntity(): ?NotifEntity
     {
         return $this->notifEntity;
     }
 
-    /**
-     * @param string $subject
-     * @return static
-     */
-    public function setSubject($subject)
+    public function setSubject(string $subject): self
     {
         $this->subject = $subject;
 
         return $this;
     }
 
-    public function setBody(string $body)
+    public function setBody(string $body): self
     {
         $this->body = $body;
         return $this;
@@ -208,9 +155,8 @@ class Notification
 
     /**
      * @param string|array $to
-     * @return static
      */
-    public function setTo($to)
+    public function setTo($to): self
     {
         $this->to = (array) $to;
 
@@ -219,9 +165,8 @@ class Notification
 
     /**
      * @param string|array $cc
-     * @return static
      */
-    public function setCc($cc)
+    public function setCc($cc): self
     {
         $this->cc = (array) $cc;
 
@@ -230,9 +175,8 @@ class Notification
 
     /**
      * @param string|array $bcc
-     * @return static
      */
-    public function setBcc($bcc)
+    public function setBcc($bcc): self
     {
         $this->bcc = (array) $bcc;
 
@@ -269,59 +213,37 @@ class Notification
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getSubject()
+    public function getSubject(): string
     {
         return $this->subject;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getBody()
+    public function getBody(): ?string
     {
         return $this->body;
     }
 
-    /**
-     * @return array
-     */
-    public function getTo()
+    public function getTo(): array
     {
         return $this->to;
     }
 
-    /**
-     * @return array
-     */
-    public function getCc()
+    public function getCc(): array
     {
         return $this->cc;
     }
 
-    /**
-     * @return array
-     */
-    public function getBcc()
+    public function getBcc(): array
     {
         return $this->bcc;
     }
 
-    /**
-     * @return string
-     */
-    public function getTemplatePath()
+    public function getTemplatePath(): ?string
     {
         return $this->templatePath;
     }
 
-    /**
-     * @param string $templatePath
-     * @return Notification
-     */
-    public function setTemplatePath($templatePath)
+    public function setTemplatePath(string $templatePath): self
     {
         $this->templatePath = $templatePath;
 
@@ -336,18 +258,11 @@ class Notification
         return $this->templateVariables[$name] ?? null;
     }
 
-    /**
-     * @return array
-     */
     public function getTemplateVariables(): array
     {
         return $this->templateVariables;
     }
 
-    /**
-     * @param array $templateVariables
-     * @return static
-     */
     public function setTemplateVariables(array $templateVariables = []): Notification
     {
         $this->templateVariables = array_merge($this->templateVariables, $templateVariables);
@@ -356,72 +271,106 @@ class Notification
     }
 
     /**
-     * Spécifie les éventuels messages d'avertissement signalés par cette notification
-     * et pouvant être affichés une fois la notification envoyée.
+     * Spécifie les messages exprimant le succès de l'envoi de cette notification.
+     * 
+     * Ces messages seront collectés et disponibles dans le {@see \Notification\NotificationResult} à l'issu de l'envoi
+     * de la notification.
      *
-     * @param string|string[] $warningMessages
-     * @return self
+     * @param string[] $successMessages
+     * @return \Notification\Notification
      */
-    public function setWarningMessages($warningMessages)
+    public function setSuccessMessages(array $successMessages): self
     {
-        $this->warningMessages = (array) $warningMessages;
+        $this->successMessages = $successMessages;
 
         return $this;
     }
 
     /**
-     * Spécifie les éventuels messages d'information signalés par cette notification
-     * et pouvant être affichés une fois la notification envoyée.
+     * Ajoute un message exprimant le succès de l'envoi de cette notification.
+     * 
+     * Ces messages seront collectés et disponibles dans le {@see \Notification\NotificationResult} à l'issu de l'envoi
+     * de la notification.
      *
-     * @param string|string[] $infoMessages
-     * @return self
+     * @param string $successMessage
+     * @return \Notification\Notification
      */
-    public function setInfoMessages($infoMessages)
+    public function addSuccessMessage(string $successMessage): self
     {
-        $this->infoMessages = (array) $infoMessages;
+        $this->successMessages[] = $successMessage;
 
         return $this;
     }
 
     /**
-     * Retourne les éventuels messages d'avertissements signalés par cette notification
-     * et pouvant être affichés une fois la notification envoyée.
+     * Retourne les messages à collecter en cas de succès de l'envoi de cette notification.
+     * Ces messages n'ont de sens que si l'envoi de la notification a réussi.
+     * Si vous ne savez pas ce que vous faites, utiliser {@see \Notification\NotificationResult::getSuccessMessages()}.
      *
      * @return string[]
      */
-    public function getWarningMessages()
+    public function getSuccessMessages(): array
     {
-        return $this->warningMessages;
+        return $this->successMessages;
     }
 
     /**
-     * Retourne les éventuels messages d'information signalés par cette notification
-     * et pouvant être affichés une fois la notification envoyée.
+     * Spécifie les messages d'erreur concernant les problèmes rencontrés par cette notification INDÉPENDAMMENT
+     * de l'envoi de celle-ci.
+     * Exemple d'erreur rencontrable : l'adresse mail d'un des destinataires n'a pas été trouvée.
+     *
+     * NB : L'existence de tels messages d'erreurs ne signifie pas l'impossibilité d'envoyer la notification.
+     * En cas d'erreur majeure empêchant l'envoi de la notification, il convient de lancer une
+     * {@see \Notification\Exception\RuntimeException}.
+     *
+     * @param string[] $errorMessages
+     */
+    public function setErrorMessages(array $errorMessages): self
+    {
+        $this->errorMessages = $errorMessages;
+
+        return $this;
+    }
+
+    /**
+     * Ajoute un message d'erreur concernant un problème rencontré par cette notification INDÉPENDAMMENT
+     * de l'envoi de celle-ci.
+     * Exemple d'erreur rencontrable : l'adresse mail d'un des destinataires n'a pas été trouvée.
+     *
+     * NB : L'existence de tels messages d'erreurs ne signifie pas l'impossibilité d'envoyer la notification.
+     * En cas d'erreur majeure empêchant l'envoi de la notification, il convient de lancer une
+     * {@see \Notification\Exception\RuntimeException}.
+     *
+     * @param string $errorMessage
+     * @return \Notification\Notification
+     */
+    public function addErrorMessage(string $errorMessage): self
+    {
+        $this->errorMessages[] = $errorMessage;
+
+        return $this;
+    }
+
+    /**
+     * Retourne les éventuels messages d'avertissements rencontrés par cette notification *INDÉPENDAMMENT de son envoi*
+     * Exemple d'erreur rencontrable : l'adresse mail d'un des destinataires n'a pas été trouvée.
+     *
+     * NB : L'existence de tels messages d'erreurs ne signifie pas l'impossibilité d'envoyer la notification.
+     * En cas d'erreur majeure empêchant l'envoi de la notification, il convient de lancer une
+     * {@see \Notification\Exception\RuntimeException}.
      *
      * @return string[]
      */
-    public function getInfoMessages()
+    public function getErrorMessages(): array
     {
-        return $this->infoMessages;
-    }
-
-    /**
-     * Renseigne la date d'envoi éventuelle de cette notification.
-     *
-     * @param \DateTime $sendDate
-     * @return self
-     */
-    public function setSendDate(\DateTime $sendDate)
-    {
-        $this->sendDate = $sendDate;
-
-        return $this;
+        return $this->errorMessages;
     }
 
     /**
      * Retourne la date d'envoi éventuelle de cette notification.
      *
      * @return \DateTime
+     * @deprecated Utiliser {@see \Notification\NotificationResult::getSendDate()}
      */
     public function getSendDate()
     {

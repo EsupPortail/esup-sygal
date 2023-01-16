@@ -3,9 +3,11 @@
 namespace Depot\Service\Notification;
 
 use Application\Service\Email\EmailTheseService;
+use Application\Service\Role\RoleService;
 use Application\Service\Variable\VariableService;
 use Interop\Container\ContainerInterface;
 use Laminas\View\Helper\Url as UrlHelper;
+use Notification\Factory\NotificationFactoryFactory;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 use UnicaenApp\Options\ModuleOptions;
@@ -13,20 +15,20 @@ use UnicaenApp\Options\ModuleOptions;
 /**
  * @author Unicaen
  */
-class NotificationFactoryFactory extends \Notification\Service\NotificationFactoryFactory
+class DepotNotificationFactoryFactory extends NotificationFactoryFactory
 {
     /**
      * @var string
      */
-    protected string $class = NotificationFactory::class;
+    protected string $class = DepotNotificationFactory::class;
 
     /**
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container): NotificationFactory
+    public function __invoke(ContainerInterface $container): DepotNotificationFactory
     {
-        /** @var NotificationFactory $factory */
+        /** @var DepotNotificationFactory $factory */
         $factory = parent::__invoke($container);
 
         /**
@@ -49,6 +51,10 @@ class NotificationFactoryFactory extends \Notification\Service\NotificationFacto
         $factory->setUniteRechercheService($uniteRechercheService);
         $factory->setUrlHelper($urlHelper);
         $factory->setAppModuleOptions($moduleOptions);
+
+        /** @var RoleService $roleService */
+        $roleService = $container->get('RoleService');
+        $factory->setRoleService($roleService);
 
         /** @var EmailTheseService $emailTheseService */
         $emailTheseService = $container->get(EmailTheseService::class);

@@ -27,7 +27,8 @@ use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Validation\TypeValidation as TypeValidationSoutenance;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Soutenance\Service\Notifier\NotifierServiceAwareTrait;
+use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
+use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use Structure\Entity\Db\EcoleDoctorale;
@@ -44,6 +45,7 @@ class PropositionService extends BaseService
     use ActeurServiceAwareTrait;
     use ValidatationServiceAwareTrait;
     use NotifierServiceAwareTrait;
+    use SoutenanceNotificationFactoryAwareTrait;
     use ParametreServiceAwareTrait;
     use VariableServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
@@ -280,22 +282,42 @@ class PropositionService extends BaseService
         $validations = $this->getValidationService()->findValidationPropositionSoutenanceByThese($these);
         foreach ($validations as $validation) {
             $this->getValidationService()->historise($validation);
-            $this->getSoutenanceNotifierService()->triggerDevalidationProposition($validation);
+            try {
+                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($validation);
+                $this->notifierService->trigger($notif);
+            } catch (\Notification\Exception\RuntimeException $e) {
+                // aucun destinataire, todo : cas à gérer !
+            }
         }
         $validationED = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these));
         if ($validationED) {
             $this->getValidationService()->historise($validationED);
-            $this->getSoutenanceNotifierService()->triggerDevalidationProposition($validationED);
+            try {
+                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($validationED);
+                $this->notifierService->trigger($notif);
+            } catch (\Notification\Exception\RuntimeException $e) {
+                // aucun destinataire, todo : cas à gérer !
+            }
         }
         $validationUR = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these));
         if ($validationUR) {
             $this->getValidationService()->historise($validationUR);
-            $this->getSoutenanceNotifierService()->triggerDevalidationProposition($validationUR);
+            try {
+                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($validationUR);
+                $this->notifierService->trigger($notif);
+            } catch (\Notification\Exception\RuntimeException $e) {
+                // aucun destinataire, todo : cas à gérer !
+            }
         }
         $validationBDD = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these));
         if ($validationBDD) {
             $this->getValidationService()->historise($validationBDD);
-            $this->getSoutenanceNotifierService()->triggerDevalidationProposition($validationBDD);
+            try {
+                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($validationBDD);
+                $this->notifierService->trigger($notif);
+            } catch (\Notification\Exception\RuntimeException $e) {
+                // aucun destinataire, todo : cas à gérer !
+            }
         }
     }
 

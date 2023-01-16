@@ -7,7 +7,7 @@ use RapportActivite\Entity\Db\RapportActiviteAvis;
 
 class RapportActiviteAvisNotification extends Notification
 {
-    protected $templatePath = 'rapport-activite/notification/avis';
+    protected ?string $templatePath = 'rapport-activite/notification/avis';
     private RapportActiviteAvis $rapportActiviteAvis;
     private array $messagesByAvisValeurBool = [];
 
@@ -32,7 +32,7 @@ class RapportActiviteAvisNotification extends Notification
      */
     public function prepare(): self
     {
-        $infoMessage = sprintf(
+        $successMessage = sprintf(
             "Un mail de notification vient d'être envoyé aux personnes suivantes : %s",
             implode(', ', array_reduce(array_keys($this->to), function(array $accu, string $key) {
                 $accu[] = sprintf('%s (%s)', $this->to[$key], $key);
@@ -45,7 +45,7 @@ class RapportActiviteAvisNotification extends Notification
             'messagesByAvisValeurBool' => $this->messagesByAvisValeurBool,
         ]);
 
-        $this->setInfoMessages($infoMessage);
+        $this->addSuccessMessage($successMessage);
 
         return $this;
     }

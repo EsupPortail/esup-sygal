@@ -32,6 +32,8 @@ use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporter;
 use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporterFactory;
 use Depot\Service\These\DepotService;
 use Depot\Service\These\Factory\DepotServiceFactory;
+use Depot\Service\These\Factory\TheseObserverServiceFactory;
+use Depot\Service\These\TheseObserverService;
 use Depot\Service\Url\UrlDepotService;
 use Depot\Service\Url\UrlDepotServiceFactory;
 use Depot\View\Helper\Url\UrlDepotHelperFactory;
@@ -1006,6 +1008,8 @@ return [
             DepotController::class => DepotControllerFactory::class,
             ConsoleController::class => ConsoleControllerFactory::class,
             ObserverController::class => ObserverControllerFactory::class,
+            TheseObserverService::class => TheseObserverServiceFactory::class,
+            'TheseObserverService' => TheseObserverServiceFactory::class,
         ],
     ],
     'controller_plugins' => [

@@ -30,7 +30,7 @@ use Depot\Form\RdvBuTheseDoctorantForm;
 use Depot\Form\RdvBuTheseForm;
 use Depot\Service\FichierThese\Exception\ValidationImpossibleException;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
-use Depot\Service\Notification\NotifierServiceAwareTrait;
+use Depot\Service\Notification\DepotNotificationFactoryAwareTrait;
 use Depot\Service\These\Convention\ConventionPdfExporter;
 use Depot\Service\These\DepotServiceAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
@@ -51,7 +51,7 @@ use Laminas\InputFilter\InputFilter;
 use Laminas\Stdlib\ParametersInterface;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
-use RapportActivite\Event\Avis\RapportActiviteAvisEvent;
+use Notification\Service\NotifierServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use These\Entity\Db\These;
@@ -67,6 +67,7 @@ class DepotController extends AbstractController
     use FichierTheseServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
     use MessageCollectorAwareTrait;
+    use DepotNotificationFactoryAwareTrait;
     use NotifierServiceAwareTrait;
     use RoleServiceAwareTrait;
     use TheseServiceAwareTrait;
@@ -612,9 +613,9 @@ class DepotController extends AbstractController
 
                 // notification par mail à la BU quand le doctorant saisit les infos pour la 1ere fois
                 if ($estDoctorant && $inserting) {
-                    $notif = $this->depotNotifierService->getNotificationFactory()->createNotificationForRdvBuSaisiParDoctorant($these, $inserting);
-                    $this->depotNotifierService->trigger($notif);
-                    $this->depotNotifierService->feedFlashMessenger($this->flashMessenger(), 'rdv_bu/');
+                    $notif = $this->depotNotificationFactory->createNotificationForRdvBuSaisiParDoctorant($these, true);
+                    $result = $this->notifierService->trigger($notif);
+                    $result->feedFlashMessenger($this->flashMessenger(), 'rdv_bu/');
                 }
 
                 if (! $this->getRequest()->isXmlHttpRequest()) {
@@ -1013,7 +1014,6 @@ class DepotController extends AbstractController
 
     /**
      * @throws \Doctrine\ORM\OptimisticLockException
-     * @throws \Notification\Exception\NotificationImpossibleException
      */
     public function testArchivabiliteAction()
     {
@@ -1438,9 +1438,6 @@ class DepotController extends AbstractController
         return $form;
     }
 
-    /**
-     * @throws \Notification\Exception\NotificationImpossibleException
-     */
     public function modifierCertifConformiteAction()
     {
         $these = $this->requestedThese();

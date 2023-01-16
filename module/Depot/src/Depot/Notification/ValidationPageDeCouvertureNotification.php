@@ -3,6 +3,7 @@
 namespace Depot\Notification;
 
 use Individu\Entity\Db\Individu;
+use Notification\Exception\RuntimeException;
 use Notification\Notification;
 use These\Entity\Db\Interfaces\TheseAwareTrait;
 use UnicaenApp\Exception\LogicException;
@@ -14,22 +15,17 @@ class ValidationPageDeCouvertureNotification extends Notification
     const ACTION_VALIDER = 'valider';
     const ACTION_DEVALIDER = 'devalider';
 
-    protected $templatePath = 'application/notification/mail/notif-validation-page-couverture';
-
-    private $action;
-
-    /**
-     * @var string
-     */
-    private $emailBu;
+    protected ?string $templatePath = 'application/notification/mail/notif-validation-page-couverture';
+    private string $action;
+    private array $emailsBu = [];
 
     /**
-     * @param string[] $emailBu
+     * @param string[] $emailsBu
      * @return self
      */
-    public function setEmailBu(array $emailBu): self
+    public function setEmailsBu(array $emailsBu): self
     {
-        $this->emailBu = $emailBu;
+        $this->emailsBu = $emailsBu;
 
         return $this;
     }
@@ -63,18 +59,22 @@ class ValidationPageDeCouvertureNotification extends Notification
         $emailsDirecteurs = $this->these->getDirecteursTheseEmails($individusSansMail);
 
         $individu = $this->these->getDoctorant()->getIndividu();
-        $to = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
+        $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
+        if (!$email) {
+            throw new RuntimeException("Aucune adresse mail trouvée pour le doctorant {$this->these->getDoctorant()}");
+        }
+
         $cc = array_merge(
             $emailsDirecteurs,
-            [$this->emailBu => $this->emailBu]
+            $this->emailsBu,
         );
 
-        $infoMessage = sprintf(
+        $successMessage = sprintf(
             "Un mail de notification vient d'être envoyé au doctorant (%s), avec copie à la direction de thèse (%s) " .
             "et à %s",
-            $to,
+            $email,
             implode(',', $emailsDirecteurs),
-            $this->emailBu
+            implode(',', $this->emailsBu),
         );
 
         $errorMessage = null;
@@ -93,7 +93,7 @@ class ValidationPageDeCouvertureNotification extends Notification
 
         $this
             ->setSubject("Page de couverture de votre thèse")
-            ->setTo($to)
+            ->setTo($email)
             ->setCc($cc)
             ->setTemplateVariables([
                 'these'   => $this->these,
@@ -101,9 +101,9 @@ class ValidationPageDeCouvertureNotification extends Notification
                 'message' => $errorMessage,
             ]);
 
-        $this->setInfoMessages($infoMessage);
+        $this->addSuccessMessage($successMessage);
         if ($errorMessage) {
-            $this->setWarningMessages($errorMessage);
+            $this->addErrorMessage($errorMessage);
         }
 
         return $this;

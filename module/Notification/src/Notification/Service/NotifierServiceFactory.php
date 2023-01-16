@@ -18,11 +18,9 @@ class NotifierServiceFactory
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): NotifierService
     {
         $notifierServiceClass = $this->notifierServiceClass;
-
-        $notificationFactory = new NotificationFactory();
 
         /** @var MailerService $mailerService */
         $mailerService = $container->get(MailerService::class);
@@ -37,7 +35,6 @@ class NotifierServiceFactory
 
         /** @var NotifierService $service */
         $service = new $notifierServiceClass($notificationRenderer);
-        $service->setNotificationFactory($notificationFactory);
         $service->setNotifEntityService($notifEntityService);
         $service->setMailerService($mailerService);
         $service->setOptions($options);

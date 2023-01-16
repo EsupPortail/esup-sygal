@@ -2,12 +2,19 @@
 
 namespace Depot\Service\Notification;
 
+use Application\Entity\Db\Role;
+use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\ValiditeFichier;
 use Application\Service\Email\EmailTheseServiceAwareTrait;
+use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Depot\Entity\Db\FichierThese;
+use Depot\Notification\ValidationDepotTheseCorrigeeNotification;
+use Depot\Notification\ValidationPageDeCouvertureNotification;
+use Depot\Notification\ValidationRdvBuNotification;
 use Fichier\Entity\Db\VersionFichier;
 use Laminas\View\Helper\Url as UrlHelper;
+use Notification\Exception\RuntimeException;
 use Notification\Notification;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
@@ -19,11 +26,12 @@ use UnicaenApp\Options\ModuleOptions;
  *
  * @author Unicaen
  */
-class NotificationFactory extends \Notification\Service\NotificationFactory
+class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
 {
     use VariableServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
+    use RoleServiceAwareTrait;
     use EmailTheseServiceAwareTrait;
 
     /**
@@ -76,7 +84,10 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
      * @return Notification
      * @return Notification
      */
-    public function createNotificationForRetraitementFini($destinataires, FichierThese $fichierTheseRetraite, ValiditeFichier $validite = null)
+    public function createNotificationForRetraitementFini(
+        string $destinataires,
+        FichierThese $fichierTheseRetraite,
+        ValiditeFichier $validite = null): Notification
     {
         $to = array_map('trim', explode(',', $destinataires));
 
@@ -101,7 +112,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
      * @param bool $estLaPremiereSaisie
      * @return Notification
      */
-    public function createNotificationForRdvBuSaisiParDoctorant(These $these, $estLaPremiereSaisie)
+    public function createNotificationForRdvBuSaisiParDoctorant(These $these, bool $estLaPremiereSaisie): Notification
     {
         $subject = sprintf("%s Saisie des informations pour la prise de rendez-vous avec la bibliothèque universitaire", $these->getLibelleDiscipline());
         $to = $this->emailTheseService->fetchEmailBibliothequeUniv($these);
@@ -116,8 +127,9 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
                 'updating' => !$estLaPremiereSaisie,
             ]);
 
-        $infoMessage = sprintf("Un mail de notification vient d'être envoyé à la bibliothèque universitaire (%s).", $to);
-        $notif->setInfoMessages($infoMessage);
+        $notif->addSuccessMessage(
+            sprintf("Un mail de notification vient d'être envoyé à la bibliothèque universitaire (%s).", $to)
+        );
 
         return $notif;
     }
@@ -129,7 +141,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
      * @param VersionFichier $version
      * @return Notification
      */
-    public function createNotificationForTheseTeleversee(These $these, VersionFichier $version)
+    public function createNotificationForTheseTeleversee(These $these, VersionFichier $version): Notification
     {
         $to = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
 
@@ -152,7 +164,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
      * @param These $these
      * @return Notification
      */
-    public function createNotificationForFichierTeleverse(These $these)
+    public function createNotificationForFichierTeleverse(These $these): Notification
     {
         $to = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
 
@@ -187,7 +199,7 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
             ->setTo($to)
             ->setToLabel($toLabel)
             ->setSubject("Sursis accordé pour les corrections de thèse")
-            ->setInfoMessages("Un mail de notification vient d'être envoyé aux destinataires suivants : $toLabel")
+            ->addSuccessMessage("Un mail de notification vient d'être envoyé aux destinataires suivants : $toLabel")
             ->setTemplatePath('depot/depot/mail/notif-sursis-correction-accorde')
             ->setTemplateVariables(compact('these'));
     }
@@ -217,4 +229,108 @@ class NotificationFactory extends \Notification\Service\NotificationFactory
 
         return $notif;
     }
+
+    /**
+     * Notification à l'issue de la validation de la page de couverture.
+     */
+    public function createNotificationValidationPageDeCouverture(These $these, string $action): ValidationPageDeCouvertureNotification
+    {
+        $notification = new ValidationPageDeCouvertureNotification();
+        $notification->setThese($these);
+        $notification->setAction($action);
+        $notification->setEmailsBu($this->emailTheseService->fetchEmailBibliothequeUniv($these));
+
+        return $notification;
+    }
+
+    /**
+     * Notification concernant la validation à l'issue du RDV BU.
+     */
+    public function createNotificationValidationRdvBu(These $these): ValidationRdvBuNotification
+    {
+        $notification = new ValidationRdvBuNotification();
+        $notification->setThese($these);
+
+        $notification->setEmailsBdd($this->emailTheseService->fetchEmailMaisonDuDoctorat($these));
+        $notification->setEmailsBu($this->emailTheseService->fetchEmailBibliothequeUniv($these));
+
+        return $notification;
+    }
+
+    /**
+     * Notification pour inviter à valider les corrections.
+     */
+    public function createNotificationValidationDepotTheseCorrigee(These $these, ?Utilisateur $presidentJury = null): Notification
+    {
+        $targetedUrl = $this->urlHelper->__invoke( 'these/validation-these-corrigee', ['these' => $these->getId()], ['force_canonical' => true]);
+        $president = $this->getRoleService()->getRepository()->findOneByCodeAndStructureConcrete(Role::CODE_PRESIDENT_JURY, $these->getEtablissement());
+        $url = $this->urlHelper->__invoke('zfcuser/login', ['type' => 'local'], ['query' => ['redirect' => $targetedUrl, 'role' => $president->getRoleId()], 'force_canonical' => true], true);
+
+        // envoi de mail aux directeurs de thèse
+        $notif = new ValidationDepotTheseCorrigeeNotification();
+        $notif
+            ->setThese($these)
+            ->setEmailsBdd($this->emailTheseService->fetchEmailMaisonDuDoctorat($these))
+            ->setTemplateVariables([
+                'these' => $these,
+                'url'   => $url,
+            ]);
+        if ($presidentJury !== null) {
+            $notif->setDestinataire($presidentJury);
+        }
+
+        return $notif;
+    }
+
+    /**
+     * Notification à propos de la validation des corrections attendues.
+     */
+    public function createNotificationValidationCorrectionThese(These $these): Notification
+    {
+        $notif = new Notification();
+        $notif
+            ->setSubject("Validation des corrections de la thèse")
+            ->setTemplatePath('application/notification/mail/notif-validation-correction-these')
+            ->setTemplateVariables([
+                'these' => $these,
+                'role' => $this->roleService->getRepository()->findOneBy(['code' => Role::CODE_PRESIDENT_JURY]),
+                'url' => $this->urlHelper->__invoke('these/depot', ['these' => $these->getId()], ['force_canonical' => true]),
+            ]);
+
+        $to = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
+        $notif
+            ->addSuccessMessage(sprintf("Un mail de notification vient d'être envoyé à la Maison du doctorat (%s)", $to))
+            ->setTo($to)
+            ->setTemplateVariables([
+                'these' => $these,
+            ]);
+
+        return $notif;
+    }
+
+    /**
+     * Notification à propos de la validation des corrections par le doctorant.
+     *
+     * @throws \Notification\Exception\RuntimeException Aucune adresse mail trouvée pour le doctorant
+     */
+    public function createNotificationValidationCorrectionTheseEtudiant(These $these): Notification
+    {
+        $individu = $these->getDoctorant()->getIndividu();
+        $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
+        if (!$email) {
+            throw new RuntimeException("Aucune adresse mail trouvée pour le doctorant {$these->getDoctorant()}");
+        }
+
+        return (new Notification())
+            ->setSubject("Validation des corrections de la thèse")
+            ->setTo($email)
+            ->addSuccessMessage(sprintf("Un mail de notification vient d'être envoyé au doctorant (%s)", $email))
+            ->setTemplatePath('application/notification/mail/notif-validation-correction-these')
+            ->setTemplateVariables([
+                'these' => $these,
+                'role' => $this->roleService->getRepository()->findOneBy(['code' => Role::CODE_PRESIDENT_JURY]),
+                'url' => $this->urlHelper->__invoke('these/depot', ['these' => $these->getId()], ['force_canonical' => true]),
+            ]);
+    }
+
 }

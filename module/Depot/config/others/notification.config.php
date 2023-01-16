@@ -4,10 +4,8 @@ namespace Depot;
 
 use UnicaenAuth\Guard\PrivilegeController;
 use Depot\Controller\ObserverController;
-use Depot\Service\Notification\NotificationFactory;
-use Depot\Service\Notification\NotificationFactoryFactory;
-use Depot\Service\Notification\NotifierService;
-use Depot\Service\Notification\NotifierServiceFactory;
+use Depot\Service\Notification\DepotNotificationFactory;
+use Depot\Service\Notification\DepotNotificationFactoryFactory;
 
 return [
     'bjyauthorize' => [
@@ -40,8 +38,7 @@ return [
     ],
     'service_manager' => [
         'factories' => [
-            NotificationFactory::class => NotificationFactoryFactory::class,
-            NotifierService::class => NotifierServiceFactory::class,
+            DepotNotificationFactory::class => DepotNotificationFactoryFactory::class,
         ],
     ],
 ];

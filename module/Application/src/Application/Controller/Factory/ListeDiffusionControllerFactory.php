@@ -8,7 +8,7 @@ use Structure\Service\Etablissement\EtablissementService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Individu\Service\IndividuService;
 use Application\Service\ListeDiffusion\ListeDiffusionService;
-use Application\Service\Notification\NotifierService;
+use Notification\Service\NotifierService;
 use Application\Service\Role\RoleService;
 use Structure\Service\Structure\StructureService;
 use Interop\Container\ContainerInterface;
@@ -41,7 +41,7 @@ class ListeDiffusionControllerFactory
          * @var NotifierService $notifierService
          */
         $notifierService = $container->get(NotifierService::class);
-        $controller->setApplicationNotifierService($notifierService);
+        $controller->setNotifierService($notifierService);
 
         /**
          * @var RoleService $roleService

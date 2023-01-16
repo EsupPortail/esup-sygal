@@ -1,6 +1,6 @@
 <?php
 
-namespace Notification\Service;
+namespace Notification\Factory;
 
 use Notification\Entity\NotifEntity;
 use Notification\Entity\Service\NotifEntityServiceAwareTrait;

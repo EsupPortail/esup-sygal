@@ -6,7 +6,8 @@ use Application\EventRouterReplacer;
 use Application\Service\Validation\ValidationService;
 use Depot\Controller\FichierTheseController;
 use Depot\Service\FichierThese\FichierTheseService;
-use Depot\Service\Notification\NotifierService;
+use Depot\Service\Notification\DepotNotificationFactory;
+use Notification\Service\NotifierService;
 use Depot\Service\These\DepotService;
 use Depot\Service\Validation\DepotValidationService;
 use Fichier\Service\Fichier\FichierService;
@@ -20,6 +21,10 @@ use These\Service\These\TheseService;
 
 class FichierTheseControllerFactory
 {
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     public function __invoke(ContainerInterface $container): FichierTheseController
     {
         /** @var TreeRouteStack $httpRouter */
@@ -54,7 +59,7 @@ class FichierTheseControllerFactory
         $controller->setFichierService($fichierService);
         $controller->setFichierStorageService($fileService);
         $controller->setVersionFichierService($versionFichierService);
-        $controller->setDepotNotifierService($notificationService);
+        $controller->setNotifierService($notificationService);
         $controller->setIndividuService($individuService);
         $controller->setValidationService($validationService);
         $controller->setEventRouterReplacer($eventRouterReplacer);
@@ -66,6 +71,10 @@ class FichierTheseControllerFactory
         /** @var \Depot\Service\Validation\DepotValidationService $depotValidationService */
         $depotValidationService = $container->get(DepotValidationService::class);
         $controller->setDepotValidationService($depotValidationService);
+
+        /** @var \Depot\Service\Notification\DepotNotificationFactory $depotNotificationFactory */
+        $depotNotificationFactory = $container->get(DepotNotificationFactory::class);
+        $controller->setDepotNotificationFactory($depotNotificationFactory);
 
         // gestion d'événements : DepotService écoute certains événement de FichierTheseController
         $controller->setEventManager($eventManager);

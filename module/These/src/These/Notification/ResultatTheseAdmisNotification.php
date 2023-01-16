@@ -9,7 +9,7 @@ class ResultatTheseAdmisNotification extends Notification
 {
     use TheseAwareTrait;
 
-    protected $templatePath = 'these/these/mail/notif-resultat-admis-doctorant';
+    protected ?string $templatePath = 'these/these/mail/notif-resultat-admis-doctorant';
 
     /**
      * @var bool
@@ -42,7 +42,7 @@ class ResultatTheseAdmisNotification extends Notification
         if (! $to) {
             // lorsque le doctorant n'a pas d'email, envoi au BDD (+ petit message d'alerte dans le mail)
             $this->emailDoctorantAbsent = true;
-            $to = $this->emailBdd;
+            $to = $this->emailsBdd;
         }
 
         $this->setTo($to);
@@ -50,7 +50,6 @@ class ResultatTheseAdmisNotification extends Notification
 
         $this->setTemplateVariables([
             'these' => $this->these,
-            'contact' => $this->emailBdd,
             'doctorant' => $this->these->getDoctorant(),
             'emailDoctorantAbsent' => $this->emailDoctorantAbsent,
         ]);
@@ -58,26 +57,16 @@ class ResultatTheseAdmisNotification extends Notification
         return $this;
     }
 
-    /**
-     * @var string
-     */
-    private $emailBdd;
+    private array $emailsBdd = [];
 
-    /**
-     * @param string $emailBdd
-     * @return self
-     */
-    public function setEmailBdd(array $emailBdd)
+    public function setEmailsBdd(array $emailBdd): self
     {
-        $this->emailBdd = $emailBdd;
+        $this->emailsBdd = $emailBdd;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isEmailDoctorantAbsent()
+    public function isEmailDoctorantAbsent(): bool
     {
         return $this->emailDoctorantAbsent;
     }

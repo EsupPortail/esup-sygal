@@ -6,6 +6,7 @@ use Application\Controller\AbstractController;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use Soutenance\Entity\Avis;
@@ -14,7 +15,7 @@ use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Form\Avis\AvisFormAwareTrait;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Soutenance\Service\Notifier\NotifierServiceAwareTrait;
+use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use Laminas\Http\Request;
@@ -27,6 +28,7 @@ class AvisController extends AbstractController
     use AvisServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierServiceAwareTrait;
+    use SoutenanceNotificationFactoryAwareTrait;
     use PropositionServiceAwareTrait;
     use TheseServiceAwareTrait;
     use ValidatationServiceAwareTrait;
@@ -90,15 +92,30 @@ class AvisController extends AbstractController
                 $allRapporteurs = $this->getMembreService()->getRapporteursByProposition($proposition);
 
                 if ($avis->getAvis() === Avis::FAVORABLE) {
-                    $this->getSoutenanceNotifierService()->triggerAvisFavorable($these, $avis);
+                    try {
+                        $notif = $this->soutenanceNotificationFactory->createNotificationAvisFavorable($these, $avis);
+                        $this->notifierService->trigger($notif);
+                    } catch (\Notification\Exception\RuntimeException $e) {
+                        // aucun destinataire, todo : cas à gérer !
+                    }
                 }
                 if ($avis->getAvis() === Avis::DEFAVORABLE) {
-                    $this->getSoutenanceNotifierService()->triggerAvisDefavorable($these, $avis);
+                    try {
+                        $notif = $this->soutenanceNotificationFactory->createNotificationAvisDefavorable($these, $avis);
+                        $this->notifierService->trigger($notif);
+                    } catch (\Notification\Exception\RuntimeException $e) {
+                        // aucun destinataire, todo : cas à gérer !
+                    }
                 }
 
                 /** TODO ajouter un prédicat dans thèse ou soutenance ??? */
                 if (count($allAvis) === count($allRapporteurs)) {
-                    $this->getSoutenanceNotifierService()->triggerAvisRendus($these);
+                    try {
+                        $notif = $this->soutenanceNotificationFactory->createNotificationAvisRendus($these);
+                        $this->notifierService->trigger($notif);
+                    } catch (\Notification\Exception\RuntimeException $e) {
+                        // aucun destinataire, todo : cas à gérer !
+                    }
                 }
 
                 $this->redirect()->toRoute('soutenance/avis-soutenance/afficher', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true);

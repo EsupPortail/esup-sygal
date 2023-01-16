@@ -3,6 +3,7 @@
 namespace Formation\Controller;
 
 use Fichier\Service\Fichier\FichierStorageService;
+use Formation\Service\Notification\FormationNotificationFactory;
 use Formation\Service\Session\SessionService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -12,7 +13,7 @@ use Structure\Service\StructureDocument\StructureDocumentService;
 use Doctorant\Service\DoctorantService;
 use Doctrine\ORM\EntityManager;
 use Formation\Service\Inscription\InscriptionService;
-use Formation\Service\Notification\NotifierService;
+use Notification\Service\NotifierService;
 use Formation\Service\Presence\PresenceService;
 use Interop\Container\ContainerInterface;
 use Laminas\View\Renderer\PhpRenderer;
@@ -68,6 +69,10 @@ class InscriptionControllerFactory {
         /** forms *****************************************************************************************************/
         /** autres*****************************************************************************************************/
         $controller->setRenderer($renderer);
+
+        /** @var \Formation\Service\Notification\FormationNotificationFactory $formationNotificationFactory */
+        $formationNotificationFactory = $container->get(FormationNotificationFactory::class);
+        $controller->setFormationNotificationFactory($formationNotificationFactory);
 
         return $controller;
     }

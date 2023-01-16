@@ -14,7 +14,7 @@ use Depot\Event\EventsInterface;
 use Depot\Service\FichierThese\Exception\DepotImpossibleException;
 use Depot\Service\FichierThese\Exception\ValidationImpossibleException;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
-use Depot\Service\Notification\NotifierServiceAwareTrait;
+use Depot\Service\Notification\DepotNotificationFactoryAwareTrait;
 use Depot\Service\These\DepotServiceAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
@@ -33,7 +33,7 @@ use Laminas\Form\Element\Hidden;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
-use Notification\Exception\NotificationException;
+use Notification\Service\NotifierServiceAwareTrait;
 use These\Entity\Db\These;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
@@ -48,6 +48,7 @@ class FichierTheseController extends AbstractController
     use VersionFichierServiceAwareTrait;
     use IdifyFilterAwareTrait;
     use NotifierServiceAwareTrait;
+    use DepotNotificationFactoryAwareTrait;
     use IndividuServiceAwareTrait;
     use ValidationServiceAwareTrait;
     use DepotValidationServiceAwareTrait;
@@ -279,10 +280,10 @@ class FichierTheseController extends AbstractController
             // si une thèse est déposée, on notifie de BdD
             // todo: déplacer ceci dans un service écoutant l'événement "fichier de thèse téléversé" déclenché ci-dessus
             if ($nature->estThesePdf()) {
-                $notif = $this->depotNotifierService->getNotificationFactory()->createNotificationForTheseTeleversee($these, $version);
+                $notif = $this->depotNotificationFactory->createNotificationForTheseTeleversee($these, $version);
                 try {
-                    $this->depotNotifierService->trigger($notif);
-                } catch (NotificationException $e) {
+                    $this->notifierService->trigger($notif);
+                } catch (Exception $e) {
                     return new JsonModel([
                         'errors' => array_filter([
                             $e->getMessage(),
@@ -295,13 +296,13 @@ class FichierTheseController extends AbstractController
             // si un rapport de soutenance est déposé, on notifie de BdD
             // todo: déplacer ceci dans un service écoutant l'événement "fichier de thèse téléversé" déclenché ci-dessus
             if ($nature->estRapportSoutenance()) {
-                $notif = $this->depotNotifierService->getNotificationFactory()->createNotificationForFichierTeleverse($these);
+                $notif = $this->depotNotificationFactory->createNotificationForFichierTeleverse($these);
                 $notif
                     ->setSubject("Dépôt du rapport de soutenance")
                     ->setTemplatePath('depot/depot/mail/notif-depot-rapport-soutenance');
                 try {
-                    $this->depotNotifierService->trigger($notif);
-                } catch (NotificationException $e) {
+                    $this->notifierService->trigger($notif);
+                } catch (Exception $e) {
                     return new JsonModel([
                         'errors' => array_filter([
                             $e->getMessage(),
@@ -520,8 +521,8 @@ class FichierTheseController extends AbstractController
 
         if ($notifier) {
             $destinataires = $notifier;
-            $notif = $this->depotNotifierService->getNotificationFactory()->createNotificationFusionFini($destinataires, $these, $outputFilePath);
-            $this->depotNotifierService->trigger($notif);
+            $notif = $this->depotNotificationFactory->createNotificationFusionFini($destinataires, $these, $outputFilePath);
+            $this->notifierService->trigger($notif);
             echo "Destinataires du courriel envoyé: " . implode(",",$notif->getTo());
             echo PHP_EOL;
         }

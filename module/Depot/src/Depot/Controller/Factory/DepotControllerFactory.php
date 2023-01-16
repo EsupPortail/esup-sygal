@@ -9,7 +9,7 @@ use Application\Service\Validation\ValidationService;
 use Application\Service\Variable\VariableService;
 use Depot\Controller\DepotController;
 use Depot\Service\FichierThese\FichierTheseService;
-use Depot\Service\Notification\NotifierService;
+use Depot\Service\Notification\DepotNotificationFactory;
 use Depot\Service\These\DepotService;
 use Depot\Service\Validation\DepotValidationService;
 use Doctrine\ORM\EntityManager;
@@ -19,6 +19,7 @@ use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use Laminas\EventManager\EventManager;
 use Laminas\View\Renderer\PhpRenderer;
+use Notification\Service\NotifierService;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 use These\Service\Acteur\ActeurService;
@@ -107,7 +108,7 @@ class DepotControllerFactory
         $controller->setUniteRechercheService($uniteService);
         $controller->setMailConfirmationService($mailConfirmationService);
         $controller->setEntityManager($entityManager);
-        $controller->setDepotNotifierService($notifierService);
+        $controller->setNotifierService($notifierService);
         $controller->setUtilisateurService($utilisateurService);
         $controller->setRdvBuTheseDoctorantForm($rdvBuTheseDoctorantForm);
         $controller->setRdvBuTheseForm($rdvBuTheseForm);
@@ -120,6 +121,10 @@ class DepotControllerFactory
         /** @var DepotService $depotService */
         $depotService = $container->get(DepotService::class);
         $controller->setDepotService($depotService);
+
+        /** @var \Depot\Service\Notification\DepotNotificationFactory $depotNotificationFactory */
+        $depotNotificationFactory = $container->get(DepotNotificationFactory::class);
+        $controller->setDepotNotificationFactory($depotNotificationFactory);
 
         // gestion d'événements : DepotService écoute certains événement de FichierTheseController
         $controller->setEventManager($eventManager);

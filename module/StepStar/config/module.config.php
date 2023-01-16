@@ -29,8 +29,6 @@ use StepStar\Service\Log\LogService;
 use StepStar\Service\Log\LogServiceFactory;
 use StepStar\Service\Log\Recherche\LogSearchService;
 use StepStar\Service\Log\Recherche\LogSearchServiceFactory;
-use StepStar\Service\Notification\NotificationService;
-use StepStar\Service\Notification\NotificationServiceFactory;
 use StepStar\Service\Oai\OaiService;
 use StepStar\Service\Oai\OaiServiceFactory;
 use StepStar\Service\Soap\SoapClient;
@@ -423,7 +421,6 @@ return [
             LogSearchService::class => LogSearchServiceFactory::class,
 
             FetchService::class => FetchServiceFactory::class,
-            NotificationService::class => NotificationServiceFactory::class,
         ],
     ],
     'controllers' => [

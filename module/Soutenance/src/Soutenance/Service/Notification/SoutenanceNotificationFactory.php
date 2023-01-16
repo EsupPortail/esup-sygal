@@ -1,6 +1,6 @@
 <?php
 
-namespace Soutenance\Service\Notifier;
+namespace Soutenance\Service\Notification;
 
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
@@ -12,22 +12,27 @@ use DateTime;
 use Doctorant\Entity\Db\Doctorant;
 use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
-use InvalidArgumentException;
-use Laminas\View\Helper\Url as UrlHelper;
-use Notification\Exception\NotificationException;
+use Notification\Exception\RuntimeException;
+use Notification\Factory\NotificationFactory;
 use Notification\Notification;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Template\MailTemplates;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use Soutenance\Service\Url\UrlServiceAwareTrait;
 use These\Entity\Db\These;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
-use UnicaenApp\Exception\LogicException;
-use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Entity\Db\RoleInterface;
+use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
-class NotifierService extends \Notification\Service\NotifierService
+/**
+ * Classe de construction de notifications par mail.
+ *
+ * @author Unicaen
+ */
+class SoutenanceNotificationFactory extends NotificationFactory
 {
     use ActeurServiceAwareTrait;
     use EmailTheseServiceAwareTrait;
@@ -37,23 +42,15 @@ class NotifierService extends \Notification\Service\NotifierService
     use TheseServiceAwareTrait;
     use EmailTheseServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
-
-    /**
-     * @var UrlHelper
-     */
-    protected $urlHelper;
-
-    public function setUrlHelper($urlHelper)
-    {
-        $this->urlHelper = $urlHelper;
-    }
+    use RenduServiceAwareTrait;
+    use UrlServiceAwareTrait;
 
     /**
      * @return string[]
      */
-    protected function getEmailAdministrateurTechnique() : array
+    protected function getEmailAdministrateurTechnique(): array
     {
-        $individus = $this->getIndividuService()->getRepository()->findByRole(Role::CODE_ADMIN_TECH);
+        $individus = $this->individuService->getRepository()->findByRole(Role::CODE_ADMIN_TECH);
         $emails = [];
         foreach ($individus as $individu) {
             $email = $individu->getEmailUtilisateur();
@@ -64,33 +61,38 @@ class NotifierService extends \Notification\Service\NotifierService
 
     /**
      * @param Validation $validation
+     * @return \Notification\Notification
      * @see Application/view/soutenance/notification/devalidation.phtml
      */
-    public function triggerDevalidationProposition($validation)
+    public function createNotificationDevalidationProposition(Validation $validation): Notification
     {
         $mail = $validation->getIndividu()->getEmailPro();
         $these = $validation->getThese();
 
-        if ($mail !== null) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Votre validation de la proposition de soutenance a été annulée")
-                ->setTo($mail)
-                ->setTemplatePath('soutenance/notification/devalidation')
-                ->setTemplateVariables([
-                    'validation' => $validation,
-                    'these' => $these,
-                ]);
-            $this->trigger($notif);
+        if (!$mail) {
+            throw new RuntimeException("Aucune adresse mail trouvée pour l'individu {$validation->getIndividu()}");
         }
+
+        $notif = new Notification();
+        $notif
+            ->setSubject("Votre validation de la proposition de soutenance a été annulée")
+            ->setTo($mail)
+            ->setTemplatePath('soutenance/notification/devalidation')
+            ->setTemplateVariables([
+                'validation' => $validation,
+                'these' => $these,
+            ]);
+
+        return $notif;
     }
 
     /**
      * @param These $these
      * @param Validation $validation
+     * @return \Notification\Notification
      * @see Application/view/soutenance/notification/validation-acteur.phtml
      */
-    public function triggerValidationProposition(These $these, Validation $validation)
+    public function createNotificationValidationProposition(These $these, Validation $validation): Notification
     {
         $emails = $this->emailTheseService->fetchEmailActeursDirects($these);
 
@@ -98,26 +100,29 @@ class NotifierService extends \Notification\Service\NotifierService
             return $s !== null;
         });
 
-        if (!empty($emails)) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Une validation de votre proposition de soutenance vient d'être faite")
-                ->setTo($emails)
-                ->setTemplatePath('soutenance/notification/validation-acteur')
-                ->setTemplateVariables([
-                    'validation' => $validation,
-                    'these' => $these,
-                ]);
-            $this->trigger($notif);
+        if (empty($emails)) {
+            throw new RuntimeException("Aucune adresse mail trouvée pour les acteurs directs de la thèse {$these->getId()}");
         }
+
+        $notif = new Notification();
+        $notif
+            ->setSubject("Une validation de votre proposition de soutenance vient d'être faite")
+            ->setTo($emails)
+            ->setTemplatePath('soutenance/notification/validation-acteur')
+            ->setTemplateVariables([
+                'validation' => $validation,
+                'these' => $these,
+            ]);
+
+        return $notif;
     }
 
     /**
      * @param These $these
+     * @return \Notification\Notification
      * @see Application/view/soutenance/notification/validation-structure.phtml
-     * @throws NotificationException
      */
-    public function triggerNotificationUniteRechercheProposition(These $these)
+    public function createNotificationUniteRechercheProposition(These $these): Notification
     {
         $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
         $panic = !($this->emailTheseService->hasEmailsByEtablissement($individuRoles, $these));
@@ -135,7 +140,8 @@ class NotifierService extends \Notification\Service\NotifierService
                     'type' => 'unité de recherche',
                     'panic' => $panic,
                 ]);
-            $this->trigger($notif);
+
+            return $notif;
         } else {
             $emailsAdmin = $this->getEmailAdministrateurTechnique();
             $emailsMdd = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
@@ -151,15 +157,17 @@ class NotifierService extends \Notification\Service\NotifierService
                     'type' => 'unité de recherche',
                     'panic' => true,
                 ]);
-            $this->trigger($notif);
+
+            return $notif;
         }
     }
 
     /**
      * @param These $these
+     * @return \Notification\Notification
      * @see Application/view/soutenance/notification/validation-structure.phtml
      */
-    public function triggerNotificationEcoleDoctoraleProposition(These $these)
+    public function createNotificationEcoleDoctoraleProposition(These $these): Notification
     {
         $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
         $panic = !($this->emailTheseService->hasEmailsByEtablissement($individuRoles, $these));
@@ -177,7 +185,8 @@ class NotifierService extends \Notification\Service\NotifierService
                     'type' => 'école doctorale',
                     'panic' => $panic,
                 ]);
-            $this->trigger($notif);
+
+            return $notif;
         } else {
             $emailsAdmin = $this->getEmailAdministrateurTechnique();
             $emailsMdd = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
@@ -193,15 +202,17 @@ class NotifierService extends \Notification\Service\NotifierService
                     'type' => 'école doctorale',
                     'panic' => true,
                 ]);
-            $this->trigger($notif);
+
+            return $notif;
         }
     }
 
     /**
      * @param These $these
+     * @return \Notification\Notification
      * @see Application/view/soutenance/notification/validation-structure.phtml
      */
-    public function triggerNotificationBureauDesDoctoratsProposition(These $these)
+    public function createNotificationBureauDesDoctoratsProposition(These $these): Notification
     {
         $email = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
 
@@ -216,7 +227,8 @@ class NotifierService extends \Notification\Service\NotifierService
                     'type' => 'maison du doctorat',
                     'panic' => false,
                 ]);
-            $this->trigger($notif);
+
+            return $notif;
         } else {
             $emailsAdmin = $this->getEmailAdministrateurTechnique();
             $emailsMdd = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
@@ -232,12 +244,16 @@ class NotifierService extends \Notification\Service\NotifierService
                     'type' => 'maison du doctorat',
                     'panic' => true,
                 ]);
-            $this->trigger($notif);
+
+            return $notif;
         }
     }
 
-    /** @param These $these */
-    public function triggerNotificationPropositionValidee(These $these)
+    /**
+     * @param \These\Entity\Db\These $these
+     * @return \Notification\Notification
+     */
+    public function createNotificationPropositionValidee(These $these): Notification
     {
         $emailsBDD = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
         $emailsED = $this->emailTheseService->fetchEmailEcoleDoctorale($these);
@@ -252,20 +268,24 @@ class NotifierService extends \Notification\Service\NotifierService
         if (!empty($emails)) {
             $notif = new Notification();
             $notif
-                ->setSubject("Validation de proposition de soutenance de ".$these->getDoctorant()->getIndividu()->getNomComplet())
+                ->setSubject("Validation de proposition de soutenance de " . $these->getDoctorant()->getIndividu()->getNomComplet())
                 ->setTo($emails)
                 ->setTemplatePath('soutenance/notification/validation-soutenance')
                 ->setTemplateVariables([
                     'these' => $these,
                 ]);
-            $this->trigger($notif);
+
+            return $notif;
         } else {
-            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
+            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
         }
     }
 
-    /** @param These $these */
-    public function triggerNotificationPresoutenance($these)
+    /**
+     * @param $these
+     * @return \Notification\Notification
+     */
+    public function createNotificationPresoutenance($these): Notification
     {
         $email = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
 
@@ -278,9 +298,10 @@ class NotifierService extends \Notification\Service\NotifierService
                 ->setTemplateVariables([
                     'these' => $these,
                 ]);
-            $this->trigger($notif);
+
+            return $notif;
         } else {
-            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
+            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
         }
     }
 
@@ -289,8 +310,9 @@ class NotifierService extends \Notification\Service\NotifierService
      * @param Individu $currentUser
      * @param RoleInterface $currentRole
      * @param string $motif
+     * @return \Notification\Notification
      */
-    public function triggerRefusPropositionSoutenance($these, $currentUser, $currentRole, $motif)
+    public function createNotificationRefusPropositionSoutenance($these, $currentUser, $currentRole, $motif): Notification
     {
         $emails = $this->emailTheseService->fetchEmailActeursDirects($these);
 
@@ -310,12 +332,14 @@ class NotifierService extends \Notification\Service\NotifierService
                     'motif' => $motif,
                     'these' => $these,
                 ]);
-            $this->trigger($notif);
+
+            return $notif;
         } else {
-            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
+            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
         }
 
     }
+
 
     /** ENGAGEMENT IMPARTIALITE ***************************************************************************************/
 
@@ -324,8 +348,9 @@ class NotifierService extends \Notification\Service\NotifierService
      * @param Proposition $proposition
      * @param Membre $membre
      * @param string $url
+     * @return \Notification\Notification
      */
-    public function triggerDemandeSignatureEngagementImpartialite(These $these, Proposition $proposition, Membre $membre, string $url)
+    public function createNotificationDemandeSignatureEngagementImpartialite(These $these, Proposition $proposition, Membre $membre, string $url): Notification
     {
         $email = $membre->getEmail();
 
@@ -341,9 +366,10 @@ class NotifierService extends \Notification\Service\NotifierService
                     'membre' => $membre,
                     'url' => $url,
                 ]);
-            $this->trigger($notif);
+
+            return $notif;
         } else {
-            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
+            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
         }
 
     }
@@ -353,7 +379,7 @@ class NotifierService extends \Notification\Service\NotifierService
      * @param Proposition $proposition
      * @param Membre $membre
      */
-    public function triggerSignatureEngagementImpartialite($these, $proposition, $membre)
+    public function createNotificationSignatureEngagementImpartialite($these, $proposition, $membre): Notification
     {
         $email = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
 
@@ -368,9 +394,10 @@ class NotifierService extends \Notification\Service\NotifierService
                     'proposition' => $proposition,
                     'membre' => $membre,
                 ]);
-            $this->trigger($notif);
+
+            return $notif;
         } else {
-            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
+            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
         }
 
     }
@@ -380,9 +407,8 @@ class NotifierService extends \Notification\Service\NotifierService
      * @param Proposition $proposition
      * @param Membre $membre
      */
-    public function triggerRefusEngagementImpartialite($these, $proposition, $membre)
+    public function createNotificationRefusEngagementImpartialite($these, $proposition, $membre): Notification
     {
-
         $emailsAD = $this->emailTheseService->fetchEmailActeursDirects($these);
         $emailsBDD = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
         $emails = array_merge($emailsAD, $emailsBDD);
@@ -402,9 +428,10 @@ class NotifierService extends \Notification\Service\NotifierService
                     'proposition' => $proposition,
                     'membre' => $membre,
                 ]);
-            $this->trigger($notif);
+
+            return $notif;
         } else {
-            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
+            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
         }
 
     }
@@ -414,7 +441,7 @@ class NotifierService extends \Notification\Service\NotifierService
      * @param Proposition $proposition
      * @param Membre $membre
      */
-    public function triggerAnnulationEngagementImpartialite($these, $proposition, $membre)
+    public function createNotificationAnnulationEngagementImpartialite($these, $proposition, $membre): Notification
     {
         $email = $membre->getEmail();
 
@@ -429,46 +456,21 @@ class NotifierService extends \Notification\Service\NotifierService
                     'proposition' => $proposition,
                     'membre' => $membre,
                 ]);
-            $this->trigger($notif);
+
+            return $notif;
         } else {
-            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
+            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
         }
 
     }
 
-    /**
-     * @param These $these
-     * @param Proposition $proposition
-     * @param Membre $rapporteur
-     * @param string $url
-     */
-    public function triggerDemandeAvisSoutenance(These $these, Proposition $proposition, Membre $rapporteur, string $url)
-    {
-        $email = $rapporteur->getEmail();
 
-        if ($email !== null) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Demande de l'avis de soutenance de la thèse de " . $these->getDoctorant()->getIndividu())
-                ->setTo($email)
-                ->setTemplatePath('soutenance/notification/demande-avis-soutenance')
-                ->setTemplateVariables([
-                    'these' => $these,
-                    'proposition' => $proposition,
-                    'membre' => $rapporteur,
-                    'url' => $url,
-                ]);
-            $this->trigger($notif);
-        } else {
-            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
-        }
-
-    }
+    /**************************** avis ***************************/
 
     /**
      * @param These $these
      */
-    public function triggerAvisRendus($these)
+    public function createNotificationAvisRendus($these): Notification
     {
         $email = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
 
@@ -481,9 +483,10 @@ class NotifierService extends \Notification\Service\NotifierService
                 ->setTemplateVariables([
                     'these' => $these,
                 ]);
-            $this->trigger($notif);
+
+            return $notif;
         } else {
-            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
+            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
         }
 
     }
@@ -493,7 +496,7 @@ class NotifierService extends \Notification\Service\NotifierService
      * @param Avis $avis
      * @param string $url
      */
-    public function triggerAvisFavorable($these, $avis, $url = null)
+    public function createNotificationAvisFavorable($these, $avis, $url = null): Notification
     {
         $emailBDD = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
         $emailsDirecteurs = $this->emailTheseService->fetchEmailEncadrants($these);
@@ -516,9 +519,10 @@ class NotifierService extends \Notification\Service\NotifierService
                     'avis' => $avis,
                     'url' => $url,
                 ]);
-            $this->trigger($notif);
+
+            return $notif;
         } else {
-            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
+            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
         }
 
     }
@@ -528,7 +532,7 @@ class NotifierService extends \Notification\Service\NotifierService
      * @param Avis $avis
      * @param string $url
      */
-    public function triggerAvisDefavorable($these, $avis, $url = null)
+    public function createNotificationAvisDefavorable($these, $avis, $url = null): Notification
     {
         $emailsDirecteurs = $this->emailTheseService->fetchEmailEncadrants($these);
         $emailsED = $this->emailTheseService->fetchEmailEcoleDoctorale($these);
@@ -550,22 +554,54 @@ class NotifierService extends \Notification\Service\NotifierService
                     'avis' => $avis,
                     'url' => $url,
                 ]);
-            $this->trigger($notif);
+
+            return $notif;
         } else {
-            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
+            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
         }
 
     }
 
+
+    /**************************** présoutenance ***************************/
+
+    /**
+     * @param These $these
+     * @param Proposition $proposition
+     * @param Membre $rapporteur
+     * @param string $url
+     * @return \Notification\Notification
+     */
+    public function createNotificationDemandeAvisSoutenance(These $these, Proposition $proposition, Membre $rapporteur, string $url): Notification
+    {
+        $email = $rapporteur->getEmail();
+
+        if ($email !== null) {
+            $notif = new Notification();
+            $notif
+                ->setSubject("Demande de l'avis de soutenance de la thèse de " . $these->getDoctorant()->getIndividu())
+                ->setTo($email)
+                ->setTemplatePath('soutenance/notification/demande-avis-soutenance')
+                ->setTemplateVariables([
+                    'these' => $these,
+                    'proposition' => $proposition,
+                    'membre' => $rapporteur,
+                    'url' => $url,
+                ]);
+
+            return $notif;
+        } else {
+            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
+        }
+    }
 
     /**
      * @param These $these
      * @param Proposition $proposition
      * @param Avis[] $avis
      */
-    public function triggerFeuVertSoutenance($these, $proposition, $avis)
+    public function createNotificationFeuVertSoutenance($these, $proposition, $avis): Notification
     {
-
         $emailsActeurs = $this->emailTheseService->fetchEmailActeursDirects($these);
         $emailsED = $this->emailTheseService->fetchEmailEcoleDoctorale($these);
         $emailsUR = $this->emailTheseService->fetchEmailUniteRecherche($these);
@@ -586,20 +622,19 @@ class NotifierService extends \Notification\Service\NotifierService
                     'proposition' => $proposition,
                     'avis' => $avis,
                 ]);
-            $this->trigger($notif);
-        } else {
-            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
-        }
 
+            return $notif;
+        } else {
+            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
+        }
     }
 
     /**
      * @param These $these
      * @param Proposition $proposition
      */
-    public function triggerStopperDemarcheSoutenance($these, $proposition)
+    public function createNotificationStopperDemarcheSoutenance($these, $proposition): Notification
     {
-
         $emailsActeurs = $this->emailTheseService->fetchEmailActeursDirects($these);
         $emailsED = $this->emailTheseService->fetchEmailEcoleDoctorale($these);
         $emailsUR = $this->emailTheseService->fetchEmailUniteRecherche($these);
@@ -619,56 +654,25 @@ class NotifierService extends \Notification\Service\NotifierService
                     'these' => $these,
                     'proposition' => $proposition,
                 ]);
-            $this->trigger($notif);
+
+            return $notif;
         } else {
-            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
+            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
         }
-
-    }
-
-    /**
-     * @param These $these
-     * @param Utilisateur $utilisateur
-     * @param string $url
-     *
-     * @deprecated Pas utilisée !
-     */
-    public function triggerInitialisationCompte($these, $utilisateur, $url)
-    {
-
-        $email = $utilisateur->getEmail();
-        if ($email === null) throw new LogicException("Aucun email de fourni !");
-
-        $token = $utilisateur->getPasswordResetToken();
-        if ($token === null) throw new LogicException("Aucun token de fourni !");
-
-        if (!empty($email)) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Initialisation de votre compte pour la these de " . $these->getDoctorant()->getIndividu()->getNomComplet())
-                ->setTo($email)
-                ->setTemplatePath('soutenance/notification/init-compte')
-                ->setTemplateVariables([
-                    'these' => $these,
-                    'username' => $utilisateur->getUsername(),
-                    'url' => $url,
-                ]);
-            $this->trigger($notif);
-        } else {
-            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
-        }
-
     }
 
     /**
      * @param Proposition $proposition
      * @param Utilisateur $user
      * @param string $url
+     * @return \Notification\Notification
      */
-    public function triggerConnexionRapporteur(Proposition $proposition, Utilisateur $user, string $url)
+    public function createNotificationConnexionRapporteur(Proposition $proposition, Utilisateur $user, string $url): Notification
     {
         $email = $user->getEmail();
-        if ($email === null) throw new LogicException("Aucun email de fourni !");
+        if ($email === null) {
+            throw new RuntimeException("Aucun email de fourni !");
+        }
 
         if (!empty($email)) {
             $notif = new Notification();
@@ -682,24 +686,27 @@ class NotifierService extends \Notification\Service\NotifierService
                     'username' => $user->getUsername(),
                     'url' => $url,
                 ]);
-            $this->trigger($notif);
-        } else {
-            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$proposition->getThese()->getId().")");
-        }
 
+            return $notif;
+        } else {
+            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $proposition->getThese()->getId() . ")");
+        }
     }
 
     /**
      * @param Membre $membre
      * @param string $url
      */
-    public function triggerNotificationRapporteurRetard($membre, $url)
+    public function createNotificationNotificationRapporteurRetard($membre, $url): Notification
     {
-        if ($membre->getActeur() === null) throw new RuntimeException("Notification vers rapporteur [MembreId = " . $membre->getId() . "] impossible car aucun acteur n'est lié.");
+        if ($membre->getActeur() === null) {
+            throw new RuntimeException("Notification vers rapporteur [MembreId = " . $membre->getId() . "] impossible car aucun acteur n'est lié.");
+        }
 
         $email = $membre->getEmail();
-        if ($email === null) throw new RuntimeException("Notification vers rapporteur [MembreId = " . $membre->getId() . "] impossible car aucun email est donné pour l'individu associé [IndividuId = " . $membre->getIndividu()->getId() . "].");
-
+        if ($email === null) {
+            throw new RuntimeException("Notification vers rapporteur [MembreId = " . $membre->getId() . "] impossible car aucun email est donné pour l'individu associé [IndividuId = " . $membre->getIndividu()->getId() . "].");
+        }
 
         $these = $membre->getProposition()->getThese();
         $doctorant = $these->getDoctorant()->getIndividu();
@@ -716,11 +723,11 @@ class NotifierService extends \Notification\Service\NotifierService
                     'proposition' => $membre->getProposition(),
                     'url' => $url,
                 ]);
-            $this->trigger($notif);
-        } else {
-            throw new InvalidArgumentException("Aucun mail de disponible (".__METHOD__."::TheseId#".$these->getId().")");
-        }
 
+            return $notif;
+        } else {
+            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
+        }
     }
 
     /**
@@ -730,11 +737,10 @@ class NotifierService extends \Notification\Service\NotifierService
      * @param string $email
      * @param string $url
      * @param array $avisArray
+     * @return \Notification\Notification
      */
-    public function triggerEnvoiConvocationDoctorant(Doctorant $doctorant, Proposition $proposition, DateTime $date, string $email, string $url, array $avisArray)
+    public function createNotificationEnvoiConvocationDoctorant(Doctorant $doctorant, Proposition $proposition, DateTime $date, string $email, string $url, array $avisArray): Notification
     {
-        if ($email === null) throw new LogicException("Aucun mail n'est fourni pour l'envoi de la convocation.", 0);
-
         $these = $proposition->getThese();
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
@@ -754,7 +760,8 @@ class NotifierService extends \Notification\Service\NotifierService
                 'avisArray' => $avisArray,
 
             ]);
-        $this->trigger($notif);
+
+        return $notif;
     }
 
     /**
@@ -764,11 +771,10 @@ class NotifierService extends \Notification\Service\NotifierService
      * @param string $email
      * @param string $url
      * @param array $avisArray
+     * @return \Notification\Notification
      */
-    public function triggerEnvoiConvocationMembre(Membre $membre, Proposition $proposition, DateTime $date, string $email, string $url, array $avisArray)
+    public function createNotificationEnvoiConvocationMembre(Membre $membre, Proposition $proposition, DateTime $date, string $email, string $url, array $avisArray): Notification
     {
-        if ($email === null) throw new LogicException("Aucun mail n'est fourni pour l'envoi de la convocation.", 0);
-
         $doctorant = $proposition->getThese()->getDoctorant();
         $these = $proposition->getThese();
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
@@ -788,7 +794,28 @@ class NotifierService extends \Notification\Service\NotifierService
 
                 'avisArray' => $avisArray,
             ]);
-        $this->trigger($notif);
+
+        return $notif;
     }
 
+    public function createNotificationTransmettreDocumentsDirectionThese(These $these, Proposition $proposition) : Notification
+    {
+        $vars = ['these' => $these, 'proposition' => $proposition, 'doctorant' => $these->getDoctorant()];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::TRANSMETTRE_DOCUMENTS_DIRECTION, $vars);
+        $mail = $these->getDirecteursTheseEmails();
+        if (count($mail) === 0) {
+            throw new RuntimeException("Aucun mail trouvés pour les directeurs de thèse");
+        }
+
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($mail)
+            ->setBody($rendu->getCorps());
+
+        return $notif;
+    }
 }

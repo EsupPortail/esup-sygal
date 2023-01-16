@@ -7,8 +7,9 @@ use Application\EventRouterReplacerAwareTrait;
 use Depot\Entity\Db\FichierThese;
 use Depot\Service\FichierThese\FichierTheseServiceAwareInterface;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
-use Depot\Service\Notification\NotifierServiceAwareTrait;
+use Depot\Service\Notification\DepotNotificationFactoryAwareTrait;
 use Laminas\Console\Request as ConsoleRequest;
+use Notification\Service\NotifierServiceAwareTrait;
 use Retraitement\Form\Retraitement;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Filter\BytesFormatter;
@@ -20,6 +21,7 @@ class IndexController extends AbstractController
     use EventRouterReplacerAwareTrait;
     use FichierTheseServiceAwareTrait;
     use NotifierServiceAwareTrait;
+    use DepotNotificationFactoryAwareTrait;
 
     public function indexAction()
     {
@@ -113,8 +115,8 @@ class IndexController extends AbstractController
 
         if ($notifier) {
             $destinataires = $notifier;
-            $notif = $this->depotNotifierService->getNotificationFactory()->createNotificationForRetraitementFini($destinataires, $fichierTheseRetraite, $validite);
-            $this->depotNotifierService->trigger($notif);
+            $notif = $this->depotNotificationFactory->createNotificationForRetraitementFini($destinataires, $fichierTheseRetraite, $validite);
+            $this->notifierService->trigger($notif);
             echo "Destinataires du courriel envoyé: " . implode(",",$notif->getTo());
             echo PHP_EOL;
         }

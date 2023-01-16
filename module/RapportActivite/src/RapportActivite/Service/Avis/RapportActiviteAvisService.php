@@ -362,6 +362,9 @@ class RapportActiviteAvisService extends BaseService
         }
     }
 
+    /**
+     * @deprecated todo : à déplacer dans une RapportActiviteNotificationFactory
+     */
     public function newRapportActiviteAvisNotification(RapportActiviteAvis $rapportActiviteAvis): RapportActiviteAvisNotification
     {
         $notif = new RapportActiviteAvisNotification();

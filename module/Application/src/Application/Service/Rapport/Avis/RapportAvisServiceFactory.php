@@ -3,7 +3,6 @@
 namespace Application\Service\Rapport\Avis;
 
 use Structure\Service\Etablissement\EtablissementService;
-use Application\Service\Notification\NotifierService;
 use Interop\Container\ContainerInterface;
 
 class RapportAvisServiceFactory
@@ -12,15 +11,12 @@ class RapportAvisServiceFactory
     {
         /**
          * @var EtablissementService $etablissementService
-         * @var NotifierService $notifierService
          */
         $etablissementService = $container->get('EtablissementService');
-        $notifierService = $container->get(NotifierService::class);
 
         $service = new RapportAvisService();
 
         $service->setEtablissementService($etablissementService);
-        $service->setApplicationNotifierService($notifierService);
 
         return $service;
     }

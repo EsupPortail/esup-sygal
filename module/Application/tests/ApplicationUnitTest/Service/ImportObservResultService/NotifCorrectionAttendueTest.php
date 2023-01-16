@@ -7,7 +7,7 @@ use Import\Model\Repository\ImportObservResultRepository;
 use These\Entity\Db\These;
 use Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Import\Model\Service\ImportObservResultService;
-use Application\Service\Notification\NotifierService;
+use Notification\Service\NotifierService;
 use These\Service\These\TheseService;
 use ApplicationUnitTest\Test\Asset\EntityAsset;
 use ApplicationUnitTest\Test\Provider\MockProviderAwareTrait;

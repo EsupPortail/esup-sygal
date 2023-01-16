@@ -6,13 +6,14 @@ use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Soutenance\Service\Notification\SoutenanceNotificationFactory;
 use These\Service\Acteur\ActeurService;
 use These\Service\These\TheseService;
 use Interop\Container\ContainerInterface;
 use Soutenance\Form\Avis\AvisForm;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Membre\MembreService;
-use Soutenance\Service\Notifier\NotifierService;
+use Notification\Service\NotifierService;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
 
@@ -59,7 +60,7 @@ class AvisControllerFactory
         $controller->setTheseService($theseService);
         $controller->setValidationService($validationService);
         $controller->setActeurService($acteurService);
-        $controller->setSoutenanceNotifierService($notifierSoutenanceService);
+        $controller->setNotifierService($notifierSoutenanceService);
         $controller->setPropositionService($propositionService);
         $controller->setAvisService($avisService);
         $controller->setMembreService($membreService);
@@ -68,6 +69,10 @@ class AvisControllerFactory
         $controller->setFichierStorageService($fileService);
 
         $controller->setAvisForm($avisForm);
+
+        /** @var \Soutenance\Service\Notification\SoutenanceNotificationFactory $soutenanceNotificationFactory */
+        $soutenanceNotificationFactory = $container->get(SoutenanceNotificationFactory::class);
+        $controller->setSoutenanceNotificationFactory($soutenanceNotificationFactory);
 
         return $controller;
     }

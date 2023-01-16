@@ -3,7 +3,7 @@
 use These\Entity\Db\These;
 
 /**
- * @see \Soutenance\Service\Notifier\NotifierService::triggerAvisRendus()
+ * @see \Soutenance\Service\Notification\SoutenanceNotificationFactory::createNotificationAvisRendus()
  *
  * @var These $these
  */
@@ -24,9 +24,6 @@ $justification = true;
     <a href="<?php echo $url; ?>">page de gestion de la soutenance</a>.
 </p>
 
-<?php
-//    $email = $this->fetchEmailBdd($these);
-?>
 <?php if ($justification) : ?>
     <p>
         Vous avez reçu ce mail car :

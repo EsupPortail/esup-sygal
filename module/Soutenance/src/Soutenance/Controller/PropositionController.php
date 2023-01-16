@@ -8,6 +8,7 @@ use Information\Service\InformationServiceAwareTrait;
 use Soutenance\Provider\Template\PdfTemplates;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\Exporter\SermentExporter\SermentPdfExporter;
+use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use These\Entity\Db\Acteur;
@@ -41,7 +42,7 @@ use Soutenance\Provider\Validation\TypeValidation;
 use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Soutenance\Service\Notifier\NotifierServiceAwareTrait;
+use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\SignaturePresident\SiganturePresidentPdfExporter;
@@ -63,6 +64,7 @@ class PropositionController extends AbstractController
     use JustificatifServiceAwareTrait;
     use MembreServiceAwareTrait;
     use NotifierServiceAwareTrait;
+    use SoutenanceNotificationFactoryAwareTrait;
     use ParametreServiceAwareTrait;
     use PropositionServiceAwareTrait;
     use RoleServiceAwareTrait;
@@ -426,7 +428,12 @@ class PropositionController extends AbstractController
         if ($autorisation !== null) return $autorisation;
 
         $validation = $this->getValidationService()->validatePropositionSoutenance($these);
-        $this->getSoutenanceNotifierService()->triggerValidationProposition($these, $validation);
+        try {
+            $notif = $this->soutenanceNotificationFactory->createNotificationValidationProposition($these, $validation);
+            $this->notifierService->trigger($notif);
+        } catch (\Notification\Exception\RuntimeException $e) {
+            // aucun destinataire , todo : cas à gérer !
+        }
 
         $doctorant = $these->getDoctorant();
 
@@ -442,7 +449,14 @@ class PropositionController extends AbstractController
                 break;
             }
         }
-        if ($allValidated) $this->getSoutenanceNotifierService()->triggerNotificationUniteRechercheProposition($these);
+        if ($allValidated) {
+            try {
+                $notif = $this->soutenanceNotificationFactory->createNotificationUniteRechercheProposition($these);
+                $this->notifierService->trigger($notif);
+            } catch (\Notification\Exception\RuntimeException $e) {
+                // aucun destinataire , todo : cas à gérer !
+            }
+        }
 
         return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
 
@@ -466,17 +480,37 @@ class PropositionController extends AbstractController
         switch ($role->getCode()) {
             case Role::CODE_RESP_UR :
                 $this->getValidationService()->validateValidationUR($these, $individu);
-                $this->getSoutenanceNotifierService()->triggerNotificationEcoleDoctoraleProposition($these);
+                try {
+                    $notif = $this->soutenanceNotificationFactory->createNotificationEcoleDoctoraleProposition($these);
+                    $this->notifierService->trigger($notif);
+                } catch (\Notification\Exception\RuntimeException $e) {
+                    // aucun destinataire , todo : cas à gérer !
+                }
                 break;
             case Role::CODE_RESP_ED :
             case Role::CODE_GEST_ED :
                 $this->getValidationService()->validateValidationED($these, $individu);
-                $this->getSoutenanceNotifierService()->triggerNotificationBureauDesDoctoratsProposition($these);
+                try {
+                    $notif = $this->soutenanceNotificationFactory->createNotificationBureauDesDoctoratsProposition($these);
+                    $this->notifierService->trigger($notif);
+                } catch (\Notification\Exception\RuntimeException $e) {
+                    // aucun destinataire , todo : cas à gérer !
+                }
                 break;
             case Role::CODE_BDD :
                 $this->getValidationService()->validateValidationBDD($these, $individu);
-                $this->getSoutenanceNotifierService()->triggerNotificationPropositionValidee($these);
-                $this->getSoutenanceNotifierService()->triggerNotificationPresoutenance($these);
+                try {
+                    $notif = $this->soutenanceNotificationFactory->createNotificationPropositionValidee($these);
+                    $this->notifierService->trigger($notif);
+                } catch (\Notification\Exception\RuntimeException $e) {
+                    // aucun destinataire , todo : cas à gérer !
+                }
+                try {
+                    $notif = $this->soutenanceNotificationFactory->createNotificationPresoutenance($these);
+                    $this->notifierService->trigger($notif);
+                } catch (\Notification\Exception\RuntimeException $e) {
+                    // aucun destinataire , todo : cas à gérer !
+                }
 
                 $proposition = $this->getPropositionService()->findOneForThese($these);
                 $proposition->setEtat($this->getPropositionService()->findPropositionEtatByCode(Etat::ETABLISSEMENT));
@@ -509,7 +543,12 @@ class PropositionController extends AbstractController
                 $currentUser = $this->userContextService->getIdentityIndividu();
                 /** @var RoleInterface $currentRole */
                 $currentRole = $this->userContextService->getSelectedIdentityRole();
-                $this->getSoutenanceNotifierService()->triggerRefusPropositionSoutenance($these, $currentUser, $currentRole, $data['motif']);
+                try {
+                    $notif = $this->soutenanceNotificationFactory->createNotificationRefusPropositionSoutenance($these, $currentUser, $currentRole, $data['motif']);
+                    $this->notifierService->trigger($notif);
+                } catch (\Notification\Exception\RuntimeException $e) {
+                    // aucun destinataire , todo : cas à gérer !
+                }
             }
         }
 

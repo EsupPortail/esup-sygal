@@ -4,12 +4,13 @@ namespace Soutenance\Controller;
 
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Soutenance\Service\Notification\SoutenanceNotificationFactory;
 use These\Service\Acteur\ActeurService;
 use Interop\Container\ContainerInterface;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
 use Soutenance\Service\Evenement\EvenementService;
 use Soutenance\Service\Membre\MembreService;
-use Soutenance\Service\Notifier\NotifierService;
+use Notification\Service\NotifierService;
 use Soutenance\Service\Proposition\PropositionService;
 use UnicaenAuthToken\Service\TokenService;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
@@ -49,10 +50,14 @@ class EngagementImpartialiteControllerFactory
         $controller->setEvenementService($evenementService);
         $controller->setPropositionService($propositionService);
         $controller->setMembreService($membreService);
-        $controller->setSoutenanceNotifierService($notifierService);
+        $controller->setNotifierService($notifierService);
         $controller->setEngagementImpartialiteService($engagementImpartialiteService);
         $controller->setRenduService($renduService);
         $controller->setTokenService($tokenService);
+
+        /** @var \Soutenance\Service\Notification\SoutenanceNotificationFactory $soutenanceNotificationFactory */
+        $soutenanceNotificationFactory = $container->get(SoutenanceNotificationFactory::class);
+        $controller->setSoutenanceNotificationFactory($soutenanceNotificationFactory);
 
         return $controller;
     }

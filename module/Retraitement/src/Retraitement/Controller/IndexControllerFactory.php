@@ -5,9 +5,10 @@ namespace Retraitement\Controller;
 use Application\Entity\Db\Utilisateur;
 use Application\EventRouterReplacer;
 use Application\Service\Utilisateur\UtilisateurService;
-use Depot\Service\Notification\NotifierService;
+use Depot\Service\Notification\DepotNotificationFactory;
 use Interop\Container\ContainerInterface;
 use Laminas\Router\Http\TreeRouteStack;
+use Notification\Service\NotifierService;
 use UnicaenApp\Exception\RuntimeException;
 
 class IndexControllerFactory
@@ -32,7 +33,11 @@ class IndexControllerFactory
         $controller = new IndexController();
         $controller->setUtilisateurApplication($this->getUtilisateurApp($container));
         $controller->setEventRouterReplacer($routerReplacer);
-        $controller->setDepotNotifierService($notifierService);
+        $controller->setNotifierService($notifierService);
+
+        /** @var \Depot\Service\Notification\DepotNotificationFactory $depotNotificationFactory */
+        $depotNotificationFactory = $container->get(DepotNotificationFactory::class);
+        $controller->setDepotNotificationFactory($depotNotificationFactory);
 
         return $controller;
     }

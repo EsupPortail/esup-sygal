@@ -2,7 +2,6 @@
 
 namespace Depot\Notification;
 
-use Individu\Entity\Db\Individu;
 use Notification\Notification;
 use These\Entity\Db\Acteur;
 use These\Entity\Db\Interfaces\TheseAwareTrait;
@@ -11,65 +10,40 @@ class PasDeMailPresidentJury extends Notification
 {
     use TheseAwareTrait;
 
-    protected $templatePath = 'application/notification/mail/notif-pas-de-mail-president-jury';
+    protected ?string $templatePath = 'application/notification/mail/notif-pas-de-mail-president-jury';
 
     /**
      * @return static
      */
     public function prepare()
     {
-        /** @var Individu[] $unknownMails */
-        $unknownMails = [];
-        $to = $this->emailBdd;
+        $to = $this->emailsBdd;
         $cc = null;
 
-        $infoMessage = sprintf(
+        $successMessage = sprintf(
             "Un mail de notification vient d'être envoyé à la Maison du doctorat (%s)",
             $to,
         );
-
-        $errorMessage = null;
-        if (count($unknownMails)) {
-            $temp = current($unknownMails);
-            $source = $temp->getSource();
-            $errorMessage = sprintf(
-                "<strong>NB:</strong> Les directeurs de thèses suivants n'ont pas pu être notifiés " .
-                "car leur adresse électronique n'est pas connue dans %s : <br> %s",
-                $source,
-                implode(',', $unknownMails)
-            );
-        }
 
         $this
             ->setSubject("Pas de mail pour le président du jury de la thèse " . $this->these->getId())
             ->setTo($to)
             ->setCc($cc)
             ->setTemplateVariables([
-                'message' => $errorMessage,
                 'these' => $this->these,
                 'president' => $this->president,
             ]);
 
-        $this->setInfoMessages($infoMessage);
-        if ($errorMessage) {
-            $this->setWarningMessages($errorMessage);
-        }
+        $this->addSuccessMessage($successMessage);
 
         return $this;
     }
 
-    /**
-     * @var string
-     */
-    protected $emailBdd;
+    protected array $emailsBdd = [];
 
-    /**
-     * @param mixed $emailBdd
-     * @return self
-     */
-    public function setEmailBdd($emailBdd)
+    public function setEmailsBdd(array $emailsBdd): self
     {
-        $this->emailBdd = $emailBdd;
+        $this->emailsBdd = $emailsBdd;
         return $this;
     }
 

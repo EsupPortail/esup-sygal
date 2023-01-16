@@ -2,14 +2,13 @@
 
 namespace Application;
 
-use Application\Service\Notification\NotifierService;
-use Application\Service\Notification\NotifierServiceFactory;
+use Application\Service\Notification\ApplicationNotificationFactory;
+use Application\Service\Notification\ApplicationNotificationFactoryFactory;
 
 return [
     'service_manager' => [
         'factories' => [
-            NotifierService::class                       => NotifierServiceFactory::class,
-            \Notification\Service\NotifierService::class => NotifierServiceFactory::class, // substitution
+            ApplicationNotificationFactory::class => ApplicationNotificationFactoryFactory::class,
         ],
     ],
 ];

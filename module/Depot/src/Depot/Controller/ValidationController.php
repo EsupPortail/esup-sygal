@@ -3,18 +3,16 @@
 namespace Depot\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
-use Depot\Notification\ValidationRdvBuNotification;
 use Depot\Provider\Privilege\ValidationPrivileges;
-use Depot\Service\Notification\NotifierServiceAwareTrait;
+use Depot\Service\Notification\DepotNotificationFactoryAwareTrait;
 use Depot\Service\These\DepotServiceAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
 use Laminas\View\Model\ViewModel;
-use Notification\Notification;
+use Notification\Service\NotifierServiceAwareTrait;
 use These\Entity\Db\Acteur;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
@@ -24,6 +22,7 @@ class ValidationController extends AbstractController
     use TheseServiceAwareTrait;
     use DepotValidationServiceAwareTrait;
     use NotifierServiceAwareTrait;
+    use DepotNotificationFactoryAwareTrait;
     use RoleServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use DepotServiceAwareTrait;
@@ -42,7 +41,8 @@ class ValidationController extends AbstractController
                 $successMessage = "Validation de la page de couverture enregistrée avec succès.";
 
                 // notification
-                $this->depotNotifierService->triggerValidationPageDeCouvertureNotification($these, $action);
+                $notification = $this->depotNotificationFactory->createNotificationValidationPageDeCouverture($these, $action);
+                $this->notifierService->trigger($notification);
             }
             elseif ($action === 'devalider') {
                 $this->depotValidationService->unvalidatePageDeCouverture($these);
@@ -88,8 +88,7 @@ class ValidationController extends AbstractController
 
         // si un tableau est retourné par le plugin, l'opération a été confirmée
         if (is_array($result)) {
-            $notification = new ValidationRdvBuNotification();
-            $notification->setThese($these);
+            $notification = $this->depotNotificationFactory->createNotificationValidationRdvBu($these);
 
             if ($action === 'valider') {
                 $this->depotValidationService->validateRdvBu($these, $this->userContextService->getIdentityIndividu());
@@ -98,7 +97,6 @@ class ValidationController extends AbstractController
                 // notification (doctorant: à la 1ere validation seulement)
                 $notifierDoctorant = ! $this->depotValidationService->existsValidationRdvBuHistorisee($these);
                 $notification->setNotifierDoctorant($notifierDoctorant);
-                $this->depotNotifierService->triggerValidationRdvBu($notification);
             }
             elseif ($action === 'devalider') {
                 $this->depotValidationService->unvalidateRdvBu($these);
@@ -107,16 +105,14 @@ class ValidationController extends AbstractController
                 // notification
                 $notification->setEstDevalidation(true);
                 $notification->setNotifierDoctorant(false);
-                $this->depotNotifierService->triggerValidationRdvBu($notification);
             }
             else {
                 throw new RuntimeException("Action inattendue!");
             }
 
-//            $notificationLog = $this->notifierService->getMessage('<br>', 'info');
+            $this->notifierService->trigger($notification);
 
             $this->flashMessenger()->addSuccessMessage($successMessage);
-//            $this->flashMessenger()->addInfoMessage($notificationLog);
         }
 
         // récupération du modèle de vue auprès du plugin et passage de variables classique
@@ -174,9 +170,6 @@ class ValidationController extends AbstractController
         return $view;
     }
 
-    /**
-     * @throws \Notification\Exception\NotificationImpossibleException
-     */
     public function modifierValidationDepotTheseCorrigeeAction(): ViewModel
     {
         $these = $this->requestedThese();
@@ -190,27 +183,28 @@ class ValidationController extends AbstractController
                 $successMessage = "Validation enregistrée avec succès.";
 
                 // notification des directeurs de thèse
-                $this->depotService->notifierCorrectionsApportees($these);
+                $resultArray = $this->depotService->notifierCorrectionsApportees($these);
             }
             elseif ($action === 'devalider') {
                 $validation = $this->depotValidationService->unvalidateDepotTheseCorrigee($these);
                 $successMessage ="Validation annulée avec succès.";
 
                 // pas de notification par mail
+                $resultArray = null;
             }
             else {
                 throw new RuntimeException("Action inattendue!");
             }
 
-            $notificationLogs = $this->depotNotifierService->getLogs();
-
             $tvCode = $validation->getTypeValidation()->getCode();
             $this->flashMessenger()->addMessage($successMessage, "$tvCode/success");
-            if (isset($notificationLogs['info'])) {
-                $this->flashMessenger()->addMessage($notificationLogs['info'], "$tvCode/info");
-            }
-            if (isset($notificationLogs['danger'])) {
-                $this->flashMessenger()->addMessage($notificationLogs['danger'], "$tvCode/danger");
+            if ($resultArray) {
+                if ($resultArray[0] === 'success') {
+                    $this->flashMessenger()->addMessage($resultArray[1], "$tvCode/info");
+                }
+                if ($resultArray[0] === 'error') {
+                    $this->flashMessenger()->addMessage($resultArray[1], "$tvCode/danger");
+                }
             }
         }
 
@@ -234,6 +228,8 @@ class ValidationController extends AbstractController
         $result = $this->confirm()->execute();
         $action = $this->params()->fromQuery('action');
 
+        $notificationLogs = [];
+
         // si un tableau est retourné par le plugin, l'opération a été confirmée
         if (is_array($result)) {
             if ($action === 'valider') {
@@ -245,21 +241,27 @@ class ValidationController extends AbstractController
                 // notification par mail si plus aucune validation attendue
                 $results = $this->depotValidationService->getValidationsAttenduesPourCorrectionThese($these);
                 if (count($results) === 0) {
-                    $notif = new Notification();
-                    $notif
-                        ->setSubject("Validation des corrections de la thèse")
-                        ->setTemplatePath('application/notification/mail/notif-validation-correction-these')
-                        ->setTemplateVariables([
-                            'these' => $these,
-                            'role' => $this->roleService->getRepository()->findOneBy(['code' => Role::CODE_PRESIDENT_JURY]),
-                            'url' => $this->url()->fromRoute('these/depot', ['these' => $these->getId()], ['force_canonical' => true]),
-                        ]);
-                    // notification du BDD
-                    $this->depotNotifierService->triggerValidationCorrectionThese($notif, $these);
-                    // notification du doctorant
-                    $this->depotNotifierService->triggerValidationCorrectionTheseEtudiant($notif, $these);
+                    // notification de la MDD
+                    $notification = $this->depotNotificationFactory->createNotificationValidationCorrectionThese($these);
+                    $notificationResult = $this->notifierService->trigger($notification);
+                    $notificationLogs = array_merge_recursive($notificationLogs, array_filter([
+                        'success' => $notificationResult->getSuccessMessages(),
+                        'danger' => $notificationResult->getErrorMessages(),
+                    ]));
 
-                    //todo mail pour etudiant
+                    // notification du doctorant
+                    try {
+                        $notification = $this->depotNotificationFactory->createNotificationValidationCorrectionTheseEtudiant($these);
+                        $notificationResult = $this->notifierService->trigger($notification);
+                        $notificationLogs = array_merge_recursive($notificationLogs, array_filter([
+                            'success' => $notificationResult->getSuccessMessages(),
+                            'danger' => $notificationResult->getErrorMessages(),
+                        ]));
+                    } catch (\Notification\Exception\RuntimeException $e) {
+                        $notificationLogs = array_merge_recursive($notificationLogs, [
+                            'danger' => $e->getMessage(),
+                        ]);
+                    }
                 }
             }
             elseif ($action === 'devalider') {
@@ -274,12 +276,10 @@ class ValidationController extends AbstractController
                 throw new RuntimeException("Action inattendue!");
             }
 
-            $notificationLogs = $this->depotNotifierService->getLogs();
-
             $tvCode = $validation->getTypeValidation()->getCode();
             $this->flashMessenger()->addMessage($successMessage, "$tvCode/success");
             if (isset($notificationLogs['info'])) {
-                $this->flashMessenger()->addMessage($notificationLogs['info'], "$tvCode/info");
+                $this->flashMessenger()->addMessage($notificationLogs['success'], "$tvCode/info");
             }
             if (isset($notificationLogs['danger'])) {
                 $this->flashMessenger()->addMessage($notificationLogs['danger'], "$tvCode/danger");

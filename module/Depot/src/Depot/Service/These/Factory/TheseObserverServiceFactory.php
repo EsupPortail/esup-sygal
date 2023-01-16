@@ -2,31 +2,34 @@
 
 namespace Depot\Service\These\Factory;
 
-use Application\Service\Notification\NotifierService;
+use Notification\Service\NotifierService;
 use Depot\Service\These\TheseObserverService;
-use Laminas\ServiceManager\ServiceManager;
+use Psr\Container\ContainerInterface;
+use These\Service\Notification\TheseNotificationFactory;
 use These\Service\These\TheseService;
 
 class TheseObserverServiceFactory
 {
     /**
-     * Create service
-     *
-     * @param ServiceManager $serviveManager
-     * @return TheseObserverService
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __invoke(ServiceManager $serviveManager)
+    public function __invoke(ContainerInterface $container): TheseObserverService
     {
         /**
          * @var TheseService $theseService
          * @var NotifierService $notifierService
          */
-        $theseService = $serviveManager->get('TheseService');
-        $notifierService = $serviveManager->get(NotifierService::class);
+        $theseService = $container->get('TheseService');
+        $notifierService = $container->get(NotifierService::class);
 
         $service = new TheseObserverService();
         $service->setTheseService($theseService);
-        $service->setApplicationNotifierService($notifierService);
+        $service->setNotifierService($notifierService);
+
+        /** @var \These\Service\Notification\TheseNotificationFactory $theseNotificationFactory */
+        $theseNotificationFactory = $container->get(TheseNotificationFactory::class);
+        $service->setTheseNotificationFactory($theseNotificationFactory);
 
         return $service;
     }
