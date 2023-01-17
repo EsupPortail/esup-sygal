@@ -7,13 +7,14 @@ use Application\Controller\AbstractController;
 use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\RouteMatch;
-use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use Depot\Entity\Db\FichierThese;
+use Depot\Event\EventsInterface;
 use Depot\Service\FichierThese\Exception\DepotImpossibleException;
 use Depot\Service\FichierThese\Exception\ValidationImpossibleException;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Depot\Service\Notification\DepotNotificationFactoryAwareTrait;
 use Depot\Service\These\DepotServiceAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
@@ -32,7 +33,7 @@ use Laminas\Form\Element\Hidden;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
-use Notification\Exception\NotificationException;
+use Notification\Service\NotifierServiceAwareTrait;
 use These\Entity\Db\These;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
@@ -47,12 +48,11 @@ class FichierTheseController extends AbstractController
     use VersionFichierServiceAwareTrait;
     use IdifyFilterAwareTrait;
     use NotifierServiceAwareTrait;
+    use DepotNotificationFactoryAwareTrait;
     use IndividuServiceAwareTrait;
     use ValidationServiceAwareTrait;
     use DepotValidationServiceAwareTrait;
     use EventRouterReplacerAwareTrait;
-
-    const FICHIER_THESE_TELEVERSE = 'FICHIER_THESE_DEPOSE';
 
     public function deposesAction()
     {
@@ -270,7 +270,7 @@ class FichierTheseController extends AbstractController
 
             // déclenchement d'un événement "fichier de thèse téléversé"
             $this->events->trigger(
-                self::FICHIER_THESE_TELEVERSE,
+                EventsInterface::EVENT__FICHIER_THESE_TELEVERSE,
                 $these, [
                     'nature' => $nature,
                     'version' => $version,
@@ -280,10 +280,10 @@ class FichierTheseController extends AbstractController
             // si une thèse est déposée, on notifie de BdD
             // todo: déplacer ceci dans un service écoutant l'événement "fichier de thèse téléversé" déclenché ci-dessus
             if ($nature->estThesePdf()) {
-                $notif = $this->notifierService->getNotificationFactory()->createNotificationForTheseTeleversee($these, $version);
+                $notif = $this->depotNotificationFactory->createNotificationForTheseTeleversee($these, $version);
                 try {
                     $this->notifierService->trigger($notif);
-                } catch (NotificationException $e) {
+                } catch (Exception $e) {
                     return new JsonModel([
                         'errors' => array_filter([
                             $e->getMessage(),
@@ -296,13 +296,13 @@ class FichierTheseController extends AbstractController
             // si un rapport de soutenance est déposé, on notifie de BdD
             // todo: déplacer ceci dans un service écoutant l'événement "fichier de thèse téléversé" déclenché ci-dessus
             if ($nature->estRapportSoutenance()) {
-                $notif = $this->notifierService->getNotificationFactory()->createNotificationForFichierTeleverse($these);
+                $notif = $this->depotNotificationFactory->createNotificationForFichierTeleverse($these);
                 $notif
                     ->setSubject("Dépôt du rapport de soutenance")
                     ->setTemplatePath('depot/depot/mail/notif-depot-rapport-soutenance');
                 try {
                     $this->notifierService->trigger($notif);
-                } catch (NotificationException $e) {
+                } catch (Exception $e) {
                     return new JsonModel([
                         'errors' => array_filter([
                             $e->getMessage(),
@@ -521,7 +521,7 @@ class FichierTheseController extends AbstractController
 
         if ($notifier) {
             $destinataires = $notifier;
-            $notif = $this->notifierService->getNotificationFactory()->createNotificationFusionFini($destinataires, $these, $outputFilePath);
+            $notif = $this->depotNotificationFactory->createNotificationFusionFini($destinataires, $these, $outputFilePath);
             $this->notifierService->trigger($notif);
             echo "Destinataires du courriel envoyé: " . implode(",",$notif->getTo());
             echo PHP_EOL;

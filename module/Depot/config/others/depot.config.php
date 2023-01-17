@@ -32,6 +32,8 @@ use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporter;
 use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporterFactory;
 use Depot\Service\These\DepotService;
 use Depot\Service\These\Factory\DepotServiceFactory;
+use Depot\Service\These\Factory\TheseObserverServiceFactory;
+use Depot\Service\These\TheseObserverService;
 use Depot\Service\Url\UrlDepotService;
 use Depot\Service\Url\UrlDepotServiceFactory;
 use Depot\View\Helper\Url\UrlDepotHelperFactory;
@@ -261,13 +263,6 @@ return [
                         'validation-these-corrigee',
                     ],
                     'roles' => 'user',
-                ],
-                [
-                    'controller' => ObserverController::class,
-                    'action' => [
-                        'notify-date-butoir-correction-depassee',
-                    ],
-                    'roles' => [],
                 ],
                 [
                     'controller' => DepotController::class,
@@ -708,15 +703,6 @@ return [
     'console' => [
         'router' => [
             'routes' => [
-                'notify-date-butoir-correction-depassee' => [
-                    'options' => [
-                        'route' => 'notify-date-butoir-correction-depassee',
-                        'defaults' => [
-                            'controller' => ObserverController::class,
-                            'action' => 'notify-date-butoir-correction-depassee',
-                        ],
-                    ],
-                ],
                 'transfer-these-data' => [
                     'options' => [
                         'route' => 'transfer-these-data --source-id= --destination-id=',
@@ -1022,6 +1008,8 @@ return [
             DepotController::class => DepotControllerFactory::class,
             ConsoleController::class => ConsoleControllerFactory::class,
             ObserverController::class => ObserverControllerFactory::class,
+            TheseObserverService::class => TheseObserverServiceFactory::class,
+            'TheseObserverService' => TheseObserverServiceFactory::class,
         ],
     ],
     'controller_plugins' => [

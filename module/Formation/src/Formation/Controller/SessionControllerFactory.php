@@ -4,6 +4,7 @@ namespace Formation\Controller;
 
 use Fichier\Service\Fichier\FichierStorageService;
 use Formation\Service\Formation\FormationService;
+use Formation\Service\Notification\FormationNotificationFactory;
 use Formation\Service\Presence\PresenceService;
 use Formation\Service\SessionStructureValide\SessionStructureValideService;
 use Psr\Container\ContainerExceptionInterface;
@@ -12,7 +13,7 @@ use Structure\Service\Etablissement\EtablissementService;
 use Doctrine\ORM\EntityManager;
 use Formation\Form\Session\SessionForm;
 use Formation\Service\Inscription\InscriptionService;
-use Formation\Service\Notification\NotificationService;
+use Notification\Service\NotifierService;
 use Formation\Service\Session\SessionService;
 use Interop\Container\ContainerInterface;
 use Laminas\View\Renderer\PhpRenderer;
@@ -33,7 +34,7 @@ class SessionControllerFactory {
          * @var \Fichier\Service\Fichier\FichierStorageService $fichierStorageService
          * @var FormationService $formationService
          * @var InscriptionService $inscriptionService
-         * @var NotificationService $notificationService
+         * @var NotifierService $notificationService
          * @var PresenceService $presenceService
          * @var SessionService $sessionService
          * @var SessionStructureValideService $sessionStructureComplementaireService
@@ -43,7 +44,7 @@ class SessionControllerFactory {
         $fichierStorageService = $container->get(FichierStorageService::class);
         $formationService = $container->get(FormationService::class);
         $inscriptionService = $container->get(InscriptionService::class);
-        $notificationService = $container->get(NotificationService::class);
+        $notificationService = $container->get(NotifierService::class);
         $presenceService = $container->get(PresenceService::class);
         $sessionService = $container->get(SessionService::class);
         $sessionStructureComplementaireService = $container->get(SessionStructureValideService::class);
@@ -63,7 +64,7 @@ class SessionControllerFactory {
         $controller->setFichierStorageService($fichierStorageService);
         $controller->setFormationService($formationService);
         $controller->setInscriptionService($inscriptionService);
-        $controller->setNotificationService($notificationService);
+        $controller->setNotifierService($notificationService);
         $controller->setPresenceService($presenceService);
         $controller->setSessionService($sessionService);
         $controller->setSessionStructureValideService($sessionStructureComplementaireService);
@@ -71,6 +72,10 @@ class SessionControllerFactory {
         $controller->setSessionForm($sessionForm);
         /** Autre *****************************************************************************************************/
         $controller->setRenderer($renderer);
+
+        /** @var \Formation\Service\Notification\FormationNotificationFactory $formationNotificationFactory */
+        $formationNotificationFactory = $container->get(FormationNotificationFactory::class);
+        $controller->setFormationNotificationFactory($formationNotificationFactory);
 
         return $controller;
     }

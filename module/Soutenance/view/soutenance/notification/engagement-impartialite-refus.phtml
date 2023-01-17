@@ -5,7 +5,7 @@ use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 
 /**
- * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerRefusEngagementImpartialite()
+ * @see \Soutenance\Service\Notification\SoutenanceNotificationFactory::createNotificationRefusEngagementImpartialite()
  * @var These $these
  * @var Proposition $proposition
  * @var Membre $membre
@@ -23,11 +23,6 @@ $justification = true;
     <strong><?php echo $these->getTitre(); ?></strong>.
 </p>
 
-<?php
-    //$emails  = $this->fetchEmailActeursDirects($these);
-    //$emails[] = $this->fetchEmailBdd($these);
-?>
-?>
 <?php if ($justification) : ?>
     <p>
         Vous avez reçu ce mail car :

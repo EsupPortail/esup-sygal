@@ -6,7 +6,6 @@ use Application\Command\ShellCommandRunner;
 use Application\Command\ShellCommandRunnerTrait;
 use Application\Entity\Db\ValiditeFichier;
 use Application\Service\BaseService;
-use Application\Service\Notification\NotifierServiceAwareTrait;
 use Depot\Entity\Db\FichierThese;
 use Depot\Entity\Db\Repository\FichierTheseRepository;
 use Depot\Filter\NomFichierTheseFormatter;
@@ -46,7 +45,6 @@ class FichierTheseService extends BaseService
     use ValiditeFichierServiceAwareTrait;
     use RetraitementServiceAwareTrait;
     use EtablissementServiceAwareTrait;
-    use NotifierServiceAwareTrait;
     use PageDeCouverturePdfExporterAwareTrait;
     use ShellCommandRunnerTrait;
 

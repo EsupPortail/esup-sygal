@@ -9,7 +9,7 @@ class ChangementsResultatsThesesNotification extends Notification
 {
     use TheseAwareTrait;
 
-    protected $templatePath = 'these/these/mail/notif-evenement-import';
+    protected ?string $templatePath = 'these/these/mail/notif-evenement-import';
 
     /**
      * @return static

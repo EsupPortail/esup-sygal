@@ -4,6 +4,7 @@ namespace Soutenance\Controller;
 
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Soutenance\Service\Notification\SoutenanceNotificationFactory;
 use These\Service\Acteur\ActeurService;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
@@ -21,7 +22,7 @@ use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
 use Soutenance\Service\Evenement\EvenementService;
 use Soutenance\Service\Justificatif\JustificatifService;
 use Soutenance\Service\Membre\MembreService;
-use Soutenance\Service\Notifier\NotifierSoutenanceService;
+use Notification\Service\NotifierService;
 use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
@@ -47,7 +48,7 @@ class PresoutenanceControllerFactory
          * @var MembreService $membreService
          * @var TheseService $theseService
          * @var IndividuService $individuService
-         * @var NotifierSoutenanceService $notifierService
+         * @var NotifierService $notifierService
          * @var ActeurService $acteurService
          * @var ValidationService $validationService
          * @var RoleService $roleService
@@ -68,7 +69,7 @@ class PresoutenanceControllerFactory
         $theseService = $container->get('TheseService');
         $individuService = $container->get(IndividuService::class);
         $acteurService = $container->get(ActeurService::class);
-        $notifierService = $container->get(NotifierSoutenanceService::class);
+        $notifierService = $container->get(NotifierService::class);
         $validationService = $container->get(ValidationService::class);
         $roleService = $container->get('RoleService');
         $avisService = $container->get(AvisService::class);
@@ -100,7 +101,7 @@ class PresoutenanceControllerFactory
         $controller->setTheseService($theseService);
         $controller->setIndividuService($individuService);
         $controller->setActeurService($acteurService);
-        $controller->setNotifierSoutenanceService($notifierService);
+        $controller->setNotifierService($notifierService);
         $controller->setValidationService($validationService);
         $controller->setSourceService($sourceService);
         $controller->setRoleService($roleService);
@@ -119,6 +120,11 @@ class PresoutenanceControllerFactory
         $controller->setAdresseSoutenanceForm($adresseSoutenanceForm);
 
         $controller->setRenderer($renderer);
+
+        /** @var \Soutenance\Service\Notification\SoutenanceNotificationFactory $soutenanceNotificationFactory */
+        $soutenanceNotificationFactory = $container->get(SoutenanceNotificationFactory::class);
+        $controller->setSoutenanceNotificationFactory($soutenanceNotificationFactory);
+
         return $controller;
     }
 }

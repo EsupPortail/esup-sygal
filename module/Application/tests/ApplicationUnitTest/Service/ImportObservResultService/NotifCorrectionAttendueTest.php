@@ -7,7 +7,7 @@ use Import\Model\Repository\ImportObservResultRepository;
 use These\Entity\Db\These;
 use Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use Import\Model\Service\ImportObservResultService;
-use Application\Service\Notification\NotifierService;
+use Notification\Service\NotifierService;
 use These\Service\These\TheseService;
 use ApplicationUnitTest\Test\Asset\EntityAsset;
 use ApplicationUnitTest\Test\Provider\MockProviderAwareTrait;
@@ -37,8 +37,8 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
     public function getTypeCorrectionAttendue()
     {
         return [
-            [These::CORRECTION_AUTORISEE_FACULTATIVE],
-            [These::CORRECTION_AUTORISEE_OBLIGATOIRE],
+            [These::$CORRECTION_AUTORISEE_FACULTATIVE],
+            [These::$CORRECTION_AUTORISEE_OBLIGATOIRE],
         ];
     }
 
@@ -59,7 +59,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
             ->expects($this->exactly(1)) // 1 fois par record
             ->method('triggerCorrectionAttendue');
 
-        if ($typeCorrectionAttendue === These::CORRECTION_AUTORISEE_FACULTATIVE) {
+        if ($typeCorrectionAttendue === These::$CORRECTION_AUTORISEE_FACULTATIVE) {
             $this->service->handleImportObservResultsForCorrectionMineure();
         }
         else {
@@ -87,7 +87,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('triggerCorrectionAttendue');
 
-        if ($typeCorrectionAttendue === These::CORRECTION_AUTORISEE_FACULTATIVE) {
+        if ($typeCorrectionAttendue === These::$CORRECTION_AUTORISEE_FACULTATIVE) {
             $this->service->handleImportObservResultsForCorrectionMineure();
         }
         else {
@@ -114,7 +114,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('triggerCorrectionAttendue');
 
-        if ($typeCorrectionAttendue === These::CORRECTION_AUTORISEE_FACULTATIVE) {
+        if ($typeCorrectionAttendue === These::$CORRECTION_AUTORISEE_FACULTATIVE) {
             $this->service->handleImportObservResultsForCorrectionMineure();
         }
         else {
@@ -126,7 +126,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
 
     public function test_directeurs_de_these_ne_sont_pas_en_copie_de_la_notif_correction_mineure_attendue()
     {
-        $typeCorrectionAttendue = These::CORRECTION_AUTORISEE_FACULTATIVE;
+        $typeCorrectionAttendue = These::$CORRECTION_AUTORISEE_FACULTATIVE;
         $record = $this->createImportObservResult($typeCorrectionAttendue);
         $aujourdhui = new DateTime('today'); // set time to 0
 
@@ -144,7 +144,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
 
     public function test_directeurs_de_these_ne_sont_pas_en_copie_de_la_1ere_notif_correction_majeure_attendue()
     {
-        $typeCorrectionAttendue = These::CORRECTION_AUTORISEE_OBLIGATOIRE;
+        $typeCorrectionAttendue = These::$CORRECTION_AUTORISEE_OBLIGATOIRE;
         $record = $this->createImportObservResult($typeCorrectionAttendue);
         $aujourdhui = new DateTime('today'); // set time to 0
 
@@ -165,7 +165,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
 
     public function test_directeurs_de_these_sont_en_copie_de_la_2eme_notif_correction_majeure_attendue()
     {
-        $typeCorrectionAttendue = These::CORRECTION_AUTORISEE_OBLIGATOIRE;
+        $typeCorrectionAttendue = These::$CORRECTION_AUTORISEE_OBLIGATOIRE;
         $record = $this->createImportObservResult($typeCorrectionAttendue);
         $aujourdhui = new DateTime('today'); // set time to 0
 
@@ -223,7 +223,7 @@ class NotifCorrectionAttendueTest extends \PHPUnit_Framework_TestCase
         $this->service = new ImportObservResultService();
         $this->service->setEntityManager($em);
         $this->service->setTheseService($theseService);
-        $this->service->setNotifierService($this->notificationServiceMock);
+        $this->service->setApplicationNotifierService($this->notificationServiceMock);
         $this->service->setRepository($repository);
         $this->service->setNotificationDepotVersionCorrigeeAttenduRule($this->ruleMock);
     }

@@ -1,0 +1,27 @@
+<?php
+
+use Application\View\Renderer\PhpRenderer;
+use These\Entity\Db\These;
+
+/**
+ * @var PhpRenderer $this
+ * @var These $these
+ */
+?>
+
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.
+</p>
+<p>
+    Vous êtes informé-e qu'un sursis vient d'être accordé pour les corrections de la thèse
+    de <?php echo $these->getDoctorant() ?>. <br>
+    La date limite pour les corrections est désormais le
+    <?php echo $these->getDateButoirDepotVersionCorrigeeAvecSursisToString() ?>.
+</p>
+<p>
+    Pour rappel, la thèse de <?php echo $these->getDoctorant() ?> est en attente de corrections
+    <?php echo lcfirst($these->getCorrectionAutoriseeToString(true)) ?>.
+</p>

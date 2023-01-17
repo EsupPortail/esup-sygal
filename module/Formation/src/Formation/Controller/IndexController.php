@@ -4,15 +4,17 @@ namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
 use Doctorant\Entity\Db\Doctorant;
-use Individu\Entity\Db\Individu;
+use Doctorant\Service\DoctorantServiceAwareTrait;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
-use UnicaenApp\Service\EntityManagerAwareTrait;
+use Individu\Entity\Db\Individu;
 use Laminas\View\Model\ViewModel;
+use UnicaenApp\Service\EntityManagerAwareTrait;
 
 class IndexController extends AbstractController
 {
     use EntityManagerAwareTrait;
+    use DoctorantServiceAwareTrait;
 
     public function indexAction() : ViewModel
     {
@@ -26,7 +28,8 @@ class IndexController extends AbstractController
         if ($doctorantId !== null) {
             $doctorant = $this->getEntityManager()->getRepository(Doctorant::class)->find($doctorantId);
         } else {
-            $doctorant = null;
+            $user = $this->userContextService->getIdentityDb();
+            $doctorant = $this->doctorantService->getDoctorantsByUser($user);
         }
 
         if($doctorant) {

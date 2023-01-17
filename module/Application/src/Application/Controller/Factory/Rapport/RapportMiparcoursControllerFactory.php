@@ -9,7 +9,6 @@ use Application\Form\Rapport\RapportForm;
 use Application\Form\RapportMiparcoursForm;
 use Fichier\Service\Fichier\FichierService;
 use Individu\Service\IndividuService;
-use Application\Service\Notification\NotifierService;
 use Application\Service\Rapport\RapportService;
 use These\Service\These\TheseService;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
@@ -32,7 +31,6 @@ class RapportMiparcoursControllerFactory
          * @var FichierService        $fichierService
          * @var RapportService        $rapportService
          * @var VersionFichierService $versionFichierService
-         * @var NotifierService       $notificationService
          * @var IndividuService       $individuService
          * @var ValidationService     $validationService
          * @var RapportForm           $rapportForm
@@ -41,7 +39,6 @@ class RapportMiparcoursControllerFactory
         $fichierService = $container->get(FichierService::class);
         $rapportService = $container->get(RapportService::class);
         $versionFichierService = $container->get('VersionFichierService');
-        $notificationService = $container->get(NotifierService::class);
         $individuService = $container->get(IndividuService::class);
         $rapportForm = $container->get('FormElementManager')->get(RapportMiparcoursForm::class);
         $validationService = $container->get(ValidationService::class);
@@ -54,7 +51,6 @@ class RapportMiparcoursControllerFactory
         $controller->setRapportService($rapportService);
         $controller->setFichierService($fichierService);
         $controller->setVersionFichierService($versionFichierService);
-        $controller->setNotifierService($notificationService);
         $controller->setIndividuService($individuService);
         $controller->setForm($rapportForm);
         $controller->setValidationService($validationService);

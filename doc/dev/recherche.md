@@ -204,6 +204,7 @@ class FormationRechercheController extends AbstractController implements SearchC
         }
         /** @var LaminasPaginator $paginator */
         $paginator = $result;
+        //$paginator->setItemCountPerPage(-1); // désactive la pagination
 
         $model = new ViewModel([
             'title' => $this->title,

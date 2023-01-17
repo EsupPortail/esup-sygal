@@ -2,24 +2,23 @@
 
 namespace Depot\Service\These;
 
-use Application\Entity\Db\Utilisateur;
 use Application\Service\AuthorizeServiceAwareTrait;
 use Application\Service\BaseService;
-use Application\Service\Notification\NotifierServiceAwareTrait;
+use Application\Service\Notification\ApplicationNotificationFactoryAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Assert\Assertion;
 use DateTime;
-use Depot\Controller\FichierTheseController;
 use Depot\Entity\Db\Attestation;
 use Depot\Entity\Db\Diffusion;
 use Depot\Entity\Db\MetadonneeThese;
 use Depot\Entity\Db\RdvBu;
-use Depot\Notification\ValidationRdvBuNotification;
+use Depot\Event\EventsInterface;
 use Depot\Rule\AutorisationDiffusionRule;
 use Depot\Rule\SuppressionAttestationsRequiseRule;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Depot\Service\Notification\DepotNotificationFactoryAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\OptimisticLockException;
@@ -27,16 +26,18 @@ use Doctrine\ORM\ORMException;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use InvalidArgumentException;
 use Laminas\EventManager\Event;
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\ListenerAggregateInterface;
 use Laminas\EventManager\ListenerAggregateTrait;
-use Notification\Exception\NotificationImpossibleException;
+use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\Repository\TheseRepository;
 use These\Entity\Db\These;
 use These\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\Notification\TheseNotificationFactoryAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
@@ -48,7 +49,10 @@ class DepotService extends BaseService implements ListenerAggregateInterface
     use TheseServiceAwareTrait;
     use ListenerAggregateTrait;
     use DepotValidationServiceAwareTrait;
+    use ApplicationNotificationFactoryAwareTrait;
+    use TheseNotificationFactoryAwareTrait;
     use NotifierServiceAwareTrait;
+    use DepotNotificationFactoryAwareTrait;
     use FichierTheseServiceAwareTrait;
     use VariableServiceAwareTrait;
     use UserContextServiceAwareTrait;
@@ -99,8 +103,8 @@ class DepotService extends BaseService implements ListenerAggregateInterface
      */
     public function attach(EventManagerInterface $events, $priority = 1)
     {
-        // réaction à l'événement de dépôt d'un fichier de thèse
-        $events->attach(FichierTheseController::FICHIER_THESE_TELEVERSE, [$this, 'onFichierTheseTeleverse']);
+        $events->attach(EventsInterface::EVENT__FICHIER_THESE_TELEVERSE, [$this, 'onFichierTheseTeleverse']);
+        $events->attach(EventsInterface::EVENT__SURSIS_CORRECTION_ACCORDE, [$this, 'onSursisCorrectionAccorde']);
     }
 
     /**
@@ -122,9 +126,9 @@ class DepotService extends BaseService implements ListenerAggregateInterface
     {
         if ($forcage !== null) {
             Assertion::inArray($forcage, [
-                These::CORRECTION_AUTORISEE_FORCAGE_AUCUNE,
-                These::CORRECTION_AUTORISEE_FORCAGE_FACULTATIVE,
-                These::CORRECTION_AUTORISEE_FORCAGE_OBLIGATOIRE,
+                These::$CORRECTION_AUTORISEE_FORCAGE_AUCUNE,
+                These::$CORRECTION_AUTORISEE_FORCAGE_FACULTATIVE,
+                These::$CORRECTION_AUTORISEE_FORCAGE_OBLIGATOIRE,
             ]);
         }
 
@@ -176,6 +180,20 @@ class DepotService extends BaseService implements ListenerAggregateInterface
         if ($version->estVersionOriginale() && $version->estVersionCorrigee()) {
             $this->onFichierTheseTeleverseVersionCorrigee($these);
         }
+    }
+
+    public function onSursisCorrectionAccorde(Event $event)
+    {
+        /** @var \These\Entity\Db\These $these */
+        $these = $event->getTarget();
+
+        $notif = $this->depotNotificationFactory->createNotificationForAccordSursisCorrection($these);
+        $result = $this->notifierService->trigger($notif);
+
+        $event->setParam('logs', array_filter([
+            'success' => $result->getSuccessMessages(),
+            'danger' => $result->getErrorMessages(),
+        ]));
     }
 
     /**
@@ -424,14 +442,12 @@ class DepotService extends BaseService implements ListenerAggregateInterface
 
             // notification BDD et BU + doctorant (à la 1ere validation seulement)
             $notifierDoctorant = ! $this->depotValidationService->existsValidationRdvBuHistorisee($these);
-            $notification = new ValidationRdvBuNotification();
-            $notification->setThese($these);
+            $notification = $this->depotNotificationFactory
+                ->createNotificationValidationRdvBu($these);
             $notification->setNotifierDoctorant($notifierDoctorant);
-            $this->notifierService->triggerValidationRdvBu($notification);
-//            $notificationLog = $this->notifierService->getMessage('<br>', 'info');
+            $this->notifierService->trigger($notification);
 
             $this->addMessage($successMessage, MessageAwareInterface::SUCCESS);
-//            $this->addMessage($notificationLog, MessageAwareInterface::INFO);
         }
     }
 
@@ -469,15 +485,13 @@ EOS;
 
     /**
      * @param These $these
-     * @param \Application\Entity\Db\Utilisateur|null $utilisateur
      * @return array
-     * @throws \Notification\Exception\NotificationImpossibleException
      */
-    public function notifierCorrectionsApportees(These $these, ?Utilisateur $utilisateur = null): array
+    public function notifierCorrectionsApportees(These $these): array
     {
         $president = $these->getPresidentJury();
         if ($president === null) {
-            throw new NotificationImpossibleException("Aucun président du jury pour la thèse [".$these->getId()."]");
+            throw new InvalidArgumentException("Aucun président du jury pour la thèse [".$these->getId()."]");
         }
 
         //Recherche de l'utilisateur  associé à l'individu
@@ -486,8 +500,9 @@ EOS;
 
         // Notification directe de l'utilisateur déjà existant
         if (!empty($utilisateurs)) {
-            $this->getNotifierService()->triggerValidationDepotTheseCorrigee($these, end($utilisateurs));
-            return ['success', "Notification des corrections faite à <strong>".end($utilisateurs)->getEmail()."</strong>"];
+            $notification = $this->depotNotificationFactory->createNotificationValidationDepotTheseCorrigee($these, end($utilisateurs));
+            $result = $this->notifierService->trigger($notification);
+            return ['success', $result->getSuccessMessages()[0], $result];
         }
         else {
             // Recupération du "meilleur" email
@@ -500,14 +515,21 @@ EOS;
                 $individu->setEmailPro($email);
                 $username = ($individu->getNomUsuel() ?: $individu->getNomPatronymique()) . "_" . $president->getId();
                 $user = $this->utilisateurService->createFromIndividu($individu, $username, 'none');
+
                 $token = $this->userService->updateUserPasswordResetToken($user);
-                $this->getNotifierService()->triggerInitialisationCompte($user, $token);
-                $this->getNotifierService()->triggerValidationDepotTheseCorrigee($these);
-                return ['success', "Création de compte initialisée et notification des corrections faite à <strong>" . $email . "</strong>"];
+                $notification = $this->applicationNotificationFactory->createNotificationInitialisationCompte($user, $token);
+                $this->notifierService->trigger($notification);
+
+                $notification = $this->depotNotificationFactory->createNotificationValidationDepotTheseCorrigee($these);
+                $result = $this->notifierService->trigger($notification);
+
+                return ['success', "Création de compte initialisée. " . ($result->getSuccessMessages()[0] ?? '')];
             } else {
                 // Echec (si aucun mail, faudra le renseigner dans un membre fictif par exemple)
-                $this->getNotifierService()->triggerPasDeMailPresidentJury($these, $president);
-                return ['error', "Aucune action de réalisée car aucun email de trouvé."];
+                $notif = $this->theseNotificationFactory->createNotificationPasDeMailPresidentJury($these, $president);
+                $result = $this->notifierService->trigger($notif);
+
+                return ['error', "Aucune action réalisée car aucun email n'a été trouvé. " . ($result->getSuccessMessages()[0] ?? '')];
             }
         }
     }

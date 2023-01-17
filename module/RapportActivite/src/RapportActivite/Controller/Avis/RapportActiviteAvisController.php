@@ -5,11 +5,11 @@ namespace RapportActivite\Controller\Avis;
 use Application\Controller\AbstractController;
 use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilterAwareTrait;
-use Individu\Service\IndividuServiceAwareTrait;
-use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Closure;
 use Doctrine\ORM\NoResultException;
+use Individu\Service\IndividuServiceAwareTrait;
+use Laminas\EventManager\EventInterface;
 use Laminas\Http\Response;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Entity\Db\RapportActiviteAvis;
@@ -30,9 +30,7 @@ class RapportActiviteAvisController extends AbstractController
     use RapportActiviteAvisServiceAwareTrait;
     use RapportActiviteValidationServiceAwareTrait;
     use ValidationServiceAwareTrait;
-    use NotifierServiceAwareTrait;
     use IndividuServiceAwareTrait;
-    use NotifierServiceAwareTrait;
 
     use IdifyFilterAwareTrait;
     use EventRouterReplacerAwareTrait;
@@ -203,7 +201,11 @@ class RapportActiviteAvisController extends AbstractController
         return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()]);
     }
 
-    private function flashMessengerAddMessagesFromEvent(RapportActiviteAvisEvent $event)
+    /**
+     * @param RapportActiviteAvisEvent $event
+     * @param string $paramName
+     */
+    protected function flashMessengerAddMessagesFromEvent(EventInterface $event, string $paramName = 'logs')
     {
         if ($messages = $event->getMessages()) {
             foreach ($messages as $namespace => $message) {

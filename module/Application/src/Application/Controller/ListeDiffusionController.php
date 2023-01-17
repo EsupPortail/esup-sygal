@@ -2,6 +2,7 @@
 
 namespace Application\Controller;
 
+use Application\Service\Notification\ApplicationNotificationFactoryAwareTrait;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
 use Individu\Entity\Db\Individu;
@@ -15,7 +16,7 @@ use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressGenerator;
 use Application\Service\ListeDiffusion\ListeDiffusionServiceAwareTrait;
-use Application\Service\Notification\NotifierServiceAwareTrait;
+use Notification\Service\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use Doctrine\ORM\ORMException;
@@ -32,6 +33,7 @@ class ListeDiffusionController extends AbstractController
     use IndividuServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
     use NotifierServiceAwareTrait;
+    use ApplicationNotificationFactoryAwareTrait;
     use StructureServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
@@ -395,11 +397,12 @@ class ListeDiffusionController extends AbstractController
 
         // Envoi d'une notif aux admin tech
         $to = $this->fetchAdminTechEmails();
-        $this->notifierService->triggerAbonnesListeDiffusionSansAdresse(
+        $notif = $this->applicationNotificationFactory->createNotificationAbonnesListeDiffusionSansAdresse(
             $to,
             $this->liste,
             $individusAvecAdresse,
             $individusSansAdresse);
+        $this->notifierService->trigger($notif);
     }
 
     /**

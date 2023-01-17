@@ -16,7 +16,6 @@ use Fichier\Service\Fichier\Exception\FichierServiceException;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
-use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
@@ -43,7 +42,6 @@ class RapportActiviteService extends BaseService
     use FichierStorageServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use EtablissementServiceAwareTrait;
-    use NotifierServiceAwareTrait;
     use NatureFichierServiceAwareTrait;
     use RapportActiviteAvisServiceAwareTrait;
     use RapportActiviteValidationServiceAwareTrait;
@@ -395,6 +393,9 @@ class RapportActiviteService extends BaseService
         return $event;
     }
 
+    /**
+     * @deprecated todo : à déplacer dans une RapportActiviteNotificationFactory
+     */
     public function newRapportActiviteSupprimeNotification(RapportActivite $rapportActivite): RapportActiviteSupprimeNotification
     {
         $doctorant = $rapportActivite->getThese()->getDoctorant();

@@ -2,18 +2,21 @@
 
 namespace Depot\Service\These\Factory;
 
-use Application\Service\Notification\NotifierService;
+use Application\Service\Notification\ApplicationNotificationFactory;
 use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Variable\VariableService;
 use Depot\Service\FichierThese\FichierTheseService;
+use Depot\Service\Notification\DepotNotificationFactory;
 use Depot\Service\These\DepotService;
 use Depot\Service\Validation\DepotValidationService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Interop\Container\ContainerInterface;
+use Notification\Service\NotifierService;
 use Soutenance\Service\Membre\MembreService;
 use Structure\Service\Etablissement\EtablissementService;
 use These\Service\Acteur\ActeurService;
+use These\Service\Notification\TheseNotificationFactory;
 use These\Service\These\TheseService;
 use UnicaenAuth\Service\AuthorizeService;
 use UnicaenAuth\Service\User as UserService;
@@ -22,10 +25,8 @@ use Webmozart\Assert\Assert;
 class DepotServiceFactory
 {
     /**
-     * Create service
-     *
-     * @param ContainerInterface $container
-     * @return DepotService
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container): DepotService
     {
@@ -75,6 +76,18 @@ class DepotServiceFactory
         /** @var \These\Service\These\TheseService $theseService */
         $theseService = $container->get(TheseService::class);
         $service->setTheseService($theseService);
+
+        /** @var \Application\Service\Notification\ApplicationNotificationFactory $applicationNotificationFactory */
+        $applicationNotificationFactory = $container->get(ApplicationNotificationFactory::class);
+        $service->setApplicationNotificationFactory($applicationNotificationFactory);
+
+        /** @var \These\Service\Notification\TheseNotificationFactory $theseNotificationFactory */
+        $theseNotificationFactory = $container->get(TheseNotificationFactory::class);
+        $service->setTheseNotificationFactory($theseNotificationFactory);
+
+        /** @var \Depot\Service\Notification\DepotNotificationFactory $depotNotificationFactory */
+        $depotNotificationFactory = $container->get(DepotNotificationFactory::class);
+        $service->setDepotNotificationFactory($depotNotificationFactory);
 
         $this->injectConfig($service, $container);
 

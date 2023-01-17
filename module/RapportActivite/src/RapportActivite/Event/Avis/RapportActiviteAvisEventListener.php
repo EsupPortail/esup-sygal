@@ -2,18 +2,16 @@
 
 namespace RapportActivite\Event\Avis;
 
-use Application\Service\Notification\NotifierServiceAwareTrait;
+use Notification\Service\NotifierServiceAwareTrait;
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\ListenerAggregateInterface;
 use Laminas\EventManager\ListenerAggregateTrait;
-use Notification\Exception\NotificationException;
 use RapportActivite\Entity\Db\RapportActiviteAvis;
 use RapportActivite\Rule\Avis\RapportActiviteAvisNotificationRuleAwareTrait;
 use RapportActivite\Rule\Validation\RapportActiviteValidationRuleAwareTrait;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
 use RapportActivite\Service\Validation\RapportActiviteValidationServiceAwareTrait;
-use UnicaenApp\Exception\RuntimeException;
 use Webmozart\Assert\Assert;
 
 class RapportActiviteAvisEventListener implements ListenerAggregateInterface
@@ -113,14 +111,10 @@ class RapportActiviteAvisEventListener implements ListenerAggregateInterface
         $notif = $this->rapportActiviteAvisService->newRapportActiviteAvisNotification($rapportActiviteAvis);
         $this->rapportActiviteAvisNotificationRule->configureNotification($notif);
 
-        try {
-            $this->notifierService->trigger($notif);
-        } catch (NotificationException $e) {
-            throw new RuntimeException("Impossible d'envoyer le mail de notification", null, $e);
-        }
+        $result = $this->notifierService->trigger($notif);
 
-        $messages['info'] = ($notif->getInfoMessages()[0] ?? null);
-        $messages['warning'] = ($notif->getWarningMessages()[0] ?? null);
+        $messages['info'] = ($result->getSuccessMessages()[0] ?? null);
+        $messages['warning'] = ($result->getErrorMessages()[0] ?? null);
         $event->setMessages(array_filter($messages));
     }
 }

@@ -5,9 +5,11 @@ namespace Import\Model\Service;
 use Application\Constants;
 use Import\Model\ImportObserv;
 use Import\Model\ImportObservResult;
+use Notification\NotificationResult;
 use These\Entity\Db\These;
 use Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule;
-use Application\Service\Notification\NotifierServiceAwareTrait;
+use Notification\Service\NotifierServiceAwareTrait;
+use These\Service\Notification\TheseNotificationFactoryAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
@@ -22,6 +24,7 @@ class ImportObservResultService extends \UnicaenDbImport\Entity\Db\Service\Impor
 {
     use TheseServiceAwareTrait;
     use NotifierServiceAwareTrait;
+    use TheseNotificationFactoryAwareTrait;
     use VariableServiceAwareTrait;
     use LoggerAwareTrait;
 
@@ -108,20 +111,33 @@ class ImportObservResultService extends \UnicaenDbImport\Entity\Db\Service\Impor
         }
 
         // Notification des doctorants dont le résultat de la thèse est passé à Admis.
-        $notifs = $this->notifierService->triggerChangementResultatThesesAdmis($data);
-        $this->logAboutNotifications($notifs);
-        // Notification concernant l'évolution des résultats de thèses.
-        $notif = $this->notifierService->triggerChangementResultatTheses($data);
-        $this->logAboutNotifications([$notif]);
-
-        // Enregistrement de la date de dernière notification
-        foreach ($records as $record) {
-            $record->setDateNotif($notif->getSendDate());
-        }
         try {
-            $this->getEntityManager()->flush($records);
-        } catch (OptimisticLockException $e) {
-            throw new RuntimeException("Enregistrement des ImportObservResultEtab impossible", null, $e);
+            $notifs = $this->theseNotificationFactory->createNotificationsChangementResultatThesesAdmis($data);
+            foreach ($notifs as $notif) {
+                $this->notifierService->trigger($notif);
+            }
+            $this->logAboutNotifications($notifs);
+        } catch (\Notification\Exception\RuntimeException $e) {
+            // aucun destinataire, todo : cas à gérer !
+        }
+
+        // Notification concernant l'évolution des résultats de thèses.
+        try {
+            $notif = $this->theseNotificationFactory->createNotificationChangementResultatTheses($data);
+            $result = $this->notifierService->trigger($notif);
+            $this->logAboutNotifications([$notif]);
+
+            // Enregistrement de la date de dernière notification
+            foreach ($records as $record) {
+                $record->setDateNotif($result->getSendDate());
+            }
+            try {
+                $this->getEntityManager()->flush($records);
+            } catch (OptimisticLockException $e) {
+                throw new RuntimeException("Enregistrement des ImportObservResultEtab impossible", null, $e);
+            }
+        } catch (\Notification\Exception\RuntimeException $e) {
+            // aucun destinataire, todo : cas à gérer !
         }
     }
 
@@ -253,18 +269,20 @@ class ImportObservResultService extends \UnicaenDbImport\Entity\Db\Service\Impor
             $these->setCorrectionAutorisee($ior->getImportObserv()->getToValue()); // anticipation nécessaire !
 
             // notification
-            $notif = $this->notifierService->triggerCorrectionAttendue($ior, $these, $message);
-            if ($notif === null) {
-                $this->logger->info(sprintf("Aucune notif n'est nécessaire pour la thèse '%s'. ", $these->getSourceCode()) . $message);
-                continue; // si le service de notif renvoie null, aucune notif n'était nécessaire, on passe au suivant
+            try {
+                $notif = $this->theseNotificationFactory->createNotificationCorrectionAttendue($ior, $these, $message);
+                if ($notif === null) {
+                    $this->logger->info(sprintf("Aucune notif n'est nécessaire pour la thèse '%s'. ", $these->getSourceCode()) . $message);
+                    continue; // si le service de notif renvoie null, aucune notif n'était nécessaire, on passe au suivant
+                }
+                $result = $this->notifierService->trigger($notif);
+                $this->logAboutNotifications([$notif]);// Enregistrement de la date de dernière notification
+
+                $ior->setDateNotif($result->getSendDate());
+                $recordsToFlush[] = $ior;
+            } catch (\Notification\Exception\RuntimeException $e) {
+                // aucun destinataire, todo : cas à gérer !
             }
-
-            $this->logAboutNotifications([$notif]);
-
-            // Enregistrement de la date de dernière notification
-            $ior->setDateNotif($notif->getSendDate());
-
-            $recordsToFlush[] = $ior;
         }
 
         try {

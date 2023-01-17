@@ -37,7 +37,8 @@ use Soutenance\Service\Exporter\RapportSoutenance\RapportSoutenancePdfExporter;
 use Soutenance\Service\Exporter\RapportTechnique\RapportTechniquePdfExporter;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
+use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
+use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
@@ -59,7 +60,8 @@ class PresoutenanceController extends AbstractController
     use TheseServiceAwareTrait;
     use MembreServiceAwareTrait;
     use IndividuServiceAwareTrait;
-    use NotifierSoutenanceServiceAwareTrait;
+    use NotifierServiceAwareTrait;
+    use SoutenanceNotificationFactoryAwareTrait;
     use PropositionServiceAwareTrait;
     use ActeurServiceAwareTrait;
     use ValidatationServiceAwareTrait;
@@ -245,7 +247,12 @@ class PresoutenanceController extends AbstractController
                 $token = $this->getMembreService()->retrieveOrCreateToken($membre);
                 $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
                 $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $acteur->getRole()->getRoleId()], 'force_canonical' => true], true);
-                $this->getNotifierSoutenanceService()->triggerConnexionRapporteur($proposition, $user, $url);
+                try {
+                    $notif = $this->soutenanceNotificationFactory->createNotificationConnexionRapporteur($proposition, $user, $url);
+                    $this->notifierService->trigger($notif);
+                } catch (\Notification\Exception\RuntimeException $e) {
+                    // aucun destinataire, todo : cas à gérer !
+                }
             }
         }
 
@@ -308,7 +315,12 @@ class PresoutenanceController extends AbstractController
                 $token = $this->getMembreService()->retrieveOrCreateToken($rapporteur);
                 $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
                 $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $rapporteur->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
-                $this->getNotifierSoutenanceService()->triggerDemandeAvisSoutenance($these, $proposition, $rapporteur, $url);
+                try {
+                    $notif = $this->soutenanceNotificationFactory->createNotificationDemandeAvisSoutenance($these, $proposition, $rapporteur, $url);
+                    $this->notifierService->trigger($notif);
+                } catch (\Notification\Exception\RuntimeException $e) {
+                    // aucun destinataire, todo : cas à gérer !
+                }
             }
         }
 
@@ -337,7 +349,12 @@ class PresoutenanceController extends AbstractController
 
         $avis = $this->getAvisService()->getAvisByThese($these);
 
-        $this->getNotifierSoutenanceService()->triggerFeuVertSoutenance($these, $proposition, $avis);
+        try {
+            $notif = $this->soutenanceNotificationFactory->createNotificationFeuVertSoutenance($these, $proposition, $avis);
+            $this->notifierService->trigger($notif);
+        } catch (\Notification\Exception\RuntimeException $e) {
+            // aucun destinataire, todo : cas à gérer !
+        }
         $this->flashMessenger()
             //->setNamespace('presoutenance')
             ->addSuccessMessage("Notifications d'accord de soutenance envoyées");
@@ -354,7 +371,12 @@ class PresoutenanceController extends AbstractController
         $proposition->setEtat($etat);
         $this->getPropositionService()->update($proposition);
 
-        $this->getNotifierSoutenanceService()->triggerStopperDemarcheSoutenance($these, $proposition);
+        try {
+            $notif = $this->soutenanceNotificationFactory->createNotificationStopperDemarcheSoutenance($these, $proposition);
+            $this->notifierService->trigger($notif);
+        } catch (\Notification\Exception\RuntimeException $e) {
+            // aucun destinataire, todo : cas à gérer !
+        }
         $this->flashMessenger()
             //->setNamespace('presoutenance')
             ->addSuccessMessage("Notifications d'arrêt des démarches de soutenance soutenance envoyées");
@@ -627,7 +649,12 @@ class PresoutenanceController extends AbstractController
             $doctorant->getIndividu()->getEmailUtilisateur();
         /** @see PresoutenanceController::convocationDoctorantAction() */
         $url = $this->url()->fromRoute('soutenance/presoutenance/convocation-doctorant', ['proposition' => $proposition->getId()], ['force_canonical' => true], true);
-        $this->getNotifierSoutenanceService()->triggerEnvoiConvocationDoctorant($doctorant, $proposition, $dateValidation, $email, $url, $avisArray);
+        try {
+            $notif = $this->soutenanceNotificationFactory->createNotificationEnvoiConvocationDoctorant($doctorant, $proposition, $dateValidation, $email, $url, $avisArray);
+            $this->notifierService->trigger($notif);
+        } catch (\Notification\Exception\RuntimeException $e) {
+            // aucun destinataire, todo : cas à gérer !
+        }
 
         //membres
         /** @var Membre $membre */
@@ -636,7 +663,12 @@ class PresoutenanceController extends AbstractController
                 $email = ($membre->getIndividu() and $membre->getIndividu()->getEmailPro()) ? $membre->getIndividu()->getEmailPro() : $membre->getEmail();
                 /** @see PresoutenanceController::convocationMembreAction() */
                 $url = $this->url()->fromRoute('soutenance/presoutenance/convocation-membre', ['proposition' => $proposition->getId(), 'membre' => $membre->getId()], ['force_canonical' => true], true);
-                $this->getNotifierSoutenanceService()->triggerEnvoiConvocationMembre($membre, $proposition, $dateValidation, $email, $url, $avisArray);
+                try {
+                    $notif = $this->soutenanceNotificationFactory->createNotificationEnvoiConvocationMembre($membre, $proposition, $dateValidation, $email, $url, $avisArray);
+                    $this->notifierService->trigger($notif);
+                } catch (\Notification\Exception\RuntimeException $e) {
+                    // aucun destinataire, todo : cas à gérer !
+                }
             }
         }
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
@@ -650,10 +682,32 @@ class PresoutenanceController extends AbstractController
         $url = $this->url()->fromRoute('soutenances/index-rapporteur', [], ['force_canonical' => true], true);
 
         foreach ($membres as $membre) {
-            $this->getNotifierSoutenanceService()->triggerNotificationRapporteurRetard($membre, $url);
+            try {
+                $notif = $this->soutenanceNotificationFactory->createNotificationNotificationRapporteurRetard($membre, $url);
+                $this->notifierService->trigger($notif);
+            } catch (\Notification\Exception\RuntimeException $e) {
+                // aucun destinataire, todo : cas à gérer !
+            }
         }
         exit();
     }
+
+    public function transmettreDocumentsDirectionTheseAction() : Response
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findOneForThese($these);
+
+        try {
+            $notif = $this->soutenanceNotificationFactory->createNotificationTransmettreDocumentsDirectionThese($these, $proposition);
+            $this->notifierService->trigger($notif);
+        } catch (\Notification\Exception\RuntimeException $e) {
+            // aucun destinataire, todo : cas à gérer !
+        }
+
+        return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+    }
+
+    /** SIMULATION DE JURY ********************************************************************************************/
 
     public function genererSimulationAction() : Response
     {

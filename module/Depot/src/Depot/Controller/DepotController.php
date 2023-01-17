@@ -9,7 +9,6 @@ use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Variable;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Service\MailConfirmationServiceAwareTrait;
-use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
@@ -21,6 +20,7 @@ use Depot\Entity\Db\FichierThese;
 use Depot\Entity\Db\MetadonneeThese;
 use Depot\Entity\Db\RdvBu;
 use Depot\Entity\Db\WfEtape;
+use Depot\Event\EventsInterface;
 use Depot\Form\Attestation\AttestationTheseForm;
 use Depot\Form\ConformiteFichierForm;
 use Depot\Form\Diffusion\DiffusionTheseForm;
@@ -30,6 +30,7 @@ use Depot\Form\RdvBuTheseDoctorantForm;
 use Depot\Form\RdvBuTheseForm;
 use Depot\Service\FichierThese\Exception\ValidationImpossibleException;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Depot\Service\Notification\DepotNotificationFactoryAwareTrait;
 use Depot\Service\These\Convention\ConventionPdfExporter;
 use Depot\Service\These\DepotServiceAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
@@ -40,6 +41,7 @@ use Fichier\Entity\Db\VersionFichier;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
+use Laminas\EventManager\Event;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Submit;
@@ -49,6 +51,7 @@ use Laminas\InputFilter\InputFilter;
 use Laminas\Stdlib\ParametersInterface;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
+use Notification\Service\NotifierServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use These\Entity\Db\These;
@@ -64,6 +67,7 @@ class DepotController extends AbstractController
     use FichierTheseServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
     use MessageCollectorAwareTrait;
+    use DepotNotificationFactoryAwareTrait;
     use NotifierServiceAwareTrait;
     use RoleServiceAwareTrait;
     use TheseServiceAwareTrait;
@@ -496,9 +500,9 @@ class DepotController extends AbstractController
         $valeurCorrectionAutoriseeFromImport = $these->getCorrectionAutorisee(false);
 
         $radioOptions = [
-            These::CORRECTION_AUTORISEE_FORCAGE_AUCUNE      => "Forcer à &laquo; <strong>Aucune correction attendue</strong> &raquo;.",
-            These::CORRECTION_AUTORISEE_FORCAGE_FACULTATIVE => "Forcer à &laquo; <strong>Corrections facultatives attendues</strong> &raquo;.",
-            These::CORRECTION_AUTORISEE_FORCAGE_OBLIGATOIRE => "Forcer à &laquo; <strong>Corrections obligatoires attendues</strong> &raquo;.",
+            These::$CORRECTION_AUTORISEE_FORCAGE_AUCUNE      => "Forcer à &laquo; <strong>Aucune correction attendue</strong> &raquo;.",
+            These::$CORRECTION_AUTORISEE_FORCAGE_FACULTATIVE => "Forcer à &laquo; <strong>Corrections facultatives attendues</strong> &raquo;.",
+            These::$CORRECTION_AUTORISEE_FORCAGE_OBLIGATOIRE => "Forcer à &laquo; <strong>Corrections obligatoires attendues</strong> &raquo;.",
         ];
 
         if ($isCorrectionAutoriseeFromImport) {
@@ -506,7 +510,7 @@ class DepotController extends AbstractController
             unset($radioOptions[$valeurCorrectionAutoriseeFromImport]);
         } else {
             $correctionAttendueImportee = "Aucune correction attendue";
-            unset($radioOptions[These::CORRECTION_AUTORISEE_FORCAGE_AUCUNE]);
+            unset($radioOptions[These::$CORRECTION_AUTORISEE_FORCAGE_AUCUNE]);
         }
 
         $radioOptions = array_merge(
@@ -549,11 +553,16 @@ class DepotController extends AbstractController
         $result = $this->confirm()->execute();
 
         $these = $this->requestedThese();
-        $dateButoirDepotVersionCorrigeeAvecSursis = $these->computeDateButoirDepotVersionCorrigeeAvecSursis();
+        $dateButoirDepotVersionCorrigeeAvecSursis = $these->computeDateButoirDepotVersionCorrigeeAvecSursis($these->getDateSoutenance());
 
         // si un tableau est retourné par le plugin Confirm, l'opération a été confirmée
         if (is_array($result)) {
             $this->depotService->updateSursisDateButoirDepotVersionCorrigee($these, $dateButoirDepotVersionCorrigeeAvecSursis);
+
+            // déclenchement d'un événement
+            $event = new Event(EventsInterface::EVENT__SURSIS_CORRECTION_ACCORDE, $these);
+            $this->events->triggerEvent($event);
+            $this->flashMessengerAddMessagesFromEvent($event);
         }
 
         $viewModel = $this->confirm()->getViewModel();
@@ -604,9 +613,9 @@ class DepotController extends AbstractController
 
                 // notification par mail à la BU quand le doctorant saisit les infos pour la 1ere fois
                 if ($estDoctorant && $inserting) {
-                    $notif = $this->notifierService->getNotificationFactory()->createNotificationForRdvBuSaisiParDoctorant($these, $inserting);
-                    $this->notifierService->trigger($notif);
-                    $this->notifierService->feedFlashMessenger($this->flashMessenger(), 'rdv_bu/');
+                    $notif = $this->depotNotificationFactory->createNotificationForRdvBuSaisiParDoctorant($these, true);
+                    $result = $this->notifierService->trigger($notif);
+                    $result->feedFlashMessenger($this->flashMessenger(), 'rdv_bu/');
                 }
 
                 if (! $this->getRequest()->isXmlHttpRequest()) {
@@ -1005,7 +1014,6 @@ class DepotController extends AbstractController
 
     /**
      * @throws \Doctrine\ORM\OptimisticLockException
-     * @throws \Notification\Exception\NotificationImpossibleException
      */
     public function testArchivabiliteAction()
     {
@@ -1430,9 +1438,6 @@ class DepotController extends AbstractController
         return $form;
     }
 
-    /**
-     * @throws \Notification\Exception\NotificationImpossibleException
-     */
     public function modifierCertifConformiteAction()
     {
         $these = $this->requestedThese();

@@ -3,6 +3,7 @@
 namespace Formation\Controller;
 
 use Fichier\Service\Fichier\FichierStorageService;
+use Formation\Service\Notification\FormationNotificationFactory;
 use Formation\Service\Session\SessionService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -12,7 +13,7 @@ use Structure\Service\StructureDocument\StructureDocumentService;
 use Doctorant\Service\DoctorantService;
 use Doctrine\ORM\EntityManager;
 use Formation\Service\Inscription\InscriptionService;
-use Formation\Service\Notification\NotificationService;
+use Notification\Service\NotifierService;
 use Formation\Service\Presence\PresenceService;
 use Interop\Container\ContainerInterface;
 use Laminas\View\Renderer\PhpRenderer;
@@ -34,7 +35,7 @@ class InscriptionControllerFactory {
          * @var \Fichier\Service\Fichier\FichierStorageService $fichierStorageService
          * @var InscriptionService $inscriptionService
          * @var IndividuService $individuService
-         * @var NotificationService $notificationService
+         * @var NotifierService $notificationService
          * @var PresenceService $presenceService
          * @var SessionService $sessionService
          * @var StructureDocumentService $structureDocumentService
@@ -45,7 +46,7 @@ class InscriptionControllerFactory {
         $fichierStorageService = $container->get(FichierStorageService::class);
         $individuService = $container->get(IndividuService::class);
         $inscriptionService = $container->get(InscriptionService::class);
-        $notificationService = $container->get(NotificationService::class);
+        $notificationService = $container->get(NotifierService::class);
         $presenceService = $container->get(PresenceService::class);
         $sessionService = $container->get(SessionService::class);
         $structureDocumentService = $container->get(StructureDocumentService::class);
@@ -61,13 +62,17 @@ class InscriptionControllerFactory {
         $controller->setFichierStorageService($fichierStorageService);
         $controller->setIndividuService($individuService);
         $controller->setInscriptionService($inscriptionService);
-        $controller->setNotificationService($notificationService);
+        $controller->setNotifierService($notificationService);
         $controller->setPresenceService($presenceService);
         $controller->setSessionService($sessionService);
         $controller->setStructureDocumentService($structureDocumentService);
         /** forms *****************************************************************************************************/
         /** autres*****************************************************************************************************/
         $controller->setRenderer($renderer);
+
+        /** @var \Formation\Service\Notification\FormationNotificationFactory $formationNotificationFactory */
+        $formationNotificationFactory = $container->get(FormationNotificationFactory::class);
+        $controller->setFormationNotificationFactory($formationNotificationFactory);
 
         return $controller;
     }

@@ -192,7 +192,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 $ligne = implode(" &ndash; ", $ligne);
                 echo $ligne;
 
-                if (($acteur->estDirecteur() || $acteur->estCodirecteur() || $acteur->estRapporteur() || $acteur->estRapporteurAbsent()) && ! isset($result['alerte-supann-id'])) {
+                if ($acteur->getRole()->estUsurpable() && ! isset($result['alerte-supann-id'])) {
                     // bouton d'usurpation d'identité
                     $individuUsurpationHelper = $this->plugin('individuUsurpation');
                     /* @var $individuUsurpationHelper IndividuUsurpationHelper */
@@ -402,7 +402,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 
             if ($these->isCorrectionAutorisee()) {
                 $dateButoirDepassee =
-                    $these->isDateButoirDepotVersionCorrigeeDepassee() &&
+                    $these->isDateButoirDepotVersionCorrigeeDepassee($these->getDateSoutenance()) &&
                     ! empty($validationsDesCorrectionsEnAttente);
 
                 if ($these->getCorrectionAutoriseeEstFacultative()) {

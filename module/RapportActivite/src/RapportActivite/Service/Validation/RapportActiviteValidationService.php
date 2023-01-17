@@ -147,6 +147,9 @@ class RapportActiviteValidationService extends BaseService
         }
     }
 
+    /**
+     * @deprecated todo : à déplacer dans une RapportActiviteNotificationFactory
+     */
     public function createRapportActiviteValidationNotification(
         RapportActiviteValidation $rapportActiviteValidation,
         RapportActiviteAvis $rapportActiviteAvis): RapportActiviteValidationNotification

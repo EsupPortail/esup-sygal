@@ -4,7 +4,7 @@ use These\Entity\Db\These;
 use Application\View\Renderer\PhpRenderer;
 
 /**
- * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerNotificationPresoutenance()
+ * @see \Soutenance\Service\Notification\SoutenanceNotificationFactory::createNotificationPresoutenance()
  * @var PhpRenderer $this
  * @var These $these
  */
@@ -35,9 +35,6 @@ $justification = true;
 <p> Vous pouvez maintenance procéder à la saisie des informations liées à la soutenance :
     <a href="<?php echo $urlRetour;?>"> soutenance de <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(false,false,false, true); ?></a>. </p>
 
-<?php
-    // $email = $this->fetchEmailBdd($these);
-?>
 <?php if ($justification) : ?>
     <p>
         Vous avez reçu ce mail car :

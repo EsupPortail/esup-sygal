@@ -8,6 +8,7 @@ use Information\Service\InformationService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Soutenance\Service\Avis\AvisService;
+use Soutenance\Service\Notification\SoutenanceNotificationFactory;
 use Structure\Service\Etablissement\EtablissementService;
 use These\Service\Acteur\ActeurService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
@@ -25,7 +26,7 @@ use Soutenance\Form\Refus\RefusForm;
 use Soutenance\Service\Evenement\EvenementService;
 use Soutenance\Service\Justificatif\JustificatifService;
 use Soutenance\Service\Membre\MembreService;
-use Soutenance\Service\Notifier\NotifierSoutenanceService;
+use Notification\Service\NotifierService;
 use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
@@ -52,7 +53,7 @@ class PropositionControllerFactory
          * @var EvenementService $evenementService
          * @var FichierStorageService $fichierStorageService
          * @var MembreService $membreService
-         * @var NotifierSoutenanceService $notificationSoutenanceService
+         * @var NotifierService $notifierService
          * @var PropositionService $propositionService
          * @var RoleService $roleService
          * @var UserContextService $userContextService
@@ -69,7 +70,7 @@ class PropositionControllerFactory
         $fichierStorageService = $container->get(FichierStorageService::class);
         $informationService = $container->get(InformationService::class);
         $membreService = $container->get(MembreService::class);
-        $notificationSoutenanceService = $container->get(NotifierSoutenanceService::class);
+        $notifierService = $container->get(NotifierService::class);
         $propositionService = $container->get(PropositionService::class);
         $roleService = $container->get(RoleService::class);
         $userContextService = $container->get('UserContextService');
@@ -113,7 +114,7 @@ class PropositionControllerFactory
         $controller->setFichierStorageService($fichierStorageService);
         $controller->setInformationService($informationService);
         $controller->setMembreService($membreService);
-        $controller->setNotifierSoutenanceService($notificationSoutenanceService);
+        $controller->setNotifierService($notifierService);
         $controller->setPropositionService($propositionService);
         $controller->setRoleService($roleService);
         $controller->setUserContextService($userContextService);
@@ -133,6 +134,10 @@ class PropositionControllerFactory
         $controller->setRenderer($renderer);
 
         $controller->setPropositionAssertion($propositionAssertion);
+
+        /** @var \Soutenance\Service\Notification\SoutenanceNotificationFactory $soutenanceNotificationFactory */
+        $soutenanceNotificationFactory = $container->get(SoutenanceNotificationFactory::class);
+        $controller->setSoutenanceNotificationFactory($soutenanceNotificationFactory);
 
         return $controller;
     }

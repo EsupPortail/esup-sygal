@@ -74,7 +74,9 @@ class EnqueteReponseRechercheController extends AbstractRechercheController
             return $model;
         }
 
+        /** @var \Application\Search\SearchResultPaginator $reponses */
         $reponses = $model->getVariable('paginator');
+        $reponses->setItemCountPerPage(-1);
 
         $questions = $this->enqueteQuestionRepository->findAll();
         $questions = array_filter($questions, function (EnqueteQuestion $a) {

@@ -4,7 +4,7 @@ use These\Entity\Db\These;
 use Application\View\Renderer\PhpRenderer;
 
 /**
- * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerNotificationPropositionValidee()
+ * @see \Soutenance\Service\Notification\SoutenanceNotificationFactory::createNotificationPropositionValidee()
  * @var PhpRenderer $this
  * @var These $these
  */
@@ -52,12 +52,6 @@ $justification = true;
     </p>
 <?php endif; ?>
 
-<?php
-    // $emailsBDD      = [ $this->fetchEmailBdd($these) ];
-    // $emailsED       = $this->fetchEmailEcoleDoctorale($these);
-    // $emailsUR       = $this->fetchEmailUniteRecherche($these);
-    // $emailsActeurs  = $this->fetchEmailActeursDirects($these);
-?>
 <?php if ($justification) : ?>
     <p>
         Vous avez reçu ce mail car :

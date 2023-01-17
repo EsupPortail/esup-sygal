@@ -5,11 +5,15 @@ namespace Depot\Controller\Factory;
 use Application\EventRouterReplacer;
 use Depot\Controller\ObserverController;
 use Depot\Service\These\TheseObserverService;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Laminas\Router\Http\TreeRouteStack;
 
 class ObserverControllerFactory
 {
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     public function __invoke(ContainerInterface $container): ObserverController
     {
         /** @var TreeRouteStack $httpRouter */
@@ -18,7 +22,7 @@ class ObserverControllerFactory
         $routerReplacer = new EventRouterReplacer($httpRouter, $cliConfig);
 
         /** @var TheseObserverService $theseObserverService */
-        $theseObserverService = $container->get('TheseObserverService');
+        $theseObserverService = $container->get(TheseObserverService::class);
 
         $controller = new ObserverController();
         $controller->setEventRouterReplacer($routerReplacer);

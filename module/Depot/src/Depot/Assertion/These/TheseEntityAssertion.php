@@ -154,7 +154,7 @@ class TheseEntityAssertion extends GeneratedTheseEntityAssertion
 
     protected function isDateButoirDepotVersionCorrigeeDepassee(): bool
     {
-        return $this->these->isDateButoirDepotVersionCorrigeeDepassee();
+        return $this->these->isDateButoirDepotVersionCorrigeeDepassee($this->these->getDateSoutenance());
     }
 
     protected function isUtilisateurEstAuteurDeLaThese(): bool

@@ -5,17 +5,18 @@ namespace Application\Controller;
 use Application\Entity\Db\MailConfirmation;
 use Application\Form\MailConfirmationForm;
 use Application\Service\MailConfirmationService;
-use Application\Service\Notification\NotifierServiceAwareTrait;
+use Notification\Service\NotifierServiceAwareTrait;
+use Application\Service\Notification\ApplicationNotificationFactoryAwareTrait;
 use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
-use Notification\Exception\NotificationException;
 use UnicaenApp\Exception\RuntimeException;
 
 class MailConfirmationController extends AbstractController
 {
     use NotifierServiceAwareTrait;
+    use ApplicationNotificationFactoryAwareTrait;
     use IndividuServiceAwareTrait;
 
     private MailConfirmationService $mailConfirmationService;
@@ -110,11 +111,8 @@ class MailConfirmationController extends AbstractController
             ['force_canonical' => true] ,
             true
         );
-        try {
-            $this->notifierService->triggerMailConfirmation($mailConfirmation, $confirmUrl);
-        } catch (NotificationException $e) {
-            throw new RuntimeException("Erreur lors de l'envoi de la notification", null, $e);
-        }
+        $notif = $this->applicationNotificationFactory->createNotificationMailConfirmation($mailConfirmation, $confirmUrl);
+        $this->notifierService->trigger($notif);
 
         return $this->redirect()->toRoute('mail-confirmation/envoye', [], [], true);
     }

@@ -2,15 +2,16 @@
 
 namespace Depot\Controller\Factory;
 
-use Application\Service\Notification\NotifierService;
 use Application\Service\Role\RoleService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Application\Service\Validation\ValidationService;
 use Depot\Controller\ValidationController;
+use Depot\Service\Notification\DepotNotificationFactory;
 use Depot\Service\These\DepotService;
 use Depot\Service\Validation\DepotValidationService;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Notification\Service\NotifierService;
 
 class ValidationControllerFactory implements FactoryInterface
 {
@@ -40,6 +41,10 @@ class ValidationControllerFactory implements FactoryInterface
         /** @var \Depot\Service\Validation\DepotValidationService $depotValidationService */
         $depotValidationService = $container->get(DepotValidationService::class);
         $controller->setDepotValidationService($depotValidationService);
+
+        /** @var \Depot\Service\Notification\DepotNotificationFactory $depotNotificationFactory */
+        $depotNotificationFactory = $container->get(DepotNotificationFactory::class);
+        $controller->setDepotNotificationFactory($depotNotificationFactory);
 
         return $controller;
     }

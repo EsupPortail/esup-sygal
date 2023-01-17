@@ -4,20 +4,19 @@ namespace Application\Controller\Factory;
 
 use Application\Controller\MailConfirmationController;
 use Application\Form\MailConfirmationForm;
+use Application\Service\Notification\ApplicationNotificationFactory;
 use Individu\Service\IndividuService;
 use Application\Service\MailConfirmationService;
-use Application\Service\Notification\NotifierService;
+use Notification\Service\NotifierService;
 use Interop\Container\ContainerInterface;
 
 class MailConfirmationControllerFactory
 {
     /**
-     * Create service
-     *
-     * @param ContainerInterface $container
-     * @return MailConfirmationController
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): MailConfirmationController
     {
         /**
          * @var MailConfirmationService $mailConfirmationService
@@ -36,6 +35,10 @@ class MailConfirmationControllerFactory
         $controller->setIndividuService($individuService);
         $controller->setNotifierService($notifierService);
         $controller->setMailConfirmationForm($mailConfirmationForm);
+
+        /** @var \Application\Service\Notification\ApplicationNotificationFactory $applicationNotificationFactory */
+        $applicationNotificationFactory = $container->get(ApplicationNotificationFactory::class);
+        $controller->setApplicationNotificationFactory($applicationNotificationFactory);
 
         return $controller;
     }
