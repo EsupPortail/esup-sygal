@@ -82,4 +82,16 @@ class UrlService {
         return $url;
     }
 
+    /**
+     * @noinspection PhpUnusedAliasInspection
+     * @return string
+     */
+    public function getRapportTechnique() : string
+    {
+        $these = $this->variables['these'];
+        /** @see \Soutenance\Controller\PresoutenanceController::rapportTechniqueAction() */
+        $url = $this->renderer->url('soutenance/presoutenance/rapport-technique', ['these' => $these->getId()], ['force_canonical' => 'true'], true);
+        return $url;
+    }
+
 }
