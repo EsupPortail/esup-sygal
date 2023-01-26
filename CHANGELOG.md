@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+5.2.9
+-----
+- Masquage des membres du CSI et de leurs saisies
+
 5.2.8
 -----
 - Second dépôt (correction de thèse) : améliorations et nouvelle notification (MDD, BU, DT).
