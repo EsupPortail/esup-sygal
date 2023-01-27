@@ -88,7 +88,7 @@ $now = new DateTime();
                         <?php if ($inscription->getValidationEnquete()) : ?>
                             <span class="icon icon-checked text-success" title="<?echo $inscription->getValidationEnquete()->format('d/m/Y'); ?>"></span>
                         <?php else : ?>
-                            <?php if ($now > $dateButoir) : ?>
+                            <?php if ($now < $dateButoir) : ?>
                                 <span class="icon icon-wait text-info" title="Enquète non validée (date butoir: <?php echo $dateButoir->format('d/m/Y'); ?>)"></span>
                             <?php else : ?>
                                 <span class="icon icon-unchecked text-danger" title="Enquète non saisie (date butoir: <?php echo $dateButoir->format('d/m/Y'); ?>)"></span>
