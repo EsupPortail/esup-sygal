@@ -433,7 +433,7 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
                                 <a href="<?php echo $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true); ?>">
                             <span class="icon icon-edit"
                                   title="Compléter l'enquête" data-bs-toggle="tooltip" data-bs-html="true"
-                            ></span>Compléter l'enquête</a>
+                            ></span>Compléter l'enquête</a><br/>
                                 <?php /** @see \Formation\Controller\EnqueteQuestionController::validerQuestionsAction() */?>
                                 <a href="<?php echo $this->url('formation/enquete/valider-questions', ['inscription' => $inscription->getId()], [], true); ?>"
                                    class="ajax-modal" data-event="modification"

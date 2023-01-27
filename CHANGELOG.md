@@ -5,6 +5,7 @@ Journal des modifications
 -----
 - Masquage des membres du CSI et de leurs saisies
 - Formation : Amélioration de l'affichage de la liste des inscrits (état de la session, état de la saisie de l'enquête)
+- Formation : La génération du pdf d'attestion est maintenant bloquée si l'enquête est non saisie
 
 5.2.8
 -----

@@ -271,8 +271,18 @@ class InscriptionController extends AbstractController
     public function genererAttestationAction()
     {
         $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
-        $session = $inscription->getSession();
 
+        if ($inscription->getValidationEnquete() === null) {
+            $vm = new ViewModel(
+            [
+                'title' => "Génération de l'attestation impossible",
+                'message' => "Vous n'avez pas encore validé l'enquête de retour de la session de formation",
+            ]);
+            $vm->setTemplate('formation/default/message-info');
+            return $vm;
+        }
+
+        $session = $inscription->getSession();
         $presences = $this->getPresenceService()->calculerDureePresence($inscription);
 
         $logos = [];
