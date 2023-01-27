@@ -6,6 +6,7 @@ use DateInterval;
 use DateTime;
 use Formation\Entity\Db\Etat;
 use Formation\Entity\Db\Inscription;
+use Formation\Entity\Db\Session;
 use Formation\Provider\Privilege\InscriptionPrivileges;
 use Formation\Provider\Privilege\SessionPrivileges;
 use Laminas\Paginator\Paginator as LaminasPaginator;
@@ -65,7 +66,7 @@ $now = new DateTime();
             <?php
                 $session = $inscription->getSession();
                 $individu = $inscription->getDoctorant()->getIndividu();
-                $dateButoir = $session->getDateFin()->add(new DateInterval('P1M'));
+                $dateButoir = $session->getDateFin()->add(new DateInterval(Session::INTERVAL_ENQUETE));
             ?>
             <tr>
                 <td> <?php echo $inscription->getId(); ?> </td>
@@ -86,12 +87,12 @@ $now = new DateTime();
                     </span>
                     <?php if ($session->getEtat()->getCode() === Etat::CODE_CLOTURER) : ?>
                         <?php if ($inscription->getValidationEnquete()) : ?>
-                            <span class="icon icon-checked text-success" title="<?echo $inscription->getValidationEnquete()->format('d/m/Y'); ?>"></span>
+                            <span class="icon icon-checked text-success" title="Enquête validée le <?php echo $inscription->getValidationEnquete()->format('d/m/Y'); ?>"></span>
                         <?php else : ?>
                             <?php if ($now < $dateButoir) : ?>
-                                <span class="icon icon-wait text-info" title="Enquète non validée (date butoir: <?php echo $dateButoir->format('d/m/Y'); ?>)"></span>
+                                <span class="icon icon-wait text-info" title="Enquête non validée (date butoir: <?php echo $dateButoir->format('d/m/Y'); ?>)"></span>
                             <?php else : ?>
-                                <span class="icon icon-unchecked text-danger" title="Enquète non saisie (date butoir: <?php echo $dateButoir->format('d/m/Y'); ?>)"></span>
+                                <span class="icon icon-unchecked text-danger" title="Enquête non saisie (date butoir: <?php echo $dateButoir->format('d/m/Y'); ?>)"></span>
                             <?php endif; ?>
                         <?php endif; ?>
                     <?php endif; ?>

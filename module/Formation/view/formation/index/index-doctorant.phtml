@@ -42,8 +42,9 @@ $canSupprimerInscription = $this->isAllowed(InscriptionPrivileges::getResourceId
 $canConvocationInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_CONVOCATION));
 $canRepondreEnquete = $this->isAllowed(EnquetePrivileges::getResourceId(EnquetePrivileges::ENQUETE_REPONSE_REPONDRE));
 $canAttestationInscription = $this->isAllowed(InscriptionPrivileges::getResourceId(InscriptionPrivileges::INSCRIPTION_ATTESTATION));
-
 $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModulePrivileges::MODULE_CATALOGUE));
+
+$now = new DateTime();
 ?>
 
 <h1 class="page-header">
@@ -429,18 +430,35 @@ $canCatalogueAfficher = $this->isAllowed(ModulePrivileges::getResourceId(ModuleP
                         <br/>
                         <?php if ($inscription->computeDureePresence() > 0) : ?>
                             <?php if ($canRepondreEnquete AND $inscription->getValidationEnquete() === null) : ?>
-                                <?php /** @see \Formation\Controller\EnqueteQuestionController::repondreQuestionsAction() */?>
-                                <a href="<?php echo $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true); ?>">
-                            <span class="icon icon-edit"
-                                  title="Compléter l'enquête" data-bs-toggle="tooltip" data-bs-html="true"
-                            ></span>Compléter l'enquête</a><br/>
-                                <?php /** @see \Formation\Controller\EnqueteQuestionController::validerQuestionsAction() */?>
-                                <a href="<?php echo $this->url('formation/enquete/valider-questions', ['inscription' => $inscription->getId()], [], true); ?>"
-                                   class="ajax-modal" data-event="modification"
-                                >
-                            <span class="icon icon-checked"
-                                  title="Valider l'enquête" data-bs-toggle="tooltip" data-bs-html="true"
-                            ></span>Valider l'enquête</a>
+                                <?php
+                                    $dateFin = $inscription->getSession()->getDateFin();
+                                    $dateButoir = $dateFin->add(new DateInterval(Session::INTERVAL_ENQUETE));
+                                ?>
+                                <?php if ($now <= $dateButoir) : ?>
+                                    <?php /** @see \Formation\Controller\EnqueteQuestionController::repondreQuestionsAction() */?>
+                                    <a href="<?php echo $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true); ?>"
+                                       title="Compléter l'enquête (date butoir: <?php echo $dateButoir->format('d/m/Y'); ?>)" data-bs-toggle="tooltip" data-bs-html="true"
+                                    >
+                                        <span class="icon icon-edit"></span>
+                                        Compléter l'enquête
+                                    </a>
+                                    <br/>
+                                    <?php /** @see \Formation\Controller\EnqueteQuestionController::validerQuestionsAction() */?>
+                                    <a href="<?php echo $this->url('formation/enquete/valider-questions', ['inscription' => $inscription->getId()], [], true); ?>"
+                                       class="ajax-modal" data-event="modification"
+                                       title="Valider l'enquête (date butoir: <?php echo $dateButoir->format('d/m/Y'); ?>)" data-bs-toggle="tooltip" data-bs-html="true"
+                                    >
+                                        <span class="icon icon-checked"></span>
+                                        Valider l'enquête
+                                    </a>
+                                <?php else : ?>
+                                    <span class="text-danger"
+                                          title="Impossible de valider l'enquête après la date butoir (date butoir: <?php echo $dateButoir->format('d/m/Y'); ?>)" data-bs-toggle="tooltip" data-bs-html="true"
+                                    >
+                                        <span class="icon icon-unchecked"></span>
+                                        Date butoir dépassée
+                                    </span>
+                                <?php endif; ?>
                             <?php endif; ?>
                             <?php if ($inscription->getValidationEnquete() !== null AND $canAttestationInscription) : ?>
                                 <?php /** @see \Formation\Controller\InscriptionController::genererAttestationAction() */?>
