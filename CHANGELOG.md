@@ -4,6 +4,7 @@ Journal des modifications
 5.2.9
 -----
 - Masquage des membres du CSI et de leurs saisies
+- Formation : Amélioration de l'affichage de la liste des inscrits (état de la session, état de la saisie de l'enquête)
 
 5.2.8
 -----
