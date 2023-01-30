@@ -6,6 +6,8 @@ use Application\Assertion\AbstractAssertion;
 use Application\Assertion\Exception\FailedAssertionException;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\Entity\Db\Role;
+use InvalidArgumentException;
+use RapportActivite\Rule\Operation\RapportActiviteOperationRuleAwareTrait;
 use These\Entity\Db\These;
 use Application\RouteMatch;
 use Application\Service\UserContextServiceAwareInterface;
@@ -14,7 +16,7 @@ use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use RapportActivite\Controller\RapportActiviteController;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
-use RapportActivite\Rule\Televersement\RapportActiviteTeleversementRuleAwareTrait;
+use RapportActivite\Rule\Creation\RapportActiviteCreationRuleAwareTrait;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use UnicaenApp\Service\MessageCollectorAwareInterface;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
@@ -28,9 +30,11 @@ class RapportActiviteAssertion extends AbstractAssertion
     use UserContextServiceAwareTrait;
     use RapportActiviteServiceAwareTrait;
 
-    use RapportActiviteTeleversementRuleAwareTrait;
+    use RapportActiviteCreationRuleAwareTrait;
+    use RapportActiviteOperationRuleAwareTrait;
 
     private ?RapportActivite $rapportActivite = null;
+    private ?These $these;
 
     /**
      * @param array $page
@@ -47,14 +51,14 @@ class RapportActiviteAssertion extends AbstractAssertion
      */
     private function assertPage(array $page): bool
     {
-        $these = $this->getRequestedThese();
-        if ($these === null) {
+        $this->these = $this->getRequestedThese();
+        if ($this->these === null) {
             return true;
         }
 
         try {
-//            $this->assertEtatThese($these);
-            $this->assertAppartenanceThese($these);
+//            $this->assertEtatThese($this->these);
+            $this->assertAppartenanceThese($this->these);
         } catch (FailedAssertionException $e) {
             if ($e->getMessage()) {
                 $this->getServiceMessageCollector()->addMessage($e->getMessage(), __CLASS__);
@@ -77,28 +81,64 @@ class RapportActiviteAssertion extends AbstractAssertion
             return false;
         }
 
-        $these = $this->getRequestedThese();
-        if ($these === null) {
-            return true;
+//        $these = $this->getRequestedThese();
+//        if ($these === null) {
+//            return true;
+//        }
+
+        if (!$this->initForControllerAction($action)) {
+            return false;
         }
 
         try {
-            $this->assertAppartenanceThese($these);
-
-            switch ($controller) {
-
-                case RapportActiviteController::class:
-
-                    switch ($action) {
-                        case 'ajouter':
-                            $this->assertTeleversementPossible();
-                            break;
-
-                        case 'supprimer':
-                            $this->rapportActivite = $this->getRequestedRapport();
-                            $this->assertAucuneValidation();
+            switch ($action) {
+                case 'lister':
+                    // je ne comprends pas pourquoi : on peut arriver ici sans thèse spécifiée dans l'URL !
+                    if ($this->these !== null) {
+                        $this->assertAppartenanceThese($this->these);
                     }
+                    break;
 
+                case 'ajouter':
+                case 'modifier':
+                case 'supprimer':
+                case 'consulter':
+                case 'telecharger':
+                case 'generer':
+                    $this->assertAppartenanceThese($this->rapportActivite->getThese());
+                    break;
+            }
+
+            switch ($action) {
+                case 'ajouter':
+                case 'modifier':
+                case 'supprimer':
+                    $this->assertEtatThese($this->rapportActivite->getThese());
+                    break;
+            }
+
+            switch ($action) {
+                case 'ajouter':
+                    $this->assertCreationPossible();
+                    break;
+
+                case 'modifier':
+                case 'supprimer':
+                    $this->assertModificationPossible($this->rapportActivite);
+                    break;
+            }
+
+            switch ($action) {
+                case 'telecharger':
+                    $this->assertRapportEstNonDematerialise($this->rapportActivite);
+                    break;
+            }
+
+            switch ($action) {
+                case 'consulter':
+                case 'modifier':
+                case 'generer':
+                    $this->assertRapportEstDematerialise($this->rapportActivite);
                     break;
             }
 
@@ -107,6 +147,32 @@ class RapportActiviteAssertion extends AbstractAssertion
                 $this->getServiceMessageCollector()->addMessage($e->getMessage(), __CLASS__);
             }
             return false;
+        }
+
+        return true;
+    }
+
+    private function initForControllerAction(string $action): bool
+    {
+        switch ($action) {
+            case 'lister':
+                $this->these = $this->getRequestedThese();
+                break;
+
+            case 'consulter':
+            case 'modifier':
+            case 'supprimer':
+            case 'generer':
+            case 'telecharger':
+                $this->rapportActivite = $this->getRequestedRapport();
+                break;
+
+            case 'ajouter':
+                $this->rapportActivite = $this->rapportActiviteService->newRapportActivite($this->getRequestedThese());
+                break;
+
+            default:
+                throw new InvalidArgumentException(__METHOD__ . " : Action inattendue : " . $action);
         }
 
         return true;
@@ -128,53 +194,53 @@ class RapportActiviteAssertion extends AbstractAssertion
         try {
 
             switch ($privilege) {
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_TOUT:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_SIEN:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_TOUT:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_SIEN:
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_TOUT:
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN:
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT:
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN:
                     $this->assertEtatThese($this->rapportActivite->getThese());
             }
 
             switch ($privilege) {
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_CONSULTER_SIEN:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_SIEN:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_SIEN:
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN:
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN:
                 case RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_SIEN:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_GENERER_SIEN:
                     $this->assertAppartenanceThese($this->rapportActivite->getThese());
             }
 
             switch ($privilege) {
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN:
-                    $this->assertAucuneValidation();
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_CONSULTER_TOUT:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_CONSULTER_SIEN:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_TOUT:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_SIEN:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_GENERER_TOUT:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_GENERER_SIEN:
+                    $this->assertRapportEstDematerialise($this->rapportActivite);
             }
 
-//            switch ($privilege) {
-//                case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT:
-//                case RapportPrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
-//                    $this->assertAppartenanceThese($this->rapportActivite->getThese());
-//            }
+            switch ($privilege) {
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_TOUT:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_SIEN:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_TOUT:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN:
+                    $this->assertRapportEstNonDematerialise($this->rapportActivite);
+            }
+
+            switch ($privilege) {
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_TOUT:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_SIEN:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN:
+                    $this->assertModificationPossible($this->rapportActivite);
+            }
 
         } catch (FailedAssertionException $e) {
             if ($e->getMessage()) {
@@ -186,35 +252,24 @@ class RapportActiviteAssertion extends AbstractAssertion
         return true;
     }
 
-
-    private function getRequestedThese(): ?These
+    private function assertCreationPossible()
     {
-        if ($rapportActivite = $this->getRequestedRapport()) {
-            return $rapportActivite->getThese();
-        } elseif ($routeMatch = $this->getRouteMatch()) {
-            return $routeMatch->getThese();
-        } else {
-            return null;
+        $these = $this->getRequestedThese();
+        $rapportsTeleverses = $this->rapportActiviteService->findRapportsForThese($these);
+
+        $this->rapportActiviteCreationRule->setRapportsExistants($rapportsTeleverses);
+        $this->rapportActiviteCreationRule->execute();
+
+        if (!$this->rapportActiviteCreationRule->isCreationPossible()) {
+            throw new FailedAssertionException("La création n'est pas possible.");
         }
     }
 
-    private function getRequestedRapport(): ?RapportActivite
+    private function assertModificationPossible(RapportActivite $rapportActivite)
     {
-        $rapportActivite = null;
-        if (($routeMatch = $this->getRouteMatch()) && $id = $routeMatch->getParam('rapport')) {
-            $rapportActivite = $this->rapportActiviteService->findRapportById($id);
-        }
-
-        return $rapportActivite;
-    }
-
-
-    private function assertTeleversementPossible()
-    {
-        $this->rapportActiviteTeleversementRule->setThese($this->getRequestedThese());
-
-        if (!$this->rapportActiviteTeleversementRule->isTeleversementPossible()) {
-            throw new FailedAssertionException("Le téléversement n'est pas possible.");
+        if ($rapportActivite->getRapportValidations()->count()) {
+            // modif impossible si une validation existe
+            throw new FailedAssertionException("La modification n'est plus possible car le rapport a été validé.");
         }
     }
 
@@ -244,25 +299,61 @@ class RapportActiviteAssertion extends AbstractAssertion
         if ($this->userContextService->getSelectedRoleDirecteurThese()) {
             $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
             $this->assertTrue(
-                $these->hasActeurWithRole($individuUtilisateur, Role::CODE_DIRECTEUR_THESE) ||
-                $these->hasActeurWithRole($individuUtilisateur, Role::CODE_CODIRECTEUR_THESE),
+                $these->hasActeurWithRole($individuUtilisateur, Role::CODE_DIRECTEUR_THESE),
                 "La thèse n'est pas dirigée par " . $individuUtilisateur
+            );
+        }
+        if ($this->userContextService->getSelectedRoleCodirecteurThese()) {
+            $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
+            $this->assertTrue(
+                $these->hasActeurWithRole($individuUtilisateur, Role::CODE_CODIRECTEUR_THESE),
+                "La thèse n'est pas codirigée par " . $individuUtilisateur
             );
         }
     }
 
-    private function assertAucuneValidation()
+    private function assertRapportEstDematerialise(RapportActivite $rapportActivite)
     {
         $this->assertTrue(
-            $this->rapportActivite->getRapportValidation() === null,
-            "Le rapport ne doit pas avoir été validé"
+            $rapportActivite->getFichier() === null,
+            "Ce rapport date de l'ancienne version du module car il a fait l'objet d'un téléversement de fichier."
         );
     }
 
+    private function assertRapportEstNonDematerialise(RapportActivite $rapportActivite)
+    {
+        $this->assertTrue(
+            $rapportActivite->getFichier() !== null,
+            "Ce rapport doit être fourni de façon dématérialisée (càd via un formulaire et sans téléversement de fichier)."
+        );
+    }
+
+    private function getRequestedThese(): ?These
+    {
+        if ($rapportActivite = $this->getRequestedRapport()) {
+            return $rapportActivite->getThese();
+        } elseif ($routeMatch = $this->getRouteMatch()) {
+            return $routeMatch->getThese();
+        } else {
+            return null;
+        }
+    }
+
+    private function getRequestedRapport(): ?RapportActivite
+    {
+        $rapportActivite = null;
+        if (($routeMatch = $this->getRouteMatch()) && $id = $routeMatch->getParam('rapport')) {
+            $rapportActivite = $this->rapportActiviteService->fetchRapportById($id);
+        }
+
+        return $rapportActivite;
+    }
 
     protected function getRouteMatch(): ?RouteMatch
     {
         /** @var \Application\RouteMatch $rm */
-        return $this->getMvcEvent()->getRouteMatch();
+        $rm = $this->getMvcEvent()->getRouteMatch();
+
+        return $rm;
     }
 }

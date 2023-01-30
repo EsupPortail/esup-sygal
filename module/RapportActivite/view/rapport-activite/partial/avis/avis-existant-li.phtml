@@ -1,0 +1,26 @@
+<?php
+/**
+ * @var \RapportActivite\Entity\Db\RapportActiviteAvis $operation
+ */
+
+use Application\Constants;
+
+$avis = $operation->getAvis();
+?>
+
+<li>
+    <p class="operation-type">
+        <strong><?php echo $avis->getAvisType()->getLibelle() ?></strong>
+    </p>
+    <p class="operation-valeur">
+        <strong><?php echo $avis->getAvisValeur()->getValeur() ?></strong>,
+        <?php echo $operation->getHistoModificateur() ?: $operation->getHistoCreateur() ?>,
+        le <?php echo ($operation->getHistoModification() ?: $operation->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
+    </p>
+    <?php if ($avisComplemsToHtml = $avis->getAvisComplemsToHtml()): ?>
+        <p class="avis-complement">
+            Compléments :
+        </p>
+        <?php echo $avisComplemsToHtml ?>
+    <?php endif ?>
+</li>

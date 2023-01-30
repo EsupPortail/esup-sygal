@@ -1,0 +1,33 @@
+<?php
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ * @var \RapportActivite\Service\Fichier\Exporter\RapportActivitePdfExporterData $data
+ */
+
+?>
+<table class="footer" width="100%">
+    <tr>
+        <td width="10%" style="text-align: left;">
+            <?php if ($data->logoCED): ?>
+                <img class="logo_ced" src="<?php echo $data->logoCED ?>" alt="Logo du CED"/>
+            <?php else: ?>
+                <span style='background-color:red;'>CED ou logo du CED non renseigné.</span>
+            <?php endif; ?>
+        </td>
+        <td width="33%" style="text-align: left;">
+            <?php echo $data->structureCED->getAdresse(); ?><br>
+            <?php if ($tel = $data->structureCED->getTelephone()): ?>
+                <strong>tél.</strong> <?php echo $data->structureCED->getTelephone(); ?> &nbsp;
+            <?php endif ?>
+            <?php if ($tel = $data->structureCED->getFax()): ?>
+                <strong>fax</strong> <?php echo $data->structureCED->getFax(); ?>
+            <?php endif ?>
+            <?php if ($data->structureCED->getEmail() || $data->structureCED->getSiteWeb()): ?>
+                <br>
+                <?php echo $data->structureCED->getEmail(); ?> &nbsp; <?php echo $data->structureCED->getSiteWeb(); ?>
+            <?php endif ?>
+        </td>
+        <td width="15%">Généré le {DATE j/m/Y à H:i:s}</td>
+        <td width="10%" style="text-align: right;">Page {PAGENO}/{nbpg}</td>
+    </tr>
+</table>

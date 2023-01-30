@@ -1,0 +1,51 @@
+@charset "UTF-8";
+/**
+ * Module Rapports d'activité
+ */
+div.rapport-activite-container h2 {
+  margin-bottom: 1em; }
+div.rapport-activite-container form#rapport-activite fieldset.collection {
+  margin-bottom: 1em; }
+  div.rapport-activite-container form#rapport-activite fieldset.collection legend {
+    font-size: inherit; }
+  div.rapport-activite-container form#rapport-activite fieldset.collection > fieldset {
+    font-size: 85%;
+    line-height: 85%;
+    margin-bottom: 0.9em;
+    padding: 0.5em;
+    background-color: #efefef; }
+    div.rapport-activite-container form#rapport-activite fieldset.collection > fieldset .form-control {
+      width: auto; }
+    div.rapport-activite-container form#rapport-activite fieldset.collection > fieldset input[type="text"] {
+      width: 100%; }
+    div.rapport-activite-container form#rapport-activite fieldset.collection > fieldset .error {
+      margin-top: 3px;
+      padding-left: 2em; }
+  div.rapport-activite-container form#rapport-activite fieldset.collection .collection-add-link {
+    font-size: 85%;
+    margin-left: 1em; }
+  div.rapport-activite-container form#rapport-activite fieldset.collection .collection-delete-link a {
+    color: darkred; }
+div.rapport-activite-container dl dd.collection {
+  line-height: 85%; }
+  div.rapport-activite-container dl dd.collection ul {
+    padding-left: 2rem; }
+    div.rapport-activite-container dl dd.collection ul > li {
+      font-size: 85%;
+      margin-bottom: 1em;
+      padding: 0.5em;
+      background-color: #efefef; }
+  div.rapport-activite-container dl dd.collection .total {
+    font-size: 85%;
+    margin-top: -1em;
+    padding-left: 1.5rem; }
+div.rapport-activite-container p.help {
+  line-height: 95%;
+  font-weight: 450;
+  font-size: 110%; }
+div.rapport-activite-container p.en, div.rapport-activite-container span.en {
+  font-weight: 400;
+  font-style: italic;
+  margin-top: -1em; }
+
+/*# sourceMappingURL=rapport-activite.css.map */

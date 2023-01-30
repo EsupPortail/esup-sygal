@@ -98,6 +98,9 @@ th {
   padding: 0 8px;
   height: $fontSize * 2 + 2;
 }
+textarea.form-control {
+  height: auto;
+}
 .form-check-input {
   padding: 0;
 }

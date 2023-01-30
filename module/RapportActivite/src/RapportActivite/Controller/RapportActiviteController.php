@@ -3,105 +3,104 @@
 namespace RapportActivite\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\Interfaces\TypeRapportAwareTrait;
-use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
-use These\Entity\Db\These;
+use Application\Entity\Db\TypeValidation;
+use Application\Exporter\ExporterDataException;
 use Application\Filter\IdifyFilter;
+use Application\Service\Validation\ValidationServiceAwareTrait;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\Query\Expr\Join;
 use Fichier\FileUtils;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use InvalidArgumentException;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use RapportActivite\Entity\Db\RapportActivite;
-use RapportActivite\Entity\Db\RapportActiviteAvis;
-use RapportActivite\Form\RapportActiviteForm;
-use RapportActivite\Rule\Televersement\RapportActiviteTeleversementRuleAwareTrait;
-use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
-use RapportActivite\Service\Fichier\Exporter\PageValidationExportDataException;
+use RapportActivite\Form\RapportActiviteAbstractForm;
+use RapportActivite\Form\RapportActiviteAnnuelForm;
+use RapportActivite\Form\RapportActiviteFinContratForm;
+use RapportActivite\Rule\Creation\RapportActiviteCreationRuleAwareTrait;
+use RapportActivite\Rule\Operation\RapportActiviteOperationRuleAwareTrait;
 use RapportActivite\Service\Fichier\RapportActiviteFichierServiceAwareTrait;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
+use SplObjectStorage;
+use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenAvis\Entity\Db\Avis;
 
-/**
- * @property \RapportActivite\Form\RapportActiviteForm $form
- */
 class RapportActiviteController extends AbstractController
 {
     use FichierServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
-    use RapportActiviteAvisServiceAwareTrait;
     use RapportActiviteServiceAwareTrait;
     use RapportActiviteFichierServiceAwareTrait;
-    use RapportActiviteTeleversementRuleAwareTrait;
+    use RapportActiviteCreationRuleAwareTrait;
+    use RapportActiviteOperationRuleAwareTrait;
+    use ValidationServiceAwareTrait;
 
-    use TypeRapportAwareTrait;
-    use TypeValidationAwareTrait;
-
-    /**
-     * @var \RapportActivite\Form\RapportActiviteForm
-     */
-    private RapportActiviteForm $form;
+    private RapportActiviteAnnuelForm $annuelForm;
+    private RapportActiviteFinContratForm $finContratForm;
 
     /**
      * @var RapportActivite[]
      */
-    private array $rapportsTeleverses = [];
+    private array $rapports = [];
 
-    /**
-     * @var \These\Entity\Db\These
-     */
     private These $these;
 
-    /**
-     * @param \RapportActivite\Form\RapportActiviteForm $form
-     */
-    public function setForm(RapportActiviteForm $form)
+    private ?RapportActivite $rapport = null;
+
+    public function setAnnuelForm(RapportActiviteAnnuelForm $annuelForm)
     {
-        $this->form = $form;
+        $this->annuelForm = $annuelForm;
     }
 
-    /**
-     * @return Response|ViewModel
-     */
-    public function consulterAction()
+    public function setFinContratForm(RapportActiviteFinContratForm $finContratForm)
+    {
+        $this->finContratForm = $finContratForm;
+    }
+
+    public function listerAction(): ViewModel
     {
         $this->these = $this->requestedThese();
-        $this->fetchRapportsTeleverses();
+        $this->fetchRapports();
 
-        $this->rapportActiviteTeleversementRule->setRapportsTeleverses($this->rapportsTeleverses);
-        $this->rapportActiviteTeleversementRule->computeCanTeleverserRapports();
-        $isTeleversementPossible = $this->rapportActiviteTeleversementRule->isTeleversementPossible();
+        $this->rapportActiviteCreationRule->setRapportsExistants($this->rapports);
+        $this->rapportActiviteCreationRule->execute();
 
-        foreach ($this->rapportsTeleverses as $rapport) {
-            $avisTypeDispo = $this->rapportActiviteAvisService->findExpectedAvisTypeForRapport($rapport);
-            if ($avisTypeDispo === null) {
-                $rapport->setRapportAvisPossible(null);
-                continue;
-            }
-
-            $rapportAvisPossible = new RapportActiviteAvis();
-            $rapportAvisPossible
-                ->setRapportActivite($rapport)
-                ->setAvis((new Avis())->setAvisType($avisTypeDispo));
-
-            $rapport->setRapportAvisPossible($rapportAvisPossible);
+        $typesRapportPossiblesData = [];
+        if ($this->rapportActiviteCreationRule->canCreateRapportAnnuel()) {
+            $typesRapportPossiblesData[] = ['label' => RapportActivite::LIBELLE_ANNUEL, 'value' => 0];
+        }
+        if ($this->rapportActiviteCreationRule->canCreateRapportFinContrat()) {
+            $typesRapportPossiblesData[] = ['label' => RapportActivite::LIBELLE_FIN_CONTRAT, 'value' => 1];
         }
 
-        // Gestion du formulaire de dépôt
-        $result = $this->ajouterAction();
-        if ($result instanceof Response) {
-            return $result;
+        $operationss = [];
+        foreach ($this->rapports as $rapport) {
+            $this->rapportActiviteOperationRule->injectOperationPossible($rapport);
+            $operationss[$rapport->getId()] = $this->rapportActiviteOperationRule->getOperationsForRapport($rapport);
         }
 
         return new ViewModel([
-            'rapports' => $this->rapportsTeleverses,
+            'rapports' => $this->rapports,
             'these' => $this->these,
-            'form' => $this->form,
-            'isTeleversementPossible' => $isTeleversementPossible,
+            'typesRapportPossiblesData' => $typesRapportPossiblesData,
+            'operationss' => $operationss,
 
-            'typeValidation' => $this->typeValidation,
-            'returnUrl' => $this->url()->fromRoute('rapport-activite/consulter', ['these' => $this->these->getId()]),
+            'returnUrl' => $this->url()->fromRoute('rapport-activite/lister', ['these' => $this->these->getId()]),
+        ]);
+    }
+
+    public function consulterAction(): ViewModel
+    {
+        $rapport = $this->requestedRapportAndCo();
+
+        $this->rapportActiviteOperationRule->injectOperationPossible($rapport);
+        $operations = $this->rapportActiviteOperationRule->getOperationsForRapport($rapport);
+
+        return new ViewModel([
+            'rapport' => $rapport,
+            'operations' => $operations,
         ]);
     }
 
@@ -111,31 +110,31 @@ class RapportActiviteController extends AbstractController
     public function ajouterAction()
     {
         $this->these = $this->requestedThese();
-
-        $this->initForm();
+        $estFinContrat = (bool)$this->params('estFinContrat');
 
         $rapport = $this->rapportActiviteService->newRapportActivite($this->these);
-        $rapport->setTypeRapport($this->typeRapport);
-        $this->form->bind($rapport);
+        $rapport->setEstFinContrat($estFinContrat);
+
+        $form = $rapport->estFinContrat() ? $this->finContratForm : $this->annuelForm;
+        $this->initForm($form, $rapport);
+        $form->bind($rapport);
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $uploadData = $request->getFiles()->toArray();
-            $data = array_merge_recursive(
-                $request->getPost()->toArray(),
-                $uploadData
-            );
-            $this->form->setData($data);
-            if ($this->form->isValid()) {
+//            $uploadData = $request->getFiles()->toArray();
+//            $data = array_merge_recursive(
+//                $request->getPost()->toArray(),
+//                $uploadData
+//            );
+            $data = $request->getPost()->toArray();
+            $form->setData($data);
+            if ($form->isValid()) {
                 /** @var RapportActivite $rapport */
-                $rapport = $this->form->getData();
-                if ($this->rapportActiviteTeleversementRule->canTeleverserRapport($rapport)) {
-                    $event = $this->rapportActiviteService->saveRapport($rapport, $uploadData);
+                $rapport = $form->getData();
+                if ($this->rapportActiviteCreationRule->canCreateRapport($rapport)) {
+                    $event = $this->rapportActiviteService->saveRapport($rapport/*, $uploadData*/);
 
-                    $this->flashMessenger()->addSuccessMessage(sprintf(
-                        "Rapport téléversé avec succès sous le nom suivant :<br>'%s'.",
-                        $rapport->getFichier()->getNom()
-                    ));
+                    $this->flashMessenger()->addSuccessMessage($rapport . " enregistré avec succès.");
 
                     if ($messages = $event->getMessages()) {
                         foreach ($messages as $namespace => $message) {
@@ -144,15 +143,74 @@ class RapportActiviteController extends AbstractController
                     }
                 } else {
                     $this->flashMessenger()->addErrorMessage(
-                        "Ce téléversement n'est pas possible. Vérifiez la cohérence entre le type de rapport et l'année universitaire, svp."
+                        "L'enregistrement n'est pas possible. Vérifiez la cohérence entre le type de rapport et l'année universitaire, svp."
                     );
                 }
 
-                return $this->redirect()->toRoute('rapport-activite/consulter', ['these' => IdifyFilter::id($this->these)]);
+                return $this->redirect()->toRoute('rapport-activite/consulter', [
+                    'these' => $rapport->getThese()->getId(),
+                    'rapport' => $rapport->getId(),
+                ]);
             }
         }
 
-        return false; // pas de vue pour cette action
+        return (new ViewModel([
+            'rapport' => $rapport,
+            'form' => $form,
+        ]))->setTemplate('rapport-activite/rapport-activite/modifier');
+    }
+
+    /**
+     * Modification d'un rapport.
+     */
+    public function modifierAction()
+    {
+        $rapport = $this->requestedRapport();
+
+        $form = $rapport->estFinContrat() ? $this->finContratForm : $this->annuelForm;
+        $this->initForm($form, $rapport);
+        $form->setAnneesUnivsReadonly();
+        $form->bind($rapport);
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+//            $uploadData = $request->getFiles()->toArray();
+//            $data = array_merge_recursive(
+//                $request->getPost()->toArray(),
+//                $uploadData
+//            );
+            $data = $request->getPost()->toArray();
+            $form->setData($data);
+            if ($form->isValid()) {
+                /** @var RapportActivite $rapport */
+                $rapport = $form->getData();
+//                if ($this->rapportActiviteCreationRule->canCreateRapport($rapport)) {
+                    $event = $this->rapportActiviteService->saveRapport($rapport/*, $uploadData*/);
+
+                    $this->flashMessenger()->addSuccessMessage($rapport . " modifié avec succès.");
+
+                    if ($messages = $event->getMessages()) {
+                        foreach ($messages as $namespace => $message) {
+                            $this->flashMessenger()->addMessage($message, $namespace);
+                        }
+                    }
+//                } else {
+//                    $this->flashMessenger()->addErrorMessage(
+//                        "L'enregistrement n'est pas possible. Vérifiez la cohérence entre le type de rapport et l'année universitaire, svp."
+//                    );
+//                }
+
+                return $this->redirect()->toRoute('rapport-activite/consulter', [
+                    'these' => $rapport->getThese()->getId(),
+                    'rapport' => $rapport->getId(),
+                ]);
+            }
+        }
+
+        return [
+            'rapport' => $rapport,
+            'form' => $form,
+        ];
     }
 
     /**
@@ -173,7 +231,7 @@ class RapportActiviteController extends AbstractController
             }
         }
 
-        return $this->redirect()->toRoute('rapport-activite/consulter', ['these' => IdifyFilter::id($these)]);
+        return $this->redirect()->toRoute('rapport-activite/lister', ['these' => IdifyFilter::id($these)]);
     }
 
     public function telechargerAction()
@@ -181,12 +239,13 @@ class RapportActiviteController extends AbstractController
         $rapport = $this->requestedRapport();
 
         // s'il s'agit d'un rapport validé, on ajoute à la volée la page de validation
-        if ($rapport->estValide()) {
+        $typeValidation = $this->validationService->findTypeValidationByCode(TypeValidation::CODE_RAPPORT_ACTIVITE_AUTO);
+        if ($rapport->getRapportValidationOfType($typeValidation) !== null) {
             // l'ajout de la page de validation n'est pas forcément possible
             if ($rapport->supporteAjoutPageValidation()) {
                 try {
                     $exportData = $this->rapportActiviteService->createPageValidationDataForRapport($rapport);
-                } catch (PageValidationExportDataException $e) {
+                } catch (ExporterDataException $e) {
                     $redirect = $this->params()->fromQuery('redirect');
                     $this->flashMessenger()->addErrorMessage(sprintf(
                         "Impossible de générer la page de validation du rapport '%s'. " . $e->getMessage(),
@@ -194,7 +253,7 @@ class RapportActiviteController extends AbstractController
                     ));
                     return $redirect ?
                         $this->redirect()->toUrl($redirect) :
-                        $this->redirect()->toRoute('rapport-activite/consulter', ['these' => IdifyFilter::id($rapport->getThese())]);
+                        $this->redirect()->toRoute('rapport-activite/lister', ['these' => IdifyFilter::id($rapport->getThese())]);
                 }
                 $outputFilePath = $this->rapportActiviteFichierService->createFileWithPageValidation($rapport, $exportData);
                 FileUtils::downloadFile($outputFilePath);
@@ -208,37 +267,98 @@ class RapportActiviteController extends AbstractController
         ]);
     }
 
-    private function fetchRapportsTeleverses()
+    public function genererAction()
     {
-        $this->rapportsTeleverses = $this->rapportActiviteService->findRapportsForThese($this->these);
+        $rapport = $this->requestedRapport();
+
+        // L'ancienne version du module Rapport d'activité invitait à téléverser le rapport.
+        if ($rapport->getFichier() !== null) {
+            throw new InvalidArgumentException("Seuls les rapports non dématérialisés peuvent être générés au format PDF");
+        }
+
+        try {
+            $this->rapportActiviteService->genererRapportActivitePdf($rapport);
+        } catch (ExporterDataException $e) {
+            $redirect = $this->params()->fromQuery('redirect');
+            $this->flashMessenger()->addErrorMessage(sprintf(
+                "Impossible de générer le %s au format PDF. " . $e->getMessage(),
+                lcfirst($rapport)
+            ));
+            return $redirect ?
+                $this->redirect()->toUrl($redirect) :
+                $this->redirect()->toRoute('rapport-activite/consulter', ['rapport' => IdifyFilter::id($rapport)]);
+        }
+
+        exit;
     }
 
-    private function initForm()
+    private function fetchRapports()
     {
-        $this->form->setAnneesUnivs($this->rapportActiviteTeleversementRule->getAnneesUnivsDisponibles());
+        $this->rapports = $this->rapportActiviteService->findRapportsForThese($this->these);
+    }
 
-        if ($this->rapportActiviteTeleversementRule->canTeleverserRapportAnnuel()) {
-            $this->form->addRapportAnnuelSelectOption();
-        }
-        if ($this->rapportActiviteTeleversementRule->canTeleverserRapportFinContrat()) {
-            $this->form->addRapportFinContratSelectOption();
+    private function initForm(RapportActiviteAbstractForm $form, RapportActivite $rapportActivite)
+    {
+        if ($rapportActivite->getId() === null) {
+            $anneesUnivsPossibles = $this->rapportActiviteCreationRule
+                ->setRapportsExistants($this->rapportActiviteService->findRapportsForThese($rapportActivite->getThese()))
+                ->getAnneesUnivsDisponibles();
+            $form->setAnneesUnivs($anneesUnivsPossibles);
+
+            if ($rapportActivite->estFinContrat() && !$this->rapportActiviteCreationRule->canCreateRapportFinContrat() ||
+                !$rapportActivite->estFinContrat() && !$this->rapportActiviteCreationRule->canCreateRapportAnnuel()) {
+                throw new InvalidArgumentException("Interdit de créer ce type de rapport");
+            }
+        } else {
+            $anneesUnivs = new SplObjectStorage();
+            $anneesUnivs->attach($rapportActivite->getAnneeUniv(), []);
+            $form->setAnneesUnivs($anneesUnivs);
+            $form->setAnneesUnivsReadonly();
         }
     }
 
     /**
-     * @return RapportActivite
+     * Fetch du rapport d'activité spécifié dans l'URL.
      */
     private function requestedRapport(): RapportActivite
     {
         $id = $this->params()->fromRoute('rapport') ?: $this->params()->fromQuery('rapport');
 
-        $rapport = $this->rapportActiviteService->findRapportById($id);
+        $rapport = $this->rapportActiviteService->fetchRapportById($id);
         if ($rapport === null) {
             throw new RuntimeException("Aucun rapport trouvé avec l'id spécifié");
         }
 
-        if ($rapport->getTypeRapport() !== $this->typeRapport) {
-            throw new RuntimeException("Type de rapport attendu : " . $this->typeRapport->getCode());
+        return $rapport;
+    }
+
+    /**
+     * Fetch du rapport d'activité spécifié dans l'URL, AVEC LES ENTITÉS LIÉES.
+     */
+    private function requestedRapportAndCo(): RapportActivite
+    {
+        $id = $this->params()->fromRoute('rapport') ?: $this->params()->fromQuery('rapport');
+
+        $qb = $this->rapportActiviteService->getRepository()->createQueryBuilder('r');
+        $qb
+            ->join('r.these', 't')->addSelect('t')
+            ->join('t.doctorant', 'd')->addSelect('d')
+            ->join('d.individu', 'di')->addSelect('di')
+            ->leftJoin('r.fichier', 'f')->addSelect('f')
+            ->leftJoin('r.rapportValidations', 'rv', Join::WITH, '1 = pasHistorise(rv)')->addSelect('rv')
+            ->leftJoin('rv.typeValidation', 'tv')->addSelect('tv')
+            ->leftJoin('r.rapportAvis', 'ra', Join::WITH, '1 = pasHistorise(ra)')->addSelect('ra')
+            ->leftJoin('ra.avis', 'a')->addSelect('a')
+            ->leftJoin('a.avisType', 'at')->addSelect('at')
+            ->where('r = :id')->setParameter('id', $id);
+
+        try {
+            $rapport = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Plusieurs rapports trouvés avec l'id spécifié");
+        }
+        if ($rapport === null) {
+            throw new RuntimeException("Aucun rapport trouvé avec l'id spécifié");
         }
 
         return $rapport;

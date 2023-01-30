@@ -6,25 +6,23 @@ use Application\Entity\Db\Financement;
 use Application\Entity\Db\OrigineFinancement;
 use Application\Provider\Privilege\FinancementPrivileges;
 use Application\Service\AuthorizeServiceAwareTrait;
-use Application\View\Helper\FinancementFormatterHelper;
+use InvalidArgumentException;
 use UnicaenApp\Exception\LogicException;
 use UnicaenAuth\Service\AuthorizeService;
+use Webmozart\Assert\Assert;
 
 class FinancementFormatter
 {
     use AuthorizeServiceAwareTrait;
 
-    const DISPLAY_AS_LINE = 'DISPLAY_LINE';
+    const DISPLAY_AS_HTML_LINES = 'DISPLAY_AS_HTML_LINES';
 
     const SORT_BY_DATE = 'SORT_DATE';
     const SORT_BY_ORIGINE = 'SORT_ORIGINE';
 
-    /** @var string */
-    private $displayAs;
-    /** @var string */
-    private $sortBy;
-    /** @var boolean */
-    private $displayComplement;
+    private string $displayAs = self::DISPLAY_AS_HTML_LINES;
+    private string $sortBy = self::SORT_BY_DATE;
+    private bool $displayComplement = false;
 
     /**
      * @param string $displayAs
@@ -32,6 +30,9 @@ class FinancementFormatter
      */
     public function setDisplayAs(string $displayAs): self
     {
+        Assert::inArray($displayAs, [
+            self::DISPLAY_AS_HTML_LINES,
+        ]);
         $this->displayAs = $displayAs;
         return $this;
     }
@@ -66,27 +67,47 @@ class FinancementFormatter
                 break;
         }
 
-        $output = "";
+        $data = [];
         foreach ($financements as $financement) {
-            switch($this->displayAs) {
-                case FinancementFormatter::DISPLAY_AS_LINE :
-                    $infos = [];
-                    if ($financement->getAnnee())                   $infos[] = $financement->getAnnee();
-                    if ($origine = $financement->getOrigineFinancement()) {
-                        if ($this->isOrigineVisible($origine)) {
-                            $infos[] = $origine->getLibelleLong();
-                        }
-                    }
-                    if ($this->displayComplement === true AND $financement->getComplementFinancement())   $infos[] = $financement->getComplementFinancement();
-                    if ($financement->getQuotiteFinancement())      $infos[] = $financement->getQuotiteFinancement();
-                    if ($financement->getDateDebut())               $infos[] = $financement->getDateDebut()->format('d/m/Y');
-                    if ($financement->getDateFin())                 $infos[] = $financement->getDateFin()->format('d/m/Y');
-                    $infos[] = $this->formatTypeFinancement($financement);
-                    $line = implode(", ", array_filter($infos));
-                    $output .= $line . "<br/>";
-                    break;
+            $infos = [];
+            if ($financement->getAnnee()) {
+                $infos[] = $financement->getAnnee();
             }
+            if ($origine = $financement->getOrigineFinancement()) {
+                if ($this->isOrigineVisible($origine)) {
+                    $infos[] = $origine->getLibelleLong();
+                }
+            }
+            if ($this->displayComplement && $financement->getComplementFinancement()) {
+                $infos[] = $financement->getComplementFinancement();
+            }
+            if ($financement->getQuotiteFinancement()) {
+                $infos[] = $financement->getQuotiteFinancement();
+            }
+            if ($financement->getDateDebut()) {
+                $infos[] = $financement->getDateDebut()->format('d/m/Y');
+            }
+            if ($financement->getDateFin()) {
+                $infos[] = $financement->getDateFin()->format('d/m/Y');
+            }
+            $infos[] = $this->formatTypeFinancement($financement);
+
+            $data[] = array_filter($infos);
         }
+
+        $output = '';
+
+        switch ($this->displayAs) {
+            case FinancementFormatter::DISPLAY_AS_HTML_LINES :
+                foreach ($data as $infos) {
+                    $line = implode(", ", $infos);
+                    $output .= $line . "<br/>";
+                }
+                break;
+            default:
+                throw new InvalidArgumentException("Option d'affichage imprévue");
+        }
+
         return $output;
     }
 

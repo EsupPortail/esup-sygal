@@ -23,6 +23,8 @@ class FinancementFormatterHelperFactory implements FactoryInterface
         $helper = new FinancementFormatterHelper();
         $helper->setFormatter($formatter);
 
+        $helper->setView($container->get('ViewRenderer'));
+
         return $helper;
     }
 }

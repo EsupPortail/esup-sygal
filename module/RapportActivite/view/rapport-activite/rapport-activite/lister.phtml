@@ -1,0 +1,105 @@
+<?php
+
+namespace RapportActivite;
+
+use Application\Entity\Db\TypeValidation;
+use Application\View\Renderer\PhpRenderer;
+use RapportActivite\Entity\Db\RapportActivite;
+use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
+use These\Entity\Db\These;
+
+/**
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var RapportActivite[] $rapports
+ * @var array $typesRapportPossiblesData
+ * @var array[] $operationss
+ * @var TypeValidation $typeValidation
+ * @var string $returnUrl
+ *
+ * @see \RapportActivite\Controller\RapportActiviteController::consulterAction()
+ */
+
+$rapportProto = (new RapportActivite())->setThese($these);
+$canAdd =
+    $this->isAllowed($rapportProto, RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_TOUT) ||
+    $this->isAllowed($rapportProto, RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_SIEN);
+if (empty($typesRapportPossiblesData)) {
+    $canAdd = false;
+}
+?>
+
+<?php $this->headTitle($this->translate($title = "Rapports d'activité"))
+    ->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+
+<h1 class="page-header">
+    <?php echo $this->translate($title); ?>
+    <small><?php echo $this->partial('these/these/partial/titre') ?></small>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<p class="lead">
+    <strong>Rapports d'activité : <u>selon l'état d'avancement de votre thèse et selon les obligations définies par votre Ecole Doctorale</u>.</strong>
+</p>
+<ul class="lead">
+    <li>
+        <strong>Vous devez rédiger un rapport d'activité annuel qui doit être déposé ci-dessous avant le 15 juin.</strong>.
+        Son dépôt conditionne le cas échéant l'autorisation de réinscription en thèse.
+        <a href="<?php echo $this->url('fichier/telecharger-permanent', ['idPermanent' => 'RAPPORT_ACTIVITE_ANNUEL']) ?>"
+        >Cliquez ici pour télécharger le document.</a>
+    </li>
+    <li>
+        <strong>Vous devez rédiger un rapport d'activité de fin de contrat</strong> au moment de votre soutenance.
+        Dans ce cas, les données indiquées doivent couvrir l'ensemble de la thèse. Il doit être
+        <strong>déposé ci-dessous dans l’application <?php echo $this->appInfos()->nom ?> au maximum 1 mois avant votre date de soutenance.</strong>
+        Son dépôt conditionne votre autorisation de soutenance.
+        <a href="<?php echo $this->url('fichier/telecharger-permanent', ['idPermanent' => 'RAPPORT_ACTIVITE_FINTHESE']) ?>"
+        >Cliquez ici pour télécharger le document.</a>
+    </li>
+</ul>
+<ul class="lead">
+    <li>Complétez le document téléchargé, faites-le signer par vos directions de thèse et de laboratoire ;</li>
+    <li>Scannez le document signé et téléversez-le en version PDF.</li>
+</ul>
+
+<div class="row">
+    <div class="col-md-12">
+        <?php if (count($rapports) > 0): ?>
+            <?php echo $this->partial('rapport-activite/partial/rapports-table', [
+                'rapports' => $rapports,
+                'operationss' => $operationss,
+                'typeValidation' => $typeValidation,
+                'returnUrl' => $returnUrl,
+
+                'displayEtablissement' => false,
+                'displayType' => true,
+                'displayDoctorant' => false,
+                'displayDirecteurThese' => false,
+                'displayEcoleDoctorale' => false,
+                'displayUniteRecherche' => false,
+                'displayValidation' => true,
+                'displayAvis' => true,
+            ]) ?>
+        <?php else: ?>
+            <p>Aucun.</p>
+        <?php endif; ?>
+    </div>
+</div>
+
+
+<?php if ($canAdd): ?>
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            Ajouter un rapport d'activité
+        </button>
+        <ul class="dropdown-menu">
+        <?php foreach ($typesRapportPossiblesData as $array): ?>
+            <li><a class="dropdown-item" href="<?php echo $this->url('rapport-activite/ajouter', [
+                    'these' => $these->getId(),
+                    'estFinContrat' => $array['value'],
+                ]) ?>"><?php echo $array['label'] ?></a></li>
+        <?php endforeach ?>
+        </ul>
+    </div>
+<?php endif; ?>

@@ -36,12 +36,10 @@ class Module
 
     public function getConfig()
     {
-        $paths = array_merge(
-            [__DIR__ . '/config/module.config.php'],
-            Glob::glob(__DIR__ . '/config/others/{,*.}{config}.php', Glob::GLOB_BRACE)
-        );
-
-        return ConfigFactory::fromFiles($paths);
+        return ConfigFactory::fromFiles([
+            __DIR__ . '/config/module.config.php',
+            __DIR__ . '/config/operations.config.php',
+        ]);
     }
 
     public function getAutoloaderConfig(): array

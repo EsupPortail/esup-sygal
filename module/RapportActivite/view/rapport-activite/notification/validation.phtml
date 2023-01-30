@@ -1,36 +1,24 @@
 <?php
 /**
- * @var \RapportActivite\Entity\Db\RapportActiviteAvis $rapportActiviteAvis
  * @var \RapportActivite\Entity\Db\RapportActiviteValidation $rapportActiviteValidation
  *
- * @see \RapportActivite\Notification\RapportActiviteValidationNotification
+ * @see \RapportActivite\Notification\RapportActiviteValidationAjouteeNotification
  */
 
-$rapport = $rapportActiviteValidation->getRapport();
-$avis = $rapportActiviteAvis->getAvis();
+use Application\Constants;
+
+$rapport = $rapportActiviteValidation->getRapportActivite();
 ?>
 <p>
     Bonjour,
 </p>
 <p>
-    Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?> à propos
-    du rapport d'activité &laquo; <?php echo $rapport->getFichier()->getNom() ?> &raquo;.
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.
 </p>
 <p>
-    Ce rapport d'activité a été validé par
+    Le <strong><?php echo lcfirst($rapport) ?></strong>
+    de <strong><?php echo $rapport->getThese()->getDoctorant() ?></strong>
+    a été <strong>validé</strong> par
     <?php echo $rapportActiviteValidation->getHistoModificateur() ?: $rapportActiviteValidation->getHistoCreateur() ?>,
-    le <?php echo ($rapportActiviteValidation->getHistoModification() ?: $rapportActiviteValidation->getHistoCreation())->format('d/m/Y H:i') ?>.
+    le <?php echo ($rapportActiviteValidation->getHistoModification() ?: $rapportActiviteValidation->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>.
 </p>
-<p>
-    Voici l'avis rendu :
-    <strong><?php echo $avis->getAvisValeur()->getValeur() ?></strong>
-</p>
-
-<?php if ($avisComplemsToHtml = $avis->getAvisComplemsToHtml()): ?>
-    <p>
-        Compléments :
-    </p>
-    <p>
-        <?php echo $avisComplemsToHtml ?>
-    </p>
-<?php endif ?>

@@ -1,0 +1,210 @@
+<?php
+
+namespace RapportActivite;
+
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer $this
+ * @var \RapportActivite\Entity\Db\RapportActivite $rapport
+ * @var \RapportActivite\Form\RapportActiviteAnnuelForm|\RapportActivite\Form\RapportActiviteFinContratForm $form
+ *
+ * @see \RapportActivite\Controller\RapportActiviteController::consulterAction()
+ */
+
+$title = $rapport->getId() ?
+    "Modification du " . lcfirst($rapport) :
+    "Nouveau " . lcfirst($rapport->getTypeRapportLibelle());
+
+$form->prepare();
+?>
+
+<?php $this->headTitle($this->translate($title))
+    ->prepend($rapport->getThese()->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+
+<h1 class="page-header">
+    <?php echo $this->translate($title); ?>
+    <small><?php echo $this->partial('these/these/partial/titre', ['these' => $rapport->getThese()]) ?></small>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+
+<div class="rapport-activite-container">
+
+    <?php echo $this->form()->openTag($form) ?>
+    <div class="row">
+        <div class="col-md-2">
+            <?php echo $this->formControlGroup($form->get('anneeUniv')) ?>
+        </div>
+    </div>
+
+
+    <h2>Activités scientifiques / <span class="en">Scientific activities</span></h2>
+
+    <div class="row">
+        <div class="col-md-7">
+            <?php echo $this->formControlGroup()->setHelpContent("")->render($form->get('descriptionProjetRecherche')); ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-7">
+            <?php echo $this->formControlGroup($form->get('principauxResultatsObtenus')); ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-7">
+            <?php echo $this->formControlGroup($form->get('productionsScientifiques')); ?>
+        </div>
+    </div>
+
+
+    <h2>Formations doctorales thématiques et transversales / <span class="en">Doctoral training</span></h2>
+
+    <p class="help">
+        Formations spécifiques/thématiques proposées par votre ED (ou une autre structure) ; précisez le volume
+        pour chaque formation suivie depuis votre 1re année d’inscription en thèse. Inclure les éventuelles autres
+        activités comptabilisées par l’ED au titre de la formation.
+    </p>
+    <p class="help en">
+        Specific training, relevant to your field, offered by your doctoral school or another institution. For
+        each course since your first year, provide the time required by the course. Include any other activities
+        likely to be recognized as part of your training.
+    </p>
+    <div class="row">
+        <div class="col-md-7">
+            <?php echo $this->formElementCollection($form->get('formationsSpecifiques')); ?>
+        </div>
+    </div>
+
+    <p class="help">
+        Formations transversales/professionnalisantes proposées par le Collège doctoral (ou une autre structure) :
+        précisez le volume pour chaque formation suivie depuis votre 1re année d’inscription en thèse.
+    </p>
+    <p class="help en">
+        Transversal training (or training not specific to your field and which is relevant to the employment
+        market), offered by the Doctoral College or another institution. For each course since your first year,
+        provide the time required by the course.
+    </p>
+    <div class="row">
+        <div class="col-md-7">
+            <?php echo $this->formElementCollection($form->get('formationsTransversales')); ?>
+        </div>
+    </div>
+
+    <p class="help">
+        Actions de diffusion de la culture scientifique, technique et industrielle (CSTI) :
+        Listez les actions auxquelles vous avez participé en précisant leur nature, le public concerné, le temps
+        consacré et la date. Exemples : MT 180s, Fête de la science, Journées Portes Ouvertes, forums,
+        communications auprès du grand public, des lycéens, des collégiens etc. (cette rubrique n’inclut pas les
+        présentations en colloques).
+    </p>
+    <p class="help en">
+        Actions undertaken within the framework of the promotion of scientific, technical and industrial
+        knowledge: list and describe all relevant activities (excluding presentations in symposia or conferences),
+        e.g. “3-minute thesis”, communications to high school or middle grade students, forums, open house days,
+        etc.
+    </p>
+    <div class="row">
+        <div class="col-md-7">
+            <?php echo $this->formElementCollection($form->get('actionsDiffusionCultureScientifique')); ?>
+        </div>
+    </div>
+
+
+    <h2>Autres activités / <span class="en">Other activities</span></h2>
+
+    <p class="help">
+        Listez les activités menées en marge de votre projet de recherche mais inscrites dans votre formation doctorale
+        (mission d’enseignement, mission d’expertise en entreprise, mission de valorisation, etc.).
+    </p>
+    <p class="help en">
+        List and describe all activities undertaken as part of your doctoral training but not related to your research
+        project (teaching, expertise, etc.).
+    </p>
+    <div class="row">
+        <div class="col-md-7">
+            <?php echo $this->formElementCollection($form->get('autresActivites')); ?>
+        </div>
+    </div>
+
+
+    <?php if ($form->has('calendrierPrevionnelFinalisation')): ?>
+        <h2>Calendrier prévisionnel de finalisation de la thèse /
+            <span class="en">Provisional timetable to finalize the thesis</span></h2>
+
+        <p class="help">
+            Lister les activités programmées pour finaliser la thèse (à renseigner uniquement pour les doctorants en 3ème année et plus).
+        </p>
+        <p class="help en">
+            List your plans to achieve this (only applicable to 3rd year doctoral students).
+        </p>
+        <div class="row">
+            <div class="col-md-7">
+                <?php echo $this->formControlGroup($form->get('calendrierPrevionnelFinalisation')); ?>
+            </div>
+        </div>
+    <?php endif ?>
+
+
+    <?php if ($form->has('preparationApresThese')): ?>
+        <h2>Préparation de l’après-thèse / <span class="en">Preparing for after the thesis</span></h2>
+
+        <p class="help">
+            Quelles sont les perspectives de carrière vers lesquelles vous souhaitez (à ce stade) vous engager et les
+            démarches entreprises ?
+        </p>
+        <p class="help en">
+            What career paths are you envisioning at this stage in your education? What actions have you undertaken to
+            further that professional aim?
+        </p>
+        <div class="row">
+            <div class="col-md-7">
+                <?php echo $this->formControlGroup($form->get('preparationApresThese')); ?>
+            </div>
+        </div>
+    <?php endif ?>
+
+    <?php if ($form->has('perspectivesApresThese')): ?>
+        <h2>Perspectives de l’après-thèse / <span class="en">Plans after the thesis</span></h2>
+
+        <p class="help">
+            Quelles sont les perspectives de carrière vers lesquelles vous souhaitez vous engager et les démarches
+            entreprises ?
+        </p>
+        <p class="help en">
+            What career paths do you wish to pursue and what actions have you undertaken to further that goal ?
+        </p>
+        <div class="row">
+            <div class="col-md-7">
+                <?php echo $this->formControlGroup($form->get('perspectivesApresThese')); ?>
+            </div>
+        </div>
+    <?php endif ?>
+
+
+    <h2>Commentaires libres / <span class="en">Additional comments</span></h2>
+
+    <p class="help">
+        Indiquer toute situation particulière professionnelle ou personnelle (congé maladie, congé
+        maternité, etc.
+    </p>
+    <p class="help en">
+        Any personal or professional situation that has had an impact on your research work (sick leave, maternity leave, etc.)
+    </p>
+    <div class="row">
+        <div class="col-md-7">
+            <?php echo $this->formControlGroup($form->get('commentaires')); ?>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-7">
+            <?php
+            echo $this->formControlGroup($form->get('security'));
+            echo $this->formSubmit($form->get('submit')->setAttributes(['class' => 'btn btn-primary']));
+            ?>
+        </div>
+    </div>
+    <?php echo $this->form()->closeTag() ?>
+
+</div>

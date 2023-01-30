@@ -1,0 +1,34 @@
+<?php
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ * @var \RapportActivite\Entity\RapportActiviteOperationInterface $operationAttendue
+ * @var string[] $anomalies
+ *
+ * @see \RapportActivite\Rule\Operation\Notification\OperationAttendueNotificationRule
+ */
+
+$these = $operationAttendue->getRapportActivite()->getThese();
+?>
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.
+</p>
+<?php if ($anomalies): ?>
+    <p>
+        <em><?php echo implode('<br>', $anomalies) ?></em>
+    </p>
+<?php endif ?>
+<p>
+    L'opération suivante est attendue de votre part : <strong><?php echo $operationAttendue->getTypeToString() ?></strong>
+    sur le <strong><?php echo lcfirst($operationAttendue->getRapportActivite()) ?></strong>
+    de <strong><?php echo $these->getDoctorant() ?></strong>.
+</p>
+<p>
+    Rendez-vous sur <a href="<?php echo $this->url('rapport-activite/consulter', [
+                        'these' => $these->getId(),
+                        'rapport' => $operationAttendue->getRapportActivite()->getId(),
+                    ], ['force_canonical' => true]) ?>">cette page</a> pour accéder au rapport.
+</p>
+

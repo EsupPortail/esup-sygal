@@ -1,0 +1,16 @@
+<?php
+/**
+ * @var \RapportActivite\Entity\Db\RapportActiviteValidation $operation
+ */
+
+$rapport = $operation->getRapportActivite();
+?>
+
+<li>
+    <p>
+        <strong><?php echo $operation->getTypeValidation()->getLibelle() ?></strong>
+    </p>
+    <p class="operation-valeur">
+        En attente
+    </p>
+</li>

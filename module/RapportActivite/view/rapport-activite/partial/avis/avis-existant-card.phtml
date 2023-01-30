@@ -1,0 +1,61 @@
+<?php
+/**
+ * @var \RapportActivite\Entity\Db\RapportActiviteAvis $operation
+ * @var bool $ajaxModalEvent
+ * @var bool $returnUrl
+ */
+
+use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
+
+$avis = $operation->getAvis();
+$statusClass = $avis->getAvisValeur()->getValeurBool() ? 'success' : 'danger';
+
+$canModifierOperation =
+    $this->isAllowed($operation, RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_AVIS_TOUT) ||
+    $this->isAllowed($operation, RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_AVIS_SIEN);
+$canSupprimerOperation =
+    $this->isAllowed($operation, RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT) ||
+    $this->isAllowed($operation, RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN);
+?>
+
+<div class="card text-center validation-rapport-activite">
+    <div class="card-header">
+        <!--<span class="badge rounded-pill bg-secondary"><?php /*echo $i+1 */ ?></span>-->
+        <?php echo $avis->getAvisType()->getLibelle() ?>
+    </div>
+    <div class="card-body">
+        <div class="card-subtitle mb-2 text-sm text-muted">
+            <?php echo $operation->getHistoModificateur() ?: $operation->getHistoCreateur() ?>,
+            le <?php echo ($operation->getHistoModification() ?: $operation->getHistoCreation())->format('d/m/Y H:i') ?>
+        </div>
+        <p class="card-text text-<?php echo $statusClass ?>">
+            <span class="icon <?php echo $avis->getAvisValeur()->getTags() ?>"></span>
+            <strong><?php echo $avis->getAvisValeur()->getValeur() ?></strong>
+
+            <?php if ($avisComplemsToHtml = $avis->getAvisComplemsToHtml()): ?>
+                <br>
+                <a type="button" class="card-link text-sm" data-bs-toggle="modal"
+                   data-bs-target="#avisComplemsModal">
+                    <span class="fas fa-glasses" title="Voir les détails de la validation"></span>
+                    Détails
+                </a>
+            <?php endif ?>
+        </p>
+        <div class="log-full-content d-none">
+            <p>Voici les compléments :</p>
+            <?php echo $avisComplemsToHtml ?>
+        </div>
+        <?php if ($canModifierOperation): ?>
+            <a href="<?php echo $this->url('rapport-activite/avis/modifier', ['rapportAvis' => $operation->getId()]) ?>"
+               class="card-link btn btn-secondary btn-sm action ajax-modal"
+               data-event="<?php echo $ajaxModalEvent ?>"
+               title="Modifier cet avis ?">Modifier l'avis</span></a>
+        <?php endif ?>
+        <?php if ($canSupprimerOperation): ?>
+            <a href="<?php echo $this->url('rapport-activite/avis/supprimer', ['rapportAvis' => $operation->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
+               class="card-link btn btn-warning btn-sm"
+               title="Supprimer cet avis ?"
+               data-toggle="confirmationx">Supprimer l'avis</span></a>
+        <?php endif ?>
+    </div>
+</div>

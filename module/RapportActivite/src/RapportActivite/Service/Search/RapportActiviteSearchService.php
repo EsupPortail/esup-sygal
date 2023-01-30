@@ -2,7 +2,6 @@
 
 namespace RapportActivite\Service\Search;
 
-use Application\Entity\Db\Interfaces\TypeRapportAwareTrait;
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
 use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Search\Filter\SearchFilter;
@@ -11,17 +10,13 @@ use Application\Search\Filter\TextSearchFilter;
 use Application\Search\Financement\OrigineFinancementSearchFilter;
 use Application\Search\SearchService;
 use Application\Search\Sorter\SearchSorter;
-use These\Search\These\TheseTextSearchFilter;
-use These\Service\Acteur\ActeurServiceAwareTrait;
 use Application\Service\Financement\FinancementServiceAwareTrait;
-use These\Service\These\TheseSearchServiceAwareTrait;
-use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use InvalidArgumentException;
 use RapportActivite\Entity\Db\RapportActiviteAvis;
+use RapportActivite\Rule\Avis\RapportActiviteAvisRuleAwareTrait;
 use RapportActivite\Search\AnneeRapportActiviteSearchFilter;
-use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
@@ -29,6 +24,10 @@ use Structure\Search\Etablissement\EtablissementSearchFilter;
 use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
+use These\Search\These\TheseTextSearchFilter;
+use These\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\These\TheseSearchServiceAwareTrait;
+use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 
 class RapportActiviteSearchService extends SearchService
 {
@@ -39,8 +38,7 @@ class RapportActiviteSearchService extends SearchService
     use EtablissementServiceAwareTrait;
     use ActeurServiceAwareTrait;
     use RapportActiviteServiceAwareTrait;
-    use RapportActiviteAvisServiceAwareTrait;
-    use TypeRapportAwareTrait;
+    use RapportActiviteAvisRuleAwareTrait;
     use TypeValidationAwareTrait;
 
     const NAME_nom_doctorant = 'nom_doctorant';
@@ -112,7 +110,6 @@ class RapportActiviteSearchService extends SearchService
 
         $this->addSorters([
             $this->createSorterEtablissement(),
-            $this->createSorterTypeRapport(),
             $this->createSorterEcoleDoctorale(),
             $this->createSorterUniteRecherche(),
             $this->createSorterAnneeRapportActivite(),
@@ -131,13 +128,12 @@ class RapportActiviteSearchService extends SearchService
         // 'rapportAvis->avis->avisType'.
 
         $qb = $this->rapportActiviteService->getRepository()->createQueryBuilder('ra')
-            ->addSelect('tr, these, etab, f, d, i, ed, ur, rav, raa, a, at')
-            ->join('ra.typeRapport', 'tr')
+            ->addSelect('these, etab, f, d, i, ed, ur, rav, raa, a, at')
             ->join('ra.these', 'these')
             ->join("these.etablissement", 'etab')
             ->join('these.doctorant', 'd')
             ->join('d.individu', 'i')
-            ->join('ra.fichier', 'f')
+            ->leftJoin('ra.fichier', 'f')
             ->leftJoin("these.ecoleDoctorale", 'ed')
             ->leftJoin("these.uniteRecherche", 'ur')
             ->leftJoin('ra.rapportValidations', 'rav')
@@ -153,10 +149,6 @@ class RapportActiviteSearchService extends SearchService
             ->leftJoinStructureSubstituante('etab_structure', 'etab_structureSubstituante')
             ->leftJoinStructureSubstituante('ed_structure', 'ed_structureSubstituante')
             ->leftJoinStructureSubstituante('ur_structure', 'ur_structureSubstituante');
-
-        if ($this->typeRapport !== null) {
-            $qb->andWhere('tr = :type')->setParameter('type', $this->typeRapport);
-        }
 
         return $qb;
     }
@@ -275,7 +267,7 @@ class RapportActiviteSearchService extends SearchService
                     ->andWhere('NOT EXISTS (' . sprintf($dql, 1) . ')')
                     ->setParameter('code_fourni_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST)
                     ->andWhere('NOT EXISTS (' . sprintf($dql, 2) . ')')
-                    ->setParameter('code_fourni_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR);
+                    ->setParameter('code_fourni_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED);
                 break;
 
             case RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST:
@@ -284,10 +276,10 @@ class RapportActiviteSearchService extends SearchService
                     ->setParameter('code_fourni_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST);
                 break;
 
-            case RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR:
+            case RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED:
                 $qb
                     ->andWhere('EXISTS (' . sprintf($dql, 2) . ')')
-                    ->setParameter('code_fourni_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR);
+                    ->setParameter('code_fourni_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED);
                 break;
 
             case 'tous':
@@ -295,7 +287,7 @@ class RapportActiviteSearchService extends SearchService
                     ->andWhere('EXISTS (' . sprintf($dql, 1) . ')')
                     ->setParameter('code_fourni_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST)
                     ->andWhere('EXISTS (' . sprintf($dql, 2) . ')')
-                    ->setParameter('code_fourni_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR);
+                    ->setParameter('code_fourni_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED);
                 break;
 
             default:
@@ -322,7 +314,7 @@ class RapportActiviteSearchService extends SearchService
                     ->andWhere('EXISTS (' . sprintf($dql, 1) . ')')
                     ->setParameter('code_attendu_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST)
                     ->andWhere('EXISTS (' . sprintf($dql, 2) . ')')
-                    ->setParameter('code_attendu_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR);
+                    ->setParameter('code_attendu_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED);
                 break;
 
             case RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST:
@@ -331,12 +323,12 @@ class RapportActiviteSearchService extends SearchService
                     ->setParameter('code_attendu_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST);
                 break;
 
-            case RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR:
+            case RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED:
                 $qb
                     ->andWhere('EXISTS (' . sprintf($dql, 1) . ')')
                     ->setParameter('code_attendu_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST)
                     ->andWhere('NOT EXISTS (' . sprintf($dql, 2) . ')')
-                    ->setParameter('code_attendu_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR);
+                    ->setParameter('code_attendu_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED);
                 break;
 
             default:
@@ -361,7 +353,7 @@ class RapportActiviteSearchService extends SearchService
     {
         $filterValue = $filter->getValue();
         $qb
-            ->andWhere("$alias.estFinal = :final")
+            ->andWhere("$alias.estFinContrat = :final")
             ->setParameter('final', $filterValue === 'finthese');
     }
 
@@ -480,24 +472,6 @@ class RapportActiviteSearchService extends SearchService
     /**
      * @return SearchSorter
      */
-    public function createSorterTypeRapport(): SearchSorter
-    {
-        $sorter = new SearchSorter("Type", self::NAME_type);
-        $sorter->setQueryBuilderApplier(
-            function (SearchSorter $sorter, QueryBuilder $qb) {
-                $direction = $sorter->getDirection();
-                $qb
-                    ->addOrderBy("tr.libelleCourt", $direction)
-                    ->addOrderBy("ra.estFinal", $direction);
-            }
-        );
-
-        return $sorter;
-    }
-
-    /**
-     * @return SearchSorter
-     */
     public function createSorterValidation(): SearchSorter
     {
         $sorter = new SearchSorter("Type", self::NAME_validation);
@@ -531,10 +505,6 @@ class RapportActiviteSearchService extends SearchService
 
     public function getFinalSearchFilter(): ?SelectSearchFilter
     {
-        if (! $this->typeRapport->estRapportActivite()) {
-            return null;
-        }
-
         if ($this->finalSearchFilter === null) {
             $this->finalSearchFilter = new SelectSearchFilter("Type", self::NAME_type);
             $this->finalSearchFilter
@@ -553,7 +523,7 @@ class RapportActiviteSearchService extends SearchService
     {
         if ($this->avisFourniSearchFilter === null) {
             $valueOptions = ['null' => "Aucun"];
-            foreach($this->rapportActiviteAvisService->findAllSortedAvisTypes() as $avisType) {
+            foreach($this->rapportActiviteAvisRule->findAllSortedAvisTypes() as $avisType) {
                 $valueOptions[$avisType->getCode()] = $avisType->__toString();
             }
             $valueOptions['tous'] = "Tous (i.e. rapport validé)";
@@ -575,7 +545,7 @@ class RapportActiviteSearchService extends SearchService
     {
         if ($this->avisAttenduSearchFilter === null) {
             $valueOptions = ['null' => "Aucun (i.e. rapport validé)"];
-            foreach($this->rapportActiviteAvisService->findAllSortedAvisTypes() as $avisType) {
+            foreach($this->rapportActiviteAvisRule->findAllSortedAvisTypes() as $avisType) {
                 $valueOptions[$avisType->getCode()] = $avisType->__toString();
             }
 

@@ -3,10 +3,11 @@
 namespace RapportActivite\Assertion\Validation;
 
 use Application\Assertion\AbstractAssertion;
+use Application\Service\Validation\ValidationService;
 use Psr\Container\ContainerInterface;
-use RapportActivite\Rule\Validation\RapportActiviteValidationRule;
-use RapportActivite\Service\Avis\RapportActiviteAvisService;
+use RapportActivite\Rule\Operation\RapportActiviteOperationRule;
 use RapportActivite\Service\RapportActiviteService;
+use RapportActivite\Service\Validation\RapportActiviteValidationService;
 
 class RapportActiviteValidationAssertionFactory
 {
@@ -20,10 +21,6 @@ class RapportActiviteValidationAssertionFactory
         $userContext = $container->get('UnicaenAuth\Service\UserContext');
         /** @var RapportActiviteService $rapportActiviteService */
         $rapportActiviteService = $container->get(RapportActiviteService::class);
-        /** @var RapportActiviteAvisService $rapportActiviteAvisService */
-        $rapportActiviteAvisService = $container->get(RapportActiviteAvisService::class);
-        /** @var RapportActiviteValidationRule $rapportActiviteValidationRule */
-        $rapportActiviteValidationRule = $container->get(RapportActiviteValidationRule::class);
         /** @var \UnicaenApp\Service\MessageCollector $messageCollector */
         $messageCollector = $container->get('MessageCollector');
 
@@ -31,9 +28,19 @@ class RapportActiviteValidationAssertionFactory
         $assertion = new RapportActiviteValidationAssertion();
         $assertion->setUserContextService($userContext);
         $assertion->setRapportActiviteService($rapportActiviteService);
-        $assertion->setRapportActiviteAvisService($rapportActiviteAvisService);
-        $assertion->setRapportActiviteValidationRule($rapportActiviteValidationRule);
         $assertion->setServiceMessageCollector($messageCollector);
+
+        /** @var ValidationService $validationService */
+        $validationService = $container->get(ValidationService::class);
+        $assertion->setValidationService($validationService);
+
+        /** @var \RapportActivite\Service\Validation\RapportActiviteValidationService $rapportActiviteValidationService */
+        $rapportActiviteValidationService = $container->get(RapportActiviteValidationService::class);
+        $assertion->setRapportActiviteValidationService($rapportActiviteValidationService);
+
+        /** @var \RapportActivite\Rule\Operation\RapportActiviteOperationRule $rapportActiviteOperationRule */
+        $rapportActiviteOperationRule = $container->get(RapportActiviteOperationRule::class);
+        $assertion->setRapportActiviteOperationRule($rapportActiviteOperationRule);
 
         $this->injectCommons($assertion, $container);
 

@@ -2,17 +2,17 @@
 
 namespace RapportActivite\Controller;
 
-use Application\Entity\Db\TypeValidation;
+use Application\Service\Validation\ValidationService;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
-use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
-use Application\Service\Validation\ValidationService;
 use Psr\Container\ContainerInterface;
-use RapportActivite\Form\RapportActiviteForm;
-use RapportActivite\Rule\Televersement\RapportActiviteTeleversementRule;
-use RapportActivite\Service\Avis\RapportActiviteAvisService;
+use RapportActivite\Form\RapportActiviteAnnuelForm;
+use RapportActivite\Form\RapportActiviteFinContratForm;
+use RapportActivite\Rule\Creation\RapportActiviteCreationRule;
+use RapportActivite\Rule\Operation\RapportActiviteOperationRule;
 use RapportActivite\Service\Fichier\RapportActiviteFichierService;
 use RapportActivite\Service\RapportActiviteService;
+use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 
 class RapportActiviteControllerFactory
 {
@@ -28,47 +28,48 @@ class RapportActiviteControllerFactory
      */
     public function __invoke(ContainerInterface $container): RapportActiviteController
     {
-        /**
-         * @var \Fichier\Service\Fichier\FichierStorageService $fileService
-         * @var \Fichier\Service\Fichier\FichierService $fichierService
-         * @var \RapportActivite\Service\RapportActiviteService $rapportActiviteService
-         * @var \RapportActivite\Service\Avis\RapportActiviteAvisService $rapportActiviteAvisService
-         * @var \RapportActivite\Service\Fichier\RapportActiviteFichierService $rapportActiviteFichierService
-         * @var \RapportActivite\Form\RapportActiviteForm $rapportActiviteForm
-         * @var \Application\Service\Validation\ValidationService $validationService
-         * @var \These\Service\TheseAnneeUniv\TheseAnneeUnivService $theseAnneeUnivService
-         */
-        $fileService = $container->get(FichierStorageService::class);
-        $fichierService = $container->get(FichierService::class);
-        $rapportActiviteService = $container->get(RapportActiviteService::class);
-        $rapportActiviteAvisService = $container->get(RapportActiviteAvisService::class);
-        $rapportActiviteFichierService = $container->get(RapportActiviteFichierService::class);
-        $rapportActiviteForm = $container->get('FormElementManager')->get(RapportActiviteForm::class);
-        $validationService = $container->get(ValidationService::class);
-        $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
-
-        $typeRapportActivite = $rapportActiviteService->findTypeRapport();
-        $typeValidation = $validationService->findTypeValidationByCode(TypeValidation::CODE_RAPPORT_ACTIVITE);
-
         $controller = new RapportActiviteController();
-        $controller->setRapportActiviteService($rapportActiviteService);
+
+        // services
+        /** @var \Fichier\Service\Fichier\FichierStorageService $fileService */
+        $fileService = $container->get(FichierStorageService::class);
         $controller->setFichierStorageService($fileService);
+        /** @var \Fichier\Service\Fichier\FichierService $fichierService */
+        $fichierService = $container->get(FichierService::class);
         $controller->setFichierService($fichierService);
-        $controller->setRapportActiviteAvisService($rapportActiviteAvisService);
+        /** @var \RapportActivite\Service\RapportActiviteService $rapportActiviteService */
+        $rapportActiviteService = $container->get(RapportActiviteService::class);
+        $controller->setRapportActiviteService($rapportActiviteService);
+        /** @var \RapportActivite\Service\Fichier\RapportActiviteFichierService $rapportActiviteFichierService */
+        $rapportActiviteFichierService = $container->get(RapportActiviteFichierService::class);
         $controller->setRapportActiviteFichierService($rapportActiviteFichierService);
 
-        $controller->setForm($rapportActiviteForm);
+        // forms
+        /** @var \RapportActivite\Form\RapportActiviteAnnuelForm $rapportActiviteAnnuelForm */
+        $rapportActiviteAnnuelForm = $container->get('FormElementManager')->get(RapportActiviteAnnuelForm::class);
+        /** @var \RapportActivite\Form\RapportActiviteFinContratForm $rapportActiviteFinContratForm */
+        $rapportActiviteFinContratForm = $container->get('FormElementManager')->get(RapportActiviteFinContratForm::class);
+        $controller->setAnnuelForm($rapportActiviteAnnuelForm);
+        $controller->setFinContratForm($rapportActiviteFinContratForm);
 
-        $controller->setTypeRapport($typeRapportActivite);
-        $controller->setTypeValidation($typeValidation);
-
-        /** @var \RapportActivite\Rule\Televersement\RapportActiviteTeleversementRule $rapportActiviteTeleversementRule */
-        $rapportActiviteTeleversementRule = $container->get(RapportActiviteTeleversementRule::class);
-        $rapportActiviteTeleversementRule->setAnneesUnivs([
+        // rules
+        /** @var \These\Service\TheseAnneeUniv\TheseAnneeUnivService $theseAnneeUnivService */
+        $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
+        /** @var \RapportActivite\Rule\Creation\RapportActiviteCreationRule $rapportActiviteCreationRule */
+        $rapportActiviteCreationRule = $container->get(RapportActiviteCreationRule::class);
+        $rapportActiviteCreationRule->setAnneesUnivs([
             $theseAnneeUnivService->anneeUnivCourante(),
             $theseAnneeUnivService->anneeUnivPrecedente(),
         ]);
-        $controller->setRapportActiviteTeleversementRule($rapportActiviteTeleversementRule);
+        $controller->setRapportActiviteCreationRule($rapportActiviteCreationRule);
+
+        /** @var \RapportActivite\Rule\Operation\RapportActiviteOperationRule $rapportActiviteOperationRule */
+        $rapportActiviteOperationRule = $container->get(RapportActiviteOperationRule::class);
+        $controller->setRapportActiviteOperationRule($rapportActiviteOperationRule);
+
+        /** @var \Application\Service\Validation\ValidationService $validationService */
+        $validationService = $container->get(ValidationService::class);
+        $controller->setValidationService($validationService);
 
         return $controller;
     }

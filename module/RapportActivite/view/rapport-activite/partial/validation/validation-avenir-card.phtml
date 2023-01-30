@@ -1,0 +1,40 @@
+<?php
+/**
+ * @var \RapportActivite\Entity\Db\RapportActiviteValidation $operation
+ * @var \Application\Entity\Db\TypeValidation $typeValidation
+ * @var string $returnUrl
+ * @var bool $ajaxModalEvent
+ */
+
+use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
+
+$rapport = $operation->getRapportActivite();
+
+$canAjouterOperation =
+    $this->isAllowed($operation, RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN) ||
+    $this->isAllowed($operation, RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT);
+?>
+
+<div class="card text-center validation-rapport-activite">
+    <div class="card-header">
+        <!--<span class="badge rounded-pill bg-secondary"><?php /*echo count($rapportAviss)+1 */ ?></span>-->
+        <?php echo $operation->getTypeValidation()->getLibelle() ?>
+    </div>
+    <div class="card-body">
+        <p class="card-text">
+            En attente
+        </p>
+        <?php if ($canAjouterOperation): ?>
+            <a href="<?php echo $this->url('rapport-activite/valider', [
+                    'rapport' => $rapport->getId(),
+                    'typeValidation' => $operation->getTypeValidation()->getId(),
+                ], [
+                    'query' => ['redirect' => $returnUrl],
+                ]) ?>"
+               class="card-link btn btn-success btn-sm action"
+               title="Valider ce rapport ?"
+               data-toggle="confirmationx"
+               data-message="Êtes-vous sûr·e de vouloir valider ce rapport ?">Valider</span></a>
+        <?php endif ?>
+    </div>
+</div>

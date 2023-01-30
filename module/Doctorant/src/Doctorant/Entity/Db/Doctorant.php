@@ -349,19 +349,12 @@ class Doctorant implements HistoriqueAwareInterface, ResourceInterface, Individu
         return $this->getIndividu()->getDateNaissanceToString();
     }
 
-    /**
-     * @return \Individu\Entity\Db\Individu
-     */
-    public function getIndividu()
+    public function getIndividu(): ?Individu
     {
         return $this->individu;
     }
 
-    /**
-     * @param \Individu\Entity\Db\Individu|null $individu
-     * @return Doctorant
-     */
-    public function setIndividu(Individu $individu = null)
+    public function setIndividu(?Individu $individu = null): self
     {
         $this->individu = $individu;
 

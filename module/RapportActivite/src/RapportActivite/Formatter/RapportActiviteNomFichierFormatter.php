@@ -18,14 +18,14 @@ class RapportActiviteNomFichierFormatter extends AbstractNomFichierFormatter
     /**
      * @var \RapportActivite\Entity\Db\RapportActivite
      */
-    private RapportActivite $rapport;
+    private RapportActivite $rapportActivite;
 
     /**
      * @param \RapportActivite\Entity\Db\RapportActivite $rapport
      */
     public function __construct(RapportActivite $rapport)
     {
-        $this->rapport = $rapport;
+        $this->rapportActivite = $rapport;
     }
 
     /**
@@ -36,14 +36,14 @@ class RapportActiviteNomFichierFormatter extends AbstractNomFichierFormatter
      */
     public function filter($value): string
     {
-        $doctorant = $this->rapport->getThese()->getDoctorant();
-        $ed = $this->rapport->getThese()->getEcoleDoctorale()->getStructure()->getCode();
+        $doctorant = $this->rapportActivite->getThese()->getDoctorant();
+        $ed = $this->rapportActivite->getThese()->getEcoleDoctorale()->getStructure()->getCode();
 
         $extension = $this->extractExtensionFromFichier($value);
 
         $parts = [];
         $parts['type'] = $this->normalizedString($this->type());
-        $parts['date'] = $this->rapport->getAnneeUniv()->toString('-');
+        $parts['date'] = $this->rapportActivite->getAnneeUniv()->toString('-');
         $parts['ed'] = 'ED' . $ed;
         $parts['nomDoctorant'] = $this->normalizedString($doctorant->getIndividu()->getNomUsuel());
         $parts['prenomDoctorant'] = ucfirst(mb_strtolower($this->normalizedString($doctorant->getIndividu()->getPrenom())));
@@ -56,10 +56,6 @@ class RapportActiviteNomFichierFormatter extends AbstractNomFichierFormatter
 
     protected function type(): string
     {
-        if ($this->rapport->getTypeRapport()->estRapportActivite()) {
-            return $this->rapport->getTypeRapport()->getCode() . ($this->rapport->estFinContrat() ? '_FINCONTRAT' : '_ANNUEL');
-        } else {
-            return $this->rapport->getTypeRapport()->getCode();
-        }
+        return 'RAPPORT_ACTIVITE' . ($this->rapportActivite->estFinContrat() ? '_FINCONTRAT' : '_ANNUEL');
     }
 }

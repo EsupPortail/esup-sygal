@@ -1,0 +1,53 @@
+h2 {
+  font-size: 20px;
+}
+
+dl {
+  margin-top: -0.5em;
+}
+dl dt {
+  margin-top: 1em;
+  font-weight: bold;
+}
+dl dd {
+  padding-left: 1em;
+}
+
+
+dl dd.collection {
+  font-size: 85%;
+  line-height: 97%;
+}
+dl dd.collection ul dl dt {
+  font-weight: bold;
+  margin-top: 7px;
+}
+dl dd.collection ul dl dd {
+  margin-top: -12px;
+  padding-left: 3.5cm;
+}
+
+ul.validation li {
+  margin-bottom: 1em;
+}
+ul.validation li p {
+  margin: 0; /* indispensable ! */
+  padding: 0 0 10px 0;
+}
+ul.validation li p.operation-valeur {
+  margin-left: 2em;
+}
+
+span.badge {
+  display: none;
+}
+span.en {
+  font-style: italic;
+}
+
+img.logo-comue {
+  width: 2.5cm;
+}
+img.logo_ced {
+  width: 1.5cm;
+}

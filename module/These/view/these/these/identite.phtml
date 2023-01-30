@@ -47,7 +47,7 @@ $canEditForcageCorrectionAutorisee = $this->isAllowed($these, DepotPrivileges::T
 
 $financementFormatter = $this->financementFormatter();
 $financementFormatter->setSortBy(FinancementFormatter::SORT_BY_DATE);
-$financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
+$financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_HTML_LINES);
 ?>
 
 <?php $this->headTitle($this->translate("Thèse"))->prepend($these->getDoctorant()->getNomUsuel()) ?>

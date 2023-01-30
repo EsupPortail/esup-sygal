@@ -3,6 +3,7 @@
 namespace Application\View\Renderer;
 
 use Depot\View\Helper\Url\UrlDepotHelper;
+use Laminas\Form\ElementInterface;
 use Structure\Entity\Db\EcoleDoctorale;
 use These\Entity\Db\These;
 use Application\Entity\Db\Validation;
@@ -115,6 +116,7 @@ use UnicaenApp\View\Helper\AppInfos;
  * @method \UnicaenApp\Form\View\Helper\FormControlGroup|string      formControlGroup(\Laminas\Form\ElementInterface $element = null, $pluginClass = 'formElement')
  * @method \UnicaenApp\Form\View\Helper\FormDate                     formDate(\UnicaenApp\Form\Element\Date $element = null, $dateReadonly = false)
  * @method \UnicaenApp\Form\View\Helper\FormDateInfSup               formdateinfsup(\UnicaenApp\Form\Element\DateInfSup $element = null, $dateInfReadonly = false, $dateSupReadonly = false)
+ * @method \UnicaenApp\Form\View\Helper\FormElementCollection|string formElementCollection(ElementInterface $element = null, $wrap = true)
  * @method \UnicaenApp\Form\View\Helper\FormRowDateInfSup            formrowdateinfsup(\Laminas\Form\ElementInterface $element = null, $labelPosition = null, $renderErrors = null, $partial = null)
  * @method \UnicaenApp\Form\View\Helper\FormSearchAndSelect          formsearchandselect(\Laminas\Form\ElementInterface $element = null)
  * @method \UnicaenApp\Form\View\Helper\FormLdapPeople               formLdapPeople(\Laminas\Form\ElementInterface $element = null)

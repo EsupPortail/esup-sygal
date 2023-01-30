@@ -112,12 +112,4 @@ class RapportEntityAssertion implements EntityAssertionInterface
             "Le rapport ne doit pas avoir été validé"
         );
     }
-
-    private function assertRapportFinDeThese()
-    {
-        $this->assertTrue(
-            $this->rapport->getTypeRapport()->estRapportActivite() && $this->rapport->estFinal(),
-            "Le rapport doit être un rapport d'activité de fin de thèse"
-        );
-    }
 }

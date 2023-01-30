@@ -2,18 +2,22 @@
 
 namespace RapportActivite\Service;
 
-use Structure\Service\Etablissement\EtablissementService;
+use Application\Service\Validation\ValidationService;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\NatureFichier\NatureFichierService;
-use Structure\Service\StructureDocument\StructureDocumentService;
-use Fichier\Service\ValiditeFichier\ValiditeFichierService;
 use Fichier\Service\VersionFichier\VersionFichierService;
 use Psr\Container\ContainerInterface;
+use RapportActivite\Rule\Avis\RapportActiviteAvisRule;
+use RapportActivite\Rule\Operation\RapportActiviteOperationRule;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
 use RapportActivite\Service\Fichier\Exporter\PageValidationPdfExporter;
+use RapportActivite\Service\Fichier\Exporter\RapportActivitePdfExporter;
 use RapportActivite\Service\Validation\RapportActiviteValidationService;
 use Retraitement\Service\RetraitementService;
+use Structure\Service\Etablissement\EtablissementService;
+use Structure\Service\Structure\StructureService;
+use Structure\Service\StructureDocument\StructureDocumentService;
 
 class RapportActiviteServiceFactory
 {
@@ -61,6 +65,26 @@ class RapportActiviteServiceFactory
         $service->setStructureDocumentService($structureDocumentService);
         $service->setPageValidationPdfExporter($pageValidationPdfExporter);
         $service->setEventManager($container->get('EventManager'));
+
+        /** @var \RapportActivite\Rule\Avis\RapportActiviteAvisRule $rapportActiviteAvisRule */
+        $rapportActiviteAvisRule = $container->get(RapportActiviteAvisRule::class);
+        $service->setRapportActiviteAvisRule($rapportActiviteAvisRule);
+
+        /** @var \RapportActivite\Service\Fichier\Exporter\RapportActivitePdfExporter $rapportActivitePdfExporter */
+        $rapportActivitePdfExporter = $container->get(RapportActivitePdfExporter::class);
+        $service->setRapportActivitePdfExporter($rapportActivitePdfExporter);
+
+        /** @var \RapportActivite\Rule\Operation\RapportActiviteOperationRule $rapportActiviteOperationRule */
+        $rapportActiviteOperationRule = $container->get(RapportActiviteOperationRule::class);
+        $service->setRapportActiviteOperationRule($rapportActiviteOperationRule);
+
+        /** @var \Structure\Service\Structure\StructureService $structureService */
+        $structureService = $container->get(StructureService::class);
+        $service->setStructureService($structureService);
+
+        /** @var \Application\Service\Validation\ValidationService $validationService */
+        $validationService = $container->get(ValidationService::class);
+        $service->setValidationService($validationService);
 
         return $service;
     }

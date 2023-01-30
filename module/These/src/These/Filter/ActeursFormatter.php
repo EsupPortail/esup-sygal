@@ -189,11 +189,21 @@ class ActeursFormatter extends AbstractFilter {
      */
     public function htmlifyActeur(Acteur $a)
     {
-        $str = (string) $a->getIndividu();
-        if ($this->displayRole)           $str .= " <b>".$a->getRole()->getRoleId()."</b>";
-        if ($this->displayRoleComplement) $str .= " (".$a->getLibelleRoleComplement().")";
-        if ($this->displayQualite) $str .= ", ".$a->getQualite();
-        if ($this->displayRoleComplement) $str .= (($etab = $a->getEtablissement()) ? ", " . $etab->getStructure()->getLibelle() : "Établissement non renseigné");
+        $str = (string)$a->getIndividu();
+
+        if ($this->displayRole) {
+            $str .= " <b>" . $a->getRole()->getRoleId() . "</b>";
+        }
+        if ($this->displayRoleComplement && $a->getLibelleRoleComplement()) {
+            $str .= " (" . $a->getLibelleRoleComplement() . ")";
+        }
+        if ($this->displayQualite && $a->getQualite()) {
+            $str .= ", " . $a->getQualite();
+        }
+        if ($this->displayEtablissement) {
+            $str .= (($etab = $a->getEtablissement()) ? ", " . $etab->getStructure()->getLibelle() : "Établissement non renseigné");
+        }
+
         return $str;
     }
 

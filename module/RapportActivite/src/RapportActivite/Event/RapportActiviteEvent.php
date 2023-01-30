@@ -24,7 +24,7 @@ class RapportActiviteEvent extends Event
 
     public function addMessages(array $messages): RapportActiviteEvent
     {
-        $this->setMessages(array_merge($this->getMessages(), $messages));
+        $this->setMessages(array_merge_recursive($this->getMessages(), $messages));
         return $this;
     }
 }

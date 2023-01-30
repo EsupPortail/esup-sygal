@@ -53,7 +53,7 @@ class RapportSearchServiceFactory implements FactoryInterface
         $theseSearchService = $container->get(TheseSearchService::class);
         $rapportService = $container->get(RapportService::class);
         $validationService = $container->get(ValidationService::class);
-        $typeValidation = $validationService->findTypeValidationByCode(TypeValidation::CODE_RAPPORT_ACTIVITE);
+        $typeValidation = $validationService->findTypeValidationByCode(TypeValidation::CODE_RAPPORT_ACTIVITE_AUTO);
 
         $service->setFinancementService($financementService);
         $service->setAnneesUnivs($theseAnneeUnivService);

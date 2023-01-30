@@ -1,0 +1,39 @@
+<?php
+/**
+ * @var \RapportActivite\Entity\Db\RapportActiviteValidation $rapportActiviteValidation
+ * @var array $messages
+ *
+ * @see \RapportActivite\Notification\RapportActiviteValidationSupprimeeNotification
+ */
+
+use Application\Constants;
+
+$rapport = $rapportActiviteValidation->getRapportActivite();
+
+$precisionDestructeur = '';
+if (($rapportActiviteValidation->getHistoModificateur() ?: $rapportActiviteValidation->getHistoCreateur()) ===
+    ($d = $rapportActiviteValidation->getHistoDestructeur())) {
+    $precisionDestructeur = " par $d";
+}
+?>
+<p>
+    Bonjour,
+</p>
+<p>
+    Ceci est un mail envoyé automatiquement par l'application <?php echo $this->appInfos()->nom ?>.
+</p>
+<p>
+    La <strong><?php echo lcfirst($rapportActiviteValidation->getTypeValidation()) ?></strong>
+    du <strong><?php echo lcfirst($rapport) ?></strong> datant du
+    <?php echo ($rapportActiviteValidation->getHistoModification() ?: $rapportActiviteValidation->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
+    a été <strong>annulée</strong><?php echo $precisionDestructeur ?>.
+</p>
+
+<?php if ($messages): ?>
+    Compléments :
+    <ul>
+        <?php foreach ((array)$messages as $severity => $message): ?>
+        <li><?php echo implode ('<br>', (array)$message) ?></li>
+        <?php endforeach; ?>
+    </ul>
+<?php endif ?>

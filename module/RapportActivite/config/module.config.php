@@ -12,6 +12,8 @@ use RapportActivite\Assertion\Avis\RapportActiviteAvisAssertion;
 use RapportActivite\Assertion\Avis\RapportActiviteAvisAssertionFactory;
 use RapportActivite\Assertion\RapportActiviteAssertion;
 use RapportActivite\Assertion\RapportActiviteAssertionFactory;
+use RapportActivite\Assertion\Recherche\RapportActiviteRechercheAssertion;
+use RapportActivite\Assertion\Recherche\RapportActiviteRechercheAssertionFactory;
 use RapportActivite\Assertion\Validation\RapportActiviteValidationAssertion;
 use RapportActivite\Assertion\Validation\RapportActiviteValidationAssertionFactory;
 use RapportActivite\Controller\Avis\RapportActiviteAvisController;
@@ -28,21 +30,31 @@ use RapportActivite\Event\RapportActiviteEventListener;
 use RapportActivite\Event\RapportActiviteEventListenerFactory;
 use RapportActivite\Event\Validation\RapportActiviteValidationEventListener;
 use RapportActivite\Event\Validation\RapportActiviteValidationEventListenerFactory;
-use RapportActivite\Form\RapportActiviteForm;
-use RapportActivite\Form\RapportActiviteFormFactory;
+use RapportActivite\Form\RapportActiviteAnnuelForm;
+use RapportActivite\Form\RapportActiviteAnnuelFormFactory;
+use RapportActivite\Form\RapportActiviteFinContratForm;
+use RapportActivite\Form\RapportActiviteFinContratFormFactory;
 use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
-use RapportActivite\Rule\Avis\RapportActiviteAvisNotificationRule;
-use RapportActivite\Rule\Avis\RapportActiviteAvisNotificationRuleFactory;
-use RapportActivite\Rule\Televersement\RapportActiviteTeleversementRule;
-use RapportActivite\Rule\Televersement\RapportActiviteTeleversementRuleFactory;
-use RapportActivite\Rule\Validation\RapportActiviteValidationRule;
-use RapportActivite\Rule\Validation\RapportActiviteValidationRuleFactory;
+use RapportActivite\Rule\Avis\RapportActiviteAvisRule;
+use RapportActivite\Rule\Avis\RapportActiviteAvisRuleFactory;
+use RapportActivite\Rule\Creation\RapportActiviteCreationRule;
+use RapportActivite\Rule\Creation\RapportActiviteCreationRuleFactory;
+use RapportActivite\Rule\Operation\Notification\OperationAttendueNotificationRule;
+use RapportActivite\Rule\Operation\Notification\OperationAttendueNotificationRuleFactory;
+use RapportActivite\Rule\Operation\RapportActiviteOperationRule;
+use RapportActivite\Rule\Operation\RapportActiviteOperationRuleFactory;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceFactory;
 use RapportActivite\Service\Fichier\Exporter\PageValidationPdfExporter;
 use RapportActivite\Service\Fichier\Exporter\PageValidationPdfExporterFactory;
+use RapportActivite\Service\Fichier\Exporter\RapportActivitePdfExporter;
+use RapportActivite\Service\Fichier\Exporter\RapportActivitePdfExporterFactory;
 use RapportActivite\Service\Fichier\RapportActiviteFichierService;
 use RapportActivite\Service\Fichier\RapportActiviteFichierServiceFactory;
+use RapportActivite\Service\Notification\RapportActiviteNotificationFactory;
+use RapportActivite\Service\Notification\RapportActiviteNotificationFactoryFactory;
+use RapportActivite\Service\Operation\RapportActiviteOperationService;
+use RapportActivite\Service\Operation\RapportActiviteOperationServiceFactory;
 use RapportActivite\Service\RapportActiviteService;
 use RapportActivite\Service\RapportActiviteServiceFactory;
 use RapportActivite\Service\Search\RapportActiviteSearchService;
@@ -52,10 +64,31 @@ use RapportActivite\Service\Validation\RapportActiviteValidationServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
-return [
+const VALIDATION_DOCTORANT = 'VALIDATION_DOCTORANT';
+const AVIS_GEST = 'AVIS_GEST';
+const AVIS_DIR_THESE = 'AVIS_DIR_THESE';
+const AVIS_CODIR_THESE = 'AVIS_CODIR_THESE';
+const AVIS_DIR_UR = 'AVIS_DIR_UR';
+const AVIS_DIR_ED = 'AVIS_DIR_ED';
+const VALIDATION_AUTO = 'VALIDATION_AUTO';
 
+return [
     // Options concernant les rapports d'activité
     'rapport-activite' => [
+        // Date butoire pour le rendu du rapport d'activité : jj/mm
+        'date_butoire_?????' => '15/06',
+
+        'template' => [
+            // templates .phtml
+            'template_path' => __DIR__ . '/../view/rapport-activite/rapport-activite/pdf/template.phtml',
+            'footer_path' => 'footer.phtml',
+            // feuille de styles
+            'css_path' => [
+                __DIR__ . '/../view/rapport-activite/pdf/common-styles.css',
+                __DIR__ . '/../view/rapport-activite/rapport-activite/pdf/styles.css',
+            ],
+        ],
+
         // Page de validation des rapports d'activité déposés
         'page_de_validation' => [
             'template' => [
@@ -88,6 +121,7 @@ return [
             'BjyAuthorize\Provider\Resource\Config' => [
                 'RapportActivite' => [],
                 'RapportActiviteAvis' => [],
+                'RapportActiviteValidation' => [],
             ],
         ],
         'rule_providers' => [
@@ -96,12 +130,20 @@ return [
                     [
                         'privileges' => [
                             // Dépôt, visualisation, etc.
+                            RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_TOUT,
+                            RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_SIEN,
+                            RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_TOUT,
+                            RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_SIEN,
+                            RapportActivitePrivileges::RAPPORT_ACTIVITE_CONSULTER_TOUT,
+                            RapportActivitePrivileges::RAPPORT_ACTIVITE_CONSULTER_SIEN,
                             RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_TOUT,
                             RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN,
                             RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN,
                             RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT,
                             RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_TOUT,
                             RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_SIEN,
+                            RapportActivitePrivileges::RAPPORT_ACTIVITE_GENERER_TOUT,
+                            RapportActivitePrivileges::RAPPORT_ACTIVITE_GENERER_SIEN,
                         ],
                         'resources' => ['RapportActivite'],
                         'assertion' => RapportActiviteAssertion::class,
@@ -127,7 +169,7 @@ return [
                             RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT,
                             RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN,
                         ],
-                        'resources' => ['RapportActivite'],
+                        'resources' => ['RapportActiviteValidation'],
                         'assertion' => RapportActiviteValidationAssertion::class,
                     ],
                 ],
@@ -136,16 +178,27 @@ return [
         'guards' => [
             PrivilegeController::class => [
                 //
-                // Dépôt, visualisation, etc.
+                // Visualisation, création, etc.
                 //
+                [
+                    'controller' => RapportActiviteController::class,
+                    'action' => [
+                        'lister',
+                    ],
+                    'privileges' => [
+                        RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT,
+                        RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN,
+                    ],
+                    'assertion' => RapportActiviteAssertion::class,
+                ],
                 [
                     'controller' => RapportActiviteController::class,
                     'action' => [
                         'consulter',
                     ],
                     'privileges' => [
-                        RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT,
-                        RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN,
+                        RapportActivitePrivileges::RAPPORT_ACTIVITE_CONSULTER_TOUT,
+                        RapportActivitePrivileges::RAPPORT_ACTIVITE_CONSULTER_SIEN,
                     ],
                     'assertion' => RapportActiviteAssertion::class,
                 ],
@@ -163,11 +216,23 @@ return [
                 [
                     'controller' => RapportActiviteController::class,
                     'action' => [
-                        'ajouter',
+                        'generer',
                     ],
                     'privileges' => [
-                        RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_TOUT,
-                        RapportActivitePrivileges::RAPPORT_ACTIVITE_TELEVERSER_SIEN,
+                        RapportActivitePrivileges::RAPPORT_ACTIVITE_GENERER_TOUT,
+                        RapportActivitePrivileges::RAPPORT_ACTIVITE_GENERER_SIEN,
+                    ],
+                    'assertion' => RapportActiviteAssertion::class,
+                ],
+                [
+                    'controller' => RapportActiviteController::class,
+                    'action' => [
+                        'ajouter',
+                        'modifier',
+                    ],
+                    'privileges' => [
+                        RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_TOUT,
+                        RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_SIEN,
                     ],
                     'assertion' => RapportActiviteAssertion::class,
                 ],
@@ -180,7 +245,7 @@ return [
                         RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT,
                         RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN,
                     ],
-                    'assertion' => Assertion\RapportActiviteAssertion::class,
+                    'assertion' => RapportActiviteAssertion::class,
                 ],
 
                 //
@@ -192,11 +257,11 @@ return [
                         'index',
                         'filters',
                     ],
-                    'privileges' => [
-                        RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT,
-                        RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN,
-                    ],
-                    'assertion' => RapportActiviteAssertion::class,
+//                    'privileges' => [
+//                        RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT,
+//                        RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN,
+//                    ],
+                    'assertion' => RapportActiviteRechercheAssertion::class,
                 ],
                 [
                     'controller' => RapportActiviteRechercheController::class,
@@ -204,7 +269,7 @@ return [
                         'telecharger-zip',
                     ],
                     'privileges' => RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_ZIP,
-                    'assertion' => Assertion\RapportActiviteAssertion::class,
+                    'assertion' => RapportActiviteRechercheAssertion::class,
                 ],
 
                 //
@@ -256,7 +321,7 @@ return [
                         RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT,
                         RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN,
                     ],
-                    'assertion' => RapportActiviteAssertion::class,
+                    'assertion' => RapportActiviteValidationAssertion::class,
                 ],
                 [
                     'controller' => RapportActiviteValidationController::class,
@@ -267,7 +332,7 @@ return [
                         RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT,
                         RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN,
                     ],
-                    'assertion' => RapportActiviteAssertion::class,
+                    'assertion' => RapportActiviteValidationAssertion::class,
                 ],
             ],
         ],
@@ -324,12 +389,26 @@ return [
                             ],
                         ],
                     ],
+                    'lister' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route' => '/lister/:these',
+                            'constraints' => [
+                                'these' => '\d+',
+                            ],
+                            'defaults' => [
+                                'action' => 'lister',
+                                /* @see \RapportActivite\Controller\RapportActiviteController::listerAction() */
+                            ],
+                        ],
+                    ],
                     'consulter' => [
                         'type' => 'Segment',
                         'options' => [
-                            'route' => '/consulter/:these',
+                            'route' => '/consulter/:these/:rapport',
                             'constraints' => [
                                 'these' => '\d+',
+                                'rapport' => '\d+',
                             ],
                             'defaults' => [
                                 'action' => 'consulter',
@@ -340,13 +419,27 @@ return [
                     'ajouter' => [
                         'type' => 'Segment',
                         'options' => [
-                            'route' => '/ajouter/:these',
+                            'route' => '/ajouter/:these/:estFinContrat',
                             'constraints' => [
                                 'these' => '\d+',
+                                'estFinContrat' => '[0-1]',
                             ],
                             'defaults' => [
                                 'action' => 'ajouter',
                                 /* @see \RapportActivite\Controller\RapportActiviteController::ajouterAction() */
+                            ],
+                        ],
+                    ],
+                    'modifier' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route' => '/modifier/:rapport',
+                            'constraints' => [
+                                'rapport' => '\d+',
+                            ],
+                            'defaults' => [
+                                'action' => 'modifier',
+                                /* @see RapportActiviteController::modifierAction() */
                             ],
                         ],
                     ],
@@ -360,6 +453,19 @@ return [
                             'defaults' => [
                                 'action' => 'telecharger',
                                 /* @see \RapportActivite\Controller\RapportActiviteController::telechargerAction() */
+                            ],
+                        ],
+                    ],
+                    'generer' => [
+                        'type' => 'Segment',
+                        'options' => [
+                            'route' => '/generer/:rapport',
+                            'constraints' => [
+                                'rapport' => '\d+',
+                            ],
+                            'defaults' => [
+                                'action' => 'generer',
+                                /* @see \RapportActivite\Controller\RapportActiviteController::genererAction() */
                             ],
                         ],
                     ],
@@ -418,9 +524,10 @@ return [
                             'ajouter' => [
                                 'type' => 'Segment',
                                 'options' => [
-                                    'route' => '/ajouter/:rapport',
+                                    'route' => '/ajouter/:rapport/type/:typeAvis',
                                     'constraints' => [
                                         'rapport' => '\d+',
+                                        'typeAvis' => '\d+',
                                     ],
                                     'defaults' => [
                                         'action' => 'ajouter',
@@ -475,13 +582,35 @@ return [
                                 'id' => 'these-rapport-activite',
                                 'label' => "Rapports d'activité",
                                 'order' => 20 ,
-                                'route' => 'rapport-activite/consulter',
+                                'route' => 'rapport-activite/lister',
                                 'withtarget' => true,
                                 'paramsInject' => [
                                     'these',
                                 ],
-                                'resource' => PrivilegeController::getResourceId(RapportActiviteController::class, 'consulter'),
-                                'visible' => Assertion\RapportActiviteAssertion::class,
+                                'resource' => PrivilegeController::getResourceId(RapportActiviteController::class, 'lister'),
+                                'visible' => RapportActiviteAssertion::class,
+
+                                'pages' => [
+                                    'consulter' => [ // juste pour le Fil d'Ariane
+                                        'label' => "Détails",
+                                        'route' => 'rapport-activite/consulter',
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'these',
+                                            'rapport',
+                                        ],
+                                        'visible' => false
+                                    ],
+                                    'ajouter' => [
+                                        'label' => "Nouveau rapport",
+                                        'route' => 'rapport-activite/ajouter',
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'these',
+                                        ],
+                                        'visible' => false,
+                                    ],
+                                ],
                             ],
                         ],
                     ],
@@ -512,7 +641,7 @@ return [
                                     RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT,
                                     RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN,
                                 ],
-                                'visible' => Assertion\RapportActiviteAssertion::class,
+                                'visible' => RapportActiviteRechercheAssertion::class,
                             ],
                         ],
                     ],
@@ -535,7 +664,7 @@ return [
                                     RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT,
                                     RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_SIEN,
                                 ],
-                                'visible' => Assertion\RapportActiviteAssertion::class,
+                                'visible' => RapportActiviteRechercheAssertion::class,
                             ],
                             '----------' => [
                                 'label' => null,
@@ -556,8 +685,12 @@ return [
             RapportActiviteSearchService::class => RapportActiviteSearchServiceFactory::class,
             RapportActiviteValidationService::class => RapportActiviteValidationServiceFactory::class,
             RapportActiviteAvisService::class => RapportActiviteAvisServiceFactory::class,
+            RapportActiviteOperationService::class => RapportActiviteOperationServiceFactory::class,
+
+            RapportActiviteNotificationFactory::class => RapportActiviteNotificationFactoryFactory::class,
 
             RapportActiviteAssertion::class => RapportActiviteAssertionFactory::class,
+            RapportActiviteRechercheAssertion::class => RapportActiviteRechercheAssertionFactory::class,
             RapportActiviteAvisAssertion::class => RapportActiviteAvisAssertionFactory::class,
             RapportActiviteValidationAssertion::class => RapportActiviteValidationAssertionFactory::class,
 
@@ -567,11 +700,13 @@ return [
             RapportActiviteAvisEventListener::class => RapportActiviteAvisEventListenerFactory::class,
             RapportActiviteValidationEventListener::class => RapportActiviteValidationEventListenerFactory::class,
 
-            RapportActiviteAvisNotificationRule::class => RapportActiviteAvisNotificationRuleFactory::class,
-            RapportActiviteValidationRule::class => RapportActiviteValidationRuleFactory::class,
-            RapportActiviteTeleversementRule::class => RapportActiviteTeleversementRuleFactory::class,
+            RapportActiviteAvisRule::class => RapportActiviteAvisRuleFactory::class,
+            OperationAttendueNotificationRule::class => OperationAttendueNotificationRuleFactory::class,
+            RapportActiviteCreationRule::class => RapportActiviteCreationRuleFactory::class,
+            RapportActiviteOperationRule::class => RapportActiviteOperationRuleFactory::class,
 
             PageValidationPdfExporter::class => PageValidationPdfExporterFactory::class,
+            RapportActivitePdfExporter::class => RapportActivitePdfExporterFactory::class,
         ],
     ],
     'controllers' => [
@@ -589,7 +724,8 @@ return [
     ],
     'form_elements' => [
         'factories' => [
-            RapportActiviteForm::class => RapportActiviteFormFactory::class,
+            RapportActiviteAnnuelForm::class => RapportActiviteAnnuelFormFactory::class,
+            RapportActiviteFinContratForm::class => RapportActiviteFinContratFormFactory::class,
             RapportAvisForm::class => RapportAvisFormFactory::class,
         ],
     ],

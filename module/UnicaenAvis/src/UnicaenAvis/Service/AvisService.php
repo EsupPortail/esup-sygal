@@ -54,12 +54,24 @@ class AvisService
         return $qb->getQuery()->useQueryCache(true)->enableResultCache()->getResult();
     }
 
-    public function findOneAvisTypeByCode(string $code): AvisType
+    public function findOneAvisTypeByCode(string $code): ?AvisType
     {
         $qb = $this->getAvisTypeRepository()->createQueryBuilder('at')
             ->where('at.code = :code')
             ->setParameter('code', $code)
         ;
+
+        /** @var \UnicaenAvis\Entity\Db\AvisType $avisType */
+        $avisType = $qb->getQuery()->useQueryCache(true)->enableResultCache()->getOneOrNullResult();
+
+        return $avisType;
+    }
+
+    public function findOneAvisTypeById(string $id): AvisType
+    {
+        $qb = $this->getAvisTypeRepository()->createQueryBuilder('at')
+            ->where('at.id = :id')
+            ->setParameter('id', $id);
 
         /** @var \UnicaenAvis\Entity\Db\AvisType $avisType */
         $avisType = $qb->getQuery()->useQueryCache(true)->enableResultCache()->getOneOrNullResult();
