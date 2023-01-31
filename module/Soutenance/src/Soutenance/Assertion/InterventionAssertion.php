@@ -3,18 +3,19 @@
 namespace Soutenance\Assertion;
 
 use Application\Entity\Db\Role;
+use Soutenance\Provider\Parametre\SoutenanceParametres;
 use These\Entity\Db\These;
 use These\Service\These\TheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use DateInterval;
 use DateTime;
 use Soutenance\Provider\Privilege\InterventionPrivileges;
-use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Laminas\Permissions\Acl\Acl;
 use Laminas\Permissions\Acl\Assertion\AssertionInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Laminas\Permissions\Acl\Role\RoleInterface;
+use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
 class InterventionAssertion implements  AssertionInterface
 {
@@ -45,7 +46,7 @@ class InterventionAssertion implements  AssertionInterface
         $proposition = $this->getPropositionService()->findOneForThese($these);
         $date_soutenance = ($these->getDateSoutenance())?$these->getDateSoutenance():$proposition->getDate();
 
-        $interval = $this->getParametreService()->getParametreByCode('PERIODE_INTERVENTION_DIRECTEUR')->getValeur();
+        $interval = $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DELAI_INTERVENTION)->getValeur();
         $mini = (new DateTime())->sub(new DateInterval('P'.$interval.'D'));
         $maxi = (new DateTime())->add(new DateInterval('P'.$interval.'D'));
 

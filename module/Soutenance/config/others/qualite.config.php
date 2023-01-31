@@ -115,25 +115,6 @@ return array(
         ],
     ],
 
-    'navigation' => [
-        'default' => [
-            'home' => [
-                'pages' => [
-                    'admin' => [
-                        'pages' => [
-                            'configuration' => [
-                                'label' => 'Paramétrage du module de soutenance',
-                                'route' => 'configuration',
-                                'order' => 2000,
-                                'resource' => QualitePrivileges::getResourceId(QualitePrivileges::SOUTENANCE_QUALITE_VISUALISER),
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ],
-
     'service_manager' => [
         'factories' => [
             QualiteService::class => QualiteServiceFactory::class,

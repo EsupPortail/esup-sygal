@@ -2,7 +2,6 @@
 
 namespace Soutenance\Service\Proposition;
 
-//TODO faire le repo aussi
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
@@ -15,21 +14,20 @@ use Application\Service\Variable\VariableServiceAwareTrait;
 use DateInterval;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Exception;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Individu\Entity\Db\Individu;
 use Laminas\Mvc\Controller\AbstractActionController;
+use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Parametre\SoutenanceParametres;
 use Soutenance\Provider\Validation\TypeValidation as TypeValidationSoutenance;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
-use Notification\Service\NotifierServiceAwareTrait;
-use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
@@ -38,6 +36,7 @@ use These\Service\Acteur\ActeurServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
 class PropositionService extends BaseService
 {
@@ -45,8 +44,8 @@ class PropositionService extends BaseService
     use ActeurServiceAwareTrait;
     use ValidatationServiceAwareTrait;
     use NotifierServiceAwareTrait;
-    use SoutenanceNotificationFactoryAwareTrait;
     use ParametreServiceAwareTrait;
+    use SoutenanceNotificationFactoryAwareTrait;
     use VariableServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
     use EtablissementServiceAwareTrait;
@@ -63,10 +62,6 @@ class PropositionService extends BaseService
 
     /** GESTION DES ENTITES *******************************************************************************************/
 
-    /**
-     * @param These $these
-     * @return Proposition
-     */
     public function create(These $these) : Proposition
     {
         $proposition = new Proposition($these);
@@ -87,16 +82,12 @@ class PropositionService extends BaseService
         try {
             $this->getEntityManager()->persist($proposition);
             $this->getEntityManager()->flush($proposition);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Un erreur s'est produite lors de l'enregistrment en BD de la proposition de thèse !");
         }
         return $proposition;
     }
 
-    /**
-     * @param Proposition $proposition
-     * @return Proposition
-     */
     public function update(Proposition $proposition) : Proposition
     {
         try {
@@ -111,29 +102,15 @@ class PropositionService extends BaseService
 
         try {
             $this->getEntityManager()->flush($proposition);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Une erreur s'est produite lors de la mise à jour de la proposition de soutenance !");
         }
         return $proposition;
     }
 
-    /**
-     * @param Proposition $proposition
-     * @return Proposition
-     */
-    public function historise($proposition)
+    public function historise(Proposition $proposition) : Proposition
     {
-        try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-        } catch(Exception $e) {
-            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
-        }
-
-        $proposition->setHistoModificateur($user);
-        $proposition->setHistoModification($date);
-        $proposition->setHistoDestructeur($user);
-        $proposition->setHistoDestruction($date);
+        $proposition->historiser();
 
         try {
             $this->getEntityManager()->flush($proposition);
@@ -143,23 +120,9 @@ class PropositionService extends BaseService
         return $proposition;
     }
 
-    /**
-     * @param Proposition $proposition
-     * @return Proposition
-     */
-    public function restore($proposition)
+    public function restore(Proposition $proposition) : Proposition
     {
-        try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-        } catch(Exception $e) {
-            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
-        }
-
-        $proposition->setHistoModificateur($user);
-        $proposition->setHistoModification($date);
-        $proposition->setHistoDestructeur(null);
-        $proposition->setHistoDestruction(null);
+        $proposition->dehistoriser();
 
         try {
             $this->getEntityManager()->flush($proposition);
@@ -169,17 +132,15 @@ class PropositionService extends BaseService
         return $proposition;
     }
 
-    /**
-     * @param Proposition $proposition
-     */
-    public function delete($proposition)
+    public function delete(Proposition $proposition) : Proposition
     {
         try {
             $this->getEntityManager()->remove($proposition);
             $this->getEntityManager()->flush($proposition);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Une erreur s'est produite lors de la mise à jour de la proposition de soutenance !");
         }
+        return $proposition;
     }
 
     /** REQUETES ******************************************************************************************************/
@@ -205,11 +166,7 @@ class PropositionService extends BaseService
         ;
     }
 
-    /**
-     * @param int $id
-     * @return Proposition
-     */
-    public function find($id): Proposition
+    public function find(?int $id): ?Proposition
     {
         $qb = $this->createQueryBuilder()
             ->andWhere("proposition.id = :id")
@@ -224,22 +181,13 @@ class PropositionService extends BaseService
         return $result;
     }
 
-    /**
-     * @param AbstractActionController $controller
-     * @param string $param
-     * @return Proposition
-     */
-    public function getRequestedProposition(AbstractActionController $controller, string $param = 'proposition') : Proposition
+    public function getRequestedProposition(AbstractActionController $controller, string $param = 'proposition') : ?Proposition
     {
         $id = $controller->params()->fromRoute($param);
 
         return $this->find($id);
     }
 
-    /**
-     * @param These $these
-     * @return Proposition|null
-     */
     public function findOneForThese(These $these): ?Proposition
     {
         $qb = $this->createQueryBuilder()
@@ -336,13 +284,12 @@ class PropositionService extends BaseService
         $nbExterieur    = 0;
         $nbRapporteur   = 0;
 
-        $parameters     =  $this->getParametreService()->getParametresAsArray();
-        $parite_min     =  $parameters['JURY_PARITE_RATIO_MIN'];
-        $membre_min     =  $parameters['JURY_SIZE_MIN'];
-        $membre_max     =  $parameters['JURY_SIZE_MAX'];
-        $rapporteur_min =  $parameters['JURY_RAPPORTEUR_SIZE_MIN'];
-        $rangA_min      =  $parameters['JURY_RANGA_RATIO_MIN'];
-        $exterieur_min  =  $parameters['JURY_EXTERIEUR_RATIO_MIN'];
+        $membre_min     =  $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MIN_MEMBRE_JURY)->getValeur();
+        $membre_max     =  $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MAX_MEMBRE_JURY)->getValeur();
+        $rapporteur_min =  $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MIN_RAPPORTEUR)->getValeur();
+        $rangA_min      =  ((float) $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_MIN_RANG_A)->getValeur());
+        $exterieur_min  =  ((float) $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_MIN_EXTERIEUR)->getValeur());
+        $parite_min     =  ((float) $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_PARITE)->getValeur());
 
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {

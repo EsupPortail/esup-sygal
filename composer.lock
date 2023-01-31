@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "11134d86edcc725657176b6b3452c53c",
+    "content-hash": "97cd7f1aa13bca4d6183b05331ae7739",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -10045,6 +10045,28 @@
             "time": "2022-12-15T12:24:44+00:00"
         },
         {
+            "name": "unicaen/parametre",
+            "version": "5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/parametre.git",
+                "reference": "04311ff04b56bda07cb67eeed3d0757f0e50027a"
+            },
+            "require": {
+                "unicaen/app": "^5",
+                "unicaen/privilege": "^5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": [],
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "description": "Module de gestion de paramètres",
+            "time": "2022-07-21T08:58:12+00:00"
+        },
+        {
             "name": "unicaen/pdf",
             "version": "4.0.0",
             "source": {
@@ -12098,5 +12120,5 @@
         "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.1.0"
 }
