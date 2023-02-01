@@ -10104,26 +10104,25 @@
         },
         {
             "name": "unicaen/renderer",
-            "version": "5.0.3",
+            "version": "5.0.5",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/renderer.git",
-                "reference": "2fac10cd89dbd5d36a64411f7e44df9ca9a831c8"
+                "reference": "15e07cff3dbb4f3a083bb5af245fc1cc5acc92af"
             },
             "require": {
                 "laminas/laminas-dependency-plugin": "^2.1",
-                "unicaen/app": "^5.0",
+                "php": "^7.0",
                 "unicaen/privilege": "^5.0"
             },
             "type": "library",
             "autoload": {
-                "psr-0": [],
                 "classmap": [
                     "./Module.php"
                 ]
             },
             "description": "Module de rendu de texte avec templates et macros",
-            "time": "2022-09-16T14:21:27+00:00"
+            "time": "2023-01-20T19:42:17+00:00"
         },
         {
             "name": "unicaen/zfc-user",
@@ -12098,5 +12097,5 @@
         "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.1.0"
 }

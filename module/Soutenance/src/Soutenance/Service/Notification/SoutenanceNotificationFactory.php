@@ -345,33 +345,28 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     /**
      * @param These $these
-     * @param Proposition $proposition
      * @param Membre $membre
-     * @param string $url
      * @return \Notification\Notification
      */
-    public function createNotificationDemandeSignatureEngagementImpartialite(These $these, Proposition $proposition, Membre $membre, string $url): Notification
+    public function createNotificationDemandeSignatureEngagementImpartialite(These $these, Membre $membre): Notification
     {
-        $email = $membre->getEmail();
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'rapporteur' => $membre];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
 
-        if ($email !== null) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Demande de signature de l'engagement d'impartialité de la thèse de " . $these->getDoctorant()->getIndividu())
-                ->setTo($email)
-                ->setTemplatePath('soutenance/notification/engagement-impartialite-demande')
-                ->setTemplateVariables([
-                    'these' => $these,
-                    'proposition' => $proposition,
-                    'membre' => $membre,
-                    'url' => $url,
-                ]);
-
-            return $notif;
-        } else {
-            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DEMANDE_ENGAGEMENT_IMPARTIALITE, $vars);
+        $mail = $membre->getEmail();
+        if ($mail === null) {
+            throw new RuntimeException("Aucun mail trouvé pour le rapporteur");
         }
 
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($mail)
+            ->setBody($rendu->getCorps());
+
+        return $notif;
     }
 
     /**
