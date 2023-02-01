@@ -121,7 +121,7 @@ class EngagementImpartialiteController extends AbstractController
         if ($signature === null) {
             $this->getEngagementImpartialiteService()->create($membre, $these);
             try {
-                $notif = $this->soutenanceNotificationFactory->createNotificationSignatureEngagementImpartialite($these, $proposition, $membre);
+                $notif = $this->soutenanceNotificationFactory->createNotificationSignatureEngagementImpartialite($these, $membre);
                 $this->notifierService->trigger($notif);
             } catch (RuntimeException $e) {
                 // aucun destintaire, todo : cas à gérer !
@@ -140,7 +140,7 @@ class EngagementImpartialiteController extends AbstractController
         $this->getEngagementImpartialiteService()->createRefus($membre, $these);
         $this->getPropositionService()->annulerValidationsForProposition($proposition);
         try {
-            $notif = $this->soutenanceNotificationFactory->createNotificationRefusEngagementImpartialite($these, $proposition, $membre);
+            $notif = $this->soutenanceNotificationFactory->createNotificationRefusEngagementImpartialite($these, $membre);
             $this->notifierService->trigger($notif);
         } catch (RuntimeException $e) {
             // aucun destintaire, todo : cas à gérer !
@@ -159,7 +159,7 @@ class EngagementImpartialiteController extends AbstractController
         /** @var Validation[] $validations */
         $this->getEngagementImpartialiteService()->delete($membre);
         try {
-            $notif = $this->soutenanceNotificationFactory->createNotificationAnnulationEngagementImpartialite($these, $proposition, $membre);
+            $notif = $this->soutenanceNotificationFactory->createNotificationAnnulationEngagementImpartialite($these, $membre);
             $this->notifierService->trigger($notif);
         } catch (RuntimeException $e) {
             // aucun destintaire, todo : cas à gérer !
