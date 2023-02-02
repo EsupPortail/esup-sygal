@@ -9,9 +9,8 @@ use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Formation\Entity\Db\Inscription;
 use Formation\Provider\NatureFichier\NatureFichier;
-use Formation\Service\Exporter\Attestation\AttestationExporter;
 use Formation\Service\Exporter\Attestation\AttestationExporterAwareTrait;
-use Formation\Service\Exporter\Convocation\ConvocationExporter;
+use Formation\Service\Exporter\Convocation\ConvocationExporterAwareTrait;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
 use Formation\Service\Notification\FormationNotificationFactoryAwareTrait;
 use Notification\Service\NotifierServiceAwareTrait;
@@ -42,6 +41,7 @@ class InscriptionController extends AbstractController
     use SessionServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
     use AttestationExporterAwareTrait;
+    use ConvocationExporterAwareTrait;
 
     private ?PhpRenderer $renderer = null;
     public function setRenderer(?PhpRenderer $renderer) { $this->renderer = $renderer; }
@@ -244,28 +244,10 @@ class InscriptionController extends AbstractController
         $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
         $session = $inscription->getSession();
 
-        $logos = [];
-        try {
-            $logos['site'] = $this->fichierStorageService->getFileForLogoStructure($session->getSite()->getStructure());
-        } catch (StorageAdapterException $e) {
-            $logos['site'] = null;
-        }
-        if ($comue = $this->etablissementService->fetchEtablissementComue()) {
-            try {
-                $logos['comue'] = $this->fichierStorageService->getFileForLogoStructure($comue->getStructure());
-            } catch (StorageAdapterException $e) {
-                $logos['comue'] = null;
-            }
-        }
-
-        $signature = $this->findSignatureEtablissement($inscription->getDoctorant()->getEtablissement());
-
         //exporter
-        $export = new ConvocationExporter($this->renderer, 'A4');
+        $export = $this->convocationExporter;
         $export->setVars([
-            'signature' => $signature,
             'inscription' => $inscription,
-            'logos' => $logos,
         ]);
         $export->export('SYGAL_convocation_' . $session->getId() . "_" . $inscription->getId() . ".pdf");
     }

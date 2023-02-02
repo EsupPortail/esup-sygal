@@ -6,7 +6,9 @@ use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Formation\Entity\Db\Inscription;
 use Formation\Provider\Template\PdfTemplates;
 use Formation\Service\Url\UrlServiceAwareTrait;
+use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\Structure;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenPdf\Exporter\PdfExporter as PdfExporter;
 use Laminas\View\Renderer\PhpRenderer;
@@ -15,6 +17,7 @@ use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 class AttestationExporter extends PdfExporter
 {
+    use EtablissementServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
     use RenduServiceAwareTrait;
     use StructureServiceAwareTrait;
@@ -56,13 +59,13 @@ class AttestationExporter extends PdfExporter
             'Url' => $urlService,
         ];
 
-        /** @var Structure $comue */
-        $comue = $this->getStructureService()->getRepository()->findOneBy(['sigle' => 'NU']);
+        /** @var Etablissement $comue */
+        $comue = $this->etablissementService->fetchEtablissementComue();
         /** @var Structure $ced */
         $ced = $this->getStructureService()->getRepository()->findOneBy(['sigle' => 'CED']);
         $etab = $doctorant->getEtablissement()->getStructure();
         $logos = [
-            "COMUE" => $comue?$this->fichierStorageService->getFileForLogoStructure($comue):null,
+            "COMUE" => $comue?$this->fichierStorageService->getFileForLogoStructure($comue->getStructure()):null,
             "CED" =>  $ced?$this->fichierStorageService->getFileForLogoStructure($ced):null,
             "ETAB" => $etab?$this->fichierStorageService->getFileForLogoStructure($etab):null,
         ];

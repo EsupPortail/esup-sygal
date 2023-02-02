@@ -1,8 +1,6 @@
 <?php
 
-namespace Soutenance\Service\Exporter\Convocation;
-
-use Formation\Service\Exporter\Convocation\ConvocationExporter;
+namespace Formation\Service\Exporter\Convocation;
 
 trait ConvocationExporterAwareTrait {
 

@@ -7,6 +7,7 @@ use Formation\Service\Url\UrlService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Structure\StructureService;
 use UnicaenRenderer\Service\Rendu\RenduService;
 
@@ -19,11 +20,13 @@ class ConvocationExporterFactory {
     public function __invoke(ContainerInterface $container) : ConvocationExporter
     {
         /**
+         * @var EtablissementService $etablissementService
          * @var FichierStorageService $fichierStorageService
          * @var RenduService $renduService
          * @var StructureService $structureService
          * @var UrlService $urlService
          */
+        $etablissementService = $container->get(EtablissementService::class);
         $fichierStorageService = $container->get(FichierStorageService::class);
         $renduService = $container->get(RenduService::class);
         $structureService = $container->get(StructureService::class);
@@ -31,6 +34,7 @@ class ConvocationExporterFactory {
         $renderer = $container->get('ViewRenderer');
 
         $exporter = new ConvocationExporter($renderer, 'A4');
+        $exporter->setEtablissementService($etablissementService);
         $exporter->setFichierStorageService($fichierStorageService);
         $exporter->setRenduService($renduService);
         $exporter->setStructureService($structureService);

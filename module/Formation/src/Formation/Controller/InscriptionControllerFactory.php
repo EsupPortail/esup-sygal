@@ -4,6 +4,7 @@ namespace Formation\Controller;
 
 use Fichier\Service\Fichier\FichierStorageService;
 use Formation\Service\Exporter\Attestation\AttestationExporter;
+use Formation\Service\Exporter\Convocation\ConvocationExporter;
 use Formation\Service\Notification\FormationNotificationFactory;
 use Formation\Service\Session\SessionService;
 use Psr\Container\ContainerExceptionInterface;
@@ -53,6 +54,7 @@ class InscriptionControllerFactory {
         $sessionService = $container->get(SessionService::class);
         $structureDocumentService = $container->get(StructureDocumentService::class);
         $attestationExporter = $container->get(AttestationExporter::class);
+        $convocationExporter = $container->get(ConvocationExporter::class);
 
         /* @var $renderer PhpRenderer */
         $renderer = $container->get('ViewRenderer');
@@ -72,6 +74,7 @@ class InscriptionControllerFactory {
         /** forms *****************************************************************************************************/
         /** autres*****************************************************************************************************/
         $controller->setAttestationExporter($attestationExporter);
+        $controller->setConvocationExporter($convocationExporter);
         $controller->setRenderer($renderer);
 
         /** @var \Formation\Service\Notification\FormationNotificationFactory $formationNotificationFactory */
