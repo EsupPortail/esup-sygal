@@ -7,6 +7,7 @@ Journal des modifications
 - Formation : Amélioration de l'affichage de la liste des inscrits (état de la session, état de la saisie de l'enquête)
 - Formation : La génération du pdf d'attestion est maintenant bloquée si l'enquête est non saisie
 - Formation : Ajout d'un interval pour la date butoir dans la Session et affichage sur l'index du doctorant
+- Formation : Passage sous la forme de template des PDFs de convocation et d'attestation
 - Soutenance : Passage des courriers électroniques liés à l'engagement d'impartialité dans UnicaenRenderer
 
 5.2.8
