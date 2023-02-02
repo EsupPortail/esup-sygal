@@ -305,7 +305,17 @@ class Session implements HistoriqueAwareInterface,
 
     /**
      * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
-     * @return string
+     */
+    public function getPeriode() : string {
+        $jour_debut = $this->getDateDebut()->format('d/m/Y');
+        $jour_fin = $this->getDateFin()->format('d/m/Y');
+
+        if ($jour_debut === $jour_fin) return $jour_debut;
+        return $jour_debut." au ".$jour_fin;
+    }
+
+    /**
+     * @noinspection PhpUnusedMethod (il s'agit d'une méthode utilisée par les macros)
      */
     public function getSeancesAsTable() : string
     {
@@ -338,5 +348,11 @@ class Session implements HistoriqueAwareInterface,
     {
         $etatCode = $this->getEtat()->getCode();
         return ($etatCode === Session::ETAT_INSCRIPTION_CLOSE OR $etatCode === Session::ETAT_IMMINENTE);
+    }
+
+    public function getDenominationResponsable() : string
+    {
+        $responsable = $this->getResponsable();
+        return $responsable?$responsable->getNomComplet():"Aucun responsable de désigner pour cette session";
     }
 }

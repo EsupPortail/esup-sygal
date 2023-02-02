@@ -2,12 +2,24 @@
 
 namespace Formation\Service\Exporter\Attestation;
 
-use UnicaenApp\Exporter\Pdf as PdfExporter;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Formation\Entity\Db\Inscription;
+use Formation\Provider\Template\PdfTemplates;
+use Formation\Service\Url\UrlServiceAwareTrait;
+use Structure\Entity\Db\Structure;
+use Structure\Service\Structure\StructureServiceAwareTrait;
+use UnicaenPdf\Exporter\PdfExporter as PdfExporter;
 use Laminas\View\Renderer\PhpRenderer;
 use Laminas\View\Resolver\TemplatePathStack;
+use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 class AttestationExporter extends PdfExporter
 {
+    use FichierStorageServiceAwareTrait;
+    use RenduServiceAwareTrait;
+    use StructureServiceAwareTrait;
+    use UrlServiceAwareTrait;
+
     private $vars;
 
     public function setVars(array $vars)
@@ -27,10 +39,38 @@ class AttestationExporter extends PdfExporter
 
     public function export($filename = null, $destination = self::DESTINATION_BROWSER, $memoryLimit = null)
     {
-//        $this->addBodyHtml('<style>' . file_get_contents(APPLICATION_DIR . '/public/css/page-unicaen.css') . '</style>');
-        $this->setHeaderScript('empty.phtml');
-        $this->setFooterScript('empty.phtml');
-        $this->addBodyScript('attestation.phtml', false, $this->vars);
+
+        /** @var Inscription $inscription */
+        $inscription = $this->vars['inscription'];
+        $session = $inscription->getSession();
+        $doctorant = $inscription->getDoctorant();
+
+        $urlService = $this->urlService;
+        $urlService->setVariables(['etablissement' => $doctorant->getEtablissement()]);
+
+        $vars = [
+            'doctorant' => $doctorant,
+            'session' => $session,
+            'formation' => $session->getFormation(),
+            'inscription' => $inscription,
+            'Url' => $urlService,
+        ];
+
+        /** @var Structure $comue */
+        $comue = $this->getStructureService()->getRepository()->findOneBy(['sigle' => 'NU']);
+        /** @var Structure $ced */
+        $ced = $this->getStructureService()->getRepository()->findOneBy(['sigle' => 'CED']);
+        $etab = $doctorant->getEtablissement()->getStructure();
+        $logos = [
+            "COMUE" => $comue?$this->fichierStorageService->getFileForLogoStructure($comue):null,
+            "CED" =>  $ced?$this->fichierStorageService->getFileForLogoStructure($ced):null,
+            "ETAB" => $etab?$this->fichierStorageService->getFileForLogoStructure($etab):null,
+        ];
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(PdfTemplates::FORMATION_ATTESTATION, $vars);
+        $this->getMpdf()->SetMargins(0,0,60);
+        $this->setHeaderScript('header.phtml', null, $logos);
+        $this->setFooterScript('footer.phtml');
+        $this->addBodyHtml($rendu->getCorps());
         return PdfExporter::export($filename, $destination, $memoryLimit);
     }
 }

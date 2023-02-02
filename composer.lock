@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "11134d86edcc725657176b6b3452c53c",
+    "content-hash": "7615d2cb05394e76416535b96e433663",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -10046,11 +10046,11 @@
         },
         {
             "name": "unicaen/pdf",
-            "version": "4.0.0",
+            "version": "5.0.1",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/pdf.git",
-                "reference": "18497c10f122c9483cb5186bd51815391caf3014"
+                "reference": "f36fa5c5f44205593d076a1a49a98bf4752ad32b"
             },
             "require": {
                 "laminas/laminas-dependency-plugin": "^2.1",
@@ -10073,7 +10073,7 @@
                 ]
             },
             "description": "Génération PDF",
-            "time": "2022-03-29T05:53:50+00:00"
+            "time": "2022-12-15T11:04:14+00:00"
         },
         {
             "name": "unicaen/privilege",

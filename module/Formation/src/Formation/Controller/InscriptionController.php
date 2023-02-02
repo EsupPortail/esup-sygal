@@ -10,6 +10,7 @@ use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Formation\Entity\Db\Inscription;
 use Formation\Provider\NatureFichier\NatureFichier;
 use Formation\Service\Exporter\Attestation\AttestationExporter;
+use Formation\Service\Exporter\Attestation\AttestationExporterAwareTrait;
 use Formation\Service\Exporter\Convocation\ConvocationExporter;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
 use Formation\Service\Notification\FormationNotificationFactoryAwareTrait;
@@ -40,6 +41,7 @@ class InscriptionController extends AbstractController
     use PresenceServiceAwareTrait;
     use SessionServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
+    use AttestationExporterAwareTrait;
 
     private ?PhpRenderer $renderer = null;
     public function setRenderer(?PhpRenderer $renderer) { $this->renderer = $renderer; }
@@ -302,7 +304,7 @@ class InscriptionController extends AbstractController
         $signature = $this->findSignatureEtablissement($inscription->getDoctorant()->getEtablissement());
 
         //exporter
-        $export = new AttestationExporter($this->renderer, 'A4');
+        $export = $this->attestationExporter;
         $export->setVars([
             'signature' => $signature,
             'inscription' => $inscription,

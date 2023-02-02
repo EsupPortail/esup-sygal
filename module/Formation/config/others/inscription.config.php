@@ -7,6 +7,10 @@ use Formation\Controller\InscriptionControllerFactory;
 use Formation\Controller\Recherche\InscriptionRechercheController;
 use Formation\Controller\Recherche\InscriptionRechercheControllerFactory;
 use Formation\Provider\Privilege\InscriptionPrivileges;
+use Formation\Service\Exporter\Attestation\AttestationExporter;
+use Formation\Service\Exporter\Attestation\AttestationExporterFactory;
+use Formation\Service\Exporter\Convocation\ConvocationExporter;
+use Formation\Service\Exporter\Convocation\ConvocationExporterFactory;
 use Formation\Service\Inscription\Search\InscriptionSearchServiceFactory;
 use Formation\Service\Inscription\InscriptionService;
 use Formation\Service\Inscription\InscriptionServiceFactory;
@@ -256,6 +260,8 @@ return [
         'factories' => [
             InscriptionService::class => InscriptionServiceFactory::class,
             InscriptionSearchService::class => InscriptionSearchServiceFactory::class,
+            AttestationExporter::class => AttestationExporterFactory::class,
+            ConvocationExporter::class => ConvocationExporterFactory::class,
         ],
     ],
     'controllers'     => [

@@ -2,12 +2,21 @@
 
 namespace Formation\Service\Exporter\Convocation;
 
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Formation\Service\Url\UrlServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenApp\Exporter\Pdf as PdfExporter;
 use Laminas\View\Renderer\PhpRenderer;
 use Laminas\View\Resolver\TemplatePathStack;
+use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 class ConvocationExporter extends PdfExporter
 {
+    use FichierStorageServiceAwareTrait;
+    use RenduServiceAwareTrait;
+    use StructureServiceAwareTrait;
+    use UrlServiceAwareTrait;
+
     private $vars;
 
     public function setVars(array $vars)
