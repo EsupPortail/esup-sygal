@@ -38,6 +38,7 @@ return [
         'UnicaenLivelog',
         'UnicaenPdf',
         'UnicaenRenderer',
+        'UnicaenParametre',
         'Structure',
         'These',
         'Fichier',

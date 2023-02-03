@@ -9,12 +9,12 @@ use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
 use Soutenance\Entity\Etat;
 use Soutenance\Provider\Privilege\JustificatifPrivileges;
-use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Laminas\Permissions\Acl\Acl;
 use Laminas\Permissions\Acl\Assertion\AssertionInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Laminas\Permissions\Acl\Role\RoleInterface;
+use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
 class JustificatifAssertion implements AssertionInterface {
     use UserContextServiceAwareTrait;

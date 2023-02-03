@@ -42,6 +42,7 @@
         "unicaen/livelog": "dev-master",
         "unicaen/faq": "^5.0",
         "unicaen/ldap": "^4.0",
+        "unicaen/parametre": "^5.0",
         "unicaen/renderer": "^5.0",
         "unicaen/pdf": "5.0.1",
         "webmozart/assert": "^1.3",

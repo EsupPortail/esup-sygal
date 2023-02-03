@@ -147,7 +147,7 @@ return [
                                 'label' => 'Gestion de contenus',
                                 'route' => 'contenu',
                                 'resource' => PrivilegeController::getResourceId(IndexController::class, 'index'),
-                                'order'    => 10001,
+                                'order'    => 10002,
                                 'icon'     => 'far fa-file-code',
                             ],
                         ],

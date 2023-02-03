@@ -2,6 +2,8 @@
 
 namespace Soutenance\Service\Proposition;
 
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Soutenance\Service\Notification\SoutenanceNotificationFactory;
 use These\Service\Acteur\ActeurService;
 use Structure\Service\Etablissement\EtablissementService;
@@ -12,14 +14,14 @@ use Doctrine\ORM\EntityManager;
 use Psr\Container\ContainerInterface;
 use Soutenance\Service\Membre\MembreService;
 use Notification\Service\NotifierService;
-use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Validation\ValidationService;
+use UnicaenParametre\Service\Parametre\ParametreService;
 
 class PropositionServiceFactory
 {
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __invoke(ContainerInterface $container): PropositionService
     {
@@ -58,7 +60,6 @@ class PropositionServiceFactory
         $service->setMembreService($membreService);
         $service->setUserContextService($userContextService);
 
-        /** @var \Soutenance\Service\Notification\SoutenanceNotificationFactory $soutenanceNotificationFactory */
         $soutenanceNotificationFactory = $container->get(SoutenanceNotificationFactory::class);
         $service->setSoutenanceNotificationFactory($soutenanceNotificationFactory);
 
