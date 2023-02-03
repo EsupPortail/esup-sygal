@@ -16,6 +16,7 @@ use Laminas\Paginator\Paginator as LaminasPaginator;
  * @var LaminasPaginator $paginator
  * @var string $routeName
  * @var string $returnUrl
+ * @var int $delai
  *
  * @see \Formation\Controller\Recherche\SessionRechercheController::indexAction()
  */
@@ -66,7 +67,7 @@ $now = new DateTime();
             <?php
                 $session = $inscription->getSession();
                 $individu = $inscription->getDoctorant()->getIndividu();
-                $dateButoir = $session->getDateFin()->add(new DateInterval(Session::INTERVAL_ENQUETE));
+                $dateButoir = $session->getDateFin()->add(new DateInterval('P'.$delai.'D'));
             ?>
             <tr>
                 <td> <?php echo $inscription->getId(); ?> </td>

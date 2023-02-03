@@ -38,8 +38,6 @@ class Session implements HistoriqueAwareInterface,
         self::ETAT_CLOS_FINAL => self::ETAT_CLOS_FINAL,
     ];
 
-    const INTERVAL_ENQUETE = 'P1M';
-
     private int $id;
     private ?int $index = null;
     private ?Formation $formation = null;

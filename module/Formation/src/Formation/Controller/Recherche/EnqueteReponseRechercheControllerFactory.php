@@ -8,6 +8,7 @@ use Formation\Entity\Db\Formateur;
 use Formation\Entity\Db\Session;
 use Formation\Service\EnqueteReponse\Search\EnqueteReponseSearchService;
 use Psr\Container\ContainerInterface;
+use UnicaenParametre\Service\Parametre\ParametreService;
 
 class EnqueteReponseRechercheControllerFactory
 {
@@ -19,8 +20,13 @@ class EnqueteReponseRechercheControllerFactory
     {
         $controller = new EnqueteReponseRechercheController();
 
-        /** @var \Doctrine\ORM\EntityManager $em */
+        /**
+         * @var \Doctrine\ORM\EntityManager $em
+         * @var ParametreService $parametreService
+         */
         $em = $container->get('doctrine.entitymanager.orm_default');
+        $parametreService = $container->get(ParametreService::class);
+        $controller->setParametreService($parametreService);
 
         /** @var \Formation\Entity\Db\Repository\EnqueteQuestionRepository $repository */
         $repository = $em->getRepository(EnqueteQuestion::class);

@@ -63,11 +63,11 @@ class AttestationExporter extends PdfExporter
         $comue = $this->etablissementService->fetchEtablissementComue();
         /** @var Structure $ced */
         $ced = $this->getStructureService()->getRepository()->findOneBy(['sigle' => 'CED']);
-        $etab = $doctorant->getEtablissement()->getStructure();
+        $etab = $session->getSite();
         $logos = [
             "COMUE" => $comue?$this->fichierStorageService->getFileForLogoStructure($comue->getStructure()):null,
             "CED" =>  $ced?$this->fichierStorageService->getFileForLogoStructure($ced):null,
-            "ETAB" => $etab?$this->fichierStorageService->getFileForLogoStructure($etab):null,
+            "ETAB" => $etab?$this->fichierStorageService->getFileForLogoStructure($etab->getStructure()):null,
         ];
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(PdfTemplates::FORMATION_ATTESTATION, $vars);
         $this->getMpdf()->SetMargins(0,0,60);

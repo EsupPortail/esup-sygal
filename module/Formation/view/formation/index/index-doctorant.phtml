@@ -7,6 +7,7 @@
  * @var Session[] $preparations
  * @var Inscription[] $inscriptions
  * @var EnqueteReponse[] $reponses;
+ * @var int $delai;
  */
 
 
@@ -432,7 +433,7 @@ $now = new DateTime();
                             <?php if ($canRepondreEnquete AND $inscription->getValidationEnquete() === null) : ?>
                                 <?php
                                     $dateFin = $inscription->getSession()->getDateFin();
-                                    $dateButoir = $dateFin->add(new DateInterval(Session::INTERVAL_ENQUETE));
+                                    $dateButoir = $dateFin->add(new DateInterval('P'.$delai.'D'));
                                 ?>
                                 <?php if ($now <= $dateButoir) : ?>
                                     <?php /** @see \Formation\Controller\EnqueteQuestionController::repondreQuestionsAction() */?>
