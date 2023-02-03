@@ -436,6 +436,7 @@ $now = new DateTime();
                                     $dateButoir = $dateFin->add(new DateInterval('P'.$delai.'D'));
                                 ?>
                                 <?php if ($now <= $dateButoir) : ?>
+                                    <span class="text-warning"> Date butoir : <?php echo $dateButoir->format('d/m/Y'); ?></span><br/>
                                     <?php /** @see \Formation\Controller\EnqueteQuestionController::repondreQuestionsAction() */?>
                                     <a href="<?php echo $this->url('formation/enquete/repondre-questions', ['inscription' => $inscription->getId()], [], true); ?>"
                                        title="Compléter l'enquête (date butoir: <?php echo $dateButoir->format('d/m/Y'); ?>)" data-bs-toggle="tooltip" data-bs-html="true"
@@ -444,14 +445,6 @@ $now = new DateTime();
                                         Compléter l'enquête
                                     </a>
                                     <br/>
-                                    <?php /** @see \Formation\Controller\EnqueteQuestionController::validerQuestionsAction() */?>
-                                    <a href="<?php echo $this->url('formation/enquete/valider-questions', ['inscription' => $inscription->getId()], [], true); ?>"
-                                       class="ajax-modal" data-event="modification"
-                                       title="Valider l'enquête (date butoir: <?php echo $dateButoir->format('d/m/Y'); ?>)" data-bs-toggle="tooltip" data-bs-html="true"
-                                    >
-                                        <span class="icon icon-checked"></span>
-                                        Valider l'enquête
-                                    </a>
                                 <?php else : ?>
                                     <span class="text-danger"
                                           title="Impossible de valider l'enquête après la date butoir (date butoir: <?php echo $dateButoir->format('d/m/Y'); ?>)" data-bs-toggle="tooltip" data-bs-html="true"
@@ -462,11 +455,17 @@ $now = new DateTime();
                                 <?php endif; ?>
                             <?php endif; ?>
                             <?php if ($inscription->getValidationEnquete() !== null AND $canAttestationInscription) : ?>
-                                <?php /** @see \Formation\Controller\InscriptionController::genererAttestationAction() */?>
-                                <a href="<?php echo $this->url('formation/inscription/generer-attestation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
-                            <span class="icon icon-pdf"
-                                  title="Télécharger l'attestation" data-bs-toggle="tooltip" data-bs-html="true"
-                            ></span>Télécharger l'attestation</a>
+                                <?php if ($session->getEtat()->getCode() === Etat::CODE_CLOTURER) : ?>
+                                    <?php /** @see \Formation\Controller\InscriptionController::genererAttestationAction() */?>
+                                    <a href="<?php echo $this->url('formation/inscription/generer-attestation', ['inscription' => $inscription->getId()], [], true); ?>" target="_blank">
+                                        <span class="icon icon-pdf" title="Télécharger l'attestation" data-bs-toggle="tooltip" data-bs-html="true"></span>
+                                        Télécharger l'attestation
+                                    </a>
+                                <?php else : ?>
+                                    <span class="text-warning">
+                                        L'attestation sera disponible à la clôture de la session
+                                    </span>
+                                <?php endif; ?>
                             <?php endif; ?>
                         <?php else :?>
                             Pas de présence

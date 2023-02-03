@@ -12,12 +12,15 @@ use Formation\Service\EnqueteReponse\EnqueteReponseService;
 use Formation\Service\Inscription\InscriptionService;
 use Formation\Service\Session\SessionService;
 use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use UnicaenParametre\Service\Parametre\ParametreService;
 
 class EnqueteQuestionControllerFactory {
 
     /**
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
      */
     public function __invoke(ContainerInterface $container) : EnqueteQuestionController
     {
@@ -26,6 +29,7 @@ class EnqueteQuestionControllerFactory {
          * @var EnqueteCategorieService $enqueteCategorieService
          * @var EnqueteReponseService $enqueteReponseService
          * @var InscriptionService $inscriptionService
+         * @var ParametreService $parametreService
          * @var SessionService $sessionService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
@@ -33,6 +37,7 @@ class EnqueteQuestionControllerFactory {
         $enqueteQuestionService = $container->get(EnqueteQuestionService::class);
         $enqueteReponseService = $container->get(EnqueteReponseService::class);
         $inscriptionService = $container->get(InscriptionService::class);
+        $parametreService = $container->get(ParametreService::class);
         $sessionService = $container->get(SessionService::class);
 
         /**
@@ -50,6 +55,7 @@ class EnqueteQuestionControllerFactory {
         $controller->setEnqueteQuestionService($enqueteQuestionService);
         $controller->setEnqueteReponseService($enqueteReponseService);
         $controller->setInscriptionService($inscriptionService);
+        $controller->setParametreService($parametreService);
         $controller->setSessionService($sessionService);
         $controller->setEnqueteCategorieForm($enqueteCategorieForm);
         $controller->setEnqueteQuestionForm($enqueteQuestionForm);
