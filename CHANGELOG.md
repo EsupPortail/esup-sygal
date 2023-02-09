@@ -1,6 +1,16 @@
 Journal des modifications
 =========================
 
+5.2.9
+-----
+- Masquage des membres du CSI et de leurs saisies
+- Formation : Amélioration de l'affichage de la liste des inscrits (état de la session, état de la saisie de l'enquête)
+- Formation : La génération du pdf d'attestion est maintenant bloquée si l'enquête est non saisie
+- Formation : Ajout d'un interval pour la date butoir dans la Session et affichage sur l'index du doctorant
+- Formation : Passage sous la forme de template des PDFs de convocation et d'attestation
+- Soutenance : Passage des courriers électroniques liés à l'engagement d'impartialité dans UnicaenRenderer
+- [FIX] Soutenance : La génération de rapport de soutenance n'est plus limitée au fait q'un membre soit en visio
+
 5.2.8
 -----
 - Second dépôt (correction de thèse) : améliorations et nouvelle notification (MDD, BU, DT).

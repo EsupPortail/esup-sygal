@@ -5,11 +5,13 @@ namespace Soutenance\Service\Url;
 use DateTime;
 use Laminas\View\Renderer\PhpRenderer;
 use Soutenance\Controller\PropositionController;
+use Soutenance\Service\Membre\MembreServiceAwareTrait;
 
 /**
  * TODO faire remonter un service père qui embarque la mécanique de base
  */
 class UrlService {
+    use MembreServiceAwareTrait;
 
     /** @var PhpRenderer */
     protected $renderer;
@@ -80,6 +82,36 @@ class UrlService {
         /** @see \Soutenance\Controller\PresoutenanceController::rapportSoutenanceAction() */
         $url = $this->renderer->url('soutenance/presoutenance/rapport-soutenance', ['these' => $these->getId()], ['force_canonical' => 'true'], true);
         return $url;
+    }
+
+    /**
+     * @noinspection PhpUnusedAliasInspection
+     * @return string
+     */
+    public function getRapportTechnique() : string
+    {
+        $these = $this->variables['these'];
+        /** @see \Soutenance\Controller\PresoutenanceController::rapportTechniqueAction() */
+        $url = $this->renderer->url('soutenance/presoutenance/rapport-technique', ['these' => $these->getId()], ['force_canonical' => 'true'], true);
+        return $url;
+    }
+
+    /**
+     * @noinspection PhpUnusedAliasInspection
+     * @return string
+     */
+    public function getUrlRapporteurDashboard() : string
+    {
+        $these = $this->variables['these'];
+        $rapporteur = $this->variables['rapporteur'];
+        if ($rapporteur->getActeur()) {
+            $token = $this->getMembreService()->retrieveOrCreateToken($rapporteur);
+            $url_rapporteur = $this->renderer->url("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
+            $url = $this->renderer->url('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $rapporteur->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
+        } else {
+            $url = $this->renderer->url('home');
+        }
+        return "<a href='".$url."' target='_blank'> Tableau de bord / Dashboard </a>";
     }
 
 }

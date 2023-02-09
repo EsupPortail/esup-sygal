@@ -3,6 +3,7 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use DateInterval;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Formation\Entity\Db\EnqueteCategorie;
@@ -11,6 +12,7 @@ use Formation\Entity\Db\EnqueteReponse;
 use Formation\Form\EnqueteCategorie\EnqueteCategorieFormAwareTrait;
 use Formation\Form\EnqueteQuestion\EnqueteQuestionFormAwareTrait;
 use Formation\Form\EnqueteReponse\EnqueteReponseFormAwareTrait;
+use Formation\Provider\Parametre\FormationParametres;
 use Formation\Service\EnqueteCategorie\EnqueteCategorieServiceAwareTrait;
 use Formation\Service\EnqueteQuestion\EnqueteQuestionServiceAwareTrait;
 use Formation\Service\EnqueteReponse\EnqueteReponseServiceAwareTrait;
@@ -19,6 +21,7 @@ use Formation\Service\Session\SessionServiceAwareTrait;
 use Laminas\Http\Response;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\View\Model\ViewModel;
+use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
 class EnqueteQuestionController extends AbstractController {
     use EntityManagerAwareTrait;
@@ -26,6 +29,7 @@ class EnqueteQuestionController extends AbstractController {
     use EnqueteQuestionServiceAwareTrait;
     use EnqueteReponseServiceAwareTrait;
     use InscriptionServiceAwareTrait;
+    use ParametreServiceAwareTrait;
     use SessionServiceAwareTrait;
     use EnqueteCategorieFormAwareTrait;
     use EnqueteQuestionFormAwareTrait;
@@ -338,11 +342,16 @@ class EnqueteQuestionController extends AbstractController {
 
         $categories = $this->getEntityManager()->getRepository(EnqueteCategorie::class)->findAll();
 
+        $delai = $this->getParametreService()->getParametreByCode(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE)->getValeur();
+        $date = DateTime::createFromFormat('d/m/Y', $inscription->getSession()->getDateFin()->format('d/m/Y'));
+        $date->add(new DateInterval('P'.$delai.'D'));
+
         return new ViewModel([
             'inscription' => $inscription,
             'questions' => $questions,
             'categories' => $categories,
             'form' => $form,
+            'date' => $date,
         ]);
     }
 

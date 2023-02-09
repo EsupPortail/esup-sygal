@@ -4,19 +4,23 @@ namespace Soutenance\Controller;
 
 use Depot\Service\FichierThese\FichierTheseService;
 use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Soutenance\Form\Justificatif\JustificatifForm;
 use Soutenance\Service\Justificatif\JustificatifService;
 use Soutenance\Service\Membre\MembreService;
-use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Proposition\PropositionService;
+use UnicaenParametre\Service\Parametre\ParametreService;
 
 class JustificatifControllerFactory {
 
     /**
      * @param ContainerInterface $container
      * @return JustificatifController
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container) : JustificatifController
     {
         /**
          * @var FichierTheseService $fichierTheseService

@@ -3,22 +3,26 @@
 namespace Soutenance\Controller;
 
 use Depot\Service\FichierThese\FichierTheseService;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use These\Service\These\TheseService;
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
 use Soutenance\Service\Intervention\InterventionService;
 use Soutenance\Service\Justificatif\JustificatifService;
 use Soutenance\Service\Membre\MembreService;
-use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Proposition\PropositionService;
+use UnicaenParametre\Service\Parametre\ParametreService;
 
 class InterventionControllerFactory
 {
     /**
      * @param ContainerInterface $container
      * @return InterventionController
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container) : InterventionController
     {
         /**
          * @var EntityManager $entityManager

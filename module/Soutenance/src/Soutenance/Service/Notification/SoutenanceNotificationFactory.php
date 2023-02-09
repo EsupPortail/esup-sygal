@@ -61,7 +61,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     /**
      * @param Validation $validation
-     * @return \Notification\Notification
+     * @return Notification
      * @see Application/view/soutenance/notification/devalidation.phtml
      */
     public function createNotificationDevalidationProposition(Validation $validation): Notification
@@ -89,7 +89,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
     /**
      * @param These $these
      * @param Validation $validation
-     * @return \Notification\Notification
+     * @return Notification
      * @see Application/view/soutenance/notification/validation-acteur.phtml
      */
     public function createNotificationValidationProposition(These $these, Validation $validation): Notification
@@ -119,7 +119,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     /**
      * @param These $these
-     * @return \Notification\Notification
+     * @return Notification
      * @see Application/view/soutenance/notification/validation-structure.phtml
      */
     public function createNotificationUniteRechercheProposition(These $these): Notification
@@ -164,7 +164,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     /**
      * @param These $these
-     * @return \Notification\Notification
+     * @return Notification
      * @see Application/view/soutenance/notification/validation-structure.phtml
      */
     public function createNotificationEcoleDoctoraleProposition(These $these): Notification
@@ -209,7 +209,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     /**
      * @param These $these
-     * @return \Notification\Notification
+     * @return Notification
      * @see Application/view/soutenance/notification/validation-structure.phtml
      */
     public function createNotificationBureauDesDoctoratsProposition(These $these): Notification
@@ -251,7 +251,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     /**
      * @param \These\Entity\Db\These $these
-     * @return \Notification\Notification
+     * @return Notification
      */
     public function createNotificationPropositionValidee(These $these): Notification
     {
@@ -283,7 +283,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     /**
      * @param $these
-     * @return \Notification\Notification
+     * @return Notification
      */
     public function createNotificationPresoutenance($these): Notification
     {
@@ -310,7 +310,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
      * @param Individu $currentUser
      * @param RoleInterface $currentRole
      * @param string $motif
-     * @return \Notification\Notification
+     * @return Notification
      */
     public function createNotificationRefusPropositionSoutenance($these, $currentUser, $currentRole, $motif): Notification
     {
@@ -343,125 +343,88 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     /** ENGAGEMENT IMPARTIALITE ***************************************************************************************/
 
-    /**
-     * @param These $these
-     * @param Proposition $proposition
-     * @param Membre $membre
-     * @param string $url
-     * @return \Notification\Notification
-     */
-    public function createNotificationDemandeSignatureEngagementImpartialite(These $these, Proposition $proposition, Membre $membre, string $url): Notification
+    public function createNotificationDemandeSignatureEngagementImpartialite(These $these, Membre $membre): Notification
     {
-        $email = $membre->getEmail();
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'rapporteur' => $membre];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
 
-        if ($email !== null) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Demande de signature de l'engagement d'impartialité de la thèse de " . $these->getDoctorant()->getIndividu())
-                ->setTo($email)
-                ->setTemplatePath('soutenance/notification/engagement-impartialite-demande')
-                ->setTemplateVariables([
-                    'these' => $these,
-                    'proposition' => $proposition,
-                    'membre' => $membre,
-                    'url' => $url,
-                ]);
-
-            return $notif;
-        } else {
-            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::DEMANDE_ENGAGEMENT_IMPARTIALITE, $vars);
+        $mail = $membre->getEmail();
+        if ($mail === null) {
+            throw new RuntimeException("Aucun mail trouvé pour le rapporteur");
         }
 
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($mail)
+            ->setBody($rendu->getCorps());
+        return $notif;
     }
 
-    /**
-     * @param These $these
-     * @param Proposition $proposition
-     * @param Membre $membre
-     */
-    public function createNotificationSignatureEngagementImpartialite($these, $proposition, $membre): Notification
+    public function createNotificationSignatureEngagementImpartialite(These $these, Membre $membre): Notification
     {
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'membre' => $membre];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SIGNATURE_ENGAGEMENT_IMPARTIALITE, $vars);
         $email = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
-
-        if ($email !== null) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Signature de l'engagement d'impartialité de la thèse de " . $these->getDoctorant()->getIndividu())
-                ->setTo($email)
-                ->setTemplatePath('soutenance/notification/engagement-impartialite-signature')
-                ->setTemplateVariables([
-                    'these' => $these,
-                    'proposition' => $proposition,
-                    'membre' => $membre,
-                ]);
-
-            return $notif;
-        } else {
-            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
+        if (empty($email)) {
+            throw new RuntimeException("Aucun mail trouvé pour la maison du doctorat de ". $these->getEtablissement()->getStructure()->getLibelle());
         }
 
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($email)
+            ->setBody($rendu->getCorps());
+        return $notif;
     }
 
-    /**
-     * @param These $these
-     * @param Proposition $proposition
-     * @param Membre $membre
-     */
-    public function createNotificationRefusEngagementImpartialite($these, $proposition, $membre): Notification
+    public function createNotificationRefusEngagementImpartialite(These $these, Membre $membre): Notification
     {
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'membre' => $membre];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::REFUS_ENGAGEMENT_IMPARTIALITE, $vars);
+
         $emailsAD = $this->emailTheseService->fetchEmailActeursDirects($these);
         $emailsBDD = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
         $emails = array_merge($emailsAD, $emailsBDD);
-
-        $emails = array_filter($emails, function ($s) {
-            return $s !== null;
-        });
-
-        if (!empty($emails)) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Refus de l'engagement d'impartialité de la thèse de " . $these->getDoctorant()->getIndividu())
-                ->setTo($emails)
-                ->setTemplatePath('soutenance/notification/engagement-impartialite-refus')
-                ->setTemplateVariables([
-                    'these' => $these,
-                    'proposition' => $proposition,
-                    'membre' => $membre,
-                ]);
-
-            return $notif;
-        } else {
-            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
+        if (empty($emails)) {
+            throw new RuntimeException("Aucun mail trouvé");
         }
 
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($emails)
+            ->setBody($rendu->getCorps());
+        return $notif;
     }
 
-    /**
-     * @param These $these
-     * @param Proposition $proposition
-     * @param Membre $membre
-     */
-    public function createNotificationAnnulationEngagementImpartialite($these, $proposition, $membre): Notification
+    public function createNotificationAnnulationEngagementImpartialite(These $these, Membre $membre): Notification
     {
-        $email = $membre->getEmail();
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'membre' => $membre];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
 
-        if ($email) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Annulation de la signature de l'engagement d'impartialité de la thèse de " . $these->getDoctorant()->getIndividu())
-                ->setTo($email)
-                ->setTemplatePath('soutenance/notification/engagement-impartialite-annulation')
-                ->setTemplateVariables([
-                    'these' => $these,
-                    'proposition' => $proposition,
-                    'membre' => $membre,
-                ]);
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::ANNULATION_ENGAGEMENT_IMPARTIALITE, $vars);
 
-            return $notif;
-        } else {
-            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
+        $mail = $membre->getEmail();
+        if ($mail === null) {
+            throw new RuntimeException("Aucun mail trouvé pour le rapporteur");
         }
 
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($mail)
+            ->setBody($rendu->getCorps());
+        return $notif;
     }
 
 
@@ -570,7 +533,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
      * @param Proposition $proposition
      * @param Membre $rapporteur
      * @param string $url
-     * @return \Notification\Notification
+     * @return Notification
      */
     public function createNotificationDemandeAvisSoutenance(These $these, Proposition $proposition, Membre $rapporteur, string $url): Notification
     {
@@ -665,7 +628,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
      * @param Proposition $proposition
      * @param Utilisateur $user
      * @param string $url
-     * @return \Notification\Notification
+     * @return Notification
      */
     public function createNotificationConnexionRapporteur(Proposition $proposition, Utilisateur $user, string $url): Notification
     {
@@ -737,7 +700,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
      * @param string $email
      * @param string $url
      * @param array $avisArray
-     * @return \Notification\Notification
+     * @return Notification
      */
     public function createNotificationEnvoiConvocationDoctorant(Doctorant $doctorant, Proposition $proposition, DateTime $date, string $email, string $url, array $avisArray): Notification
     {
@@ -771,7 +734,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
      * @param string $email
      * @param string $url
      * @param array $avisArray
-     * @return \Notification\Notification
+     * @return Notification
      */
     public function createNotificationEnvoiConvocationMembre(Membre $membre, Proposition $proposition, DateTime $date, string $email, string $url, array $avisArray): Notification
     {

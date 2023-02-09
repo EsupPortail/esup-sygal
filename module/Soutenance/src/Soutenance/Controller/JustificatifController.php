@@ -5,15 +5,15 @@ namespace Soutenance\Controller;
 use Application\Controller\AbstractController;
 use Fichier\Entity\Db\VersionFichier;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Laminas\Http\Response;
 use Soutenance\Entity\Justificatif;
-use Soutenance\Entity\Parametre;
 use Soutenance\Form\Justificatif\JustificatifFormAwareTrait;
+use Soutenance\Provider\Parametre\SoutenanceParametres;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
-use Laminas\Http\Request;
 use Laminas\View\Model\ViewModel;
+use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
 class JustificatifController extends AbstractController {
     use FichierTheseServiceAwareTrait;
@@ -24,7 +24,7 @@ class JustificatifController extends AbstractController {
 
     use JustificatifFormAwareTrait;
 
-    public function ajouterAction()
+    public function ajouterAction() : ViewModel
     {
         $proposition = $this->getPropositionService()->getRequestedProposition($this);
         $nature = $this->params()->fromRoute('nature');
@@ -57,7 +57,7 @@ class JustificatifController extends AbstractController {
         ]);
     }
 
-    public function retirerAction()
+    public function retirerAction() : Response
     {
         $justificatif = $this->getJustificatifService()->getRequestedJustificatif($this);
         $retour = $this->params()->fromQuery('retour');
@@ -67,7 +67,7 @@ class JustificatifController extends AbstractController {
         return $this->redirect()->toUrl($retour);
     }
 
-    public function ajouterJustificatifAction()
+    public function ajouterJustificatifAction() : ViewModel
     {
 
         $these = $this->requestedThese();
@@ -80,7 +80,6 @@ class JustificatifController extends AbstractController {
         $form->bind($justificatif);
         $form->init();
 
-        /** @var Request $request */
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
@@ -105,11 +104,11 @@ class JustificatifController extends AbstractController {
             'form' => $form,
             'justificatifs' => $justificatifs,
 
-            'FORMULAIRE_DELOCALISATION' => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_DELOCALISATION)->getValeur(),
-            'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_DELEGUATION)->getValeur(),
-            'FORMULAIRE_DEMANDE_LABEL' => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_LABEL_EUROPEEN)->getValeur(),
-            'FORMULAIRE_DEMANDE_ANGLAIS' => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_THESE_ANGLAIS)->getValeur(),
-            'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_CONFIDENTIALITE)->getValeur(),
+            'FORMULAIRE_DELOCALISATION' => $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELOCALISATION)->getValeur(),
+            'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELEGATION_SIGNATURE)->getValeur(),
+            'FORMULAIRE_DEMANDE_LABEL' => $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_LABEL_EUROPEEN)->getValeur(),
+            'FORMULAIRE_DEMANDE_ANGLAIS' => $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_REDACTION_ANGLAIS)->getValeur(),
+            'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_CONFIDENTIALITE)->getValeur(),
         ]);
 //        $vm->setTemplate('soutenance/default/default-form');
         return $vm;

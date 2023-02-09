@@ -77,7 +77,7 @@ class EngagementImpartialiteController extends AbstractController
                     $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
                     $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $membre->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
                     try {
-                        $notif = $this->soutenanceNotificationFactory->createNotificationDemandeSignatureEngagementImpartialite($these, $proposition, $membre, $url);
+                        $notif = $this->soutenanceNotificationFactory->createNotificationDemandeSignatureEngagementImpartialite($these, $membre);
                         $this->notifierService->trigger($notif);
                     } catch (RuntimeException $e) {
                         // aucun destintaire, todo : cas à gérer !
@@ -101,7 +101,7 @@ class EngagementImpartialiteController extends AbstractController
             $url_rapporteur = $this->url()->fromRoute("soutenance/index-rapporteur", ['these' => $these->getId()], ['force_canonical' => true], true);
             $url = $this->url()->fromRoute('zfcuser/login', ['type' => 'token'], ['query' => ['token' => $token->getToken(), 'redirect' => $url_rapporteur, 'role' => $membre->getActeur()->getRole()->getRoleId()], 'force_canonical' => true], true);
             try {
-                $notif = $this->soutenanceNotificationFactory->createNotificationDemandeSignatureEngagementImpartialite($these, $proposition, $membre, $url);
+                $notif = $this->soutenanceNotificationFactory->createNotificationDemandeSignatureEngagementImpartialite($these, $membre);
                 $this->notifierService->trigger($notif);
             } catch (RuntimeException $e) {
                 // aucun destintaire, todo : cas à gérer !
@@ -121,7 +121,7 @@ class EngagementImpartialiteController extends AbstractController
         if ($signature === null) {
             $this->getEngagementImpartialiteService()->create($membre, $these);
             try {
-                $notif = $this->soutenanceNotificationFactory->createNotificationSignatureEngagementImpartialite($these, $proposition, $membre);
+                $notif = $this->soutenanceNotificationFactory->createNotificationSignatureEngagementImpartialite($these, $membre);
                 $this->notifierService->trigger($notif);
             } catch (RuntimeException $e) {
                 // aucun destintaire, todo : cas à gérer !
@@ -140,7 +140,7 @@ class EngagementImpartialiteController extends AbstractController
         $this->getEngagementImpartialiteService()->createRefus($membre, $these);
         $this->getPropositionService()->annulerValidationsForProposition($proposition);
         try {
-            $notif = $this->soutenanceNotificationFactory->createNotificationRefusEngagementImpartialite($these, $proposition, $membre);
+            $notif = $this->soutenanceNotificationFactory->createNotificationRefusEngagementImpartialite($these, $membre);
             $this->notifierService->trigger($notif);
         } catch (RuntimeException $e) {
             // aucun destintaire, todo : cas à gérer !
@@ -159,7 +159,7 @@ class EngagementImpartialiteController extends AbstractController
         /** @var Validation[] $validations */
         $this->getEngagementImpartialiteService()->delete($membre);
         try {
-            $notif = $this->soutenanceNotificationFactory->createNotificationAnnulationEngagementImpartialite($these, $proposition, $membre);
+            $notif = $this->soutenanceNotificationFactory->createNotificationAnnulationEngagementImpartialite($these, $membre);
             $this->notifierService->trigger($notif);
         } catch (RuntimeException $e) {
             // aucun destintaire, todo : cas à gérer !

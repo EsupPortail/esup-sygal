@@ -9,8 +9,8 @@ use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Formation\Entity\Db\Inscription;
 use Formation\Provider\NatureFichier\NatureFichier;
-use Formation\Service\Exporter\Attestation\AttestationExporter;
-use Formation\Service\Exporter\Convocation\ConvocationExporter;
+use Formation\Service\Exporter\Attestation\AttestationExporterAwareTrait;
+use Formation\Service\Exporter\Convocation\ConvocationExporterAwareTrait;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
 use Formation\Service\Notification\FormationNotificationFactoryAwareTrait;
 use Notification\Service\NotifierServiceAwareTrait;
@@ -40,6 +40,8 @@ class InscriptionController extends AbstractController
     use PresenceServiceAwareTrait;
     use SessionServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
+    use AttestationExporterAwareTrait;
+    use ConvocationExporterAwareTrait;
 
     private ?PhpRenderer $renderer = null;
     public function setRenderer(?PhpRenderer $renderer) { $this->renderer = $renderer; }
@@ -242,28 +244,10 @@ class InscriptionController extends AbstractController
         $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
         $session = $inscription->getSession();
 
-        $logos = [];
-        try {
-            $logos['site'] = $this->fichierStorageService->getFileForLogoStructure($session->getSite()->getStructure());
-        } catch (StorageAdapterException $e) {
-            $logos['site'] = null;
-        }
-        if ($comue = $this->etablissementService->fetchEtablissementComue()) {
-            try {
-                $logos['comue'] = $this->fichierStorageService->getFileForLogoStructure($comue->getStructure());
-            } catch (StorageAdapterException $e) {
-                $logos['comue'] = null;
-            }
-        }
-
-        $signature = $this->findSignatureEtablissement($inscription->getDoctorant()->getEtablissement());
-
         //exporter
-        $export = new ConvocationExporter($this->renderer, 'A4');
+        $export = $this->convocationExporter;
         $export->setVars([
-            'signature' => $signature,
             'inscription' => $inscription,
-            'logos' => $logos,
         ]);
         $export->export('SYGAL_convocation_' . $session->getId() . "_" . $inscription->getId() . ".pdf");
     }
@@ -271,8 +255,18 @@ class InscriptionController extends AbstractController
     public function genererAttestationAction()
     {
         $inscription = $this->getInscriptionService()->getRepository()->getRequestedInscription($this);
-        $session = $inscription->getSession();
 
+        if ($inscription->getValidationEnquete() === null) {
+            $vm = new ViewModel(
+            [
+                'title' => "Génération de l'attestation impossible",
+                'message' => "Vous n'avez pas encore validé l'enquête de retour de la session de formation",
+            ]);
+            $vm->setTemplate('formation/default/message-info');
+            return $vm;
+        }
+
+        $session = $inscription->getSession();
         $presences = $this->getPresenceService()->calculerDureePresence($inscription);
 
         $logos = [];
@@ -292,7 +286,7 @@ class InscriptionController extends AbstractController
         $signature = $this->findSignatureEtablissement($inscription->getDoctorant()->getEtablissement());
 
         //exporter
-        $export = new AttestationExporter($this->renderer, 'A4');
+        $export = $this->attestationExporter;
         $export->setVars([
             'signature' => $signature,
             'inscription' => $inscription,
