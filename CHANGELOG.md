@@ -9,6 +9,7 @@ Journal des modifications
 - Formation : Ajout d'un interval pour la date butoir dans la Session et affichage sur l'index du doctorant
 - Formation : Passage sous la forme de template des PDFs de convocation et d'attestation
 - Soutenance : Passage des courriers électroniques liés à l'engagement d'impartialité dans UnicaenRenderer
+- [FIX] Soutenance : La génération de rapport de soutenance n'est plus limitée au fait q'un membre soit en visio
 
 5.2.8
 -----

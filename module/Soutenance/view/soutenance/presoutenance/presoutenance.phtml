@@ -303,7 +303,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                         </a>
                     <?php endif; ?>
 
-                    <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE AND $canGenererDocument AND $proposition->hasVisio()) : ?>
+                    <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE AND $canGenererDocument) : ?>
                         <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::rapportSoutenanceAction() */ ?>
                                 href="<?php echo $this->url('soutenance/presoutenance/rapport-soutenance', ['these' => $these->getId()], [], true); ?>"
                                 class="btn btn-primary action"
