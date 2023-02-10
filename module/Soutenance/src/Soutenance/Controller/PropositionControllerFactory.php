@@ -3,7 +3,6 @@
 namespace Soutenance\Controller;
 
 use Fichier\Service\Fichier\FichierStorageService;
-use Information\Controller\InformationController;
 use Information\Service\InformationService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -27,10 +26,10 @@ use Soutenance\Service\Evenement\EvenementService;
 use Soutenance\Service\Justificatif\JustificatifService;
 use Soutenance\Service\Membre\MembreService;
 use Notification\Service\NotifierService;
-use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
 use Laminas\View\Renderer\PhpRenderer;
+use UnicaenParametre\Service\Parametre\ParametreService;
 use UnicaenRenderer\Service\Rendu\RenduService;
 
 class PropositionControllerFactory

@@ -27,6 +27,7 @@ use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Membre;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceFormAwareTrait;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportFormAwareTrait;
+use Soutenance\Provider\Parametre\SoutenanceParametres;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
@@ -39,7 +40,6 @@ use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
 use Notification\Service\NotifierServiceAwareTrait;
-use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use Structure\Entity\Db\Etablissement;
@@ -51,6 +51,7 @@ use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
+use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
 /** @method FlashMessenger flashMessenger() */
 
@@ -61,6 +62,7 @@ class PresoutenanceController extends AbstractController
     use MembreServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use NotifierServiceAwareTrait;
+    use ParametreServiceAwareTrait;
     use SoutenanceNotificationFactoryAwareTrait;
     use PropositionServiceAwareTrait;
     use ActeurServiceAwareTrait;
@@ -69,7 +71,6 @@ class PresoutenanceController extends AbstractController
     use AvisServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use UserServiceAwareTrait;
-    use ParametreServiceAwareTrait;
     use EngagementImpartialiteServiceAwareTrait;
     use FichierServiceAwareTrait;
     use JustificatifServiceAwareTrait;
@@ -130,7 +131,7 @@ class PresoutenanceController extends AbstractController
             'evenementsEngagement' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_ENGAGEMENT),
             'evenementsPrerapport' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_PRERAPPORT),
 
-            'deadline' => $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur(),
+            'deadline' => $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DELAI_RETOUR)->getValeur(),
         ]);
     }
 

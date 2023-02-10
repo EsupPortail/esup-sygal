@@ -2,6 +2,7 @@
 
 namespace Soutenance\Controller;
 
+use phpDocumentor\Reflection\DocBlock\Tags\Param;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Soutenance\Service\Notification\SoutenanceNotificationFactory;
@@ -23,12 +24,12 @@ use Soutenance\Service\Evenement\EvenementService;
 use Soutenance\Service\Justificatif\JustificatifService;
 use Soutenance\Service\Membre\MembreService;
 use Notification\Service\NotifierService;
-use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
 use UnicaenAuth\Service\User as UserService;
 use UnicaenAuthToken\Service\TokenService;
 use Laminas\View\Renderer\PhpRenderer;
+use UnicaenParametre\Service\Parametre\ParametreService;
 use UnicaenRenderer\Service\Rendu\RenduService;
 
 class PresoutenanceControllerFactory
@@ -54,7 +55,6 @@ class PresoutenanceControllerFactory
          * @var RoleService $roleService
          * @var UtilisateurService $utilisateurService
          * @var UserService $userService
-         * @var ParametreService $parametreService
          * @var EngagementImpartialiteService $engagementImpartialiteService
          * @var FichierService $fichierService
          * @var StructureDocumentService $structureDocumentService
@@ -62,6 +62,7 @@ class PresoutenanceControllerFactory
          * @var SourceService $sourceService
          * @var JustificatifService $justificatifService
          * @var FichierStorageService $fichierStorageService
+         * @var ParametreService $parametreService
          */
         $evenementService = $container->get(EvenementService::class);
         $propositionService = $container->get(PropositionService::class);
@@ -75,7 +76,6 @@ class PresoutenanceControllerFactory
         $avisService = $container->get(AvisService::class);
         $utilisateurService = $container->get('UtilisateurService');
         $userService = $container->get('unicaen-auth_user_service');
-        $parametreService = $container->get(ParametreService::class);
         $engagementImpartialiteService = $container->get(EngagementImpartialiteService::class);
         $fichierService = $container->get(FichierService::class);
         $structureDocumentService = $container->get(StructureDocumentService::class);
@@ -83,6 +83,7 @@ class PresoutenanceControllerFactory
         $sourceService = $container->get(SourceService::class);
         $justificatifService = $container->get(JustificatifService::class);
         $fichierStorageService = $container->get(FichierStorageService::class);
+        $parametreService = $container->get(ParametreService::class);
 
         /**
          * @var DateRenduRapportForm $dateRenduRapportForm
@@ -108,13 +109,13 @@ class PresoutenanceControllerFactory
         $controller->setAvisService($avisService);
         $controller->setUtilisateurService($utilisateurService);
         $controller->setUserService($userService);
-        $controller->setParametreService($parametreService);
         $controller->setEngagementImpartialiteService($engagementImpartialiteService);
         $controller->setFichierService($fichierService);
         $controller->setStructureDocumentService($structureDocumentService);
         $controller->setTokenService($tokenService);
         $controller->setJustificatifService($justificatifService);
         $controller->setFichierStorageService($fichierStorageService);
+        $controller->setParametreService($parametreService);
 
         $controller->setDateRenduRapportForm($dateRenduRapportForm);
         $controller->setAdresseSoutenanceForm($adresseSoutenanceForm);
