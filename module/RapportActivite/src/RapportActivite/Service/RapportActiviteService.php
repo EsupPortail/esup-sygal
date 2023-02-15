@@ -22,6 +22,7 @@ use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Laminas\EventManager\EventManagerAwareTrait;
 use RapportActivite\Entity\Db\RapportActivite;
+use RapportActivite\Entity\Db\RapportActiviteAvis;
 use RapportActivite\Event\RapportActiviteEvent;
 use RapportActivite\Notification\RapportActiviteSupprimeNotification;
 use RapportActivite\Rule\Avis\RapportActiviteAvisRuleAwareTrait;
@@ -41,6 +42,7 @@ use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Exporter\Pdf;
+use UnicaenAvis\Entity\Db\AvisType;
 
 class RapportActiviteService extends BaseService
 {
@@ -475,7 +477,9 @@ class RapportActiviteService extends BaseService
         }
 
         // avis
-        $exportData->mostRecentAvis = $this->rapportActiviteAvisRule->findMostRecentRapportAvisForRapport($rapport);
+        $exportData->mostRecentAvis = $this->rapportActiviteAvisService->findRapportAvisByRapportAndAvisType(
+            $rapport, RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST
+        );
 
         // validation
         $typeValidation = $this->validationService->findTypeValidationByCode(TypeValidation::CODE_RAPPORT_ACTIVITE_AUTO);

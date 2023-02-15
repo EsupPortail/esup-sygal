@@ -2,6 +2,7 @@
 
 namespace RapportActivite\Service\Operation;
 
+use Application\Entity\Db\TypeValidation;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use InvalidArgumentException;
 use RapportActivite\Entity\Db\RapportActivite;
@@ -12,6 +13,7 @@ use RapportActivite\Event\RapportActiviteEvent;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
 use RapportActivite\Service\Validation\RapportActiviteValidationServiceAwareTrait;
 use UnicaenAvis\Entity\Db\Avis;
+use UnicaenAvis\Entity\Db\AvisType;
 use UnicaenAvis\Service\AvisServiceAwareTrait;
 
 class RapportActiviteOperationService
@@ -24,26 +26,19 @@ class RapportActiviteOperationService
     private array $typeValidationsCache = [];
     private array $avisTypesCache = [];
 
-    public function fetchOperationForRapportAndConfig(RapportActivite $rapportActivite, array $config): ?RapportActiviteOperationInterface
+    public function fetchOperationForRapportAndConfig(RapportActivite $rapportActivite, array $operationConfig): ?RapportActiviteOperationInterface
     {
-        switch ($config['type']) {
-            case RapportActiviteValidation::class:
-                $typeValidation = $this->fetchTypeValidationByCode($config['code']);
-//                $ope = $this->rapportActiviteValidationService->findByRapportActiviteAndType($rapportActivite, $typeValidation);
-                // NB : on parcourt les entités liées donc attention à faire les jointure en amont
-                $ope = $rapportActivite->getRapportValidationOfType($typeValidation);
-                break;
-            case RapportActiviteAvis::class:
-                $avisType = $this->fetchAvisTypeByCode($config['code']);
-//                $ope = $this->rapportActiviteAvisService->findRapportAvisByRapportAndAvisType($rapportActivite, $avisType);
-                // NB : on parcourt les entités liées donc attention à faire les jointure en amont
-                $ope = $rapportActivite->getRapportAvisOfType($avisType);
-                break;
-            default:
-                throw new InvalidArgumentException("Type inattendu : " . $config['type']);
-        }
+        $typeOperation = $this->fetchTypeOperationFromConfig($operationConfig);
 
-        return $ope;
+        switch ($operationConfig['type']) {
+            // NB : on parcourt les entités liées donc attention à faire les jointure en amont
+            case RapportActiviteValidation::class:
+                return $rapportActivite->getRapportValidationOfType($typeOperation);
+            case RapportActiviteAvis::class:
+                return $rapportActivite->getRapportAvisOfType($typeOperation);
+            default:
+                throw new InvalidArgumentException("Type inattendu : " . $operationConfig['type']);
+        }
     }
 
     public function newOperationForRapportAndConfig(RapportActivite $rapportActivite, array $config): RapportActiviteOperationInterface
@@ -97,7 +92,19 @@ class RapportActiviteOperationService
         return $event;
     }
 
-    private function fetchTypeValidationByCode(string $code)
+    public function fetchTypeOperationFromConfig(array $operationConfig)
+    {
+        switch ($operationConfig['type']) {
+            case RapportActiviteValidation::class:
+                return $this->fetchTypeValidationByCode($operationConfig['code']);
+            case RapportActiviteAvis::class:
+                return $this->fetchAvisTypeByCode($operationConfig['code']);
+            default:
+                throw new InvalidArgumentException("Type inattendu : " . $operationConfig['type']);
+        }
+    }
+
+    private function fetchTypeValidationByCode(string $code): TypeValidation
     {
         if (!array_key_exists($code, $this->typeValidationsCache)) {
             $this->typeValidationsCache[$code] = $this->validationService->findTypeValidationByCode($code);
@@ -105,7 +112,7 @@ class RapportActiviteOperationService
         return $this->typeValidationsCache[$code];
     }
 
-    private function fetchAvisTypeByCode(string $code)
+    private function fetchAvisTypeByCode(string $code): AvisType
     {
         if (!array_key_exists($code, $this->avisTypesCache)) {
             $this->avisTypesCache[$code] = $this->avisService->findOneAvisTypeByCode($code);

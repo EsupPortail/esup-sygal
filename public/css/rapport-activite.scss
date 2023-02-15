@@ -98,3 +98,22 @@ div.rapport-activite-container {
   }
 
 }
+
+
+table.rapport-activite {
+  .card {
+    font-size: 90%;
+    line-height: 95%;
+    margin-bottom: 3px;
+    max-width: 200px;
+    .card-header, .card-body {
+      padding: 4px;
+    }
+    .card-subtitle.mb-2 {
+      margin-bottom: 3px !important;
+    }
+    p {
+      margin-bottom: 3px;
+    }
+  }
+}

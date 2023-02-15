@@ -66,7 +66,7 @@ class RapportActiviteAvisEventListener extends RapportActiviteOperationAbstractE
         }
 
         // le nom de l'opération "validation doctorant" est dans la config de l'opération courante (pratique!).
-        $operationConfig = $this->rapportActiviteOperationRule->getOperationConfig($this->operationRealisee);
+        $operationConfig = $this->rapportActiviteOperationRule->getConfigForOperation($this->operationRealisee);
         $ripOperatioName = $operationConfig['extra']['validation_doctorant_operation_name'] ?? null;
         if (!$ripOperatioName) {
             throw new InvalidArgumentException(sprintf(

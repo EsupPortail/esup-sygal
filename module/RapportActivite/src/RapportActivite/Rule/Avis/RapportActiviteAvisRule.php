@@ -9,7 +9,6 @@ use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Entity\Db\RapportActiviteAvis;
 use RapportActivite\Rule\Operation\RapportActiviteOperationRuleAwareTrait;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
-use UnicaenAvis\Entity\Db\Avis;
 use UnicaenAvis\Entity\Db\AvisType;
 use UnicaenAvis\Service\AvisServiceAwareTrait;
 
@@ -46,25 +45,6 @@ class RapportActiviteAvisRule implements RuleInterface
     public function findAllSortedAvisTypes(): array
     {
         return $this->avisService->findAvisTypesByCodes($this->avisTypesCodesOrdered);
-    }
-
-    /**
-     * Injecte dans le rapport spécifié les données indiquant si un avis peut être saisi.
-     * @deprecated wfrule
-     */
-    public function injectRapportAvisPossible(RapportActivite $rapport)
-    {
-        $rapportAvisPossible = null;
-
-        $avisTypeDispo = $this->findExpectedAvisTypeForRapport($rapport);
-        if ($avisTypeDispo !== null) {
-            $rapportAvisPossible = new RapportActiviteAvis();
-            $rapportAvisPossible
-                ->setRapportActivite($rapport)
-                ->setAvis((new Avis())->setAvisType($avisTypeDispo));
-        }
-
-        $rapport->setRapportAvisPossible($rapportAvisPossible);
     }
 
     /**

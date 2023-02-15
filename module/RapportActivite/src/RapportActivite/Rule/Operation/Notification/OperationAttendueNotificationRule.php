@@ -8,8 +8,6 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Closure;
 use Individu\Entity\Db\Individu;
 use InvalidArgumentException;
-use RapportActivite\Entity\Db\RapportActiviteAvis;
-use RapportActivite\Entity\Db\RapportActiviteValidation;
 use RapportActivite\Entity\RapportActiviteOperationInterface;
 use RapportActivite\Notification\RapportActiviteOperationAttenduNotification;
 use RapportActivite\Rule\Operation\RapportActiviteOperationRuleAwareTrait;
@@ -60,28 +58,14 @@ class OperationAttendueNotificationRule implements RuleInterface
 
     public function execute(): self
     {
-        $this->notificationRequired = false;
-
-        if ($this->operationRealisee instanceof RapportActiviteAvis) {
-//            // Après chaque avis autre que "rapport incomplet", on notifie à propos de l'opération suivante attendue.
-//            $codeIncomplet = RapportActiviteAvis::AVIS_VALEUR__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED_VALEUR_INCOMPLET;
-//            if ($this->operationRealisee->getAvis()->getAvisValeur()->getCode() !== $codeIncomplet) {
-                $this->notificationRequired = true;
-//            }
-        } elseif ($this->operationRealisee instanceof RapportActiviteValidation) {
-            // Après chaque validation, on notifie à propos de l'opération suivante attendue.
-            $this->notificationRequired = true;
-        }
-
-        if ($this->notificationRequired === false) {
-            return $this;
-        }
+        // On notifie à propos de l'opération suivante attendue, quelle qu'elle soit.
 
         $operationAttendue = $this->rapportActiviteOperationRule->findFollowingOperation($this->operationRealisee);
         if ($operationAttendue === null) {
             $this->notificationRequired = false;
             return $this;
         }
+
         $this->operationAttendue = $operationAttendue;
 
         $this->handleOperationAttendue();
@@ -93,7 +77,7 @@ class OperationAttendueNotificationRule implements RuleInterface
     {
         $these = $this->operationRealisee->getRapportActivite()->getThese();
 
-        $followingOperationConfig = $this->rapportActiviteOperationRule->getOperationConfig($this->operationAttendue);
+        $followingOperationConfig = $this->rapportActiviteOperationRule->getConfigForOperation($this->operationAttendue);
         $to = $this->extractEmailsFromOperationRoles($followingOperationConfig);
         $cc = [$this->emailAddressExtractor->__invoke($these->getDoctorant()->getIndividu())];
 
@@ -189,30 +173,6 @@ class OperationAttendueNotificationRule implements RuleInterface
         }
 
         return $emailsTmp;
-    }
-
-    private function onAvisResponsable()
-    {
-        $avisValeur = $this->operationRealisee->getAvis()->getAvisValeur();
-        $these = $this->operationRealisee->getRapportActivite()->getThese();
-
-        if ($avisValeur->getCode() === RapportActiviteAvis::AVIS_VALEUR__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED_VALEUR_INCOMPLET) {
-            // notifier l'auteur de l'avis précédent
-            $rapportActiviteAvisPrec = $this->fetchPreviousAvis();
-            $auteurPrec = $rapportActiviteAvisPrec->getHistoModificateur() ?: $rapportActiviteAvisPrec->getHistoCreateur();
-            $auteurPrecIndividu = $auteurPrec->getIndividu();
-            $auteurPrecEmail = $auteurPrecIndividu ?
-                ($auteurPrecIndividu->getEmailContact() ?: $auteurPrecIndividu->getEmailPro() ?: $auteurPrecIndividu->getEmailUtilisateur()) :
-                $auteurPrec->getEmail();
-
-            $this->notificationRequired = true;
-            $this->to = [$auteurPrecEmail => $auteurPrec->getDisplayName()];
-            $this->subject = "Rapport d'activité de " . $these->getDoctorant();
-            $this->messagesByAvisValeurBool = [
-                false => "<strong>Important : le rapport étant incomplet, la balle revient dans votre camp.</strong> " .
-                    "Vous devez revenir sur votre avis et déclarer le rapport incomplet afin de notifier le doctorant.",
-            ];
-        }
     }
 
     public function configureNotification(RapportActiviteOperationAttenduNotification $notif)

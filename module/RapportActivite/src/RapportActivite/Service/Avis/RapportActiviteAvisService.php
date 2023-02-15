@@ -50,13 +50,21 @@ class RapportActiviteAvisService extends BaseService
         }
     }
 
-    public function findRapportAvisByRapportAndAvisType(RapportActivite $rapportActivite, AvisType $avisType): ?RapportActiviteAvis
+    /**
+     * @param \RapportActivite\Entity\Db\RapportActivite $rapportActivite
+     * @param \UnicaenAvis\Entity\Db\AvisType|string $avisType
+     * @return \RapportActivite\Entity\Db\RapportActiviteAvis|null
+     */
+    public function findRapportAvisByRapportAndAvisType(RapportActivite $rapportActivite, $avisType): ?RapportActiviteAvis
     {
+        $code = $avisType instanceof AvisType ? $avisType->getCode() : $avisType;
+
         $qb = $this->getRepository()->createQueryBuilder('ra')
-            ->addSelect('r, a')
+            ->addSelect('r, a, at')
             ->join('ra.rapport', 'r', Join::WITH, 'r = :rapport')->setParameter('rapport', $rapportActivite)
             ->join('ra.avis', 'a')
-            ->andWhere('a.avisType = :avisType')->setParameter('avisType', $avisType)
+            ->join('a.avisType', 'at')
+            ->andWhere('at.code = :code')->setParameter('code', $code)
             ->andWhereNotHistorise();
 
         try {

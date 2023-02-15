@@ -48,4 +48,16 @@ div.rapport-activite-container p.en, div.rapport-activite-container span.en {
   font-style: italic;
   margin-top: -1em; }
 
+table.rapport-activite .card {
+  font-size: 90%;
+  line-height: 95%;
+  margin-bottom: 3px;
+  max-width: 200px; }
+  table.rapport-activite .card .card-header, table.rapport-activite .card .card-body {
+    padding: 4px; }
+  table.rapport-activite .card .card-subtitle.mb-2 {
+    margin-bottom: 3px !important; }
+  table.rapport-activite .card p {
+    margin-bottom: 3px; }
+
 /*# sourceMappingURL=rapport-activite.css.map */

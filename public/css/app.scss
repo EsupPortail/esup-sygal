@@ -67,6 +67,22 @@ h2.modal-title {
   }
 }
 
+
+.card {
+  .card-header {
+    font-weight: 400;
+  }
+  .card-header.bg-info  {
+    color: white;
+  }
+  .card-header.bg-success  {
+    color: white;
+  }
+  .card-header.bg-danger {
+    color: white;
+  }
+}
+
 .card.box {
   margin-bottom: 10px;
 
@@ -112,19 +128,6 @@ h2.modal-title {
 }
 .card.box.roadmap-next-step {
   width: 50%;
-}
-
-.card .card-header {
-  font-weight: 400;
-}
-.card-header.bg-info  {
-  color: white;
-}
-.card-header.bg-success  {
-  color: white;
-}
-.card-header.bg-danger {
-  color: white;
 }
 
 

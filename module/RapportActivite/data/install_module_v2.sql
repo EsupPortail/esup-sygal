@@ -186,6 +186,9 @@ from rapport
 where type_rapport_id = 1
 ;
 
+UPDATE unicaen_avis_type SET libelle = 'Complétude du rapport d''activité (ancien module)'
+WHERE code = 'AVIS_RAPPORT_ACTIVITE_GEST';
+
 -- recup des anciens avis sur les rapports d'activité
 insert into rapport_activite_avis(id, rapport_id, avis_id, histo_createur_id, histo_modificateur_id,
                                   histo_destructeur_id, histo_creation, histo_modification, histo_destruction)
@@ -248,29 +251,16 @@ where not exists (
 
 INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
 with data(categ, priv) as (
+    select 'rapport-activite', 'lister-sien' union
     select 'rapport-activite', 'ajouter-sien' union
     select 'rapport-activite', 'modifier-sien' union
     select 'rapport-activite', 'consulter-sien' union
+    select 'rapport-activite', 'telecharger-sien' union
     select 'rapport-activite', 'generer-sien'
 )
 select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
 from data
          join PROFIL on profil.ROLE_ID in ('D', 'DOCTORANT', 'K', 'GEST_UR', 'GEST_ED', 'RESP_UR', 'RESP_ED')
-         join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
-         join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
-where not exists (
-        select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id
-    ) ;
-
-INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
-with data(categ, priv) as (
-    select 'rapport-activite', 'ajouter-avis-sien' union
-    select 'rapport-activite', 'modifier-avis-sien' union
-    select 'rapport-activite', 'supprimer-avis-sien'
-)
-select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
-from data
-         join PROFIL on profil.ROLE_ID in ('D', 'K', 'GEST_UR', 'GEST_ED', 'RESP_UR', 'RESP_ED')
          join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
          join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
 where not exists (
@@ -287,32 +277,20 @@ where not exists (
     )
 ;
 
-delete from profil_privilege pp1 where exists (
-                                               select *
-                                               from profil_privilege pp
-                                                        join profil on pp.profil_id = profil.id and role_id in ('RESP_ED', 'GEST_ED')
-                                                        join privilege p on pp.privilege_id = p.id
-                                               where p.code in ('valider-sien', 'valider-tout', 'devalider-sien', 'devalider-tout')
-                                                 and pp.profil_id = pp1.profil_id and pp.privilege_id = pp1.privilege_id
-                                           );
-
-select r.id, r.role_id, p.code, p.categorie_id
-from ROLE_PRIVILEGE rp
-         join role r on rp.role_id = r.id
-         join privilege p on rp.privilege_id = p.id
-where not exists (
-        select *
-        from PROFIL_TO_ROLE p2r
-                 --join profil pr on pr.id = p2r.PROFIL_ID
-                 join PROFIL_PRIVILEGE pp on pp.PROFIL_ID = p2r.PROFIL_ID
-        where rp.role_id = p2r.role_id and rp.privilege_id = pp.privilege_id
-    );
+delete from profil_privilege pp1
+where exists (
+              select *
+              from profil_privilege pp
+                       join profil on pp.profil_id = profil.id and role_id in ('RESP_ED', 'GEST_ED')
+                       join privilege p on pp.privilege_id = p.id
+              where p.code in ('valider-sien', 'valider-tout', 'devalider-sien', 'devalider-tout')
+                and pp.profil_id = pp1.profil_id and pp.privilege_id = pp1.privilege_id
+          );
 
 delete from ROLE_PRIVILEGE rp
 where not exists (
         select *
         from PROFIL_TO_ROLE p2r
-                 --join profil pr on pr.id = p2r.PROFIL_ID
                  join PROFIL_PRIVILEGE pp on pp.PROFIL_ID = p2r.PROFIL_ID
         where rp.role_id = p2r.role_id and rp.privilege_id = pp.privilege_id
     );

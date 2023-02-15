@@ -16,6 +16,8 @@ use RapportActivite\Assertion\Recherche\RapportActiviteRechercheAssertion;
 use RapportActivite\Assertion\Recherche\RapportActiviteRechercheAssertionFactory;
 use RapportActivite\Assertion\Validation\RapportActiviteValidationAssertion;
 use RapportActivite\Assertion\Validation\RapportActiviteValidationAssertionFactory;
+use RapportActivite\Config\ModuleConfig;
+use RapportActivite\Config\ModuleConfigFactory;
 use RapportActivite\Controller\Avis\RapportActiviteAvisController;
 use RapportActivite\Controller\Avis\RapportActiviteAvisControllerFactory;
 use RapportActivite\Controller\RapportActiviteController;
@@ -626,6 +628,22 @@ return [
                     ],
 
                     /**
+                     * Page pour Dir, Codir.
+                     * Cette page aura des pages filles 'these-1', 'these-2', etc. générées automatiquement.
+                     * @see ApplicationNavigationFactory::processPage()
+                     */
+                    // DEPTH = 1
+                    ApplicationNavigationFactory::MES_THESES_PAGE_ID => [
+                        'pages' => [
+                            // DEPTH = 2
+                            // Déclinée en 'these-1', 'these-2', etc.
+                            'THESE' => [
+                                'pages' => $thesePages,
+                            ]
+                        ]
+                    ],
+
+                    /**
                      * Cette page aura une page fille 'these-1', 'these-2', etc. générées automatiquement.
                      * @see ApplicationNavigationFactory::processPage()
                      */
@@ -681,6 +699,8 @@ return [
     ],
     'service_manager' => [
         'factories' => [
+            ModuleConfig::class => ModuleConfigFactory::class,
+
             RapportActiviteService::class => RapportActiviteServiceFactory::class,
             RapportActiviteSearchService::class => RapportActiviteSearchServiceFactory::class,
             RapportActiviteValidationService::class => RapportActiviteValidationServiceFactory::class,

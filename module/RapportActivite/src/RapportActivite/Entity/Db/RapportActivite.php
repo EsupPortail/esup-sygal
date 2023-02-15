@@ -53,8 +53,6 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
     /** @var Collection|\RapportActivite\Entity\Db\RapportActiviteAvis[] */
     private $rapportAvis;
 
-    private ?RapportActiviteAvis $rapportAvisPossible = null;
-
     /** @var \RapportActivite\Entity\Db\RapportActiviteAvis|\RapportActivite\Entity\Db\RapportActiviteValidation|null */
     private $operationPossible = null;
 
@@ -452,21 +450,6 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
         });
 
         return $rapportsAvis->first() ?: null;
-    }
-
-    /**
-     * Injecte une instance de {@see \RapportActivite\Entity\Db\RapportActiviteAvis} qu'il est possible de créer
-     * pour ce rapport.
-     * @deprecated Utiliser setOperationPossible()
-     */
-    public function setRapportAvisPossible(?RapportActiviteAvis $rapportAvis): RapportActivite
-    {
-        $this->rapportAvisPossible = $rapportAvis;
-        if ($this->rapportAvisPossible) {
-            $this->rapportAvisPossible->setRapportActivite($this);
-        }
-
-        return $this;
     }
 
     /**

@@ -2,9 +2,7 @@
 
 namespace RapportActivite;
 
-use Laminas\Config\Factory as ConfigFactory;
 use Laminas\Mvc\MvcEvent;
-use Laminas\Stdlib\Glob;
 use RapportActivite\Event\Avis\RapportActiviteAvisEventListener;
 use RapportActivite\Event\RapportActiviteEventListener;
 use RapportActivite\Event\Validation\RapportActiviteValidationEventListener;
@@ -36,10 +34,7 @@ class Module
 
     public function getConfig()
     {
-        return ConfigFactory::fromFiles([
-            __DIR__ . '/config/module.config.php',
-            __DIR__ . '/config/operations.config.php',
-        ]);
+        return include __DIR__ . '/config/module.config.php';
     }
 
     public function getAutoloaderConfig(): array

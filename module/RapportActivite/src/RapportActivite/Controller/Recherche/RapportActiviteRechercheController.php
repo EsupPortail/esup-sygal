@@ -5,6 +5,7 @@ namespace RapportActivite\Controller\Recherche;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
 use Application\Exporter\ExporterDataException;
+use Application\Filter\IdifyFilter;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
@@ -16,7 +17,6 @@ use Laminas\Paginator\Paginator as LaminasPaginator;
 use Laminas\View\Model\ViewModel;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
-use RapportActivite\Rule\Avis\RapportActiviteAvisRuleAwareTrait;
 use RapportActivite\Rule\Operation\RapportActiviteOperationRuleAwareTrait;
 use RapportActivite\Service\Fichier\RapportActiviteFichierServiceAwareTrait;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
@@ -36,7 +36,6 @@ class RapportActiviteRechercheController extends AbstractController implements S
     use StructureServiceAwareTrait;
     use FichierServiceAwareTrait;
     use RapportActiviteServiceAwareTrait;
-    use RapportActiviteAvisRuleAwareTrait;
     use RapportActiviteOperationRuleAwareTrait;
     use RapportActiviteFichierServiceAwareTrait;
 
@@ -60,7 +59,6 @@ class RapportActiviteRechercheController extends AbstractController implements S
     {
         $this->restrictFilterEcolesDoctorales();
         $this->restrictFilterUnitesRecherches();
-        $this->initFilterAvisAttendu();
 
         $text = $this->params()->fromQuery('text');
 
@@ -73,8 +71,6 @@ class RapportActiviteRechercheController extends AbstractController implements S
 
         $operationss = [];
         foreach ($paginator as $rapport) {
-//            $this->rapportActiviteAvisRule->injectRapportAvisPossible($rapport);
-//            $this->rapportActiviteOperationRule->injectOperationPossible($rapport);
             $operationss[$rapport->getId()] = $this->rapportActiviteOperationRule->getOperationsForRapport($rapport);
         }
 
@@ -112,7 +108,6 @@ class RapportActiviteRechercheController extends AbstractController implements S
     {
         $this->restrictFilterEcolesDoctorales();
         $this->restrictFilterUnitesRecherches();
-        $this->initFilterAvisAttendu();
 
         $filters = $this->filters();
 
@@ -170,35 +165,6 @@ class RapportActiviteRechercheController extends AbstractController implements S
     }
 
     /**
-     * Initialisations du filtre "Avis attendu".
-     */
-    private function initFilterAvisAttendu()
-    {
-//        $filter = $this->searchService->getAvisManquantSearchFilter();
-//
-//        /**
-//         * Valeur par défaut (NB : empêche de sélectionner la valeur "Peu importe") :
-//         *   - pour le rôle Gestionnaire d'ED : "Avis gestionnaire d'ED"
-//         *   - pour le rôle Responsable d'ED : "Avis direction d'ED"
-//         */
-//        if ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
-//            if ($roleEcoleDoctorale->getCode() === Role::CODE_GEST_ED) {
-//                $filter->setDefaultValue(RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST);
-//            } elseif ($roleEcoleDoctorale->getCode() === Role::CODE_RESP_ED) {
-//                $filter->setDefaultValue(RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR);
-//            }
-//        }
-//
-//        /**
-//         * Valeur par défaut (NB : empêche de sélectionner la valeur "Peu importe") :
-//         *   - pour le rôle Observateur COMUE : "Avis gestionnaire d'ED"
-//         */
-//        if ($this->userContextService->getSelectedIdentityRole()->getCode() === Role::CODE_OBSERVATEUR_COMUE) {
-//            $filter->setDefaultValue(RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST);
-//        }
-    }
-
-    /**
      * Redéfinition de la méthode {@see SearchControllerTrait::filtersAction()}
      * pour injecter des choses dans les rapports d'activité avant affichage.
      *
@@ -212,11 +178,6 @@ class RapportActiviteRechercheController extends AbstractController implements S
         }
 
         $result->setItemCountPerPage(25);
-
-        /** @var RapportActivite $rapport */
-        foreach ($result as $rapport) {
-            $this->rapportActiviteAvisRule->injectRapportAvisPossible($rapport);
-        }
 
         return $result;
     }
@@ -238,6 +199,11 @@ class RapportActiviteRechercheController extends AbstractController implements S
         $fichiersArchivables = [];
         /** @var RapportActivite $rapport */
         foreach ($paginator as $rapport) {
+            // pour l'instant on zappe les rapports dématérialisés (doute sur le temps de réponse de la génération PDF préalable)
+            if ($rapport->getFichier() === null) {
+                continue;
+            }
+
             $fichierArchivable = new FichierArchivable($rapport->getFichier());
             // s'il s'agit d'un rapport validé, on ajoute à la volée la page de validation
             if ($rapport->getRapportValidationOfType($this->typeValidation)) {
@@ -261,6 +227,11 @@ class RapportActiviteRechercheController extends AbstractController implements S
             }
             $fichierArchivable->setFilePathInArchive($rapport->generateInternalPathForZipArchive());
             $fichiersArchivables[] = $fichierArchivable;
+        }
+
+        if (!count($fichiersArchivables)) {
+            $this->flashMessenger()->addErrorMessage("Aucun rapport à télécharger ou rapports non téléchargeables au format ZIP.");
+            return $this->redirect()->toRoute('rapport-activite/recherche/index', [], ['query' => $this->params()->fromQuery()], true);
         }
 
         $filename = sprintf("sygal_%s.zip", strtolower(RapportActivite::CODE));

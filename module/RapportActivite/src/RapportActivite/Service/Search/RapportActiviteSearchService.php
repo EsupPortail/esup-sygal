@@ -3,7 +3,9 @@
 namespace RapportActivite\Service\Search;
 
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
+use Application\Entity\Db\TypeValidation;
 use Application\QueryBuilder\DefaultQueryBuilder;
+use Application\Search\Filter\CheckboxSearchFilter;
 use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Search\Filter\TextSearchFilter;
@@ -11,12 +13,15 @@ use Application\Search\Financement\OrigineFinancementSearchFilter;
 use Application\Search\SearchService;
 use Application\Search\Sorter\SearchSorter;
 use Application\Service\Financement\FinancementServiceAwareTrait;
+use Application\Service\Validation\ValidationServiceAwareTrait;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use InvalidArgumentException;
 use RapportActivite\Entity\Db\RapportActiviteAvis;
-use RapportActivite\Rule\Avis\RapportActiviteAvisRuleAwareTrait;
+use RapportActivite\Entity\Db\RapportActiviteValidation;
+use RapportActivite\Rule\Operation\RapportActiviteOperationRuleAwareTrait;
 use RapportActivite\Search\AnneeRapportActiviteSearchFilter;
+use RapportActivite\Service\Operation\RapportActiviteOperationServiceAwareTrait;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
@@ -28,6 +33,8 @@ use These\Search\These\TheseTextSearchFilter;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseSearchServiceAwareTrait;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
+use UnicaenAvis\Entity\Db\AvisType;
+use Webmozart\Assert\Assert;
 
 class RapportActiviteSearchService extends SearchService
 {
@@ -38,7 +45,9 @@ class RapportActiviteSearchService extends SearchService
     use EtablissementServiceAwareTrait;
     use ActeurServiceAwareTrait;
     use RapportActiviteServiceAwareTrait;
-    use RapportActiviteAvisRuleAwareTrait;
+    use RapportActiviteOperationRuleAwareTrait;
+    use RapportActiviteOperationServiceAwareTrait;
+    use ValidationServiceAwareTrait;
     use TypeValidationAwareTrait;
 
     const NAME_nom_doctorant = 'nom_doctorant';
@@ -47,6 +56,7 @@ class RapportActiviteSearchService extends SearchService
     const NAME_avis_attendu = 'avis_attendu';
     const NAME_avis_fourni = 'avis_fourni';
     const NAME_validation = 'est_valide';
+    const NAME_est_dematerialise = 'est_dematerialise';
 
     private ?EtablissementSearchFilter $etablissementTheseSearchFilter = null;
     private ?OrigineFinancementSearchFilter $origineFinancementSearchFilter = null;
@@ -55,8 +65,9 @@ class RapportActiviteSearchService extends SearchService
     private ?AnneeRapportActiviteSearchFilter $anneeRapportActiviteSearchFilter = null;
     private ?SelectSearchFilter $validationSearchFilter = null;
     private ?SelectSearchFilter $finalSearchFilter = null;
-    private ?SelectSearchFilter $avisFourniSearchFilter = null;
-    private ?SelectSearchFilter $avisAttenduSearchFilter = null;
+    private ?SelectSearchFilter $operationRealiseeSearchFilter = null;
+    private ?SelectSearchFilter $operationAttendueSearchFilter = null;
+    private ?SelectSearchFilter $dematerialiseSearchFilter = null;
 
     /**
      * @inheritDoc
@@ -83,10 +94,11 @@ class RapportActiviteSearchService extends SearchService
             });
         $origineFinancementFilter = $this->getOrigineFinancementSearchFilter();
         $anneeRapportActiviteInscrFilter = $this->getAnneeRapportActiviteSearchFilter();
-        $avisFourniSearchFilter = $this->getAvisFourniSearchFilter();
-        $avisAttenduSearchFilter = $this->getAvisAttenduSearchFilter();
+//        $avisFourniSearchFilter = $this->getOperationRealiseeSearchFilter();
+        $avisAttenduSearchFilter = $this->getOperationAttendueSearchFilter();
         $validationSearchFilter = $this->getValidationSearchFilter();
         $finalSearchFilter = $this->getFinalSearchFilter();
+        $dematerialiseSearchFilter = $this->getDematerialiseSearchFilter();
 
         $etablissementInscrFilter->setDataProvider(fn() => $this->fetchEtablissements());
         $origineFinancementFilter->setDataProvider(fn() => $this->fetchOriginesFinancements());
@@ -103,9 +115,10 @@ class RapportActiviteSearchService extends SearchService
             $anneeRapportActiviteInscrFilter,
             $this->createFilterNomDoctorant(),
             $this->createFilterNomDirecteur(),
-            $avisFourniSearchFilter,
+//            $avisFourniSearchFilter,
             $avisAttenduSearchFilter,
-            $validationSearchFilter,
+//            $validationSearchFilter,
+            $dematerialiseSearchFilter,
         ]));
 
         $this->addSorters([
@@ -248,92 +261,154 @@ class RapportActiviteSearchService extends SearchService
         }
     }
 
-    public function applyAvisFourniSearchFilterToQueryBuilder(SearchFilter $filter, QueryBuilder $qb, $alias = 'ra')
+    public function applyOperationAttendueSearchFilterToQueryBuilder(SearchFilter $filter, QueryBuilder $qb, $alias = 'ra')
     {
         $filterValue = $filter->getValue();
         if (!$filterValue) {
             return;
         }
 
-        $dql = 'SELECT rapportAvis_fourni_%1$d.id ' .
-            'FROM ' . RapportActiviteAvis::class . ' rapportAvis_fourni_%1$d ' .
-            'JOIN rapportAvis_fourni_%1$d.avis avis_fourni_%1$d ' .
-            'JOIN avis_fourni_%1$d.avisType avisType_fourni_%1$d WITH avisType_fourni_%1$d.code = :code_fourni_%1$d ' .
-            'WHERE rapportAvis_fourni_%1$d.rapport = ra';
+        $typesOperation = $this->rapportActiviteOperationRule->fetchTypesOperation();
+        Assert::allIsInstanceOfAny($typesOperation, [TypeValidation::class, AvisType::class]);
 
-        switch ($filterValue) {
-            case 'null':
-                $qb
-                    ->andWhere('NOT EXISTS (' . sprintf($dql, 1) . ')')
-                    ->setParameter('code_fourni_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST)
-                    ->andWhere('NOT EXISTS (' . sprintf($dql, 2) . ')')
-                    ->setParameter('code_fourni_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED);
-                break;
+        $i = 1;
+        if ($filterValue === 'null') {
+            // Aucune opération attendue <=> Toutes les opérations doivent être réalisées.
+            foreach ($typesOperation as $type) {
+                $this->addOperationDqlToQb($type, true, $qb, $i, $alias);
+                $i++;
+            }
+            return;
+        }
 
-            case RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST:
-                $qb
-                    ->andWhere('EXISTS (' . sprintf($dql, 1) . ')')
-                    ->setParameter('code_fourni_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST);
-                break;
+        $typeOperationFilterConfig = $this->rapportActiviteOperationRule->getConfigForTypeOperation($filterValue);
+        $typeOperationFilter = $this->rapportActiviteOperationService->fetchTypeOperationFromConfig($typeOperationFilterConfig);
+        Assert::isInstanceOfAny($typeOperationFilter, [TypeValidation::class, AvisType::class]);
 
-            case RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED:
-                $qb
-                    ->andWhere('EXISTS (' . sprintf($dql, 2) . ')')
-                    ->setParameter('code_fourni_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED);
-                break;
+        $typeFilterFound = false;
+        foreach ($typesOperation as $typeOperation) {
+            if (!$typeFilterFound && $typeOperation === $typeOperationFilter) {
+                $typeFilterFound = true;
+                // On s'occupera plus tard de l'opération correspondant au filtre spécifié.
+                continue;
+            }
+            if (!$typeFilterFound) {
+                // Les opérations précédant celle spécifiée dans le filtre doivent être réalisées.
+                $this->addOperationDqlToQb($typeOperation, true, $qb, $i, $alias);
+            } else {
+                // Les opérations suivant celle spécifiée dans le filtre NE doivent PAS être réalisées.
+                $this->addOperationDqlToQb($typeOperation, false, $qb, $i, $alias);
+            }
+            $i++;
+        }
+        // Gestion à part de l'opération correspondant au filtre spécifié, qui NE doit PAS être réalisée.
+        $this->addOperationFilterDqlToQb($typeOperationFilter, $qb, $i, $alias);
+    }
 
-            case 'tous':
-                $qb
-                    ->andWhere('EXISTS (' . sprintf($dql, 1) . ')')
-                    ->setParameter('code_fourni_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST)
-                    ->andWhere('EXISTS (' . sprintf($dql, 2) . ')')
-                    ->setParameter('code_fourni_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED);
-                break;
-
-            default:
-                throw new InvalidArgumentException("Valeur inattendue pour le filtre " . $filter->getName());
+    private function addOperationDqlToQb(object $typeOperation, bool $exists, QueryBuilder $qb, int $i, string $alias)
+    {
+        if ($typeOperation instanceof TypeValidation) {
+            $this->addValidationDqlToQb($typeOperation, $exists, $qb, $i, $alias);
+        } elseif ($typeOperation instanceof AvisType) {
+            $this->addAvisDqlToQb($typeOperation, $exists, $qb, $i, $alias);
         }
     }
 
-    public function applyAvisAttenduSearchFilterToQueryBuilder(SearchFilter $filter, QueryBuilder $qb, $alias = 'ra')
+    private function addOperationFilterDqlToQb(object $typeOperation, QueryBuilder $qb, int $i, string $alias)
     {
-        $filterValue = $filter->getValue();
-        if (!$filterValue) {
-            return;
+        if ($typeOperation instanceof TypeValidation) {
+            $this->addValidationFilterDqlToQb($typeOperation, $qb, $i, $alias);
+        } elseif ($typeOperation instanceof AvisType) {
+            $this->addAvisFilterDqlToQb($typeOperation, $qb, $i, $alias);
+        }
+    }
+
+    private string $validationDqlTemplate =
+        'SELECT rapportValidation_attendue_%1$d.id ' .
+        'FROM ' . RapportActiviteValidation::class . ' rapportValidation_attendue_%1$d ' .
+        'JOIN rapportValidation_attendue_%1$d.typeValidation typeValidation_attendue_%1$d WITH typeValidation_attendue_%1$d.code = :code_typeValidation_attendue_%1$d ' .
+        'WHERE rapportValidation_attendue_%1$d.histoDestruction is null AND rapportValidation_attendue_%1$d.rapport = ';
+
+    private function addValidationDqlToQb(TypeValidation $typeValidation, bool $exists, QueryBuilder $qb, int $i, string $alias)
+    {
+        $dql = $this->validationDqlTemplate . $alias;
+
+        $compl = '';
+        if ($enabledAsDql = $this->getEnabledAsDqlComplementForTypeOperation($typeValidation, $alias)) {
+            $compl = 'OR NOT (' . $enabledAsDql . ')';
         }
 
-        $dql = 'SELECT rapportAvis_attendu_%1$d.id ' .
-            'FROM ' . RapportActiviteAvis::class . ' rapportAvis_attendu_%1$d ' .
-            'JOIN rapportAvis_attendu_%1$d.avis avis_attendu_%1$d ' .
-            'JOIN avis_attendu_%1$d.avisType avisType_attendu_%1$d WITH avisType_attendu_%1$d.code = :code_attendu_%1$d ' .
-            'WHERE rapportAvis_attendu_%1$d.rapport = ra';
+        $qb
+            ->andWhere(sprintf('(%s EXISTS (%s) %s)', $exists ? '' : 'NOT', sprintf($dql, $i), $compl))
+            ->setParameter("code_typeValidation_attendue_$i", $typeValidation->getCode());
+    }
 
-        switch ($filterValue) {
-            case 'null':
-                $qb
-                    ->andWhere('EXISTS (' . sprintf($dql, 1) . ')')
-                    ->setParameter('code_attendu_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST)
-                    ->andWhere('EXISTS (' . sprintf($dql, 2) . ')')
-                    ->setParameter('code_attendu_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED);
-                break;
+    private function addValidationFilterDqlToQb(TypeValidation $typeValidation, QueryBuilder $qb, int $i, string $alias)
+    {
+        $dql = $this->validationDqlTemplate . $alias;
 
-            case RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST:
-                $qb
-                    ->andWhere('NOT EXISTS (' . sprintf($dql, 1) . ')')
-                    ->setParameter('code_attendu_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST);
-                break;
-
-            case RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED:
-                $qb
-                    ->andWhere('EXISTS (' . sprintf($dql, 1) . ')')
-                    ->setParameter('code_attendu_1', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST)
-                    ->andWhere('NOT EXISTS (' . sprintf($dql, 2) . ')')
-                    ->setParameter('code_attendu_2', RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED);
-                break;
-
-            default:
-                throw new InvalidArgumentException("Valeur inattendue pour le filtre " . $filter->getName());
+        $compl = '';
+        if ($enabledAsDql = $this->getEnabledAsDqlComplementForTypeOperation($typeValidation, $alias)) {
+            // NB : c'est bien un AND ici
+            $compl = 'AND (' . $enabledAsDql . ')';
         }
+
+        $qb
+            ->andWhere(sprintf('(NOT EXISTS (%s) %s)', sprintf($dql, $i), $compl))
+            ->setParameter("code_typeValidation_attendue_$i", $typeValidation->getCode());
+    }
+
+    private string $avisDqlTemplate =
+        'SELECT rapportAvis_attendu_%1$d.id ' .
+        'FROM ' . RapportActiviteAvis::class . ' rapportAvis_attendu_%1$d ' .
+        'JOIN rapportAvis_attendu_%1$d.avis avis_attendu_%1$d ' .
+        'JOIN avis_attendu_%1$d.avisType avisType_attendu_%1$d WITH avisType_attendu_%1$d.code = :code_avisType_attendu_%1$d ' .
+        'WHERE rapportAvis_attendu_%1$d.histoDestruction is null AND rapportAvis_attendu_%1$d.rapport = ';
+
+
+    private function addAvisDqlToQb(AvisType $avisType, bool $exists, QueryBuilder $qb, int $i, string $alias)
+    {
+        $dql = $this->avisDqlTemplate . $alias;
+
+        $compl = '';
+        $enabledAsDql = $this->getEnabledAsDqlComplementForTypeOperation($avisType, $alias);
+        if ($enabledAsDql) {
+            $compl = 'OR NOT (' . $enabledAsDql . ')';
+        }
+
+        $qb
+            ->andWhere(sprintf('(%s EXISTS (%s) %s)', $exists ? '' : 'NOT', sprintf($dql, $i), $compl))
+            ->setParameter("code_avisType_attendu_$i", $avisType->getCode());
+    }
+
+    private function addAvisFilterDqlToQb(AvisType $avisType, QueryBuilder $qb, int $i, string $alias)
+    {
+        $dql = $this->avisDqlTemplate . $alias;
+
+        $compl = '';
+        $enabledAsDql = $this->getEnabledAsDqlComplementForTypeOperation($avisType, $alias);
+        if ($enabledAsDql) {
+            // NB : c'est bien un AND ici
+            $compl = 'AND (' . $enabledAsDql . ')';
+        }
+
+        $qb
+            ->andWhere(sprintf('(NOT EXISTS (%s) %s)', sprintf($dql, $i), $compl))
+            ->setParameter("code_avisType_attendu_$i", $avisType->getCode());
+    }
+
+    /**
+     * @param \Application\Entity\Db\TypeValidation|\UnicaenAvis\Entity\Db\AvisType|string $typeOperation
+     */
+    private function getEnabledAsDqlComplementForTypeOperation($typeOperation, string $rapportAlias): string
+    {
+        $typeOperationConfig = $this->rapportActiviteOperationRule->getConfigForTypeOperation($typeOperation);
+        $enabledAsDqlCallable = $typeOperationConfig['enabled_as_dql'] ?? null;
+        if (is_callable($enabledAsDqlCallable)) {
+            return $enabledAsDqlCallable($rapportAlias);
+        }
+
+        return '';
     }
 
     public function applyValidationFilterToQueryBuilder(SearchFilter $filter, QueryBuilder $qb, $alias = 'ra')
@@ -355,6 +430,12 @@ class RapportActiviteSearchService extends SearchService
         $qb
             ->andWhere("$alias.estFinContrat = :final")
             ->setParameter('final', $filterValue === 'finthese');
+    }
+
+    public function applyDematerialiseFilterToQueryBuilder(SearchFilter $filter, QueryBuilder $qb, $alias = 'ra')
+    {
+        $filterValue = $filter->getValue();
+        $qb->andWhere($filterValue === 'oui' ? "$alias.fichier is null" : "$alias.fichier is not null");
     }
 
     /**
@@ -519,47 +600,63 @@ class RapportActiviteSearchService extends SearchService
         return $this->finalSearchFilter;
     }
 
-    public function getAvisFourniSearchFilter(): SelectSearchFilter
+    public function getDematerialiseSearchFilter(): ?SelectSearchFilter
     {
-        if ($this->avisFourniSearchFilter === null) {
-            $valueOptions = ['null' => "Aucun"];
-            foreach($this->rapportActiviteAvisRule->findAllSortedAvisTypes() as $avisType) {
-                $valueOptions[$avisType->getCode()] = $avisType->__toString();
-            }
-            $valueOptions['tous'] = "Tous (i.e. rapport validé)";
-
-            $this->avisFourniSearchFilter = new SelectSearchFilter("Avis fourni", self::NAME_avis_fourni);
-            $this->avisFourniSearchFilter
-                ->setDataProvider(function () use ($valueOptions) {
-                    return $valueOptions;
+        if ($this->dematerialiseSearchFilter === null) {
+            $this->dematerialiseSearchFilter = new SelectSearchFilter("Dématérialisé ?", self::NAME_est_dematerialise);
+            $this->dematerialiseSearchFilter
+                ->setDataProvider(function () {
+                    return ['oui' => "Oui (nouveau module)", 'non' => "Non (ancien module)"];
                 })
                 ->setEmptyOptionLabel("(Peu importe)")
                 ->setAllowsEmptyOption()
-                ->setQueryBuilderApplier([$this, 'applyAvisFourniSearchFilterToQueryBuilder']);
+                ->setQueryBuilderApplier([$this, 'applyDematerialiseFilterToQueryBuilder']);
         }
 
-        return $this->avisFourniSearchFilter;
+        return $this->dematerialiseSearchFilter;
     }
 
-    public function getAvisAttenduSearchFilter(): SelectSearchFilter
+    public function getOperationRealiseeSearchFilter(): SelectSearchFilter
     {
-        if ($this->avisAttenduSearchFilter === null) {
-            $valueOptions = ['null' => "Aucun (i.e. rapport validé)"];
-            foreach($this->rapportActiviteAvisRule->findAllSortedAvisTypes() as $avisType) {
-                $valueOptions[$avisType->getCode()] = $avisType->__toString();
+        if ($this->operationRealiseeSearchFilter === null) {
+            $valueOptions = ['null' => "Aucune"];
+            foreach($this->rapportActiviteOperationRule->fetchTypesOperation() as $type) {
+                $valueOptions[$type->getCode()] = $type->__toString();
             }
+            $valueOptions['tous'] = "Toutes";
 
-            $this->avisAttenduSearchFilter = new SelectSearchFilter("Avis attendu", self::NAME_avis_attendu);
-            $this->avisAttenduSearchFilter
+            $this->operationRealiseeSearchFilter = new SelectSearchFilter("Opération réalisée", self::NAME_avis_fourni);
+            $this->operationRealiseeSearchFilter
                 ->setDataProvider(function () use ($valueOptions) {
                     return $valueOptions;
                 })
                 ->setEmptyOptionLabel("(Peu importe)")
                 ->setAllowsEmptyOption()
-                ->setQueryBuilderApplier([$this, 'applyAvisAttenduSearchFilterToQueryBuilder']);
+                ->setQueryBuilderApplier([$this, 'applyOperationRealiseeSearchFilterToQueryBuilder']);
         }
 
-        return $this->avisAttenduSearchFilter;
+        return $this->operationRealiseeSearchFilter;
+    }
+
+    public function getOperationAttendueSearchFilter(): SelectSearchFilter
+    {
+        if ($this->operationAttendueSearchFilter === null) {
+            $valueOptions = ['null' => "Aucune (i.e. toutes les opérations réalisées)"];
+            foreach($this->rapportActiviteOperationRule->fetchTypesOperation() as $type) {
+                $valueOptions[$type->getCode()] = $type->__toString();
+            }
+
+            $this->operationAttendueSearchFilter = new SelectSearchFilter("Opération attendue", self::NAME_avis_attendu);
+            $this->operationAttendueSearchFilter
+                ->setDataProvider(function () use ($valueOptions) {
+                    return $valueOptions;
+                })
+                ->setEmptyOptionLabel("(Peu importe)")
+                ->setAllowsEmptyOption()
+                ->setQueryBuilderApplier([$this, 'applyOperationAttendueSearchFilterToQueryBuilder']);
+        }
+
+        return $this->operationAttendueSearchFilter;
     }
 
     /**

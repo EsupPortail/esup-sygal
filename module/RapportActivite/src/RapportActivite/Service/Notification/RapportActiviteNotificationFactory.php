@@ -4,9 +4,7 @@ namespace RapportActivite\Service\Notification;
 
 use Notification\Factory\NotificationFactory;
 use RapportActivite\Entity\Db\RapportActivite;
-use RapportActivite\Entity\Db\RapportActiviteAvis;
 use RapportActivite\Entity\Db\RapportActiviteValidation;
-use RapportActivite\Notification\RapportActiviteAvisNotification;
 use RapportActivite\Notification\RapportActiviteOperationAttenduNotification;
 use RapportActivite\Notification\RapportActiviteSupprimeNotification;
 use RapportActivite\Notification\RapportActiviteValidationAjouteeNotification;
@@ -31,17 +29,6 @@ class RapportActiviteNotificationFactory extends NotificationFactory
     {
         $notif = new RapportActiviteValidationSupprimeeNotification();
         $notif->setRapportActiviteValidation($rapportActiviteValidation);
-
-        return $notif;
-    }
-
-    /**
-     * @deprecated
-     */
-    public function createNotificationRapportActiviteAvis(RapportActiviteAvis $rapportActiviteAvis): RapportActiviteAvisNotification
-    {
-        $notif = new RapportActiviteAvisNotification();
-        $notif->setRapportActiviteAvis($rapportActiviteAvis);
 
         return $notif;
     }

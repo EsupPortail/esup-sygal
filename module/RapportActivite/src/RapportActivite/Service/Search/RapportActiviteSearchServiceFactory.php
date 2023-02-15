@@ -8,8 +8,9 @@ use Application\Service\Financement\FinancementService;
 use Application\Service\Validation\ValidationService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
-use RapportActivite\Rule\Avis\RapportActiviteAvisRule;
+use RapportActivite\Rule\Operation\RapportActiviteOperationRule;
 use RapportActivite\Search\AnneeRapportActiviteSearchFilter;
+use RapportActivite\Service\Operation\RapportActiviteOperationService;
 use RapportActivite\Service\RapportActiviteService;
 use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
 use Structure\Search\Etablissement\EtablissementSearchFilter;
@@ -73,9 +74,17 @@ class RapportActiviteSearchServiceFactory implements FactoryInterface
         $service->setEcoleDoctoraleSearchFilter(EcoleDoctoraleSearchFilter::newInstance());
         $service->setAnneeRapportActiviteSearchFilter(AnneeRapportActiviteSearchFilter::newInstance());
 
-        /** @var \RapportActivite\Rule\Avis\RapportActiviteAvisRule $rapportActiviteAvisRule */
-        $rapportActiviteAvisRule = $container->get(RapportActiviteAvisRule::class);
-        $service->setRapportActiviteAvisRule($rapportActiviteAvisRule);
+        /** @var \RapportActivite\Rule\Operation\RapportActiviteOperationRule $rapportActiviteOperationRule */
+        $rapportActiviteOperationRule = $container->get(RapportActiviteOperationRule::class);
+        $service->setRapportActiviteOperationRule($rapportActiviteOperationRule);
+
+        /** @var \RapportActivite\Service\Operation\RapportActiviteOperationService $rapportActiviteOperationService */
+        $rapportActiviteOperationService = $container->get(RapportActiviteOperationService::class);
+        $service->setRapportActiviteOperationService($rapportActiviteOperationService);
+
+        /** @var \Application\Service\Validation\ValidationService $validationService */
+        $validationService = $container->get(ValidationService::class);
+        $service->setValidationService($validationService);
 
         return $service;
     }

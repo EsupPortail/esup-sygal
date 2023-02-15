@@ -15,69 +15,20 @@ class RapportActiviteOperationRule
 {
     use RapportActiviteOperationServiceAwareTrait;
 
-    private array $allowedRoles = [
-        Role::CODE_DOCTORANT,
-        Role::CODE_DIRECTEUR_THESE,
-        Role::CODE_CODIRECTEUR_THESE,
-        Role::CODE_RESP_UR,
-        Role::CODE_RESP_ED,
-        Role::CODE_GEST_ED,
-    ];
-
     /**
      * Config de l'enchaînement des validations/avis attendus.
-     * @var array[]
      */
     private array $operationsConfig;
 
+    /**
+     * Cache des opérations par rapport d'activité.
+     * @var \RapportActivite\Entity\RapportActiviteOperationInterface[]
+     */
     private ?array $operations = null;
 
     public function __construct(array $operationsConfig)
     {
-        $this->setOperationsConfig($operationsConfig);
-    }
-
-    public function setOperationsConfig(array $operationsConfig)
-    {
-        $this->validateOperationsConfig($operationsConfig);
-
         $this->operationsConfig = $operationsConfig;
-    }
-
-    private function validateOperationsConfig(array $operationsConfig)
-    {
-        if (empty($operationsConfig)) {
-            throw new InvalidArgumentException("Config vide !");
-        }
-
-        $distincts = [];
-
-        foreach ($operationsConfig as $config) {
-            if (!array_key_exists($k = 'type', $config)) {
-                throw new InvalidArgumentException("Config invalide, clé '$k' introuvable !");
-            }
-            if (!array_key_exists($k = 'code', $config)) {
-                throw new InvalidArgumentException("Config invalide, clé '$k' introuvable !");
-            }
-
-            if (!array_key_exists($k = 'role', $config)) {
-                throw new InvalidArgumentException("Config invalide, clé '$k' introuvable !");
-            }
-            $this->validateRoles($config['role']);
-
-            if (($distincts[$config['type']] ?? null) === $config['code']) {
-                throw new InvalidArgumentException("Config invalide, doublons {type, code} interdits !");
-            }
-            $distincts[$config['type']] = $config['code'];
-
-        }
-    }
-
-    private function validateRoles(array $roles)
-    {
-        if ($diff = array_diff(array_unique($roles), $this->allowedRoles)) {
-            throw new InvalidArgumentException("Les rôles suivants ne sont pas supportés : " . implode(', ', $diff));
-        }
     }
 
     /**
@@ -200,8 +151,6 @@ class RapportActiviteOperationRule
         return $nextOperation;
     }
 
-
-
     /**
      * @param \RapportActivite\Entity\RapportActiviteOperationInterface $operation
      * @param \Application\Entity\Db\Role $role
@@ -270,7 +219,24 @@ class RapportActiviteOperationRule
         return $found[0];
     }
 
-    public function getOperationConfig(RapportActiviteOperationInterface $operation): array
+    /**
+     * @param \Application\Entity\Db\TypeValidation|\UnicaenAvis\Entity\Db\AvisType|string $typeOperation
+     * @return array
+     */
+    public function getConfigForTypeOperation($typeOperation): array
+    {
+        $code = is_string($typeOperation) ? $typeOperation : $typeOperation->getCode();
+
+        foreach ($this->operationsConfig as $operationConfig) {
+            // NB : l'absence de doublons de codes dans la config est garantie par construction.
+            if ($operationConfig['code'] === $code) {
+                return $operationConfig;
+            }
+        }
+        throw new InvalidArgumentException("Type d'opération non trouvé dans la config : '{$code}'");
+    }
+
+    public function getConfigForOperation(RapportActiviteOperationInterface $operation): array
     {
         $name = $this->findOperationName($operation);
 
@@ -369,5 +335,16 @@ class RapportActiviteOperationRule
         }
 
         return $result;
+    }
+
+    /**
+     * @return \Application\Entity\Db\TypeValidation[]|\UnicaenAvis\Entity\Db\AvisType[]
+     */
+    public function fetchTypesOperation(): array
+    {
+        return array_map(
+            fn(array $config) => $this->rapportActiviteOperationService->fetchTypeOperationFromConfig($config),
+            $this->operationsConfig
+        );
     }
 }

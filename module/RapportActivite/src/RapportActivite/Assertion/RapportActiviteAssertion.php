@@ -6,18 +6,18 @@ use Application\Assertion\AbstractAssertion;
 use Application\Assertion\Exception\FailedAssertionException;
 use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
 use Application\Entity\Db\Role;
-use InvalidArgumentException;
-use RapportActivite\Rule\Operation\RapportActiviteOperationRuleAwareTrait;
-use These\Entity\Db\These;
 use Application\RouteMatch;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
+use InvalidArgumentException;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
-use RapportActivite\Controller\RapportActiviteController;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
 use RapportActivite\Rule\Creation\RapportActiviteCreationRuleAwareTrait;
+use RapportActivite\Rule\Operation\RapportActiviteOperationRuleAwareTrait;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
+use RuntimeException;
+use These\Entity\Db\These;
 use UnicaenApp\Service\MessageCollectorAwareInterface;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
 
@@ -289,21 +289,26 @@ class RapportActiviteAssertion extends AbstractAssertion
                 "La thèse n'appartient pas au doctorant " . $doctorant
             );
         }
-        // todo : remplacer par $role->isStructureDependant() && $role->getTypeStructureDependant()->isEcoleDoctorale() :
-        if ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
+        elseif ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
             $this->assertTrue(
                 $these->getEcoleDoctorale()->getStructure()->getId() === $roleEcoleDoctorale->getStructure()->getId(),
                 "La thèse n'est pas rattachée à l'ED " . $roleEcoleDoctorale->getStructure()->getCode()
             );
         }
-        if ($this->userContextService->getSelectedRoleDirecteurThese()) {
+        elseif ($roleUniteRech = $this->userContextService->getSelectedRoleUniteRecherche()) {
+            $this->assertTrue(
+                $these->getUniteRecherche()->getStructure()->getId() === $roleUniteRech->getStructure()->getId(),
+                "La thèse n'est pas rattachée à l'UR " . $roleUniteRech->getStructure()->getCode()
+            );
+        }
+        elseif ($this->userContextService->getSelectedRoleDirecteurThese()) {
             $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
             $this->assertTrue(
                 $these->hasActeurWithRole($individuUtilisateur, Role::CODE_DIRECTEUR_THESE),
                 "La thèse n'est pas dirigée par " . $individuUtilisateur
             );
         }
-        if ($this->userContextService->getSelectedRoleCodirecteurThese()) {
+        elseif ($this->userContextService->getSelectedRoleCodirecteurThese()) {
             $individuUtilisateur = $this->userContextService->getIdentityDb()->getIndividu();
             $this->assertTrue(
                 $these->hasActeurWithRole($individuUtilisateur, Role::CODE_CODIRECTEUR_THESE),

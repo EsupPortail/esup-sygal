@@ -6,7 +6,6 @@ use Application\Entity\Db\TypeValidation;
 use Application\Service\Validation\ValidationService;
 use Fichier\Service\Fichier\FichierService;
 use Psr\Container\ContainerInterface;
-use RapportActivite\Rule\Avis\RapportActiviteAvisRule;
 use RapportActivite\Rule\Operation\RapportActiviteOperationRule;
 use RapportActivite\Service\Fichier\RapportActiviteFichierService;
 use RapportActivite\Service\RapportActiviteService;
@@ -43,10 +42,6 @@ class RapportActiviteRechercheControllerFactory
         /** @var RapportActiviteFichierService $rapportActiviteFichierService */
         $rapportActiviteFichierService = $container->get(RapportActiviteFichierService::class);
         $controller->setRapportActiviteFichierService($rapportActiviteFichierService);
-
-        /** @var \RapportActivite\Rule\Avis\RapportActiviteAvisRule $rapportActiviteAvisRule */
-        $rapportActiviteAvisRule = $container->get(RapportActiviteAvisRule::class);
-        $controller->setRapportActiviteAvisRule($rapportActiviteAvisRule);
 
         /** @var \RapportActivite\Rule\Operation\RapportActiviteOperationRule $rapportActiviteOperationRule */
         $rapportActiviteOperationRule = $container->get(RapportActiviteOperationRule::class);

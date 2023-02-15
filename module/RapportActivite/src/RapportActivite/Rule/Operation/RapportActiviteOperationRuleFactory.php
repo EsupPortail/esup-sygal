@@ -3,8 +3,8 @@
 namespace RapportActivite\Rule\Operation;
 
 use Psr\Container\ContainerInterface;
+use RapportActivite\Config\ModuleConfig;
 use RapportActivite\Service\Operation\RapportActiviteOperationService;
-use UnicaenOperation\Service\OperationService;
 
 class RapportActiviteOperationRuleFactory
 {
@@ -14,9 +14,10 @@ class RapportActiviteOperationRuleFactory
      */
     public function __invoke(ContainerInterface $container): RapportActiviteOperationRule
     {
-        $config = $container->get('config')['rapport-activite']['operations'];
+        /** @var \RapportActivite\Config\ModuleConfig $moduleConfig */
+        $moduleConfig = $container->get(ModuleConfig::class);
 
-        $rule = new RapportActiviteOperationRule($config);
+        $rule = new RapportActiviteOperationRule($moduleConfig->getOperationsConfig());
 
         /** @var \RapportActivite\Service\Operation\RapportActiviteOperationService $rapportActiviteOperationService */
         $rapportActiviteOperationService = $container->get(RapportActiviteOperationService::class);
