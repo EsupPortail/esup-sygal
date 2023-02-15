@@ -372,16 +372,12 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
         return $this;
     }
 
+    /**
+     * Retourne le fichier téléversé pour ce rapport non dématérialisé (ancien mode opératoire).
+     */
     public function getFichier(): ?Fichier
     {
         return $this->fichier;
-    }
-
-    public function setFichier(Fichier $fichier): self
-    {
-        $this->fichier = $fichier;
-
-        return $this;
     }
 
     public function getThese(): ?These

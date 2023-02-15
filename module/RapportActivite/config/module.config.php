@@ -37,8 +37,6 @@ use RapportActivite\Form\RapportActiviteAnnuelFormFactory;
 use RapportActivite\Form\RapportActiviteFinContratForm;
 use RapportActivite\Form\RapportActiviteFinContratFormFactory;
 use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
-use RapportActivite\Rule\Avis\RapportActiviteAvisRule;
-use RapportActivite\Rule\Avis\RapportActiviteAvisRuleFactory;
 use RapportActivite\Rule\Creation\RapportActiviteCreationRule;
 use RapportActivite\Rule\Creation\RapportActiviteCreationRuleFactory;
 use RapportActivite\Rule\Operation\Notification\OperationAttendueNotificationRule;
@@ -720,7 +718,6 @@ return [
             RapportActiviteAvisEventListener::class => RapportActiviteAvisEventListenerFactory::class,
             RapportActiviteValidationEventListener::class => RapportActiviteValidationEventListenerFactory::class,
 
-            RapportActiviteAvisRule::class => RapportActiviteAvisRuleFactory::class,
             OperationAttendueNotificationRule::class => OperationAttendueNotificationRuleFactory::class,
             RapportActiviteCreationRule::class => RapportActiviteCreationRuleFactory::class,
             RapportActiviteOperationRule::class => RapportActiviteOperationRuleFactory::class,

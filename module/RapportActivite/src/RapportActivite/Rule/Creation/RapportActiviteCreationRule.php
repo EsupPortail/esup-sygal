@@ -6,10 +6,9 @@ use Application\Entity\AnneeUniv;
 use Application\Rule\RuleInterface;
 use InvalidArgumentException;
 use RapportActivite\Entity\Db\RapportActivite;
-use RapportActivite\Form\OldRapportActiviteForm;
+use RapportActivite\Form\RapportActiviteAbstractForm;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use SplObjectStorage;
-use These\Entity\Db\These;
 use Webmozart\Assert\Assert;
 
 /**
@@ -141,12 +140,12 @@ class RapportActiviteCreationRule implements RuleInterface
             // avec un type de rapport (annuel ou fin de contrat)
             $cssClasses = ['annee-univ'];
             if ($this->canCreateRapportAnnuelForAnneeUniv($anneeUniv)) {
-                $cssClasses[] = OldRapportActiviteForm::ANNEE_UNIV__HTML_CLASS_ATTRIB__VALUE_PREFIX .
-                    OldRapportActiviteForm::EST_FINAL__VALUE__ANNUEL;
+                $cssClasses[] = RapportActiviteAbstractForm::ANNEE_UNIV__HTML_CLASS_ATTRIB__VALUE_PREFIX .
+                    RapportActiviteAbstractForm::EST_FINAL__VALUE__ANNUEL;
             }
             if ($this->canCreateRapportFinContratForAnneeUniv($anneeUniv)) {
-                $cssClasses[] = OldRapportActiviteForm::ANNEE_UNIV__HTML_CLASS_ATTRIB__VALUE_PREFIX .
-                    OldRapportActiviteForm::EST_FINAL__VALUE__FIN_CONTRAT;
+                $cssClasses[] = RapportActiviteAbstractForm::ANNEE_UNIV__HTML_CLASS_ATTRIB__VALUE_PREFIX .
+                    RapportActiviteAbstractForm::EST_FINAL__VALUE__FIN_CONTRAT;
             }
             $info = ['class' => implode(' ', $cssClasses)];
 

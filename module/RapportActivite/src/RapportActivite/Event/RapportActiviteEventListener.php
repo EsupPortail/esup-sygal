@@ -8,6 +8,7 @@ use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\ListenerAggregateInterface;
 use Laminas\EventManager\ListenerAggregateTrait;
 use RapportActivite\Entity\Db\RapportActivite;
+use RapportActivite\Service\Notification\RapportActiviteNotificationFactoryAwareTrait;
 use RapportActivite\Service\RapportActiviteService;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use Webmozart\Assert\Assert;
@@ -17,6 +18,7 @@ class RapportActiviteEventListener implements ListenerAggregateInterface
     use UserContextServiceAwareTrait;
     use RapportActiviteServiceAwareTrait;
     use NotifierServiceAwareTrait;
+    use RapportActiviteNotificationFactoryAwareTrait;
 
     use ListenerAggregateTrait;
 
@@ -60,7 +62,7 @@ class RapportActiviteEventListener implements ListenerAggregateInterface
             return;
         }
 
-        $notif = $this->rapportActiviteService->newRapportActiviteSupprimeNotification($rapportActivite);
+        $notif = $this->rapportActiviteNotificationFactory->createNotificationRapportActiviteSupprime($rapportActivite);
         $result = $this->notifierService->trigger($notif);
 
         $messages['info'] = ($result->getSuccessMessages()[0] ?? null);

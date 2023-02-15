@@ -24,8 +24,6 @@ use Laminas\EventManager\EventManagerAwareTrait;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Entity\Db\RapportActiviteAvis;
 use RapportActivite\Event\RapportActiviteEvent;
-use RapportActivite\Notification\RapportActiviteSupprimeNotification;
-use RapportActivite\Rule\Avis\RapportActiviteAvisRuleAwareTrait;
 use RapportActivite\Rule\Operation\RapportActiviteOperationRuleAwareTrait;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
 use RapportActivite\Service\Fichier\Exporter\PageValidationExportData;
@@ -35,14 +33,12 @@ use RapportActivite\Service\Fichier\Exporter\RapportActivitePdfExporterTrait;
 use RapportActivite\Service\Validation\RapportActiviteValidationServiceAwareTrait;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
-use Structure\Entity\Db\Structure;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Exporter\Pdf;
-use UnicaenAvis\Entity\Db\AvisType;
 
 class RapportActiviteService extends BaseService
 {
@@ -52,7 +48,6 @@ class RapportActiviteService extends BaseService
     use EtablissementServiceAwareTrait;
     use NatureFichierServiceAwareTrait;
     use RapportActiviteAvisServiceAwareTrait;
-    use RapportActiviteAvisRuleAwareTrait;
     use RapportActiviteOperationRuleAwareTrait;
     use RapportActiviteValidationServiceAwareTrait;
     use RoleServiceAwareTrait;
@@ -152,24 +147,15 @@ class RapportActiviteService extends BaseService
     }
 
     /**
-     * Enregistre le rapport spécifié, après avoir créé le fichier à partir des données d'upload fournies.
+     * Enregistre le rapport spécifié.
      *
      * @param \RapportActivite\Entity\Db\RapportActivite $rapportActivite
-     * @param array $uploadData Données résultant de l'upload de fichiers
      * @return \RapportActivite\Event\RapportActiviteEvent Rapport annuel créé
      */
-    public function saveRapport(RapportActivite $rapportActivite, array $uploadData = []): RapportActiviteEvent
+    public function saveRapport(RapportActivite $rapportActivite): RapportActiviteEvent
     {
-//        $this->fichierService->setNomFichierFormatter(new RapportActiviteNomFichierFormatter($rapportActivite));
-//        $fichiers = $this->fichierService->createFichiersFromUpload($uploadData, NatureFichier::CODE_RAPPORT_ACTIVITE);
-
         $this->entityManager->beginTransaction();
         try {
-//            $this->fichierService->saveFichiers($fichiers);
-//
-//            $fichier = array_pop($fichiers); // il n'y a en fait qu'un seul fichier
-//            $rapportActivite->setFichier($fichier);
-
             $this->entityManager->persist($rapportActivite);
             $this->entityManager->flush($rapportActivite);
             $this->entityManager->commit();
@@ -521,22 +507,5 @@ class RapportActiviteService extends BaseService
         $this->events->triggerEvent($event);
 
         return $event;
-    }
-
-    /**
-     * @deprecated todo : à déplacer dans une RapportActiviteNotificationFactory
-     */
-    public function newRapportActiviteSupprimeNotification(RapportActivite $rapportActivite): RapportActiviteSupprimeNotification
-    {
-        $doctorant = $rapportActivite->getThese()->getDoctorant();
-        $individu = $doctorant->getIndividu();
-        $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
-
-        $notif = new RapportActiviteSupprimeNotification();
-        $notif->setRapportActivite($rapportActivite);
-        $notif->setSubject("Rapport d'activité supprimé");
-        $notif->setTo([$email => $doctorant->getIndividu()->getNomComplet()]);
-
-        return $notif;
     }
 }

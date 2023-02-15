@@ -121,18 +121,13 @@ class RapportActiviteController extends AbstractController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-//            $uploadData = $request->getFiles()->toArray();
-//            $data = array_merge_recursive(
-//                $request->getPost()->toArray(),
-//                $uploadData
-//            );
             $data = $request->getPost()->toArray();
             $form->setData($data);
             if ($form->isValid()) {
                 /** @var RapportActivite $rapport */
                 $rapport = $form->getData();
                 if ($this->rapportActiviteCreationRule->canCreateRapport($rapport)) {
-                    $event = $this->rapportActiviteService->saveRapport($rapport/*, $uploadData*/);
+                    $event = $this->rapportActiviteService->saveRapport($rapport);
 
                     $this->flashMessenger()->addSuccessMessage($rapport . " enregistré avec succès.");
 
@@ -174,31 +169,20 @@ class RapportActiviteController extends AbstractController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-//            $uploadData = $request->getFiles()->toArray();
-//            $data = array_merge_recursive(
-//                $request->getPost()->toArray(),
-//                $uploadData
-//            );
             $data = $request->getPost()->toArray();
             $form->setData($data);
             if ($form->isValid()) {
                 /** @var RapportActivite $rapport */
                 $rapport = $form->getData();
-//                if ($this->rapportActiviteCreationRule->canCreateRapport($rapport)) {
-                    $event = $this->rapportActiviteService->saveRapport($rapport/*, $uploadData*/);
+                $event = $this->rapportActiviteService->saveRapport($rapport);
 
-                    $this->flashMessenger()->addSuccessMessage($rapport . " modifié avec succès.");
+                $this->flashMessenger()->addSuccessMessage($rapport . " modifié avec succès.");
 
-                    if ($messages = $event->getMessages()) {
-                        foreach ($messages as $namespace => $message) {
-                            $this->flashMessenger()->addMessage($message, $namespace);
-                        }
+                if ($messages = $event->getMessages()) {
+                    foreach ($messages as $namespace => $message) {
+                        $this->flashMessenger()->addMessage($message, $namespace);
                     }
-//                } else {
-//                    $this->flashMessenger()->addErrorMessage(
-//                        "L'enregistrement n'est pas possible. Vérifiez la cohérence entre le type de rapport et l'année universitaire, svp."
-//                    );
-//                }
+                }
 
                 return $this->redirect()->toRoute('rapport-activite/consulter', [
                     'these' => $rapport->getThese()->getId(),

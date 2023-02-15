@@ -8,7 +8,6 @@ use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\NatureFichier\NatureFichierService;
 use Fichier\Service\VersionFichier\VersionFichierService;
 use Psr\Container\ContainerInterface;
-use RapportActivite\Rule\Avis\RapportActiviteAvisRule;
 use RapportActivite\Rule\Operation\RapportActiviteOperationRule;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
 use RapportActivite\Service\Fichier\Exporter\PageValidationPdfExporter;
@@ -65,10 +64,6 @@ class RapportActiviteServiceFactory
         $service->setStructureDocumentService($structureDocumentService);
         $service->setPageValidationPdfExporter($pageValidationPdfExporter);
         $service->setEventManager($container->get('EventManager'));
-
-        /** @var \RapportActivite\Rule\Avis\RapportActiviteAvisRule $rapportActiviteAvisRule */
-        $rapportActiviteAvisRule = $container->get(RapportActiviteAvisRule::class);
-        $service->setRapportActiviteAvisRule($rapportActiviteAvisRule);
 
         /** @var \RapportActivite\Service\Fichier\Exporter\RapportActivitePdfExporter $rapportActivitePdfExporter */
         $rapportActivitePdfExporter = $container->get(RapportActivitePdfExporter::class);

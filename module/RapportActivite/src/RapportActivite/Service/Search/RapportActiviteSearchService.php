@@ -5,7 +5,6 @@ namespace RapportActivite\Service\Search;
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
 use Application\Entity\Db\TypeValidation;
 use Application\QueryBuilder\DefaultQueryBuilder;
-use Application\Search\Filter\CheckboxSearchFilter;
 use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Search\Filter\TextSearchFilter;
@@ -94,9 +93,7 @@ class RapportActiviteSearchService extends SearchService
             });
         $origineFinancementFilter = $this->getOrigineFinancementSearchFilter();
         $anneeRapportActiviteInscrFilter = $this->getAnneeRapportActiviteSearchFilter();
-//        $avisFourniSearchFilter = $this->getOperationRealiseeSearchFilter();
         $avisAttenduSearchFilter = $this->getOperationAttendueSearchFilter();
-        $validationSearchFilter = $this->getValidationSearchFilter();
         $finalSearchFilter = $this->getFinalSearchFilter();
         $dematerialiseSearchFilter = $this->getDematerialiseSearchFilter();
 
@@ -115,9 +112,7 @@ class RapportActiviteSearchService extends SearchService
             $anneeRapportActiviteInscrFilter,
             $this->createFilterNomDoctorant(),
             $this->createFilterNomDirecteur(),
-//            $avisFourniSearchFilter,
             $avisAttenduSearchFilter,
-//            $validationSearchFilter,
             $dematerialiseSearchFilter,
         ]));
 
@@ -568,22 +563,6 @@ class RapportActiviteSearchService extends SearchService
         return $sorter;
     }
 
-    public function getValidationSearchFilter(): SelectSearchFilter
-    {
-        if ($this->validationSearchFilter === null) {
-            $this->validationSearchFilter = new SelectSearchFilter("Validés ?", self::NAME_validation);
-            $this->validationSearchFilter
-                ->setDataProvider(function () {
-                    return ['oui' => "Oui", 'non' => "Non"];
-                })
-                ->setEmptyOptionLabel("(Peu importe)")
-                ->setAllowsEmptyOption()
-                ->setQueryBuilderApplier([$this, 'applyValidationFilterToQueryBuilder']);
-        }
-
-        return $this->validationSearchFilter;
-    }
-
     public function getFinalSearchFilter(): ?SelectSearchFilter
     {
         if ($this->finalSearchFilter === null) {
@@ -614,28 +593,6 @@ class RapportActiviteSearchService extends SearchService
         }
 
         return $this->dematerialiseSearchFilter;
-    }
-
-    public function getOperationRealiseeSearchFilter(): SelectSearchFilter
-    {
-        if ($this->operationRealiseeSearchFilter === null) {
-            $valueOptions = ['null' => "Aucune"];
-            foreach($this->rapportActiviteOperationRule->fetchTypesOperation() as $type) {
-                $valueOptions[$type->getCode()] = $type->__toString();
-            }
-            $valueOptions['tous'] = "Toutes";
-
-            $this->operationRealiseeSearchFilter = new SelectSearchFilter("Opération réalisée", self::NAME_avis_fourni);
-            $this->operationRealiseeSearchFilter
-                ->setDataProvider(function () use ($valueOptions) {
-                    return $valueOptions;
-                })
-                ->setEmptyOptionLabel("(Peu importe)")
-                ->setAllowsEmptyOption()
-                ->setQueryBuilderApplier([$this, 'applyOperationRealiseeSearchFilterToQueryBuilder']);
-        }
-
-        return $this->operationRealiseeSearchFilter;
     }
 
     public function getOperationAttendueSearchFilter(): SelectSearchFilter
