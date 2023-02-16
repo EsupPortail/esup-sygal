@@ -13,8 +13,10 @@ use RapportActivite\Notification\RapportActiviteOperationAttenduNotification;
 use RapportActivite\Rule\Operation\RapportActiviteOperationRuleAwareTrait;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
 use RuntimeException;
+use Structure\Entity\Db\Structure;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use UnicaenApp\Traits\MessageAwareTrait;
+use Webmozart\Assert\Assert;
 
 /**
  * Règles métiers concernant la notification en cas d'opération attendue sur un rapport d'activité.
@@ -36,6 +38,9 @@ class OperationAttendueNotificationRule implements RuleInterface
     private string $subject;
     private array $anomalies = [];
 
+    private string $anomalieRoleInexistantTemplate =
+        "Ce mail vous est adressé à la place des destinataires prévus car 
+        la recherche des personnes concernées est impossible ayant le rôle suivant sont introuvables dans l'application : %s.";
     private string $anomalieAucunePersonneTemplate =
         "Ce mail vous est adressé à la place des destinataires prévus car 
         les personnes ayant le rôle suivant sont introuvables dans l'application : %s.";
@@ -117,29 +122,35 @@ class OperationAttendueNotificationRule implements RuleInterface
         }
 
         $emails = [];
-        foreach ((array) $operationConfig['role'] as $code) {
-            switch ($code) {
+        foreach ((array) $operationConfig['role'] as $codeRole) {
+            switch ($codeRole) {
                 case Role::CODE_DOCTORANT:
                     $emails[$emailDoctorant] = $doctorant . "(doctorant)";
                     break;
 
                 case Role::CODE_DIRECTEUR_THESE:
                 case Role::CODE_CODIRECTEUR_THESE:
-                    $acteurs = $this->acteurService->getRepository()->findActeursByTheseAndRole($these, $code);
-                    $emailsActeurs = $this->collectEmails($acteurs, $code, $emailDoctorant);
+                    $acteurs = $this->acteurService->getRepository()->findActeursByTheseAndRole($these, $codeRole);
+                    $emailsActeurs = $this->collectEmails($acteurs);
                     $emails = array_merge($emails, $emailsActeurs);
                     break;
 
                 case Role::CODE_RESP_UR:
                 case Role::CODE_RESP_ED:
-                    $structure = $code === Role::CODE_RESP_UR ?
+                    $structure = ($codeRole === Role::CODE_RESP_UR) ?
                         $these->getUniteRecherche()->getStructure() :
                         $these->getEcoleDoctorale()->getStructure();
-                    // Si aucun individu n'est trouvé avec la contrainte sur l'établissement de l'individu, on essaie sans.
-                    $individusRoles =
-                        $this->roleService->findIndividuRoleByStructure($structure, $code, $these->getEtablissement()) ?:
-                        $this->roleService->findIndividuRoleByStructure($structure, $code);
-                    $emailsIndividuRoles = $this->collectEmails($individusRoles, $code, $emailDoctorant);
+                    // Recherche des individus ayant le rôle attendu.
+                    $individusRoles = $this->roleService->findIndividuRoleByStructure($structure, $codeRole, $these->getEtablissement());
+                    if (!count($individusRoles)) {
+                        // Si aucun individu n'est trouvé avec la contrainte sur l'établissement de l'individu, on essaie sans.
+                        $individusRoles = $this->roleService->findIndividuRoleByStructure($structure, $codeRole);
+                    }
+                    if (count($individusRoles)) {
+                        $emailsIndividuRoles = $this->collectEmails($individusRoles);
+                    } else {
+                        $emailsIndividuRoles = $this->collectFallbackEmails($codeRole, $structure);
+                    }
                     $emails = array_merge($emails, $emailsIndividuRoles);
                     break;
 
@@ -153,33 +164,51 @@ class OperationAttendueNotificationRule implements RuleInterface
 
     /**
      * @param \Individu\Entity\Db\IndividuRoleAwareInterface[] $individuRoleAwares
-     * @param string $codeRole
-     * @param string $emailDoctorantFallback
      * @return string[] email => identité
      */
-    private function collectEmails(array $individuRoleAwares, string $codeRole, string $emailDoctorantFallback): array
+    private function collectEmails(array $individuRoleAwares): array
     {
+        Assert::notEmpty($individuRoleAwares);
+
         $doctorant = $this->operationRealisee->getRapportActivite()->getThese()->getDoctorant();
+        $emailDoctorant = $this->emailAddressExtractor->__invoke($doctorant->getIndividu());
 
         $emailsTmp = [];
-        if (!count($individuRoleAwares)) {
-            $role = $this->roleService->getRepository()->findByCode($codeRole);
-            $emailsTmp[$emailDoctorantFallback] = $doctorant . "(doctorant)";
-            $this->anomalies[] = sprintf($this->anomalieAucunePersonneTemplate, $role);
-        } else {
-            $identites = [];
-            foreach ($individuRoleAwares as $ir) {
-                $individu = $ir->getIndividu();
-                $email = $this->emailAddressExtractor->__invoke($individu);
-                $identite = sprintf("%s (%s)", $individu, $ir->getRole());
-                $identites[] = $identite;
-                $emailsTmp[$email] = $identite;
-            }
-            if (empty($emailsTmp)) {
-                $emailsTmp[$emailDoctorantFallback] = $doctorant . "(doctorant)";
-                $this->anomalies[] = sprintf($this->anomalieAucuneAdresseTemplate, implode(', ', $identites));
-            }
+        $identites = [];
+        foreach ($individuRoleAwares as $ir) {
+            $individu = $ir->getIndividu();
+            $email = $this->emailAddressExtractor->__invoke($individu);
+            $identite = sprintf("%s (%s)", $individu, $ir->getRole());
+            $identites[] = $identite;
+            $emailsTmp[$email] = $identite;
         }
+        if (empty($emailsTmp)) {
+            $emailsTmp[$emailDoctorant] = $doctorant . "(doctorant)";
+            $this->anomalies[] = sprintf($this->anomalieAucuneAdresseTemplate, implode(', ', $identites));
+        }
+
+        return $emailsTmp;
+    }
+
+    private function collectFallbackEmails(string $codeRole, Structure $structure): array
+    {
+        $doctorant = $this->operationRealisee->getRapportActivite()->getThese()->getDoctorant();
+        $emailDoctorant = $this->emailAddressExtractor->__invoke($doctorant->getIndividu());
+
+        // Aucun individu trouvé avec le rôle attendu, vérifions si le rôle attendu existe.
+        $role = $this->roleService->getRepository()->findOneByCodeAndStructure($codeRole, $structure);
+        if ($role === null) {
+            // S'il n'existe pas, on recherche le 1er rôle existant ayant ce code, histoire de pouvoir informer.
+            $role = $this->roleService->getRepository()->findByCode($codeRole);
+        }
+        if ($role === null) {
+            throw new RuntimeException("Anomalie : aucun rôle trouvé avec ce code : '$codeRole'");
+        }
+
+        $emailsTmp = [];
+        $emailsTmp[$emailDoctorant] = $doctorant . " (doctorant.e)";
+        $this->anomalies[] = sprintf($this->anomalieAucunePersonneTemplate,
+            $role->getLibelle() . ' ' . $structure->getSigle());
 
         return $emailsTmp;
     }

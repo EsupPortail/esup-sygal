@@ -258,8 +258,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_HTML_LINES)
             <dd class="col-md-8">
                 <?php
                 if ($these->getUniteRecherche()) {
-                    echo /*$these->getUniteRecherche()->getSourceCode() . " - " .*/
-                    $these->getUniteRecherche()->getStructure()->getLibelle();
+                    echo $these->getUniteRecherche();
                 } elseif ($these->getCodeUniteRecherche() && $these->getLibelleUniteRecherche()) {
                     echo $these->getCodeUniteRecherche() . " - " . $these->getLibelleUniteRecherche();
                     echo "<div class='alert alert-sm alert-warning'>";
@@ -292,14 +291,12 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_HTML_LINES)
                 ?>
             </dd>
 
-
             <dt class="col-md-4">
                 <?php echo $this->translate("École doctorale"); ?>
             </dt>
             <dd class="col-md-8">
                 <?php if ($these->getEcoleDoctorale()) {
-                    echo /*$these->getEcoleDoctorale()->getSourceCode() . " - " .*/
-                    $these->getEcoleDoctorale()->getStructure()->getLibelle();
+                    echo $these->getEcoleDoctorale();
                 } else {
                     echo "<div class='alert alert-sm alert-warning'>";
                     echo "<span class='fas fa-exclamation-triangle'></span> Aucune école doctorale n'est renseignée.";
