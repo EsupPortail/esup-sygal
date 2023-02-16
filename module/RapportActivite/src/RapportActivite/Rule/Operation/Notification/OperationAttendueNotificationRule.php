@@ -62,6 +62,15 @@ class OperationAttendueNotificationRule implements RuleInterface
 
         $operationAttendue = $this->rapportActiviteOperationRule->findFollowingOperation($this->operationRealisee);
         if ($operationAttendue === null) {
+            // Aucune opération après : bye !
+            $this->notificationRequired = false;
+            return $this;
+        }
+
+        $operationAttendueConfig = $this->rapportActiviteOperationRule->getConfigForOperation($operationAttendue);
+        $operationAttendueIsAuto = $operationAttendueConfig['readonly'] ?? false;
+        if ($operationAttendueIsAuto) {
+            // L'opération attendue ensuite est "automatique" (sans intervention humaine), personne à notifier : bye !
             $this->notificationRequired = false;
             return $this;
         }

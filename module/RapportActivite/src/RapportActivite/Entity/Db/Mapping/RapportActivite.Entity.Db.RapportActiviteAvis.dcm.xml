@@ -15,7 +15,7 @@
         </many-to-one>
         <many-to-one field="avis" target-entity="UnicaenAvis\Entity\Db\Avis">
             <cascade>
-                <cascade-persist/>
+                <cascade-all/>
             </cascade>
             <join-columns>
                 <join-column name="AVIS_ID" referenced-column-name="ID"/>

@@ -83,10 +83,9 @@ class RapportActiviteAvisService extends BaseService
     {
         $this->entityManager->beginTransaction();
         try {
-            $this->entityManager->remove($rapportAvis);
+            $this->entityManager->remove($rapportAvis); // l'Avis sera supprimé en cascade (cf. mapping)
             $this->entityManager->flush($rapportAvis);
             $this->entityManager->commit();
-            $this->avisService->deleteAvis($rapportAvis->getAvis());
         } catch (Exception $e) {
             $this->entityManager->rollback();
             throw new RuntimeException("Erreur survenue lors de la suppression de l'avis, rollback!", 0, $e);

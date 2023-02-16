@@ -120,9 +120,13 @@ class RapportActiviteOperationAbstractAssertion extends AbstractAssertion
     {
         $role = $this->userContextService->getSelectedIdentityRole();
 
+        $this->assertFalse(
+            $this->rapportActiviteOperationRule->isOperationReadonly($operation),
+            "L'opération attendue est en lecture seule (non réalisable)"
+        );
         $this->assertTrue(
             $this->rapportActiviteOperationRule->isOperationAllowedByRole($operation, $role),
-            "Le type d'avis attendu pour ce rapport concerne un rôle utilisateur différent"
+            "L'opération attendue pour ce rapport concerne un rôle utilisateur différent"
         );
     }
 

@@ -37,6 +37,9 @@ class ModuleConfig
     public function __construct()
     {
         $this->setOperationsConfig([
+            /**
+             * Validation par le doctorant.
+             */
             self::VALIDATION_DOCTORANT => [
                 'type' => RapportActiviteValidation::class,
                 'code' => TypeValidation::CODE_RAPPORT_ACTIVITE_DOCTORANT,
@@ -49,10 +52,17 @@ class ModuleConfig
                     return "$rapportAlias.fichier is null";
                 },
             ],
-            self::AVIS_GEST => [ // NB : conservé pour compatibilité avec ancien module
+            /**
+             * Ancien avis des gestionnaires d'ED (complétude du rapport).
+             * Présente ici pour qu'elle soit visible sur les rapports non dématérialisés (ancien mode opératoire),
+             * mais non réalisable car interdite par l'assertion.
+             * @deprecated
+             */
+            self::AVIS_GEST => [
                 'type' => RapportActiviteAvis::class,
                 'code' => RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST, // Cf. UNICAEN_AVIS_TYPE.CODE
                 'role' => [Role::CODE_GEST_ED],
+                'is_readonly' => true,
                 'pre_condition' => [
                     // nom de l'opération devant exister => condition sur sa valeur booléenne
                     self::VALIDATION_DOCTORANT => true, // la validation doctorant doit exister & sa valeur positive (tj vrai pour une validation)
@@ -64,6 +74,9 @@ class ModuleConfig
                     return "$rapportAlias.fichier is not null";
                 },
             ],
+            /**
+             * Avis du directeur de thèse.
+             */
             self::AVIS_DIR_THESE => [
                 'type' => RapportActiviteAvis::class,
                 'code' => RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_THESE,
@@ -80,6 +93,9 @@ class ModuleConfig
                     return "$rapportAlias.estFinContrat = false AND $rapportAlias.fichier is null";
                 },
             ],
+            /**
+             * Avis du co-directeur de thèse.
+             */
             self::AVIS_CODIR_THESE => [
                 'type' => RapportActiviteAvis::class,
                 'code' => RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_CODIR_THESE,
@@ -103,6 +119,9 @@ class ModuleConfig
                         )";
                 },
             ],
+            /**
+             * Avis de la direction d'UR.
+             */
             self::AVIS_DIR_UR => [
                 'type' => RapportActiviteAvis::class,
                 'code' => RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_UR,
@@ -119,12 +138,18 @@ class ModuleConfig
                     return "$rapportAlias.estFinContrat = false AND $rapportAlias.fichier is null";
                 },
             ],
+            /**
+             * Avis de la direction d'ED.
+             */
             self::AVIS_DIR_ED => [
                 'type' => RapportActiviteAvis::class,
                 'code' => RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED,
                 'role' => [Role::CODE_RESP_ED],
                 'pre_condition' => [
-                    self::VALIDATION_DOCTORANT => true,
+                    self::AVIS_GEST => true, // En réalité, sera pris en compte uniquement si le rapport
+                                             // est non dématérialisé (cf. 'enabled' de AVIS_GEST).
+                    self::VALIDATION_DOCTORANT => true, // En réalité, sera pris en compte uniquement si le rapport
+                                                        // est dématérialisé (cf. 'enabled' de VALIDATION_DOCTORANT).
                 ],
                 'enabled' => function(RapportActivite $rapportActivite) {
                     return
@@ -141,10 +166,17 @@ class ModuleConfig
                     'validation_doctorant_operation_name' => self::VALIDATION_DOCTORANT,
                 ],
             ],
-            self::VALIDATION_AUTO => [
+            /**
+             * Ancienne validation automatique à l'issue de l'avis des gestionnaires d'ED (complétude du rapport).
+             * Présente ici pour qu'elle soit visible sur les rapports non dématérialisés (ancien mode opératoire),
+             * mais n'est plus réalisée.
+             * @deprecated
+             */
+            self::VALIDATION_AUTO => [ //
                 'type' => RapportActiviteValidation::class,
                 'code' => TypeValidation::CODE_RAPPORT_ACTIVITE_AUTO,
                 'role' => [Role::CODE_RESP_ED],
+                'is_auto' => true, // opération "automatique" (i.e. sans intervention humaine)
                 'pre_condition' => [
                     // nom de l'opération devant exister => condition sur sa valeur booléenne
                     self::VALIDATION_DOCTORANT => true,

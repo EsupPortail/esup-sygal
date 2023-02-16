@@ -65,6 +65,8 @@ class RapportActiviteAvisEventListener extends RapportActiviteOperationAbstractE
             return;
         }
 
+        $rapportActivite = $this->operationRealisee->getRapportActivite();
+
         // le nom de l'opération "validation doctorant" est dans la config de l'opération courante (pratique!).
         $operationConfig = $this->rapportActiviteOperationRule->getConfigForOperation($this->operationRealisee);
         $ripOperatioName = $operationConfig['extra']['validation_doctorant_operation_name'] ?? null;
@@ -75,13 +77,17 @@ class RapportActiviteAvisEventListener extends RapportActiviteOperationAbstractE
             ));
         }
 
-        $rapportActivite = $this->operationRealisee->getRapportActivite();
+        $ripOperatioConfig = $this->rapportActiviteOperationRule->getConfigForOperationName($ripOperatioName);
+        if (!$this->rapportActiviteOperationRule->isOperationEnabledForRapport($ripOperatioConfig, $rapportActivite)) {
+            // opération non activée pour ce rapport, rien à faire.
+            return;
+        }
 
         /** @var \RapportActivite\Entity\RapportActiviteOperationInterface $ripOperation */
         $operations = $this->rapportActiviteOperationRule->getOperationsForRapport($rapportActivite);
-        $ripOperation = $operations[$ripOperatioName];
+        $ripOperation = $operations[$ripOperatioName] ?? null;
         if (!$ripOperation->getId()) {
-            // opération non réalisée (bizarre, déjà supprimée ?), on abandonne.
+            // opération non réalisée (théoriquement impossible), on abandonne.
             return;
         }
 

@@ -164,24 +164,18 @@ class RapportActiviteOperationRule
             return false;
         }
 
-//        if ($role->getTypeStructureDependant() !== null) {
-//            $these = $operation->getRapportActivite()->getThese();
-//            if ($role->getTypeStructureDependant()->isUniteRecherche()) {
-//                if ($role->getStructure() !== $these->getUniteRecherche()) {
-//                    return false;
-//                }
-//            } elseif ($role->getTypeStructureDependant()->isEcoleDoctorale()) {
-//                if ($role->getStructure() !== $these->getEcoleDoctorale()) {
-//                    return false;
-//                }
-//            } else {
-//                return false;
-//            }
-//        } elseif ($role->isDirecteurThese()) {
-//            if ()
-//        }
-
         return true;
+    }
+
+    /**
+     * @param \RapportActivite\Entity\RapportActiviteOperationInterface $operation
+     * @return bool
+     */
+    public function isOperationReadonly(RapportActiviteOperationInterface $operation): bool
+    {
+        $name = $this->findOperationName($operation);
+
+        return $this->operationsConfig[$name]['is_readonly'] ?? false;
     }
 
     /**
@@ -233,12 +227,21 @@ class RapportActiviteOperationRule
                 return $operationConfig;
             }
         }
-        throw new InvalidArgumentException("Type d'opération non trouvé dans la config : '{$code}'");
+        throw new InvalidArgumentException("Type d'opération non trouvé dans la config : '$code'");
     }
 
     public function getConfigForOperation(RapportActiviteOperationInterface $operation): array
     {
         $name = $this->findOperationName($operation);
+
+        return $this->getConfigForOperationName($name);
+    }
+
+    public function getConfigForOperationName(string $name): array
+    {
+        if (!array_key_exists($name, $this->operationsConfig)) {
+            throw new InvalidArgumentException("Aucune config d'opération trouvée avec ce nom : '$name'");
+        }
 
         // NB : injection du 'name' dans la config
         $this->operationsConfig[$name]['name'] = $name;
@@ -271,9 +274,7 @@ class RapportActiviteOperationRule
     private function loadOperationsForRapport(RapportActivite $rapportActivite): void
     {
         foreach ($this->operationsConfig as $name => $config) {
-            if (is_bool($config['enabled']) && !$config['enabled']) {
-                continue;
-            } elseif (is_callable($config['enabled']) && !call_user_func($config['enabled'], $rapportActivite)) {
+            if (!$this->isOperationEnabledForRapport($config, $rapportActivite)) {
                 continue;
             }
 
@@ -287,6 +288,16 @@ class RapportActiviteOperationRule
 
             $this->operations[$rapportActivite->getId()][$name] = $ope;
         }
+    }
+
+    public function isOperationEnabledForRapport(array $operationConfig, RapportActivite $rapportActivite)
+    {
+        if (is_bool($operationConfig['enabled'])) {
+            return $operationConfig['enabled'];
+        } elseif (is_callable($operationConfig['enabled'])) {
+            return call_user_func($operationConfig['enabled'], $rapportActivite);
+        }
+        return true;
     }
 
     private function checkPreConditionForOperation(RapportActiviteOperationInterface $operation): bool
@@ -316,6 +327,11 @@ class RapportActiviteOperationRule
         foreach ($preCondition as $name => $spec) {
             if ($spec === null) {
                 // i.e. pas de condition
+                continue;
+            }
+
+            // Si l'opération mentionnée n'est pas activée, pas la peine de la prendre en compte.
+            if (!$this->isOperationEnabledForRapport($this->operationsConfig[$name], $operation->getRapportActivite())) {
                 continue;
             }
 
