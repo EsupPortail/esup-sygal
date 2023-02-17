@@ -115,7 +115,7 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
     public function createNotificationForRdvBuSaisiParDoctorant(These $these, bool $estLaPremiereSaisie): Notification
     {
         $subject = sprintf("%s Saisie des informations pour la prise de rendez-vous avec la bibliothèque universitaire", $these->getLibelleDiscipline());
-        $to = $this->emailTheseService->fetchEmailBibliothequeUniv($these);
+        $to = $this->emailTheseService->fetchEmailAspectsBibliotheque($these);
 
         $notif = $this->createNotification();
         $notif
@@ -143,7 +143,7 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
      */
     public function createNotificationForTheseTeleversee(These $these, VersionFichier $version): Notification
     {
-        $to = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
+        $to = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
 
         $notif = $this->createNotification('notif-depot-these');
         $notif
@@ -166,7 +166,7 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
      */
     public function createNotificationForFichierTeleverse(These $these): Notification
     {
-        $to = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
+        $to = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
 
         $notif = $this->createNotification();
         $notif
@@ -184,8 +184,8 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
      */
     public function createNotificationForAccordSursisCorrection(These $these): Notification
     {
-        $emailBDD = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
-        $emailBU = $this->emailTheseService->fetchEmailBibliothequeUniv($these);
+        $emailBDD = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
+        $emailBU = $this->emailTheseService->fetchEmailAspectsBibliotheque($these);
         $emailsDirecteurs = $this->emailTheseService->fetchEmailEncadrants($these);
 
         $toLabel = "Maison du doctorat, Bibliothèque Universitaire et (co)directeur de thèse";
@@ -238,7 +238,7 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
         $notification = new ValidationPageDeCouvertureNotification();
         $notification->setThese($these);
         $notification->setAction($action);
-        $notification->setEmailsBu($this->emailTheseService->fetchEmailBibliothequeUniv($these));
+        $notification->setEmailsBu($this->emailTheseService->fetchEmailAspectsBibliotheque($these));
 
         return $notification;
     }
@@ -251,8 +251,8 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
         $notification = new ValidationRdvBuNotification();
         $notification->setThese($these);
 
-        $notification->setEmailsBdd($this->emailTheseService->fetchEmailMaisonDuDoctorat($these));
-        $notification->setEmailsBu($this->emailTheseService->fetchEmailBibliothequeUniv($these));
+        $notification->setEmailsBdd($this->emailTheseService->fetchEmailAspectsDoctorat($these));
+        $notification->setEmailsBu($this->emailTheseService->fetchEmailAspectsBibliotheque($these));
 
         return $notification;
     }
@@ -270,7 +270,7 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
         $notif = new ValidationDepotTheseCorrigeeNotification();
         $notif
             ->setThese($these)
-            ->setEmailsBdd($this->emailTheseService->fetchEmailMaisonDuDoctorat($these))
+            ->setEmailsBdd($this->emailTheseService->fetchEmailAspectsDoctorat($these))
             ->setTemplateVariables([
                 'these' => $these,
                 'url'   => $url,
@@ -297,7 +297,7 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
                 'url' => $this->urlHelper->__invoke('these/depot', ['these' => $these->getId()], ['force_canonical' => true]),
             ]);
 
-        $to = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
+        $to = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
         $notif
             ->addSuccessMessage(sprintf("Un mail de notification vient d'être envoyé à la Maison du doctorat (%s)", $to))
             ->setTo($to)

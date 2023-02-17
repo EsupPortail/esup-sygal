@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+5.2.10
+------
+- Les adresses mail d'assistance, Bibliothèque et Doctorat sont désormais renseignées sur la fiche de l'établissement d'inscription.
+
 5.2.9
 -----
 - Masquage des membres du CSI et de leurs saisies

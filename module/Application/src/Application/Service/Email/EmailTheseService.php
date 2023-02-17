@@ -2,8 +2,6 @@
 
 namespace Application\Service\Email;
 
-use Application\Entity\Db\Role;
-use Application\Entity\Db\Variable;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
@@ -96,27 +94,31 @@ class EmailTheseService
     }
 
     /**
+     * Retourne l'éventuelle adresse mail pour les aspects "Doctorat".
+     *
      * @param These $these
      * @return string[]
      */
-    public function fetchEmailMaisonDuDoctorat(These $these) : array
+    public function fetchEmailAspectsDoctorat(These $these) : array
     {
-        /** @var IndividuRole[] $individuRoles */
-        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getEtablissement()->getStructure());
-        $individuRoles = array_filter($individuRoles, function (IndividuRole $ir) { return $ir->getRole()->getCode() === Role::CODE_BDD;});
-        return $this->fetchEmailsByEtablissement($individuRoles, $these);
+        if ($email = $these->getEtablissement()->getEmailDoctorat()) {
+            return [$email];
+        }
+        return [];
     }
 
     /**
+     * Retourne l'éventuelle adresse mail pour les aspects "Bibliothèque".
+     *
      * @param These $these
      * @return string[]
      */
-    public function fetchEmailBibliothequeUniv(These $these) : array
+    public function fetchEmailAspectsBibliotheque(These $these) : array
     {
-        /** @var IndividuRole[] $individuRoles */
-        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getEtablissement()->getStructure());
-        $individuRoles = array_filter($individuRoles, function (IndividuRole $ir) { return $ir->getRole()->getCode() === Role::CODE_BU;});
-        return $this->fetchEmailsByEtablissement($individuRoles, $these);
+        if ($email = $these->getEtablissement()->getEmailBibliotheque()) {
+            return [$email];
+        }
+        return [];
     }
 
     /**

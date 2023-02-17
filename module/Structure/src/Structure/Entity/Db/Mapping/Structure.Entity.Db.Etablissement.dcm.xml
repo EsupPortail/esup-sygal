@@ -9,6 +9,9 @@
             <generator strategy="SEQUENCE"/>
         </id>
 
+        <field name="emailAssistance" type="string" column="EMAIL_ASSISTANCE" length="256" nullable="true"/>
+        <field name="emailBibliotheque" type="string" column="EMAIL_BIBLIOTHEQUE" length="256" nullable="true"/>
+        <field name="emailDoctorat" type="string" column="EMAIL_DOCTORAT" length="256" nullable="true"/>
         <field name="domaine"   type="string"   length="50"  column="DOMAINE"   nullable="true"/>
         <field name="estMembre"  type="boolean" column="EST_MEMBRE" nullable="false"/>
         <field name="estAssocie" type="boolean" column="EST_ASSOCIE" nullable="false"/>

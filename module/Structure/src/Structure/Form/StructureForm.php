@@ -36,7 +36,7 @@ abstract class StructureForm extends Form implements InputFilterProviderInterfac
         );
 
         $this->add((new File('cheminLogo'))
-            ->setLabel('Logo de l\'école doctorale :')
+            ->setLabel('Logo :')
         );
 
         $this->add((new Submit('supprimer-logo'))
