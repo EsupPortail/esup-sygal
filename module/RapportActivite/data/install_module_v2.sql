@@ -303,6 +303,9 @@ where code = 'RAPPORT_ACTIVITE';
 insert into type_validation(id, code, libelle)
 select nextval('type_validation_id_seq'), 'RAPPORT_ACTIVITE_DOCTORANT', 'Validation du rapport d''activité par le doctorant';
 
+INSERT INTO type_validation (id, code, libelle)
+select nextval('type_validation_id_seq'), 'RAPPORT_ACTIVITE', 'Validation finale du rapport d''activité non dématérialisé (ancien module)';
+
 --------------------------- Avis : retouches ---------------------------
 
 --update unicaen_avis_type set code = 'AVIS_RAPPORT_ACTIVITE_GEST_ED' where code = 'AVIS_RAPPORT_ACTIVITE_GEST'; // pas décidé
