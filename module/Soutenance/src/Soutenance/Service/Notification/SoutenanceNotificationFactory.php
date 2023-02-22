@@ -60,29 +60,28 @@ class SoutenanceNotificationFactory extends NotificationFactory
     }
 
     /**
+     * @param These $these
      * @param Validation $validation
      * @return Notification
      * @see Application/view/soutenance/notification/devalidation.phtml
      */
-    public function createNotificationDevalidationProposition(Validation $validation): Notification
+    public function createNotificationDevalidationProposition(These $these, Validation $validation): Notification
     {
-        $mail = $validation->getIndividu()->getEmailPro();
-        $these = $validation->getThese();
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'validation' => $validation];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
 
-        if (!$mail) {
-            throw new RuntimeException("Aucune adresse mail trouvée pour l'individu {$validation->getIndividu()}");
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_VALIDATION_ANNULEE, $vars);
+        $mail = $validation->getIndividu()->getEmailUtilisateur();
+        if ($mail === null) {
+            throw new RuntimeException("Aucun mail trouvé pour ".$validation->getIndividu()->getNomComplet());
         }
 
         $notif = new Notification();
         $notif
-            ->setSubject("Votre validation de la proposition de soutenance a été annulée")
+            ->setSubject($rendu->getSujet())
             ->setTo($mail)
-            ->setTemplatePath('soutenance/notification/devalidation')
-            ->setTemplateVariables([
-                'validation' => $validation,
-                'these' => $these,
-            ]);
-
+            ->setBody($rendu->getCorps());
         return $notif;
     }
 
@@ -95,162 +94,105 @@ class SoutenanceNotificationFactory extends NotificationFactory
     public function createNotificationValidationProposition(These $these, Validation $validation): Notification
     {
         $emails = $this->emailTheseService->fetchEmailActeursDirects($these);
-
         $emails = array_filter($emails, function ($s) {
             return $s !== null;
         });
-
         if (empty($emails)) {
             throw new RuntimeException("Aucune adresse mail trouvée pour les acteurs directs de la thèse {$these->getId()}");
         }
 
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'validation' => $validation];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_VALIDATION_ACTEUR_DIRECT, $vars);
         $notif = new Notification();
         $notif
-            ->setSubject("Une validation de votre proposition de soutenance vient d'être faite")
+            ->setSubject($rendu->getSujet())
             ->setTo($emails)
-            ->setTemplatePath('soutenance/notification/validation-acteur')
-            ->setTemplateVariables([
-                'validation' => $validation,
-                'these' => $these,
-            ]);
-
+            ->setBody($rendu->getCorps());
         return $notif;
     }
 
     /**
      * @param These $these
      * @return Notification
-     * @see Application/view/soutenance/notification/validation-structure.phtml
      */
     public function createNotificationUniteRechercheProposition(These $these): Notification
     {
         $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
-        $panic = !($this->emailTheseService->hasEmailsByEtablissement($individuRoles, $these));
         $emails = $this->emailTheseService->fetchEmailsByEtablissement($individuRoles, $these);
-        //$emails = $this->emailService->fetchEmailUniteRecherche($these);
 
-        if (!empty($emails)) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Demande de validation d'une proposition de soutenance")
-                ->setTo($emails)
-                ->setTemplatePath('soutenance/notification/validation-structure')
-                ->setTemplateVariables([
-                    'these' => $these,
-                    'type' => 'unité de recherche',
-                    'panic' => $panic,
-                ]);
-
-            return $notif;
-        } else {
-            $emailsAdmin = $this->getEmailAdministrateurTechnique();
-            $emailsMdd = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
-            $emails = array_merge($emailsAdmin, $emailsMdd);
-
-            $notif = new Notification();
-            $notif
-                ->setSubject("ATTENTION MAIL NON DÉLIVRÉ : Demande de validation d'une proposition de soutenance")
-                ->setTo($emails)
-                ->setTemplatePath('soutenance/notification/validation-structure')
-                ->setTemplateVariables([
-                    'these' => $these,
-                    'type' => 'unité de recherche',
-                    'panic' => true,
-                ]);
-
-            return $notif;
+        if (empty($emails)) {
+            throw new RuntimeException("Aucune adresse mail trouvée pour l'unité de recherche de la thèse {$these->getId()}");
         }
+
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'unite-recherche' => $these->getUniteRecherche()];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_VALIDATION_DEMANDE_UR, $vars);
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($emails)
+            ->setBody($rendu->getCorps());
+        return $notif;
     }
 
     /**
      * @param These $these
      * @return Notification
-     * @see Application/view/soutenance/notification/validation-structure.phtml
      */
     public function createNotificationEcoleDoctoraleProposition(These $these): Notification
     {
         $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
-        $panic = !($this->emailTheseService->hasEmailsByEtablissement($individuRoles, $these));
         $emails = $this->emailTheseService->fetchEmailsByEtablissement($individuRoles, $these);
-        //$emails = $this->emailService->fetchEmailEcoleDoctorale($these);
 
-        if (!empty($emails)) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Demande de validation d'une proposition de soutenance")
-                ->setTo($emails)
-                ->setTemplatePath('soutenance/notification/validation-structure')
-                ->setTemplateVariables([
-                    'these' => $these,
-                    'type' => 'école doctorale',
-                    'panic' => $panic,
-                ]);
-
-            return $notif;
-        } else {
-            $emailsAdmin = $this->getEmailAdministrateurTechnique();
-            $emailsMdd = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
-            $emails = array_merge($emailsAdmin, $emailsMdd);
-
-            $notif = new Notification();
-            $notif
-                ->setSubject("ATTENTION MAIL NON DÉLIVRÉ : Demande de validation d'une proposition de soutenance")
-                ->setTo($emails)
-                ->setTemplatePath('soutenance/notification/validation-structure')
-                ->setTemplateVariables([
-                    'these' => $these,
-                    'type' => 'école doctorale',
-                    'panic' => true,
-                ]);
-
-            return $notif;
+        if (empty($emails)) {
+            throw new RuntimeException("Aucune adresse mail trouvée pour l'école doctorale de la thèse {$these->getId()}");
         }
+
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'ecole-doctorale' => $these->getEcoleDoctorale()];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_VALIDATION_DEMANDE_ED, $vars);
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($emails)
+            ->setBody($rendu->getCorps());
+        return $notif;
     }
 
     /**
      * @param These $these
      * @return Notification
-     * @see Application/view/soutenance/notification/validation-structure.phtml
      */
     public function createNotificationBureauDesDoctoratsProposition(These $these): Notification
     {
-        $email = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
+        $emails = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
 
-        if ($email !== null) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Demande de validation d'une proposition de soutenance")
-                ->setTo($email)
-                ->setTemplatePath('soutenance/notification/validation-structure')
-                ->setTemplateVariables([
-                    'these' => $these,
-                    'type' => 'maison du doctorat',
-                    'panic' => false,
-                ]);
-
-            return $notif;
-        } else {
-            $emailsAdmin = $this->getEmailAdministrateurTechnique();
-            $emailsMdd = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
-            $emails = array_merge($emailsAdmin, $emailsMdd);
-
-            $notif = new Notification();
-            $notif
-                ->setSubject("ATTENTION MAIL NON DÉLIVRÉ : Demande de validation d'une proposition de soutenance")
-                ->setTo($email)
-                ->setTemplatePath('soutenance/notification/validation-structure')
-                ->setTemplateVariables([
-                    'these' => $these,
-                    'type' => 'maison du doctorat',
-                    'panic' => true,
-                ]);
-
-            return $notif;
+        if (empty($emails)) {
+            throw new RuntimeException("Aucune adresse mail trouvée pour la maison du doctorat de la thèse {$these->getId()}");
         }
+
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'etablissement' => $these->getEtablissement()];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SOUTENANCE_VALIDATION_DEMANDE_ETAB, $vars);
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($emails)
+            ->setBody($rendu->getCorps());
+        return $notif;
     }
 
     /**
-     * @param \These\Entity\Db\These $these
+     * @param These $these
      * @return Notification
      */
     public function createNotificationPropositionValidee(These $these): Notification

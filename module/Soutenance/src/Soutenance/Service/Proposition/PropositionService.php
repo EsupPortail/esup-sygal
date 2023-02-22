@@ -231,7 +231,7 @@ class PropositionService extends BaseService
         foreach ($validations as $validation) {
             $this->getValidationService()->historise($validation);
             try {
-                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($validation);
+                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($these, $validation);
                 $this->notifierService->trigger($notif);
             } catch (\Notification\Exception\RuntimeException $e) {
                 // aucun destinataire, todo : cas à gérer !
@@ -241,7 +241,7 @@ class PropositionService extends BaseService
         if ($validationED) {
             $this->getValidationService()->historise($validationED);
             try {
-                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($validationED);
+                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($these, $validationED);
                 $this->notifierService->trigger($notif);
             } catch (\Notification\Exception\RuntimeException $e) {
                 // aucun destinataire, todo : cas à gérer !
@@ -251,7 +251,7 @@ class PropositionService extends BaseService
         if ($validationUR) {
             $this->getValidationService()->historise($validationUR);
             try {
-                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($validationUR);
+                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($these, $validationUR);
                 $this->notifierService->trigger($notif);
             } catch (\Notification\Exception\RuntimeException $e) {
                 // aucun destinataire, todo : cas à gérer !
@@ -261,7 +261,7 @@ class PropositionService extends BaseService
         if ($validationBDD) {
             $this->getValidationService()->historise($validationBDD);
             try {
-                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($validationBDD);
+                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($these, $validationBDD);
                 $this->notifierService->trigger($notif);
             } catch (\Notification\Exception\RuntimeException $e) {
                 // aucun destinataire, todo : cas à gérer !

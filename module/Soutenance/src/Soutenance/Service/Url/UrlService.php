@@ -49,7 +49,19 @@ class UrlService {
     }
 
     /**
-     * @noinspection PhpUnusedAliasInspection
+     * @noinspection
+     * @return string
+     */
+    public function getSoutenanceProposition() : string
+    {
+        $these = $this->variables['these'];
+        /** @see PropositionController::propositionAction() */
+        $url = $this->renderer->url('soutenance/proposition', ['these' => $these->getId()], ['force_canonical' => 'true'], true);
+        return $url;
+    }
+
+    /**
+     * @noinspection
      * @return string
      */
     public function getSermentDocteur() : string
@@ -61,7 +73,7 @@ class UrlService {
     }
 
     /**
-     * @noinspection PhpUnusedAliasInspection
+     * @noinspection
      * @return string
      */
     public function getProcesVerbal() : string
@@ -73,7 +85,7 @@ class UrlService {
     }
 
     /**
-     * @noinspection PhpUnusedAliasInspection
+     * @noinspection
      * @return string
      */
     public function getRapportSoutenance() : string
@@ -85,7 +97,7 @@ class UrlService {
     }
 
     /**
-     * @noinspection PhpUnusedAliasInspection
+     * @noinspection
      * @return string
      */
     public function getRapportTechnique() : string
@@ -97,7 +109,7 @@ class UrlService {
     }
 
     /**
-     * @noinspection PhpUnusedAliasInspection
+     * @noinspection
      * @return string
      */
     public function getUrlRapporteurDashboard() : string
