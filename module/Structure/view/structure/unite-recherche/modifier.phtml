@@ -42,11 +42,11 @@ $form->get('code')->setAttribute('readonly', !$editable);
     <?php if ($isNew): ?>
         Création d'une nouvelle UR
     <?php else: ?>
-        Modification de l'UR &laquo; <?php echo $unite->getStructure()->getLibelle(); ?> &raquo;
+        Modification de l'UR &laquo; <?php echo $unite ?> &raquo;
     <?php endif ?>
 </h1>
 
-<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+<?php echo $this->messenger()->addCurrentMessagesFromFlashMessengerWithNoNamespace(); ?>
 
 <?php if (!$editable) : ?>
     <div class="alert alert-warning">
@@ -71,72 +71,80 @@ $form->get('code')->setAttribute('readonly', !$editable);
 
 <!-- BLOC DES INFORMATIONS GENERALES ---------------------------------------------------------------------------------->
 
-<h2> Informations générales </h2>
+<?php echo $this->form()->openTag($form->prepare()->setAttribute('class', 'unite-recherche')) ?>
 
 <div class="row">
 
     <div class="col-md-6">
-        <?php echo $this->form()->openTag($form->prepare()->setAttribute('class', 'unite-recherche')) ?>
-        <?php echo $fcg($form->get('libelle')) ?>
-        <?php echo $fcg($form->get('sigle')) ?>
-        <?php echo $fcg($form->get('code')) ?>
-        <?php echo $fcg($form->get('id_ref')) ?>
-        <?php echo $fcg($form->get('id_hal')) ?>
-        <?php echo $fcg($form->get('RNSR')) ?>
-        <?php echo $fcg($form->get('estFerme')) ?>
+        <fieldset>
+            <legend><h2>Informations générales</h2></legend>
+            <?php echo $fcg($form->get('libelle')) ?>
+            <?php echo $fcg($form->get('sigle')) ?>
+        </fieldset>
+        <fieldset>
+            <legend><h2>Informations techniques</h2></legend>
+            <?php echo $fcg($form->get('id_ref')) ?>
+            <?php echo $fcg($form->get('id_hal')) ?>
+            <?php echo $fcg($form->get('RNSR')) ?>
+            <?php echo $fcg($form->get('code')) ?>
+        </fieldset>
     </div>
 
-    <div class="col-md-6" id="logo-div">
-        <?php
-        /** @var \Laminas\Form\Element\File $logoFile */
-        $logoFile = $form->get('cheminLogo');
-        echo $this->formLabel($logoFile);
+    <div class="col-md-6">
+        <label class="form-label col-form-label">Étiquettes associées :</label>
+        <?php echo $fcg($form->get('estFerme')) ?>
 
-        $content = $logoContent;
-        if ($content === null) {
-            $unite->getStructure()->setCheminLogo(null);
-        }
-        ?>
+        <div id="logo-div">
+            <?php
+            /** @var \Laminas\Form\Element\File $logoFile */
+            $logoFile = $form->get('cheminLogo');
+            echo $this->formLabel($logoFile);
 
-        <table>
-            <tr>
-                <td>
-                    <img
-                            id="logo"
-                            style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
-                            src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"
-                    />
-                </td>
-                <td style="padding:20px;">
-                    <?php
-                    echo $this->formFile($logoFile);
-                    echo $this->formElementErrors($logoFile);
-                    ?>
-                    <br/>
-                    <?php if ($unite->getId()): ?>
-                        <a
-                                id="supprimer-logo"
-                                class="btn btn-danger"
-                                href="<?php echo $this->url('unite-recherche/supprimer-logo', ["structure" => $idUniteRecherche]); ?>"
-                        >
-                            <span class="icon icon-delete"></span>
-                            Supprimer le logo
-                        </a>
-                    <?php endif; ?>
-                </td>
-            </tr>
-        </table>
+            $content = $logoContent;
+            if ($content === null) {
+                $unite->getStructure()->setCheminLogo(null);
+            }
+            ?>
+            <table>
+                <tr>
+                    <td>
+                        <img
+                                id="logo"
+                                style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
+                                src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"
+                        />
+                    </td>
+                    <td style="padding:20px;">
+                        <?php
+                        echo $this->formFile($logoFile);
+                        echo $this->formElementErrors($logoFile);
+                        ?>
+                        <br/>
+                        <?php if ($unite->getId()): ?>
+                            <a
+                                    id="supprimer-logo"
+                                    class="btn btn-danger"
+                                    href="<?php echo $this->url('unite-recherche/supprimer-logo', ["structure" => $idUniteRecherche]); ?>"
+                            >
+                                <span class="icon icon-delete"></span>
+                                Supprimer le logo
+                            </a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            </table>
 
-        <div class="alert alert-warning">
-            <small>
-                <span class="icon icon-warning"></span>
-                Le logo de la structure doit être donné dans un des formats suivant&nbsp;:
-                <ul>
-                    <li>.bmp</li>
-                    <li>.jpg, .jpeg</li>
-                    <li>.png</li>
-                </ul>
-            </small>
+            <div class="alert alert-warning">
+                <small>
+                    <span class="icon icon-warning"></span>
+                    Le logo de la structure doit être donné dans un des formats suivant&nbsp;:
+                    <ul>
+                        <li>.bmp</li>
+                        <li>.jpg, .jpeg</li>
+                        <li>.png</li>
+                    </ul>
+                </small>
+            </div>
         </div>
 
     </div>

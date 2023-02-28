@@ -5,6 +5,7 @@ namespace Structure\Form;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Text;
 use Laminas\InputFilter\InputFilterProviderInterface;
+use Laminas\Validator\EmailAddress;
 use Structure\Entity\Db\Etablissement;
 
 class EtablissementForm extends StructureForm implements InputFilterProviderInterface
@@ -24,7 +25,7 @@ class EtablissementForm extends StructureForm implements InputFilterProviderInte
         );
 
         $this->add((new Text('adresse'))
-            ->setLabel("Adresse (sur une ligne) :")
+            ->setLabel("Adresse postale (sur une ligne) :")
         );
 
         $this->add((new Text('telephone'))
@@ -37,6 +38,18 @@ class EtablissementForm extends StructureForm implements InputFilterProviderInte
 
         $this->add((new Text('email'))
             ->setLabel("Adresse électronique :")
+        );
+
+        $this->add((new Text('emailAssistance'))
+            ->setLabel("Adresse électronique d'Assistance :")
+        );
+
+        $this->add((new Text('emailBibliotheque'))
+            ->setLabel("Adresse électronique pour les aspects Bibliothèque :")
+        );
+
+        $this->add((new Text('emailDoctorat'))
+            ->setLabel("Adresse électronique pour les aspects Doctorat :")
         );
 
         $this->add((new Text('siteWeb'))
@@ -86,6 +99,39 @@ class EtablissementForm extends StructureForm implements InputFilterProviderInte
             'email' => [
                 'name' => 'email',
                 'required' => false,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => EmailAddress::class],
+                ],
+            ],
+            'emailAssistance' => [
+                'required' => false,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => EmailAddress::class],
+                ],
+            ],
+            'emailBibliotheque' => [
+                'required' => false,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => EmailAddress::class],
+                ],
+            ],
+            'emailDoctorat' => [
+                'required' => false,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
+                'validators' => [
+                    ['name' => EmailAddress::class],
+                ],
             ],
             'siteWeb' => [
                 'name' => 'siteWeb',

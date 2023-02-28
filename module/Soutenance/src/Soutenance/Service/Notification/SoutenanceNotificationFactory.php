@@ -172,7 +172,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
      */
     public function createNotificationBureauDesDoctoratsProposition(These $these): Notification
     {
-        $emails = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
+        $emails = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
 
         if (empty($emails)) {
             throw new RuntimeException("Aucune adresse mail trouvée pour la maison du doctorat de la thèse {$these->getId()}");
@@ -197,7 +197,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
      */
     public function createNotificationPropositionValidee(These $these): Notification
     {
-        $emailsBDD = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
+        $emailsBDD = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
         $emailsED = $this->emailTheseService->fetchEmailEcoleDoctorale($these);
         $emailsUR = $this->emailTheseService->fetchEmailUniteRecherche($these);
         $emailsActeurs = $this->emailTheseService->fetchEmailActeursDirects($these);
@@ -229,7 +229,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
      */
     public function createNotificationPresoutenance($these): Notification
     {
-        $email = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
+        $email = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
 
         if ($email !== null) {
             $notif = new Notification();
@@ -312,7 +312,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
         $vars['Url'] = $url;
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::SIGNATURE_ENGAGEMENT_IMPARTIALITE, $vars);
-        $email = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
+        $email = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
         if (empty($email)) {
             throw new RuntimeException("Aucun mail trouvé pour la maison du doctorat de ". $these->getEtablissement()->getStructure()->getLibelle());
         }
@@ -334,7 +334,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::REFUS_ENGAGEMENT_IMPARTIALITE, $vars);
 
         $emailsAD = $this->emailTheseService->fetchEmailActeursDirects($these);
-        $emailsBDD = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
+        $emailsBDD = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
         $emails = array_merge($emailsAD, $emailsBDD);
         if (empty($emails)) {
             throw new RuntimeException("Aucun mail trouvé");
@@ -377,7 +377,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
      */
     public function createNotificationAvisRendus($these): Notification
     {
-        $email = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
+        $email = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
 
         if ($email !== null) {
             $notif = new Notification();
@@ -403,7 +403,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
      */
     public function createNotificationAvisFavorable($these, $avis, $url = null): Notification
     {
-        $emailBDD = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
+        $emailBDD = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
         $emailsDirecteurs = $this->emailTheseService->fetchEmailEncadrants($these);
         $emailsED = $this->emailTheseService->fetchEmailEcoleDoctorale($these);
         $emailsUR = $this->emailTheseService->fetchEmailUniteRecherche($these);

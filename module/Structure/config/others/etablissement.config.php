@@ -185,6 +185,7 @@ return [
                                         'paramsInject' => [
                                             'structure',
                                         ],
+                                        'visible' => false,
                                     ],
                                     'information' => [
                                         'label'    => 'Détails',
@@ -195,6 +196,7 @@ return [
                                         'paramsInject' => [
                                             'structure',
                                         ],
+                                        'visible' => false,
                                     ],
                                 ],
                             ],

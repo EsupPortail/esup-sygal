@@ -8,6 +8,9 @@ ETAB_CODE='UCN'                             # Code unique identifiant l'établis
 ETAB_SIGLE='Unicaen'                        # Sigle ou surnom de l'établissement
 ETAB_LIBELLE='Université de Caen Normandie' # Libellé complet de l'établissement
 ETAB_DOMAINE='unicaen.fr'                   # Domaine de l'établissement
+EMAIL_ASSISTANCE='sygal-assistance@univ.fr' # Adresse électronique d'assistance
+EMAIL_BIBLIOTHEQUE='sygal-scd@univ.fr'      # Adresse électronique par les aspects Bibliothèque
+EMAIL_DOCTORAT='sygal-doctorat@univ.fr'     # Adresse électronique par les aspects Doctorat
 
 #============= COMUE éventuelle ============#
 ETAB_COMUE=0                                # Une COMUE doit-elle être créée ? 0=Non 1=Oui

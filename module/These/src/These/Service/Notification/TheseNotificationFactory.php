@@ -34,12 +34,12 @@ class TheseNotificationFactory extends NotificationFactory
     {
         $these = current($data)['these'];
 
-        $emailsBdd = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
+        $emailsBdd = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
         if (empty($emailsBdd)) {
             throw new RuntimeException("Aucune adresse mail trouvée pour la MDD (thèse {$these->getId()})");
         }
 
-        $emailsBu = $this->emailTheseService->fetchEmailBibliothequeUniv($these);
+        $emailsBu = $this->emailTheseService->fetchEmailAspectsBibliotheque($these);
         if (empty($emailsBu)) {
             throw new RuntimeException("Aucune adresse mail trouvée pour la BU (thèse {$these->getId()})");
         }
@@ -65,7 +65,7 @@ class TheseNotificationFactory extends NotificationFactory
             $these = $array['these'];
             /* @var These $these */
 
-            $emailsBdd = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
+            $emailsBdd = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
             if (empty($emailsBdd)) {
                 throw new RuntimeException("Aucune adresse mail trouvée pour la Maison du doctorat (thèse {$these->getId()})");
             }
@@ -128,7 +128,7 @@ class TheseNotificationFactory extends NotificationFactory
      */
     public function createNotificationDateButoirCorrectionDepassee(These $these): Notification
     {
-        $to = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
+        $to = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
         if (empty($to)) {
             throw new RuntimeException("Aucune adresse mail trouvée pour la Maison du doctorat (thèse {$these->getId()})");
         }
@@ -155,7 +155,7 @@ class TheseNotificationFactory extends NotificationFactory
      */
     public function createNotificationPasDeMailPresidentJury(These $these, Acteur $president): Notification
     {
-        $emailsBdd = $this->emailTheseService->fetchEmailMaisonDuDoctorat($these);
+        $emailsBdd = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
         if (empty($emailsBdd)) {
             throw new RuntimeException("Aucune adresse mail trouvée pour la Maison du doctorat (thèse {$these->getId()})");
         }
