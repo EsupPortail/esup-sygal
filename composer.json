@@ -40,16 +40,16 @@
         "webmozart/assert": "^1.3",
 
         "unicaen/alerte": "^2.0",
-        "unicaen/app": "dev-ll-php8-bs5",
-        "unicaen/auth": "dev-ll-php8-bs5",
-        "unicaen/auth-token": "dev-bg-php8",
-        "unicaen/console": "dev-main",
-        "unicaen/db-anonym": "^2.0",
+        "unicaen/app": "^6.0",
+        "unicaen/auth": "^6.0",
+        "unicaen/auth-token": "^6.0",
+        "unicaen/console": "^6.0",
+        "unicaen/db-anonym": "^3.0",
         "unicaen/db-import": "^6.0",
         "unicaen/faq": "^6.0",
-        "unicaen/ldap": "dev-bg-php8",
+        "unicaen/ldap": "^6.0",
         "unicaen/livelog": "^2.0",
-        "unicaen/renderer": "dev-bg-php8"
+        "unicaen/renderer": "^6.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
