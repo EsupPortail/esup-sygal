@@ -4,6 +4,7 @@ Journal des modifications
 5.2.10
 ------
 - Les adresses mail d'assistance, Bibliothèque et Doctorat sont désormais renseignées sur la fiche de l'établissement d'inscription.
+- [FIX] Correction d'un oubli de la constante AVIS_DEADLINE
 
 5.2.9
 -----

@@ -19,6 +19,7 @@ use Exception;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Individu\Entity\Db\Individu;
+use Laminas\Cache\Exception\LogicException;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Entity\Etat;
@@ -33,7 +34,6 @@ use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\These;
 use These\Service\Acteur\ActeurServiceAwareTrait;
-use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
@@ -667,7 +667,7 @@ class PropositionService extends BaseService
         if ($proposition->getDate() === null) throw new RuntimeException("Aucune date de soutenance de renseignée !");
         try {
             $renduRapport = $proposition->getDate();
-            $deadline = $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur();
+            $deadline = $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DELAI_RETOUR)->getValeur();
             $renduRapport = $renduRapport->sub(new DateInterval('P'. $deadline.'D'));
 
             $date = DateTime::createFromFormat('d/m/Y H:i:s', $renduRapport->format('d/m/Y') . " 23:59:59");
