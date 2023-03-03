@@ -57,7 +57,7 @@ class InterventionController extends AbstractController
             'membres' => $membres,
             'justificatifs' => $justificatifs,
             'urlFichierThese' => $this->urlFichierThese(),
-            'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELEGATION_SIGNATURE)->getValeur(),
+            'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELEGATION_SIGNATURE),
         ]);
     }
 

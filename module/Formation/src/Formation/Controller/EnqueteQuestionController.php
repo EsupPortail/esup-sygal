@@ -342,7 +342,7 @@ class EnqueteQuestionController extends AbstractController {
 
         $categories = $this->getEntityManager()->getRepository(EnqueteCategorie::class)->findAll();
 
-        $delai = $this->getParametreService()->getParametreByCode(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE)->getValeur();
+        $delai = $this->getParametreService()->getValeurForParametre(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE);
         $date = DateTime::createFromFormat('d/m/Y', $inscription->getSession()->getDateFin()->format('d/m/Y'));
         $date->add(new DateInterval('P'.$delai.'D'));
 

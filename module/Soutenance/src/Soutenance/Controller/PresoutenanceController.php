@@ -131,7 +131,7 @@ class PresoutenanceController extends AbstractController
             'evenementsEngagement' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_ENGAGEMENT),
             'evenementsPrerapport' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_PRERAPPORT),
 
-            'deadline' => $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DELAI_RETOUR)->getValeur(),
+            'deadline' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DELAI_RETOUR),
         ]);
     }
 

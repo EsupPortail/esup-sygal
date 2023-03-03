@@ -9943,14 +9943,13 @@
         },
         {
             "name": "unicaen/parametre",
-            "version": "5.0.0",
+            "version": "5.0.1",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/parametre.git",
-                "reference": "04311ff04b56bda07cb67eeed3d0757f0e50027a"
+                "reference": "5ee55b27320ded72c7e18fdcc18086867343dbd8"
             },
             "require": {
-                "unicaen/app": "^5",
                 "unicaen/privilege": "^5"
             },
             "type": "library",
@@ -9961,7 +9960,7 @@
                 ]
             },
             "description": "Module de gestion de paramètres",
-            "time": "2022-07-21T08:58:12+00:00"
+            "time": "2023-03-03T10:09:58+00:00"
         },
         {
             "name": "unicaen/pdf",

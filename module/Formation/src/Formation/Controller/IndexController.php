@@ -53,7 +53,7 @@ class IndexController extends AbstractController
             'ouvertes' => $ouvertes,
             'preparations' => $preparations,
             'inscriptions' => $inscriptions,
-            'delai' => $this->getParametreService()->getParametreByCode(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE)->getValeur(),
+            'delai' => $this->getParametreService()->getValeurForParametre(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE),
         ]);
     }
 

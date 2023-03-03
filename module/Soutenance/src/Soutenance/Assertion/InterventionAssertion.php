@@ -46,7 +46,7 @@ class InterventionAssertion implements  AssertionInterface
         $proposition = $this->getPropositionService()->findOneForThese($these);
         $date_soutenance = ($these->getDateSoutenance())?$these->getDateSoutenance():$proposition->getDate();
 
-        $interval = $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DELAI_INTERVENTION)->getValeur();
+        $interval = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DELAI_INTERVENTION);
         $mini = (new DateTime())->sub(new DateInterval('P'.$interval.'D'));
         $maxi = (new DateTime())->add(new DateInterval('P'.$interval.'D'));
 

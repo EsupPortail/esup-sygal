@@ -284,12 +284,12 @@ class PropositionService extends BaseService
         $nbExterieur    = 0;
         $nbRapporteur   = 0;
 
-        $membre_min     =  $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MIN_MEMBRE_JURY)->getValeur();
-        $membre_max     =  $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MAX_MEMBRE_JURY)->getValeur();
-        $rapporteur_min =  $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MIN_RAPPORTEUR)->getValeur();
-        $rangA_min      =  ((float) $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_MIN_RANG_A)->getValeur());
-        $exterieur_min  =  ((float) $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_MIN_EXTERIEUR)->getValeur());
-        $parite_min     =  ((float) $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_PARITE)->getValeur());
+        $membre_min     =  $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MIN_MEMBRE_JURY);
+        $membre_max     =  $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MAX_MEMBRE_JURY);
+        $rapporteur_min =  $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MIN_RAPPORTEUR);
+        $rangA_min      =  ((float) $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_MIN_RANG_A));
+        $exterieur_min  =  ((float) $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_MIN_EXTERIEUR));
+        $parite_min     =  ((float) $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_PARITE));
 
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
@@ -667,7 +667,7 @@ class PropositionService extends BaseService
         if ($proposition->getDate() === null) throw new RuntimeException("Aucune date de soutenance de renseignée !");
         try {
             $renduRapport = $proposition->getDate();
-            $deadline = $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DELAI_RETOUR)->getValeur();
+            $deadline = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DELAI_RETOUR);
             $renduRapport = $renduRapport->sub(new DateInterval('P'. $deadline.'D'));
 
             $date = DateTime::createFromFormat('d/m/Y H:i:s', $renduRapport->format('d/m/Y') . " 23:59:59");

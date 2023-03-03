@@ -220,11 +220,11 @@ class PropositionController extends AbstractController
             'informationsOk' => $informationsOk,
             'avis' => $this->getAvisService()->getAvisByThese($these),
 
-            'FORMULAIRE_DELOCALISATION' => $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELOCALISATION)->getValeur(),
-            'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELEGATION_SIGNATURE)->getValeur(),
-            'FORMULAIRE_DEMANDE_LABEL' => $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_LABEL_EUROPEEN)->getValeur(),
-            'FORMULAIRE_DEMANDE_ANGLAIS' => $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_REDACTION_ANGLAIS)->getValeur(),
-            'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_CONFIDENTIALITE)->getValeur(),
+            'FORMULAIRE_DELOCALISATION' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELOCALISATION),
+            'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELEGATION_SIGNATURE),
+            'FORMULAIRE_DEMANDE_LABEL' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_LABEL_EUROPEEN),
+            'FORMULAIRE_DEMANDE_ANGLAIS' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_REDACTION_ANGLAIS),
+            'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_CONFIDENTIALITE),
         ]);
     }
 
@@ -737,7 +737,7 @@ class PropositionController extends AbstractController
         $vm->setVariables([
             'these' => $these,
             'proposition' => $proposition,
-            'FORMULAIRE_DELOCALISATION' => $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELOCALISATION)->getValeur(),
+            'FORMULAIRE_DELOCALISATION' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELOCALISATION),
             'canModifier' => $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER)),
         ]);
         return $vm;
@@ -759,7 +759,7 @@ class PropositionController extends AbstractController
         $vm->setVariables([
             'these' => $these,
             'proposition' => $proposition,
-            'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELEGATION_SIGNATURE)->getValeur(),
+            'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELEGATION_SIGNATURE),
             'canModifier' => $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER)),
             'indicateurs' => $indicateurs,
         ]);
@@ -777,9 +777,9 @@ class PropositionController extends AbstractController
         $vm->setVariables([
             'these' => $these,
             'proposition' => $proposition,
-            'FORMULAIRE_DEMANDE_LABEL' => $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_LABEL_EUROPEEN)->getValeur(),
-            'FORMULAIRE_DEMANDE_ANGLAIS' => $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_REDACTION_ANGLAIS)->getValeur(),
-            'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $this->getParametreService()->getParametreByCode(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_CONFIDENTIALITE)->getValeur(),
+            'FORMULAIRE_DEMANDE_LABEL' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_LABEL_EUROPEEN),
+            'FORMULAIRE_DEMANDE_ANGLAIS' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_REDACTION_ANGLAIS),
+            'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_CONFIDENTIALITE),
             'canModifier' => $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_MODIFIER)),
         ]);
         return $vm;

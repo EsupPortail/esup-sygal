@@ -40,7 +40,7 @@ class AbstractRechercheController extends AbstractController implements SearchCo
             'paginator' => $paginator,
             'routeName' => $this->routeName,
             'returnUrl' => $this->getRequest()->getRequestUri(),
-            'delai' => $this->getParametreService()?$this->getParametreService()->getParametreByCode(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE)->getValeur():null,
+            'delai' => $this->getParametreService()?$this->getParametreService()->getValeurForParametre(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE):null,
         ]);
         $model->setTemplate($this->indexActionTemplate);
 
