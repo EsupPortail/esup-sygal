@@ -31,7 +31,7 @@ $class = $these->estConfidentielle() ? 'text-danger' : '';
        data-bs-placement="bottom"><span class="badge bg-danger">CONFIDENTIELLE</span></span>
 <?php endif ?>
 
-<?php if ($description !== false) : ?>
+<?php if (isset($description) && $description !== false) : ?>
     <a title="Thèse"
        data-bs-toggle="popover"
        data-bs-content="<?php echo htmlspecialchars($this->partial('these/these/partial/fiche')) ?>"
