@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+5.2.11
+------
+- Renommange de Parité en Équilibre (et ajustement des couleurs des barres de l'indicateur)
+
 5.2.10
 ------
 - Les adresses mail d'assistance, Bibliothèque et Doctorat sont désormais renseignées sur la fiche de l'établissement d'inscription.

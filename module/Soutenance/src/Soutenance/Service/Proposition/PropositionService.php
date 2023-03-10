@@ -289,7 +289,7 @@ class PropositionService extends BaseService
         $rapporteur_min =  $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MIN_RAPPORTEUR);
         $rangA_min      =  ((float) $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_MIN_RANG_A));
         $exterieur_min  =  ((float) $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_MIN_EXTERIEUR));
-        $parite_min     =  ((float) $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_PARITE));
+        $parite_min     =  ((float) $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::EQUILIBRE_FEMME_HOMME));
 
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
