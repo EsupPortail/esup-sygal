@@ -9,7 +9,7 @@
     ],
     "require-dev": {
         "laminas/laminas-developer-tools": "^2.0",
-        "unicaen/code": "^7.1",
+        "unicaen/code": "^6.0",
         "unicaen/test": "^4.0"
     },
     "require": {
