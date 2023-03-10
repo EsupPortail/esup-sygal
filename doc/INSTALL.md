@@ -218,30 +218,6 @@ Dans la suite, vous adapterez le contenu de ces fichiers à votre situation.
 
 #### Fichier `${APPLICATION_ENV}.secret.local.php`
 
-- Dans la config de connexion au WS, `UCN` doit être remplacé par le code établissement choisi lors
-de la création de votre établissement dans la base de données (dans le script [`08_init.sql`](database/sql/08_init.sql)) :
-
-```php
-    'import' => [
-        'connections' => [
-            'sygal-import-ws-UCN' => [ // <<<<<<<<<<<<<< remplacer 'UCN' par votre code établissement
-                'url' => 'https://host.domain.fr',
-                'proxy' => false,
-                'verify' => false, // si true et faux certif : cURL error 60: SSL certificate problem: self signed certificate
-                'user' => 'xxxxxx',
-                'password' => 'yyyyyy',
-                'connect_timeout' => 10,
-            ],
-        ],
-```
-
-- Idem dans la config des imports/synchros juste après :
-
-```php
-        'imports' => \Application\generateConfigImportsForEtabs($etabs = ['UCN']), // <<<<<<<<<<<<<< remplacer 'UCN' par votre code établissement
-        'synchros' => \Application\generateConfigSynchrosForEtabs($etabs),
-```
-
 - Renseignez les infos de connexion à la base de données de l'application :
 
 ```php
@@ -336,7 +312,7 @@ de la création de votre établissement dans la base de données (dans le script
 
 
 
-## Import des données
+## Import des données depuis le SI Scolarité de votre établissement 
 
 ESUP-Sygal doit pouvoir importer les thèses, acteurs des thèses, etc. depuis le SI Scolarité de votre établissement 
 (soit Apogée, soit Physalis). Pour cela ESUP-SyGAL fournit un web service (API REST) que vous devez installer.
@@ -346,6 +322,46 @@ ESUP-Sygal doit pouvoir importer les thèses, acteurs des thèses, etc. depuis l
 
 Vous devez à présent installer le web service d'import de données. Reportez-vous au projet `sygal-import-ws` 
 sur [sur github.com/EsupPortail](https://github.com/EsupPortail/sygal-import-ws).
+
+
+### Configuration d'accès au web service
+
+Dans le fichier de config `${APPLICATION_ENV}.secret.local.php` :
+
+- Dans la config de connexion au WS, `UCN` doit être remplacé par le code établissement choisi lors
+  de la création de votre établissement dans la base de données (dans le script [`08_init.sql`](database/sql/08_init.sql)) :
+
+```php
+    'import' => [
+        'connections' => [
+            'sygal-import-ws-UCN' => [ // <<<<<<< remplacer 'UCN' par votre code établissement
+                //...
+            ],
+        ],
+```
+
+- Idem dans la config des imports/synchros juste après :
+
+```php
+        'imports' => \Application\generateConfigImportsForEtabs($etabs = ['UCN']), // <<<<<<<< remplacer 'UCN' par votre code établissement
+        'synchros' => \Application\generateConfigSynchrosForEtabs($etabs),
+```
+
+- La config de connexion au WS doit être complétée :
+
+```php
+    'import' => [
+        'connections' => [
+            'sygal-import-ws-UCN' => [
+                'url' => 'https://host.domain.fr/v2',   // URL d'accès au WS. 'v2' signifie que vous avez installé la version 2.x.x du WS.
+                'proxy' => false,
+                'verify' => false,                      // Si true et faux certif : cURL error 60: SSL certificate problem: self signed certificate.
+                'user' => 'xxxxxx',                     // Utilisateur autorisé à interroger le WS et...
+                'password' => 'yyyyyy',                 // son mot de passe associé.
+                'connect_timeout' => 10,
+            ],
+        ],
+```
 
 
 ### Lancement de l'import seul
