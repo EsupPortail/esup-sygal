@@ -11,6 +11,7 @@ class MailTemplates {
     const INSCRIPTION_ECHEC                         = "FORMATION_INSCRIPTION_ECHEC";
 
     const SESSION_IMMINENTE                         = "FORMATION_SESSION_IMMINENTE";
+    const SESSION_IMMINENTE_FORMATEUR               = "FORMATION_SESSION_IMMINENTE_FORMATEUR";
     const SESSION_TERMINEE                          = "FORMATION_SESSION_TERMINEE";
     const SESSION_ANNULEE                           = "FORMATION_SESSION_ANNULEE";
 

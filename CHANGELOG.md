@@ -3,6 +3,7 @@ Journal des modifications
 
 5.2.11
 ------
+- Formation : Ajout d'un mail vers les formateurs lorsque la session est imminente
 - Soutenance : Renommange de Parité en Équilibre (et ajustement des couleurs des barres de l'indicateur)
 - Soutenance : Retravail du rapport de soutenance (Ajout d'une page blacnhe et d'une troisième page pour les signatures)
 
