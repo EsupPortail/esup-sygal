@@ -3,7 +3,8 @@ Journal des modifications
 
 5.2.11
 ------
-- Renommange de Parité en Équilibre (et ajustement des couleurs des barres de l'indicateur)
+- Soutenance : Renommange de Parité en Équilibre (et ajustement des couleurs des barres de l'indicateur)
+- Soutenance : Retravail du rapport de soutenance (Ajout d'une page blacnhe et d'une troisième page pour les signatures)
 
 5.2.10
 ------
