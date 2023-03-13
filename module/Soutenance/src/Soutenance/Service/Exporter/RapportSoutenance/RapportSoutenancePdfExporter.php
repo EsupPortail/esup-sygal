@@ -31,6 +31,8 @@ class RapportSoutenancePdfExporter extends PdfExporter
         $this->setHeaderScript('empty.phtml');
         $this->setFooterScript('footer.phtml', null, $this->vars);
         $this->addBodyScript('rapport-soutenance.phtml', false, $this->vars);
+        $this->addBodyScript('rapport-soutenance-2.phtml', true, $this->vars);
+        $this->addBodyScript('rapport-soutenance-3.phtml', true, $this->vars);
         return PdfExporter::export($filename, $destination, $memoryLimit);
     }
 }
