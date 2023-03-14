@@ -230,22 +230,23 @@ class SoutenanceNotificationFactory extends NotificationFactory
      */
     public function createNotificationPresoutenance($these): Notification
     {
-        $email = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
+        $emails = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
 
-        if ($email !== null) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Vous pouvez procéder au renseignement des informations de soutenance")
-                ->setTo($email)
-                ->setTemplatePath('soutenance/notification/presoutenance')
-                ->setTemplateVariables([
-                    'these' => $these,
-                ]);
-
-            return $notif;
-        } else {
-            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
+        if (empty($emails)) {
+            throw new RuntimeException("Aucune adresse mail trouvée pour la maison du doctorat de la thèse {$these->getId()}");
         }
+
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'etablissement' => $these->getEtablissement()];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::VALIDATION_SOUTENANCE_ENVOI_PRESOUTENANCE, $vars);
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($emails)
+            ->setBody($rendu->getCorps());
+        return $notif;
     }
 
     /**
