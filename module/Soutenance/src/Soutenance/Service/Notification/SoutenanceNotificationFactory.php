@@ -207,20 +207,21 @@ class SoutenanceNotificationFactory extends NotificationFactory
             return $s !== null;
         });
 
-        if (!empty($emails)) {
-            $notif = new Notification();
-            $notif
-                ->setSubject("Validation de proposition de soutenance de " . $these->getDoctorant()->getIndividu()->getNomComplet())
-                ->setTo($emails)
-                ->setTemplatePath('soutenance/notification/validation-soutenance')
-                ->setTemplateVariables([
-                    'these' => $these,
-                ]);
-
-            return $notif;
-        } else {
-            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
+        if (empty($emails)) {
+            throw new RuntimeException("Aucune adresse électronique trouvée pour la thèse {$these->getId()}");
         }
+
+        $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'etablissement' => $these->getEtablissement()];
+        $url = $this->getUrlService()->setVariables($vars);
+        $vars['Url'] = $url;
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::VALIDATION_SOUTENANCE_AVANT_PRESOUTENANCE, $vars);
+        $notif = new Notification();
+        $notif
+            ->setSubject($rendu->getSujet())
+            ->setTo($emails)
+            ->setBody($rendu->getCorps());
+        return $notif;
     }
 
     /**
