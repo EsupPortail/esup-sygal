@@ -7,6 +7,7 @@ use Admission\Service\Admission\AdmissionService;
 use Admission\Service\Avis\AdmissionAvisService;
 use Application\Assertion\AbstractAssertion;
 use Psr\Container\ContainerInterface;
+use UnicaenAuthentification\Service\UserContext;
 use UnicaenAvis\Service\AvisService;
 
 class AdmissionAvisAssertionFactory
@@ -17,7 +18,7 @@ class AdmissionAvisAssertionFactory
      */
     public function __invoke(ContainerInterface $container): AdmissionAvisAssertion
     {
-        $userContext = $container->get('UnicaenAuth\Service\UserContext');
+        $userContext = $container->get(UserContext::class);
         $admissionService = $container->get(AdmissionService::class);
         $admissionAvisService = $container->get(AdmissionAvisService::class);
         $messageCollector = $container->get('MessageCollector');

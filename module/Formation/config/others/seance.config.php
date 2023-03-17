@@ -12,7 +12,7 @@ use Formation\Provider\Privilege\IndexPrivileges;
 use Formation\Provider\Privilege\SeancePrivileges;
 use Formation\Service\Seance\SeanceService;
 use Formation\Service\Seance\SeanceServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 

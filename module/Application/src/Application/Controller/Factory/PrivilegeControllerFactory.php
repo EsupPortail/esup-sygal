@@ -26,7 +26,7 @@ class PrivilegeControllerFactory
 
         $controller = new PrivilegeController();
         $controller->setEntityManager($entityManager);
-        $controller->setRoleService($roleService);
+        $controller->setApplicationRoleService($roleService);
         $controller->setEtablissementService($etablissementService);
         $controller->setStructureService($structureService);
 

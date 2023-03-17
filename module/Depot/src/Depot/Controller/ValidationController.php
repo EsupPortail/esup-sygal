@@ -4,7 +4,7 @@ namespace Depot\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\TypeValidation;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Depot\Provider\Privilege\ValidationPrivileges;
@@ -23,7 +23,7 @@ class ValidationController extends AbstractController
     use DepotValidationServiceAwareTrait;
     use NotifierServiceAwareTrait;
     use DepotNotificationFactoryAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use DepotServiceAwareTrait;
     use ValidationServiceAwareTrait;

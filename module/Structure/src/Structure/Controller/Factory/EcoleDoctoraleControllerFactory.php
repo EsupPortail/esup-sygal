@@ -43,7 +43,7 @@ class EcoleDoctoraleControllerFactory
         $controller = new EcoleDoctoraleController();
         $controller->setCoEncadrantService($coEncadrantService);
         $controller->setEcoleDoctoraleService($ecoleDoctoralService);
-        $controller->setRoleService($roleService);
+        $controller->setApplicationRoleService($roleService);
         $controller->setStructureForm($form);
         $controller->setStructureService($structureService);
         $controller->setStructureDocumentService($structureDocumentService);

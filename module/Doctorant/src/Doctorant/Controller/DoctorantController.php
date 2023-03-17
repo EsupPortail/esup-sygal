@@ -17,7 +17,7 @@ use Laminas\Http\Response;
 use Laminas\Paginator\Paginator as LaminasPaginator;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
-use UnicaenAuth\Authentication\Adapter\Ldap as LdapAuthAdapter;
+use UnicaenAuthentification\Authentication\Adapter\Ldap as LdapAuthAdapter;
 
 /**
  * @property \Doctorant\Service\Search\DoctorantSearchService $searchService

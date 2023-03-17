@@ -9,8 +9,8 @@ use Soutenance\Controller\EngagementImpartialiteControllerFactory;
 use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 use Laminas\Router\Http\Segment;
 
 return array(

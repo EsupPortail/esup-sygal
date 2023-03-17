@@ -6,7 +6,6 @@ use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Profil;
 use Application\Entity\Db\Repository\RoleRepository;
 use Application\Entity\Db\Role;
-use Application\Service\BaseService;
 use Application\Service\Profil\ProfilServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
@@ -23,7 +22,7 @@ use Structure\Entity\Db\TypeStructure;
 use Structure\Entity\Db\UniteRecherche;
 use UnicaenApp\Exception\RuntimeException;
 
-class RoleService extends BaseService
+class RoleService extends \UnicaenUtilisateur\Service\Role\RoleService
 {
     use SourceServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
@@ -307,7 +306,7 @@ class RoleService extends BaseService
             $this->entityManager->flush($role);
             $this->entityManager->commit();
         } catch (ORMException $e) {
-            $this->rollback();
+            $this->entityManager->rollback();
             throw new RuntimeException("Erreur lors de l'enregistrement du rôle '{$role->getRoleId()}'.", null, $e);
         }
 

@@ -55,7 +55,7 @@ class TheseSaisieControllerFactory
 
         /** @var \Application\Service\Role\RoleService $roleService */
         $roleService = $container->get(RoleService::class);
-        $controller->setRoleService($roleService);
+        $controller->setApplicationRoleService($roleService);
 
         return $controller;
     }

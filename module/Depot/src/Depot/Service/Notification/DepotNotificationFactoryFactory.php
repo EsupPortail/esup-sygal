@@ -54,7 +54,7 @@ class DepotNotificationFactoryFactory extends NotificationFactoryFactory
 
         /** @var RoleService $roleService */
         $roleService = $container->get('RoleService');
-        $factory->setRoleService($roleService);
+        $factory->setApplicationRoleService($roleService);
 
         /** @var EmailTheseService $emailTheseService */
         $emailTheseService = $container->get(EmailTheseService::class);

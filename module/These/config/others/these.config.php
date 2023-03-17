@@ -31,8 +31,8 @@ use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceFactory;
 use These\Service\Url\UrlTheseService;
 use These\Service\Url\UrlTheseServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize' => [

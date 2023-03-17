@@ -8,7 +8,7 @@ use Application\Filter\NomCompletFormatter;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Doctorant\Controller\Plugin\UrlDoctorant;
@@ -42,7 +42,7 @@ class IndividuController extends AbstractActionController implements SearchContr
 
     use IndividuServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use StructureServiceAwareTrait;
     use ActeurServiceAwareTrait;
     use DoctorantServiceAwareTrait;
@@ -94,12 +94,12 @@ class IndividuController extends AbstractActionController implements SearchContr
     {
         $individu = $this->individuService->getRequestedIndividu($this);
 
-        $rolesEtablissement = $this->roleService->findRolesByTypeStructureDependant(TypeStructure::CODE_ETABLISSEMENT);
-        $rolesEcoleDoctorale = $this->roleService->findRolesByTypeStructureDependant(TypeStructure::CODE_ECOLE_DOCTORALE);
-        $rolesUniteRecherche = $this->roleService->findRolesByTypeStructureDependant(TypeStructure::CODE_UNITE_RECHERCHE);
-        $rolesStatiques = $this->roleService->findRolesByTypeStructureDependant(null);
+        $rolesEtablissement = $this->applicationRoleService->findRolesByTypeStructureDependant(TypeStructure::CODE_ETABLISSEMENT);
+        $rolesEcoleDoctorale = $this->applicationRoleService->findRolesByTypeStructureDependant(TypeStructure::CODE_ECOLE_DOCTORALE);
+        $rolesUniteRecherche = $this->applicationRoleService->findRolesByTypeStructureDependant(TypeStructure::CODE_UNITE_RECHERCHE);
+        $rolesStatiques = $this->applicationRoleService->findRolesByTypeStructureDependant(null);
 
-        $individusRoles = $this->roleService->findIndividuRolesByIndividu($individu);
+        $individusRoles = $this->applicationRoleService->findIndividuRolesByIndividu($individu);
         $rolesAffectes = $individu->getRoles();
         $rolesAffectesAuto = $this->collectRolesDynamiquesForIndividu($individu);
 
@@ -151,15 +151,15 @@ class IndividuController extends AbstractActionController implements SearchContr
 
         $doctorant = $this->doctorantService->getRepository()->findOneByIndividu($individu);
         if ($doctorant) {
-            $roles[] = $this->roleService->getRepository()
+            $roles[] = $this->applicationRoleService->getRepository()
                 ->findOneByCodeAndStructureConcrete(Role::CODE_DOCTORANT, $doctorant->getEtablissement());
         }
 
-        $individuRoles = $this->roleService->findIndividuRolesByIndividu($individu);
+        $individuRoles = $this->applicationRoleService->findIndividuRolesByIndividu($individu);
         if($individuRoles){
-            $individuPotentielDirecteurRole = $this->roleService->filterIndividuRolePotentielDirecteurThese($individuRoles);
-            $individuPotentielCoDirecteurRole = $this->roleService->filterIndividuRolePotentielCoDirecteurThese($individuRoles);
-            $individuCandidatRole = $this->roleService->filterIndividuRoleCandidat($individuRoles);
+            $individuPotentielDirecteurRole = $this->applicationRoleService->filterIndividuRolePotentielDirecteurThese($individuRoles);
+            $individuPotentielCoDirecteurRole = $this->applicationRoleService->filterIndividuRolePotentielCoDirecteurThese($individuRoles);
+            $individuCandidatRole = $this->applicationRoleService->filterIndividuRoleCandidat($individuRoles);
             $roles = array_merge($roles, array_map(
                 function (IndividuRole $ir) {
                     return $ir->getRole();

@@ -46,8 +46,8 @@ use Depot\Service\Url\UrlDepotServiceFactory;
 use Depot\View\Helper\Url\UrlDepotHelperFactory;
 use Fichier\Entity\Db\NatureFichier;
 use These\Provider\Privilege\ThesePrivileges;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 $depotFichierDiversRoutesConfig = generateDepotFichierDiversRoutesConfig();
 

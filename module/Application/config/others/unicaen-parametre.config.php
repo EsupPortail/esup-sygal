@@ -2,7 +2,7 @@
 
 namespace UnicaenParametre;
 
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use UnicaenParametre\Controller\CategorieController;
 use UnicaenParametre\Controller\ParametreController;
 use UnicaenParametre\Provider\Privilege\ParametrecategoriePrivileges;

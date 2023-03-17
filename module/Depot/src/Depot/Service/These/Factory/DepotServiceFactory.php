@@ -18,8 +18,8 @@ use Structure\Service\Etablissement\EtablissementService;
 use These\Service\Acteur\ActeurService;
 use These\Service\Notification\TheseNotificationFactory;
 use These\Service\These\TheseService;
-use UnicaenAuth\Service\AuthorizeService;
-use UnicaenAuth\Service\User as UserService;
+use UnicaenAuthentification\Service\User as UserService;
+use UnicaenPrivilege\Service\AuthorizeService;
 use Webmozart\Assert\Assert;
 
 class DepotServiceFactory

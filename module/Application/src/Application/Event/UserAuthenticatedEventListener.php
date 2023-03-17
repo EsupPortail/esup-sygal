@@ -10,8 +10,8 @@ use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
-use UnicaenAuth\Event\Listener\AuthenticatedUserSavedAbstractListener;
-use UnicaenAuth\Event\UserAuthenticatedEvent;
+use UnicaenAuthentification\Event\Listener\AuthenticatedUserSavedAbstractListener;
+use UnicaenAuthentification\Event\UserAuthenticatedEvent;
 
 class UserAuthenticatedEventListener extends AuthenticatedUserSavedAbstractListener
 {

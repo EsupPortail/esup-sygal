@@ -11,8 +11,8 @@ use Application\Form\Factory\AutorisationInscriptionFormFactory;
 use Application\Provider\Privilege\AutorisationInscriptionPrivileges;
 use Application\Service\AutorisationInscription\AutorisationInscriptionService;
 use Application\Service\AutorisationInscription\AutorisationInscriptionServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize'    => [

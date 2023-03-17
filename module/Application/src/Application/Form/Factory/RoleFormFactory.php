@@ -4,7 +4,7 @@ namespace Application\Form\Factory;
 
 use Application\Form\RoleForm;
 use Interop\Container\ContainerInterface;
-use UnicaenAuth\Service\RoleService;
+use UnicaenUtilisateur\Service\Role\RoleService;
 
 
 class RoleFormFactory {
@@ -20,8 +20,8 @@ class RoleFormFactory {
 
 
         $form = new RoleForm();
-        $serviceRole = $container->get(RoleService::class);
-        $form->setServiceRole($serviceRole);
+//        $serviceRole = $container->get(RoleService::class);
+//        $form->setServiceRole($serviceRole);
 //        $form->setHydrator($hydrator);
 
         return $form;

@@ -4,7 +4,7 @@ namespace Application;
 
 use Application\Service\Discipline\DisciplineService;
 use Application\Service\Discipline\DisciplineServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     'bjyauthorize' => [

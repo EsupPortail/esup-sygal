@@ -13,7 +13,7 @@ use Admission\Provider\Template\MailTemplates;
 use Admission\Rule\Email\ExtractionEmailRuleAwareTrait;
 use Admission\Service\Url\UrlServiceAwareTrait;
 use Application\Entity\Db\Role;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Individu\Entity\Db\Individu;
 use Notification\Exception\RuntimeException;
@@ -30,7 +30,7 @@ class NotificationFactory extends NF
 {
     use RenduServiceAwareTrait;
     use UserContextServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use UrlServiceAwareTrait;
     use ExtractionEmailRuleAwareTrait;
 

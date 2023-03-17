@@ -4,7 +4,7 @@ namespace Application;
 
 use Application\Service\DomaineHal\DomaineHalService;
 use Application\Service\DomaineHal\DomaineHalServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     'bjyauthorize' => [

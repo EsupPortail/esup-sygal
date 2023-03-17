@@ -15,8 +15,8 @@ use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Service\Justificatif\JustificatifService;
 use Soutenance\Service\Justificatif\JustificatifServiceFactory;
 use Soutenance\View\Helper\JustificatifViewHelper;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 use Laminas\Router\Http\Segment;
 
 return [

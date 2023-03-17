@@ -14,7 +14,7 @@ class StructureAssertionFactory
     public function __invoke(ContainerInterface $container): StructureAssertion
     {
         /** @var \Application\Service\UserContextService $userContext */
-        $userContext = $container->get('UnicaenAuth\Service\UserContext');
+        $userContext = $container->get(\UnicaenAuthentification\Service\UserContext::class);
 
         /** @var \UnicaenApp\Service\MessageCollector $messageCollector */
         $messageCollector = $container->get('MessageCollector');

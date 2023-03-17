@@ -2,7 +2,7 @@
 
 namespace Individu\Provider\Privilege;
 
-use UnicaenAuth\Provider\Privilege\Privileges;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 class IndividuPrivileges extends Privileges
 {

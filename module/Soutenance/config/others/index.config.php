@@ -7,7 +7,7 @@ use Soutenance\Controller\IndexController;
 use Soutenance\Controller\IndexControllerFactory;
 use Soutenance\Controller\PropositionRechercheController;
 use Soutenance\Provider\Privilege\IndexPrivileges;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 

@@ -94,7 +94,7 @@ class AdmissionControllerFactory implements FactoryInterface
         $controller->setAdmissionOperationRule($admissionOperationRule);
         $controller->setAdmissionOperationService($admissionOperationService);
         $controller->setConventionFormationDoctoraleService($conventionFormationDoctoraleService);
-        $controller->setRoleService($roleService);
+        $controller->setApplicationRoleService($roleService);
         $controller->setAdmissionRechercheService($admissionRechercheService);
         $controller->setAdmissionExporter($admissionExporter);
         $controller->setTypeValidationService($admissionTypeValidationService);

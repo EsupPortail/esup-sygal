@@ -15,7 +15,7 @@ class TheseAssertionFactory
     {
         $assertion = new TheseAssertion();
 
-        $userContext = $container->get('UnicaenAuth\Service\UserContext');
+        $userContext = $container->get(\UnicaenAuthentification\Service\UserContext::class);
         $assertion->setUserContextService($userContext);
 
         $messageCollector = $container->get('MessageCollector');
@@ -36,7 +36,7 @@ class TheseAssertionFactory
      */
     protected function injectCommons(AbstractAssertion $assertion, ContainerInterface $container)
     {
-        /** @var \UnicaenAuth\Service\AuthorizeService $authorizeService */
+        /** @var \UnicaenPrivilege\Service\AuthorizeService $authorizeService */
         $authorizeService = $container->get('BjyAuthorize\Service\Authorize');
         $mvcEvent = $container->get('Application')->getMvcEvent();
 

@@ -19,7 +19,7 @@ class ExtractionEmailRuleFactory
 
         /** @var RoleService $roleService */
         $roleService = $container->get(RoleService::class);
-        $rule->setRoleService($roleService);
+        $rule->setApplicationRoleService($roleService);
 
         return $rule;
     }

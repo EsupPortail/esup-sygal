@@ -19,10 +19,10 @@ use Formation\Service\Inscription\InscriptionServiceFactory;
 use Formation\Service\Inscription\Search\InscriptionSearchService;
 use Formation\Service\Inscription\Search\InscriptionSearchServiceFactory;
 use Formation\View\Helper\InscriptionViewHelper;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize' => [

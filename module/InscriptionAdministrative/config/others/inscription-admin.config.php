@@ -6,8 +6,8 @@ use InscriptionAdministrative\Controller\InscriptionAdministrativeController;
 use InscriptionAdministrative\Controller\InscriptionAdministrativeControllerFactory;
 use InscriptionAdministrative\Service\InscriptionAdministrativeService;
 use InscriptionAdministrative\Service\InscriptionAdministrativeServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize' => [

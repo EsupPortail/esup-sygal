@@ -17,8 +17,8 @@ use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Crypt\Password\Bcrypt;
 use Laminas\Mvc\Controller\AbstractActionController;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenAuth\Entity\Db\AbstractUser;
-use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
+use UnicaenUtilisateur\Entity\Db\AbstractUser;
+use UnicaenAuthentification\Service\Traits\UserServiceAwareTrait;
 use UnicaenLdap\Entity\People;
 
 class UtilisateurService extends BaseService

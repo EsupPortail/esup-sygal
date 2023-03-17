@@ -8,7 +8,7 @@ use Import\Model\Service\ImportObservResultService;
 use Import\Model\Service\ImportObservResultServiceFactory;
 use Unicaen\Console\Router\Simple;
 use Laminas\Router\Http\Segment;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     'bjyauthorize'    => [

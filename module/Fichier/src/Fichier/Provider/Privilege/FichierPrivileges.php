@@ -6,7 +6,7 @@ use Depot\Provider\Privilege\DepotPrivileges;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenAuth\Provider\Privilege\Privileges;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 /**
  * Privilèges pour les opérations sur les fichiers *NE CONCERNANT PAS UNE THÈSE*.

@@ -8,8 +8,8 @@ use Application\Provider\Privilege\UtilisateurPrivileges;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 use Structure\Provider\Privilege\StructurePrivileges;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Privilege\Privileges;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 return [
     'bjyauthorize'    => [
@@ -46,8 +46,8 @@ return [
                         'index',
                     ],
                     'privileges' => [
-                        Privileges::DROIT_PRIVILEGE_VISUALISATION,
-                        Privileges::DROIT_PRIVILEGE_EDITION,
+                        \UnicaenPrivilege\Provider\Privilege\PrivilegePrivileges::PRIVILEGE_VOIR,
+                        \UnicaenPrivilege\Provider\Privilege\PrivilegePrivileges::PRIVILEGE_AFFECTER,
                     ],
                 ],
                 [
@@ -56,7 +56,7 @@ return [
                         'modifier',
                     ],
                     'privileges' => [
-                        Privileges::DROIT_PRIVILEGE_EDITION,
+                        \UnicaenPrivilege\Provider\Privilege\PrivilegePrivileges::PRIVILEGE_MODIFIER,
                     ],
                 ],
                 [
@@ -183,10 +183,10 @@ return [
                             ],
                         ],
                     ],
-                    'administration' => [
-                        'route'    => 'admin',
-                        'visible'  => false,
-                    ],
+//                    'administration' => [
+//                        'route' => "unicaen-privilege",
+//                        'visible'  => false,
+//                    ],
                 ],
             ],
         ],

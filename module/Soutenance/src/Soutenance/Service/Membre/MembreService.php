@@ -19,7 +19,7 @@ use Soutenance\Entity\Qualite;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use UnicaenAuth\Entity\Db\AbstractUser;
+use UnicaenUtilisateur\Entity\Db\AbstractUser;
 use UnicaenAuthToken\Entity\Db\AbstractUserToken;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
 use UnicaenAuthToken\Service\TokenServiceException;

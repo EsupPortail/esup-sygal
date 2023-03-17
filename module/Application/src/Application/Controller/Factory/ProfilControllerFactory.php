@@ -7,7 +7,7 @@ use Application\Form\ProfilForm;
 use Application\Service\Profil\ProfilService;
 use Application\Service\Role\RoleService;
 use Interop\Container\ContainerInterface;
-use UnicaenAuth\Service\PrivilegeService;
+use UnicaenPrivilege\Service\Privilege\PrivilegeService;
 
 class ProfilControllerFactory {
 
@@ -18,18 +18,17 @@ class ProfilControllerFactory {
          * @var ProfilService $profilService
          * @var RoleService $roleService
          */
-        $privilegeService = $container->get('UnicaenAuth\Service\Privilege');
+        $privilegeService = $container->get(\UnicaenPrivilege\Service\Privilege\PrivilegeService::class);
         $profilService = $container->get(ProfilService::class);
         $roleService = $container->get(RoleService::class);
 
         /** @var ProfilForm $profilForm */
         $profilForm = $container->get('FormElementManager')->get(ProfilForm::class);
 
-        /** @var ProfilController $controller */
         $controller = new ProfilController();
-        $controller->setServicePrivilege($privilegeService);
+        $controller->setPrivilegeService($privilegeService);
         $controller->setProfilService($profilService);
-        $controller->setRoleService($roleService);
+        $controller->setApplicationRoleService($roleService);
         $controller->setProfilForm($profilForm);
 
         return $controller;

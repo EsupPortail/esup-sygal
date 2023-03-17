@@ -11,7 +11,7 @@ use Application\Service\ListeDiffusion\Handler\ListeDiffusionHandler;
 use Application\Service\ListeDiffusion\Handler\ListeDiffusionHandlerFactory;
 use Application\Service\ListeDiffusion\Url\UrlService;
 use Application\Service\ListeDiffusion\Url\UrlServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 

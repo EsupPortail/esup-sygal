@@ -4,7 +4,7 @@ namespace Structure\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
@@ -30,7 +30,7 @@ class StructureController extends AbstractController
     const TAB_coenc = 'coencadrants';
     const TAB_variables = 'variables';
 
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use StructureServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
@@ -61,14 +61,14 @@ class StructureController extends AbstractController
         $structure = $this->structureService->findStructureById($structureId);
         $type = $this->params()->fromRoute("type");
 
-        $roles_tmp = $this->roleService->findRolesForStructure($structure);
+        $roles_tmp = $this->applicationRoleService->findRolesForStructure($structure);
         $roles = [];
         /** @var Role $role */
         foreach ($roles_tmp as $role) {
             if (!$role->isTheseDependant()) $roles[] = $role;
         }
 
-        $individuRoles = $this->roleService->findIndividuRoleByStructure($structure);
+        $individuRoles = $this->applicationRoleService->findIndividuRoleByStructure($structure);
 
         $repartition = [];
         foreach ($roles as $role) {
@@ -108,15 +108,15 @@ class StructureController extends AbstractController
         switch($type) {
             case TypeStructure::CODE_ECOLE_DOCTORALE :
                 $ecole = $this->getEcoleDoctoraleService()->getRepository()->findByStructureId($id);
-                $this->getRoleService()->addRoleByStructure($ecole);
+                $this->getApplicationRoleService()->addRoleByStructure($ecole);
                 return $this->redirect()->toRoute('ecole-doctorale/voir', ['ecole-doctorale' => $ecole->getId()], ['query' => ['tab' => StructureController::TAB_infos]], true);
             case TypeStructure::CODE_UNITE_RECHERCHE :
                 $unite = $this->getUniteRechercheService()->getRepository()->findByStructureId($id);
-                $this->getRoleService()->addRoleByStructure($unite);
+                $this->getApplicationRoleService()->addRoleByStructure($unite);
                 return $this->redirect()->toRoute('unite-recherche/voir', ['unite-recherche' => $unite->getId()], ['query' => ['tab' => StructureController::TAB_infos]], true);
             case TypeStructure::CODE_ETABLISSEMENT :
                 $etab = $this->getEtablissementService()->getRepository()->findByStructureId($id);
-                $this->getRoleService()->addRoleByStructure($etab);
+                $this->getApplicationRoleService()->addRoleByStructure($etab);
                 return $this->redirect()->toRoute('etablissement/voir', ['etablissement' => $etab->getId()], ['query' => ['tab' => StructureController::TAB_infos]], true);
         }
     }

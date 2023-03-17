@@ -13,7 +13,7 @@
 
 use Laminas\Filter\Word\UnderscoreToCamelCase;
 use Substitution\Controller\SubstitutionController;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 $canEdit = ($canEdit ?? false) && $this->isAllowed(PrivilegeController::getResourceId(SubstitutionController::class, 'modifier'));
 

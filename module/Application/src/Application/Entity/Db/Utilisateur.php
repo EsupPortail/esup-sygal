@@ -6,7 +6,8 @@ use BjyAuthorize\Provider\Role\ProviderInterface;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuAwareInterface;
 use UnicaenApp\Entity\UserInterface;
-use UnicaenAuth\Entity\Db\AbstractUser;
+use UnicaenUtilisateur\Entity\Db\AbstractUser;
+use UnicaenUtilisateur\Entity\Db\RoleInterface;
 
 /**
  * Classe Utilisateur.
@@ -79,7 +80,7 @@ class Utilisateur extends AbstractUser implements UserInterface, ProviderInterfa
      * @param Role $role
      * @return $this
      */
-    public function removeRole(Role $role)
+    public function removeRole(RoleInterface $role): self
     {
         $this->roles->removeElement($role);
 

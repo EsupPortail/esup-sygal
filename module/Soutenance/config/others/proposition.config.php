@@ -36,8 +36,8 @@ use Soutenance\Service\Proposition\PropositionSearchService;
 use Soutenance\Service\Proposition\PropositionSearchServiceFactory;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Proposition\PropositionServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 

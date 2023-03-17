@@ -8,6 +8,7 @@ use Application\Service\Rapport\RapportService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use UnicaenAuthentification\Service\UserContext;
 
 class AutorisationInscriptionAssertionFactory
 {
@@ -17,7 +18,7 @@ class AutorisationInscriptionAssertionFactory
      */
     public function __invoke(ContainerInterface $container): AutorisationInscriptionAssertion
     {
-        $userContext = $container->get('UnicaenAuth\Service\UserContext');
+        $userContext = $container->get(UserContext::class);
         $autorisationInscriptionService = $container->get(AutorisationInscriptionService::class);
         $rapportService = $container->get(RapportService::class);
         $messageCollector = $container->get('MessageCollector');

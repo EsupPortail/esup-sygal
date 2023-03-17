@@ -10,8 +10,8 @@ use Application\Form\Hydrator\ProfilHydrator;
 use Application\Form\ProfilForm;
 use Application\Service\Profil\ProfilService;
 use Application\Service\Profil\ProfilServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Privilege\Privileges;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 
@@ -25,8 +25,8 @@ return [
                         'index',
                     ],
                     'privileges' => [
-                        Privileges::DROIT_PRIVILEGE_VISUALISATION,
-                        Privileges::DROIT_PRIVILEGE_EDITION,
+                        \UnicaenPrivilege\Provider\Privilege\PrivilegePrivileges::PRIVILEGE_VOIR,
+                        \UnicaenPrivilege\Provider\Privilege\PrivilegePrivileges::PRIVILEGE_AFFECTER,
                     ],
                 ],
                 [
@@ -41,7 +41,7 @@ return [
                         'modifier-profil-privilege'
                     ],
                     'privileges' => [
-                        Privileges::DROIT_PRIVILEGE_EDITION,
+                        \UnicaenPrivilege\Provider\Privilege\PrivilegePrivileges::PRIVILEGE_MODIFIER
                     ],
                 ],
             ],

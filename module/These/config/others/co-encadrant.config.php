@@ -12,10 +12,10 @@ use These\Provider\Privilege\CoEncadrantPrivileges;
 use These\Provider\Privilege\ThesePrivileges;
 use These\Service\CoEncadrant\CoEncadrantService;
 use These\Service\CoEncadrant\CoEncadrantServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize'    => [

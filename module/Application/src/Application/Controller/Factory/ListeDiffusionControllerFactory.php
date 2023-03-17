@@ -52,7 +52,7 @@ class ListeDiffusionControllerFactory
          * @var RoleService $roleService
          */
         $roleService = $container->get(RoleService::class);
-        $controller->setRoleService($roleService);
+        $controller->setApplicationRoleService($roleService);
 
         /**
          * @var EtablissementService $etablissementService

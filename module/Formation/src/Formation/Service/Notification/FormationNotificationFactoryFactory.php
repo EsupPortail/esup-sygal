@@ -38,7 +38,7 @@ class FormationNotificationFactoryFactory extends NotificationFactoryFactory
         $factory->setListeDiffusionService($listeDiffusionService);
 
         $roleService = $container->get(RoleService::class);
-        $factory->setRoleService($roleService);
+        $factory->setApplicationRoleService($roleService);
 
         return $factory;
     }

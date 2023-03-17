@@ -5,13 +5,13 @@ namespace Application\Entity;
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Utilisateur;
 use Application\Exception\DomainException;
-use UnicaenAuth\Entity\Ldap\People as UnicaenAuthPeople;
+use UnicaenAuthentification\Entity\Ldap\People as UnicaenAuthPeople;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenAuth\Authentication\Storage\ChainEvent as StorageChainEvent;
-use UnicaenAuth\Entity\Shibboleth\ShibUser;
-use UnicaenAuth\Event\UserAuthenticatedEvent;
+use UnicaenAuthentification\Authentication\Storage\ChainEvent as StorageChainEvent;
+use UnicaenAuthentification\Entity\Shibboleth\ShibUser;
+use UnicaenAuthentification\Event\UserAuthenticatedEvent;
 use Laminas\Authentication\Exception\ExceptionInterface;
-use UnicaenAuth\Options\ModuleOptions;
+use UnicaenAuthentification\Options\ModuleOptions;
 
 /**
  * @author Unicaen
@@ -20,6 +20,9 @@ class UserWrapperFactory
 {
     protected ModuleOptions $options;
 
+    /**
+     * @param \UnicaenAuthentification\Options\ModuleOptions $authModuleOptions
+     */
     public function setModuleOptions(ModuleOptions $authModuleOptions): void
     {
         $this->options = $authModuleOptions;
@@ -33,7 +36,7 @@ class UserWrapperFactory
     public function createInstanceFromStorageChainEvent(StorageChainEvent $event): ?UserWrapper
     {
         $inst = new UserWrapper();
-        $inst->setLdapAttributeNameForUsername($this->options->getLdapUsername());
+        $inst->setLdapAttributeNameForUsername($this->options->getLdap()['username']);
 
         try {
             $contents = $event->getContents();

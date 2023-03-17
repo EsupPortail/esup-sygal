@@ -34,7 +34,7 @@ use Admission\Service\TypeValidation\TypeValidationServiceAwareTrait;
 use Admission\Service\Validation\AdmissionValidationServiceAwareTrait;
 use Admission\Service\Verification\VerificationServiceAwareTrait;
 use Application\Entity\Db\Role;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
 use Doctorant\Entity\Db\Doctorant;
@@ -76,7 +76,7 @@ class AdmissionController extends AdmissionAbstractController {
     use FichierStorageServiceAwareTrait;
     use AdmissionOperationServiceAwareTrait;
     use ConventionFormationDoctoraleServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use AdmissionRechercheServiceAwareTrait;
     use AdmissionExporterAwareTrait;
     use TypeValidationServiceAwareTrait;
@@ -694,11 +694,11 @@ class AdmissionController extends AdmissionAbstractController {
     public function gererRoleIndividu(Individu|null $individu, string $roleId): void
     {
         if($individu){
-            $role = $this->roleService->getRepository()->findOneBy(["roleId" => $roleId]);
-            $hasRole = $this->roleService->findOneIndividuRole($individu, $role);
+            $role = $this->applicationRoleService->getRepository()->findOneBy(["roleId" => $roleId]);
+            $hasRole = $this->applicationRoleService->findOneIndividuRole($individu, $role);
             //Si l'individu ne possède pas ce rôle, on lui ajoute
             if (!$hasRole) {
-                $this->roleService->addRole($individu, $role->getId());
+                $this->applicationRoleService->addRole($individu, $role->getId());
                 //Si l'individu possède ce rôle, on regarde s'il possède encore des dossiers d'admissions
                 //si c'est non, on lui enlève le rôle
             } else {
@@ -708,7 +708,7 @@ class AdmissionController extends AdmissionAbstractController {
                     $admissionsIndividu = $this->inscriptionService->getRepository()->findBy(["coDirecteur" => $individu]);
                 }
                 if(empty($admissionsIndividu)){
-                    $this->roleService->removeRole($individu, $role->getId());
+                    $this->applicationRoleService->removeRole($individu, $role->getId());
                 }
             }
         }

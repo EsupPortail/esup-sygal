@@ -3,7 +3,7 @@
 namespace These\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
@@ -19,7 +19,7 @@ use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 class ActeurController extends AbstractController
 {
     use ActeurServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
 
     use EtablissementServiceAwareTrait;
     use IndividuServiceAwareTrait;
@@ -39,7 +39,7 @@ class ActeurController extends AbstractController
     {
         $acteur = $this->getRequestedActeur();
 
-        $roles = $this->roleService->getRepository()->findAll();
+        $roles = $this->applicationRoleService->getRepository()->findAll();
         /** @var \These\Fieldset\Acteur\ActeurFieldset $acteurFieldset */
         $acteurFieldset = $this->acteurForm->get('acteur');
         $acteurFieldset->setRoles($roles);

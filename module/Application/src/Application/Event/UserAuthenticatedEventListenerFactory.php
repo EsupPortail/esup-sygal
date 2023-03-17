@@ -3,12 +3,11 @@
 namespace Application\Event;
 
 use Application\Entity\UserWrapperFactory;
-use Structure\Service\Etablissement\EtablissementServiceLocateTrait;
-use Individu\Service\IndividuServiceLocateTrait;
 use Application\Service\Source\SourceService;
-use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurServiceLocateTrait;
+use Individu\Service\IndividuServiceLocateTrait;
 use Interop\Container\ContainerInterface;
+use Structure\Service\Etablissement\EtablissementServiceLocateTrait;
 
 class UserAuthenticatedEventListenerFactory
 {
@@ -18,8 +17,6 @@ class UserAuthenticatedEventListenerFactory
 
     public function __invoke(ContainerInterface $container): UserAuthenticatedEventListener
     {
-        /** @var UserContextService $userContextService */
-        $userContextService = $container->get('AuthUserContext');
         $individuService = $this->locateIndividuService($container);
         $etablissementService = $this->locateEtablissementService($container);
 
@@ -27,7 +24,6 @@ class UserAuthenticatedEventListenerFactory
         $userWrapperFactory = $container->get(UserWrapperFactory::class);
 
         $listener = new UserAuthenticatedEventListener();
-        $listener->setServiceUserContext($userContextService);
         $listener->setIndividuService($individuService);
         $listener->setEtablissementService($etablissementService);
         $listener->setUtilisateurService($this->locateUtilisateurService($container));

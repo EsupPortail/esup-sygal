@@ -37,7 +37,7 @@ class EtablissementControllerFactory
 
         $controller = new EtablissementController();
         $controller->setEtablissementService($etablissmentService);
-        $controller->setRoleService($roleService);
+        $controller->setApplicationRoleService($roleService);
         $controller->setStructureService($structureService);
         $controller->setStructureDocumentService($structureDocumentService);
         $controller->setStructureForm($form);

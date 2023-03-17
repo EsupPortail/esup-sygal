@@ -14,7 +14,7 @@ use Structure\Provider\Privilege\StructurePrivileges;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceFactory;
 use Structure\View\Helper\EcoleDoctoraleHelper;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     'bjyauthorize'    => [

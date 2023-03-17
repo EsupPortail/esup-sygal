@@ -7,7 +7,7 @@ use Formation\Service\Formation\FormationService;
 use Interop\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use UnicaenAuth\Service\UserContext;
+use UnicaenAuthentification\Service\UserContext;
 
 class SessionServiceFactory {
 

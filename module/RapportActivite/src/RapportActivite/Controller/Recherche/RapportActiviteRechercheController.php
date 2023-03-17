@@ -23,7 +23,7 @@ use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use RuntimeException;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnexpectedValueException;
-use UnicaenAuth\Provider\Privilege\Privileges;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 /**
  * @property \RapportActivite\Service\Search\RapportActiviteSearchService $searchService

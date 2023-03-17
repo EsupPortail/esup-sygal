@@ -16,7 +16,7 @@ class TheseEntityAssertionFactory
         /** @var  $assertion */
         $assertion = new TheseEntityAssertion();
 
-        $userContext = $container->get('UnicaenAuth\Service\UserContext');
+        $userContext = $container->get(\UnicaenAuthentification\Service\UserContext::class);
         $assertion->setUserContextService($userContext);
 
         /** @var \These\Service\These\TheseService $theseService */

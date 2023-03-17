@@ -10,7 +10,7 @@ use Structure\Entity\Db\StructureConcreteInterface;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Laminas\View\Model\JsonModel;
 use UnicaenApp\Exception\RuntimeException;
@@ -24,7 +24,7 @@ use UnicaenApp\Util;
 class EtablissementController extends StructureConcreteController
 {
     use EtablissementServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
     use VariableServiceAwareTrait;
 
@@ -92,9 +92,9 @@ class EtablissementController extends StructureConcreteController
 
         $roleListings = [];
         $individuListings = [];
-        $roles = $this->roleService->findRolesForStructure($structureConcrete->getStructure());
-        $individus = $this->roleService->findIndividuForStructure($structureConcrete->getStructure());
-        $individuRoles = $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure());
+        $roles = $this->applicationRoleService->findRolesForStructure($structureConcrete->getStructure());
+        $individus = $this->applicationRoleService->findIndividuForStructure($structureConcrete->getStructure());
+        $individuRoles = $this->applicationRoleService->findIndividuRoleByStructure($structureConcrete->getStructure());
 
         $variables = $structureConcrete->estInscription() ? $this->variableService->getRepository()->findAllByEtab($structureConcrete) : [];
 

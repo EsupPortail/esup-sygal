@@ -16,8 +16,8 @@ use These\Form\Acteur\ActeurFormFactory;
 use These\Provider\Privilege\ActeurPrivileges;
 use These\Service\Acteur\ActeurService;
 use These\Service\Acteur\ActeurServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize' => [

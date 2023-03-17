@@ -30,7 +30,7 @@ class DirectionHydratorFactory
 
         /** @var \Application\Service\Role\RoleService $roleService */
         $roleService = $container->get(RoleService::class);
-        $hydrator->setRoleService($roleService);
+        $hydrator->setApplicationRoleService($roleService);
 
         /** @var EtablissementService $etablissementService */
         $etablissementService = $container->get(EtablissementService::class);

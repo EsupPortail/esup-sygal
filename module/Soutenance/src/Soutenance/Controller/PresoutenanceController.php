@@ -7,7 +7,7 @@ use Application\Entity\Db\Profil;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Source;
 use Application\Entity\Db\TypeValidation;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
@@ -53,7 +53,7 @@ use These\Form\Acteur\ActeurFormAwareTrait;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
+use UnicaenAuthentification\Service\Traits\UserServiceAwareTrait;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
 use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
@@ -71,7 +71,7 @@ class PresoutenanceController extends AbstractController
     use PropositionServiceAwareTrait;
     use ActeurServiceAwareTrait;
     use ValidatationServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use AvisServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use UserServiceAwareTrait;
@@ -312,7 +312,7 @@ class PresoutenanceController extends AbstractController
         $these = $this->requestedThese();
         $proposition = $this->propositionService->findOneForThese($these);
         $membre = $this->membreService->getRequestedMembre($this);
-        $role = $this->roleService->getRepository()->findOneByCodeAndStructureConcrete("R", $these->getEtablissement());
+        $role = $this->applicationRoleService->getRepository()->findOneByCodeAndStructureConcrete("R", $these->getEtablissement());
 
         $individu = $this->params()->fromQuery('individu') ?  $this->individuService->getRepository()->find($this->params()->fromQuery('individu')) : new Individu();
         $acteur = $this->acteurService->newActeur($these, $individu, $role);
@@ -323,7 +323,7 @@ class PresoutenanceController extends AbstractController
         $form->bind($acteur);
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/presoutenance/associer-jury-these-sygal', ['these' => $these->getId(), 'membre' => $membre->getId()], [], true));
 
-        $roles = $this->roleService->getRepository()->findAll();
+        $roles = $this->applicationRoleService->getRepository()->findAll();
         /** @var ActeurFieldset $acteurFieldset */
         $acteurFieldset = $form->get('acteur');
         $acteurFieldset->setRoles($roles);
@@ -808,8 +808,8 @@ class PresoutenanceController extends AbstractController
 
         /** @var Role $rapporteur */
         /** @var Role $membreJury */
-        $rapporteur = $this->roleService->getRepository()->findOneByCodeAndStructureConcrete('R', $these->getEtablissement());
-        $membreJury = $this->roleService->getRepository()->findOneByCodeAndStructureConcrete('M', $these->getEtablissement());
+        $rapporteur = $this->applicationRoleService->getRepository()->findOneByCodeAndStructureConcrete('R', $these->getEtablissement());
+        $membreJury = $this->applicationRoleService->getRepository()->findOneByCodeAndStructureConcrete('M', $these->getEtablissement());
 
         /** @var Source $sygal */
         $sygal = $this->sourceService->getRepository()->findOneBy(['code' => 'SYGAL::sygal']);

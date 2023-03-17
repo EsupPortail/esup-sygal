@@ -3,7 +3,7 @@
 namespace These\Fieldset\Encadrement;
 
 use Application\Entity\Db\Role;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
@@ -15,7 +15,7 @@ class EncadrementHydrator extends DoctrineObject
 {
     use IndividuServiceAwareTrait;
     use ActeurServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
 
     /**
      * @param These|object $object
@@ -56,7 +56,7 @@ class EncadrementHydrator extends DoctrineObject
                 /** @var Individu $individu */
                 $individu = $this->individuService->getRepository()->find($individuId);
                 $acteur = $object->getId() ? $this->acteurService->getRepository()->findActeurByIndividuAndThese($individu, $object) : null;
-                $role = $this->roleService->getRepository()->findByCode(Role::CODE_CO_ENCADRANT);
+                $role = $this->applicationRoleService->getRepository()->findByCode(Role::CODE_CO_ENCADRANT);
                 if ($acteur === null) {
                     $acteur = $this->acteurService->newActeur($object, $individu, $role);
                     $object->addActeur($acteur);

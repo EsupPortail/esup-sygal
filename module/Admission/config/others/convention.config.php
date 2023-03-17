@@ -16,8 +16,8 @@ use Admission\Service\ConventionFormationDoctorale\ConventionFormationDoctoraleS
 use Admission\Service\Exporter\ConventionFormationDoctorale\ConventionFormationDoctoraleExporter;
 use Admission\Service\Exporter\ConventionFormationDoctorale\ConventionFormationDoctoraleExporterFactory;
 use Laminas\Router\Http\Segment;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return array(
     'bjyauthorize' => [

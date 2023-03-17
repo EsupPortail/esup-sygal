@@ -6,7 +6,7 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\Validation;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Exception;
 use Fichier\Entity\Db\NatureFichier;
@@ -53,6 +53,7 @@ use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\Acteur;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenUtilisateur\Entity\Db\RoleInterface;
 use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
@@ -73,7 +74,7 @@ class PropositionController extends AbstractController
     use SoutenanceNotificationFactoryAwareTrait;
     use ParametreServiceAwareTrait;
     use PropositionServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use UserContextServiceAwareTrait;
     use RenduServiceAwareTrait;
     use ValidatationServiceAwareTrait;
@@ -139,12 +140,12 @@ class PropositionController extends AbstractController
         /** @var IndividuRole[] $ecoleResponsables */
         $ecoleResponsables = [];
         if ($these->getEcoleDoctorale() !== null) {
-            $ecoleResponsables = $this->getRoleService()->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure(), null, $these->getEtablissement());
+            $ecoleResponsables = $this->getApplicationRoleService()->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure(), null, $these->getEtablissement());
         }
         /** @var IndividuRole[] $uniteResponsables */
         $uniteResponsables = [];
         if ($these->getUniteRecherche() !== null) {
-            $uniteResponsables = $this->getRoleService()->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure(), null, $these->getEtablissement());
+            $uniteResponsables = $this->getApplicationRoleService()->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure(), null, $these->getEtablissement());
         }
         $notif = $this->soutenanceNotificationFactory->createNotificationBureauDesDoctoratsProposition($these);
         $emailsAspectDoctorats = $notif->getTo();

@@ -8,7 +8,7 @@ use Application\Provider\Privilege\FinancementPrivileges;
 use Application\Service\AuthorizeServiceAwareTrait;
 use InvalidArgumentException;
 use UnicaenApp\Exception\LogicException;
-use UnicaenAuth\Service\AuthorizeService;
+use UnicaenPrivilege\Service\AuthorizeService;
 use Webmozart\Assert\Assert;
 
 class FinancementFormatter

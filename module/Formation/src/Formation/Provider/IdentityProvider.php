@@ -2,19 +2,19 @@
 
 namespace Formation\Provider;
 
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use BjyAuthorize\Provider\Identity\ProviderInterface;
 use Formation\Entity\Db\Formateur;
 use Formation\Entity\Db\Session;
 use Formation\Service\Session\SessionServiceAwareTrait;
-use UnicaenAuth\Entity\Db\RoleInterface;
-use UnicaenAuth\Provider\Identity\ChainableProvider;
-use UnicaenAuth\Provider\Identity\ChainEvent;
-use UnicaenAuth\Service\Traits\UserContextServiceAwareTrait;
+use UnicaenUtilisateur\Entity\Db\RoleInterface;
+use UnicaenAuthentification\Provider\Identity\ChainableProvider;
+use UnicaenAuthentification\Provider\Identity\ChainEvent;
+use UnicaenAuthentification\Service\Traits\UserContextServiceAwareTrait;
 
 class IdentityProvider implements ProviderInterface, ChainableProvider
 {
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use SessionServiceAwareTrait;
     use UserContextServiceAwareTrait;
 
@@ -46,7 +46,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
 
         $sessions = $this->getSessionService()->getEntityManager()->getRepository(Session::class)->findSessionsByFormateur($individu);
         if (!empty($sessions)) {
-            $formateur = $this->getRoleService()->getRepository()->findByCode(Formateur::ROLE);
+            $formateur = $this->getApplicationRoleService()->getRepository()->findByCode(Formateur::ROLE);
             $roles[] = $formateur;
         }
         return $roles;

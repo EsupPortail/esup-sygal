@@ -5,7 +5,7 @@ namespace Application\Provider;
 use Application\Entity\Db\Role;
 use Application\Entity\UserWrapper;
 use Application\Entity\UserWrapperFactoryAwareTrait;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
 use BjyAuthorize\Provider\Identity\ProviderInterface;
@@ -19,8 +19,8 @@ use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
-use UnicaenAuth\Provider\Identity\ChainableProvider;
-use UnicaenAuth\Provider\Identity\ChainEvent;
+use UnicaenAuthentification\Provider\Identity\ChainableProvider;
+use UnicaenAuthentification\Provider\Identity\ChainEvent;
 
 /**
  * Service chargé de fournir tous les rôles que possède l'identité authentifiée.
@@ -34,7 +34,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
     use TheseServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
@@ -100,7 +100,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
             return [];
         }
 
-        $roleAuthentifie = $this->roleService->getRepository()->findByCode('user');
+        $roleAuthentifie = $this->applicationRoleService->getRepository()->findByCode('user');
 
         $this->roles = array_merge(
             [$roleAuthentifie],
@@ -154,12 +154,12 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
 
         $individuRoles = [];
         if ($individu !== null) {
-            $individuRoles = $this->roleService->findIndividuRolesByIndividu($individu);
+            $individuRoles = $this->applicationRoleService->findIndividuRolesByIndividu($individu);
         } else {
             $id = $this->userWrapper->getSupannId();
             if ($id) {
                 $pattern = $this->sourceCodeStringHelper->generateSearchPatternForAnyPrefix($id);
-                $individuRoles = $this->roleService->findIndividuRolesByIndividuSourceCodePattern($pattern);
+                $individuRoles = $this->applicationRoleService->findIndividuRolesByIndividuSourceCodePattern($pattern);
             }
         }
 
@@ -192,7 +192,7 @@ class IdentityProvider implements ProviderInterface, ChainableProvider
             return [];
         }
 
-        $role = $this->roleService->getRepository()
+        $role = $this->applicationRoleService->getRepository()
             ->findOneByCodeAndStructureConcrete(Role::CODE_DOCTORANT, $doctorant->getEtablissement());
 
         return [$role];

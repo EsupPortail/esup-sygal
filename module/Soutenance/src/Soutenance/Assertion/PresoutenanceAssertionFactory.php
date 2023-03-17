@@ -8,6 +8,7 @@ use Interop\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use These\Service\These\TheseService;
+use UnicaenAuthentification\Service\UserContext;
 
 class PresoutenanceAssertionFactory {
 
@@ -20,7 +21,7 @@ class PresoutenanceAssertionFactory {
         /**
          * @var UserContextService $userContext
          */
-        $userContext = $container->get('UnicaenAuth\Service\UserContext');
+        $userContext = $container->get(UserContext::class);
         $theseService = $container->get(TheseService::class);
         $messageCollector = $container->get('MessageCollector');
 

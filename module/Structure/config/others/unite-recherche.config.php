@@ -14,8 +14,8 @@ use Structure\Hydrator\Strategy\UniteRechercheStrategyFactory;
 use Structure\Provider\Privilege\StructurePrivileges;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 use Structure\Service\UniteRecherche\UniteRechercheServiceFactory;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use Structure\View\Helper\UniteRechercheHelper;
-use UnicaenAuth\Guard\PrivilegeController;
 
 return [
     'bjyauthorize'    => [

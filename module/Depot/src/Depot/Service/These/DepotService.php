@@ -42,7 +42,7 @@ use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Traits\MessageAwareInterface;
-use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
+use UnicaenAuthentification\Service\Traits\UserServiceAwareTrait;
 
 class DepotService extends BaseService implements ListenerAggregateInterface
 {

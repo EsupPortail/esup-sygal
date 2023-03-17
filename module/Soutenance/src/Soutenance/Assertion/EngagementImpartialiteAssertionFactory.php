@@ -16,7 +16,7 @@ class EngagementImpartialiteAssertionFactory {
         /**
          * @var UserContextService $userContext
          */
-        $userContext = $container->get('UnicaenAuth\Service\UserContext');
+        $userContext = $container->get(\UnicaenAuthentification\Service\UserContext::class);
 
         /** @var  $assertion */
         $assertion = new EngagementImpartialiteAssertion();

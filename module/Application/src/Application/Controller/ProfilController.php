@@ -7,22 +7,22 @@ use Application\Entity\Db\Profil;
 use Application\Entity\Db\Role;
 use Application\Form\ProfilForm;
 use Application\Service\Profil\ProfilServiceAwareTrait;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\QueryBuilder;
+use UnicaenApp\Exception\RuntimeException;
+use UnicaenPrivilege\Service\Privilege\PrivilegeServiceAwareTrait;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
-use UnicaenApp\Exception\RuntimeException;
-use UnicaenAuth\Service\Traits\PrivilegeServiceAwareTrait;
 
 class ProfilController extends AbstractActionController
 {
     use PrivilegeServiceAwareTrait;
     use ProfilServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
 
     const PERIMETRE_ED = "ED";
     const PERIMETRE_UR = "UR";
@@ -47,7 +47,7 @@ class ProfilController extends AbstractActionController
         $depend = $this->params()->fromQuery("depend");
         $categorie = $this->params()->fromQuery("categorie");
         $profil = $this->params()->fromQuery("profil");
-        
+
         $qbProfils = $this->profilService->getRepository()->createQueryBuilder("profil");
         $qbProfils
             ->addSelect('ts')->leftJoin('profil.structureType', 'ts')
@@ -57,7 +57,7 @@ class ProfilController extends AbstractActionController
         /** @var Profil[] $profils */
         $profils = $qbProfils->getQuery()->execute();
 
-        $qbPrivileges = $this->getServicePrivilege()->getRepo()->createQueryBuilder("p");
+        $qbPrivileges = $this->getPrivilegeService()->getRepo()->createQueryBuilder("p");
         $qbPrivileges
             ->addSelect('profil')->leftJoin('p.profils', 'profil')
             ->orderBy("p.categorie, p.ordre", "ASC");
@@ -185,7 +185,7 @@ class ProfilController extends AbstractActionController
         /** @var Profil $profil */
         $profil = $this->getProfilService()->getProfil($profilId);
         /** @var Privilege $privilege */
-        $privilege = $this->getServicePrivilege()->getRepo()->find($privilegeId);
+        $privilege = $this->getPrivilegeService()->getRepo()->find($privilegeId);
 
         $value = null;
         if( $profil->hasPrivilege($privilege)) {
@@ -196,12 +196,12 @@ class ProfilController extends AbstractActionController
             $value = 1;
         }
         try {
-            $this->getServicePrivilege()->getEntityManager()->flush($privilege);
+            $this->getPrivilegeService()->getEntityManager()->flush($privilege);
         } catch (OptimisticLockException $e) {
             throw new RuntimeException("Un problème lors du changement de rôle s'est produit", $e);
         }
         // Application aux rôles associés au profil
-        $this->getRoleService()->applyChangement($profil->getRoles(), $privilege, $value);
+        $this->getApplicationRoleService()->applyChangement($profil->getRoles(), $privilege, $value);
 
         return new JsonModel([
             'value' => $value,
@@ -214,7 +214,7 @@ class ProfilController extends AbstractActionController
         $profilId   = $this->params()->fromRoute('profil');
         $profil     = $this->getProfilService()->getProfil($profilId);
 
-        $roles      = $this->getRoleService()->findRolesSansProfil();
+        $roles      = $this->getApplicationRoleService()->findRolesSansProfil();
 
         return new ViewModel([
             'profil' => $profil,
@@ -235,7 +235,7 @@ class ProfilController extends AbstractActionController
             /** @var Role $role */
             $roleId = $data['role'] ?? null;
             if ($roleId) {
-                $role = $this->getRoleService()->getRepository()->find($roleId);
+                $role = $this->getApplicationRoleService()->getRepository()->find($roleId);
 
                 if (!$profil->hasRole($role)) {
                     $profil->addRole($role);
@@ -256,7 +256,7 @@ class ProfilController extends AbstractActionController
 
         /** @var Role $role */
         $roleId = $this->params()->fromRoute('role');
-        $role = $this->getRoleService()->getRepository()->find($roleId);
+        $role = $this->getApplicationRoleService()->getRepository()->find($roleId);
 
         if ($profil->hasRole($role)) {
             $profil->removeRole($role);

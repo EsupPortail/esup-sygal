@@ -2,7 +2,7 @@
 
 namespace Depot\Provider\Privilege;
 
-use UnicaenAuth\Provider\Privilege\Privileges;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 /**
  * Liste des privilèges utilisables.

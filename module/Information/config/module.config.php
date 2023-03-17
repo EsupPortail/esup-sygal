@@ -47,13 +47,6 @@ return [
                 ],
             ],
         ],
-        'eventmanager'  => [
-            'orm_default' => [
-                'subscribers' => [
-                    'UnicaenApp\HistoriqueListener',
-                ],
-            ],
-        ],
         'configuration' => [
             'orm_default' => [
                 'default_repository_class_name' => DefaultEntityRepository::class,
@@ -68,7 +61,7 @@ return [
     ],
     'bjyauthorize'    => [
         'guards' => [
-            \UnicaenAuth\Guard\PrivilegeController::class => [
+            \UnicaenPrivilege\Guard\PrivilegeController::class => [
                 [
                     'controller' => InformationController::class,
                     'action'     => [

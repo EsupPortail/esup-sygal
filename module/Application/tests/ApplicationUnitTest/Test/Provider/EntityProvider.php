@@ -18,7 +18,7 @@ use ApplicationUnitTest\Test\Asset\EntityAsset;
 use Doctrine\ORM\EntityManager;
 use InvalidArgumentException;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenAuth\ORM\Event\Listeners\HistoriqueListener;
+use UnicaenUtilisateur\ORM\Event\Listeners\HistoriqueListener;
 use Application\Entity\Db\Source;
 use UnicaenTest\Entity\Db\AbstractEntityProvider;
 

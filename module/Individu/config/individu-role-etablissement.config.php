@@ -11,7 +11,7 @@ use Individu\Fieldset\IndividuRoleEtablissement\IndividuRoleEtablissementHydrato
 use Individu\Service\IndividuRoleEtablissement\IndividuRoleEtablissementService;
 use Individu\Service\IndividuRoleEtablissement\IndividuRoleEtablissementServiceFactory;
 use Laminas\Router\Http\Literal;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     'bjyauthorize' => [

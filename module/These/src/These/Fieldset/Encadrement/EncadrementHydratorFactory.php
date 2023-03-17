@@ -32,7 +32,7 @@ class EncadrementHydratorFactory
 
         /** @var \Application\Service\Role\RoleService $roleService */
         $roleService = $container->get(RoleService::class);
-        $hydrator->setRoleService($roleService);
+        $hydrator->setApplicationRoleService($roleService);
 
         return $hydrator;
     }

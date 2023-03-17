@@ -22,7 +22,7 @@ use Laminas\Router\Http\Segment;
 return array(
     'bjyauthorize'    => [
         'guards' => [
-            \UnicaenAuth\Guard\PrivilegeController::class => [
+            \UnicaenPrivilege\Guard\PrivilegeController::class => [
                 [
                     'controller' => IndicateurController::class,
                     'action'     => [

@@ -7,7 +7,7 @@ use Structure\Service\Etablissement\EtablissementServiceLocateTrait;
 use Individu\Service\IndividuService;
 use Application\SourceCodeStringHelper;
 use Interop\Container\ContainerInterface;
-use UnicaenAuth\Options\ModuleOptions;
+use UnicaenAuthentification\Options\ModuleOptions;
 use Laminas\Authentication\AuthenticationService;
 
 class UserContextServiceFactory

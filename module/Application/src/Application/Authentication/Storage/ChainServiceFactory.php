@@ -2,10 +2,10 @@
 
 namespace Application\Authentication\Storage;
 
-use UnicaenAuth\Authentication\Storage\ChainServiceFactory as BaseChainServiceFactory;
+use UnicaenAuthentification\Authentication\Storage\ChainServiceFactory as BaseChainServiceFactory;
 
 /**
- * Ajout d'un storage maison à ceux d'UnicaenAuth.
+ * Ajout d'un storage maison à ceux d'UnicaenAuthentification.
  *
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
  */

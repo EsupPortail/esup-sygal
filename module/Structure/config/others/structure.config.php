@@ -9,8 +9,8 @@ use Structure\Service\Structure\StructureService;
 use Structure\Service\Structure\StructureServiceFactory;
 use Structure\Service\StructureDocument\StructureDocumentService;
 use Structure\Service\StructureDocument\StructureDocumentServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 use Laminas\Router\Http\Segment;
 
 return [

@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use UnicaenAuth\Service\UserContext;
+use UnicaenAuthentification\Service\UserContext;
 
 class HorodatageServiceFactory {
 

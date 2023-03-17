@@ -5,7 +5,7 @@ namespace Application\Service\ListeDiffusion\Handler;
 use Application\Entity\Db\Role;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressParserResult;
 use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressParserResultWithED;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use BadMethodCallException;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
@@ -22,7 +22,7 @@ class ListeDiffusionHandler extends ListeDiffusionAbstractHandler
     use EtablissementServiceAwareTrait;
     use ActeurServiceAwareTrait;
     use DoctorantServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
 
     /**
      * Rôle concerné.
@@ -156,7 +156,7 @@ class ListeDiffusionHandler extends ListeDiffusionAbstractHandler
         $code = strtoupper($this->role);
         $structure = $this->etablissement->getStructure();
 
-        $role = $this->roleService->getRepository()->findOneByCodeAndStructure($code, $structure);
+        $role = $this->applicationRoleService->getRepository()->findOneByCodeAndStructure($code, $structure);
 
         return $this->individuService->getRepository()->findByRole($role);
     }

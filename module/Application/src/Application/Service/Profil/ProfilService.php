@@ -11,7 +11,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use UnicaenAuth\Service\Traits\PrivilegeServiceAwareTrait;
+use UnicaenPrivilege\Service\Privilege\PrivilegeServiceAwareTrait;
 
 class ProfilService extends BaseService
 {
@@ -42,6 +42,8 @@ class ProfilService extends BaseService
     public function getProfil($id)
     {
         $qb = $this->getEntityManager()->getRepository(Profil::class)->createQueryBuilder('profil')
+            ->addSelect('r')
+            ->leftJoin('profil.roles', 'r')
             ->andWhere('profil.id = :id')
             ->setParameter('id', $id)
         ;
@@ -109,7 +111,7 @@ class ProfilService extends BaseService
         // Comment accéder à la liste des privilèges d'un rôle ??? (la relation est unidirectionnelle est c'est génant ici) ...
 //        foreach ($role->getPrivileges() as $privilege) {
 
-        $privileges = $this->getServicePrivilege()->getRepo()->findAll();
+        $privileges = $this->getPrivilegeService()->getRepo()->findAll();
         /** @var Privilege $privilege */
         foreach ($privileges as $privilege) {
             if ($privilege->hasRole($role)) {

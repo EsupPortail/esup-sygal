@@ -3,8 +3,8 @@
 namespace Individu\View\Helper;
 
 use Psr\Container\ContainerInterface;
-use UnicaenAuth\Options\ModuleOptions;
-use UnicaenAuth\Service\UserContext;
+use UnicaenAuthentification\Options\ModuleOptions;
+use UnicaenAuthentification\Service\UserContext;
 use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\Form;

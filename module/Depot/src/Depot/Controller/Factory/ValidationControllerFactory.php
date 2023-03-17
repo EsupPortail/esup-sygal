@@ -35,7 +35,7 @@ class ValidationControllerFactory implements FactoryInterface
         $controller->setValidationService($validationService);
         $controller->setNotifierService($notifierService);
         $controller->setTheseService($theseService);
-        $controller->setRoleService($roleService);
+        $controller->setApplicationRoleService($roleService);
         $controller->setUtilisateurService($utilisateurService);
 
         /** @var DepotService $depotService */

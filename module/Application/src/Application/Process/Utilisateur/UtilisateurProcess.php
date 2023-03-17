@@ -10,7 +10,7 @@ use Exception;
 use Individu\Service\IndividuServiceAwareTrait;
 use Notification\Exception\RuntimeException;
 use Notification\Service\NotifierServiceAwareTrait;
-use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
+use UnicaenAuthentification\Service\Traits\UserServiceAwareTrait;
 
 class UtilisateurProcess extends AbstractProcess
 {
@@ -41,6 +41,7 @@ class UtilisateurProcess extends AbstractProcess
 
             $utilisateur = $this->utilisateurService->createFromIndividu($individu, $individu->getEmailPro(), 'none');
             $this->userService->updateUserPasswordResetToken($utilisateur);
+            // todo : créer updateUserPasswordResetToken(), cf.  UnicaenAuth\Service\Traits\UserServiceAwareTrait
 
             $notif = $this->applicationNotificationFactory->createNotificationInitialisationCompte($utilisateur);
             $result = $this->notifierService->trigger($notif);

@@ -20,7 +20,7 @@ class InformationServiceFactory
          * @var UserContextService $userContextService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
-        $userContextService = $container->get('UnicaenAuth\Service\UserContext');
+        $userContextService = $container->get(\UnicaenAuthentification\Service\UserContext::class);
 
         $service = new InformationService();
         $service->setEntityManager($entityManager);

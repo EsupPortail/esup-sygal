@@ -16,7 +16,7 @@ use Soutenance\Service\Qualite\QualiteService;
 use Soutenance\Service\Qualite\QualiteServiceFactory;
 use Soutenance\Service\QualiteLibelleSupplementaire\QualiteLibelleSupplementaireService;
 use Soutenance\Service\QualiteLibelleSupplementaire\QualiteLibelleSupplementaireServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 

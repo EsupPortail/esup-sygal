@@ -23,8 +23,8 @@ use Admission\Service\Notification\NotificationFactoryFactory;
 use Admission\Service\Operation\AdmissionOperationService;
 use Admission\Service\Operation\AdmissionOperationServiceFactory;
 use Laminas\Router\Http\Segment;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return array(
     'bjyauthorize' => [

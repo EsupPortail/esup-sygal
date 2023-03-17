@@ -9,7 +9,7 @@ use Structure\Form\Factory\VariableFormFactory;
 use Structure\Form\Factory\VariableHydratorFactory;
 use Structure\Form\Hydrator\VariableHydrator;
 use Structure\Form\VariableForm;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     'bjyauthorize'    => [

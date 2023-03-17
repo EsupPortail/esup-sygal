@@ -48,7 +48,7 @@ class ListeDiffusionHandlerFactory
          * @var RoleService $roleService
          */
         $roleService = $container->get(RoleService::class);
-        $service->setRoleService($roleService);
+        $service->setApplicationRoleService($roleService);
 
         /**
          * @var DoctorantService $doctorantService

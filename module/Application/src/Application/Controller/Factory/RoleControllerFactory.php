@@ -28,7 +28,7 @@ class RoleControllerFactory
         $sourceService = $container->get(SourceService::class);
 
         $controller = new RoleController();
-        $controller->setRoleService($roleService);
+        $controller->setApplicationRoleService($roleService);
         $controller->setEtablissementService($etablissementService);
         $controller->setRoleForm($theseSaisieForm);
         $controller->setSource($sourceService->fetchApplicationSource());

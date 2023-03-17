@@ -4,7 +4,7 @@ namespace Admission\Rule\Email;
 
 use Admission\Entity\Db\Admission;
 use Application\Entity\Db\Role;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Closure;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuRole;
@@ -20,7 +20,7 @@ use Webmozart\Assert\Assert;
  */
 class ExtractionEmailRule
 {
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use MessageAwareTrait;
     private array $anomalies = [];
 
@@ -74,10 +74,10 @@ class ExtractionEmailRule
                         $admission->getInscription()->first()->getUniteRecherche() :
                         $admission->getInscription()->first()->getEcoleDoctorale();
                     // Recherche des individus ayant le rôle attendu.
-                    $individusRoles = !empty($structureConcrete) ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole) : null;
+                    $individusRoles = !empty($structureConcrete) ? $this->applicationRoleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole) : null;
                     if (empty($individusRoles)) {
                         // Si aucun individu n'est trouvé avec la contrainte sur l'établissement de l'individu, on essaie sans.
-                        $individusRoles = $structureConcrete ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole) : null;
+                        $individusRoles = $structureConcrete ? $this->applicationRoleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole) : null;
                     }
                     if (!empty($individusRoles) && count($individusRoles)) {
                         $emailsIndividuRoles = $this->collectEmails($admission, $individusRoles);
@@ -112,10 +112,10 @@ class ExtractionEmailRule
                         $admission->getInscription()->first()->getUniteRecherche() :
                         $admission->getInscription()->first()->getEcoleDoctorale();
                     // Recherche des individus ayant le rôle attendu.
-                    $individusRoles = !empty($structureConcrete) ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole) : null;
+                    $individusRoles = !empty($structureConcrete) ? $this->applicationRoleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole) : null;
                     if (empty($individusRoles)) {
                         // Si aucun individu n'est trouvé avec la contrainte sur l'établissement de l'individu, on essaie sans.
-                        $individusRoles = !empty($structureConcrete) ? $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole) : null;
+                        $individusRoles = !empty($structureConcrete) ? $this->applicationRoleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole) : null;
                     }
                     if (!empty($individusRoles) && count($individusRoles)) {
                         $emailsIndividuRoles = $this->collectEmails($admission,$individusRoles);
@@ -163,12 +163,12 @@ class ExtractionEmailRule
 
         // Si une structure est spécifiée, on cherche un rôle "structure dépendant".
         if ($structureConcrete !== null) {
-            $role = $this->roleService->getRepository()->findOneByCodeAndStructure($codeRole, $structureConcrete->getStructure());
+            $role = $this->applicationRoleService->getRepository()->findOneByCodeAndStructure($codeRole, $structureConcrete->getStructure());
             $roleToString = $role ? (string) $role : null;
         }
         // Si on n'a aucun rôle sous la main, on recherche le 1er rôle existant ayant ce code, juste pour son libellé.
         if ($role === null) {
-            $role = $this->roleService->getRepository()->findByCode($codeRole);
+            $role = $this->applicationRoleService->getRepository()->findByCode($codeRole);
             $roleToString = $role?->getLibelle(); // NB : faut bien prendre le libellé
         }
 

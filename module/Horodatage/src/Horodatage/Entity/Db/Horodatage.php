@@ -3,7 +3,7 @@
 namespace Horodatage\Entity\Db;
 
 use DateTime;
-use UnicaenAuth\Entity\Db\AbstractUser;
+use UnicaenUtilisateur\Entity\Db\AbstractUser;
 
 class Horodatage {
 

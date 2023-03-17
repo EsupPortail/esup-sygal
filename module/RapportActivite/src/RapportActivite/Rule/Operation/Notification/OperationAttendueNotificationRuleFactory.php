@@ -31,7 +31,7 @@ class OperationAttendueNotificationRuleFactory
 
         /** @var \Application\Service\Role\RoleService $roleService */
         $roleService = $container->get(RoleService::class);
-        $rule->setRoleService($roleService);
+        $rule->setApplicationRoleService($roleService);
 
         return $rule;
     }

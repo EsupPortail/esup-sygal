@@ -106,7 +106,7 @@ class DepotControllerFactory
         $controller->setDepotValidationService($depotValidationService);
         $controller->setVersionFichierService($versionFichierService);
         $controller->setTheseService($theseService);
-        $controller->setRoleService($roleService);
+        $controller->setApplicationRoleService($roleService);
         $controller->setFichierTheseService($fichierTheseService);
         $controller->setFichierStorageService($fileService);
         $controller->setWorkflowService($workflowService);

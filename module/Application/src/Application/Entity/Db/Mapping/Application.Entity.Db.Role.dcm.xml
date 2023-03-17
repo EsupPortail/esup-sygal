@@ -11,7 +11,7 @@
         <field name="code" type="string" column="code" length="64" nullable="false"/>
         <field name="libelle" type="string" column="libelle" length="128" nullable="false"/>
         <field name="roleId" type="string" column="role_id" length="64" nullable="false"/>
-        <field name="isDefault" type="boolean" column="is_default" nullable="false"/>
+        <field name="default" type="boolean" column="is_default" nullable="false"/>
         <field name="ldapFilter" type="string" column="ldap_filter" length="255" nullable="true"/>
         <field name="attributionAutomatique" type="boolean" column="attrib_auto" nullable="false"/>
         <field name="theseDependant" type="boolean" column="these_dep" nullable="false"/>
@@ -55,6 +55,19 @@
                 <join-column name="histo_createur_id" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
+
+        <many-to-many field="users" target-entity="Application\Entity\Db\Utilisateur" mapped-by="roles"/>
+
+        <many-to-many field="privileges" target-entity="Application\Entity\Db\Privilege" inversed-by="roles">
+            <join-table name="role_privilege">
+                <join-columns>
+                    <join-column name="role_id" referenced-column-name="id"/>
+                </join-columns>
+                <inverse-join-columns>
+                    <join-column name="privilege_id" referenced-column-name="id"/>
+                </inverse-join-columns>
+            </join-table>
+        </many-to-many>
 
         <many-to-many target-entity="Application\Entity\Db\Profil" field="profils">
             <join-table name="profil_to_role">

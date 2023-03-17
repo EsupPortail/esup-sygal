@@ -1,0 +1,43 @@
+<?php
+
+use Application\Controller\ProfilController;
+use UnicaenPrivilege\Provider\Privilege\PrivilegePrivileges;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
+use UnicaenUtilisateur\Provider\Privilege\RolePrivileges;
+
+$canViewRoles      = $this->isAllowed(Privileges::getResourceId(RolePrivileges::ROLE_AFFICHER));
+$canViewPrivileges = $this->isAllowed(Privileges::getResourceId(PrivilegePrivileges::PRIVILEGE_VOIR));
+$canViewProfils = $this->isAllowed(Privileges::getResourceId(PrivilegePrivileges::PRIVILEGE_VOIR));
+
+?>
+<h1 class="page-header">Gestion des droits d'accès</h1>
+
+<dl>
+    <?php if ($canViewRoles): ?>
+        <dt><a href="<?php echo $this->url('unicaen-role') ?>">Rôles</a></dt>
+        <dd>
+            Page consacrée aux différents <em>rôles</em> existants.
+        </dd>
+    <?php endif; ?>
+
+    <?php if ($canViewProfils): ?>
+        <dt><a href="<?php echo $this->url('profil', [], ['query' => ['depend' => ProfilController::PERIMETRE_Aucun]]) ?>">Profils et privilèges</a></dt>
+        <dd>
+            Page consacrée aux <em>profils</em> et à leur attribution de privilèges.
+        </dd>
+    <?php endif; ?>
+
+    <?php if ($canViewPrivileges): ?>
+        <dt><a href="<?php echo $this->url('gestion-privilege', [], ['query' => ['depend' => ProfilController::PERIMETRE_Aucun]]) ?>">Rôles et privilèges</a></dt>
+        <dd>
+            Page consacrées à l'attribution directe de privilèges aux rôles n'étant liés à aucun profil.
+        </dd>
+    <?php endif; ?>
+</dl>
+<style>
+
+    dt {
+        padding-top: 2em;
+    }
+
+</style>

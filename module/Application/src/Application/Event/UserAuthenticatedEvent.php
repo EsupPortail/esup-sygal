@@ -2,8 +2,8 @@
 
 namespace Application\Event;
 
-use UnicaenAuth\Entity\Shibboleth\ShibUser;
-use UnicaenAuth\Entity\Ldap\People;
+use UnicaenAuthentification\Entity\Shibboleth\ShibUser;
+use UnicaenAuthentification\Entity\Ldap\People;
 use ZfcUser\Entity\UserInterface;
 
 /**
@@ -11,7 +11,7 @@ use ZfcUser\Entity\UserInterface;
  *
  * @author Bertrand GAUTHIER <bertrand.gauthier at unicaen.fr>
  */
-class UserAuthenticatedEvent extends \UnicaenAuth\Event\UserAuthenticatedEvent
+class UserAuthenticatedEvent extends \UnicaenAuthentification\Event\UserAuthenticatedEvent
 {
     const PARAM_DB_USER    = 'db_user';
     const PARAM_LDAP_USER  = 'ldap_user';

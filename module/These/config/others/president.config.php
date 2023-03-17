@@ -9,7 +9,7 @@ use Application\Form\AdresseMail\AdresseMailForm;
 use Application\Form\AdresseMail\AdresseMailFormFactory;
 use Application\Form\AdresseMail\AdresseMailHydrator;
 use These\Provider\Privilege\PresidentJuryPrivileges;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 

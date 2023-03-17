@@ -32,7 +32,7 @@ use Formation\Service\EnqueteReponse\Search\EnqueteReponseSearchService;
 use Formation\Service\EnqueteReponse\Search\EnqueteReponseSearchServiceFactory;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     'bjyauthorize' => [

@@ -4,7 +4,7 @@ namespace Formation\Service\Notification;
 
 use Application\Entity\Db\Role;
 use Application\Service\ListeDiffusion\ListeDiffusionServiceAwareTrait;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Formation\Entity\Db\Formateur;
 use Formation\Entity\Db\Formation;
 use Formation\Entity\Db\Inscription;
@@ -26,7 +26,7 @@ class FormationNotificationFactory extends NotificationFactory
 {
     use RenduServiceAwareTrait;
     use ListeDiffusionServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
 
     /** INSCRIPTION ***************************************************************************************************/
 
@@ -259,7 +259,7 @@ class FormationNotificationFactory extends NotificationFactory
     public function createNotificationFormationSpecifiqueAjoutee(Formation $formation, SessionStructureValide $structureValide): Notification
     {
         $ed = $structureValide->getStructure()->getEcoleDoctorale();
-        $role = $this->roleService->getRepository()->findOneBy(["code" => Role::CODE_DOCTORANT]);
+        $role = $this->applicationRoleService->getRepository()->findOneBy(["code" => Role::CODE_DOCTORANT]);
         $ng = $this->listeDiffusionService->createNameGenerator($ed, $role, null);
         $domain = $this->listeDiffusionService->getEmailDomain();
         $ng->setDomain($domain);

@@ -10,8 +10,8 @@ use Soutenance\Controller\InterventionControllerFactory;
 use Soutenance\Provider\Privilege\InterventionPrivileges;
 use Soutenance\Service\Intervention\InterventionService;
 use Soutenance\Service\Intervention\InterventionServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 use Laminas\Router\Http\Segment;
 
 return [

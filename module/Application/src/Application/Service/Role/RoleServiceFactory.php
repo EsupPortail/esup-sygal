@@ -5,17 +5,15 @@ namespace Application\Service\Role;
 use Application\Service\Profil\ProfilService;
 use Application\Service\Source\SourceService;
 use Application\SourceCodeStringHelper;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 class RoleServiceFactory
 {
     /**
-     * Create service
-     *
-     * @param ContainerInterface $container
-     * @return RoleService
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): RoleService
     {
         /**
          * @var SourceService $sourceService
@@ -26,6 +24,10 @@ class RoleServiceFactory
 
         $service = new RoleService();
         $service->setSourceService($sourceService);
+
+        /** @var \Doctrine\ORM\EntityManager $em */
+        $em = $container->get('doctrine.entitymanager.orm_default');
+        $service->setEntityManager($em);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper

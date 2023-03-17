@@ -24,16 +24,16 @@ use Application\Service\Utilisateur\UtilisateurServiceFactory;
 use Individu\View\Helper\IndividuUsurpationHelperFactory;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     'bjyauthorize'    => [
         'guards' => [
             'BjyAuthorize\Guard\Controller' => [
-                ['controller' => 'Application\Controller\Utilisateur', 'action' => 'selectionner-profil', 'roles' => []],
-                ['controller' => 'Application\Controller\Utilisateur', 'action' => 'usurper-identite', 'roles' => []],
-                ['controller' => 'Application\Controller\Utilisateur', 'action' => 'stopper-usurpation', 'roles' => []],
-                ['controller' => 'Application\Controller\Utilisateur', 'action' => 'usurper-individu', 'roles' => []],
+//                ['controller' => 'UnicaenAuthentification\Controller\Utilisateur', 'action' => 'selectionner-profil', 'roles' => []],
+//                ['controller' => 'Application\Controller\Utilisateur', 'action' => 'usurper-identite', 'roles' => 'guest'],
+                ['controller' => 'Application\Controller\Utilisateur', 'action' => 'stopper-usurpation', 'roles' => 'guest'],
+                ['controller' => 'Application\Controller\Utilisateur', 'action' => 'usurper-individu', 'roles' => 'guest'],
             ],
             PrivilegeController::class => [
                 [
@@ -95,13 +95,22 @@ return [
                 'options'       => [
                     'route'    => '/utilisateur',
                     'defaults' => [
-                        '__NAMESPACE__' => 'Application\Controller',
-                        'controller'    => 'Utilisateur',
+                        'controller'    => 'Application\Controller\Utilisateur',
                         'action'        => 'index',
                     ],
                 ],
                 'may_terminate' => true,
                 'child_routes'  => [
+                    'selectionner-profil' => [
+                        'type'          => Literal::class,
+                        'options'       => [
+                            'route'       => '/selectionner-profil',
+                            'defaults'    => [
+                                'controller'    => 'UnicaenAuthentification\Controller\Utilisateur',
+                                'action' => 'selectionner-profil',
+                            ],
+                        ],
+                    ],
                     'voir' => [
                         'type'          => Segment::class,
                         'options'       => [

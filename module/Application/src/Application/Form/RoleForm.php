@@ -7,7 +7,7 @@ use Laminas\Form\Form;
 
 class RoleForm extends Form
 {
-    use \UnicaenAuth\Form\Droits\Traits\RoleFormAwareTrait;
+    use RoleFormAwareTrait;
 
 //    public function __construct(){
 //        parent::__construct();
@@ -18,7 +18,7 @@ class RoleForm extends Form
 
     public function init(): void
     {
-        $roleForm = $this->getFormFactory()->getFormElementManager()->get(\UnicaenAuth\Form\Droits\RoleForm::class);
+        $roleForm = $this->getFormFactory()->getFormElementManager()->get(\UnicaenUtilisateur\Form\Role\RoleForm::class);
         $roleForm->setName("role");
         $this->add($roleForm);
     }

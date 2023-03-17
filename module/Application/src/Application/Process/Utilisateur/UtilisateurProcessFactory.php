@@ -8,7 +8,7 @@ use Individu\Service\IndividuService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Notification\Service\NotifierService;
 use Psr\Container\ContainerInterface;
-use UnicaenAuth\Service\User as UserService;
+use UnicaenAuthentification\Service\User as UserService;
 
 class UtilisateurProcessFactory implements FactoryInterface
 {
@@ -25,7 +25,7 @@ class UtilisateurProcessFactory implements FactoryInterface
         $process->setUtilisateurService($utilisateurService);
 
         /** @var UserService $userService */
-        $userService = $container->get('unicaen-auth_user_service');
+        $userService = $container->get(UserService::class);
         $process->setUserService($userService);
 
         /** @var \Individu\Service\IndividuService $service */

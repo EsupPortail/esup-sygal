@@ -44,7 +44,7 @@ class ConventionFormationDoctoraleExporterFactory {
         $exporter->setStructureService($structureService);
         $exporter->setUrlService($urlService);
         $exporter->setAdmissionService($admissionService);
-        $exporter->setRoleService($roleService);
+        $exporter->setApplicationRoleService($roleService);
         return $exporter;
     }
 }

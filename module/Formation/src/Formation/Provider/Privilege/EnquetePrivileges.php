@@ -2,7 +2,7 @@
 
 namespace Formation\Provider\Privilege;
 
-use UnicaenAuth\Provider\Privilege\Privileges;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 class EnquetePrivileges extends Privileges
 {

@@ -5,6 +5,7 @@ namespace Application;
 use Application\Service\MailConfirmationService;
 use Application\Service\UserContextService;
 use Doctorant\Entity\Db\Doctorant;
+use UnicaenAuthentification\Service\UserContext;
 
 /**
  * Détournement de la requête en fonction de la connaissance de l'adresse email de contact du doctorant.
@@ -47,7 +48,7 @@ class SaisieEmailContactRouteDeflector extends RouteDeflector
         }
 
         /** @var UserContextService $userContext */
-        $userContext = $this->event->getApplication()->getServiceManager()->get('UnicaenAuth\Service\UserContext');
+        $userContext = $this->event->getApplication()->getServiceManager()->get(UserContext::class);
 
         $this->doctorant = $userContext->getIdentityDoctorant();
 

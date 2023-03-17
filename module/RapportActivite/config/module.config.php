@@ -61,8 +61,8 @@ use RapportActivite\Service\Search\RapportActiviteSearchService;
 use RapportActivite\Service\Search\RapportActiviteSearchServiceFactory;
 use RapportActivite\Service\Validation\RapportActiviteValidationService;
 use RapportActivite\Service\Validation\RapportActiviteValidationServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 const VALIDATION_DOCTORANT = 'VALIDATION_DOCTORANT';
 const AVIS_GEST = 'AVIS_GEST';

@@ -17,7 +17,7 @@ use Formation\Service\Module\ModuleService;
 use Formation\Service\Module\ModuleServiceFactory;
 use Formation\Service\Module\Search\ModuleSearchService;
 use Formation\Service\Module\Search\ModuleSearchServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 

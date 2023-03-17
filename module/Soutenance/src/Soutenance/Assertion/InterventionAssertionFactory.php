@@ -30,7 +30,7 @@ class InterventionAssertionFactory
         $parametreService = $container->get(ParametreService::class);
         $propositionService = $container->get(PropositionService::class);
         $theseService = $container->get(TheseService::class);
-        $userContext = $container->get('UnicaenAuth\Service\UserContext');
+        $userContext = $container->get(\UnicaenAuthentification\Service\UserContext::class);
 
         /** @var  $assertion */
         $assertion = new InterventionAssertion();

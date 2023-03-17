@@ -3,7 +3,7 @@
 namespace Application;
 
 use Laminas\ApiTools\Documentation as ApiToolsDocumentation;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     'bjyauthorize' => [

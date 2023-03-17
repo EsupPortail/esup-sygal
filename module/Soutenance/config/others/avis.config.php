@@ -12,8 +12,8 @@ use Soutenance\Form\Avis\AvisHydrator;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\Avis\AvisServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 

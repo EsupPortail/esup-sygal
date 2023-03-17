@@ -14,7 +14,7 @@ use Depot\Provider\Privilege\DepotPrivileges;
 use Depot\Provider\Privilege\ValidationPrivileges;
 use Depot\Service\FichierThese\FichierTheseService;
 use Depot\Service\FichierThese\FichierTheseServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     'bjyauthorize' => [

@@ -44,7 +44,7 @@ class UniteRechercheControllerFactory
         $controller = new UniteRechercheController();
         $controller->setCoEncadrantService($coEncadrantService);
         $controller->setUniteRechercheService($uniteRechercheService);
-        $controller->setRoleService($roleService);
+        $controller->setApplicationRoleService($roleService);
         $controller->setEtablissementService($this->locateEtablissementService($container));
         $controller->setDomaineScientifiqueService($domaineService);
         $controller->setStructureService($structureService);

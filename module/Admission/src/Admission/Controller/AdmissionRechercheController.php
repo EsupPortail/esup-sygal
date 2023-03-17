@@ -18,7 +18,7 @@ use Application\Search\SearchServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use UnicaenApp\Form\Element\SearchAndSelect;
-use UnicaenAuth\Provider\Privilege\Privileges;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 /**
  * Class AdmissionRechercheController

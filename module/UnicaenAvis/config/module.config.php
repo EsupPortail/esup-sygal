@@ -48,7 +48,7 @@ return [
     ],
     'bjyauthorize' => [
         'guards' => [
-            'UnicaenAuth\Guard\PrivilegeController' => [
+            'UnicaenPrivilege\Guard\PrivilegeController' => [
                 [
                     'controller' => IndexController::class,
                     'action' => [

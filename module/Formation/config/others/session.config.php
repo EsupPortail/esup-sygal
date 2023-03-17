@@ -20,10 +20,10 @@ use Formation\Service\Session\Search\SessionSearchService;
 use Formation\Service\Session\Search\SessionSearchServiceFactory;
 use Formation\Service\Session\SessionService;
 use Formation\Service\Session\SessionServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize' => [

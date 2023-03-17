@@ -7,7 +7,7 @@ use Admission\Controller\Document\DocumentController;
 use Admission\Controller\Document\DocumentControllerFactory;
 use Admission\Provider\Privilege\AdmissionPrivileges;
 use Laminas\Router\Http\Segment;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return array(
     'bjyauthorize' => [

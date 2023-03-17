@@ -2,12 +2,13 @@
 <?php
 
 use Application\Entity\Db\Role;
-use UnicaenAuth\Provider\Privilege\Privileges;
+use UnicaenUtilisateur\Provider\Privilege\RolePrivileges;
 
 /* @var $roles Role[] */
 
-$canEdit = $this->isAllowed('privilege/'.Privileges::DROIT_ROLE_EDITION);
-$ajoutUrl = $this->url( 'droits/roles/edition' );
+$canEdit = $this->isAllowed(RolePrivileges::getResourceId(RolePrivileges::ROLE_MODIFIER));
+//$ajoutUrl = $this->url( 'droits/roles/edition' );
+$ajoutUrl = $this->url( 'droits' );
 
 ?>
 <table class="table table-sm table-bordered">
@@ -19,8 +20,10 @@ $ajoutUrl = $this->url( 'droits/roles/edition' );
         <?php if ($canEdit): ?><th>Action</th><?php endif; ?>
     </tr>
 <?php foreach( $roles as $role ):
-    $editionUrl     = $this->url( 'droits/roles/edition',     ['role' => $role->getId()] );
-    $suppressionUrl = $this->url( 'droits/roles/suppression', ['role' => $role->getId()] );
+//    $editionUrl     = $this->url( 'droits/roles/edition',     ['role' => $role->getId()] );
+    $editionUrl     = $this->url( 'droits',     ['role' => $role->getId()] );
+//    $suppressionUrl = $this->url( 'droits/roles/suppression', ['role' => $role->getId()] );
+    $suppressionUrl = $this->url( 'droits', ['role' => $role->getId()] );
 
     $importe = $role->getSource() && $role->getSource()->getImportable();
     $historise = $role->getHistoDestruction() !== null;
@@ -38,8 +41,8 @@ $ajoutUrl = $this->url( 'droits/roles/edition' );
         <td><?php echo $role->getTypeStructureDependant(); ?></td>
         <td style="width:1%;white-space: nowrap;text-align: center">
             <?php if ($canEditThisRole): ?>
-            <a href="<?php echo $editionUrl; ?>" class="ajax-modal" data-event="role-edition"><span class="icon icon-edit iconly"></span></a>
-            <a href="<?php echo $suppressionUrl; ?>" class="ajax-modal" data-event="role-suppression"><span class="icon icon-delete iconly"></span></a>
+<!--            <a href="--><?php //echo $editionUrl; ?><!--" class="ajax-modal" data-event="role-edition"><span class="icon icon-edit iconly"></span></a>-->
+<!--            <a href="--><?php //echo $suppressionUrl; ?><!--" class="ajax-modal" data-event="role-suppression"><span class="icon icon-delete iconly"></span></a>-->
             <?php endif; ?>
         </td>
     </tr>

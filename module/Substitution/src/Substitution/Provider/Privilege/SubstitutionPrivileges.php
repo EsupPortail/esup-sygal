@@ -2,7 +2,7 @@
 
 namespace Substitution\Provider\Privilege;
 
-use UnicaenAuth\Provider\Privilege\Privileges;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 class SubstitutionPrivileges extends Privileges
 {

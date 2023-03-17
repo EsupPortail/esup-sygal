@@ -6,7 +6,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Entity\Db\ValiditeFichier;
 use Application\Service\Email\EmailTheseServiceAwareTrait;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Depot\Entity\Db\FichierThese;
 use Depot\Notification\ChangementCorrectionAttendueNotification;
@@ -34,7 +34,7 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
     use VariableServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use EmailTheseServiceAwareTrait;
 
     protected UrlHelper $urlHelper;
@@ -282,7 +282,7 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
     public function createNotificationValidationDepotTheseCorrigee(These $these, ?Utilisateur $presidentJury = null): Notification
     {
         $targetedUrl = $this->urlHelper->__invoke( 'these/validation-these-corrigee', ['these' => $these->getId()], ['force_canonical' => true]);
-        $president = $this->getRoleService()->getRepository()->findOneByCodeAndStructureConcrete(Role::CODE_PRESIDENT_JURY, $these->getEtablissement());
+        $president = $this->getApplicationRoleService()->getRepository()->findOneByCodeAndStructureConcrete(Role::CODE_PRESIDENT_JURY, $these->getEtablissement());
         $url = $this->urlHelper->__invoke('zfcuser/login', ['type' => 'local'], ['query' => ['redirect' => $targetedUrl, 'role' => $president->getRoleId()], 'force_canonical' => true], true);
 
         // envoi de mail aux directeurs de thèse
@@ -312,7 +312,7 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
             ->setTemplatePath('application/notification/mail/notif-validation-correction-these')
             ->setTemplateVariables([
                 'these' => $these,
-                'role' => $this->roleService->getRepository()->findOneBy(['code' => Role::CODE_PRESIDENT_JURY]),
+                'role' => $this->applicationRoleService->getRepository()->findOneBy(['code' => Role::CODE_PRESIDENT_JURY]),
                 'url' => $this->urlHelper->__invoke('these/depot', ['these' => $these->getId()], ['force_canonical' => true]),
             ]);
 
@@ -347,7 +347,7 @@ class DepotNotificationFactory extends \Notification\Factory\NotificationFactory
             ->setTemplatePath('application/notification/mail/notif-validation-correction-these')
             ->setTemplateVariables([
                 'these' => $these,
-                'role' => $this->roleService->getRepository()->findOneBy(['code' => Role::CODE_PRESIDENT_JURY]),
+                'role' => $this->applicationRoleService->getRepository()->findOneBy(['code' => Role::CODE_PRESIDENT_JURY]),
                 'url' => $this->urlHelper->__invoke('these/depot', ['these' => $these->getId()], ['force_canonical' => true]),
             ]);
     }

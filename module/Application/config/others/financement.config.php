@@ -4,7 +4,7 @@ namespace Application;
 
 use Application\Provider\Privilege\FinancementPrivileges;
 use Application\View\Helper\FinancementFormatterHelperFactory;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize'    => [

@@ -11,8 +11,8 @@ use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Laminas\Authentication\Exception\ExceptionInterface;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenAuth\Authentication\Storage\ChainableStorage;
-use UnicaenAuth\Authentication\Storage\ChainEvent;
+use UnicaenAuthentification\Authentication\Storage\ChainableStorage;
+use UnicaenAuthentification\Authentication\Storage\ChainEvent;
 
 /**
  * Ajout de données utiles concernant l'utilisateur authentifié.

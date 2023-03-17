@@ -3,8 +3,8 @@
 namespace Individu\View\Helper;
 
 use Individu\Entity\Db\Individu;
-use UnicaenAuth\Options\ModuleOptions;
-use UnicaenAuth\View\Helper\UserAbstract;
+use UnicaenAuthentification\Options\ModuleOptions;
+use UnicaenUtilisateur\View\Helper\UserAbstract;
 use Laminas\Form\Form;
 use Laminas\Form\View\Helper\Form as FormHelper;
 use Laminas\Form\View\Helper\FormElement;

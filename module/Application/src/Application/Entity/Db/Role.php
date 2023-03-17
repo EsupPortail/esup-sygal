@@ -9,7 +9,7 @@ use Structure\Entity\Db\StructureAwareTrait;
 use Structure\Entity\Db\TypeStructure;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use UnicaenAuth\Entity\Db\AbstractRole;
+use UnicaenUtilisateur\Entity\Db\AbstractRole;
 use UnicaenDbImport\Entity\Db\Interfaces\SourceAwareInterface;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
@@ -99,11 +99,6 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     protected $code;
 
     /**
-     * @var string
-     */
-    protected $libelle;
-
-    /**
      * @var bool
      */
     private $attributionAutomatique = false;
@@ -184,25 +179,6 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
     public function setCode($code)
     {
         $this->code = $code;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLibelle()
-    {
-        return $this->libelle;
-    }
-
-    /**
-     * @param string $libelle
-     * @return Role
-     */
-    public function setLibelle($libelle)
-    {
-        $this->libelle = $libelle;
 
         return $this;
     }

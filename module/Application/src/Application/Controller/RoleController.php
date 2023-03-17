@@ -4,18 +4,17 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Role;
 use Application\Form\RoleFormAwareTrait;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Laminas\View\Model\ViewModel;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
 
 class RoleController extends AbstractController
 {
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use RoleFormAwareTrait;
     use SourceAwareTrait;
-    use \UnicaenAuth\Service\Traits\RoleServiceAwareTrait;
 
     public function indexAction()
     {
@@ -23,7 +22,7 @@ class RoleController extends AbstractController
 
         $mappedRoles = [];
         foreach ($etablissementsInscrs as $etablissement) {
-            $roles = $this->getRoleService()->getRepository()->findAllRolesTheseDependantForStructureConcrete($etablissement);
+            $roles = $this->getApplicationRoleService()->getRepository()->findAllRolesTheseDependantForStructureConcrete($etablissement);
             $mappedRoles[$etablissement->getStructure()->getCode()] = $roles;
         }
         return new ViewModel([

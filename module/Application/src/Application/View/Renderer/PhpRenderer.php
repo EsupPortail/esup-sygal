@@ -103,7 +103,7 @@ use UnicaenIdref\View\Helper\IdrefLinkViewHelper;
  * @method string                                                    LaminasDeveloperToolsTime($time, $precision = 2)
  * @method string                                                    LaminasDeveloperToolsMemory($size, $precision = 2)
  * @method string                                                    LaminasDeveloperToolsDetailArray($label, array $details, $redundant = false)
- * @method \UnicaenAuth\View\Helper\AppConnection                    appconnection()
+ * @method \UnicaenAuthentification\View\Helper\AppConnection                    appconnection()
  * @method \UnicaenApp\View\Helper\Messenger                         messenger()
  * @method string                                                    modalajaxdialog($dialogDivId = null)
  * @method \UnicaenApp\View\Helper\ConfirmHelper                     confirm($message = null)

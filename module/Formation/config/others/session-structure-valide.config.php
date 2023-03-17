@@ -12,7 +12,7 @@ use Formation\Provider\Privilege\SessionPrivileges;
 use Formation\Service\SessionStructureValide\SessionStructureValideService;
 use Formation\Service\SessionStructureValide\SessionStructureValideServiceFactory;
 use Laminas\Router\Http\Segment;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     'bjyauthorize' => [

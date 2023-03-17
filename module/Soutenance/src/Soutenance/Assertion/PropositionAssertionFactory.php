@@ -18,7 +18,7 @@ class PropositionAssertionFactory {
          * @var UserContextService $userContext
          * @var ValidationService $validationService
          */
-        $userContext = $container->get('UnicaenAuth\Service\UserContext');
+        $userContext = $container->get(\UnicaenAuthentification\Service\UserContext::class);
         $validationService = $container->get('ValidationService');
 
         /** @var  $assertion */

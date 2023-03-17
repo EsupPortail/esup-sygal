@@ -5,7 +5,7 @@ namespace Application;
 use Application\Controller\Factory\OffreControllerFactory;
 use Application\Controller\OffreController;
 use Laminas\Router\Http\Literal;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     'bjyauthorize'    => [

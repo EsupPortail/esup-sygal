@@ -4,7 +4,8 @@ namespace Application\Controller;
 
 use Application\Entity\Db\Privilege;
 use Application\Entity\Db\Role;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\QueryBuilder;
 use Laminas\View\Model\JsonModel;
@@ -13,12 +14,12 @@ use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use UnicaenAuth\Service\Traits\PrivilegeServiceAwareTrait;
+use UnicaenPrivilege\Service\Privilege\PrivilegeServiceAwareTrait;
 
 class PrivilegeController extends AbstractController
 {
     use EntityManagerAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use StructureServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use PrivilegeServiceAwareTrait;
@@ -52,7 +53,7 @@ class PrivilegeController extends AbstractController
         $qbPrivileges = $this->entityManager->getRepository(Privilege::class)->createQueryBuilder("p");
         $qbPrivileges
             ->addSelect('r')
-            ->leftJoin('p.role', 'r')
+            ->leftJoin('p.roles', 'r')
             ->orderBy("p.categorie, p.ordre", "ASC");
         $this->applyFilterCategorie($qbPrivileges, $categorie);
         /** @var Privilege[] $privileges */
@@ -81,46 +82,34 @@ class PrivilegeController extends AbstractController
         return $roles;
     }
 
-    public function modifierAction()
+    /**
+     * Ajout ou retrait d'un privilège à un rôle.
+     */
+    public function modifierAction(): JsonModel
     {
-        $privilege_id = $this->params()->fromRoute("privilege");
-        $role_id = $this->params()->fromRoute("role");
-        /**
-         * @var Privilege $privilege
-         * @var Role      $role
-         */
-        $privilege = $this->entityManager->getRepository(Privilege::class)->find($privilege_id);
-        $role = $this->entityManager->getRepository(Role::class)->find($role_id);
-
-        $value = null;
-
-        // /!\ si le role à un privilège desactivé la modification
+        /** @var Role $role */
+        $role = $this->entityManager->getRepository(Role::class)->find($this->params()->fromRoute("role"));
         if ($role->getProfil()) {
-            if (array_search($role, $privilege->getRole()->toArray()) !== false) {
-                $value = 1;
-            } else {
-                $value = 0;
-            }
+            throw new RuntimeException("Seuls les rôles sans profil sont concernés");
+        }
+
+        /** @var Privilege $privilege */
+        $privilege = $this->entityManager->getRepository(Privilege::class)->find($this->params()->fromRoute("privilege"));
+
+        if (in_array($role, $privilege->getRoles()->toArray())) {
+            $privilege->removeRole($role);
+            $value = 0;
         } else {
-            if (array_search($role, $privilege->getRole()->toArray()) !== false) {
-                $privilege->removeRole($role);
-                try {
-                    $this->getEntityManager()->flush($privilege);
-                } catch (OptimisticLockException $e) {
-                    throw new RuntimeException("Un problème est survenu lors de la suppression du privilège.", $e);
-                }
-                $value = 0;
-            } else {
-                $privilege->addRole($role);
-                try {
-                    $this->getEntityManager()->flush($privilege);
-                } catch (OptimisticLockException $e) {
-                    throw new RuntimeException("Un problème est survenu lors de l'ajout du privilège.", $e);
-                }
-                $value = 1;
-            }
-            // retrait du profil affecté à un role
-            $this->getRoleService()->removeProfil($role);
+            $privilege->addRole($role);
+            $value = 1;
+        }
+        try {
+            $this->getEntityManager()->flush($privilege);
+        } catch (ORMException $e) {
+            throw new RuntimeException(
+                sprintf("Un problème est survenu lors de %s du privilège.", $value ? "l'ajout" : "la suppression"),
+                $e
+            );
         }
 
         return new JsonModel([

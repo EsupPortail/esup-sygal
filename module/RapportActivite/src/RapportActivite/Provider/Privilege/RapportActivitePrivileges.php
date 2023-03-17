@@ -2,7 +2,7 @@
 
 namespace RapportActivite\Provider\Privilege;
 
-use UnicaenAuth\Provider\Privilege\Privileges;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 class RapportActivitePrivileges extends Privileges
 {

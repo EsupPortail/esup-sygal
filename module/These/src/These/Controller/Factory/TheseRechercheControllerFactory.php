@@ -30,7 +30,7 @@ class TheseRechercheControllerFactory
         $controller = new TheseRechercheController();
         $controller->setSearchService($theseSearchService);
         $controller->setTheseService($theseService);
-        $controller->setRoleService($roleService);
+        $controller->setApplicationRoleService($roleService);
 
         return $controller;
     }

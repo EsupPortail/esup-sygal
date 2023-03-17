@@ -12,6 +12,7 @@ use Application\Controller\Plugin\ForwardFactory;
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Entity\UserWrapperFactory;
 use Application\Entity\UserWrapperFactoryFactory;
+use Application\Event\UserAuthenticatedEventListener;
 use Application\Event\UserAuthenticatedEventListenerFactory;
 use Application\Event\UserRoleSelectedEventListener;
 use Application\Form\Factory\RoleFormFactory;
@@ -40,9 +41,12 @@ use Fichier\Controller\Plugin\Uploader\UploaderPluginFactory;
 use Fichier\View\Helper\Uploader\UploaderHelper;
 use Fichier\View\Helper\Uploader\UploaderHelperFactory;
 use Laminas\Navigation\Navigation;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 use Structure\Form\Factory\EcoleDoctoraleFormFactory;
 use Unicaen\Console\Router\Simple;
 use UnicaenApp\Service\EntityManagerAwareInitializer;
+use UnicaenAuthentification\Service\UserContext;
+use UnicaenUtilisateur\ORM\Event\Listeners\HistoriqueListener;
 
 return array(
     'bjyauthorize' => [
@@ -54,7 +58,7 @@ return array(
 //                ['controller' => ConsoleController::class, 'action' => '', 'roles' => []],
 //                ['controller' => ConsoleController::class, 'action' => '', 'roles' => []],
             ],
-            \UnicaenAuth\Guard\PrivilegeController::class => [
+            \UnicaenPrivilege\Guard\PrivilegeController::class => [
                 [
                     'controller' => 'DoctrineModule\Controller\Cli',
                     'roles' => [],
@@ -89,7 +93,7 @@ return array(
         'eventmanager'  => [
             'orm_default' => [
                 'subscribers' => [
-                    'UnicaenApp\HistoriqueListener',
+                    HistoriqueListener::class,
                 ],
             ],
         ],
@@ -216,9 +220,10 @@ return array(
     ],
     'service_manager' => array(
         'aliases' => array(
-            'UserContextService' => 'UnicaenAuth\Service\UserContext',
+            'UserContextService' => UserContext::class,
             'RoleService' =>  RoleService::class,
             UserContextService::class => 'UserContextService',
+            'UserAuthenticatedEventListener' => UserAuthenticatedEventListener::class,
         ),
         'invokables' => array(
             'RouteMatchInjector' => RouteMatchInjector::class,
@@ -226,12 +231,12 @@ return array(
         ),
         'factories' => array(
             Navigation::class => NavigationFactoryFactory::class,
-            'UnicaenAuth\Service\UserContext' => UserContextServiceFactory::class,
-            'UserAuthenticatedEventListener' => UserAuthenticatedEventListenerFactory::class,
+            UserContext::class => UserContextServiceFactory::class,
             'Sygal\Memcached'                => MemcachedFactory::class,
             RoleService::class => RoleServiceFactory::class,
             SourceCodeStringHelper::class => SourceCodeStringHelperFactory::class,
             UserWrapperFactory::class => UserWrapperFactoryFactory::class,
+            UserAuthenticatedEventListener::class => UserAuthenticatedEventListenerFactory::class,
         ),
         'abstract_factories' => [
             AssertionAbstractFactory::class,

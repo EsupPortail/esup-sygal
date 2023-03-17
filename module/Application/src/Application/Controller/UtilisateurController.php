@@ -11,7 +11,7 @@ use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Notification\ApplicationNotificationFactoryAwareTrait;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
@@ -38,10 +38,10 @@ use These\Service\Acteur\ActeurServiceAwareTrait;
 use UnexpectedValueException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use UnicaenAuth\Entity\Shibboleth\ShibUser;
-use UnicaenAuth\Options\ModuleOptions;
-use UnicaenAuth\Service\ShibService;
-use UnicaenAuth\Service\Traits\UserServiceAwareTrait;
+use UnicaenAuthentification\Entity\Shibboleth\ShibUser;
+use UnicaenAuthentification\Options\ModuleOptions;
+use UnicaenAuthentification\Service\ShibService;
+use UnicaenAuthentification\Service\User as AuthentificationUserService;
 use UnicaenAuthToken\Controller\TokenController;
 use UnicaenAuthToken\Service\TokenServiceAwareTrait;
 use Webmozart\Assert\Assert;
@@ -49,7 +49,7 @@ use Webmozart\Assert\Assert;
 /**
  * @method \Application\Controller\Plugin\Forward forward()
  */
-class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurController implements SearchControllerInterface
+class UtilisateurController extends \UnicaenAuthentification\Controller\UtilisateurController implements SearchControllerInterface
 {
     use SearchServiceAwareTrait;
     use SearchControllerTrait;
@@ -57,7 +57,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use ActeurServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use UserContextServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use EntityManagerAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
@@ -67,7 +67,6 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     use ApplicationNotificationFactoryAwareTrait;
     use StructureServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
-    use UserServiceAwareTrait;
     use TokenServiceAwareTrait;
 
     use UtilisateurProcessAwareTrait;
@@ -92,6 +91,13 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
     protected $shibService;
 
     private CreationUtilisateurForm $creationUtilisateurForm;
+
+    protected AuthentificationUserService $authentificationUserService;
+
+    public function setAuthentificationUserService(AuthentificationUserService $authentificationUserService): void
+    {
+        $this->authentificationUserService = $authentificationUserService;
+    }
 
     /**
      * @param ModuleOptions $authModuleOptions
@@ -224,7 +230,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
                 } else {
                     $utilisateur = $this->utilisateurService->createFromFormData($data->toArray());
                 }
-                $this->userService->updateUserPasswordResetToken($utilisateur);
+                $this->authentificationUserService->updateUserPasswordResetToken($utilisateur);
 
                 try {
                     $notif = $this->applicationNotificationFactory->createNotificationInitialisationCompte($utilisateur, $utilisateur->getPasswordResetToken());
@@ -301,7 +307,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         }
 
         $usernameUsurpe = $utilisateur->getUsername();
-        $sessionIdentity = $this->serviceUserContext->usurperIdentite($usernameUsurpe);
+        $sessionIdentity = $this->userContextService->usurperIdentite($usernameUsurpe);
         if ($sessionIdentity !== null) {
             // cuisine spéciale si l'utilisateur courant s'est authentifié via Shibboleth
             $this->usurperIdentiteShib($utilisateur);
@@ -348,9 +354,9 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $individu = $this->getIndividuService()->getRepository()->find($individuId);
             $roleId = $this->params()->fromRoute('role');
             /** @var \Application\Entity\Db\Role $role */
-            $role = $this->getRoleService()->getRepository()->find($roleId);
+            $role = $this->getApplicationRoleService()->getRepository()->find($roleId);
 
-            $this->roleService->removeRole($individuId, $roleId);
+            $this->applicationRoleService->removeRole($individuId, $roleId);
 
             try {
                 $notif = $this->applicationNotificationFactory->createNotificationChangementRole("retrait", $role, $individu);
@@ -376,9 +382,9 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
             $individuId = $this->params()->fromRoute('individu');
             $individu = $this->getIndividuService()->getRepository()->find($individuId);
             $roleId = $this->params()->fromRoute('role');
-            $role = $this->getRoleService()->getRepository()->find($roleId);
+            $role = $this->getApplicationRoleService()->getRepository()->find($roleId);
 
-            $this->roleService->addRole($individuId, $roleId);
+            $this->applicationRoleService->addRole($individuId, $roleId);
 
             try {
                 $notif = $this->applicationNotificationFactory->createNotificationChangementRole("ajout", $role, $individu);
@@ -442,7 +448,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
 
         if (empty($utilisateurs)) {
             $user = $this->utilisateurService->createFromIndividu($individu, $individu->getEmailPro(), 'none');
-            $this->userService->updateUserPasswordResetToken($user);
+            $this->authentificationUserService->updateUserPasswordResetToken($user);
 
             $url = $this->url()->fromRoute(
                 'utilisateur/init-compte',
@@ -471,7 +477,7 @@ class UtilisateurController extends \UnicaenAuth\Controller\UtilisateurControlle
         $utilisateur = $utilisateurs ? current($utilisateurs) : null;
 
         if ($utilisateur !== null) {
-            $this->userService->updateUserPasswordResetToken($utilisateur);
+            $this->authentificationUserService->updateUserPasswordResetToken($utilisateur);
             $url = $this->url()->fromRoute(
                 'utilisateur/init-compte',
                 ['token' => $utilisateur->getPasswordResetToken()],

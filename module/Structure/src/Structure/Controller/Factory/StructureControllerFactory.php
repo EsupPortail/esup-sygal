@@ -46,7 +46,7 @@ class StructureControllerFactory
 
         $controller = new StructureController();
         $controller->setIndividuService($individuService);
-        $controller->setRoleService($roleService);
+        $controller->setApplicationRoleService($roleService);
         $controller->setStructureService($structureService);
         $controller->setEcoleDoctoraleService($ecoleService);
         $controller->setUniteRechercheService($uniteService);

@@ -2,7 +2,7 @@
 
 namespace StepStar\Provider;
 
-use UnicaenAuth\Provider\Privilege\Privileges;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 class StepStarPrivileges extends Privileges
 {

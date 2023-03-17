@@ -32,8 +32,8 @@ use Application\Service\Rapport\RapportService;
 use Application\Service\Rapport\RapportServiceFactory;
 use Application\Service\RapportValidation\RapportValidationService;
 use Application\Service\RapportValidation\RapportValidationServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize'    => [

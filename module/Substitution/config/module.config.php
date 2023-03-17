@@ -51,7 +51,7 @@ use Substitution\Service\Substitution\UniteRecherche\UniteRechercheSubstitutionS
 use Substitution\Service\Substitution\UniteRecherche\UniteRechercheSubstitutionServiceFactory;
 use Substitution\Service\Trigger\TriggerService;
 use Substitution\Service\Trigger\TriggerServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     'bjyauthorize' => [

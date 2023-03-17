@@ -7,7 +7,7 @@ use Admission\Notification\AdmissionOperationAttenduNotification;
 use Admission\Rule\Email\ExtractionEmailRuleAwareTrait;
 use Admission\Rule\Operation\AdmissionOperationRuleAwareTrait;
 use Application\Rule\RuleInterface;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use UnicaenApp\Traits\MessageAwareTrait;
 
@@ -18,7 +18,7 @@ class OperationAttendueNotificationRule implements RuleInterface
 {
     use AdmissionOperationRuleAwareTrait;
     use ActeurServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use MessageAwareTrait;
     use ExtractionEmailRuleAwareTrait;
 

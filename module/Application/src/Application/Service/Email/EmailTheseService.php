@@ -2,7 +2,7 @@
 
 namespace Application\Service\Email;
 
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use Individu\Entity\Db\IndividuRole;
@@ -14,7 +14,7 @@ use These\Service\Acteur\ActeurServiceAwareTrait;
 
 class EmailTheseService
 {
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use VariableServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
     use ActeurServiceAwareTrait;
@@ -53,7 +53,7 @@ class EmailTheseService
      */
     public function fetchEmailEcoleDoctorale(These $these) : array
     {
-        $individuRoles = $this->roleService->findIndividuRoleByStructure(
+        $individuRoles = $this->applicationRoleService->findIndividuRoleByStructure(
             $these->getEcoleDoctorale()->getStructure(), null, $these->getEtablissement());
 
         return $this->collectEmailsFromIndividuRoles($individuRoles);
@@ -64,7 +64,7 @@ class EmailTheseService
      */
     public function fetchEmailUniteRecherche(These $these) : array
     {
-        $individuRoles = $this->roleService->findIndividuRoleByStructure(
+        $individuRoles = $this->applicationRoleService->findIndividuRoleByStructure(
             $these->getUniteRecherche()->getStructure(), null, $these->getEtablissement());
 
         return $this->collectEmailsFromIndividuRoles($individuRoles);

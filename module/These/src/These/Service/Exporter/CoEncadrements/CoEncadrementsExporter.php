@@ -2,7 +2,7 @@
 
 namespace These\Service\Exporter\CoEncadrements;
 
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Laminas\View\Renderer\PhpRenderer;
 use Laminas\View\Resolver\TemplatePathStack;
 use These\Provider\Template\PdfTemplates;
@@ -12,7 +12,7 @@ use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 class CoEncadrementsExporter extends PdfExporter
 {
     use RenduServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     private $vars;
 
     public function setVars(array $vars)

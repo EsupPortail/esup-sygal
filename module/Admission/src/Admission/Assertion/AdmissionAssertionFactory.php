@@ -8,6 +8,7 @@ use Individu\Service\IndividuService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use UnicaenAuthentification\Service\UserContext;
 
 class AdmissionAssertionFactory
 {
@@ -17,7 +18,7 @@ class AdmissionAssertionFactory
      */
     public function __invoke(ContainerInterface $container): AdmissionAssertion
     {
-        $userContext = $container->get('UnicaenAuth\Service\UserContext');
+        $userContext = $container->get(UserContext::class);
         $admission = $container->get(AdmissionService::class);
         $individu = $container->get(IndividuService::class);
         $messageCollector = $container->get('MessageCollector');

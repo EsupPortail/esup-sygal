@@ -12,6 +12,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use UnicaenApp\Service\MessageCollector;
+use UnicaenAuthentification\Service\UserContext;
 
 class AdmissionValidationAssertionFactory
 {
@@ -22,7 +23,7 @@ class AdmissionValidationAssertionFactory
     public function __invoke(ContainerInterface $container): AdmissionValidationAssertion
     {
         /** @var UserContextService $userContext */
-        $userContext = $container->get('UnicaenAuth\Service\UserContext');
+        $userContext = $container->get(UserContext::class);
         /** @var AdmissionService $admissionService */
         $admissionService = $container->get(AdmissionService::class);
         /** @var MessageCollector $messageCollector */

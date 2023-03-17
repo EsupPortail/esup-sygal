@@ -4,7 +4,7 @@ namespace These\Service\Acteur;
 
 use Application\Entity\Db\Role;
 use Application\Service\BaseService;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
@@ -21,7 +21,7 @@ use UnicaenApp\Exception\RuntimeException;
 
 class ActeurService extends BaseService
 {
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use SourceServiceAwareTrait;
     use SourceCodeStringHelperAwareTrait;
     use UserContextServiceAwareTrait;
@@ -107,7 +107,7 @@ class ActeurService extends BaseService
     public function ajouterCoEncradrant(These $these, Individu $individu, ?Etablissement $etablissement = null): ?Acteur
     {
         if ($etablissement === null) $etablissement = $these->getEtablissement();
-        $role = $this->getRoleService()->getRepository()->findOneByCodeAndStructureConcrete(Role::CODE_CO_ENCADRANT, $these->getEtablissement());
+        $role = $this->getApplicationRoleService()->getRepository()->findOneByCodeAndStructureConcrete(Role::CODE_CO_ENCADRANT, $these->getEtablissement());
         $source = $this->sourceService->fetchApplicationSource();
 
         $acteur = new Acteur();
@@ -143,7 +143,7 @@ class ActeurService extends BaseService
     public function newActeur(These $these, Individu $individu, $role): Acteur
     {
         if (is_string($role)) {
-            $role = $this->roleService->getRepository()->findByCode($role);
+            $role = $this->applicationRoleService->getRepository()->findByCode($role);
         }
 
         $acteur = new Acteur();
@@ -296,7 +296,7 @@ class ActeurService extends BaseService
         ?Etablissement $etablissement) : Acteur
     {
         $acteur = $this->getRepository()->findActeurByIndividuAndThese($individu, $these);
-        $role = $this->roleService->getRepository()->findByCode($roleCode);
+        $role = $this->applicationRoleService->getRepository()->findByCode($roleCode);
 
         if ($acteur === null) {
             $acteur = $this->newActeur($these, $individu, $role);
@@ -323,7 +323,7 @@ class ActeurService extends BaseService
     public function creerOrModifierActeur(These $these, Individu $individu, string $roleCode, Qualite $qualite, Etablissement $etablissement) : Acteur
     {
         $acteur = $this->getRepository()->findActeurByIndividuAndThese($individu, $these);
-        $role = $this->getRoleService()->getRepository()->findByCode($roleCode);
+        $role = $this->getApplicationRoleService()->getRepository()->findByCode($roleCode);
         if ($acteur === null OR $acteur === false) {
             $acteur = new Acteur();
             $acteur->setThese($these);

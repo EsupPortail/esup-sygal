@@ -6,7 +6,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
 use Application\Service\Email\EmailTheseServiceAwareTrait;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
@@ -23,6 +23,7 @@ use Soutenance\Service\Url\UrlServiceAwareTrait;
 use These\Entity\Db\These;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
+use UnicaenUtilisateur\Entity\Db\RoleInterface;
 use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 /** Todo à déplacer dans UnicaenRenderer dans les prochaines versions */
@@ -46,7 +47,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
     use ActeurServiceAwareTrait;
     use EmailTheseServiceAwareTrait;
     use MembreServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use TheseServiceAwareTrait;
     use EmailTheseServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
@@ -99,7 +100,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     public function createNotificationUniteRechercheProposition(These $these): Notification
     {
-        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure(), null, $these->getEtablissement());
+        $individuRoles = $this->applicationRoleService->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure(), null, $these->getEtablissement());
         //
         // todo : quid si rien pour l'établissement spécifié ? => il faut bien pouvoir notifier qqun, non ?!
         // if (!$individuRoles) {
@@ -128,7 +129,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
 
     public function createNotificationEcoleDoctoraleProposition(These $these): Notification
     {
-        $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure(), null, $these->getEtablissement());
+        $individuRoles = $this->applicationRoleService->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure(), null, $these->getEtablissement());
         $emails = $this->emailTheseService->collectEmailsFromIndividuRoles($individuRoles);
 
         if (empty($emails)) {

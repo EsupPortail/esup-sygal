@@ -25,7 +25,7 @@ return [
     ],
     'bjyauthorize'    => [
         'guards' => [
-            \UnicaenAuth\Guard\PrivilegeController::class => [
+            \UnicaenPrivilege\Guard\PrivilegeController::class => [
                 [
                     'controller' => 'SygalApi\\V1\\Rest\\Ping\\Controller',
 //                    'action'     => [

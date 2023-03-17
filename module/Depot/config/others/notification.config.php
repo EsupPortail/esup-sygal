@@ -2,7 +2,7 @@
 
 namespace Depot;
 
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use Depot\Controller\ObserverController;
 use Depot\Service\Notification\DepotNotificationFactory;
 use Depot\Service\Notification\DepotNotificationFactoryFactory;

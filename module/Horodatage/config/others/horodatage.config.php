@@ -9,7 +9,7 @@ use Horodatage\View\Helper\DerniersHorodatagesViewHelper;
 use Horodatage\View\Helper\HorodatagesParTypesViewHelper;
 use Horodatage\View\Helper\HorodatagesParTypeViewHelper;
 use Horodatage\View\Helper\HorodatageViewHelper;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     'bjyauthorize' => [

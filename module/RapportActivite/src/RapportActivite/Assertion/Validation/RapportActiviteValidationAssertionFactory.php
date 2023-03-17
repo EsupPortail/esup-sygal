@@ -18,7 +18,7 @@ class RapportActiviteValidationAssertionFactory
     public function __invoke(ContainerInterface $container): RapportActiviteValidationAssertion
     {
         /** @var \Application\Service\UserContextService $userContext */
-        $userContext = $container->get('UnicaenAuth\Service\UserContext');
+        $userContext = $container->get(\UnicaenAuthentification\Service\UserContext::class);
         /** @var RapportActiviteService $rapportActiviteService */
         $rapportActiviteService = $container->get(RapportActiviteService::class);
         /** @var \UnicaenApp\Service\MessageCollector $messageCollector */

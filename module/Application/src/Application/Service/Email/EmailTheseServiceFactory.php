@@ -25,7 +25,7 @@ class EmailTheseServiceFactory
 
         /** @var $roleService \Application\Service\Role\RoleService */
         $roleService = $container->get('RoleService');
-        $service->setRoleService($roleService);
+        $service->setApplicationRoleService($roleService);
 
         /** @var $utilisateurService \Application\Service\Utilisateur\UtilisateurService */
         $utilisateurService = $container->get(UtilisateurService::class);

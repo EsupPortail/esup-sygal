@@ -11,8 +11,8 @@ use Admission\Provider\Privilege\AdmissionPrivileges;
 use Admission\Service\Transmission\TransmissionService;
 use Admission\Service\Transmission\TransmissionServiceFactory;
 use Laminas\Router\Http\Segment;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return array(
     'bjyauthorize' => [

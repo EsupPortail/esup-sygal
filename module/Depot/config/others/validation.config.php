@@ -7,8 +7,8 @@ use Depot\Provider\Privilege\DepotPrivileges;
 use Depot\Provider\Privilege\ValidationPrivileges;
 use Depot\Service\Validation\DepotValidationService;
 use Depot\Service\Validation\DepotValidationServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize'    => [

@@ -2,7 +2,7 @@
 
 use Application\Controller\Factory\StatistiqueControllerFactory;
 use Indicateur\Provider\Privilege\IndicateurPrivileges;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 
 return [

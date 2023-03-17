@@ -8,7 +8,7 @@ use Formation\Provider\Privilege\IndexPrivileges;
 use Formation\Provider\Privilege\SessionPrivileges;
 use Formation\Service\Formateur\FormateurService;
 use Formation\Service\Formateur\FormateurServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 

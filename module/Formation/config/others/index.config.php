@@ -6,7 +6,7 @@ use Application\Navigation\ApplicationNavigationFactory;
 use Formation\Controller\IndexController;
 use Formation\Controller\IndexControllerFactory;
 use Formation\Provider\Privilege\IndexPrivileges;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 

@@ -13,7 +13,7 @@ use Retraitement\Form\Retraitement;
 use Unicaen\Console\Request as ConsoleRequest;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Filter\BytesFormatter;
-use UnicaenAuth\ORM\Event\Listeners\HistoriqueListener;
+use UnicaenUtilisateur\ORM\Event\Listeners\HistoriqueListener;
 
 class IndexController extends AbstractController
     implements FichierTheseServiceAwareInterface

@@ -25,7 +25,7 @@ class CoEncadrementsExporterFactory {
 
         $exporter = new CoEncadrementsExporter($renderer, 'A4');
         $exporter->setRenduService($renduService);
-        $exporter->setRoleService($roleService);
+        $exporter->setApplicationRoleService($roleService);
         return $exporter;
     }
 }

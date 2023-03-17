@@ -8,7 +8,7 @@ use Application\Service\Actualite\ActualiteService;
 use Application\Service\Actualite\ActualiteServiceFactory;
 use Application\View\Helper\Actualite\ActualiteViewHelperFactory;
 use Laminas\Router\Http\Literal;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     'bjyauthorize'    => [

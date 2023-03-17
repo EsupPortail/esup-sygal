@@ -19,7 +19,7 @@ use Formation\View\Helper\SessionInscriptionViewHelper;
 use Formation\View\Helper\SessionLibelleViewHelper;
 use Formation\View\Helper\SiteViewHelper;
 use Formation\View\Helper\TypeViewHelper;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return array(
     'bjyauthorize' => [

@@ -10,8 +10,8 @@ use Depot\View\Helper\Workflow\RoadmapHelper;
 use Depot\View\Helper\Workflow\WorkflowHelper;
 use Depot\View\Helper\Workflow\WorkflowStepHelper;
 use Laminas\ServiceManager\Factory\InvokableFactory;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'doctrine' => [

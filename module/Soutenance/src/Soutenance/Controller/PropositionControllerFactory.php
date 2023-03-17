@@ -122,7 +122,7 @@ class PropositionControllerFactory
         $controller->setMembreService($membreService);
         $controller->setNotifierService($notifierService);
         $controller->setPropositionService($propositionService);
-        $controller->setRoleService($roleService);
+        $controller->setApplicationRoleService($roleService);
         $controller->setUserContextService($userContextService);
         $controller->setValidationService($validationService);
         $controller->setJustificatifService($justificatifService);

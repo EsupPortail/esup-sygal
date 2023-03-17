@@ -42,7 +42,7 @@ class NotificationFactoryFactory extends NFF
 
         /** @var RoleService $roleService */
         $roleService = $container->get(RoleService::class);
-        $factory->setRoleService($roleService);
+        $factory->setApplicationRoleService($roleService);
 
         /** @var UrlService $urlService */
         $urlService = $container->get(UrlService::class);

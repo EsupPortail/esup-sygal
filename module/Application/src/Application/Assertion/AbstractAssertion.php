@@ -10,7 +10,7 @@ use Depot\Service\Workflow\WorkflowServiceAwareInterface;
 use Depot\Service\Workflow\WorkflowServiceAwareTrait;
 use Doctorant\Entity\Db\Doctorant;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
-use UnicaenAuth\Provider\Privilege\Privileges;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**
@@ -18,7 +18,7 @@ use Laminas\Permissions\Acl\Resource\ResourceInterface;
  *
  * @method UserContextService getServiceUserContext()
  */
-abstract class AbstractAssertion extends \UnicaenAuth\Assertion\AbstractAssertion
+abstract class AbstractAssertion extends \UnicaenPrivilege\Assertion\AbstractAssertion
     implements WorkflowServiceAwareInterface
 {
     use UserContextServiceAwareTrait;

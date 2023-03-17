@@ -27,7 +27,7 @@ use Structure\Service\StructureDocument\StructureDocumentService;
 use These\Form\Acteur\ActeurForm;
 use These\Service\Acteur\ActeurService;
 use These\Service\These\TheseService;
-use UnicaenAuth\Service\User as UserService;
+use UnicaenAuthentification\Service\User as UserService;
 use UnicaenAuthToken\Service\TokenService;
 use UnicaenParametre\Service\Parametre\ParametreService;
 
@@ -106,7 +106,7 @@ class PresoutenanceControllerFactory
         $controller->setNotifierService($notifierService);
         $controller->setValidationService($validationService);
         $controller->setSourceService($sourceService);
-        $controller->setRoleService($roleService);
+        $controller->setApplicationRoleService($roleService);
         $controller->setUtilisateurService($utilisateurService);
         $controller->setUserService($userService);
         $controller->setEngagementImpartialiteService($engagementImpartialiteService);

@@ -5,7 +5,7 @@ namespace InscriptionAdministrative;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use InscriptionAdministrative\Controller\InscriptionAdministrativeController;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     'doctrine' => [

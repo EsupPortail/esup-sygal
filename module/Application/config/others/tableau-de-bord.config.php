@@ -4,7 +4,7 @@ use Application\Controller\Factory\TableauDeBordControllerFactory;
 use Application\Controller\TableauDeBordController;
 use Structure\Provider\Privilege\StructurePrivileges;
 use Application\Service\AnomalieService;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 

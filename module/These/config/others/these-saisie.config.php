@@ -34,9 +34,9 @@ use These\Form\TheseSaisie\TheseSaisieForm;
 use These\Form\TheseSaisie\TheseSaisieFormFactory;
 use These\Form\TheseSaisie\TheseSaisieHydrator;
 use These\Form\TheseSaisie\TheseSaisieHydratorFactory;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use These\Provider\Privilege\ThesePrivileges;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return [
     'bjyauthorize' => [

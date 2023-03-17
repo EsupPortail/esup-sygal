@@ -8,7 +8,7 @@ use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchResultPaginator;
 use Application\Search\SearchServiceAwareTrait;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use These\Entity\Db\These;
@@ -23,7 +23,7 @@ class TheseRechercheController extends AbstractController implements SearchContr
     use SearchServiceAwareTrait;
     use SearchControllerTrait;
 
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use TheseServiceAwareTrait;
 
     private bool $searchIfRequired = false; // todo : ne pas mettre à true car impossible de dépasser la page 1 !! :-(
@@ -48,7 +48,7 @@ class TheseRechercheController extends AbstractController implements SearchContr
         return new ViewModel([
             'theses' => $paginator,
             'text' => $text,
-            'roleDirecteurThese' => $this->roleService->getRepository()->findOneBy(['sourceCode' => Role::CODE_DIRECTEUR_THESE]),
+            'roleDirecteurThese' => $this->applicationRoleService->getRepository()->findOneBy(['sourceCode' => Role::CODE_DIRECTEUR_THESE]),
             'displayEtablissement' => !$etablissement,
             'displayDateSoutenance' => $etatThese === These::ETAT_SOUTENUE || !$etatThese,
             'etatThese' => $etatThese,

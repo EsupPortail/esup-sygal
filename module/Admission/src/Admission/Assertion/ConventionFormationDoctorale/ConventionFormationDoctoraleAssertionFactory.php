@@ -10,6 +10,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use UnicaenApp\Service\MessageCollector;
+use UnicaenAuthentification\Service\UserContext;
 
 class ConventionFormationDoctoraleAssertionFactory
 {
@@ -20,7 +21,7 @@ class ConventionFormationDoctoraleAssertionFactory
     public function __invoke(ContainerInterface $container): ConventionFormationDoctoraleAssertion
     {
         /** @var UserContextService $userContext */
-        $userContext = $container->get('UnicaenAuth\Service\UserContext');
+        $userContext = $container->get(UserContext::class);
         /** @var AdmissionService $admissionService */
         $admissionService = $container->get(AdmissionService::class);
         /** @var MessageCollector $messageCollector */

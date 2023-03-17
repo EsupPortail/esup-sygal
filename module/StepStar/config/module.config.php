@@ -49,7 +49,7 @@ use StepStar\Service\Xsl\XslServiceFactory;
 use StepStar\Service\Zip\ZipService;
 use StepStar\Service\Zip\ZipServiceFactory;
 use Unicaen\Console\Router\Simple;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     /**

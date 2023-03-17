@@ -5,6 +5,7 @@ namespace Doctorant\Assertion;
 use Application\Assertion\AbstractAssertion;
 use Psr\Container\ContainerInterface;
 use These\Service\These\TheseService;
+use UnicaenAuthentification\Service\UserContext;
 
 class DoctorantAssertionFactory
 {
@@ -16,7 +17,7 @@ class DoctorantAssertionFactory
     {
         $assertion = new DoctorantAssertion();
 
-        $userContext = $container->get('UnicaenAuth\Service\UserContext');
+        $userContext = $container->get(UserContext::class);
         $assertion->setUserContextService($userContext);
 
         $messageCollector = $container->get('MessageCollector');

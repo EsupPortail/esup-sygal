@@ -8,7 +8,7 @@ use Admission\Entity\Db\ConventionFormationDoctorale;
 use Admission\Entity\Db\Inscription;
 use Admission\Service\Admission\AdmissionServiceAwareTrait;
 use Application\Entity\Db\Role;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Admission\Provider\Template\PdfTemplates;
 use Admission\Service\Url\UrlServiceAwareTrait;
@@ -27,7 +27,7 @@ class ConventionFormationDoctoraleExporter extends PdfExporter
     use StructureServiceAwareTrait;
     use UrlServiceAwareTrait;
     use AdmissionServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     private $vars;
 
     public function setVars(array $vars)
@@ -65,11 +65,11 @@ class ConventionFormationDoctoraleExporter extends PdfExporter
         $uniteRechercheDirecteur = $inscription?->getUniteRecherche();
         $uniteRechercheCoDirecteur = $inscription?->getUniteRechercheCoDirecteur();
 
-        $individuResponsablesUniteRechercheDirecteur = $uniteRechercheDirecteur ? $this->roleService->findIndividuRoleByStructure($uniteRechercheDirecteur->getStructure(), Role::CODE_RESP_UR) : null;
+        $individuResponsablesUniteRechercheDirecteur = $uniteRechercheDirecteur ? $this->applicationRoleService->findIndividuRoleByStructure($uniteRechercheDirecteur->getStructure(), Role::CODE_RESP_UR) : null;
         if(is_array($individuResponsablesUniteRechercheDirecteur)){
             $conventionFormationDoctoraleDataTemplate->setIndividuResponsablesUniteRechercheDirecteur($individuResponsablesUniteRechercheDirecteur);
         }
-        $individuResponsablesUniteRechercheCoDirecteur = $uniteRechercheCoDirecteur ? $this->roleService->findIndividuRoleByStructure($uniteRechercheCoDirecteur->getStructure(), Role::CODE_RESP_UR) : null;
+        $individuResponsablesUniteRechercheCoDirecteur = $uniteRechercheCoDirecteur ? $this->applicationRoleService->findIndividuRoleByStructure($uniteRechercheCoDirecteur->getStructure(), Role::CODE_RESP_UR) : null;
         if(is_array($individuResponsablesUniteRechercheCoDirecteur)){
             $conventionFormationDoctoraleDataTemplate->setIndividuResponsablesUniteRechercheCoDirecteur($individuResponsablesUniteRechercheCoDirecteur);
         }

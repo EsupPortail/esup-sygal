@@ -13,9 +13,9 @@ use Application\Entity\UserWrapper;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;
-use UnicaenAuth\Entity\Ldap\People;
-use UnicaenAuth\Entity\Shibboleth\ShibUser;
-use UnicaenAuth\Service\UserContext as BaseUserContextService;
+use UnicaenAuthentification\Entity\Ldap\People;
+use UnicaenAuthentification\Entity\Shibboleth\ShibUser;
+use UnicaenAuthentification\Service\UserContext as BaseUserContextService;
 use Laminas\Permissions\Acl\Role\RoleInterface;
 
 /**

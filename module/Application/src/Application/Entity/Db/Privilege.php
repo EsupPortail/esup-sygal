@@ -3,8 +3,8 @@
 namespace Application\Entity\Db;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use UnicaenAuth\Entity\Db\AbstractPrivilege;
-use UnicaenAuth\Entity\Db\RoleInterface;
+use UnicaenPrivilege\Entity\Db\AbstractPrivilege;
+use UnicaenUtilisateur\Entity\Db\RoleInterface;
 
 class Privilege extends AbstractPrivilege
 {
@@ -55,11 +55,19 @@ class Privilege extends AbstractPrivilege
     }
 
     /**
+     * @deprecated
+     */
+    public function getRole()
+    {
+        throw new \BadMethodCallException("Cette méthode est remplacée par getRoles()");
+    }
+
+    /**
      * @return ArrayCollection
      */
     public function getRoles()
     {
-        return $this->role;
+        return $this->roles;
     }
 
     /**
@@ -68,6 +76,6 @@ class Privilege extends AbstractPrivilege
      */
     public function hasRole($role)
     {
-        return $this->role->contains($role);
+        return $this->roles->contains($role);
     }
 }

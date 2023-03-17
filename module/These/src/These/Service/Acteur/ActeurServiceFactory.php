@@ -27,7 +27,7 @@ class ActeurServiceFactory {
         $sourceCodeStringHelper = $container->get(SourceCodeStringHelper::class);
 
         $service = new ActeurService();
-        $service->setRoleService($roleService);
+        $service->setApplicationRoleService($roleService);
         $service->setSourceService($sourceService);
         $service->setUserContextService($userContextService);
         $service->setSourceCodeStringHelper($sourceCodeStringHelper);

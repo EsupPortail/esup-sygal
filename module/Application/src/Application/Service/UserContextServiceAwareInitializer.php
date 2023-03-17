@@ -13,7 +13,7 @@ class UserContextServiceAwareInitializer implements InitializerInterface
     public function __invoke(ContainerInterface $container, $instance)
     {
         if ($instance instanceof UserContextServiceAwareInterface) {
-            $instance->setUserContextService($container->get('UnicaenAuth\Service\UserContext'));
+            $instance->setUserContextService($container->get(\UnicaenAuthentification\Service\UserContext::class));
         }
 
         return $instance;

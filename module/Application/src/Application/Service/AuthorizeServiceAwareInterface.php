@@ -2,7 +2,7 @@
 
 namespace Application\Service;
 
-use UnicaenAuth\Service\AuthorizeService;
+use UnicaenPrivilege\Service\AuthorizeService;
 
 interface AuthorizeServiceAwareInterface
 {

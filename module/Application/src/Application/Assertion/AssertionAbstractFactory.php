@@ -8,7 +8,8 @@ use Application\Assertion\Interfaces\PageAssertionInterface;
 use Application\Service\UserContextService;
 use Interop\Container\ContainerInterface;
 use UnicaenApp\Service\MessageCollector;
-use UnicaenAuth\Service\AuthorizeService;
+use UnicaenAuthentification\Service\UserContext;
+use UnicaenPrivilege\Service\AuthorizeService;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\Exception\InvalidArgumentException;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
@@ -106,7 +107,7 @@ class AssertionAbstractFactory implements AbstractFactoryInterface
         /* @var AuthorizeService $authorizeService */
         $authorizeService = $container->get('BjyAuthorize\Service\Authorize');
         /** @var UserContextService $userContextService */
-        $userContextService = $container->get('UnicaenAuth\Service\UserContext');
+        $userContextService = $container->get(UserContext::class);
 
         // les Assertions spécialisées sont injectées dans l'Assertion de base
         /** @var EntityAssertionInterface $entityAssertion */

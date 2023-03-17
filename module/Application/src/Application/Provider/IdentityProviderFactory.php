@@ -57,7 +57,7 @@ class IdentityProviderFactory
         $service->setDoctorantService($doctorantService);
         $service->setEcoleDoctoraleService($edService);
         $service->setUniteRechercheService($urService);
-        $service->setRoleService($roleService);
+        $service->setApplicationRoleService($roleService);
         $service->setUtilisateurService($utilisateurService);
         $service->setEtablissementService($etablissementService);
         $service->setUserWrapperFactory($userWrapperFactory);

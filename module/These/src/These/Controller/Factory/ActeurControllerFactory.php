@@ -24,7 +24,7 @@ class ActeurControllerFactory
 
         /** @var RoleService $roleService */
         $roleService = $container->get(RoleService::class);
-        $controller->setRoleService($roleService);
+        $controller->setApplicationRoleService($roleService);
 
         /** @var \These\Form\Acteur\ActeurForm $acteurForm */
         $acteurForm = $container->get('FormElementManager')->get(ActeurForm::class);

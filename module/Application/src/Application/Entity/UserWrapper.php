@@ -5,11 +5,12 @@ namespace Application\Entity;
 use Application\Entity\Db\Utilisateur;
 use Individu\Entity\Db\Individu;
 use Laminas\Ldap\Exception\LdapException;
-use UnicaenApp\Entity\Ldap\People as UnicaenAppPeople;
+use Exception;
+use UnicaenAuthentification\Entity\Ldap\People as UnicaenAuthPeople;
 use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenAuth\Entity\Db\AbstractUser;
-use UnicaenAuth\Entity\Shibboleth\ShibUser;
+use UnicaenUtilisateur\Entity\Db\AbstractUser;
+use UnicaenAuthentification\Entity\Shibboleth\ShibUser;
 use UnicaenLdap\Entity\People as UnicaenLdapPeople;
 use ZfcUser\Entity\UserInterface;
 
@@ -52,7 +53,7 @@ class UserWrapper implements UserInterface
             default:
                 throw new LogicException(
                     "Type de données utilisateurs spécifié inattendu : " .
-                    (is_object($userData) ? get_class($userData) : gettype($userData))
+                    ($userData && is_object($userData) ? get_class($userData) : gettype($userData))
                 );
         }
 

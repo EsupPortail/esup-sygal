@@ -15,7 +15,7 @@ return [
 
         ],
         'guards' => [
-            \UnicaenAuth\Guard\PrivilegeController::class => [
+            \UnicaenPrivilege\Guard\PrivilegeController::class => [
                 [
                     'controller' => 'Retraitement\Controller\Index',
                     'action'     => [

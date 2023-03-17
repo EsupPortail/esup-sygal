@@ -8,7 +8,7 @@ use Application\Service\ListeDiffusion\Address\ListeDiffusionAddressGenerator;
 use Application\Service\ListeDiffusion\ListeDiffusionServiceAwareTrait;
 use Application\Service\ListeDiffusion\Url\UrlServiceAwareTrait;
 use Application\Service\Notification\ApplicationNotificationFactoryAwareTrait;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Doctrine\ORM\Exception\ORMException;
 use Fichier\FileUtils;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
@@ -38,7 +38,7 @@ class ListeDiffusionController extends AbstractController
     use StructureServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use UrlServiceAwareTrait;
 
     private ListeDiffusion $liste;
@@ -73,7 +73,7 @@ class ListeDiffusionController extends AbstractController
 //            Role::CODE_BDD => false,
 //            Role::CODE_ADMIN_TECH => false, // NB: pas de structure liée
         ];
-        $roles = $this->roleService->getRepository()->findByCodes(array_keys($codesRolesAvecTemoinsED));
+        $roles = $this->applicationRoleService->getRepository()->findByCodes(array_keys($codesRolesAvecTemoinsED));
 
         $etablissementsAsStructures = array_map(fn(Etablissement $e) => $e->getStructure(), $etablissements);
         $roles = array_filter($roles, fn(Role $role) =>

@@ -4,7 +4,7 @@ namespace RapportActivite\Rule\Operation\Notification;
 
 use Application\Entity\Db\Role;
 use Application\Rule\RuleInterface;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Closure;
 use Individu\Entity\Db\Individu;
 use InvalidArgumentException;
@@ -26,7 +26,7 @@ class OperationAttendueNotificationRule implements RuleInterface
     use RapportActiviteAvisServiceAwareTrait;
     use RapportActiviteOperationRuleAwareTrait;
     use ActeurServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use MessageAwareTrait;
 
     private RapportActiviteOperationInterface $operationRealisee;
@@ -139,10 +139,10 @@ class OperationAttendueNotificationRule implements RuleInterface
                         $these->getUniteRecherche() :
                         $these->getEcoleDoctorale();
                     // Recherche des individus ayant le rôle attendu.
-                    $individusRoles = $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole, $these->getEtablissement());
+                    $individusRoles = $this->applicationRoleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole, $these->getEtablissement());
                     if (!count($individusRoles)) {
                         // Si aucun individu n'est trouvé avec la contrainte sur l'établissement de l'individu, on essaie sans.
-                        $individusRoles = $this->roleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole);
+                        $individusRoles = $this->applicationRoleService->findIndividuRoleByStructure($structureConcrete->getStructure(), $codeRole);
                     }
                     if (count($individusRoles)) {
                         $emailsIndividuRoles = $this->collectEmails($individusRoles);
@@ -189,12 +189,12 @@ class OperationAttendueNotificationRule implements RuleInterface
 
         // Si une structure est spécifiée, on cherche un rôle "structure dépendant".
         if ($structureConcrete !== null) {
-            $role = $this->roleService->getRepository()->findOneByCodeAndStructure($codeRole, $structureConcrete->getStructure());
+            $role = $this->applicationRoleService->getRepository()->findOneByCodeAndStructure($codeRole, $structureConcrete->getStructure());
             $roleToString = $role ? (string) $role : null;
         }
         // Si on n'a aucun rôle sous la main, on recherche le 1er rôle existant ayant ce code, juste pour son libellé.
         if ($role === null) {
-            $role = $this->roleService->getRepository()->findByCode($codeRole);
+            $role = $this->applicationRoleService->getRepository()->findByCode($codeRole);
             $roleToString = $role ? $role->getLibelle() : null; // NB : faut bien prendre le libellé
         }
 

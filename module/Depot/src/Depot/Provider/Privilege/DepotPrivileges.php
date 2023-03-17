@@ -3,7 +3,7 @@
 namespace Depot\Provider\Privilege;
 
 use Fichier\Entity\Db\VersionFichier;
-use UnicaenAuth\Provider\Privilege\Privileges;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
 
 /**
  * Privilèges pour les opérations concernant les thèses.

@@ -20,7 +20,7 @@ class QualiteServiceFactory
          * @var UserContextService $userContextService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
-        $userContextService = $container->get('UnicaenAuth\Service\UserContext');
+        $userContextService = $container->get(\UnicaenAuthentification\Service\UserContext::class);
 
         /** @var QualiteService $service */
         $service = new QualiteService();

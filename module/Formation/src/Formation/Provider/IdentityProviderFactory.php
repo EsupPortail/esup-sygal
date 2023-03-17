@@ -3,12 +3,16 @@
 namespace Formation\Provider;
 
 use Formation\Service\Session\SessionService;
-use Interop\Container\ContainerInterface;
-use UnicaenAuth\Service\RoleService;
-use UnicaenAuth\Service\UserContext;
+use Psr\Container\ContainerInterface;
+use Application\Service\Role\RoleService;
+use UnicaenAuthentification\Service\UserContext;
 
 class IdentityProviderFactory
 {
+    /**
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     */
     public function __invoke(ContainerInterface $container) : IdentityProvider
     {
         /**
@@ -21,9 +25,10 @@ class IdentityProviderFactory
         $userService = $container->get(UserContext::class);
 
         $service = new IdentityProvider();
-        $service->setRoleService($roleService);
+        $service->setApplicationRoleService($roleService);
         $service->setSessionService($sessionService);
         $service->setServiceUserContext($userService);
+
         return $service;
     }
 }

@@ -16,7 +16,7 @@ use Structure\Provider\Privilege\StructurePrivileges;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Etablissement\EtablissementServiceFactory;
 use Structure\View\Helper\EtablissementHelper;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 

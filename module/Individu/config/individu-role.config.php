@@ -13,7 +13,7 @@ use Individu\Service\IndividuRole\IndividuRoleService;
 use Individu\Service\IndividuRole\IndividuRoleServiceFactory;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     'bjyauthorize' => [

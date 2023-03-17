@@ -3,7 +3,7 @@
 use Application\Controller\ExportController;
 use Application\Controller\Factory\ExportControllerFactory;
 use These\Provider\Privilege\ThesePrivileges;
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 
 return [
     'bjyauthorize'    => [

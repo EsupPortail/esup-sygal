@@ -17,7 +17,7 @@ class RapportActiviteAvisAssertionFactory
      */
     public function __invoke(ContainerInterface $container): RapportActiviteAvisAssertion
     {
-        $userContext = $container->get('UnicaenAuth\Service\UserContext');
+        $userContext = $container->get(\UnicaenAuthentification\Service\UserContext::class);
         $rapportActiviteService = $container->get(RapportActiviteService::class);
         $rapportActiviteAvisService = $container->get(RapportActiviteAvisService::class);
         $messageCollector = $container->get('MessageCollector');

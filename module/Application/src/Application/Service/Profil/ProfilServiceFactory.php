@@ -4,7 +4,7 @@ namespace Application\Service\Profil;
 
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
-use UnicaenAuth\Service\PrivilegeService;
+use UnicaenPrivilege\Service\Privilege\PrivilegeService;
 
 class ProfilServiceFactory
 {
@@ -15,12 +15,12 @@ class ProfilServiceFactory
          * @var PrivilegeService $privilegeService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
-        $privilegeService = $container->get('UnicaenAuth\Service\Privilege');
+        $privilegeService = $container->get(\UnicaenPrivilege\Service\Privilege\PrivilegeService::class);
 
         /** @var ProfilService $service */
         $service = new ProfilService();
         $service->setEntityManager($entityManager);
-        $service->setServicePrivilege($privilegeService);
+        $service->setPrivilegeService($privilegeService);
 
         return $service;
     }

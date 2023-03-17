@@ -4,7 +4,7 @@ namespace These\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Doctorant\Service\DoctorantServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Form\FieldsetInterface;
@@ -26,7 +26,7 @@ class TheseSaisieController extends AbstractController
     use TheseServiceAwareTrait;
     use TheseSaisieFormAwareTrait;
     use DoctorantServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use GeneralitesFormAwareTrait;
     use StructuresFormAwareTrait;
     use FinancementsFormAwareTrait;

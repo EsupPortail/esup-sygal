@@ -3,7 +3,7 @@
 namespace Application\Entity;
 
 use Psr\Container\ContainerInterface;
-use UnicaenAuth\Options\ModuleOptions;
+use UnicaenAuthentification\Options\ModuleOptions;
 
 /**
  * @author Unicaen

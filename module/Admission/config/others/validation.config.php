@@ -24,8 +24,8 @@ use Admission\Service\Operation\AdmissionOperationServiceFactory;
 use Admission\Service\Validation\AdmissionValidationService;
 use Admission\Service\Validation\AdmissionValidationServiceFactory;
 use Laminas\Router\Http\Segment;
-use UnicaenAuth\Guard\PrivilegeController;
-use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
+use UnicaenPrivilege\Guard\PrivilegeController;
+use UnicaenPrivilege\Provider\Rule\PrivilegeRuleProvider;
 
 return array(
     'bjyauthorize' => [

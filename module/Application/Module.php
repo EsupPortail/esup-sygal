@@ -3,7 +3,6 @@
 namespace Application;
 
 use Application\Event\UserAuthenticatedEventListener;
-use Application\Event\UserRoleSelectedEventListener;
 use Application\View\Helper\Navigation\MenuSecondaire;
 use Laminas\Config\Factory as ConfigFactory;
 use Laminas\EventManager\EventInterface;
@@ -63,10 +62,6 @@ class Module implements BootstrapListenerInterface, AutoloaderProviderInterface,
 
         /** @var UserAuthenticatedEventListener $listener */
         $listener = $sm->get('UserAuthenticatedEventListener');
-        $listener->attach($eventManager);
-
-        /** @var UserRoleSelectedEventListener $listener */
-        $listener = $sm->get('UserRoleSelectedEventListener');
         $listener->attach($eventManager);
 
         /* @var $vhm HelperPluginManager */

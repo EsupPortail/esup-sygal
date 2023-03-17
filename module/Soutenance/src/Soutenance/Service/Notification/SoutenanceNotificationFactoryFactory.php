@@ -56,7 +56,7 @@ class SoutenanceNotificationFactoryFactory extends NotificationFactoryFactory
         $factory->setActeurService($acteurService);
         $factory->setEmailTheseService($emailTheseService);
         $factory->setMembreService($membreService);
-        $factory->setRoleService($roleService);
+        $factory->setApplicationRoleService($roleService);
         $factory->setTheseService($theseService);
         $factory->setValidationService($validationService);
 

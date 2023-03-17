@@ -3,7 +3,7 @@
 namespace These\Fieldset\Direction;
 
 use Application\Entity\Db\Role;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Hydrator\AbstractHydrator;
@@ -20,7 +20,7 @@ class DirectionHydrator extends AbstractHydrator
 {
     use IndividuServiceAwareTrait;
     use ActeurServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
 
     use ActeurHydratorAwareTrait;
@@ -185,7 +185,7 @@ class DirectionHydrator extends AbstractHydrator
 
     private function addActeur(These $these, Individu $individu, string $role, Etablissement $etablissement): Acteur
     {
-        $role = $this->roleService->getRepository()->findOneByCodeAndStructureConcrete($role, $etablissement);
+        $role = $this->applicationRoleService->getRepository()->findOneByCodeAndStructureConcrete($role, $etablissement);
         $acteur = $these->getId() ? $this->acteurService->getRepository()->findActeurByIndividuAndThese($individu, $these) : null;
         if($role){
             if ($acteur === null) {

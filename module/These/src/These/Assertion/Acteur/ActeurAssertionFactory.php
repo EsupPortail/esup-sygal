@@ -7,6 +7,7 @@ use Psr\Container\ContainerInterface;
 use These\Service\Acteur\ActeurService;
 use These\Service\CoEncadrant\CoEncadrantService;
 use These\Service\These\TheseService;
+use UnicaenAuthentification\Service\UserContext;
 
 class ActeurAssertionFactory
 {
@@ -44,7 +45,7 @@ class ActeurAssertionFactory
     {
         $authorizeService = $container->get('BjyAuthorize\Service\Authorize');
         $mvcEvent = $container->get('Application')->getMvcEvent();
-        $userContext = $container->get('UnicaenAuth\Service\UserContext');
+        $userContext = $container->get(UserContext::class);
         $messageCollector = $container->get('MessageCollector');
 
         $assertion->setServiceAuthorize($authorizeService);

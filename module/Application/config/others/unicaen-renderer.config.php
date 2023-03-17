@@ -1,6 +1,6 @@
 <?php
 
-use UnicaenAuth\Guard\PrivilegeController;
+use UnicaenPrivilege\Guard\PrivilegeController;
 use UnicaenRenderer\Controller\IndexController;
 use UnicaenRenderer\Controller\MacroController;
 use UnicaenRenderer\Controller\RenduController;

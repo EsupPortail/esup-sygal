@@ -4,6 +4,7 @@ namespace RapportActivite\Assertion\Recherche;
 
 use Application\Assertion\AbstractAssertion;
 use Psr\Container\ContainerInterface;
+use UnicaenAuthentification\Service\UserContext;
 
 class RapportActiviteRechercheAssertionFactory
 {
@@ -13,7 +14,7 @@ class RapportActiviteRechercheAssertionFactory
      */
     public function __invoke(ContainerInterface $container): RapportActiviteRechercheAssertion
     {
-        $userContext = $container->get('UnicaenAuth\Service\UserContext');
+        $userContext = $container->get(UserContext::class);
         $messageCollector = $container->get('MessageCollector');
 
         /** @var  $assertion */

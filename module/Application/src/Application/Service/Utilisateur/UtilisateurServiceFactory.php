@@ -5,7 +5,7 @@ namespace Application\Service\Utilisateur;
 use Application\Service\Source\SourceService;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
-use UnicaenAuth\Service\User as UserService;
+use UnicaenAuthentification\Service\User as UserService;
 
 class UtilisateurServiceFactory
 {

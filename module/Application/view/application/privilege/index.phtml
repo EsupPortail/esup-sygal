@@ -2,11 +2,12 @@
 
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Privilege;
-use UnicaenAuth\Provider\Privilege\Privileges;
+use UnicaenPrivilege\Provider\Privilege\PrivilegePrivileges;
+use UnicaenPrivilege\Provider\Privilege\Privileges;
 use Structure\Entity\Db\Etablissement;
 
-$canVisualiser = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIVILEGE_VISUALISATION));
-$canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIVILEGE_EDITION));
+$canVisualiser = $this->isAllowed(Privileges::getResourceId(PrivilegePrivileges::PRIVILEGE_VOIR));
+$canModifier = $this->isAllowed(Privileges::getResourceId(PrivilegePrivileges::PRIVILEGE_AFFECTER));
 
 
 /**
@@ -96,7 +97,7 @@ $canModifier = $this->isAllowed(Privileges::getResourceId(Privileges::DROIT_PRIV
             <?php $previous_categorie = null; ?>
             <?php foreach ($privileges as $privilege) : ?>
                 <?php
-                $privilegeRoles = $privilege->getRole()->toArray();
+                $privilegeRoles = $privilege->getRoles()->toArray();
                 ?>
                 <?php if ($previous_categorie !== $privilege->getCategorie()) : ?>
                     <tr>

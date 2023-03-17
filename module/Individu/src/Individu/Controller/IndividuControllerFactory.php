@@ -41,7 +41,7 @@ class IndividuControllerFactory {
 
         /** @var \Application\Service\Role\RoleService $roleService */
         $roleService = $container->get('RoleService');
-        $controller->setRoleService($roleService);
+        $controller->setApplicationRoleService($roleService);
 
         /** @var \Structure\Service\Structure\StructureService $structureService */
         $structureService = $container->get(StructureService::class);

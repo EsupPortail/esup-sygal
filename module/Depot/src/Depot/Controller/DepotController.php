@@ -10,7 +10,7 @@ use Application\Entity\Db\Variable;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Service\DomaineHal\DomaineHalServiceAwareTrait;
 use Application\Service\MailConfirmationServiceAwareTrait;
-use Application\Service\Role\RoleServiceAwareTrait;
+use Application\Service\Role\ApplicationRoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
@@ -71,7 +71,7 @@ class DepotController extends AbstractController
     use MessageCollectorAwareTrait;
     use DepotNotificationFactoryAwareTrait;
     use NotifierServiceAwareTrait;
-    use RoleServiceAwareTrait;
+    use ApplicationRoleServiceAwareTrait;
     use TheseServiceAwareTrait;
     use DepotValidationServiceAwareTrait;
     use ValidationServiceAwareTrait;
