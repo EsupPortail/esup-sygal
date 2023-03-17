@@ -728,6 +728,27 @@ return [
                     ApplicationNavigationFactory::THESE_SELECTIONNEE_PAGE_ID => [
                         'pages' => $thesePages = [
                             // DEPTH = 3
+                            'divider-depot' => [
+                                'label' => null,
+                                'order' => 40,
+                                'uri' => '',
+                                'class' => 'divider',
+                                'separator' => true,
+                            ],
+                            'depot-divers' => [
+                                'id' => 'depot-divers',
+                                'label' => 'Dépôt fichiers divers',
+                                'order' => 41,
+                                'route' => 'these/depot-divers',
+                                'withtarget' => true,
+                                'paramsInject' => [
+                                    'these',
+                                ],
+                                'icon' => 'fas fa-copy',
+//                                'resource' => PrivilegeController::getResourceId(DepotController::class, 'detail-fichiers'),
+//                                'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
+//                                'visible' => TheseAssertion::class,
+                            ],
                             'depot' => [
                                 'label' => 'Dépôt de la thèse',
                                 'order' => 60,
@@ -921,27 +942,6 @@ return [
                                         'visible' => TheseAssertion::class,
                                     ],
                                 ]
-                            ],
-                            'divider-depot' => [
-                                'label' => null,
-                                'order' => 90,
-                                'uri' => '',
-                                'class' => 'divider',
-                                'separator' => true,
-                            ],
-                            'depot-divers' => [
-                                'id' => 'depot-divers',
-                                'label' => 'Dépôt fichiers divers',
-                                'order' => 100,
-                                'route' => 'these/depot-divers',
-                                'withtarget' => true,
-                                'paramsInject' => [
-                                    'these',
-                                ],
-                                'icon' => 'fas fa-copy',
-                                'resource' => PrivilegeController::getResourceId(DepotController::class, 'detail-fichiers'),
-                                'etape' => WfEtape::CODE_DEPOT_VERSION_ORIGINALE,
-                                'visible' => TheseAssertion::class,
                             ],
                         ],
                     ],
