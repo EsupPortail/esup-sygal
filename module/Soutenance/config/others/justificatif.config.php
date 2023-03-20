@@ -11,6 +11,8 @@ use Soutenance\Form\Justificatif\JustificatifForm;
 use Soutenance\Form\Justificatif\JustificatifFormFactory;
 use Soutenance\Form\Justificatif\JustificatifHydratorFactory;
 use Soutenance\Provider\Privilege\JustificatifPrivileges;
+use Soutenance\Provider\Privilege\PresoutenancePrivileges;
+use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Service\Justificatif\JustificatifService;
 use Soutenance\Service\Justificatif\JustificatifServiceFactory;
 use Soutenance\View\Helper\JustificatifViewHelper;
@@ -52,9 +54,28 @@ return [
                 [
                     'controller' => JustificatifController::class,
                     'action' => [
+                        'ajouter',
+                        'ajouter-justificatif',
+                    ],
+                    'privileges' => JustificatifPrivileges::JUSTIFICATIF_AJOUTER,
+                ],
+                [
+                    'controller' => JustificatifController::class,
+                    'action' => [
                         'retirer',
                     ],
-                    'privileges' => JustificatifPrivileges::JUSTIFICATIF_RETIRER,
+                    'privileges' => [
+                        JustificatifPrivileges::JUSTIFICATIF_RETIRER,
+                        PropositionPrivileges::PROPOSITION_MODIFIER_GESTION,
+                    ],
+                ],
+                [
+                    'controller' => JustificatifController::class,
+                    'action' => [
+                        'ajouter-autorisation-soutenance',
+                        'ajouter-rapport-soutenance',
+                    ],
+                    'privileges' => PropositionPrivileges::PROPOSITION_MODIFIER_GESTION,
                 ],
             ],
         ],
@@ -96,8 +117,31 @@ return [
                                 'options' => [
                                     'route' => '/ajouter-justificatif',
                                     'defaults' => [
+                                        /** @see JustificatifController::ajouterJustificatifAction() */
                                         'controller' => JustificatifController::class,
                                         'action' => 'ajouter-justificatif',
+                                    ],
+                                ],
+                            ],
+                            'ajouter-autorisation-soutenance' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route' => '/ajouter-autorisation-soutenance',
+                                    'defaults' => [
+                                        /** @see JustificatifController::ajouterAutorisationSoutenanceAction() */
+                                        'controller' => JustificatifController::class,
+                                        'action' => 'ajouter-autorisation-soutenance',
+                                    ],
+                                ],
+                            ],
+                            'ajouter-rapport-soutenance' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route' => '/ajouter-rapport-soutenance',
+                                    'defaults' => [
+                                        /** @see JustificatifController::ajouterRapportSoutenanceAction() */
+                                        'controller' => JustificatifController::class,
+                                        'action' => 'ajouter-rapport-soutenance',
                                     ],
                                 ],
                             ],

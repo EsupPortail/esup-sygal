@@ -13,13 +13,19 @@
  * @var array $justificatifs
  * @var Evenement[] $evenementsEngagement
  * @var Evenement[] $evenementsPrerapport
+ * @var UrlFichierThese $urlFichierThese
+ *
+ * @var Justificatif $autorisation
+ * @var Justificatif $rapport
  */
 
 use Application\Constants;
 use Application\Entity\Db\Validation;
+use Depot\Controller\Plugin\UrlFichierThese;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Evenement;
+use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 
@@ -184,8 +190,8 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                         </div>
                         <div class="float-end" style="margin-right: 2rem;">
                             <a
-                                    <?php /** @see \These\Controller\TheseController::validationPageDeCouvertureAction() */ ?>
-                                    href="<?php echo $this->url('these/validation-page-de-couverture', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary">
+                                <?php /** @see \These\Controller\TheseController::validationPageDeCouvertureAction() */ ?>
+                                href="<?php echo $this->url('these/validation-page-de-couverture', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary">
                                 Accéder à la validation de la PDC
                             </a>
                         </div>
@@ -198,6 +204,16 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     </div>
     <!-- AVIS SOUTENANCE -------------------------------------------------------------------------------------------------->
     <?php echo $this->partial('soutenance/presoutenance/partial/avis-soutenance'); ?>
+
+    <!-- DOCUMENT ----------------------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/documents',
+        [
+            'these' => $these, 'autorisation' => $autorisation, 'rapport' => $rapport,
+            'urlFichierThese' => $urlFichierThese
+
+        ]
+    ); ?>
+
 
     <!-- FEU VERT --------------------------------------------------------------------------------------------------------->
     <?php if($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) :?>

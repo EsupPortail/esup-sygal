@@ -50,6 +50,9 @@ class JustificatifAssertion implements AssertionInterface {
         $user = $this->userContextService->getIdentityDb();
         $role = $this->userContextService->getSelectedIdentityRole();
 
+//        var_dump($role->getStructure()->getId());
+//        var_dump($these->getEtablissement()->getStructure()->getId());
+
         switch ($privilege) {
             case JustificatifPrivileges::JUSTIFICATIF_AJOUTER:
             case JustificatifPrivileges::JUSTIFICATIF_RETIRER:
