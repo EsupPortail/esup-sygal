@@ -6,6 +6,7 @@ Journal des modifications
 - Formation : Ajout d'un mail vers les formateurs lorsque la session est imminente
 - Soutenance : Renommange de Parité en Équilibre (et ajustement des couleurs des barres de l'indicateur)
 - Soutenance : Retravail du rapport de soutenance (Ajout d'une page blacnhe et d'une troisième page pour les signatures)
+- Soutenance : Ajout du dépôt de l'autorisation de soutenance et du rapport de soutenance
 - Menu Dépôt fichiers divers : remonté et affiché sans condition
 - Page Dépôt fichiers divers : téléversement bloqué pour PV soutenance, Pré-rapport soutenance, Rapport soutenance
 
