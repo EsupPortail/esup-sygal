@@ -445,7 +445,7 @@ return [
                             'defaults' => [
                                 'controller' => DepotController::class,
                                 'action' => 'detail-depot-divers',
-                                /* @see TheseController::detailDepotDiversAction() */
+                                /* @see DepotController::detailDepotDiversAction() */
                             ],
                         ],
                     ],
