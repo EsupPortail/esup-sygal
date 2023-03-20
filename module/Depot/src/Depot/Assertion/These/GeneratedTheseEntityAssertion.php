@@ -117,7 +117,7 @@ abstract class GeneratedTheseEntityAssertion
             /* line 17 */
             $this->linesTrace[] = '/* line 17 */';
             if ($this->isDateButoirDepotVersionCorrigeeDepassee() /* test 8 */) {
-                $this->failureMessage = "La date butoir pour le dépôt de la version corrigée est dépassée (%s).";
+                $this->failureMessage = "La date butoir pour le dépôt de la version corrigée est dépassée.";
                 return false;
             }
             /* line 18 */
@@ -276,7 +276,7 @@ abstract class GeneratedTheseEntityAssertion
             /* line 42 */
             $this->linesTrace[] = '/* line 42 */';
             if ($this->isDateButoirDepotVersionCorrigeeDepassee() /* test 8 */) {
-                $this->failureMessage = "La date butoir pour le dépôt de la version corrigée est dépassée (%s).";
+                $this->failureMessage = "La date butoir pour le dépôt de la version corrigée est dépassée.";
                 return false;
             }
             /* line 43 */
@@ -613,7 +613,7 @@ line;enabled;privilege;isTheseEnCours;isTheseSoutenue;isCorrectionAttendue;isDat
 14;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE;;;;;;;;;;;1:1;;;;;;;;;;;;;0;Opération impossible dès lors que la bibliothèque universitaire a validé.
 15;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_INITIALE;;;;;;;;;;;;;;;;;;;;;;;;1;
 16;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_DEPOT_VERSION_CORRIGEE;;;1:0;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse
-17;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_DEPOT_VERSION_CORRIGEE;;;;1:1;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée est dépassée (%s).
+17;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_DEPOT_VERSION_CORRIGEE;;;;1:1;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée est dépassée.
 18;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_DEPOT_VERSION_CORRIGEE;;;;;;;;;;;;1:1;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé par au moins un directeur.
 19;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_DEPOT_VERSION_CORRIGEE;;;;;;;;;;;;;;;;;;;;;;;;1;
 20;1;\Depot\Provider\Privilege\DepotPrivileges::THESE_SAISIE_CONFORMITE_VERSION_ARCHIVAGE_CORRIGEE;;1:0;;;;;;;;;;;;;;;;;;;;;;0;L’état de la thèse ne permet pas cette opération.
@@ -638,7 +638,7 @@ line;enabled;privilege;isTheseEnCours;isTheseSoutenue;isCorrectionAttendue;isDat
 39;1;\Depot\Provider\Privilege\ValidationPrivileges::THESE_VALIDATION_RDV_BU_SUPPR;;;;;;;1:0;;;;;;;2:1;;;;;;;;;;1;
 40;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;1:0;;;;;;;;;;;;;;;;;;;;;0;Aucune correction n'est attendue pour cette thèse.
 41;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;;;;;;;;1:1;;;;;;;;;;;;;;0;Opération impossible dès lors que le dépôt de la version corrigée a été validé.
-42;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;;1:1;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée est dépassée (%s).
+42;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;;1:1;;;;;;;;;;;;;;;;;;;;0;La date butoir pour le dépôt de la version corrigée est dépassée.
 43;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE;;;1:1;3:0;;;;;;2:0;;;;;;;;;;;;;;1;
 44;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR;;;;;;;;;;;;1:1;;;;;;;;;;;;0;
 45;1;\Depot\Provider\Privilege\ValidationPrivileges::VALIDATION_DEPOT_THESE_CORRIGEE_SUPPR;;;;;;;;;;;;;;;;;;;;;;;;1;
