@@ -8,7 +8,6 @@ use Application\Entity\Db\Utilisateur;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
-use Horodatage\Entity\Db\Horodatage;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuRole;
 use Information\Service\InformationServiceAwareTrait;
@@ -36,6 +35,8 @@ use Soutenance\Provider\Validation\TypeValidation;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Exporter\SermentExporter\SermentPdfExporter;
+use Soutenance\Service\Horodatage\HorodatageService;
+use Soutenance\Service\Horodatage\HorodatageServiceAwareTrait;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
@@ -60,6 +61,7 @@ class PropositionController extends AbstractController
     use EvenementServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
+    use HorodatageServiceAwareTrait;
     use InformationServiceAwareTrait;
     use JustificatifServiceAwareTrait;
     use MembreServiceAwareTrait;
@@ -82,13 +84,8 @@ class PropositionController extends AbstractController
 
     use PropositionAssertionAwareTrait;
 
-    /** @var PhpRenderer */
-    private $renderer;
-
-    /**
-     * @param PhpRenderer $renderer
-     */
-    public function setRenderer(PhpRenderer $renderer)
+    private PhpRenderer $renderer;
+    public function setRenderer(PhpRenderer $renderer) : void
     {
         $this->renderer = $renderer;
     }
@@ -226,6 +223,7 @@ class PropositionController extends AbstractController
             'FORMULAIRE_DEMANDE_LABEL' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_LABEL_EUROPEEN),
             'FORMULAIRE_DEMANDE_ANGLAIS' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_REDACTION_ANGLAIS),
             'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_CONFIDENTIALITE),
+
         ]);
     }
 
@@ -244,6 +242,7 @@ class PropositionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->update($request, $form, $proposition);
+            $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Date et lieu");
             $this->getPropositionService()->initialisationDateRetour($proposition);
             if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
         }
@@ -287,6 +286,7 @@ class PropositionController extends AbstractController
                 } else {
                     $this->getMembreService()->create($membre);
                 }
+                $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Jury");
                 if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
             }
         }
@@ -312,6 +312,7 @@ class PropositionController extends AbstractController
         if ($membre) {
             if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($membre->getProposition());
             $this->getMembreService()->delete($membre);
+            $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Jury");
         }
 
         return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
@@ -332,6 +333,7 @@ class PropositionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->update($request, $form, $proposition);
+            $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires");
             if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
         }
 
@@ -359,6 +361,7 @@ class PropositionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->update($request, $form, $proposition);
+            $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires");
             if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
         }
 
@@ -386,6 +389,7 @@ class PropositionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->update($request, $form, $proposition);
+            $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires");
             if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
         }
 
@@ -414,6 +418,7 @@ class PropositionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->update($request, $form, $proposition);
+            $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires");
             if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
         }
 
@@ -435,6 +440,7 @@ class PropositionController extends AbstractController
         if ($autorisation !== null) return $autorisation;
 
         $validation = $this->getValidationService()->validatePropositionSoutenance($these);
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_VALIDATION, "Acteurs directes");
         try {
             $notif = $this->soutenanceNotificationFactory->createNotificationValidationProposition($these, $validation);
             $this->notifierService->trigger($notif);
@@ -487,6 +493,7 @@ class PropositionController extends AbstractController
         switch ($role->getCode()) {
             case Role::CODE_RESP_UR :
                 $this->getValidationService()->validateValidationUR($these, $individu);
+                $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_VALIDATION, "Structures");
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationEcoleDoctoraleProposition($these);
                     $this->notifierService->trigger($notif);
@@ -547,6 +554,8 @@ class PropositionController extends AbstractController
             $data = $request->getPost();
             if ($data['motif'] !== null) {
                 $this->getPropositionService()->annulerValidationsForProposition($proposition);
+                $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_VALIDATION, "Structures");
+
                 $currentUser = $this->userContextService->getIdentityIndividu();
                 /** @var RoleInterface $currentRole */
                 $currentRole = $this->userContextService->getSelectedIdentityRole();
@@ -580,6 +589,7 @@ class PropositionController extends AbstractController
 
 
         $this->getEvenementService()->ajouterEvenement($proposition, Evenement::EVENEMENT_SIGNATURE);
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Autorisation de soutenance");
 
         $exporter = new SiganturePresidentPdfExporter($this->renderer, 'A4');
         $exporter->setVars([
@@ -847,7 +857,6 @@ class PropositionController extends AbstractController
         $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $horodatages = $proposition->getHorodatages();
-        usort($horodatages, function (Horodatage $a, Horodatage $b) { return $a->getDate() > $b->getDate();});
 
         return new ViewModel([
             'these' => $these,

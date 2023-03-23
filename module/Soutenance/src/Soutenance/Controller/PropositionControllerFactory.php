@@ -7,6 +7,7 @@ use Information\Service\InformationService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Soutenance\Service\Avis\AvisService;
+use Soutenance\Service\Horodatage\HorodatageService;
 use Soutenance\Service\Notification\SoutenanceNotificationFactory;
 use Structure\Service\Etablissement\EtablissementService;
 use These\Service\Acteur\ActeurService;
@@ -51,6 +52,7 @@ class PropositionControllerFactory
          * @var InformationService $informationService
          * @var EvenementService $evenementService
          * @var FichierStorageService $fichierStorageService
+         * @var HorodatageService $horodatageService
          * @var MembreService $membreService
          * @var NotifierService $notifierService
          * @var PropositionService $propositionService
@@ -67,6 +69,7 @@ class PropositionControllerFactory
         $etablissementService = $container->get(EtablissementService::class);
         $evenementService = $container->get(EvenementService::class);
         $fichierStorageService = $container->get(FichierStorageService::class);
+        $horodatageService = $container->get(HorodatageService::class);
         $informationService = $container->get(InformationService::class);
         $membreService = $container->get(MembreService::class);
         $notifierService = $container->get(NotifierService::class);
@@ -111,6 +114,7 @@ class PropositionControllerFactory
         $controller->setEtablissementService($etablissementService);
         $controller->setEvenementService($evenementService);
         $controller->setFichierStorageService($fichierStorageService);
+        $controller->setHorodatageService($horodatageService);
         $controller->setInformationService($informationService);
         $controller->setMembreService($membreService);
         $controller->setNotifierService($notifierService);

@@ -4,6 +4,7 @@ namespace Soutenance\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Horodatage\Entity\Db\Horodatage;
+use Soutenance\Service\Horodatage\HorodatageService;
 use These\Entity\Db\These;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -397,7 +398,15 @@ class Proposition implements HistoriqueAwareInterface {
                 $result[] = $horadatage;
             }
         }
+        usort($result, function(Horodatage $a, Horodatage $b) { return $a->getDate() > $b->getDate();});
         return $result;
+    }
+
+    public function getLastHoradatage(?string $type = null, ?string $complement = null) : ?Horodatage
+    {
+        $horodatages = $this->getHorodatages($type, $complement);
+        if ($horodatages === []) return null;
+        return array_reverse($horodatages)[0];
     }
 
     public function addHorodatage(Horodatage $horodatage) : void

@@ -11,6 +11,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\Validation;
 use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Proposition;
+use Soutenance\Service\Horodatage\HorodatageService;
 
 $these = $proposition->getThese();
 
@@ -107,6 +108,13 @@ $these = $proposition->getThese();
                         <li> Faite le <?php echo $signature->getDate()->format('d/m/Y à H:i:s'); ?></li>
                     <?php endforeach; ?>
                     </ul>
+                <?php endif; ?>
+
+                <?php $last = $proposition->getLastHoradatage(HorodatageService::TYPE_EDITION, "Autorisation de soutenance"); ?>
+                <?php if ($last) : ?>
+                    <div class="alert alert-info">
+                        Dernière modification <?php echo $this->horodatage($last); ?>
+                    </div>
                 <?php endif; ?>
 
                 <?php if ($canStructureValider): ?>

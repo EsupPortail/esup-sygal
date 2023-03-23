@@ -76,7 +76,7 @@ class HorodatageService {
     public function createHorodatage(string $type, ?string $complement = null) : Horodatage
     {
         $timestamp = new DateTime();
-        $utilisateur = $this->userContextService->getIdentity();
+        $utilisateur = $this->userContextService->getIdentityDb();
 
         $horodatage = new Horodatage();
         $horodatage->setDate($timestamp);

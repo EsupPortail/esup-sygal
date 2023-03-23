@@ -2,6 +2,7 @@
 
 namespace Soutenance\Service\Proposition;
 
+use Horodatage\Service\Horodatage\HorodatageService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Soutenance\Service\Notification\SoutenanceNotificationFactory;
@@ -36,6 +37,7 @@ class PropositionServiceFactory
          * @var EtablissementService $etablissamentService
          * @var MembreService $membreService
          * @var UserContextService $userContextService
+         * @var HorodatageService $horodatageService
          */
         $entityManager = $container->get('doctrine.entitymanager.orm_default');
         $acteurService = $container->get(ActeurService::class);
@@ -47,6 +49,7 @@ class PropositionServiceFactory
         $etablissamentService = $container->get(EtablissementService::class);
         $membreService = $container->get(MembreService::class);
         $userContextService = $container->get('UserContextService');
+        $horodatageService = $container->get(HorodatageService::class);
 
         $service = new PropositionService();
         $service->setEntityManager($entityManager);

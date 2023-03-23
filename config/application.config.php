@@ -39,6 +39,7 @@ return [
         'UnicaenPdf',
         'UnicaenRenderer',
         'UnicaenParametre',
+        'Horodatage',
         'Structure',
         'These',
         'Fichier',

@@ -30,6 +30,8 @@ use Soutenance\Form\Membre\MembreHydratorFactory;
 use Soutenance\Form\Refus\RefusForm;
 use Soutenance\Form\Refus\RefusFormFactory;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Soutenance\Service\Horodatage\HorodatageService;
+use Soutenance\Service\Horodatage\HorodatageServiceFactory;
 use Soutenance\Service\Proposition\PropositionSearchService;
 use Soutenance\Service\Proposition\PropositionSearchServiceFactory;
 use Soutenance\Service\Proposition\PropositionService;
@@ -461,6 +463,7 @@ return [
             PropositionService::class => PropositionServiceFactory::class,
             PropositionSearchService::class => PropositionSearchServiceFactory::class,
             PropositionAssertion::class => PropositionAssertionFactory::class,
+            HorodatageService::class => HorodatageServiceFactory::class,
         ],
     ],
     'controllers' => [
