@@ -8,6 +8,7 @@ use Application\Entity\Db\Utilisateur;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Horodatage\Entity\Db\Horodatage;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuRole;
 use Information\Service\InformationServiceAwareTrait;
@@ -836,5 +837,22 @@ class PropositionController extends AbstractController
         ]);
         $exporter->export($these->getId() . '_serment.pdf');
         exit;
+    }
+
+    /** Gestion des horodatages d'une proposition **************************/
+
+    public function horodatagesAction() : ViewModel
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findOneForThese($these);
+
+        $horodatages = $proposition->getHorodatages();
+        usort($horodatages, function (Horodatage $a, Horodatage $b) { return $a->getDate() > $b->getDate();});
+
+        return new ViewModel([
+            'these' => $these,
+            'proposition' => $proposition,
+            'horodatages' => $horodatages,
+        ]);
     }
 }

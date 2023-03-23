@@ -2,6 +2,8 @@
 
 namespace Soutenance\Entity;
 
+use Doctrine\Common\Collections\Collection;
+use Horodatage\Entity\Db\Horodatage;
 use These\Entity\Db\These;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -11,59 +13,33 @@ use UnicaenApp\Entity\HistoriqueAwareTrait;
 class Proposition implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
-    /** @var int */
-    private $id;
-    /** @var These */
-    private $these;
-    /** @var DateTime */
-    private $date;
-    /** @var string */
-    private $lieu;
-    /** @var string */
-    private $adresse;
-    /** @var boolean */
-    private $exterieur;
+    private ?int $id = null;
+    private ?These $these = null;
+    private ?DateTime $date = null;
+    private ?string $lieu = null;
+    private ?string $adresse = null;
+    private bool $exterieur = false;
 
-    /** @var ArrayCollection */
-    private $membres;
+    private Collection $membres;
 
-    /** @var DateTime */
-    private $renduRapport;
+    private ?DateTime $renduRapport = null;
+    private ?DateTime $confidentialite = null;
+    private bool $huitClos = false;
+    private bool $labelEuropeen = false;
+//    private bool $manuscritAnglais = false;
+    private bool $soutenanceAnglais = false;
+    private ?string $nouveauTitre = null;
+    private  ?Etat $etat = null;
+    private ?string $sursis = null;
 
-    /** @var DateTime */
-    private $confidentialite;
-    /** @var boolean */
-    private $huitClos;
-    /** @var boolean */
-    private $labelEuropeen;
-    /** @var boolean */
-//    private $manuscritAnglais;
-    /** @var boolean */
-    private $soutenanceAnglais;
-    /** @var string */
-    private $nouveauTitre;
-    /** @var Etat */
-    private  $etat;
-    /** @var string */
-    private $sursis;
+    private Collection $justificatifs;
+    private Collection $avis;
+    private Collection $horodatages;
 
-
-    /** @var ArrayCollection */
-    private $justificatifs;
-    /** @var ArrayCollection */
-    private $avis;
-
-
-//    /** @var ArrayCollection */
-//    private $validations;
-
-    /**
-     * Proposition constructor.
-     * @param These|null $these
-     */
-    public function __construct(These $these = null)
+    public function __construct(?These $these = null)
     {
         $this->membres = new ArrayCollection();
+
         $this->setThese($these);
         $this->setLabelEuropeen(false);
 //        $this->setManuscritAnglais(false);
@@ -73,122 +49,67 @@ class Proposition implements HistoriqueAwareInterface {
 
         $this->justificatifs = new ArrayCollection();
         $this->avis = new ArrayCollection();
+        $this->horodatages = new ArrayCollection();
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId() : ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return These
-     */
-    public function getThese()
+    public function getThese() : ?These
     {
         return $this->these;
     }
 
-    /**
-     * @param These $these
-     * @return Proposition
-     */
-    public function setThese($these)
+    public function setThese(These $these) : void
     {
         $this->these = $these;
-        return $this;
     }
 
-    /**
-     * @return DateTime
-     */
-    public function getDate()
+    public function getDate() : ?DateTime
     {
         return $this->date;
     }
 
-    /**
-     * @param DateTime $date
-     * @return Proposition
-     */
-    public function setDate($date)
+    public function setDate(?DateTime $date) : void
     {
         $this->date = $date;
-        return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLieu()
+    public function getLieu() : ?string
     {
         return $this->lieu;
     }
 
-    /**
-     * @param string $lieu
-     * @return Proposition
-     */
-    public function setLieu($lieu)
+    public function setLieu(?string $lieu) : void
     {
         $this->lieu = $lieu;
-        return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getAdresse()
+    public function getAdresse() : ?string
     {
         return $this->adresse;
     }
 
-    /**
-     * @param string $adresse
-     * @return Proposition
-     */
-    public function setAdresse($adresse)
+    public function setAdresse(?string $adresse) : void
     {
         $this->adresse = $adresse;
-        return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isExterieur()
+    public function isExterieur() : bool
     {
         return $this->exterieur;
     }
 
-    /**
-     * @param bool $exterieur
-     * @return Proposition
-     */
-    public function setExterieur($exterieur)
+    public function setExterieur(bool $exterieur) : void
     {
         $this->exterieur = $exterieur;
-        return $this;
     }
 
-    /**
-     * @return ArrayCollection
-     */
     public function getMembres()
     {
         return $this->membres;
-    }
-
-    /**
-     * @param ArrayCollection $membres
-     * @return Proposition
-     */
-    public function setMembres($membres)
-    {
-        $this->membres = $membres;
-        return $this;
     }
 
     /**
@@ -461,4 +382,29 @@ class Proposition implements HistoriqueAwareInterface {
         }
         return false;
     }
+
+    /** GESTION DES HORODATAGES ***************************************************/
+
+    /** @return Horodatage[] */
+    public function getHorodatages(?string $type = null, ?string $complement = null) : array
+    {
+        $result = [];
+        /** @var Horodatage $horadatage */
+        foreach ($this->horodatages as $horadatage) {
+            if (    ($type === null OR $horadatage->getType() === $type)
+                AND ($complement === null OR $horadatage->getComplement() === $complement)
+            ) {
+                $result[] = $horadatage;
+            }
+        }
+        return $result;
+    }
+
+    public function addHorodatage(Horodatage $horodatage) : void
+    {
+        $this->horodatages->add($horodatage);
+    }
+
+    /** Pas besoin de remove car les horodatages vont "cascader" le relation */
+
 }

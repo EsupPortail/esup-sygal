@@ -92,6 +92,7 @@ return [
                     'controller' => PropositionController::class,
                     'action' => [
                         'proposition',
+                        'horodatages',
                         'generer-serment',
                         'generate-view-date-lieu',
                         'generate-view-jury',
@@ -203,6 +204,18 @@ return [
                             ],
                         ],
                         'child_routes' => [
+                            'horodatages' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/horodatages',
+                                    'defaults' => [
+                                        /** @see PropositionController::horodatagesAction() */
+                                        'controller' => PropositionController::class,
+                                        'action' => 'horodatages',
+                                    ],
+                                ],
+                            ],
                             'generer-serment' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,

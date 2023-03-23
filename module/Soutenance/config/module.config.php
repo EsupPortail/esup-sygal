@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Soutenance\Controller\AvisController;
 use Soutenance\Controller\EngagementImpartialiteController;
+use Soutenance\Controller\PropositionController;
 use Soutenance\Provider\Privilege\IndexPrivileges;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
@@ -93,6 +94,16 @@ return array(
                                         'route' => 'soutenance/presoutenance',
                                         'order' => 200,
                                         'resource' => PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION),
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'these',
+                                        ],
+                                    ],
+                                    'horodatages' => [
+                                        'label' => 'Horodatages des événements',
+                                        'route' => 'soutenance/proposition/horodatages',
+                                        'order' => 1000,
+                                        'resource' => PrivilegeController::getResourceId(PropositionController::class, 'horodatages ') ,
                                         'withtarget' => true,
                                         'paramsInject' => [
                                             'these',
