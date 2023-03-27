@@ -461,6 +461,21 @@ from tmp, unicaen_avis_type_valeur tv
                                                                                     'AVIS_RAPPORT_ACTIVITE_VALEUR_NEGATIF'
     ) ;
 
+
+------------------------------------- paramètres ------------------------------------------
+
+INSERT INTO unicaen_parametre_categorie (code, libelle, description, ordre)
+VALUES ('RAPPORT_ACTIVITE', 'Paramètres du module Rapports d''activité', null, 100);
+
+INSERT INTO unicaen_parametre_parametre(CATEGORIE_ID, CODE, LIBELLE, description, valeurs_possibles, valeur, ORDRE)
+WITH d(code, lib, description, possible, valeur, ordre) AS (
+    SELECT 'CAMPAGNE_DEPOT_DEBUT', 'Jour et mois de début de la campagne de dépôt des rapports d''activité pour l''année universitaire en cours. Exemple : 01/04/N+1.', null, 'String', '01/04/N+1', 100 UNION
+    SELECT 'CAMPAGNE_DEPOT_FIN', 'Jour et mois de fin de la campagne de dépôt des rapports d''activité pour l''année universitaire en cours. Exemple : 15/06/N+1.', null, 'String', '15/06/N+1', 200
+)
+SELECT cp.id, d.code, d.lib, d.description, d.possible, d.valeur, d.ordre
+FROM d JOIN unicaen_parametre_categorie cp ON cp.CODE = 'RAPPORT_ACTIVITE';
+
+
 --------------------------------------------- CED -------------------------------------------
 
 INSERT INTO structure (id, sigle, libelle, chemin_logo, type_structure_id,  histo_createur_id,
@@ -468,3 +483,6 @@ INSERT INTO structure (id, sigle, libelle, chemin_logo, type_structure_id,  hist
 select nextval('structure_id_seq'), 'CED', 'Collège des écoles doctorales normandes', 'CED.png', 1, 1,
        1, 'SyGAL::63db82880b300', 'CED', false, 'Esplanade de la Paix - CS14032 – 14032 Caen cedex',
        '+33 (0)2 31 56 69 57', '+33 (0)2 31 56 69 51';
+
+
+

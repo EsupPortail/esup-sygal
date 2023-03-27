@@ -2,9 +2,11 @@
 
 namespace RapportActivite;
 
+use Application\Constants;
 use Application\Entity\Db\TypeValidation;
 use Application\View\Renderer\PhpRenderer;
 use RapportActivite\Entity\Db\RapportActivite;
+use RapportActivite\Provider\Parametre\RapportActiviteParametres;
 use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
 use These\Entity\Db\These;
 
@@ -16,6 +18,7 @@ use These\Entity\Db\These;
  * @var array[] $operationss
  * @var TypeValidation $typeValidation
  * @var string $returnUrl
+ * @var \DateTime[] $campagneDepotDates
  *
  * @see \RapportActivite\Controller\RapportActiviteController::consulterAction()
  */
@@ -27,6 +30,8 @@ $canAdd =
 if (empty($typesRapportPossiblesData)) {
     $canAdd = false;
 }
+
+$campagneDepotDateFin = $campagneDepotDates[RapportActiviteParametres::CAMPAGNE_DEPOT_FIN]->format(Constants::DATE_FORMAT);
 ?>
 
 <?php $this->headTitle($this->translate($title = "Rapports d'activité"))
@@ -44,24 +49,17 @@ if (empty($typesRapportPossiblesData)) {
 </p>
 <ul class="lead">
     <li>
-        <strong>Vous devez rédiger un rapport d'activité annuel qui doit être déposé ci-dessous avant le 15 juin.</strong>.
-        Son dépôt conditionne le cas échéant l'autorisation de réinscription en thèse.
-        <a href="<?php echo $this->url('fichier/telecharger-permanent', ['idPermanent' => 'RAPPORT_ACTIVITE_ANNUEL']) ?>"
-        >Cliquez ici pour télécharger le document.</a>
+        Vous devez rédiger un rapport d'activité annuel qui doit être complété avant le <?php echo $campagneDepotDateFin ?>. Sa complétude conditionne le cas échéant l'autorisation de réinscription en thèse.
     </li>
     <li>
-        <strong>Vous devez rédiger un rapport d'activité de fin de contrat</strong> au moment de votre soutenance.
-        Dans ce cas, les données indiquées doivent couvrir l'ensemble de la thèse. Il doit être
-        <strong>déposé ci-dessous dans l’application <?php echo $this->appInfos()->nom ?> au maximum 1 mois avant votre date de soutenance.</strong>
-        Son dépôt conditionne votre autorisation de soutenance.
-        <a href="<?php echo $this->url('fichier/telecharger-permanent', ['idPermanent' => 'RAPPORT_ACTIVITE_FINTHESE']) ?>"
-        >Cliquez ici pour télécharger le document.</a>
+        En fonction de l’état d’avancement de votre thèse, vous devez rédiger un rapport d'activité de fin de contrat 1 mois avant la fin de ce dernier ou au moment de votre soutenance si votre contrat doctoral est toujours en cours. Dans ce cas, les données indiquées doivent couvrir l’ensemble de la thèse.
     </li>
 </ul>
-<ul class="lead">
-    <li>Complétez le document téléchargé, faites-le signer par vos directions de thèse et de laboratoire ;</li>
-    <li>Scannez le document signé et téléversez-le en version PDF.</li>
-</ul>
+<p class="lead">
+    <em>Si vous constatez une erreur dans les informations mentionnées par l'application, rendez-vous sur la page
+        <a href="<?php echo $this->url('contact') ?>">Assistance</a> et signalez l'erreur en envoyant un message
+        à l'assistance.</em>
+</p>
 
 <div class="row">
     <div class="col-md-12">

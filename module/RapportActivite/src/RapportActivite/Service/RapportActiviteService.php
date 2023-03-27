@@ -11,6 +11,7 @@ use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Closure;
+use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Exception;
@@ -21,9 +22,11 @@ use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Laminas\EventManager\EventManagerAwareTrait;
+use parametre\src\UnicaenParametre\Exception\ParametreMalTypeException;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Entity\Db\RapportActiviteAvis;
 use RapportActivite\Event\RapportActiviteEvent;
+use RapportActivite\Provider\Parametre\RapportActiviteParametres;
 use RapportActivite\Rule\Operation\RapportActiviteOperationRuleAwareTrait;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
 use RapportActivite\Service\Fichier\Exporter\PageValidationExportData;
@@ -39,6 +42,8 @@ use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Exporter\Pdf;
+use UnicaenParametre\Exception\ParametreNotFoundException;
+use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
 class RapportActiviteService extends BaseService
 {
@@ -54,6 +59,7 @@ class RapportActiviteService extends BaseService
     use StructureServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
     use ValidationServiceAwareTrait;
+    use ParametreServiceAwareTrait;
 
     use RapportActivitePdfExporterTrait;
 
@@ -507,5 +513,35 @@ class RapportActiviteService extends BaseService
         $this->events->triggerEvent($event);
 
         return $event;
+    }
+
+    public function fetchParametresCampagneDepotDates(): array
+    {
+        try {
+            $campagneDepotDeb = $this->parametreService->getValeurForParametre(RapportActiviteParametres::CATEGORIE, $k = RapportActiviteParametres::CAMPAGNE_DEPOT_DEBUT);
+            $campagneDepotFin = $this->parametreService->getValeurForParametre(RapportActiviteParametres::CATEGORIE, $k = RapportActiviteParametres::CAMPAGNE_DEPOT_FIN);
+        } catch (Exception $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'obtention du paramètre $k", null, $e);
+        }
+
+        $a = AnneeUniv::courante()->getPremiereAnnee();
+        $dateDebSpec = str_replace(['N+1', 'N'], [$a+1, $a], $campagneDepotDeb);
+        $dateFinSpec = str_replace(['N+1', 'N'], [$a+1, $a], $campagneDepotFin);
+        $dateDeb = DateTime::createFromFormat('d/m/Y H:i:s', "$dateDebSpec 00:00:00");
+        $dateFin = DateTime::createFromFormat('d/m/Y H:i:s', "$dateFinSpec 23:59:59");
+
+        if ($dateDeb > $dateFin) {
+            throw new RuntimeException(sprintf(
+                "Les valeurs des paramètres suivants sont invalides car on obtient une date de début postérieure à la date de fin : %s, %s (catégorie %s)",
+                RapportActiviteParametres::CAMPAGNE_DEPOT_DEBUT,
+                RapportActiviteParametres::CAMPAGNE_DEPOT_FIN,
+                RapportActiviteParametres::CATEGORIE
+            ));
+        }
+
+        return [
+            RapportActiviteParametres::CAMPAGNE_DEPOT_DEBUT => $dateDeb,
+            RapportActiviteParametres::CAMPAGNE_DEPOT_FIN => $dateFin,
+        ];
     }
 }

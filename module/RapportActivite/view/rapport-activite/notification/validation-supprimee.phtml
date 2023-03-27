@@ -24,7 +24,9 @@ if (($rapportActiviteValidation->getHistoModificateur() ?: $rapportActiviteValid
 </p>
 <p>
     La <strong><?php echo lcfirst($rapportActiviteValidation->getTypeValidation()) ?></strong>
-    du <strong><?php echo lcfirst($rapport) ?></strong> datant du
+    du <strong><?php echo lcfirst($rapport) ?></strong>
+    de <strong><?php echo $rapport->getThese()->getDoctorant() ?></strong>
+    datant du
     <?php echo ($rapportActiviteValidation->getHistoModification() ?: $rapportActiviteValidation->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
     a été <strong>annulée</strong><?php echo $precisionDestructeur ?>.
 </p>

@@ -86,6 +86,7 @@ class RapportActiviteController extends AbstractController
             'these' => $this->these,
             'typesRapportPossiblesData' => $typesRapportPossiblesData,
             'operationss' => $operationss,
+            'campagneDepotDates' => $this->rapportActiviteService->fetchParametresCampagneDepotDates(),
 
             'returnUrl' => $this->url()->fromRoute('rapport-activite/lister', ['these' => $this->these->getId()]),
         ]);

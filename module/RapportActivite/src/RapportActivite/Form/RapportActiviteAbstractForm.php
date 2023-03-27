@@ -241,7 +241,7 @@ abstract class RapportActiviteAbstractForm extends Form implements InputFilterPr
             'type' => Submit::class,
             'name' => 'submit',
             'attributes' => [
-                'value' => 'Enregistrer',
+                'value' => 'Valider',
             ],
         ]);
 

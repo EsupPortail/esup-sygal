@@ -27,7 +27,7 @@
                 <?php echo $data->structureCED->getEmail(); ?> &nbsp; <?php echo $data->structureCED->getSiteWeb(); ?>
             <?php endif ?>
         </td>
-        <td width="15%">Généré le {DATE j/m/Y à H:i:s}</td>
+        <td width="15%">Généré par <?php echo $this->appInfos()->nom ?> le {DATE j/m/Y à H:i:s}</td>
         <td width="10%" style="text-align: right;">Page {PAGENO}/{nbpg}</td>
     </tr>
 </table>

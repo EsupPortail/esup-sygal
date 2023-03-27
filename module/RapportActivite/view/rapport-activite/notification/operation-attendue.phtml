@@ -7,7 +7,10 @@
  * @see \RapportActivite\Notification\RapportActiviteOperationAttenduNotification
  */
 
-$these = $operationAttendue->getRapportActivite()->getThese();
+use Application\Constants;
+
+$rapport = $operationAttendue->getRapportActivite();
+$these = $rapport->getThese();
 ?>
 <p>
     Bonjour,
@@ -21,14 +24,18 @@ $these = $operationAttendue->getRapportActivite()->getThese();
     </p>
 <?php endif ?>
 <p>
-    L'opération suivante est attendue de votre part : <strong><?php echo $operationAttendue->getTypeToString() ?></strong>
-    sur le <strong><?php echo lcfirst($operationAttendue->getRapportActivite()) ?></strong>
-    de <strong><?php echo $these->getDoctorant() ?></strong>.
+    Le <strong><?php echo lcfirst($rapport) ?></strong>
+    de <strong><?php echo $rapport->getThese()->getDoctorant() ?></strong>
+    complété à la date du
+    <?php echo ($rapport->getHistoModification() ?: $rapport->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
+    est en attente de l'opération suivante de votre part :
+    <strong><?php echo $operationAttendue->getTypeToString() ?></strong>.
 </p>
 <p>
-    Rendez-vous sur <a href="<?php echo $this->url('rapport-activite/consulter', [
-                        'these' => $these->getId(),
-                        'rapport' => $operationAttendue->getRapportActivite()->getId(),
-                    ], ['force_canonical' => true]) ?>">cette page</a> pour accéder au rapport.
+    Merci de vous connecter sur la plateforme <?php echo $this->appInfos()->nom ?> via le lien suivant :
+    <a href="<?php echo $this->url('rapport-activite/consulter', [
+        'these' => $rapport->getThese()->getId(),
+        'rapport' => $rapport->getId(),
+    ], ['force_canonical' => true]) ?>">lien</a>.
 </p>
 

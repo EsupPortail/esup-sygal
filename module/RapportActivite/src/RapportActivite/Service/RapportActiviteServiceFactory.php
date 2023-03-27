@@ -17,6 +17,7 @@ use Retraitement\Service\RetraitementService;
 use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\Structure\StructureService;
 use Structure\Service\StructureDocument\StructureDocumentService;
+use UnicaenParametre\Service\Parametre\ParametreService;
 
 class RapportActiviteServiceFactory
 {
@@ -80,6 +81,10 @@ class RapportActiviteServiceFactory
         /** @var \Application\Service\Validation\ValidationService $validationService */
         $validationService = $container->get(ValidationService::class);
         $service->setValidationService($validationService);
+
+        /** @var \UnicaenParametre\Service\Parametre\ParametreService $parametreService */
+        $parametreService = $container->get(ParametreService::class);
+        $service->setParametreService($parametreService);
 
         return $service;
     }

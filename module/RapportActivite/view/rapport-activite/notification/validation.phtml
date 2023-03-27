@@ -18,6 +18,8 @@ $rapport = $rapportActiviteValidation->getRapportActivite();
 <p>
     Le <strong><?php echo lcfirst($rapport) ?></strong>
     de <strong><?php echo $rapport->getThese()->getDoctorant() ?></strong>
+    complété à la date du
+    <?php echo ($rapport->getHistoModification() ?: $rapport->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
     a été <strong>validé</strong> par
     <?php echo $rapportActiviteValidation->getHistoModificateur() ?: $rapportActiviteValidation->getHistoCreateur() ?>,
     le <?php echo ($rapportActiviteValidation->getHistoModification() ?: $rapportActiviteValidation->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>.
