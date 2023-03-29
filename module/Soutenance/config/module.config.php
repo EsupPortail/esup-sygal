@@ -103,7 +103,7 @@ return array(
                                         'label' => 'Horodatages des événements',
                                         'route' => 'soutenance/proposition/horodatages',
                                         'order' => 1000,
-                                        'resource' => PrivilegeController::getResourceId(PropositionController::class, 'horodatages ') ,
+                                        'resource' => PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION),
                                         'withtarget' => true,
                                         'paramsInject' => [
                                             'these',
@@ -113,7 +113,7 @@ return array(
 //                                        'label' => 'Notifier attente de rapport',
 //                                        'route' => 'soutenance/notifier-retard-rapport-presoutenance',
 //                                        'order' => 500,
-//                                        'resource' => UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION),
+//                                        'resource' => PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION),
 //                                    ],
                                 ],
                             ],

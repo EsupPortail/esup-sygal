@@ -5,6 +5,7 @@ namespace Soutenance\Controller;
 use phpDocumentor\Reflection\DocBlock\Tags\Param;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Soutenance\Service\Horodatage\HorodatageService;
 use Soutenance\Service\Notification\SoutenanceNotificationFactory;
 use These\Service\Acteur\ActeurService;
 use Fichier\Service\Fichier\FichierService;
@@ -44,13 +45,14 @@ class PresoutenanceControllerFactory
     {
         /**
          * @var PropositionService $propositionService
+         * @var ActeurService $acteurService
          * @var AvisService $avisService
          * @var EvenementService $evenementService
+         * @var HorodatageService $horodatageService
          * @var MembreService $membreService
          * @var TheseService $theseService
          * @var IndividuService $individuService
          * @var NotifierService $notifierService
-         * @var ActeurService $acteurService
          * @var ValidationService $validationService
          * @var RoleService $roleService
          * @var UtilisateurService $utilisateurService
@@ -64,16 +66,17 @@ class PresoutenanceControllerFactory
          * @var FichierStorageService $fichierStorageService
          * @var ParametreService $parametreService
          */
-        $evenementService = $container->get(EvenementService::class);
         $propositionService = $container->get(PropositionService::class);
+        $acteurService = $container->get(ActeurService::class);
+        $avisService = $container->get(AvisService::class);
+        $evenementService = $container->get(EvenementService::class);
+        $horodatageService = $container->get(HorodatageService::class);
         $membreService = $container->get(MembreService::class);
         $theseService = $container->get('TheseService');
         $individuService = $container->get(IndividuService::class);
-        $acteurService = $container->get(ActeurService::class);
         $notifierService = $container->get(NotifierService::class);
         $validationService = $container->get(ValidationService::class);
         $roleService = $container->get('RoleService');
-        $avisService = $container->get(AvisService::class);
         $utilisateurService = $container->get('UtilisateurService');
         $userService = $container->get('unicaen-auth_user_service');
         $engagementImpartialiteService = $container->get(EngagementImpartialiteService::class);
@@ -96,17 +99,18 @@ class PresoutenanceControllerFactory
         $renderer = $container->get('ViewRenderer');
 
         $controller = new PresoutenanceController();
-        $controller->setEvenementService($evenementService);
         $controller->setPropositionService($propositionService);
+        $controller->setActeurService($acteurService);
+        $controller->setAvisService($avisService);
+        $controller->setEvenementService($evenementService);
+        $controller->setHorodatageService($horodatageService);
         $controller->setMembreService($membreService);
         $controller->setTheseService($theseService);
         $controller->setIndividuService($individuService);
-        $controller->setActeurService($acteurService);
         $controller->setNotifierService($notifierService);
         $controller->setValidationService($validationService);
         $controller->setSourceService($sourceService);
         $controller->setRoleService($roleService);
-        $controller->setAvisService($avisService);
         $controller->setUtilisateurService($utilisateurService);
         $controller->setUserService($userService);
         $controller->setEngagementImpartialiteService($engagementImpartialiteService);
@@ -116,7 +120,6 @@ class PresoutenanceControllerFactory
         $controller->setJustificatifService($justificatifService);
         $controller->setFichierStorageService($fichierStorageService);
         $controller->setParametreService($parametreService);
-
         $controller->setDateRenduRapportForm($dateRenduRapportForm);
         $controller->setAdresseSoutenanceForm($adresseSoutenanceForm);
 

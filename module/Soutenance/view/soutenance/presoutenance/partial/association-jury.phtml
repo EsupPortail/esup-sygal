@@ -5,6 +5,7 @@
  * @var These $these
  */
 
+use Soutenance\Service\Horodatage\HorodatageService;
 use These\Entity\Db\These;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -89,6 +90,8 @@ $canAssocierMembreIndividu              = $this->isAllowed($these, Presoutenance
             <?php endforeach; ?>
             </tbody>
         </table>
+
+        <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Association jury"); ?>
 
     </div>
 

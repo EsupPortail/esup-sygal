@@ -130,6 +130,7 @@ echo $this->partial('partial/informations', [
 <div id="DECLARATION"></div>
 <?php echo $this->partial('partial/declaration-non-plagiat', [
     'these' => $these,
+    'proposition' => $proposition,
     'validation' => $validations[TypeValidation::CODE_VALIDATION_DECLARATION_HONNEUR],
     'refus' => $validations[TypeValidation::CODE_REFUS_DECLARATION_HONNEUR],
 ]); ?>

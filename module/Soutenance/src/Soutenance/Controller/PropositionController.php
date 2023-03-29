@@ -615,6 +615,8 @@ class PropositionController extends AbstractController
         $proposition->setSurcis(!$sursis);
         $this->getPropositionService()->update($proposition);
 
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_ETAT, "Sursis");
+
         return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
     }
 
@@ -836,6 +838,8 @@ class PropositionController extends AbstractController
 
         $cheminLogoComue = ($comue) ? $this->fichierStorageService->getFileForLogoStructure($comue->getStructure()) : null;
         $cheminLogoEtablissement = ($these->getEtablissement()) ? $this->fichierStorageService->getFileForLogoStructure($these->getEtablissement()->getStructure()) : null;
+
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Serment du docteur");
 
         $exporter = new SermentPdfExporter($this->renderer, 'A4');
         $exporter->getMpdf()->SetMargins(0, 0, 50);

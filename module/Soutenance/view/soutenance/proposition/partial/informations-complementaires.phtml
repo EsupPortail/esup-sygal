@@ -174,11 +174,7 @@ $these = $proposition->getThese();
             <?php endif; ?>
         </div>
     </div>
-    <?php $last = $proposition->getLastHoradatage(HorodatageService::TYPE_MODIFICATION, "Informations complémentaires"); ?>
-    <?php if ($last) : ?>
-        <div class="alert alert-info">
-            Dernière modification <?php echo $this->horodatage($last); ?>
-        </div>
-    <?php endif; ?>
+    <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires"); ?>
+
 </div>
 </div>

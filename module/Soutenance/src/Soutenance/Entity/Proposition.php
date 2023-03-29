@@ -3,16 +3,17 @@
 namespace Soutenance\Entity;
 
 use Doctrine\Common\Collections\Collection;
-use Horodatage\Entity\Db\Horodatage;
-use Soutenance\Service\Horodatage\HorodatageService;
+use Horodatage\Entity\Interfaces\HasHorodatagesInterface;
+use Horodatage\Entity\Traits\HasHorodatagesTrait;
 use These\Entity\Db\These;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class Proposition implements HistoriqueAwareInterface {
+class Proposition implements HistoriqueAwareInterface, HasHorodatagesInterface {
     use HistoriqueAwareTrait;
+    use HasHorodatagesTrait;
 
     private ?int $id = null;
     private ?These $these = null;
@@ -35,7 +36,6 @@ class Proposition implements HistoriqueAwareInterface {
 
     private Collection $justificatifs;
     private Collection $avis;
-    private Collection $horodatages;
 
     public function __construct(?These $these = null)
     {
@@ -383,37 +383,5 @@ class Proposition implements HistoriqueAwareInterface {
         }
         return false;
     }
-
-    /** GESTION DES HORODATAGES ***************************************************/
-
-    /** @return Horodatage[] */
-    public function getHorodatages(?string $type = null, ?string $complement = null) : array
-    {
-        $result = [];
-        /** @var Horodatage $horadatage */
-        foreach ($this->horodatages as $horadatage) {
-            if (    ($type === null OR $horadatage->getType() === $type)
-                AND ($complement === null OR $horadatage->getComplement() === $complement)
-            ) {
-                $result[] = $horadatage;
-            }
-        }
-        usort($result, function(Horodatage $a, Horodatage $b) { return $a->getDate() > $b->getDate();});
-        return $result;
-    }
-
-    public function getLastHoradatage(?string $type = null, ?string $complement = null) : ?Horodatage
-    {
-        $horodatages = $this->getHorodatages($type, $complement);
-        if ($horodatages === []) return null;
-        return array_reverse($horodatages)[0];
-    }
-
-    public function addHorodatage(Horodatage $horodatage) : void
-    {
-        $this->horodatages->add($horodatage);
-    }
-
-    /** Pas besoin de remove car les horodatages vont "cascader" le relation */
 
 }

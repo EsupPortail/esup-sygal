@@ -36,6 +36,8 @@ use Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter;
 use Soutenance\Service\Exporter\ProcesVerbal\ProcesVerbalSoutenancePdfExporter;
 use Soutenance\Service\Exporter\RapportSoutenance\RapportSoutenancePdfExporter;
 use Soutenance\Service\Exporter\RapportTechnique\RapportTechniquePdfExporter;
+use Soutenance\Service\Horodatage\HorodatageService;
+use Soutenance\Service\Horodatage\HorodatageServiceAwareTrait;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
@@ -58,6 +60,7 @@ use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 class PresoutenanceController extends AbstractController
 {
     use EvenementServiceAwareTrait;
+    use HorodatageServiceAwareTrait;
     use TheseServiceAwareTrait;
     use MembreServiceAwareTrait;
     use IndividuServiceAwareTrait;
@@ -156,6 +159,7 @@ class PresoutenanceController extends AbstractController
             $form->setData($data);
             if ($form->isValid()) {
                 $this->getPropositionService()->update($proposition);
+                $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Date de rendu");
             }
         }
 
@@ -240,6 +244,7 @@ class PresoutenanceController extends AbstractController
             //mise à jour du membre de soutenance
             $membre->setActeur($acteur);
             $this->getMembreService()->update($membre);
+            $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
             //creation de l'utilisateur
 
             if ($membre->estRapporteur()) {
@@ -274,6 +279,7 @@ class PresoutenanceController extends AbstractController
     public function deassocierJuryAction() : Response
     {
         $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         $acteurs = $this->getActeurService()->getRepository()->findActeurByThese($these);
@@ -286,6 +292,7 @@ class PresoutenanceController extends AbstractController
         //retrait dans membre de soutenance
         $membre->setActeur(null);
         $this->getMembreService()->update($membre);
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
 
         $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these, TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $acteur->getIndividu());
         if ($validation !== null) {
