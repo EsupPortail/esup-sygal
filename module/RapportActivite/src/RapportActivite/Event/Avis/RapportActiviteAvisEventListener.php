@@ -60,8 +60,10 @@ class RapportActiviteAvisEventListener extends RapportActiviteOperationAbstractE
     private function handleSuppressionValidationDoctorant(): void
     {
         // Si un avis "rapport incomplet" est émis par la direction d'ED, on supprime la validation doctorant.
-        if ($this->operationRealisee->getAvis()->getAvisValeur()->getCode() !==
-            RapportActiviteAvis::AVIS_VALEUR__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED_VALEUR_INCOMPLET) {
+        if (!in_array($this->operationRealisee->getAvis()->getAvisValeur()->getCode(), [
+            RapportActiviteAvis::AVIS_VALEUR__CODE__AVIS_RAPPORT_ACTIVITE_VALEUR_INCOMPLET,
+            RapportActiviteAvis::AVIS_VALEUR__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED_VALEUR_INCOMPLET,
+        ])) {
             return;
         }
 
@@ -77,8 +79,8 @@ class RapportActiviteAvisEventListener extends RapportActiviteOperationAbstractE
             ));
         }
 
-        $ripOperatioConfig = $this->rapportActiviteOperationRule->getConfigForOperationName($ripOperatioName);
-        if (!$this->rapportActiviteOperationRule->isOperationEnabledForRapport($ripOperatioConfig, $rapportActivite)) {
+        $ripOperationConfig = $this->rapportActiviteOperationRule->getConfigForOperationName($ripOperatioName);
+        if (!$this->rapportActiviteOperationRule->isOperationEnabledForRapport($ripOperationConfig, $rapportActivite)) {
             // opération non activée pour ce rapport, rien à faire.
             return;
         }

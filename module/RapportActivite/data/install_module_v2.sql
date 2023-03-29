@@ -339,20 +339,21 @@ select t.id, v.id
 from unicaen_avis_type t, unicaen_avis_valeur v
 where t.code = 'AVIS_RAPPORT_ACTIVITE_DIR_THESE'
   and v.code in (
+                 'AVIS_RAPPORT_ACTIVITE_VALEUR_INCOMPLET',
                  'AVIS_RAPPORT_ACTIVITE_VALEUR_POSITIF',
                  'AVIS_RAPPORT_ACTIVITE_VALEUR_NEGATIF'
     ) ;
 
--- insert into unicaen_avis_type_valeur_complem (avis_type_valeur_id, code, obligatoire_un_au_moins, type, libelle)
--- with tmp (code, oblig, type, libelle) as (
---     select 'PB_INFOS', false, 'information', 'Si l''avis est négatif, la balle retournera dans le camp du doctorant...'
--- )
--- select tv.id, concat(t.code,'__',v.code,'__',tmp.code), tmp.oblig, tmp.type, tmp.libelle
--- from tmp, unicaen_avis_type_valeur tv
--- join unicaen_avis_type t on t.id = tv.avis_type_id and t.code = 'AVIS_RAPPORT_ACTIVITE_DIR_THESE'
--- join unicaen_avis_valeur v on v.id = tv.avis_valeur_id and v.code in (
---     'AVIS_RAPPORT_ACTIVITE_VALEUR_NEGATIF'
--- ) ;
+insert into unicaen_avis_type_valeur_complem (avis_type_valeur_id, code, obligatoire_un_au_moins, type, libelle)
+with tmp (code, oblig, type, libelle) as (
+    select 'PB_INFOS', false, 'information', 'Si le rapport est jugé incomplet, la balle retournera dans le camp du doctorant...'
+)
+select tv.id, concat(t.code,'__',v.code,'__',tmp.code), tmp.oblig, tmp.type, tmp.libelle
+from tmp, unicaen_avis_type_valeur tv
+              join unicaen_avis_type t on t.id = tv.avis_type_id and t.code = 'AVIS_RAPPORT_ACTIVITE_DIR_THESE'
+              join unicaen_avis_valeur v on v.id = tv.avis_valeur_id and v.code in (
+    'AVIS_RAPPORT_ACTIVITE_VALEUR_INCOMPLET'
+    ) ;
 
 insert into unicaen_avis_type_valeur_complem (avis_type_valeur_id, code, obligatoire_un_au_moins, type, libelle)
 with tmp (code, oblig, type, libelle) as (
@@ -373,6 +374,7 @@ select tv.id, concat(t.code,'__',v.code,'__',tmp.code), tmp.oblig, tmp.type, tmp
 from tmp, unicaen_avis_type_valeur tv
               join unicaen_avis_type t on t.id = tv.avis_type_id and t.code = 'AVIS_RAPPORT_ACTIVITE_DIR_THESE'
               join unicaen_avis_valeur v on v.id = tv.avis_valeur_id and v.code in (
+                                                                                    'AVIS_RAPPORT_ACTIVITE_VALEUR_INCOMPLET',
                                                                                     'AVIS_RAPPORT_ACTIVITE_VALEUR_POSITIF',
                                                                                     'AVIS_RAPPORT_ACTIVITE_VALEUR_NEGATIF'
     ) ;

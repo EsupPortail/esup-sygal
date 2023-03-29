@@ -96,6 +96,10 @@ class ModuleConfig
                         "$rapportAlias.estFinContrat = false AND " .
                         "$rapportAlias.fichier is null";
                 },
+                'extra' => [
+                    // Si un avis "rapport incomplet" est émis, on supprimera la validation doctorant.
+                    'validation_doctorant_operation_name' => self::VALIDATION_DOCTORANT,
+                ],
             ],
             /**
              * Avis du co-directeur de thèse.
