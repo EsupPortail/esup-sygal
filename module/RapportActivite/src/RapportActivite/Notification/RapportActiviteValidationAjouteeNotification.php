@@ -4,6 +4,7 @@ namespace RapportActivite\Notification;
 
 use Notification\Notification;
 use RapportActivite\Entity\Db\RapportActiviteValidation;
+use RuntimeException;
 
 class RapportActiviteValidationAjouteeNotification extends Notification
 {
@@ -26,6 +27,9 @@ class RapportActiviteValidationAjouteeNotification extends Notification
         $these = $this->rapportActiviteValidation->getRapportActivite()->getThese();
         $individu = $these->getDoctorant()->getIndividu();
         $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
+        if (!$email) {
+            throw new RuntimeException("Anomalie bloquante : aucune adresse mail disponible pour le doctorant {$these->getDoctorant()}");
+        }
 
         $this->setTo([$email => $these->getDoctorant()->getIndividu()->getNomComplet()]);
         $this->setCc($these->getDirecteursTheseEmails());
@@ -36,12 +40,21 @@ class RapportActiviteValidationAjouteeNotification extends Notification
         ));
 
         $successMessage = sprintf(
-            "Un mail de notification vient d'être envoyé aux personnes suivantes : %s",
+            "Un mail de notification vient d'être envoyé à %s",
             implode(', ', array_reduce(array_keys($this->to), function(array $accu, string $key) {
                 $accu[] = sprintf('%s (%s)', $this->to[$key], $key);
                 return $accu;
-            }, []))
+            }, [])),
         );
+        if ($this->cc) {
+            $successMessage .= sprintf(
+                " et en copie à %s",
+                implode(', ', array_reduce(array_keys($this->cc), function(array $accu, string $key) {
+                    $accu[] = sprintf('%s (%s)', $this->cc[$key], $key);
+                    return $accu;
+                }, [])),
+            );
+        }
 
         $this->setTemplateVariables([
             'rapportActiviteValidation' => $this->rapportActiviteValidation,

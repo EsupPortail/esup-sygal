@@ -28,6 +28,10 @@ class RapportActiviteAvisAssertion extends RapportActiviteOperationAbstractAsser
      */
     protected function assertController($controller, $action = null, $privilege = null): bool
     {
+        if (! parent::assertController($controller, $action, $privilege)) {
+            return false;
+        }
+
 //        switch ($action) {
 //            case 'ajouter':
 //                $rapportActivite = $this->rapportActiviteService->fetchRapportById($this->getRouteMatch()->getParam('rapport'));
@@ -141,6 +145,10 @@ class RapportActiviteAvisAssertion extends RapportActiviteOperationAbstractAsser
      */
     protected function assertEntity(ResourceInterface $entity, $privilege = null): bool
     {
+        if (! parent::assertEntity($entity, $privilege)) {
+            return false;
+        }
+
         $rapportActiviteAvis = $entity;
         $rapport = $rapportActiviteAvis->getRapportActivite();
 

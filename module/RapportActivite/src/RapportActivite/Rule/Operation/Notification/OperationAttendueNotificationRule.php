@@ -224,6 +224,7 @@ class OperationAttendueNotificationRule implements RuleInterface
         $doctorant = $this->operationRealisee->getRapportActivite()->getThese()->getDoctorant();
         $emailDoctorant = $this->emailAddressExtractor->__invoke($doctorant->getIndividu());
 
+        $emailsTmp = [];
         $identites = [];
         foreach ($individuRoleAwares as $ir) {
             $individu = $ir->getIndividu();
@@ -234,7 +235,7 @@ class OperationAttendueNotificationRule implements RuleInterface
                 $emailsTmp[$email] = $identite;
             }
         }
-        if (empty($emailsTmp)) {
+        if (!$emailsTmp) {
             $emailsTmp[$emailDoctorant] = $doctorant . "(doctorant)";
             $this->anomalies[] = sprintf($this->anomalieAucuneAdresseTemplate, implode(', ', $identites));
         }

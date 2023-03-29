@@ -74,11 +74,20 @@ $canGen =
             <?php echo $rapport->getHistoCreation()->format('d/m/Y à H:i') ?>
         </dd>
 
-        <dt>
-            Fichier téléversé
-        </dt>
-        <dd>
-            <?php if ($fichier = $rapport->getFichier()): ?>
+        <?php if ($rapport->getParDirecteurTheseMotif()): ?>
+            <dt>
+                Motif de la non saisie du rapport par le doctorant (en cas d’incapacité du doctorant)
+            </dt>
+            <dd>
+                <?php echo $rapport->getParDirecteurTheseMotif() ?>
+            </dd>
+        <?php endif; ?>
+
+        <?php if ($fichier = $rapport->getFichier()): ?>
+            <dt>
+                Fichier téléversé
+            </dt>
+            <dd>
                 <?php if ($canDl): ?>
                     <?php $returnUrl = $this->url('rapport-activite/consulter', ['these' => $these->getId(), 'rapport' => IdifyFilter::id($rapport)]) ?>
                     <a href="<?php echo $this->url('rapport-activite/telecharger', ['rapport' => IdifyFilter::id($rapport)], ['query' => ['redirect' => $returnUrl]]) ?>"
@@ -90,12 +99,8 @@ $canGen =
                 <?php endif; ?>
                 <span class="icon icon-info text-info"
                       title="Il s'agit d'un rapport non dématérialisé téléversé dans l'ancienne version du module Rapport d'activité"></span>
-            <?php else: ?>
-                Aucun
-                <span class="icon icon-info text-info"
-                      title="Aucun fichier téléversé car il s'agit d'un rapport dématérialisé créé avec le nouveau module Rapport d'activité"></span>
-            <?php endif; ?>
-        </dd>
+            </dd>
+        <?php endif; ?>
     </dl>
 
 
@@ -444,18 +449,22 @@ $canGen =
     </div>
 
 
-    <h2>Validations</h2>
+    <h2>Validations et avis</h2>
 
     <div class="row">
         <div class="col-md-4">
-            <?php foreach ($operations as $i => $operation): ?>
-                <?php
-                echo $this->partial('rapport-activite/partial/operation-card', [
-                    'operation' => $operation,
-                    'ajaxModalEvent' => $ajaxModalEvent,
-                ]);
-                ?>
-            <?php endforeach ?>
+            <?php if ($operations): ?>
+                <?php foreach ($operations as $i => $operation): ?>
+                    <?php
+                    echo $this->partial('rapport-activite/partial/operation-card', [
+                        'operation' => $operation,
+                        'ajaxModalEvent' => $ajaxModalEvent,
+                    ]);
+                    ?>
+                <?php endforeach ?>
+            <?php else: ?>
+                Aucune validation ni aucun avis attendus.
+            <?php endif ?>
         </div>
     </div>
 

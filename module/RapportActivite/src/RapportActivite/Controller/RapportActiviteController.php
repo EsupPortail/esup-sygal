@@ -116,6 +116,9 @@ class RapportActiviteController extends AbstractController
         $rapport = $this->rapportActiviteService->newRapportActivite($this->these);
         $rapport->setEstFinContrat($estFinContrat);
 
+        // Si ce n'est pas le doctorant qui est connecté, on actionne le témoin "rapport créé par le dir de thèse".
+        $rapport->setParDirecteurThese($this->userContextService->getSelectedRoleDoctorant() === null);
+
         $form = $rapport->estFinContrat() ? $this->finContratForm : $this->annuelForm;
         $this->initForm($form, $rapport);
         $form->bind($rapport);
@@ -162,6 +165,9 @@ class RapportActiviteController extends AbstractController
     public function modifierAction()
     {
         $rapport = $this->requestedRapport();
+
+        // Si ce n'est pas le doctorant qui est connecté, on actionne le témoin "rapport créé par le dir de thèse".
+        $rapport->setParDirecteurThese($this->userContextService->getSelectedRoleDoctorant() === null);
 
         $form = $rapport->estFinContrat() ? $this->finContratForm : $this->annuelForm;
         $this->initForm($form, $rapport);

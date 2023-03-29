@@ -140,6 +140,9 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
             $canView =
                 $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_CONSULTER_TOUT) ||
                 $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_CONSULTER_SIEN);
+            $canEdit =
+                $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_TOUT) ||
+                $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_SIEN);
             $canDel =
                 $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT) ||
                 $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN);
@@ -258,6 +261,11 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
                 <?php if ($canView): ?>
                     <a href="<?php echo $this->url('rapport-activite/consulter', ['these' => $rapport->getThese()->getId(), 'rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
                        title="Consulter ce rapport"><span class="icon icon-voir iconly"></span></a>
+                <?php endif; ?>
+                <?php if ($canEdit): ?>
+                    <a href="<?php echo $this->url('rapport-activite/modifier', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
+                       title="Modifier ce rapport"><span class="icon icon-modifier iconly"></span></a>
+                    </a>
                 <?php endif; ?>
                 <?php if ($canDel): ?>
                     <a href="<?php echo $this->url('rapport-activite/supprimer', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"

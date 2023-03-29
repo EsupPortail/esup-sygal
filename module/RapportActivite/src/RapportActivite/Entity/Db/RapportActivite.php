@@ -32,6 +32,8 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
     private ?int $id = null;
     private int $anneeUniv;
     private bool $estFinContrat = false;
+    private bool $parDirecteurThese = false; // rapport créé par le directeur de thèse (en cas d'incapacité du doctorant)
+    private ?string $parDirecteurTheseMotif = null;
     private ?Fichier $fichier = null;
     private ?string $descriptionProjetRecherche = null;
     private ?string $principauxResultatsObtenus = null;
@@ -105,6 +107,28 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
     {
         $this->estFinContrat = $estFinContrat;
 
+        return $this;
+    }
+
+    public function getParDirecteurThese(): bool
+    {
+        return $this->parDirecteurThese;
+    }
+
+    public function setParDirecteurThese(bool $parDirecteurThese): self
+    {
+        $this->parDirecteurThese = $parDirecteurThese;
+        return $this;
+    }
+
+    public function getParDirecteurTheseMotif(): ?string
+    {
+        return $this->parDirecteurTheseMotif;
+    }
+
+    public function setParDirecteurTheseMotif(?string $parDirecteurTheseMotif): self
+    {
+        $this->parDirecteurTheseMotif = $parDirecteurTheseMotif;
         return $this;
     }
 

@@ -1343,24 +1343,49 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     public function getDirecteursTheseEmails(array &$individusSansMail = []): array
     {
         $emails = [];
-        /** @var Acteur[] $directeurs */
-        $directeurs = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE)->toArray();
-        /** @var Acteur[] $codirecteurs */
-        $codirecteurs = $this->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE)->toArray();
-        $encadrements = array_merge($directeurs, $codirecteurs);
+        $encadrements = $this->getActeursByRoleCode(Role::CODE_DIRECTEUR_THESE)->toArray();
+        $emailExtractor = fn(Individu $i) => $i->getEmailPro() ?: $i->getEmailUtilisateur();
 
         /** @var Acteur $acteur */
         foreach ($encadrements as $acteur) {
-            $email = $acteur->getIndividu()->getEmailPro();
-            $name = (string) $acteur->getIndividu();
+            $individu = $acteur->getIndividu();
+            $email = $emailExtractor->__invoke($individu);
+            $name = (string) $individu;
             if (! $email) {
-                $individusSansMail[$name] = $acteur->getIndividu();
+                $individusSansMail[$name] = $individu;
             } else {
                 $emails[$email] = $name;
             }
         }
 
         return $emails;
+    }
+
+    /**
+     * Retourne les mails des codirecteurs de thèse.
+     *
+     * @param Individu[] $individusSansMail Liste des individus sans mail, format: "Paul Hochon" => Individu
+     * @return array
+     */
+    public function getCoDirecteursTheseEmails(array &$individusSansMail = []): array
+    {
+        $emailsPros = [];
+        $encadrements = $this->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE)->toArray();
+        $emailExtractor = fn(Individu $i) => $i->getEmailPro() ?: $i->getEmailUtilisateur();
+
+        /** @var Acteur $acteur */
+        foreach ($encadrements as $acteur) {
+            $individu = $acteur->getIndividu();
+            $email = $emailExtractor->__invoke($individu);
+            $name = (string) $individu;
+            if (! $email) {
+                $individusSansMail[$name] = $individu;
+            } else {
+                $emails[$email] = $name;
+            }
+        }
+
+        return $emailsPros;
     }
 
     /**

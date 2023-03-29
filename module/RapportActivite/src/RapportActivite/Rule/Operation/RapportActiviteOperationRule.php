@@ -273,6 +273,8 @@ class RapportActiviteOperationRule
 
     private function loadOperationsForRapport(RapportActivite $rapportActivite): void
     {
+        $this->operations[$rapportActivite->getId()] = [];
+
         foreach ($this->operationsConfig as $name => $config) {
             if (!$this->isOperationEnabledForRapport($config, $rapportActivite)) {
                 continue;

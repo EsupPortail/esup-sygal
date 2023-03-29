@@ -39,6 +39,14 @@ $form->prepare();
         </div>
     </div>
 
+    <?php if ($form->has('parDirecteurTheseMotif')): ?>
+        <div class="row">
+            <div class="col-md-7">
+                <?php echo $this->formControlGroup($form->get('parDirecteurTheseMotif')); ?>
+            </div>
+        </div>
+    <?php endif ?>
+
 
     <h2>Activités scientifiques / <span class="en">Scientific activities</span></h2>
 

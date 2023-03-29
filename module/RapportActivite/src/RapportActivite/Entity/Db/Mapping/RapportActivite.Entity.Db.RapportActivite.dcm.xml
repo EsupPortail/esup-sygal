@@ -11,6 +11,9 @@
         <field name="anneeUniv" type="integer" column="ANNEE_UNIV"/>
         <field name="estFinContrat" type="boolean" column="EST_FIN_CONTRAT"/>
 
+        <field name="parDirecteurThese" type="boolean" column="PAR_DIRECTEUR_THESE"/>
+        <field name="parDirecteurTheseMotif" type="string" column="PAR_DIRECTEUR_THESE_MOTIF"/>
+
         <field name="descriptionProjetRecherche" type="string" column="DESCRIPTION_PROJET_RECHERCHE"/>
         <field name="principauxResultatsObtenus" type="string" column="PRINCIPAUX_RESULTATS_OBTENUS"/>
         <field name="productionsScientifiques" type="string" column="PRODUCTIONS_SCIENTIFIQUES"/>

@@ -406,7 +406,11 @@ $these = $rapport->getThese();
 
     <div class="row">
         <div class="col-md-4">
-            <?php echo $this->partial('rapport-activite/partial/operations-ul', ['operations' => $operations]) ?>
+            <?php if ($operations): ?>
+                <?php echo $this->partial('rapport-activite/partial/operations-ul', ['operations' => $operations]) ?>
+            <?php else: ?>
+                Aucune validation ni aucun avis attendus.
+            <?php endif ?>
         </div>
     </div>
 

@@ -105,6 +105,21 @@ abstract class RapportActiviteAbstractForm extends Form implements InputFilterPr
 
         $this->add([
             'type' => Textarea::class,
+            'name' => 'parDirecteurTheseMotif',
+            'options' => [
+                'label' => "Motif de la non saisie du rapport par le doctorant (en cas d’incapacité du doctorant) :",
+                'label_attributes' => [
+                    'class' => 'required',
+                ],
+            ],
+            'attributes' => [
+                'class' => 'form-control',
+                'rows' => 4,
+            ],
+        ]);
+
+        $this->add([
+            'type' => Textarea::class,
             'name' => 'descriptionProjetRecherche',
             'options' => [
                 'label' => "Description du projet de recherche (7-8 lignes max) / Briefly describe (7-8 lines) the research project :",
@@ -241,7 +256,7 @@ abstract class RapportActiviteAbstractForm extends Form implements InputFilterPr
             'type' => Submit::class,
             'name' => 'submit',
             'attributes' => [
-                'value' => 'Valider',
+                'value' => 'Enregistrer',
             ],
         ]);
 
@@ -254,6 +269,10 @@ abstract class RapportActiviteAbstractForm extends Form implements InputFilterPr
     public function prepare()
     {
         $this->prepareAnneeUnivSelect();
+
+        if (!$this->object->getParDirecteurThese()) {
+            $this->remove('parDirecteurTheseMotif');
+        }
 
         return parent::prepare();
     }
@@ -312,6 +331,13 @@ abstract class RapportActiviteAbstractForm extends Form implements InputFilterPr
 //                        ],
 //                    ],
                 ],
+            ],
+
+            'parDirecteurTheseMotif' => [
+                'required' => $this->object->getParDirecteurThese(),
+                'filters' => [
+                    ['name' => StringTrim::class],
+                ]
             ],
 
             'descriptionProjetRecherche' => [

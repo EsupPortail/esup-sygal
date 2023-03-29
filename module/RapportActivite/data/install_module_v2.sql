@@ -15,6 +15,8 @@ create table rapport_activite
             on delete cascade,
     annee_univ bigint not null,
     est_fin_contrat boolean not null,
+    par_directeur_these boolean default false not null,
+    par_directeur_these_motif text,
     description_projet_recherche text,
     principaux_resultats_obtenus text,
     productions_scientifiques text,
@@ -240,9 +242,21 @@ with data(categ, priv) as (
 )
 select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
 from data
-         join PROFIL on profil.ROLE_ID in (
-                                           'ADMIN_TECH', 'BDD'
-    )
+         join PROFIL on profil.ROLE_ID in ('ADMIN_TECH', 'BDD')
+         join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
+         join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
+where not exists (
+        select * from PROFIL_PRIVILEGE where PRIVILEGE_ID = p.id and PROFIL_ID = profil.id
+    ) ;
+
+INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
+with data(categ, priv) as (
+    select 'rapport-activite', 'ajouter-sien' union
+    select 'rapport-activite', 'modifier-sien'
+)
+select p.id as PRIVILEGE_ID, profil.id as PROFIL_ID
+from data
+         join PROFIL on profil.ROLE_ID in ('D', 'DOCTORANT')
          join CATEGORIE_PRIVILEGE cp on cp.CODE = data.categ
          join PRIVILEGE p on p.CATEGORIE_ID = cp.id and p.code = data.priv
 where not exists (
@@ -252,8 +266,6 @@ where not exists (
 INSERT INTO PROFIL_PRIVILEGE (PRIVILEGE_ID, PROFIL_ID)
 with data(categ, priv) as (
     select 'rapport-activite', 'lister-sien' union
-    select 'rapport-activite', 'ajouter-sien' union
-    select 'rapport-activite', 'modifier-sien' union
     select 'rapport-activite', 'consulter-sien' union
     select 'rapport-activite', 'telecharger-sien' union
     select 'rapport-activite', 'generer-sien'
@@ -301,7 +313,7 @@ update type_validation
 set code = 'RAPPORT_ACTIVITE_AUTO', libelle = 'Validation finale du rapport d''activité non dématérialisé (ancien module)'
 where code = 'RAPPORT_ACTIVITE';
 insert into type_validation(id, code, libelle)
-select nextval('type_validation_id_seq'), 'RAPPORT_ACTIVITE_DOCTORANT', 'Validation du rapport d''activité par le doctorant';
+select nextval('type_validation_id_seq'), 'RAPPORT_ACTIVITE_DOCTORANT', 'Validation du rapport d''activité';
 
 INSERT INTO type_validation (id, code, libelle)
 select nextval('type_validation_id_seq'), 'RAPPORT_ACTIVITE', 'Validation finale du rapport d''activité non dématérialisé (ancien module)';

@@ -43,7 +43,7 @@ class ModuleConfig
             self::VALIDATION_DOCTORANT => [
                 'type' => RapportActiviteValidation::class,
                 'code' => TypeValidation::CODE_RAPPORT_ACTIVITE_DOCTORANT,
-                'role' => [Role::CODE_DOCTORANT],
+                'role' => [Role::CODE_DOCTORANT, Role::CODE_DIRECTEUR_THESE],
                 'pre_condition' => null,
                 'enabled' => function(RapportActivite $rapportActivite) {
                     return $rapportActivite->getFichier() === null;
@@ -86,11 +86,15 @@ class ModuleConfig
                 ],
                 'enabled' => function(RapportActivite $rapportActivite) {
                     return
+                        !$rapportActivite->getParDirecteurThese() &&
                         !$rapportActivite->estFinContrat() &&
                         $rapportActivite->getFichier() === null;
                 },
                 'enabled_as_dql' => function(string $rapportAlias) {
-                    return "$rapportAlias.estFinContrat = false AND $rapportAlias.fichier is null";
+                    return
+                        "$rapportAlias.parDirecteurThese = false AND " .
+                        "$rapportAlias.estFinContrat = false AND " .
+                        "$rapportAlias.fichier is null";
                 },
             ],
             /**
@@ -111,8 +115,9 @@ class ModuleConfig
                 },
                 'enabled_as_dql' => function(string $rapportAlias) {
                     return
-                        "$rapportAlias.estFinContrat = false AND $rapportAlias.fichier is null " .
-                        "AND EXISTS (
+                        "$rapportAlias.estFinContrat = false AND " .
+                        "$rapportAlias.fichier is null AND " .
+                        "EXISTS (
                             SELECT a_filter FROM " . Acteur::class . " a_filter 
                             JOIN a_filter.role r WITH r.code = '" . Role::CODE_CODIRECTEUR_THESE . "'
                             WHERE a_filter.histoDestruction is null AND a_filter.these = $rapportAlias.these
@@ -135,7 +140,9 @@ class ModuleConfig
                         $rapportActivite->getFichier() === null;
                 },
                 'enabled_as_dql' => function(string $rapportAlias) {
-                    return "$rapportAlias.estFinContrat = false AND $rapportAlias.fichier is null";
+                    return
+                        "$rapportAlias.estFinContrat = false AND " .
+                        "$rapportAlias.fichier is null";
                 },
             ],
             /**
@@ -158,8 +165,8 @@ class ModuleConfig
                 },
                 'enabled_as_dql' => function(string $rapportAlias) {
                     return
-                        "$rapportAlias.estFinContrat = false AND $rapportAlias.fichier is null 
-                        OR $rapportAlias.fichier is not null";
+                        "($rapportAlias.estFinContrat = false AND $rapportAlias.fichier is null) OR" .
+                        "$rapportAlias.fichier is not null";
                 },
                 'extra' => [
                     // Si un avis "rapport incomplet" est émis par la direction d'ED, on supprimera la validation doctorant.

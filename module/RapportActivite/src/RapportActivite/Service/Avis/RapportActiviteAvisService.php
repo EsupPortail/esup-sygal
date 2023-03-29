@@ -75,20 +75,20 @@ class RapportActiviteAvisService extends BaseService
     }
 
     /**
-     * Supprime en bdd un avis sur un rapport d'activité.
+     * Historise en bdd un avis sur un rapport d'activité.
      *
      * @param \RapportActivite\Entity\Db\RapportActiviteAvis $rapportAvis
      */
     public function deleteRapportAvis(RapportActiviteAvis $rapportAvis)
     {
         $this->entityManager->beginTransaction();
+        $rapportAvis->historiser();
         try {
-            $this->entityManager->remove($rapportAvis); // l'Avis sera supprimé en cascade (cf. mapping)
-            $this->entityManager->flush($rapportAvis);
+            $this->getEntityManager()->flush($rapportAvis);
             $this->entityManager->commit();
         } catch (Exception $e) {
             $this->entityManager->rollback();
-            throw new RuntimeException("Erreur survenue lors de la suppression de l'avis, rollback!", 0, $e);
+            throw new RuntimeException("Erreur survenue lors de l'historisation de l'avis, rollback!", 0, $e);
         }
     }
 

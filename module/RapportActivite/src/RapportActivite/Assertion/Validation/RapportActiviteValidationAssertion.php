@@ -90,6 +90,10 @@ class RapportActiviteValidationAssertion extends RapportActiviteOperationAbstrac
      */
     protected function assertEntity(ResourceInterface $entity, $privilege = null): bool
     {
+        if (! parent::assertEntity($entity, $privilege)) {
+            return false;
+        }
+
         /** @var RapportActiviteValidation $rapportActiviteValidation */
         $rapportActiviteValidation = $entity;
 
