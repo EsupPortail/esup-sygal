@@ -328,7 +328,9 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
 
     public function getCalendrierPrevionnelFinalisationEnabled(): bool
     {
-        return !$this->estFinContrat();
+        return
+            !$this->estFinContrat() &&
+            $this->getThese()->getAnneesUnivInscriptionCount() >= 3; // à partir de la 3ème année d'inscription
     }
 
     public function getCalendrierPrevionnelFinalisation(): ?string

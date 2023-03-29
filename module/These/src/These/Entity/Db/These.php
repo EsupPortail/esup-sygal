@@ -2,6 +2,7 @@
 
 namespace These\Entity\Db;
 
+use Application\Entity\AnneeUniv;
 use Application\Entity\Db\Financement;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\Role;
@@ -1277,6 +1278,28 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     }
 
     /**
+     * Retourne le nombre d'années d'inscriptions liées à cette thèse.
+     *
+     * @param int|null $anneeMax Année maximum à considérer.
+     * Il s'agit de l'année "de début" d'une année universitaire, ex : N pour l'année universitaire N/N+1.
+     * Si absente, c'est l'année universitaire courante qui est considérée.
+     * @return int
+     */
+    public function getAnneesUnivInscriptionCount(?int $anneeMax = null) : int
+    {
+        if ($anneeMax === null) {
+            $anneeMax = AnneeUniv::courante()->getPremiereAnnee();
+        }
+        $inscriptions = array_filter(
+            $this->getAnneesUnivInscription()->toArray(),
+            function (TheseAnneeUniv $a) use ($anneeMax) {
+                return ($a->estNonHistorise() AND $a->getAnneeUniv() <= $anneeMax);
+            }
+        );
+        return count($inscriptions);
+    }
+
+    /**
      * Retourne l'année universitaire de première inscription,
      *
      * @return TheseAnneeUniv|VTheseAnneeUnivFirst
@@ -1519,19 +1542,5 @@ class These implements HistoriqueAwareInterface, ResourceInterface
             }
         }
         return null;
-    }
-
-    public static function getAnneeScolaireCourante() : int {
-        $mois = ((int) (new DateTime())->format('m'));
-        $annee = ((int) (new DateTime())->format('Y'));
-        if ($mois > 8) $annee += 1;
-        return $annee;
-    }
-
-    public function getNbInscription(?int $annee = null) : int
-    {
-        if ($annee === null) $annee = These::getAnneeScolaireCourante();
-        $inscriptions = array_filter($this->getAnneesUnivInscription()->toArray(), function (TheseAnneeUniv $a) use ($annee) { return ($a->estNonHistorise() AND $a->getAnneeUniv() <= $annee); });
-        return count($inscriptions);
     }
 }

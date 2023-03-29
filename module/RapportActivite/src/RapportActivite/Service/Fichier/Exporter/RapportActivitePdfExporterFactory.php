@@ -18,6 +18,7 @@ class RapportActivitePdfExporterFactory
         $config = $container->get('Config');
 
         $templateConfig = $config['rapport-activite']['template'];
+        $headerScriptFilePath = $templateConfig['header_path'];
         $footerScriptFilePath = $templateConfig['footer_path'];
         $bodyScriptFilePath = $templateConfig['template_path'];
         $cssFilePaths = $templateConfig['css_path'];
@@ -25,6 +26,7 @@ class RapportActivitePdfExporterFactory
         $exporter = new RapportActivitePdfExporter($renderer, 'A4');
         $exporter
             ->setTemplateFilePath($bodyScriptFilePath)
+            ->setHeaderScript($headerScriptFilePath)
             ->setFooterScript($footerScriptFilePath)
             ->setCssFilePaths($cssFilePaths);
         $exporter->setMarginTop(10);

@@ -113,31 +113,21 @@ $canGen =
                     École doctorale / Doctoral School
                 </dt>
                 <dd>
-                    <?php if ($ed = $these->getEcoleDoctorale()): ?>
-                        <abbr title="<?php echo $ed->getStructure()->getLibelle() ?>">
-                            <?php echo $ed->getStructure()->getCode(); ?>
-                        </abbr>
-                    <?php endif ?>
+                    <?php echo $these->getEcoleDoctorale() ?>
                 </dd>
 
                 <dt>
                     Établissement d’inscription / Enrollment institution
                 </dt>
                 <dd>
-                    <abbr title="<?php echo $these->getEtablissement()->getStructure()->getLibelle() ?>">
-                        <?php echo $these->getEtablissement()->getStructure()->getCode() ?>
-                    </abbr>
+                    <?php echo $these->getEtablissement() ?>
                 </dd>
 
                 <dt>
                     Unité de recherche / Research unit
                 </dt>
                 <dd>
-                    <?php if ($ur = $these->getUniteRecherche()): ?>
-                        <abbr title="<?php echo $ur->getStructure()->getLibelle() ?>">
-                            <?php echo $ur->getStructure()->getCode(); ?>
-                        </abbr>
-                    <?php endif ?>
+                    <?php echo $these->getUniteRecherche(); ?>
                 </dd>
 
                 <dt>
@@ -219,7 +209,7 @@ $canGen =
     <div class="row">
         <div class="col-md-6">
             <?php if ($these->getFinancements()->isEmpty()): ?>
-                (Non renseigné)
+                Pas de financement dédié à la thèse.
             <?php else: ?>
                 <?php echo $financementFormatter->format($these->getFinancements()->toArray()); ?>
             <?php endif ?>

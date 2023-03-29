@@ -14,7 +14,7 @@ $avis = $operation->getAvis();
     </p>
     <p class="operation-valeur">
         <strong><?php echo $avis->getAvisValeur()->getValeur() ?></strong>,
-        <?php echo $operation->getHistoModificateur() ?: $operation->getHistoCreateur() ?>,
+        par <?php echo $operation->getHistoModificateur() ?: $operation->getHistoCreateur() ?>,
         le <?php echo ($operation->getHistoModification() ?: $operation->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
     </p>
     <?php if ($avisComplemsToHtml = $avis->getAvisComplemsToHtml()): ?>

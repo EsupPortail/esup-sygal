@@ -15,6 +15,7 @@ use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Exception;
+use Fichier\Entity\Db\Fichier;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
@@ -26,6 +27,7 @@ use parametre\src\UnicaenParametre\Exception\ParametreMalTypeException;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Entity\Db\RapportActiviteAvis;
 use RapportActivite\Event\RapportActiviteEvent;
+use RapportActivite\Formatter\RapportActiviteNomFichierFormatter;
 use RapportActivite\Provider\Parametre\RapportActiviteParametres;
 use RapportActivite\Rule\Operation\RapportActiviteOperationRuleAwareTrait;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
@@ -36,6 +38,7 @@ use RapportActivite\Service\Fichier\Exporter\RapportActivitePdfExporterTrait;
 use RapportActivite\Service\Validation\RapportActiviteValidationServiceAwareTrait;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\Structure;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
@@ -275,12 +278,17 @@ class RapportActiviteService extends BaseService
      */
     public function genererRapportActivitePdf(RapportActivite $rapport): void
     {
-        $outputFilepath = sys_get_temp_dir() . '/' . uniqid('sygal_rapport_activite_') . '.pdf';
+        $f = new RapportActiviteNomFichierFormatter();
+        $filename = $f->filter($rapport);
+
+        $outputFilepath = sys_get_temp_dir() . '/' . $filename;
 
         $data = $this->createRapportActivitePdfExporterData($rapport);
 
         $exporter = clone $this->rapportActivitePdfExporter; // clonage indispensable
+        $exporter->setMarginTop(40);
         $exporter->setWatermark("CONFIDENTIEL");
+        $exporter->getMpdf()->watermarkTextAlpha = 0.1;
         $exporter->setVars(['rapport' => $rapport, 'data' => $data]);
         $exporter->export($outputFilepath, Pdf::DESTINATION_BROWSER);
     }
@@ -295,7 +303,6 @@ class RapportActiviteService extends BaseService
         $data->rapport = $rapport;
 
         $these = $rapport->getThese();
-        $etablissement = $these->getEtablissement();
         $ed = $these->getEcoleDoctorale();
         $ur = $these->getUniteRecherche();
 
@@ -308,52 +315,33 @@ class RapportActiviteService extends BaseService
 
         $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(true);
 
-        // logo COMUE
-        $data->useCOMUE = false;
+        // Logos CMUE & établissements d'inscription
+        $data->logosEtablissements = [];
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {
-            $data->useCOMUE = true;
             if (!$comue->getStructure()->getCheminLogo()) {
                 throw new ExporterDataException("La COMUE '{$comue}' n'a aucun logo !");
             }
             try {
-                $data->logoCOMUE = $this->fichierStorageService->getFileForLogoStructure($comue->getStructure());
+                $data->logosEtablissements[] = $this->fichierStorageService->getFileForLogoStructure($comue->getStructure());
             } catch (StorageAdapterException $e) {
                 throw new ExporterDataException(
                     "Accès impossible au logo de la COMUE '{$comue}' : " . $e->getMessage());
             }
         }
-
-        // logo etablissement
-        if (!$etablissement->getStructure()->getCheminLogo()) {
-            throw new ExporterDataException("L'établissement '{$etablissement}' n'a aucun logo !");
+        $etablissements = $this->etablissementService->getRepository()->findAllEtablissementsInscriptions();
+        if (!$etablissements) {
+            throw new ExporterDataException("Aucun établissement d'inscription trouvé !");
         }
-        try {
-            $data->logoEtablissement = $this->fichierStorageService->getFileForLogoStructure($etablissement->getStructure());
-        } catch (StorageAdapterException $e) {
-            throw new ExporterDataException(
-                "Accès impossible au logo de l'établissement '{$etablissement}' : " . $e->getMessage());
-        }
-
-        // logo ED
-        if (!$ed->getStructure()->getCheminLogo()) {
-            throw new ExporterDataException("L'ED '{$ed}' n'a aucun logo !");
-        }
-        try {
-            $data->logoEcoleDoctorale = $this->fichierStorageService->getFileForLogoStructure($ed->getStructure());
-        } catch (StorageAdapterException $e) {
-            throw new ExporterDataException(
-                "Accès impossible au logo de l'ED '{$ed}' : " . $e->getMessage());
-        }
-
-        // logo UR
-        if (!$ur->getStructure()->getCheminLogo()) {
-            throw new ExporterDataException("L'UR '{$ur}' n'a aucun logo !");
-        }
-        try {
-            $data->logoUniteRecherche = $this->fichierStorageService->getFileForLogoStructure($ur->getStructure());
-        } catch (StorageAdapterException $e) {
-            throw new ExporterDataException(
-                "Accès impossible au logo de l'UR '{$ur}' : " . $e->getMessage());
+        foreach ($etablissements as $etablissement) {
+            if (!$etablissement->getStructure()->getCheminLogo()) {
+                throw new ExporterDataException("L'établissement '{$etablissement}' n'a aucun logo !");
+            }
+            try {
+                $data->logosEtablissements[] = $this->fichierStorageService->getFileForLogoStructure($etablissement->getStructure());
+            } catch (StorageAdapterException $e) {
+                throw new ExporterDataException(
+                    "Accès impossible au logo de l'établissement '{$etablissement}' : " . $e->getMessage());
+            }
         }
 
         // Collège des ED (CED)
@@ -374,13 +362,6 @@ class RapportActiviteService extends BaseService
 
         // operations
         $data->operations = $this->rapportActiviteOperationRule->getOperationsForRapport($rapport);
-
-//        // signature ED
-//        $signatureEcoleDoctorale = $this->findSignatureEcoleDoctorale($ed, $etablissement);
-//        if ($signatureEcoleDoctorale === null) {
-//            throw new ExporterDataException("Aucune signature trouvée pour l'ED '$ed'.");
-//        }
-//        $data->signatureEcoleDoctorale = $signatureEcoleDoctorale;
 
         return $data;
     }

@@ -313,7 +313,7 @@ update type_validation
 set code = 'RAPPORT_ACTIVITE_AUTO', libelle = 'Validation finale du rapport d''activité non dématérialisé (ancien module)'
 where code = 'RAPPORT_ACTIVITE';
 insert into type_validation(id, code, libelle)
-select nextval('type_validation_id_seq'), 'RAPPORT_ACTIVITE_DOCTORANT', 'Validation du rapport d''activité';
+select nextval('type_validation_id_seq'), 'RAPPORT_ACTIVITE_DOCTORANT', 'Validation électronique du rapport d''activité';
 
 INSERT INTO type_validation (id, code, libelle)
 select nextval('type_validation_id_seq'), 'RAPPORT_ACTIVITE', 'Validation finale du rapport d''activité non dématérialisé (ancien module)';

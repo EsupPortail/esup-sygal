@@ -12,12 +12,7 @@ class RapportActivitePdfExporterData
     /** @var \RapportActivite\Entity\RapportActiviteOperationInterface[] */
     public array $operations;
 
-    public bool $useCOMUE = false;
-    public ?string $logoCOMUE = null;
-
-    public string $logoEtablissement;
-    public string $logoEcoleDoctorale;
-    public string $logoUniteRecherche;
+    public array $logosEtablissements;
 
     public ?Structure $structureCED;
     public string $logoCED;

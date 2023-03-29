@@ -70,7 +70,11 @@ class UniteRecherche
 
     public function __toString(): string
     {
-        $str = $this->structure->getLibelle();
+        $str = '';
+        if ($code = $this->structure->getCode()) {
+            $str .= $code . ' - ';
+        }
+        $str .= $this->structure->getLibelle();
         if ($sigle = $this->structure->getSigle()) {
             $str .= " ($sigle)";
         }

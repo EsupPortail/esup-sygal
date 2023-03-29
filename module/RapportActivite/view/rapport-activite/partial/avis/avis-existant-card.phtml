@@ -25,7 +25,7 @@ $canSupprimerOperation =
     </div>
     <div class="card-body">
         <div class="card-subtitle mb-2 text-sm text-muted">
-            <?php echo $operation->getHistoModificateur() ?: $operation->getHistoCreateur() ?>,
+            Par <?php echo $operation->getHistoModificateur() ?: $operation->getHistoCreateur() ?>,
             le <?php echo ($operation->getHistoModification() ?: $operation->getHistoCreation())->format('d/m/Y H:i') ?>
         </div>
         <p class="card-text text-<?php echo $statusClass ?>">

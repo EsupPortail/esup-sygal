@@ -2,6 +2,7 @@
 
 namespace RapportActivite;
 
+use Application\Filter\FinancementFormatter;
 use Application\View\Renderer\PhpRenderer;
 
 /**
@@ -15,6 +16,10 @@ use Application\View\Renderer\PhpRenderer;
 $title = $rapport->getId() ?
     "Modification du " . lcfirst($rapport) :
     "Nouveau " . lcfirst($rapport->getTypeRapportLibelle());
+
+$financementFormatter = $this->financementFormatter();
+$financementFormatter->setSortBy(FinancementFormatter::SORT_BY_DATE);
+$financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_HTML_LINES);
 
 $form->prepare();
 ?>
@@ -33,6 +38,7 @@ $form->prepare();
 <div class="rapport-activite-container">
 
     <?php echo $this->form()->openTag($form) ?>
+
     <div class="row">
         <div class="col-md-2">
             <?php echo $this->formControlGroup($form->get('anneeUniv')) ?>
@@ -46,6 +52,19 @@ $form->prepare();
             </div>
         </div>
     <?php endif ?>
+
+
+    <h2>Financement de la thèse / <span class="en">Thesis funding</span></h2>
+
+    <div class="row">
+        <div class="col-md-7">
+            <?php if ($rapport->getThese()->getFinancements()->isEmpty()): ?>
+                Pas de financement dédié à la thèse.
+            <?php else: ?>
+                <?php echo $financementFormatter->format($rapport->getThese()->getFinancements()->toArray()); ?>
+            <?php endif ?>
+        </div>
+    </div>
 
 
     <h2>Activités scientifiques / <span class="en">Scientific activities</span></h2>

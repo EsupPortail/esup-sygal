@@ -81,6 +81,7 @@ return [
         'template' => [
             // templates .phtml
             'template_path' => __DIR__ . '/../view/rapport-activite/rapport-activite/pdf/template.phtml',
+            'header_path' => 'header.phtml',
             'footer_path' => 'footer.phtml',
             // feuille de styles
             'css_path' => [

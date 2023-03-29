@@ -34,18 +34,6 @@ $operations = $data->operations;
 $these = $rapport->getThese();
 ?>
 
-<!-- SECTION DU LOGO DE LA COMUE -------------------------------------------------------------------------------------->
-<?php if ($data->useCOMUE): ?>
-    <div style="text-align: center; margin-bottom: 30px;">
-        <?php if ($data->logoCOMUE): ?>
-            <img class="logo-comue" src="<?php echo $data->logoCOMUE ?>" alt="Logo de la COMUE"/>
-        <?php else: ?>
-            <span style='background-color:red;'> COMUE ou logo de la COMUE non renseigné. </span>
-        <?php endif; ?>
-    </div>
-<?php endif; ?>
-<!-- --------------------------------------------------------------------------------------------------------------- -->
-
 <div class='bandeau-titre'>
     <?php echo mb_strtoupper($rapport) ?>
 </div>
@@ -66,38 +54,28 @@ $these = $rapport->getThese();
                     École doctorale / <span class="en">Doctoral School</span>
                 </dt>
                 <dd>
-                    <?php if ($ed = $these->getEcoleDoctorale()): ?>
-                        <abbr title="<?php echo $ed->getStructure()->getLibelle() ?>">
-                            <?php echo $ed->getStructure()->getCode(); ?>
-                        </abbr>
-                    <?php endif ?>
+                    <?php echo $these->getEcoleDoctorale() ?>
                 </dd>
 
                 <dt>
                     Établissement d’inscription / <span class="en">Enrollment institution</span>
                 </dt>
                 <dd>
-                    <abbr title="<?php echo $these->getEtablissement()->getStructure()->getLibelle() ?>">
-                        <?php echo $these->getEtablissement()->getStructure()->getCode() ?>
-                    </abbr>
+                    <?php echo $these->getEtablissement() ?>
                 </dd>
 
                 <dt>
                     Unité de recherche / <span class="en">Research unit</span>
                 </dt>
                 <dd>
-                    <?php if ($ur = $these->getUniteRecherche()): ?>
-                        <abbr title="<?php echo $ur->getStructure()->getLibelle() ?>">
-                            <?php echo $ur->getStructure()->getCode(); ?>
-                        </abbr>
-                    <?php endif ?>
+                    <?php echo $these->getUniteRecherche(); ?>
                 </dd>
 
                 <dt>
                     Année de 1re inscription en these / <span class="en">Starting year of your PhD program</span>
                 </dt>
                 <dd>
-                    <?php echo $these->getDatePremiereInscriptionToString() ?>
+                    <?php echo $these->getAnneeUniv1ereInscription() ?>
                 </dd>
 
             </dl>
@@ -171,11 +149,18 @@ $these = $rapport->getThese();
 
     <div class="row">
         <div class="col-md-6">
-            <?php if ($these->getFinancements()->isEmpty()): ?>
-                (Non renseigné)
-            <?php else: ?>
-                <?php echo $financementFormatter->format($these->getFinancements()->toArray()); ?>
-            <?php endif ?>
+            <dl>
+                <dt>
+                    Financement / <span class="en">Thesis funding</span>
+                </dt>
+                <dd>
+                    <?php if ($these->getFinancements()->isEmpty()): ?>
+                        Pas de financement dédié à la thèse.
+                    <?php else: ?>
+                        <?php echo $financementFormatter->format($these->getFinancements()->toArray()); ?>
+                    <?php endif ?>
+                </dd>
+            </dl>
         </div>
     </div>
 
@@ -402,16 +387,20 @@ $these = $rapport->getThese();
     </div>
 
 
-    <h2>Validations</h2>
+    <div style="page-break-inside: avoid">
 
-    <div class="row">
-        <div class="col-md-4">
-            <?php if ($operations): ?>
-                <?php echo $this->partial('rapport-activite/partial/operations-ul', ['operations' => $operations]) ?>
-            <?php else: ?>
-                Aucune validation ni aucun avis attendus.
-            <?php endif ?>
+        <h2>Validations</h2>
+
+        <div class="row">
+            <div class="col-md-4">
+                <?php if ($operations): ?>
+                    <?php echo $this->partial('rapport-activite/partial/operations-ul', ['operations' => $operations]) ?>
+                <?php else: ?>
+                    Aucune validation ni aucun avis attendus.
+                <?php endif ?>
+            </div>
         </div>
+
     </div>
 
 </div>

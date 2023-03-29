@@ -13,7 +13,7 @@ $statusClass = 'success';
         <strong><?php echo $operation->getTypeValidation()->getLibelle() ?></strong>
     </p>
     <p class="operation-valeur">
-        <?php echo $operation->getHistoModificateur() ?: $operation->getHistoCreateur() ?>,
+        Par <?php echo $operation->getHistoModificateur() ?: $operation->getHistoCreateur() ?>,
         le <?php echo ($operation->getHistoModification() ?: $operation->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
     </p>
 </li>
