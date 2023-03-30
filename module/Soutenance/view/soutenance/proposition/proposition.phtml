@@ -8,6 +8,7 @@ use Doctorant\Entity\Db\Doctorant;
 use Individu\Entity\Db\IndividuRole;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
+use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\JustificatifPrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
@@ -33,6 +34,8 @@ use These\Entity\Db\These;
  * @var array $justificatifs ,
  * @var boolean $justificatifsOk ,
  * @var boolean $validationActeur
+ *
+ * @var Justificatif[] $attestationsIntegriteScientifique
  *
  * @var IndividuRole[] $ecoleResponsables
  * @var IndividuRole[] $uniteResponsables
@@ -132,6 +135,10 @@ echo $this->partial('partial/informations-complementaires', [
     'proposition' => $proposition,
     'validation' => $validations[TypeValidation::CODE_VALIDATION_DECLARATION_HONNEUR],
     'refus' => $validations[TypeValidation::CODE_REFUS_DECLARATION_HONNEUR],
+
+    'canModifier' => $canModifierJustificatif,
+    'urlFichierThese' => $urlFichierThese,
+    'attestationsIntegriteScientifique' => $attestationsIntegriteScientifique,
 ]); ?>
 
 <br/><br/>

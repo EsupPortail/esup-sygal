@@ -73,27 +73,31 @@ class JustificatifController extends AbstractController {
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findOneForThese($these);
+        $nature = $this->fichierTheseService->fetchNatureFichier($this->params()->fromRoute('nature'));
 
         $justificatif = new Justificatif();
         $justificatif->setProposition($proposition);
         $form = $this->getJustificatifForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/justificatif/ajouter-justificatif', ['these' => $these->getId()], [], true));
         $form->bind($justificatif);
-        $form->init();
+
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
             $files = ['files' => $request->getFiles()->toArray()];
+            if ($nature) $data['nature'] = $nature->getCode();
 
             $form->setData($data);
             if ($form->isValid()) {
-                $nature = $this->fichierTheseService->fetchNatureFichier($data['nature']);
+                var_dump("After form");
+                if ($nature === null) $nature = $this->fichierTheseService->fetchNatureFichier($data['nature']);
                 $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
                 $fichiers = $this->fichierTheseService->createFichierThesesFromUpload($these, $files, $nature, $version);
                 $justificatif->setFichier($fichiers[0]);
+
                 $this->getJustificatifService()->create($justificatif);
-//                return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
+                exit();
             }
         }
 
@@ -111,7 +115,7 @@ class JustificatifController extends AbstractController {
             'FORMULAIRE_DEMANDE_ANGLAIS' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_REDACTION_ANGLAIS),
             'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_CONFIDENTIALITE),
         ]);
-//        $vm->setTemplate('soutenance/default/default-form');
+        if ($nature !== null) $vm->setTemplate('soutenance/justificatif/ajouter');
         return $vm;
     }
 

@@ -7,6 +7,8 @@ Journal des modifications
 - Soutenance : Renommange de Parité en Équilibre (et ajustement des couleurs des barres de l'indicateur)
 - Soutenance : Retravail du rapport de soutenance (Ajout d'une page blacnhe et d'une troisième page pour les signatures)
 - Soutenance : Ajout du dépôt de l'autorisation de soutenance et du rapport de soutenance
+- Soutenance : Dépôt de l'attestation de la formation "Intégrité scientifique"
+- Soutenance : Mise en place de l'horodatage 
 - Dépôt de thèse : un dépôt existant de la version corrigée reste visible même si l'avis de reproduction Apogée revient à Non. 
 - Menu Dépôt fichiers divers : remonté et affiché sans condition
 - Page Dépôt fichiers divers : téléversement bloqué pour PV soutenance, Pré-rapport soutenance, Rapport soutenance

@@ -20,9 +20,10 @@ class JustificatifForm extends Form {
             'type' => Select::class,
             'name' => 'nature',
             'options' => [
-                'label' => 'Type de justificatif* :',
+                'label' => 'Type de justificatif * :',
                 'empty_option' => 'Nature du justificatif',
                 'value_options' => [
+                    NatureFichier::CODE_FORMATION_INTEGRITE_SCIENTIFIQUE => NatureFichier::LABEL_FORMATION_INTEGRITE_SCIENTIFIQUE,
                     NatureFichier::CODE_JUSTIFICATIF_HDR => 'Justificatif d\'habilitation à diriger des recherches ou équivalent',
                     NatureFichier::CODE_JUSTIFICATIF_EMERITAT => 'Justificatif d\'émeritat ou équivalent',
                     NatureFichier::CODE_JUSTIFICATIF_ETRANGER => 'Justificatif permettant de justifier du rang d\'un membre de jury étranger',

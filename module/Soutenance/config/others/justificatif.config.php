@@ -115,7 +115,7 @@ return [
                             'ajouter-justificatif' => [
                                 'type' => Segment::class,
                                 'options' => [
-                                    'route' => '/ajouter-justificatif',
+                                    'route' => '/ajouter-justificatif[/:nature]',
                                     'defaults' => [
                                         /** @see JustificatifController::ajouterJustificatifAction() */
                                         'controller' => JustificatifController::class,

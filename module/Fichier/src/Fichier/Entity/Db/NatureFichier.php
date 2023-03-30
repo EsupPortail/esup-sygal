@@ -11,6 +11,7 @@ class NatureFichier
     const CODE_FICHIER_NON_PDF = 'FICHIER_NON_PDF';
 
     // Fichiers divers
+    const CODE_FORMATION_INTEGRITE_SCIENTIFIQUE = 'FORMATION_INTEGRITE_SCIENTIFIQUE';
     const CODE_AUTORISATION_SOUTENANCE = 'AUTORISATION_SOUTENANCE';
     const CODE_PV_SOUTENANCE = 'PV_SOUTENANCE';
     const CODE_DEMANDE_CONFIDENT = 'DEMANDE_CONFIDENT';
@@ -55,6 +56,7 @@ class NatureFichier
     const CODE_LANGUE_ANGLAISE = 'DEMANDE_LANGUE_ANGLAISE';
     const CODE_AUTRES_JUSTIFICATIFS = 'AUTRES_JUSTIFICATIFS';
 
+    const LABEL_FORMATION_INTEGRITE_SCIENTIFIQUE = 'Justificatif de suivi de la formation "Intégrité scientifique"';
     const LABEL_JUSTIFICATIF_HDR = "Justificatif d'habilitation à diriger des recherches";
     const LABEL_JUSTIFICATIF_EMERITAT = "Justificatif d'émeritat";
     const LABEL_JUSTIFICATIF_ETRANGER = "Justificatif dans le cas d'un membre du jury étranger";

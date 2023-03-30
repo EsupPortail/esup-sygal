@@ -7,6 +7,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Fichier\Entity\Db\NatureFichier;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuRole;
@@ -193,6 +194,9 @@ class PropositionController extends AbstractController
             }
         }
 
+        /** Récupération des éléments liés au bloc 'intégrité scientifique' */
+        $attestationsIntegriteScientifique = $this->getJustificatifService()->getJustificatifsByPropositionAndNature($proposition, NatureFichier::CODE_FORMATION_INTEGRITE_SCIENTIFIQUE);
+
         return new ViewModel([
             'these' => $these,
             'proposition' => $proposition,
@@ -207,6 +211,8 @@ class PropositionController extends AbstractController
             'isOk' => $isOk,
             'justificatifs' => $justificatifs,
             'justificatifsOk' => $justificatifsOk,
+
+            'attestationsIntegriteScientifique' => $attestationsIntegriteScientifique,
 
             'ecoleResponsables' => $ecoleResponsables,
             'uniteResponsables' => $uniteResponsables,
