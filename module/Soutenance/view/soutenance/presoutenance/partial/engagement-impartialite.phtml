@@ -6,19 +6,17 @@
  * @var Membre[] $rapporteurs
  * @var Validation[] $engagements
  *
- * @var Evenement[] $evenementsEngagement
  * @var bool $tousLesEngagements
  * @var bool $tousLesAvis
  */
 
 use Application\Constants;
-use Soutenance\Service\Horodatage\HorodatageService;
-use These\Entity\Db\These;
 use Application\Entity\Db\Validation;
-use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\EngagementImpartialitePrivileges;
+use Soutenance\Service\Horodatage\HorodatageService;
+use These\Entity\Db\These;
 
 $tousLesRapporteurs = true;
 foreach ($rapporteurs as $rapporteur) {
@@ -28,8 +26,8 @@ foreach ($rapporteurs as $rapporteur) {
     }
 }
 
-$canNotifierEngagementImpartialite      = $this->isAllowed($these, EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_NOTIFIER);
-$canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_ANNULER);
+$canNotifierEngagementImpartialite = $this->isAllowed($these, EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_NOTIFIER);
+$canRevoquerEngagementImpartialite = $this->isAllowed($these, EngagementImpartialitePrivileges::ENGAGEMENT_IMPARTIALITE_ANNULER);
 
 ?>
 
@@ -47,9 +45,9 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
         <table class="table table-extra-condensed">
             <thead>
             <tr>
-                <th> Rapporteur </th>
-                <th> Signé </th>
-                <th> Actions </th>
+                <th> Rapporteur</th>
+                <th> Signé</th>
+                <th> Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -57,8 +55,8 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
             foreach ($rapporteurs as $rapporteur) : ?>
 
                 <?php
-                    $acteur       = $rapporteur->getActeur();
-                    $engagement     = ($acteur)?$engagements[$rapporteur->getIndividu()->getId()]:null;
+                $acteur = $rapporteur->getActeur();
+                $engagement = ($acteur) ? $engagements[$rapporteur->getIndividu()->getId()] : null;
                 ?>
 
                 <tr>
@@ -79,7 +77,7 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
                             <?php if ($acteur->getMembre()->getEmail() !== null) : ?>
                                 <?php if ($engagement !== null): ?>
                                     <?php
-                                        echo $engagement->getHistoCreation()->format(Constants::DATETIME_FORMAT);
+                                    echo $engagement->getHistoCreation()->format(Constants::DATETIME_FORMAT);
                                     ?>
                                 <?php else: ?>
                                     <span class="text-warning">
@@ -104,39 +102,45 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
 
                     <!-- Actions -------------------------------------------------------------------------------------->
                     <td>
-                        <?php if ($acteur !== null AND $acteur->getMembre()->getEmail() !== null) : ?>
+                        <?php if ($acteur !== null and $acteur->getMembre()->getEmail() !== null) : ?>
 
-                            <?php if($canNotifierEngagementImpartialite) : ?>
+                            <?php if ($canNotifierEngagementImpartialite) : ?>
                                 <?php if ($engagement) : ?>
-                                    <span class="icon icon-notify" title="Notifier le rapporteur" style="color:lightgray;"></span>
+                                    <span class="icon icon-notify" title="Notifier le rapporteur"
+                                          style="color:lightgray;"></span>
                                 <?php else: ?>
                                     <a
                                         <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::notifierEngagementImpartialiteAction() */ ?>
-                                        href="<?php echo $this->url('soutenance/engagement-impartialite/notifier', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true);?>">
-                                        <span class="icon icon-notify" title="Notifier le rapporteur '<?php echo $acteur->getMembre()->getEmail(); ?>'"></span>
+                                            href="<?php echo $this->url('soutenance/engagement-impartialite/notifier', ['these' => $these->getId(), 'proposition' => $proposition->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
+                                        <span class="icon icon-notify"
+                                              title="Notifier le rapporteur '<?php echo $acteur->getMembre()->getEmail(); ?>'"></span>
                                     </a>
                                 <?php endif; ?>
                             <?php endif; ?>
 
-                            <?php if($canRevoquerEngagementImpartialite) : ?>
+                            <?php if ($canRevoquerEngagementImpartialite) : ?>
                                 <?php if ($engagement) : ?>
-                                    <a  <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::annulerEngagementImpartialiteAction() */ ?>
-                                        href="<?php echo $this->url('soutenance/engagement-impartialite/annuler', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
-                                        <span class="icon icon-delete iconly"    title="Révoquer l'engagement d'impartialité"></span>
+                                    <a <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::annulerEngagementImpartialiteAction() */ ?>
+                                            href="<?php echo $this->url('soutenance/engagement-impartialite/annuler', ['these' => $these->getId(), 'membre' => $rapporteur->getId()], [], true); ?>">
+                                        <span class="icon icon-delete iconly"
+                                              title="Révoquer l'engagement d'impartialité"></span>
                                     </a>
                                 <?php else: ?>
-                                    <span class="icon icon-delete iconly"  style="color:lightgray;"  title="Révoquer l'engagement d'impartialité"></span>
+                                    <span class="icon icon-delete iconly" style="color:lightgray;"
+                                          title="Révoquer l'engagement d'impartialité"></span>
                                 <?php endif; ?>
                             <?php endif; ?>
 
                         <?php else : ?>
 
-                            <?php if($canNotifierEngagementImpartialite) : ?>
-                                <span class="icon icon-notify iconly"      style="color:lightgray;" title="Notifier le rapporteur"></span>
+                            <?php if ($canNotifierEngagementImpartialite) : ?>
+                                <span class="icon icon-notify iconly" style="color:lightgray;"
+                                      title="Notifier le rapporteur"></span>
                             <?php endif; ?>
 
-                            <?php if($canRevoquerEngagementImpartialite) : ?>
-                                <span class="icon icon-delete iconly"    style="color:lightgray;" title="Révoquer l'engagement d'impartialité"></span>
+                            <?php if ($canRevoquerEngagementImpartialite) : ?>
+                                <span class="icon icon-delete iconly" style="color:lightgray;"
+                                      title="Révoquer l'engagement d'impartialité"></span>
                             <?php endif; ?>
 
                         <?php endif; ?>
@@ -148,25 +152,16 @@ $canRevoquerEngagementImpartialite     = $this->isAllowed($these, EngagementImpa
 
         <div class="row">
             <div class="col-md-4">
-                <?php if($canNotifierEngagementImpartialite): ?>
+                <?php if ($canNotifierEngagementImpartialite): ?>
                     <a
                         <?php /** @see \Soutenance\Controller\EngagementImpartialiteController::notifierRapporteursEngagementImpartialiteAction() */ ?>
-                        href="<?php echo $this->url('soutenance/presoutenance/notifier-engagement-impartialite', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true);?>"
-                       class="btn btn-info <?php echo ($tousLesRapporteurs)?'':'disabled'; ?>">
+                            href="<?php echo $this->url('soutenance/presoutenance/notifier-engagement-impartialite', ['these' => $these->getId(), 'proposition' => $proposition->getId()], [], true); ?>"
+                            class="btn btn-info <?php echo ($tousLesRapporteurs) ? '' : 'disabled'; ?>">
                         <span class="icon icon-notify"></span> Envoyer les notifications aux rapporteurs
                     </a>
                 <?php endif; ?>
 
                 <br/>
-
-                <?php if ($evenementsEngagement !== null AND !empty($evenementsEngagement)) : ?>
-                    Notification de la demande d'engagement &nbsp;:&nbsp;
-                    <ul>
-                        <?php foreach ($evenementsEngagement as $evenementEngagement) : ?>
-                            <li> Faite le <?php echo $evenementEngagement->getDate()->format('d/m/Y à H:i:s'); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
             </div>
 
             <div class="col-md-8">

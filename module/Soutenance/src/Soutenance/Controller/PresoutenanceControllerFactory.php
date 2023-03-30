@@ -2,36 +2,33 @@
 
 namespace Soutenance\Controller;
 
-use phpDocumentor\Reflection\DocBlock\Tags\Param;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
-use Soutenance\Service\Horodatage\HorodatageService;
-use Soutenance\Service\Notification\SoutenanceNotificationFactory;
-use These\Service\Acteur\ActeurService;
+use Application\Service\Role\RoleService;
+use Application\Service\Source\SourceService;
+use Application\Service\Utilisateur\UtilisateurService;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Individu\Service\IndividuService;
-use Application\Service\Role\RoleService;
-use Application\Service\Source\SourceService;
-use Structure\Service\StructureDocument\StructureDocumentService;
-use These\Service\These\TheseService;
-use Application\Service\Utilisateur\UtilisateurService;
 use Interop\Container\ContainerInterface;
+use Laminas\View\Renderer\PhpRenderer;
+use Notification\Service\NotifierService;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceForm;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
-use Soutenance\Service\Evenement\EvenementService;
+use Soutenance\Service\Horodatage\HorodatageService;
 use Soutenance\Service\Justificatif\JustificatifService;
 use Soutenance\Service\Membre\MembreService;
-use Notification\Service\NotifierService;
+use Soutenance\Service\Notification\SoutenanceNotificationFactory;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
+use Structure\Service\StructureDocument\StructureDocumentService;
+use These\Service\Acteur\ActeurService;
+use These\Service\These\TheseService;
 use UnicaenAuth\Service\User as UserService;
 use UnicaenAuthToken\Service\TokenService;
-use Laminas\View\Renderer\PhpRenderer;
 use UnicaenParametre\Service\Parametre\ParametreService;
-use UnicaenRenderer\Service\Rendu\RenduService;
 
 class PresoutenanceControllerFactory
 {
@@ -41,13 +38,12 @@ class PresoutenanceControllerFactory
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container) : PresoutenanceController
+    public function __invoke(ContainerInterface $container): PresoutenanceController
     {
         /**
          * @var PropositionService $propositionService
          * @var ActeurService $acteurService
          * @var AvisService $avisService
-         * @var EvenementService $evenementService
          * @var HorodatageService $horodatageService
          * @var MembreService $membreService
          * @var TheseService $theseService
@@ -69,7 +65,6 @@ class PresoutenanceControllerFactory
         $propositionService = $container->get(PropositionService::class);
         $acteurService = $container->get(ActeurService::class);
         $avisService = $container->get(AvisService::class);
-        $evenementService = $container->get(EvenementService::class);
         $horodatageService = $container->get(HorodatageService::class);
         $membreService = $container->get(MembreService::class);
         $theseService = $container->get('TheseService');
@@ -102,7 +97,6 @@ class PresoutenanceControllerFactory
         $controller->setPropositionService($propositionService);
         $controller->setActeurService($acteurService);
         $controller->setAvisService($avisService);
-        $controller->setEvenementService($evenementService);
         $controller->setHorodatageService($horodatageService);
         $controller->setMembreService($membreService);
         $controller->setTheseService($theseService);

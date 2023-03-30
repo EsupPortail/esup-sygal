@@ -18,7 +18,6 @@ use Laminas\View\Renderer\PhpRenderer;
 use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Assertion\PropositionAssertionAwareTrait;
 use Soutenance\Entity\Etat;
-use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\Anglais\AnglaisFormAwareTrait;
@@ -33,7 +32,6 @@ use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Provider\Template\PdfTemplates;
 use Soutenance\Provider\Validation\TypeValidation;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
-use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Exporter\SermentExporter\SermentPdfExporter;
 use Soutenance\Service\Horodatage\HorodatageService;
 use Soutenance\Service\Horodatage\HorodatageServiceAwareTrait;
@@ -58,7 +56,6 @@ class PropositionController extends AbstractController
     use ActeurServiceAwareTrait;
     use AvisServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
-    use EvenementServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
     use HorodatageServiceAwareTrait;
@@ -210,7 +207,6 @@ class PropositionController extends AbstractController
             'isOk' => $isOk,
             'justificatifs' => $justificatifs,
             'justificatifsOk' => $justificatifsOk,
-            'signatures' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_SIGNATURE),
 
             'ecoleResponsables' => $ecoleResponsables,
             'uniteResponsables' => $uniteResponsables,
@@ -588,7 +584,6 @@ class PropositionController extends AbstractController
         $codirecteurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE);
 
 
-        $this->getEvenementService()->ajouterEvenement($proposition, Evenement::EVENEMENT_SIGNATURE);
         $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Autorisation de soutenance");
 
         $exporter = new SiganturePresidentPdfExporter($this->renderer, 'A4');

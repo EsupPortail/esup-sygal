@@ -2,18 +2,16 @@
 
 namespace Soutenance\Controller;
 
+use Interop\Container\ContainerInterface;
+use Notification\Service\NotifierService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Soutenance\Service\Notification\SoutenanceNotificationFactory;
-use These\Service\Acteur\ActeurService;
-use Interop\Container\ContainerInterface;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
-use Soutenance\Service\Evenement\EvenementService;
+use Soutenance\Service\Horodatage\HorodatageService;
 use Soutenance\Service\Membre\MembreService;
-use Notification\Service\NotifierService;
+use Soutenance\Service\Notification\SoutenanceNotificationFactory;
 use Soutenance\Service\Proposition\PropositionService;
-use UnicaenAuthToken\Service\TokenService;
-use UnicaenAuthToken\Service\TokenServiceAwareTrait;
+use These\Service\Acteur\ActeurService;
 use UnicaenRenderer\Service\Rendu\RenduService;
 
 class EngagementImpartialiteControllerFactory
@@ -28,34 +26,31 @@ class EngagementImpartialiteControllerFactory
     {
         /**
          * @var ActeurService $acteurService
-         * @var EvenementService $evenementService
-         * @var PropositionService $propositionService
+         * @var EngagementImpartialiteService $engagementImpartialiteService
+         * @var HorodatageService $horodatageService
          * @var MembreService $membreService
          * @var NotifierService $notifierService
-         * @var EngagementImpartialiteService $engagementImpartialiteService
+         * @var PropositionService $propositionService
          * @var RenduService $renduService
-         * @var TokenService $tokenService
          */
         $acteurService                  = $container->get(ActeurService::class);
-        $evenementService               = $container->get(EvenementService::class);
+        $horodatageService              = $container->get(HorodatageService::class);
         $propositionService             = $container->get(PropositionService::class);
         $membreService                  = $container->get(MembreService::class);
         $notifierService                = $container->get(NotifierService::class);
         $engagementImpartialiteService  = $container->get(EngagementImpartialiteService::class);
         $renduService                   = $container->get(RenduService::class);
-        $tokenService                   = $container->get(TokenService::class);
 
         $controller = new EngagementImpartialiteController();
         $controller->setActeurService($acteurService);
-        $controller->setEvenementService($evenementService);
+        $controller->setHorodatageService($horodatageService);
         $controller->setPropositionService($propositionService);
         $controller->setMembreService($membreService);
         $controller->setNotifierService($notifierService);
         $controller->setEngagementImpartialiteService($engagementImpartialiteService);
         $controller->setRenduService($renduService);
-        $controller->setTokenService($tokenService);
 
-        /** @var \Soutenance\Service\Notification\SoutenanceNotificationFactory $soutenanceNotificationFactory */
+        /** @var SoutenanceNotificationFactory $soutenanceNotificationFactory */
         $soutenanceNotificationFactory = $container->get(SoutenanceNotificationFactory::class);
         $controller->setSoutenanceNotificationFactory($soutenanceNotificationFactory);
 

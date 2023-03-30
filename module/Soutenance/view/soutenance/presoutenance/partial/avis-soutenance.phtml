@@ -7,19 +7,18 @@
  * @var Validation[] $engagements
  * @var Avis[] $avis
  *
- * @var Evenement[] $evenementsPrerapport
  * @var bool $tousLesEngagements
  * @var bool $tousLesAvis
  */
 
 use Application\Constants;
-use These\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use Soutenance\Entity\Avis;
-use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\AvisSoutenancePrivileges;
+use Soutenance\Service\Horodatage\HorodatageService;
+use These\Entity\Db\These;
 
 $canNotifierAvisSoutenance = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoutenancePrivileges::AVIS_NOTIFIER));
 $canRevoquerAvisSoutenance = $this->isAllowed(AvisSoutenancePrivileges::getResourceId(AvisSoutenancePrivileges::AVIS_ANNULER));
@@ -159,15 +158,6 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                         <span class="icon icon-notify"></span> Envoyer des demandes d'avis de soutenance
                     </a>
                 <?php endif; ?>
-
-                <?php if ($evenementsPrerapport !== null AND !empty($evenementsPrerapport)) : ?>
-                    Notification de la demande des pré-rapports &nbsp;:&nbsp;
-                    <ul>
-                        <?php foreach ($evenementsPrerapport as $evenementPrerapport) : ?>
-                            <li> Faite le <?php echo $evenementPrerapport->getDate()->format('d/m/Y à H:i:s'); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
             </div>
 
             <div class="col-md-8">
@@ -189,6 +179,9 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
 
             </div>
         </div>
+
+        <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_NOTIFICATION, "Demande de rapport de pré-soutenance"); ?>
+
     </div>
 
 </div>
