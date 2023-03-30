@@ -39,7 +39,7 @@ $canRevoquer = $this->isAllowed($these,PropositionPrivileges::PROPOSITION_DECLAR
 <div class="box card">
     <div class="card-header
     <?php
-    if ($isValider === null)  echo " bg-warning";
+    if ($isValider === null OR empty($attestationsIntegriteScientifique) )  echo " bg-warning";
     if ($isValider === true AND !empty($attestationsIntegriteScientifique))  echo " bg-success";
     if ($isValider === false) echo " bg-danger";
     ?>
@@ -132,15 +132,18 @@ $canRevoquer = $this->isAllowed($these,PropositionPrivileges::PROPOSITION_DECLAR
                     <?php endif; ?>
                 <?php endif; ?>
                 <?php if (!empty($refus) OR !empty($validation)) : ?>
-                    <?php /** @see \Soutenance\Controller\PropositionController::revoquerDeclarationNonPlagiatAction() */ ?>
-                    <a href="<?php echo $this->url('soutenance/proposition/declaration-non-plagiat/revoquer', ['these' => $these->getId()], [], true); ?>"
-                       class="btn btn-danger"
-                    >
-                        <span class="icon icon-unchecked"></span>
-                        Révoquer la déclaration
-                    </a>
+                    <?php if ($canRevoquer) : ?>
+                        <?php /** @see \Soutenance\Controller\PropositionController::revoquerDeclarationNonPlagiatAction() */ ?>
+                        <a href="<?php echo $this->url('soutenance/proposition/declaration-non-plagiat/revoquer', ['these' => $these->getId()], [], true); ?>"
+                           class="btn btn-danger"
+                        >
+                            <span class="icon icon-unchecked"></span>
+                            Révoquer la déclaration
+                        </a>
+                    <?php endif; ?>
                 <?php endif; ?>
             </div>
+        </div>
         </div>
 
         <div id="serment_du_docteur">
