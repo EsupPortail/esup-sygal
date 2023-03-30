@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Soutenance\Controller\AvisController;
 use Soutenance\Controller\EngagementImpartialiteController;
+use Soutenance\Controller\PropositionController;
 use Soutenance\Provider\Privilege\IndexPrivileges;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
@@ -98,11 +99,21 @@ return array(
                                             'these',
                                         ],
                                     ],
+                                    'horodatages' => [
+                                        'label' => 'Horodatages des événements',
+                                        'route' => 'soutenance/proposition/horodatages',
+                                        'order' => 1000,
+                                        'resource' => PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION),
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'these',
+                                        ],
+                                    ],
 //                                    'retard' => [
 //                                        'label' => 'Notifier attente de rapport',
 //                                        'route' => 'soutenance/notifier-retard-rapport-presoutenance',
 //                                        'order' => 500,
-//                                        'resource' => UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION),
+//                                        'resource' => PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION),
 //                                    ],
                                 ],
                             ],

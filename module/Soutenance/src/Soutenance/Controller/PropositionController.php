@@ -18,7 +18,6 @@ use Laminas\View\Renderer\PhpRenderer;
 use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Assertion\PropositionAssertionAwareTrait;
 use Soutenance\Entity\Etat;
-use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
 use Soutenance\Form\Anglais\AnglaisFormAwareTrait;
@@ -33,8 +32,9 @@ use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Provider\Template\PdfTemplates;
 use Soutenance\Provider\Validation\TypeValidation;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
-use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Exporter\SermentExporter\SermentPdfExporter;
+use Soutenance\Service\Horodatage\HorodatageService;
+use Soutenance\Service\Horodatage\HorodatageServiceAwareTrait;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
@@ -56,9 +56,9 @@ class PropositionController extends AbstractController
     use ActeurServiceAwareTrait;
     use AvisServiceAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
-    use EvenementServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
+    use HorodatageServiceAwareTrait;
     use InformationServiceAwareTrait;
     use JustificatifServiceAwareTrait;
     use MembreServiceAwareTrait;
@@ -81,13 +81,8 @@ class PropositionController extends AbstractController
 
     use PropositionAssertionAwareTrait;
 
-    /** @var PhpRenderer */
-    private $renderer;
-
-    /**
-     * @param PhpRenderer $renderer
-     */
-    public function setRenderer(PhpRenderer $renderer)
+    private PhpRenderer $renderer;
+    public function setRenderer(PhpRenderer $renderer) : void
     {
         $this->renderer = $renderer;
     }
@@ -212,7 +207,6 @@ class PropositionController extends AbstractController
             'isOk' => $isOk,
             'justificatifs' => $justificatifs,
             'justificatifsOk' => $justificatifsOk,
-            'signatures' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_SIGNATURE),
 
             'ecoleResponsables' => $ecoleResponsables,
             'uniteResponsables' => $uniteResponsables,
@@ -225,6 +219,7 @@ class PropositionController extends AbstractController
             'FORMULAIRE_DEMANDE_LABEL' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_LABEL_EUROPEEN),
             'FORMULAIRE_DEMANDE_ANGLAIS' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_REDACTION_ANGLAIS),
             'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_CONFIDENTIALITE),
+
         ]);
     }
 
@@ -243,6 +238,7 @@ class PropositionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->update($request, $form, $proposition);
+            $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Date et lieu");
             $this->getPropositionService()->initialisationDateRetour($proposition);
             if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
         }
@@ -286,6 +282,7 @@ class PropositionController extends AbstractController
                 } else {
                     $this->getMembreService()->create($membre);
                 }
+                $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Jury");
                 if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
             }
         }
@@ -311,6 +308,7 @@ class PropositionController extends AbstractController
         if ($membre) {
             if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($membre->getProposition());
             $this->getMembreService()->delete($membre);
+            $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Jury");
         }
 
         return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
@@ -331,6 +329,7 @@ class PropositionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->update($request, $form, $proposition);
+            $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires");
             if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
         }
 
@@ -358,6 +357,7 @@ class PropositionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->update($request, $form, $proposition);
+            $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires");
             if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
         }
 
@@ -385,6 +385,7 @@ class PropositionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->update($request, $form, $proposition);
+            $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires");
             if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
         }
 
@@ -413,6 +414,7 @@ class PropositionController extends AbstractController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $this->update($request, $form, $proposition);
+            $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires");
             if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
         }
 
@@ -434,6 +436,7 @@ class PropositionController extends AbstractController
         if ($autorisation !== null) return $autorisation;
 
         $validation = $this->getValidationService()->validatePropositionSoutenance($these);
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_VALIDATION, "Acteurs directes");
         try {
             $notif = $this->soutenanceNotificationFactory->createNotificationValidationProposition($these, $validation);
             $this->notifierService->trigger($notif);
@@ -486,6 +489,7 @@ class PropositionController extends AbstractController
         switch ($role->getCode()) {
             case Role::CODE_RESP_UR :
                 $this->getValidationService()->validateValidationUR($these, $individu);
+                $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_VALIDATION, "Structures");
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationEcoleDoctoraleProposition($these);
                     $this->notifierService->trigger($notif);
@@ -546,6 +550,8 @@ class PropositionController extends AbstractController
             $data = $request->getPost();
             if ($data['motif'] !== null) {
                 $this->getPropositionService()->annulerValidationsForProposition($proposition);
+                $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_VALIDATION, "Structures");
+
                 $currentUser = $this->userContextService->getIdentityIndividu();
                 /** @var RoleInterface $currentRole */
                 $currentRole = $this->userContextService->getSelectedIdentityRole();
@@ -578,7 +584,7 @@ class PropositionController extends AbstractController
         $codirecteurs = $this->getActeurService()->getRepository()->findActeursByTheseAndRole($these, Role::CODE_CODIRECTEUR_THESE);
 
 
-        $this->getEvenementService()->ajouterEvenement($proposition, Evenement::EVENEMENT_SIGNATURE);
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Autorisation de soutenance");
 
         $exporter = new SiganturePresidentPdfExporter($this->renderer, 'A4');
         $exporter->setVars([
@@ -603,6 +609,8 @@ class PropositionController extends AbstractController
         $sursis = $proposition->hasSursis();
         $proposition->setSurcis(!$sursis);
         $this->getPropositionService()->update($proposition);
+
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_ETAT, "Sursis");
 
         return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
     }
@@ -826,6 +834,8 @@ class PropositionController extends AbstractController
         $cheminLogoComue = ($comue) ? $this->fichierStorageService->getFileForLogoStructure($comue->getStructure()) : null;
         $cheminLogoEtablissement = ($these->getEtablissement()) ? $this->fichierStorageService->getFileForLogoStructure($these->getEtablissement()->getStructure()) : null;
 
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Serment du docteur");
+
         $exporter = new SermentPdfExporter($this->renderer, 'A4');
         $exporter->getMpdf()->SetMargins(0, 0, 50);
         $exporter->setVars([
@@ -836,5 +846,21 @@ class PropositionController extends AbstractController
         ]);
         $exporter->export($these->getId() . '_serment.pdf');
         exit;
+    }
+
+    /** Gestion des horodatages d'une proposition **************************/
+
+    public function horodatagesAction() : ViewModel
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findOneForThese($these);
+
+        $horodatages = $proposition->getHorodatages();
+
+        return new ViewModel([
+            'these' => $these,
+            'proposition' => $proposition,
+            'horodatages' => $horodatages,
+        ]);
     }
 }

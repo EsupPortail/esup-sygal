@@ -1,20 +1,19 @@
 <?php
 
 use Application\Constants;
-use Depot\Controller\Plugin\UrlFichierThese;
-use Soutenance\Entity\Avis;
-use These\Entity\Db\Acteur;
-use Individu\Entity\Db\IndividuRole;
-use Doctorant\Entity\Db\Doctorant;
 use Application\Entity\Db\Role;
-use These\Entity\Db\These;
 use Application\Entity\Db\Validation;
-use Soutenance\Entity\Evenement;
+use Depot\Controller\Plugin\UrlFichierThese;
+use Doctorant\Entity\Db\Doctorant;
+use Individu\Entity\Db\IndividuRole;
+use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Proposition;
 use Soutenance\Provider\Privilege\JustificatifPrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Provider\Validation\TypeValidation;
+use These\Entity\Db\Acteur;
+use These\Entity\Db\These;
 
 /**
  * @see \Soutenance\Controller\PropositionController::propositionAction()
@@ -30,11 +29,10 @@ use Soutenance\Provider\Validation\TypeValidation;
  * @var array $indicateurs
  * @var boolean $isOk
  * @var boolean $juryOk
- * @var UrlFichierThese $urlFichierThese,
- * @var array $justificatifs,
- * @var boolean $justificatifsOk,
+ * @var UrlFichierThese $urlFichierThese ,
+ * @var array $justificatifs ,
+ * @var boolean $justificatifsOk ,
  * @var boolean $validationActeur
- * @var Evenement[] $signatures
  *
  * @var IndividuRole[] $ecoleResponsables
  * @var IndividuRole[] $uniteResponsables
@@ -48,7 +46,7 @@ use Soutenance\Provider\Validation\TypeValidation;
  * @var $FORMULAIRE_DEMANDE_CONFIDENTIALITE
  */
 
-$canModifier = ($this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER) OR $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION));
+$canModifier = ($this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER) or $this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION));
 $canModifierJustificatif = ($this->isAllowed($these, JustificatifPrivileges::JUSTIFICATIF_AJOUTER));
 
 $this->headTitle("Proposition de soutenance");
@@ -71,7 +69,8 @@ $this->headTitle("Proposition de soutenance");
 </p>
 <div class="alert alert-warning">
     <span class="icon icon-attention"></span>
-    En cas de modifications de la proposition, toutes validations seront annulées et la proposition devra être à nouveau être validée.
+    En cas de modifications de la proposition, toutes validations seront annulées et la proposition devra être à nouveau
+    être validée.
 </div>
 
 <br/><br/>
@@ -92,44 +91,45 @@ echo $this->partial('partial/informations', [
 
 <div id="DATE_ET_LIEU"></div>
 <?php
-    echo $this->partial('partial/date-et-lieu', [
-        'proposition' => $proposition,
-        'canModifier' => $canModifier,
-        'FORMULAIRE_DELOCALISATION' => $FORMULAIRE_DELOCALISATION]);
+echo $this->partial('partial/date-et-lieu', [
+    'proposition' => $proposition,
+    'canModifier' => $canModifier,
+    'FORMULAIRE_DELOCALISATION' => $FORMULAIRE_DELOCALISATION]);
 ?>
 
 <div id="COMPOSITION_JURY"></div>
 <?php
-    echo $this->partial('partial/composition-jury', [
-        'proposition' => $proposition,
-        'indicateurs' => $indicateurs,
-        'canModifier' => $canModifier,
-        'FORMULAIRE_DELEGUATION' => $FORMULAIRE_DELEGUATION]);
+echo $this->partial('partial/composition-jury', [
+    'proposition' => $proposition,
+    'indicateurs' => $indicateurs,
+    'canModifier' => $canModifier,
+    'FORMULAIRE_DELEGUATION' => $FORMULAIRE_DELEGUATION]);
 ?>
 
 
 <div id="INFORMATION"></div>
 <?php
-    echo $this->partial('partial/informations-complementaires', [
-        'proposition' => $proposition,
-        'canModifier' => $canModifier,
-        'FORMULAIRE_DEMANDE_LABEL' => $FORMULAIRE_DEMANDE_LABEL,
-        'FORMULAIRE_DEMANDE_ANGLAIS' => $FORMULAIRE_DEMANDE_ANGLAIS,
-        'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $FORMULAIRE_DEMANDE_CONFIDENTIALITE]);
+echo $this->partial('partial/informations-complementaires', [
+    'proposition' => $proposition,
+    'canModifier' => $canModifier,
+    'FORMULAIRE_DEMANDE_LABEL' => $FORMULAIRE_DEMANDE_LABEL,
+    'FORMULAIRE_DEMANDE_ANGLAIS' => $FORMULAIRE_DEMANDE_ANGLAIS,
+    'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $FORMULAIRE_DEMANDE_CONFIDENTIALITE]);
 ?>
 
 <div id="JUSTIFICATIF"></div>
 <?php echo $this->partial('partial/fichiers', [
-        'proposition' => $proposition,
-        'canModifier' => $canModifierJustificatif,
-        'justificatifs' => $justificatifs,
-        'justificatifsOk' => $justificatifsOk,
-        'urlFichierThese' => $urlFichierThese,
+    'proposition' => $proposition,
+    'canModifier' => $canModifierJustificatif,
+    'justificatifs' => $justificatifs,
+    'justificatifsOk' => $justificatifsOk,
+    'urlFichierThese' => $urlFichierThese,
 ]); ?>
 
 <div id="DECLARATION"></div>
 <?php echo $this->partial('partial/declaration-non-plagiat', [
     'these' => $these,
+    'proposition' => $proposition,
     'validation' => $validations[TypeValidation::CODE_VALIDATION_DECLARATION_HONNEUR],
     'refus' => $validations[TypeValidation::CODE_REFUS_DECLARATION_HONNEUR],
 ]); ?>
@@ -138,50 +138,51 @@ echo $this->partial('partial/informations', [
 
 <div id="VALIDATION"></div>
 <?php
-    $canValiderActeur = $isOk && ($justificatifsOk !== false) && ($informationsOk !== false) &&$this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR);
-    $canSursis = $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_SURSIS));
+$canValiderActeur = $isOk && ($justificatifsOk !== false) && ($informationsOk !== false) && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ACTEUR);
+$canSursis = $this->isAllowed(PropositionPrivileges::getResourceId(PropositionPrivileges::PROPOSITION_SURSIS));
 
-    echo $this->partial('partial/validations-acteurs', [
-        'proposition' => $proposition,
-        'validations' => $validations,
-        'canValiderActeur' => $canValiderActeur,
-        'canSursis' => $canSursis,
+echo $this->partial('partial/validations-acteurs', [
+    'proposition' => $proposition,
+    'validations' => $validations,
+    'canValiderActeur' => $canValiderActeur,
+    'canSursis' => $canSursis,
 
-        'isOk' => $isOk,
-        'doctorant' => $doctorant,
-        'directeurs' => $directeurs,
-        'validationActeur' => $validationActeur,
+    'isOk' => $isOk,
+    'doctorant' => $doctorant,
+    'directeurs' => $directeurs,
+    'validationActeur' => $validationActeur,
 
-        'informationsOk' => $informationsOk,
+    'informationsOk' => $informationsOk,
 
-    ]); ?>
-
-<?php
-    $canStructureValider = $isOk && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_UR) ||
-        $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ED) ||
-        $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_BDD);
-    $canPresidence = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_PRESIDENCE);
-
-    echo $this->partial('partial/validations-structures', [
-        'proposition' => $proposition,
-        'validations' => $validations,
-        'canStructureValider' => $canStructureValider,
-        'canPresidence' => $canPresidence,
-        'signatures' => $signatures,
-    ]); ?>
+]); ?>
 
 <?php
-    echo $this->partial('partial/pre-rapports', [
-        'these' => $these,
-        'avis' => $avis,
-    ]);
+$canStructureValider = $isOk && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_UR) ||
+    $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ED) ||
+    $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_BDD);
+$canPresidence = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_PRESIDENCE);
+
+echo $this->partial('partial/validations-structures', [
+    'proposition' => $proposition,
+    'validations' => $validations,
+    'canStructureValider' => $canStructureValider,
+    'canPresidence' => $canPresidence,
+]); ?>
+
+<?php
+echo $this->partial('partial/pre-rapports', [
+    'these' => $these,
+    'avis' => $avis,
+]);
 ?>
 
 <?php
-    $validationMDD = null;
-    if ($validations[Role::CODE_BDD]) { $validationMDD = current($validations[Role::CODE_BDD]); }
+$validationMDD = null;
+if ($validations[Role::CODE_BDD]) {
+    $validationMDD = current($validations[Role::CODE_BDD]);
+}
 
-    if ($validationMDD AND $proposition->getEtat()->getCode() === Etat::EN_COURS AND $canPresidence): ?>
+if ($validationMDD and $proposition->getEtat()->getCode() === Etat::EN_COURS and $canPresidence): ?>
     <div class="box card">
         <div class="card-header bg-success">
             <h2 class="first"> Et ensuite ? </h2>
@@ -193,7 +194,7 @@ echo $this->partial('partial/informations', [
                 <ul class="roadmap pagination">
                     <li>
                         <a
-                            <?php /** @see \Soutenance\Controller\AvisController::indexAction()  */ ?>
+                            <?php /** @see \Soutenance\Controller\AvisController::indexAction() */ ?>
                                 class="roadmap-step-link"
                                 href="<?php echo $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true); ?>">
                             <span class="fas fa-arrow-alt-circle-right"></span>
@@ -209,19 +210,19 @@ echo $this->partial('partial/informations', [
 <script>
     let navbar = 50 + 5;
 
-    $(function() {
+    $(function () {
         $("body").on({
-            "edition-datelieu" : function (event) {
+            "edition-datelieu": function (event) {
                 event.div.modal('hide');
                 $.ajax({
                     type: "POST",
-                    url : "<?php echo $this->url('soutenance/proposition/generate-view-date-lieu', ["these" => $these->getId()], [], true); ?>",
+                    url: "<?php echo $this->url('soutenance/proposition/generate-view-date-lieu', ["these" => $these->getId()], [], true); ?>",
                     beforeSend:
                         function () {
                             $("div#BOXDIV_DATE_LIEU").html("<div class='alert alert-warning'> <span class='fas fa-exclamation-triangle'></span> Rechargement de la vue associée à la date et lieu de soutenance.</div><br/>");
                         },
                     success:
-                        function(retour){
+                        function (retour) {
                             $("div#BOXDIV_DATE_LIEU").html(retour);
                         }
                 });
@@ -230,7 +231,7 @@ echo $this->partial('partial/informations', [
                 // let top = $('div#DATE_ET_LIEU').offset().top - navbar;
                 // window.scrollTo(0,top);
             },
-            "edition-membre" : function (event) {
+            "edition-membre": function (event) {
                 event.div.modal('hide');
                 //$.ajax({
                 //    type: "POST",
@@ -248,9 +249,9 @@ echo $this->partial('partial/informations', [
 
                 window.location.reload();
                 let top = $('div#COMPOSITION_JURY').offset().top - navbar;
-                window.scrollTo(0,top);
+                window.scrollTo(0, top);
             },
-            "edition-informations" : function (event) {
+            "edition-informations": function (event) {
                 event.div.modal('hide');
                 //$.ajax({
                 //    type: "POST",
@@ -268,20 +269,20 @@ echo $this->partial('partial/informations', [
 
                 window.location.reload();
                 let top = $('div#BOXDIV_INFORMATIONS').offset().top - navbar;
-                window.scrollTo(0,top);
+                window.scrollTo(0, top);
             },
-            "edition-confidentialite" : function (event) {
+            "edition-confidentialite": function (event) {
                 event.div.modal('hide');
                 window.location.reload();
             },
-            "refus-proposition" : function (event) {
+            "refus-proposition": function (event) {
                 event.div.modal('hide');
                 window.location.reload();
             },
         });
     });
 
-    $(function() {
+    $(function () {
         $("body").on("modification", function (event) {
             event.div.modal('hide');
             window.location.reload();

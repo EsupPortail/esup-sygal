@@ -2,18 +2,15 @@
 
 namespace Soutenance\Controller;
 
-use Fichier\Service\Fichier\FichierStorageService;
-use Information\Service\InformationService;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
-use Soutenance\Service\Avis\AvisService;
-use Soutenance\Service\Notification\SoutenanceNotificationFactory;
-use Structure\Service\Etablissement\EtablissementService;
-use These\Service\Acteur\ActeurService;
-use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Application\Service\Role\RoleService;
 use Application\Service\UserContextService;
+use Fichier\Service\Fichier\FichierStorageService;
+use Information\Service\InformationService;
 use Interop\Container\ContainerInterface;
+use Laminas\View\Renderer\PhpRenderer;
+use Notification\Service\NotifierService;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Soutenance\Assertion\PropositionAssertion;
 use Soutenance\Form\Anglais\AnglaisForm;
 use Soutenance\Form\ChangementTitre\ChangementTitreForm;
@@ -22,13 +19,16 @@ use Soutenance\Form\DateLieu\DateLieuForm;
 use Soutenance\Form\LabelEuropeen\LabelEuropeenForm;
 use Soutenance\Form\Membre\MembreForm;
 use Soutenance\Form\Refus\RefusForm;
-use Soutenance\Service\Evenement\EvenementService;
+use Soutenance\Service\Avis\AvisService;
+use Soutenance\Service\Horodatage\HorodatageService;
 use Soutenance\Service\Justificatif\JustificatifService;
 use Soutenance\Service\Membre\MembreService;
-use Notification\Service\NotifierService;
+use Soutenance\Service\Notification\SoutenanceNotificationFactory;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
-use Laminas\View\Renderer\PhpRenderer;
+use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\Etablissement\EtablissementService;
+use These\Service\Acteur\ActeurService;
 use UnicaenParametre\Service\Parametre\ParametreService;
 use UnicaenRenderer\Service\Rendu\RenduService;
 
@@ -41,7 +41,7 @@ class PropositionControllerFactory
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container) : PropositionController
+    public function __invoke(ContainerInterface $container): PropositionController
     {
         /**
          * @var ActeurService $acteurService
@@ -49,8 +49,8 @@ class PropositionControllerFactory
          * @var EcoleDoctoraleService $ecoleDoctoraleService
          * @var EtablissementService $etablissementService
          * @var InformationService $informationService
-         * @var EvenementService $evenementService
          * @var FichierStorageService $fichierStorageService
+         * @var HorodatageService $horodatageService
          * @var MembreService $membreService
          * @var NotifierService $notifierService
          * @var PropositionService $propositionService
@@ -65,8 +65,8 @@ class PropositionControllerFactory
         $avisService = $container->get(AvisService::class);
         $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
         $etablissementService = $container->get(EtablissementService::class);
-        $evenementService = $container->get(EvenementService::class);
         $fichierStorageService = $container->get(FichierStorageService::class);
+        $horodatageService = $container->get(HorodatageService::class);
         $informationService = $container->get(InformationService::class);
         $membreService = $container->get(MembreService::class);
         $notifierService = $container->get(NotifierService::class);
@@ -109,8 +109,8 @@ class PropositionControllerFactory
         $controller->setAvisService($avisService);
         $controller->setEcoleDoctoraleService($ecoleDoctoraleService);
         $controller->setEtablissementService($etablissementService);
-        $controller->setEvenementService($evenementService);
         $controller->setFichierStorageService($fichierStorageService);
+        $controller->setHorodatageService($horodatageService);
         $controller->setInformationService($informationService);
         $controller->setMembreService($membreService);
         $controller->setNotifierService($notifierService);

@@ -11,8 +11,6 @@
  * @var Avis[] $avis
  * @var bool $justificatifsOk
  * @var array $justificatifs
- * @var Evenement[] $evenementsEngagement
- * @var Evenement[] $evenementsPrerapport
  * @var UrlFichierThese $urlFichierThese
  *
  * @var Justificatif $autorisation
@@ -24,10 +22,10 @@ use Application\Entity\Db\Validation;
 use Depot\Controller\Plugin\UrlFichierThese;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
-use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
+use Soutenance\Service\Horodatage\HorodatageService;
 
 $tousLesEngagements = true;
 foreach($rapporteurs as $rapporteur) {
@@ -205,15 +203,6 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     <!-- AVIS SOUTENANCE -------------------------------------------------------------------------------------------------->
     <?php echo $this->partial('soutenance/presoutenance/partial/avis-soutenance'); ?>
 
-    <!-- DOCUMENT ----------------------------------------------------------------------------------------------------->
-    <?php echo $this->partial('soutenance/presoutenance/partial/documents',
-        [
-            'these' => $these, 'autorisation' => $autorisation, 'rapport' => $rapport,
-            'urlFichierThese' => $urlFichierThese
-
-        ]
-    ); ?>
-
 
     <!-- FEU VERT --------------------------------------------------------------------------------------------------------->
     <?php if($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) :?>
@@ -250,6 +239,10 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
         </span>
 
     <?php endif; ?>
+
+    <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_ETAT, "Annulation de la soutenance"); ?>
+    <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_ETAT, "Feu vert pour la soutenance"); ?>
+
 
     <?php  /** DOCUMENTS DE FIN DE PREPARATION DE SOUTENANCE **/ ?>
 
@@ -291,12 +284,14 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                     </a>
                     <?php endif; ?>
                 </div>
+
+                <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Adresse du lieu de soutenance"); ?>
             </div>
         <?php endif; ?>
 
             <br/><br/>
 
-            <!-- Partie adresse du lieu de soutenance ----------------------------------------------------------------->
+            <!-- Génération des documents liés à la soutenance--------------------------------------------------------->
             <div class="row">
                 <div class="col-md-12">
                     <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE AND $canGenererDocument) : ?>
@@ -348,16 +343,13 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                                 <span class="fas fa-list-alt"></span>Générer les convocations
                         </a>
                     <?php endif; ?>
-
-                    <?php if ($canGenererDocument) : ?>
-                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::transmettreDocumentsDirectionTheseAction() */ ?>
-                                href="<?php echo $this->url('soutenance/presoutenance/transmettre-documents-direction-these', ['these' => $these->getId()], [], true); ?>"
-                                class="btn btn-primary action"
-                        >
-                            <span class="icon icon-notifier"></span>Transmettre documents à la direction de thèse
-                        </a>
-                    <?php endif; ?>
                 </div>
+
+                <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_EDITION, "Procès verbal"); ?>
+                <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_EDITION, "Avis de soutenance"); ?>
+                <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_EDITION, "Rapport de soutenance"); ?>
+                <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_EDITION, "Rapport technique"); ?>
+                <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_EDITION, "Convocations"); ?>
             </div>
 
             <!-- Partie envoi des convocations ------------------------------------------------------------------------>
@@ -371,11 +363,32 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                         <span class="icon icon-notify"></span>Envoyer les convocations
                     </a>
                     <?php endif; ?>
+                    <?php if ($canGenererDocument) : ?>
+                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::transmettreDocumentsDirectionTheseAction() */ ?>
+                                href="<?php echo $this->url('soutenance/presoutenance/transmettre-documents-direction-these', ['these' => $these->getId()], [], true); ?>"
+                                class="btn btn-info action"
+                        >
+                            <span class="icon icon-notify"></span>Transmettre documents à la direction de thèse
+                        </a>
+                    <?php endif; ?>
                 </div>
+
+                <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_NOTIFICATION, "Convocations"); ?>
+                <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_NOTIFICATION, "Transmission des documents"); ?>
+
             </div>
         </div>
     </div>
     <?php endif; ?>
+
+    <!-- DOCUMENT ----------------------------------------------------------------------------------------------------->
+    <?php echo $this->partial('soutenance/presoutenance/partial/documents',
+        [
+            'these' => $these, 'autorisation' => $autorisation, 'rapport' => $rapport,
+            'urlFichierThese' => $urlFichierThese
+
+        ]
+    ); ?>
 
 <?php endif; ?>
 

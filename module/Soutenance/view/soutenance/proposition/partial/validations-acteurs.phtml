@@ -17,6 +17,7 @@
  */
 
 
+use Soutenance\Service\Horodatage\HorodatageService;
 use These\Entity\Db\Acteur;
 use Doctorant\Entity\Db\Doctorant;
 use Individu\Entity\Db\Individu;
@@ -119,9 +120,8 @@ $a=1;
             </div>
 
             <?php if ($canSursis) : ?>
-                <div class="col-md-6" >
                     <?php /** @see \Soutenance\Controller\PropositionController::toggleSursisAction() */ ?>
-                    <a href="<?php echo $this->url('soutenance/proposition/sursis', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action float-end">
+                    <a href="<?php echo $this->url('soutenance/proposition/sursis', ['these' => $these->getId()], [], true); ?>" class="btn btn-primary action">
                         <?php if (!$proposition->hasSursis()) : ?>
                             <span class="icon icon-plus-sign"></span>
                             Accorder un sursis
@@ -130,7 +130,8 @@ $a=1;
                             Retirer le sursis
                         <?php endif; ?>
                     </a>
-                </div>
+
+                    <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_ETAT, "Sursis"); ?>
             <?php endif; ?>
         </div>
     </div>

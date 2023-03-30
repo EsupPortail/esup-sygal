@@ -18,6 +18,7 @@ use Doctrine\ORM\ORMException;
 use Exception;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Horodatage\Service\Horodatage\HorodatageServiceAwareTrait;
 use Individu\Entity\Db\Individu;
 use Laminas\Cache\Exception\LogicException;
 use Laminas\Mvc\Controller\AbstractActionController;
@@ -677,4 +678,5 @@ class PropositionService extends BaseService
         $proposition->setRenduRapport($date);
         $this->update($proposition);
     }
+
 }

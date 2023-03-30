@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Horodatage\Entity\Db\Horodatage"
+            table="HORODATAGE_HORODATAGE">
+            <!--repository-class="Horodatage\Entity\Db\Repository\HorodatageRepository">-->
+
+        <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
+        </id>
+
+        <many-to-one field="utilisateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="USER_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <field name="date" type="datetime" column="DATE" nullable="false"/>
+
+        <field name="type"             type="string"       length="1024"       column="TYPE"          nullable="false"/>
+        <field name="complement"       type="string"       length="9999"       column="COMPLEMENT"    nullable="false"/>
+    </entity>
+</doctrine-mapping>
