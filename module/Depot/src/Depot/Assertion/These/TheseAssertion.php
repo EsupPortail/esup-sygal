@@ -88,6 +88,10 @@ class TheseAssertion extends AbstractAssertion
             return false;
         }
 
+        if ($this->getRouteMatch() === null) {
+            return false;
+        }
+
         $this->these = $this->getRouteMatch()->getThese();
 
         switch (true) {

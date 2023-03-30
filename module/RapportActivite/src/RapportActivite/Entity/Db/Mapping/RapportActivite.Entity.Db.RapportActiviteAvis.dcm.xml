@@ -18,7 +18,7 @@
                 <cascade-all/>
             </cascade>
             <join-columns>
-                <join-column name="AVIS_ID" referenced-column-name="ID"/>
+                <join-column name="AVIS_ID" referenced-column-name="id"/>
             </join-columns>
         </many-to-one>
 
