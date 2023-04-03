@@ -1,0 +1,62 @@
+<?php
+
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ */
+
+use Laminas\Form\Element\Text;
+use UnicaenIdref\Domain\Index1;
+use UnicaenIdref\ParamsFactory;
+
+?>
+<h1>Accueil Module IdRef</h1>
+
+<h2>Exemple : Nom de personne</h2>
+<p>
+    <em>NB : Le nom de personne utilisé pour initier la recherche est prélevé dans le champ de formulaire source.
+        Le PPN de la notice qui sera sélectionnée dans l'iframe sera inscrit dans le champ de formulaire
+        destination.</em>
+</p>
+<div class="row">
+    <div class="col-md-4">
+        <?php
+        $sourceElement = (new Text('source-element'))
+            ->setLabel("Élément de formulaire source :")
+            ->setValue('Gauthier bertrand')
+            ->setAttribute('id', 'source-element');
+        $destinationElement = (new Text('destination-element'))
+            ->setLabel("Élément de formulaire destination :")
+            ->setAttribute('id', 'destination-element')
+            ->setAttribute('disabled', true);
+        echo $this->formControlGroup($sourceElement);
+        echo $this->formControlGroup($destinationElement);
+        ?>
+        <?php echo $this->idrefPopupTrigger(
+            [['Index1' => Index1::INDEX_NomDePersonne, 'Index1Value' => [$sourceElement->getAttribute('id')]]],
+            $destinationElement->getAttribute('id')
+        ) ?>
+    </div>
+</div>
+
+<hr>
+
+<h2>Exemple : PPN</h2>
+<p>
+    <em>NB : Le PPN utilisé pour initier la recherche est prélevé dans le champ de formulaire.
+        Le PPN de la notice qui sera sélectionnée dans l'iframe sera inscrit dans le même champ de formulaire.</em>
+</p>
+<div class="row">
+    <div class="col-md-4">
+        <?php
+        $sourceElement = (new Text('source-element-2'))
+            ->setLabel("Élément de formulaire source/destination:")
+            ->setValue('128415827')
+            ->setAttribute('id', 'source-element-2');
+        echo $this->formControlGroup($sourceElement);
+        ?>
+        <?php echo $this->idrefPopupTrigger(
+            [['Index1' => Index1::INDEX_Ppn, 'Index1Value' => [$sourceElement->getAttribute('id')]]],
+            $sourceElement->getAttribute('id')
+        ) ?>
+    </div>
+</div>

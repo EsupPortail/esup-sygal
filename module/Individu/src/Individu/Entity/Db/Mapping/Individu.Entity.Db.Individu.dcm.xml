@@ -19,6 +19,7 @@
         <field name="prenom1" column="PRENOM1"/>
         <field name="prenom2" column="PRENOM2"/>
         <field name="prenom3" column="PRENOM3"/>
+        <field name="idRef" column="ID_REF" nullable="true"/>
 
         <field name="sourceCode" column="SOURCE_CODE" nullable="true"/>
 

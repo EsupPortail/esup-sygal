@@ -94,7 +94,7 @@ $structure = $ecole->getStructure();
                     <dd>    <?php echo $ecole->getStructure()->getSigle(); ?>       </dd>
                     <dt> Code :</dt>
                     <dd>    <?php echo $ecole->getStructure()->getCode(); ?>        </dd>
-                    <dt> Id REF :</dt>
+                    <dt>IdRef :</dt>
                     <dd>
                         <?php if ($ecole->getStructure()->getIdRef() !== null AND trim($ecole->getStructure()->getIdRef()) !== "") : ?>
                             <?php echo $ecole->getStructure()->getIdRef(); ?>
