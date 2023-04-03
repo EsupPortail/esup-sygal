@@ -12,6 +12,7 @@ Journal des modifications
 - Dépôt de thèse : un dépôt existant de la version corrigée reste visible même si l'avis de reproduction Apogée revient à Non. 
 - Menu Dépôt fichiers divers : remonté et affiché sans condition
 - Page Dépôt fichiers divers : téléversement bloqué pour PV soutenance, Pré-rapport soutenance, Rapport soutenance
+- Recherche/sélection du PPN IdRef dans les formulaires de modification de structure et d'individu
 
 5.2.10
 ------
