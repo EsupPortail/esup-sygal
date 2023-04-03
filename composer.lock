@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "633d9ca098d7d3f1b4cdea0a6ba9d372",
+    "content-hash": "4d2d7ae4851a045662ffe993c5f59eb2",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -9874,6 +9874,39 @@
             "time": "2022-11-23T12:18:12+00:00"
         },
         {
+            "name": "unicaen/idref",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/idref.git",
+                "reference": "3aada6c252d9fce97329bf135347c7681803b1be"
+            },
+            "require": {
+                "laminas/laminas-dependency-plugin": "^2.1",
+                "monolog/monolog": "^2.3"
+            },
+            "require-dev": {
+                "laminas/laminas-config": "^2.0 || ^3.0",
+                "laminas/laminas-form": "^2.0 || ^3.0",
+                "laminas/laminas-mvc": "^2.0 || ^3.0",
+                "laminas/laminas-stdlib": "^2.0 || ^3.0",
+                "laminas/laminas-view": "^2.0",
+                "phpunit/phpunit": "~5.4",
+                "unicaen/test": "^4.0"
+            },
+            "type": "module",
+            "autoload": {
+                "psr-0": {
+                    "UnicaenIdref\\": "src/"
+                },
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "description": "Module d'interrogation des autorités Sudoc (IDRef)",
+            "time": "2023-04-03T19:45:59+00:00"
+        },
+        {
             "name": "unicaen/ldap",
             "version": "4.0.1",
             "source": {
@@ -11994,7 +12027,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "unicaen/idref": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
