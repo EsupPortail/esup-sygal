@@ -11,11 +11,8 @@ use UnicaenIdref\Params;
  * Aide de vue dessinant un bouton affichant l'interface web d'IdRef pour rechercher la notice d'une personne/structure
  * dont on veut "importer" l'identifiant PPN dans un formulaire.
  *
- * Ce bouton est associé a minima à un champ texte source, duquel est prélevé le texte à rechercher (PPN, nom de personne, etc.).
- * Il peut être associé à un 2e champ texte destination, dans lequel sera inscrit l'identifiant PPN de la notice sélectionnée.
- * Si aucun champ texte destination n'est spécifié, l'identifiant PPN de la notice sélectionnée sera inscrit dans le champ texte source.
- *
- * Par défaut, cette aide de vue est paramétrée pour que la recherche se fasse sur l'identifiant PPN.
+ * Ce bouton est associé à plusieurs champs sources possibles, desquels est prélevé le texte à rechercher (PPN, nom de personne, etc.)
+ * et à un champ texte destination dans lequel sera inscrit l'identifiant PPN de la notice sélectionnée.
  *
  * @see https://documentation.abes.fr/aideidrefdeveloppeur/index.html#InterconnecterBaseEtIdref
  *
@@ -28,42 +25,42 @@ class IdrefPopupTriggerViewHelper extends AbstractHelper
     protected Button $button;
     protected Params $params;
 
-    private string $sourceElementId;
-    private string $destinationElementId;
+    private array $sourceElements;
+    private string $destinationElement;
 
     public function __construct()
     {
         $this->button = new Button('button');
         $this->button->setLabel('');
 
-        // par défaut, la recherche se fait sur le PPN
         $this->params = new Params();
-        $this->params->setIndex1((new Index1)->setPpn(''));
+        $this->params->setIndex1((new Index1)->setNomDePersonne('')); // todo : encore utile ?
     }
 
     /**
      * Point d'entrée.
      *
-     * @param string $sourceElementId Id HTML de l'élément source, duquel est prélevé le texte à rechercher
-     * @param string|null $destinationElementId Id HTML de l'élément destination dans lequel sera inscrit le PPN de la notice sélectionnée
-     */
-    public function __invoke(string $sourceElementId, ?string $destinationElementId = null): self
-    {
-        $this->sourceElementId = $sourceElementId;
-        $this->destinationElementId = $destinationElementId ?: $sourceElementId;
-
-        return $this;
-    }
-
-    /**
-     * Spécifie les paramètres de recherche.
+     * @param array $sourceElements Éléments sources possibles à partir desquels seront prélevés le texte à rechercher dans l'interface web d'IdRef.
+     * Exemple de valeur :
+     *      <pre>
+     *      [
+     *         ['Index1' => Index1::INDEX_Ppn, 'Index1Value' => ['#idRef']],
+     *         ['Index1' => Index1::INDEX_NomDePersonne, 'Index1Value' => ['#nomUsuel', '#prenom1']],
+     *      ]
+     *      </pre>
+     * Signification :
+     *      Si l'élément HTML '#idRef' est renseigné, alors la recherche visera un "Identifiant IdRef (n°PPN)" (Index1::INDEX_Ppn) avec
+     *      comme texte recherché la valeur de cet élément.
+     *      Sinon, la recherche visera un "Nom de personne" (Index1::INDEX_NomDePersonne) avec comme texte recherché la concaténation
+     *      des valeurs éventuelles des éléments HTML '#nomUsuel' et '#prenom1'.
      *
-     * @param Params $params Ex pour rechercher selon le PPN : `(new Params())->setIndex1((new Index1)->setPpn('123456789'));`
-     * @return self
+     * @param string $destinationElement Élément destination dans lequel sera inscrit le PPN de la notice sélectionnée.
+     * Exemple : '#idRef'.
      */
-    public function setParams(Params $params): self
+    public function __invoke(array $sourceElements, string $destinationElement): self
     {
-        $this->params = $params;
+        $this->sourceElements = $sourceElements;
+        $this->destinationElement = $destinationElement;
 
         return $this;
     }
@@ -76,8 +73,8 @@ class IdrefPopupTriggerViewHelper extends AbstractHelper
         $this->button
             ->setAttribute('class', 'idref-popup-trigger ' . $this->button->getAttribute('class'))
             ->setAttribute('href', '#')
-            ->setAttribute('data-source-element-id', $this->sourceElementId)
-            ->setAttribute('data-destination-element-id', $this->destinationElementId);
+            ->setAttribute('data-source-elements', json_encode($this->sourceElements))
+            ->setAttribute('data-destination-element', $this->destinationElement);
 
         return $this->view->partial($this->partial, [
             'button' => $this->button,

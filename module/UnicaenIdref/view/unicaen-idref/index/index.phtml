@@ -31,8 +31,10 @@ use UnicaenIdref\ParamsFactory;
         echo $this->formControlGroup($sourceElement);
         echo $this->formControlGroup($destinationElement);
         ?>
-        <?php echo $this->idrefPopupTrigger($sourceElement->getAttribute('id'), $destinationElement->getAttribute('id'))
-            ->setParams(ParamsFactory::new()->setIndex1((new Index1())->setNomDePersonne(''))) ?>
+        <?php echo $this->idrefPopupTrigger(
+            [['Index1' => Index1::INDEX_NomDePersonne, 'Index1Value' => [$sourceElement->getAttribute('id')]]],
+            $destinationElement->getAttribute('id')
+        ) ?>
     </div>
 </div>
 
@@ -52,6 +54,9 @@ use UnicaenIdref\ParamsFactory;
             ->setAttribute('id', 'source-element-2');
         echo $this->formControlGroup($sourceElement);
         ?>
-        <?php echo $this->idrefPopupTrigger($sourceElement->getAttribute('id')) ?>
+        <?php echo $this->idrefPopupTrigger(
+            [['Index1' => Index1::INDEX_Ppn, 'Index1Value' => [$sourceElement->getAttribute('id')]]],
+            $sourceElement->getAttribute('id')
+        ) ?>
     </div>
 </div>

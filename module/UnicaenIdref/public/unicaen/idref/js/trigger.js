@@ -7,10 +7,23 @@ const UnicaenIdRef = {
          */
         initTrigger: function ($trigger, params) {
             $trigger.on('click', function (event) {
-                const $sourceElement = UnicaenIdRef.getSourceElementFromTrigger($trigger);
-
-                // prise en compte de la "valeur" éventuelle de l'élément source en tant que 'index1Value'
-                var index1Value = UnicaenIdRef.getSourceElementValue($sourceElement);
+                const sourceElements = $trigger.data(k = 'source-elements');
+                if (!sourceElements) {
+                    throw new Error("UnicaenIdRef : le trigger doit fournir l'id de l'élément source via l'attribut suivant : data-" + k);
+                }
+                var index1 = null;
+                var index1Value = null;
+                $(sourceElements).each(function(i, item) {
+                    if (index1Value) {
+                        return; // on s'arrête à la première valeur trouvée
+                    }
+                    index1 = item["Index1"];
+                    index1Value = $(item["Index1Value"]).map(function(i, val) {
+                        var sel = '#' + val;
+                        return $(sel).is(":input") ? $(sel).val() : $(sel).text();
+                    }).get().join(' ').trim();
+                });
+                params["index1"] = index1;
                 if (index1Value) {
                     params["index1Value"] = index1Value;
                 }
@@ -40,35 +53,13 @@ const UnicaenIdRef = {
         handleResult: function ($trigger, data) {
             if (data["g"] != null) {
                 const idref = data['b'];
-                const $sourceElement = UnicaenIdRef.getSourceElementFromTrigger($trigger);
                 const $destinationElement = UnicaenIdRef.getDestinationElementFromTrigger($trigger);
                 UnicaenIdRef.setDestinationElementValue($destinationElement, idref);
-                //console.log('idrefTriggerHandleResult', $trigger, $sourceElement, idref);
-            }
-        },
-
-        getSourceElementFromTrigger: function ($trigger) {
-            const sourceElementId = $trigger.data(k = 'source-element-id');
-            if (!sourceElementId) {
-                throw new Error("UnicaenIdRef : le trigger doit fournir l'id de l'élément source via l'attribut suivant : data-" + k);
-            }
-            const $sourceElement = $('#' + sourceElementId);
-            if (!$sourceElement.length) {
-                throw new Error("UnicaenIdRef : élément source introuvable avec cet id : " + sourceElementId);
-            }
-            return $sourceElement;
-        },
-
-        getSourceElementValue: function ($sourceElement) {
-            if ($sourceElement.is(":input")) {
-                return $sourceElement.val();
-            } else {
-                return $sourceElement.text();
             }
         },
 
         getDestinationElementFromTrigger: function ($trigger) {
-            const destinationElementId = $trigger.data(k = 'destination-element-id');
+            const destinationElementId = $trigger.data(k = 'destination-element');
             if (!destinationElementId) {
                 throw new Error("UnicaenIdRef : le trigger doit fournir l'id de l'élément source via l'attribut suivant : data-" + k);
             }
