@@ -3,7 +3,6 @@
 namespace RapportActivite\Service\Fichier\Exporter;
 
 use RapportActivite\Entity\Db\RapportActivite;
-use Structure\Entity\Db\Structure;
 
 class RapportActivitePdfExporterData
 {
@@ -13,7 +12,5 @@ class RapportActivitePdfExporterData
     public array $operations;
 
     public array $logosEtablissements;
-
-    public ?Structure $structureCED;
     public string $logoCED;
 }

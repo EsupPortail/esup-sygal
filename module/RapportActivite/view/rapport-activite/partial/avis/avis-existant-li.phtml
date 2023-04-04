@@ -6,6 +6,7 @@
 use Application\Constants;
 
 $avis = $operation->getAvis();
+$statusClass = $avis->getAvisValeur()->getValeurBool() ? 'success' : 'danger';
 ?>
 
 <li>
@@ -13,14 +14,11 @@ $avis = $operation->getAvis();
         <strong><?php echo $avis->getAvisType()->getLibelle() ?></strong>
     </p>
     <p class="operation-valeur">
-        <strong><?php echo $avis->getAvisValeur()->getValeur() ?></strong>,
+        <span class="avis-valeur text-<?php echo $statusClass ?>"><?php echo $avis->getAvisValeur()->getValeur() ?></span>,
         par <?php echo $operation->getHistoModificateur() ?: $operation->getHistoCreateur() ?>,
         le <?php echo ($operation->getHistoModification() ?: $operation->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
     </p>
     <?php if ($avisComplemsToHtml = $avis->getAvisComplemsToHtml()): ?>
-        <p class="avis-complement">
-            Compléments :
-        </p>
         <?php echo $avisComplemsToHtml ?>
     <?php endif ?>
 </li>

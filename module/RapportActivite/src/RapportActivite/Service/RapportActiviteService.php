@@ -315,7 +315,7 @@ class RapportActiviteService extends BaseService
 
         $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(true);
 
-        // Logos CMUE & établissements d'inscription
+        // Logos COMUE & établissements d'inscription
         $data->logosEtablissements = [];
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {
             if (!$comue->getStructure()->getCheminLogo()) {
@@ -345,19 +345,16 @@ class RapportActiviteService extends BaseService
         }
 
         // Collège des ED (CED)
-        $ced = $this->structureService->findStructureByCode('CED');
-        if ($ced === null) {
-            throw new ExporterDataException("Aucun CED trouvé parmi les structures, veuillez le créer avec le code 'CED', svp.");
-        }
-        $data->structureCED = $ced;
-        if (!$ced->getCheminLogo()) {
-            throw new ExporterDataException("Le CED n'a aucun logo !");
-        }
-        try {
-            $data->logoCED = $this->fichierStorageService->getFileForLogoStructure($ced);
-        } catch (StorageAdapterException $e) {
-            throw new ExporterDataException(
-                "Accès impossible au logo du CED : " . $e->getMessage());
+        if ($ced = $this->etablissementService->fetchEtablissementCed()) {
+            if (!$ced->getStructure()->getCheminLogo()) {
+                throw new ExporterDataException("Le CED n'a aucun logo !");
+            }
+            try {
+                $data->logoCED = $this->fichierStorageService->getFileForLogoStructure($ced->getStructure());
+            } catch (StorageAdapterException $e) {
+                throw new ExporterDataException(
+                    "Accès impossible au logo du CED : " . $e->getMessage());
+            }
         }
 
         // operations

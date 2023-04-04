@@ -118,6 +118,7 @@ NAME_INSERT_BOOTSTRAP_DATA='insert_bootstrap_data'
 NAME_INSERT_DATA='insert_data'
 NAME_PREPARE_DATA='prepare_data'
 NAME_CREATE_COMUE='create_comue'
+NAME_CREATE_CED='create_ced'
 NAME_INIT='init'
 NAME_CREATE_FIXTURE='create_fixture'
 NAME_CREATE_CONSTRAINTS='create_constraints'
@@ -193,9 +194,17 @@ cp $SRC_SCRIPT $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
 
 #
+# CED
+#
+OUTPUT_FILE=$OUTPUT_DIR/sql/08_$NAME_CREATE_CED.sql.dist
+SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_CREATE_CED.template.sql
+cp $SRC_SCRIPT $OUTPUT_FILE
+echo "> $OUTPUT_FILE"
+
+#
 # init
 #
-OUTPUT_FILE=$OUTPUT_DIR/sql/08_$NAME_INIT.sql.dist
+OUTPUT_FILE=$OUTPUT_DIR/sql/09_$NAME_INIT.sql.dist
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_INIT.template.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
@@ -203,7 +212,7 @@ echo "> $OUTPUT_FILE"
 #
 # fixtures
 #
-OUTPUT_FILE=$OUTPUT_DIR/sql/09_$NAME_CREATE_FIXTURE.sql.dist
+OUTPUT_FILE=$OUTPUT_DIR/sql/10_$NAME_CREATE_FIXTURE.sql.dist
 SRC_SCRIPT=$THIS_DIR/src/sql/$NAME_CREATE_FIXTURE.template.sql
 cp $SRC_SCRIPT $OUTPUT_FILE
 echo "> $OUTPUT_FILE"

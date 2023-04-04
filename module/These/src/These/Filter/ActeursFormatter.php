@@ -163,10 +163,10 @@ class ActeursFormatter extends AbstractFilter {
             if ($this->displayRole === true) {
                 $result["role"] = $acteur->getRole()->getRoleId();
             }
-            if ($this->displayRoleComplement === true) {
+            if ($this->displayRoleComplement === true && trim($acteur->getLibelleRoleComplement())) {
                 $result["complement"] = $acteur->getLibelleRoleComplement();
             }
-            if ($this->displayQualite === true) {
+            if ($this->displayQualite === true && trim($acteur->getQualite())) {
                 $result["qualite"] = $acteur->getQualite();
             }
             if ($this->displayEtablissement === true) {
@@ -194,10 +194,10 @@ class ActeursFormatter extends AbstractFilter {
         if ($this->displayRole) {
             $str .= " <b>" . $a->getRole()->getRoleId() . "</b>";
         }
-        if ($this->displayRoleComplement && $a->getLibelleRoleComplement()) {
+        if ($this->displayRoleComplement && $a->getLibelleRoleComplement() && trim($a->getLibelleRoleComplement())) {
             $str .= " (" . $a->getLibelleRoleComplement() . ")";
         }
-        if ($this->displayQualite && $a->getQualite()) {
+        if ($this->displayQualite && $a->getQualite() && trim($a->getQualite())) {
             $str .= ", " . $a->getQualite();
         }
         if ($this->displayEtablissement) {

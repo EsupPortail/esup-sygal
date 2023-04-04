@@ -45,6 +45,28 @@ $these = $rapport->getThese();
 
 <div class="rapport-activite-container">
 
+    <h2>Nature du financement doctoral / <span class="en">Funding information</span></h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <dl>
+                <dt>
+                    Financement / <span class="en">Thesis funding</span>
+                </dt>
+                <dd>
+                    <?php if ($these->getFinancements()->isEmpty()): ?>
+                        Pas de financement dédié à la thèse.
+                    <?php else: ?>
+                        <?php echo $financementFormatter->format($these->getFinancements()->toArray()); ?>
+                    <?php endif ?>
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <hr>
+
+
     <h2>Volet administratif / <span class="en">General information</span></h2>
 
     <div class="row">
@@ -78,10 +100,6 @@ $these = $rapport->getThese();
                     <?php echo $these->getAnneeUniv1ereInscription() ?>
                 </dd>
 
-            </dl>
-        </div>
-        <div class="col-md-6">
-            <dl>
                 <dt>
                     Direction de thèse / <span class="en">Thesis advisor</span>
                 </dt>
@@ -144,25 +162,9 @@ $these = $rapport->getThese();
         </div>
     </div>
 
+    <hr>
 
-    <h2>Nature du financement doctoral / <span class="en">Funding information</span></h2>
-
-    <div class="row">
-        <div class="col-md-6">
-            <dl>
-                <dt>
-                    Financement / <span class="en">Thesis funding</span>
-                </dt>
-                <dd>
-                    <?php if ($these->getFinancements()->isEmpty()): ?>
-                        Pas de financement dédié à la thèse.
-                    <?php else: ?>
-                        <?php echo $financementFormatter->format($these->getFinancements()->toArray()); ?>
-                    <?php endif ?>
-                </dd>
-            </dl>
-        </div>
-    </div>
+    <pagebreak/>
 
 
     <h2>Activités scientifiques / <span class="en">Scientific activities</span></h2>
@@ -170,21 +172,23 @@ $these = $rapport->getThese();
     <div class="row">
         <div class="col-md-10">
             <dl>
-                <dt>Description du projet de recherche</dt>
+                <dt>Description du projet de recherche / <span class="en">Description of the research project</span></dt>
                 <dd>
                     <?php echo $rapport->getDescriptionProjetRecherche() ?>
                 </dd>
-                <dt>Principaux résultats obtenus</dt>
+                <dt>Principaux résultats obtenus / <span class="en">Main results obtained</span></dt>
                 <dd>
                     <?php echo $rapport->getPrincipauxResultatsObtenus() ?>
                 </dd>
-                <dt>Productions scientifiques</dt>
+                <dt>Productions scientifiques / <span class="en">Scientific product</span></dt>
                 <dd>
                     <?php echo $rapport->getProductionsScientifiques() ?>
                 </dd>
             </dl>
         </div>
     </div>
+
+    <hr>
 
 
     <h2>Formations doctorales thématiques et transversales / <span class="en">Doctoral training</span></h2>
@@ -209,7 +213,7 @@ $these = $rapport->getThese();
                                 </li>
                             <?php endforeach ?>
                         </ul>
-                        <span class="total">Volume horaire total : <?php echo $rapport->getFormationsSpecifiquesTempsTotal() ?> h</span>
+                        <div class="total">Volume horaire total : <?php echo $rapport->getFormationsSpecifiquesTempsTotal() ?> h</div>
                     <?php else: ?>
                         Aucune
                     <?php endif ?>
@@ -232,7 +236,7 @@ $these = $rapport->getThese();
                                 </li>
                             <?php endforeach ?>
                         </ul>
-                        <span class="total">Volume horaire total : <?php echo $rapport->getFormationsTransversalesTempsTotal() ?> h</span>
+                        <div class="total">Volume horaire total : <?php echo $rapport->getFormationsTransversalesTempsTotal() ?> h</div>
                     <?php else: ?>
                         Aucune
                     <?php endif ?>
@@ -259,7 +263,7 @@ $these = $rapport->getThese();
                                 </li>
                             <?php endforeach ?>
                         </ul>
-                        <span class="total">Volume horaire total : <?php echo $rapport->getActionsDiffusionCultureScientifiqueTempsTotal() ?> h</span>
+                        <div class="total">Volume horaire total : <?php echo $rapport->getActionsDiffusionCultureScientifiqueTempsTotal() ?> h</div>
                     <?php else: ?>
                         Aucune
                     <?php endif ?>
@@ -275,8 +279,8 @@ $these = $rapport->getThese();
         <div class="col-md-8">
             <dl>
                 <?php $autresActivitesArray = $rapport->getAutresActivitesToArray() ?>
-                <dt>Autres activités / <span class="en">Other activities</span>
-                    <span class="badge bg-secondary"><?php echo count($autresActivitesArray) ?></span></dt>
+                <dt><!--Autres activités / <span class="en">Other activities</span>
+                    <span class="badge bg-secondary"><?php /*echo count($autresActivitesArray) */?></span>--></dt>
                 <dd class="collection">
                     <?php if ($autresActivitesArray): ?>
                         <ul>
@@ -297,7 +301,7 @@ $these = $rapport->getThese();
                                 </li>
                             <?php endforeach ?>
                         </ul>
-                        <span class="total">Volume horaire total : <?php echo $rapport->getAutresActivitesTempsTotal() ?> h</span>
+                        <div class="total">Volume horaire total : <?php echo $rapport->getAutresActivitesTempsTotal() ?> h</div>
                     <?php else: ?>
                         Aucune
                     <?php endif ?>
@@ -305,6 +309,8 @@ $these = $rapport->getThese();
             </dl>
         </div>
     </div>
+
+    <hr>
 
 
     <?php if ($rapport->getCalendrierPrevionnelFinalisationEnabled()): ?>
@@ -315,7 +321,7 @@ $these = $rapport->getThese();
             <div class="col-md-10">
                 <dl>
                     <dt>
-                        Calendrier prévisionnel / <span class="en">Provisional timetable (up to 4-5 lines)</span>
+                        <!--Calendrier prévisionnel / <span class="en">Provisional timetable</span>-->
                     </dt>
                     <dd>
                         <?php echo $rapport->getCalendrierPrevionnelFinalisation() ?>
@@ -367,13 +373,13 @@ $these = $rapport->getThese();
     <?php endif ?>
 
 
-    <h2>Commentaires / <span class="en">Additional comments</span></h2>
+    <h2>Commentaires libres / <span class="en">Additional comments</span></h2>
 
     <div class="row">
         <div class="col-md-10">
             <dl>
                 <dt>
-                    Commentaire libres / <span class="en">Additional comments</span>
+                    <!--Commentaire libres / <span class="en">Additional comments</span>-->
                 </dt>
                 <dd>
                     <?php if ($commentaires = $rapport->getCommentaires()): ?>
@@ -386,6 +392,7 @@ $these = $rapport->getThese();
         </div>
     </div>
 
+    <pagebreak/>
 
     <div style="page-break-inside: avoid">
 

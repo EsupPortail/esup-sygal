@@ -313,7 +313,7 @@ update type_validation
 set code = 'RAPPORT_ACTIVITE_AUTO', libelle = 'Validation finale du rapport d''activité non dématérialisé (ancien module)'
 where code = 'RAPPORT_ACTIVITE';
 insert into type_validation(id, code, libelle)
-select nextval('type_validation_id_seq'), 'RAPPORT_ACTIVITE_DOCTORANT', 'Validation électronique du rapport d''activité';
+select nextval('type_validation_id_seq'), 'RAPPORT_ACTIVITE_DOCTORANT', 'Validation électronique du rapport d''activité par le doctorant';
 
 INSERT INTO type_validation (id, code, libelle)
 select nextval('type_validation_id_seq'), 'RAPPORT_ACTIVITE', 'Validation finale du rapport d''activité non dématérialisé (ancien module)';
@@ -430,7 +430,7 @@ from tmp, unicaen_avis_type_valeur tv
 --------------------------- Avis Direction UR ---------------------------
 
 insert into unicaen_avis_type (code, libelle, description, ordre)
-values ('AVIS_RAPPORT_ACTIVITE_DIR_UR', 'Avis de la direction d''UR', 'Point de vue de la direction d''UR', 20);
+values ('AVIS_RAPPORT_ACTIVITE_DIR_UR', 'Avis de la direction de l''unité de recherche', 'Point de vue de la direction d''UR', 20);
 
 insert into unicaen_avis_type_valeur (avis_type_id, avis_valeur_id)
 select t.id, v.id
@@ -475,6 +475,9 @@ from tmp, unicaen_avis_type_valeur tv
                                                                                     'AVIS_RAPPORT_ACTIVITE_VALEUR_NEGATIF'
     ) ;
 
+--------------------------- Avis Direction ED ---------------------------
+
+UPDATE unicaen_avis_type set libelle = 'Avis de la direction de l''école doctorale' where code = 'AVIS_RAPPORT_ACTIVITE_DIR_ED';
 
 ------------------------------------- paramètres ------------------------------------------
 
@@ -492,11 +495,20 @@ FROM d JOIN unicaen_parametre_categorie cp ON cp.CODE = 'RAPPORT_ACTIVITE';
 
 --------------------------------------------- CED -------------------------------------------
 
-INSERT INTO structure (id, sigle, libelle, chemin_logo, type_structure_id,  histo_createur_id,
-                       source_id, source_code, code, est_ferme, adresse, telephone, fax)
-select nextval('structure_id_seq'), 'CED', 'Collège des écoles doctorales normandes', 'CED.png', 1, 1,
-       1, 'SyGAL::63db82880b300', 'CED', false, 'Esplanade de la Paix - CS14032 – 14032 Caen cedex',
-       '+33 (0)2 31 56 69 57', '+33 (0)2 31 56 69 51';
+alter table etablissement add est_ced bool default false not null;
+comment on column etablissement.est_ced is 'Indique si cet établissement est un Collège des écoles doctorales';
 
+INSERT INTO structure (id, code, sigle, libelle, type_structure_id,  histo_createur_id,
+                       source_id, source_code, est_ferme, adresse, telephone, fax)
+select nextval('structure_id_seq'), 'CED', 'CED', 'Collège des écoles doctorales normandes', ts.id, 1,
+       s.id, 'CED', false, 'Esplanade de la Paix - CS14032 – 14032 Caen cedex', '+33 (0)2 31 56 69 57', '+33 (0)2 31 56 69 51'
+from type_structure ts, source s
+where ts.code = 'etablissement'
+and s.code = 'SYGAL::sygal';
 
-
+insert into etablissement (id, structure_id, histo_createur_id, source_id, source_code,
+                           est_membre, est_associe, est_comue, est_etab_inscription, est_ced)
+select nextval('etablissement_id_seq'), str.id, 1, s.id, 'CED', false, false, false, false, true
+from structure str, source s
+where str.source_code = 'CED'
+  and s.code = 'SYGAL::sygal';

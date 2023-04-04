@@ -2,6 +2,11 @@ h2 {
   font-size: 20px;
 }
 
+hr {
+  width: 80%;
+  height: 3px;
+}
+
 dl {
   margin-top: -0.5em;
 }
@@ -21,6 +26,14 @@ dl dd.collection {
   font-size: 85%;
   line-height: 97%;
 }
+dl dd.collection div.total {
+  margin: 0 0 0 2em;
+  font-weight: bold;
+  font-style: oblique;
+}
+dl dd.collection ul {
+  padding-left: 2em;
+}
 dl dd.collection ul dl dt {
   font-weight: bold;
   margin-top: 7px;
@@ -30,15 +43,31 @@ dl dd.collection ul dl dd {
   padding-left: 3.5cm;
 }
 
-ul.validation li {
+ul.operation li {
   margin-bottom: 1em;
 }
-ul.validation li p {
+ul.operation li p {
   margin: 0; /* indispensable ! */
   padding: 0 0 10px 0;
 }
-ul.validation li p.operation-valeur {
+ul.operation li p.operation-valeur {
   margin-left: 2em;
+}
+ul.operation li p.operation-valeur .avis-valeur {
+  font-weight: bold;
+}
+ul.operation li p.avis-complement {
+  margin-left: 3em;
+}
+ul.operation li p.avis-complement .avis-complem-libelle {
+  font-weight: bold;
+}
+
+.text-success {
+  color: #3c763d !important;
+}
+.text-danger {
+  color: #a94442 !important;
 }
 
 span.badge {
