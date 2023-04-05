@@ -346,6 +346,19 @@ class PresoutenanceController extends AbstractController
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $avis->getThese()->getId()], [], true);
     }
 
+    public function indiquerDossierCompletAction() : Response
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findOneForThese($these);
+
+        $etat = $this->getPropositionService()->findPropositionEtatByCode(Etat::COMPLET);
+        $proposition->setEtat($etat);
+        $this->getPropositionService()->update($proposition);
+
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_ETAT, "Dossier complet");
+        return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+    }
+
     public function feuVertAction() : Response
     {
         $these = $this->requestedThese();

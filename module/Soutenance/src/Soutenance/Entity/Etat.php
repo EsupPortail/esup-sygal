@@ -14,6 +14,7 @@ class Etat implements HistoriqueAwareInterface, SearchFilterValueInterface
     const ETABLISSEMENT = 'ETABLISSEMENT';
     const VALIDEE = 'VALIDEE';
     const REJETEE = 'REJETEE';
+    const COMPLET = 'COMPLET';
 
     /** @var integer */
     private $id;

@@ -204,10 +204,142 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     <?php echo $this->partial('soutenance/presoutenance/partial/avis-soutenance'); ?>
 
 
-    <!-- FEU VERT --------------------------------------------------------------------------------------------------------->
-    <?php if($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) :?>
-            <?php if ($tousLesAvis) : ?>
-            <?php if ($canFeuVert) : ?>
+    <!-- En attente de validation de l'établissement ------------------------------------------------------------------>
+
+<?php
+    $bgcolor = "bg-dark";
+    if (!$tousLesAvis) $bgcolor = "bg-danger";
+    else {
+        switch ($proposition->getEtat()->getCode()) {
+            case Etat::VALIDEE :
+            case Etat::COMPLET :
+            case Etat::REJETEE :
+                $bgcolor = "bg-success";
+        }
+    }
+?>
+
+<?php if ($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) :?>
+<?php endif; ?>
+    <div class="box card">
+        <div class="card-header <?php echo $bgcolor; ?> text-white">
+            <h2>  Complétion du dossier et validation de l'établissement </h2>
+        </div>
+        <div class="card-body">
+            <?php if ($proposition->getEtat()->getCode() === Etat::ETABLISSEMENT) : ?>
+
+                <p class="lead">
+                    Pour permettre de faire avancer le dossier, veuillez vérifier que les rapports de pré-soutenance sont valides.
+                </p>
+
+                <?php if (!$tousLesAvis) : ?>
+                    <div class="alert alert-warning">
+                        <span class="icon icon-attention"></span>
+                        Tous les rapports n'ont pas été rendus.
+                    </div>
+                <?php else : ?>
+                    <?php /** @see PresoutenanceController::indiquerDossierCompletAction() */ ?>
+                    <a href="<?php echo $this->url('soutenance/presoutenance/indiquer-dossier-complet', ['these' => $these->getId()], [], true); ?>"
+                       class="btn btn-success"
+                    >
+                        <span class="icon icon-checked"></span>
+                        Dossier complet
+                    </a>
+                <?php endif; ?>
+            <?php endif; ?>
+
+            <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_ETAT, "Dossier complet"); ?>
+        </div>
+    </div>
+
+    <!-- Adresse et PV ------------------------------------------------------------------------------------------------>
+
+    <?php if ($proposition->getEtat()->getCode() === Etat::COMPLET OR $proposition->getEtat()->getCode() === Etat::VALIDEE): ?>
+    <div class="box card">
+        <div class="card-header bg-dark text-white">
+            <h2>  Adresse de soutenance et édition du procès verbal de soutenance </h2>
+        </div>
+        <div class="card-body">
+            <?php if ($proposition->getAdresse() === null) : ?>
+                <p class="lead">
+                    L'adresse exacte de la soutenance est nécessaire pour la génération des documents.
+                    Veuillez renseigner celle-ci.
+                </p>
+            <?php else : ?>
+                <p class="lead">Adresse exacte de la soutenance : </p>
+                <div class="adresse-block">
+                    <?php echo $proposition->getAdresse(); ?>
+                </div>
+            <?php endif; ?>
+
+            <br/>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <?php if ($canModifierAdresse) : ?>
+                        <a
+                            <?php /** @see \Soutenance\Controller\PresoutenanceController::modifierAdresseAction() */ ?>
+                            href="<?php echo $this->url('soutenance/presoutenance/modifier-adresse', ['these' => $these->getId()], [] ,true); ?>"
+                            class="btn btn-primary ajax-modal" data-event="modification-adresse">
+                            <span class="icon icon-editer"></span>
+                            Modifier l'adresse
+                        </a>
+                    <?php endif; ?>
+                </div>
+                <div class="col-md-9">
+                    <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Adresse du lieu de soutenance"); ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <?php if ($canGenererDocument) : ?>
+                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::procesVerbalSoutenanceAction() */ ?>
+                            href="<?php echo $this->url('soutenance/presoutenance/proces-verbal-soutenance', ['these' => $these->getId()], [], true); ?>"
+                            class="btn btn-primary action"
+                            target="_blank"
+                        >
+                            <span class="fas fa-list-alt"></span>
+                            Générer le procès verbal
+                        </a>
+                    <?php endif; ?>
+                </div>
+                <div class="col-md-9">
+                    <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_EDITION, "Procès verbal"); ?>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Feu vert ----------------------------------------------------------------------------------------------------->
+
+
+    <?php
+    $bgcolor = "bg-dark";
+    if (!$tousLesAvis) $bgcolor = "bg-danger";
+    else {
+        switch ($proposition->getEtat()->getCode()) {
+            case Etat::VALIDEE :
+                $bgcolor = "bg-success";
+                break;
+            case Etat::REJETEE :
+                $bgcolor = "bg-danger";
+                break;
+        }
+    }
+    ?>
+
+    <?php if ($canFeuVert) : ?>
+    <div class="box card">
+        <div class="card-header <?php echo $bgcolor; ?> text-white">
+            <h2>  Validation finale de la proposition de soutenance </h2>
+        </div>
+        <div class="card-body">
+
+            <p class="lead"> Le feu vert pour la soutenance ne peut être donné qu'une fois le dossier complet et validé par l'établissement. </p>
+
+            <?php if($proposition->getEtat()->getCode() === Etat::COMPLET) :?>
                 <?php /** @see \Soutenance\Controller\PresoutenanceController::feuVertAction() */ ?>
                 <a href="<?php echo $this->url('soutenance/presoutenance/feu-vert', ['these' => $these->getId()], [], true); ?>"
                     class="btn btn-success action"
@@ -216,13 +348,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                     Donner le feu vert
                 </a>
             <?php endif; ?>
-        <?php else : ?>
-            <p class="lead">
-                Vous ne pouvez commencer les démarches de présouteances qu'une fois toutes les validations obtenues.
-            </p>
-        <?php endif; ?>
 
-        <?php if ($canFeuVert) : ?>
             <?php /** @see \Soutenance\Controller\PresoutenanceController::stopperDemarcheAction() */ ?>
             <a href="<?php echo $this->url('soutenance/presoutenance/stopper-demarche', ['these' => $these->getId()], [], true); ?>"
                class="btn btn-danger action"
@@ -230,25 +356,26 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                 <span class="fas fa-thumbs-down"></span>
                 Stopper les démarches
             </a>
-        <?php endif; ?>
-    <?php else :?>
-        <span style="font-size: 24pt">
-        <span class="badge <?php echo $proposition->getEtat()->getCode(); ?>" style="font-size: 24pt">
-            <?php echo $proposition->getEtat()->getLibelle(); ?>
-        </span>
-        </span>
-
-    <?php endif; ?>
-
-    <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_ETAT, "Annulation de la soutenance"); ?>
-    <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_ETAT, "Feu vert pour la soutenance"); ?>
 
 
-    <?php  /** DOCUMENTS DE FIN DE PREPARATION DE SOUTENANCE **/ ?>
+            <?php echo $this->derniersHorodatages($proposition, [
+                [HorodatageService::TYPE_ETAT, "Annulation de la soutenance"],
+                [HorodatageService::TYPE_ETAT, "Feu vert pour la soutenance"],
+            ]); ?>
+
+            <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE) : ?>
+                <div class="bg-success text-white" style="padding-left:1rem; font-size: x-large; "> Soutenance autorisée </div>
+            <?php endif; ?>
+            <?php if ($proposition->getEtat()->getCode() === Etat::REJETEE) : ?>
+                <div class="bg-danger text-white" style="padding-left:1rem; font-size: x-large; "> Soutenance rejetée </div>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php endif ?>
+
+    <!-- documennts liées à la soutenance ----------------------------------------------------------------------------->
 
     <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE OR $proposition->getEtat()->getCode() === Etat::REJETEE) : ?>
-
-    <br/><br/>
 
     <!-- En cas de thèses rejetées ne faire afficher que la génération de l'avis de soutenances ----------------------->
         <div class="card box">
@@ -257,53 +384,9 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
         </div>
         <div class="card-body">
 
-            <!-- Partie adresse du lieu de soutenance ----------------------------------------------------------------->
-            <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE) : ?>
-            <div class="row">
-                <div class="col-md-8">
-                    <?php if ($proposition->getAdresse() === null) : ?>
-                                <p class="lead">
-                                L'adresse exacte de la soutenance est nécessaire pour la génération des documents.
-                                Veuillez renseigner celle-ci.
-                                </p>
-                    <?php else : ?>
-                        <p class="lead">Adresse exacte de la soutenance : </p>
-                        <?php echo $proposition->getAdresse(); ?>
-                    <?php endif; ?>
-                </div>
-                <div class="float-end">
-                    <br/>
-                    <br/>
-                    <?php if ($canModifierAdresse) : ?>
-                    <a
-                            <?php /** @see \Soutenance\Controller\PresoutenanceController::modifierAdresseAction() */ ?>
-                            href="<?php echo $this->url('soutenance/presoutenance/modifier-adresse', ['these' => $these->getId()], [] ,true); ?>"
-                            class="btn btn-primary action ajax-modal" data-event="modification-adresse">
-                        <span class="icon icon-editer"></span>
-                        Modifier l'adresse
-                    </a>
-                    <?php endif; ?>
-                </div>
-
-                <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Adresse du lieu de soutenance"); ?>
-            </div>
-        <?php endif; ?>
-
-            <br/><br/>
-
             <!-- Génération des documents liés à la soutenance--------------------------------------------------------->
             <div class="row">
                 <div class="col-md-12">
-                    <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE AND $canGenererDocument) : ?>
-                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::procesVerbalSoutenanceAction() */ ?>
-                                href="<?php echo $this->url('soutenance/presoutenance/proces-verbal-soutenance', ['these' => $these->getId()], [], true); ?>"
-                                class="btn btn-primary action"
-                                target="_blank"
-                        >
-                            <span class="fas fa-list-alt"></span>Générer le procès verbal
-                        </a>
-                    <?php endif; ?>
-
                     <?php if ($canGenererDocument) : ?>
                         <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::avisSoutenanceAction() */ ?>
                                 href="<?php echo $this->url('soutenance/presoutenance/avis-soutenance', ['these' => $these->getId()], [], true); ?>"
@@ -346,7 +429,6 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                 </div>
 
                 <?php echo $this->derniersHorodatages($proposition, [
-                    [HorodatageService::TYPE_EDITION, "Procès verbal"],
                     [HorodatageService::TYPE_EDITION, "Avis de soutenance"],
                     [HorodatageService::TYPE_EDITION, "Rapport de soutenance"],
                     [HorodatageService::TYPE_EDITION, "Rapport technique"],
@@ -397,6 +479,12 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
 
 <?php endif; ?>
 
+<style>
+    div.adresse-block {
+        border-left: 2px gray solid;
+        padding: 0.5rem;
+    }
+</style>
 
 <script>
     $(function() {

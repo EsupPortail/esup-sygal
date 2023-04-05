@@ -377,7 +377,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
     /**
      * @param These $these
      */
-    public function createNotificationAvisRendus($these): Notification
+    public function createNotificationAvisRendus(These $these): Notification
     {
         $email = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
 
@@ -387,6 +387,29 @@ class SoutenanceNotificationFactory extends NotificationFactory
                 ->setSubject("Tous les avis de soutenance de la thèse de " . $these->getDoctorant()->getIndividu() . " ont été rendus.")
                 ->setTo($email)
                 ->setTemplatePath('soutenance/notification/tous-avis-soutenance')
+                ->setTemplateVariables([
+                    'these' => $these,
+                ]);
+
+            return $notif;
+        } else {
+            throw new RuntimeException("Aucun mail de disponible (" . __METHOD__ . "::TheseId#" . $these->getId() . ")");
+        }
+    }
+
+    /**
+     * @param These $these
+     */
+    public function createNotificationAvisRendusDirection(These $these): Notification
+    {
+        $emails = $this->emailTheseService->fetchEmailEncadrants($these);
+
+        if ($emails !== []) {
+            $notif = new Notification();
+            $notif
+                ->setSubject("Tous les avis de soutenance de la thèse de " . $these->getDoctorant()->getIndividu() . " ont été rendus.")
+                ->setTo($emails)
+                ->setTemplatePath('soutenance/notification/tous-avis-soutenance-directions')
                 ->setTemplateVariables([
                     'these' => $these,
                 ]);

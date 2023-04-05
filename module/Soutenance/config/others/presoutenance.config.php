@@ -64,6 +64,7 @@ return [
                     'controller' => PresoutenanceController::class,
                     'action' => [
                         'date-rendu-rapport',
+                        'indiquer-dossier-complet',
                         'feu-vert',
                         'stopper-demarche',
                         'avis-soutenance',
@@ -329,6 +330,18 @@ return [
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
                                         'action' => 'revoquer-avis-soutenance',
+                                    ],
+                                ],
+                            ],
+                            'indiquer-dossier-complet' => [
+                                'type' => Literal::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/indiquer-dossier-complet',
+                                    'defaults' => [
+                                        /** @see PresoutenanceController::indiquerDossierCompletAction() */
+                                        'controller' => PresoutenanceController::class,
+                                        'action' => 'indiquer-dossier-complet',
                                     ],
                                 ],
                             ],
