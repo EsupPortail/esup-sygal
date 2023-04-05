@@ -5,6 +5,7 @@ namespace Formation;
 use Horodatage\Service\Horodatage\HorodatageService;
 use Horodatage\Service\Horodatage\HorodatageServiceFactory;
 use Horodatage\View\Helper\DernierHorodatageViewHelper;
+use Horodatage\View\Helper\DerniersHorodatagesViewHelper;
 use Horodatage\View\Helper\HorodatageViewHelper;
 use UnicaenAuth\Guard\PrivilegeController;
 
@@ -42,6 +43,7 @@ return [
         'invokables' => [
             'horodatage' => HorodatageViewHelper::class,
             'dernierHorodatage' => DernierHorodatageViewHelper::class,
+            'derniersHorodatages' => DerniersHorodatagesViewHelper::class,
         ],
     ],
 
