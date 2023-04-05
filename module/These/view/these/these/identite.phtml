@@ -8,6 +8,7 @@ use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\View\Renderer\PhpRenderer;
 use Depot\Provider\Privilege\DepotPrivileges;
 use Doctorant\Provider\Privilege\DoctorantPrivileges;
+use Individu\Provider\Privilege\IndividuPrivileges;
 use Individu\View\Helper\IndividuUsurpationHelper;
 use Structure\Entity\Db\EtablissementRattachement;
 use These\Controller\TheseController;
@@ -191,6 +192,12 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
 
                 $ligne = implode(" &ndash; ", $ligne);
                 echo $ligne;
+
+                $canVisualiserIndividu = $this->isAllowed($acteur->getIndividu(), IndividuPrivileges::INDIVIDU_CONSULTER);
+                if ($canVisualiserIndividu) {
+                    echo " <a href='".$this->url('individu/voir', ['individu' => $acteur->getIndividu()->getId()], [], true) ."'>";
+                    echo "<span class='icon icon-voir' title='Accéder à la fiche détaillée de cet individu'></span></a>";
+                }
 
                 if ($acteur->getRole()->estUsurpable() && ! isset($result['alerte-supann-id'])) {
                     // bouton d'usurpation d'identité

@@ -109,7 +109,7 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
             <dl>
                 <dt>Code :</dt>
                 <dd><?php echo $etablissement->getStructure()->getCode(); ?></dd>
-                <dt>Id REF:</dt>
+                <dt>IdRef :</dt>
                 <dd>
                     <?php if ($etablissement->getStructure()->getIdRef() !== null and trim($etablissement->getStructure()->getIdRef()) !== "") : ?>
                         <?php echo $etablissement->getStructure()->getIdRef(); ?>

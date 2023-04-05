@@ -133,6 +133,8 @@ use UnicaenApp\View\Helper\AppInfos;
  *
  * @method \UnicaenAlerte\View\Helper\AlerteViewHelper alertes()
  *
+ * @method \UnicaenIdref\View\Helper\IdrefPopupTriggerViewHelper idrefPopupTrigger(array $sourceElements, ?string $destinationElement = null)
+ *
  * @method boolean isAllowed($resource, $privilege = null)
  *
  * @method array                                              queryParams()
