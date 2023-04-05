@@ -112,7 +112,7 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
                 <dt>IdRef :</dt>
                 <dd>
                     <?php if ($etablissement->getStructure()->getIdRef() !== null and trim($etablissement->getStructure()->getIdRef()) !== "") : ?>
-                        <?php echo $etablissement->getStructure()->getIdRef(); ?>
+                        <?php echo $this->idrefLink($etablissement->getStructure()->getIdRef()); ?>
                     <?php else : ?>
                         (Non renseigné)
                     <?php endif; ?>

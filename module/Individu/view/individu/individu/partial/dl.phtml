@@ -51,7 +51,7 @@
         <dd class="col-md-5"><?php echo $individu->getSupannId() ?: "(Non renseigné)" ?></dd>
 
         <dt class="col-md-5">IdRef</dt>
-        <dd class="col-md-5"><?php echo $individu->getIdRef() ?: "(Non renseigné)" ?></dd>
+        <dd class="col-md-5"><?php echo $individu->getIdRef() ? $this->idrefLink($individu->getIdRef()) : "(Non renseigné)" ?></dd>
     <?php endif ?>
 
     <dt class="col-md-5">Id</dt>

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4d2d7ae4851a045662ffe993c5f59eb2",
+    "content-hash": "a6135d91452ea481df28158c8fc6f698",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -9879,7 +9879,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/idref.git",
-                "reference": "3aada6c252d9fce97329bf135347c7681803b1be"
+                "reference": "5c579fac9e0b9f2315cbf85d3d63710bd3050f41"
             },
             "require": {
                 "laminas/laminas-dependency-plugin": "^2.1",
@@ -9904,7 +9904,7 @@
                 ]
             },
             "description": "Module d'interrogation des autorités Sudoc (IDRef)",
-            "time": "2023-04-03T19:45:59+00:00"
+            "time": "2023-04-05T11:39:33+00:00"
         },
         {
             "name": "unicaen/ldap",
