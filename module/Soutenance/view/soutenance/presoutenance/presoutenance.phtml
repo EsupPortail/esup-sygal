@@ -375,7 +375,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
 
     <!-- documennts liées à la soutenance ----------------------------------------------------------------------------->
 
-    <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE OR $proposition->getEtat()->getCode() === Etat::REJETEE) : ?>
+    <?php if ($proposition->getEtat()->getCode() === Etat::VALIDEE) : ?>
 
     <!-- En cas de thèses rejetées ne faire afficher que la génération de l'avis de soutenances ----------------------->
         <div class="card box">
