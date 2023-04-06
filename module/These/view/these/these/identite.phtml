@@ -90,6 +90,13 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                     $these->getDoctorant()->getIndividu()->getDateNaissanceToString());
                 ?>
                 <?php
+                $canVisualiserIndividu = $this->isAllowed($these->getDoctorant()->getIndividu(), IndividuPrivileges::INDIVIDU_CONSULTER);
+                if ($canVisualiserIndividu) {
+                echo " <a href='".$this->url('individu/voir', ['individu' => $these->getDoctorant()->getIndividu()->getId()], [], true) ."'>";
+                echo "<span class='icon icon-voir' title='Accéder à la fiche détaillée de cet individu'></span></a>";
+                }
+                ?>
+                <?php
                 // bouton d'usurpation d'identité
                 $individuUsurpationHelper = $this->plugin('individuUsurpation'); /* @var $individuUsurpationHelper IndividuUsurpationHelper */
                 $individuUsurpationHelper->setIndividu($these->getDoctorant()->getIndividu());

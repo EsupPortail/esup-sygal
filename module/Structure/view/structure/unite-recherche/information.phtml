@@ -118,7 +118,7 @@ $structure = $unite->getStructure();
                 <dt>IdRef :</dt>
                 <dd>
                     <?php if ($unite->getStructure()->getIdRef() !== null and trim($unite->getStructure()->getIdRef()) !== "") : ?>
-                        <?php echo $unite->getStructure()->getIdRef(); ?>
+                        <?php echo $this->idrefLink($unite->getStructure()->getIdRef()); ?>
                     <?php else : ?>
                         (Non renseigné)
                     <?php endif; ?>

@@ -19,6 +19,7 @@ use Depot\View\Helper\Workflow\WorkflowHelper;
 use Depot\View\Helper\Workflow\WorkflowStepHelper;
 use UnicaenApp\Message\View\Helper\MessageHelper;
 use UnicaenApp\View\Helper\AppInfos;
+use UnicaenIdref\View\Helper\IdrefLinkViewHelper;
 
 /**
  * Description of PhpRenderer
@@ -155,6 +156,8 @@ use UnicaenApp\View\Helper\AppInfos;
  * @method FinancementFormatterHelper financementFormatter()
  *
  * @method ActualiteViewHelper actualite()
+ *
+ * @method IdrefLinkViewHelper idrefLink(string $ppn)
  *
  * @author UnicaenCode
  */

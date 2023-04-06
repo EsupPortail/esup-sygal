@@ -70,7 +70,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
     <div class="col-md-6">
         <fieldset>
             <legend><h2>Informations générales</h2></legend>
-            <?php echo $fcg($form->get('libelle')) ?>
+            <?php echo $fcg($form->get('libelle')->setAttribute('id', 'libelle')) ?>
             <?php echo $fcg($form->get('sigle')) ?>
             <?php echo $fcg($form->get('theme')) ?>
             <?php echo $fcg($form->get('offre-these')) ?>
@@ -79,10 +79,13 @@ $form->get('code')->setAttribute('readonly', !$editable);
             <legend><h2>Informations techniques</h2></legend>
             <div class="row">
                 <div class="col-md-5">
-                    <?php echo $fcg($form->get('id_ref')->setAttribute('id', 'id_ref')) ?>
+                    <?php echo $fcg($form->get('id_ref')->setAttribute('id', 'idRef')) ?>
                 </div>
                 <div class="col-md-2">
-                    <?php echo $this->idrefPopupTrigger('id_ref') ?>
+                    <?php echo $this->idrefPopupTrigger([
+                        ['Index1' => Index1::INDEX_Ppn, 'Index1Value' => ['idRef']],
+                        ['Index1' => Index1::INDEX_NomDeCollectivité, 'Index1Value' => ['libelle']],
+                    ], 'idRef') ?>
                 </div>
             </div>
             <?php echo $fcg($form->get('id_hal')) ?>

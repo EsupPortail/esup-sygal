@@ -97,7 +97,7 @@ $structure = $ecole->getStructure();
                     <dt>IdRef :</dt>
                     <dd>
                         <?php if ($ecole->getStructure()->getIdRef() !== null AND trim($ecole->getStructure()->getIdRef()) !== "") : ?>
-                            <?php echo $ecole->getStructure()->getIdRef(); ?>
+                            <?php echo $this->idrefLink($ecole->getStructure()->getIdRef()); ?>
                         <?php else : ?>
                             (Non renseigné)
                         <?php endif; ?>
