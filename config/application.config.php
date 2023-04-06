@@ -56,7 +56,7 @@ return [
         'Information',
         'Doctorant',
         'StepStar',
-//        'UnicaenIdref',
+        'UnicaenIdref',
         'Application',
     ],
     'module_listener_options' => [

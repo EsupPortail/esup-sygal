@@ -10,6 +10,7 @@ Journal des modifications
 - Soutenance : Dépôt de l'attestation de la formation "Intégrité scientifique"
 - Soutenance : Mise en place de l'horodatage 
 - Soutenance : Ajout d'une étape intermédiaire avant feu vert pour soutenance
+- Soutenance : [Fix] Echappement des caractères " et encapsulation des réponses
 - Dépôt de thèse : un dépôt existant de la version corrigée reste visible même si l'avis de reproduction Apogée revient à Non. 
 - Menu Dépôt fichiers divers : remonté et affiché sans condition
 - Page Dépôt fichiers divers : téléversement bloqué pour PV soutenance, Pré-rapport soutenance, Rapport soutenance

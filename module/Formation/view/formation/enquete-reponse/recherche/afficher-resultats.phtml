@@ -265,7 +265,8 @@ usort($sans, function (EnqueteQuestion $a, EnqueteQuestion $b) { return $a->getO
         for (let line in arrayOfJson) {
             csv += line + ";";
             for (let value in arrayOfJson[line]) {
-                csv += arrayOfJson[line][value] + ";";
+
+                csv += '"' + (arrayOfJson[line][value]).replace(/"/g, '\\\"') + '";';
             }
             csv += "\n";
         }
