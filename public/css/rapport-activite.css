@@ -47,6 +47,8 @@ div.rapport-activite-container p.en, div.rapport-activite-container span.en {
   font-weight: 400;
   font-style: italic;
   margin-top: -1em; }
+div.rapport-activite-container p.help.en {
+  padding-top: 0.3em; }
 
 table.rapport-activite .card {
   font-size: 90%;

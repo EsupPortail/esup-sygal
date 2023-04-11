@@ -12,5 +12,5 @@ class RapportActivitePdfExporterData
     public array $operations;
 
     public array $logosEtablissements;
-    public string $logoCED;
+    public ?string $logoCED = null;
 }

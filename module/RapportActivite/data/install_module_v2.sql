@@ -332,7 +332,7 @@ where code = 'AVIS_RAPPORT_ACTIVITE_DIR__AVIS_RAPPORT_ACTIVITE_DIR_VALEUR_INCOMP
 --------------------------- Avis Direction These ---------------------------
 
 insert into unicaen_avis_type (code, libelle, description, ordre)
-values ('AVIS_RAPPORT_ACTIVITE_DIR_THESE', 'Avis de la direction de thèse', 'Point de vue de la direction de thèse', 20);
+values ('AVIS_RAPPORT_ACTIVITE_DIR_THESE', 'Avis et validation électronique de la direction de thèse', 'Point de vue de la direction de thèse', 20);
 
 insert into unicaen_avis_type_valeur (avis_type_id, avis_valeur_id)
 select t.id, v.id
@@ -382,7 +382,7 @@ from tmp, unicaen_avis_type_valeur tv
 --------------------------- Avis CoDirection These ---------------------------
 
 insert into unicaen_avis_type (code, libelle, description, ordre)
-values ('AVIS_RAPPORT_ACTIVITE_CODIR_THESE', 'Avis de la codirection de thèse', 'Point de vue de la codirection de thèse', 20);
+values ('AVIS_RAPPORT_ACTIVITE_CODIR_THESE', 'Avis et validation électronique de la codirection de thèse', 'Point de vue de la codirection de thèse', 20);
 
 insert into unicaen_avis_type_valeur (avis_type_id, avis_valeur_id)
 select t.id, v.id
@@ -430,7 +430,7 @@ from tmp, unicaen_avis_type_valeur tv
 --------------------------- Avis Direction UR ---------------------------
 
 insert into unicaen_avis_type (code, libelle, description, ordre)
-values ('AVIS_RAPPORT_ACTIVITE_DIR_UR', 'Avis de la direction de l''unité de recherche', 'Point de vue de la direction d''UR', 20);
+values ('AVIS_RAPPORT_ACTIVITE_DIR_UR', 'Avis et validation électronique de la direction de l''unité de recherche', 'Point de vue de la direction d''UR', 20);
 
 insert into unicaen_avis_type_valeur (avis_type_id, avis_valeur_id)
 select t.id, v.id
@@ -477,7 +477,7 @@ from tmp, unicaen_avis_type_valeur tv
 
 --------------------------- Avis Direction ED ---------------------------
 
-UPDATE unicaen_avis_type set libelle = 'Avis de la direction de l''école doctorale' where code = 'AVIS_RAPPORT_ACTIVITE_DIR_ED';
+UPDATE unicaen_avis_type set libelle = 'Avis et validation électronique de la direction de l''école doctorale' where code = 'AVIS_RAPPORT_ACTIVITE_DIR_ED';
 
 ------------------------------------- paramètres ------------------------------------------
 

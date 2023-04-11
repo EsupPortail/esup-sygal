@@ -168,7 +168,7 @@ abstract class RapportActiviteAbstractForm extends Form implements InputFilterPr
             ->setLabel("Formations spécifiques suivies / Specific training attended : ")
             ->setMinElements(0)
             ->setOptions([
-                'count' => 1,
+                'count' => 0,
                 'should_create_template' => true,
                 'allow_add' => true,
                 'allow_remove' => true,
@@ -184,9 +184,9 @@ abstract class RapportActiviteAbstractForm extends Form implements InputFilterPr
         $formationsTranversales = new Collection('formationsTransversales');
         $formationsTranversales
             ->setLabel("Formations transversales suivies / Transversal training attended :")
-            ->setMinElements(1)
+            ->setMinElements(0)
             ->setOptions([
-                'count' => 1,
+                'count' => 0,
                 'should_create_template' => true,
                 'allow_add' => true,
                 'allow_remove' => true,
@@ -202,9 +202,9 @@ abstract class RapportActiviteAbstractForm extends Form implements InputFilterPr
         $actionsDiffusion = new Collection('actionsDiffusionCultureScientifique');
         $actionsDiffusion
             ->setLabel("Actions de diffusion de la culture scientifique, technique et industrielle (CSTI) / Actions undertaken within the framework of the promotion of scientific, technical and industrial knowledge :")
-            ->setMinElements(1)
+            ->setMinElements(0)
             ->setOptions([
-                'count' => 1,
+                'count' => 0,
                 'should_create_template' => true,
                 'allow_add' => true,
                 'allow_remove' => true,

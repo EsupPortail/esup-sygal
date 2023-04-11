@@ -277,7 +277,10 @@ class RapportActiviteController extends AbstractController
             ));
             return $redirect ?
                 $this->redirect()->toUrl($redirect) :
-                $this->redirect()->toRoute('rapport-activite/consulter', ['rapport' => IdifyFilter::id($rapport)]);
+                $this->redirect()->toRoute('rapport-activite/consulter', [
+                    'these' => IdifyFilter::id($rapport->getThese()),
+                    'rapport' => IdifyFilter::id($rapport),
+                ]);
         }
 
         exit;
