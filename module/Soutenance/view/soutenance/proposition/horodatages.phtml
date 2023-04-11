@@ -1,0 +1,29 @@
+<?php
+
+use Horodatage\Entity\Db\Horodatage;
+use Soutenance\Entity\Proposition;
+use These\Entity\Db\These;
+
+/**
+ * @see \Soutenance\Controller\PropositionController::horodatagesAction()
+ * @var These $these
+ * @var Proposition $proposition
+ * @var Horodatage[] $horodatages
+ */
+
+$this->headTitle("Horodatages de la proposition de soutenance");
+
+?>
+
+<h1 class="page-header">
+    Horodatages de la proposition de soutenance
+</h1>
+
+La proposition possède <?php echo count($horodatages); ?> événements datés.
+
+<ul>
+    <?php foreach ($horodatages as $horodatage) : ?>
+        <li> <?php echo $this->horodatage($horodatage); ?> </li>
+    <?php endforeach; ?>
+</ul>
+

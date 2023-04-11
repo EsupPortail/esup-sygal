@@ -4,13 +4,12 @@
  * @var Validation[][] $validations
  * @var boolean $canStructureValider
  * @var boolean $canPresidence
- * @var Evenement[] $signatures
  */
 
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Validation;
-use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Proposition;
+use Soutenance\Service\Horodatage\HorodatageService;
 
 $these = $proposition->getThese();
 
@@ -100,14 +99,7 @@ $these = $proposition->getThese();
                     </p>
                 <?php endif; ?>
 
-                <?php if ($signatures !== null AND !empty($signatures)) : ?>
-                    Génération du document pour signature&nbsp;:&nbsp;
-                    <ul>
-                    <?php foreach ($signatures as $signature) : ?>
-                        <li> Faite le <?php echo $signature->getDate()->format('d/m/Y à H:i:s'); ?></li>
-                    <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
+                <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_EDITION, "Autorisation de soutenance"); ?>
 
                 <?php if ($canStructureValider): ?>
                     <p>

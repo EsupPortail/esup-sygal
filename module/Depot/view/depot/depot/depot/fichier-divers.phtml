@@ -14,11 +14,13 @@ use These\Entity\Db\These;
  * @var NatureFichier $nature
  * @var VersionFichier $version
  * @var bool $isVisible
+ * @var bool $readonly
  * @var string $message
  * @var int $maxUploadableFilesCount
  */
 
-$canEdit = $this->isAllowed($these, $p = FichierPrivileges::privilegeTeleverserFor($nature, $version));
+$readonly = $readonly ?? false;
+$canEdit = !$readonly && $this->isAllowed($these, $p = FichierPrivileges::privilegeTeleverserFor($nature, $version));
 $maxUploadableFilesCount = $maxUploadableFilesCount ?? 1;
 $isVisible = $isVisible ?? true;
 $message = $message ?? null;

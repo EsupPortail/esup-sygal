@@ -98,6 +98,11 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface, Resour
     private $sourceCode;
 
     /**
+     * @var string|null
+     */
+    private ?string $idRef = null;
+
+    /**
      * @var integer
      */
     private $id;
@@ -584,6 +589,24 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface, Resour
     public function getSourceCode()
     {
         return $this->sourceCode;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getIdRef(): ?string
+    {
+        return $this->idRef;
+    }
+
+    /**
+     * @param string|null $idRef
+     * @return self
+     */
+    public function setIdRef(?string $idRef): self
+    {
+        $this->idRef = $idRef;
+        return $this;
     }
 
     /**

@@ -269,11 +269,7 @@ class Membre implements HistoriqueAwareInterface {
         return $this->acteur;
     }
 
-    /**
-     * @param Acteur $acteur
-     * @return Membre
-     */
-    public function setActeur($acteur)
+    public function setActeur(?Acteur $acteur) : Membre
     {
         $this->acteur = $acteur;
         return $this;

@@ -21,25 +21,25 @@ use Laminas\Http\Response;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
+use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Entity\Avis;
 use Soutenance\Entity\Etat;
-use Soutenance\Entity\Evenement;
 use Soutenance\Entity\Membre;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceFormAwareTrait;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportFormAwareTrait;
 use Soutenance\Provider\Parametre\SoutenanceParametres;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
-use Soutenance\Service\Evenement\EvenementServiceAwareTrait;
 use Soutenance\Service\Exporter\AvisSoutenance\AvisSoutenancePdfExporter;
 use Soutenance\Service\Exporter\Convocation\ConvocationPdfExporter;
 use Soutenance\Service\Exporter\ProcesVerbal\ProcesVerbalSoutenancePdfExporter;
 use Soutenance\Service\Exporter\RapportSoutenance\RapportSoutenancePdfExporter;
 use Soutenance\Service\Exporter\RapportTechnique\RapportTechniquePdfExporter;
+use Soutenance\Service\Horodatage\HorodatageService;
+use Soutenance\Service\Horodatage\HorodatageServiceAwareTrait;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
-use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use Structure\Entity\Db\Etablissement;
@@ -57,7 +57,7 @@ use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
 class PresoutenanceController extends AbstractController
 {
-    use EvenementServiceAwareTrait;
+    use HorodatageServiceAwareTrait;
     use TheseServiceAwareTrait;
     use MembreServiceAwareTrait;
     use IndividuServiceAwareTrait;
@@ -107,6 +107,9 @@ class PresoutenanceController extends AbstractController
         $justificatifs = $this->getJustificatifService()->generateListeJustificatif($proposition);
         $justificatifsOk = $this->getJustificatifService()->isJustificatifsOk($proposition, $justificatifs);
 
+        $autorisation = $proposition->getJustificatif(NatureFichier::CODE_AUTORISATION_SOUTENANCE, null);
+        $rapport = $proposition->getJustificatif(NatureFichier::CODE_RAPPORT_SOUTENANCE, null);
+
         /** ==> clef: Membre->getActeur()->getIndividu()->getId() <== */
         $engagements = $this->getEngagementImpartialiteService()->getEngagmentsImpartialiteByThese($these);
         $avis = $this->getAvisService()->getAvisByThese($these);
@@ -128,10 +131,10 @@ class PresoutenanceController extends AbstractController
             'justificatifsOk' => $justificatifsOk,
             'justificatifs' => $justificatifs,
 
-            'evenementsEngagement' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_ENGAGEMENT),
-            'evenementsPrerapport' => $this->getEvenementService()->getEvenementsByPropositionAndType($proposition, Evenement::EVENEMENT_PRERAPPORT),
-
             'deadline' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DELAI_RETOUR),
+
+            'autorisation' => $autorisation,
+            'rapport' => $rapport,
         ]);
     }
 
@@ -150,6 +153,7 @@ class PresoutenanceController extends AbstractController
             $form->setData($data);
             if ($form->isValid()) {
                 $this->getPropositionService()->update($proposition);
+                $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Date de rendu");
             }
         }
 
@@ -234,6 +238,7 @@ class PresoutenanceController extends AbstractController
             //mise à jour du membre de soutenance
             $membre->setActeur($acteur);
             $this->getMembreService()->update($membre);
+            $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
             //creation de l'utilisateur
 
             if ($membre->estRapporteur()) {
@@ -268,6 +273,7 @@ class PresoutenanceController extends AbstractController
     public function deassocierJuryAction() : Response
     {
         $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findOneForThese($these);
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
         $acteurs = $this->getActeurService()->getRepository()->findActeurByThese($these);
@@ -280,6 +286,7 @@ class PresoutenanceController extends AbstractController
         //retrait dans membre de soutenance
         $membre->setActeur(null);
         $this->getMembreService()->update($membre);
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Association jury");
 
         $validation = $this->getValidationService()->getRepository()->findValidationByTheseAndCodeAndIndividu($these, TypeValidation::CODE_ENGAGEMENT_IMPARTIALITE, $acteur->getIndividu());
         if ($validation !== null) {
@@ -325,7 +332,7 @@ class PresoutenanceController extends AbstractController
             }
         }
 
-        $this->getEvenementService()->ajouterEvenement($proposition, Evenement::EVENEMENT_PRERAPPORT);
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_NOTIFICATION, "Demande de rapport de pré-soutenance");
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
@@ -337,6 +344,19 @@ class PresoutenanceController extends AbstractController
         $this->getAvisService()->historiser($avis);
 
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $avis->getThese()->getId()], [], true);
+    }
+
+    public function indiquerDossierCompletAction() : Response
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findOneForThese($these);
+
+        $etat = $this->getPropositionService()->findPropositionEtatByCode(Etat::COMPLET);
+        $proposition->setEtat($etat);
+        $this->getPropositionService()->update($proposition);
+
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_ETAT, "Dossier complet");
+        return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
     public function feuVertAction() : Response
@@ -360,6 +380,7 @@ class PresoutenanceController extends AbstractController
             //->setNamespace('presoutenance')
             ->addSuccessMessage("Notifications d'accord de soutenance envoyées");
 
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_ETAT, "Feu vert pour la soutenance");
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
@@ -382,6 +403,7 @@ class PresoutenanceController extends AbstractController
             //->setNamespace('presoutenance')
             ->addSuccessMessage("Notifications d'arrêt des démarches de soutenance soutenance envoyées");
 
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_ETAT, "Annulation de la soutenance");
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
@@ -400,6 +422,7 @@ class PresoutenanceController extends AbstractController
             $form->setData($data);
             if ($form->isValid()) {
                 $this->getPropositionService()->update($proposition);
+                $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Adresse du lieu de soutenance");
             }
         }
 
@@ -418,7 +441,6 @@ class PresoutenanceController extends AbstractController
         $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
-
         $exporter = new ProcesVerbalSoutenancePdfExporter($this->renderer, 'A4');
         $exporter->setVars([
             'proposition' => $proposition,
@@ -426,6 +448,8 @@ class PresoutenanceController extends AbstractController
             'informations' => $pdcData,
         ]);
         $exporter->export($these->getId() . '_proces_verbal.pdf');
+
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Procès verbal");
         exit;
     }
 
@@ -435,7 +459,6 @@ class PresoutenanceController extends AbstractController
         $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
-
         $exporter = new AvisSoutenancePdfExporter($this->renderer, 'A4');
         $exporter->setVars([
             'proposition' => $proposition,
@@ -443,6 +466,8 @@ class PresoutenanceController extends AbstractController
             'informations' => $pdcData,
         ]);
         $exporter->export($these->getId() . '_avis_soutenance.pdf');
+
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Avis de soutenance");
         exit;
     }
 
@@ -452,7 +477,6 @@ class PresoutenanceController extends AbstractController
         $proposition = $this->getPropositionService()->findOneForThese($these);
 
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
-
         $exporter = new RapportSoutenancePdfExporter($this->renderer, 'A4');
         $exporter->setVars([
             'proposition' => $proposition,
@@ -460,20 +484,25 @@ class PresoutenanceController extends AbstractController
             'informations' => $pdcData,
         ]);
         $exporter->export($these->getId() . '_rapport_soutenance.pdf');
+
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Rapport de soutenance");
         exit;
     }
 
     public function rapportTechniqueAction()
     {
         $these = $this->requestedThese();
-        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+        $proposition = $this->getPropositionService()->findOneForThese($these);
 
+        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
         $exporter = new RapportTechniquePdfExporter($this->renderer, 'A4');
         $exporter->setVars([
             'these' => $these,
             'informations' => $pdcData,
         ]);
         $exporter->export($these->getId() . '_rapport_technique.pdf');
+
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Rapport technique");
         exit;
     }
 
@@ -499,59 +528,6 @@ class PresoutenanceController extends AbstractController
                 $ville = "Manquant";
         }
         return $ville;
-    }
-
-    /** Document pour la signature en présidence */
-    public function convocationsAction()
-    {
-        $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
-        $signature = $this->findSignatureEcoleDoctorale($these) ?: $this->findSignatureEtablissement($these);
-
-        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
-
-        $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
-        $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
-
-        $ville = $this->getVille($these->getEtablissement());
-
-        $exporter = new ConvocationPdfExporter($this->renderer, 'A4');
-        $exporter->setVars([
-            'proposition' => $proposition,
-            'these' => $these,
-            'informations' => $pdcData,
-            'date' => $dateValidation,
-            'ville' => $ville,
-            'signature' => $signature,
-        ]);
-        $exporter->export($these->getId() . '_convocation.pdf');
-        exit;
-    }
-
-    public function convocationDoctorantAction()
-    {
-        $these = $this->requestedThese();
-        $proposition = $this->getPropositionService()->findOneForThese($these);
-        $signature = $this->findSignatureEcoleDoctorale($these) ?: $this->findSignatureEtablissement($these);
-
-        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
-
-        $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
-        $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
-
-        $ville = $this->getVille($these->getEtablissement());
-
-        $exporter = new ConvocationPdfExporter($this->renderer, 'A4');
-        $exporter->setVars([
-            'proposition' => $proposition,
-            'these' => $these,
-            'informations' => $pdcData,
-            'date' => $dateValidation,
-            'ville' => $ville,
-            'signature' => $signature,
-        ]);
-        $exporter->exportDoctorant($these->getId() . '_convocation.pdf');
-        exit;
     }
 
     private function findSignatureEtablissement(These $these): ?string
@@ -590,6 +566,61 @@ class PresoutenanceController extends AbstractController
         } catch (StorageAdapterException $e) {
             throw new RuntimeException("Un problème est survenu lors de la récupération de la signature de l'ED !", 0, $e);
         }
+    }
+
+    /** Document pour la signature en présidence */
+    public function convocationsAction()
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $signature = $this->findSignatureEcoleDoctorale($these) ?: $this->findSignatureEtablissement($these);
+
+        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+
+        $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
+        $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
+
+        $ville = $this->getVille($these->getEtablissement());
+
+        $exporter = new ConvocationPdfExporter($this->renderer, 'A4');
+        $exporter->setVars([
+            'proposition' => $proposition,
+            'these' => $these,
+            'informations' => $pdcData,
+            'date' => $dateValidation,
+            'ville' => $ville,
+            'signature' => $signature,
+        ]);
+        $exporter->export($these->getId() . '_convocation.pdf');
+
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_EDITION, "Convocations");
+        exit;
+    }
+
+    public function convocationDoctorantAction()
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findOneForThese($these);
+        $signature = $this->findSignatureEcoleDoctorale($these) ?: $this->findSignatureEtablissement($these);
+
+        $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
+
+        $validationMDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
+        $dateValidation = (!empty($validationMDD)) ? current($validationMDD)->getHistoModification() : null;
+
+        $ville = $this->getVille($these->getEtablissement());
+
+        $exporter = new ConvocationPdfExporter($this->renderer, 'A4');
+        $exporter->setVars([
+            'proposition' => $proposition,
+            'these' => $these,
+            'informations' => $pdcData,
+            'date' => $dateValidation,
+            'ville' => $ville,
+            'signature' => $signature,
+        ]);
+        $exporter->exportDoctorant($these->getId() . '_convocation.pdf');
+        exit;
     }
 
     public function convocationMembreAction()
@@ -672,6 +703,8 @@ class PresoutenanceController extends AbstractController
                 }
             }
         }
+
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_NOTIFICATION, "Convocations");
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
@@ -705,6 +738,7 @@ class PresoutenanceController extends AbstractController
             // aucun destinataire, todo : cas à gérer !
         }
 
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_NOTIFICATION, "Transmission des documents");
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 

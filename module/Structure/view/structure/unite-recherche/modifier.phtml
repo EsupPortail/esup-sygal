@@ -8,6 +8,7 @@ use Structure\Form\UniteRechercheForm;
 use Application\View\Helper\SelectHelper;
 use Application\View\Helper\FiltersPanel\FiltersPanelHelper;
 use Application\View\Renderer\PhpRenderer;
+use UnicaenIdref\Domain\Index1;
 
 /**
  * @see \Structure\Controller\UniteRechercheController::modifierAction()
@@ -78,12 +79,22 @@ $form->get('code')->setAttribute('readonly', !$editable);
     <div class="col-md-6">
         <fieldset>
             <legend><h2>Informations générales</h2></legend>
-            <?php echo $fcg($form->get('libelle')) ?>
+            <?php echo $fcg($form->get('libelle')->setAttribute('id', 'libelle')) ?>
             <?php echo $fcg($form->get('sigle')) ?>
         </fieldset>
         <fieldset>
             <legend><h2>Informations techniques</h2></legend>
-            <?php echo $fcg($form->get('id_ref')) ?>
+            <div class="row">
+                <div class="col-md-5">
+                    <?php echo $fcg($form->get('id_ref')->setAttribute('id', 'idRef')) ?>
+                </div>
+                <div class="col-md-2">
+                    <?php echo $this->idrefPopupTrigger([
+                        ['Index1' => Index1::INDEX_Ppn, 'Index1Value' => ['idRef']],
+                        ['Index1' => Index1::INDEX_NomDeCollectivité, 'Index1Value' => ['libelle']],
+                    ], 'idRef') ?>
+                </div>
+            </div>
             <?php echo $fcg($form->get('id_hal')) ?>
             <?php echo $fcg($form->get('RNSR')) ?>
             <?php echo $fcg($form->get('code')) ?>

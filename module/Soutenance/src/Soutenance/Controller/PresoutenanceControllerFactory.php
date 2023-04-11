@@ -2,35 +2,33 @@
 
 namespace Soutenance\Controller;
 
-use phpDocumentor\Reflection\DocBlock\Tags\Param;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
-use Soutenance\Service\Notification\SoutenanceNotificationFactory;
-use These\Service\Acteur\ActeurService;
+use Application\Service\Role\RoleService;
+use Application\Service\Source\SourceService;
+use Application\Service\Utilisateur\UtilisateurService;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Individu\Service\IndividuService;
-use Application\Service\Role\RoleService;
-use Application\Service\Source\SourceService;
-use Structure\Service\StructureDocument\StructureDocumentService;
-use These\Service\These\TheseService;
-use Application\Service\Utilisateur\UtilisateurService;
 use Interop\Container\ContainerInterface;
+use Laminas\View\Renderer\PhpRenderer;
+use Notification\Service\NotifierService;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Soutenance\Form\AdresseSoutenance\AdresseSoutenanceForm;
 use Soutenance\Form\DateRenduRapport\DateRenduRapportForm;
 use Soutenance\Service\Avis\AvisService;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteService;
-use Soutenance\Service\Evenement\EvenementService;
+use Soutenance\Service\Horodatage\HorodatageService;
 use Soutenance\Service\Justificatif\JustificatifService;
 use Soutenance\Service\Membre\MembreService;
-use Notification\Service\NotifierService;
+use Soutenance\Service\Notification\SoutenanceNotificationFactory;
 use Soutenance\Service\Proposition\PropositionService;
 use Soutenance\Service\Validation\ValidationService;
+use Structure\Service\StructureDocument\StructureDocumentService;
+use These\Service\Acteur\ActeurService;
+use These\Service\These\TheseService;
 use UnicaenAuth\Service\User as UserService;
 use UnicaenAuthToken\Service\TokenService;
-use Laminas\View\Renderer\PhpRenderer;
 use UnicaenParametre\Service\Parametre\ParametreService;
-use UnicaenRenderer\Service\Rendu\RenduService;
 
 class PresoutenanceControllerFactory
 {
@@ -40,17 +38,17 @@ class PresoutenanceControllerFactory
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container) : PresoutenanceController
+    public function __invoke(ContainerInterface $container): PresoutenanceController
     {
         /**
          * @var PropositionService $propositionService
+         * @var ActeurService $acteurService
          * @var AvisService $avisService
-         * @var EvenementService $evenementService
+         * @var HorodatageService $horodatageService
          * @var MembreService $membreService
          * @var TheseService $theseService
          * @var IndividuService $individuService
          * @var NotifierService $notifierService
-         * @var ActeurService $acteurService
          * @var ValidationService $validationService
          * @var RoleService $roleService
          * @var UtilisateurService $utilisateurService
@@ -64,16 +62,16 @@ class PresoutenanceControllerFactory
          * @var FichierStorageService $fichierStorageService
          * @var ParametreService $parametreService
          */
-        $evenementService = $container->get(EvenementService::class);
         $propositionService = $container->get(PropositionService::class);
+        $acteurService = $container->get(ActeurService::class);
+        $avisService = $container->get(AvisService::class);
+        $horodatageService = $container->get(HorodatageService::class);
         $membreService = $container->get(MembreService::class);
         $theseService = $container->get('TheseService');
         $individuService = $container->get(IndividuService::class);
-        $acteurService = $container->get(ActeurService::class);
         $notifierService = $container->get(NotifierService::class);
         $validationService = $container->get(ValidationService::class);
         $roleService = $container->get('RoleService');
-        $avisService = $container->get(AvisService::class);
         $utilisateurService = $container->get('UtilisateurService');
         $userService = $container->get('unicaen-auth_user_service');
         $engagementImpartialiteService = $container->get(EngagementImpartialiteService::class);
@@ -96,17 +94,17 @@ class PresoutenanceControllerFactory
         $renderer = $container->get('ViewRenderer');
 
         $controller = new PresoutenanceController();
-        $controller->setEvenementService($evenementService);
         $controller->setPropositionService($propositionService);
+        $controller->setActeurService($acteurService);
+        $controller->setAvisService($avisService);
+        $controller->setHorodatageService($horodatageService);
         $controller->setMembreService($membreService);
         $controller->setTheseService($theseService);
         $controller->setIndividuService($individuService);
-        $controller->setActeurService($acteurService);
         $controller->setNotifierService($notifierService);
         $controller->setValidationService($validationService);
         $controller->setSourceService($sourceService);
         $controller->setRoleService($roleService);
-        $controller->setAvisService($avisService);
         $controller->setUtilisateurService($utilisateurService);
         $controller->setUserService($userService);
         $controller->setEngagementImpartialiteService($engagementImpartialiteService);
@@ -116,7 +114,6 @@ class PresoutenanceControllerFactory
         $controller->setJustificatifService($justificatifService);
         $controller->setFichierStorageService($fichierStorageService);
         $controller->setParametreService($parametreService);
-
         $controller->setDateRenduRapportForm($dateRenduRapportForm);
         $controller->setAdresseSoutenanceForm($adresseSoutenanceForm);
 

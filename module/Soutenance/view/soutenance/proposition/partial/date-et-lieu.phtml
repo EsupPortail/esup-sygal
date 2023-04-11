@@ -7,6 +7,7 @@
  */
 
 use Soutenance\Entity\Proposition;
+use Soutenance\Service\Horodatage\HorodatageService;
 
 $these = $proposition->getThese();
 
@@ -85,6 +86,8 @@ $these = $proposition->getThese();
             </div>
 
         </div>
+
+        <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Date et lieu"); ?>
     </div>
 
 </div>

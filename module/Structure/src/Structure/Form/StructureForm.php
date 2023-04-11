@@ -28,7 +28,7 @@ abstract class StructureForm extends Form implements InputFilterProviderInterfac
         );
 
         $this->add((new Text('id_ref'))
-            ->setLabel("IdREF :")
+            ->setLabel("IdRef :")
         );
 
         $this->add((new Text('id_hal'))

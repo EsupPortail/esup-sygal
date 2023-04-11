@@ -307,6 +307,13 @@ class SessionController extends AbstractController
     {
         $inscriptions = $session->getListePrincipale();
 
+        try {
+            $notif = $this->formationNotificationFactory->createNotificationSessionImminenteFormateur($session);
+            $this->notifierService->trigger($notif);
+        } catch (\Notification\Exception\RuntimeException $e) {
+            // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
+        }
+
         foreach ($inscriptions as $inscription) {
             try {
                 $notif = $this->formationNotificationFactory->createNotificationSessionImminente($inscription);
@@ -315,6 +322,7 @@ class SessionController extends AbstractController
                 // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
             }
         }
+
     }
 
     private function triggerNotificationSessionTerminee(Session $session)

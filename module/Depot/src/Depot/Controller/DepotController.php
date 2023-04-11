@@ -846,9 +846,10 @@ class DepotController extends AbstractController
         $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new \DateTime();
 
         $view = $this->createViewForFichierAction(NatureFichier::CODE_PV_SOUTENANCE);
+        $view->setVariable('readonly', true);
         $view->setVariable('isVisible', $dateSoutenanceDepassee);
         if (!$dateSoutenanceDepassee) {
-            $view->setVariable('message', "Téléversement impossible avant la soutenance.");
+            $view->setVariable('message', "Non pertinent avant la soutenance.");
         }
         $view->setTemplate('depot/depot/depot/fichier-divers');
 
@@ -864,9 +865,10 @@ class DepotController extends AbstractController
         $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new \DateTime();
 
         $view = $this->createViewForFichierAction(NatureFichier::CODE_RAPPORT_SOUTENANCE);
+        $view->setVariable('readonly', true);
         $view->setVariable('isVisible', $dateSoutenanceDepassee);
         if (!$dateSoutenanceDepassee) {
-            $view->setVariable('message', "Téléversement impossible avant la soutenance.");
+            $view->setVariable('message', "Non pertinent avant la soutenance.");
         }
         $view->setTemplate('depot/depot/depot/fichier-divers');
 
@@ -882,9 +884,10 @@ class DepotController extends AbstractController
         $dateSoutenanceDepassee = $these->getDateSoutenance() && $these->getDateSoutenance() < new \DateTime();
 
         $view = $this->createViewForFichierAction(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
+        $view->setVariable('readonly', true);
         $view->setVariable('isVisible', $dateSoutenanceDepassee);
         if (!$dateSoutenanceDepassee) {
-            $view->setVariable('message', "Téléversement impossible avant la soutenance.");
+            $view->setVariable('message', "Non pertinent avant la soutenance.");
         }
         $view->setVariable('maxUploadableFilesCount', 3);
         $view->setTemplate('depot/depot/depot/fichier-divers');

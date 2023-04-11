@@ -1,28 +1,21 @@
 <?php
 
-/** @var PdcData $informations */
+$date = new DateTime();
 
-use These\Service\FichierThese\PdcData;
-
-$membres = $informations->getJury();
-$position = 0;
-$nbPerLine = 4;
-$width = (100 / $nbPerLine);
 ?>
 
-Fait à ........................................, le ........................................
-
-<table style="width: 100%;">
+<table>
     <tr>
-        <?php foreach ($membres as $membre) : ?>
-            <td style="width:<?php echo $width; ?>%">
-                <?php echo $membre->getIndividu()->getNomComplet(); ?>
-                <br/>&nbsp;<br/>&nbsp;<br/>&nbsp;
-                <?php $position += 1; ?>
-            </td>
-            <?php if ($position % $nbPerLine === 0) : ?>
-                </tr><tr>
-            <?php endif; ?>
-        <?php endforeach; ?>
+        <td>
+            <!--            Direction de la recherche et de l'innovation - Pôle formation doctorale<br/>-->
+            <!--            Maison du doctorat de --><?php //echo $lieu; ?>
+        </td>
+        <td>
+
+        </td>
+        <td style="text-align:right;">
+            Généré par <?php echo $this->appInfos()->nom ?>
+            le <?php echo $date->format('d/m/Y à H:i:s'); ?>
+        </td>
     </tr>
 </table>

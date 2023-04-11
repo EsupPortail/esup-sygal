@@ -4,6 +4,7 @@ namespace Soutenance\Service\Url;
 
 use DateTime;
 use Laminas\View\Renderer\PhpRenderer;
+use Soutenance\Controller\PresoutenanceController;
 use Soutenance\Controller\PropositionController;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
 
@@ -57,6 +58,18 @@ class UrlService {
         $these = $this->variables['these'];
         /** @see PropositionController::propositionAction() */
         $url = $this->renderer->url('soutenance/proposition', ['these' => $these->getId()], ['force_canonical' => 'true'], true);
+        return $url;
+    }
+
+    /**
+     * @noinspection
+     * @return string
+     */
+    public function getSoutenancePresoutenance() : string
+    {
+        $these = $this->variables['these'];
+        /** @see PresoutenanceController::presoutenanceAction() */
+        $url = $this->renderer->url('soutenance/presoutenance', ['these' => $these->getId()], ['force_canonical' => 'true'], true);
         return $url;
     }
 

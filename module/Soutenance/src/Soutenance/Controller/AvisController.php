@@ -111,8 +111,10 @@ class AvisController extends AbstractController
                 /** TODO ajouter un prédicat dans thèse ou soutenance ??? */
                 if (count($allAvis) === count($allRapporteurs)) {
                     try {
-                        $notif = $this->soutenanceNotificationFactory->createNotificationAvisRendus($these);
-                        $this->notifierService->trigger($notif);
+                        $notif1 = $this->soutenanceNotificationFactory->createNotificationAvisRendus($these);
+                        $this->notifierService->trigger($notif1);
+                        $notif2 = $this->soutenanceNotificationFactory->createNotificationAvisRendusDirection($these);
+                        $this->notifierService->trigger($notif2);
                     } catch (\Notification\Exception\RuntimeException $e) {
                         // aucun destinataire, todo : cas à gérer !
                     }

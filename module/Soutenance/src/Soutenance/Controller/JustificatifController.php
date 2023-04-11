@@ -3,6 +3,8 @@
 namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
+use Fichier\Entity\Db\Fichier;
+use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Laminas\Http\Response;
@@ -39,7 +41,7 @@ class JustificatifController extends AbstractController {
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $data = $request->getPost();
+//            $data = $request->getPost();
             $files = ['files' => $request->getFiles()->toArray()];
 
             if (!empty($files)) {
@@ -69,30 +71,33 @@ class JustificatifController extends AbstractController {
 
     public function ajouterJustificatifAction() : ViewModel
     {
-
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findOneForThese($these);
+        $nature = $this->fichierTheseService->fetchNatureFichier($this->params()->fromRoute('nature'));
 
         $justificatif = new Justificatif();
         $justificatif->setProposition($proposition);
         $form = $this->getJustificatifForm();
         $form->setAttribute('action', $this->url()->fromRoute('soutenance/justificatif/ajouter-justificatif', ['these' => $these->getId()], [], true));
         $form->bind($justificatif);
-        $form->init();
+
 
         $request = $this->getRequest();
         if ($request->isPost()) {
             $data = $request->getPost();
             $files = ['files' => $request->getFiles()->toArray()];
+            if ($nature) $data['nature'] = $nature->getCode();
 
             $form->setData($data);
             if ($form->isValid()) {
-                $nature = $this->fichierTheseService->fetchNatureFichier($data['nature']);
+                var_dump("After form");
+                if ($nature === null) $nature = $this->fichierTheseService->fetchNatureFichier($data['nature']);
                 $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
                 $fichiers = $this->fichierTheseService->createFichierThesesFromUpload($these, $files, $nature, $version);
                 $justificatif->setFichier($fichiers[0]);
+
                 $this->getJustificatifService()->create($justificatif);
-//                return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
+                exit();
             }
         }
 
@@ -110,7 +115,88 @@ class JustificatifController extends AbstractController {
             'FORMULAIRE_DEMANDE_ANGLAIS' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_REDACTION_ANGLAIS),
             'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_CONFIDENTIALITE),
         ]);
-//        $vm->setTemplate('soutenance/default/default-form');
+        if ($nature !== null) $vm->setTemplate('soutenance/justificatif/ajouter');
+        return $vm;
+    }
+
+    public function ajouterAutorisationSoutenanceAction() : ViewModel
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findOneForThese($these);
+
+        $fichier = new Fichier();
+        $nature = $this->fichierTheseService->fetchNatureFichier(NatureFichier::CODE_AUTORISATION_SOUTENANCE);
+        $fichier->setNature($nature);
+
+        $justificatif = new Justificatif();
+        $justificatif->setProposition($proposition);
+        $form = $this->getJustificatifForm();
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/justificatif/ajouter-autorisation-soutenance', ['these' => $these->getId()], [], true));
+        $form->bind($justificatif);
+        $form->init();
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+//            $data = $request->getPost();
+            $files = ['files' => $request->getFiles()->toArray()];
+
+            if (!empty($files)) {
+                $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+                $fichiers = $this->fichierTheseService->createFichierThesesFromUpload($these, $files, $nature, $version);
+                $justificatif->setFichier($fichiers[0]);
+                $this->getJustificatifService()->create($justificatif);
+            }
+            exit();
+        }
+
+
+        $vm =  new ViewModel([
+            'title' => "Téléversement de l' autorisation de soutenance",
+            'these' => $these,
+            'form' => $form,
+        ]);
+        $vm->setTemplate('soutenance/justificatif/ajouter');
+        return $vm;
+    }
+
+
+    public function ajouterRapportSoutenanceAction() : ViewModel
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findOneForThese($these);
+
+        $fichier = new Fichier();
+        $nature = $this->fichierTheseService->fetchNatureFichier(NatureFichier::CODE_RAPPORT_SOUTENANCE);
+        $fichier->setNature($nature);
+
+        $justificatif = new Justificatif();
+        $justificatif->setProposition($proposition);
+        $form = $this->getJustificatifForm();
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/justificatif/ajouter-rapport-soutenance', ['these' => $these->getId()], [], true));
+        $form->bind($justificatif);
+        $form->init();
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+//            $data = $request->getPost();
+            $files = ['files' => $request->getFiles()->toArray()];
+
+            if (!empty($files)) {
+                $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+                $fichiers = $this->fichierTheseService->createFichierThesesFromUpload($these, $files, $nature, $version);
+                $justificatif->setFichier($fichiers[0]);
+                $this->getJustificatifService()->create($justificatif);
+            }
+            exit();
+        }
+
+
+        $vm =  new ViewModel([
+            'title' => "Téléversement du rapport de soutenance",
+            'these' => $these,
+            'form' => $form,
+        ]);
+        $vm->setTemplate('soutenance/justificatif/ajouter');
         return $vm;
     }
 }
