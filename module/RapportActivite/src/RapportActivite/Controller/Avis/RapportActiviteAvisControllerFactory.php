@@ -4,12 +4,11 @@ namespace RapportActivite\Controller\Avis;
 
 use Application\Service\Validation\ValidationService;
 use Psr\Container\ContainerInterface;
-use RapportActivite\Rule\Avis\RapportActiviteAvisNotificationRule;
-use RapportActivite\Rule\Validation\RapportActiviteValidationRule;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
 use RapportActivite\Service\RapportActiviteService;
 use RapportActivite\Service\Validation\RapportActiviteValidationService;
 use UnicaenAvis\Form\AvisForm;
+use UnicaenAvis\Service\AvisService;
 
 class RapportActiviteAvisControllerFactory
 {
@@ -25,9 +24,6 @@ class RapportActiviteAvisControllerFactory
         $rapportValidationService = $container->get(RapportActiviteValidationService::class);
         $validationService = $container->get(ValidationService::class);
 
-        $rapportActiviteAvisNotificationRule = $container->get(RapportActiviteAvisNotificationRule::class);
-        $rapportActiviteValidationRule = $container->get(RapportActiviteValidationRule::class);
-
         $controller = new RapportActiviteAvisController();
         $controller->setRapportActiviteService($rapportService);
         $controller->setRapportActiviteAvisService($rapportAvisService);
@@ -36,8 +32,9 @@ class RapportActiviteAvisControllerFactory
 
         $controller->setForm($avisForm);
 
-        $controller->setNotificationRule($rapportActiviteAvisNotificationRule);
-        $controller->setValidationRule($rapportActiviteValidationRule);
+        /** @var \UnicaenAvis\Service\AvisService $rapportActiviteAvisRule */
+        $avisService = $container->get(AvisService::class);
+        $controller->setAvisService($avisService);
 
         return $controller;
     }

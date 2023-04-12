@@ -2,13 +2,12 @@
 
 namespace UnicaenAvis\Controller;
 
-use Application\Controller\AbstractController;
+use Laminas\Mvc\Controller\AbstractActionController;
 
-class IndexController extends AbstractController
+class IndexController extends AbstractActionController
 {
     public function indexAction(): array
     {
         return [];
-
     }
 }

@@ -115,7 +115,7 @@ abstract class RapportRechercheController extends AbstractController implements 
             'displayDirecteurThese' => true,
             'displayEcoleDoctorale' => true,
             'displayUniteRecherche' => true,
-            'displayValidation' => $this->typeRapport->estRapportActivite(),
+            'displayValidation' => false,
         ]);
         $model->setTemplate($this->indexActionTemplate);
 
@@ -129,9 +129,7 @@ abstract class RapportRechercheController extends AbstractController implements 
     {
         $this->restrictEcolesDoctorales();
 
-        if (! $this->typeRapport->estRapportActivite()) {
-            $this->searchService->getValidationSearchFilter()->setVisible(false);
-        }
+        $this->searchService->getValidationSearchFilter()->setVisible(false);
 
         $filters = $this->filters();
 

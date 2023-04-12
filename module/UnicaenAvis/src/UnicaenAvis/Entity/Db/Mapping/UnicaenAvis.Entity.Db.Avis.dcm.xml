@@ -3,15 +3,15 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
     <entity name="UnicaenAvis\Entity\Db\Avis" table="UNICAEN_AVIS">
-        <id name="id" type="integer" column="ID">
+        <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
 
         <many-to-one field="avisType" target-entity="UnicaenAvis\Entity\Db\AvisType">
-            <join-column name="AVIS_TYPE_ID" referenced-column-name="ID"/>
+            <join-column name="avis_type_id" referenced-column-name="id"/>
         </many-to-one>
         <many-to-one field="avisValeur" target-entity="UnicaenAvis\Entity\Db\AvisValeur">
-            <join-column name="AVIS_VALEUR_ID" referenced-column-name="ID"/>
+            <join-column name="avis_valeur_id" referenced-column-name="id"/>
         </many-to-one>
 
         <one-to-many field="avisComplems" target-entity="UnicaenAvis\Entity\Db\AvisComplem" orphan-removal="true"

@@ -78,6 +78,7 @@ class EmailTheseService
     public function fetchEmailEcoleDoctorale(These $these) : array
     {
         /** @var IndividuRole[] $individuRoles */
+        // todo : utiliser findIndividuRoleByStructure(..., null, $these->getEtablissement())
         $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
         return $this->fetchEmailsByEtablissement($individuRoles, $these);
     }
@@ -89,6 +90,7 @@ class EmailTheseService
     public function fetchEmailUniteRecherche(These $these) : array
     {
         /** @var IndividuRole[] $individuRoles */
+        // todo : utiliser findIndividuRoleByStructure(..., null, $these->getEtablissement())
         $individuRoles = $this->roleService->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
         return $this->fetchEmailsByEtablissement($individuRoles, $these);
     }

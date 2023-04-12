@@ -39,7 +39,7 @@ $these = current($doctorant->getTheses());
             echo " - ";
             echo $this->site($these->getUniteRecherche());
             echo " - ";
-            echo "D" . $these->getNbInscription($annee);
+            echo "D" . $these->getAnneesUnivInscriptionCount($annee);
         }
     }
     ?>

@@ -7,7 +7,6 @@ namespace Application\Entity\Db;
  */
 class TypeRapport
 {
-    const RAPPORT_ACTIVITE = 'RAPPORT_ACTIVITE';
     const RAPPORT_CSI = 'RAPPORT_CSI';
     const RAPPORT_MIPARCOURS = 'RAPPORT_MIPARCOURS';
 
@@ -30,14 +29,6 @@ class TypeRapport
      * @var integer
      */
     private $id;
-
-    /**
-     * @return bool
-     */
-    public function estRapportActivite(): bool
-    {
-        return $this->getCode() === self::RAPPORT_ACTIVITE;
-    }
 
     /**
      * @return bool

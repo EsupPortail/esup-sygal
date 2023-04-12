@@ -79,6 +79,9 @@ th {
   padding: 0 8px;
   height: 26px; }
 
+textarea.form-control {
+  height: auto; }
+
 .form-check-input {
   padding: 0; }
 

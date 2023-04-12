@@ -1,0 +1,20 @@
+<?php
+/**
+ * @var \RapportActivite\Entity\Db\RapportActiviteValidation $operation
+ */
+
+use Application\Constants;
+
+$statusClass = 'success';
+?>
+
+<li>
+    <p>
+        <strong><?php echo $operation->getTypeValidation()->getLibelle() ?></strong>
+    </p>
+    <p class="operation-valeur">
+        <strong class="validation-valeur text-<?php echo $statusClass ?>">Validé</strong>
+        par <?php echo $operation->getHistoModificateur() ?: $operation->getHistoCreateur() ?>,
+        le <?php echo ($operation->getHistoModification() ?: $operation->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
+    </p>
+</li>

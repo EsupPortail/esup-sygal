@@ -58,13 +58,14 @@ class EcoleDoctorale
         return 'EcoleDoctorale';
     }
 
-    /**
-     * EcoleDoctorale prettyPrint
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->structure->getLibelle();
+        $str = '';
+        if ($sigle = $this->structure->getSigle()) {
+            $str .= "$sigle - ";
+        }
+        $str .= $this->structure->getLibelle();
+        return $str;
     }
 
     /**

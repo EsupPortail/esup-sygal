@@ -2,7 +2,9 @@
 
 namespace Individu\Entity\Db;
 
-class IndividuRole
+use Application\Entity\Db\Role;
+
+class IndividuRole implements IndividuRoleAwareInterface
 {
     /**
      * @var int $id
@@ -19,33 +21,23 @@ class IndividuRole
         return $this->id;
     }
 
-    /** @return Individu */
-    public function getIndividu()
+    public function getIndividu(): ?Individu
     {
         return $this->individu;
     }
 
-    /**
-     * @param Individu $individu
-     * @return IndividuRole
-     */
-    public function setIndividu($individu)
+    public function setIndividu(?Individu $individu = null): self
     {
         $this->individu = $individu;
         return $this;
     }
 
-    /** @return \Application\Entity\Db\Role */
-    public function getRole()
+    public function getRole(): Role
     {
         return $this->role;
     }
 
-    /**
-     * @param \Application\Entity\Db\Role  $role
-     * @return IndividuRole
-     */
-    public function setRole($role)
+    public function setRole(Role $role): self
     {
         $this->role = $role;
         return $this;

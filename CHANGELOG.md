@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+5.3.0
+-----
+- Nouvelle version du module Rapports d'activité.
+
 5.2.11
 ------
 - Formation : Ajout d'un mail vers les formateurs lorsque la session est imminente

@@ -3,10 +3,11 @@
 namespace RapportActivite\Assertion;
 
 use Application\Assertion\AbstractAssertion;
+use RapportActivite\Rule\Operation\RapportActiviteOperationRule;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Assertion\RapportActiviteAssertion;
-use RapportActivite\Rule\Televersement\RapportActiviteTeleversementRule;
+use RapportActivite\Rule\Creation\RapportActiviteCreationRule;
 use RapportActivite\Service\RapportActiviteService;
 
 class RapportActiviteAssertionFactory
@@ -30,13 +31,17 @@ class RapportActiviteAssertionFactory
         /** @var \These\Service\TheseAnneeUniv\TheseAnneeUnivService $theseAnneeUnivService */
         $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
 
-        /** @var \RapportActivite\Rule\Televersement\RapportActiviteTeleversementRule $rapportActiviteTeleversementRule */
-        $rapportActiviteTeleversementRule = $container->get(RapportActiviteTeleversementRule::class);
+        /** @var \RapportActivite\Rule\Creation\RapportActiviteCreationRule $rapportActiviteTeleversementRule */
+        $rapportActiviteTeleversementRule = $container->get(RapportActiviteCreationRule::class);
         $rapportActiviteTeleversementRule->setAnneesUnivs([
             $theseAnneeUnivService->anneeUnivCourante(),
             $theseAnneeUnivService->anneeUnivPrecedente(),
         ]);
-        $assertion->setRapportActiviteTeleversementRule($rapportActiviteTeleversementRule);
+        $assertion->setRapportActiviteCreationRule($rapportActiviteTeleversementRule);
+
+        /** @var \RapportActivite\Rule\Operation\RapportActiviteOperationRule $rapportActiviteOperationRule */
+        $rapportActiviteOperationRule = $container->get(RapportActiviteOperationRule::class);
+        $assertion->setRapportActiviteOperationRule($rapportActiviteOperationRule);
 
         $this->injectCommons($assertion, $container);
 

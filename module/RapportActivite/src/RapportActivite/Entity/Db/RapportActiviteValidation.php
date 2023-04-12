@@ -3,146 +3,106 @@
 namespace RapportActivite\Entity\Db;
 
 use Application\Constants;
-use Individu\Entity\Db\Individu;
 use Application\Entity\Db\TypeValidation;
 use DateTime;
+use Individu\Entity\Db\Individu;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use RapportActivite\Entity\RapportActiviteOperationInterface;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
-/**
- * RapportValidation
- */
-class RapportActiviteValidation implements HistoriqueAwareInterface, ResourceInterface
+class RapportActiviteValidation implements HistoriqueAwareInterface, ResourceInterface, RapportActiviteOperationInterface
 {
     use HistoriqueAwareTrait;
 
-    /**
-     * @var integer
-     */
-    private $id;
+    private ?int $id = null;
 
-    /**
-     * @var RapportActivite
-     */
-    private $rapport;
+    private ?RapportActivite $rapport = null;
 
-    /**
-     * @var \Application\Entity\Db\TypeValidation
-     */
-    private $typeValidation;
+    private ?TypeValidation $typeValidation = null;
 
-    /**
-     * @var \Individu\Entity\Db\Individu
-     *
-     */
-    private $individu;
+    private ?Individu $individu;
 
-    /**
-     * RapportValidation constructor.
-     *
-     * @param TypeValidation|null $type
-     * @param RapportActivite|null $rapport
-     * @param Individu|null $individu
-     */
-    public function __construct(TypeValidation $type = null, RapportActivite $rapport = null, Individu $individu = null)
+    public function __construct(?TypeValidation $type = null, ?RapportActivite $rapport = null, ?Individu $individu = null)
     {
-        $this->setTypeValidation($type);
-        $this->setRapport($rapport);
-        $this->setIndividu($individu);
+        if ($type !== null) {
+            $this->setTypeValidation($type);
+        }
+        if ($rapport !== null) {
+            $this->setRapportActivite($rapport);
+        }
+        if ($individu !== null) {
+            $this->setIndividu($individu);
+        }
     }
 
-    /**
-     * Représentation littérale de cet objet.
-     *
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
-        return sprintf("Validation du %s par %s",
-            $this->getHistoCreation()->format(Constants::DATETIME_FORMAT),
-            $this->getHistoCreateur());
+        $str = (string) $this->getTypeValidation();
+
+        if ($date = $this->getHistoModification() ?: $this->getHistoCreation()) {
+            $str .= sprintf(" (le %s par %s)",
+                $date->format(Constants::DATETIME_FORMAT),
+                $this->getHistoModificateur() ?: $this->getHistoCreateur());
+        }
+
+        return $str;
     }
 
-    /**
-     * Get histoModification
-     *
-     * @return DateTime
-     */
+    public function matches(RapportActiviteOperationInterface $otherOperation): bool
+    {
+        return
+            $otherOperation instanceof self && (
+                // même id non null ou même type de validation
+                $this->getId() && $otherOperation->getId() && $this->getId() === $otherOperation->getId() ||
+                $this->getTypeValidation() === $otherOperation->getTypeValidation()
+            );
+    }
+
+    public function getTypeToString(): string
+    {
+        return (string) $this->getTypeValidation();
+    }
+
     public function getHistoModification(): DateTime
     {
         return $this->histoModification ?: $this->getHistoCreation();
     }
 
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * Set intervenant
-     *
-     * @param RapportActivite|null $rapport
-     * @return self
-     */
-    public function setRapport(RapportActivite $rapport = null): self
+    public function setRapportActivite(RapportActivite $rapport): self
     {
         $this->rapport = $rapport;
 
         return $this;
     }
 
-    /**
-     * Get these
-     *
-     * @return RapportActivite
-     */
-    public function getRapport(): RapportActivite
+    public function getRapportActivite(): RapportActivite
     {
         return $this->rapport;
     }
 
-    /**
-     * Set typeValidation
-     *
-     * @param TypeValidation|null $typeValidation
-     *
-     * @return self
-     */
-    public function setTypeValidation(TypeValidation $typeValidation = null): RapportActiviteValidation
+    public function setTypeValidation(TypeValidation $typeValidation): RapportActiviteValidation
     {
         $this->typeValidation = $typeValidation;
 
         return $this;
     }
 
-    /**
-     * Get typeValidation
-     *
-     * @return TypeValidation
-     */
     public function getTypeValidation(): TypeValidation
     {
         return $this->typeValidation;
     }
 
-    /**
-     * @return Individu
-     */
     public function getIndividu(): Individu
     {
         return $this->individu;
     }
 
-    /**
-     * @param Individu $individu
-     * @return self
-     */
     public function setIndividu(Individu $individu): RapportActiviteValidation
     {
         $this->individu = $individu;
@@ -150,15 +110,13 @@ class RapportActiviteValidation implements HistoriqueAwareInterface, ResourceInt
         return $this;
     }
 
+    public function getValeurBool(): bool
+    {
+        return true;
+    }
 
-    /**
-     * Returns the string identifier of the Resource
-     *
-     * @return string
-     * @see ResourceInterface
-     */
     public function getResourceId(): string
     {
-        return 'RapportValidation';
+        return 'RapportActiviteValidation';
     }
 }

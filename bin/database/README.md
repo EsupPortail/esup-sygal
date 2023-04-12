@@ -21,8 +21,9 @@ Le script shell [`./build_db_install_files.sh`](build_db_install_files.sh) gén�
     - `05_prepare_data.sql`
     - `06_create_constraints.sql`
     - `07_create_comue.sql`
-    - `08_init.sql`
-    - `09_create_fixture.sql`
+    - `08_create_ced.sql`
+    - `09_init.sql`
+    - `10_create_fixture.sql`
       
   - un script bash et un fichier de config pour "préparer" les scripts SQL ayant l'extension `.sql.dist` :    
     - `build_db_files.conf.dist`

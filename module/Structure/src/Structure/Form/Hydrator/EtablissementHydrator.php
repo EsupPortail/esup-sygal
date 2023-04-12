@@ -18,6 +18,7 @@ class EtablissementHydrator extends StructureHydrator
         $data['estMembre'] = $etablissement->estMembre();
         $data['estAssocie'] = $etablissement->estAssocie();
         $data['estInscription'] = $etablissement->estInscription();
+        $data['estCed'] = $etablissement->estCed();
         $data['adresse'] = $etablissement->getStructure()->getAdresse();
         $data['telephone'] = $etablissement->getStructure()->getTelephone();
         $data['fax'] = $etablissement->getStructure()->getFax();
@@ -48,6 +49,7 @@ class EtablissementHydrator extends StructureHydrator
         $object->setEstMembre($data['estMembre']);
         $object->setEstAssocie($data['estAssocie']);
         $object->setEstInscription($data['estInscription']);
+        $object->setEstCed($data['estCed']);
 
         return $object;
     }

@@ -68,12 +68,14 @@ class UniteRecherche
         return 'UniteRecherche';
     }
 
-    /**
-     * UniteRecherche prettyPrint
-     * @return string
-     */
-    public function __toString() {
-        return $this->structure->getLibelle();
+    public function __toString(): string
+    {
+        $str = '';
+        if ($code = $this->structure->getSigle()) {
+            $str .= $code . ' - ';
+        }
+        $str .= $this->structure->getLibelle();
+        return $str;
     }
 
     /**

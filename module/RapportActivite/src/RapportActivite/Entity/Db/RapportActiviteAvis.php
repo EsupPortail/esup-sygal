@@ -3,27 +3,30 @@
 namespace RapportActivite\Entity\Db;
 
 use Application\Constants;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use RapportActivite\Entity\RapportActiviteOperationInterface;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
-use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use UnicaenAvis\Entity\Db\Avis;
+use UnicaenAvis\Entity\Db\AvisType;
+use Webmozart\Assert\Assert;
 
-class RapportActiviteAvis implements HistoriqueAwareInterface, ResourceInterface
+class RapportActiviteAvis implements HistoriqueAwareInterface, ResourceInterface, RapportActiviteOperationInterface
 {
     const RESOURCE_ID = 'RapportActiviteAvis';
 
     use HistoriqueAwareTrait;
 
     // Codes des types d'avis, issus de "UNICAEN_AVIS_TYPE.CODE" :
-    const AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST = 'AVIS_RAPPORT_ACTIVITE_GEST';
-    const AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR = 'AVIS_RAPPORT_ACTIVITE_DIR';
-    const AVIS_TYPE__CODES = [
-        0 => self::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST,
-        1 => self::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR,
-    ];
+    const AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST = 'AVIS_RAPPORT_ACTIVITE_GEST'; // avis gestionnaire ED (conservé pour compatibilité)
+    const AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_THESE = 'AVIS_RAPPORT_ACTIVITE_DIR_THESE';
+    const AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_CODIR_THESE = 'AVIS_RAPPORT_ACTIVITE_CODIR_THESE';
+    const AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_UR = 'AVIS_RAPPORT_ACTIVITE_DIR_UR';
+    const AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED = 'AVIS_RAPPORT_ACTIVITE_DIR_ED';
 
     // Codes des valeurs d'avis, issus de "UNICAEN_AVIS_VALEUR.CODE" :
-    const AVIS_VALEUR__CODE__AVIS_RAPPORT_ACTIVITE_DIR_VALEUR_INCOMPLET = 'AVIS_RAPPORT_ACTIVITE_DIR_VALEUR_INCOMPLET';
+    const AVIS_VALEUR__CODE__AVIS_RAPPORT_ACTIVITE_VALEUR_INCOMPLET = 'AVIS_RAPPORT_ACTIVITE_VALEUR_INCOMPLET';
+    const AVIS_VALEUR__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED_VALEUR_INCOMPLET = 'AVIS_RAPPORT_ACTIVITE_DIR_ED_VALEUR_INCOMPLET';
     const AVIS_VALEUR__CODE__AVIS_RAPPORT_ACTIVITE_VALEUR_POSITIF = 'AVIS_RAPPORT_ACTIVITE_VALEUR_POSITIF';
     const AVIS_VALEUR__CODE__AVIS_RAPPORT_ACTIVITE_VALEUR_NEGATIF = 'AVIS_RAPPORT_ACTIVITE_VALEUR_NEGATIF';
 
@@ -33,50 +36,57 @@ class RapportActiviteAvis implements HistoriqueAwareInterface, ResourceInterface
     const AVIS_RAPPORT_ACTIVITE_GEST__AVIS_RAPPORT_ACTIVITE_VALEUR_INCOMPLET__MANQUE_AVIS_DIRECTION_UR =
         'AVIS_RAPPORT_ACTIVITE_GEST__AVIS_RAPPORT_ACTIVITE_VALEUR_INCOMPLET__MANQUE_AVIS_DIRECTION_UR';
 
-    /**
-     * @var integer
-     */
-    private int $id;
+    private ?int $id = null;
 
-    /**
-     * @var RapportActivite
-     */
     private RapportActivite $rapport;
 
-    /**
-     * @var \UnicaenAvis\Entity\Db\Avis
-     */
     private Avis $avis;
 
-    /**
-     * Représentation littérale de cet objet.
-     *
-     * @return string
-     */
-    public function __toString()
+    public function __construct(?RapportActivite $rapport = null, ?AvisType $avisType = null)
     {
-        return sprintf("%s (%s, %s)",
-            $this->getAvis(),
-            $this->getHistoCreation()->format(Constants::DATETIME_FORMAT),
-            $this->getHistoCreateur());
+        if ($rapport !== null) {
+            $this->setRapportActivite($rapport);
+        }
+        if ($avisType !== null) {
+            $this->setAvis(
+                (new Avis())->setAvisType($avisType)
+            );
+        }
     }
 
-    /**
-     * Get id
-     *
-     * @return integer
-     */
+    public function __toString(): string
+    {
+        $str = (string) $this->getAvis();
+
+        if ($date = $this->getHistoModification() ?: $this->getHistoCreation()) {
+            $str .= sprintf(" (le %s par %s)",
+                $date->format(Constants::DATETIME_FORMAT),
+                $this->getHistoModificateur() ?: $this->getHistoCreateur());
+        }
+
+        return $str;
+    }
+
+    public function matches(RapportActiviteOperationInterface $otherOperation): bool
+    {
+        return
+            $otherOperation instanceof self && (
+                // même id non null ou même type d'avis
+                $this->getId() && $otherOperation->getId() && $this->getId() === $otherOperation->getId() ||
+                $this->getAvis()->getAvisType() === $otherOperation->getAvis()->getAvisType()
+            );
+    }
+
+    public function getTypeToString(): string
+    {
+        return (string) $this->getAvis()->getAvisType();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * Set intervenant
-     *
-     * @param RapportActivite|null $rapport
-     * @return self
-     */
     public function setRapportActivite(RapportActivite $rapport): self
     {
         $this->rapport = $rapport;
@@ -84,41 +94,27 @@ class RapportActiviteAvis implements HistoriqueAwareInterface, ResourceInterface
         return $this;
     }
 
-    /**
-     * Get these
-     *
-     * @return RapportActivite
-     */
-    public function getRapportActivite(): ?RapportActivite
+    public function getRapportActivite(): RapportActivite
     {
         return $this->rapport;
     }
 
-    /**
-     * @return Avis
-     */
     public function getAvis(): Avis
     {
         return $this->avis;
     }
 
-    /**
-     * @param Avis $avis
-     * @return self
-     */
     public function setAvis(Avis $avis): self
     {
         $this->avis = $avis;
         return $this;
     }
 
+    public function getValeurBool(): bool
+    {
+        return $this->getAvis()->getAvisValeur()->getValeurBool();
+    }
 
-    /**
-     * Returns the string identifier of the Resource
-     *
-     * @return string
-     * @see ResourceInterface
-     */
     public function getResourceId(): string
     {
         return self::RESOURCE_ID;

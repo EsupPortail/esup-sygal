@@ -6,13 +6,12 @@ use Application\Assertion\Exception\FailedAssertionException;
 use Application\Assertion\Interfaces\ControllerAssertionInterface;
 use Application\Assertion\Interfaces\EntityAssertionInterface;
 use Application\Assertion\Interfaces\PageAssertionInterface;
-use Application\RouteMatch;
 use Application\Service\UserContextService;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use UnicaenApp\Service\MessageCollectorAwareInterface;
 use UnicaenApp\Service\MessageCollectorAwareTrait;
-use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * Class BaseAssertion
@@ -191,16 +190,5 @@ abstract class BaseAssertion extends AbstractAssertion
         $this->entityAssertion = $entityAssertion;
 
         return $this;
-    }
-
-    /**
-     * @return RouteMatch
-     */
-    protected function getRouteMatch()
-    {
-        /** @var RouteMatch $rm */
-        $rm = $this->getMvcEvent()->getRouteMatch();
-
-        return $rm;
     }
 }

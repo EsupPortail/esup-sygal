@@ -1,0 +1,40 @@
+<?php
+/**
+ * @var \RapportActivite\Entity\Db\RapportActiviteValidation $operation
+ * @var bool $ajaxModalEvent
+ * @var bool $returnUrl
+ */
+
+use Application\Constants;
+use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
+
+$statusClass = 'success';
+
+$canSupprimerOperation =
+    $this->isAllowed($operation, RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT) ||
+    $this->isAllowed($operation, RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN);
+?>
+
+<div class="card text-center validation-rapport-activite">
+    <div class="card-header">
+        <!--<span class="badge rounded-pill bg-secondary"><?php /*echo $i+1 */ ?></span>-->
+        <?php echo $operation->getTypeValidation()->getLibelle() ?>
+    </div>
+    <div class="card-body">
+        <div class="card-subtitle mb-2 text-sm text-muted">
+            Par <?php echo $operation->getHistoModificateur() ?: $operation->getHistoCreateur() ?>,
+            le <?php echo ($operation->getHistoModification() ?: $operation->getHistoCreation())->format(Constants::DATETIME_FORMAT) ?>
+        </div>
+        <p class="card-text text-<?php echo $statusClass ?>">
+            <span class="icon icon-ok"></span>
+            <strong>Validé</strong>
+        </p>
+        <?php if ($canSupprimerOperation): ?>
+            <a href="<?php echo $this->url('rapport-activite/devalider', ['rapportValidation' => $operation->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
+               class="btn btn-danger collapsable-action"
+               title="Dévalider ce rapport ?"
+               data-toggle="confirmationx"
+               data-message="Êtes-vous sûr·e de vouloir dévalider ?">Dévalider</span></a>
+        <?php endif ?>
+    </div>
+</div>
