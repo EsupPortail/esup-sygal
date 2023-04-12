@@ -53,10 +53,18 @@ class EtablissementController extends StructureConcreteController
         $etablissementsExternes = array_filter($etablissements, function (Etablissement $e) {
             return !$e->estMembre();
         });
+        $etablissementsCeds = array_filter($etablissements, function (Etablissement $e) {
+            return $e->estCed();
+        });
+
+        if (count($etablissementsCeds) > 1) {
+            throw new \RuntimeException("Anomalie rencontrée : il existe plusieurs établissements CED");
+        }
 
         return new ViewModel([
             'etablissementsSygal'    => $etablissementsPrincipaux,
             'etablissementsExternes' => $etablissementsExternes,
+            'etablissementsCeds' => $etablissementsCeds,
         ]);
     }
 

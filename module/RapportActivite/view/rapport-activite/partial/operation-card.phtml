@@ -1,0 +1,42 @@
+<?php
+/**
+ * @var \RapportActivite\Entity\RapportActiviteOperationInterface $operation
+ * @var bool $ajaxModalEvent
+ */
+
+use RapportActivite\Entity\Db\RapportActiviteAvis;
+use RapportActivite\Entity\Db\RapportActiviteValidation;
+
+if ($operation instanceof RapportActiviteValidation) {
+    $returnUrl = $this->url('rapport-activite/consulter', [
+        'rapport' => $operation->getRapportActivite()->getId(),
+        'these' => $operation->getRapportActivite()->getThese()->getId()],
+    );
+    if ($operation->getId() !== null) {
+        echo $this->partial('rapport-activite/partial/validation/validation-existante-card', [
+            'operation' => $operation,
+            'ajaxModalEvent' => $ajaxModalEvent,
+            'returnUrl' => $returnUrl,
+        ]);
+    } else {
+        echo $this->partial('rapport-activite/partial/validation/validation-avenir-card', [
+            'operation' => $operation,
+            'ajaxModalEvent' => $ajaxModalEvent,
+            'returnUrl' => $returnUrl,
+        ]);
+    }
+} elseif ($operation instanceof RapportActiviteAvis) {
+    if ($operation->getId() !== null) {
+        echo $this->partial('rapport-activite/partial/avis/avis-existant-card', [
+            'operation' => $operation,
+            'ajaxModalEvent' => $ajaxModalEvent,
+        ]);
+    } else {
+        echo $this->partial('rapport-activite/partial/avis/avis-avenir-card', [
+            'operation' => $operation,
+            'ajaxModalEvent' => $ajaxModalEvent,
+        ]);
+    }
+} else {
+    throw new InvalidArgumentException("Type inattendu");
+}

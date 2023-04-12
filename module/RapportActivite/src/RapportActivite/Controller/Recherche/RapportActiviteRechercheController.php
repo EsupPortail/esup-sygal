@@ -3,30 +3,27 @@
 namespace RapportActivite\Controller\Recherche;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\Interfaces\TypeRapportAwareTrait;
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
-use Application\Entity\Db\TypeRapport;
-use Fichier\Entity\FichierArchivable;
+use Application\Exporter\ExporterDataException;
+use Application\Filter\IdifyFilter;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
+use Fichier\Entity\FichierArchivable;
 use Fichier\Service\Fichier\Exception\FichierServiceException;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use RapportActivite\Service\Fichier\Exporter\PageValidationExportDataException;
-use RapportActivite\Service\Fichier\RapportActiviteFichierServiceAwareTrait;
-use RapportActivite\Service\RapportActiviteServiceAwareTrait;
-use Structure\Service\Structure\StructureServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\Paginator\Paginator as LaminasPaginator;
 use Laminas\View\Model\ViewModel;
 use RapportActivite\Entity\Db\RapportActivite;
-use RapportActivite\Entity\Db\RapportActiviteAvis;
 use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
-use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
+use RapportActivite\Rule\Operation\RapportActiviteOperationRuleAwareTrait;
+use RapportActivite\Service\Fichier\RapportActiviteFichierServiceAwareTrait;
+use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use RuntimeException;
+use Structure\Service\Structure\StructureServiceAwareTrait;
 use UnexpectedValueException;
 use UnicaenAuth\Provider\Privilege\Privileges;
-use UnicaenAvis\Entity\Db\Avis;
 
 /**
  * @property \RapportActivite\Service\Search\RapportActiviteSearchService $searchService
@@ -39,10 +36,9 @@ class RapportActiviteRechercheController extends AbstractController implements S
     use StructureServiceAwareTrait;
     use FichierServiceAwareTrait;
     use RapportActiviteServiceAwareTrait;
-    use RapportActiviteAvisServiceAwareTrait;
+    use RapportActiviteOperationRuleAwareTrait;
     use RapportActiviteFichierServiceAwareTrait;
 
-    use TypeRapportAwareTrait;
     use TypeValidationAwareTrait;
 
     protected string $routeName = 'rapport-activite';
@@ -63,7 +59,6 @@ class RapportActiviteRechercheController extends AbstractController implements S
     {
         $this->restrictFilterEcolesDoctorales();
         $this->restrictFilterUnitesRecherches();
-        $this->initFilterAvisAttendu();
 
         $text = $this->params()->fromQuery('text');
 
@@ -74,11 +69,17 @@ class RapportActiviteRechercheController extends AbstractController implements S
         /** @var LaminasPaginator $paginator */
         $paginator = $result;
 
+        $operationss = [];
+        foreach ($paginator as $rapport) {
+            $operationss[$rapport->getId()] = $this->rapportActiviteOperationRule->getOperationsForRapport($rapport);
+        }
+
         $model = new ViewModel([
             'title' => $this->title,
             'paginator' => $paginator,
             'text' => $text,
 
+            'operationss' => $operationss,
             'typeValidation' => $this->typeValidation,
             'routeName' => $this->routeName,
 
@@ -107,7 +108,6 @@ class RapportActiviteRechercheController extends AbstractController implements S
     {
         $this->restrictFilterEcolesDoctorales();
         $this->restrictFilterUnitesRecherches();
-        $this->initFilterAvisAttendu();
 
         $filters = $this->filters();
 
@@ -165,35 +165,6 @@ class RapportActiviteRechercheController extends AbstractController implements S
     }
 
     /**
-     * Initialisations du filtre "Avis attendu".
-     */
-    private function initFilterAvisAttendu()
-    {
-//        $filter = $this->searchService->getAvisManquantSearchFilter();
-//
-//        /**
-//         * Valeur par défaut (NB : empêche de sélectionner la valeur "Peu importe") :
-//         *   - pour le rôle Gestionnaire d'ED : "Avis gestionnaire d'ED"
-//         *   - pour le rôle Responsable d'ED : "Avis direction d'ED"
-//         */
-//        if ($roleEcoleDoctorale = $this->userContextService->getSelectedRoleEcoleDoctorale()) {
-//            if ($roleEcoleDoctorale->getCode() === Role::CODE_GEST_ED) {
-//                $filter->setDefaultValue(RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST);
-//            } elseif ($roleEcoleDoctorale->getCode() === Role::CODE_RESP_ED) {
-//                $filter->setDefaultValue(RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_DIR);
-//            }
-//        }
-//
-//        /**
-//         * Valeur par défaut (NB : empêche de sélectionner la valeur "Peu importe") :
-//         *   - pour le rôle Observateur COMUE : "Avis gestionnaire d'ED"
-//         */
-//        if ($this->userContextService->getSelectedIdentityRole()->getCode() === Role::CODE_OBSERVATEUR_COMUE) {
-//            $filter->setDefaultValue(RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST);
-//        }
-    }
-
-    /**
      * Redéfinition de la méthode {@see SearchControllerTrait::filtersAction()}
      * pour injecter des choses dans les rapports d'activité avant affichage.
      *
@@ -207,22 +178,6 @@ class RapportActiviteRechercheController extends AbstractController implements S
         }
 
         $result->setItemCountPerPage(25);
-
-        /** @var RapportActivite $rapport */
-        foreach ($result as $rapport) {
-            $avisTypeDispo = $this->rapportActiviteAvisService->findExpectedAvisTypeForRapport($rapport);
-            if ($avisTypeDispo === null) {
-                $rapport->setRapportAvisPossible(null);
-                continue;
-            }
-
-            $rapportAvisPossible = new RapportActiviteAvis();
-            $rapportAvisPossible
-                ->setRapportActivite($rapport)
-                ->setAvis((new Avis())->setAvisType($avisTypeDispo));
-
-            $rapport->setRapportAvisPossible($rapportAvisPossible);
-        }
 
         return $result;
     }
@@ -244,14 +199,19 @@ class RapportActiviteRechercheController extends AbstractController implements S
         $fichiersArchivables = [];
         /** @var RapportActivite $rapport */
         foreach ($paginator as $rapport) {
+            // pour l'instant on zappe les rapports dématérialisés (doute sur le temps de réponse de la génération PDF préalable)
+            if ($rapport->getFichier() === null) {
+                continue;
+            }
+
             $fichierArchivable = new FichierArchivable($rapport->getFichier());
             // s'il s'agit d'un rapport validé, on ajoute à la volée la page de validation
-            if ($rapport->estValide()) {
+            if ($rapport->getRapportValidationOfType($this->typeValidation)) {
                 // l'ajout de la page de validation n'est pas forcément possible
                 if ($rapport->supporteAjoutPageValidation()) {
                     try {
                         $exportData = $this->rapportActiviteService->createPageValidationDataForRapport($rapport);
-                    } catch (PageValidationExportDataException $e) {
+                    } catch (ExporterDataException $e) {
                         $redirect = $this->params()->fromQuery('redirect');
                         $this->flashMessenger()->addErrorMessage(sprintf(
                             "Impossible de générer la page de validation du rapport '%s'. " . $e->getMessage(),
@@ -269,7 +229,12 @@ class RapportActiviteRechercheController extends AbstractController implements S
             $fichiersArchivables[] = $fichierArchivable;
         }
 
-        $filename = sprintf("sygal_%s.zip", strtolower(TypeRapport::RAPPORT_ACTIVITE));
+        if (!count($fichiersArchivables)) {
+            $this->flashMessenger()->addErrorMessage("Aucun rapport à télécharger ou rapports non téléchargeables au format ZIP.");
+            return $this->redirect()->toRoute('rapport-activite/recherche/index', [], ['query' => $this->params()->fromQuery()], true);
+        }
+
+        $filename = sprintf("sygal_%s.zip", strtolower(RapportActivite::CODE));
         try {
             $fichierZip = $this->fichierService->compresserFichiers($fichiersArchivables, $filename);
         } catch (FichierServiceException $e) {

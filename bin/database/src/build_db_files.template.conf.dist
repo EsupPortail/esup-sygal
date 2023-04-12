@@ -18,6 +18,11 @@ ETAB_COMUE=0                                # Une COMUE doit-elle être créée 
 #ETAB_COMUE_LIBELLE='Normandie Université'   # Libellé complet de la COMUE
 #ETAB_COMUE_DOMAINE='normandie-univ.fr'      # Domaine de la COMUE
 
+#============================= CED =========================#
+ETAB_CED=0                                                  # Un CED doit-il être créé ? 0=Non 1=Oui
+#ETAB_CED_SIGLE='CED'                                        # Sigle du CED
+#ETAB_CED_LIBELLE='Collège des écoles doctorales normandes'  # Libellé complet du CED
+
 #============= Sources d'import ============#
 SOURCE_APOGEE=1                             # Apogée   est-elle une source de données à importer ? 0=Non 1=Oui
 SOURCE_PHYSALIS=0                           # Physalis est-elle une source de données à importer ? 0=Non 1=Oui

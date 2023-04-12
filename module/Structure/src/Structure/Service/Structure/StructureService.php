@@ -374,6 +374,17 @@ class StructureService extends BaseService
     }
 
     /**
+     * Retourne la structure ayant le code spécifié.
+     */
+    public function findStructureByCode(string $code): ?Structure
+    {
+        /** @var Structure|null $result */
+        $result = $this->getRepository()->findOneBy(['code' => $code]);
+
+        return $result;
+    }
+
+    /**
      * Détruit les substitutions associées à une structure cible dans la table STRUCTURE_SUBSTIT et détruit cette structure cible.
      *
      * @param StructureConcreteInterface $cibleConcrete

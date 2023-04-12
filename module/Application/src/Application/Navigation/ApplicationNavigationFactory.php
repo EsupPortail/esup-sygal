@@ -80,6 +80,8 @@ class ApplicationNavigationFactory extends NavigationFactory
                 $these = $routeMatch->getThese();
                 if ($these !== null) {
                     $this->injectThese($page, $these);
+                } else {
+                    $page['visible'] = false; // todo : pas vérifié si ça pose pb en cas de param de route facultatif
                 }
             }
         }

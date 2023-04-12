@@ -50,6 +50,25 @@ class EtablissementService extends BaseService
     }
 
     /**
+     * Fetch l'éventuel établissement Collège des écoles doctorales (CED).
+     *
+     * @return Etablissement|null
+     */
+    public function fetchEtablissementCed(): ?Etablissement
+    {
+        $qb = $this->getRepository()->createQueryBuilder('e')
+            ->where('e.estCed = true');
+
+        try {
+            $etab = $qb->getQuery()->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            throw new RuntimeException("Anomalie: plusieurs établissements CED trouvés.");
+        }
+
+        return $etab;
+    }
+
+    /**
      * @param Etablissement $structureConcrete
      * @param Utilisateur   $createur
      * @return Etablissement

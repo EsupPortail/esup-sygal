@@ -1,0 +1,16 @@
+<?php
+/**
+ * @var \RapportActivite\Entity\Db\RapportActiviteAvis $operation
+ */
+
+$avis = $operation->getAvis();
+?>
+
+<li>
+    <p class="operation-type">
+        <strong><?php echo $avis->getAvisType()->getLibelle() ?></strong>
+    </p>
+    <p class="operation-valeur">
+        En attente
+    </p>
+</li>

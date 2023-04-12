@@ -48,7 +48,7 @@ $canEditForcageCorrectionAutorisee = $this->isAllowed($these, DepotPrivileges::T
 
 $financementFormatter = $this->financementFormatter();
 $financementFormatter->setSortBy(FinancementFormatter::SORT_BY_DATE);
-$financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
+$financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_HTML_LINES);
 ?>
 
 <?php $this->headTitle($this->translate("Thèse"))->prepend($these->getDoctorant()->getNomUsuel()) ?>
@@ -161,7 +161,6 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             $results = $acteursFormatter->doFormat($acteurs->toArray());
             $previous = "";
             foreach ($results as $result) {
-                $aucunSupannIdDansIndividu = isset($result['alerte-supann-id']);
                 /** @var Acteur $acteur */
                 $acteur = $result["acteur"];
                 if ($previous != $result["role"]) {
@@ -183,19 +182,6 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 if (isset($result["etablissement"]) && trim($result["etablissement"]) != "") {
                     $ligne[] = $result["etablissement"];
                 }
-                if ($acteur->estDirecteur() && $aucunSupannIdDansIndividu) {
-                    if (empty($utilisateurs[$acteur->getId()])) {
-//                        $ligne[] = sprintf('<span class="fas fa-exclamation-triangle text-danger" title="%s"></span>',
-//                            $result['alerte-supann-id']);
-                    } else {
-                        $ligne[] = sprintf('<span class="fas fa-info-circle text-warning" title="Compte local"></span>');
-                    }
-//                    if ($canCreate) {
-//                        $ligne[] = sprintf('<a href="%s" class="btn btn-sm btn-warning">Gérer l\'utilisateur</a>',
-//                            $this->url('utilisateur/gerer-utilisateur', ['individu' => $acteur->getIndividu()->getId()], [], true));
-//                    }
-                }
-
 
                 $ligne = implode(" &ndash; ", $ligne);
                 echo $ligne;
@@ -272,8 +258,7 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
             <dd class="col-md-8">
                 <?php
                 if ($these->getUniteRecherche()) {
-                    echo /*$these->getUniteRecherche()->getSourceCode() . " - " .*/
-                    $these->getUniteRecherche()->getStructure()->getLibelle();
+                    echo $these->getUniteRecherche();
                 } elseif ($these->getCodeUniteRecherche() && $these->getLibelleUniteRecherche()) {
                     echo $these->getCodeUniteRecherche() . " - " . $these->getLibelleUniteRecherche();
                     echo "<div class='alert alert-sm alert-warning'>";
@@ -306,14 +291,12 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_LINE);
                 ?>
             </dd>
 
-
             <dt class="col-md-4">
                 <?php echo $this->translate("École doctorale"); ?>
             </dt>
             <dd class="col-md-8">
                 <?php if ($these->getEcoleDoctorale()) {
-                    echo /*$these->getEcoleDoctorale()->getSourceCode() . " - " .*/
-                    $these->getEcoleDoctorale()->getStructure()->getLibelle();
+                    echo $these->getEcoleDoctorale();
                 } else {
                     echo "<div class='alert alert-sm alert-warning'>";
                     echo "<span class='fas fa-exclamation-triangle'></span> Aucune école doctorale n'est renseignée.";

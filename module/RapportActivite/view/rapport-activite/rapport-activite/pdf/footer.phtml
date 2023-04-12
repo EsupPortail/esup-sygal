@@ -1,0 +1,22 @@
+<?php
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ * @var \RapportActivite\Service\Fichier\Exporter\RapportActivitePdfExporterData $data
+ */
+
+?>
+<table class="footer" width="100%">
+    <tr>
+        <td width="10%" style="text-align: left;">
+            <?php if ($data->logoCED): ?>
+                <img class="logo_ced" src="<?php echo $data->logoCED ?>" alt="Logo du CED"/>
+            <?php endif; ?>
+        </td>
+        <td width="75%" style="text-align: center;">
+            <em>Généré par <?php echo $this->appInfos()->nom ?> le {DATE j/m/Y à H:i:s}</em>
+        </td>
+        <td width="10%" style="text-align: right;">
+            Page {PAGENO}/{nbpg}
+        </td>
+    </tr>
+</table>

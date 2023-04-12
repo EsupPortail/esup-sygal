@@ -735,7 +735,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
         $vars['Url'] = $url;
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::TRANSMETTRE_DOCUMENTS_DIRECTION, $vars);
-        $mail = $these->getDirecteursTheseEmails();
+        $mail = array_merge($these->getDirecteursTheseEmails(), $these->getCoDirecteursTheseEmails());
         if (count($mail) === 0) {
             throw new RuntimeException("Aucun mail trouvés pour les directeurs de thèse");
         }

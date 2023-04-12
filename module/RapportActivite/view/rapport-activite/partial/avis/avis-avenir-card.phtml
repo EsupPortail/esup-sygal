@@ -1,0 +1,34 @@
+<?php
+/**
+ * @var \RapportActivite\Entity\Db\RapportActiviteAvis $operation
+ * @var bool $ajaxModalEvent
+ */
+
+use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
+
+$avis = $operation->getAvis();
+
+$canAjouterOperation =
+    $this->isAllowed($operation, RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT) ||
+    $this->isAllowed($operation, RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN);
+?>
+
+<div class="card text-center validation-rapport-activite">
+    <div class="card-header">
+        <!--<span class="badge rounded-pill bg-secondary"><?php /*echo count($rapportAviss)+1 */ ?></span>-->
+        <?php echo $operation->getAvis()->getAvisType()->getLibelle() ?>
+    </div>
+    <div class="card-body">
+        <p class="card-text">
+            En attente
+        </p>
+        <?php if ($canAjouterOperation): ?>
+            <a href="<?php echo $this->url('rapport-activite/avis/ajouter', [
+                    'rapport' => $operation->getRapportActivite()->getId(),
+                    'typeAvis' => $operation->getAvis()->getAvisType()->getId(),
+                ]) ?>"
+               class="card-link btn btn-primary btn-sm action ajax-modal"
+               data-event="<?php echo $ajaxModalEvent ?>">Saisir l'avis</span></a>
+        <?php endif ?>
+    </div>
+</div>

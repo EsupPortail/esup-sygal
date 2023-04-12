@@ -3,21 +3,22 @@
 namespace RapportActivite\Service\Search;
 
 use Application\Entity\Db\TypeValidation;
-use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
-use Structure\Search\Etablissement\EtablissementSearchFilter;
 use Application\Search\Financement\OrigineFinancementSearchFilter;
-use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
-use Structure\Service\Etablissement\EtablissementService;
 use Application\Service\Financement\FinancementService;
-use Structure\Service\Structure\StructureService;
-use These\Service\These\TheseSearchService;
-use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Application\Service\Validation\ValidationService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
+use RapportActivite\Rule\Operation\RapportActiviteOperationRule;
 use RapportActivite\Search\AnneeRapportActiviteSearchFilter;
-use RapportActivite\Service\Avis\RapportActiviteAvisService;
+use RapportActivite\Service\Operation\RapportActiviteOperationService;
 use RapportActivite\Service\RapportActiviteService;
+use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
+use Structure\Search\Etablissement\EtablissementSearchFilter;
+use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
+use Structure\Service\Etablissement\EtablissementService;
+use Structure\Service\Structure\StructureService;
+use These\Service\These\TheseSearchService;
+use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 
 class RapportActiviteSearchServiceFactory implements FactoryInterface
 {
@@ -48,7 +49,6 @@ class RapportActiviteSearchServiceFactory implements FactoryInterface
          * @var TheseAnneeUnivService $theseAnneeUnivService
          * @var TheseSearchService $theseSearchService
          * @var RapportActiviteService $rapportActiviteService
-         * @var RapportActiviteAvisService $rapportActiviteAvisService
          * @var ValidationService $validationService
          */
         $structureService = $container->get(StructureService::class);
@@ -57,9 +57,8 @@ class RapportActiviteSearchServiceFactory implements FactoryInterface
         $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
         $theseSearchService = $container->get(TheseSearchService::class);
         $rapportActiviteService = $container->get(RapportActiviteService::class);
-        $rapportActiviteAvisService = $container->get(RapportActiviteAvisService::class);
         $validationService = $container->get(ValidationService::class);
-        $typeValidation = $validationService->findTypeValidationByCode(TypeValidation::CODE_RAPPORT_ACTIVITE);
+        $typeValidation = $validationService->findTypeValidationByCode(TypeValidation::CODE_RAPPORT_ACTIVITE_AUTO);
 
         $service->setFinancementService($financementService);
         $service->setAnneesUnivs($theseAnneeUnivService);
@@ -67,7 +66,6 @@ class RapportActiviteSearchServiceFactory implements FactoryInterface
         $service->setEtablissementService($etablissementService);
         $service->setTheseSearchService($theseSearchService);
         $service->setRapportActiviteService($rapportActiviteService);
-        $service->setRapportActiviteAvisService($rapportActiviteAvisService);
         $service->setTypeValidation($typeValidation);
 
         $service->setEtablissementTheseSearchFilter(EtablissementSearchFilter::newInstance());
@@ -75,6 +73,18 @@ class RapportActiviteSearchServiceFactory implements FactoryInterface
         $service->setUniteRechercheSearchFilter(UniteRechercheSearchFilter::newInstance());
         $service->setEcoleDoctoraleSearchFilter(EcoleDoctoraleSearchFilter::newInstance());
         $service->setAnneeRapportActiviteSearchFilter(AnneeRapportActiviteSearchFilter::newInstance());
+
+        /** @var \RapportActivite\Rule\Operation\RapportActiviteOperationRule $rapportActiviteOperationRule */
+        $rapportActiviteOperationRule = $container->get(RapportActiviteOperationRule::class);
+        $service->setRapportActiviteOperationRule($rapportActiviteOperationRule);
+
+        /** @var \RapportActivite\Service\Operation\RapportActiviteOperationService $rapportActiviteOperationService */
+        $rapportActiviteOperationService = $container->get(RapportActiviteOperationService::class);
+        $service->setRapportActiviteOperationService($rapportActiviteOperationService);
+
+        /** @var \Application\Service\Validation\ValidationService $validationService */
+        $validationService = $container->get(ValidationService::class);
+        $service->setValidationService($validationService);
 
         return $service;
     }

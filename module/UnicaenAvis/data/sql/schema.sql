@@ -83,6 +83,7 @@ create table unicaen_avis_type_valeur
 create index unicaen_avis_type_valeur__idx on unicaen_avis_type_valeur (id);
 create index unicaen_avis_type_valeur__unicaen_avis_type__idx on unicaen_avis_type_valeur (avis_type_id);
 create index unicaen_avis_type_valeur__unicaen_avis_valeur__idx on unicaen_avis_type_valeur (avis_valeur_id);
+create unique index unicaen_avis_type_valeur__uindex on unicaen_avis_type_valeur (avis_type_id, avis_valeur_id);
 
 comment on table unicaen_avis_type_valeur is 'Valeurs d''avis autorisées par type d''avis';
 comment on column unicaen_avis_type_valeur.avis_type_id is 'Identifiant du type d''avis concerné';

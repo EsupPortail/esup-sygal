@@ -1,0 +1,46 @@
+<?php
+/**
+ * @var \UnicaenAvis\Form\AvisTypeForm $form
+ */
+
+$form->prepare();
+
+/** @var \UnicaenAvis\Fieldset\AvisTypeFieldset $avisTypeFieldset */
+$avisTypeFieldset = $form->get('avisTypeFieldset');
+?>
+
+<?php echo $this->form()->openTag($form) ?>
+
+<div class="row">
+    <div class="col-md-7">
+    <?php
+    echo $this->formControlGroup($avisTypeFieldset->get('code'));
+    echo $this->formControlGroup($avisTypeFieldset->get('libelle'));
+    echo $this->formControlGroup($avisTypeFieldset->get('description'));
+    echo $this->formControlGroup($avisTypeFieldset->get('ordre'));
+    ?>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-5">
+        <?php echo $this->formElementCollection($avisTypeFieldset->get('avisValeurs')); ?>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-7">
+    <?php
+    echo $this->formControlGroup($form->get('csrf'));
+    echo $this->formSubmit($form->get('submit')->setAttributes(['class' => 'btn btn-primary']));
+    ?>
+</div>
+
+<?php echo $this->form()->closeTag() ?>
+
+
+<script>
+    $(function() {
+
+    });
+</script>

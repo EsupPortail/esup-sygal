@@ -92,18 +92,18 @@ class AvisValeur
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
-    public function getValeurBool(): bool
+    public function getValeurBool(): ?bool
     {
         return $this->valeurBool;
     }
 
     /**
-     * @param bool $valeurBool
+     * @param bool|null $valeurBool
      * @return self
      */
-    public function setValeurBool(bool $valeurBool): self
+    public function setValeurBool(?bool $valeurBool): self
     {
         $this->valeurBool = $valeurBool;
         return $this;

@@ -26,7 +26,7 @@ use RapportActivite\Entity\Db\RapportActiviteAvis;
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
 <div class='bandeau-titre'>
-    <?php echo mb_strtoupper($rapport->getTypeRapportToString()) ?>
+    <?php echo mb_strtoupper($rapport->getTypeRapportLibelle()) ?>
 </div>
 
 <div class='bandeau-titre-these'>
@@ -35,7 +35,7 @@ use RapportActivite\Entity\Db\RapportActiviteAvis;
 
 <div class='infos-rapport'>
     <p>
-        <?php echo $rapport->getFichier()->getNom() ?>
+        <?php echo $rapport->getFichier() ?>
     </p>
     <p>
         Déposé le <?php echo ($rapport->getHistoModification() ?: $rapport->getHistoCreation())->format('d/m/Y H:i') ?>
@@ -46,7 +46,7 @@ use RapportActivite\Entity\Db\RapportActiviteAvis;
     <p>
         La direction de l'ED &laquo; <?php echo $data->ecoleDoctorale ?> &raquo; atteste avoir validé le
         <?php echo $data->validation->getHistoCreation()->format('d/m/Y à H:i') ?> le
-        <?php echo lcfirst($rapport->getTypeRapportToString()) ?> de <?php echo $data->doctorant ?>,
+        <?php echo lcfirst($rapport->getTypeRapportLibelle()) ?> de <?php echo $data->doctorant ?>,
         laboratoire &laquo; <?php echo $data->uniteRecherche ?> &raquo;
         <?php if ($data->mostRecentAvis): ?>
             <?php $avisValeur = $data->mostRecentAvis->getAvis()->getAvisValeur(); ?>

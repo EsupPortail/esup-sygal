@@ -1,0 +1,49 @@
+<?php
+/**
+ * @var \UnicaenAvis\Entity\Db\AvisType[] $avisTypes
+ */
+
+use UnicaenAvis\Provider\Privilege\AvisPrivileges;
+
+$canAjouter = $this->isAllowed('privilege/' . AvisPrivileges::AVIS__AVIS_TYPE__AJOUTER);
+$canModifier = $this->isAllowed('privilege/' . AvisPrivileges::AVIS__AVIS_TYPE__MODIFIER);
+?>
+
+<?php $this->headTitle($this->translate($title = "Types d'avis")) ?>
+
+<h1 class="page-header">Types d'avis (AvisType)</h1>
+
+<?php if ($avisTypes): ?>
+    <table class="table table-hover table-bordered">
+        <tr>
+            <th>Code unique</th>
+            <th>Libellé</th>
+            <th>Description</th>
+            <th>Ordre d'affichage</th>
+            <th class="actions">Actions</th>
+        </tr>
+    <?php foreach ($avisTypes as $avisType): ?>
+        <tr>
+            <td><?php echo $avisType->getCode() ?></td>
+            <td><?php echo $avisType->getLibelle() ?>
+            <td><?php echo $avisType->getDescription() ?></td>
+            <td><?php echo $avisType->getOrdre() ?></td>
+            <td class="actions">
+                <?php if ($canModifier): ?>
+                    <a href="<?php echo $this->url('unicaen-avis/avis-type/modifier', ['avisType' => $avisType->getId()]) ?>">
+                        <span class="icon icon-modifier iconly"></span>
+                    </a>
+                <?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </table>
+<?php else: ?>
+    Aucun.
+<?php endif; ?>
+
+<?php if ($canAjouter): ?>
+    <a href="<?php echo $this->url('unicaen-avis/avis-type/ajouter') ?>" class="btn btn-primary">
+        <span class="icon icon-modifier"></span> Ajouter
+    </a>
+<?php endif; ?>

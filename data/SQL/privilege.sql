@@ -9,17 +9,14 @@ insert into CATEGORIE_PRIVILEGE(ID, CODE, LIBELLE, ORDRE)
 --
 insert into PRIVILEGE(ID, CATEGORIE_ID, CODE, LIBELLE, ORDRE)
 with d(ordre, code, lib) as (
-    select 10, 'lister', 'Lister les jetons utilisateur' union
-    select 20, 'consulter', 'Consulter un jeton utilisateur' union
-    select 30, 'creer', 'Créer un jeton utilisateur' union
-    select 40, 'modifier', 'Modifier un jeton utilisateur' union
-    select 50, 'prolonger', 'Prolonger un jeton utilisateur' union
-    select 60, 'supprimer', 'SUpprimer un jeton utilisateur' union
-    select 70, 'tester', 'Tester unejeton utilisateur'
+    select 210, 'ajouter-tout', 'Ajouter un rapport d''activité concernant toute thèse' union
+    select 220, 'ajouter-sien', 'Ajouter un rapport d''activité concernant ses thèses' union
+    select 230, 'consulter-tout', 'Consulter un rapport d''activité concernant toute thèse' union
+    select 240, 'consulter-sien', 'Consulter un rapport d''activité concernant ses thèses'
 )
 select nextval('privilege_id_seq'), cp.id, d.code, d.lib, d.ordre
 from d
-join CATEGORIE_PRIVILEGE cp on cp.CODE = 'unicaen-auth-token'
+         join CATEGORIE_PRIVILEGE cp on cp.CODE = 'rapport-activite'
 ;
 
 --
@@ -90,6 +87,19 @@ where not exists (
     select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id
 )
 ;
+--
+-- Inverse : suppression des attributions de privilèges à des rôles si elles n'existent pas dans :
+--   - PROFIL_TO_ROLE (profils appliqués à chaque rôle) et
+--   - PROFIL_PRIVILEGE (privilèges accordés à chaque profil).
+--
+delete from ROLE_PRIVILEGE rp
+where not exists (
+    select *
+    from PROFIL_TO_ROLE p2r
+    join PROFIL_PRIVILEGE pp on pp.PROFIL_ID = p2r.PROFIL_ID
+    where rp.role_id = p2r.role_id and rp.privilege_id = pp.privilege_id
+);
+
 
 
 --

@@ -83,18 +83,37 @@ class RoleService extends BaseService
      * Recherche des IndividuRole liés à la structure spécifiée.
      *
      * @param \Structure\Entity\Db\Structure $structure
-     * @return array
+     * @param string|null $role
+     * @param \Structure\Entity\Db\Etablissement|null $etablissementIndividu
+     * @return \Individu\Entity\Db\IndividuRole[]
      */
-    public function findIndividuRoleByStructure(Structure $structure): array
+    public function findIndividuRoleByStructure(Structure $structure, ?string $role = null, ?Etablissement $etablissementIndividu = null): array
     {
         /** @var \Application\Entity\Db\Repository\DefaultEntityRepository $repo */
         $repo = $this->entityManager->getRepository(IndividuRole::class);
+
         $qb = $repo->createQueryBuilder("ir")
-            ->leftJoin("ir.role", "r")->addSelect('r')
+            ->join("ir.individu", "i")->addSelect('i')
+            ->join("ir.role", "r")->addSelect('r')
             ->leftJoin('r.structure', 's')->addSelect('s')
             ->andWhereStructureOuSubstituanteIs($structure);
 
-        return $qb->getQuery()->execute();
+        if ($role !== null) {
+            $qb->andWhere('r.code = :role')->setParameter('role', $role);
+        }
+
+        $individuRoles = $qb->getQuery()->execute();
+
+        // filtrage selon l'établissement de l'individu, trop compliqué (?) à faire via le qb.
+        if ($etablissementIndividu !== null) {
+            $individuRoles = array_filter($individuRoles, function (IndividuRole $ir) use ($etablissementIndividu) {
+                // NB : un individu n'étant rattaché à aucun établissement particulier EST ÉCARTÉ.
+                return $ir->getIndividu()->getEtablissement() !== null &&
+                    $ir->getIndividu()->getEtablissement()->getId() === $etablissementIndividu->getId();
+            });
+        }
+
+        return $individuRoles;
     }
 
     /**

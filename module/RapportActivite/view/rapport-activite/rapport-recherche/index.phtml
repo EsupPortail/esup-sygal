@@ -14,6 +14,7 @@ use UnicaenAuth\Provider\Privilege\Privileges;
  * @var LaminasPaginator $paginator
  * @var string $text
  *
+ * @var array[] $operationss
  * @var TypeValidation $typeValidation
  * @var string $routeName
  *
@@ -74,6 +75,7 @@ $this->headTitle($this->translate($title));
         'rapports' => $paginator,
         'routeName' => $routeName,
         'typeValidation' => $typeValidation,
+        'operationss' => $operationss,
         'returnUrl' => $returnUrl,
 
         'displayEtablissement' => $displayEtablissement,

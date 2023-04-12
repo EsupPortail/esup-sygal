@@ -14,6 +14,16 @@ class AnneeUniv
     const SPEC_DATE_BASCULE = '-10 months'; // revient à basculer le 01/11
 
     /**
+     * Spécification de la date de début d'une année universitaire, *fonction de la date de bascule*.
+     */
+    const SPEC_ANNEE_UNIV_DATE_DEBUT = '01/11/%s 00:00:00';
+
+    /**
+     * Spécification de la date de fin d'une année universitaire, *fonction de la date de bascule*.
+     */
+    const SPEC_ANNEE_UNIV_DATE_FIN = '31/10/%s 23:59:59';
+
+    /**
      * @var int
      */
     protected $premiereAnnee;
@@ -115,10 +125,12 @@ class AnneeUniv
     /**
      * Calcule la première année à partir de la date spécifiée.
      *
-     * Exemples :
-     * 09/07/2020 => 2019 ;
-     * 11/09/2020 => 2020 ;
-     * 15/08/2020 => 2020
+     * Exemples si la date de bascule est le 01/11 :
+     *   - 15/01/2022 => Année univ 2021/2022 => première année : 2021
+     *   - 09/07/2022 => idem
+     *   - 11/09/2022 => idem
+     *   - 01/11/2022 => Année univ 2022/2023 => première année : 2022
+     *   - 15/01/2023 => idem
      *
      * @param \DateTime $date
      * @return int
@@ -130,8 +142,8 @@ class AnneeUniv
 
     protected function computeDatesDebFin()
     {
-        $dateDeb = DateTime::createFromFormat('d/m/Y H:i:s', sprintf("01/09/%s 00:00:00", $this->premiereAnnee));
-        $dateFin = DateTime::createFromFormat('d/m/Y H:i:s', sprintf("31/08/%s 00:00:00", $this->premiereAnnee + 1));
+        $dateDeb = DateTime::createFromFormat('d/m/Y H:i:s', sprintf(self::SPEC_ANNEE_UNIV_DATE_DEBUT, $this->premiereAnnee));
+        $dateFin = DateTime::createFromFormat('d/m/Y H:i:s', sprintf(self::SPEC_ANNEE_UNIV_DATE_FIN, $this->premiereAnnee + 1));
         $this->dateDeb = $dateDeb;
         $this->dateFin = $dateFin;
     }

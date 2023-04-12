@@ -59,13 +59,16 @@ class EtablissementForm extends StructureForm implements InputFilterProviderInte
         $this->add((new Checkbox('estMembre'))
             ->setLabel("Établissement membre")
         );
-
         $this->add((new Checkbox('estAssocie'))
             ->setLabel("Établissement associé")
         );
         $this->add((new Checkbox('estInscription'))
             ->setLabel("Établissement d'inscription")
         );
+        $this->add((new Checkbox('estCed'))
+            ->setLabel("Collège des écoles doctorales")
+        );
+
         $this->add((new Checkbox('estFerme'))
             ->setLabel("Établissement fermé")
         );

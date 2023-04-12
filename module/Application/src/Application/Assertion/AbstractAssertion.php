@@ -100,7 +100,7 @@ abstract class AbstractAssertion extends \UnicaenAuth\Assertion\AbstractAssertio
         return $allowed;
     }
 
-    protected function getRouteMatch()
+    protected function getRouteMatch(): ?RouteMatch
     {
         /** @var \Application\RouteMatch $rm */
         $rm = $this->getMvcEvent()->getRouteMatch();

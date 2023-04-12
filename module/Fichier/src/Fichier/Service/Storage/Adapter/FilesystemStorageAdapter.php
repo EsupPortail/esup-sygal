@@ -115,8 +115,13 @@ class FilesystemStorageAdapter extends AbstractStorageAdapter
     {
         $filePath = $this->assemblePath($fromDirPath, $fromFileName);
 
+        if (! file_exists($filePath)) {
+            throw (new StorageAdapterException("Le fichier suivant n'existe pas sur le serveur : " . $filePath))
+                ->setDirPath($fromDirPath)
+                ->setFileName($fromFileName);
+        }
         if (! is_readable($filePath)) {
-            throw (new StorageAdapterException("Le fichier suivant n'existe pas ou n'est pas accessible sur le serveur : " . $filePath))
+            throw (new StorageAdapterException("Le fichier suivant n'est pas lisible : " . $filePath))
                 ->setDirPath($fromDirPath)
                 ->setFileName($fromFileName);
         }

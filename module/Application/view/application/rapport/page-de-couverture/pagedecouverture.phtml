@@ -22,7 +22,7 @@
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
 <div class='bandeau-these'>
-    <?php echo mb_strtoupper($rapport->getTypeRapportToString()) ?>
+    <?php echo mb_strtoupper($rapport->getTypeRapportLibelle()) ?>
 </div>
 
 <div class='bandeau-titre'>
@@ -30,7 +30,7 @@
 </div>
 
 <div class='infos-doctorant'>
-    <?php $validation = $rapport->getRapportValidation() ?>
+    <?php $validation = $rapport->getRapportValidationOfType() ?>
     Déposé le <?php echo ($rapport->getHistoModification() ?: $rapport->getHistoCreation())->format('d/m/Y H:i') ?>
     <br>
     <br>

@@ -14,8 +14,6 @@ use Laminas\Http\Response;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Entity\Db\RapportActiviteAvis;
 use RapportActivite\Event\Avis\RapportActiviteAvisEvent;
-use RapportActivite\Rule\Avis\RapportActiviteAvisNotificationRule;
-use RapportActivite\Rule\Validation\RapportActiviteValidationRule;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use RapportActivite\Service\Validation\RapportActiviteValidationServiceAwareTrait;
@@ -23,6 +21,7 @@ use UnicaenApp\Exception\RuntimeException;
 use UnicaenAvis\Entity\Db\Avis;
 use UnicaenAvis\Entity\Db\AvisTypeValeurComplem;
 use UnicaenAvis\Form\AvisForm;
+use UnicaenAvis\Service\AvisServiceAwareTrait;
 
 class RapportActiviteAvisController extends AbstractController
 {
@@ -31,41 +30,12 @@ class RapportActiviteAvisController extends AbstractController
     use RapportActiviteValidationServiceAwareTrait;
     use ValidationServiceAwareTrait;
     use IndividuServiceAwareTrait;
+    use AvisServiceAwareTrait;
 
     use IdifyFilterAwareTrait;
     use EventRouterReplacerAwareTrait;
 
-    /**
-     * @var \UnicaenAvis\Form\AvisForm
-     */
     private AvisForm $form;
-
-    /**
-     * @var \RapportActivite\Rule\Avis\RapportActiviteAvisNotificationRule
-     */
-    private RapportActiviteAvisNotificationRule $notificationRule;
-
-    /**
-     * @var \RapportActivite\Rule\Validation\RapportActiviteValidationRule
-     */
-    private RapportActiviteValidationRule $validationRule;
-
-
-    /**
-     * @param \RapportActivite\Rule\Avis\RapportActiviteAvisNotificationRule $notificationRule
-     */
-    public function setNotificationRule(RapportActiviteAvisNotificationRule $notificationRule): void
-    {
-        $this->notificationRule = $notificationRule;
-    }
-
-    /**
-     * @param \RapportActivite\Rule\Validation\RapportActiviteValidationRule $validationRule
-     */
-    public function setValidationRule(RapportActiviteValidationRule $validationRule): void
-    {
-        $this->validationRule = $validationRule;
-    }
 
     /**
      * @param \UnicaenAvis\Form\AvisForm $form
@@ -81,14 +51,10 @@ class RapportActiviteAvisController extends AbstractController
     public function ajouterAction()
     {
         $rapportActivite = $this->requestedRapport();
-
-        $avisTypeDispo = $this->rapportActiviteAvisService->findExpectedAvisTypeForRapport($rapportActivite);
-        if ($avisTypeDispo === null) {
-            return $this->redirect()->toRoute('these/identite', ['these' => $rapportActivite->getThese()->getId()]);
-        }
+        $avisType = $this->avisService->findOneAvisTypeById($this->params('typeAvis'));
 
         $avis = new Avis();
-        $avis->setAvisType($avisTypeDispo);
+        $avis->setAvisType($avisType);
 
         $this->form->setAvisTypeValeurComplemsFilter($this->getAvisTypeValeurComplemsFilter($rapportActivite));
         $this->form->bind($avis);
@@ -106,7 +72,8 @@ class RapportActiviteAvisController extends AbstractController
 
                 $rapportActiviteAvis = $this->rapportActiviteAvisService->newRapportAvis($rapportActivite);
                 $rapportActiviteAvis->setAvis($avis);
-                $event = $this->rapportActiviteAvisService->saveNewRapportAvis($rapportActiviteAvis);
+                $this->rapportActiviteAvisService->saveNewRapportAvis($rapportActiviteAvis);
+                $event = $this->rapportActiviteAvisService->triggerEventAvisAjoute($rapportActiviteAvis);
 
                 $this->flashMessenger()->addSuccessMessage("Avis enregistré avec succès.");
                 $this->flashMessengerAddMessagesFromEvent($event);
@@ -116,7 +83,10 @@ class RapportActiviteAvisController extends AbstractController
                     if ($redirectUrl = $this->params()->fromQuery('redirect')) {
                         return $this->redirect()->toUrl($redirectUrl);
                     }
-                    return $this->redirect()->toRoute('these/identite', ['these' => $rapportActivite->getThese()->getId()]);
+                    return $this->redirect()->toRoute('rapport-activite/consulter', [
+                        'these' => $rapportActivite->getThese()->getId(),
+                        'rapport' => $rapportActivite->getId(),
+                    ]);
                 }
             }
         }
@@ -161,7 +131,8 @@ class RapportActiviteAvisController extends AbstractController
             $data = $request->getPost();
             $this->form->setData($data);
             if ($this->form->isValid()) {
-                $event = $this->rapportActiviteAvisService->updateRapportAvis($rapportActiviteAvis);
+                $this->rapportActiviteAvisService->updateRapportAvis($rapportActiviteAvis);
+                $event = $this->rapportActiviteAvisService->triggerEventAvisModifie($rapportActiviteAvis);
 
                 $this->flashMessenger()->addSuccessMessage("Avis modifié avec succès.");
                 $this->flashMessengerAddMessagesFromEvent($event);
@@ -171,7 +142,10 @@ class RapportActiviteAvisController extends AbstractController
                     if ($redirectUrl = $this->params()->fromQuery('redirect')) {
                         return $this->redirect()->toUrl($redirectUrl);
                     }
-                    return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()]);
+                    return $this->redirect()->toRoute('rapport-activite/consulter', [
+                        'these' => $rapportActivite->getThese()->getId(),
+                        'rapport' => $rapportActivite->getId(),
+                    ]);
                 }
             }
         }
@@ -186,9 +160,10 @@ class RapportActiviteAvisController extends AbstractController
     public function supprimerAction(): Response
     {
         $rapportActiviteAvis = $this->requestedRapportAvis();
-        $these = $rapportActiviteAvis->getRapportActivite()->getThese();
+        $rapportActivite = $rapportActiviteAvis->getRapportActivite();
 
-        $event = $this->rapportActiviteAvisService->deleteRapportAvis($rapportActiviteAvis);
+        $this->rapportActiviteAvisService->deleteRapportAvis($rapportActiviteAvis);
+        $event = $this->rapportActiviteAvisService->triggerEventAvisSupprime($rapportActiviteAvis);
 
         $this->flashMessenger()->addSuccessMessage("Avis supprimé avec succès.");
         $this->flashMessengerAddMessagesFromEvent($event);
@@ -198,7 +173,10 @@ class RapportActiviteAvisController extends AbstractController
             return $this->redirect()->toUrl($redirectUrl);
         }
 
-        return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()]);
+        return $this->redirect()->toRoute('rapport-activite/consulter', [
+            'these' => $rapportActivite->getThese()->getId(),
+            'rapport' => $rapportActivite->getId(),
+        ]);
     }
 
     /**
@@ -220,7 +198,7 @@ class RapportActiviteAvisController extends AbstractController
             // On ajoute un message contenant un lien vers la page des rapports du doctorant,
             // si ce n'est pas redondant avec la page de retour demandée.
             $theseRapportActivitePageUrl = $this->url()->fromRoute(
-                'rapport-activite/consulter',
+                'rapport-activite/lister',
                 ['these' => $rapportActiviteAvis->getRapportActivite()->getThese()->getId()],
             );
             if ($redirectUrl !== $theseRapportActivitePageUrl) {
@@ -240,7 +218,7 @@ class RapportActiviteAvisController extends AbstractController
     {
         $id = $this->params()->fromRoute('rapport') ?: $this->params()->fromQuery('rapport');
 
-        $rapport = $this->rapportActiviteService->findRapportById($id);
+        $rapport = $this->rapportActiviteService->fetchRapportById($id);
         if ($rapport === null) {
             throw new RuntimeException("Aucun rapport trouvé avec l'id spécifié");
         }

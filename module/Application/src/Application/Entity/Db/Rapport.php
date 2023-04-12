@@ -152,9 +152,7 @@ class Rapport implements ResourceInterface, HistoriqueAwareInterface
      */
     public function getTypeRapportToString(): string
     {
-        return $this->typeRapport->estRapportActivite() ?
-            $this->typeRapport . " ({$this->getEstFinalToString()})" :
-            (string) $this->typeRapport;
+        return (string) $this->typeRapport;
     }
 
     /**
@@ -213,8 +211,6 @@ class Rapport implements ResourceInterface, HistoriqueAwareInterface
     public function getCodeTypeValidationAttendu(): string
     {
         switch ($code = $this->getTypeRapport()->getCode()) {
-            case TypeRapport::RAPPORT_ACTIVITE:
-                return TypeValidation::CODE_RAPPORT_ACTIVITE;
             case TypeRapport::RAPPORT_CSI:
                 return TypeValidation::CODE_RAPPORT_CSI;
             case TypeRapport::RAPPORT_MIPARCOURS:
