@@ -22,8 +22,6 @@ if (!$passed){
 /* Fin de fermeture du service */
 
 
-define('APPLICATION_DIR', realpath(__DIR__ . '/..'));
-
 define('REQUEST_MICROTIME', microtime(true));
 
 /**
