@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c1894c7ead27eb7a59043cc5c0a90653",
+    "content-hash": "63701e9fa60cbcc9b0dfcb08d65bec75",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -8989,6 +8989,39 @@
             "time": "2022-12-16T09:02:59+00:00"
         },
         {
+            "name": "unicaen/idref",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/idref.git",
+                "reference": "374bd16c7ff3da3261a00909c9cf5c9e6626b22e"
+            },
+            "require": {
+                "laminas/laminas-dependency-plugin": "^2.1",
+                "monolog/monolog": "^2.3"
+            },
+            "require-dev": {
+                "laminas/laminas-config": "^2.0 || ^3.0",
+                "laminas/laminas-form": "^2.0 || ^3.0",
+                "laminas/laminas-mvc": "^2.0 || ^3.0",
+                "laminas/laminas-stdlib": "^2.0 || ^3.0",
+                "laminas/laminas-view": "^2.0",
+                "phpunit/phpunit": "~5.4",
+                "unicaen/test": "^4.0"
+            },
+            "type": "module",
+            "autoload": {
+                "psr-0": {
+                    "UnicaenIdref\\": "src/"
+                },
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "description": "Module d'interrogation des autorités Sudoc (IDRef)",
+            "time": "2023-04-06T10:59:47+00:00"
+        },
+        {
             "name": "unicaen/ldap",
             "version": "6.0.0",
             "source": {
@@ -9059,6 +9092,27 @@
             },
             "description": "Module permettant d'afficher des logs en live à l'aide d'une websocket (et d'une socket)",
             "time": "2023-01-27T09:51:22+00:00"
+        },
+        {
+            "name": "unicaen/parametre",
+            "version": "6.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/parametre.git",
+                "reference": "37c008272479e6880162e5ae1d462f01442bedc0"
+            },
+            "require": {
+                "unicaen/privilege": "^6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": [],
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "description": "Module de gestion de paramètres",
+            "time": "2023-03-31T09:57:08+00:00"
         },
         {
             "name": "unicaen/pdf",
@@ -9655,6 +9709,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "unicaen/idref": 20,
         "unicaen/pdf": 20
     },
     "prefer-stable": true,
