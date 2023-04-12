@@ -3,11 +3,11 @@
 namespace These\Service\TheseAnneeUniv;
 
 use Application\Entity\AnneeUniv;
-use Structure\Entity\Db\Etablissement;
-use These\Entity\Db\TheseAnneeUniv;
 use Application\Service\BaseService;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Structure\Entity\Db\Etablissement;
+use These\Entity\Db\TheseAnneeUniv;
 
 class TheseAnneeUnivService extends BaseService
 {

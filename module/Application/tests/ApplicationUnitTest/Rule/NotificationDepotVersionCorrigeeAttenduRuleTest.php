@@ -3,7 +3,7 @@
 namespace ApplicationTest\Rule;
 
 use These\Entity\Db\These;
-use Application\Rule\NotificationDepotVersionCorrigeeAttenduRule;
+use Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule;
 use DateTime;
 use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophet;
@@ -12,7 +12,7 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
 {
     public function test_retourne_date_null_si_date_butoire_null()
     {
-        $correctionAutorisee = These::CORRECTION_AUTORISEE_FACULTATIVE;
+        $correctionAutorisee = These::$CORRECTION_AUTORISEE_FACULTATIVE;
 
         $these = $this->theseMock($correctionAutorisee, $dateButoir = null);
 
@@ -88,7 +88,7 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
      */
     public function test_correction_mineure($aujourdhui, $dateDerniereNotif, $dateButoir, $expectedDateProchaineNotif, $expectedEstPremiereNotif)
     {
-        $correctionAutorisee = These::CORRECTION_AUTORISEE_FACULTATIVE;
+        $correctionAutorisee = These::$CORRECTION_AUTORISEE_FACULTATIVE;
 
         $these = $this->theseMock($correctionAutorisee, $dateButoir);
 
@@ -216,11 +216,11 @@ class NotificationDepotVersionCorrigeeAttenduRuleTest extends \PHPUnit_Framework
      */
     public function test_correction_majeure($aujourdhui, $dateDerniereNotif, $dateButoir, $expectedDateProchaineNotif, $expectedEstPremiereNotif)
     {
-        $correctionAutorisee = These::CORRECTION_AUTORISEE_OBLIGATOIRE;
+        $correctionAutorisee = These::$CORRECTION_AUTORISEE_OBLIGATOIRE;
 
         $these = $this->theseMock($correctionAutorisee, $dateButoir);
 
-        $rule = new NotificationDepotVersionCorrigeeAttenduRule();
+        $rule = new \Depot\Rule\NotificationDepotVersionCorrigeeAttenduRule();
         $rule->setThese($these);
         $rule->setDateDerniereNotif($dateDerniereNotif);
         $rule->setDateAujourdhui($aujourdhui);

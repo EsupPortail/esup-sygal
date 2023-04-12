@@ -2,17 +2,17 @@
 
 namespace These\Service\CoEncadrant;
 
-use InvalidArgumentException;
-use Structure\Entity\Db\StructureConcreteInterface;
-use These\Entity\Db\Acteur;
-use Structure\Entity\Db\EcoleDoctorale;
-use These\Entity\Db\These;
-use Structure\Entity\Db\UniteRecherche;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
+use InvalidArgumentException;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\StructureConcreteInterface;
+use Structure\Entity\Db\UniteRecherche;
+use These\Entity\Db\Acteur;
+use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Laminas\Mvc\Controller\AbstractActionController;
 
 class CoEncadrantService {
     use EntityManagerAwareTrait;

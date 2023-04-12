@@ -2,7 +2,7 @@
 
 namespace RapportActivite\Event\Avis;
 
-use Application\Service\Notification\NotifierService;
+use Notification\Service\NotifierService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Rule\Avis\RapportActiviteAvisNotificationRule;
 use RapportActivite\Rule\Validation\RapportActiviteValidationRule;

@@ -15,7 +15,6 @@ use Application\Form\Rapport\RapportForm;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
-use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Rapport\RapportServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
@@ -35,7 +34,6 @@ abstract class RapportController extends AbstractController
     use RapportServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use IdifyFilterAwareTrait;
-    use NotifierServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use ValidationServiceAwareTrait;
     use EventRouterReplacerAwareTrait;

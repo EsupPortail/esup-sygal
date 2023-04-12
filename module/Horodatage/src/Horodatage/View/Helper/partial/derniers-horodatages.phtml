@@ -1,0 +1,30 @@
+<?php
+
+use Horodatage\Entity\Db\Horodatage;
+
+/**
+ * @see DernierHorodatageViewHelper
+ * @var Horodatage $horodatage
+ * @var array $options
+ */
+
+$first = true;
+?>
+<?php if (!empty($horodatages)) : ?>
+    <div class="alert alert-info"  style="margin-left: 1rem;">
+        <?php foreach ($horodatages as $horodatage) : ?>
+            <?php if (!$first) : ?>
+                <br/>
+            <?php endif; ?>
+            <?php echo $horodatage->getType(); ?>
+            <?php if ($horodatage->getComplement()) : ?>
+                : <?php echo $horodatage->getComplement(); ?>
+            <?php endif; ?>
+            &mdash;
+            fait par <?php echo $horodatage->getUtilisateur()->getDisplayName(); ?>
+            le <?php echo $horodatage->getDate()->format('d/m/Y'); ?>
+            à <?php echo $horodatage->getDate()->format('H:i'); ?>
+            <?php $first = false; ?>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>

@@ -23,15 +23,18 @@ use Soutenance\Entity\Etat;
 
 <style>
     span.badge.<?php echo Etat::VALIDEE; ?> {
-        background: green;
+        background: darkgreen;
     }
     span.badge.<?php echo Etat::REJETEE; ?> {
         background: darkred;
     }
     span.badge.<?php echo Etat::EN_COURS; ?> {
-        background: teal;
+        background: darkorange;
     }
     span.badge.<?php echo Etat::ETABLISSEMENT; ?> {
+        background: teal;
+    }
+    span.badge.<?php echo Etat::COMPLET; ?> {
         background: dodgerblue;
     }
 </style>

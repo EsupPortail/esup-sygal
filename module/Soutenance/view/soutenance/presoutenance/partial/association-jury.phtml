@@ -5,6 +5,7 @@
  * @var These $these
  */
 
+use Soutenance\Service\Horodatage\HorodatageService;
 use These\Entity\Db\These;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
@@ -21,13 +22,13 @@ $canAssocierMembreIndividu              = $this->isAllowed($these, Presoutenance
             </div>
             <div class="col-md-4">
                 <p>
-                    <a
-                        <?php /** @see  \Soutenance\Controller\PresoutenanceController::presoutenanceAction() */ ?>
-                        class="btn btn-secondary btn-sm"
-                       id="refresh-these-button"
-                       href="<?php echo $this->urlThese()->refreshTheseUrl($these, $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)); ?>"
-                    ><span class="icon icon-import"></span> <strong>Mettre à jour</strong> la thèse à partir de
-                        <?php echo $these->getSource() ?></a>
+<!--                    <a-->
+<!--                        --><?php ///** @see  \Soutenance\Controller\PresoutenanceController::presoutenanceAction() */ ?>
+<!--                        class="btn btn-secondary btn-sm"-->
+<!--                       id="refresh-these-button"-->
+<!--                       href="--><?php //echo $this->urlThese()->refreshTheseUrl($these, $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)); ?><!--"-->
+<!--                    ><span class="icon icon-import"></span> <strong>Mettre à jour</strong> la thèse à partir de-->
+<!--                        --><?php //echo $these->getSource() ?><!--</a>-->
 
                 </p>
 <!--                <span class="small">-->
@@ -89,6 +90,8 @@ $canAssocierMembreIndividu              = $this->isAllowed($these, Presoutenance
             <?php endforeach; ?>
             </tbody>
         </table>
+
+        <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Association jury"); ?>
 
     </div>
 

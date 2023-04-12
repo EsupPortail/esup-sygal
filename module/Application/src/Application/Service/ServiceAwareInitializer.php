@@ -4,15 +4,15 @@ namespace Application\Service;
 
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
-use These\Service\FichierThese\FichierTheseService;
+use Depot\Service\FichierThese\FichierTheseService;
 use Individu\Service\IndividuService;
 use Application\Service\Role\RoleService;
 use These\Service\These\TheseService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 use Application\Service\Validation\ValidationService;
-use Application\Service\ValiditeFichier\ValiditeFichierService;
+use Fichier\Service\ValiditeFichier\ValiditeFichierService;
 use Fichier\Service\VersionFichier\VersionFichierService;
-use Application\Service\Workflow\WorkflowService;
+use Depot\Service\Workflow\WorkflowService;
 use Interop\Container\ContainerInterface;
 use Retraitement\Service\RetraitementService;
 use Laminas\ServiceManager\Initializer\InitializerInterface;

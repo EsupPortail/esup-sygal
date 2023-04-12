@@ -2,13 +2,13 @@
 
 /**
  * @see \Structure\Controller\UniteRechercheController::informationAction()
- * @var UniteRecherche              $unite
- * @var array                       $roleListing     (string => int)
- * @var IndividuRole[]              $individuRoles
+ * @var UniteRecherche $unite
+ * @var array $roleListing (string => int)
+ * @var IndividuRole[] $individuRoles
  * @var EtablissementRattachement[] $etablissementsRattachements
- * @var string                      $logoContent
- * @var array                       $coencadrants
- * @var string[]                    $contenus
+ * @var string $logoContent
+ * @var array $coencadrants
+ * @var string[] $contenus
  */
 
 use Structure\Controller\StructureController;
@@ -75,45 +75,17 @@ $structure = $unite->getStructure();
 </ul>
 
 <div class="<?php echo $tab === StructureController::TAB_infos ? '' : 'd-none' ?>" id="informations">
-    <h2>
-        Informations générales
-    </h2>
     <div class="row">
         <div class="col-md-8">
+            <h2>
+                Informations générales
+            </h2>
             <dl>
-                <dt> Libelle :</dt>
-                <dd>    <?php echo $unite->getStructure()->getLibelle(); ?>     </dd>
-                <dt> Sigle :</dt>
-                <dd>    <?php echo $unite->getStructure()->getSigle(); ?>       </dd>
-                <dt> Code :</dt>
-                <dd>    <?php echo $unite->getStructure()->getCode(); ?>        </dd>
-                <dt> Id REF: </dt>
-                <dd>
-                    <?php if ($unite->getStructure()->getIdRef() !== null AND trim($unite->getStructure()->getIdRef()) !== "") : ?>
-                        <?php echo $unite->getStructure()->getIdRef(); ?>
-                    <?php else : ?>
-                        (Non renseigné)
-                    <?php endif; ?>
-                </dd>
-                <dt> Id HAL :</dt>
-                <dd>
-                    <?php if ($unite->getStructure()->getIdHal() !== null AND trim($unite->getStructure()->getIdHal()) !== "") : ?>
-                        <?php echo $unite->getStructure()->getIdHal(); ?>
-                    <?php else : ?>
-                        (Non renseigné)
-                    <?php endif; ?>
-                </dd>
-                <dt> Identifiant RNSR :</dt>
-                <dd>    <?php echo $unite->getRNSR(); ?>        </dd>
-                <dt> Établissement(s) de rattachement :</dt>
-                <dd>
-                    <ul>
-                        <?php foreach ($etablissementsRattachements as $etablissementRattachement) : ?>
-                            <li> <?php echo $etablissementRattachement->getEtablissement()->getStructure()->getLibelle(); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </dd>
-                <dt> Domaine(s) scientifique(s) :</dt>
+                <dt>Libelle :</dt>
+                <dd><?php echo $unite->getStructure()->getLibelle(); ?></dd>
+                <dt>Sigle :</dt>
+                <dd><?php echo $unite->getStructure()->getSigle(); ?></dd>
+                <dt>Domaine(s) scientifique(s) :</dt>
                 <dd>
                     <ul>
                         <?php foreach ($unite->getDomaines() as $domaineScientifique) : ?>
@@ -121,14 +93,48 @@ $structure = $unite->getStructure();
                         <?php endforeach; ?>
                     </ul>
                 </dd>
-                <dt> Statut :</dt>
+                <dt>Établissement(s) de rattachement :</dt>
+                <dd>
+                    <ul>
+                        <?php foreach ($etablissementsRattachements as $etablissementRattachement) : ?>
+                            <li> <?php echo $etablissementRattachement->getEtablissement()->getStructure()->getLibelle(); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </dd>
+                <dt>Statut :</dt>
                 <dd>
                     <?php if ($unite->getStructure()->estFermee()) : ?>
-                        <span class="badge bg-secondary" style="background-color:darkred">Structure fermée</span>
+                        <span class="badge bg-danger">Structure fermée</span>
                     <?php else : ?>
-                        <span class="badge bg-secondary" style="background-color:darkgreen">Structure ouverte</span>
+                        <span class="badge bg-success">Structure ouverte</span>
                     <?php endif; ?>
                 </dd>
+            </dl>
+
+            <h2>
+                Informations techniques
+            </h2>
+            <dl>
+                <dt>IdRef :</dt>
+                <dd>
+                    <?php if ($unite->getStructure()->getIdRef() !== null and trim($unite->getStructure()->getIdRef()) !== "") : ?>
+                        <?php echo $this->idrefLink($unite->getStructure()->getIdRef()); ?>
+                    <?php else : ?>
+                        (Non renseigné)
+                    <?php endif; ?>
+                </dd>
+                <dt>Id HAL :</dt>
+                <dd>
+                    <?php if ($unite->getStructure()->getIdHal() !== null and trim($unite->getStructure()->getIdHal()) !== "") : ?>
+                        <?php echo $unite->getStructure()->getIdHal(); ?>
+                    <?php else : ?>
+                        (Non renseigné)
+                    <?php endif; ?>
+                </dd>
+                <dt>Identifiant RNSR :</dt>
+                <dd><?php echo $unite->getRNSR(); ?></dd>
+                <dt>Code :</dt>
+                <dd><?php echo $unite->getStructure()->getCode(); ?></dd>
             </dl>
         </div>
         <div class="col-md-4">
@@ -177,9 +183,9 @@ $structure = $unite->getStructure();
         <tr>
             <th> Dénomination</th>
             <th> Adresse électronique</th>
-            <th> Site </th>
+            <th> Site</th>
             <th> Rôle</th>
-            <th> &nbsp; </th>
+            <th> &nbsp;</th>
         </tr>
         </thead>
         <tbody>
@@ -190,12 +196,13 @@ $structure = $unite->getStructure();
             ?>
             <tr>
                 <td> <?php echo $individu->getNomComplet(); ?> </td>
-                <td> <?php echo $individu->getEmail(); ?> </td>
+                <td> <?php echo $individu->getEmailPro(); ?> </td>
                 <td> <?php echo $individu->getEtablissement(); ?> </td>
                 <td> <?php echo $role->getLibelle(); ?> </td>
                 <td>
                     <?php if ($canEdit) : ?>
-                        <a href="<?php echo $this->url("individu-compl/gerer", ['individu' => $individu->getId()], [], true); ?>" class="ajax-modal" data-event="modification">
+                        <a href="<?php echo $this->url("individu-compl/gerer", ['individu' => $individu->getId()], [], true); ?>"
+                           class="ajax-modal" data-event="modification">
                             <span class="icon icon-editer" title="Ajouter/Modifier un complément"></span></a>
                     <?php endif; ?>
                 </td>
@@ -206,7 +213,7 @@ $structure = $unite->getStructure();
 
     <?php if ($canAddRole && empty($roleListing)): ?>
         <a href="<?php echo $this->url('structure/generer-roles-defauts', [
-            'id'   => $unite->getStructure()->getId(),
+            'id' => $unite->getStructure()->getId(),
             'type' => TypeStructure::CODE_UNITE_RECHERCHE], [], true); ?>"
            class="btn btn-warning"><span class="fas fa-cog"></span>Générer rôles par défaut</a>
     <?php endif; ?>
@@ -220,7 +227,7 @@ $structure = $unite->getStructure();
         <span class="badge bg-secondary"> <?php echo count($coencadrants); ?> </span>
     </h2>
 
-    <?php if($canCoencadrantExport) : ?>
+    <?php if ($canCoencadrantExport) : ?>
         <?php /** @see \These\Controller\CoEncadrantController::genererExportCsvAction() */ ?>
         <a href="<?php echo $this->url('co-encadrant/generer-export-csv', ['structure-type' => 'unite-recherche', 'structure-id' => $unite->getId()], [], true); ?>"
            class="btn btn-primary"
@@ -244,7 +251,7 @@ $structure = $unite->getStructure();
                 <?php echo $acteur->getIndividu()->getNomUsuel(); ?>
                 (<?php echo $count; ?> co-encadrement<?php if ($count > 1) echo "s"; ?>.)
                 <?php if ($canCoencadrantAfficher) : ?>
-                    <a href="<?php echo $this->url('co-encadrant/historique', ['co-encadrant' => $acteur->getId()],[], true); ?>">
+                    <a href="<?php echo $this->url('co-encadrant/historique', ['co-encadrant' => $acteur->getId()], [], true); ?>">
                         <span class="icon icon-voir" title="Accéder à l'historique de co-encadrement"></span></a>
                 <?php endif; ?>
             </li>
@@ -261,7 +268,7 @@ $structure = $unite->getStructure();
 
 
 <script>
-    $(function() {
+    $(function () {
         $("body").on("modification", function (event) {
             event.div.modal('hide');
             window.location.reload();

@@ -1,6 +1,7 @@
 <?php
 
 use Application\View\Renderer\PhpRenderer;
+use UnicaenIdref\Domain\Index1;
 
 /**
  * @var \Individu\Form\IndividuForm $form
@@ -24,7 +25,7 @@ $form->setAttribute('class', 'row')->prepare();
         </div>
         <div class="row">
             <div class="col-md-6">
-                <?php echo $this->formControlGroup($form->get('nomUsuel')) ?>
+                <?php echo $this->formControlGroup($form->get('nomUsuel')->setAttribute('id', 'nomUsuel')) ?>
             </div>
             <div class="col-md-6">
                 <?php echo $this->formControlGroup($form->get('nomPatronymique')) ?>
@@ -32,7 +33,7 @@ $form->setAttribute('class', 'row')->prepare();
         </div>
         <div class="row">
             <div class="col-md-5">
-                <?php echo $this->formControlGroup($form->get('prenom1')) ?>
+                <?php echo $this->formControlGroup($form->get('prenom1')->setAttribute('id', 'prenom1')) ?>
             </div>
             <div class="col-md-5">
                 <?php echo $this->formControlGroup($form->get('prenom2')) ?>
@@ -49,6 +50,17 @@ $form->setAttribute('class', 'row')->prepare();
         </div>
         <div class="col-md-4">
             <?php echo $this->formControlGroup($form->get('supannId')) ?>
+        </div>
+        <div class="row">
+            <div class="col-md-5">
+                <?php echo $this->formControlGroup($form->get('idRef')->setAttribute('id', 'idRef')) ?>
+            </div>
+            <div class="col-md-2">
+                <?php echo $this->idrefPopupTrigger([
+                    ['Index1' => Index1::INDEX_Ppn, 'Index1Value' => ['idRef']],
+                    ['Index1' => Index1::INDEX_NomDePersonne, 'Index1Value' => ['nomUsuel', 'prenom1']],
+                ], 'idRef') ?>
+            </div>
         </div>
         <?php echo $this->formSubmit($form->get('submit')) ?>
         <?php echo $this->form()->closeTag() ?>

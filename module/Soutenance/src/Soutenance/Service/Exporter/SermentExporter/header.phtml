@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @var string|null $cheminLogoComue
+ * @var string|null $cheminLogoEtablissement
+ */
+
+?>
+
+
+<?php if ($cheminLogoComue !== null) : ?>
+    <img src="<?php echo $cheminLogoComue; ?>" style="max-height:40mm; max-width:60mm;"/>
+<?php endif; ?>
+<?php if ($cheminLogoEtablissement !== null) : ?>
+    <img src="<?php echo $cheminLogoEtablissement; ?>" style="max-height:40mm; max-width:60mm;"/>
+<?php endif; ?>

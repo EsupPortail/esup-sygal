@@ -2,10 +2,11 @@
 
 namespace Application\View\Renderer;
 
+use Depot\View\Helper\Url\UrlDepotHelper;
 use Structure\Entity\Db\EcoleDoctorale;
 use These\Entity\Db\These;
 use Application\Entity\Db\Validation;
-use Application\Entity\Db\VWorkflow;
+use Depot\Entity\Db\VWorkflow;
 use Application\View\Helper\Actualite\ActualiteViewHelper;
 use Structure\View\Helper\EcoleDoctoraleHelper;
 use Application\View\Helper\EscapeTextHelper;
@@ -13,11 +14,12 @@ use Application\View\Helper\FinancementFormatterHelper;
 use Structure\View\Helper\StructureSubstitHelper;
 use These\View\Helper\Url\UrlTheseHelper;
 use Application\View\Helper\ValidationViewHelper;
-use Application\View\Helper\Workflow\RoadmapHelper;
-use Application\View\Helper\Workflow\WorkflowHelper;
-use Application\View\Helper\Workflow\WorkflowStepHelper;
+use Depot\View\Helper\Workflow\RoadmapHelper;
+use Depot\View\Helper\Workflow\WorkflowHelper;
+use Depot\View\Helper\Workflow\WorkflowStepHelper;
 use UnicaenApp\Message\View\Helper\MessageHelper;
 use UnicaenApp\View\Helper\AppInfos;
+use UnicaenIdref\View\Helper\IdrefLinkViewHelper;
 
 /**
  * Description of PhpRenderer
@@ -131,6 +133,8 @@ use UnicaenApp\View\Helper\AppInfos;
  *
  * @method \UnicaenAlerte\View\Helper\AlerteViewHelper alertes()
  *
+ * @method \UnicaenIdref\View\Helper\IdrefPopupTriggerViewHelper idrefPopupTrigger(array $sourceElements, ?string $destinationElement = null)
+ *
  * @method boolean isAllowed($resource, $privilege = null)
  *
  * @method array                                              queryParams()
@@ -146,11 +150,13 @@ use UnicaenApp\View\Helper\AppInfos;
  * @method ValidationViewHelper  validation(Validation $validation = null)
  * @method EcoleDoctoraleHelper  ed(EcoleDoctorale $ecole)
  *
- * @method UrlTheseHelper urlThese()
+ * @method UrlDepotHelper urlThese()
  * @method StructureSubstitHelper structureSubstitHelper()
  * @method FinancementFormatterHelper financementFormatter()
  *
  * @method ActualiteViewHelper actualite()
+ *
+ * @method IdrefLinkViewHelper idrefLink(string $ppn)
  *
  * @author UnicaenCode
  */

@@ -7,7 +7,8 @@ use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
 /**
- * ValiditeFichier
+ * Classe d'entité se voulant générique.
+ * Le seul usage est pour l'instant : valide = archivable.
  */
 class ValiditeFichier implements HistoriqueAwareInterface
 {
@@ -45,7 +46,7 @@ class ValiditeFichier implements HistoriqueAwareInterface
     {
         return implode(PHP_EOL, [
             '- Date: ' . $this->getHistoModification()->format('d/m/Y H:i:s'),
-            '- Archivable: ' . $this->getEstValideToString(),
+            '- Valide: ' . $this->getEstValideToString(),
             '- Message: ' . $this->getMessage(),
             '- Log: ' . $this->getLog(),
         ]);
@@ -68,7 +69,7 @@ class ValiditeFichier implements HistoriqueAwareInterface
      *
      * @return ValiditeFichier
      */
-    public function setEstValide($estValide = true)
+    public function setEstValide(?bool $estValide = true): self
     {
         $this->estValide = $estValide;
 
@@ -79,28 +80,21 @@ class ValiditeFichier implements HistoriqueAwareInterface
      * Get estValide
      *
      * @return bool|null
-     * <code>true</code>  : archivable ;
-     * <code>false</code> : non archivable ;
-     * <code>null</code>  : archivabilité indéterminée car plantage lors du test.
+     * <code>true</code>  : valide (ex : archivable) ;
+     * <code>false</code> : non valide (ex : non archivable) ;
+     * <code>null</code>  : validité indéterminée (ex : archivabilité indéterminée car plantage lors du test).
      */
-    public function getEstValide()
+    public function getEstValide(): ?bool
     {
         return $this->estValide;
     }
 
-    /**
-     * Get estValide
-     *
-     * @return bool|null
-     * <code>true</code>  : archivable ;
-     * <code>false</code> : non archivable ;
-     * <code>null</code>  : archivabilité indéterminée car plantage lors du test.
-     */
-    public function getEstValideToString()
+    public function getEstValideToString(): string
     {
         if ($this->estValide === null) {
             return 'Indéterminé';
         }
+
         return $this->estValide ? 'Oui' : 'Non';
     }
 

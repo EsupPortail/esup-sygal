@@ -16,7 +16,7 @@ use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\TypeStructure;
 use Structure\Provider\Privilege\StructurePrivileges;
 
-$this->headTitle('Details de l\'établissement ['.$etablissement->getStructure()->getLibelle().']');
+$this->headTitle("Établissement '{$etablissement->getStructure()->getLibelle()}'");
 
 $canAddRole = true;
 $canModifierEtablissement = $this->isAllowed(StructurePrivileges::getResourceId(StructurePrivileges::STRUCTURE_MODIFICATION_TOUTES_STRUCTURES));
@@ -25,7 +25,7 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
 ?>
 
 <h1 class="page-header">
-    Details de l'établissement [  <?php echo $etablissement->getStructure()->getLibelle(); ?> ]
+    Établissement &laquo; <?php echo $etablissement->getStructure()->getLibelle(); ?> &raquo;
 </h1>
 
 <?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
@@ -63,42 +63,78 @@ $tab = $this->queryParams()['tab'] ?? StructureController::TAB_infos;
 </ul>
 
 <div class="<?php echo $tab === StructureController::TAB_infos ? '' : 'd-none' ?>" id="informations">
-    <h2>
-        Informations générales
-    </h2>
     <div class="row">
         <div class="col-md-6">
+            <h2>
+                Informations générales
+            </h2>
             <dl>
-                <dt> Libelle : </dt>                <dd>    <?php echo $etablissement->getStructure()->getLibelle(); ?>     </dd>
-                <dt> Sigle : </dt>                  <dd>    <?php echo $etablissement->getStructure()->getSigle() ?: "(Non renseigné)"; ?></dd>
-                <dt> Adresse : </dt>                <dd>    <?php echo $etablissement->getStructure()->getAdresse() ?: "(Non renseignée)"; ?></dd>
-                <dt> Téléphone : </dt>              <dd>    <?php echo $etablissement->getStructure()->getTelephone() ?: "(Non renseigné)"; ?></dd>
-                <dt> Fax : </dt>                    <dd>    <?php echo $etablissement->getStructure()->getFax() ?: "(Non renseigné)"; ?></dd>
-                <dt> Adresse électronique : </dt>   <dd>    <?php echo $etablissement->getStructure()->getEmail() ?: "(Non renseignée)"; ?></dd>
-                <dt> Site internet : </dt>          <dd>    <?php echo $etablissement->getStructure()->getSiteWeb() ?: "(Non renseigné)"; ?></dd>
-                <dt> Code : </dt>                   <dd>    <?php echo $etablissement->getStructure()->getCode(); ?>        </dd>
-                <dt> Id REF: </dt>
+                <dt>Libelle :</dt>
+                <dd><?php echo $etablissement->getStructure()->getLibelle(); ?></dd>
+                <dt>Sigle :</dt>
+                <dd><?php echo $etablissement->getStructure()->getSigle() ?: "(Non renseigné)"; ?></dd>
+                <dt>Site internet :</dt>
+                <dd><?php echo $etablissement->getStructure()->getSiteWeb() ?: "(Non renseigné)"; ?></dd>
+            </dl>
+
+            <h2>
+                Coordonnées
+            </h2>
+            <dl>
+                <dt>Adresse :</dt>
+                <dd><?php echo $etablissement->getStructure()->getAdresse() ?: "(Non renseignée)"; ?></dd>
+                <dt>Téléphone :</dt>
+                <dd><?php echo $etablissement->getStructure()->getTelephone() ?: "(Non renseigné)"; ?></dd>
+                <dt>Fax :</dt>
+                <dd><?php echo $etablissement->getStructure()->getFax() ?: "(Non renseigné)"; ?></dd>
+            </dl>
+
+            <h2>
+                Contact
+            </h2>
+            <dl>
+                <dt>Adresse électronique :</dt>
+                <dd><?php echo $etablissement->getStructure()->getEmail() ?: "(Non renseignée)"; ?></dd>
+                <dt>Adresse électronique d'Assistance:</dt>
+                <dd><?php echo $etablissement->getEmailAssistance() ?: "(Non renseignée)"; ?></dd>
+                <dt>Adresse électronique pour les aspects Bibliothèque :</dt>
+                <dd><?php echo $etablissement->getEmailBibliotheque() ?: "(Non renseignée)"; ?></dd>
+                <dt>Adresse électronique pour les aspects Doctorat :</dt>
+                <dd><?php echo $etablissement->getEmailDoctorat() ?: "(Non renseignée)"; ?></dd>
+            </dl>
+
+            <h2>
+                Informations techniques
+            </h2>
+            <dl>
+                <dt>Code :</dt>
+                <dd><?php echo $etablissement->getStructure()->getCode(); ?></dd>
+                <dt>IdRef :</dt>
                 <dd>
-                    <?php if ($etablissement->getStructure()->getIdRef() !== null AND trim($etablissement->getStructure()->getIdRef()) !== "") : ?>
-                        <?php echo $etablissement->getStructure()->getIdRef(); ?>
+                    <?php if ($etablissement->getStructure()->getIdRef() !== null and trim($etablissement->getStructure()->getIdRef()) !== "") : ?>
+                        <?php echo $this->idrefLink($etablissement->getStructure()->getIdRef()); ?>
                     <?php else : ?>
                         (Non renseigné)
                     <?php endif; ?>
                 </dd>
-                <dt> Id HAL :</dt>
+                <dt>Id HAL :</dt>
                 <dd>
-                    <?php if ($etablissement->getStructure()->getIdHal() !== null AND trim($etablissement->getStructure()->getIdHal()) !== "") : ?>
+                    <?php if ($etablissement->getStructure()->getIdHal() !== null and trim($etablissement->getStructure()->getIdHal()) !== "") : ?>
                         <?php echo $etablissement->getStructure()->getIdHal(); ?>
                     <?php else : ?>
                         (Non renseigné)
                     <?php endif; ?>
                 </dd>
-                <dt> Domaine : </dt>                <dd>    <?php echo $etablissement->getDomaine() ?: "(Non renseigné)"; ?></dd>
+                <dt>Domaine :</dt>
+                <dd><?php echo $etablissement->getDomaine() ?: "(Non renseigné)"; ?></dd>
+            </dl>
+            <dl>
+
             </dl>
         </div>
         <div class="col-md-4">
             <dl>
-                <dt> Statut : </dt>     <dd>
+                <dt>Étiquettes associées : </dt>     <dd>
                     <?php if ($etablissement->estMembre()): ?>
                         <span class="badge bg-primary">Membre</span>
                     <?php endif ?>

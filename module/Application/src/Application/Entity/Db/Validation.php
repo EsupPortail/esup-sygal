@@ -162,4 +162,25 @@ class Validation implements HistoriqueAwareInterface, ResourceInterface
     {
         return 'Validation';
     }
+
+    /** Fonction pour les macros du module UnicaenRenderer ************************************************************/
+
+    /**
+     * @noinspection
+     * @return string
+     */
+    public function getAuteurToString() : string
+    {
+        $displayname = $this->getIndividu()->getNomComplet(false, false, false, true);
+        return $displayname;
+    }
+    /**
+     * @noinspection
+     * @return string
+     */
+    public function getDateToString() : string
+    {
+        $date = $this->getHistoCreation()->format('d/m/Y à H:i');
+        return $date;
+    }
 }

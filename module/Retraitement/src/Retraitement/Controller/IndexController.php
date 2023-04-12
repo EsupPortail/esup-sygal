@@ -3,16 +3,17 @@
 namespace Retraitement\Controller;
 
 use Application\Controller\AbstractController;
-use These\Entity\Db\FichierThese;
 use Application\EventRouterReplacerAwareTrait;
-use These\Service\FichierThese\FichierTheseServiceAwareInterface;
-use These\Service\FichierThese\FichierTheseServiceAwareTrait;
-use Application\Service\Notification\NotifierServiceAwareTrait;
+use Depot\Entity\Db\FichierThese;
+use Depot\Service\FichierThese\FichierTheseServiceAwareInterface;
+use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Depot\Service\Notification\DepotNotificationFactoryAwareTrait;
+use Notification\Service\NotifierServiceAwareTrait;
 use Retraitement\Form\Retraitement;
+use Unicaen\Console\Request as ConsoleRequest;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Filter\BytesFormatter;
 use UnicaenAuth\ORM\Event\Listeners\HistoriqueListener;
-use Unicaen\Console\Request as ConsoleRequest;
 
 class IndexController extends AbstractController
     implements FichierTheseServiceAwareInterface
@@ -20,6 +21,7 @@ class IndexController extends AbstractController
     use EventRouterReplacerAwareTrait;
     use FichierTheseServiceAwareTrait;
     use NotifierServiceAwareTrait;
+    use DepotNotificationFactoryAwareTrait;
 
     public function indexAction()
     {
@@ -113,7 +115,7 @@ class IndexController extends AbstractController
 
         if ($notifier) {
             $destinataires = $notifier;
-            $notif = $this->notifierService->getNotificationFactory()->createNotificationForRetraitementFini($destinataires, $fichierTheseRetraite, $validite);
+            $notif = $this->depotNotificationFactory->createNotificationForRetraitementFini($destinataires, $fichierTheseRetraite, $validite);
             $this->notifierService->trigger($notif);
             echo "Destinataires du courriel envoyé: " . implode(",",$notif->getTo());
             echo PHP_EOL;

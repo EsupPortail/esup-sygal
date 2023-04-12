@@ -93,10 +93,10 @@ $structure = $ecole->getStructure();
                     <dd>    <?php echo $ecole->getStructure()->getSigle(); ?>       </dd>
                     <dt> Code :</dt>
                     <dd>    <?php echo $ecole->getStructure()->getCode(); ?>        </dd>
-                    <dt> Id REF :</dt>
+                    <dt>IdRef :</dt>
                     <dd>
                         <?php if ($ecole->getStructure()->getIdRef() !== null AND trim($ecole->getStructure()->getIdRef()) !== "") : ?>
-                            <?php echo $ecole->getStructure()->getIdRef(); ?>
+                            <?php echo $this->idrefLink($ecole->getStructure()->getIdRef()); ?>
                         <?php else : ?>
                             (Non renseigné)
                         <?php endif; ?>
@@ -179,7 +179,7 @@ $structure = $ecole->getStructure();
                 ?>
                 <tr>
                     <td> <?php echo $individu->getNomComplet(); ?> </td>
-                    <td> <?php echo $individu->getEmail(); ?> </td>
+                    <td> <?php echo $individu->getEmailPro(); ?> </td>
                     <td> <?php echo $individu->getEtablissement(); ?> </td>
                     <td> <?php echo $role->getLibelle(); ?> </td>
                     <td>

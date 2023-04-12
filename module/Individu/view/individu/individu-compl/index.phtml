@@ -65,8 +65,8 @@ $canHistoriser = $canAjouter;
                    title="Voir les détails de cet individu"><?php echo $complement->getIndividu() ?></a>
             </td>
             <td>
-                <?php if ($complement->getEmail()) : ?>
-                    <?php echo $complement->getEmail(); ?>
+                <?php if ($complement->getEmailPro()) : ?>
+                    <?php echo $complement->getEmailPro(); ?>
                 <?php else: ?>
                     (Non renseigné&middot;e)
                 <?php endif; ?>

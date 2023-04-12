@@ -19,6 +19,7 @@
         <field name="prenom1" column="PRENOM1"/>
         <field name="prenom2" column="PRENOM2"/>
         <field name="prenom3" column="PRENOM3"/>
+        <field name="idRef" column="ID_REF" nullable="true"/>
 
         <field name="sourceCode" column="SOURCE_CODE" nullable="true"/>
 
@@ -33,7 +34,11 @@
             </join-table>
         </many-to-many>
 
-        <one-to-many target-entity="Application\Entity\Db\MailConfirmation" mapped-by="individu" field="mailsConfirmations"/>
+        <one-to-many target-entity="Application\Entity\Db\MailConfirmation" mapped-by="individu" field="mailsConfirmations">
+            <order-by>
+                <order-by-field name="id" direction="DESC"/>
+            </order-by>
+        </one-to-many>
         <one-to-many target-entity="Application\Entity\Db\Utilisateur" mapped-by="individu" field="utilisateurs"/>
         <one-to-many target-entity="Individu\Entity\Db\IndividuCompl" mapped-by="individu" field="complements"/>
 

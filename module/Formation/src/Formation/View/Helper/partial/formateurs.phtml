@@ -10,6 +10,7 @@ use Formation\Entity\Db\Session;
  * @var array $options
  */
 
+$displayType = $options['display-type'];
 
 /** @var Formateur[] $formateurs */
 $formateurs = $session->getFormateurs()->toArray();
@@ -19,14 +20,19 @@ usort($formateurs, function(Formateur $a, Formateur $b) { return $a->getIndividu
 ?>
 
 <?php if (!empty($formateurs)) : ?>
-    <ul>
-        <?php foreach ($formateurs as $formateur) : ?>
-        <li>
-            <?php echo $formateur->getIndividu()->getNomComplet(); ?>
-        </li>
-        <?php endforeach; ?>
-    </ul>
+    <?php if ($displayType === 'liste') : ?>
+        <ul>
+            <?php foreach ($formateurs as $formateur) : ?>
+            <li>
+                <?php echo $formateur->getIndividu()->getNomComplet(); ?>
+            </li>
+            <?php endforeach; ?>
+        </ul>
+    <?php else : ?>
+        <?php $array = []; foreach ($formateurs as $formateur) { $array[] = $formateur->getIndividu()->getNomComplet();} ?>
+        <?php echo implode('<br/>', $array); ?>
+    <?php endif; ?>
 <?php else : ?>
-    Aucun formateur&middot;trice
+    <span class="text-danger">Aucun·e formateur&middot;trice</span>
 <?php endif; ?>
 

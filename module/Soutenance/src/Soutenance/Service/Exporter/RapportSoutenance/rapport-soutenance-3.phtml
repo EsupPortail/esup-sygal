@@ -1,0 +1,30 @@
+<?php
+
+/** @var PdcData $informations */
+
+use These\Service\FichierThese\PdcData;
+
+$membres = $informations->getJury();
+$position = 0;
+$nbPerLine = 3;
+$width = (100 / $nbPerLine);
+?>
+
+Fait à ........................................, le ........................................
+
+<br/>&nbsp;<br/>&nbsp;<br/>&nbsp;
+
+<table style="width: 100%;">
+    <tr>
+        <?php foreach ($membres as $membre) : ?>
+        <td style="width:<?php echo $width; ?>%">
+            <?php echo $membre->getIndividu()->getNomComplet(true, true, false, true); ?><br/>
+            <br/>&nbsp;<br/>&nbsp;<br/>&nbsp;<br/>&nbsp;<br/>&nbsp;<br/>&nbsp; <br/>&nbsp;<br/>&nbsp;<br/>&nbsp;
+            <?php $position += 1; ?>
+        </td>
+        <?php if ($position % $nbPerLine === 0) : ?>
+    </tr><tr>
+        <?php endif; ?>
+        <?php endforeach; ?>
+    </tr>
+</table>

@@ -64,14 +64,14 @@ return [
                     'controller' => PresoutenanceController::class,
                     'action' => [
                         'date-rendu-rapport',
+                        'indiquer-dossier-complet',
                         'feu-vert',
                         'stopper-demarche',
                         'avis-soutenance',
                         'convocations',
-                        'proces-verbal-soutenance',
                         'modifier-adresse',
                         'envoyer-convocation',
-                        'rapport-technique',
+                        'transmettre-documents-direction-these',
                     ],
                     'privileges' => PresoutenancePrivileges::PRESOUTENANCE_DATE_RETOUR_MODIFICATION,
                 ],
@@ -80,6 +80,9 @@ return [
                     'action' => [
                         'convocation-doctorant',
                         'convocation-membre',
+                        'proces-verbal-soutenance',
+                        'rapport-soutenance',
+                        'rapport-technique',
                     ],
                     'roles' => [],
                 ],
@@ -176,6 +179,17 @@ return [
                                     ],
                                 ],
                             ],
+                            'rapport-soutenance' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/rapport-soutenance',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action' => 'rapport-soutenance',
+                                    ],
+                                ],
+                            ],
                             'rapport-technique' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
@@ -242,6 +256,17 @@ return [
                                     ],
                                 ],
                             ],
+                            'transmettre-documents-direction-these' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/transmettre-documents-direction-these',
+                                    'defaults' => [
+                                        'controller' => PresoutenanceController::class,
+                                        'action' => 'transmettre-documents-direction-these',
+                                    ],
+                                ],
+                            ],
                             'date-rendu-rapport' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
@@ -305,6 +330,18 @@ return [
                                     'defaults' => [
                                         'controller' => PresoutenanceController::class,
                                         'action' => 'revoquer-avis-soutenance',
+                                    ],
+                                ],
+                            ],
+                            'indiquer-dossier-complet' => [
+                                'type' => Literal::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/indiquer-dossier-complet',
+                                    'defaults' => [
+                                        /** @see PresoutenanceController::indiquerDossierCompletAction() */
+                                        'controller' => PresoutenanceController::class,
+                                        'action' => 'indiquer-dossier-complet',
                                     ],
                                 ],
                             ],

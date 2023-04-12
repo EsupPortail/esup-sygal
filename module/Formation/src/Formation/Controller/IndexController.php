@@ -4,15 +4,20 @@ namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
 use Doctorant\Entity\Db\Doctorant;
-use Individu\Entity\Db\Individu;
+use Doctorant\Service\DoctorantServiceAwareTrait;
 use Formation\Entity\Db\Inscription;
 use Formation\Entity\Db\Session;
-use UnicaenApp\Service\EntityManagerAwareTrait;
+use Formation\Provider\Parametre\FormationParametres;
+use Individu\Entity\Db\Individu;
 use Laminas\View\Model\ViewModel;
+use UnicaenApp\Service\EntityManagerAwareTrait;
+use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
 class IndexController extends AbstractController
 {
     use EntityManagerAwareTrait;
+    use DoctorantServiceAwareTrait;
+    use ParametreServiceAwareTrait;
 
     public function indexAction() : ViewModel
     {
@@ -26,7 +31,8 @@ class IndexController extends AbstractController
         if ($doctorantId !== null) {
             $doctorant = $this->getEntityManager()->getRepository(Doctorant::class)->find($doctorantId);
         } else {
-            $doctorant = null;
+            $user = $this->userContextService->getIdentityDb();
+            $doctorant = $this->doctorantService->getDoctorantsByUser($user);
         }
 
         if($doctorant) {
@@ -47,6 +53,7 @@ class IndexController extends AbstractController
             'ouvertes' => $ouvertes,
             'preparations' => $preparations,
             'inscriptions' => $inscriptions,
+            'delai' => $this->getParametreService()->getValeurForParametre(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE),
         ]);
     }
 

@@ -7,7 +7,7 @@ use Fichier\Entity\Db\NatureFichier;
 use These\Entity\Db\These;
 use Fichier\Entity\Db\VersionFichier;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use These\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;

@@ -10,7 +10,6 @@ use Application\Form\RapportCsiForm;
 use ComiteSuiviIndividuel\Service\Membre\MembreService;
 use Fichier\Service\Fichier\FichierService;
 use Individu\Service\IndividuService;
-use Application\Service\Notification\NotifierService;
 use Application\Service\Rapport\RapportService;
 use These\Service\These\TheseService;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
@@ -33,7 +32,6 @@ class RapportCsiControllerFactory
          * @var FichierService        $fichierService
          * @var RapportService        $rapportService
          * @var VersionFichierService $versionFichierService
-         * @var NotifierService       $notificationService
          * @var IndividuService       $individuService
          * @var ValidationService     $validationService
          * @var RapportForm           $rapportForm
@@ -44,7 +42,6 @@ class RapportCsiControllerFactory
         $fichierService = $container->get(FichierService::class);
         $rapportService = $container->get(RapportService::class);
         $versionFichierService = $container->get('VersionFichierService');
-        $notificationService = $container->get(NotifierService::class);
         $individuService = $container->get(IndividuService::class);
         $rapportForm = $container->get('FormElementManager')->get(RapportCsiForm::class);
         $validationService = $container->get(ValidationService::class);
@@ -59,7 +56,6 @@ class RapportCsiControllerFactory
         $controller->setRapportService($rapportService);
         $controller->setFichierService($fichierService);
         $controller->setVersionFichierService($versionFichierService);
-        $controller->setNotifierService($notificationService);
         $controller->setIndividuService($individuService);
         $controller->setForm($rapportForm);
         $controller->setValidationService($validationService);
@@ -68,7 +64,7 @@ class RapportCsiControllerFactory
         $controller->setTypeValidation($typeValidation);
         $controller->setMembreService($membreService);
 
-        $theseService->attach($controller->getEventManager());
+//        $theseService->attach($controller->getEventManager());
 
         return $controller;
     }

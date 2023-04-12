@@ -8,8 +8,9 @@
         }
     ],
     "require-dev": {
-        "unicaen/test": "dev-bg-php8",
-        "laminas/laminas-developer-tools": "^2.3"
+        "laminas/laminas-developer-tools": "^2.0",
+        "unicaen/code": "^6.0",
+        "unicaen/test": "^5.0"
     },
     "require": {
         "php": "^8.0",
@@ -32,10 +33,11 @@
         "aws/aws-sdk-php": "^3.226",
         "beberlei/assert": "^3.0",
         "guzzlehttp/guzzle": "^6.3",
-        "laminas/laminas-dependency-plugin": "^2.1",
         "laminas/laminas-development-mode": "^3.2",
+        "laminas/laminas-dependency-plugin": "^2.1",
         "laminas/laminas-feed": "^2.12",
         "laminas/laminas-soap": "^2.8",
+        "ramsey/uuid": "^3.3",
         "twig/twig": "^3.0",
         "webmozart/assert": "^1.3",
 
@@ -49,31 +51,46 @@
         "unicaen/faq": "^6.0",
         "unicaen/ldap": "^6.0",
         "unicaen/livelog": "^2.0",
-        "unicaen/renderer": "^6.0"
+        "unicaen/renderer": "^6.0",
+        "unicaen/pdf": "dev-bg-php8"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {
         "psr-0": {
             "Application\\": "module/Application/src",
-            "Retraitement\\": "module/Retraitement/src",
-            "Notification\\": "module/Notification/src",
+            "ComiteSuiviIndividuel\\": "module/ComiteSuiviIndividuel/src",
+            "Depot\\": "module/Depot/src",
+            "Doctorant\\": "module/Doctorant/src",
+            "Fichier\\": "module/Fichier/src",
+            "Formation\\": "module/Formation/src",
             "Import\\": "module/Import/src",
-            "StepStar\\": "module/StepStar/src"
+            "Indicateur\\": "module/Indicateur/src",
+            "Individu\\": "module/Individu/src",
+            "Information\\": "module/Information/src",
+            "Notification\\": "module/Notification/src",
+            "RapportActivite\\": "module/RapportActivite/src",
+            "Retraitement\\": "module/Retraitement/src",
+            "Soutenance\\": "module/Soutenance/src",
+            "StepStar\\": "module/StepStar/src",
+            "Structure\\": "module/Structure/src",
+            "These\\": "module/These/src",
+            "UnicaenAvis\\": "module/UnicaenAvis/src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "ApplicationUnitTest\\": "module/Application/tests/ApplicationUnitTest",
             "ApplicationFunctionalTest\\": "module/Application/tests/ApplicationFunctionalTest",
-            "RetraitementTest\\": "module/Retraitement/test/RetraitementTest",
-            "ImportTest\\": "module/Import/tests/ImportTest"
+            "ApplicationUnitTest\\": "module/Application/tests/ApplicationUnitTest",
+            "ImportTest\\": "module/Import/tests/ImportTest",
+            "RetraitementTest\\": "module/Retraitement/test/RetraitementTest"
         }
     },
     "scripts": {
         "post-install-cmd": [
             "mkdir -p public/unicaen && cp -r vendor/unicaen/app/public/unicaen public/",
             "mkdir -p public/unicaen && cp -r vendor/unicaen/db-import/public/unicaen public/",
+            "mkdir -p public/unicaen && cp -r vendor/unicaen/idref/public/unicaen public/",
             "mkdir -p vendor/mpdf/mpdf/ttfontdata && chmod -R 777 vendor/mpdf/mpdf/ttfontdata"
         ]
     },

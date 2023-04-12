@@ -3,16 +3,16 @@
 namespace These\Service\These\Factory;
 
 use Application\Service\DomaineScientifiqueService;
+use Application\Service\Financement\FinancementService;
+use Application\Service\UserContextService;
+use Interop\Container\ContainerInterface;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
 use Structure\Service\Etablissement\EtablissementService;
-use Application\Service\Financement\FinancementService;
 use Structure\Service\Structure\StructureService;
+use Structure\Service\UniteRecherche\UniteRechercheService;
 use These\Service\These\TheseSearchService;
 use These\Service\These\TheseService;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
-use Structure\Service\UniteRecherche\UniteRechercheService;
-use Application\Service\UserContextService;
-use Interop\Container\ContainerInterface;
 
 class TheseSearchServiceFactory
 {

@@ -24,6 +24,9 @@ class Etablissement
     const CODE_TOUT_ETABLISSEMENT_CONFONDU = 'Tous';
 
     protected $id;
+    protected ?string $emailAssistance = null;
+    protected ?string $emailBibliotheque = null;
+    protected ?string $emailDoctorat = null;
     protected $domaine;
     protected $theses;
     protected $doctorants;
@@ -100,6 +103,60 @@ class Etablissement
     public function getSourceCode(): ?string
     {
         return $this->sourceCode;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmailAssistance(): ?string
+    {
+        return $this->emailAssistance;
+    }
+
+    /**
+     * @param string|null $emailAssistance
+     * @return self
+     */
+    public function setEmailAssistance(?string $emailAssistance): self
+    {
+        $this->emailAssistance = $emailAssistance;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmailBibliotheque(): ?string
+    {
+        return $this->emailBibliotheque;
+    }
+
+    /**
+     * @param string|null $emailBibliotheque
+     * @return self
+     */
+    public function setEmailBibliotheque(?string $emailBibliotheque): self
+    {
+        $this->emailBibliotheque = $emailBibliotheque;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmailDoctorat(): ?string
+    {
+        return $this->emailDoctorat;
+    }
+
+    /**
+     * @param string|null $emailDoctorat
+     * @return self
+     */
+    public function setEmailDoctorat(?string $emailDoctorat): self
+    {
+        $this->emailDoctorat = $emailDoctorat;
+        return $this;
     }
 
     /**

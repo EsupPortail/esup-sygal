@@ -386,4 +386,14 @@ class Role extends AbstractRole implements SourceAwareInterface, HistoriqueAware
         return $this->profils->contains($profil);
     }
 
+    public function estUsurpable(): bool
+    {
+        return in_array($this->getCode(), [
+            Role::CODE_DIRECTEUR_THESE,
+            Role::CODE_CODIRECTEUR_THESE,
+            Role::CODE_PRESIDENT_JURY,
+            Role::CODE_RAPPORTEUR_JURY,
+            Role::CODE_RAPPORTEUR_ABSENT,
+        ]);
+    }
 }

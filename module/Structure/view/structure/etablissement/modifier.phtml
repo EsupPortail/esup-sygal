@@ -4,6 +4,7 @@ use Structure\Controller\EtablissementController;
 use Structure\Entity\Db\Etablissement;
 use Structure\Form\EtablissementForm;
 use Application\View\Renderer\PhpRenderer;
+use UnicaenIdref\Domain\Index1;
 
 /**
  * @var PhpRenderer        $this
@@ -24,7 +25,7 @@ $etablissement = $form->getObject();
 $idEtablissement = $etablissement->getStructure()->getId();
 $isNew = $etablissement->getId() === null;
 $estSubstituee = $etablissement->getStructure()->estSubstituee();
-$estModifiable = !($etablissement->getSource()->getImportable());
+$estModifiable = !($etablissement->getSource() !== null AND $etablissement->getSource()->getImportable());
 $fcg = $this->formControlGroup();
 
 $editable = $isNew || (!$estSubstituee AND $estModifiable);
@@ -32,6 +33,16 @@ $form->get('libelle')->setAttribute('readonly', !$editable);
 $form->get('sigle')->setAttribute('readonly', !$editable);
 $form->get('code')->setAttribute('readonly', !$editable);
 ?>
+
+<h1 class="page-header">
+    <?php if ($isNew): ?>
+        Création d'un nouvel établissement
+    <?php else: ?>
+        Modification de l'établissement &laquo; <?php echo $etablissement ?> &raquo;
+    <?php endif ?>
+</h1>
+
+<?php echo $this->messenger()->addCurrentMessagesFromFlashMessengerWithNoNamespace(); ?>
 
 <?php if (!$editable) : ?>
     <div class="alert alert-warning">
@@ -58,75 +69,107 @@ $form->get('code')->setAttribute('readonly', !$editable);
 
 <div class="row">
     <div class="col-md-6">
-        <?php echo $fcg($form->get('libelle')) ?>
-        <?php echo $fcg($form->get('sigle')) ?>
-        <?php echo $fcg($form->get('adresse')) ?>
-        <?php echo $fcg($form->get('telephone')) ?>
-        <?php echo $fcg($form->get('fax')) ?>
-        <?php echo $fcg($form->get('email')) ?>
-        <?php echo $fcg($form->get('siteWeb')) ?>
-        <?php echo $fcg($form->get('code')) ?>
-        <?php echo $fcg($form->get('id_ref')) ?>
-        <?php echo $fcg($form->get('id_hal')) ?>
-        <?php echo $fcg($form->get('domaine')) ?>
+        <fieldset>
+            <legend><h2>Informations générales</h2></legend>
+            <?php echo $fcg($form->get('libelle')->setAttribute('id', 'libelle')) ?>
+            <?php echo $fcg($form->get('sigle')) ?>
+            <div class="row">
+                <div class="col-md-10"><?php echo $fcg($form->get('siteWeb')) ?></div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend><h2>Coordonnées</h2></legend>
+            <?php echo $fcg($form->get('adresse')) ?>
+            <div class="row">
+                <div class="col-md-4"><?php echo $fcg($form->get('telephone')) ?></div>
+                <div class="col-md-4"><?php echo $fcg($form->get('fax')) ?></div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend><h2>Contact</h2></legend>
+            <?php echo $fcg($form->get('email')) ?>
+            <?php echo $fcg($form->get('emailAssistance')) ?>
+            <?php echo $fcg($form->get('emailBibliotheque')) ?>
+            <?php echo $fcg($form->get('emailDoctorat')) ?>
+        </fieldset>
+        <fieldset>
+            <legend><h2>Informations techniques</h2></legend>
+            <div class="row">
+                <div class="col-md-5">
+                    <?php echo $fcg($form->get('id_ref')->setAttribute('id', 'idRef')) ?>
+                </div>
+                <div class="col-md-2">
+                    <?php echo $this->idrefPopupTrigger([
+                        ['Index1' => Index1::INDEX_Ppn, 'Index1Value' => ['idRef']],
+                        ['Index1' => Index1::INDEX_NomDeCollectivité, 'Index1Value' => ['libelle']],
+                    ], 'idRef') ?>
+                </div>
+            </div>
+            <?php echo $fcg($form->get('id_hal')) ?>
+            <?php echo $fcg($form->get('code')) ?>
+            <?php echo $fcg($form->get('domaine')) ?>
+        </fieldset>
     </div>
+
     <div class="col-md-6">
         <label class="form-label col-form-label">Étiquettes associées :</label>
         <?php echo $fcg($form->get('estMembre')) ?>
         <?php echo $fcg($form->get('estAssocie')) ?>
         <?php echo $fcg($form->get('estInscription')) ?>
         <?php echo $fcg($form->get('estFerme')) ?>
-    <div id="logo-div">
-        <?php
-        /** @var \Laminas\Form\Element\File $logoFile */
-        $logoFile = $form->get('cheminLogo');
-        echo $this->formLabel($logoFile);
-        ?>
 
-        <?php
-        $content = $logoContent;
-        if ($content === null) {
-            $form->getObject()->setCheminLogo(null);
-        }
-        ?>
-        <table>
-            <tr>
-                <td>
-                    <img
-                            id="logo"
-                        style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
-                        src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"
-                    />
-                </td>
-                <td style="padding:20px;">
-                    <?php
-                    echo $this->formFile($logoFile);
-                    echo $this->formElementErrors($logoFile);
-                    ?>
-                    <br/>
-                    <?php if($form->getObject()->getId()): ?>
-                    <a id="supprimer-logo" class="btn btn-danger" href="<?php echo $this->url('etablissement/supprimer-logo', ["structure" => $form->getObject()->getStructure()->getId()], [], true); ?>">
-                        <span class="icon icon-delete"></span>
-                        Supprimer le logo
-                    </a>
-                    <?php endif; ?>
-                </td>
-            </tr>
-        </table>
+        <div id="logo-div">
+            <?php
+            /** @var \Laminas\Form\Element\File $logoFile */
+            $logoFile = $form->get('cheminLogo');
+            echo $this->formLabel($logoFile);
+            ?>
 
-        <div class="alert alert-warning">
-            <small>
-                <span class="icon icon-warning"></span>
-                Le logo de la structure doit être donné dans un des formats suivant&nbsp;:
-                <ul>
-                    <li>.bmp</li>
-                    <li>.jpg, .jpeg</li>
-                    <li>.png</li>
-                </ul>
-            </small>
+            <?php
+            $content = $logoContent;
+            if ($content === null) {
+                $form->getObject()->getStructure()->setCheminLogo(null);
+            }
+            ?>
+            <table>
+                <tr>
+                    <td>
+                        <img
+                                id="logo"
+                            style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
+                            src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"
+                        />
+                    </td>
+                    <td style="padding:20px;">
+                        <?php
+                        echo $this->formFile($logoFile);
+                        echo $this->formElementErrors($logoFile);
+                        ?>
+                        <br/>
+                        <?php if($form->getObject()->getId()): ?>
+                        <a id="supprimer-logo" class="btn btn-danger" href="<?php echo $this->url('etablissement/supprimer-logo', ["structure" => $form->getObject()->getStructure()->getId()], [], true); ?>">
+                            <span class="icon icon-delete"></span>
+                            Supprimer le logo
+                        </a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="alert alert-warning">
+                <small>
+                    <span class="icon icon-warning"></span>
+                    Le logo de la structure doit être donné dans un des formats suivant&nbsp;:
+                    <ul>
+                        <li>.bmp</li>
+                        <li>.jpg, .jpeg</li>
+                        <li>.png</li>
+                    </ul>
+                </small>
+            </div>
         </div>
     </div>
-    </div>
+
 </div>
 <?php echo $this->formElement($form->get('submit')) ?>
 <?php echo $this->form()->closeTag() ?>

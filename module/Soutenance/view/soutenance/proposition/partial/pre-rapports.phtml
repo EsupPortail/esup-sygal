@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * @var These $these
+ * @var Avis[] $avis
+ */
+
+use Soutenance\Entity\Avis;
+use These\Entity\Db\These;
+
+?>
+
+<div class="box card">
+    <div class="card-header bg-dark text-white">
+        <h2>Pré-rapports de soutenance</h2>
+    </div>
+    <div class="card-body">
+        <div>
+            <?php if (empty($avis)) : ?>
+                <div class="alert alert-info">
+                    Aucun pré-rapport de déposer pour le moment.
+                </div>
+            <?php else : ?>
+            <table class="table table-condensed">
+                <thead>
+                <tr>
+                    <th> Rapporteur </th>
+                    <th> Avis </th>
+                    <th> Pré-rapport </th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($avis as $avi) : ?>
+                    <tr>
+                        <td> <?php echo $avi->getMembre()->getDenomination(); ?> </td>
+                        <td>
+                            <?php if ($avi->getAvis() === Avis::FAVORABLE) : ?>
+                                <span class="text-success">
+                                    <span class="icon icon-ok"></span>
+                                    Avis favorable
+                                </span>
+                            <?php else : ?>
+                                <span class="text-danger">
+                                    <span class="icon icon-kk"></span>
+                                    Avis défavorable
+                                </span>
+                            <?php endif; ?>
+                        <td>
+                            <?php /** @see \Soutenance\Controller\AvisController::telechargerAction() ?> */?>
+                            <a href="<?php echo $this->url('soutenance/avis-soutenance/telecharger', ['these' => $these->getId(), 'rapporteur' => $avi->getMembre()->getId()]); ?>">
+                                <span class="icon icon-pdf"></span> Télécharger le pré-rapport
+                            </a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>

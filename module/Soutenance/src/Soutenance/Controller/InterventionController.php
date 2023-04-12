@@ -3,25 +3,26 @@
 namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
+use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
-use These\Service\FichierThese\FichierTheseServiceAwareTrait;
-use These\Service\These\TheseServiceAwareTrait;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
 use Soutenance\Entity\Intervention;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
-use Soutenance\Entity\Parametre;
+use Soutenance\Provider\Parametre\SoutenanceParametres;
 use Soutenance\Service\Intervention\InterventionServiceAwareTrait;
 use Soutenance\Service\Justificatif\JustificatifServiceAwareTrait;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Laminas\Http\Response;
-use Laminas\View\Model\ViewModel;
+use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
-class InterventionController extends AbstractController {
+class InterventionController extends AbstractController
+{
     use EntityManagerAwareTrait;
     use FichierTheseServiceAwareTrait;
     use InterventionServiceAwareTrait;
@@ -31,12 +32,12 @@ class InterventionController extends AbstractController {
     use PropositionServiceAwareTrait;
     use TheseServiceAwareTrait;
 
-    public function indexAction()
+    public function indexAction() : ViewModel
     {
         return new ViewModel([]);
     }
 
-    public function afficherAction() : ViewModel
+    public function afficherAction(): ViewModel
     {
         $these = $this->getTheseService()->getRequestedThese($this);
         $proposition = $this->getPropositionService()->findOneForThese($these);
@@ -44,23 +45,23 @@ class InterventionController extends AbstractController {
         $distanciels = $this->getInterventionService()->getInterventionByTheseAndType($these, Intervention::TYPE_DISTANCIEL);
         $visios = $this->getInterventionService()->getInterventionByTheseAndType($these, Intervention::TYPE_VISIO_TARDIVE);
         $membres = [];
-        foreach($proposition->getMembres() as $membre) {
+        foreach ($proposition->getMembres() as $membre) {
             $membres[$membre->getId()] = $membre;
         }
 
         return new ViewModel([
             'these' => $these,
-            'distanciel' => (!empty($distanciels))?current($distanciels):null,
-            'visios' => (!empty($visios))?$visios:null,
+            'distanciel' => (!empty($distanciels)) ? current($distanciels) : null,
+            'visios' => (!empty($visios)) ? $visios : null,
             'proposition' => $proposition,
             'membres' => $membres,
             'justificatifs' => $justificatifs,
             'urlFichierThese' => $this->urlFichierThese(),
-            'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getParametreByCode(Parametre::CODE_FORMULAIRE_DELEGUATION)->getValeur(),
+            'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELEGATION_SIGNATURE),
         ]);
     }
 
-    public function togglePresidentDistancielAction()
+    public function togglePresidentDistancielAction() : Response
     {
         $these = $this->getTheseService()->getRequestedThese($this);
         $interventions = $this->getInterventionService()->getInterventionByTheseAndType($these, Intervention::TYPE_DISTANCIEL);
@@ -78,13 +79,13 @@ class InterventionController extends AbstractController {
                 $this->getInterventionService()->historiser($intervention);
                 break;
             default: //erreur
-                throw new RuntimeException("Plusieurs Intervention de type '".Intervention::TYPE_DISTANCIEL." pour la thèse '".$these->getId()."'.");
+                throw new RuntimeException("Plusieurs Intervention de type '" . Intervention::TYPE_DISTANCIEL . " pour la thèse '" . $these->getId() . "'.");
         }
 
         return $this->redirect()->toRoute('soutenance/intervention/afficher', ['these' => $these->getId()], [], true);
     }
 
-    public function ajouterVisioconferenceTardiveAction() : ViewModel
+    public function ajouterVisioconferenceTardiveAction(): ViewModel
     {
         $these = $this->getTheseService()->getRequestedThese($this);
         $proposition = $this->getPropositionService()->findOneForThese($these);
@@ -95,7 +96,7 @@ class InterventionController extends AbstractController {
             $files = $request->getFiles();
             $membre = $this->getMembreService()->find($data['membre']);
 
-            if ($membre !== null and ($files !== null AND !empty($files))) {
+            if ($membre !== null and ($files !== null and !empty($files))) {
 
                 // 1 - Justificatif
                 $files = ['files' => $files->toArray()];
@@ -123,7 +124,9 @@ class InterventionController extends AbstractController {
         }
 
         $membres = $proposition->getMembres()->toArray();
-        $membres = array_filter($membres, function(Membre $membre) { return $membre->isVisio() === false; });
+        $membres = array_filter($membres, function (Membre $membre) {
+            return $membre->isVisio() === false;
+        });
 
         return new ViewModel([
             'title' => "Ajout d'une déclaration de visioconférence tardive pour un membre du jury",
@@ -132,7 +135,7 @@ class InterventionController extends AbstractController {
         ]);
     }
 
-    public function supprimerVisioconferenceTardiveAction() : Response
+    public function supprimerVisioconferenceTardiveAction(): Response
     {
         $intervention = $this->getInterventionService()->getRequestedIntervention($this);
         $these = $intervention->getThese();

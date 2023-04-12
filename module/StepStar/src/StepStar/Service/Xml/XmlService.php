@@ -2,9 +2,9 @@
 
 namespace StepStar\Service\Xml;
 
-use These\Entity\Db\Diffusion;
+use Depot\Entity\Db\Diffusion;
 use Application\Entity\Db\MailConfirmation;
-use These\Entity\Db\MetadonneeThese;
+use Depot\Entity\Db\MetadonneeThese;
 use Application\Entity\Db\Role;
 use DateInterval;
 use DateTime;

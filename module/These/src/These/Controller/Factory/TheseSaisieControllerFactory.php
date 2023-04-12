@@ -2,17 +2,17 @@
 
 namespace These\Controller\Factory;
 
-use These\Controller\TheseSaisieController;
-use These\Form\TheseSaisie\TheseSaisieForm;
-use These\Service\Acteur\ActeurService;
-use Structure\Service\Etablissement\EtablissementService;
-use Individu\Service\IndividuService;
 use Application\Service\Source\SourceService;
-use These\Service\These\TheseService;
+use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Soutenance\Service\Qualite\QualiteService;
+use Structure\Service\Etablissement\EtablissementService;
+use These\Controller\TheseSaisieController;
+use These\Form\TheseSaisie\TheseSaisieForm;
+use These\Service\Acteur\ActeurService;
+use These\Service\These\TheseService;
 
 class TheseSaisieControllerFactory
 {

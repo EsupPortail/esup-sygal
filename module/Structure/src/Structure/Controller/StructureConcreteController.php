@@ -166,9 +166,10 @@ abstract class StructureConcreteController extends AbstractController
                 $test = $this->routeName .'/information';
                 return $this->redirect()->toRoute($this->routeName.'/information', ['structure' => $structureId], [], true);
             }
-            $this->flashMessenger()->addErrorMessage("Echec de la mise à jour : données incorrectes saissie");
 
-            return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureId]], true);
+            $this->flashMessenger()->addErrorMessage("Echec de la mise à jour : données incorrectes saisies.");
+
+            //return $this->redirect()->toRoute($this->routeName, [], ['query' => ['selected' => $structureId]], true);
         }
 
         return new ViewModel([

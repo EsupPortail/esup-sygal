@@ -6,14 +6,17 @@ use Application\Controller\AbstractController;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchServiceAwareTrait;
+use Formation\Provider\Parametre\FormationParametres;
 use Laminas\Http\Response;
 use Laminas\Paginator\Paginator as LaminasPaginator;
 use Laminas\View\Model\ViewModel;
+use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
 class AbstractRechercheController extends AbstractController implements SearchControllerInterface
 {
     use SearchServiceAwareTrait;
     use SearchControllerTrait;
+    use ParametreServiceAwareTrait;
 
     protected string $routeName;
     protected string $indexActionTemplate;
@@ -37,6 +40,7 @@ class AbstractRechercheController extends AbstractController implements SearchCo
             'paginator' => $paginator,
             'routeName' => $this->routeName,
             'returnUrl' => $this->getRequest()->getRequestUri(),
+            'delai' => $this->getParametreService()?$this->getParametreService()->getValeurForParametre(FormationParametres::CATEGORIE, FormationParametres::DELAI_ENQUETE):null,
         ]);
         $model->setTemplate($this->indexActionTemplate);
 

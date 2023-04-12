@@ -3,15 +3,15 @@
 namespace These\Entity\Db;
 
 use Application\Entity\Db\Role;
-use Individu\Entity\Db\IndividuAwareInterface;
 use Individu\Entity\Db\Individu;
+use Individu\Entity\Db\IndividuAwareInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Soutenance\Entity\Membre;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\UniteRecherche;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
-use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * --- Class Acteur ---

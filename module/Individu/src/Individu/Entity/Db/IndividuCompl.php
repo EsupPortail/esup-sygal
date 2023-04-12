@@ -14,8 +14,8 @@ class IndividuCompl implements HistoriqueAwareInterface {
     private $id;
     /** @var Individu $individu */
     private $individu;
-    /** @var string $email */
-    private $email;
+    /** @var string $emailPro */
+    private $emailPro;
     /** @var Etablissement $etablissement */
     private $etablissement;
     /** @var UniteRecherche $uniteRecherche */
@@ -48,20 +48,22 @@ class IndividuCompl implements HistoriqueAwareInterface {
     }
 
     /**
+     * Retourne l'adresse électronique professionnelle/institutionnelle.
+     *
      * @return string|null
      */
-    public function getEmail(): ?string
+    public function getEmailPro(): ?string
     {
-        return $this->email;
+        return $this->emailPro;
     }
 
     /**
      * @param string $email
      * @return IndividuCompl
      */
-    public function setEmail(string $email): IndividuCompl
+    public function setEmailPro(string $email): IndividuCompl
     {
-        $this->email = $email;
+        $this->emailPro = $email;
         return $this;
     }
 

@@ -7,13 +7,16 @@ use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Soutenance\Controller\AvisController;
 use Soutenance\Controller\EngagementImpartialiteController;
+use Soutenance\Controller\PropositionController;
 use Soutenance\Provider\Privilege\IndexPrivileges;
 use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Service\Membre\MembreService;
 use Soutenance\Service\Membre\MembreServiceFactory;
-use Soutenance\Service\Notifier\NotifierSoutenanceService;
-use Soutenance\Service\Notifier\NotifierSoutenanceServiceFactory;
+use Soutenance\Service\Notification\SoutenanceNotificationFactory;
+use Soutenance\Service\Notification\SoutenanceNotificationFactoryFactory;
+use Soutenance\Service\Url\UrlService;
+use Soutenance\Service\Url\UrlServiceFactory;
 use Soutenance\Service\Validation\ValidationService;
 use Soutenance\Service\Validation\ValidationServiceFactory;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -96,11 +99,21 @@ return array(
                                             'these',
                                         ],
                                     ],
+                                    'horodatages' => [
+                                        'label' => 'Horodatages des événements',
+                                        'route' => 'soutenance/proposition/horodatages',
+                                        'order' => 1000,
+                                        'resource' => PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION),
+                                        'withtarget' => true,
+                                        'paramsInject' => [
+                                            'these',
+                                        ],
+                                    ],
 //                                    'retard' => [
 //                                        'label' => 'Notifier attente de rapport',
 //                                        'route' => 'soutenance/notifier-retard-rapport-presoutenance',
 //                                        'order' => 500,
-//                                        'resource' => UtilisateurPrivileges::getResourceId(UtilisateurPrivileges::UTILISATEUR_MODIFICATION),
+//                                        'resource' => PresoutenancePrivileges::getResourceId(PresoutenancePrivileges::PRESOUTENANCE_PRESOUTENANCE_VISUALISATION),
 //                                    ],
                                 ],
                             ],
@@ -202,8 +215,9 @@ return array(
         'factories' => [
             //service
             MembreService::class => MembreServiceFactory::class,
-            NotifierSoutenanceService::class => NotifierSoutenanceServiceFactory::class,
+            SoutenanceNotificationFactory::class => SoutenanceNotificationFactoryFactory::class,
             ValidationService::class => ValidationServiceFactory::class,
+            UrlService::class => UrlServiceFactory::class,
         ],
     ],
 

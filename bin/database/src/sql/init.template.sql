@@ -7,6 +7,9 @@
 --      '{ETAB_SIGLE}' : sigle ou libellé court de l'établissement, ex: 'Unilim'
 --      '{ETAB_LIBELLE}' : libellé complet de l'établissement, ex: 'Université de Limoges'
 --      '{ETAB_DOMAINE}' : domaine de l'établissement, ex: 'unilim.fr'
+--      '{EMAIL_ASSISTANCE}' : Adresse électronique d'assistance
+--      '{EMAIL_BIBLIOTHEQUE}' : Adresse électronique par les aspects Bibliothèque
+--      '{EMAIL_DOCTORAT}' : Adresse électronique par les aspects Doctorat
 --
 
 --
@@ -14,32 +17,27 @@
 --
 -- 1/ STRUCTURE
 --
-insert into structure (id, source_code, code, sigle, libelle, type_structure_id, source_id, histo_createur_id, histo_modificateur_id)
+insert into structure (id, type_structure_id,
+                       source_code, source_id,
+                       code, sigle, libelle,
+                       histo_createur_id, histo_modificateur_id)
 select
-    nextval('structure_id_seq'),
-    '{ETAB_CODE}',
-    '{ETAB_CODE}',
-    '{ETAB_SIGLE}',
-    '{ETAB_LIBELLE}',
-    1,
-    1,
+    nextval('structure_id_seq'), 1, '{ETAB_CODE}', 1,
+    '{ETAB_CODE}', '{ETAB_SIGLE}', '{ETAB_LIBELLE}',
     1, 1
 ;
 
 --
 -- 2/ ETABLISSEMENT
 --
-insert into etablissement (id, structure_id, domaine, source_code, source_id, est_comue, est_membre,
-                           est_etab_inscription, histo_createur_id, histo_modificateur_id)
+insert into etablissement (id, structure_id, domaine, source_code, source_id,
+                           est_comue, est_membre, est_etab_inscription,
+                           email_assistance, email_bibliotheque, email_doctorat,
+                           histo_createur_id, histo_modificateur_id)
 select
-    nextval('etablissement_id_seq'),
-    s.id,
-    '{ETAB_DOMAINE}',
-    '{ETAB_CODE}',
-   1,
-    false,
-    true,
-    true,
+    nextval('etablissement_id_seq'), s.id, '{ETAB_DOMAINE}', '{ETAB_CODE}', 1,
+    false, true, true,
+    '{EMAIL_ASSISTANCE}', '{EMAIL_BIBLIOTHEQUE}', '{EMAIL_DOCTORAT}',
     1, 1
 from structure s
 where s.source_code = '{ETAB_CODE}'

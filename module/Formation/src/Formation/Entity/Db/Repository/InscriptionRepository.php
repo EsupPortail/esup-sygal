@@ -85,6 +85,8 @@ class InscriptionRepository extends EntityRepository
             ->setParameter('doctorant', $doctorant)
         ;
         $result = $qb->getQuery()->getResult();
+
+        usort($result, function (Inscription $a, Inscription $b) { return $a->getSession()->getDateDebut() > $b->getSession()->getDateDebut();});
         return $result;
     }
 

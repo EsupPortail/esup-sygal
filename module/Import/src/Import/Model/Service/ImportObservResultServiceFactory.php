@@ -2,7 +2,8 @@
 
 namespace Import\Model\Service;
 
-use Application\Service\Notification\NotifierService;
+use Notification\Service\NotifierService;
+use These\Service\Notification\TheseNotificationFactory;
 use These\Service\These\TheseService;
 use Application\Service\Variable\VariableService;
 use Doctrine\ORM\EntityManager;
@@ -15,7 +16,11 @@ use Laminas\Log\Writer\Stream;
 
 class ImportObservResultServiceFactory
 {
-    public function __invoke(ContainerInterface $container)
+    /**
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     */
+    public function __invoke(ContainerInterface $container): ImportObservResultService
     {
         /** @var EntityManager $em */
         $em = $container->get('doctrine.entitymanager.orm_default');
@@ -38,6 +43,10 @@ class ImportObservResultServiceFactory
         $service->setTheseService($theseService);
         $service->setNotifierService($notifierService);
         $service->setVariableService($variableService);
+
+        /** @var \These\Service\Notification\TheseNotificationFactory $theseNotificationFactory */
+        $theseNotificationFactory = $container->get(TheseNotificationFactory::class);
+        $service->setTheseNotificationFactory($theseNotificationFactory);
 
         if ($logger = $this->getLogger($container)) {
             $service->setLogger($logger);

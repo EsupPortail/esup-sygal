@@ -6,9 +6,8 @@ use Structure\Service\Etablissement\EtablissementService;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\NatureFichier\NatureFichierService;
-use Application\Service\Notification\NotifierService;
 use Structure\Service\StructureDocument\StructureDocumentService;
-use Application\Service\ValiditeFichier\ValiditeFichierService;
+use Fichier\Service\ValiditeFichier\ValiditeFichierService;
 use Fichier\Service\VersionFichier\VersionFichierService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
@@ -32,10 +31,9 @@ class RapportActiviteServiceFactory
          * @var FichierService $fichierService
          * @var \Fichier\Service\Fichier\FichierStorageService $fileService
          * @var VersionFichierService $versionFichierService
-         * @var ValiditeFichierService $validiteFichierService
+         * @var \Fichier\Service\ValiditeFichier\ValiditeFichierService $validiteFichierService
          * @var RetraitementService $retraitementService
          * @var EtablissementService $etablissementService
-         * @var NotifierService $notifierService
          * @var NatureFichierService $natureFichierService
          * @var RapportActiviteAvisService $rapportActiviteAvisService
          * @var RapportActiviteValidationService $rapportValidationService
@@ -45,7 +43,6 @@ class RapportActiviteServiceFactory
         $fileService = $container->get(FichierStorageService::class);
         $versionFichierService = $container->get('VersionFichierService');
         $etablissementService = $container->get('EtablissementService');
-        $notifierService = $container->get(NotifierService::class);
         $natureFichierService = $container->get('NatureFichierService');
         $rapportActiviteAvisService = $container->get(RapportActiviteAvisService::class);
         $rapportValidationService = $container->get(RapportActiviteValidationService::class);
@@ -58,7 +55,6 @@ class RapportActiviteServiceFactory
         $service->setFichierStorageService($fileService);
         $service->setVersionFichierService($versionFichierService);
         $service->setEtablissementService($etablissementService);
-        $service->setNotifierService($notifierService);
         $service->setNatureFichierService($natureFichierService);
         $service->setRapportActiviteAvisService($rapportActiviteAvisService);
         $service->setRapportActiviteValidationService($rapportValidationService);

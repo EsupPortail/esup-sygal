@@ -1,7 +1,5 @@
 <?php
 
-define('APPLICATION_DIR', realpath(__DIR__ . '/..'));
-
 return [
     'modules' => [
         'Laminas\Cache',
@@ -33,12 +31,16 @@ return [
         'UnicaenAuthToken',
         'UnicaenAvis',
         'UnicaenLdap',
-        'UnicaenDbAnonym',
+//        'UnicaenDbAnonym',
         'UnicaenDbImport',
         'UnicaenFaq',
-        'UnicaenLivelog',
+        'UnicaenIdref',
+//        'UnicaenLivelog',
+        'UnicaenPdf',
         'UnicaenRenderer',
         'Unicaen\Console',
+        'UnicaenParametre',
+        'Horodatage',
         'Structure',
         'These',
         'Fichier',
@@ -47,6 +49,7 @@ return [
         'Individu',
         'Retraitement',
         'Soutenance',
+        'Depot',
         'Formation',
         'ComiteSuiviIndividuel',
         'RapportActivite',

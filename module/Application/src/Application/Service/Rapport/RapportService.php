@@ -18,8 +18,7 @@ use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use These\Service\FichierThese\PdcData;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
-use Application\Service\Notification\NotifierServiceAwareTrait;
-use These\Service\PageDeCouverture\PageDeCouverturePdfExporterAwareTrait;
+use Depot\Service\PageDeCouverture\PageDeCouverturePdfExporterAwareTrait;
 use Application\Service\RapportValidation\RapportValidationServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
@@ -37,7 +36,6 @@ class RapportService extends BaseService
     use FichierStorageServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use EtablissementServiceAwareTrait;
-    use NotifierServiceAwareTrait;
     use NatureFichierServiceAwareTrait;
     use RapportValidationServiceAwareTrait;
     use PageDeCouverturePdfExporterAwareTrait;

@@ -128,7 +128,7 @@ class UtilisateurService extends BaseService
 
         $utilisateur = new Utilisateur();
         $utilisateur->setDisplayName($displayName);
-        $utilisateur->setEmail($individu->getEmail());
+        $utilisateur->setEmail($individu->getEmailPro());
         $utilisateur->setUsername($username);
         $utilisateur->setPassword($password);
         $utilisateur->setState(1);
@@ -151,11 +151,11 @@ class UtilisateurService extends BaseService
      */
     public function createFromIndividuAndFormData(Individu $individu, array $formData): Utilisateur
     {
-        if (!$individu->getEmail()) {
+        if (!$individu->getEmailPro()) {
             throw new RuntimeException("Impossible de créer un utilisateur à partir d'un individu n'ayant pas d'email");
         }
 
-        $username = $individu->getEmail(); // NB: username = email
+        $username = $individu->getEmailPro(); // NB: username = email
 
         $bcrypt = new Bcrypt();
         $password = $bcrypt->create($formData['password']);

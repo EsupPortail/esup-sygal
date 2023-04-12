@@ -168,7 +168,12 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
                 -
                 <?php echo $session->getDuree(); ?> h.
                 <ul>
-                <?php foreach ($session->getSeances() as $seance) : ?>
+                <?php
+                /** @var Seance[] $seances */
+                $seances = $session->getSeances()->toArray();
+                usort($seances, function (Seance $a, Seance $b) { return $a->getDebut() > $b->getDebut();});
+                ?>
+                <?php foreach ($seances as $seance) : ?>
                     <?php /** @var Seance $seance*/?>
                     <li>
                         <?php echo $seance->getDebut()->format('d/m/Y'); ?>

@@ -3,9 +3,9 @@
 namespace These\QueryBuilder;
 
 use Application\QueryBuilder\DefaultQueryBuilder;
+use Application\QueryBuilder\Expr\AndWhereDoctorantIs;
 use Doctorant\Entity\Db\Doctorant;
 use These\Entity\Db\These;
-use Application\QueryBuilder\Expr\AndWhereDoctorantIs;
 
 /**
  * Class TheseQueryBuilder
@@ -58,7 +58,7 @@ class TheseQueryBuilder extends DefaultQueryBuilder
         // correction non autorisee si : correctionAutorisee === null OU correctionAutoriseeForcee === 'aucune'
         $this
             ->andWhere("NOT ($this->rootAlias.correctionAutorisee IS NULL OR $this->rootAlias.correctionAutoriseeForcee = :forceeAucune)")
-            ->setParameter('forceeAucune', These::CORRECTION_AUTORISEE_FORCAGE_AUCUNE);
+            ->setParameter('forceeAucune', These::$CORRECTION_AUTORISEE_FORCAGE_AUCUNE);
 
         return $this;
     }

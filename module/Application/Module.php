@@ -8,6 +8,7 @@ use Application\View\Helper\Navigation\MenuSecondaire;
 use Laminas\Config\Factory as ConfigFactory;
 use Laminas\EventManager\EventInterface;
 use Laminas\Http\Request as HttpRequest;
+use Laminas\Mvc\ModuleRouteListener;
 use Laminas\ModuleManager\Feature\AutoloaderProviderInterface;
 use Laminas\ModuleManager\Feature\BootstrapListenerInterface;
 use Laminas\ModuleManager\Feature\ConfigProviderInterface;
@@ -28,6 +29,8 @@ class Module implements BootstrapListenerInterface, AutoloaderProviderInterface,
         $application = $e->getApplication();
         $application->getServiceManager()->get('translator');
         $eventManager = $application->getEventManager();
+        $moduleRouteListener = new ModuleRouteListener();
+        $moduleRouteListener->attach($eventManager);
 
 // TODO decommenter cela avec la bonne route
         $eventManager->attach(MvcEvent::EVENT_DISPATCH, function(MvcEvent $e) {
@@ -46,7 +49,7 @@ class Module implements BootstrapListenerInterface, AutoloaderProviderInterface,
         );
 
         /* Détournement de requête pour demander la saisie du persopass */
-        $deflector = new SaisiePersopassRouteDeflector('#^home|these|soutenance\/.+#', [
+        $deflector = new SaisieEmailContactRouteDeflector('#^home|these|soutenance|formation\/.+#', [
             'options' => ['name' => 'doctorant/modifier-email-contact'],
             'params' => ['detournement' => 1]
         ]);

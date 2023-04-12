@@ -193,11 +193,11 @@ abstract class ListeDiffusionAbstractHandler implements ListeDiffusionHandlerInt
      * @param Individu $individu
      * @return string[]
      */
-    private function extractEmailFromIndividu(Individu $individu)
+    private function extractEmailFromIndividu(Individu $individu): array
     {
         return array_map('trim', array_unique(array_filter([
-            $individu->getEmailContact(),
-            $individu->getEmail(),
+            $individu->getEmailContactAutorisePourListeDiff() ? $individu->getEmailContact() : null, // respect du consentement
+            $individu->getEmailPro(),
             $individu->getEmailUtilisateur(),
         ])));
     }

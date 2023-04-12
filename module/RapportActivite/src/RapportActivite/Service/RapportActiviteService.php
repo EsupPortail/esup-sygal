@@ -15,7 +15,6 @@ use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
-use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
@@ -41,7 +40,6 @@ class RapportActiviteService extends BaseService
     use FichierStorageServiceAwareTrait;
     use VersionFichierServiceAwareTrait;
     use EtablissementServiceAwareTrait;
-    use NotifierServiceAwareTrait;
     use NatureFichierServiceAwareTrait;
     use RapportActiviteAvisServiceAwareTrait;
     use RapportActiviteValidationServiceAwareTrait;
@@ -393,14 +391,19 @@ class RapportActiviteService extends BaseService
         return $event;
     }
 
+    /**
+     * @deprecated todo : à déplacer dans une RapportActiviteNotificationFactory
+     */
     public function newRapportActiviteSupprimeNotification(RapportActivite $rapportActivite): RapportActiviteSupprimeNotification
     {
         $doctorant = $rapportActivite->getThese()->getDoctorant();
+        $individu = $doctorant->getIndividu();
+        $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
 
         $notif = new RapportActiviteSupprimeNotification();
         $notif->setRapportActivite($rapportActivite);
         $notif->setSubject("Rapport d'activité supprimé");
-        $notif->setTo([$doctorant->getEmail() => $doctorant->getIndividu()->getNomComplet()]);
+        $notif->setTo([$email => $doctorant->getIndividu()->getNomComplet()]);
 
         return $notif;
     }

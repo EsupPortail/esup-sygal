@@ -28,5 +28,5 @@ $appName = $this->appInfos()->nom;
     veuillez cliquer sur le bouton ci-dessous.
 </p>
 
-<a href="<?php echo $this->url('doctorant/modifier-email-contact', ['back' => true, 'doctorant' => $doctorant->getId()], ['query' => ['force' => 1]], true) ?>"
+<a href="<?php echo $this->url('doctorant/modifier-email-contact', ['doctorant' => $doctorant->getId()], ['query' => ['force' => 1]], true) ?>"
    class="btn btn-info">Nouvelle demande</a>

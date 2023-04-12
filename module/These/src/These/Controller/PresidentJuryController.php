@@ -3,24 +3,27 @@
 namespace These\Controller;
 
 use Application\Entity\Db\Utilisateur;
-use These\Entity\Db\Acteur;
 use Application\Form\AdresseMail\AdresseMailFormAwareTrait;
-use These\Service\Acteur\ActeurServiceAwareTrait;
-use These\Service\These\TheseServiceAwareTrait;
 use DateInterval;
 use DateTime;
-use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use Depot\Service\These\DepotServiceAwareTrait;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\View\Model\ViewModel;
+use Soutenance\Service\Membre\MembreServiceAwareTrait;
+use These\Entity\Db\Acteur;
+use These\Service\Acteur\ActeurServiceAwareTrait;
+use These\Service\These\TheseServiceAwareTrait;
 
 /** @method FlashMessenger flashMessenger() **/
 
-class PresidentJuryController extends AbstractActionController {
+class PresidentJuryController extends AbstractActionController
+{
     use ActeurServiceAwareTrait;
     use MembreServiceAwareTrait;
     use TheseServiceAwareTrait;
     use AdresseMailFormAwareTrait;
+    use DepotServiceAwareTrait;
 
     public function indexAction() {
         $date = (new DateTime())->sub(new DateInterval('P4M'));
@@ -33,21 +36,18 @@ class PresidentJuryController extends AbstractActionController {
         ]);
     }
 
+    /**
+     * @todo : déplacer dans la module Depot.
+     */
     public function notifierCorrectionAction()
     {
         $president = $this->getActeurService()->getRequestedActeur($this, 'president');
-        $utilisateurId = $this->params()->fromQuery('utilisateur');
-
-        $utilisateur = null;
-        if ($utilisateurId) $utilisateur = $this->getActeurService()->getEntityManager()->getRepository(Utilisateur::class)->find($utilisateurId);
-
-
         $these = $president->getThese();
 
-        $message = $this->getTheseService()->notifierCorrectionsApportees($these, $utilisateur);
-        if ($message[0] === 'success') $this->flashMessenger()->addSuccessMessage($message[1]);
-        if ($message[0] === 'error')   $this->flashMessenger()->addErrorMessage($message[1]);
+        $resultArray = $this->depotService->notifierCorrectionsApportees($these);
 
+        if ($resultArray[0] === 'success') $this->flashMessenger()->addSuccessMessage($resultArray[1]);
+        if ($resultArray[0] === 'error')   $this->flashMessenger()->addErrorMessage($resultArray[1]);
 
         return $this->redirect()->toRoute('president-jury', [], [], true);
     }

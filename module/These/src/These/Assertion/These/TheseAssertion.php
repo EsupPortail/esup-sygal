@@ -2,67 +2,30 @@
 
 namespace These\Assertion\These;
 
-use Application\Acl\WfEtapeResource;
 use Application\Assertion\AbstractAssertion;
 use Application\Assertion\Exception\FailedAssertionException;
 use Application\Entity\Db\Role;
-use Application\Entity\Db\WfEtape;
-use Application\Provider\Privilege\ValidationPrivileges;
-use Application\RouteMatch;
-use Application\Service\UserContextService;
-use Application\Service\UserContextServiceAwareTrait;
-use Application\Service\Workflow\WorkflowServiceAwareInterface;
-use Application\Service\Workflow\WorkflowServiceAwareTrait;
-use Doctorant\Entity\Db\Doctorant;
+use Depot\Acl\WfEtapeResource;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
-use These\Controller\TheseController;
 use These\Entity\Db\These;
 use These\Provider\Privilege\ThesePrivileges;
 use UnicaenApp\Exception\RuntimeException;
-use UnicaenApp\Service\MessageCollectorAwareTrait;
 
-/**
- * Class TheseAssertion
- *
- * @package Application\Assertion
- * @method UserContextService getServiceUserContext()
- */
-class TheseAssertion extends AbstractAssertion implements WorkflowServiceAwareInterface
+class TheseAssertion extends AbstractAssertion
 {
-    use UserContextServiceAwareTrait;
-    use WorkflowServiceAwareTrait;
-    use MessageCollectorAwareTrait;
-
-    const THESE_CONTROLLER = TheseController::class;
-    const DOCTORANT_CONTROLLER = 'Application\Controller\Doctorant';
-
     private TheseEntityAssertion $theseEntityAssertion;
-    private ?Doctorant $doctorant = null;
     private ?These $these = null;
-    protected ?string $controller = null;
-    protected ?string $action = null;
 
-    /**
-     * @param \These\Assertion\These\TheseEntityAssertion $theseEntityAssertion
-     */
     public function setTheseEntityAssertion(TheseEntityAssertion $theseEntityAssertion)
     {
         $this->theseEntityAssertion = $theseEntityAssertion;
     }
 
-    /**
-     * @param array $page
-     * @return bool
-     */
     public function __invoke(array $page): bool
     {
         return $this->assertPage($page);
     }
 
-    /**
-     * @param array $page
-     * @return bool
-     */
     private function assertPage(array $page): bool
     {
         if ($this->getRouteMatch() === null) {
@@ -70,7 +33,6 @@ class TheseAssertion extends AbstractAssertion implements WorkflowServiceAwareIn
         }
 
         $this->these = $this->getRouteMatch()->getThese();
-        $this->doctorant = $this->getRouteMatch()->getDoctorant();
 
         $etape = $page['etape'] ?? null;
         if (!$etape) {
@@ -105,12 +67,6 @@ class TheseAssertion extends AbstractAssertion implements WorkflowServiceAwareIn
         $role = $this->userContextService->getSelectedIdentityRole();
         $individu = $this->userContextService->getIdentityIndividu();
         switch (true) {
-            case $privilege === ThesePrivileges::THESE_SAISIE_DESCRIPTION_VERSION_INITIALE:
-                return ! $this->isAllowed(new WfEtapeResource(WfEtape::CODE_DEPOT_VERSION_ORIGINALE_CORRIGEE, $these));
-                break;
-            case $privilege === ValidationPrivileges::THESE_VALIDATION_RDV_BU:
-                return $this->isAllowed(new WfEtapeResource(WfEtape::CODE_RDV_BU_VALIDATION_BU, $these));
-                break;
             case $privilege === ThesePrivileges::THESE_CONSULTATION_SES_THESES:
             case $privilege === ThesePrivileges::THESE_MODIFICATION_SES_THESES:
                 // doctorant
@@ -152,11 +108,7 @@ class TheseAssertion extends AbstractAssertion implements WorkflowServiceAwareIn
             return false;
         }
 
-        $this->controller = $controller;
-        $this->action = $action;
-
         $this->these = $this->getRouteMatch()->getThese();
-        $this->doctorant = $this->getRouteMatch()->getDoctorant();
 
         switch (true) {
             case $this->selectedRoleIsDoctorant():
@@ -173,12 +125,6 @@ class TheseAssertion extends AbstractAssertion implements WorkflowServiceAwareIn
 //            return false;
 //        }
 
-        switch (true) {
-            case $privilege === ValidationPrivileges::THESE_VALIDATION_RDV_BU:
-                return $this->isAllowed(new WfEtapeResource(WfEtape::CODE_RDV_BU_VALIDATION_BU, $this->these));
-                break;
-        }
-
         return true;
     }
 
@@ -190,72 +136,10 @@ class TheseAssertion extends AbstractAssertion implements WorkflowServiceAwareIn
             throw new RuntimeException("Anomalie: le role doctorant est sélectionné mais aucune donnée d'identité doctorant n'est disponible");
         }
 
-        switch (true) {
-            case $this->actionIs(self::DOCTORANT_CONTROLLER, 'modifier-email-contact'):
-                return $this->doctorant && $this->doctorant->getId() === $identityDoctorant->getId();
-                break;
-        }
-
         if ($this->these === null) {
             return true;
         }
 
         return $this->these->getDoctorant()->getId() === $identityDoctorant->getId();
-    }
-
-    /**
-     * @param string $expectedController
-     * @param string $expectedAction
-     * @return bool
-     */
-    private function actionIs(string $expectedController, string $expectedAction): bool
-    {
-        return $this->controller === $expectedController && $this->action === $expectedAction;
-    }
-
-    /**
-     * @return bool
-     */
-    private function selectedRoleIsDoctorant(): bool
-    {
-        return (bool) $this->userContextService->getSelectedRoleDoctorant();
-    }
-
-    protected ?Doctorant $identityDoctorant = null;
-
-    private function getIdentityDoctorant(): ?Doctorant
-    {
-        if (null === $this->identityDoctorant) {
-            $this->identityDoctorant = $this->userContextService->getIdentityDoctorant();
-        }
-
-        return $this->identityDoctorant;
-    }
-
-    public function isAllowed($resource, $privilege = null): bool
-    {
-        $allowed = parent::isAllowed($resource, $privilege);
-
-        if (! $allowed) {
-            switch (true) {
-                case $resource instanceof WfEtapeResource:
-                    $etape = $this->workflowService->getEtapeRepository()->findOneBy(['code' => $resource->getEtape()]);
-                    $this->getServiceMessageCollector()->addMessage(
-                        sprintf("L'étape &laquo; %s &raquo; n'est pas encore accessible.", $etape->getLibelleAutres()),
-                        $etape->getCode());
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        return $allowed;
-    }
-
-    protected function getRouteMatch(): ?RouteMatch
-    {
-        /** @var \Application\RouteMatch $rm */
-        $rm = $this->getMvcEvent()->getRouteMatch();
-        return $rm;
     }
 }

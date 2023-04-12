@@ -1,28 +1,16 @@
-<?php /** @noinspection PhpUnusedAliasInspection */
-/** @noinspection PhpUnusedAliasInspection */
-/** @noinspection PhpUnusedAliasInspection */
-/** @noinspection PhpUnusedAliasInspection */
-/** @noinspection PhpUnusedAliasInspection */
-/** @noinspection PhpUnusedAliasInspection */
-/** @noinspection PhpUnusedAliasInspection */
-/** @noinspection PhpUnusedAliasInspection */
-/** @noinspection PhpUnusedAliasInspection */
-/** @noinspection PhpUnusedAliasInspection */
-/** @noinspection PhpUnusedAliasInspection */
-/** @noinspection PhpUnusedAliasInspection */
-
-/** @noinspection PhpUnusedAliasInspection */
+<?php
 
 namespace Formation;
 
-use Application\Navigation\ApplicationNavigationFactory;
-use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Formation\Provider\IdentityProvider;
 use Formation\Provider\IdentityProviderFactory;
-use Formation\Service\Notification\NotificationService;
-use Formation\Service\Notification\NotificationServiceFactory;
+use Formation\Service\Notification\FormationNotificationFactory;
+use Formation\Service\Notification\FormationNotificationFactoryFactory;
+use Formation\Service\Url\UrlService;
+use Formation\Service\Url\UrlServiceFactory;
 use Formation\View\Helper\EtatViewHelper;
 use Formation\View\Helper\FormateursViewHelper;
 use Formation\View\Helper\ModaliteViewHelper;
@@ -31,18 +19,6 @@ use Formation\View\Helper\SessionInscriptionViewHelper;
 use Formation\View\Helper\SessionLibelleViewHelper;
 use Formation\View\Helper\SiteViewHelper;
 use Formation\View\Helper\TypeViewHelper;
-use Soutenance\Controller\AvisController;
-use Soutenance\Controller\EngagementImpartialiteController;
-use Soutenance\Provider\Privilege\IndexPrivileges;
-use Soutenance\Provider\Privilege\PresoutenancePrivileges;
-use Soutenance\Provider\Privilege\PropositionPrivileges;
-use Soutenance\Service\Membre\MembreService;
-use Soutenance\Service\Membre\MembreServiceFactory;
-use Soutenance\Service\Notifier\NotifierSoutenanceService;
-use Soutenance\Service\Notifier\NotifierSoutenanceServiceFactory;
-use Soutenance\Service\Validation\ValidationService;
-use Soutenance\Service\Validation\ValidationServiceFactory;
-use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
 return array(
@@ -87,8 +63,9 @@ return array(
 
     'service_manager' => [
         'factories' => [
-            NotificationService::class => NotificationServiceFactory::class,
+            FormationNotificationFactory::class => FormationNotificationFactoryFactory::class,
             IdentityProvider::class => IdentityProviderFactory::class,
+            UrlService::class => UrlServiceFactory::class,
         ],
     ],
 

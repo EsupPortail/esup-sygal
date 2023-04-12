@@ -1,6 +1,68 @@
 Journal des modifications
 =========================
 
+5.2.11
+------
+- Formation : Ajout d'un mail vers les formateurs lorsque la session est imminente
+- Soutenance : Renommange de Parité en Équilibre (et ajustement des couleurs des barres de l'indicateur)
+- Soutenance : Retravail du rapport de soutenance (Ajout d'une page blacnhe et d'une troisième page pour les signatures)
+- Soutenance : Ajout du dépôt de l'autorisation de soutenance et du rapport de soutenance
+- Soutenance : Dépôt de l'attestation de la formation "Intégrité scientifique"
+- Soutenance : Mise en place de l'horodatage 
+- Soutenance : Ajout d'une étape intermédiaire avant feu vert pour soutenance
+- Soutenance : [Fix] Echappement des caractères " et encapsulation des réponses
+- Dépôt de thèse : un dépôt existant de la version corrigée reste visible même si l'avis de reproduction Apogée revient à Non. 
+- Menu Dépôt fichiers divers : remonté et affiché sans condition
+- Page Dépôt fichiers divers : téléversement bloqué pour PV soutenance, Pré-rapport soutenance, Rapport soutenance
+- Recherche/sélection du PPN IdRef dans les formulaires de modification de structure et d'individu
+
+5.2.10
+------
+- Les adresses mail d'assistance, Bibliothèque et Doctorat sont désormais renseignées sur la fiche de l'établissement d'inscription.
+- [FIX] Correction d'un oubli de la constante AVIS_DEADLINE
+
+5.2.9
+-----
+- Masquage des membres du CSI et de leurs saisies
+- Formation : Amélioration de l'affichage de la liste des inscrits (état de la session, état de la saisie de l'enquête)
+- Formation : La génération du pdf d'attestion est maintenant bloquée si l'enquête est non saisie
+- Formation : Ajout d'un interval pour la date butoir dans la Session et affichage sur l'index du doctorant
+- Formation : Passage sous la forme de template des PDFs de convocation et d'attestation
+- Soutenance : Passage des courriers électroniques liés à l'engagement d'impartialité dans UnicaenRenderer
+- [FIX] Soutenance : La génération de rapport de soutenance n'est plus limitée au fait q'un membre soit en visio
+
+5.2.8
+-----
+- Second dépôt (correction de thèse) : améliorations et nouvelle notification (MDD, BU, DT).
+- Fiche Thèse : bouton usurper pour le rôle Président du jury
+- Ajout du bouton de transmission des documents de soutenance à la direction de thèse
+- Les co-encadrants sont maintenant des individus et non plus nécessairement des acteurs
+- Notifications par mail : utilisation généralisée de factories de notifications
+- [FIX] Module formation : récupération du doctorant via l'utilisateur si aucun n'est fourni
+- [FIX] Filtres de recherche réutilisables : nouvelle stratégie de prise en compte ou non des filtres.
+- [FIX] Changement des fonctions de récupération des emails dans la partie exportation
+- [FIX] Correction De la taille des logos dans le serment du docteur
+- [FIX] Correction de la fonction getDoctorantsByUser
+
+5.2.7
+-----
+- Ajout d'une date de fermeture (indicative) pour les sessions de formation
+- Dépôts de nouveaux fichiers divers : charte du doctorat et convention de formation doctorale.
+- Extraction d'un module Depot (dépôt du manuscrit de thèse).
+- Amélioration de l'index doctorant du module formation
+- Ajout de la possibilité d'enregistrer et de valider l'enquête de retour de formation
+- Doctorant : peut refuser de recevoir sur son adresse électronique de contact les messages des listes de diffusion
+- Suppression du menu 'Mes données' : la modif de l'adresse de contact et du consentement associé est désormais sur la fiche Thèse
+- Abandon (avant suppression) de la table obsolète doctorant_compl.
+- Ajout d'un bloc dans l'écran de proposition de soutenance pour le téléchargement des pré-rapports et du serment
+- Nouveau document "Serment du docteur"
+- Modification du pv de soutenance
+- Ajout d'un nouvel mail intermediare à la clôture des inscriptions + deplacement du mail d'echec d'inscription
+- [FIX] Module Formation : Ordonnancement des séances sur les index des formations et des sessions
+- [FIX] Module Formation : Correction du bug de comptage d'année si pas de thèse
+- [FIX] Module Soutenance : Correction paramètre de route erronée + suppression bouton inactif
+- [FIX] Module Soutenance : Ouverture de l'acces aux gestionnaires d'UR sur les popositions de soutenance
+
 5.2.6
 -----
 - Déclaration des membres du comite de suivi individuel

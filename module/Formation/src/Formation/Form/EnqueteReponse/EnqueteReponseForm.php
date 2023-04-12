@@ -51,7 +51,7 @@ class EnqueteReponseForm extends Form
         }
         $this->add([
             'type' => Button::class,
-            'name' => 'bouton',
+            'name' => 'enregistrer',
             'options' => [
                 'label' => '<i class="fas fa-save"></i> Enregistrer',
                 'label_options' => [
@@ -61,6 +61,21 @@ class EnqueteReponseForm extends Form
             'attributes' => [
                 'type' => 'submit',
                 'class' => 'btn btn-primary',
+            ],
+        ]);
+
+        $this->add([
+            'type' => Button::class,
+            'name' => 'enregistrer_valider',
+            'options' => [
+                'label' => '<i class="fas fa-check"></i> Enregistrer et valider',
+                'label_options' => [
+                    'disable_html_escape' => true,
+                ],
+            ],
+            'attributes' => [
+                'type' => 'submit',
+                'class' => 'btn btn-success',
             ],
         ]);
 

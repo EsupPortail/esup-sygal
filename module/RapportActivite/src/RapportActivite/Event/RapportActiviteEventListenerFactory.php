@@ -2,7 +2,7 @@
 
 namespace RapportActivite\Event;
 
-use Application\Service\Notification\NotifierService;
+use Notification\Service\NotifierService;
 use Application\Service\UserContextService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Service\RapportActiviteService;
@@ -25,7 +25,7 @@ class RapportActiviteEventListenerFactory
         $rapportActiviteService = $container->get(RapportActiviteService::class);
         $listener->setRapportActiviteService($rapportActiviteService);
 
-        /** @var \Application\Service\Notification\NotifierService $notifierService */
+        /** @var \Notification\Service\NotifierService $notifierService */
         $notifierService = $container->get(NotifierService::class);
         $listener->setNotifierService($notifierService);
 

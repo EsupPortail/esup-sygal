@@ -2,7 +2,7 @@
 
 namespace RapportActivite\Event\Validation;
 
-use Application\Service\Notification\NotifierService;
+use Notification\Service\NotifierService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
 use RapportActivite\Service\Validation\RapportActiviteValidationService;
@@ -25,7 +25,7 @@ class RapportActiviteValidationEventListenerFactory
         $rapportActiviteValidationService = $container->get(RapportActiviteValidationService::class);
         $listener->setRapportActiviteValidationService($rapportActiviteValidationService);
 
-        /** @var \Application\Service\Notification\NotifierService $notifierService */
+        /** @var \Notification\Service\NotifierService $notifierService */
         $notifierService = $container->get(NotifierService::class);
         $listener->setNotifierService($notifierService);
 

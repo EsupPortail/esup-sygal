@@ -2,7 +2,6 @@
 
 namespace Soutenance\Service\Proposition;
 
-//TODO faire le repo aussi
 use Application\Entity\Db\Repository\DefaultEntityRepository;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
@@ -10,34 +9,35 @@ use Application\Entity\Db\Validation;
 use Application\Entity\Db\Variable;
 use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Service\BaseService;
-use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Variable\VariableServiceAwareTrait;
 use DateInterval;
 use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Exception;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Horodatage\Service\Horodatage\HorodatageServiceAwareTrait;
 use Individu\Entity\Db\Individu;
+use Laminas\Cache\Exception\LogicException;
 use Laminas\Mvc\Controller\AbstractActionController;
+use Notification\Service\NotifierServiceAwareTrait;
 use Soutenance\Entity\Etat;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Provider\Parametre\SoutenanceParametres;
 use Soutenance\Provider\Validation\TypeValidation as TypeValidationSoutenance;
 use Soutenance\Service\Membre\MembreServiceAwareTrait;
-use Soutenance\Service\Notifier\NotifierSoutenanceServiceAwareTrait;
-use Soutenance\Service\Parametre\ParametreServiceAwareTrait;
+use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
 use Soutenance\Service\Validation\ValidatationServiceAwareTrait;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use These\Entity\Db\These;
 use These\Service\Acteur\ActeurServiceAwareTrait;
-use UnicaenApp\Exception\LogicException;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
+use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
 class PropositionService extends BaseService
 {
@@ -45,8 +45,8 @@ class PropositionService extends BaseService
     use ActeurServiceAwareTrait;
     use ValidatationServiceAwareTrait;
     use NotifierServiceAwareTrait;
-    use NotifierSoutenanceServiceAwareTrait;
     use ParametreServiceAwareTrait;
+    use SoutenanceNotificationFactoryAwareTrait;
     use VariableServiceAwareTrait;
     use FichierStorageServiceAwareTrait;
     use EtablissementServiceAwareTrait;
@@ -63,10 +63,6 @@ class PropositionService extends BaseService
 
     /** GESTION DES ENTITES *******************************************************************************************/
 
-    /**
-     * @param These $these
-     * @return Proposition
-     */
     public function create(These $these) : Proposition
     {
         $proposition = new Proposition($these);
@@ -87,16 +83,12 @@ class PropositionService extends BaseService
         try {
             $this->getEntityManager()->persist($proposition);
             $this->getEntityManager()->flush($proposition);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Un erreur s'est produite lors de l'enregistrment en BD de la proposition de thèse !");
         }
         return $proposition;
     }
 
-    /**
-     * @param Proposition $proposition
-     * @return Proposition
-     */
     public function update(Proposition $proposition) : Proposition
     {
         try {
@@ -111,29 +103,15 @@ class PropositionService extends BaseService
 
         try {
             $this->getEntityManager()->flush($proposition);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Une erreur s'est produite lors de la mise à jour de la proposition de soutenance !");
         }
         return $proposition;
     }
 
-    /**
-     * @param Proposition $proposition
-     * @return Proposition
-     */
-    public function historise($proposition)
+    public function historise(Proposition $proposition) : Proposition
     {
-        try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-        } catch(Exception $e) {
-            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
-        }
-
-        $proposition->setHistoModificateur($user);
-        $proposition->setHistoModification($date);
-        $proposition->setHistoDestructeur($user);
-        $proposition->setHistoDestruction($date);
+        $proposition->historiser();
 
         try {
             $this->getEntityManager()->flush($proposition);
@@ -143,23 +121,9 @@ class PropositionService extends BaseService
         return $proposition;
     }
 
-    /**
-     * @param Proposition $proposition
-     * @return Proposition
-     */
-    public function restore($proposition)
+    public function restore(Proposition $proposition) : Proposition
     {
-        try {
-            $date = new DateTime();
-            $user = $this->userContextService->getIdentityDb();
-        } catch(Exception $e) {
-            throw new RuntimeException("Un problème est survenu lors de la récupération des données liées à l'historisation", 0 , $e);
-        }
-
-        $proposition->setHistoModificateur($user);
-        $proposition->setHistoModification($date);
-        $proposition->setHistoDestructeur(null);
-        $proposition->setHistoDestruction(null);
+        $proposition->dehistoriser();
 
         try {
             $this->getEntityManager()->flush($proposition);
@@ -169,17 +133,15 @@ class PropositionService extends BaseService
         return $proposition;
     }
 
-    /**
-     * @param Proposition $proposition
-     */
-    public function delete($proposition)
+    public function delete(Proposition $proposition) : Proposition
     {
         try {
             $this->getEntityManager()->remove($proposition);
             $this->getEntityManager()->flush($proposition);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             throw new RuntimeException("Une erreur s'est produite lors de la mise à jour de la proposition de soutenance !");
         }
+        return $proposition;
     }
 
     /** REQUETES ******************************************************************************************************/
@@ -205,11 +167,7 @@ class PropositionService extends BaseService
         ;
     }
 
-    /**
-     * @param int $id
-     * @return Proposition
-     */
-    public function find($id): Proposition
+    public function find(?int $id): ?Proposition
     {
         $qb = $this->createQueryBuilder()
             ->andWhere("proposition.id = :id")
@@ -224,22 +182,13 @@ class PropositionService extends BaseService
         return $result;
     }
 
-    /**
-     * @param AbstractActionController $controller
-     * @param string $param
-     * @return Proposition
-     */
-    public function getRequestedProposition(AbstractActionController $controller, string $param = 'proposition') : Proposition
+    public function getRequestedProposition(AbstractActionController $controller, string $param = 'proposition') : ?Proposition
     {
         $id = $controller->params()->fromRoute($param);
 
         return $this->find($id);
     }
 
-    /**
-     * @param These $these
-     * @return Proposition|null
-     */
     public function findOneForThese(These $these): ?Proposition
     {
         $qb = $this->createQueryBuilder()
@@ -282,22 +231,42 @@ class PropositionService extends BaseService
         $validations = $this->getValidationService()->findValidationPropositionSoutenanceByThese($these);
         foreach ($validations as $validation) {
             $this->getValidationService()->historise($validation);
-            $this->getNotifierSoutenanceService()->triggerDevalidationProposition($validation);
+            try {
+                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($these, $validation);
+                $this->notifierService->trigger($notif);
+            } catch (\Notification\Exception\RuntimeException $e) {
+                // aucun destinataire, todo : cas à gérer !
+            }
         }
         $validationED = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these));
         if ($validationED) {
             $this->getValidationService()->historise($validationED);
-            $this->getNotifierSoutenanceService()->triggerDevalidationProposition($validationED);
+            try {
+                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($these, $validationED);
+                $this->notifierService->trigger($notif);
+            } catch (\Notification\Exception\RuntimeException $e) {
+                // aucun destinataire, todo : cas à gérer !
+            }
         }
         $validationUR = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these));
         if ($validationUR) {
             $this->getValidationService()->historise($validationUR);
-            $this->getNotifierSoutenanceService()->triggerDevalidationProposition($validationUR);
+            try {
+                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($these, $validationUR);
+                $this->notifierService->trigger($notif);
+            } catch (\Notification\Exception\RuntimeException $e) {
+                // aucun destinataire, todo : cas à gérer !
+            }
         }
         $validationBDD = current($this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these));
         if ($validationBDD) {
             $this->getValidationService()->historise($validationBDD);
-            $this->getNotifierSoutenanceService()->triggerDevalidationProposition($validationBDD);
+            try {
+                $notif = $this->soutenanceNotificationFactory->createNotificationDevalidationProposition($these, $validationBDD);
+                $this->notifierService->trigger($notif);
+            } catch (\Notification\Exception\RuntimeException $e) {
+                // aucun destinataire, todo : cas à gérer !
+            }
         }
     }
 
@@ -316,13 +285,12 @@ class PropositionService extends BaseService
         $nbExterieur    = 0;
         $nbRapporteur   = 0;
 
-        $parameters     =  $this->getParametreService()->getParametresAsArray();
-        $parite_min     =  $parameters['JURY_PARITE_RATIO_MIN'];
-        $membre_min     =  $parameters['JURY_SIZE_MIN'];
-        $membre_max     =  $parameters['JURY_SIZE_MAX'];
-        $rapporteur_min =  $parameters['JURY_RAPPORTEUR_SIZE_MIN'];
-        $rangA_min      =  $parameters['JURY_RANGA_RATIO_MIN'];
-        $exterieur_min  =  $parameters['JURY_EXTERIEUR_RATIO_MIN'];
+        $membre_min     =  $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MIN_MEMBRE_JURY);
+        $membre_max     =  $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MAX_MEMBRE_JURY);
+        $rapporteur_min =  $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::NB_MIN_RAPPORTEUR);
+        $rangA_min      =  ((float) $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_MIN_RANG_A));
+        $exterieur_min  =  ((float) $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::RATIO_MIN_EXTERIEUR));
+        $parite_min     =  ((float) $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::EQUILIBRE_FEMME_HOMME));
 
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
@@ -700,7 +668,7 @@ class PropositionService extends BaseService
         if ($proposition->getDate() === null) throw new RuntimeException("Aucune date de soutenance de renseignée !");
         try {
             $renduRapport = $proposition->getDate();
-            $deadline = $this->getParametreService()->getParametreByCode('AVIS_DEADLINE')->getValeur();
+            $deadline = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DELAI_RETOUR);
             $renduRapport = $renduRapport->sub(new DateInterval('P'. $deadline.'D'));
 
             $date = DateTime::createFromFormat('d/m/Y H:i:s', $renduRapport->format('d/m/Y') . " 23:59:59");
@@ -710,4 +678,5 @@ class PropositionService extends BaseService
         $proposition->setRenduRapport($date);
         $this->update($proposition);
     }
+
 }

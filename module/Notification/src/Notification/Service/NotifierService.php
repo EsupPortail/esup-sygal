@@ -4,45 +4,40 @@ namespace Notification\Service;
 
 use DateTime;
 use Doctrine\ORM\ORMException;
+use Laminas\Mail\Message;
 use Notification\Entity\NotifMail;
 use Notification\Entity\Service\NotifEntityServiceAwareTrait;
-use Notification\Exception\NotificationException;
+use Notification\Exception\ExceptionInterface;
+use Notification\Exception\RuntimeException;
+use Notification\Factory\NotificationFactory;
 use Notification\MessageContainer;
 use Notification\Notification;
+use Notification\NotificationResult;
+use Throwable;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use UnicaenApp\Service\Mailer\MailerServiceAwareTrait;
-use Laminas\Mail\Message;
 
 /**
  * Service d'envoi de notification par mail.
  *
  * @author Unicaen
  */
-class NotifierService
+final class NotifierService
 {
     use NotifEntityServiceAwareTrait;
     use MailerServiceAwareTrait;
     use EntityManagerAwareTrait;
 
     /**
-     * @var MessageContainer
+     * @var \Notification\MessageContainer
+     * @deprecated
      */
-    protected $messageContainer;
+    protected MessageContainer $messageContainer;
 
-    /**
-     * @var NotificationRenderingService
-     */
-    protected $renderingService;
+    protected NotificationRenderingService $renderingService;
+    protected NotificationFactory $notificationFactory;
 
-    /**
-     * @var NotificationFactory
-     */
-    protected $notificationFactory;
-
-    /**
-     * @var array
-     */
-    protected $defaultOptions = [
+    protected array $defaultOptions = [
         // préfixe à ajouter systématiquement devant le sujet des mails, ex: '[Sygal] '
         'subject_prefix' => '',
 
@@ -51,55 +46,62 @@ class NotifierService
         'bcc' => [],
     ];
 
-    /**
-     * @var array
-     */
-    protected $options = [];
+    protected array $options = [];
 
     /**
      * NotifierService constructor.
-     *
-     * @param NotificationRenderingService $renderingService
      */
     public function __construct(NotificationRenderingService $renderingService)
     {
         $this->renderingService = $renderingService;
-        $this->messageContainer = new MessageContainer();
     }
 
-    /**
-     * @param array $options
-     */
-    public function setOptions($options)
+    public function setOptions(array $options)
     {
         $this->options = array_merge($this->defaultOptions, $options);
     }
 
-    /**
-     * @param Notification $notification
-     * @throws \Notification\Exception\NotificationException
-     */
-    public function trigger(Notification $notification)
+    public function trigger(Notification $notification): NotificationResult
     {
-        $notification->prepare();
-        $this->sendNotification($notification);
+        $result = new NotificationResult($notification);
 
-        // collecte des éventuels messages exposés par la notification
-        foreach ($notification->getInfoMessages() as $message) {
-            $this->messageContainer->setMessage($message, 'info');
+        $notification->prepare();
+        try {
+            $message = $this->sendNotification($notification);
+            $sendDate = $this->extractDateFromMessage($message) ?: new DateTime();
+            $result
+                ->setSendDate($sendDate)
+                ->setIsSuccess()
+                ->setSuccessMessages($notification->getSuccessMessages());
+        } catch (ExceptionInterface $e) {
+            $result
+                ->setIsSuccess(false)
+                ->setErrorMessages([$e->getMessage()]);
         }
-        foreach ($notification->getWarningMessages() as $message) {
-            $this->messageContainer->setMessage($message, 'warning');
+
+        return $result;
+    }
+
+    protected function sendNotification(Notification $notification): Message
+    {
+        $email = $this->createMailMessageForNotification($notification);
+
+        $this->saveNotifMail($email);
+
+        try {
+            $message = $this->mailerService->send($email);
+        } catch (Throwable $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'envoi de la notification", null, $e);
         }
+
+        return $message;
     }
 
     /**
-     * @param Notification $notification
-     * @throws \Notification\Exception\NotificationException
+     * todo: mécanisme d'événement, ou bien passer à unicaen/mail.
      */
-    protected function sendNotification(Notification $notification)
+    private function saveNotifMail(Message $email)
     {
-        $email = $this->createMailForNotification($notification);
         $nMail = new NotifMail();
 
         $mails = [];
@@ -118,39 +120,22 @@ class NotifierService
             $this->entityManager->persist($nMail);
             $this->entityManager->flush($nMail);
         } catch (ORMException $e) {
-            throw new NotificationException("Erreur rencontrée lors de l'enregistrement dans NotifMail", null, $e);
+            throw new RuntimeException("Erreur rencontrée lors de l'enregistrement dans NotifMail", null, $e);
         }
-
-        try {
-            $message = $this->mailerService->send($email);
-        } catch (\Exception $e) {
-            throw new NotificationException("Erreur rencontrée lors de l'envoi de la notification", null, $e);
-        }
-
-        $sendDate = $this->extractDateFromMessage($message) ?: new \DateTime();
-        $notification->setSendDate($sendDate);
     }
 
-    /**
-     * @param Message $message
-     * @return \DateTime|null
-     */
-    private function extractDateFromMessage(Message $message)
+    private function extractDateFromMessage(Message $message): ?DateTime
     {
-        if ($message->getHeaders()->has('Date')) {
-            $messageDate = $message->getHeaders()->get('Date')->getFieldValue();
-
-            return date_create_from_format($messageDate, 'r');
+        if (!$message->getHeaders()->has('Date')) {
+            return null;
         }
 
-        return null;
+        $messageDate = $message->getHeaders()->get('Date')->getFieldValue();
+
+        return date_create($messageDate) ?: null;
     }
 
-    /**
-     * @param Notification $notification
-     * @return \Laminas\Mail\Message
-     */
-    protected function createMailForNotification(Notification $notification)
+    protected function createMailMessageForNotification(Notification $notification): Message
     {
         $subjectPrefix = '';
         if (isset($this->options['subject_prefix'])) {
@@ -182,36 +167,5 @@ class NotifierService
         }
 
         return $mail;
-    }
-
-    /**
-     * Retourne les éventuels messages exposés lors de la notification.
-     *
-     * @see MessageContainer::getMessages()
-     *
-     * @return array
-     */
-    public function getLogs()
-    {
-        return $this->messageContainer->getMessages();
-    }
-
-    /**
-     * @param NotificationFactory $notificationFactory
-     * @return self
-     */
-    public function setNotificationFactory(NotificationFactory $notificationFactory)
-    {
-        $this->notificationFactory = $notificationFactory;
-
-        return $this;
-    }
-
-    /**
-     * @return NotificationFactory
-     */
-    public function getNotificationFactory()
-    {
-        return $this->notificationFactory;
     }
 }

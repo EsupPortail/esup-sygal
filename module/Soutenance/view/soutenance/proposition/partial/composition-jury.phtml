@@ -8,6 +8,7 @@
 
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use Soutenance\Service\Horodatage\HorodatageService;
 
 $these = $proposition->getThese();
 ?>
@@ -23,7 +24,7 @@ $these = $proposition->getThese();
 
         <div class="col-md-4">
             <h5>
-                Parité de genre
+                Équilibre Femme/Homme
             </h5>
             <div class="progress">
                 <div class="progress-bar femme-bar" style="width:<?php echo $indicateurs["parité"]["Femme"]*100; ?>%;">
@@ -102,7 +103,7 @@ $these = $proposition->getThese();
 
         <div class="col-md-4">
             <h5>
-                Statut de rapporteurs non valide
+                Rapporteurs non valides
                 <?php if ($indicateurs["bad-rapporteur"]["valide"]):?>
                     <span class="badge bg-success"> Valide </span>
                 <?php else: ?>
@@ -215,14 +216,15 @@ $these = $proposition->getThese();
         </div>
 
     </div>
+    <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Jury"); ?>
 </div>
 </div>
 
 <style>
     div.femme-bar {
-        background-color: hotpink;
+        background-color: seagreen;
     }
     div.homme-bar {
-        background-color: dodgerblue;
+        background-color: salmon;
     }
 </style>

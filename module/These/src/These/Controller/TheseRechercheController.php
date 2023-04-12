@@ -4,16 +4,16 @@ namespace These\Controller;
 
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
-use These\Entity\Db\These;
 use Application\Search\Controller\SearchControllerInterface;
 use Application\Search\Controller\SearchControllerTrait;
 use Application\Search\SearchResultPaginator;
 use Application\Search\SearchServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
-use These\Service\These\TheseSearchService;
-use These\Service\These\TheseServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
+use These\Entity\Db\These;
+use These\Service\These\TheseSearchService;
+use These\Service\These\TheseServiceAwareTrait;
 
 /**
  * Class TheseRechercheController

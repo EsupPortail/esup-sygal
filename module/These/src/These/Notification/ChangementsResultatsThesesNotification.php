@@ -2,14 +2,14 @@
 
 namespace These\Notification;
 
-use These\Entity\Db\Interfaces\TheseAwareTrait;
 use Notification\Notification;
+use These\Entity\Db\Interfaces\TheseAwareTrait;
 
 class ChangementsResultatsThesesNotification extends Notification
 {
     use TheseAwareTrait;
 
-    protected $templatePath = 'these/these/mail/notif-evenement-import';
+    protected ?string $templatePath = 'these/these/mail/notif-evenement-import';
 
     /**
      * @return static

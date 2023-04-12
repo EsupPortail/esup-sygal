@@ -10,6 +10,7 @@ use Doctrine\ORM\QueryBuilder;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Entity\Membre;
 use Soutenance\Entity\Proposition;
+use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\Mvc\Controller\AbstractActionController;
@@ -104,7 +105,9 @@ class JustificatifService {
     {
         $qb = $this->getEntityManager()->getRepository(Justificatif::class)->createQueryBuilder('justificatif')
             ->addSelect('proposition')->join('justificatif.proposition', 'proposition')
-            ->addSelect('fichier')->join('justificatif.fichier', 'fichier')
+            ->addSelect('fichierthese')->join('justificatif.fichier', 'fichierthese')
+            ->addSelect('fichier')->join('fichierthese.fichier', 'fichier')
+            ->addSelect('nature')->join('fichier.nature', 'nature')
             ->addSelect('membre')->leftJoin('justificatif.membre', 'membre')
         ;
         return $qb;
@@ -257,5 +260,19 @@ class JustificatifService {
             }
         }
         return $justificatifsOk;
+    }
+
+    /** @return Justificatif[] */
+    public function getJustificatifsByPropositionAndNature(Proposition $proposition, string $natureCode, bool $histo = false) : array
+    {
+        $qb = $this->createQueryBuilder()
+            ->andWhere('justificatif.proposition = :proposition')->setParameter('proposition', $proposition)
+            ->andWhere('nature.code = :nature')->setParameter('nature', $natureCode)
+            ->orderBy('justificatif.histoCreation', 'DESC')
+        ;
+        if (!$histo) $qb = $qb->andWhere('justificatif.histoDestruction IS NULL');
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
     }
 }

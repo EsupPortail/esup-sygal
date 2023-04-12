@@ -6,7 +6,7 @@ use Soutenance\Entity\Avis;
 use Soutenance\Entity\Proposition;
 
 /**
- * @see \Soutenance\Service\Notifier\NotifierSoutenanceService::triggerAvisDefavorable()
+ * @see \Soutenance\Service\Notification\SoutenanceNotificationFactory::createNotificationAvisDefavorable()
  *
  * @var PhpRenderer $this
  * @var These $these
@@ -49,13 +49,6 @@ $justification = true;
         </a>
     </li>
 </ul>
-
-<?php
-    //$emailBDD           = [ $this->fetchEmailBdd($these) ];
-    //$emailsDirecteurs   = $this->fetchEmailEncadrants($these);
-    //$emailsED           = $this->fetchEmailEcoleDoctorale($these);
-    //$emailsUR           = $this->fetchEmailUniteRecherche($these);
-?>
 
 <?php if ($justification) : ?>
     <p>

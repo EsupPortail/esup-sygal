@@ -1,0 +1,22 @@
+<?php
+
+use Horodatage\Entity\Db\Horodatage;
+
+/**
+ * @see HorodatageViewHelper
+ * @var Horodatage $horodatage
+ * @var array $options
+ */
+
+?>
+
+<div class="horodatage">
+    <?php echo $horodatage->getType(); ?>
+    <?php if ($horodatage->getComplement()) : ?>
+        : <?php echo $horodatage->getComplement(); ?>
+    <?php endif; ?>
+    &mdash;
+    fait par <?php echo $horodatage->getUtilisateur()->getDisplayName(); ?>
+    le <?php echo $horodatage->getDate()->format('d/m/Y'); ?>
+    à <?php echo $horodatage->getDate()->format('H:i'); ?>
+</div>

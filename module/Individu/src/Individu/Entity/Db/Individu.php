@@ -98,6 +98,11 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface, Resour
     private $sourceCode;
 
     /**
+     * @var string|null
+     */
+    private ?string $idRef = null;
+
+    /**
      * @var integer
      */
     private $id;
@@ -108,7 +113,7 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface, Resour
     private $roles;
 
     /**
-     * @var ArrayCollection (mailContact)
+     * @var ArrayCollection|MailConfirmation[]
      */
     private $mailsConfirmations;
 
@@ -243,10 +248,9 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface, Resour
      * Set email
      *
      * @param string $email
-     *
      * @return self
      */
-    public function setEmail($email)
+    public function setEmailPro(string $email): self
     {
         $this->email = $email;
 
@@ -254,54 +258,55 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface, Resour
     }
 
     /**
-     * Retourne l'adresse mail la plus susceptible d'être "fiable" parmi toutes celles disponibles.
+     * Retourne l'adresse électronique professionnelle/institutionnelle de cet individu.
+     * Si une adresse existe dans un "complément", c'est elle qui est retournée.
      *
      * @return string|null
      */
-    public function getEmailBestOf(): ?string
-    {
-        return $this->getEmailContact() ?: $this->getEmail() ?: $this->getEmailUtilisateur();
-    }
-
-    /**
-     * Retourne l'adresse mail pour cet individu.
-     *
-     * **Conseil : voir aussi {@see getEmailBestOf()}.**
-     *
-     * @return string|null
-     */
-    public function getEmail(): ?string
+    public function getEmailPro(): ?string
     {
         $complement = $this->getComplement();
-        if ($complement AND !$complement->estHistorise() AND $complement->getEmail() !== null) return $complement->getEmail();
+        if ($complement AND !$complement->estHistorise() AND $complement->getEmailPro() !== null) {
+            return $complement->getEmailPro();
+        }
+
         return $this->email;
     }
 
     /**
      * Retourne l'adresse mail de contact, renseignée par le doctorant lui-même.
-     *
-     * **Conseil : voir aussi {@see getEmailBestOf()}.**
+     * Voir {@see getEmailContactAutorisePourListeDiff()} pour savoir si l'utilisation de cette adresse est autorisée.
      *
      * @return string|null
      */
     public function getEmailContact(): ?string
     {
-        if (! $this->mailsConfirmations->isEmpty())
-        {
-            /** @var \Application\Entity\Db\MailConfirmation $mailConfirmation */
-            foreach ($this->mailsConfirmations as $mailConfirmation) {
-                if ($mailConfirmation->getEtat() === MailConfirmation::CONFIRME) {
-                    return $mailConfirmation->getEmail();
-                }
-            }
+        if ($mailConfirmation = $this->getMailConfirmationConfirme()) {
+            return $mailConfirmation->getEmail();
         }
+
         return null;
     }
 
     /**
-     * Retourne l'adresse mail de l'éventuel (premier) utilisateur correspondant à cet individu.
+     * Indique si l'individu a autorisé l'application à utiliser l'adresse mail de contact pour les listes de diffusion.
      *
-     * **Conseil : voir aussi {@see getEmailBestOf()}.**
+     * @return bool
+     */
+    public function getEmailContactAutorisePourListeDiff(): bool
+    {
+        // ATTENTION : pour l'instant, tant que l'individu n'a pas fait la démarche de refuser, on considère
+        // qu'on a l'autorisation ! :-/
+
+        if ($mailConfirmation = $this->getMailConfirmationConfirme()) {
+            return !$mailConfirmation->getRefusListeDiff();
+        }
+
+        return true;
+    }
+
+    /**
+     * Retourne l'adresse mail de l'éventuel (premier) utilisateur correspondant à cet individu.
      *
      * @return string|null
      */
@@ -587,6 +592,24 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface, Resour
     }
 
     /**
+     * @return string|null
+     */
+    public function getIdRef(): ?string
+    {
+        return $this->idRef;
+    }
+
+    /**
+     * @param string|null $idRef
+     * @return self
+     */
+    public function setIdRef(?string $idRef): self
+    {
+        $this->idRef = $idRef;
+        return $this;
+    }
+
+    /**
      * Get id
      *
      * @return integer
@@ -738,6 +761,17 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface, Resour
     public function getComplement() : ?IndividuCompl
     {
         return $this->complements->first() ?: null;
+    }
+
+    private function getMailConfirmationConfirme(): ?MailConfirmation
+    {
+        foreach ($this->mailsConfirmations as $mailConfirmation) {
+            if ($mailConfirmation->getEtat() === MailConfirmation::CONFIRME) {
+                return $mailConfirmation;
+            }
+        }
+
+        return null;
     }
 
 

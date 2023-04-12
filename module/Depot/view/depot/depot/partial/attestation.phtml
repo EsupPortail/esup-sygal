@@ -1,0 +1,24 @@
+<?php
+
+use Depot\Entity\Db\Attestation;
+use These\Entity\Db\These;
+use Depot\Form\Attestation\AttestationTheseForm;
+
+/**
+ * @var These                $these
+ * @var Attestation          $attestation
+ * @var AttestationTheseForm $form
+ * @var boolean              $masquerFichiers
+ * @var array                $theseFichiersExpurgesItems
+ * @var array                $annexesFichiersExpurgesItems
+ */
+?>
+
+<p><?php echo $form->getText() ?></p>
+
+<ul class="attestation">
+    <li><?php echo $form->get('versionDeposeeEstVersionRef')->getLabel() ?>
+    <?php if ($attestation->getExemplaireImprimeConformeAVersionDeposee()): ?>
+    <li><?php echo $form->get('exemplaireImprimeConformeAVersionDeposee')->getLabel() ?>
+    <?php endif ?>
+</ul>

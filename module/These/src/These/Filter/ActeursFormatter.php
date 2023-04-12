@@ -2,9 +2,9 @@
 
 namespace These\Filter;
 
-use These\Entity\Db\Acteur;
-use Laminas\View\Helper\HtmlList;
 use Laminas\Filter\AbstractFilter;
+use Laminas\View\Helper\HtmlList;
+use These\Entity\Db\Acteur;
 
 /** --- Class ActeursFormatteur ---
  * @var bool $asUl                      returned data type as unordered list (html)

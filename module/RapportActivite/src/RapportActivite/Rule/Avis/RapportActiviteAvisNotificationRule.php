@@ -63,8 +63,10 @@ class RapportActiviteAvisNotificationRule implements RuleInterface
 
         if ($avisValeur->getValeurBool() === false) {
             // notifier doctorant
+            $individu = $these->getDoctorant()->getIndividu();
+            $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
             $this->notificationRequired = true;
-            $this->to = [$these->getDoctorant()->getEmail() => $these->getDoctorant()->getIndividu()->getNomComplet()];
+            $this->to = [$email => $these->getDoctorant()->getIndividu()->getNomComplet()];
             $this->subject = "Important : problème concernant votre rapport";
             $this->messagesByAvisValeurBool = [
                 false => "<strong>Important : pour que votre École Doctorale valide votre rapport, vous devez " .
@@ -83,7 +85,10 @@ class RapportActiviteAvisNotificationRule implements RuleInterface
             // notifier l'auteur de l'avis précédent
             $rapportActiviteAvisPrec = $this->fetchPreviousAvis();
             $auteurPrec = $rapportActiviteAvisPrec->getHistoModificateur() ?: $rapportActiviteAvisPrec->getHistoCreateur();
-            $auteurPrecEmail = $auteurPrec->getIndividu() ? $auteurPrec->getIndividu()->getEmailBestOf() : $auteurPrec->getEmail();
+            $auteurPrecIndividu = $auteurPrec->getIndividu();
+            $auteurPrecEmail = $auteurPrecIndividu ?
+                ($auteurPrecIndividu->getEmailContact() ?: $auteurPrecIndividu->getEmailPro() ?: $auteurPrecIndividu->getEmailUtilisateur()) :
+                $auteurPrec->getEmail();
 
             $this->notificationRequired = true;
             $this->to = [$auteurPrecEmail => $auteurPrec->getDisplayName()];

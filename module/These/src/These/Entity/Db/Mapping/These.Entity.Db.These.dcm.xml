@@ -34,20 +34,20 @@
 
         <field name="sourceCode" type="string" column="SOURCE_CODE" length="64" nullable="true"/>
 
-        <one-to-many field="fichierTheses" target-entity="These\Entity\Db\FichierThese" mapped-by="these" />
-        <one-to-many field="attestations" target-entity="These\Entity\Db\Attestation" mapped-by="these" >
+        <one-to-many field="fichierTheses" target-entity="Depot\Entity\Db\FichierThese" mapped-by="these" />
+        <one-to-many field="attestations" target-entity="Depot\Entity\Db\Attestation" mapped-by="these" >
             <order-by>
                 <order-by-field name="histoModification" direction="ASC" />
             </order-by>
         </one-to-many>
-        <one-to-many field="miseEnLignes" target-entity="These\Entity\Db\Diffusion" mapped-by="these" >
+        <one-to-many field="miseEnLignes" target-entity="Depot\Entity\Db\Diffusion" mapped-by="these" >
             <order-by>
                 <order-by-field name="histoModification" direction="ASC" />
             </order-by>
         </one-to-many>
-        <one-to-many field="metadonnees" target-entity="These\Entity\Db\MetadonneeThese" mapped-by="these"/>
+        <one-to-many field="metadonnees" target-entity="Depot\Entity\Db\MetadonneeThese" mapped-by="these"/>
         <one-to-many field="acteurs" target-entity="These\Entity\Db\Acteur" mapped-by="these"/>
-        <one-to-many field="rdvBus" target-entity="Application\Entity\Db\RdvBu" mapped-by="these"/>
+        <one-to-many field="rdvBus" target-entity="Depot\Entity\Db\RdvBu" mapped-by="these"/>
         <one-to-many field="validations" target-entity="Application\Entity\Db\Validation" mapped-by="these"/>
         <one-to-many field="titreAcces" target-entity="Application\Entity\Db\TitreAcces" mapped-by="these"/>
         <one-to-many field="anneesUnivInscription" target-entity="These\Entity\Db\TheseAnneeUniv" mapped-by="these"/>

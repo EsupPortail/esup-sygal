@@ -1,0 +1,18 @@
+<?php
+
+use These\Entity\Db\These;
+use Depot\Entity\Db\WfEtape;
+use Application\View\Renderer\PhpRenderer;
+
+/**
+ * @var PhpRenderer         $this
+ * @var These               $these
+ * @var null|string|\Depot\Entity\Db\WfEtape $etape
+ * @var string[]|\Depot\Entity\Db\WfEtape[]  $except
+ * @var string              $message
+ *
+ * @see \Depot\Controller\WorkflowController::nextStepBoxAction()
+ */
+?>
+
+<?php echo $this->partial('next-step-box') ?>

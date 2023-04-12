@@ -3,6 +3,7 @@
 namespace Formation\Controller;
 
 use Application\Controller\AbstractController;
+use Formation\Service\Notification\FormationNotificationFactoryAwareTrait;
 use These\Entity\Db\These;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
@@ -12,7 +13,6 @@ use Formation\Service\Formation\FormationServiceAwareTrait;
 use Formation\Service\Presence\PresenceServiceAwareTrait;
 use Formation\Service\SessionStructureValide\SessionStructureValideServiceAwareTrait;
 use Laminas\Http\Response;
-use Notification\Exception\NotificationException;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use DateTime;
 use Formation\Entity\Db\Etat;
@@ -22,7 +22,7 @@ use Formation\Entity\Db\Session;
 use Formation\Form\Session\SessionFormAwareTrait;
 use Formation\Service\Exporter\Emargement\EmargementExporter;
 use Formation\Service\Inscription\InscriptionServiceAwareTrait;
-use Formation\Service\Notification\NotificationServiceAwareTrait;
+use Notification\Service\NotifierServiceAwareTrait;
 use Formation\Service\Session\SessionServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 use Laminas\View\Model\ViewModel;
@@ -36,7 +36,8 @@ class SessionController extends AbstractController
     use FichierStorageServiceAwareTrait;
     use FormationServiceAwareTrait;
     use InscriptionServiceAwareTrait;
-    use NotificationServiceAwareTrait;
+    use NotifierServiceAwareTrait;
+    use FormationNotificationFactoryAwareTrait;
     use PresenceServiceAwareTrait;
     use SessionServiceAwareTrait;
     use SessionStructureValideServiceAwareTrait;
@@ -66,6 +67,15 @@ class SessionController extends AbstractController
         return new ViewModel([
             'session' => $session,
             'presences' => $dictionnaire,
+        ]);
+    }
+
+    public function afficherFicheAction() : ViewModel
+    {
+        $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
+        return new ViewModel([
+            'title' => "Information sur la session #".$session->getIndex(). " - ". $session->getFormation()->getLibelle(),
+            'session' => $session,
         ]);
     }
 
@@ -183,9 +193,6 @@ class SessionController extends AbstractController
         return $vm;
     }
 
-    /**
-     * @throws NotificationException
-     */
     public function changerEtatAction()
     {
         $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
@@ -214,18 +221,19 @@ class SessionController extends AbstractController
 
                 switch ($session->getEtat()->getCode()) {
                     case Etat::CODE_FERME :
-                        $this->getNotificationService()->triggerInscriptionsListePrincipale($session);
-                        $this->getNotificationService()->triggerInscriptionsListeComplementaire($session);
-                        $this->getNotificationService()->triggerInscriptionEchec($session);
+                        $this->triggerNotificationInscriptionsListePrincipale($session);
+                        $this->triggerNotificationInscriptionsListeComplementaire($session);
+                        $this->triggerNotificationInscriptionClose($session);
                         break;
                     case Etat::CODE_IMMINENT :
-                        $this->getNotificationService()->triggerSessionImminente($session);
+                        $this->triggerNotificationSessionImminente($session);
+                        $this->triggerNotificationInscriptionEchec($session);
                         break;
                     case Etat::CODE_CLOTURER :
-                        $this->getNotificationService()->triggerSessionTerminee($session);
+                        $this->triggerNotificationSessionTerminee($session);
                         break;
                     case Etat::CODE_ANNULEE :
-                        $this->getNotificationService()->triggerSessionAnnulee($session);
+                        $this->triggerNotificationSessionAnnulee($session);
                         break;
                 }
             }
@@ -238,9 +246,113 @@ class SessionController extends AbstractController
         ]);
     }
 
-    /**
-     * @throws NotificationException
-     */
+    private function triggerNotificationInscriptionsListePrincipale(Session $session)
+    {
+        $inscriptions = $session->getInscriptionsByListe(Inscription::LISTE_PRINCIPALE);
+        foreach ($inscriptions as $inscription) {
+            try {
+                $notif = $this->formationNotificationFactory->createNotificationInscriptionListePrincipale($inscription);
+                $this->notifierService->trigger($notif);
+            } catch (\Notification\Exception\RuntimeException $e) {
+                // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
+            }
+        }
+    }
+
+    private function triggerNotificationInscriptionsListeComplementaire(Session $session)
+    {
+        $inscriptions = $session->getInscriptionsByListe(Inscription::LISTE_COMPLEMENTAIRE);
+        foreach ($inscriptions as $inscription) {
+            try {
+                $notif = $this->formationNotificationFactory->createNotificationInscriptionListeComplementaire($inscription);
+                $this->notifierService->trigger($notif);
+            } catch (\Notification\Exception\RuntimeException $e) {
+                // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
+            }
+        }
+    }
+
+    private function triggerNotificationInscriptionClose(Session $session)
+    {
+        $nonClasses = $session->getNonClasses();
+
+        foreach ($nonClasses as $inscription) {
+            try {
+                $notif = $this->formationNotificationFactory->createNotificationInscriptionClose($inscription);
+                $this->notifierService->trigger($notif);
+            } catch (\Notification\Exception\RuntimeException $e) {
+                // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
+            }
+        }
+    }
+
+    private function triggerNotificationInscriptionEchec(Session $session)
+    {
+        $complementaire = $session->getListeComplementaire();
+        $nonClasses = $session->getNonClasses();
+
+        $inscriptions = array_merge($nonClasses, $complementaire);
+
+        foreach ($inscriptions as $inscription) {
+            try {
+                $notif = $this->formationNotificationFactory->createNotificationInscriptionEchec($inscription);
+                $this->notifierService->trigger($notif);
+            } catch (\Notification\Exception\RuntimeException $e) {
+                // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
+            }
+        }
+    }
+
+    private function triggerNotificationSessionImminente(Session $session)
+    {
+        $inscriptions = $session->getListePrincipale();
+
+        try {
+            $notif = $this->formationNotificationFactory->createNotificationSessionImminenteFormateur($session);
+            $this->notifierService->trigger($notif);
+        } catch (\Notification\Exception\RuntimeException $e) {
+            // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
+        }
+
+        foreach ($inscriptions as $inscription) {
+            try {
+                $notif = $this->formationNotificationFactory->createNotificationSessionImminente($inscription);
+                $this->notifierService->trigger($notif);
+            } catch (\Notification\Exception\RuntimeException $e) {
+                // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
+            }
+        }
+
+    }
+
+    private function triggerNotificationSessionTerminee(Session $session)
+    {
+        $inscriptions = $session->getListePrincipale();
+
+        foreach ($inscriptions as $inscription) {
+            try {
+                $notif = $this->formationNotificationFactory->createNotificationSessionTerminee($inscription);
+                $this->notifierService->trigger($notif);
+            } catch (\Notification\Exception\RuntimeException $e) {
+                // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
+            }
+        }
+    }
+
+    private function triggerNotificationSessionAnnulee(Session $session)
+    {
+        $inscriptions = array_merge($session->getListePrincipale(), $session->getListeComplementaire());
+
+        foreach ($inscriptions as $inscription) {
+            try {
+                $notif = $this->formationNotificationFactory->createNotificationSessionAnnulee($inscription);
+                $this->notifierService->trigger($notif);
+            } catch (\Notification\Exception\RuntimeException $e) {
+                // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
+            }
+        }
+    }
+
     public function classerInscriptionsAction() : Response
     {
         $session = $this->getSessionService()->getRepository()->getRequestedSession($this);
@@ -262,13 +374,27 @@ class SessionController extends AbstractController
             if ($positionPrincipale < $session->getTailleListePrincipale()) {
                 $inscription->setListe(Inscription::LISTE_PRINCIPALE);
                 $this->getInscriptionService()->update($inscription);
-                if ($session->isFinInscription()) $this->getNotificationService()->triggerInscriptionListePrincipale($inscription);
+                if ($session->isFinInscription()) {
+                    try {
+                        $notif = $this->formationNotificationFactory->createNotificationInscriptionListePrincipale($inscription);
+                        $this->notifierService->trigger($notif);
+                    } catch (\Notification\Exception\RuntimeException $e) {
+                        // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
+                    }
+                }
                 $positionPrincipale++;
             } else {
                 if ($positionComplementaire < $session->getTailleListeComplementaire()) {
                     $inscription->setListe(Inscription::LISTE_COMPLEMENTAIRE);
                     $this->getInscriptionService()->update($inscription);
-                    if ($session->isFinInscription()) $this->getNotificationService()->triggerInscriptionListeComplementaire($inscription);
+                    if ($session->isFinInscription()) {
+                        try {
+                            $notif = $this->formationNotificationFactory->createNotificationInscriptionListeComplementaire($inscription);
+                            $this->notifierService->trigger($notif);
+                        } catch (\Notification\Exception\RuntimeException $e) {
+                            // aucun destinataire trouvé lors de la construction de la notif : cas à gérer !
+                        }
+                    }
                     $positionComplementaire++;
                 }
                 else {
@@ -313,11 +439,12 @@ class SessionController extends AbstractController
             $etablissements = array_map(function (These $t) { return ($t->getEtablissement())?$t->getEtablissement()->getStructure()->getLibelle():"Établissement non renseigné";}, $theses);
             $ecoles = array_map(function (These $t) { return ($t->getEcoleDoctorale())?$t->getEcoleDoctorale()->getStructure()->getLibelle():"École doctorale non renseignée";}, $theses);
             $unites = array_map(function (These $t) { return ($t->getUniteRecherche())?$t->getUniteRecherche()->getStructure()->getLibelle():"Unité de recherche non renseignée";}, $theses);
+            $nbInscription = (!empty($theses))?current($theses)->getNbInscription($annee):"---";
             $entry = [
                 'Liste' => $inscription->getListe(),
                 'Dénomination étudiant' => $doctorant->getIndividu()->getNomComplet(),
-                'Adresse électronique' => $doctorant->getIndividu()->getEmail(),
-                'Année de thèse' => current($theses)->getNbInscription($annee),
+                'Adresse électronique' => $doctorant->getIndividu()->getEmailUtilisateur(),
+                'Année de thèse' => $nbInscription,
                 'Établissement' => implode("/",$etablissements),
                 'École doctorale' => implode("/",$ecoles),
                 'Unité de recherche' => implode("/",$unites),

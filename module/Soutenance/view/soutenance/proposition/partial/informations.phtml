@@ -47,7 +47,7 @@ $etablissement = $these->getEtablissement();
                     <?php foreach ($directeurs as $directeur) : ?>
                         <li>
                             <?php echo $directeur->getIndividu()->getNomComplet(); ?>
-                            (<?php echo ($directeur->getIndividu()->getEmail())?:'<span class="text-danger">Adresse électronique manquante</span>'; ?>)
+                            (<?php echo ($directeur->getIndividu()->getEmailPro())?:'<span class="text-danger">Adresse électronique manquante</span>'; ?>)
                             <br/>
                             Établissement :
                             <?php echo ($directeur->getIndividu()->getEtablissement())?:'<span class="text-danger">Établissement manquant</span>'; ?>
@@ -83,7 +83,7 @@ $etablissement = $these->getEtablissement();
                                         <?php foreach ($uniteResponsables as $uniteResponsable) : ?>
                                             <li>
                                                 <?php echo $uniteResponsable->getIndividu()->getNomComplet(); ?>
-                                                (<?php echo ($uniteResponsable->getIndividu()->getEmail())?:"<span class='text-danger'>Adresse électronique manquante</span>"; ?>)
+                                                (<?php echo ($uniteResponsable->getIndividu()->getEmailPro())?:"<span class='text-danger'>Adresse électronique manquante</span>"; ?>)
                                             </li>
                                         <?php endforeach; ?>
                                         </ul>
@@ -105,7 +105,7 @@ $etablissement = $these->getEtablissement();
                                         <?php foreach ($ecoleResponsables as $ecoleResponsable) : ?>
                                             <li>
                                                 <?php echo $ecoleResponsable->getIndividu()->getNomComplet(); ?>
-                                                (<?php echo ($ecoleResponsable->getIndividu()->getEmail())?:"<span class='text-danger'>Adresse électronique manquante</span>"; ?>)
+                                                (<?php echo ($ecoleResponsable->getIndividu()->getEmailPro())?:"<span class='text-danger'>Adresse électronique manquante</span>"; ?>)
                                             </li>
                                         <?php endforeach; ?>
                                     </ul>
@@ -127,7 +127,7 @@ $etablissement = $these->getEtablissement();
                                         <?php foreach ($etablissementResponsables as $etablissementResponsable) : ?>
                                             <li>
                                                 <?php echo $etablissementResponsable->getIndividu()->getNomComplet(); ?>
-                                                (<?php echo ($etablissementResponsable->getIndividu()->getEmail())?:"<span class='text-danger'>Adresse électronique manquante</span>"; ?>)
+                                                (<?php echo ($etablissementResponsable->getIndividu()->getEmailPro())?:"<span class='text-danger'>Adresse électronique manquante</span>"; ?>)
                                             </li>
                                         <?php endforeach; ?>
                                     </ul>

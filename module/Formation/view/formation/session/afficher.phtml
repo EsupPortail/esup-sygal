@@ -166,11 +166,15 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
         <dd class="col-md-9"> <?php echo count($listeComplementaireTrue); ?>/<?php echo $session->getTailleListeComplementaire(); ?></dd>
         <dt class="col-md-3"> Nombre d'inscription </dt>
         <dd class="col-md-9"> <?php echo count($inscrits); ?></dd>
+        <?php if ($session->getDateClotureInscription()) : ?>
+            <dt class="col-md-3"> Date de clôture des inscriptions </dt>
+            <dd class="col-md-9"> <?php echo $session->getDateClotureInscription()->format('d/m/Y'); ?></dd>
+        <?php endif; ?>
     </dl>
     </div>
     </div>
     <div class="col-md-5">
-        <h3>Heurodatage</h3>
+        <h3>Horodatage</h3>
         <?php $heurodatages = $session->getHeurodatages(); ?>
         <?php foreach ($heurodatages as $heurodatage) : ?>
             <?php echo $this->etat($heurodatage); ?>
@@ -328,7 +332,7 @@ echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace();
                     <?php endif; ?>
                 </span>
             </td>
-            <td> <?php echo $seance->getDebut()->format('d/m/y'); ?> </td>
+            <td> <?php echo $seance->getDebut()->format('d/m/Y'); ?> </td>
             <td> <?php echo $seance->getDebut()->format('H:i'); ?> </td>
             <td> <?php echo $seance->getFin()->format('H:i'); ?> </td>
             <td> <?php echo $seance->getDuree(); ?> h. </td>

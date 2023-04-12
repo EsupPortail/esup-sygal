@@ -2,16 +2,14 @@
 
 namespace RapportActivite\Event;
 
-use Application\Service\Notification\NotifierServiceAwareTrait;
+use Notification\Service\NotifierServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\ListenerAggregateInterface;
 use Laminas\EventManager\ListenerAggregateTrait;
-use Notification\Exception\NotificationException;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Service\RapportActiviteService;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
-use UnicaenApp\Exception\RuntimeException;
 use Webmozart\Assert\Assert;
 
 class RapportActiviteEventListener implements ListenerAggregateInterface
@@ -63,14 +61,10 @@ class RapportActiviteEventListener implements ListenerAggregateInterface
         }
 
         $notif = $this->rapportActiviteService->newRapportActiviteSupprimeNotification($rapportActivite);
-        try {
-            $this->notifierService->trigger($notif);
-        } catch (NotificationException $e) {
-            throw new RuntimeException("Impossible d'envoyer le mail de notification", null, $e);
-        }
+        $result = $this->notifierService->trigger($notif);
 
-        $messages['info'] = ($notif->getInfoMessages()[0] ?? null);
-        $messages['warning'] = ($notif->getWarningMessages()[0] ?? null);
+        $messages['info'] = ($result->getSuccessMessages()[0] ?? null);
+        $messages['warning'] = ($result->getErrorMessages()[0] ?? null);
         $event->setMessages(array_filter($messages));
     }
 }

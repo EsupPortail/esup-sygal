@@ -8,6 +8,7 @@
  */
 
 use Soutenance\Entity\Proposition;
+use Soutenance\Service\Horodatage\HorodatageService;
 
 
 $these = $proposition->getThese();
@@ -173,5 +174,7 @@ $these = $proposition->getThese();
             <?php endif; ?>
         </div>
     </div>
+    <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Informations complémentaires"); ?>
+
 </div>
 </div>

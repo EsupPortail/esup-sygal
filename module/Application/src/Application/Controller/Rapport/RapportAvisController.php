@@ -9,7 +9,6 @@ use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Form\Rapport\RapportAvisForm;
 use Individu\Service\IndividuServiceAwareTrait;
-use Application\Service\Notification\NotifierServiceAwareTrait;
 use Application\Service\Rapport\Avis\RapportAvisServiceAwareTrait;
 use Application\Service\Rapport\RapportServiceAwareTrait;
 use Doctrine\ORM\NoResultException;
@@ -21,7 +20,6 @@ class RapportAvisController extends AbstractController
     use RapportServiceAwareTrait;
     use RapportAvisServiceAwareTrait;
     use IdifyFilterAwareTrait;
-    use NotifierServiceAwareTrait;
     use IndividuServiceAwareTrait;
     use EventRouterReplacerAwareTrait;
 

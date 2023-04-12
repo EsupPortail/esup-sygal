@@ -30,6 +30,8 @@ use Soutenance\Form\Membre\MembreHydratorFactory;
 use Soutenance\Form\Refus\RefusForm;
 use Soutenance\Form\Refus\RefusFormFactory;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
+use Soutenance\Service\Horodatage\HorodatageService;
+use Soutenance\Service\Horodatage\HorodatageServiceFactory;
 use Soutenance\Service\Proposition\PropositionSearchService;
 use Soutenance\Service\Proposition\PropositionSearchServiceFactory;
 use Soutenance\Service\Proposition\PropositionService;
@@ -92,6 +94,8 @@ return [
                     'controller' => PropositionController::class,
                     'action' => [
                         'proposition',
+                        'horodatages',
+                        'generer-serment',
                         'generate-view-date-lieu',
                         'generate-view-jury',
                         'generate-view-informations',
@@ -202,6 +206,29 @@ return [
                             ],
                         ],
                         'child_routes' => [
+                            'horodatages' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/horodatages',
+                                    'defaults' => [
+                                        /** @see PropositionController::horodatagesAction() */
+                                        'controller' => PropositionController::class,
+                                        'action' => 'horodatages',
+                                    ],
+                                ],
+                            ],
+                            'generer-serment' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/generer-serment',
+                                    'defaults' => [
+                                        'controller' => PropositionController::class,
+                                        'action' => 'generer-serment',
+                                    ],
+                                ],
+                            ],
                             'generate-view-date-lieu' => [
                                 'type' => Segment::class,
                                 'may_terminate' => true,
@@ -436,6 +463,7 @@ return [
             PropositionService::class => PropositionServiceFactory::class,
             PropositionSearchService::class => PropositionSearchServiceFactory::class,
             PropositionAssertion::class => PropositionAssertionFactory::class,
+            HorodatageService::class => HorodatageServiceFactory::class,
         ],
     ],
     'controllers' => [

@@ -1,0 +1,97 @@
+<?php
+
+use Application\Service\Message\DiffusionMessages;
+use Application\View\Renderer\PhpRenderer;
+use Depot\Entity\Db\Diffusion;
+use Structure\Entity\Db\Etablissement;
+use These\Entity\Db\These;
+
+/**
+ * @var PhpRenderer $this
+ * @var These       $these
+ * @var Diffusion   $diffusion
+ * @var string      $libEtablissement
+ * @var string      $libEtablissementA
+ * @var string      $libEtablissementLe
+ *
+ * @var Etablissement $etablissement
+ * @var string $logo
+ */
+?>
+
+<style>
+    body { font-family: Arial, Helvetica, sans-serif; font-size: 13px; }
+    h1 { font-size: 22px; }
+    h2 { font-size: 18px; margin-top: 15px; font-variant: small-caps; }
+    hr { margin: 30px 0; }
+    dl dt { font-weight: bold; margin-top: 10px; }
+    .attestations { margin: 0; }
+    .diffusion { margin: 0; }
+    .signatures { margin: 30px auto; width: 90%; }
+    .signatures td { width: 50%; height: 30px; }
+    address { font-style: normal; font-size: 8px; }
+</style>
+
+<div style="text-align: center; margin-bottom: 30px;">
+    <h1>CONVENTION DE MISE EN LIGNE<br>D'UNE THÈSE SOUTENUE</h1>
+
+    <img src="<?php echo $logo; ?>" height="100px" alt="Logo de Normandie Université" />
+<!--    <img src="var:logo" height="100px" alt="Logo de Normandie Université" />-->
+</div>
+
+<p>
+    En application de la Charte de dépôt et de diffusion des thèses votée par le
+    Conseil Académique de Normandie Université le 28/11/2016, il est convenu ce qui suit
+    entre Normandie Université, représentée par le chef d'établissement,
+    et l’auteur identifié ci-dessous :
+</p>
+<p>
+    <strong>Nom :</strong> <?php echo $these->getDoctorant()->getIndividu()->getNomUsuel() ?> <br>
+    <strong>Prénom :</strong> <?php echo $these->getDoctorant()->getIndividu()->getPrenom() ?> <br>
+    <strong>Etablissement de préparation :</strong> <?php echo $libEtablissement ?> <br>
+
+    <?php if ($these->getDateSoutenance()): ?>
+        <strong>Date de soutenance :</strong> <?php echo $these->getDateSoutenanceToString() ?><br>
+    <?php else: ?>
+        <strong>Date prévisionnelle de soutenance :</strong> <?php echo $these->getDatePrevisionSoutenanceToString() ?: "" ?><br>
+    <?php endif ?>
+
+    <?php if ($these->getDateFinConfidentialite() !== null): ?>
+        <strong>Date de fin de confidentialité :</strong> <?php echo $these->getDateFinConfidentialiteToString() ?> <br>
+    <?php endif ?>
+
+    <strong>Titre de la thèse :</strong> <?php echo $these->getTitre() ?: "(Aucun titre)" ?> <br>
+</p>
+
+<div class="attestations">
+    <?php echo $this->partial('partial/attestations') ?>
+</div>
+
+<div class="diffusion">
+    <?php echo $this->partial('partial/diffusion') ?>
+</div>
+
+<pagebreak>
+
+<div class="droits">
+    <?php echo $this->partial('partial/droits') ?>
+</div>
+
+<hr>
+
+<div>
+    <p>
+        <?php echo $this->message()->render(DiffusionMessages::AUTORIS_MISE_EN_LIGNE_LAIUS, [], $diffusion) ?>
+    </p>
+</div>
+
+<table class="signatures">
+    <tr>
+        <td>Date,</td>
+        <td>Date,</td>
+    </tr>
+    <tr>
+        <td>L'auteur</td>
+        <td>Le chef d'établissement</td>
+    </tr>
+</table>

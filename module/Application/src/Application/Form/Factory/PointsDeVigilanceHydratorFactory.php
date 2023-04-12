@@ -2,7 +2,7 @@
 
 namespace Application\Form\Factory;
 
-use Application\Form\Hydrator\PointsDeVigilanceHydrator;
+use Depot\Form\Hydrator\PointsDeVigilanceHydrator;
 use Interop\Container\ContainerInterface;
 
 class PointsDeVigilanceHydratorFactory

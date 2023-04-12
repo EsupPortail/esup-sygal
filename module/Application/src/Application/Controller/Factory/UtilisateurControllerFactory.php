@@ -5,8 +5,9 @@ namespace Application\Controller\Factory;
 use Application\Controller\UtilisateurController;
 use Application\Form\CreationUtilisateurForm;
 use Application\Form\InitCompteForm;
+use Application\Service\Notification\ApplicationNotificationFactory;
 use These\Service\Acteur\ActeurService;
-use Application\Service\Notification\NotifierService;
+use Notification\Service\NotifierService;
 use Application\Service\Role\RoleService;
 use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurSearchService;
@@ -33,6 +34,10 @@ class UtilisateurControllerFactory
 {
     use IndividuServiceLocateTrait;
 
+    /**
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     public function __invoke(ContainerInterface $container): UtilisateurController
     {
         /**
@@ -109,6 +114,10 @@ class UtilisateurControllerFactory
         $controller->setSearchService($utilisateurSearchService);
         $controller->setUserMapper($userMapper);
         $controller->setSessionService($sessionService);
+
+        /** @var \Application\Service\Notification\ApplicationNotificationFactory $applicationNotificationFactory */
+        $applicationNotificationFactory = $container->get(ApplicationNotificationFactory::class);
+        $controller->setApplicationNotificationFactory($applicationNotificationFactory);
 
         /**
          * @var SourceCodeStringHelper $sourceCodeHelper

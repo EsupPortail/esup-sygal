@@ -4,6 +4,8 @@ use Structure\Controller\EcoleDoctoraleController;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Form\EcoleDoctoraleForm;
 use Application\View\Renderer\PhpRenderer;
+use UnicaenIdref\Domain\Index1;
+use UnicaenIdref\ParamsFactory;
 
 /**
  * @var PhpRenderer        $this
@@ -20,7 +22,7 @@ use Application\View\Renderer\PhpRenderer;
 $ecole = $form->getObject();
 $isNew = $ecole->getId() === null;
 $estSubstituee = $ecole->getStructure()->estSubstituee();
-$estModifiable = !($ecole->getSource()->getImportable());
+$estModifiable = !($ecole->getSource() !== null AND $ecole->getSource()->getImportable());
 $fcg = $this->formControlGroup();
 $this->headTitle("Modification de l'école doctorale ".$ecole->getStructure()->getCode());
 
@@ -34,9 +36,11 @@ $form->get('code')->setAttribute('readonly', !$editable);
     <?php if ($isNew): ?>
         Création d'une nouvelle école doctorale
     <?php else: ?>
-        Modification de l'école doctorale &laquo; <?php echo $ecole->getStructure()->getLibelle(); ?> &raquo;
+        Modification de l'école doctorale &laquo; <?php echo $ecole ?> &raquo;
     <?php endif ?>
 </h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
 
 <?php if (!$editable) : ?>
 <div class="alert alert-warning">
@@ -60,70 +64,88 @@ $form->get('code')->setAttribute('readonly', !$editable);
 <?php endif; ?>
 
 <?php echo $this->form()->openTag($form->prepare()->setAttribute('class', 'ecole-doctorale')) ?>
+
 <div class="row">
 
     <div class="col-md-6">
-        <?php echo $fcg($form->get('libelle')) ?>
-        <?php echo $fcg($form->get('sigle')) ?>
-        <?php echo $fcg($form->get('code')) ?>
-        <?php echo $fcg($form->get('id_ref')) ?>
-        <?php echo $fcg($form->get('id_hal')) ?>
-        <?php echo $fcg($form->get('theme')) ?>
-        <?php echo $fcg($form->get('offre-these')) ?>
-        <?php echo $fcg($form->get('estFerme')) ?>
+        <fieldset>
+            <legend><h2>Informations générales</h2></legend>
+            <?php echo $fcg($form->get('libelle')->setAttribute('id', 'libelle')) ?>
+            <?php echo $fcg($form->get('sigle')) ?>
+            <?php echo $fcg($form->get('theme')) ?>
+            <?php echo $fcg($form->get('offre-these')) ?>
+        </fieldset>
+        <fieldset>
+            <legend><h2>Informations techniques</h2></legend>
+            <div class="row">
+                <div class="col-md-5">
+                    <?php echo $fcg($form->get('id_ref')->setAttribute('id', 'idRef')) ?>
+                </div>
+                <div class="col-md-2">
+                    <?php echo $this->idrefPopupTrigger([
+                        ['Index1' => Index1::INDEX_Ppn, 'Index1Value' => ['idRef']],
+                        ['Index1' => Index1::INDEX_NomDeCollectivité, 'Index1Value' => ['libelle']],
+                    ], 'idRef') ?>
+                </div>
+            </div>
+            <?php echo $fcg($form->get('id_hal')) ?>
+            <?php echo $fcg($form->get('code')) ?>
+        </fieldset>
     </div>
 
-    <div id="logo-div" class="col-md-6">
+    <div class="col-md-6">
+        <label class="form-label col-form-label">Étiquettes associées :</label>
+        <?php echo $fcg($form->get('estFerme')) ?>
 
-        <?php
-        /** @var \Laminas\Form\Element\File $logoFile */
-        $logoFile = $form->get('cheminLogo');
-        echo $this->formLabel($logoFile);
-        ?>
+        <div id="logo-div">
+            <?php
+            /** @var \Laminas\Form\Element\File $logoFile */
+            $logoFile = $form->get('cheminLogo');
+            echo $this->formLabel($logoFile);
+            ?>
 
-        <?php
-        $content = $logoContent;
-        if ($content === null) {
-            $ecole->getStructure()->setCheminLogo(null);
-        }
-        ?>
+            <?php
+            $content = $logoContent;
+            if ($content === null) {
+                $ecole->getStructure()->setCheminLogo(null);
+            }
+            ?>
+            <table>
+                <tr>
+                    <td>
+                        <img
+                                id="logo"
+                                style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
+                                src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"
+                        />
+                    </td>
+                    <td style="padding:20px;">
+                        <?php
+                        echo $this->formFile($logoFile);
+                        echo $this->formElementErrors($logoFile);
+                        ?>
+                        <br/>
+                        <?php if($ecole->getId()): ?>
+                            <a id="supprimer-logo" class="btn btn-danger" href="<?php echo $this->url('ecole-doctorale/supprimer-logo', ["structure" => $ecole->getStructure()->getId()]); ?>">
+                                <span class="icon icon-delete"></span>
+                                Supprimer le logo
+                            </a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            </table>
 
-
-        <table>
-            <tr>
-                <td>
-                    <img
-                            id="logo"
-                            style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
-                            src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"
-                    />
-                </td>
-                <td style="padding:20px;">
-                    <?php
-                    echo $this->formFile($logoFile);
-                    echo $this->formElementErrors($logoFile);
-                    ?>
-                    <br/>
-                    <?php if($ecole->getId()): ?>
-                        <a id="supprimer-logo" class="btn btn-danger" href="<?php echo $this->url('ecole-doctorale/supprimer-logo', ["structure" => $ecole->getStructure()->getId()]); ?>">
-                            <span class="icon icon-delete"></span>
-                            Supprimer le logo
-                        </a>
-                    <?php endif; ?>
-                </td>
-            </tr>
-        </table>
-
-        <div class="alert alert-warning">
-            <small>
-                <span class="icon icon-warning"></span>
-                Le logo de la structure doit être donné dans un des formats suivant&nbsp;:
-                <ul>
-                    <li>.bmp</li>
-                    <li>.jpg, .jpeg</li>
-                    <li>.png</li>
-                </ul>
-            </small>
+            <div class="alert alert-warning">
+                <small>
+                    <span class="icon icon-warning"></span>
+                    Le logo de la structure doit être donné dans un des formats suivant&nbsp;:
+                    <ul>
+                        <li>.bmp</li>
+                        <li>.jpg, .jpeg</li>
+                        <li>.png</li>
+                    </ul>
+                </small>
+            </div>
         </div>
     </div>
 

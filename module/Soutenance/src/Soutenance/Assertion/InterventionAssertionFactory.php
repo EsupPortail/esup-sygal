@@ -2,11 +2,13 @@
 
 namespace Soutenance\Assertion;
 
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use These\Service\These\TheseService;
 use Application\Service\UserContextService;
 use Interop\Container\ContainerInterface;
-use Soutenance\Service\Parametre\ParametreService;
 use Soutenance\Service\Proposition\PropositionService;
+use UnicaenParametre\Service\Parametre\ParametreService;
 
 class InterventionAssertionFactory
 {
@@ -14,8 +16,10 @@ class InterventionAssertionFactory
     /**
      * @param ContainerInterface $container
      * @return InterventionAssertion
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container) : InterventionAssertion
     {
         /**
          * @var TheseService $theseService
