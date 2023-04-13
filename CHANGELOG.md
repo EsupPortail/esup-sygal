@@ -19,7 +19,8 @@ Journal des modifications
 - Menu Dépôt fichiers divers : remonté et affiché sans condition
 - Page Dépôt fichiers divers : téléversement bloqué pour PV soutenance, Pré-rapport soutenance, Rapport soutenance
 - Recherche/sélection du PPN IdRef dans les formulaires de modification de structure et d'individu
-- [FIX] Donnée : ajout de garde lorsque le mail fourni par les données sources est " " 
+- [FIX] Donnée : ajout de garde lorsque le mail fourni par les données sources est " "
+- [FIX] hydration des justificatifs 
 
 5.2.10
 ------
