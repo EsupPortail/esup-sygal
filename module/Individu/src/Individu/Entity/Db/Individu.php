@@ -266,11 +266,14 @@ class Individu implements HistoriqueAwareInterface, SourceAwareInterface, Resour
     public function getEmailPro(): ?string
     {
         $complement = $this->getComplement();
-        if ($complement AND !$complement->estHistorise() AND $complement->getEmailPro() !== null) {
+        if ($complement AND !$complement->estHistorise()
+                AND $complement->getEmailPro() !== null) {
             return $complement->getEmailPro();
         }
 
-        return $this->email;
+        $email = $this->email;
+        if ($email === null or trim($this->email) === '') return null;
+        return $email;
     }
 
     /**

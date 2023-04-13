@@ -1,6 +1,11 @@
 Journal des modifications
 =========================
 
+5.3.1
+-----
+- [FIX] Donnée : ajout de garde lorsque le mail fourni par les données sources est " "
+- [FIX] hydration des justificatifs
+
 5.3.0
 -----
 - Nouvelle version du module Rapports d'activité.

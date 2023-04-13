@@ -692,7 +692,9 @@ class PresoutenanceController extends AbstractController
         /** @var Membre $membre */
         foreach ($proposition->getMembres() as $membre) {
             if ($membre->estMembre()) {
-                $email = ($membre->getIndividu() and $membre->getIndividu()->getEmailPro()) ? $membre->getIndividu()->getEmailPro() : $membre->getEmail();
+                $email = null;
+                if ($membre->getIndividu() and $membre->getIndividu()->getEmailPro()) $email = $membre->getIndividu()->getEmailPro();
+                if ($email === null or trim($email) === '') $email = $membre->getEmail();
                 /** @see PresoutenanceController::convocationMembreAction() */
                 $url = $this->url()->fromRoute('soutenance/presoutenance/convocation-membre', ['proposition' => $proposition->getId(), 'membre' => $membre->getId()], ['force_canonical' => true], true);
                 try {
