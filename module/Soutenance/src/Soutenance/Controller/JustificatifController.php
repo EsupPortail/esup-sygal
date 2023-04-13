@@ -90,7 +90,6 @@ class JustificatifController extends AbstractController {
 
             $form->setData($data);
             if ($form->isValid()) {
-                var_dump("After form");
                 if ($nature === null) $nature = $this->fichierTheseService->fetchNatureFichier($data['nature']);
                 $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
                 $fichiers = $this->fichierTheseService->createFichierThesesFromUpload($these, $files, $nature, $version);
