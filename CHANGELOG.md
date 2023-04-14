@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+5.3.2
+-----
+- [FIX] Erreur dans le test de pertinence des étapes de dépôt d'une version corrigée (SQL).
+
 5.3.1
 -----
 - [FIX] Donnée : ajout de garde lorsque le mail fourni par les données sources est " "
