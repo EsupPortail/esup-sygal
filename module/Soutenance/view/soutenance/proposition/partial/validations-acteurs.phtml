@@ -32,8 +32,9 @@ $these = $proposition->getThese();
 
 $hasDeclaration= !empty($validations[TypeValidation::CODE_VALIDATION_DECLARATION_HONNEUR]);
 $hasAttestation = !empty($attestationsIntegriteScientifique);
+$hasSursis = $proposition->hasSursis();
 
-$isDateOk = ((new DateTime())->add(new DateInterval('P2M')) < $proposition->getDate());
+$isDateOk = ((new DateTime())->add(new DateInterval('P2M')) < $proposition->getDate() OR $hasSursis);
 $isAllOk = ($hasDeclaration AND $hasAttestation AND $isDateOk AND $isInformationsOk)
 ?>
 
