@@ -436,10 +436,12 @@ class SessionController extends AbstractController
         foreach ($inscriptions as $inscription) {
             $doctorant = $inscription->getDoctorant();
             $theses = array_filter($doctorant->getTheses(), function (These $t) { return ($t->getEtatThese() === These::ETAT_EN_COURS AND $t->estNonHistorise());});
+            /** @var These $these */
+            $these = (!empty($theses))?current($theses):null;
             $etablissements = array_map(function (These $t) { return ($t->getEtablissement())?$t->getEtablissement()->getStructure()->getLibelle():"Établissement non renseigné";}, $theses);
             $ecoles = array_map(function (These $t) { return ($t->getEcoleDoctorale())?$t->getEcoleDoctorale()->getStructure()->getLibelle():"École doctorale non renseignée";}, $theses);
             $unites = array_map(function (These $t) { return ($t->getUniteRecherche())?$t->getUniteRecherche()->getStructure()->getLibelle():"Unité de recherche non renseignée";}, $theses);
-            $nbInscription = (!empty($theses))?current($theses)->getNbInscription($annee):"---";
+            $nbInscription = ($these)?$these->getNbInscription():"---";
             $entry = [
                 'Liste' => $inscription->getListe(),
                 'Dénomination étudiant' => $doctorant->getIndividu()->getNomComplet(),

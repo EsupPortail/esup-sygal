@@ -4,6 +4,7 @@ Journal des modifications
 5.3.2
 -----
 - [FIX] Erreur dans le test de pertinence des étapes de dépôt d'une version corrigée (SQL).
+- [FIX] Remise de la fonction getNbInscription effacée car sans d'usage (explicite)
 
 5.3.1
 -----
