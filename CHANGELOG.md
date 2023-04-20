@@ -6,6 +6,7 @@ Journal des modifications
 - [FIX] Erreur dans le test de pertinence des étapes de dépôt d'une version corrigée (SQL).
 - [FIX] Remise de la fonction getNbInscription effacée car sans d'usage (explicite)
 - [FIX] Remise du controle de sursis pour les validations acteurs
+- [FIX] Inversion de l'ordre de génération des avis de souteances et procés verbaux
 
 5.3.1
 -----
