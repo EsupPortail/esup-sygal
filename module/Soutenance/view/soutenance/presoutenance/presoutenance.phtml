@@ -293,18 +293,17 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
             <div class="row">
                 <div class="col-md-3">
                     <?php if ($canGenererDocument) : ?>
-                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::procesVerbalSoutenanceAction() */ ?>
-                            href="<?php echo $this->url('soutenance/presoutenance/proces-verbal-soutenance', ['these' => $these->getId()], [], true); ?>"
+                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::avisSoutenanceAction() */ ?>
+                            href="<?php echo $this->url('soutenance/presoutenance/avis-soutenance', ['these' => $these->getId()], [], true); ?>"
                             class="btn btn-primary action"
                             target="_blank"
                         >
-                            <span class="fas fa-list-alt"></span>
-                            Générer le procès verbal
+                            <span class="fas fa-list-alt"></span>Générer l'avis de soutenance
                         </a>
                     <?php endif; ?>
                 </div>
                 <div class="col-md-9">
-                    <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_EDITION, "Procès verbal"); ?>
+                    <?php echo $this->dernierHorodatage($proposition, HorodatageService::TYPE_EDITION, "Avis de soutenance"); ?>
                 </div>
             </div>
 
@@ -388,12 +387,13 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
             <div class="row">
                 <div class="col-md-12">
                     <?php if ($canGenererDocument) : ?>
-                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::avisSoutenanceAction() */ ?>
-                                href="<?php echo $this->url('soutenance/presoutenance/avis-soutenance', ['these' => $these->getId()], [], true); ?>"
-                                class="btn btn-primary action"
-                                target="_blank"
+                        <a  <?php /** @see \Soutenance\Controller\PresoutenanceController::procesVerbalSoutenanceAction() */ ?>
+                            href="<?php echo $this->url('soutenance/presoutenance/proces-verbal-soutenance', ['these' => $these->getId()], [], true); ?>"
+                            class="btn btn-primary action"
+                            target="_blank"
                         >
-                            <span class="fas fa-list-alt"></span>Générer l'avis de soutenance
+                            <span class="fas fa-list-alt"></span>
+                            Générer le procès verbal
                         </a>
                     <?php endif; ?>
 
@@ -429,7 +429,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                 </div>
 
                 <?php echo $this->derniersHorodatages($proposition, [
-                    [HorodatageService::TYPE_EDITION, "Avis de soutenance"],
+                    [HorodatageService::TYPE_EDITION, "Procès verbal"],
                     [HorodatageService::TYPE_EDITION, "Rapport de soutenance"],
                     [HorodatageService::TYPE_EDITION, "Rapport technique"],
                     [HorodatageService::TYPE_EDITION, "Convocations"],
