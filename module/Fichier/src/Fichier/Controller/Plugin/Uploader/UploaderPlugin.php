@@ -71,8 +71,7 @@ class UploaderPlugin extends AbstractPlugin
      */
     public function download(UploadedFileInterface $fichier)
     {
-        $contenu     = $fichier->getContenu();
-        $content     = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
+        $content = $fichier->getContenu();
         $contentType = $fichier->getTypeMime() ?: 'application/octet-stream';
 
         header('Content-Description: File Transfer');

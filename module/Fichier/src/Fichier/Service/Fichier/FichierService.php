@@ -271,8 +271,7 @@ class FichierService extends BaseService
      */
     public function telechargerFichier(Fichier $fichier)
     {
-        $contenu     = $fichier->getContenu();
-        $content     = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
+        $content = $fichier->getContenu();
         $contentType = $fichier->getTypeMime() ?: 'application/octet-stream';
 
         FileUtils::downloadFileFromContent($content, $fichier->getNom(), $contentType);
