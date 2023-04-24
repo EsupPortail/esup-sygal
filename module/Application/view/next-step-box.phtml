@@ -54,7 +54,7 @@ if (!empty($except)) {
             </div>
             <div class="card-body">
                 <p class="lead">
-                    <?php if ($message): ?>
+                    <?php if (isset($message)): ?>
                         <?php echo $message ?>
                     <?php else: ?>
                         C'est terminé : dépôt validé.
