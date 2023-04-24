@@ -15,8 +15,9 @@ Les fichiers fournis permettant de créer une base de données pour ESUP-SyGAL s
     - [`05_prepare_data.sql`](sql/05_prepare_data.sql)
     - [`06_create_constraints.sql`](sql/06_create_constraints.sql)
     - [`07_create_comue.sql.dist`](sql/07_create_comue.sql.dist)
-    - [`08_init.sql.dist`](sql/08_init.sql.dist)
-    - [`09_create_fixture.sql.dist`](sql/09_create_fixture.sql.dist)
+    - [`08_create_ced.sql.dist`](sql/08_create_ced.sql.dist)
+    - [`09_init.sql.dist`](sql/09_init.sql.dist)
+    - [`10_create_fixture.sql.dist`](sql/10_create_fixture.sql.dist)
     
 
 ## Case départ

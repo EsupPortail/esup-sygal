@@ -5,6 +5,7 @@ namespace These\Entity\Db;
 use Application\Entity\Db\Role;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuAwareInterface;
+use Individu\Entity\Db\IndividuRoleAwareInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Soutenance\Entity\Membre;
 use Structure\Entity\Db\Etablissement;
@@ -27,7 +28,7 @@ use UnicaenDbImport\Entity\Db\Traits\SourceAwareTrait;
  * @var string   $uniteRecherche        l'unité de recherche d'attachement de l'acteur (p.e. GREYC,
  *      ...)
  */
-class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwareInterface
+class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuRoleAwareInterface
 {
     use HistoriqueAwareTrait;
     use SourceAwareTrait;
@@ -246,29 +247,18 @@ class Acteur implements HistoriqueAwareInterface, ResourceInterface, IndividuAwa
         return $this;
     }
 
-    /**
-     * @return Individu
-     */
-    public function getIndividu()
+    public function getIndividu(): ?Individu
     {
         return $this->individu;
     }
 
-    /**
-     * @param Individu $individu
-     * @return self
-     */
-    public function setIndividu(Individu $individu = null)
+    public function setIndividu(?Individu $individu = null): self
     {
         $this->individu = $individu;
-
         return $this;
     }
 
-    /**
-     * @return Role
-     */
-    public function getRole()
+    public function getRole(): Role
     {
         return $this->role;
     }

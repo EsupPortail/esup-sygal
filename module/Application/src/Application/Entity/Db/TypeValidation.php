@@ -26,7 +26,10 @@ class TypeValidation implements HistoriqueAwareInterface
     const CODE_VALIDATION_PROPOSITION_BDD    = 'VALIDATION_PROPOSITION_BDD';
     const CODE_AVIS_SOUTENANCE               = 'AVIS_SOUTENANCE';
 
-    const CODE_RAPPORT_ACTIVITE              = 'RAPPORT_ACTIVITE';
+    /** @deprecated Validation du rapport non dématérialisé (ancienne version du module Rapport d'activité) */
+    const CODE_RAPPORT_ACTIVITE_AUTO         = 'RAPPORT_ACTIVITE_AUTO';
+    const CODE_RAPPORT_ACTIVITE_DOCTORANT    = 'RAPPORT_ACTIVITE_DOCTORANT';
+
     const CODE_RAPPORT_CSI                   = 'RAPPORT_CSI';
     const CODE_RAPPORT_MIPARCOURS            = 'RAPPORT_MIPARCOURS';
 

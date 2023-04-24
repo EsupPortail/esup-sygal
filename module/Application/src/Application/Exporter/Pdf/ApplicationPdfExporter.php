@@ -23,9 +23,9 @@ class ApplicationPdfExporter extends PdfExporter
     protected string $templateFilePath;
 
     /**
-     * @var string|null
+     * @var string[]
      */
-    protected ?string $cssFilePath = null;
+    protected array $cssFilePaths = [];
 
     /**
      * @var array
@@ -56,7 +56,7 @@ class ApplicationPdfExporter extends PdfExporter
     {
         if (!is_readable($templateFilePath)) {
             throw new InvalidArgumentException(
-                "Le template spécifié pour la page de couverture n'existe pas ou est inaccessible : " . $templateFilePath
+                "Le template spécifié n'existe pas ou est inaccessible : " . $templateFilePath
             );
         }
 
@@ -66,10 +66,32 @@ class ApplicationPdfExporter extends PdfExporter
     }
 
     /**
+     * Spécifie les chemins absolus des feuilles de styles dont le contenu sera ajouté au HTML.
+     *
+     * @param string[] $cssFilePaths
+     * @return $this
+     */
+    public function setCssFilePaths(array $cssFilePaths): self
+    {
+        foreach ($cssFilePaths as $path) {
+            if (!is_readable($path)) {
+                throw new InvalidArgumentException(
+                    "Le fichier CSS spécifié n'existe pas ou est inaccessible : " . $path
+                );
+            }
+            $this->cssFilePaths[] = $path;
+        }
+
+        return $this;
+    }
+
+    /**
      * Spécifie le chemin absolu de la feuille de styles, le cas écéhant.
      *
      * @param string|null $cssFilePath
      * @return $this
+     *
+     * @deprecated Utiliser {@see setCssFilePaths()}
      */
     public function setCssFilePath(?string $cssFilePath): self
     {
@@ -79,7 +101,7 @@ class ApplicationPdfExporter extends PdfExporter
             );
         }
 
-        $this->cssFilePath = $cssFilePath;
+        $this->cssFilePaths = (array) $cssFilePath;
 
         return $this;
     }
@@ -108,8 +130,8 @@ class ApplicationPdfExporter extends PdfExporter
             $templateDirPath,
         ]]));
 
-        if ($this->cssFilePath) {
-            $this->addBodyHtml('<style>' . file_get_contents($this->cssFilePath) . '</style>');
+        foreach ($this->cssFilePaths as $path) {
+            $this->addBodyHtml('<style>' . file_get_contents($path) . '</style>', false);
         }
         $this->addBodyScript($templateFileName, false, $this->vars);
     }

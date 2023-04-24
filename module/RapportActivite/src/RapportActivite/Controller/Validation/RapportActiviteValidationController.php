@@ -28,13 +28,13 @@ class RapportActiviteValidationController extends AbstractController
 
         $redirectUrl = $this->params()->fromQuery('redirect');
 
-        $this->rapportActiviteValidationService->setTypeValidation($typeValidation);
-        $rapportValidation = $this->rapportActiviteValidationService->newRapportValidation($rapport);
-        $event = $this->rapportActiviteValidationService->saveNewRapportValidation($rapportValidation);
+        $rapportValidation = $this->rapportActiviteValidationService->newRapportValidation($rapport, $typeValidation);
+        $this->rapportActiviteValidationService->saveNewRapportValidation($rapportValidation);
+        $event = $this->rapportActiviteValidationService->triggerEventValidationAjoutee($rapportValidation);
 
         $this->flashMessenger()->addSuccessMessage(sprintf(
-            "La validation du rapport '%s' a été enregistrée avec succès.",
-            $rapport->getFichier()->getNom()
+            "%s enregistrée avec succès.",
+            $rapportValidation->getTypeValidation()
         ));
 
         if ($messages = $event->getMessages()) {
@@ -53,14 +53,15 @@ class RapportActiviteValidationController extends AbstractController
     public function devaliderAction(): Response
     {
         $rapportValidation = $this->requestedRapportValidation();
-        $rapport = $rapportValidation->getRapport();
+        $rapport = $rapportValidation->getRapportActivite();
         $redirectUrl = $this->params()->fromQuery('redirect');
 
-        $event = $this->rapportActiviteValidationService->deleteRapportValidation($rapportValidation);
+        $this->rapportActiviteValidationService->deleteRapportValidation($rapportValidation);
+        $event = $this->rapportActiviteValidationService->triggerEventValidationSupprimee($rapportValidation);
 
         $this->flashMessenger()->addSuccessMessage(sprintf(
-            "La validation du rapport '%s' a été supprimée avec succès.",
-            $rapport->getFichier()->getNom()
+            "%s supprimée avec succès.",
+            $rapportValidation->getTypeValidation()
         ));
 
         if ($messages = $event->getMessages()) {
@@ -83,7 +84,7 @@ class RapportActiviteValidationController extends AbstractController
     {
         $id = $this->params()->fromRoute('rapport') ?: $this->params()->fromQuery('rapport');
 
-        $rapport = $this->rapportActiviteService->findRapportById($id);
+        $rapport = $this->rapportActiviteService->fetchRapportById($id);
         if ($rapport === null) {
             throw new RuntimeException("Aucun rapport trouvé avec l'id spécifié");
         }

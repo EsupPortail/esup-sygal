@@ -2,28 +2,22 @@
 
 namespace RapportActivite\Event\Avis;
 
-use Notification\Service\NotifierServiceAwareTrait;
+use Application\Constants;
+use InvalidArgumentException;
 use Laminas\EventManager\EventManagerInterface;
-use Laminas\EventManager\ListenerAggregateInterface;
-use Laminas\EventManager\ListenerAggregateTrait;
 use RapportActivite\Entity\Db\RapportActiviteAvis;
-use RapportActivite\Rule\Avis\RapportActiviteAvisNotificationRuleAwareTrait;
-use RapportActivite\Rule\Validation\RapportActiviteValidationRuleAwareTrait;
+use RapportActivite\Event\Operation\RapportActiviteOperationAbstractEventListener;
+use RapportActivite\Event\RapportActiviteEvent;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
-use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
-use RapportActivite\Service\Validation\RapportActiviteValidationServiceAwareTrait;
+use RapportActivite\Service\Operation\RapportActiviteOperationServiceAwareTrait;
 use Webmozart\Assert\Assert;
 
-class RapportActiviteAvisEventListener implements ListenerAggregateInterface
+/**
+ * @property \RapportActivite\Entity\Db\RapportActiviteAvis $operationRealisee
+ */
+class RapportActiviteAvisEventListener extends RapportActiviteOperationAbstractEventListener
 {
-    use RapportActiviteValidationServiceAwareTrait;
-    use RapportActiviteAvisServiceAwareTrait;
-    use NotifierServiceAwareTrait;
-
-    use ListenerAggregateTrait;
-
-    use RapportActiviteAvisNotificationRuleAwareTrait;
-    use RapportActiviteValidationRuleAwareTrait;
+    use RapportActiviteOperationServiceAwareTrait;
 
     /**
      * @inheritDoc
@@ -33,88 +27,85 @@ class RapportActiviteAvisEventListener implements ListenerAggregateInterface
         $events->getSharedManager()->attach(
             RapportActiviteAvisService::class,
             RapportActiviteAvisService::RAPPORT_ACTIVITE__AVIS_AJOUTE__EVENT,
-            [$this, 'onAvisAjouteModifie']
+            [$this, 'onAvisAjoute']
         );
         $events->getSharedManager()->attach(
             RapportActiviteAvisService::class,
             RapportActiviteAvisService::RAPPORT_ACTIVITE__AVIS_MODIFIE__EVENT,
-            [$this, 'onAvisAjouteModifie']
+            [$this, 'onAvisModifie']
         );
     }
 
-    public function onAvisAjouteModifie(RapportActiviteAvisEvent $event)
+    public function onAvisAjoute(RapportActiviteAvisEvent $event)
     {
-        /** @var \RapportActivite\Entity\Db\RapportActiviteAvis $rapportActiviteAvis */
-        $rapportActiviteAvis = $event->getTarget();
+        $this->initFromEvent($event);
 
-        Assert::isInstanceOf($rapportActiviteAvis, RapportActiviteAvis::class);
-
-        // L'ajout ou la modification d'un avis peut entrainer :
-        //   - la création d'une validation ;
-        //   - l'envoi d'une notification.
-        $this->handleValidation($rapportActiviteAvis, $event);
-        $this->handleNotification($rapportActiviteAvis, $event);
+        $this->handleSuppressionValidationDoctorant();
+        $this->handleNotificationOperationAttendue();
     }
 
-    /**
-     * Validation.
-     *
-     * L'ajout ou la modification d'un avis peut entrainer la création d'une validation.
-     *
-     * @param \RapportActivite\Entity\Db\RapportActiviteAvis $rapportActiviteAvis
-     * @param \RapportActivite\Event\Avis\RapportActiviteAvisEvent $event
-     */
-    private function handleValidation(
-        RapportActiviteAvis $rapportActiviteAvis,
-        RapportActiviteAvisEvent $event): void
+    public function onAvisModifie(RapportActiviteAvisEvent $event)
     {
-        // une validation n'est créée que si la règle métier répond 'banco'
-        $this->rapportActiviteValidationRule
-            ->setRapportActivite($rapportActiviteAvis->getRapportActivite())
-            ->execute();
-        if (! $this->rapportActiviteValidationRule->isValidationPossible()) {
+        $this->initFromEvent($event);
+
+        $this->handleSuppressionValidationDoctorant();
+    }
+
+    protected function initFromEvent(RapportActiviteEvent $event)
+    {
+        parent::initFromEvent($event);
+        Assert::isInstanceOf($this->operationRealisee, RapportActiviteAvis::class);
+    }
+
+    private function handleSuppressionValidationDoctorant(): void
+    {
+        // Si un avis "rapport incomplet" est émis par la direction d'ED, on supprime la validation doctorant.
+        if (!in_array($this->operationRealisee->getAvis()->getAvisValeur()->getCode(), [
+            RapportActiviteAvis::AVIS_VALEUR__CODE__AVIS_RAPPORT_ACTIVITE_VALEUR_INCOMPLET,
+            RapportActiviteAvis::AVIS_VALEUR__CODE__AVIS_RAPPORT_ACTIVITE_DIR_ED_VALEUR_INCOMPLET,
+        ])) {
             return;
         }
 
-        $rapportValidation = $this->rapportActiviteValidationService->newRapportValidation($rapportActiviteAvis->getRapportActivite());
-        $newValidationEvent = $this->rapportActiviteValidationService->saveNewRapportValidation($rapportValidation);
+        $rapportActivite = $this->operationRealisee->getRapportActivite();
 
-        $event->setMessages([
+        // le nom de l'opération "validation doctorant" est dans la config de l'opération courante (pratique!).
+        $operationConfig = $this->rapportActiviteOperationRule->getConfigForOperation($this->operationRealisee);
+        $ripOperatioName = $operationConfig['extra']['validation_doctorant_operation_name'] ?? null;
+        if (!$ripOperatioName) {
+            throw new InvalidArgumentException(sprintf(
+                "Clé ['extra']['validation_doctorant_operation_name'] introuvable dans la config de l'opération suivante : %s",
+                $operationConfig['name']
+            ));
+        }
+
+        $ripOperationConfig = $this->rapportActiviteOperationRule->getConfigForOperationName($ripOperatioName);
+        if (!$this->rapportActiviteOperationRule->isOperationEnabledForRapport($ripOperationConfig, $rapportActivite)) {
+            // opération non activée pour ce rapport, rien à faire.
+            return;
+        }
+
+        /** @var \RapportActivite\Entity\RapportActiviteOperationInterface $ripOperation */
+        $operations = $this->rapportActiviteOperationRule->getOperationsForRapport($rapportActivite);
+        $ripOperation = $operations[$ripOperatioName] ?? null;
+        if (!$ripOperation->getId()) {
+            // opération non réalisée (théoriquement impossible), on abandonne.
+            return;
+        }
+
+        $messages = [
             'success' => sprintf(
-                "La validation du rapport '%s' a été enregistrée avec succès.",
-                $rapportActiviteAvis->getRapportActivite()->getFichier()->getNom()
+                "L'opération suivante a été annulée car le rapport a été déclaré incomplet le %s par %s : %s.",
+                ($this->operationRealisee->getHistoModification() ?: $this->operationRealisee->getHistoCreation())->format(Constants::DATETIME_FORMAT),
+                $this->operationRealisee->getHistoModificateur() ?: $this->operationRealisee->getHistoCreateur(),
+                lcfirst($ripOperation),
             ),
-        ]);
-        $event->addMessages($newValidationEvent->getMessages());
-    }
+        ];
 
-    /**
-     * Notification.
-     *
-     * L'ajout ou la modification d'un avis peut entrainer l'envoi d'une notification.
-     *
-     * @param \RapportActivite\Entity\Db\RapportActiviteAvis $rapportActiviteAvis
-     * @param \RapportActivite\Event\Avis\RapportActiviteAvisEvent $event
-     */
-    private function handleNotification(
-        RapportActiviteAvis $rapportActiviteAvis,
-        RapportActiviteAvisEvent $event)
-    {
-        // notif éventuelle
-        $this->rapportActiviteAvisNotificationRule
-            ->setRapportActiviteAvis($rapportActiviteAvis)
-            ->execute();
-        if (! $this->rapportActiviteAvisNotificationRule->isNotificationRequired()) {
-            return;
-        }
+        // historisation (avec déclenchement de l'événement).
+        $event = $this->rapportActiviteOperationService->deleteOperationAndThrowEvent($ripOperation, $messages);
 
-        $notif = $this->rapportActiviteAvisService->newRapportActiviteAvisNotification($rapportActiviteAvis);
-        $this->rapportActiviteAvisNotificationRule->configureNotification($notif);
-
-        $result = $this->notifierService->trigger($notif);
-
-        $messages['info'] = ($result->getSuccessMessages()[0] ?? null);
-        $messages['warning'] = ($result->getErrorMessages()[0] ?? null);
-        $event->setMessages(array_filter($messages));
+        $this->event->setMessages($messages);
+        $this->event->addMessages($event->getMessages());
     }
 }

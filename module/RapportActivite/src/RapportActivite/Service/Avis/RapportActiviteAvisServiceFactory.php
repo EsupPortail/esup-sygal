@@ -13,13 +13,12 @@ class RapportActiviteAvisServiceFactory
      */
     public function __invoke(ContainerInterface $container): RapportActiviteAvisService
     {
-        $etablissementService = $container->get('EtablissementService');
-        $avisService = $container->get(AvisService::class);
-
         $service = new RapportActiviteAvisService();
 
-        $service->setEtablissementService($etablissementService);
+        /** @var \UnicaenAvis\Service\AvisService $avisService */
+        $avisService = $container->get(AvisService::class);
         $service->setAvisService($avisService);
+
         $service->setEventManager($container->get('EventManager'));
 
         return $service;

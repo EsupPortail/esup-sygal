@@ -477,22 +477,7 @@ class RapportSearchService extends SearchService
 
     public function getFinalSearchFilter(): ?SelectSearchFilter
     {
-        if (! $this->typeRapport->estRapportActivite()) {
-            return null;
-        }
-
-        if ($this->finalSearchFilter === null) {
-            $this->finalSearchFilter = new SelectSearchFilter("Type", self::NAME_type);
-            $this->finalSearchFilter
-                ->setDataProvider(function () {
-                    return ['annuel' => "Annuel", 'finthese' => "Fin de thèse"];
-                })
-                ->setEmptyOptionLabel("(Peu importe)")
-                ->setAllowsEmptyOption()
-                ->setQueryBuilderApplier([$this, 'applyFinalFilterToQueryBuilder']);
-        }
-
-        return $this->finalSearchFilter;
+        return null;
     }
 
     /**

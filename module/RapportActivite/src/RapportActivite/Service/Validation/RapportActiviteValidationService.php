@@ -3,9 +3,8 @@
 namespace RapportActivite\Service\Validation;
 
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
+use Application\Entity\Db\TypeValidation;
 use Application\Service\BaseService;
-use Individu\Service\IndividuServiceAwareInterface;
-use Individu\Service\IndividuServiceAwareTrait;
 use Application\Service\UserContextServiceAwareInterface;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
@@ -13,12 +12,12 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query\Expr\Join;
+use Individu\Service\IndividuServiceAwareInterface;
+use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\EventManager\EventManagerAwareTrait;
 use RapportActivite\Entity\Db\RapportActivite;
-use RapportActivite\Entity\Db\RapportActiviteAvis;
 use RapportActivite\Entity\Db\RapportActiviteValidation;
 use RapportActivite\Event\Validation\RapportActiviteValidationEvent;
-use RapportActivite\Notification\RapportActiviteValidationNotification;
 use UnicaenApp\Exception\RuntimeException;
 
 class RapportActiviteValidationService extends BaseService
@@ -41,53 +40,53 @@ class RapportActiviteValidationService extends BaseService
         return $this->entityManager->getRepository(RapportActiviteValidation::class);
     }
 
-    public function newRapportValidation(RapportActivite $rapportActivite): RapportActiviteValidation
+    public function newRapportValidation(RapportActivite $rapportActivite, TypeValidation $typeValidation): RapportActiviteValidation
     {
         // l'individu sera enregistré dans la validation pour faire le lien entre Utilisateur et Individu.
         $individu = $this->userContextService->getIdentityIndividu();
 
         return new RapportActiviteValidation(
-            $this->typeValidation,
+            $typeValidation,
             $rapportActivite,
             $individu);
     }
 
     /**
-     * Enregistre en bdd une validation de rapport d'activité, AVEC déclenchement d'événement.
+     * Enregistre en bdd une validation de rapport d'activité.
      *
      * @param \RapportActivite\Entity\Db\RapportActiviteValidation $rapportValidation
-     * @return \RapportActivite\Event\Validation\RapportActiviteValidationEvent
      */
-    public function saveNewRapportValidation(RapportActiviteValidation $rapportValidation): RapportActiviteValidationEvent
+    public function saveNewRapportValidation(RapportActiviteValidation $rapportValidation)
     {
         try {
             $this->entityManager->persist($rapportValidation);
-            $this->entityManager->flush($rapportValidation);
-
-            // déclenchement d'un événement
-            $event = $this->triggerEvent(
-                self::RAPPORT_ACTIVITE__VALIDATION_AJOUTEE__EVENT,
-                $rapportValidation,
-                []
-            );
+            $this->entityManager->flush();
         } catch (ORMException $e) {
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement en bdd", null, $e);
         }
+    }
 
-        return $event;
+    public function triggerEventValidationAjoutee(RapportActiviteValidation $rapportValidation, array $params = []): RapportActiviteValidationEvent
+    {
+        return $this->triggerEvent(
+            self::RAPPORT_ACTIVITE__VALIDATION_AJOUTEE__EVENT,
+            $rapportValidation,
+            $params
+        );
     }
 
     /**
-     * @param RapportActivite $rapportActivite
-     * @return RapportActiviteValidation|null
+     * @param \RapportActivite\Entity\Db\RapportActivite $rapportActivite
+     * @param \Application\Entity\Db\TypeValidation $type
+     * @return \RapportActivite\Entity\Db\RapportActiviteValidation|null
      *
-     * @todo Utiliser cette méthode et supprimer {@see RapportActivite::getRapportValidation()}
+     * @deprecated Remplacé par l'utilisation d'un fetch du rapport avec les relations vers les entités liées
      */
-    public function findByRapportActivite(RapportActivite $rapportActivite): ?RapportActiviteValidation
+    public function findByRapportActiviteAndType(RapportActivite $rapportActivite, TypeValidation $type): ?RapportActiviteValidation
     {
         $qb = $this->getRepository()->createQueryBuilder('v')
-            ->join('v.type', 't', Join::WITH, 't = :type')->setParameter('type', $this->typeValidation)
-            ->join('v.rapport', 'r', Join::WITH, 'r = :rapport')->setParameter('r', $rapportActivite)
+            ->join('v.typeValidation', 't', Join::WITH, 't = :type')->setParameter('type', $type)
+            ->join('v.rapport', 'r', Join::WITH, 'r = :rapport')->setParameter('rapport', $rapportActivite)
             ->andWhere('v.histoDestruction is null');
         try {
             /** @var RapportActiviteValidation $rapportValidation */
@@ -104,39 +103,38 @@ class RapportActiviteValidationService extends BaseService
     }
 
     /**
-     * Supprime en bdd une validation de rapport d'activité, AVEC déclenchement d'événement.
+     * Historise une validation de rapport d'activité.
      *
      * @param RapportActiviteValidation $rapportValidation
-     * @return \RapportActivite\Event\Validation\RapportActiviteValidationEvent
      */
-    public function deleteRapportValidation(RapportActiviteValidation $rapportValidation): RapportActiviteValidationEvent
+    public function deleteRapportValidation(RapportActiviteValidation $rapportValidation)
     {
         $rapportValidation->historiser();
         try {
             $this->getEntityManager()->flush($rapportValidation);
-
-            // déclenchement d'un événement
-            $event = $this->triggerEvent(
-                self::RAPPORT_ACTIVITE__VALIDATION_SUPPRIMEE__EVENT,
-                $rapportValidation,
-                []
-            );
         } catch (ORMException $e) {
             throw new RuntimeException("Erreur rencontrée lors de l'enregistrement en bdd", null, $e);
         }
+    }
 
-        return $event;
+    public function triggerEventValidationSupprimee(RapportActiviteValidation $rapportValidation, array $params = []): RapportActiviteValidationEvent
+    {
+        return $this->triggerEvent(
+            self::RAPPORT_ACTIVITE__VALIDATION_SUPPRIMEE__EVENT,
+            $rapportValidation,
+            $params
+        );
     }
 
     /**
-     * Supprime en bdd la validation d'un rapport d'activité, SANS déclenchement d'événement.
+     * Supprime physiquement en bdd la validation d'un rapport d'activité.
      *
      * @param RapportActivite $rapportActivite
      */
     public function deleteRapportValidationForRapportActivite(RapportActivite $rapportActivite)
     {
-        // NB : il peut y avoir des validations historisées
-        foreach ($rapportActivite->getRapportValidations() as $validation) {
+        // NB : inclusion des validations historisées
+        foreach ($rapportActivite->getRapportValidations(true) as $validation) {
             $rapportActivite->removeRapportValidation($validation);
             try {
                 $this->getEntityManager()->remove($validation);
@@ -147,30 +145,18 @@ class RapportActiviteValidationService extends BaseService
         }
     }
 
-    /**
-     * @deprecated todo : à déplacer dans une RapportActiviteNotificationFactory
-     */
-    public function createRapportActiviteValidationNotification(
-        RapportActiviteValidation $rapportActiviteValidation,
-        RapportActiviteAvis $rapportActiviteAvis): RapportActiviteValidationNotification
-    {
-        $these = $rapportActiviteAvis->getRapportActivite()->getThese();
-        $individu = $these->getDoctorant()->getIndividu();
-        $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
-
-        $notif = new RapportActiviteValidationNotification();
-        $notif->setRapportActiviteValidation($rapportActiviteValidation);
-        $notif->setRapportActiviteAvis($rapportActiviteAvis);
-        $notif->setTo([$email => $these->getDoctorant()->getIndividu()->getNomComplet()]);
-        $notif->setCc($these->getDirecteursTheseEmails());
-        $notif->setSubject("Rapport d'activité validé");
-
-        return $notif;
-    }
-
     private function triggerEvent(string $name, $target, array $params = []): RapportActiviteValidationEvent
     {
+        $messages = [];
+        if (isset($params['messages'])) {
+            $messages = $params['messages'];
+            unset($params['messages']);
+        }
+
         $event = new RapportActiviteValidationEvent($name, $target, $params);
+        if ($messages) {
+            $event->addMessages($messages);
+        }
 
         $this->events->triggerEvent($event);
 

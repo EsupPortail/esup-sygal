@@ -78,7 +78,7 @@ class AvisComplem
             case AvisTypeValeurComplem::TYPE_COMPLEMENT_TEXTAREA:
                 return sprintf(
                     '%s<span class="avis-complem-textarea"><span class="avis-complem-libelle">%s</span> : <span class="avis-complem-valeur">%s</span></span>',
-                    $this->getAvisTypeValeurComplem()->getAvisTypeValeurComplemParent() ? '' : '- ',
+                    '',//$this->getAvisTypeValeurComplem()->getAvisTypeValeurComplemParent() ? '' : '',
                     rtrim($this->getAvisTypeValeurComplem()->getLibelle(), ' :'),
                     preg_replace("/\r\n|\n|\r/", '<br>', $this->valeur)
                 );

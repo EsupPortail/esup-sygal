@@ -1,0 +1,103 @@
+<?php
+
+namespace RapportActivite;
+
+use Application\Constants;
+use Application\Entity\Db\TypeValidation;
+use Application\View\Renderer\PhpRenderer;
+use RapportActivite\Entity\Db\RapportActivite;
+use RapportActivite\Provider\Parametre\RapportActiviteParametres;
+use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
+use These\Entity\Db\These;
+
+/**
+ * @var PhpRenderer $this
+ * @var These $these
+ * @var RapportActivite[] $rapports
+ * @var array $typesRapportPossiblesData
+ * @var array[] $operationss
+ * @var TypeValidation $typeValidation
+ * @var string $returnUrl
+ * @var \DateTime[] $campagneDepotDates
+ *
+ * @see \RapportActivite\Controller\RapportActiviteController::consulterAction()
+ */
+
+$rapportProto = (new RapportActivite())->setThese($these);
+$canAdd =
+    $this->isAllowed($rapportProto, RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_TOUT) ||
+    $this->isAllowed($rapportProto, RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_SIEN);
+if (empty($typesRapportPossiblesData)) {
+    $canAdd = false;
+}
+
+$campagneDepotDateFin = $campagneDepotDates[RapportActiviteParametres::CAMPAGNE_DEPOT_FIN]->format(Constants::DATE_FORMAT);
+?>
+
+<?php $this->headTitle($this->translate($title = "Rapports d'activité"))
+    ->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
+
+<h1 class="page-header">
+    <?php echo $this->translate($title); ?>
+    <small><?php echo $this->partial('these/these/partial/titre') ?></small>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<p class="lead">
+    <strong>Rapports d'activité : <u>selon l'état d'avancement de votre thèse et selon les obligations définies par votre Ecole Doctorale</u>.</strong>
+</p>
+<ul class="lead">
+    <li>
+        Vous devez rédiger un rapport d'activité annuel qui doit être complété avant le <?php echo $campagneDepotDateFin ?>. Sa complétude conditionne le cas échéant l'autorisation de réinscription en thèse.
+    </li>
+    <li>
+        En fonction de l’état d’avancement de votre thèse, vous devez rédiger un rapport d'activité de fin de contrat 1 mois avant la fin de ce dernier ou au moment de votre soutenance si votre contrat doctoral est toujours en cours. Dans ce cas, les données indiquées doivent couvrir l’ensemble de la thèse.
+    </li>
+</ul>
+<p class="lead">
+    <em>Si vous constatez une erreur dans les informations mentionnées par l'application, rendez-vous sur la page
+        <a href="<?php echo $this->url('contact') ?>">Assistance</a> et signalez l'erreur en envoyant un message
+        à l'assistance.</em>
+</p>
+
+<div class="row">
+    <div class="col-md-12">
+        <?php if (count($rapports) > 0): ?>
+            <?php echo $this->partial('rapport-activite/partial/rapports-table', [
+                'rapports' => $rapports,
+                'operationss' => $operationss,
+                'typeValidation' => $typeValidation,
+                'returnUrl' => $returnUrl,
+
+                'displayEtablissement' => false,
+                'displayType' => true,
+                'displayDoctorant' => false,
+                'displayDirecteurThese' => false,
+                'displayEcoleDoctorale' => false,
+                'displayUniteRecherche' => false,
+                'displayValidation' => true,
+                'displayAvis' => true,
+            ]) ?>
+        <?php else: ?>
+            <p>Aucun.</p>
+        <?php endif; ?>
+    </div>
+</div>
+
+
+<?php if ($canAdd): ?>
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            Ajouter un rapport d'activité
+        </button>
+        <ul class="dropdown-menu">
+        <?php foreach ($typesRapportPossiblesData as $array): ?>
+            <li><a class="dropdown-item" href="<?php echo $this->url('rapport-activite/ajouter', [
+                    'these' => $these->getId(),
+                    'estFinContrat' => $array['value'],
+                ]) ?>"><?php echo $array['label'] ?></a></li>
+        <?php endforeach ?>
+        </ul>
+    </div>
+<?php endif; ?>

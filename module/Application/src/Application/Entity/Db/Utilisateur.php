@@ -62,19 +62,12 @@ class Utilisateur extends AbstractUser implements UserInterface, ProviderInterfa
         return $this;
     }
 
-    /**
-     * @return Individu
-     */
-    public function getIndividu()
+    public function getIndividu(): ?Individu
     {
         return $this->individu;
     }
 
-    /**
-     * @param Individu $individu
-     * @return self
-     */
-    public function setIndividu(?Individu $individu = null)
+    public function setIndividu(?Individu $individu = null): self
     {
         $this->individu = $individu;
 

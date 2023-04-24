@@ -4,8 +4,10 @@ namespace RapportActivite\Assertion\Avis;
 
 use Application\Assertion\AbstractAssertion;
 use Psr\Container\ContainerInterface;
+use RapportActivite\Rule\Operation\RapportActiviteOperationRule;
 use RapportActivite\Service\Avis\RapportActiviteAvisService;
 use RapportActivite\Service\RapportActiviteService;
+use UnicaenAvis\Service\AvisService;
 
 class RapportActiviteAvisAssertionFactory
 {
@@ -26,6 +28,14 @@ class RapportActiviteAvisAssertionFactory
         $assertion->setRapportActiviteService($rapportActiviteService);
         $assertion->setRapportActiviteAvisService($rapportActiviteAvisService);
         $assertion->setServiceMessageCollector($messageCollector);
+
+        /** @var \RapportActivite\Rule\Operation\RapportActiviteOperationRule $rapportActiviteOperationRule */
+        $rapportActiviteOperationRule = $container->get(RapportActiviteOperationRule::class);
+        $assertion->setRapportActiviteOperationRule($rapportActiviteOperationRule);
+
+        /** @var \UnicaenAvis\Service\AvisService $rapportActiviteAvisRule */
+        $avisService = $container->get(AvisService::class);
+        $assertion->setAvisService($avisService);
 
         $this->injectCommons($assertion, $container);
 

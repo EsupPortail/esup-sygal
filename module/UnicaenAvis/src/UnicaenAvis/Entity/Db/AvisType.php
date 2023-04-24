@@ -40,10 +40,16 @@ class AvisType
      */
     private Collection $avisTypeValeurs;
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private Collection $avisValeurs;
+
 
     public function __construct()
     {
         $this->avisTypeValeurs = new ArrayCollection();
+        $this->avisValeurs = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -157,5 +163,27 @@ class AvisType
     public function getAvisTypeValeurs(): Collection
     {
         return $this->avisTypeValeurs;
+    }
+
+    /**
+     * @return AvisValeur[]|\Doctrine\Common\Collections\Collection
+     */
+    public function getAvisValeurs(): Collection
+    {
+        return $this->avisValeurs;
+    }
+
+    public function addAvisValeurs(Collection $avisValeurs)
+    {
+        foreach ($avisValeurs as $avisValeur) {
+            $this->avisValeurs->add($avisValeur);
+        }
+    }
+
+    public function removeAvisValeurs(Collection $avisValeurs)
+    {
+        foreach ($avisValeurs as $avisValeur) {
+            $this->avisValeurs->removeElement($avisValeur);
+        }
     }
 }

@@ -1,0 +1,17 @@
+<?php
+/**
+ * @var \Application\View\Renderer\PhpRenderer $this
+ * @var \RapportActivite\Service\Fichier\Exporter\RapportActivitePdfExporterData $data
+ */
+
+$width = round(100.0 / floatval(count($data->logosEtablissements)), 0, PHP_ROUND_HALF_DOWN);
+?>
+<table class="footer" width="100%">
+    <tr>
+        <?php foreach ($data->logosEtablissements as $logo): ?>
+            <td width="<?php echo $width ?>%" style="padding: 0 5mm; text-align: center; vertical-align: middle">
+                <img class="logo" style="max-width: 40mm; max-height: 30mm" src="<?php echo $logo ?>"/>
+            </td>
+        <?php endforeach; ?>
+    </tr>
+</table>

@@ -132,6 +132,7 @@ class PropositionController extends AbstractController
         /** @var IndividuRole[] $ecoleResponsables */
         $ecoleResponsables = [];
         if ($these->getEcoleDoctorale() !== null) {
+            // todo : utiliser findIndividuRoleByStructure(..., null, $these->getEtablissement())
             $ecoleResponsables = $this->getRoleService()->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
             $ecoleResponsables = array_filter($ecoleResponsables, function (IndividuRole $ir) use ($these) {
                 return $ir->getIndividu()->getEtablissement() and $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId();
@@ -140,6 +141,7 @@ class PropositionController extends AbstractController
         /** @var IndividuRole[] $uniteResponsables */
         $uniteResponsables = [];
         if ($these->getUniteRecherche() !== null) {
+            // todo : utiliser findIndividuRoleByStructure(..., null, $these->getEtablissement())
             $uniteResponsables = $this->getRoleService()->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
             $uniteResponsables = array_filter($uniteResponsables, function (IndividuRole $ir) use ($these) {
                 return $ir->getIndividu()->getEtablissement() and $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId();
@@ -148,6 +150,7 @@ class PropositionController extends AbstractController
         /** @var IndividuRole[] $etablissementResponsables */
         $etablissementResponsables = [];
         if ($these->getEtablissement() !== null) {
+            // todo : utiliser findIndividuRoleByStructure(..., Role::CODE_BDD, $these->getEtablissement())
             $etablissementResponsables = $this->roleService->findIndividuRoleByStructure($these->getEtablissement()->getStructure());
             $etablissementResponsables = array_filter($etablissementResponsables, function (IndividuRole $ir) {
                 return $ir->getRole()->getCode() === Role::CODE_BDD;

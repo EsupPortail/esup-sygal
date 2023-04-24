@@ -114,7 +114,7 @@ class Avis
 
         $html = '';
         foreach ($avisComplems as $avisComplem) {
-            $html .= '<p class="avis-complem">' . $avisComplem->getValeurToHtml() . '</p>';
+            $html .= '<p class="avis-complement">' . $avisComplem->getValeurToHtml() . '</p>';
         }
 
         return $html;

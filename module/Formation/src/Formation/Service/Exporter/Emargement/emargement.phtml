@@ -69,7 +69,7 @@ $formateurs = $session->getFormateurs();
                 $ecoles[$ecole] = $ecole;
                 $unite = ($these->getUniteRecherche())?$these->getUniteRecherche()->getStructure()->getSigle():"Unité de recherche non renseignée";
                 $unites[$unite] = $unite;
-                $anneet = $these->getNbInscription($annee);
+                $anneet = $these->getAnneesUnivInscriptionCount($annee);
                 $anneets[$these->getId()] = $anneet;
             }
         ?>

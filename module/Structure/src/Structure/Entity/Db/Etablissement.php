@@ -58,6 +58,11 @@ class Etablissement
     protected $estComue = false;
 
     /**
+     * @var bool
+     */
+    protected bool $estCed = false;
+
+    /**
      * Etablissement constructor.
      */
     public function __construct()
@@ -247,6 +252,17 @@ class Etablissement
     {
         $this->estComue = $estComue;
 
+        return $this;
+    }
+
+    public function estCed(): bool
+    {
+        return $this->estCed;
+    }
+
+    public function setEstCed(bool $estCed): self
+    {
+        $this->estCed = $estCed;
         return $this;
     }
 

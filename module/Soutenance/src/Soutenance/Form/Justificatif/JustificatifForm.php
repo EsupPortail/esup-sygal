@@ -83,7 +83,7 @@ class JustificatifForm extends Form {
         $this->setInputFilter((new Factory())->createInputFilter([
             'nature'    => [
                 'name' => 'nature',
-                'required' => true,
+                'required' => false,
             ],
             'fichier'   => [
                 'name' => 'fichier',

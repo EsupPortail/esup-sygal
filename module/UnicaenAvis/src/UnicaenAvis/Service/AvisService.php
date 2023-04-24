@@ -47,6 +47,20 @@ class AvisService
     }
 
     /**
+     * Recherche tous les types d'avis.
+     *
+     * @return AvisType[]
+     */
+    public function findAllAvisTypes(): array
+    {
+        $qb = $this->getAvisTypeRepository()->createQueryBuilder('at', 'at.code')
+            ->leftJoin('at.avisValeurs', 'av')->addSelect('av')
+            ->addOrderBy('at.ordre, at.code');
+
+        return $qb->getQuery()->useQueryCache(true)->enableResultCache()->getResult();
+    }
+
+    /**
      * Recherche des types d'avis par leurs codes, ordonnés selon la colonne 'ordre'.
      *
      * @param array $codes
@@ -62,12 +76,26 @@ class AvisService
         return $qb->getQuery()->useQueryCache(true)->enableResultCache()->getResult();
     }
 
-    public function findOneAvisTypeByCode(string $code): AvisType
+    public function findOneAvisTypeByCode(string $code): ?AvisType
     {
         $qb = $this->getAvisTypeRepository()->createQueryBuilder('at')
+            ->leftJoin('at.avisValeurs', 'av')->addSelect('av')
             ->where('at.code = :code')
             ->setParameter('code', $code)
         ;
+
+        /** @var \UnicaenAvis\Entity\Db\AvisType $avisType */
+        $avisType = $qb->getQuery()->useQueryCache(true)->enableResultCache()->getOneOrNullResult();
+
+        return $avisType;
+    }
+
+    public function findOneAvisTypeById(string $id): AvisType
+    {
+        $qb = $this->getAvisTypeRepository()->createQueryBuilder('at')
+            ->leftJoin('at.avisValeurs', 'av')->addSelect('av')
+            ->where('at.id = :id')
+            ->setParameter('id', $id);
 
         /** @var \UnicaenAvis\Entity\Db\AvisType $avisType */
         $avisType = $qb->getQuery()->useQueryCache(true)->enableResultCache()->getOneOrNullResult();
@@ -92,6 +120,26 @@ class AvisService
         ]);
 
         return $avisTypeValeur;
+    }
+
+    /**
+     * @param \UnicaenAvis\Entity\Db\AvisType $avisType
+     */
+    public function saveAvisType(AvisType $avisType)
+    {
+        $this->objectManager->beginTransaction();
+        try {
+            $this->objectManager->persist($avisType);
+//            foreach ($avisType->getAvisComplems() as $avisComplem) {
+//                $this->objectManager->persist($avisComplem);
+//                $this->objectManager->flush($avisComplem);
+//            }
+            $this->objectManager->flush($avisType);
+            $this->objectManager->commit();
+        } catch (Exception $e) {
+            $this->objectManager->rollback();
+            throw new RuntimeException("Erreur survenue lors de l'enregistrement de l'AvisType, rollback!", null, $e);
+        }
     }
 
     /**

@@ -3,14 +3,18 @@
 namespace RapportActivite\Entity\Db;
 
 use Application\Entity\AnneeUniv;
-use Fichier\Entity\Db\Fichier;
-use These\Entity\Db\These;
-use Application\Entity\Db\TypeRapport;
 use Application\Entity\Db\TypeValidation;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Fichier\Entity\Db\Fichier;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use RapportActivite\Entity\ActionDiffusionCultureScientifique;
+use RapportActivite\Entity\AutreActivite;
+use RapportActivite\Entity\Formation;
+use RapportActivite\Entity\RapportActiviteOperationInterface;
+use RuntimeException;
+use These\Entity\Db\These;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
@@ -18,88 +22,58 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;
 
+    const CODE = 'RAPPORT_ACTIVITE';
     const RESOURCE_ID = 'RapportActivite';
 
-    /**
-     * @var string
-     */
-    private $id;
+    const LIBELLE_ANNUEL = 'Annuel';
+    const LIBELLE_FIN_CONTRAT = 'Fin de contrat';
 
-    /**
-     * @var int
-     */
-    private $anneeUniv;
+    private ?int $id = null;
+    private int $anneeUniv;
+    private bool $estFinContrat = false;
+    private bool $parDirecteurThese = false; // rapport créé par le directeur de thèse (en cas d'incapacité du doctorant)
+    private ?string $parDirecteurTheseMotif = null;
+    private ?Fichier $fichier = null;
+    private ?string $descriptionProjetRecherche = null;
+    private ?string $principauxResultatsObtenus = null;
+    private ?string $productionsScientifiques = null;
+    private ?string $formationsSpecifiques = null;
+    private ?string $formationsTransversales = null;
+    private ?string $actionsDiffusionCultureScientifique = null;
+    private ?string $autresActivites = null;
+    private ?string $calendrierPrevionnelFinalisation = null;
+    private ?string $preparationApresThese = null;
+    private ?string $perspectivesApresThese = null;
+    private ?string $commentaires = null;
 
-    /**
-     * @var bool
-     */
-    private $estFinal = false;
+    private ?These $these = null;
 
-    /**
-     * @var TypeRapport
-     */
-    private $typeRapport;
-
-    /**
-     * @var Fichier
-     */
-    private $fichier;
-
-    /**
-     * @var These
-     */
-    private $these;
-
-    /**
-     * @var Collection|RapportActiviteValidation[]
-     */
+    /** @var Collection|RapportActiviteValidation[] */
     private $rapportValidations;
 
-    /**
-     * @var Collection|\RapportActivite\Entity\Db\RapportActiviteAvis[]
-     */
+    /** @var Collection|\RapportActivite\Entity\Db\RapportActiviteAvis[] */
     private $rapportAvis;
 
-    /**
-     * @var \RapportActivite\Entity\Db\RapportActiviteAvis|null
-     */
-    private ?RapportActiviteAvis $rapportAvisPossible = null;
+    /** @var \RapportActivite\Entity\Db\RapportActiviteAvis|\RapportActivite\Entity\Db\RapportActiviteValidation|null */
+    private $operationPossible = null;
 
-    /**
-     * Rapport constructor.
-     * @param TypeRapport|null $typeRapport
-     */
-    public function __construct(TypeRapport $typeRapport = null)
+    public function __construct()
     {
-        $this->typeRapport = $typeRapport;
         $this->anneeUniv = (int) (new DateTime('today'))->format('Y');
         $this->rapportValidations = new ArrayCollection();
         $this->rapportAvis = new ArrayCollection();
     }
 
-    /**
-     * Représentation littérale de cet objet.
-     * 
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->fichier->getNom();
+        return $this->getTypeRapportLibelle() . ' ' . $this->getAnneeUniv()->toString();
     }
 
-    /**
-     * Get id
-     *
-     * @return string
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return AnneeUniv
-     */
     public function getAnneeUniv(): AnneeUniv
     {
         return AnneeUniv::fromPremiereAnnee($this->anneeUniv);
@@ -107,7 +81,6 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
 
     /**
      * @param int|AnneeUniv $anneeUniv
-     * @return self
      */
     public function setAnneeUniv($anneeUniv): self
     {
@@ -119,91 +92,325 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function estFinContrat(): bool
     {
-        return $this->estFinal;
+        return $this->estFinContrat;
     }
 
-    /**
-     * @return string
-     */
-    public function getEstFinalToString(): string
+    public function getEstFinContratToString(): string
     {
-        return $this->estFinal ? 'Fin de contrat' : 'Annuel';
+        return $this->estFinContrat ? self::LIBELLE_FIN_CONTRAT : self::LIBELLE_ANNUEL;
+    }
+
+    public function setEstFinContrat(bool $estFinContrat = true): self
+    {
+        $this->estFinContrat = $estFinContrat;
+
+        return $this;
+    }
+
+    public function getParDirecteurThese(): bool
+    {
+        return $this->parDirecteurThese;
+    }
+
+    public function setParDirecteurThese(bool $parDirecteurThese): self
+    {
+        $this->parDirecteurThese = $parDirecteurThese;
+        return $this;
+    }
+
+    public function getParDirecteurTheseMotif(): ?string
+    {
+        return $this->parDirecteurTheseMotif;
+    }
+
+    public function setParDirecteurTheseMotif(?string $parDirecteurTheseMotif): self
+    {
+        $this->parDirecteurTheseMotif = $parDirecteurTheseMotif;
+        return $this;
+    }
+
+    public function getTypeRapportLibelle(): string
+    {
+        return "Rapport d'activité " . (
+            $this->estFinContrat ?
+                'de ' . lcfirst(self::LIBELLE_FIN_CONTRAT) :
+                lcfirst(self::LIBELLE_ANNUEL)
+            );
+    }
+
+    public function getDescriptionProjetRecherche(): ?string
+    {
+        return $this->descriptionProjetRecherche;
+    }
+
+    public function setDescriptionProjetRecherche(?string $descriptionProjetRecherche): self
+    {
+        $this->descriptionProjetRecherche = $descriptionProjetRecherche;
+        return $this;
+    }
+
+    public function getPrincipauxResultatsObtenus(): ?string
+    {
+        return $this->principauxResultatsObtenus;
+    }
+
+    public function setPrincipauxResultatsObtenus(?string $principauxResultatsObtenus): self
+    {
+        $this->principauxResultatsObtenus = $principauxResultatsObtenus;
+        return $this;
+    }
+
+    public function getProductionsScientifiques(): ?string
+    {
+        return $this->productionsScientifiques;
+    }
+
+    public function setProductionsScientifiques(?string $productionsScientifiques): self
+    {
+        $this->productionsScientifiques = $productionsScientifiques;
+        return $this;
     }
 
     /**
-     * @param bool $estFinal
+     * @return string|null
+     */
+    public function getFormationsSpecifiques(): ?string
+    {
+        return $this->formationsSpecifiques;
+    }
+
+    /**
+     * @return \RapportActivite\Entity\Formation[]
+     */
+    public function getFormationsSpecifiquesToArray(): array
+    {
+        $toArray = [];
+        if ($actions = $this->getFormationsSpecifiques()) {
+            foreach (json_decode($actions, true) as $array) {
+                $toArray[] = Formation::fromArray($array);
+            }
+        }
+
+        return $toArray;
+    }
+
+    public function getFormationsSpecifiquesTempsTotal(): int
+    {
+        return array_reduce($this->getFormationsSpecifiquesToArray(), fn(int $sum, $e) => $sum + $e->getTemps(), 0);
+    }
+
+    /**
+     * @param string|null $formationsSpecifiques
      * @return self
      */
-    public function setEstFinal($estFinal = true): self
+    public function setFormationsSpecifiques(?string $formationsSpecifiques): self
     {
-        $this->estFinal = $estFinal;
-
+        $this->formationsSpecifiques = $formationsSpecifiques;
         return $this;
     }
 
     /**
-     * @return TypeRapport|null
+     * @return string|null
      */
-    public function getTypeRapport(): ?TypeRapport
+    public function getFormationsTransversales(): ?string
     {
-        return $this->typeRapport;
+        return $this->formationsTransversales;
     }
 
     /**
-     * @return string
+     * @return \RapportActivite\Entity\Formation[]
      */
-    public function getTypeRapportToString(): string
+    public function getFormationsTransversalesToArray(): array
     {
-        return $this->typeRapport . ($this->estFinal ? ' de fin de contrat' : ' annuel');
+        $toArray = [];
+        if ($actions = $this->getFormationsTransversales()) {
+            foreach (json_decode($actions, true) as $array) {
+                $toArray[] = Formation::fromArray($array);
+            }
+        }
+
+        return $toArray;
+    }
+
+    public function getFormationsTransversalesTempsTotal(): int
+    {
+        return array_reduce($this->getFormationsTransversalesToArray(), fn(int $sum, $e) => $sum + $e->getTemps(), 0);
     }
 
     /**
-     * @param TypeRapport $typeRapport
-     * @return RapportActivite
+     * @param string|null $formationsTransversales
+     * @return self
      */
-    public function setTypeRapport(TypeRapport $typeRapport)
+    public function setFormationsTransversales(?string $formationsTransversales): self
     {
-        $this->typeRapport = $typeRapport;
+        $this->formationsTransversales = $formationsTransversales;
         return $this;
     }
 
     /**
-     * @return Fichier
+     * @return string|null
      */
-    public function getFichier()
+    public function getActionsDiffusionCultureScientifique(): ?string
+    {
+        return $this->actionsDiffusionCultureScientifique;
+    }
+
+    /**
+     * @return ActionDiffusionCultureScientifique[]
+     */
+    public function getActionsDiffusionCultureScientifiqueToArray(): array
+    {
+        $toArray = [];
+        if ($actions = $this->getActionsDiffusionCultureScientifique()) {
+            foreach (json_decode($actions, true) as $array) {
+                $toArray[] = ActionDiffusionCultureScientifique::fromArray($array);
+            }
+        }
+
+        return $toArray;
+    }
+
+    public function getActionsDiffusionCultureScientifiqueTempsTotal(): int
+    {
+        return array_reduce($this->getActionsDiffusionCultureScientifiqueToArray(), fn(int $sum, $e) => $sum + $e->getTemps(), 0);
+    }
+
+    /**
+     * @param string|null $actionsDiffusionCultureScientifique
+     * @return self
+     */
+    public function setActionsDiffusionCultureScientifique(?string $actionsDiffusionCultureScientifique): self
+    {
+        $this->actionsDiffusionCultureScientifique = $actionsDiffusionCultureScientifique;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAutresActivites(): ?string
+    {
+        return $this->autresActivites;
+    }
+
+    /**
+     * @return AutreActivite[]
+     */
+    public function getAutresActivitesToArray(): array
+    {
+        $toArray = [];
+        if ($actions = $this->getAutresActivites()) {
+            foreach (json_decode($actions, true) as $array) {
+                $toArray[] = AutreActivite::fromArray($array);
+            }
+        }
+
+        return $toArray;
+    }
+
+    public function getAutresActivitesTempsTotal(): int
+    {
+        return array_reduce($this->getAutresActivitesToArray(), fn(int $sum, $e) => $sum + $e->getTemps(), 0);
+    }
+
+    /**
+     * @param string|null $autresActivites
+     * @return self
+     */
+    public function setAutresActivites(?string $autresActivites): self
+    {
+        $this->autresActivites = $autresActivites;
+        return $this;
+    }
+
+    public function getCalendrierPrevionnelFinalisationEnabled(): bool
+    {
+        return
+            !$this->estFinContrat() &&
+            $this->getThese()->getAnneesUnivInscriptionCount() >= 3; // à partir de la 3ème année d'inscription
+    }
+
+    public function getCalendrierPrevionnelFinalisation(): ?string
+    {
+        return $this->calendrierPrevionnelFinalisation;
+    }
+
+    public function setCalendrierPrevionnelFinalisation(?string $calendrierPrevionnelFinalisation): self
+    {
+        $this->calendrierPrevionnelFinalisation = $calendrierPrevionnelFinalisation;
+        return $this;
+    }
+
+    public function getPreparationApresTheseEnabled(): bool
+    {
+        return !$this->estFinContrat();
+    }
+
+    public function getPreparationApresThese(): ?string
+    {
+        return $this->preparationApresThese;
+    }
+
+    public function setPreparationApresThese(?string $preparationApresThese): self
+    {
+        $this->preparationApresThese = $preparationApresThese;
+        return $this;
+    }
+
+    public function getPerspectivesApresTheseEnabled(): bool
+    {
+        return $this->estFinContrat();
+    }
+
+    public function getPerspectivesApresThese(): ?string
+    {
+        return $this->perspectivesApresThese;
+    }
+
+    /**
+     * @param string|null $perspectivesApresThese
+     * @return self
+     */
+    public function setPerspectivesApresThese(?string $perspectivesApresThese): self
+    {
+        $this->perspectivesApresThese = $perspectivesApresThese;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCommentaires(): ?string
+    {
+        return $this->commentaires;
+    }
+
+    /**
+     * @param string|null $commentaires
+     * @return self
+     */
+    public function setCommentaires(?string $commentaires): self
+    {
+        $this->commentaires = $commentaires;
+        return $this;
+    }
+
+    /**
+     * Retourne le fichier téléversé pour ce rapport non dématérialisé (ancien mode opératoire).
+     */
+    public function getFichier(): ?Fichier
     {
         return $this->fichier;
     }
 
-    /**
-     * @param Fichier $fichier
-     * @return self
-     */
-    public function setFichier(Fichier $fichier)
-    {
-        $this->fichier = $fichier;
-
-        return $this;
-    }
-
-    /**
-     * @return These
-     */
-    public function getThese()
+    public function getThese(): ?These
     {
         return $this->these;
     }
 
-    /**
-     * @param These $these
-     * @return self
-     */
-    public function setThese(These $these)
+    public function setThese(These $these): self
     {
         $this->these = $these;
 
@@ -211,46 +418,35 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
     }
 
     /**
-     * Détermine si ce rapport a été validé.
-     *
-     * @return bool
+     * Retourne l'éventuelle validation de ce rapport, du type spécifié.
      */
-    public function estValide(): bool
+    public function getRapportValidationOfType(TypeValidation $typeValidation): ?RapportActiviteValidation
     {
-        return $this->getRapportValidation() !== null;
-    }
+        $validations = $this->getRapportValidations()->filter(function(RapportActiviteValidation $v) use ($typeValidation) {
+            return $v->getTypeValidation() === $typeValidation;
+        });
 
-    /**
-     * Retourne l'éventuelle validation de ce rapport.
-     *
-     * @return RapportActiviteValidation|null
-     * @deprecated À supprimer pour utiliser {@see \RapportActivite\Service\Validation\RapportActiviteValidationService::findByRapportActivite()}
-     */
-    public function getRapportValidation(): ?RapportActiviteValidation
-    {
-        $validations = $this->rapportValidations;
-        $validations = $validations->filter(function(RapportActiviteValidation $v) {
-            return $v->getTypeValidation()->getCode() === TypeValidation::CODE_RAPPORT_ACTIVITE;
-        });
-        $validations = $validations->filter(function(RapportActiviteValidation $v) {
-            return $v->estNonHistorise();
-        });
+        if (count($validations) > 1) {
+            throw new RuntimeException("Anomalie : plusieurs validations de rapport du même type trouvées");
+        }
 
         return $validations->first() ?: null;
     }
 
     /**
-     * @return Collection
+     * @return \RapportActivite\Entity\Db\RapportActiviteValidation[]|Collection
      */
-    public function getRapportValidations()
+    public function getRapportValidations(bool $includeHistorises = false): Collection
     {
-        return $this->rapportValidations;
+        if ($includeHistorises) {
+            return $this->rapportValidations;
+        }
+
+        return $this->rapportValidations->filter(function(RapportActiviteValidation $v) {
+            return $v->estNonHistorise();
+        });
     }
 
-    /**
-     * @param RapportActiviteValidation $validation
-     * @return self
-     */
     public function addRapportValidation(RapportActiviteValidation $validation): self
     {
         $this->rapportValidations->add($validation);
@@ -258,10 +454,6 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
         return $this;
     }
 
-    /**
-     * @param RapportActiviteValidation $validation
-     * @return self
-     */
     public function removeRapportValidation(RapportActiviteValidation $validation): self
     {
         $this->rapportValidations->removeElement($validation);
@@ -270,7 +462,6 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
     }
 
     /**
-     * @return \RapportActivite\Entity\Db\RapportActiviteAvis|null
      * @deprecated
      */
     public function getFirstRapportAvis(): ?RapportActiviteAvis
@@ -283,44 +474,53 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
     }
 
     /**
-     * Injecte une instance de {@see \RapportActivite\Entity\Db\RapportActiviteAvis} qu'il est possible de créer
-     * pour ce rapport.
-     *
-     * @param \RapportActivite\Entity\Db\RapportActiviteAvis|null $rapportAvis
-     * @return \RapportActivite\Entity\Db\RapportActivite
+     * Injecte l'opération éventuelle qu'il est possible de réaliser sur ce rapport.
      */
-    public function setRapportAvisPossible(?RapportActiviteAvis $rapportAvis): RapportActivite
+    public function setOperationPossible(?RapportActiviteOperationInterface $operation = null): self
     {
-        $this->rapportAvisPossible = $rapportAvis;
-        if ($this->rapportAvisPossible) {
-            $this->rapportAvisPossible->setRapportActivite($this);
+        $this->operationPossible = $operation;
+        if ($this->operationPossible) {
+            $this->operationPossible->setRapportActivite($this);
         }
 
         return $this;
     }
 
-    /**
-     * @return \RapportActivite\Entity\Db\RapportActiviteAvis|null
-     */
-    public function getRapportAvisPossible(): ?RapportActiviteAvis
+    public function getOperationPossible()
     {
-        return $this->rapportAvisPossible;
+        return $this->operationPossible;
     }
 
     /**
      * @return \RapportActivite\Entity\Db\RapportActiviteAvis[]|Collection
      */
-    public function getRapportAvis(): Collection
+    public function getRapportAvis(bool $includeHistorises = false): Collection
     {
+        if ($includeHistorises) {
+            return $this->rapportAvis;
+        }
+
         return $this->rapportAvis->filter(function(RapportActiviteAvis $rapportAvis) {
             return $rapportAvis->estNonHistorise();
         });
     }
 
     /**
-     * @param \RapportActivite\Entity\Db\RapportActiviteAvis $rapportAvis
-     * @return self
+     * Retourne l'éventuel avis sur ce rapport, du type spécifié.
      */
+    public function getRapportAvisOfType(AvisType $avisType): ?RapportActiviteAvis
+    {
+        $aviss = $this->getRapportAvis()->filter(function(RapportActiviteAvis $avis) use ($avisType) {
+            return $avis->getAvis()->getAvisType() === $avisType;
+        });
+
+        if (count($aviss) > 1) {
+            throw new RuntimeException("Anomalie : plusieurs aviss de rapport du même type trouvées");
+        }
+
+        return $aviss->first() ?: null;
+    }
+
     public function addRapportAvis(RapportActiviteAvis $rapportAvis): self
     {
         $this->rapportAvis->add($rapportAvis);
@@ -328,10 +528,6 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
         return $this;
     }
 
-    /**
-     * @param \RapportActivite\Entity\Db\RapportActiviteAvis $rapportAvis
-     * @return self
-     */
     public function removeRapportAvis(RapportActiviteAvis $rapportAvis): self
     {
         $this->rapportAvis->removeElement($rapportAvis);
@@ -339,19 +535,11 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
         return $this;
     }
 
-    /**
-     * Returns the string identifier of the Resource
-     *
-     * @return string
-     */
-    public function getResourceId()
+    public function getResourceId(): string
     {
         return self::RESOURCE_ID;
     }
 
-    /**
-     * @return string
-     */
     public function generateInternalPathForZipArchive(): string
     {
         $these = $this->getThese();
@@ -366,8 +554,6 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
 
     /**
      * Teste si le fichier du rapport supporte l'ajout de la page de validation.
-     *
-     * @return bool
      */
     public function supporteAjoutPageValidation(): bool
     {

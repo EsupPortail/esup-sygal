@@ -76,7 +76,10 @@ final class NotifierService
         } catch (ExceptionInterface $e) {
             $result
                 ->setIsSuccess(false)
-                ->setErrorMessages([$e->getMessage()]);
+                ->setErrorMessages(array_filter([
+                    $e->getMessage(),
+                    $e->getPrevious() ? $e->getPrevious()->getMessage() : null,
+                ]));
         }
 
         return $result;
@@ -91,7 +94,7 @@ final class NotifierService
         try {
             $message = $this->mailerService->send($email);
         } catch (Throwable $e) {
-            throw new RuntimeException("Erreur rencontrée lors de l'envoi de la notification", null, $e);
+            throw new RuntimeException("Erreur rencontrée lors de l'envoi de la notification.", null, $e);
         }
 
         return $message;

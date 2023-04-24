@@ -40,6 +40,7 @@ class JusticatifHydrator implements HydratorInterface {
     {
         /** @var Membre $membre */
         $membre = $this->getMembreService()->find($data['membre']);
+
         $object->setMembre($membre);
         return $object;
     }

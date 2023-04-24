@@ -2,18 +2,29 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="RapportActivite\Entity\Db\RapportActivite" table="RAPPORT">
+    <entity name="RapportActivite\Entity\Db\RapportActivite" table="RAPPORT_ACTIVITE">
 
         <id name="id" type="integer" column="ID">
             <generator strategy="SEQUENCE"/>
         </id>
 
         <field name="anneeUniv" type="integer" column="ANNEE_UNIV"/>
-        <field name="estFinal" type="boolean" column="EST_FINAL"/>
+        <field name="estFinContrat" type="boolean" column="EST_FIN_CONTRAT"/>
 
-        <many-to-one field="typeRapport" target-entity="Application\Entity\Db\TypeRapport">
-            <join-column name="TYPE_RAPPORT_ID" referenced-column-name="ID"/>
-        </many-to-one>
+        <field name="parDirecteurThese" type="boolean" column="PAR_DIRECTEUR_THESE"/>
+        <field name="parDirecteurTheseMotif" type="string" column="PAR_DIRECTEUR_THESE_MOTIF"/>
+
+        <field name="descriptionProjetRecherche" type="string" column="DESCRIPTION_PROJET_RECHERCHE"/>
+        <field name="principauxResultatsObtenus" type="string" column="PRINCIPAUX_RESULTATS_OBTENUS"/>
+        <field name="productionsScientifiques" type="string" column="PRODUCTIONS_SCIENTIFIQUES"/>
+        <field name="formationsSpecifiques" type="string" column="FORMATIONS_SPECIFIQUES"/>
+        <field name="formationsTransversales" type="string" column="FORMATIONS_TRANSVERSALES"/>
+        <field name="actionsDiffusionCultureScientifique" type="string" column="ACTIONS_DIFFUSION_CULTURE_SCIENTIFIQUE"/>
+        <field name="autresActivites" type="string" column="AUTRES_ACTIVITES"/>
+        <field name="calendrierPrevionnelFinalisation" type="string" column="CALENDRIER_PREVIONNEL_FINALISATION"/>
+        <field name="preparationApresThese" type="string" column="PREPARATION_APRES_THESE"/>
+        <field name="perspectivesApresThese" type="string" column="PERSPECTIVES_APRES_THESE"/>
+        <field name="commentaires" type="string" column="COMMENTAIRES"/>
 
         <many-to-one field="fichier" target-entity="Fichier\Entity\Db\Fichier">
             <join-column name="FICHIER_ID" referenced-column-name="ID"/>

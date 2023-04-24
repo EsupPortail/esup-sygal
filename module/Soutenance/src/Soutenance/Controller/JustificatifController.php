@@ -88,10 +88,15 @@ class JustificatifController extends AbstractController {
             $files = ['files' => $request->getFiles()->toArray()];
             if ($nature) $data['nature'] = $nature->getCode();
 
-            $form->setData($data);
-            if ($form->isValid()) {
-                var_dump("After form");
+//            $form->setData($data);
+//            if ($form->isValid()) {
+            // <!> Attention : L'hydration echoue ...
+            if ($data['nature'] !== null AND !empty($files)) {
                 if ($nature === null) $nature = $this->fichierTheseService->fetchNatureFichier($data['nature']);
+                if ($data['membre']) {
+                    $membre = $this->getMembreService()->find($data['membre']);
+                    $justificatif->setMembre($membre);
+                }
                 $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
                 $fichiers = $this->fichierTheseService->createFichierThesesFromUpload($these, $files, $nature, $version);
                 $justificatif->setFichier($fichiers[0]);

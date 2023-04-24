@@ -674,6 +674,13 @@ class SoutenanceNotificationFactory extends NotificationFactory
         $these = $proposition->getThese();
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
+        if ($email === null or $email === '') {
+            throw new RuntimeException("Aucune adresse électronique pour le doctorant [".$doctorant->getIndividu()->getNomComplet()."]");
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new RuntimeException("L'adresse électronique est mal formée pour le doctorant [".$doctorant->getIndividu()->getNomComplet()."]");
+        }
+
         $notif = new Notification();
         $notif
             ->setSubject("Convocation pour la soutenance de thèse de  " . $doctorant->getNomComplet())
@@ -709,6 +716,13 @@ class SoutenanceNotificationFactory extends NotificationFactory
         $these = $proposition->getThese();
         $pdcData = $this->getTheseService()->fetchInformationsPageDeCouverture($these);
 
+        if ($email === null or $email === '') {
+            throw new RuntimeException("Aucune adresse électronique pour le membre [".$membre->getDenomination()."]");
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new RuntimeException("L'adresse électronique est mal formée pour le membre [".$membre->getDenomination()."]");
+        }
+
         $notif = new Notification();
         $notif
             ->setSubject("Convocation pour la soutenance de thèse de  " . $doctorant->getNomComplet())
@@ -735,7 +749,7 @@ class SoutenanceNotificationFactory extends NotificationFactory
         $vars['Url'] = $url;
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(MailTemplates::TRANSMETTRE_DOCUMENTS_DIRECTION, $vars);
-        $mail = $these->getDirecteursTheseEmails();
+        $mail = array_merge($these->getDirecteursTheseEmails(), $these->getCoDirecteursTheseEmails());
         if (count($mail) === 0) {
             throw new RuntimeException("Aucun mail trouvés pour les directeurs de thèse");
         }

@@ -4,35 +4,49 @@ namespace RapportActivite\Service;
 
 use Application\Command\ShellCommandRunnerTrait;
 use Application\Entity\AnneeUniv;
-use Fichier\Entity\Db\NatureFichier;
-use These\Entity\Db\These;
-use Application\Entity\Db\TypeRapport;
+use Application\Entity\Db\TypeValidation;
+use Application\Exporter\ExporterDataException;
+use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Service\BaseService;
-use RapportActivite\Service\Fichier\Exporter\PageValidationExportDataException;
-use Structure\Entity\Db\EcoleDoctorale;
-use Structure\Entity\Db\Etablissement;
-use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
-use Fichier\Service\Fichier\FichierServiceAwareTrait;
-use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
-use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
 use Application\Service\Role\RoleServiceAwareTrait;
-use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
-use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
-use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
+use Application\Service\Validation\ValidationServiceAwareTrait;
 use Closure;
+use DateTime;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Exception;
+use Fichier\Entity\Db\Fichier;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Service\Fichier\FichierServiceAwareTrait;
+use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Fichier\Service\NatureFichier\NatureFichierServiceAwareTrait;
+use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Laminas\EventManager\EventManagerAwareTrait;
+use parametre\src\UnicaenParametre\Exception\ParametreMalTypeException;
 use RapportActivite\Entity\Db\RapportActivite;
+use RapportActivite\Entity\Db\RapportActiviteAvis;
 use RapportActivite\Event\RapportActiviteEvent;
 use RapportActivite\Formatter\RapportActiviteNomFichierFormatter;
-use RapportActivite\Notification\RapportActiviteSupprimeNotification;
+use RapportActivite\Provider\Parametre\RapportActiviteParametres;
+use RapportActivite\Rule\Operation\RapportActiviteOperationRuleAwareTrait;
 use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
 use RapportActivite\Service\Fichier\Exporter\PageValidationExportData;
 use RapportActivite\Service\Fichier\Exporter\PageValidationPdfExporterTrait;
+use RapportActivite\Service\Fichier\Exporter\RapportActivitePdfExporterData;
+use RapportActivite\Service\Fichier\Exporter\RapportActivitePdfExporterTrait;
 use RapportActivite\Service\Validation\RapportActiviteValidationServiceAwareTrait;
+use Structure\Entity\Db\EcoleDoctorale;
+use Structure\Entity\Db\Etablissement;
+use Structure\Entity\Db\Structure;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
+use Structure\Service\Structure\StructureServiceAwareTrait;
+use Structure\Service\StructureDocument\StructureDocumentServiceAwareTrait;
+use These\Entity\Db\These;
 use UnicaenApp\Exception\RuntimeException;
+use UnicaenApp\Exporter\Pdf;
+use UnicaenParametre\Exception\ParametreNotFoundException;
+use UnicaenParametre\Service\Parametre\ParametreServiceAwareTrait;
 
 class RapportActiviteService extends BaseService
 {
@@ -42,9 +56,15 @@ class RapportActiviteService extends BaseService
     use EtablissementServiceAwareTrait;
     use NatureFichierServiceAwareTrait;
     use RapportActiviteAvisServiceAwareTrait;
+    use RapportActiviteOperationRuleAwareTrait;
     use RapportActiviteValidationServiceAwareTrait;
     use RoleServiceAwareTrait;
+    use StructureServiceAwareTrait;
     use StructureDocumentServiceAwareTrait;
+    use ValidationServiceAwareTrait;
+    use ParametreServiceAwareTrait;
+
+    use RapportActivitePdfExporterTrait;
 
     use PageValidationPdfExporterTrait;
     use ShellCommandRunnerTrait;
@@ -52,20 +72,23 @@ class RapportActiviteService extends BaseService
     use EventManagerAwareTrait;
 
     const RAPPORT_ACTIVITE__AJOUTE__EVENT = 'RAPPORT_ACTIVITE__AJOUTE__EVENT';
+    const RAPPORT_ACTIVITE__MODIFIE__EVENT = 'RAPPORT_ACTIVITE__MODIFIE__EVENT';
     const RAPPORT_ACTIVITE__SUPPRIME__EVENT = 'RAPPORT_ACTIVITE__SUPPRIME__EVENT';
 
     /**
+     * Fetch complet d'un rapport par son id :
+     *  - Les relations suivantes doivent être sélectionnées : 'rapportAvis->avis->avisType' ;
+     *  - L'orderBy 'avisType.ordre' doit être spécifié.
+     *
      * @param int $id
      * @return RapportActivite|null
      */
-    public function findRapportById(int $id): ?RapportActivite
+    public function fetchRapportById(int $id): ?RapportActivite
     {
         $qb = $this->getRepository()->createQueryBuilder('ra');
-        $qb
-            ->addSelect('t, f')
-            ->join('ra.these', 't')
-            ->join('ra.fichier', 'f')
-            ->where('ra = :id')->setParameter('id', $id);
+        $qb->where('ra = :id')->setParameter('id', $id);
+
+        $this->addRelationships($qb);
 
         try {
             return $qb->getQuery()->getOneOrNullResult();
@@ -80,15 +103,24 @@ class RapportActiviteService extends BaseService
      */
     public function findRapportsForThese(These $these): array
     {
-        // ATTENTION ! Les relations suivantes doivent être sélectionnées lors du fetch des rapports :
-        // 'rapportAvis->avis->avisType'.
-
         $qb = $this->getRepository()->createQueryBuilder('ra');
+        $this->addRelationships($qb);
+        $qb->andWhere('t =:these')->setParameter('these', $these);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    private function addRelationships(DefaultQueryBuilder $qb)
+    {
+        //
+        // ATTENTION ! Lors du fetch des rapports :
+        // - Les relations suivantes doivent avoir été sélectionnées : 'rapportAvis->avis->avisType' ;
+        // - L'orderBy 'avisType.ordre' doit avoir été utilisé.
+        //
         $qb
-            ->addSelect('tr, t, f, d, i, rav, raa, a, at')
-            ->join('ra.typeRapport', 'tr', Join::WITH, 'tr.code = :code')->setParameter('code', TypeRapport::RAPPORT_ACTIVITE)
-            ->join('ra.these', 't', Join::WITH, 't =:these')->setParameter('these', $these)
-            ->join('ra.fichier', 'f')
+            ->addSelect('t, f, d, i, rav, raa, a, at')
+            ->join('ra.these', 't')
+            ->leftJoin('ra.fichier', 'f')
             ->join('t.doctorant', 'd')
             ->join('d.individu', 'i')
             ->leftJoin('ra.rapportValidations', 'rav')
@@ -97,10 +129,8 @@ class RapportActiviteService extends BaseService
             ->leftJoin('a.avisType', 'at')
             ->andWhereNotHistorise()
             ->addOrderBy('ra.anneeUniv')
-            ->addOrderBy('ra.estFinal')
+            ->addOrderBy('ra.estFinContrat')
             ->addOrderBy('at.ordre');
-
-        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -120,43 +150,33 @@ class RapportActiviteService extends BaseService
     public function newRapportActivite(These $these): RapportActivite
     {
         $rapportActivite = new RapportActivite();
-        $rapportActivite->setTypeRapport($this->findTypeRapport());
         $rapportActivite->setThese($these);
 
         return $rapportActivite;
     }
 
     /**
-     * Enregistre le rapport spécifié, après avoir créé le fichier à partir des données d'upload fournies.
+     * Enregistre le rapport spécifié.
      *
      * @param \RapportActivite\Entity\Db\RapportActivite $rapportActivite
-     * @param array $uploadData Données résultant de l'upload de fichiers
      * @return \RapportActivite\Event\RapportActiviteEvent Rapport annuel créé
      */
-    public function saveRapport(RapportActivite $rapportActivite, array $uploadData): RapportActiviteEvent
+    public function saveRapport(RapportActivite $rapportActivite): RapportActiviteEvent
     {
-        $this->fichierService->setNomFichierFormatter(new RapportActiviteNomFichierFormatter($rapportActivite));
-        $fichiers = $this->fichierService->createFichiersFromUpload($uploadData, NatureFichier::CODE_RAPPORT_ACTIVITE);
-
         $this->entityManager->beginTransaction();
         try {
-            $this->fichierService->saveFichiers($fichiers);
-
-            $fichier = array_pop($fichiers); // il n'y a en fait qu'un seul fichier
-            $rapportActivite->setFichier($fichier);
-
             $this->entityManager->persist($rapportActivite);
             $this->entityManager->flush($rapportActivite);
             $this->entityManager->commit();
 
             $event = $this->triggerEvent(
-                self::RAPPORT_ACTIVITE__AJOUTE__EVENT,
+                $rapportActivite->getId() ? self::RAPPORT_ACTIVITE__MODIFIE__EVENT : self::RAPPORT_ACTIVITE__AJOUTE__EVENT,
                 $rapportActivite,
                 []
             );
         } catch (Exception $e) {
             $this->entityManager->rollback();
-            throw new RuntimeException("Erreur survenue lors de l'enregistrement des rapports annuels, rollback!", 0, $e);
+            throw new RuntimeException("Erreur survenue lors de l'enregistrement du rapport, rollback!", 0, $e);
         }
 
         return $event;
@@ -174,9 +194,12 @@ class RapportActiviteService extends BaseService
         try {
             $this->rapportActiviteAvisService->deleteAllAvisForRapportActivite($rapportActivite);
             $this->rapportActiviteValidationService->deleteRapportValidationForRapportActivite($rapportActivite);
-            $this->fichierService->supprimerFichiers([$fichier]);
+            if ($fichier) {
+                $this->fichierService->supprimerFichiers([$fichier]);
+            }
 
-            $this->entityManager->remove($rapportActivite);
+            $rapportActivite->historiser();
+            $this->entityManager->flush($rapportActivite);
             $this->entityManager->commit();
 
             $event = $this->triggerEvent(
@@ -193,19 +216,6 @@ class RapportActiviteService extends BaseService
     }
 
     /**
-     * @return TypeRapport
-     */
-    public function findTypeRapport(): TypeRapport
-    {
-        $qb = $this->getEntityManager()->getRepository(TypeRapport::class);
-
-        /** @var TypeRapport $type */
-        $type = $qb->findOneBy(['code' => TypeRapport::RAPPORT_ACTIVITE]);
-
-        return $type;
-    }
-
-    /**
      * @param bool $cacheable
      * @return array
      */
@@ -215,7 +225,6 @@ class RapportActiviteService extends BaseService
         $qb
             ->distinct()
             ->select("ra.anneeUniv")
-            ->join('ra.typeRapport', 'tr', Join::WITH, 'tr.code = :code')->setParameter('code', TypeRapport::RAPPORT_ACTIVITE)
             ->orderBy("ra.anneeUniv", 'desc');
 
         $qb->setCacheable($cacheable);
@@ -235,7 +244,6 @@ class RapportActiviteService extends BaseService
         $qb = $this->getRepository()->createQueryBuilder('ra');
         $qb
             ->join('ra.these', 't', Join::WITH, 't = :these')->setParameter('these', $these)
-            ->join('ra.typeRapport', 'tr', Join::WITH, 'tr.code = :code')->setParameter('code', TypeRapport::RAPPORT_ACTIVITE)
             ->orderBy("ra.anneeUniv", 'desc');
 
         /** @var RapportActivite $rapports */
@@ -265,7 +273,98 @@ class RapportActiviteService extends BaseService
     }
 
     /**
-     * @throws \RapportActivite\Service\Fichier\Exporter\PageValidationExportDataException Une structure n'a aucun logo
+     * @param \RapportActivite\Entity\Db\RapportActivite $rapport
+     * @throws \Application\Exporter\ExporterDataException
+     */
+    public function genererRapportActivitePdf(RapportActivite $rapport): void
+    {
+        $f = new RapportActiviteNomFichierFormatter();
+        $filename = $f->filter($rapport);
+
+        $outputFilepath = sys_get_temp_dir() . '/' . $filename;
+
+        $data = $this->createRapportActivitePdfExporterData($rapport);
+
+        $exporter = clone $this->rapportActivitePdfExporter; // clonage indispensable
+        $exporter->setMarginTop(40);
+        $exporter->setWatermark("CONFIDENTIEL");
+        $exporter->getMpdf()->watermarkTextAlpha = 0.1;
+        $exporter->setVars(['rapport' => $rapport, 'data' => $data]);
+        $exporter->export($outputFilepath, Pdf::DESTINATION_BROWSER);
+    }
+
+    /**
+     * @throws \Application\Exporter\ExporterDataException Pb de données bloquant
+     */
+    private function createRapportActivitePdfExporterData(RapportActivite $rapport): RapportActivitePdfExporterData
+    {
+        $data = new RapportActivitePdfExporterData();
+
+        $data->rapport = $rapport;
+
+        $these = $rapport->getThese();
+        $ed = $these->getEcoleDoctorale();
+        $ur = $these->getUniteRecherche();
+
+        if ($ed === null) {
+            throw new ExporterDataException("La thèse n'est rattachée à aucune école doctorale");
+        }
+        if ($ur === null) {
+            throw new ExporterDataException("La thèse n'est rattachée à aucune unité de recherche");
+        }
+
+        $this->fichierStorageService->setGenererFichierSubstitutionSiIntrouvable(true);
+
+        // Logos COMUE & établissements d'inscription
+        $data->logosEtablissements = [];
+        if ($comue = $this->etablissementService->fetchEtablissementComue()) {
+            if (!$comue->getStructure()->getCheminLogo()) {
+                throw new ExporterDataException("La COMUE '{$comue}' n'a aucun logo !");
+            }
+            try {
+                $data->logosEtablissements[] = $this->fichierStorageService->getFileForLogoStructure($comue->getStructure());
+            } catch (StorageAdapterException $e) {
+                throw new ExporterDataException(
+                    "Accès impossible au logo de la COMUE '{$comue}' : " . $e->getMessage());
+            }
+        }
+        $etablissements = $this->etablissementService->getRepository()->findAllEtablissementsInscriptions();
+        if (!$etablissements) {
+            throw new ExporterDataException("Aucun établissement d'inscription trouvé !");
+        }
+        foreach ($etablissements as $etablissement) {
+            if (!$etablissement->getStructure()->getCheminLogo()) {
+                throw new ExporterDataException("L'établissement '{$etablissement}' n'a aucun logo !");
+            }
+            try {
+                $data->logosEtablissements[] = $this->fichierStorageService->getFileForLogoStructure($etablissement->getStructure());
+            } catch (StorageAdapterException $e) {
+                throw new ExporterDataException(
+                    "Accès impossible au logo de l'établissement '{$etablissement}' : " . $e->getMessage());
+            }
+        }
+
+        // Collège des ED (CED)
+        if ($ced = $this->etablissementService->fetchEtablissementCed()) {
+            if (!$ced->getStructure()->getCheminLogo()) {
+                throw new ExporterDataException("Le CED n'a aucun logo !");
+            }
+            try {
+                $data->logoCED = $this->fichierStorageService->getFileForLogoStructure($ced->getStructure());
+            } catch (StorageAdapterException $e) {
+                throw new ExporterDataException(
+                    "Accès impossible au logo du CED : " . $e->getMessage());
+            }
+        }
+
+        // operations
+        $data->operations = $this->rapportActiviteOperationRule->getOperationsForRapport($rapport);
+
+        return $data;
+    }
+
+    /**
+     * @throws \Application\Exporter\ExporterDataException Une structure n'a aucun logo
      */
     public function createPageValidationDataForRapport(RapportActivite $rapport): PageValidationExportData
     {
@@ -277,10 +376,10 @@ class RapportActiviteService extends BaseService
         $ur = $these->getUniteRecherche();
 
         if ($ed === null) {
-            throw new PageValidationExportDataException("La thèse n'est rattachée à aucune école doctorale");
+            throw new ExporterDataException("La thèse n'est rattachée à aucune école doctorale");
         }
         if ($ur === null) {
-            throw new PageValidationExportDataException("La thèse n'est rattachée à aucune unité de recherche");
+            throw new ExporterDataException("La thèse n'est rattachée à aucune unité de recherche");
         }
 
         // généralités
@@ -304,59 +403,62 @@ class RapportActiviteService extends BaseService
         if ($comue = $this->etablissementService->fetchEtablissementComue()) {
             $exportData->useCOMUE = true;
             if (!$comue->getStructure()->getCheminLogo()) {
-                throw new PageValidationExportDataException("La COMUE '{$comue}' n'a aucun logo !");
+                throw new ExporterDataException("La COMUE '{$comue}' n'a aucun logo !");
             }
             try {
                 $exportData->logoCOMUE = $this->fichierStorageService->getFileForLogoStructure($comue->getStructure());
             } catch (StorageAdapterException $e) {
-                throw new PageValidationExportDataException(
+                throw new ExporterDataException(
                     "Accès impossible au logo de la COMUE '{$comue}' : " . $e->getMessage());
             }
         }
 
         // logo etablissement
         if (!$etablissement->getStructure()->getCheminLogo()) {
-            throw new PageValidationExportDataException("L'établissement '{$etablissement}' n'a aucun logo !");
+            throw new ExporterDataException("L'établissement '{$etablissement}' n'a aucun logo !");
         }
         try {
             $exportData->logoEtablissement = $this->fichierStorageService->getFileForLogoStructure($etablissement->getStructure());
         } catch (StorageAdapterException $e) {
-            throw new PageValidationExportDataException(
+            throw new ExporterDataException(
                 "Accès impossible au logo de l'établissement '{$etablissement}' : " . $e->getMessage());
         }
 
         // logo ED
         if (!$ed->getStructure()->getCheminLogo()) {
-            throw new PageValidationExportDataException("L'ED '{$ed}' n'a aucun logo !");
+            throw new ExporterDataException("L'ED '{$ed}' n'a aucun logo !");
         }
         try {
             $exportData->logoEcoleDoctorale = $this->fichierStorageService->getFileForLogoStructure($ed->getStructure());
         } catch (StorageAdapterException $e) {
-            throw new PageValidationExportDataException(
+            throw new ExporterDataException(
                 "Accès impossible au logo de l'ED '{$ed}' : " . $e->getMessage());
         }
 
         // logo UR
         if (!$ur->getStructure()->getCheminLogo()) {
-            throw new PageValidationExportDataException("L'UR '{$ur}' n'a aucun logo !");
+            throw new ExporterDataException("L'UR '{$ur}' n'a aucun logo !");
         }
         try {
             $exportData->logoUniteRecherche = $this->fichierStorageService->getFileForLogoStructure($ur->getStructure());
         } catch (StorageAdapterException $e) {
-            throw new PageValidationExportDataException(
+            throw new ExporterDataException(
                 "Accès impossible au logo de l'UR '{$ur}' : " . $e->getMessage());
         }
 
         // avis
-        $exportData->mostRecentAvis = $this->rapportActiviteAvisService->findMostRecentRapportAvisForRapport($rapport);
+        $exportData->mostRecentAvis = $this->rapportActiviteAvisService->findRapportAvisByRapportAndAvisType(
+            $rapport, RapportActiviteAvis::AVIS_TYPE__CODE__AVIS_RAPPORT_ACTIVITE_GEST
+        );
 
         // validation
-        $exportData->validation = $rapport->getRapportValidation();
+        $typeValidation = $this->validationService->findTypeValidationByCode(TypeValidation::CODE_RAPPORT_ACTIVITE_AUTO);
+        $exportData->validation = $rapport->getRapportValidationOfType($typeValidation);
 
         // signature ED
         $signatureEcoleDoctorale = $this->findSignatureEcoleDoctorale($ed, $etablissement);
         if ($signatureEcoleDoctorale === null) {
-            throw new PageValidationExportDataException("Aucune signature trouvée pour l'ED '$ed'.");
+            throw new ExporterDataException("Aucune signature trouvée pour l'ED '$ed'.");
         }
         $exportData->signatureEcoleDoctorale = $signatureEcoleDoctorale;
 
@@ -391,20 +493,33 @@ class RapportActiviteService extends BaseService
         return $event;
     }
 
-    /**
-     * @deprecated todo : à déplacer dans une RapportActiviteNotificationFactory
-     */
-    public function newRapportActiviteSupprimeNotification(RapportActivite $rapportActivite): RapportActiviteSupprimeNotification
+    public function fetchParametresCampagneDepotDates(): array
     {
-        $doctorant = $rapportActivite->getThese()->getDoctorant();
-        $individu = $doctorant->getIndividu();
-        $email = $individu->getEmailContact() ?: $individu->getEmailPro() ?: $individu->getEmailUtilisateur();
+        try {
+            $campagneDepotDeb = $this->parametreService->getValeurForParametre(RapportActiviteParametres::CATEGORIE, $k = RapportActiviteParametres::CAMPAGNE_DEPOT_DEBUT);
+            $campagneDepotFin = $this->parametreService->getValeurForParametre(RapportActiviteParametres::CATEGORIE, $k = RapportActiviteParametres::CAMPAGNE_DEPOT_FIN);
+        } catch (Exception $e) {
+            throw new RuntimeException("Erreur rencontrée lors de l'obtention du paramètre $k", null, $e);
+        }
 
-        $notif = new RapportActiviteSupprimeNotification();
-        $notif->setRapportActivite($rapportActivite);
-        $notif->setSubject("Rapport d'activité supprimé");
-        $notif->setTo([$email => $doctorant->getIndividu()->getNomComplet()]);
+        $a = AnneeUniv::courante()->getPremiereAnnee();
+        $dateDebSpec = str_replace(['N+1', 'N'], [$a+1, $a], $campagneDepotDeb);
+        $dateFinSpec = str_replace(['N+1', 'N'], [$a+1, $a], $campagneDepotFin);
+        $dateDeb = DateTime::createFromFormat('d/m/Y H:i:s', "$dateDebSpec 00:00:00");
+        $dateFin = DateTime::createFromFormat('d/m/Y H:i:s', "$dateFinSpec 23:59:59");
 
-        return $notif;
+        if ($dateDeb > $dateFin) {
+            throw new RuntimeException(sprintf(
+                "Les valeurs des paramètres suivants sont invalides car on obtient une date de début postérieure à la date de fin : %s, %s (catégorie %s)",
+                RapportActiviteParametres::CAMPAGNE_DEPOT_DEBUT,
+                RapportActiviteParametres::CAMPAGNE_DEPOT_FIN,
+                RapportActiviteParametres::CATEGORIE
+            ));
+        }
+
+        return [
+            RapportActiviteParametres::CAMPAGNE_DEPOT_DEBUT => $dateDeb,
+            RapportActiviteParametres::CAMPAGNE_DEPOT_FIN => $dateFin,
+        ];
     }
 }

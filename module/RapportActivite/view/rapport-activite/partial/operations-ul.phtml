@@ -1,0 +1,43 @@
+<?php
+/**
+ * @var \RapportActivite\Entity\RapportActiviteOperationInterface[] $operations
+ * @var bool $ajaxModalEvent
+ */
+
+use RapportActivite\Entity\Db\RapportActiviteAvis;
+use RapportActivite\Entity\Db\RapportActiviteValidation;
+?>
+
+<ul class="operation">
+<?php
+foreach ($operations as $operation) {
+    if ($operation instanceof RapportActiviteValidation) {
+        $returnUrl = $this->url('rapport-activite/consulter', [
+            'rapport' => $operation->getRapportActivite()->getId(),
+            'these' => $operation->getRapportActivite()->getThese()->getId()],
+        );
+        if ($operation->getId() !== null) {
+            echo $this->partial('rapport-activite/partial/validation/validation-existante-li', [
+                'operation' => $operation,
+            ]);
+        } else {
+            echo $this->partial('rapport-activite/partial/validation/validation-avenir-li', [
+                'operation' => $operation,
+            ]);
+        }
+    } elseif ($operation instanceof RapportActiviteAvis) {
+        if ($operation->getId() !== null) {
+            echo $this->partial('rapport-activite/partial/avis/avis-existant-li', [
+                'operation' => $operation,
+            ]);
+        } else {
+            echo $this->partial('rapport-activite/partial/avis/avis-avenir-li', [
+                'operation' => $operation,
+            ]);
+        }
+    } else {
+        throw new InvalidArgumentException("Type inattendu");
+    }
+}
+?>
+</ul>

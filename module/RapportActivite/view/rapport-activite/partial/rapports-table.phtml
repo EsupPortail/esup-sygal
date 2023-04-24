@@ -4,19 +4,20 @@ namespace RapportActivite;
 
 use Application\Entity\Db\Role;
 use Application\Entity\Db\TypeValidation;
-use These\Filter\ActeursFormatter;
 use Application\Filter\IdifyFilter;
-use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
-use Structure\Search\Etablissement\EtablissementSearchFilter;
-use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
 use Application\Service\Rapport\RapportSearchService;
 use Application\View\Renderer\PhpRenderer;
 use RapportActivite\Entity\Db\RapportActivite;
 use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
+use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
+use Structure\Search\Etablissement\EtablissementSearchFilter;
+use Structure\Search\UniteRecherche\UniteRechercheSearchFilter;
+use These\Filter\ActeursFormatter;
 
 /**
  * @var PhpRenderer $this
  * @var RapportActivite[] $rapports
+ * @var array[] $operationss
  *
  * @var TypeValidation $typeValidation
  *
@@ -46,7 +47,7 @@ $acteursFormatterCodirecteurs->asSeparated()
 $ajaxModalEvent = 'EVENT_AVIS_SAISI';
 ?>
 
-<table class="table table-bordered table-hover">
+<table class="table table-bordered table-hover rapport-activite">
     <thead>
     <tr>
         <?php if ($displayEtablissement): ?>
@@ -108,18 +109,16 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
         <?php endif ?>
 
         <th>
-            Document téléversé
+            Création
         </th>
 
-        <?php if ($displayAvis): ?>
-            <th>
-                Statut
-            </th>
-        <?php endif ?>
+        <th>
+            Fichier
+        </th>
 
-        <?php if ($displayValidation): ?>
+        <?php if ($displayAvis || $displayValidation): ?>
             <th>
-                Validation
+                Validations
             </th>
         <?php endif ?>
 
@@ -134,17 +133,25 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
         <tr>
             <?php
             $these = $rapport->getThese();
-            $rapportValidation = $rapport->getRapportValidation();
             $rapportAviss = $rapport->getRapportAvis();
             $canList =
                 $this->isAllowed(RapportActivitePrivileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_LISTER_TOUT)) ||
                 $this->isAllowed(RapportActivitePrivileges::getResourceId(RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN));
+            $canView =
+                $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_CONSULTER_TOUT) ||
+                $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_CONSULTER_SIEN);
+            $canEdit =
+                $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_TOUT) ||
+                $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_SIEN);
             $canDel =
                 $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_TOUT) ||
                 $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_SIEN);
             $canDl =
                 $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_TOUT) ||
                 $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_TELECHARGER_SIEN);
+            $canGen =
+                $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_GENERER_TOUT) ||
+                $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_GENERER_SIEN);
             ?>
 
             <?php if ($displayEtablissement): ?>
@@ -157,7 +164,7 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
 
             <?php if ($displayType): ?>
             <td>
-                <?php echo $rapport->getTypeRapportToString() ?>
+                <?php echo $rapport->getTypeRapportLibelle() ?>
             </td>
             <?php endif ?>
 
@@ -170,7 +177,7 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
                 <?php echo $these->getDoctorant()->getIndividu()->getNomComplet() ?>
                 <?php if ($canList): ?>
                     <p>
-                        <a href="<?php echo $this->url('rapport-activite/consulter', ['these' => $these->getId()], [], true) ?>"
+                        <a href="<?php echo $this->url('rapport-activite/lister', ['these' => $these->getId()], [], true) ?>"
                            class="small"
                            title="Aller à la page des rapports d'activité de <?php echo $these->getDoctorant() ?>">Rapports</a>
                     </p>
@@ -214,138 +221,61 @@ $ajaxModalEvent = 'EVENT_AVIS_SAISI';
             <?php endif ?>
 
             <td>
-                <?php if ($canDl): ?>
-                    <a href="<?php echo $this->url('rapport-activite/telecharger', ['rapport' => IdifyFilter::id($rapport)], ['query' => ['redirect' => $returnUrl]]) ?>"
-                       title="Cliquez pour télécharger">
-                        <?php echo $rapport->getFichier()->getNom() ?>
-                    </a>
-                <?php else: ?>
-                    <?php echo $rapport->getFichier()->getNom() ?>
-                <?php endif; ?>
-                <div class="text-sm">
-                    <?php echo $rapport->getHistoCreateur() ?><br>
-                    <?php echo $rapport->getHistoCreation()->format('d/m/Y H:i') ?>
-                </div>
+                <?php echo $rapport->getHistoCreateur() ?><br>
+                <?php echo $rapport->getHistoCreation()->format('d/m/Y H:i') ?>
             </td>
 
-            <?php if ($displayAvis): ?>
-                <td>
-                <?php
-                $rapportAvisPossible = $rapport->getRapportAvisPossible();
-                $canAjouterAvis = $rapportAvisPossible && (
-                        $this->isAllowed($rapportAvisPossible, RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_TOUT) ||
-                        $this->isAllowed($rapportAvisPossible, RapportActivitePrivileges::RAPPORT_ACTIVITE_AJOUTER_AVIS_SIEN)
-                    );
-                ?>
-                    <?php foreach ($rapportAviss as $i => $rapportAvis): ?>
-                    <?php
-                    $canModifierAvis =
-                        $this->isAllowed($rapportAvis, RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_AVIS_TOUT) ||
-                        $this->isAllowed($rapportAvis, RapportActivitePrivileges::RAPPORT_ACTIVITE_MODIFIER_AVIS_SIEN);
-                    $canSupprimerAvis =
-                        $this->isAllowed($rapportAvis, RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_TOUT) ||
-                        $this->isAllowed($rapportAvis, RapportActivitePrivileges::RAPPORT_ACTIVITE_SUPPRIMER_AVIS_SIEN);
-                    $avis = $rapportAvis->getAvis();
-                    $statusClass = $avis->getAvisValeur()->getValeurBool() ? 'success' : 'danger';
-                    ?>
-                    <div class="card text-center validation-rapport-activite">
-                        <div class="card-header">
-                            <!--<span class="badge rounded-pill bg-secondary"><?php /*echo $i+1 */?></span>-->
-                            <?php echo $avis->getAvisType()->getLibelle() ?>
-                        </div>
-                        <div class="card-body">
-                            <div class="card-subtitle mb-2 text-sm text-muted">
-                                <?php echo $rapportAvis->getHistoModificateur() ?: $rapportAvis->getHistoCreateur() ?>,
-                                le <?php echo ($rapportAvis->getHistoModification() ?: $rapportAvis->getHistoCreation())->format('d/m/Y H:i') ?>
-                            </div>
-                            <p class="card-text text-<?php echo $statusClass ?>">
-                                <span class="icon <?php echo $avis->getAvisValeur()->getTags() ?>"></span>
-                                <strong><?php echo $avis->getAvisValeur()->getValeur() ?></strong>
-
-                                <?php if ($avisComplemsToHtml = $avis->getAvisComplemsToHtml()): ?>
-                                    <br>
-                                    <a type="button" class="card-link text-sm" data-bs-toggle="modal" data-bs-target="#avisComplemsModal">
-                                        <span class="fas fa-glasses" title="Voir les détails de la validation"></span> Détails
-                                    </a>
-                                <?php endif ?>
-                            </p>
-                            <div class="log-full-content d-none">
-                                <p>Voici les compléments :</p>
-                                <?php echo $avisComplemsToHtml ?>
-                            </div>
-                            <?php if ($canModifierAvis): ?>
-                                <a href="<?php echo $this->url('rapport-activite/avis/modifier', ['rapportAvis' => $rapportAvis->getId()]) ?>"
-                                   class="card-link btn btn-secondary btn-sm action ajax-modal"
-                                   data-event="<?php echo $ajaxModalEvent ?>"
-                                   title="Modifier cet avis ?">Modifier l'avis</span></a>
-                            <?php endif ?>
-                            <?php if ($canSupprimerAvis): ?>
-                                <a href="<?php echo $this->url('rapport-activite/avis/supprimer', ['rapportAvis' => $rapportAvis->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
-                                   class="card-link btn btn-warning btn-sm"
-                                   title="Supprimer cet avis ?"
-                                   data-toggle="confirmationx">Supprimer l'avis</span></a>
-                            <?php endif ?>
-                        </div>
-                    </div>
-                <?php endforeach ?>
-                <?php if ($rapportAvisPossible !== null): ?>
-                    <div class="card text-center validation-rapport-activite">
-                        <div class="card-header">
-                            <!--<span class="badge rounded-pill bg-secondary"><?php /*echo count($rapportAviss)+1 */?></span>-->
-                            <?php echo $rapportAvisPossible->getAvis()->getAvisType()->getLibelle() ?>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">
-                                En attente
-                            </p>
-                            <?php if ($canAjouterAvis): ?>
-                                <a href="<?php echo $this->url('rapport-activite/avis/ajouter', ['rapport' => $rapport->getId()]) ?>"
-                                   class="card-link btn btn-primary btn-sm action ajax-modal"
-                                   data-event="<?php echo $ajaxModalEvent ?>">Saisir l'avis</span></a>
-                            <?php endif ?>
-                        </div>
-                    </div>
-                <?php endif ?>
-                </td>
-            <?php endif; ?>
-
-            <?php if ($displayValidation): ?>
             <td>
-                <?php $returnUrl = $returnUrl ?: $this->url('rapport-activite/consulter', ['these' => $these->getId()]) ?>
-                <?php if ($rapportValidation !== null): ?>
-                    <p>
-                        <strong>Validé</strong> <br>
-                        <span class="text-sm text-muted"><?php echo $rapportValidation->getHistoCreateur() ?><br>
-                            <?php echo $rapportValidation->getHistoCreation()->format('d/m/Y H:i') ?></span>
-                    </p>
-                    <?php $canDevalider = $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT) || $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN) ?>
-                    <?php if ($canDevalider): ?>
-                        <a href="<?php echo $this->url('rapport-activite/devalider', ['rapportValidation' => $rapportValidation->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
-                           class="btn btn-danger collapsable-action"
-                           title="Dévalider ce rapport ?"
-                           data-toggle="confirmationx"
-                           data-message="Êtes-vous sûr·e de vouloir dévalider ?">Dévalider</span></a>
-                    <?php endif ?>
+                <?php if ($fichier = $rapport->getFichier()): ?>
+                    <?php if ($canDl): ?>
+                        <a href="<?php echo $this->url('rapport-activite/telecharger', ['rapport' => IdifyFilter::id($rapport)], ['query' => ['redirect' => $returnUrl]]) ?>"
+                           title="Cliquez pour télécharger">
+                            <?php echo $fichier->getNom() ?>
+                        </a>
+                    <?php else: ?>
+                        <?php echo $fichier->getNom() ?>
+                    <?php endif; ?>
+                    <span class="icon icon-info text-info"
+                          title="Il s'agit d'un rapport non dématérialisé téléversé dans l'ancienne version du module Rapport d'activité"></span>
                 <?php else: ?>
-                    <p>En attente d'avis.</p>
-                    <?php $canValider = $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT) || $this->isAllowed($rapport, RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN) ?>
-                    <?php if ($canValider): ?>
-                        <a href="<?php echo $this->url('rapport-activite/valider', ['rapport' => $rapport->getId(), 'typeValidation' => $typeValidation->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
-                           class="btn btn-success"
-                           title="Valider ce rapport ?"
-                           data-toggle="confirmationx"
-                           data-message="Êtes-vous sûr·e de vouloir valider ce rapport ?">Valider</span></a>
-                    <?php endif ?>
-                <?php endif ?>
+                    Aucun
+                    <span class="icon icon-info text-info"
+                          title="Aucun fichier téléversé car il s'agit d'un rapport dématérialisé créé avec le nouveau module Rapport d'activité"></span>
+                <?php endif; ?>
+            </td>
+
+            <?php if ($displayAvis || $displayValidation): ?>
+            <td>
+                <?php foreach ($operationss[$rapport->getId()] as $i => $operation): ?>
+                    <?php
+                    echo $this->partial('rapport-activite/partial/operation-card', [
+                        'operation' => $operation,
+                        'ajaxModalEvent' => $ajaxModalEvent,
+                    ]);
+                    ?>
+                <?php endforeach ?>
             </td>
             <?php endif; ?>
 
             <td class="action">
+                <?php if ($canView): ?>
+                    <a href="<?php echo $this->url('rapport-activite/consulter', ['these' => $rapport->getThese()->getId(), 'rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
+                       title="Consulter ce rapport"><span class="icon icon-voir iconly"></span></a>
+                <?php endif; ?>
+                <?php if ($canEdit): ?>
+                    <a href="<?php echo $this->url('rapport-activite/modifier', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
+                       title="Modifier ce rapport"><span class="icon icon-modifier iconly"></span></a>
+                    </a>
+                <?php endif; ?>
                 <?php if ($canDel): ?>
                     <a href="<?php echo $this->url('rapport-activite/supprimer', ['rapport' => $rapport->getId()], ['query' => ['redirect' => $returnUrl]]) ?>"
                        title="Supprimer ce rapport"
                        data-toggle="confirmationx"
                        data-message="Êtes-vous sûr de vouloir supprimer ce rapport ?"><span class="icon icon-delete iconly"></span></a>
+                <?php endif; ?>
+                <?php if ($canGen): ?>
+                    <a href="<?php echo $this->url('rapport-activite/generer', ['rapport' => $rapport->getId()]) ?>"
+                       title="Cliquez pour générer et télécharger le rapport au format PDF"><span class="icon icon-telecharger iconly"></a>
                 <?php endif; ?>
             </td>
         </tr>

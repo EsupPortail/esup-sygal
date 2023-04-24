@@ -2,55 +2,19 @@
 
 namespace RapportActivite\Assertion\Validation;
 
-use Application\Assertion\AbstractAssertion;
 use Application\Assertion\Exception\FailedAssertionException;
-use Application\Assertion\ThrowsFailedAssertionExceptionTrait;
-use Application\RouteMatch;
-use Application\Service\UserContextServiceAwareInterface;
-use Application\Service\UserContextServiceAwareTrait;
+use Application\Service\Validation\ValidationServiceAwareTrait;
+use InvalidArgumentException;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
-use RapportActivite\Entity\Db\RapportActivite;
+use RapportActivite\Assertion\RapportActiviteOperationAbstractAssertion;
+use RapportActivite\Entity\Db\RapportActiviteValidation;
 use RapportActivite\Provider\Privilege\RapportActivitePrivileges;
-use RapportActivite\Rule\Validation\RapportActiviteValidationRuleAwareTrait;
-use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
-use RapportActivite\Service\RapportActiviteServiceAwareTrait;
-use UnicaenApp\Service\MessageCollectorAwareInterface;
-use UnicaenApp\Service\MessageCollectorAwareTrait;
+use RapportActivite\Service\Validation\RapportActiviteValidationServiceAwareTrait;
 
-class RapportActiviteValidationAssertion extends AbstractAssertion
-    implements UserContextServiceAwareInterface, MessageCollectorAwareInterface
+class RapportActiviteValidationAssertion extends RapportActiviteOperationAbstractAssertion
 {
-    use ThrowsFailedAssertionExceptionTrait;
-    use MessageCollectorAwareTrait;
-
-    use UserContextServiceAwareTrait;
-    use RapportActiviteServiceAwareTrait;
-    use RapportActiviteAvisServiceAwareTrait;
-
-    use RapportActiviteValidationRuleAwareTrait;
-
-    private ?RapportActivite $rapportActivite = null;
-
-    /**
-     * @param array $page
-     * @return bool
-     */
-    public function __invoke(array $page): bool
-    {
-        return $this->assertPage($page);
-    }
-
-    /**
-     * @param array $page
-     * @return bool
-     */
-    private function assertPage(array $page): bool
-    {
-
-
-
-        return true;
-    }
+    use RapportActiviteValidationServiceAwareTrait;
+    use ValidationServiceAwareTrait;
 
     /**
      * @param string $controller
@@ -60,29 +24,53 @@ class RapportActiviteValidationAssertion extends AbstractAssertion
      */
     protected function assertController($controller, $action = null, $privilege = null): bool
     {
+        switch ($action) {
+            case 'valider':
+                $rapportActivite = $this->rapportActiviteService->fetchRapportById($this->getRouteMatch()->getParam('rapport'));
+                if ($rapportActivite === null) {
+                    return false;
+                }
+                $typeValidation = $this->validationService->findTypeValidationById($this->getRouteMatch()->getParam('typeValidation'));
+                if ($typeValidation === null) {
+                    return false;
+                }
+                $rapportActiviteValidation = new RapportActiviteValidation($typeValidation, $rapportActivite); // prototype
+                $these = $rapportActivite->getThese();
+                break;
 
+            case 'devalider':
+                $rapportActiviteValidation = $this->rapportActiviteValidationService->getRepository()->find($this->getRouteMatch()->getParam('rapportValidation'));
+                $these = $rapportActiviteValidation->getRapportActivite()->getThese();
+                break;
 
-
-
-
-        return true;
-    }
-
-    /**
-     * @param RapportActivite $entity
-     * @param string $privilege
-     * @return boolean
-     */
-    protected function assertEntity(ResourceInterface $entity, $privilege = null): bool
-    {
-        $this->rapportActivite = $entity;
+            default:
+                throw new InvalidArgumentException("Action inattendue : " . $action);
+        }
 
         try {
 
-            switch ($privilege) {
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
-                case RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT:
-                    $this->assertValidationPossible();
+            switch ($action) {
+                case 'valider':
+                case 'devalider':
+                    $this->assertEtatThese($these);
+                    $this->assertAppartenanceThese($these);
+            }
+
+            switch ($action) {
+                case 'valider':
+                    $nextOperation = $this->findNextExpectedOperation($rapportActiviteValidation->getRapportActivite());
+                    $this->assertOperationsMatch($rapportActiviteValidation, $nextOperation);
+                    $this->assertOperationIsAllowed($nextOperation);
+                    $this->assertPrecedingOperationValueCompatible($rapportActiviteValidation);
+                    break;
+            }
+
+            switch ($action) {
+                case 'devalider':
+                    $lastCompletedOperation = $this->findLastCompletedOperation($rapportActiviteValidation->getRapportActivite());
+                    $this->assertOperationsMatch($rapportActiviteValidation, $lastCompletedOperation);
+                    $this->assertOperationIsAllowed($rapportActiviteValidation);
+                    break;
             }
 
         } catch (FailedAssertionException $e) {
@@ -95,26 +83,57 @@ class RapportActiviteValidationAssertion extends AbstractAssertion
         return true;
     }
 
-    private function assertValidationPossible()
+    /**
+     * @param RapportActiviteValidation $entity
+     * @param string $privilege
+     * @return boolean
+     */
+    protected function assertEntity(ResourceInterface $entity, $privilege = null): bool
     {
-        $this->rapportActiviteValidationRule
-            ->setRapportActivite($this->rapportActivite)
-            ->execute();
+        if (! parent::assertEntity($entity, $privilege)) {
+            return false;
+        }
 
-        $this->assertTrue(
-            $this->rapportActiviteValidationRule->isValidationPossible(),
-            "La valeur de l'avis précédent ne permet pas de poursuivre"
-        );
-    }
+        /** @var RapportActiviteValidation $rapportActiviteValidation */
+        $rapportActiviteValidation = $entity;
 
+        try {
 
+            switch ($privilege) {
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT:
+                    $this->assertEtatThese($rapportActiviteValidation->getRapportActivite()->getThese());
+                    $this->assertAppartenanceThese($rapportActiviteValidation->getRapportActivite()->getThese());
+                    break;
+            }
 
+            switch ($privilege) {
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_SIEN:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_VALIDER_TOUT:
+                    $nextOperation = $this->findNextExpectedOperation($rapportActiviteValidation->getRapportActivite());
+                    $this->assertOperationsMatch($rapportActiviteValidation, $nextOperation);
+                    $this->assertOperationIsAllowed($nextOperation);
+                    $this->assertPrecedingOperationValueCompatible($rapportActiviteValidation);
+                    // IMPORTANT : pour une création, pas de vérification portant sur l'opération suivante.
+                    break;
 
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_SIEN:
+                case RapportActivitePrivileges::RAPPORT_ACTIVITE_DEVALIDER_TOUT:
+                    $lastCompletedOperation = $this->findLastCompletedOperation($rapportActiviteValidation->getRapportActivite());
+                    $this->assertOperationsMatch($rapportActiviteValidation, $lastCompletedOperation);
+                    $this->assertOperationIsAllowed($rapportActiviteValidation);
+                    break;
+            }
 
-    protected function getRouteMatch(): RouteMatch
-    {
-        /** @var \Application\RouteMatch $rm */
-        $rm = $this->getMvcEvent()->getRouteMatch();
-        return $rm;
+        } catch (FailedAssertionException $e) {
+            if ($e->getMessage()) {
+                $this->getServiceMessageCollector()->addMessage($e->getMessage(), __CLASS__);
+            }
+            return false;
+        }
+
+        return true;
     }
 }

@@ -2,8 +2,8 @@
 
 namespace RapportActivite\Formatter;
 
-use Fichier\Entity\Db\Fichier;
 use Fichier\Filter\AbstractNomFichierFormatter;
+use Ramsey\Uuid\Uuid;
 use RapportActivite\Entity\Db\RapportActivite;
 
 /**
@@ -18,48 +18,41 @@ class RapportActiviteNomFichierFormatter extends AbstractNomFichierFormatter
     /**
      * @var \RapportActivite\Entity\Db\RapportActivite
      */
-    private RapportActivite $rapport;
+    private RapportActivite $rapportActivite;
 
     /**
-     * @param \RapportActivite\Entity\Db\RapportActivite $rapport
-     */
-    public function __construct(RapportActivite $rapport)
-    {
-        $this->rapport = $rapport;
-    }
-
-    /**
-     * Retourne un nom de fichier conforme aux règles de nommage.
+     * Retourne un nom de fichier conforme aux règles de nommage pour le rapport spécifié.
      *
-     * @param  Fichier $value
+     * @param RapportActivite $value
      * @return string
      */
     public function filter($value): string
     {
-        $doctorant = $this->rapport->getThese()->getDoctorant();
-        $ed = $this->rapport->getThese()->getEcoleDoctorale()->getStructure()->getCode();
+        $this->rapportActivite = $value;
 
-        $extension = $this->extractExtensionFromFichier($value);
+        $these = $this->rapportActivite->getThese();
+        $doctorant = $these->getDoctorant();
+        $ed = $these->getEcoleDoctorale()->getStructure()->getCode();
+        $ur = $these->getUniteRecherche()->getStructure()->getCode();
+        $uid = strstr(Uuid::uuid4()->toString(), '-', true);
 
         $parts = [];
         $parts['type'] = $this->normalizedString($this->type());
-        $parts['date'] = $this->rapport->getAnneeUniv()->toString('-');
+        $parts['date'] = $this->rapportActivite->getAnneeUniv()->toString('-');
+        $parts['etab'] = $these->getEtablissement()->getStructure()->getCode();
         $parts['ed'] = 'ED' . $ed;
+        $parts['ur'] = $ur;
         $parts['nomDoctorant'] = $this->normalizedString($doctorant->getIndividu()->getNomUsuel());
         $parts['prenomDoctorant'] = ucfirst(mb_strtolower($this->normalizedString($doctorant->getIndividu()->getPrenom())));
-        $parts['id'] = $value->getShortUuid(); // on inclue un id unique au cas où il y ait plusieurs fichiers de même nom déposés
+        $parts['id'] = $uid; // on inclue un id unique au cas où il y ait plusieurs fichiers de même nom déposés
 
         $name = implode($this->separator, $parts);
 
-        return $name . '.' . $extension;
+        return $name . '.pdf';
     }
 
     protected function type(): string
     {
-        if ($this->rapport->getTypeRapport()->estRapportActivite()) {
-            return $this->rapport->getTypeRapport()->getCode() . ($this->rapport->estFinContrat() ? '_FINCONTRAT' : '_ANNUEL');
-        } else {
-            return $this->rapport->getTypeRapport()->getCode();
-        }
+        return 'RAPPORT_ACTIVITE' . ($this->rapportActivite->estFinContrat() ? '_FINCONTRAT' : '_ANNUEL');
     }
 }

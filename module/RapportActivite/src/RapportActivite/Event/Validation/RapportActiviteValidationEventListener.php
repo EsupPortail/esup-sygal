@@ -2,110 +2,92 @@
 
 namespace RapportActivite\Event\Validation;
 
-use Notification\Service\NotifierServiceAwareTrait;
 use Laminas\EventManager\EventManagerInterface;
-use Laminas\EventManager\ListenerAggregateInterface;
-use Laminas\EventManager\ListenerAggregateTrait;
-use RapportActivite\Entity\Db\RapportActiviteAvis;
+use Notification\Notification;
 use RapportActivite\Entity\Db\RapportActiviteValidation;
-use RapportActivite\Service\Avis\RapportActiviteAvisServiceAwareTrait;
+use RapportActivite\Event\Operation\RapportActiviteOperationAbstractEventListener;
+use RapportActivite\Event\RapportActiviteEvent;
+use RapportActivite\Service\Operation\RapportActiviteOperationServiceAwareTrait;
 use RapportActivite\Service\Validation\RapportActiviteValidationService;
-use RapportActivite\Service\Validation\RapportActiviteValidationServiceAwareTrait;
 use Webmozart\Assert\Assert;
 
-class RapportActiviteValidationEventListener implements ListenerAggregateInterface
+/**
+ * @property \RapportActivite\Entity\Db\RapportActiviteValidation $operationRealisee
+ */
+class RapportActiviteValidationEventListener extends RapportActiviteOperationAbstractEventListener
 {
-    use RapportActiviteValidationServiceAwareTrait;
-    use RapportActiviteAvisServiceAwareTrait;
-    use NotifierServiceAwareTrait;
+    use RapportActiviteOperationServiceAwareTrait;
 
-    use ListenerAggregateTrait;
-
-    /**
-     * @inheritDoc
-     */
     public function attach(EventManagerInterface $events, $priority = 1)
     {
         $events->getSharedManager()->attach(
             RapportActiviteValidationService::class,
             RapportActiviteValidationService::RAPPORT_ACTIVITE__VALIDATION_AJOUTEE__EVENT,
-            [$this, 'onValidationAjoutee']
+            [$this, 'onValidationAjoutee'],
+            $priority
         );
         $events->getSharedManager()->attach(
             RapportActiviteValidationService::class,
             RapportActiviteValidationService::RAPPORT_ACTIVITE__VALIDATION_SUPPRIMEE__EVENT,
-            [$this, 'onValidationSupprimee']
+            [$this, 'onValidationSupprimee'],
+            $priority
         );
     }
 
-    /**
-     * La création d'une validation entraîne l'envoi d'une notification.
-     *
-     * @param \RapportActivite\Event\Validation\RapportActiviteValidationEvent $event
-     */
+    protected function initFromEvent(RapportActiviteEvent $event)
+    {
+        parent::initFromEvent($event);
+        Assert::isInstanceOf($this->operationRealisee, RapportActiviteValidation::class);
+    }
+
     public function onValidationAjoutee(RapportActiviteValidationEvent $event)
     {
-        /** @var \RapportActivite\Entity\Db\RapportActiviteValidation $rapportValidation */
-        $rapportValidation = $event->getTarget();
+        $this->initFromEvent($event);
 
-        Assert::isInstanceOf($rapportValidation, RapportActiviteValidation::class);
-
-        $rapportAvis = $this->rapportActiviteAvisService->findMostRecentRapportAvisForRapport($rapportValidation->getRapport());
-        if ($rapportAvis === null) {
-            return;
-        }
-
-        $this->handleNotification($rapportValidation, $rapportAvis, $event);
+        $this->handleNotificationValidationAjoutee();
+        $this->handleSuppressionOperationsExistantes();
+        $this->handleNotificationOperationAttendue();
     }
 
-    /**
-     * La suppression d'une validation entraine la suppression du dernier avis.
-     *
-     * @param \RapportActivite\Event\Validation\RapportActiviteValidationEvent $event
-     */
     public function onValidationSupprimee(RapportActiviteValidationEvent $event)
     {
-        /** @var \RapportActivite\Entity\Db\RapportActiviteValidation $rapportValidation */
-        $rapportValidation = $event->getTarget();
+        $this->initFromEvent($event);
 
-        Assert::isInstanceOf($rapportValidation, RapportActiviteValidation::class);
-
-        $rapportAvis = $this->rapportActiviteAvisService->findMostRecentRapportAvisForRapport($rapportValidation->getRapport());
-        if ($rapportAvis === null) {
-            return;
-        }
-
-        $this->rapportActiviteAvisService->deleteRapportAvis($rapportAvis);
-
-        $event->setMessages([
-            'info' => sprintf(
-                "L'avis suivant a été supprimé automatiquement : '%s'",
-                $rapportAvis->getAvis()->getAvisType()
-            ),
-        ]);
+        $this->handleNotificationValidationSupprimee();
     }
 
-    /**
-     * Notification.
-     *
-     * @param \RapportActivite\Entity\Db\RapportActiviteValidation $rapportActiviteValidation
-     * @param \RapportActivite\Entity\Db\RapportActiviteAvis $rapportActiviteAvis
-     * @param \RapportActivite\Event\Validation\RapportActiviteValidationEvent $event
-     */
-    private function handleNotification(
-        RapportActiviteValidation $rapportActiviteValidation,
-        RapportActiviteAvis $rapportActiviteAvis,
-        RapportActiviteValidationEvent $event)
+    private function handleNotificationValidationAjoutee()
     {
-        $notif = $this->rapportActiviteValidationService->createRapportActiviteValidationNotification(
-            $rapportActiviteValidation,
-            $rapportActiviteAvis
-        );
+        $notif = $this->rapportActiviteNotificationFactory->createNotificationValidationAjoutee($this->operationRealisee);
+        $this->triggerNotification($notif);
+    }
 
-        $this->notifierService->trigger($notif);
+    private function handleSuppressionOperationsExistantes()
+    {
+        // suppression de toutes les opérations suivantes.
+        $operation = $this->operationRealisee;
+        while ($operation = $this->rapportActiviteOperationRule->findFollowingOperation($operation)) {
+            if ($operation->getId() === null) {
+                // opération non réalisée (çàd rien en bdd),
+                continue;
+            }
+            $this->rapportActiviteOperationService->deleteOperation($operation);
+        }
+    }
 
-        $messages['info'] = ($notif->getSuccessMessages()[0] ?? null);
-        $messages['warning'] = ($notif->getErrorMessages()[0] ?? null);
-        $event->setMessages(array_filter($messages));
+    private function handleNotificationValidationSupprimee()
+    {
+        $notif = $this->rapportActiviteNotificationFactory->createNotificationValidationSupprimee($this->operationRealisee);
+        $notif->setTemplateVariables(['messages' => $this->event->getMessages()]);
+        $this->triggerNotification($notif);
+    }
+
+    private function triggerNotification(Notification $notification)
+    {
+        $result = $this->notifierService->trigger($notification);
+
+        $messages['info'] = ($result->getSuccessMessages()[0] ?? null);
+        $messages['warning'] = ($result->getErrorMessages()[0] ?? null);
+        $this->event->setMessages(array_filter($messages));
     }
 }
