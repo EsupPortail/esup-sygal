@@ -17,6 +17,7 @@ use RuntimeException;
 use These\Entity\Db\These;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
+use UnicaenAvis\Entity\Db\AvisType;
 
 class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
 {
