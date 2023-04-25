@@ -3,7 +3,6 @@
 namespace Structure\Service\Structure;
 
 use Application\Entity\Db\Repository\DefaultEntityRepository;
-use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Service\BaseService;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\SourceCodeStringHelperAwareTrait;

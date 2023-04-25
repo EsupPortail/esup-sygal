@@ -2,12 +2,11 @@
 
 use Application\Assertion\BaseAssertion;
 use Application\Constants;
-use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
-use Depot\Provider\Privilege\DepotPrivileges;
-use Depot\Provider\Privilege\ValidationPrivileges;
 use Application\View\Renderer\PhpRenderer;
+use Depot\Provider\Privilege\ValidationPrivileges;
+use These\Entity\Db\These;
 
 /**
  * @var PhpRenderer      $this
@@ -65,4 +64,4 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_DEPOT
 
 <?php echo $this->messenger()
     ->setContainerClassesToAdd('alert-md')
-    ->addMessagesFromFlashMessenger($typeValidation->getCode() . '/*') ?>
+    ->addMessagesFromFlashMessengerWithNamespace($typeValidation->getCode() . '/*') ?>

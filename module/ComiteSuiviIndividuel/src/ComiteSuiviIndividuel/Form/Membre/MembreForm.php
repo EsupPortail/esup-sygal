@@ -10,7 +10,6 @@ use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
-use Laminas\Form\Element\Textarea;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
 use Laminas\Validator\EmailAddress;

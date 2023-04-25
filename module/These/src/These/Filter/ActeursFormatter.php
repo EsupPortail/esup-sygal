@@ -4,7 +4,6 @@ namespace These\Filter;
 
 use Laminas\Filter\AbstractFilter;
 use Laminas\View\Helper\HtmlList;
-use Laminas\View\Renderer\PhpRenderer;
 use These\Entity\Db\Acteur;
 
 /** --- Class ActeursFormatteur ---
@@ -107,7 +106,6 @@ class ActeursFormatter extends AbstractFilter {
         if ($this->asUl) {
             $acteurs = $this->doFormatUnorderedList($acteurs);
             $helper = new HtmlList();
-            $helper->setView(new PhpRenderer());
             $result = $helper($acteurs, $ordered = false, $attribs = false, $escape = false);
         }
         elseif ($this->asSeparated) {
@@ -132,7 +130,6 @@ class ActeursFormatter extends AbstractFilter {
     private function doFormatUnorderedList($acteurs) {
         $acteurs = array_map([$this, 'htmlifyActeur'], $acteurs);
         $helper = new HtmlList();
-        $helper->setView(new PhpRenderer());
         $results = $helper($acteurs, $ordered = false, ['class' => 'row'], $escape = false);
         return $results;
     }

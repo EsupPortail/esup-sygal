@@ -21,7 +21,7 @@ $justification = true;
     Bonjour,
 </p>
 <p>
-    Vous venez d'être désigné comme rapporteur pour la thèse de <strong><?php echo $doctorant->getNomComplet(); ?></strong> intitulée
+    Vous venez d'être désigné comme rapporteur pour la thèse de <strong><?php echo $doctorant->getIndividu()->getNomComplet(); ?></strong> intitulée
     <strong><?php echo $these->getTitre(); ?></strong>. Ce courrier électronique a pour but de vous rappeler que vous devez rendre
     votre avis de soutenance pour la date du <?php echo $proposition->getRenduRapport()->format('d/m/Y'); ?>.
 

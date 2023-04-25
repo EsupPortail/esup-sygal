@@ -2,8 +2,6 @@
 
 namespace Import\Model\Service;
 
-use Import\Model\Service\ImportObservResultService;
-
 /**
  * @author Unicaen
  */

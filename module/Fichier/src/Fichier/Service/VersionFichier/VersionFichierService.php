@@ -13,7 +13,9 @@ class VersionFichierService extends BaseService
      */
     public function getRepository()
     {
-        return $this->entityManager->getRepository(VersionFichier::class);
+        /** @var VersionFichierRepository $repo */
+        $repo = $this->entityManager->getRepository(VersionFichier::class);
+        return $repo;
     }
 
     /**

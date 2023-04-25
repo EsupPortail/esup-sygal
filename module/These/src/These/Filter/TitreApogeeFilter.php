@@ -103,7 +103,6 @@ class TitreApogeeFilter extends AbstractFilter
             "Â"  => "ν",
             "Ã"  => "ξ",
             "o"  => "ο",
-            "Ä"  => "π",
             "Å"  => "ρ", //961 => manque 962 ς
             "Æ"  => "σ", //963
             "Ç"  => "τ",
@@ -112,11 +111,8 @@ class TitreApogeeFilter extends AbstractFilter
             "Ê"  => "χ",
             "Ë"  => "ψ",
             "Ì"  => "ω",
-            "A"  => "Α",
-            "B"  => "Β",
             "Í"  => "Γ",
             "Î"  => "Δ",
-            "E"  => "Ε",
             "Z"  => "Ζ",
             "H"  => "Η",
             "Ï"  => "Θ",

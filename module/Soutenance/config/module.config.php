@@ -3,7 +3,7 @@
 namespace Soutenance;
 
 use Application\Navigation\ApplicationNavigationFactory;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Soutenance\Controller\AvisController;
 use Soutenance\Controller\EngagementImpartialiteController;

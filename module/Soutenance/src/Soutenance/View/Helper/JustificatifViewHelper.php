@@ -19,7 +19,7 @@ class JustificatifViewHelper extends AbstractHelper
     public function render($justificatif, $urlFichierThese, $options = []) {
 
         /** @var PhpRenderer $view */
-        $view = $this->getView();
+        $view = $this->view;
         $view->resolver()->attach(new TemplatePathStack(['script_paths' => [__DIR__ . "/partial"]]));
         $texte = $view->partial('justificatif', ['justificatif' => $justificatif, 'urlFichierThese' => $urlFichierThese, 'options' => $options]);
         return $texte;

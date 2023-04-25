@@ -12,7 +12,6 @@ use These\Service\These\TheseServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Soutenance\Entity\Membre;
-use Soutenance\Entity\Proposition;
 use Soutenance\Service\Avis\AvisServiceAwareTrait;
 use Soutenance\Service\EngagementImpartialite\EngagementImpartialiteServiceAwareTrait;
 use Soutenance\Service\Proposition\PropositionServiceAwareTrait;

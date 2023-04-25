@@ -6,7 +6,6 @@ use Structure\Entity\Db\Etablissement;
 use Individu\Entity\Db\Individu;
 use Individu\Entity\Db\IndividuCompl;
 use Structure\Entity\Db\UniteRecherche;
-use Individu\Service\IndividuServiceAwareTrait;
 use Laminas\Hydrator\HydratorInterface;
 use UnicaenApp\Service\EntityManagerAwareTrait;
 

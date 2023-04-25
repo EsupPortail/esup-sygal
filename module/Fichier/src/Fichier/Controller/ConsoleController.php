@@ -7,7 +7,7 @@ use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\StorageAdapterManagerAwareTrait;
-use Laminas\Mvc\Console\Controller\AbstractConsoleController;
+use Unicaen\Console\Controller\AbstractConsoleController;
 use Laminas\Paginator\Paginator;
 use Webmozart\Assert\Assert;
 

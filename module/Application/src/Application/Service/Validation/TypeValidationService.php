@@ -2,17 +2,19 @@
 
 namespace Application\Service\Validation;
 
-use These\Entity\Db\Repository\TheseRepository;
 use Application\Entity\Db\TypeValidation;
 use Application\Service\BaseService;
+use Doctrine\ORM\EntityRepository;
 
 class TypeValidationService extends BaseService
 {
     /**
-     * @return TheseRepository
+     * @return EntityRepository
      */
     public function getRepository()
     {
-        return $this->entityManager->getRepository(TypeValidation::class);
+        /** @var EntityRepository $repo */
+        $repo = $this->entityManager->getRepository(TypeValidation::class);
+        return $repo;
     }
 }

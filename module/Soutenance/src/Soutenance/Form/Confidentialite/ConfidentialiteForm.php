@@ -5,7 +5,6 @@ namespace Soutenance\Form\Confidentialite;
 use DateInterval;
 use DateTime;
 use Soutenance\Validator\DateLesserThan;
-use UnicaenApp\Form\Element\Date;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\Form;

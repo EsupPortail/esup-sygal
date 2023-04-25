@@ -2,9 +2,9 @@
 
 namespace Formation;
 
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\DBAL\Driver\OCI8\Driver as OCI8;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Formation\Provider\IdentityProvider;
 use Formation\Provider\IdentityProviderFactory;
 use Formation\Service\Notification\FormationNotificationFactory;

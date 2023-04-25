@@ -3,7 +3,7 @@
 namespace Depot;
 
 use Laminas\Config\Factory as ConfigFactory;
-use Laminas\Console\Adapter\AdapterInterface as Console;
+use Unicaen\Console\Adapter\AdapterInterface as Console;
 use Laminas\Stdlib\Glob;
 
 class Module

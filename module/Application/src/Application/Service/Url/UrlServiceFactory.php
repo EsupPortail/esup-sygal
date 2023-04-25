@@ -4,7 +4,7 @@ namespace Application\Service\Url;
 
 use Application\RouteMatch;
 use Interop\Container\ContainerInterface;
-use Laminas\Console\Console;
+use Unicaen\Console\Console;
 use Laminas\Router\RouteStackInterface;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 

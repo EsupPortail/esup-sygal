@@ -4,7 +4,7 @@ namespace Depot\Controller;
 
 use Depot\Service\These\DepotServiceAwareTrait;
 use Laminas\Log\LoggerAwareTrait;
-use Laminas\Mvc\Console\Controller\AbstractConsoleController;
+use Unicaen\Console\Controller\AbstractConsoleController;
 use These\Entity\Db\These;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;

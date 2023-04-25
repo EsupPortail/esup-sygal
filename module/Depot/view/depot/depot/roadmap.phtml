@@ -9,7 +9,7 @@ use Application\View\Renderer\PhpRenderer;
  */
 ?>
 
-<?php $this->headTitle("Feuille de route")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+<?php $this->headTitle("Feuille de route")->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
 
 <h1 class="page-header">Feuille de route <small><?php echo $this->partial('these/these/partial/titre') ?></small></h1>
 

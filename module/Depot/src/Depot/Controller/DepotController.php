@@ -1612,8 +1612,7 @@ class DepotController extends AbstractController
         }
 
         /** Retourner un PDF ...  */
-        $contenu     = file_get_contents($outputFilePath);
-        $content     = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
+        $content = file_get_contents($outputFilePath);
 
         header('Content-Description: File Transfer');
         header('Content-Type: ' . 'application/pdf');

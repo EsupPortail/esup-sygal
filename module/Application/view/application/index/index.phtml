@@ -5,11 +5,11 @@
  * @var Role        $role Rôle courant de l'utilisateur
  * @var Role[]      $roles Rôles que possèdent l'utilisateur
  * @var bool        $estDoctorant
+ * @var array       $informations
  */
 
 use Application\Constants;
 use Application\Entity\Db\Role;
-use Information\Entity\Db\Information;
 
 $appName = $this->appInfos()->nom;
 $subtitle = $this->appInfos()->desc;
@@ -31,7 +31,7 @@ echo $this->messenger()
 
     <div class="col-12 col-md-2">
         <?php echo $this->partial('application/index/partial/informations', ['informations' => $informations]) ?>
-        <?php echo $this->partial('application/index/partial/menu-lateral') ?>
+        <?php echo $this->partial('application/index/partial/menu-lateral', ['current' => null]) ?>
     </div>
 
     <div id="content" class="jumbotron col-12 col-md-10">

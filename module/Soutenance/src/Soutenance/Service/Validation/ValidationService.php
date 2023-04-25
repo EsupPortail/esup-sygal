@@ -27,7 +27,9 @@ class ValidationService
      */
     public function getRepository()
     {
-        return $this->entityManager->getRepository(Validation::class);
+        /** @var ValidationRepository $repo */
+        $repo = $this->entityManager->getRepository(Validation::class);
+        return $repo;
     }
 
     /**

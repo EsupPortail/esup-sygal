@@ -1,13 +1,12 @@
 <?php
 
+use Application\View\Renderer\PhpRenderer;
 use Depot\Entity\Db\FichierThese;
 use Fichier\Entity\Db\NatureFichier;
-use These\Entity\Db\These;
 use Fichier\Entity\Db\VersionFichier;
 use Fichier\Provider\Privilege\FichierPrivileges;
-use Depot\Provider\Privilege\DepotPrivileges;
-use Application\View\Renderer\PhpRenderer;
 use Laminas\Form\Element\Hidden;
+use These\Entity\Db\These;
 
 /**
  * @var PhpRenderer    $this
@@ -16,6 +15,9 @@ use Laminas\Form\Element\Hidden;
  * @var string         $annexesListUrl
  * @var NatureFichier  $nature
  * @var VersionFichier $versionFichier
+ * @var string $titre
+ * @var bool $hasFichierThese
+ * @var bool $hasFichiersAnnexesThese
  */
 
 $canEdit = $this->isAllowed($these, FichierPrivileges::privilegeTeleverserFor($nature, $versionFichier));

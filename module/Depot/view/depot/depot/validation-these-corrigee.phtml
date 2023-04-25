@@ -1,11 +1,10 @@
 <?php
 
-use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;
 use Application\Entity\Db\Validation;
-use Depot\Provider\Privilege\DepotPrivileges;
-use Depot\Provider\Privilege\ValidationPrivileges;
 use Application\View\Renderer\PhpRenderer;
+use Depot\Provider\Privilege\ValidationPrivileges;
+use These\Entity\Db\These;
 
 /**
  * @var PhpRenderer      $this
@@ -25,7 +24,7 @@ $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_DEPOT
 
 ?>
 
-<?php $this->headTitle("Validations")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+<?php $this->headTitle("Validations")->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
 
 <h1 class="page-header">Validations
     <small><?php echo $this->partial('these/these/partial/titre') ?></small>

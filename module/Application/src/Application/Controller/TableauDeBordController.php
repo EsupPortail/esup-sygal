@@ -24,6 +24,7 @@ class TableauDeBordController extends AbstractController
         $etablissement = $this->params()->fromQuery("etablissement");
         $anomalies = $this->getAnomalieService()->getAnomalies($etablissement);
 
+        $anomaliesTables = [];
         foreach ($anomalies as $anomalie) {
             $anomaliesTables[$anomalie->getTableName()][] = $anomalie;
         }

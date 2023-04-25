@@ -1,6 +1,7 @@
-
-
 <?php
+/**
+ * @var \Laminas\Form\Form $form
+ */
 echo $this->form()->openTag($form->prepare());
 echo $this->formRow($form->get('submit'));
 echo $this->formControlGroup($form->get('commands'));

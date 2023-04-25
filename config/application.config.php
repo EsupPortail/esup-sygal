@@ -1,5 +1,7 @@
 <?php
 
+define('APPLICATION_DIR', realpath(__DIR__ . '/..'));
+
 return [
     'modules' => [
         'Laminas\Cache',
@@ -10,7 +12,6 @@ return [
         'Laminas\InputFilter',
         'Laminas\Log',
         'Laminas\Mail',
-        'Laminas\Mvc\Console',
         'Laminas\Mvc\I18n',
         'Laminas\Mvc\Plugin\FilePrg',
         'Laminas\Mvc\Plugin\FlashMessenger',
@@ -39,6 +40,7 @@ return [
 //        'UnicaenLivelog',
         'UnicaenPdf',
         'UnicaenRenderer',
+        'Unicaen\Console',
         'UnicaenParametre',
         'Horodatage',
         'Structure',

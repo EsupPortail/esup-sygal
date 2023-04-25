@@ -8,7 +8,6 @@ use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use Structure\Entity\Db\Structure;
 use Structure\Entity\Db\StructureConcreteInterface;
-use Structure\Entity\Db\TypeStructure;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;

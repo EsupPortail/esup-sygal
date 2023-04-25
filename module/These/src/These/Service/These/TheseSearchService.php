@@ -370,7 +370,7 @@ EOS;
         }
 
         $theses = [];
-        while ($r = $stmt->fetch()) {
+        while ($r = $stmt->fetchAssociative()) {
             $theses[$r['code_these']] = [
                 'code'           => $r['code_these'],
                 'code-doctorant' => $r['code_doctorant'],

@@ -2,10 +2,7 @@
 
 namespace Retraitement;
 
-use Laminas\Console\Adapter\AdapterInterface as Console;
-use Laminas\ModuleManager\Feature\ConsoleUsageProviderInterface;
-
-class Module implements ConsoleUsageProviderInterface
+class Module
 {
     public function getConfig()
     {
@@ -25,7 +22,7 @@ class Module implements ConsoleUsageProviderInterface
         ];
     }
 
-    public function getConsoleUsage(Console $console)
+    public function getConsoleUsage()
     {
         return [
             // Describe available commands

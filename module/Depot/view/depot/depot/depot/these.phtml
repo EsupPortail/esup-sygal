@@ -1,18 +1,17 @@
 <?php
 
 use Application\Assertion\BaseAssertion;
-use Structure\Entity\Db\Etablissement;
+use Application\View\Renderer\PhpRenderer;
 use Fichier\Entity\Db\NatureFichier;
-use These\Entity\Db\These;
 use Fichier\Entity\Db\VersionFichier;
 use Fichier\Provider\Privilege\FichierPrivileges;
-use Depot\Provider\Privilege\DepotPrivileges;
-use Application\View\Renderer\PhpRenderer;
+use These\Entity\Db\These;
 
 /**
  * @var PhpRenderer    $this
  * @var These          $these
  * @var string         $info
+ * @var string         $titre
  * @var string         $uploadUrl
  * @var string         $theseListUrl
  * @var NatureFichier  $nature

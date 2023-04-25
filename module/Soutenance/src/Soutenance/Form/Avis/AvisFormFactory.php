@@ -3,7 +3,6 @@
 namespace Soutenance\Form\Avis;
 
 use Interop\Container\ContainerInterface;
-use Laminas\Form\FormElementManager;
 
 class AvisFormFactory
 {

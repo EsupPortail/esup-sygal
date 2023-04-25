@@ -45,9 +45,9 @@ class CompletIndicateurStructureHelper extends AbstractHelper
                         $html .= '<td>';
                         if ($clef === 'Libelle') {
                             switch($entry['type_structure_id']) {
-                                case "1" : $html .= '<a href="'.$this->getView()->url('etablissement/information', ['structure' => $entry['id']], [], true).'">'; break;
-                                case "2" : $html .= '<a href="'.$this->getView()->url('ecole-doctorale/information', ['structure' => $entry['id']], [], true).'">'; break;
-                                case "3" : $html .= '<a href="'.$this->getView()->url('unite-recherche/information', ['structure' => $entry['id']], [], true).'">'; break;
+                                case "1" : $html .= '<a href="'.$this->view->url('etablissement/information', ['structure' => $entry['id']], [], true).'">'; break;
+                                case "2" : $html .= '<a href="'.$this->view->url('ecole-doctorale/information', ['structure' => $entry['id']], [], true).'">'; break;
+                                case "3" : $html .= '<a href="'.$this->view->url('unite-recherche/information', ['structure' => $entry['id']], [], true).'">'; break;
                                 default : $html .=  '<a href="">' ; break;
                             }
                         }

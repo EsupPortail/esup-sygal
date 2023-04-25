@@ -3,7 +3,6 @@
 namespace Fichier\Entity\Db;
 
 use Application\Entity\Db\ValiditeFichier;
-use Fichier\Entity\Db\VersionFichier;
 use Fichier\Controller\Plugin\Uploader\UploadedFileInterface;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
