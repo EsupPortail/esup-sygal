@@ -3,6 +3,7 @@ Journal des modifications
 
 5.3.2
 -----
+- Module Soutenance : 2 nouvelles qualités possibles : 'Autre membre de rang B' et Associate Professor - Équivalent HDR'
 - [FIX] Erreur dans le test de pertinence des étapes de dépôt d'une version corrigée (SQL).
 - [FIX] Remise de la fonction getNbInscription effacée car sans d'usage (explicite)
 - [FIX] Remise du controle de sursis pour les validations acteurs
