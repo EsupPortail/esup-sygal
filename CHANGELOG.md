@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+6.0.0
+-----
+- Passage à PHP 8.0
+
 5.3.1
 -----
 - [FIX] Donnée : ajout de garde lorsque le mail fourni par les données sources est " "
