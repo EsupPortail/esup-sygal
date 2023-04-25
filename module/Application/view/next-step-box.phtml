@@ -34,7 +34,7 @@ if (!empty($except)) {
             <div class="card-body">
                 <nav aria-label="Etape suivante">
                     <ul class="roadmap pagination">
-                        <?php if ($message): ?>
+                        <?php if (isset($message)): ?>
                             <li><?php echo $message ?></li>
                         <?php else: ?>
                             <li><?php echo $wfStepHelper->render() ?></li>
