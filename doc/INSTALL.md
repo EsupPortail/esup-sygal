@@ -75,8 +75,8 @@ créés ou modifiés par le script `Dockerfile.sh` :
 - ${APACHE_CONF_DIR}/sites-available/app.conf
 - ${APACHE_CONF_DIR}/sites-available/app-ssl.conf
 - ${PHP_CONF_DIR}/fpm/pool.d/www.conf
-- ${PHP_CONF_DIR}/fpm/conf.d/99-app.ini
-- ${PHP_CONF_DIR}/cli/conf.d/99-app.ini
+- ${PHP_CONF_DIR}/fpm/conf.d/99-sygal.ini
+- ${PHP_CONF_DIR}/cli/conf.d/99-sygal.ini
 
 NB : Vérifiez dans le script `Dockerfile.sh` que vous venez de lancer mais normalement 
 `APACHE_CONF_DIR=/etc/apache2` et `PHP_CONF_DIR=/etc/php/${PHP_VERSION}`.
