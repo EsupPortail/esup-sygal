@@ -1543,4 +1543,11 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         }
         return null;
     }
+
+    public function getNbInscription() : int
+    {
+        $inscriptions = $this->getAnneesUnivInscription()->toArray();
+        $inscriptions = array_filter($inscriptions, function (TheseAnneeUniv $a) { return $a->estNonHistorise();});
+        return count($inscriptions);
+    }
 }

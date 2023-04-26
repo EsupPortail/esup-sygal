@@ -11,7 +11,7 @@ use Fichier\Command\MergeShellCommand;
  */
 class PdfMergeShellCommandQpdf extends MergeShellCommand
 {
-    protected $executable = '/usr/local/bin/qpdf';
+    protected $executable = 'qpdf';
 
     /**
      * @return string

@@ -21,9 +21,10 @@ trait ShellCommandRunnerTrait
             }
 
             if (!$result->isSuccessfull()) {
-                $message = sprintf("La commande '%s' a échoué (code retour = %s). ",
+                $message = sprintf("La commande '%s' a échoué (code retour = %s) : %s",
                     $command->getName(),
-                    $result->getReturnCode()
+                    $result->getReturnCode(),
+                    $command->getCommandLine()
                 );
                 if ($output = $result->getOutput()) {
                     $message .= "Voici le log d'exécution : " . implode(PHP_EOL, $output);
