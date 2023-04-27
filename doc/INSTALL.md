@@ -50,10 +50,10 @@ git clone https://git.unicaen.fr/open-source/docker/unicaen-image.git ${UNICAEN_
 cd ${UNICAEN_IMAGE_TMP_DIR}
 ```
 
-- Lancez-y le script `Dockerfile-7.x.sh` conçu pour la version 7.4 de PHP. 
+- Lancez-y le script `Dockerfile-8.x.sh` conçu pour la version 8.0 de PHP. 
 ```bash
-PHP_VERSION=7.4
-bash Dockerfile-7.x.sh ${PHP_VERSION}
+PHP_VERSION=8.0
+bash Dockerfile-8.x.sh ${PHP_VERSION}
 ```
 
 - Ensuite, quelque part sur le serveur, récupérez cette fois l'image Docker `sygal-image` puis placez-vous dans 
@@ -98,12 +98,12 @@ Notamment, lorsque sa valeur est `development`, cela active l'affichage détaill
 - Prenez connaissance du chemin spécifié par le paramètre `error_log` du fichier de config `/etc/php/${PHP_VERSION}/fpm/php-fpm.conf`, 
 exemple :
 ```conf
-error_log = /var/log/php7.4-fpm.log
+error_log = /var/log/php8.0-fpm.log
 ```
 
 - Créez le fichier de log avec le propriétaire qui va bien, exemple :
 ```bash
-FPM_PHP_LOG_FILE=/var/log/php7.4-fpm.log
+FPM_PHP_LOG_FILE=/var/log/php8.0-fpm.log
 touch ${FPM_PHP_LOG_FILE} && chown www-data:www-data ${FPM_PHP_LOG_FILE}
 ```
 
