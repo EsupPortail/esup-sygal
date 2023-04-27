@@ -107,7 +107,7 @@ class UploadForm extends Form
         return $this;
     }
 
-    public function isValid()
+    public function isValid(): bool
     {
         $this->updateFileSizeValidator();
 

@@ -3,7 +3,7 @@
 namespace Formation\Controller\Console;
 
 use Formation\Service\Session\SessionServiceAwareTrait;
-use Laminas\Mvc\Console\Controller\AbstractConsoleController;
+use Unicaen\Console\Controller\AbstractConsoleController;
 use UnicaenApp\Exception\RuntimeException;
 
 class SessionConsoleController extends AbstractConsoleController

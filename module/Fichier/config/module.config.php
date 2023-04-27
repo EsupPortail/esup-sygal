@@ -2,13 +2,12 @@
 
 namespace Fichier;
 
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Fichier\Controller\ConsoleController;
 use Fichier\Controller\Factory\ConsoleControllerFactory;
 use Fichier\Controller\IndexController;
 use Fichier\Controller\Factory\IndexControllerFactory;
-use Laminas\Mvc\Console\Router\Simple;
 
 return [
     'doctrine' => [

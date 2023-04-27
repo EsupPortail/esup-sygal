@@ -5,7 +5,6 @@ namespace Application;
 use Exception;
 use InvalidArgumentException;
 use Structure\Entity\Db\Etablissement;
-use UnicaenApp\Exception\RuntimeException;
 
 /**
  * Service incontournable (si si) à utiliser pour la génération/manipulation de chaîne de caratères

@@ -4,7 +4,6 @@ namespace Application\Service\Utilisateur;
 
 use Individu\Entity\Db\Individu;
 use Application\Entity\Db\Repository\UtilisateurRepository;
-use Application\Entity\Db\Source;
 use Application\Entity\Db\Utilisateur;
 use Application\Filter\NomCompletFormatter;
 use Application\Service\BaseService;

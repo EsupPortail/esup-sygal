@@ -3,7 +3,6 @@
 namespace Formation\Form\Formation;
 
 use Formation\Entity\Db\Interfaces\HasModaliteInterface;
-use Formation\Entity\Db\Traits\HasModaliteTrait;
 use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\Structure\StructureServiceAwareTrait;
 use Formation\Service\Module\ModuleServiceAwareTrait;

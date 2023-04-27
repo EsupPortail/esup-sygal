@@ -9,7 +9,7 @@ use Application\Service\Variable\VariableService;
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
 use UnicaenDbImport\Config\Config;
-use Laminas\Console\Request as ConsoleRequest;
+use Unicaen\Console\Request as ConsoleRequest;
 use Laminas\Log\Logger;
 use Laminas\Log\Writer\Noop;
 use Laminas\Log\Writer\Stream;

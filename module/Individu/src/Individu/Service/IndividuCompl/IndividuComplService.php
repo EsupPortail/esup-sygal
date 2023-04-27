@@ -16,7 +16,9 @@ class IndividuComplService extends BaseService
      */
     public function getRepository(): IndividuComplRepository
     {
-        return $this->entityManager->getRepository(IndividuCompl::class);
+        /** @var IndividuComplRepository $repo */
+        $repo = $this->entityManager->getRepository(IndividuCompl::class);
+        return $repo;
     }
 
     /** Entity managment **********************************************************************************************/

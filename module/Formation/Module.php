@@ -2,11 +2,9 @@
 namespace Formation;
 
 use Laminas\Config\Factory as ConfigFactory;
-use Laminas\Console\Adapter\AdapterInterface as Console;
-use Laminas\ModuleManager\Feature\ConsoleUsageProviderInterface;
 use Laminas\Stdlib\Glob;
 
-class Module implements ConsoleUsageProviderInterface
+class Module
 {
     public function getConfig()
     {
@@ -29,7 +27,7 @@ class Module implements ConsoleUsageProviderInterface
         );
     }
 
-    public function getConsoleUsage(Console $console): array
+    public function getConsoleUsage(): array
     {
         return [
             'formation:session:terminer-auto' =>

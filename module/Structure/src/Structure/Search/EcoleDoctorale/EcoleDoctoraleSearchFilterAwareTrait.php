@@ -2,8 +2,6 @@
 
 namespace Structure\Search\EcoleDoctorale;
 
-use Structure\Search\EcoleDoctorale\EcoleDoctoraleSearchFilter;
-
 trait EcoleDoctoraleSearchFilterAwareTrait
 {
     /**

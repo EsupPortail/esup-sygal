@@ -22,7 +22,7 @@ $count = count($soutenances);
 
     <div class="col-12 col-md-2">
         <?php echo $this->partial('application/index/partial/informations', ['informations' => $informations]) ?>
-        <?php echo $this->partial('application/index/partial/menu-lateral') ?>
+        <?php echo $this->partial('application/index/partial/menu-lateral', ['current' => null]) ?>
 
     </div>
     <div id="content" class="col-12 col-md-10">

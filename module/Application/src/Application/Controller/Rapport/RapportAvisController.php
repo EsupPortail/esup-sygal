@@ -6,7 +6,6 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\Rapport;
 use Application\Entity\Db\RapportAvis;
 use Application\EventRouterReplacerAwareTrait;
-use Application\Filter\IdifyFilter;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Form\Rapport\RapportAvisForm;
 use Individu\Service\IndividuServiceAwareTrait;

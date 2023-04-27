@@ -1,7 +1,7 @@
 <?php
 
 use Indicateur\Provider\Privilege\IndicateurPrivileges;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Indicateur\Controller\Factory\IndicateurControllerFactory;
 use Indicateur\Controller\IndicateurController;

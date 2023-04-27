@@ -2,8 +2,6 @@
 
 namespace RapportActivite\Search;
 
-use RapportActivite\Search\AnneeRapportActiviteSearchFilter;
-
 trait AnneeRapportActiviteSearchFilterAwareTrait
 {
     /**

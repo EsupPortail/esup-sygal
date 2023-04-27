@@ -2,7 +2,6 @@
 
 namespace Soutenance\Service\EngagementImpartialite;
 
-use These\Entity\Db\Acteur;
 use Individu\Entity\Db\Individu;
 use These\Entity\Db\These;
 use Application\Entity\Db\TypeValidation;

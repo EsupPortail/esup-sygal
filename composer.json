@@ -10,10 +10,11 @@
     "require-dev": {
         "laminas/laminas-developer-tools": "^2.0",
         "unicaen/code": "^6.0",
-        "unicaen/test": "^4.0"
+        "unicaen/test": "^5.0"
     },
     "require": {
-        "php": "^7.4.0",
+        "php": "^8.0",
+
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-fileinfo": "*",
@@ -28,31 +29,37 @@
         "ext-xmlwriter": "*",
         "ext-xsl": "*",
         "ext-zip": "*",
-        "beberlei/assert": "^2.9",
+
+        "aws/aws-sdk-php": "^3.226",
+        "beberlei/assert": "^3.0",
         "guzzlehttp/guzzle": "^6.3",
-        "ramsey/uuid": "^3.3",
-        "twig/twig": "^3.0",
-        "unicaen/alerte": "^1.1",
-        "unicaen/app": "^5.1",
-        "unicaen/auth": "^5.1",
-        "unicaen/auth-token": "^5.0",
-        "unicaen/bjy-authorize": "^4.0",
-        "unicaen/db-anonym": "^2.0",
-        "unicaen/db-import": "^5.2",
-        "unicaen/livelog": "^2.0",
-        "unicaen/faq": "^5.0",
-        "unicaen/idref": "dev-master",
-        "unicaen/ldap": "^4.0",
-        "unicaen/parametre": "^5.0",
-        "unicaen/renderer": "^5.0",
-        "unicaen/pdf": "5.0.1",
-        "webmozart/assert": "^1.3",
-        "laminas/laminas-feed": "^2.12",
-        "laminas/laminas-soap": "^2.8",
         "laminas/laminas-development-mode": "^3.2",
         "laminas/laminas-dependency-plugin": "^2.1",
-        "aws/aws-sdk-php": "^3.226"
+        "laminas/laminas-feed": "^2.12",
+        "laminas/laminas-soap": "^2.8",
+        "ramsey/uuid": "^3.3",
+        "twig/twig": "^3.0",
+        "webmozart/assert": "^1.3",
+
+        "unicaen/pdf": "5.0.1",
+
+        "unicaen/alerte": "^2.0",
+        "unicaen/app": "^6.0",
+        "unicaen/auth": "^6.0",
+        "unicaen/auth-token": "^6.0",
+        "unicaen/console": "^6.0",
+        "unicaen/db-anonym": "^3.0",
+        "unicaen/db-import": "^6.0",
+        "unicaen/faq": "^6.0",
+        "unicaen/idref": "dev-master",
+        "unicaen/ldap": "^6.0",
+        "unicaen/livelog": "^2.0",
+        "unicaen/parametre": "^6.0",
+        "unicaen/renderer": "^6.0",
+        "unicaen/pdf": "dev-bg-php8"
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-0": {
             "Application\\": "module/Application/src",
@@ -93,6 +100,7 @@
     },
     "config": {
         "allow-plugins": {
+            "laminas-api-tools/api-tools-asset-manager": true,
             "laminas/laminas-dependency-plugin": true
         }
     }

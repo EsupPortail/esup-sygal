@@ -4,7 +4,6 @@ namespace Application\Filter;
 
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
-use Application\View\Renderer\PhpRenderer;
 use Laminas\Filter\AbstractFilter;
 use Laminas\Permissions\Acl\Role\RoleInterface;
 use Laminas\View\Helper\HtmlList;
@@ -99,7 +98,6 @@ class RolesUtilisateurFormatter extends AbstractFilter
     {
         if ($this->asUl) {
             $helper = new HtmlList();
-            $helper->setView(new PhpRenderer());
             $result = $helper($roles, $ordered = false, $attribs = false, $escape = false);
         }
         elseif ($this->asSeparated) {

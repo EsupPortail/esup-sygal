@@ -14,7 +14,7 @@ class ResumeIndicateurStructureHelper extends AbstractHelper
      */
     public function render($indicateur, $data, $route = null, $limite = 5)
     {
-        $url = $this->getView()->url('indicateur/view', ['indicateur' => $indicateur->getId()], [], true);
+        $url = $this->view->url('indicateur/view', ['indicateur' => $indicateur->getId()], [], true);
 
         $html  = '';
         $html .= '<div class="col-md-4">';

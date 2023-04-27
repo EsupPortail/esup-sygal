@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+6.0.0
+-----
+- Passage à PHP 8.0
+
 5.3.2
 -----
 - Module Soutenance : 2 nouvelles qualités possibles : 'Autre membre de rang B' et Associate Professor - Équivalent HDR'

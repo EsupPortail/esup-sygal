@@ -2,7 +2,6 @@
 
 namespace Fichier\Service\Fichier;
 
-use Fichier\Service\Fichier\FichierStorageService;
 use Fichier\Service\NatureFichier\NatureFichierService;
 use Fichier\Service\VersionFichier\VersionFichierService;
 use Interop\Container\ContainerInterface;

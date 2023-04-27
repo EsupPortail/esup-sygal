@@ -18,7 +18,7 @@ $class = $these->estConfidentielle() ? 'text-danger' : '';
     <span class="<?php echo $class ?>"
           title="<?php echo $titre = $these->getTitre() ?>"><?php echo trim($titre) ? Util::truncatedString($titre, $length) : "(Aucun titre)" ?></span>
 <?php else: ?>
-    <span class="<?php echo $class ?>"><?php echo $these->getDoctorant()->getNomComplet() ?></span>
+    <span class="<?php echo $class ?>"><?php echo $these->getDoctorant()->getIndividu()->getNomComplet() ?></span>
 <?php endif ?>
 
 <?php if ($these->estConfidentielle()): ?>

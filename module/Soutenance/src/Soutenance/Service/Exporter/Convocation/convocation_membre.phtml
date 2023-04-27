@@ -1,6 +1,5 @@
 <?php
 
-use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use These\Service\FichierThese\PdcData;
@@ -27,6 +26,7 @@ use Soutenance\Entity\Proposition;
 
 $date = new DateTime();
 
+$civilite = null;
 //$civilite = ($membre->getGenre() !== "H")?"Madame":"Monsieur";
 if ($membre->getIndividu()) {
     if ($membre->getIndividu()->getCivilite() === 'M.') $civilite = "Monsieur";

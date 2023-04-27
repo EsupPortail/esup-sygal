@@ -28,7 +28,6 @@ use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
-use Laminas\Console\Request as ConsoleRequest;
 use Laminas\Form\Element\Hidden;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
@@ -36,6 +35,7 @@ use Laminas\View\Model\ViewModel;
 use Notification\Service\NotifierServiceAwareTrait;
 use These\Entity\Db\These;
 use These\Service\These\TheseServiceAwareTrait;
+use Unicaen\Console\Request as ConsoleRequest;
 use UnicaenApp\Exception\RuntimeException;
 
 class FichierTheseController extends AbstractController
@@ -508,6 +508,7 @@ class FichierTheseController extends AbstractController
         }
 
         $pdcData = $this->theseService->fetchInformationsPageDeCouverture($these);
+        $outputFilePath = null;
         try {
             $outputFilePath = $this->fichierTheseService->fusionnerPdcEtThese($these, $pdcData, $versionFichier, $removeFirstPage);
         } catch (TimedOutCommandException $e) {
@@ -556,8 +557,7 @@ class FichierTheseController extends AbstractController
         }
 
         /** Retourner un PDF ...  */
-        $contenu     = file_get_contents($outputFilePath);
-        $content     = is_resource($contenu) ? stream_get_contents($contenu) : $contenu;
+        $content = file_get_contents($outputFilePath);
 
         header('Content-Description: File Transfer');
         header('Content-Type: ' . 'application/pdf');

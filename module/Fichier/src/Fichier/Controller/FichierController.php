@@ -7,7 +7,6 @@ use Fichier\Entity\Db\Fichier;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Provider\Privilege\FichierPrivileges;
 use Application\RouteMatch;
-use Fichier\Service\Fichier\Exception\FichierServiceException;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Application\View\Helper\Sortable;
 use BjyAuthorize\Exception\UnAuthorizedException;

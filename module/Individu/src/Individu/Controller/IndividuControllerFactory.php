@@ -7,7 +7,6 @@ use Structure\Service\Structure\StructureService;
 use Application\Service\UserContextService;
 use Application\Service\Utilisateur\UtilisateurService;
 use Doctorant\Service\DoctorantService;
-use Individu\Controller\IndividuController;
 use Individu\Form\IndividuForm;
 use Individu\Service\IndividuService;
 use Individu\Service\Search\IndividuSearchService;

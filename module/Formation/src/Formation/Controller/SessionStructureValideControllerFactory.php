@@ -2,15 +2,9 @@
 
 namespace Formation\Controller;
 
-use Formation\Entity\Db\SessionStructureValide;
 use Formation\Form\SessionStructureValide\SessionStructureValideForm;
-use Formation\Form\SessionStructureValide\SessionStructureValideFormAwareTrait;
 use Formation\Service\Session\SessionService;
-use Formation\Service\Session\SessionServiceAwareTrait;
 use Formation\Service\SessionStructureValide\SessionStructureValideService;
-use Formation\Service\SessionStructureValide\SessionStructureValideServiceAwareTrait;
-use Laminas\Mvc\Controller\AbstractActionController;
-use Laminas\View\Model\ViewModel;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;

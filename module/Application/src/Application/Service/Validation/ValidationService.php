@@ -30,7 +30,9 @@ class ValidationService extends BaseService
      */
     public function getRepository()
     {
-        return $this->entityManager->getRepository(Validation::class);
+        /** @var ValidationRepository $repo */
+        $repo = $this->entityManager->getRepository(Validation::class);
+        return $repo;
     }
 
     public function saveValidation(Validation $v)

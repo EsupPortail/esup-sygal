@@ -358,7 +358,6 @@ class RapportActiviteAssertion extends AbstractAssertion
     {
         /** @var \Application\RouteMatch $rm */
         $rm = $this->getMvcEvent()->getRouteMatch();
-
         return $rm;
     }
 }

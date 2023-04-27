@@ -1,6 +1,5 @@
 <?php
 
-use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
 use Application\Entity\Db\Validation;
 use These\Service\FichierThese\PdcData;
@@ -76,7 +75,7 @@ $civilite = ($these->getDoctorant()->getIndividu()->getCivilite() === 'M.')?"Mon
 <br/>
 
 <p>
-    <?php echo $civilite ?> <?php echo $these->getDoctorant()->getNomComplet(); ?>, <br/>
+    <?php echo $civilite ?> <?php echo $these->getDoctorant()->getIndividu()->getNomComplet(); ?>, <br/>
 </p>
 
     Par décision en date du

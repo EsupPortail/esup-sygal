@@ -9,8 +9,6 @@ use Import\Model\ImportObserv;
 use Import\Model\ImportObservResult;
 use Retraitement\Filter\Command\RetraitementShellCommandMines;
 
-define('APPLICATION_DIR', __DIR__ . '/../..');
-
 $config = [
     'translator' => [
         'locale' => 'fr_FR',

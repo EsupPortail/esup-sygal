@@ -22,10 +22,7 @@ if (!$passed){
 /* Fin de fermeture du service */
 
 
-
 define('REQUEST_MICROTIME', microtime(true));
-
-define('APPLICATION_DIR', realpath(__DIR__ . '/..'));
 
 /**
  * This makes our life easier when dealing with paths. Everything is relative

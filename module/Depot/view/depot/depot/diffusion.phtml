@@ -1,12 +1,11 @@
 <?php
 
-use These\Controller\TheseController;
-use Depot\Entity\Db\Diffusion;
-use These\Entity\Db\These;
-use Fichier\Entity\Db\VersionFichier;
-use Depot\Form\Diffusion\DiffusionTheseForm;
-use Depot\Provider\Privilege\DepotPrivileges;
 use Application\View\Renderer\PhpRenderer;
+use Depot\Entity\Db\Diffusion;
+use Depot\Provider\Privilege\DepotPrivileges;
+use Fichier\Entity\Db\VersionFichier;
+use These\Controller\TheseController;
+use These\Entity\Db\These;
 
 /**
  * @var                    $this PhpRenderer
@@ -19,6 +18,7 @@ use Application\View\Renderer\PhpRenderer;
  * @var bool               $resaisirAutorisationDiffusionVersionCorrigee
  * @var string             $modifierDiffusionUrl
  * @var string             $exporterConventionMelUrl
+ * @var bool               $hasFichierThese
  *
  * @see TheseController::diffusionAction()
  */

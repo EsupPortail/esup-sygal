@@ -3,7 +3,7 @@
 namespace Application\Form\Factory;
 
 use Application\Form\RapportCsiForm;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Doctrine\Laminas\Hydrator\DoctrineObject;
 use Interop\Container\ContainerInterface;
 

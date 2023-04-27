@@ -2,7 +2,6 @@
 
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
-use Laminas\Router\Http\Segment;
 use UnicaenAuth\Guard\PrivilegeController;
 
 return [

@@ -19,7 +19,7 @@ abstract class AndWhereExpr
     public function applyToQueryBuilder(QueryBuilder $qb): self
     {
         if (!in_array($this->alias, $qb->getAllAliases())) {
-            throw new RuntimeException("L'alias $this->alias est inconnu du QueryBuilder. " . $this->getJoinSuggestion($qb->getRootAlias()));
+            throw new RuntimeException("L'alias $this->alias est inconnu du QueryBuilder. " . $this->getJoinSuggestion($qb->getRootAliases()));
         }
 
         $qb->andWhere($this->where);

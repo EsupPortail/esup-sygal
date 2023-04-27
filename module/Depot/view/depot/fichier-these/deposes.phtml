@@ -5,12 +5,14 @@
  * @var PhpRenderer              $this
  * @var Paginator|FichierThese[] $fichiers
  * @var UrlFichierThese          $urlFichierThese
+ * @var string $url
  */
 
+
+use Application\View\Renderer\PhpRenderer;
 use Depot\Controller\Plugin\UrlFichierThese;
 use Depot\Entity\Db\FichierThese;
 use Depot\Provider\Privilege\DepotPrivileges;
-use Application\View\Renderer\PhpRenderer;
 use Laminas\Paginator\Paginator;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
@@ -103,11 +105,11 @@ use UnicaenApp\Form\Element\SearchAndSelect;
             <td>
                 <?php
                 $doctorant = $these->getDoctorant();
-                echo $this->translate($doctorant->getCivilite());
+                echo $this->translate($doctorant->getIndividu()->getCivilite());
                 echo " ";
-                echo $doctorant->getPrenom();
+                echo $doctorant->getIndividu()->getPrenom();
                 echo " ";
-                echo $doctorant->getNomUsuel();
+                echo $doctorant->getIndividu()->getNomUsuel();
                 ?>
             </td>
             <td>

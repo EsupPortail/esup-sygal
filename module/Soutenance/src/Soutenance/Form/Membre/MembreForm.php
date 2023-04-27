@@ -5,8 +5,6 @@ namespace Soutenance\Form\Membre;
 use Soutenance\Entity\Membre;
 use Soutenance\Service\Qualite\QualiteServiceAwareTrait;
 use UnicaenApp\Service\EntityManagerAwareTrait;
-use Laminas\Filter\StringToLower;
-use Laminas\Form\Element;
 use Laminas\Form\Element\Email;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Select;

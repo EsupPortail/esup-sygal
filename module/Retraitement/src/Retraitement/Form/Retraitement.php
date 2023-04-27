@@ -2,7 +2,6 @@
 
 namespace Retraitement\Form;
 use Laminas\Form\Form;
-use Laminas\InputFilter\InputFilterAwareInterface;
 use Laminas\InputFilter\InputFilterProviderInterface;
 
 /**

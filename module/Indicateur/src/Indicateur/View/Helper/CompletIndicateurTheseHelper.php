@@ -47,7 +47,7 @@ class CompletIndicateurTheseHelper extends AbstractHelper
                     $html .= '<td>';
                     switch($clef) {
                         case 'Titre':
-                            $html .= '<a href="' . $this->getView()->url('these/identite', ['these' => $entry['id']], [], true) . '">';
+                            $html .= '<a href="' . $this->view->url('these/identite', ['these' => $entry['id']], [], true) . '">';
                             $html .= $entry[$valeur];
                             $html .= '</a>';
                             break;

@@ -58,7 +58,7 @@ class DateLesserThan extends AbstractValidator
      * Sets validator options
      *
      * @param  array|Traversable $options
-     * @throws Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct($options = null)
     {
@@ -77,7 +77,7 @@ class DateLesserThan extends AbstractValidator
         }
 
         if (!array_key_exists('max', $options)) {
-            throw new Exception\InvalidArgumentException("Missing option 'max'");
+            throw new InvalidArgumentException("Missing option 'max'");
         }
 
         if (!array_key_exists('inclusive', $options)) {

@@ -3,7 +3,6 @@
 namespace Individu;
 
 use BjyAuthorize\Provider\Resource\Config;
-use Individu\Controller\IndividuComplController;
 use Individu\Controller\IndividuController;
 use Individu\Controller\IndividuControllerFactory;
 use Individu\Form\IndividuForm;

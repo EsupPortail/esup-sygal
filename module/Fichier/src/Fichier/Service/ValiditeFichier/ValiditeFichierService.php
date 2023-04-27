@@ -15,7 +15,9 @@ class ValiditeFichierService extends BaseService
      */
     public function getRepository(): ValiditeFichierRepository
     {
-        return $this->entityManager->getRepository(ValiditeFichier::class);
+        /** @var ValiditeFichierRepository $repo */
+        $repo = $this->entityManager->getRepository(ValiditeFichier::class);
+        return $repo;
     }
 
     /**

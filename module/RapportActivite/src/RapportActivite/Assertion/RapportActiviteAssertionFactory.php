@@ -3,12 +3,11 @@
 namespace RapportActivite\Assertion;
 
 use Application\Assertion\AbstractAssertion;
-use RapportActivite\Rule\Operation\RapportActiviteOperationRule;
-use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use Psr\Container\ContainerInterface;
-use RapportActivite\Assertion\RapportActiviteAssertion;
 use RapportActivite\Rule\Creation\RapportActiviteCreationRule;
+use RapportActivite\Rule\Operation\RapportActiviteOperationRule;
 use RapportActivite\Service\RapportActiviteService;
+use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 
 class RapportActiviteAssertionFactory
 {

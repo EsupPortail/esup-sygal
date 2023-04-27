@@ -2,7 +2,6 @@
 
 namespace Application\Controller\Factory;
 
-use Application\Controller\ActualiteController;
 use Application\Controller\OffreController;
 use Application\Service\Actualite\ActualiteService;
 use Information\Service\InformationService;

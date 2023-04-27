@@ -3,7 +3,6 @@
 namespace These\Controller;
 
 use Application\Controller\AbstractController;
-use Application\Entity\Db\MailConfirmation;
 use Application\Service\MailConfirmationServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;

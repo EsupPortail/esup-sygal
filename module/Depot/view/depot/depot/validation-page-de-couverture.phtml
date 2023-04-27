@@ -30,7 +30,7 @@ $canValidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_DE
 $canUnvalidate = $this->isAllowed($these, ValidationPrivileges::VALIDATION_PAGE_DE_COUVERTURE_SUPPR);
 ?>
 
-<?php $this->headTitle($this->translate("Page de couverture"))->prepend($these->getDoctorant()->getNomUsuel()) ?>
+<?php $this->headTitle($this->translate("Page de couverture"))->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
 
 <h1 class="page-header">
     <?php echo $this->translate("Page de couverture"); ?>

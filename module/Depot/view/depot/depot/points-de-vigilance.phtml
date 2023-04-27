@@ -1,16 +1,7 @@
 <?php
 
-use Application\Form\Factory\PointsDeVigilanceFormFactory;
-
-use These\Entity\Db\These;
 use Depot\Form\PointsDeVigilanceForm;
-use Application\Entity\Db\Validation;
-use Depot\Entity\Db\WfEtape;
-use Depot\Provider\Privilege\DepotPrivileges;
-use Depot\Provider\Privilege\ValidationPrivileges;
-use Application\View\Renderer\PhpRenderer;
-use UnicaenApp\Service\MessageCollector;
-use Depot\Entity\Db\Repository\FichierTheseRepository;
+use These\Entity\Db\These;
 
 /**
  * @var These               $these
@@ -23,7 +14,7 @@ use Depot\Entity\Db\Repository\FichierTheseRepository;
 $recap = new \Depot\Form\PointsDeVigilanceForm();
 ?>
 
-<?php $this->headTitle("Récapitulatif de la bibliothèque universitaire")->prepend($these->getDoctorant()->getNomUsuel()) ?>
+<?php $this->headTitle("Récapitulatif de la bibliothèque universitaire")->prepend($these->getDoctorant()->getIndividu()->getNomUsuel()) ?>
 
 <h1 class="page-header">Points de vigilance
     <small><?php echo $this->partial('these/these/partial/titre') ?></small>

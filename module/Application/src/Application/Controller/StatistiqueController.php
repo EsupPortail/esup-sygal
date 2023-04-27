@@ -10,7 +10,6 @@ use These\Service\These\TheseServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
-use Laminas\Http\Request;
 use Laminas\View\Model\ViewModel;
 
 class StatistiqueController extends AbstractController
