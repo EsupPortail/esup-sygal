@@ -100,7 +100,7 @@ class FetchService
     {
         $qb = $this->theseService->getRepository()->createQueryBuilder('t');
         $qb
-            ->addSelect('e, d, di, dip, ed, ur, f, orf, m, rdv, mel, es, eds, urs, a, ai, r')
+            ->addSelect('e, d, di, dip, dimc, ed, ur, f, orf, m, rdv, mel, es, eds, urs, a, ai, r')
             ->join('t.etablissement', 'e')
             ->join('t.doctorant', 'd')
             ->join('d.individu', 'di')

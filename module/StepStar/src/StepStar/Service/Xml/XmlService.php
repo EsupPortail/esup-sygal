@@ -387,7 +387,7 @@ class XmlService
         $contratDoctoral = $this->extractContratDoctoralFromThese($these) ? 'oui' : 'non';
         $conventionCifre = $this->extractConventionCifreFromThese($these) ? 'oui' : 'non';
 
-        $metadonnees = current($these['metadonnees']) ?: null;
+        $metadonnees = current($these['metadonnees']) ?: [];
 
         $dateFinConfidentialite = $these['dateFinConfidentialite'] ?? null;
         $dateDebutConfidentialite = null;
@@ -451,9 +451,9 @@ class XmlService
 //            self::NNT => '2013FOR31234',
 
             // métadonnées
-            self::TITRE => $metadonnees['titre'] ?: $these['titre'],
+            self::TITRE => $metadonnees['titre'] ?? $these['titre'],
             self::TITRE_LANGUE => $langue = $metadonnees['langue'] ?? 'fr',
-            self::TITRE_TRADUIT => $metadonnees['titreAutreLangue'],
+            self::TITRE_TRADUIT => $metadonnees['titreAutreLangue'] ?? null,
             self::TITRE_TRADUIT_LANGUE => $langue === 'fr' ? 'en' : 'fr',
             self::RESUME_FRANCAIS => $this->sanitizeXML($metadonnees['resume'] ?? ''),
             self::RESUME_ANGLAIS => $this->sanitizeXML($metadonnees['resumeAnglais'] ?? ''),
@@ -645,7 +645,7 @@ class XmlService
 
     private function extractEmailPersoFromThese(array $these): ?string
     {
-        foreach ((array) $these['mailsConfirmations'] as $mailConfirmation) {
+        foreach ((array) $these['doctorant']['individu']['mailsConfirmations'] as $mailConfirmation) {
             if ($mailConfirmation['etat'] === MailConfirmation::CONFIRME) {
                 return $mailConfirmation['email'];
             }
