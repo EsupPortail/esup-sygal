@@ -3,9 +3,10 @@
 namespace Formation\Form\Seance;
 
 use Laminas\Form\Element\Button;
-use Laminas\Form\Element\DateTime;
+use Laminas\Form\Element\Date;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Textarea;
+use Laminas\Form\Element\Time;
 use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
 
@@ -16,14 +17,14 @@ class SeanceForm extends Form {
         //jour
         $this->add([
             'name' => 'date',
-            'type' => DateTime::class,
+            'type' => Date::class,
             'options' => [
                 'label' => "Date de la séance de formation <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
                 'label_attributes' => [
                     'class' => 'control-label',
                 ],
-                'format' => 'd/m/Y',
+                'format' => 'Y-m-d',
             ],
             'attributes' => [
                 'id' => 'date',
@@ -33,7 +34,7 @@ class SeanceForm extends Form {
         //debut
         $this->add([
             'name' => 'debut',
-            'type' => DateTime::class,
+            'type' => Time::class,
             'options' => [
                 'label' => "Début de la séance <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
@@ -50,7 +51,7 @@ class SeanceForm extends Form {
         //fin
         $this->add([
             'name' => 'fin',
-            'type' => DateTime::class,
+            'type' => Time::class,
             'options' => [
                 'label' => "Fin de la séance <span class='icon icon-star' style='color: darkred;' title='Obligatoire'></span> :",
                 'label_options' => [ 'disable_html_escape' => true, ],
