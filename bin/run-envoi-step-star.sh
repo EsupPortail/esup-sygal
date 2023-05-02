@@ -39,5 +39,12 @@ fi
 echo
 
 TAG="cron-${ETAB}-$(date +%Y%m%d_%H%M%S)"
+
+echo "> Envoi des theses ${ETAB} soutenues depuis moins d'un mois..."
 /usr/bin/php ${APP_DIR}/public/index.php step-star:envoyer-theses --etat S --etablissement ${ETAB} --tag ${TAG} --date-soutenance-min P1M
+echo
+echo
+echo "> Envoi des theses ${ETAB} en cours..."
 /usr/bin/php ${APP_DIR}/public/index.php step-star:envoyer-theses --etat E --etablissement ${ETAB} --tag ${TAG}
+echo
+

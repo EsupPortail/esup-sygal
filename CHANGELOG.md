@@ -1,6 +1,11 @@
 Journal des modifications
 =========================
 
+6.0.1
+-----
+- [FIX] Module Formation : mauvais éléments de formulaire pour la date et les horaires, empêchant de créer/modifier une séance.
+- [FIX] Module StepStar : erreur dans l'extraction du mail du doctorant.
+
 6.0.0
 -----
 - Passage à PHP 8.0
