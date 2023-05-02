@@ -246,10 +246,14 @@ class PropositionController extends AbstractController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $this->update($request, $form, $proposition);
-            $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Date et lieu");
-            $this->getPropositionService()->initialisationDateRetour($proposition);
-            if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
+            $data = $request->getPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $this->update($request, $form, $proposition);
+                $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_MODIFICATION, "Date et lieu");
+                $this->getPropositionService()->initialisationDateRetour($proposition);
+                if (!$this->isAllowed($these, PropositionPrivileges::PROPOSITION_MODIFIER_GESTION)) $this->getPropositionService()->annulerValidationsForProposition($proposition);
+            }
         }
 
         $vm = new ViewModel();

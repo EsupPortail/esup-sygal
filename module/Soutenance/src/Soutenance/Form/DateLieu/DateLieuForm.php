@@ -3,7 +3,7 @@
 namespace Soutenance\Form\DateLieu;
 
 use Laminas\Form\Element\Button;
-use Laminas\Form\Element\DateTime;
+use Laminas\Form\Element\Date;
 use Laminas\Form\Element\Time;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Element\Text;
@@ -16,13 +16,12 @@ class DateLieuForm extends Form {
 
     public function init()
     {
-
         $this->add([
             'name' => 'date',
-            'type' => DateTime::class,
+            'type' => Date::class,
             'options' => [
                 'label' => 'Date de la soutenance : ',
-                'format' => 'd/m/Y',
+                'format' => 'Y-m-d',
             ],
             'attributes' => [
                 //'min'  => $twomonth->format('Y-m-d'),
@@ -84,7 +83,7 @@ class DateLieuForm extends Form {
                                 Callback::INVALID_VALUE => "La date de soutenance est dans le passé ! ",
                             ],
                             'callback' => function ($value) {
-                                $sdate = DDateTime::createFromFormat('d/m/Y', $value);
+                                $sdate = DDateTime::createFromFormat('Y-m-d', $value);
                                 $cdate = new DDateTime();
                                 $res = $sdate >= $cdate;
                                 return $res;
