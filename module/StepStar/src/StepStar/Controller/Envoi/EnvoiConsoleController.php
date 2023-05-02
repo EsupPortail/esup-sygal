@@ -31,7 +31,8 @@ class EnvoiConsoleController extends AbstractConsoleController
 
         $theses = $this->fetchService->fetchThesesByCriteria($criteria);
         if (empty($theses)) {
-            throw new InvalidArgumentException("Aucune these trouvee avec les criteres specifies");
+            $this->console->write("Aucune these trouvee avec les criteres specifies.");
+            exit(0);
         }
 
         $this->envoiFacade->setSaveLogs(true);
@@ -39,6 +40,7 @@ class EnvoiConsoleController extends AbstractConsoleController
 
         /** @var \StepStar\Entity\Db\Log $log */
         foreach ($logs as $log) {
+            $this->console->write("These " . $log->getTheseId());
             $this->console->write($log->getLog());
         }
     }
