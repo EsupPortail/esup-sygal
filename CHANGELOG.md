@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+6.0.2
+-----
+- [SQL] Amélioration des libellés des 2 paramètres du module Rapport d'activité.
+
 6.0.1
 -----
 - [FIX] Module Formation : mauvais éléments de formulaire pour la date et les horaires, empêchant de créer/modifier une séance.
