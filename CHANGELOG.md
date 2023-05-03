@@ -4,6 +4,7 @@ Journal des modifications
 6.0.2
 -----
 - [SQL] Amélioration des libellés des 2 paramètres du module Rapport d'activité.
+- Soutenance : Masquage du warning si la soutenance n'est plus à l'état EN_COURS
 
 6.0.1
 -----

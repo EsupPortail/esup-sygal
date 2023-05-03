@@ -18,6 +18,7 @@
  */
 
 
+use Soutenance\Entity\Etat;
 use Soutenance\Entity\Justificatif;
 use Soutenance\Service\Horodatage\HorodatageService;
 use These\Entity\Db\Acteur;
@@ -46,7 +47,7 @@ $isAllOk = $hasDeclaration && $hasAttestation && $isDateOk && $isInformationsOk;
     </div>
     <div class="card-body">
 
-        <?php if (!$isAllOk) : ?>
+        <?php if ($proposition->getEtat()->getCode() === Etat::EN_COURS && !$isAllOk) : ?>
          <div class="alert alert-danger">
             <strong>
                 <span class="icon icon-attention"></span>
