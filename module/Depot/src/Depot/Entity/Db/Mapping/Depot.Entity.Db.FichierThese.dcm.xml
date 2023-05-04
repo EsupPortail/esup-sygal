@@ -12,7 +12,7 @@
     <field name="estConforme" type="integer" column="EST_CONFORME" nullable="true"/>
     <field name="estPartiel" type="boolean" column="EST_PARTIEL"/>
 
-    <many-to-one field="fichier" target-entity="Fichier\Entity\Db\Fichier" inversed-by="fichierTheses">
+    <many-to-one field="fichier" target-entity="Fichier\Entity\Db\Fichier">
       <join-column name="FICHIER_ID" referenced-column-name="ID"/>
     </many-to-one>
 
