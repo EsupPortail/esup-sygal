@@ -346,15 +346,15 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
                     <span class="fas fa-thumbs-up"></span>
                     Donner le feu vert
                 </a>
-            <?php endif; ?>
 
-            <?php /** @see \Soutenance\Controller\PresoutenanceController::stopperDemarcheAction() */ ?>
-            <a href="<?php echo $this->url('soutenance/presoutenance/stopper-demarche', ['these' => $these->getId()], [], true); ?>"
-               class="btn btn-danger action"
-            >
-                <span class="fas fa-thumbs-down"></span>
-                Stopper les démarches
-            </a>
+                <?php /** @see \Soutenance\Controller\PresoutenanceController::stopperDemarcheAction() */ ?>
+                <a href="<?php echo $this->url('soutenance/presoutenance/stopper-demarche', ['these' => $these->getId()], [], true); ?>"
+                   class="btn btn-danger action ajax-modal" data-event="annuler-soutenance"
+                >
+                    <span class="fas fa-thumbs-down"></span>
+                    Annuler/Rejeter la proposition de soutenance
+                </a>
+            <?php endif; ?>
 
 
             <?php echo $this->derniersHorodatages($proposition, [
@@ -487,6 +487,13 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
 </style>
 
 <script>
+    $(function() {
+        $("body").on("annuler-soutenance", function (event) {
+            event.div.modal('hide');
+            window.location.reload();
+        });
+    });
+
     $(function() {
         $("body").on("modification-date-rendu-rapport", function (event) {
             event.div.modal('hide');

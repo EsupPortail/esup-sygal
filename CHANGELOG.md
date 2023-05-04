@@ -4,7 +4,8 @@ Journal des modifications
 6.0.2
 -----
 - [SQL] Amélioration des libellés des 2 paramètres du module Rapport d'activité.
-- Soutenance : Masquage du warning si la soutenance n'est plus à l'état EN_COURS
+- Module Soutenance : Masquage des avertissements sur l'état du dossier si la soutenance n'est plus à l'état EN_COURS
+- Module Soutenance : Ajout d'une modale de confirmation lors de l'annulation d'une soutenance
 
 6.0.1
 -----

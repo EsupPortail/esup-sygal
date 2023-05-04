@@ -384,27 +384,45 @@ class PresoutenanceController extends AbstractController
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
     }
 
-    public function stopperDemarcheAction() : Response
+    public function stopperDemarcheAction() : ViewModel
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findOneForThese($these);
 
-        $etat = $this->getPropositionService()->findPropositionEtatByCode(Etat::REJETEE);
-        $proposition->setEtat($etat);
-        $this->getPropositionService()->update($proposition);
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            if ($data["reponse"] === "oui") {
+                $etat = $this->getPropositionService()->findPropositionEtatByCode(Etat::REJETEE);
+                $proposition->setEtat($etat);
+                $this->getPropositionService()->update($proposition);
 
-        try {
-            $notif = $this->soutenanceNotificationFactory->createNotificationStopperDemarcheSoutenance($these, $proposition);
-            $this->notifierService->trigger($notif);
-        } catch (\Notification\Exception\RuntimeException $e) {
-            // aucun destinataire, todo : cas à gérer !
+                try {
+                    $notif = $this->soutenanceNotificationFactory->createNotificationStopperDemarcheSoutenance($these, $proposition);
+                    $this->notifierService->trigger($notif);
+                } catch (\Notification\Exception\RuntimeException $e) {
+                    // aucun destinataire, todo : cas à gérer !
+                }
+                $this->flashMessenger()
+                    //->setNamespace('presoutenance')
+                    ->addSuccessMessage("Notifications d'arrêt des démarches de soutenance soutenance envoyées");
+
+                $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_ETAT, "Annulation de la soutenance");
+                exit();
+            }
         }
-        $this->flashMessenger()
-            //->setNamespace('presoutenance')
-            ->addSuccessMessage("Notifications d'arrêt des démarches de soutenance soutenance envoyées");
 
-        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_ETAT, "Annulation de la soutenance");
-        return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);
+        $vm = new ViewModel();
+        if ($proposition !== null) {
+            $vm->setTemplate('soutenance/default/confirmation');
+            $vm->setVariables([
+                'title' => "Annuler/Rejeter la proposition de soutenance",
+                'text' => "L'annulation effacera le dossier de soutentance et les justificatifs associés. Êtes-vous sûr·e de vouloir continuer ?",
+                'action' => $this->url()->fromRoute('soutenance/presoutenance/stopper-demarche', ['these' => $these->getId()], [], true),
+            ]);
+        }
+        return $vm;
+
     }
 
     public function modifierAdresseAction() : ViewModel
