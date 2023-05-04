@@ -9,82 +9,44 @@ use UnicaenApp\Entity\HistoriqueAwareTrait;
 class Justificatif implements HistoriqueAwareInterface {
     use HistoriqueAwareTrait;
 
-    /** @var integer */
-    private $id;
-    /** @var Proposition */
-    private $proposition;
-    /** @var FichierThese */
-    private $fichier;
-    /** @var Membre */
-    private $membre;
+    private ?int $id = null;
+    private ?Proposition $proposition = null;
+    private ?FichierThese $fichier = null;
+    private ?Membre $membre = null;
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId() : ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return Proposition
-     */
-    public function getProposition()
+    public function getProposition() : ?Proposition
     {
         return $this->proposition;
     }
 
-    /**
-     * @param Proposition $proposition
-     * @return Justificatif
-     */
-    public function setProposition($proposition)
+    public function setProposition(?Proposition $proposition) : void
     {
         $this->proposition = $proposition;
-        return $this;
     }
 
-    /**
-     * @return FichierThese
-     */
-    public function getFichier()
+    public function getFichier() : ?FichierThese
     {
         return $this->fichier;
     }
 
-    /**
-     * @param FichierThese $fichier
-     * @return Justificatif
-     */
-    public function setFichier($fichier)
+    public function setFichier(FichierThese $fichier) : void
     {
         $this->fichier = $fichier;
-        return $this;
     }
 
-    /**
-     * @return Membre
-     */
-    public function getMembre()
+    public function getMembre() : ?Membre
     {
         return $this->membre;
     }
 
-    /**
-     * @param Membre $membre
-     * @return Justificatif
-     */
-    public function setMembre($membre)
+    public function setMembre(?Membre $membre) : void
     {
         $this->membre = $membre;
-        return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasMembre()
-    {
-        return ($this->membre !== null);
-    }
 }

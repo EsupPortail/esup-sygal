@@ -36,7 +36,7 @@ class JusticatifHydrator implements HydratorInterface {
      * @param Justificatif $object
      * @return Justificatif
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, $object): Justificatif
     {
         /** @var Membre $membre */
         $membre = $this->getMembreService()->find($data['membre']);

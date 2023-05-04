@@ -14,6 +14,7 @@ use Individu\Entity\Db\IndividuRole;
 use Information\Service\InformationServiceAwareTrait;
 use Laminas\Form\Form;
 use Laminas\Http\Request;
+use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
 use Notification\Service\NotifierServiceAwareTrait;
@@ -88,7 +89,7 @@ class PropositionController extends AbstractController
         $this->renderer = $renderer;
     }
 
-    public function propositionAction()
+    public function propositionAction() : ViewModel|Response
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findOneForThese($these);
@@ -309,7 +310,7 @@ class PropositionController extends AbstractController
         return $vm;
     }
 
-    public function effacerMembreAction()
+    public function effacerMembreAction() : ViewModel|Response
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findOneForThese($these);
@@ -440,7 +441,7 @@ class PropositionController extends AbstractController
         return $vm;
     }
 
-    public function validerActeurAction()
+    public function validerActeurAction(): ViewModel|Response
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findOneForThese($these);
