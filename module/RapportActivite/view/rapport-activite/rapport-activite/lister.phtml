@@ -16,7 +16,6 @@ use These\Entity\Db\These;
  * @var RapportActivite[] $rapports
  * @var array $typesRapportPossiblesData
  * @var array[] $operationss
- * @var TypeValidation $typeValidation
  * @var string $returnUrl
  * @var \DateTime[] $campagneDepotDates
  *
@@ -67,7 +66,6 @@ $campagneDepotDateFin = $campagneDepotDates[RapportActiviteParametres::CAMPAGNE_
             <?php echo $this->partial('rapport-activite/partial/rapports-table', [
                 'rapports' => $rapports,
                 'operationss' => $operationss,
-                'typeValidation' => $typeValidation,
                 'returnUrl' => $returnUrl,
 
                 'displayEtablissement' => false,
