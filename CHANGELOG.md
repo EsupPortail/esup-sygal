@@ -6,6 +6,8 @@ Journal des modifications
 - [SQL] Amélioration des libellés des 2 paramètres du module Rapport d'activité.
 - Module Soutenance : Masquage des avertissements sur l'état du dossier si la soutenance n'est plus à l'état EN_COURS
 - Module Soutenance : Ajout d'une modale de confirmation lors de l'annulation d'une soutenance
+- Module Rapport d'activité : utilisation des années universitaires d'inscription pour calculer la liste des années sélectionnables dans le formulaire.
+- [FIX] Warning PHP à propos d'une variable indéfinie (typeValidation) sur la page des rapports d'activités d'un doctorant.
 
 6.0.1
 -----
