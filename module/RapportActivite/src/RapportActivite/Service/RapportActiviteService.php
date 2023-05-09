@@ -4,6 +4,7 @@ namespace RapportActivite\Service;
 
 use Application\Command\ShellCommandRunnerTrait;
 use Application\Entity\AnneeUniv;
+use Application\Entity\AnneeUnivInterface;
 use Application\Entity\Db\TypeValidation;
 use Application\Exporter\ExporterDataException;
 use Application\QueryBuilder\DefaultQueryBuilder;
@@ -262,13 +263,13 @@ class RapportActiviteService extends BaseService
     }
 
     /**
-     * @param \Application\Entity\AnneeUniv $anneeUniv
+     * @param \Application\Entity\AnneeUnivInterface $anneeUniv
      * @return \Closure
      */
-    public function getFilterRapportsByAnneeUniv(AnneeUniv $anneeUniv): Closure
+    public function getFilterRapportsByAnneeUniv(AnneeUnivInterface $anneeUniv): Closure
     {
         return function (RapportActivite $rapport) use ($anneeUniv) {
-            return $rapport->getAnneeUniv() === $anneeUniv;
+            return $rapport->getAnneeUniv()->getPremiereAnnee() === $anneeUniv->getPremiereAnnee();
         };
     }
 

@@ -6,7 +6,7 @@ use Application\Filter\AnneeUnivFormatter;
 use DateInterval;
 use DateTime;
 
-class AnneeUniv
+class AnneeUniv implements AnneeUnivInterface
 {
     /**
      * Spécification pour calculer la date de bascule d'une année universitaire sur la suivante.
@@ -112,6 +112,11 @@ class AnneeUniv
     public function toString(string $separator = '/'): string
     {
         return $this->formatter->filter($this->premiereAnnee, $separator);
+    }
+
+    public function getAnneeUnivToString(): string
+    {
+        return $this->toString();
     }
 
     /**

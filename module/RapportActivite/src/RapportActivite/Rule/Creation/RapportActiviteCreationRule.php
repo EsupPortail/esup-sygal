@@ -3,6 +3,7 @@
 namespace RapportActivite\Rule\Creation;
 
 use Application\Entity\AnneeUniv;
+use Application\Entity\AnneeUnivInterface;
 use Application\Rule\RuleInterface;
 use InvalidArgumentException;
 use RapportActivite\Entity\Db\RapportActivite;
@@ -21,7 +22,7 @@ class RapportActiviteCreationRule implements RuleInterface
     /**
      * Années univ proposables.
      *
-     * @var \Application\Entity\AnneeUniv[]|null
+     * @var \Application\Entity\AnneeUnivInterface[]|null
      */
     private ?array $anneesUnivs = null;
 
@@ -48,8 +49,7 @@ class RapportActiviteCreationRule implements RuleInterface
     private bool $executed = false;
 
     /**
-     * @param \Application\Entity\AnneeUniv[] $anneesUnivs
-     * @return self
+     * @param \Application\Entity\AnneeUnivInterface[] $anneesUnivs
      */
     public function setAnneesUnivs(array $anneesUnivs): self
     {
@@ -128,7 +128,7 @@ class RapportActiviteCreationRule implements RuleInterface
 
         // Détermination des années universitaires disponibles
         $anneesPrises = $this->getAnneesPrises();
-        $anneesUnivsDisponibles = array_filter($this->anneesUnivs, function(AnneeUniv $annee) use ($anneesPrises) {
+        $anneesUnivsDisponibles = array_filter($this->anneesUnivs, function(AnneeUnivInterface $annee) use ($anneesPrises) {
             $utilisee = in_array($annee->getPremiereAnnee(), $anneesPrises);
             return !$utilisee;
         });
@@ -213,7 +213,7 @@ class RapportActiviteCreationRule implements RuleInterface
         );
     }
 
-    private function canCreateRapportAnnuelForAnneeUniv(AnneeUniv $anneeUniv): bool
+    private function canCreateRapportAnnuelForAnneeUniv(AnneeUnivInterface $anneeUniv): bool
     {
         if ($this->rapportsExistantsAnnuels === null) {
             throw new InvalidArgumentException("La liste des rapports annuels existants n'a pas été fournie");
@@ -229,7 +229,7 @@ class RapportActiviteCreationRule implements RuleInterface
         return empty($rapportsExistants);
     }
 
-    private function canCreateRapportFinContratForAnneeUniv(AnneeUniv $anneeUniv): bool
+    private function canCreateRapportFinContratForAnneeUniv(AnneeUnivInterface $anneeUniv): bool
     {
         if ($this->rapportsExistantsAnnuels === null) {
             throw new InvalidArgumentException("La liste des rapports de fin de contrat existants n'a pas été fournie");
@@ -237,7 +237,7 @@ class RapportActiviteCreationRule implements RuleInterface
 
         // Dépôt d'un rapport de fin de contrat seulement sur la dernière année univ.
 
-        if ($anneeUniv !== $this->getAnneeUnivMax()) {
+        if ($anneeUniv->getPremiereAnnee() !== $this->getAnneeUnivMax()->getPremiereAnnee()) {
             return false;
         }
 
@@ -249,12 +249,10 @@ class RapportActiviteCreationRule implements RuleInterface
         return empty($rapportsExistants);
     }
 
-    /**
-     * @return AnneeUniv
-     */
-    private function getAnneeUnivMax(): AnneeUniv
+    private function getAnneeUnivMax(): AnneeUnivInterface
     {
-        $annees = array_map(function(AnneeUniv $anneeUniv) {
+        /** @var int[] $annees */
+        $annees = array_map(function(AnneeUnivInterface $anneeUniv) {
             return $anneeUniv->getPremiereAnnee();
         }, $this->anneesUnivs);
 

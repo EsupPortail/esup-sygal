@@ -2,12 +2,13 @@
 
 namespace These\Entity\Db;
 
+use Application\Entity\AnneeUnivInterface;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 
 /**
  * TheseAnneeUniv
  */
-class TheseAnneeUniv implements HistoriqueAwareInterface
+class TheseAnneeUniv implements HistoriqueAwareInterface, AnneeUnivInterface
 {
     use TheseAnneeUnivTrait;
 
@@ -45,5 +46,10 @@ class TheseAnneeUniv implements HistoriqueAwareInterface
         $this->these = $these;
 
         return $this;
+    }
+
+    public function getPremiereAnnee(): int
+    {
+        return $this->getAnneeUniv();
     }
 }

@@ -12,7 +12,6 @@ use RapportActivite\Rule\Creation\RapportActiviteCreationRule;
 use RapportActivite\Rule\Operation\RapportActiviteOperationRule;
 use RapportActivite\Service\Fichier\RapportActiviteFichierService;
 use RapportActivite\Service\RapportActiviteService;
-use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 
 class RapportActiviteControllerFactory
 {
@@ -53,14 +52,8 @@ class RapportActiviteControllerFactory
         $controller->setFinContratForm($rapportActiviteFinContratForm);
 
         // rules
-        /** @var \These\Service\TheseAnneeUniv\TheseAnneeUnivService $theseAnneeUnivService */
-        $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
         /** @var \RapportActivite\Rule\Creation\RapportActiviteCreationRule $rapportActiviteCreationRule */
         $rapportActiviteCreationRule = $container->get(RapportActiviteCreationRule::class);
-        $rapportActiviteCreationRule->setAnneesUnivs([
-            $theseAnneeUnivService->anneeUnivCourante(),
-            $theseAnneeUnivService->anneeUnivPrecedente(),
-        ]);
         $controller->setRapportActiviteCreationRule($rapportActiviteCreationRule);
 
         /** @var \RapportActivite\Rule\Operation\RapportActiviteOperationRule $rapportActiviteOperationRule */

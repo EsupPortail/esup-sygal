@@ -64,10 +64,7 @@ trait TheseAnneeUnivTrait
         return $this->anneeUniv;
     }
 
-    /**
-     * @return int
-     */
-    public function getAnneeUnivToString()
+    public function getAnneeUnivToString(): string
     {
         return $this->anneeUniv . '/' . ($this->anneeUniv + 1);
     }

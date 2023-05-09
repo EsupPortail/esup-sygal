@@ -1252,9 +1252,9 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * @return ArrayCollection
      */
-    public function getAnneesUnivInscription()
+    public function getAnneesUnivInscription(): ArrayCollection
     {
-        return $this->anneesUnivInscription;
+        return $this->anneesUnivInscription->filter(fn(TheseAnneeUniv $tau) => $tau->estNonHistorise());
     }
 
     /**
@@ -1293,7 +1293,7 @@ class These implements HistoriqueAwareInterface, ResourceInterface
         $inscriptions = array_filter(
             $this->getAnneesUnivInscription()->toArray(),
             function (TheseAnneeUniv $a) use ($anneeMax) {
-                return ($a->estNonHistorise() AND $a->getAnneeUniv() <= $anneeMax);
+                return $a->getAnneeUniv() <= $anneeMax;
             }
         );
         return count($inscriptions);
@@ -1546,8 +1546,6 @@ class These implements HistoriqueAwareInterface, ResourceInterface
 
     public function getNbInscription() : int
     {
-        $inscriptions = $this->getAnneesUnivInscription()->toArray();
-        $inscriptions = array_filter($inscriptions, function (TheseAnneeUniv $a) { return $a->estNonHistorise();});
-        return count($inscriptions);
+        return $this->getAnneesUnivInscription()->count();
     }
 }

@@ -25,6 +25,7 @@ use RapportActivite\Service\Fichier\RapportActiviteFichierServiceAwareTrait;
 use RapportActivite\Service\RapportActiviteServiceAwareTrait;
 use SplObjectStorage;
 use These\Entity\Db\These;
+use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
 use UnicaenApp\Exception\RuntimeException;
 
 class RapportActiviteController extends AbstractController
@@ -36,6 +37,7 @@ class RapportActiviteController extends AbstractController
     use RapportActiviteCreationRuleAwareTrait;
     use RapportActiviteOperationRuleAwareTrait;
     use ValidationServiceAwareTrait;
+    use TheseAnneeUnivServiceAwareTrait;
 
     private RapportActiviteAnnuelForm $annuelForm;
     private RapportActiviteFinContratForm $finContratForm;
@@ -294,6 +296,8 @@ class RapportActiviteController extends AbstractController
     private function initForm(RapportActiviteAbstractForm $form, RapportActivite $rapportActivite)
     {
         if ($rapportActivite->getId() === null) {
+            $anneesUnivs = $rapportActivite->getThese()->getAnneesUnivInscription();
+            $this->rapportActiviteCreationRule->setAnneesUnivs($anneesUnivs->toArray());
             $anneesUnivsPossibles = $this->rapportActiviteCreationRule
                 ->setRapportsExistants($this->rapportActiviteService->findRapportsForThese($rapportActivite->getThese()))
                 ->getAnneesUnivsDisponibles();

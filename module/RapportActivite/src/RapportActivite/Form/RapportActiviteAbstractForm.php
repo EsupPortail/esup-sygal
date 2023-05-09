@@ -2,7 +2,6 @@
 
 namespace RapportActivite\Form;
 
-use Application\Entity\AnneeUniv;
 use Laminas\Filter\StringTrim;
 use Laminas\Form\Element\Csrf;
 use Laminas\Form\Element\Hidden;
@@ -17,7 +16,6 @@ use RapportActivite\Fieldset\ActionDiffusionCultureScientifiqueFieldset;
 use RapportActivite\Fieldset\AutreActiviteFieldset;
 use RapportActivite\Fieldset\FormationFieldset;
 use SplObjectStorage;
-use These\Entity\Db\TheseAnneeUniv;
 use UnicaenApp\Form\Element\Collection;
 
 /**
@@ -51,20 +49,13 @@ abstract class RapportActiviteAbstractForm extends Form implements InputFilterPr
     {
         $valuesOptions = [];
 
+        /** @var \Application\Entity\AnneeUnivInterface $anneeUniv */
         while ($anneeUniv = $this->anneesUnivs->current()) {
             $infos = $this->anneesUnivs->getInfo();
-
-            if ($anneeUniv instanceof TheseAnneeUniv) {
-                $data = [
-                    'value' => $anneeUniv->getAnneeUniv(),
-                    'label' => $anneeUniv->getAnneeUnivToString()
-                ];
-            } elseif ($anneeUniv instanceof AnneeUniv) {
-                $data = [
-                    'value' => $anneeUniv->getPremiereAnnee(),
-                    'label' => (string)$anneeUniv
-                ];
-            }
+            $data = [
+                'value' => $anneeUniv->getPremiereAnnee(),
+                'label' => $anneeUniv->getAnneeUnivToString()
+            ];
             $data['attributes'] = $infos;
             $valuesOptions[] = $data;
 
