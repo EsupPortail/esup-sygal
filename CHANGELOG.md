@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+6.0.3
+-----
+- [FIX] Signature de méthode setObject() modifiée en PHP8 dans Doctrine\Laminas\Hydrator\Strategy\AbstractCollectionStrategy.
+
 6.0.2
 -----
 - [SQL] Amélioration des libellés des 2 paramètres du module Rapport d'activité.
