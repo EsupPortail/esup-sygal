@@ -59,7 +59,7 @@ $this->headTitle($titrePage);
             </td>
             <?php foreach ($seances as $seance) : ?>
                 <td class="reponse <?php if ($canPresenceModifier) echo "toggle"; ?>" id="<?php echo $seance->getId(); ?>_<?php echo $inscription->getId(); ?>">
-                    <?php if ($presences[$seance->getId()][$inscription->getId()] && $presences[$seance->getId()][$inscription->getId()]->isPresent()) : ?>
+                    <?php if (isset($presences[$seance->getId()][$inscription->getId()]) && $presences[$seance->getId()][$inscription->getId()]->isPresent()) : ?>
                         <span class="icon icon-yes" style="color:darkgreen;" title="Présent"></span>
                     <?php else : ?>
                         <span class="icon icon-no" style="color:darkred;" title="Non présent"></span>
