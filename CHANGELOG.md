@@ -4,6 +4,7 @@ Journal des modifications
 6.0.3
 -----
 - [FIX] Signature de méthode setObject() modifiée en PHP8 dans Doctrine\Laminas\Hydrator\Strategy\AbstractCollectionStrategy.
+- Mise en place d'une zone de dépot du pv de soutrenance sur la page de présoutenance
 
 6.0.2
 -----

@@ -11,7 +11,6 @@ use Soutenance\Form\Justificatif\JustificatifForm;
 use Soutenance\Form\Justificatif\JustificatifFormFactory;
 use Soutenance\Form\Justificatif\JustificatifHydratorFactory;
 use Soutenance\Provider\Privilege\JustificatifPrivileges;
-use Soutenance\Provider\Privilege\PresoutenancePrivileges;
 use Soutenance\Provider\Privilege\PropositionPrivileges;
 use Soutenance\Service\Justificatif\JustificatifService;
 use Soutenance\Service\Justificatif\JustificatifServiceFactory;
@@ -74,6 +73,7 @@ return [
                     'action' => [
                         'ajouter-autorisation-soutenance',
                         'ajouter-rapport-soutenance',
+                        'ajouter-proces-verbal-soutenance',
                     ],
                     'privileges' => PropositionPrivileges::PROPOSITION_MODIFIER_GESTION,
                 ],
@@ -142,6 +142,17 @@ return [
                                         /** @see JustificatifController::ajouterRapportSoutenanceAction() */
                                         'controller' => JustificatifController::class,
                                         'action' => 'ajouter-rapport-soutenance',
+                                    ],
+                                ],
+                            ],
+                            'ajouter-proces-verbal-soutenance' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route' => '/ajouter-proces-verbal-soutenance',
+                                    'defaults' => [
+                                        /** @see JustificatifController::ajouterProcesVerbalAction() */
+                                        'controller' => JustificatifController::class,
+                                        'action' => 'ajouter-proces-verbal-soutenance',
                                     ],
                                 ],
                             ],

@@ -14,6 +14,7 @@
  * @var UrlFichierThese $urlFichierThese
  *
  * @var Justificatif $autorisation
+ * @var Justificatif $pv
  * @var Justificatif $rapport
  */
 
@@ -471,7 +472,7 @@ $canSimulerRemonter = $this->isAllowed(PresoutenancePrivileges::getResourceId(Pr
     <!-- DOCUMENT ----------------------------------------------------------------------------------------------------->
     <?php echo $this->partial('soutenance/presoutenance/partial/documents',
         [
-            'these' => $these, 'autorisation' => $autorisation, 'rapport' => $rapport,
+            'these' => $these, 'autorisation' => $autorisation, 'rapport' => $rapport, 'pv' => $pv,
             'urlFichierThese' => $urlFichierThese
 
         ]

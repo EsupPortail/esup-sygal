@@ -4,6 +4,7 @@
  * @var These $these
  * @var Justificatif $autorisation
  * @var Justificatif $rapport
+ * @var Justificatif $pv
  * @var UrlFichierThese $urlFichierThese
  */
 
@@ -26,6 +27,7 @@ $canAjouterRapport              = $this->isAllowed($these, PropositionPrivileges
         <p class="lead">
         Dépôt des fichiers liés à la soutenance : autorisation de soutenance, rapport de soutenance
         </p>
+        <!--todo JP: section qui se repete completeement par manque de temps (faire aide de vue ou partial ) -->
 
         <div class="row">
             <h3>Autorisation de soutenance</h3>
@@ -94,6 +96,50 @@ $canAjouterRapport              = $this->isAllowed($these, PropositionPrivileges
                             <?php if ($canAjouterRapport) : ?>
                                 <a href="<?php echo $this->url('soutenance/justificatif/retirer',
                                     ['justificatif' => $rapport->getId(), 'these' => $these->getId()],
+                                    ["query" => [
+                                        "retour" => $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)
+                                    ]
+                                    ],
+                                    true); ?>">
+                                    <span class="text-danger">
+                                        <span class="icon icon-unchecked"></span>
+                                        Supprimer
+                                    </span>
+                                </a>
+                            <?php endif; ?>
+                        </li>
+                    </ul>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <br/>
+
+        <div class="row">
+            <h3>Procès-verbal de soutenance</h3>
+
+            <div class="col-md-4">
+                <?php if ($pv === null AND $canAjouterAutorisation) : ?>
+                    <?php /** @see \Soutenance\Controller\JustificatifController::ajouterProcesVerbalSoutenanceAction() */ ?>
+                    <a href="<?php echo $this->url('soutenance/justificatif/ajouter-proces-verbal-soutenance', ['these' => $these->getId()], [], true); ?>"
+                       class="btn btn-primary ajax-modal" data-event="modification">
+                        Téléverser le procès-verbal de soutenance
+                    </a>
+                <?php endif; ?>
+            </div>
+            <div class="col-md-8">
+                <?php if ($pv === null) : ?>
+                    <div class="card-header bg-warning">
+                        <span class="icon icon-attention"></span>
+                        Aucun procès-verbal de soutenance déposé.
+                    </div>
+                <?php else : ?>
+                    <ul>
+                        <li>
+                            <?php echo $this->justificatif()->render($pv, $urlFichierThese); ?>
+                            <?php if ($canAjouterAutorisation) : ?>
+                                <a href="<?php echo $this->url('soutenance/justificatif/retirer',
+                                    ['justificatif' => $pv->getId(), 'these' => $these->getId()],
                                     ["query" => [
                                         "retour" => $this->url('soutenance/presoutenance', ['these' => $these->getId()], [], true)
                                     ]

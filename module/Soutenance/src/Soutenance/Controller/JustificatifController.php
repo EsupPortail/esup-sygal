@@ -204,4 +204,44 @@ class JustificatifController extends AbstractController {
         $vm->setTemplate('soutenance/justificatif/ajouter');
         return $vm;
     }
+
+    public function ajouterProcesVerbalSoutenanceAction() : ViewModel
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findOneForThese($these);
+
+        $fichier = new Fichier();
+        $nature = $this->fichierTheseService->fetchNatureFichier(NatureFichier::CODE_PV_SOUTENANCE);
+        $fichier->setNature($nature);
+
+        $justificatif = new Justificatif();
+        $justificatif->setProposition($proposition);
+        $form = $this->getJustificatifForm();
+        $form->setAttribute('action', $this->url()->fromRoute('soutenance/justificatif/ajouter-proces-verbal-soutenance', ['these' => $these->getId()], [], true));
+        $form->bind($justificatif);
+        $form->init();
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+//            $data = $request->getPost();
+            $files = ['files' => $request->getFiles()->toArray()];
+
+            if (!empty($files)) {
+                $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+                $fichiers = $this->fichierTheseService->createFichierThesesFromUpload($these, $files, $nature, $version);
+                $justificatif->setFichier($fichiers[0]);
+                $this->getJustificatifService()->create($justificatif);
+            }
+            exit();
+        }
+
+
+        $vm =  new ViewModel([
+            'title' => "Téléversement du procès-verbal de soutenance",
+            'these' => $these,
+            'form' => $form,
+        ]);
+        $vm->setTemplate('soutenance/justificatif/ajouter');
+        return $vm;
+    }
 }
