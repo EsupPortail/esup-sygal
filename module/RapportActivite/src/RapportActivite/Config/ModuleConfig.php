@@ -87,13 +87,11 @@ class ModuleConfig
                 'enabled' => function(RapportActivite $rapportActivite) {
                     return
                         !$rapportActivite->getParDirecteurThese() &&
-                        !$rapportActivite->estFinContrat() &&
                         $rapportActivite->getFichier() === null;
                 },
                 'enabled_as_dql' => function(string $rapportAlias) {
                     return
                         "$rapportAlias.parDirecteurThese = false AND " .
-                        "$rapportAlias.estFinContrat = false AND " .
                         "$rapportAlias.fichier is null";
                 },
                 'extra' => [
@@ -113,13 +111,11 @@ class ModuleConfig
                 ],
                 'enabled' => function(RapportActivite $rapportActivite) {
                     return
-                        !$rapportActivite->estFinContrat() &&
                         $rapportActivite->getFichier() === null &&
                         $rapportActivite->getThese()->getActeursByRoleCode(Role::CODE_CODIRECTEUR_THESE)->count();
                 },
                 'enabled_as_dql' => function(string $rapportAlias) {
                     return
-                        "$rapportAlias.estFinContrat = false AND " .
                         "$rapportAlias.fichier is null AND " .
                         "EXISTS (
                             SELECT a_filter FROM " . Acteur::class . " a_filter 
@@ -139,14 +135,10 @@ class ModuleConfig
                     self::VALIDATION_DOCTORANT => true,
                 ],
                 'enabled' => function(RapportActivite $rapportActivite) {
-                    return
-                        !$rapportActivite->estFinContrat() &&
-                        $rapportActivite->getFichier() === null;
+                    return $rapportActivite->getFichier() === null;
                 },
                 'enabled_as_dql' => function(string $rapportAlias) {
-                    return
-                        "$rapportAlias.estFinContrat = false AND " .
-                        "$rapportAlias.fichier is null";
+                    return "$rapportAlias.fichier is null";
                 },
             ],
             /**
@@ -163,14 +155,10 @@ class ModuleConfig
                                                         // est dématérialisé (cf. 'enabled' de VALIDATION_DOCTORANT).
                 ],
                 'enabled' => function(RapportActivite $rapportActivite) {
-                    return
-                        (!$rapportActivite->estFinContrat() && $rapportActivite->getFichier() === null) ||
-                        $rapportActivite->getFichier() !== null;
+                    return true;
                 },
                 'enabled_as_dql' => function(string $rapportAlias) {
-                    return
-                        "($rapportAlias.estFinContrat = false AND $rapportAlias.fichier is null) OR" .
-                        "$rapportAlias.fichier is not null";
+                    return '';
                 },
                 'extra' => [
                     // Si un avis "rapport incomplet" est émis par la direction d'ED, on supprimera la validation doctorant.
