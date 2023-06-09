@@ -21,9 +21,6 @@ class InscriptionAdministrativeResource extends \SygalApi\V1\Rest\InscriptionAdm
     {
         $this->logger->debug(print_r([__METHOD__, $data], true));
 
-        //var_dump($data);
-//        return new ApiProblem(501, 'Revenez plus tard !');
-
         try {
             $this->importFacade->import($data);
         } catch (Exception $e) {

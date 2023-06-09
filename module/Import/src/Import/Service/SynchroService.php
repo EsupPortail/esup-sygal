@@ -37,6 +37,8 @@ class SynchroService
 
     /**
      * Lance la synchro des données par UnicaenImport pour tous les services inscrits.
+     *
+     * @throws \Doctrine\DBAL\Exception Erreur imprévue en base de données
      */
     public function synchronize()
     {
