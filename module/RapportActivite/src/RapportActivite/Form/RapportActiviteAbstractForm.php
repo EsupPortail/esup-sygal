@@ -241,7 +241,7 @@ abstract class RapportActiviteAbstractForm extends Form implements InputFilterPr
             ],
         ]);
 
-        $this->add(new Csrf('security'));
+        $this->add(new Csrf('security'), ['csrf_options' => ['timeout' => 600]]);
 
         $this->add([
             'type' => Submit::class,
