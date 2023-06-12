@@ -53,6 +53,11 @@ abstract class SearchFilter implements SearchFilterInterface
     protected ?string $whereField = null;
 
     /**
+     * Indique si ce filtre doit impacter le query builder ou non.
+     */
+    protected bool $applyToQueryBuilder = true;
+
+    /**
      * Constructor.
      *
      * @param string $label

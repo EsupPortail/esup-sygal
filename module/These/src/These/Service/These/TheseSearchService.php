@@ -9,6 +9,7 @@ use Application\Search\DomaineScientifique\DomaineScientifiqueSearchFilterAwareT
 use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Search\Filter\TextCriteriaSearchFilter;
+use Application\Search\Financement\AnneeFinancementSearchFilterAwareTrait;
 use Application\Search\Financement\OrigineFinancementSearchFilterAwareTrait;
 use Application\Search\SearchService;
 use Application\Search\Sorter\SearchSorter;
@@ -44,6 +45,7 @@ class TheseSearchService extends SearchService
 {
     use EtablissementInscSearchFilterAwareTrait;
     use OrigineFinancementSearchFilterAwareTrait;
+    use AnneeFinancementSearchFilterAwareTrait;
     use UniteRechercheSearchFilterAwareTrait;
     use EcoleDoctoraleSearchFilterAwareTrait;
     use EtatTheseSearchFilterAwareTrait;
@@ -64,6 +66,7 @@ class TheseSearchService extends SearchService
     const NAME_anneeCivile1ereInscription = 'anneePremiereInscription';
     const NAME_anneeUniv1ereInscription = 'anneeUniv1ereInscription';
     const NAME_anneeUnivInscription = 'anneeUnivInscription';
+    const NAME_anneeUnivFinancement = 'anneeUnivFinancement';
     const NAME_anneeSoutenance = 'anneeSoutenance';
     const NAME_domaineScientifique = 'domaineScientifique';
 
@@ -143,7 +146,12 @@ class TheseSearchService extends SearchService
                     ->andWhere($qb->expr()->orX('ur.sourceCode = :sourceCodeUR', 'ur_substituant.sourceCode = :sourceCodeUR'))
                     ->setParameter('sourceCodeUR', $filter->getValue());
             });
+        $anneeFinancementFilter = $this->getAnneeFinancementSearchFilter()
+            ->setDataProvider(function(SelectSearchFilter $filter) {
+                return $this->fetchAnneesUnivInscription($filter);
+            });
         $origineFinancementFilter = $this->getOrigineFinancementSearchFilter()
+            ->setAnneeFinancementSearchFilter($anneeFinancementFilter) // <<<< NB !!
             ->setDataProvider(function(SelectSearchFilter $filter) {
                 return $this->fetchOriginesFinancements($filter);
             });
@@ -184,6 +192,7 @@ class TheseSearchService extends SearchService
             $ecoleDoctoraleFilter,
             $uniteRechercheFilter,
             $origineFinancementFilter->setAllowsNoneOption(),
+            $anneeFinancementFilter,
             $anneeCivile1ereInscriptionFilter,
             $anneeUniv1ereInscriptionFilter,
             $anneeUnivInscriptionFilter,

@@ -4,14 +4,8 @@ namespace Application\Search\Financement;
 
 trait OrigineFinancementSearchFilterAwareTrait
 {
-    /**
-     * @var OrigineFinancementSearchFilter
-     */
-    protected $origineFinancementSearchFilter;
+    protected ?OrigineFinancementSearchFilter $origineFinancementSearchFilter = null;
 
-    /**
-     * @return OrigineFinancementSearchFilter
-     */
     public function getOrigineFinancementSearchFilter(): OrigineFinancementSearchFilter
     {
         if ($this->origineFinancementSearchFilter === null) {
@@ -20,10 +14,7 @@ trait OrigineFinancementSearchFilterAwareTrait
         return $this->origineFinancementSearchFilter;
     }
 
-    /**
-     * @param OrigineFinancementSearchFilter $origineFinancementSearchFilter
-     */
-    public function setOrigineFinancementSearchFilter(OrigineFinancementSearchFilter $origineFinancementSearchFilter)
+    public function setOrigineFinancementSearchFilter(OrigineFinancementSearchFilter $origineFinancementSearchFilter): void
     {
         $this->origineFinancementSearchFilter = $origineFinancementSearchFilter;
     }
