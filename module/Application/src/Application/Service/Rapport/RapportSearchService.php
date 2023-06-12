@@ -5,6 +5,7 @@ namespace Application\Service\Rapport;
 use Application\Entity\Db\Interfaces\TypeRapportAwareTrait;
 use Application\Entity\Db\Interfaces\TypeValidationAwareTrait;
 use Application\Filter\AnneeUnivFormatter;
+use Application\QueryBuilder\DefaultQueryBuilder;
 use Application\Search\Filter\SearchFilter;
 use Application\Search\Filter\SelectSearchFilter;
 use Application\Search\Filter\TextSearchFilter;
@@ -80,7 +81,11 @@ class RapportSearchService extends SearchService
     public function init()
     {
         $etablissementInscrFilter = $this->getEtablissementTheseSearchFilter()
-            ->setWhereField('etab.sourceCode')
+            ->setQueryBuilderApplier(function (SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
+                $qb
+                    ->andWhere('etab.sourceCode = :sourceCodeEtab OR etab_structureSubstituante.sourceCode = :sourceCodeEtab')
+                    ->setParameter('sourceCodeEtab', $filter->getValue());
+            })
             ->setDataProvider(function() {
                 return $this->fetchEtablissements();
             });
@@ -89,12 +94,20 @@ class RapportSearchService extends SearchService
                 return $this->fetchOriginesFinancements();
             });
         $uniteRechercheFilter = $this->getUniteRechercheSearchFilter()
-            ->setWhereField('ur.sourceCode')
+            ->setQueryBuilderApplier(function (SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
+                $qb
+                    ->andWhere('ur.sourceCode = :sourceCodeUR OR ur_structureSubstituante.sourceCode = :sourceCodeUR')
+                    ->setParameter('sourceCodeUR', $filter->getValue());
+            })
             ->setDataProvider(function() {
                 return $this->fetchUnitesRecherches();
             });
         $ecoleDoctoraleFilter = $this->getEcoleDoctoraleSearchFilter()
-            ->setWhereField('ed.sourceCode')
+            ->setQueryBuilderApplier(function (SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
+                $qb
+                    ->andWhere('ed.sourceCode = :sourceCodeED OR ed_structureSubstituante.sourceCode = :sourceCodeED')
+                    ->setParameter('sourceCodeED', $filter->getValue());
+            })
             ->setDataProvider(function() {
                 return $this->fetchEcolesDoctorales();
             });
@@ -298,6 +311,14 @@ class RapportSearchService extends SearchService
             ->leftJoin("these.ecoleDoctorale", 'ed')
             ->leftJoin("these.uniteRecherche", 'ur')
             ->andWhereNotHistorise();
+
+        $qb
+            ->leftJoin('etab.structure', 'etab_structure')->addSelect('etab_structure')
+            ->leftJoin('ed.structure', 'ed_structure')->addSelect('ed_structure')
+            ->leftJoin('ur.structure', 'ur_structure')->addSelect('ur_structure')
+            ->leftJoinStructureSubstituante('etab_structure', 'etab_structureSubstituante')
+            ->leftJoinStructureSubstituante('ed_structure', 'ed_structureSubstituante')
+            ->leftJoinStructureSubstituante('ur_structure', 'ur_structureSubstituante');
 
         if ($this->typeRapport !== null) {
             $qb->andWhere('tr = :type')->setParameter('type', $this->typeRapport);

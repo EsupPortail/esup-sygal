@@ -5,6 +5,7 @@ Journal des modifications
 -----
 - [FIX] Signature de méthode setObject() modifiée en PHP8 dans Doctrine\Laminas\Hydrator\Strategy\AbstractCollectionStrategy.
 - [FIX] Page de couverture : utilisation de mb_strtoupper pour mettre les noms en majuscules même si elles sont accentuées.
+- [FIX] Rapports CSI : les filtres de recherche Etablissement, ED et UR ne tenaient pas compte des substitutions de structures.
 - Mise en place d'une zone de dépot du pv de soutrenance sur la page de présoutenance
 - Rapport d'activité : implémentation pour les rapports de fin de contrat du même circuit de validation/avis que les annuels.
 - Affichage du nom complet d'un individu : choc de simplification en supprimant 2 options d'affichage dans le formatteur.
