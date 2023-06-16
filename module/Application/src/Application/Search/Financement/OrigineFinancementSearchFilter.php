@@ -9,32 +9,27 @@ class OrigineFinancementSearchFilter extends SelectSearchFilter
 {
     const NAME = 'financement';
 
-    /**
-     * @inheritDoc
-     */
-    protected function __construct(string $label, string $name, array $attributes = [], $defaultValue = null)
-    {
-        parent::__construct($label, $name, $attributes, $defaultValue);
-    }
+    private ?AnneeFinancementSearchFilter $anneeFinancementSearchFilter = null;
 
     /**
-     * @return self
+     * Spécifie le filtre "année de financement" dont on doit utiliser la valeur.
      */
+    public function setAnneeFinancementSearchFilter(?AnneeFinancementSearchFilter $anneeFinancementSearchFilter): self
+    {
+        $this->anneeFinancementSearchFilter = $anneeFinancementSearchFilter;
+        return $this;
+    }
+
     static public function newInstance(): self
     {
-        $instance = new self(
+        return new self(
             "Orig. financ.",
             self::NAME,
             ['liveSearch' => true]
         );
-
-        return $instance;
     }
 
-    /**
-     * @param QueryBuilder $qb
-     */
-    public function applyToQueryBuilder(QueryBuilder $qb)
+    public function applyToQueryBuilder(QueryBuilder $qb): void
     {
         $alias = 'these'; // todo: rendre paramétrable
 
@@ -43,6 +38,7 @@ class OrigineFinancementSearchFilter extends SelectSearchFilter
         $qb
             ->leftJoin("$alias.financements", 'fin')
             ->leftJoin('fin.origineFinancement', 'orig')
+            ->andWhere("fin.histoDestruction is null")
         ;
         if ($filterValue === 'NULL') {
             $qb
@@ -51,6 +47,19 @@ class OrigineFinancementSearchFilter extends SelectSearchFilter
             $qb
                 ->andWhere('orig.code = :origine')
                 ->setParameter('origine', $filterValue);
+        }
+
+        //
+        // Prise en compte du filtre "annee de financement" éventuel.
+        //
+        if ($this->anneeFinancementSearchFilter !== null) {
+            if ($this->anneeFinancementSearchFilter->canApplyToQueryBuilder()) {
+                $qb
+                    ->andWhere('fin.annee = :anneeFinanc')
+                    ->setParameter('anneeFinanc', $this->anneeFinancementSearchFilter->getValue());
+                // le filtre devient redondant
+                $this->anneeFinancementSearchFilter->setValue(null);
+            }
         }
     }
 }
