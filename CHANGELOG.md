@@ -9,6 +9,7 @@ Journal des modifications
 - Rapport d'activité : implémentation pour les rapports de fin de contrat du même circuit de validation/avis que les annuels.
 - Affichage du nom complet d'un individu : choc de simplification en supprimant 2 options d'affichage dans le formatteur.
 - Rapport activité : augmentation à 10 min du timeout CSRF dans le formulaire de création/modification.
+- Possibilité de déclarer des missions d'enseignement
 
 6.0.2
 -----

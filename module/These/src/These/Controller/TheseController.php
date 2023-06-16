@@ -9,6 +9,7 @@ use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Depot\Entity\Db\WfEtape;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
+use Doctorant\Service\MissionEnseignement\MissionEnseignementServiceAwareTrait;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
@@ -20,6 +21,7 @@ class TheseController extends AbstractController
     use ValidationServiceAwareTrait;
     use DepotValidationServiceAwareTrait;
     use MailConfirmationServiceAwareTrait;
+    use MissionEnseignementServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
     use UserContextServiceAwareTrait;
     use UtilisateurServiceAwareTrait;
@@ -70,6 +72,7 @@ class TheseController extends AbstractController
             'rattachements' => $rattachements,
             'validationsDesCorrectionsEnAttente' => $validationsDesCorrectionsEnAttente,
             'utilisateurs' => $utilisateurs,
+            'missions' => $this->getMissionEnseignementService()->getRepository()->findByDoctorant($these->getDoctorant()),
         ]);
         $view->setTemplate('these/these/identite');
 
