@@ -56,9 +56,9 @@
   "inscription": {
     "ecoleDoctorale": "{{ inscription_ecoleDoctorale }}",
     "noCandidat": "1234",
-    "origine": "ecandidat",
+    "origine": "ECANDIDAT",
     "formation": "ut Excepteur",
-    "statutInscription": "valide",
+    "statutInscription": "VALIDE",
     "regimeInscription": {
       "code": "1234",
       "libelle": "sdfsfjmsdqfjmjklh"

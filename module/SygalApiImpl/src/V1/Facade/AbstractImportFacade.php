@@ -67,7 +67,8 @@ abstract class AbstractImportFacade
     protected function beginTransaction(): void
     {
         try {
-            $this->destinationConnection->setNestTransactionsWithSavepoints(true); // transactions imbriquées
+            // Cf. https://www.doctrine-project.org/projects/doctrine-dbal/en/current/reference/transactions.html
+            $this->destinationConnection->setNestTransactionsWithSavepoints(true);
             $this->destinationConnection->beginTransaction();
         } catch (\Doctrine\DBAL\Exception $e) {
             throw new RuntimeException("Echec de l'ouverture d'une transaction en bdd", null, $e);

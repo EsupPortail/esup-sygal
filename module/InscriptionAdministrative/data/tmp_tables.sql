@@ -29,6 +29,7 @@ FROM tmp_doctorant tmp
          JOIN individu i ON i.source_code::text = tmp.individu_id::text;
 
 
+--drop view src_inscription_administrative cascade;
 --drop table if exists tmp_inscription_administrative;
 create table tmp_inscription_administrative
 (
@@ -39,22 +40,21 @@ create table tmp_inscription_administrative
     source_code varchar(128) not null, -- Id Pegase inscription (merge request en cours)
 
     doctorant_id varchar(64) not null,
-    ecole_doct_id varchar(32),
+    ecole_doct_id varchar(32) not null,
 
-    no_candidat varchar(32),
-    date_inscription date,
+    date_inscription date not null,
     date_annulation date,
-    cesure varchar(32),
-    chemin varchar(128),
-    --code_structure_etablissement_du_chemin varchar(32),
+    principale bool not null,
+    statut_inscription varchar(32) not null,
+    chemin varchar(128) not null,
+    code_structure_etablissement_du_chemin varchar(64) not null,
     formation varchar(64),
+    cesure varchar(32),
     mobilite varchar(32),
     origine varchar(32),
-    --periode varchar(32), => cf. table dédiée
-    principale bool,
     --regime_inscription_code varchar(32), -- utile ?
     regime_inscription_libelle varchar(64),
-    statut_inscription varchar(32),
+    no_candidat varchar(32),
 
     periode_code varchar(32) not null,
     periode_libelle varchar(32) not null,
@@ -86,24 +86,30 @@ create table inscription_administrative
     id bigserial constraint inscription_administrative_pkey primary key,
     source_id bigint not null constraint inscription_administrative_source_fk references source,
     source_code varchar(128) not null,
+
     doctorant_id bigint not null constraint inscription_administrative_doctorant_fk references doctorant,
-    ecole_doct_id bigint constraint inscription_administrative_ecole_doct_fk references ecole_doct,
-    no_candidat varchar(32),
-    date_inscription date,
+    ecole_doct_id bigint not null constraint inscription_administrative_ecole_doct_fk references ecole_doct,
+
+    date_inscription date not null,
     date_annulation date,
-    cesure varchar(32),
-    chemin varchar(128),
+    principale boolean not null,
+    statut_inscription varchar(32) not null,
+    chemin varchar(128) not null,
+    code_structure_etablissement_du_chemin varchar(64) not null,
     formation varchar(64),
+    cesure varchar(32),
     mobilite varchar(32),
     origine varchar(32),
-    principale boolean,
+    --regime_inscription_code varchar(32), -- utile ?
     regime_inscription_libelle varchar(64),
-    statut_inscription varchar(32),
+    no_candidat varchar(32),
+
     periode_code varchar(32) not null,
     periode_libelle varchar(32) not null,
     periode_date_debut date not null,
     periode_date_fin date,
     periode_annee_universitaire smallint,
+
     histo_creation timestamp(0) default ('now'::text)::timestamp(0) without time zone not null,
     histo_createur_id bigint not null,
     histo_modification timestamp(0) without time zone,

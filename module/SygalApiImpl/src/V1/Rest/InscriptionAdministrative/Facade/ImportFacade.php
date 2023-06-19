@@ -16,6 +16,7 @@ use UnicaenDbImport\Connection\ApiConnection;
 use UnicaenDbImport\Domain\Destination;
 use UnicaenDbImport\Domain\Import;
 use UnicaenDbImport\Domain\Operation;
+use UnicaenDbImport\Domain\Result;
 use UnicaenDbImport\Domain\Source;
 use UnicaenDbImport\Domain\Synchro;
 
@@ -32,7 +33,10 @@ class ImportFacade extends AbstractImportFacade
         $this->inscriptionExtractor = new InscriptionExtractor();
     }
 
-    public function import(stdClass $data)
+    /**
+     * @throws \SygalApiImpl\V1\Exception\ErrorDuringImportException
+     */
+    public function import(stdClass $data): void
     {
         $this->beginTransaction();
         try {
@@ -56,73 +60,65 @@ class ImportFacade extends AbstractImportFacade
      * @throws \SygalApiImpl\V1\Exception\ErrorDuringImportException Erreur durant l'import mais commit possible
      * @throws \Exception Erreur grave imprévue
      */
-    private function importIndividu(stdClass $data)
+    private function importIndividu(stdClass $data): void
     {
         $preparedData = $this->individuExtractor->extract($data);
         $import = $this->createImportIndividu($preparedData);
         $result = $this->runImport($import);
-        if ($e = $result->getFailureException()) {
-            throw new ErrorDuringImportException(
-                "Une erreur est survenue lors de l'import de l'individu : " . $e->getMessage(), null, $e
-            );
-        }
+        $this->handleResult($result, "l'import de l'individu");
 
         $sourceId = $preparedData['source_id'];
         $synchro = $this->createSynchroIndividu($sourceId);
         $result = $this->runSynchro($synchro);
-        if ($e = $result->getFailureException()) {
-            throw new ErrorDuringImportException(
-                "Une erreur est survenue lors de la synchro de l'individu : " . $e->getMessage(), null, $e
-            );
-        }
+        $this->handleResult($result, "la synchro de l'individu");
     }
 
     /**
      * @throws \SygalApiImpl\V1\Exception\ErrorDuringImportException Erreur durant l'import mais commit possible
      * @throws \Exception Erreur grave imprévue
      */
-    private function importDoctorant(stdClass $data)
+    private function importDoctorant(stdClass $data): void
     {
         $preparedData = $this->doctorantExtractor->extract($data);
         $import = $this->createImportDoctorant($preparedData);
         $result = $this->runImport($import);
-        if ($e = $result->getFailureException()) {
-            throw new ErrorDuringImportException(
-                "Une erreur est survenue lors de l'import du doctorant : " . $e->getMessage(), null, $e
-            );
-        }
+        $this->handleResult($result, "l'import du doctorant");
 
         $sourceId = $preparedData['source_id'];
         $synchro = $this->createSynchroDoctorant($sourceId);
         $result = $this->runSynchro($synchro);
-        if ($e = $result->getFailureException()) {
-            throw new ErrorDuringImportException(
-                "Une erreur est survenue lors de la synchro du doctorant : " . $e->getMessage(), null, $e
-            );
-        }
+        $this->handleResult($result, "la synchro du doctorant");
     }
 
     /**
      * @throws \SygalApiImpl\V1\Exception\ErrorDuringImportException Erreur durant l'import mais commit possible
      * @throws \Exception Erreur grave imprévue
      */
-    private function importInscription(stdClass $data)
+    private function importInscription(stdClass $data): void
     {
         $preparedData = $this->inscriptionExtractor->extract($data);
         $import = $this->createImportInscription($preparedData);
         $result = $this->runImport($import);
-        if ($e = $result->getFailureException()) {
-            throw new ErrorDuringImportException(
-                "Une erreur est survenue lors de l'import de l'inscription : " . $e->getMessage(), null, $e
-            );
-        }
+        $this->handleResult($result, "l'import de l'inscription");
 
         $sourceId = $preparedData['source_id'];
         $synchro = $this->createSynchroInscription($sourceId);
         $result = $this->runSynchro($synchro);
+        $this->handleResult($result, "la synchro de l'inscription");
+    }
+
+    /**
+     * @throws \SygalApiImpl\V1\Exception\ErrorDuringImportException
+     */
+    private function handleResult(Result $result, string $intituleAction): void
+    {
         if ($e = $result->getFailureException()) {
             throw new ErrorDuringImportException(
-                "Une erreur est survenue lors de la synchro de l'inscription : " . $e->getMessage(), null, $e
+                "Une erreur est survenue lors de $intituleAction : " . $e->getMessage(), null, $e
+            );
+        } elseif ($result->hasExceptionInResults()) {
+            throw new ErrorDuringImportException(
+                "Une ou plusieurs opérations ont échoué lors de $intituleAction : " . $result->toString()
             );
         }
     }

@@ -8,7 +8,7 @@ return [
         'synchros' => [
             [
                 'name' => 'inscription-administrative',
-                'order' => -10,
+                'order' => 150,
                 'source' => [
                     'name' => 'sygal',
                     'code' => 'app',
@@ -73,26 +73,26 @@ return [
              *          join source src on src.id = tmp.source_id
              *       ;
              */
-            [
-                'name' => 'doctorant_source_code',
-                'order' => 0,
-                'source' => [
-                    'name' => 'application',
-                    'code' => 'app',
-                    'table' => 'src_doctorant_source_code',
-                    'connection' => 'default',
-                    'source_code_column' => 'id',
-                ],
-                'destination' => [
-                    'name' => 'application',
-                    'table' => 'doctorant',
-                    'connection' => 'default',
-                    'source_code_column' => 'id',
-                ],
-                'operations' => [
-                    Operation::OPERATION_UPDATE, // seule opération
-                ],
-            ],
+//            [
+//                'name' => 'doctorant_source_code',
+//                'order' => 0,
+//                'source' => [
+//                    'name' => 'application',
+//                    'code' => 'app',
+//                    'table' => 'src_doctorant_source_code',
+//                    'connection' => 'default',
+//                    'source_code_column' => 'id',
+//                ],
+//                'destination' => [
+//                    'name' => 'application',
+//                    'table' => 'doctorant',
+//                    'connection' => 'default',
+//                    'source_code_column' => 'id',
+//                ],
+//                'operations' => [
+//                    Operation::OPERATION_UPDATE, // seule opération
+//                ],
+//            ],
         ],
     ],
     'service_manager' => [
