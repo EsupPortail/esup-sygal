@@ -93,7 +93,8 @@
             "mkdir -p public/unicaen && cp -r vendor/unicaen/app/public/unicaen public/",
             "mkdir -p public/unicaen && cp -r vendor/unicaen/db-import/public/unicaen public/",
             "mkdir -p public/unicaen && cp -r vendor/unicaen/idref/public/unicaen public/",
-            "mkdir -p vendor/mpdf/mpdf/ttfontdata && chmod -R 777 vendor/mpdf/mpdf/ttfontdata"
+            "mkdir -p vendor/mpdf/mpdf/ttfontdata && chmod -R 777 vendor/mpdf/mpdf/ttfontdata",
+            "rm -rf data/cache/*"
         ]
     },
     "config": {
