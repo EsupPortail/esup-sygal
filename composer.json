@@ -41,8 +41,6 @@
         "twig/twig": "^3.0",
         "webmozart/assert": "^1.3",
 
-        "unicaen/pdf": "5.0.1",
-
         "unicaen/alerte": "^2.0",
         "unicaen/app": "^6.0",
         "unicaen/auth": "^6.0",
@@ -56,7 +54,7 @@
         "unicaen/livelog": "^2.0",
         "unicaen/parametre": "^6.0",
         "unicaen/renderer": "^6.0",
-        "unicaen/pdf": "dev-bg-php8"
+        "unicaen/pdf": "^6.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

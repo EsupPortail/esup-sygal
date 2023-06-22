@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e7839c85397ebd11b0be69c3b95da2da",
+    "content-hash": "81cf6e7d2bf5967a284a62dea6f14247",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -9112,17 +9112,18 @@
         },
         {
             "name": "unicaen/pdf",
-            "version": "dev-bg-php8",
+            "version": "6.1.0",
             "source": {
                 "type": "git",
                 "url": "https://git.unicaen.fr/lib/unicaen/pdf.git",
-                "reference": "08bfd95a628d63be4aee458eec1795e4f2bb6bcb"
+                "reference": "7625ae471c75c0c66debf77a768f921a59b39e12"
             },
             "require": {
                 "laminas/laminas-dependency-plugin": "^2.1",
                 "laminas/laminas-view": "^2.22",
                 "mpdf/mpdf": "^8.0",
-                "php": "^7.0 || ^8.0"
+                "php": "^8.0",
+                "unicaen/shell": "^1.0"
             },
             "require-dev": {
                 "laminas/laminas-test": "^4.0",
@@ -9139,7 +9140,7 @@
                 ]
             },
             "description": "Génération PDF",
-            "time": "2022-12-15T12:08:28+00:00"
+            "time": "2023-05-05T14:22:59+00:00"
         },
         {
             "name": "unicaen/privilege",
@@ -9189,6 +9190,36 @@
             },
             "description": "Module de rendu de texte avec templates et macros",
             "time": "2023-03-31T09:50:13+00:00"
+        },
+        {
+            "name": "unicaen/shell",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.unicaen.fr/lib/unicaen/shell.git",
+                "reference": "6d18e4d3ade3b6fd3f258772367fd73c2ca098a4"
+            },
+            "require": {
+                "laminas/laminas-config": "^3.8",
+                "laminas/laminas-servicemanager": "^3.10",
+                "php": "^8.0",
+                "webmozart/assert": "^1.11"
+            },
+            "require-dev": {
+                "laminas/laminas-test": "^4.0",
+                "phpunit/phpunit": "^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "UnicaenShell": "src/"
+                },
+                "classmap": [
+                    "./Module.php"
+                ]
+            },
+            "description": "Création et lancement de commandes shell",
+            "time": "2023-05-05T14:16:30+00:00"
         },
         {
             "name": "unicaen/zfc-user",
@@ -9705,7 +9736,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "unicaen/pdf": 20,
         "unicaen/idref": 20
     },
     "prefer-stable": true,
