@@ -3,9 +3,14 @@
 namespace Soutenance\Controller;
 
 use Application\Controller\AbstractController;
+use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
+use Fichier\Entity\Db\Fichier;
+use Fichier\Entity\Db\NatureFichier;
+use Fichier\Entity\Db\VersionFichier;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
+use Soutenance\Entity\Justificatif;
 use Soutenance\Service\Notification\SoutenanceNotificationFactoryAwareTrait;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\These\TheseServiceAwareTrait;
@@ -35,6 +40,7 @@ class AvisController extends AbstractController
 
     use FichierStorageServiceAwareTrait;
     use FichierServiceAwareTrait;
+    use FichierTheseServiceAwareTrait;
 
     use AvisFormAwareTrait;
 
@@ -71,13 +77,30 @@ class AvisController extends AbstractController
 
             $form->setData($data);
             if ($form->isValid()) {
-                $fichier = $this->getAvisService()->createAvisFromUpload($files, $membre);
-                $validation = $this->getValidationService()->signerAvisSoutenance($these, $membre->getIndividu());
 
+//                $fichier = $this->getAvisService()->createAvisFromUpload($files, $membre);
+
+
+                $fichiers = [];
+                if (!empty($files)) {
+
+                    $file = new Fichier();
+                    $nature = $this->fichierTheseService->fetchNatureFichier(NatureFichier::CODE_PRE_RAPPORT_SOUTENANCE);
+                    $file->setNature($nature);
+                    $nfiles['files'][0] =  $files['files']['rapport'] ;
+
+
+                    $version = $this->fichierTheseService->fetchVersionFichier(VersionFichier::CODE_ORIG);
+                    $fichiers = $this->fichierTheseService->createFichierThesesFromUpload($these, $nfiles , $nature, $version);
+                }
+//                var_dump($fichiers);
+//                die();
+
+                $validation = $this->getValidationService()->signerAvisSoutenance($these, $membre->getIndividu());
                 $avis = new Avis();
                 $avis->setProposition($proposition);
                 $avis->setMembre($membre);
-                $avis->setFichier($fichier);
+                $avis->setFichierThese($fichiers[0]);
                 $avis->setValidation($validation);
                 $avis->setAvis($data['avis']);
                 $avis->setMotif($data['motif']);

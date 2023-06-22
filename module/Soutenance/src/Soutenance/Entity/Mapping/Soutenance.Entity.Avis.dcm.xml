@@ -34,6 +34,12 @@
             </join-columns>
         </many-to-one>
 
+        <many-to-one field="fichierThese" target-entity="Depot\Entity\Db\FichierThese">
+            <join-columns>
+                <join-column name="FICHIERTHESE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
         <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
         <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
         <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
