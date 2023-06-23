@@ -104,15 +104,10 @@ class ActeurService extends BaseService
         return $result;
     }
 
-    /**
-     * @param These $these
-     * @param Individu $individu
-     * @return Acteur
-     */
-    public function ajouterCoEncradrant(These $these, Individu $individu)
+    public function ajouterCoEncradrant(These $these, Individu $individu, ?Etablissement $etablissement = null): ?Acteur
     {
-        $etablissement = $these->getEtablissement();
-        $role = $this->getRoleService()->getRepository()->findOneByCodeAndStructureConcrete(Role::CODE_CO_ENCADRANT, $etablissement);
+        if ($etablissement === null) $etablissement = $these->getEtablissement();
+        $role = $this->getRoleService()->getRepository()->findOneByCodeAndStructureConcrete(Role::CODE_CO_ENCADRANT, $these->getEtablissement());
         $source = $this->sourceService->fetchApplicationSource();
 
         $acteur = new Acteur();

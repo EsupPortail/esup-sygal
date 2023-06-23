@@ -2,27 +2,19 @@
 
 namespace These\Form\CoEncadrant;
 
-trait RechercherCoEncadrantFormAwareTrait {
+trait RechercherCoEncadrantFormAwareTrait
+{
 
-    /** @var RechercherCoEncadrantForm */
-    private $rechercherCoEncadrantForm;
+    private RechercherCoEncadrantForm $rechercherCoEncadrantForm;
 
-    /**
-     * @return RechercherCoEncadrantForm
-     */
     public function getRechercherCoEncadrantForm(): RechercherCoEncadrantForm
     {
         return $this->rechercherCoEncadrantForm;
     }
 
-    /**
-     * @param RechercherCoEncadrantForm $rechercherCoEncadrantForm
-     * @return RechercherCoEncadrantForm
-     */
-    public function setRechercherCoEncadrantForm(RechercherCoEncadrantForm $rechercherCoEncadrantForm): RechercherCoEncadrantForm
+    public function setRechercherCoEncadrantForm(RechercherCoEncadrantForm $rechercherCoEncadrantForm): void
     {
         $this->rechercherCoEncadrantForm = $rechercherCoEncadrantForm;
-        return $this->rechercherCoEncadrantForm;
     }
 
 

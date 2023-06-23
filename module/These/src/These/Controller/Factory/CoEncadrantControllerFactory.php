@@ -6,7 +6,10 @@ use Fichier\Service\Fichier\FichierStorageService;
 use Individu\Service\IndividuService;
 use Interop\Container\ContainerInterface;
 use Laminas\View\Renderer\PhpRenderer;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleService;
+use Structure\Service\Etablissement\EtablissementService;
 use Structure\Service\UniteRecherche\UniteRechercheService;
 use These\Controller\CoEncadrantController;
 use These\Form\CoEncadrant\RechercherCoEncadrantForm;
@@ -14,18 +17,22 @@ use These\Service\Acteur\ActeurService;
 use These\Service\CoEncadrant\CoEncadrantService;
 use These\Service\These\TheseService;
 
-class CoEncadrantControllerFactory {
+class CoEncadrantControllerFactory
+{
 
     /**
      * @param ContainerInterface $container
      * @return CoEncadrantController
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): CoEncadrantController
     {
         /**
          * @var ActeurService $acteurService
          * @var CoEncadrantService $coEncadrantService
          * @var EcoleDoctoraleService $ecoleDoctoraleService
+         * @var EtablissementService $etablissementService
          * @var IndividuService $individuService
          * @var FichierStorageService $fileService
          * @var TheseService $theseService
@@ -34,6 +41,7 @@ class CoEncadrantControllerFactory {
         $acteurService = $container->get(ActeurService::class);
         $coEncadrantService = $container->get(CoEncadrantService::class);
         $ecoleDoctoraleService = $container->get(EcoleDoctoraleService::class);
+        $etablissementService = $container->get(EtablissementService::class);
         $individuService = $container->get(IndividuService::class);
         $fileService = $container->get(FichierStorageService::class);
         $theseService = $container->get('TheseService');
@@ -51,6 +59,7 @@ class CoEncadrantControllerFactory {
         $controller->setActeurService($acteurService);
         $controller->setCoEncadrantService($coEncadrantService);
         $controller->setEcoleDoctoraleService($ecoleDoctoraleService);
+        $controller->setEtablissementService($etablissementService);
         $controller->setIndividuService($individuService);
         $controller->setFichierStorageService($fileService);
         $controller->setTheseService($theseService);

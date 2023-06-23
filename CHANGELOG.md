@@ -13,6 +13,7 @@ Journal des modifications
 - Rapport activité : augmentation à 10 min du timeout CSRF dans le formulaire de création/modification.
 - Possibilité de déclarer des missions d'enseignement
 - Les avis de soutenance deviennent des FichierThese afin de pouvoir être afficher sur la page des fichiers divers
+- Possibilité de saisir l'établissement du co-encadrant (si différent de l'établissement d'inscription)
 
 6.0.2
 -----

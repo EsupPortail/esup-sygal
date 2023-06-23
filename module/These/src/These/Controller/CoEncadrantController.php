@@ -8,6 +8,7 @@ use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
+use Laminas\Http\Response;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
@@ -15,6 +16,7 @@ use Laminas\View\Renderer\PhpRenderer;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\UniteRecherche;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
+use Structure\Service\Etablissement\EtablissementServiceAwareTrait;
 use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
@@ -25,7 +27,8 @@ use These\Service\CoEncadrant\Exporter\JustificatifCoencadrements\JustificatifCo
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\View\Model\CsvModel;
 
-class CoEncadrantController extends AbstractActionController {
+class CoEncadrantController extends AbstractActionController
+{
     use ActeurServiceAwareTrait;
     use CoEncadrantServiceAwareTrait;
     use IndividuServiceAwareTrait;
@@ -33,6 +36,7 @@ class CoEncadrantController extends AbstractActionController {
     use TheseServiceAwareTrait;
     use RechercherCoEncadrantFormAwareTrait;
     use EcoleDoctoraleServiceAwareTrait;
+    use EtablissementServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
 
 
@@ -47,7 +51,7 @@ class CoEncadrantController extends AbstractActionController {
         $this->renderer = $renderer;
     }
 
-    public function indexAction()
+    public function indexAction(): ViewModel
     {
         $form = $this->getRechercherCoEncadrantForm();
         $form->setAttribute('action', $this->url()->fromRoute('co-encadrant', [], [], true));
@@ -59,7 +63,7 @@ class CoEncadrantController extends AbstractActionController {
         if ($request->isPost()) {
             $data = $request->getPost();
             if ($data['co-encadrant']['id'] !== "") {
-                $this->redirect()->toRoute('co-encadrant/historique',['co-encadrant' => $data['co-encadrant']['id']]);
+                $this->redirect()->toRoute('co-encadrant/historique', ['co-encadrant' => $data['co-encadrant']['id']]);
             }
         }
 
@@ -68,7 +72,7 @@ class CoEncadrantController extends AbstractActionController {
         ]);
     }
 
-    public function rechercherCoEncadrantAction()
+    public function rechercherCoEncadrantAction(): JsonModel
     {
         if (($term = $this->params()->fromQuery('term'))) {
             $acteurs = $this->getCoEncadrantService()->findByText($term);
@@ -76,7 +80,7 @@ class CoEncadrantController extends AbstractActionController {
             foreach ($acteurs as $acteur) {
                 // mise en forme attendue par l'aide de vue FormSearchAndSelect
                 $label = $acteur->getIndividu()->getPrenom() . ' ' . $acteur->getIndividu()->getNomUsuel();
-                $extra = ($acteur->getIndividu()->getEmailPro())?:$acteur->getIndividu()->getSourceCode();
+                $extra = ($acteur->getIndividu()->getEmailPro()) ?: $acteur->getIndividu()->getSourceCode();
                 $result[$acteur->getIndividu()->getId()] = array(
                     'id' => $acteur->getId(),   // identifiant unique de l'item
                     'label' => $label,          // libellé de l'item
@@ -92,7 +96,7 @@ class CoEncadrantController extends AbstractActionController {
         exit;
     }
 
-    public function ajouterCoEncadrantAction()
+    public function ajouterCoEncadrantAction(): ViewModel
     {
         /** @var These $these */
         $theseId = $this->params()->fromRoute('these');
@@ -102,6 +106,7 @@ class CoEncadrantController extends AbstractActionController {
         $form->setAttribute('action', $this->url()->fromRoute('co-encadrant/ajouter-co-encadrant', [], [], true));
         /** @see UtilisateurController::rechercherIndividuAction() */
         $form->setUrlCoEncadrant($this->url()->fromRoute('utilisateur/rechercher-individu', [], ["query" => []], true));
+        $form->setUrlEtablisssement($this->url()->fromRoute('etablissement/rechercher', [], ["query" => []], true));
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -110,17 +115,18 @@ class CoEncadrantController extends AbstractActionController {
             if (isset($data['co-encadrant']['id'])) {
                 /** @var Individu $individu */
                 $individu = $this->getIndividuService()->getRepository()->find($data['co-encadrant']['id']);
-                $this->getActeurService()->ajouterCoEncradrant($these, $individu);
+                $etablissement = (isset($data['etablissement']['id']) && $data['etablissement']['id'] !== '')?$this->getEtablissementService()->getRepository()->find($data['etablissement']['id']):null;
+                $this->getActeurService()->ajouterCoEncradrant($these, $individu, $etablissement);
             }
         }
 
         return new ViewModel([
-            'title' => "Ajout d'un co-encadrant pour la thèse de ". $these->getDoctorant()->getIndividu()->getPrenom() . " " . $these->getDoctorant()->getIndividu()->getNomUsuel(),
+            'title' => "Ajout d'un co-encadrant pour la thèse de " . $these->getDoctorant()->getIndividu()->getPrenom() . " " . $these->getDoctorant()->getIndividu()->getNomUsuel(),
             'form' => $form,
         ]);
     }
 
-    public function retirerCoEncadrantAction()
+    public function retirerCoEncadrantAction(): Response
     {
         /** @var These $these */
         $theseId = $this->params()->fromRoute('these');
@@ -129,12 +135,12 @@ class CoEncadrantController extends AbstractActionController {
 
         /** @var Acteur $acteur */
         $acteur = $this->getActeurService()->getRepository()->find($acteurId);
-        if ($acteur !== null AND $acteur->getThese() === $these) $this->getActeurService()->delete($acteur);
+        if ($acteur !== null and $acteur->getThese() === $these) $this->getActeurService()->delete($acteur);
 
-        $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], [], true);
+        return $this->redirect()->toRoute('these/identite', ['these' => $these->getId()], [], true);
     }
 
-    public function historiqueAction()
+    public function historiqueAction(): ViewModel|Response
     {
         $coencadrant = $this->getCoEncadrantService()->getRequestedCoEncadrant($this);
         if ($coencadrant === null) {
@@ -143,7 +149,8 @@ class CoEncadrantController extends AbstractActionController {
 
         $theses = $this->getTheseService()->getRepository()->fetchThesesByCoEncadrant($coencadrant->getIndividu());
 
-        $encours = []; $closes = [];
+        $encours = [];
+        $closes = [];
         foreach ($theses as $these) {
             if ($these->getEtatThese() === These::ETAT_EN_COURS) {
                 $encours[] = $these;
@@ -159,7 +166,7 @@ class CoEncadrantController extends AbstractActionController {
         ]);
     }
 
-    public function genererJustificatifCoencadrementsAction()
+    public function genererJustificatifCoencadrementsAction(): void
     {
         $coencadrant = $this->getCoEncadrantService()->getRequestedCoEncadrant($this);
         $theses = $this->getTheseService()->getRepository()->fetchThesesByCoEncadrant($coencadrant->getIndividu());
@@ -181,7 +188,7 @@ class CoEncadrantController extends AbstractActionController {
         $export->export('justificatif_coencadrement_' . $coencadrant->getIndividu()->getId() . ".pdf");
     }
 
-    public function genererExportCsvAction()
+    public function genererExportCsvAction(): CsvModel
     {
         $structureType = $this->params()->fromRoute('structure-type');
         $structureId = $this->params()->fromRoute('structure-id');
@@ -201,11 +208,13 @@ class CoEncadrantController extends AbstractActionController {
             $entry['Co-endrant'] = $item['co-encadrant']->getIndividu()->getPrenom1() . " " . $item['co-encadrant']->getIndividu()->getNomUsuel();
             $entry['Nombre d\'encadrements actuels'] = count($item['theses']);
             $entry['Listing'] = implode(';',
-                array_map(function(These $t) {return $t->getDoctorant()->getIndividu()->getPrenom1() . " " . $t->getDoctorant()->getIndividu()->getNomUsuel();}, $item['theses'])
+                array_map(function (These $t) {
+                    return $t->getDoctorant()->getIndividu()->getPrenom1() . " " . $t->getDoctorant()->getIndividu()->getNomUsuel();
+                }, $item['theses'])
             );
             $records[] = $entry;
         }
-        $filename = (new DateTime())->format('Ymd-His') . '_coencadrants-' . str_replace(' ','_',$structure->getStructure()->getSigle()) . '.csv';
+        $filename = (new DateTime())->format('Ymd-His') . '_coencadrants-' . str_replace(' ', '_', $structure->getStructure()->getSigle()) . '.csv';
         $CSV = new CsvModel();
         $CSV->setDelimiter(';');
         $CSV->setEnclosure('"');

@@ -206,11 +206,13 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_HTML_LINES)
 
                 echo " &nbsp;";
 
-                if ($canCoEncadrantAfficher AND $acteur->estCoEncadrant()) {
+                if ($canCoEncadrantAfficher && $acteur->estCoEncadrant()) {
+                    /** @see \These\Controller\CoEncadrantController::historiqueAction() */
                     echo " <a href='".$this->url('co-encadrant/historique', ['co-encadrant' => $acteur->getId()], [], true) ."'>";
-                    echo "<span class='icon icon-voir' title='Voir historique de co-encadrement'></span></a>";
+                    echo "<span class='icon icon-listing' title='Voir historique de co-encadrement'></span></a>";
                 }
-                if ($canCoEncadrantGerer AND $acteur->estCoEncadrant()) {
+                if ($canCoEncadrantGerer && $acteur->estCoEncadrant()) {
+                    /** @see \These\Controller\CoEncadrantController::retirerCoEncadrantAction() */
                     echo " <a href='".$this->url('co-encadrant/retirer-co-encadrant', ['these' => $these->getId(), 'co-encadrant' => $acteur->getId()], [], true) ."'>";
                     echo "<span class='icon icon-delete iconly' title='Retirer le co-encadrant'></span></a>";
                 }
