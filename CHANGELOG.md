@@ -15,6 +15,7 @@ Journal des modifications
 - Possibilité de déclarer des missions d'enseignement
 - Les avis de soutenance deviennent des FichierThese afin de pouvoir être afficher sur la page des fichiers divers
 - Possibilité de saisir l'établissement du co-encadrant (si différent de l'établissement d'inscription)
+- Validation du rapport d'activité par le doctorant : avertissement indiquant que le rapport n'est plus modifiable après validation.
 
 6.0.2
 -----
