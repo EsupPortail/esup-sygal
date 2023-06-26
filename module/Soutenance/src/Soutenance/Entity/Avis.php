@@ -2,163 +2,123 @@
 
 namespace Soutenance\Entity;
 
-use These\Entity\Db\Acteur;
-use Fichier\Entity\Db\Fichier;
-use These\Entity\Db\These;
 use Application\Entity\Db\Validation;
+use Depot\Entity\Db\FichierThese;
+use Fichier\Entity\Db\Fichier;
+use These\Entity\Db\Acteur;
+use These\Entity\Db\These;
 use UnicaenApp\Entity\HistoriqueAwareInterface;
 use UnicaenApp\Entity\HistoriqueAwareTrait;
 
-class Avis implements HistoriqueAwareInterface {
+class Avis implements HistoriqueAwareInterface
+{
     use HistoriqueAwareTrait;
 
     const FAVORABLE = 'Favorable';
     const DEFAVORABLE = 'Défavorable';
 
-    /** @var int */
-    private $id;
-    /** @var Proposition */
-    private  $proposition;
-    /** @var Membre */
-    private $membre;
-    /** @var string */
-    private $avis;
-    /** @var string */
-    private $motif;
-    /** @var Validation */
-    private $validation;
+    private ?int $id = null;
+    private ?Proposition $proposition = null;
+    private ?Membre $membre = null;
+    private ?string $avis = null;
+    private ?string $motif = null;
+    private ?Validation $validation = null;
+    private ?FichierThese $fichierThese = null;
+
     /** @var Fichier */
     private $fichier;
 
-    /**
-     * @return int
-     */
-    public function getId()
+
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return These
-     */
-    public function getThese()
-    {
-        return $this->proposition->getThese();
-    }
-
-    /**
-     * @return Acteur
-     */
-    public function getRapporteur()
-    {
-        return $this->getMembre()->getActeur();
-    }
-
-    /**
-     * @return string
-     */
-    public function getAvis()
-    {
-        return $this->avis;
-    }
-
-    /**
-     * @param string $avis
-     * @return Avis
-     */
-    public function setAvis($avis)
-    {
-        $this->avis = $avis;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMotif()
-    {
-        return $this->motif;
-    }
-
-    /**
-     * @param string $motif
-     * @return Avis
-     */
-    public function setMotif($motif)
-    {
-        $this->motif = $motif;
-        return $this;
-    }
-
-    /**
-     * @return Validation
-     */
-    public function getValidation()
-    {
-        return $this->validation;
-    }
-
-    /**
-     * @param Validation $validation
-     * @return Avis
-     */
-    public function setValidation($validation)
-    {
-        $this->validation = $validation;
-        return $this;
-    }
-
-    /**
-     * @return Fichier
-     */
-    public function getFichier()
-    {
-        return $this->fichier;
-    }
-
-    /**
-     * @param Fichier $fichier
-     * @return Avis
-     */
-    public function setFichier($fichier)
-    {
-        $this->fichier = $fichier;
-        return $this;
-    }
-
-    /**
-     * @return Proposition
-     */
-    public function getProposition()
+    public function getProposition(): ?Proposition
     {
         return $this->proposition;
     }
 
-    /**
-     * @param Proposition $proposition
-     * @return Avis
-     */
-    public function setProposition($proposition)
+    public function setProposition(?Proposition $proposition): void
     {
         $this->proposition = $proposition;
-        return $this;
     }
 
-    /**
-     * @return Membre
-     */
-    public function getMembre()
+    public function getMembre(): ?Membre
     {
         return $this->membre;
     }
 
-    /**
-     * @param Membre $membre
-     * @return Avis
-     */
-    public function setMembre($membre)
+    public function setMembre(?Membre $membre): void
     {
         $this->membre = $membre;
-        return $this;
     }
+
+    public function getAvis(): ?string
+    {
+        return $this->avis;
+    }
+
+    public function setAvis(?string $avis): void
+    {
+        $this->avis = $avis;
+    }
+
+    public function getMotif(): ?string
+    {
+        return $this->motif;
+    }
+
+    public function setMotif(?string $motif): void
+    {
+        $this->motif = $motif;
+    }
+
+    public function getValidation(): ?Validation
+    {
+        return $this->validation;
+    }
+
+    public function setValidation(?Validation $validation): void
+    {
+        $this->validation = $validation;
+    }
+
+    public function getFichierThese(): ?FichierThese
+    {
+        return $this->fichierThese;
+    }
+
+    public function setFichierThese(?FichierThese $fichierThese): void
+    {
+        $this->fichierThese = $fichierThese;
+    }
+
+    public function setFichier($fichier) : void //todo check that
+    {
+        $this->fichier = $fichier;
+    }
+
+
+    /** Fonctions de qualité de vie ***********************************************************************************/
+
+    public function getThese(): ?These
+    {
+        if (!isset($this->proposition)) return null;
+        return $this->proposition->getThese();
+    }
+
+    public function getRapporteur(): ?Acteur
+    {
+        if (!isset($this->membre)) return null;
+        return $this->getMembre()->getActeur();
+    }
+
+    public function getFichier(): ?Fichier
+    {
+        if (!isset($this->fichierThese)) return null;
+        return $this->fichierThese->getFichier();
+    }
+
+
 }

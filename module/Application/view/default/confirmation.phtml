@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * @var string $title
+ * @var string $text
+ * @var string $action
+ * @var bool $justificationOui
+ * @var bool $justificationNon
+ */
+
+?>
+
+<p class="lead">
+<?php echo $text; ?>
+</p>
+
+
+<table style="width: 100%;">
+    <tr><td style="width: 50%;">
+<form method="post" action="<?php echo $action; ?>">
+    <input type="hidden" name="reponse" value="oui">
+    <?php if (isset($justificationOui) && $justificationOui === true) : ?>
+        <label for="justification-oui"> Justification </label>
+        <textarea id="justification-oui" name="justification-oui" style="width: 95%;" placeholder="Merci de justifier"></textarea><br/>
+    <?php endif; ?>
+    <input type="submit" name="reponse" class="btn btn-success action" value="Oui, je suis sûr&middot;e">
+</form>
+        </td><td style="width: 50%;">
+<form method="post" action="<?php echo $action; ?>">
+    <input type="hidden" name="reponse" value="non">
+    <?php if (isset($justificationNon) && $justificationNon === true) : ?>
+        <label for="justification-non"> Justification </label>
+        <textarea id="justification-non" name="justification-non"  style="width: 95%;" placeholder="Merci de justifier"></textarea><br/>
+    <?php endif; ?>
+    <input type="submit" id="non" name="reponse" class="btn btn-danger action"  value="Non, je ne veux pas">
+</form>
+        </td></tr>
+</table>
+
+<script>
+    $(function() {
+        $("input#non").click(function(e){
+            $('div.modal').modal('hide');
+            e.preventDefault(e);
+        });
+    });
+</script>
+

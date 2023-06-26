@@ -8,6 +8,7 @@ use Application\Provider\Privilege\UtilisateurPrivileges;
 use Application\View\Renderer\PhpRenderer;
 use Depot\Provider\Privilege\DepotPrivileges;
 use Doctorant\Provider\Privilege\DoctorantPrivileges;
+use Doctorant\Provider\Privilege\MissionEnseignementPrivileges;
 use Individu\Provider\Privilege\IndividuPrivileges;
 use Individu\View\Helper\IndividuUsurpationHelper;
 use Structure\Entity\Db\EtablissementRattachement;
@@ -42,6 +43,9 @@ $canCreate = $this->isAllowed(UtilisateurPrivileges::getResourceId(UtilisateurPr
 
 $canCoEncadrantAfficher = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_AFFICHER));
 $canCoEncadrantGerer    = $this->isAllowed(CoEncadrantPrivileges::getResourceId(CoEncadrantPrivileges::COENCADRANT_GERER));
+
+$canMissionAfficher = $this->isAllowed(MissionEnseignementPrivileges::getResourceId(MissionEnseignementPrivileges::MISSION_ENSEIGNEMENT_VISUALISER));
+$canMissionGerer    = $this->isAllowed(MissionEnseignementPrivileges::getResourceId(MissionEnseignementPrivileges::MISSION_ENSEIGNEMENT_MODIFIER));
 
 
 $canEditForcageCorrectionAutorisee = $this->isAllowed($these, DepotPrivileges::THESE_SAISIE_CORREC_AUTORISEE_FORCEE);
@@ -202,11 +206,13 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_HTML_LINES)
 
                 echo " &nbsp;";
 
-                if ($canCoEncadrantAfficher AND $acteur->estCoEncadrant()) {
+                if ($canCoEncadrantAfficher && $acteur->estCoEncadrant()) {
+                    /** @see \These\Controller\CoEncadrantController::historiqueAction() */
                     echo " <a href='".$this->url('co-encadrant/historique', ['co-encadrant' => $acteur->getId()], [], true) ."'>";
-                    echo "<span class='icon icon-voir' title='Voir historique de co-encadrement'></span></a>";
+                    echo "<span class='icon icon-listing' title='Voir historique de co-encadrement'></span></a>";
                 }
-                if ($canCoEncadrantGerer AND $acteur->estCoEncadrant()) {
+                if ($canCoEncadrantGerer && $acteur->estCoEncadrant()) {
+                    /** @see \These\Controller\CoEncadrantController::retirerCoEncadrantAction() */
                     echo " <a href='".$this->url('co-encadrant/retirer-co-encadrant', ['these' => $these->getId(), 'co-encadrant' => $acteur->getId()], [], true) ."'>";
                     echo "<span class='icon icon-delete iconly' title='Retirer le co-encadrant'></span></a>";
                 }
@@ -315,6 +321,47 @@ $financementFormatter->setDisplayAs(FinancementFormatter::DISPLAY_AS_HTML_LINES)
                     <?php echo $financementFormatter->format($these->getFinancements()->toArray()); ?>
                 <?php endif ?>
             </dd>
+
+            <?php if ($canMissionAfficher) : ?>
+                <dt class="col-md-4">
+                    Mission(s) d'enseignement
+                </dt>
+                <dd class="col-md-8">
+                <?php if ($canMissionGerer) : ?>
+                <a  <?php /**  @see \Doctorant\Controller\MissionEnseignementController::ajouterAction() */ ?>
+                        class="btn btn-primary ajax-modal" data-event="modification"
+                        href="<?php echo $this->url('doctorant/mission-enseignement/ajouter', ['doctorant' => $these->getDoctorant()->getId()], [], true); ?>"
+                >
+                    <span class="icon icon-plus"></span>
+                    Ajouter une mission d'enseignement
+                </a>
+                <br>
+                <?php endif; ?>
+                <?php if (!isset($missions) || empty($missions)) : ?>
+                    <em> Aucune mission de renseignée </em>
+                <?php else: ?>
+                    <ul>
+                        <?php foreach ($missions as $mission) : ?>
+                            <li>
+                                mission d'enseignement pour l'année <?php echo $mission->getAnneeUniversitaire(); ?>/<?php echo ($mission->getAnneeUniversitaire()+1); ?>
+                                <?php if ($canMissionGerer) : ?>
+
+                                <a  <?php /**  @see \Doctorant\Controller\MissionEnseignementController::retirerAction() */ ?>
+                                        class="ajax-modal" data-event="modification"
+                                        href="<?php echo $this->url('doctorant/mission-enseignement/retirer', ['mission' => $mission->getId(), 'doctorant' => $these->getDoctorant()->getId()], [], true); ?>"
+                                >
+                                    <span class="text-danger">
+                                        <span class="icon icon-unchecked"></span>
+                                    </span>
+                                </a>
+
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+            </dd>
+            <?php endif; ?>
 
             <dt class="col-md-4">
                 <?php echo $this->translate("Titre"); ?>

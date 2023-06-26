@@ -53,7 +53,7 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
 
                 <?php
                 $acteur = $rapporteur->getActeur();
-                $avi = ($acteur !== null)?$avis[$acteur->getIndividu()->getId()]:null;
+                $avi = ($acteur !== null && isset($avis[$acteur->getIndividu()->getId()]))?$avis[$acteur->getIndividu()->getId()]:null;
 
                 ?>
 
@@ -101,7 +101,7 @@ $tousLesAvis = count($rapporteurs) === count($avis) ;
                     </td>
                     <td>
                         <?php if ($acteur) : ?>
-                            <?php if ($engagements[$acteur->getIndividu()->getId()] && $avis[$acteur->getIndividu()->getId()]) : ?>
+                            <?php if (isset($engagements[$acteur->getIndividu()->getId()]) && isset($avis[$acteur->getIndividu()->getId()])) : ?>
                                 <a
                                     <?php /** @see TELECHARGER FICHIER */ ?>
                                     href=" <?php echo $this->urlFichierThese->telechargerFichierThese($these, $avis[$acteur->getIndividu()->getId()]->getFichier()); ?>" >

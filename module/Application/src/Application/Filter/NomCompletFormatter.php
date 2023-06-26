@@ -2,11 +2,11 @@
 
 namespace Application\Filter;
 
+use Application\Entity\Db\Utilisateur;
 use Doctorant\Entity\Db\Doctorant;
 use Individu\Entity\Db\Individu;
 use Laminas\Filter\AbstractFilter;
 use UnicaenApp\Entity\Ldap\People;
-use Application\Entity\Db\Utilisateur;
 
 /**
  * Formatte le nom complet d'un individu (nom usuel, patronymique, etc.)
@@ -15,13 +15,11 @@ use Application\Entity\Db\Utilisateur;
  */
 class NomCompletFormatter extends AbstractFilter
 {
-    protected $nomEnMajuscule = true;
-    protected $avecCivilite   = false;
-    protected $avecNomPatro   = false;
-    protected $prenomDabord   = false;
-    protected $tousLesPrenoms = false;
-    protected $court = false;
-    protected $patroPlutotQueUsuel = false;
+    protected bool $nomEnMajuscule = true;
+    protected bool $avecCivilite   = false;
+    protected bool $avecNomPatro   = false;
+    protected bool $prenomDabord   = false;
+    protected bool $tousLesPrenoms = false;
 
     /**
      * Constructeur.
@@ -32,15 +30,18 @@ class NomCompletFormatter extends AbstractFilter
      * @param bool $prenomDabord
      * @param bool $tousLesPrenoms
      */
-    public function __construct($nomEnMajuscule = true, $avecCivilite = false, $avecNomPatro = false, $prenomDabord = false, $tousLesPrenoms = false, $court = false, $patroPlutotQueUsuel=false)
+    public function __construct(
+        bool $nomEnMajuscule = true,
+        bool $avecCivilite = false,
+        bool $avecNomPatro = false,
+        bool $prenomDabord = false,
+        bool $tousLesPrenoms = false)
     {
         $this->nomEnMajuscule       = $nomEnMajuscule;
         $this->avecCivilite         = $avecCivilite;
         $this->avecNomPatro         = $avecNomPatro;
         $this->prenomDabord         = $prenomDabord;
         $this->tousLesPrenoms       = $tousLesPrenoms;
-        $this->court                = $court;
-        $this->patroPlutotQueUsuel  = $patroPlutotQueUsuel;
     }
 
     /**
@@ -48,9 +49,8 @@ class NomCompletFormatter extends AbstractFilter
      *
      * @param  mixed $value
      * @throws \RuntimeException If filtering $value is impossible
-     * @return mixed
      */
-    public function filter($value)
+    public function filter($value): string
     {
         // normalisation
         if ($value instanceof Individu) {
@@ -113,32 +113,15 @@ class NomCompletFormatter extends AbstractFilter
         $nomPatro = ucfirst($this->nomEnMajuscule ? mb_strtoupper($nomPatro) : $nomPatro);
         $civilite = $this->avecCivilite ? $civilite : null;
 
-        if ($this->patroPlutotQueUsuel && $nomPatro != '') {
-            $parts = [
-                $civilite,
-                $this->prenomDabord ? "$prenom $nomPatro" : "$nomPatro $prenom",
-            ];
-        } else {
-            $parts = [
-                $civilite,
-                $this->prenomDabord ? "$prenom $nomUsuel" : "$nomUsuel $prenom",
-            ];
-        }
+        $parts = [
+            $civilite,
+            $this->prenomDabord ? "$prenom $nomUsuel" : "$nomUsuel $prenom",
+        ];
 
         $result = implode(' ', array_filter($parts));
 
-        if (! $this->patroPlutotQueUsuel) {
-            if ($this->avecNomPatro && $nomPatro !== $nomUsuel) {
-                if ($this->court) {
-                    $result = "";
-                    if ($this->avecCivilite) $result .= "$civilite";
-                    if ($this->prenomDabord) $result .= " $prenom";
-                    $result .= " $nomPatro-$nomUsuel";
-                    if (!$this->prenomDabord) $result .= " $prenom";
-                } else {
-                    $result .= ", née $nomPatro";
-                }
-            }
+        if ($this->avecNomPatro && $nomPatro !== $nomUsuel) {
+            $result .= ", né·e $nomPatro";
         }
 
 	    return $result;

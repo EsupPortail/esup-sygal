@@ -21,6 +21,7 @@ $this->headTitle('Historique de co-encadrement de ' . $denomination);
 
 <div class="main">
 
+    <?php /** @see \These\Controller\CoEncadrantController::genererJustificatifCoencadrementsAction() */ ?>
     <a href="<?php echo $this->url('co-encadrant/generer-justificatif-coencadrements', ['co-encadrant' => $coencadrant->getId()], [], true); ?>" class="btn btn-primary">
         Générer justificatif
     </a>

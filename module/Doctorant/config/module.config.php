@@ -7,14 +7,24 @@ use Doctorant\Assertion\These\TheseAssertionFactory;
 use Doctorant\Assertion\These\TheseEntityAssertion;
 use Doctorant\Assertion\These\TheseEntityAssertionFactory;
 use Doctorant\Controller\DoctorantControllerFactory;
+use Doctorant\Controller\MissionEnseignementController;
+use Doctorant\Controller\MissionEnseignementControllerFactory;
 use Doctorant\Form\MailConsentementForm;
 use Doctorant\Form\MailConsentementFormFactory;
+use Doctorant\Form\MissionEnseignement\MissionEnseignementForm;
+use Doctorant\Form\MissionEnseignement\MissionEnseignementFormFactory;
+use Doctorant\Form\MissionEnseignement\MissionEnseignementHydrator;
+use Doctorant\Form\MissionEnseignement\MissionEnseignementHydratorFactory;
 use Doctorant\Provider\Privilege\DoctorantPrivileges;
+use Doctorant\Provider\Privilege\MissionEnseignementPrivileges;
 use Doctorant\Service\DoctorantService;
 use Doctorant\Service\DoctorantServiceFactory;
+use Doctorant\Service\MissionEnseignement\MissionEnseignementService;
+use Doctorant\Service\MissionEnseignement\MissionEnseignementServiceFactory;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Laminas\Router\Http\Segment;
+use These\Provider\Privilege\CoEncadrantPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
 use UnicaenAuth\Provider\Rule\PrivilegeRuleProvider;
 
@@ -68,6 +78,14 @@ return [
                         'rechercher',
                     ],
                     'roles' => 'user',
+                ],
+                [
+                    'controller' => MissionEnseignementController::class,
+                    'action' => [
+                        'ajouter',
+                        'retirer',
+                    ],
+                    'privileges' => MissionEnseignementPrivileges::MISSION_ENSEIGNEMENT_MODIFIER,
                 ],
             ],
         ],
@@ -134,6 +152,39 @@ return [
                             ],
                         ],
                     ],
+                    'mission-enseignement' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/mission-enseignement',
+                            'defaults' => [
+                            ],
+                        ],
+                        'may_terminate' => false,
+                        'child_routes' => [
+                            'ajouter' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route' => '/ajouter',
+                                    'defaults' => [
+                                        /** @see MissionEnseignementController::ajouterAction() */
+                                        'controller' => MissionEnseignementController::class,
+                                        'action' => 'ajouter',
+                                    ],
+                                ],
+                            ],
+                            'retirer' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route' => '/retirer/:mission',
+                                    'defaults' => [
+                                        /** @see MissionEnseignementController::retirerAction() */
+                                        'controller' => MissionEnseignementController::class,
+                                        'action' => 'retirer',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -150,14 +201,18 @@ return [
     'form_elements' => [
         'factories' => [
             MailConsentementForm::class => MailConsentementFormFactory::class,
+            MissionEnseignementForm::class => MissionEnseignementFormFactory::class,
         ],
     ],
-    'hydrators' => array(
-        'factories' => array()
-    ),
+    'hydrators' => [
+        'factories' => [
+            MissionEnseignementHydrator::class => MissionEnseignementHydratorFactory::class,
+        ],
+    ],
     'service_manager' => [
         'factories' => [
             'DoctorantService' => DoctorantServiceFactory::class,
+            MissionEnseignementService::class => MissionEnseignementServiceFactory::class,
             TheseAssertion::class => TheseAssertionFactory::class,
             TheseEntityAssertion::class => TheseEntityAssertionFactory::class,
         ],
@@ -169,6 +224,7 @@ return [
         'invokables' => [],
         'factories' => [
             'Application\Controller\Doctorant' => DoctorantControllerFactory::class,
+            MissionEnseignementController::class => MissionEnseignementControllerFactory::class,
         ],
     ],
     'controller_plugins' => [

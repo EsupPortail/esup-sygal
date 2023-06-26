@@ -2,26 +2,18 @@
 
 namespace These\Service\CoEncadrant;
 
-trait CoEncadrantServiceAwareTrait {
+trait CoEncadrantServiceAwareTrait
+{
 
-    /** @var CoEncadrantService */
-    private $coEncadrantService;
+    private CoEncadrantService $coEncadrantService;
 
-    /**
-     * @return CoEncadrantService
-     */
     public function getCoEncadrantService(): CoEncadrantService
     {
         return $this->coEncadrantService;
     }
 
-    /**
-     * @param CoEncadrantService $coEncadrantService
-     * @return CoEncadrantService
-     */
-    public function setCoEncadrantService(CoEncadrantService $coEncadrantService): CoEncadrantService
+    public function setCoEncadrantService(CoEncadrantService $coEncadrantService): void
     {
         $this->coEncadrantService = $coEncadrantService;
-        return $this->coEncadrantService;
     }
 }

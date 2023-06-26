@@ -59,7 +59,8 @@ class AvisHydrator extends AbstractHydrator
             }
         }
         $strategy = new AllowRemoveByValue();
-        $strategy->setObject($object)->setCollectionName('avisComplems');
+        $strategy->setObject($object);
+        $strategy->setCollectionName('avisComplems');
         $strategy->hydrate($avisComplems, []);
 
         return $object;

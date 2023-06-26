@@ -2,6 +2,7 @@
 
 namespace Soutenance\Controller;
 
+use Depot\Service\FichierThese\FichierTheseService;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
 use Psr\Container\ContainerExceptionInterface;
@@ -45,8 +46,12 @@ class AvisControllerFactory
         $theseService               = $container->get('TheseService');
         $validationService          = $container->get(ValidationService::class);
 
-        /** @var FichierService $fichierService */
+        /**
+         * @var FichierService $fichierService
+         * @var FichierTheseService $fichierTheseService
+         */
         $fichierService = $container->get(FichierService::class);
+        $fichierTheseService = $container->get(FichierTheseService::class);
 
         /** @var FichierStorageService $fileService */
         $fileService = $container->get(FichierStorageService::class);
@@ -66,6 +71,7 @@ class AvisControllerFactory
         $controller->setMembreService($membreService);
 
         $controller->setFichierService($fichierService);
+        $controller->setFichierTheseService($fichierTheseService);
         $controller->setFichierStorageService($fileService);
 
         $controller->setAvisForm($avisForm);

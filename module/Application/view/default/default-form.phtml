@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * @var Form $form
+ */
+
+use Laminas\Form\Form;
+
+echo $this->form($form);
+?>
+
+<script>
+
+    $(document).ready(function() {
+        tinymce.remove();
+        tinymce.init({
+            selector: '.tinymce',
+            toolbar: 'newdocument undo redo | bold italic removeformat | bullist',
+            resize: true,
+            language: 'fr_FR',
+            plugins: 'lists',
+            statusbar: true,
+            browser_spellcheck : true,
+            branding: false,
+            menu: {},
+            body_id: 'description',
+            setup: function (editor) {
+                editor.on("focusout", function () {
+                    console.log(tinymce.get('description').getContent());
+                    $('textarea').val(tinymce.get('description').getContent());
+                });
+            }
+        });
+        $('select').selectpicker();
+    });
+</script>

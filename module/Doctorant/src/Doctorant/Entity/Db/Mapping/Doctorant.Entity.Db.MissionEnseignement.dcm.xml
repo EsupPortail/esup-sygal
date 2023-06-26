@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Doctorant\Entity\Db\MissionEnseignement" table="DOCTORANT_MISSION_ENSEIGNEMENT"
+            repository-class="Doctorant\Entity\Db\Repository\MissionEnseignementRepository">
+
+        <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
+        </id>
+
+        <many-to-one field="doctorant" target-entity="Doctorant\Entity\Db\Doctorant">
+            <join-columns>
+                <join-column name="DOCTORANT_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <field name="anneeUniversitaire" type="integer" column="ANNEE_UNIV" nullable="false"/>
+
+        <!-- HISTORISATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
+        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="true"/>
+        <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+    </entity>
+</doctrine-mapping>

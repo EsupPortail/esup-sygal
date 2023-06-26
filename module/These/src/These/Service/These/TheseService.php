@@ -91,7 +91,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
             $pdcData->setEtablissement($these->getEtablissement()->getStructure()->getLibelle());
         }
         if ($these->getDoctorant()) {
-            $pdcData->setDoctorant(strtoupper($these->getDoctorant()->getIndividu()->getNomComplet(false, true, false, true, true, false)));
+            $pdcData->setDoctorant(mb_strtoupper($these->getDoctorant()->getIndividu()->getNomComplet(false, true, false, true)));
         }
         if ($these->getDateSoutenance()) $pdcData->setDate($these->getDateSoutenance()->format("d/m/Y"));
 
@@ -179,7 +179,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
             $acteursLies = array_filter($these->getActeurs()->toArray(), function (Acteur $a) use ($individu) { return $a->getIndividu() === $individu;});
 
             $acteurData = new MembreData();
-            $acteurData->setDenomination(strtoupper($acteur->getIndividu()->getNomComplet(true, false, false, true, true)));
+            $acteurData->setDenomination(mb_strtoupper($acteur->getIndividu()->getNomComplet(true, false, false, true)));
             $acteurData->setQualite($acteur->getQualite());
 
             $estMembre = !empty(array_filter($jury, function (Acteur $a) use ($acteur) {return $a->getIndividu() === $acteur->getIndividu();}));
@@ -223,13 +223,13 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
         /** Directeurs de thèses */
         $nomination = [];
         foreach ($directeurs as $directeur) {
-            $current = strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true, true));
+            $current = mb_strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true));
             $structure = ($these->getUniteRecherche())?:$directeur->getIndividu()->getUniteRecherche()?:$directeur->getIndividu()->getEtablissement();
             if ($structure !== null) $current .= " (". $structure->getStructure()->getLibelle() .")";
             $nomination[] = $current;
         }
         foreach ($codirecteurs as $directeur) {
-            $current = strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true, true));
+            $current = mb_strtoupper($directeur->getIndividu()->getNomComplet(false, false, false, true));
             $structure = ($directeur->getIndividu()->getUniteRecherche())?:$directeur->getIndividu()->getEtablissement();
             if ($structure !== null) $current .= " (". $structure->getStructure()->getLibelle() .")";
             $nomination[] = $current;

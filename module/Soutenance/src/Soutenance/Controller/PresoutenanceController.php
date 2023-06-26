@@ -109,6 +109,7 @@ class PresoutenanceController extends AbstractController
 
         $autorisation = $proposition->getJustificatif(NatureFichier::CODE_AUTORISATION_SOUTENANCE, null);
         $rapport = $proposition->getJustificatif(NatureFichier::CODE_RAPPORT_SOUTENANCE, null);
+        $pv = $proposition->getJustificatif(NatureFichier::CODE_PV_SOUTENANCE, null);
 
         /** ==> clef: Membre->getActeur()->getIndividu()->getId() <== */
         $engagements = $this->getEngagementImpartialiteService()->getEngagmentsImpartialiteByThese($these);
@@ -134,6 +135,7 @@ class PresoutenanceController extends AbstractController
             'deadline' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DELAI_RETOUR),
 
             'autorisation' => $autorisation,
+            'pv' => $pv,
             'rapport' => $rapport,
         ]);
     }
