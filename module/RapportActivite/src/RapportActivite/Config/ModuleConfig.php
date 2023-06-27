@@ -43,7 +43,7 @@ class ModuleConfig
             self::VALIDATION_DOCTORANT => [
                 'type' => RapportActiviteValidation::class,
                 'code' => TypeValidation::CODE_RAPPORT_ACTIVITE_DOCTORANT,
-                'role' => [Role::CODE_DOCTORANT, Role::CODE_DIRECTEUR_THESE],
+                'role' => [Role::CODE_DOCTORANT, Role::CODE_DIRECTEUR_THESE, Role::CODE_GEST_ED],
                 'pre_condition' => null,
                 'enabled' => function(RapportActivite $rapportActivite) {
                     return $rapportActivite->getFichier() === null;
