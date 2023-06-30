@@ -399,6 +399,16 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
     }
 
     /**
+     * Détache le fichier téléversé pour ce rapport non dématérialisé (ancien mode opératoire).
+     */
+    public function removeFichier(): self
+    {
+        $this->fichier = null;
+
+        return $this;
+    }
+
+    /**
      * Retourne le fichier téléversé pour ce rapport non dématérialisé (ancien mode opératoire).
      */
     public function getFichier(): ?Fichier

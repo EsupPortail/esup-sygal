@@ -196,6 +196,7 @@ class RapportActiviteService extends BaseService
             $this->rapportActiviteAvisService->deleteAllAvisForRapportActivite($rapportActivite);
             $this->rapportActiviteValidationService->deleteRapportValidationForRapportActivite($rapportActivite);
             if ($fichier) {
+                $rapportActivite->removeFichier();
                 $this->fichierService->supprimerFichiers([$fichier]);
             }
 
