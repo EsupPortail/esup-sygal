@@ -8,6 +8,7 @@ Journal des modifications
 - [FIX] Rapports CSI : les filtres de recherche Etablissement, ED et UR ne tenaient pas compte des substitutions de structures.
 - [FIX] Le menu 'Mes thèses' incluait les thèses historisées.
 - [FIX] Rapport activité : bug empêchant la suppression d'un rapport non dématérialisé (ancien fonctionnement).
+- [FIX] Dépot de thèse : historisation plutôt que suppression de l'attestation en cas de modif de l'autorisation de diffusion.
 - Annuaire des thèses : nouveau filtre de recherche 'Année de financement'.
 - Mise en place d'une zone de dépot du pv de soutenance sur la page de présoutenance
 - Rapport d'activité : implémentation pour les rapports de fin de contrat du même circuit de validation/avis que les annuels.
