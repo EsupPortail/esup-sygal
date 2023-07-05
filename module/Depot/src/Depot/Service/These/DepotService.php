@@ -20,9 +20,9 @@ use Depot\Rule\SuppressionAttestationsRequiseRule;
 use Depot\Service\FichierThese\FichierTheseServiceAwareTrait;
 use Depot\Service\Notification\DepotNotificationFactoryAwareTrait;
 use Depot\Service\Validation\DepotValidationServiceAwareTrait;
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Entity\Db\VersionFichier;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
@@ -272,10 +272,11 @@ class DepotService extends BaseService implements ListenerAggregateInterface
             return;
         }
 
+        $attestation->historiser();
         $these->removeAttestation($attestation);
 
         try {
-            $this->entityManager->remove($attestation);
+            $this->entityManager->flush($attestation);
             $this->entityManager->flush($attestation);
         } catch (ORMException $e) {
             throw new RuntimeException("Erreur rencontrée lors de la suppression", null, $e);

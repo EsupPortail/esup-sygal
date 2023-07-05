@@ -313,7 +313,7 @@ $these = $rapport->getThese();
     <hr>
 
 
-    <?php if ($rapport->getCalendrierPrevionnelFinalisationEnabled()): ?>
+    <?php if ($rapport->getCalendrierPrevionnelFinalisationEnabled($data->anneeUnivCourante)): ?>
 
         <h2>Calendrier prévisionnel de finalisation de la thèse / <span class="en">Provisional timetable to finalize the thesis</span></h2>
 

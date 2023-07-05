@@ -163,6 +163,7 @@ class TheseRepository extends DefaultEntityRepository
             ->andWhere('a.individu = :individu')->setParameter('individu', $individu)
             ->andWhere('a.role = :role')->setParameter('role', $role)
             ->andWhereEtatIn($etats)
+            ->andWhereNotHistorise()
             ->orderBy('t.datePremiereInscription', 'ASC');
 
         return $qb->getQuery()->getResult();

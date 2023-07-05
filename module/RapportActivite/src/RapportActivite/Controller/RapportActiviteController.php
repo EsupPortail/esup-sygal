@@ -6,6 +6,7 @@ use Application\Controller\AbstractController;
 use Application\Entity\Db\TypeValidation;
 use Application\Exporter\ExporterDataException;
 use Application\Filter\IdifyFilter;
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
@@ -38,6 +39,7 @@ class RapportActiviteController extends AbstractController
     use RapportActiviteOperationRuleAwareTrait;
     use ValidationServiceAwareTrait;
     use TheseAnneeUnivServiceAwareTrait;
+    use AnneeUnivServiceAwareTrait;
 
     private RapportActiviteAnnuelForm $annuelForm;
     private RapportActiviteFinContratForm $finContratForm;
@@ -104,6 +106,7 @@ class RapportActiviteController extends AbstractController
         return new ViewModel([
             'rapport' => $rapport,
             'operations' => $operations,
+            'anneeUnivCourante' => $this->anneeUnivService->courante(),
         ]);
     }
 

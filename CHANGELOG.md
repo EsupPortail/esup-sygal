@@ -6,14 +6,20 @@ Journal des modifications
 - [FIX] Signature de méthode setObject() modifiée en PHP8 dans Doctrine\Laminas\Hydrator\Strategy\AbstractCollectionStrategy.
 - [FIX] Page de couverture : utilisation de mb_strtoupper pour mettre les noms en majuscules même si elles sont accentuées.
 - [FIX] Rapports CSI : les filtres de recherche Etablissement, ED et UR ne tenaient pas compte des substitutions de structures.
+- [FIX] Le menu 'Mes thèses' incluait les thèses historisées.
+- [FIX] Rapport activité : bug empêchant la suppression d'un rapport non dématérialisé (ancien fonctionnement).
+- [FIX] Dépot de thèse : historisation plutôt que suppression de l'attestation en cas de modif de l'autorisation de diffusion.
 - Annuaire des thèses : nouveau filtre de recherche 'Année de financement'.
 - Mise en place d'une zone de dépot du pv de soutenance sur la page de présoutenance
 - Rapport d'activité : implémentation pour les rapports de fin de contrat du même circuit de validation/avis que les annuels.
 - Affichage du nom complet d'un individu : choc de simplification en supprimant 2 options d'affichage dans le formatteur.
 - Rapport activité : augmentation à 10 min du timeout CSRF dans le formulaire de création/modification.
+- Rapport activité : ajout de Gestionnaire ED à la liste des rôles pouvant valider/dévalider un rapport (privilège requis).
 - Possibilité de déclarer des missions d'enseignement
 - Les avis de soutenance deviennent des FichierThese afin de pouvoir être afficher sur la page des fichiers divers
 - Possibilité de saisir l'établissement du co-encadrant (si différent de l'établissement d'inscription)
+- Validation du rapport d'activité par le doctorant : avertissement indiquant que le rapport n'est plus modifiable après validation.
+- Nouveaux paramètres applicatifs et service AnneeUnivService concernant les années universitaires (spécif date de bascule N sur N+1, etc.).
 
 6.0.2
 -----

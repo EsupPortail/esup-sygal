@@ -2,6 +2,7 @@
 
 namespace RapportActivite\Service;
 
+use Application\Service\AnneeUniv\AnneeUnivService;
 use Application\Service\Validation\ValidationService;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
@@ -85,6 +86,10 @@ class RapportActiviteServiceFactory
         /** @var \UnicaenParametre\Service\Parametre\ParametreService $parametreService */
         $parametreService = $container->get(ParametreService::class);
         $service->setParametreService($parametreService);
+
+        /** @var \Application\Service\AnneeUniv\AnneeUnivService $anneeUnivService */
+        $anneeUnivService = $container->get(AnneeUnivService::class);
+        $service->setAnneeUnivService($anneeUnivService);
 
         return $service;
     }
