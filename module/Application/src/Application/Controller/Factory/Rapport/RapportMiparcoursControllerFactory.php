@@ -7,14 +7,15 @@ use Application\Entity\Db\TypeRapport;
 use Application\Entity\Db\TypeValidation;
 use Application\Form\Rapport\RapportForm;
 use Application\Form\RapportMiparcoursForm;
-use Fichier\Service\Fichier\FichierService;
-use Individu\Service\IndividuService;
+use Application\Service\AnneeUniv\AnneeUnivService;
 use Application\Service\Rapport\RapportService;
+use Application\Service\Validation\ValidationService;
+use Fichier\Service\Fichier\FichierService;
+use Fichier\Service\VersionFichier\VersionFichierService;
+use Individu\Service\IndividuService;
+use Interop\Container\ContainerInterface;
 use These\Service\These\TheseService;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
-use Application\Service\Validation\ValidationService;
-use Fichier\Service\VersionFichier\VersionFichierService;
-use Interop\Container\ContainerInterface;
 
 class RapportMiparcoursControllerFactory
 {
@@ -34,6 +35,7 @@ class RapportMiparcoursControllerFactory
          * @var IndividuService       $individuService
          * @var ValidationService     $validationService
          * @var RapportForm           $rapportForm
+         * @var AnneeUnivService      $anneeUnivService
          */
         $theseService = $container->get('TheseService');
         $fichierService = $container->get(FichierService::class);
@@ -45,6 +47,7 @@ class RapportMiparcoursControllerFactory
         $theseAnneeUnivService = $container->get(TheseAnneeUnivService::class);
         $typeRapport = $rapportService->findTypeRapportByCode(TypeRapport::RAPPORT_MIPARCOURS);
         $typeValidation = $validationService->findTypeValidationByCode(TypeValidation::CODE_RAPPORT_MIPARCOURS);
+        $anneeUnivService = $container->get(AnneeUnivService::class);
 
         $controller = new RapportMiparcoursController();
         $controller->setTheseService($theseService);
@@ -57,6 +60,7 @@ class RapportMiparcoursControllerFactory
         $controller->setAnneesUnivs($theseAnneeUnivService);
         $controller->setTypeRapport($typeRapport);
         $controller->setTypeValidation($typeValidation);
+        $controller->setAnneeUnivService($anneeUnivService);
 
 //        $theseService->attach($controller->getEventManager());
 

@@ -3,6 +3,7 @@
 namespace RapportActivite\Assertion;
 
 use Application\Assertion\AbstractAssertion;
+use Application\Service\AnneeUniv\AnneeUnivService;
 use Psr\Container\ContainerInterface;
 use RapportActivite\Rule\Creation\RapportActiviteCreationRule;
 use RapportActivite\Rule\Operation\RapportActiviteOperationRule;
@@ -32,9 +33,11 @@ class RapportActiviteAssertionFactory
 
         /** @var \RapportActivite\Rule\Creation\RapportActiviteCreationRule $rapportActiviteTeleversementRule */
         $rapportActiviteTeleversementRule = $container->get(RapportActiviteCreationRule::class);
+        /** @var \Application\Service\AnneeUniv\AnneeUnivService $anneeUnivService */
+        $anneeUnivService = $container->get(AnneeUnivService::class);
         $rapportActiviteTeleversementRule->setAnneesUnivs([
-            $theseAnneeUnivService->anneeUnivCourante(),
-            $theseAnneeUnivService->anneeUnivPrecedente(),
+            $anneeUnivService->courante(),
+            $anneeUnivService->precedente(),
         ]);
         $assertion->setRapportActiviteCreationRule($rapportActiviteTeleversementRule);
 

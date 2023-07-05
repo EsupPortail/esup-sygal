@@ -15,6 +15,7 @@ use These\Filter\ActeursFormatter;
  * @var PhpRenderer $this
  * @var RapportActivite $rapport
  * @var \RapportActivite\Entity\RapportActiviteOperationInterface[] $operations
+ * @var \Application\Entity\AnneeUniv $anneeUnivCourante
  *
  * @see \RapportActivite\Controller\RapportActiviteController::consulterAction()
  */
@@ -359,7 +360,7 @@ $canGen =
     </div>
 
 
-    <?php if ($rapport->getCalendrierPrevionnelFinalisationEnabled()): ?>
+    <?php if ($rapport->getCalendrierPrevionnelFinalisationEnabled($anneeUnivCourante)): ?>
 
         <h2>Calendrier prévisionnel de finalisation de la thèse / Provisional timetable to finalize the thesis</h2>
 

@@ -2,6 +2,7 @@
 
 namespace RapportActivite\Controller;
 
+use Application\Service\AnneeUniv\AnneeUnivService;
 use Application\Service\Validation\ValidationService;
 use Fichier\Service\Fichier\FichierService;
 use Fichier\Service\Fichier\FichierStorageService;
@@ -63,6 +64,10 @@ class RapportActiviteControllerFactory
         /** @var \Application\Service\Validation\ValidationService $validationService */
         $validationService = $container->get(ValidationService::class);
         $controller->setValidationService($validationService);
+
+        /** @var \Application\Service\AnneeUniv\AnneeUnivService $anneeUnivService */
+        $anneeUnivService = $container->get(AnneeUnivService::class);
+        $controller->setAnneeUnivService($anneeUnivService);
 
         return $controller;
     }

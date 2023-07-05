@@ -6,6 +6,7 @@
  * @var array $options
  */
 
+use Application\Entity\AnneeUniv;
 use These\Entity\Db\These;
 use Formation\Entity\Db\Inscription;
 
@@ -39,7 +40,7 @@ $these = current($doctorant->getTheses());
             echo " - ";
             echo $this->site($these->getUniteRecherche());
             echo " - ";
-            echo "D" . $these->getAnneesUnivInscriptionCount($annee);
+            echo "D" . $these->getAnneesUnivInscriptionCount(AnneeUniv::fromPremiereAnnee($annee));
         }
     }
     ?>

@@ -1280,20 +1280,15 @@ class These implements HistoriqueAwareInterface, ResourceInterface
     /**
      * Retourne le nombre d'années d'inscriptions liées à cette thèse.
      *
-     * @param int|null $anneeMax Année maximum à considérer.
-     * Il s'agit de l'année "de début" d'une année universitaire, ex : N pour l'année universitaire N/N+1.
-     * Si absente, c'est l'année universitaire courante qui est considérée.
+     * @param \Application\Entity\AnneeUniv $anneeUnivMax Année universitaire maximum à considérer.
      * @return int
      */
-    public function getAnneesUnivInscriptionCount(?int $anneeMax = null) : int
+    public function getAnneesUnivInscriptionCount(AnneeUniv $anneeUnivMax) : int
     {
-        if ($anneeMax === null) {
-            $anneeMax = AnneeUniv::courante()->getPremiereAnnee();
-        }
         $inscriptions = array_filter(
             $this->getAnneesUnivInscription()->toArray(),
-            function (TheseAnneeUniv $a) use ($anneeMax) {
-                return $a->getAnneeUniv() <= $anneeMax;
+            function (TheseAnneeUniv $a) use ($anneeUnivMax) {
+                return $a->getAnneeUniv() <= $anneeUnivMax->getPremiereAnnee();
             }
         );
         return count($inscriptions);

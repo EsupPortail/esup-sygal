@@ -19,6 +19,7 @@ Journal des modifications
 - Les avis de soutenance deviennent des FichierThese afin de pouvoir être afficher sur la page des fichiers divers
 - Possibilité de saisir l'établissement du co-encadrant (si différent de l'établissement d'inscription)
 - Validation du rapport d'activité par le doctorant : avertissement indiquant que le rapport n'est plus modifiable après validation.
+- Nouveaux paramètres applicatifs et service AnneeUnivService concernant les années universitaires (spécif date de bascule N sur N+1, etc.).
 
 6.0.2
 -----
