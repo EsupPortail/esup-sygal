@@ -12,19 +12,20 @@ use Application\EventRouterReplacerAwareTrait;
 use Application\Filter\IdifyFilter;
 use Application\Filter\IdifyFilterAwareTrait;
 use Application\Form\Rapport\RapportForm;
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
+use Application\Service\Rapport\RapportServiceAwareTrait;
+use Application\Service\Validation\ValidationServiceAwareTrait;
+use Doctrine\ORM\NoResultException;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
+use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
 use Individu\Service\IndividuServiceAwareTrait;
-use Application\Service\Rapport\RapportServiceAwareTrait;
+use Laminas\Http\Response;
+use Laminas\View\Model\ViewModel;
 use These\Service\These\TheseServiceAwareTrait;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivService;
 use These\Service\TheseAnneeUniv\TheseAnneeUnivServiceAwareTrait;
-use Application\Service\Validation\ValidationServiceAwareTrait;
-use Fichier\Service\VersionFichier\VersionFichierServiceAwareTrait;
-use Doctrine\ORM\NoResultException;
 use UnicaenApp\Exception\RuntimeException;
-use Laminas\Http\Response;
-use Laminas\View\Model\ViewModel;
 
 abstract class RapportController extends AbstractController
 {
@@ -40,6 +41,7 @@ abstract class RapportController extends AbstractController
     use TheseAnneeUnivServiceAwareTrait;
     use TypeRapportAwareTrait;
     use TypeValidationAwareTrait;
+    use AnneeUnivServiceAwareTrait;
 
     /**
      * @var string À redéfinir par les sous-classes.
@@ -95,13 +97,13 @@ abstract class RapportController extends AbstractController
     /**
      * @inheritDoc
      */
-    public function setAnneesUnivs(TheseAnneeUnivService $service)
+    public function setAnneesUnivs(TheseAnneeUnivService $service): void
     {
         $this->theseAnneeUnivService = $service;
 
         $this->anneesUnivs = [
-            $this->theseAnneeUnivService->anneeUnivCourante(),
-            $this->theseAnneeUnivService->anneeUnivPrecedente(),
+            $this->anneeUnivService->courante(),
+            $this->anneeUnivService->precedente(),
         ];
     }
 

@@ -8,6 +8,7 @@ use Application\Entity\AnneeUnivInterface;
 use Application\Entity\Db\TypeValidation;
 use Application\Exporter\ExporterDataException;
 use Application\QueryBuilder\DefaultQueryBuilder;
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Application\Service\BaseService;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Validation\ValidationServiceAwareTrait;
@@ -64,6 +65,7 @@ class RapportActiviteService extends BaseService
     use StructureDocumentServiceAwareTrait;
     use ValidationServiceAwareTrait;
     use ParametreServiceAwareTrait;
+    use AnneeUnivServiceAwareTrait;
 
     use RapportActivitePdfExporterTrait;
 
@@ -196,6 +198,7 @@ class RapportActiviteService extends BaseService
             $this->rapportActiviteAvisService->deleteAllAvisForRapportActivite($rapportActivite);
             $this->rapportActiviteValidationService->deleteRapportValidationForRapportActivite($rapportActivite);
             if ($fichier) {
+                $rapportActivite->removeFichier();
                 $this->fichierService->supprimerFichiers([$fichier]);
             }
 
@@ -361,6 +364,8 @@ class RapportActiviteService extends BaseService
         // operations
         $data->operations = $this->rapportActiviteOperationRule->getOperationsForRapport($rapport);
 
+        $data->anneeUnivCourante = $this->anneeUnivService->courante();
+
         return $data;
     }
 
@@ -503,7 +508,7 @@ class RapportActiviteService extends BaseService
             throw new RuntimeException("Erreur rencontrée lors de l'obtention du paramètre $k", null, $e);
         }
 
-        $a = AnneeUniv::courante()->getPremiereAnnee();
+        $a = $this->anneeUnivService->courante()->getPremiereAnnee();
         $dateDebSpec = str_replace(['N+1', 'N'], [$a+1, $a], $campagneDepotDeb);
         $dateFinSpec = str_replace(['N+1', 'N'], [$a+1, $a], $campagneDepotFin);
         $dateDeb = DateTime::createFromFormat('d/m/Y H:i:s', "$dateDebSpec 00:00:00");

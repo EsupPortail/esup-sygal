@@ -4,6 +4,7 @@
  * @var Seance $seance
  */
 
+use Application\Entity\AnneeUniv;
 use These\Entity\Db\These;
 use Formation\Entity\Db\Formateur;
 use Formation\Entity\Db\Inscription;
@@ -69,7 +70,7 @@ $formateurs = $session->getFormateurs();
                 $ecoles[$ecole] = $ecole;
                 $unite = ($these->getUniteRecherche())?$these->getUniteRecherche()->getStructure()->getSigle():"Unité de recherche non renseignée";
                 $unites[$unite] = $unite;
-                $anneet = $these->getAnneesUnivInscriptionCount($annee);
+                $anneet = $these->getAnneesUnivInscriptionCount(AnneeUniv::fromPremiereAnnee($annee));
                 $anneets[$these->getId()] = $anneet;
             }
         ?>

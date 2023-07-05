@@ -2,6 +2,7 @@
 
 namespace RapportActivite\Form;
 
+use Application\Service\AnneeUniv\AnneeUnivServiceAwareTrait;
 use Laminas\Filter\StringTrim;
 use Laminas\Form\Element\Textarea;
 
@@ -10,6 +11,8 @@ use Laminas\Form\Element\Textarea;
  */
 class RapportActiviteAnnuelForm extends RapportActiviteAbstractForm
 {
+    use AnneeUnivServiceAwareTrait;
+
     public function init()
     {
         parent::init();
@@ -49,7 +52,7 @@ class RapportActiviteAnnuelForm extends RapportActiviteAbstractForm
     {
         parent::prepare();
 
-        if (!$this->object->getCalendrierPrevionnelFinalisationEnabled()) {
+        if (!$this->object->getCalendrierPrevionnelFinalisationEnabled($this->anneeUnivService->courante())) {
             $this->remove('calendrierPrevionnelFinalisation');
         }
         if (!$this->object->getPreparationApresTheseEnabled()) {
@@ -66,7 +69,7 @@ class RapportActiviteAnnuelForm extends RapportActiviteAbstractForm
     {
         return array_merge_recursive(parent::getInputFilterSpecification(), [
             'calendrierPrevionnelFinalisation' => [
-                'required' => $this->object->getCalendrierPrevionnelFinalisationEnabled(),
+                'required' => $this->object->getCalendrierPrevionnelFinalisationEnabled($this->anneeUnivService->courante()),
                 'filters' => [
                     ['name' => StringTrim::class],
                 ]

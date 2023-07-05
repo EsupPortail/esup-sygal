@@ -326,11 +326,11 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
         return $this;
     }
 
-    public function getCalendrierPrevionnelFinalisationEnabled(): bool
+    public function getCalendrierPrevionnelFinalisationEnabled(AnneeUniv $anneeUnivCourante): bool
     {
         return
             !$this->estFinContrat() &&
-            $this->getThese()->getAnneesUnivInscriptionCount() >= 3; // à partir de la 3ème année d'inscription
+            $this->getThese()->getAnneesUnivInscriptionCount($anneeUnivCourante) >= 3; // à partir de la 3ème année d'inscription
     }
 
     public function getCalendrierPrevionnelFinalisation(): ?string
@@ -395,6 +395,16 @@ class RapportActivite implements ResourceInterface, HistoriqueAwareInterface
     public function setCommentaires(?string $commentaires): self
     {
         $this->commentaires = $commentaires;
+        return $this;
+    }
+
+    /**
+     * Détache le fichier téléversé pour ce rapport non dématérialisé (ancien mode opératoire).
+     */
+    public function removeFichier(): self
+    {
+        $this->fichier = null;
+
         return $this;
     }
 

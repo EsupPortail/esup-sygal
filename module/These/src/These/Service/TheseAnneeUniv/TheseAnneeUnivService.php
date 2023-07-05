@@ -2,7 +2,6 @@
 
 namespace These\Service\TheseAnneeUniv;
 
-use Application\Entity\AnneeUniv;
 use Application\Service\BaseService;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
@@ -44,25 +43,5 @@ class TheseAnneeUnivService extends BaseService
         return array_map(function($value) {
             return current($value);
         }, $qb->getQuery()->getScalarResult());
-    }
-
-    /**
-     * Retourne l'année universitaire courante.
-     *
-     * @return AnneeUniv
-     */
-    public function anneeUnivCourante(): AnneeUniv
-    {
-        return AnneeUniv::courante();
-    }
-
-    /**
-     * Retourne l'année universitaire précédent celle en cours.
-     *
-     * @return AnneeUniv
-     */
-    public function anneeUnivPrecedente(): AnneeUniv
-    {
-        return AnneeUniv::precedente();
     }
 }
