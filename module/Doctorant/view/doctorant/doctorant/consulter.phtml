@@ -1,0 +1,69 @@
+<?php
+
+namespace Doctorant;
+
+use Application\View\Renderer\PhpRenderer;
+use Doctorant\Entity\Db\Doctorant;
+
+/**
+ * @var PhpRenderer $this
+ * @var Doctorant $doctorant
+ * @var array $rolesData
+ *
+ * @see \Doctorant\Controller\DoctorantController::voirAction()
+ */
+
+$canModifier = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_MODIFIER);
+$canSupprimer = false;//$this->isAllowed($doctorant, DoctorantPrivileges::DOCTORANT_SUPPRIMER);
+?>
+
+<?php $this->headTitle($this->translate("Doctorant"))->append($doctorant->getIndividu()->getNomComplet()) ?>
+
+<h1 class="page-header">
+    <span class="<?php echo $doctorant->estHistorise() ? 'historise' : '' ?>">
+        Doctorant &laquo; <?php echo $doctorant->getIndividu()->getNomComplet() ?> &raquo;
+    </span>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace() ?>
+
+<div class="box card">
+    <div class="card-header bg-dark text-white">
+        <h2 class="first">Détails</h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-7">
+                <?php echo $this->partial('individu/individu/partial/dl', ['individu' => $doctorant->getIndividu(), 'verbose' => false]) ?>
+
+                <a href="<?php echo $this->url('individu/voir', ['individu' => $doctorant->getIndividu()->getId()]) ?>"
+                   class="btn btn-info"
+                   title="Accéder à la fiche détaillée de cet individu">
+                    Aller à la fiche détaillée de l'individu
+                </a>
+            </div>
+            <div class="col-md-5">
+                <?php echo $this->partial('doctorant/doctorant/partial/dl', ['doctorant' => $doctorant, 'verbose' => true]) ?>
+            </div>
+        </div>
+
+        <?php if ($canModifier && !$doctorant->estHistorise()): ?>
+            <a href="<?php echo $this->url('doctorant/modifier', ['doctorant' => $doctorant->getId()]) ?>"
+               class="btn btn-primary"
+               title="Accéder à la page de modification de cet doctorant">Modifier le doctorant</a>
+        <?php endif ?>
+        <?php if ($canSupprimer): ?>
+            <?php if ($doctorant->estHistorise()): ?>
+                <a href="<?php echo $this->url('doctorant/restaurer', ['doctorant' => $doctorant->getId()]) ?>"
+                   class="btn bg-secondary text-light float-end"
+                   title="Restaurer (déhistoriser) ce doctorant"
+                   data-toggle="confirmationx">Restaurer le doctorant</a>
+            <?php else: ?>
+                <a href="<?php echo $this->url('doctorant/supprimer', ['doctorant' => $doctorant->getId()]) ?>"
+                   class="btn bg-danger float-end"
+                   title="Supprimer (historiser) ce doctorant"
+                   data-toggle="confirmationx">Supprimer le doctorant</a>
+            <?php endif ?>
+        <?php endif ?>
+    </div>
+</div>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="InscriptionAdministrative\Entity\Db\InscriptionAdministrative" table="inscription_administrative">
+        <id name="id" type="integer" column="ID">
+            <generator strategy="SEQUENCE"/>
+        </id>
+
+        <field name="noCandidat" column="no_candidat" type="string" nullable="false"/>
+        <field name="dateInscription" column="date_inscription" type="date" nullable="false"/>
+        <field name="dateAnnulation" column="date_annulation" type="date" nullable="true"/>
+        <field name="cesure" column="cesure" type="string" nullable="false"/>
+        <field name="chemin" column="chemin" type="string" nullable="false"/>
+        <field name="codeStructureEtablissementDuChemin" column="code_structure_etablissement_du_chemin" type="string" nullable="false"/>
+        <field name="formation" column="formation" type="string" nullable="false"/>
+        <field name="mobilite" column="mobilite" type="string" nullable="false"/>
+        <field name="origine" column="origine" type="string" nullable="false"/>
+        <field name="principale" column="principale" type="boolean" nullable="false"/>
+        <field name="regimeInscriptionLibelle" column="regime_inscription_libelle" type="string" nullable="false"/>
+        <field name="statutInscription" column="statut_inscription" type="string" nullable="false"/>
+        <field name="periodeCode" column="periode_code" type="string" nullable="false"/>
+        <field name="periodeLibelle" column="periode_libelle" type="string" nullable="false"/>
+        <field name="periodeDateDebut" column="periode_date_debut" type="date" nullable="false"/>
+        <field name="periodeDateFin" column="periode_date_fin" type="date" nullable="true"/>
+        <field name="periodeAnneeUniversitaire" column="periode_annee_universitaire" type="integer" nullable="false"/>
+
+        <many-to-one field="doctorant" target-entity="Doctorant\Entity\Db\Doctorant">
+            <join-columns>
+                <join-column name="DOCTORANT_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <many-to-one field="ecoleDoctorale" target-entity="Structure\Entity\Db\EcoleDoctorale">
+            <join-columns>
+                <join-column name="ECOLE_DOCT_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <field name="sourceCode" type="string" column="SOURCE_CODE" length="64" nullable="true"/>
+
+        <many-to-one field="source" target-entity="Application\Entity\Db\Source">
+            <join-columns>
+                <join-column name="SOURCE_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+        <field name="histoCreation" type="datetime" column="HISTO_CREATION" nullable="false"/>
+        <field name="histoDestruction" type="datetime" column="HISTO_DESTRUCTION" nullable="true"/>
+        <field name="histoModification" type="datetime" column="HISTO_MODIFICATION" nullable="false"/>
+        <many-to-one field="histoCreateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="HISTO_CREATEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoModificateur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="HISTO_MODIFICATEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+        <many-to-one field="histoDestructeur" target-entity="Application\Entity\Db\Utilisateur">
+            <join-columns>
+                <join-column name="HISTO_DESTRUCTEUR_ID" referenced-column-name="ID"/>
+            </join-columns>
+        </many-to-one>
+
+    </entity>
+</doctrine-mapping>

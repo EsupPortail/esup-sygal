@@ -1,0 +1,66 @@
+<?php
+/**
+ * @see \InscriptionAdministrative\Controller\InscriptionAdministrativeController::indexAction()
+ *
+ * @var \InscriptionAdministrative\Entity\Db\InscriptionAdministrative $inscription
+ */
+?>
+
+<h1>Inscription administrative</h1>
+
+<dl class="">
+    <div class="row align-items-start">
+        <div class="col">
+            <dt>id</dt>
+            <dd><?php echo $inscription->getId() ?></dd>
+            <dt>source_code</dt>
+            <dd><?php echo $inscription->getSourceCode() ?></dd>
+            <dt>doctorant</dt>
+            <dd><?php echo $inscription->getDoctorant() ?></dd>
+            <dt>ecole_doct</dt>
+            <dd><?php echo $inscription->getEcoleDoctorale() ?></dd>
+            <dt>chemin</dt>
+            <dd><?php echo $inscription->getChemin() ?></dd>
+            <dt>date_inscription</dt>
+            <dd><?php echo $inscription->getDateInscriptionToString() ?></dd>
+            <dt>principale</dt>
+            <dd><?php echo $inscription->isPrincipale() ? 'Oui' : 'Non' ?></dd>
+            <dt>statutInscription</dt>
+            <dd><?php echo $inscription->getStatutInscription() ?></dd>
+            <dt>dateAnnulation</dt>
+            <dd><?php echo $inscription->getDateAnnulationToString() ?: '-' ?></dd>
+        </div>
+        <div class="col">
+            <dt>no_candidat</dt>
+            <dd><?php echo $inscription->getNoCandidat() ?></dd>
+            <dt>cesure</dt>
+            <dd><?php echo $inscription->getCesure() ?></dd>
+            <dt>codeStructureEtablissementDuChemin</dt>
+            <dd><?php echo $inscription->getCodeStructureEtablissementDuChemin() ?></dd>
+            <dt>formation</dt>
+            <dd><?php echo $inscription->getFormation() ?: '-' ?></dd>
+            <dt>mobilite</dt>
+            <dd><?php echo $inscription->getMobilite() ?></dd>
+            <dt>origine</dt>
+            <dd><?php echo $inscription->getOrigine() ?></dd>
+            <dt>regimeInscriptionLibelle</dt>
+            <dd><?php echo $inscription->getRegimeInscriptionLibelle() ?></dd>
+        </div>
+        <div class="col">
+            <dt>periodeCode</dt>
+            <dd><?php echo $inscription->getPeriodeCode() ?></dd>
+            <dt>periodeLibelle</dt>
+            <dd><?php echo $inscription->getPeriodeLibelle() ?></dd>
+            <dt>periodeDateDebut</dt>
+            <dd><?php echo $inscription->getPeriodeDateDebutToString() ?></dd>
+            <dt>periodeDateFin</dt>
+            <dd><?php echo $inscription->getPeriodeDateFinToString() ?></dd>
+            <dt>periodeAnneeUniversitaire</dt>
+            <dd><?php echo $inscription->getPeriodeAnneeUniversitaire() ?></dd>
+            <dt>histoCreation</dt>
+            <dd><?php echo $inscription->getHistoCreation()->format(\Application\Constants::DATETIME_FORMAT) ?></dd>
+            <dt>histoModification</dt>
+            <dd><?php echo $inscription->getHistoModification()?->format(\Application\Constants::DATETIME_FORMAT) ?: '-' ?></dd>
+        </div>
+    </div>
+</dl>

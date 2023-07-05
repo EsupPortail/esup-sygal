@@ -19,10 +19,14 @@ use Doctorant\Provider\Privilege\DoctorantPrivileges;
 use Doctorant\Provider\Privilege\MissionEnseignementPrivileges;
 use Doctorant\Service\DoctorantService;
 use Doctorant\Service\DoctorantServiceFactory;
+use Doctorant\Service\Search\DoctorantSearchService;
+use Doctorant\Service\Search\DoctorantSearchServiceFactory;
 use Doctorant\Service\MissionEnseignement\MissionEnseignementService;
 use Doctorant\Service\MissionEnseignement\MissionEnseignementServiceFactory;
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctorant\Controller\DoctorantController;
+use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 use These\Provider\Privilege\CoEncadrantPrivileges;
 use UnicaenAuth\Guard\PrivilegeController;
@@ -64,7 +68,7 @@ return [
         'guards' => [
             PrivilegeController::class => [
                 [
-                    'controller' => 'Application\Controller\Doctorant',
+                    'controller' => DoctorantController::class,
                     'action' => [
                         'modifier-email-contact',
                         'modifier-email-contact-consent',
@@ -73,9 +77,11 @@ return [
                     'assertion'  => TheseAssertion::class,
                 ],
                 [
-                    'controller' => 'Application\Controller\Doctorant',
+                    'controller' => DoctorantController::class,
                     'action' => [
                         'rechercher',
+                        'lister',
+                        'consulter',
                     ],
                     'roles' => 'user',
                 ],
@@ -97,29 +103,96 @@ return [
                 'options' => [
                     'route' => '/recherche-doctorant',
                     'defaults' => [
-                        'controller' => 'Application\Controller\Doctorant',
+                        'controller' => DoctorantController::class,
                         'action' => 'rechercher',
                     ],
                 ],
                 'may_terminate' => true,
             ],
             'doctorant' => [
-                'type' => 'Segment',
+                'type' => LIteral::class,
                 'options' => [
-                    'route' => '/doctorant/:doctorant',
-                    'constraints' => [
-                        'doctorant' => '\d+',
-                    ],
+                    'route' => '/doctorant',
                     'defaults' => [
-                        'controller' => 'Application\Controller\Doctorant',
+                        'controller' => DoctorantController::class,
                     ],
                 ],
                 'may_terminate' => false,
                 'child_routes' => [
+                    'voir' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/consulter/:doctorant',
+                            'constraints' => [
+                                'doctorant' => '\d+',
+                            ],
+                            'defaults' => [
+                                'action' => 'consulter',
+                            ],
+                        ],
+                    ],
+                    'modifier' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/modifier/:doctorant',
+                            'constraints' => [
+                                'doctorant' => '\d+',
+                            ],
+                            'defaults' => [
+                                'action' => 'modifier',
+                            ],
+                        ],
+                    ],
+                    'supprimer' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/supprimer/:doctorant',
+                            'constraints' => [
+                                'doctorant' => '\d+',
+                            ],
+                            'defaults' => [
+                                'action' => 'supprimer',
+                            ],
+                        ],
+                    ],
+                    'restaurer' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/restaurer/:doctorant',
+                            'constraints' => [
+                                'doctorant' => '\d+',
+                            ],
+                            'defaults' => [
+                                'action' => 'restaurer',
+                            ],
+                        ],
+                    ],
+                    'ajouter' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/ajouter',
+                            'defaults' => [
+                                'action' => 'ajouter',
+                            ],
+                        ],
+                    ],
+                    'rechercher' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route' => '/rechercher',
+                            'defaults' => [
+                                'controller' => DoctorantController::class,
+                                'action' => 'rechercher',
+                            ],
+                        ],
+                    ],
                     'modifier-email-contact' => [
                         'type' => 'Segment',
                         'options' => [
-                            'route' => '/modifier-email-contact',
+                            'route' => '/modifier-email-contact/:doctorant',
+                            'constraints' => [
+                                'doctorant' => '\d+',
+                            ],
                             'defaults' => [
                                 /**
                                  * @see \Doctorant\Controller\DoctorantController::modifierEmailContactAction()
@@ -131,7 +204,10 @@ return [
                     'modifier-email-contact-consent' => [
                         'type' => 'Segment',
                         'options' => [
-                            'route' => '/modifier-email-contact-consent',
+                            'route' => '/modifier-email-contact-consent/:doctorant',
+                            'constraints' => [
+                                'doctorant' => '\d+',
+                            ],
                             'defaults' => [
                                 /**
                                  * @see \Doctorant\Controller\DoctorantController::modifierEmailContactConsentAction()
@@ -212,6 +288,7 @@ return [
     'service_manager' => [
         'factories' => [
             'DoctorantService' => DoctorantServiceFactory::class,
+            DoctorantSearchService::class => DoctorantSearchServiceFactory::class,
             MissionEnseignementService::class => MissionEnseignementServiceFactory::class,
             TheseAssertion::class => TheseAssertionFactory::class,
             TheseEntityAssertion::class => TheseEntityAssertionFactory::class,
@@ -223,8 +300,11 @@ return [
     'controllers' => [
         'invokables' => [],
         'factories' => [
-            'Application\Controller\Doctorant' => DoctorantControllerFactory::class,
+            DoctorantController::class => DoctorantControllerFactory::class,
             MissionEnseignementController::class => MissionEnseignementControllerFactory::class,
+        ],
+        'aliases' => [
+            'Application\Controller\Doctorant' => DoctorantController::class,
         ],
     ],
     'controller_plugins' => [

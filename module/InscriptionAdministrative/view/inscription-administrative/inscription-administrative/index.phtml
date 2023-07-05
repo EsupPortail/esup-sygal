@@ -1,0 +1,78 @@
+<?php
+/**
+ * @see \InscriptionAdministrative\Controller\InscriptionAdministrativeController::indexAction()
+ *
+ * @var \InscriptionAdministrative\Entity\Db\InscriptionAdministrative[] $inscriptions
+ */
+
+use Application\Constants;
+use Application\Entity\AnneeUniv;
+use InscriptionAdministrative\Entity\Db\InscriptionAdministrative;
+
+$statusColors = [
+    InscriptionAdministrative::STATUT_INSCRIPTION_VALIDE => 'default',
+    InscriptionAdministrative::STATUT_INSCRIPTION_ANNULE => 'danger',
+];
+?>
+
+<h1 class="page-header">Inscriptions administratives</h1>
+
+<table class="table table-bordered table-sm table-hover">
+    <tr>
+        <th rowspan="2">id</th>
+        <th rowspan="2">source</th>
+        <th rowspan="2">source code</th>
+        <th rowspan="2">doctorant</th>
+        <th rowspan="2">ecole doct</th>
+        <th rowspan="2">statut inscription</th>
+        <th rowspan="2">chemin</th>
+        <th rowspan="2">date inscription</th>
+        <th colspan="2">periode</th>
+        <th rowspan="2">date créa/modif</th>
+        <th rowspan="2"></th>
+    </tr>
+    <tr>
+        <th>debut<br>fin</th>
+        <th>annee univ</th>
+    </tr>
+    <?php foreach ($inscriptions as $inscription): ?>
+        <tr class="text-<?php echo $statusColors[$inscription['statutInscription']] ?>">
+            <td><?php echo $inscription['id'] ?></td>
+            <td><?php echo $inscription['source']['code'] ?></td>
+            <td><?php echo $inscription['sourceCode'] ?></td>
+            <td>
+                <a href="<?php echo $this->url('doctorant/voir', ['doctorant' => $inscription['doctorant']['id']]) ?>">
+                    <?php echo $inscription['doctorant']['individu']['nomUsuel'] . '<br>' . $inscription['doctorant']['individu']['prenom1'] ?>
+                </a>
+            </td>
+            <td>
+                <a href="<?php echo $this->url('ecole-doctorale/information', ['structure' => $inscription['ecoleDoctorale']['structure']['id']]) ?>">
+                    <?php echo $inscription['ecoleDoctorale']['structure']['code'] ?>
+                </a>
+            </td>
+            <td><?php echo $inscription['statutInscription'] ?></td>
+            <td><?php echo $inscription['chemin'] ?></td>
+            <td><?php echo $inscription['dateInscription']->format(Constants::DATE_FORMAT) ?></td>
+            <td>
+                <?php echo $inscription['periodeDateDebut']->format(Constants::DATE_FORMAT) ?><br>
+                <?php echo $inscription['periodeDateFin']->format(Constants::DATE_FORMAT) ?>
+            </td>
+            <td>
+                <?php
+                $anneeUnivDeduite = AnneeUniv::fromDate($inscription['periodeDateDebut']);
+                $anneeUnivClass = $anneeUnivDeduite->getPremiereAnnee() <> $inscription['periodeAnneeUniversitaire'] ? 'danger' : 'success';
+                ?>
+                <?php if ($inscription['periodeAnneeUniversitaire']): ?>
+                    <?php echo $inscription['periodeAnneeUniversitaire'] ?><br>
+                    <small><abbr class="text-<?php echo $anneeUnivClass ?>" title="Déduite de la date de début"><?php echo $anneeUnivDeduite ?></abbr></small>
+                <?php else: ?>
+                    <abbr class="text-<?php echo $anneeUnivClass ?>" title="Déduite de la date de début"><?php echo $anneeUnivDeduite ?></abbr>
+                <?php endif ?>
+            </td>
+            <td><?php echo ($inscription['histoModification'] ?: $inscription['histoCreation'])->format(Constants::DATETIME_FORMAT) ?></td>
+            <td>
+                <a href="<?php echo $this->url('inscription-administrative/voir', ['id' => $inscription['id']]) ?>"><span class="icon icon-voir"></span></a>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+</table>

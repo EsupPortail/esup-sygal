@@ -1,14 +1,28 @@
 
-alter table source add synchro_delete_interdit boolean default false not null;
-comment on column source.synchro_delete_interdit is 'Indique si dans le cadre d''une synchro l''opération ''delete'' est interdite. L''interdire est utile lorsque les données sources sont obtenues de façon incrémentale au fil du temps et non pas de façon exhaustive en une seule fois.';
+alter table source add synchro_insert_enabled boolean default true not null;
+alter table source add synchro_update_enabled boolean default true not null;
+alter table source add synchro_undelete_enabled boolean default true not null;
+alter table source add synchro_delete_enabled boolean default true not null;
+comment on column source.synchro_insert_enabled is 'Indique si dans le cadre d''une synchro l''opération ''insert'' est autorisée.';
+comment on column source.synchro_update_enabled is 'Indique si dans le cadre d''une synchro l''opération ''update'' est autorisée.';
+comment on column source.synchro_undelete_enabled is 'Indique si dans le cadre d''une synchro l''opération ''undelete'' est autorisée.';
+comment on column source.synchro_delete_enabled is 'Indique si dans le cadre d''une synchro l''opération ''delete'' est autorisée.';
 
 create sequence if not exists source_id_seq;
 
 -- Sources correspondant aux instances pégase.
 -- NB : le 'code' doit matcher avec le 'instancePegase' du contrat d'API.
-insert into source (id, code, libelle, importable, synchro_delete_interdit, etablissement_id)
-select nextval('source_id_seq'), 'PEGASE_INSA', 'Instance Pégase INSA', true, true/*delete interdit*/, 5 union
-select nextval('source_id_seq'), 'PEGASE_UCN', 'Instance Pégase UCN', true, true/*delete interdit*/, 2;
+insert into source (id, code, libelle, importable, synchro_delete_enabled, etablissement_id)
+select nextval('source_id_seq'), 'PEGASE_INSA', 'Instance Pégase INSA', true, false/*delete interdit*/, 5 union
+select nextval('source_id_seq'), 'PEGASE_UCN', 'Instance Pégase UCN', true, false/*delete interdit*/, 2;
+
+update source set synchro_delete_enabled = false where code in (
+                                                                'PEGASE_INSA',
+                                                                'PEGASE_UCN',
+                                                                'po-sxb',
+                                                                'test-sxb',
+                                                                'dev'
+    );
 
 alter table tmp_doctorant add code_apprenant_in_source varchar(64);
 alter table doctorant add code_apprenant_in_source varchar(64);
@@ -27,7 +41,6 @@ FROM tmp_doctorant tmp
          JOIN source src ON src.id = tmp.source_id
          JOIN etablissement e ON e.id = src.etablissement_id
          JOIN individu i ON i.source_code::text = tmp.individu_id::text;
-
 
 --drop view src_inscription_administrative cascade;
 --drop table if exists tmp_inscription_administrative;
@@ -130,16 +143,12 @@ alter table inscription_administrative
 
 create index inscription_administrative_doctorant_id_idx
     on inscription_administrative (doctorant_id);
-
 create index inscription_administrative_ecole_doct_id_idx
     on inscription_administrative (ecole_doct_id);
-
 create index inscription_administrative_hcfk_idx
     on inscription_administrative (histo_createur_id);
-
 create index inscription_administrative_hdfk_idx
     on inscription_administrative (histo_destructeur_id);
-
 create index inscription_administrative_hmfk_idx
     on inscription_administrative (histo_modificateur_id);
 
@@ -169,10 +178,14 @@ SELECT null::bigint as id,
 FROM tmp_inscription_administrative tmp
          JOIN source src ON src.id = tmp.source_id
          JOIN doctorant d ON d.source_code = tmp.doctorant_id
-         LEFT JOIN ecole_doct ed ON ed.source_code = tmp.ecole_doct_id
+         LEFT JOIN ecole_doct ed ON ed.source_code = tmp.ecole_doct_id -- left join obligatoire sinon perte possible d'une IA
 ;
 
 alter table tmp_doctorant alter column ine set not null;
+
+
+
+
 
 
 

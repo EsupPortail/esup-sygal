@@ -80,7 +80,7 @@ return [
         'Information',
         'Doctorant',
         'StepStar',
-//        'InscriptionAdministrative',
+        'InscriptionAdministrative',
         'Application',
         'SygalApi',
         'SygalApiImpl',

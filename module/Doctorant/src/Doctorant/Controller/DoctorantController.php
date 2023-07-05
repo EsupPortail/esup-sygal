@@ -2,21 +2,31 @@
 
 namespace Doctorant\Controller;
 
-use Application\Constants;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\MailConfirmation;
 use Application\Form\MailConfirmationForm;
 use Application\RouteMatch;
+use Application\Search\Controller\SearchControllerInterface;
+use Application\Search\Controller\SearchControllerTrait;
+use Application\Search\SearchServiceAwareTrait;
 use Application\Service\MailConfirmationService;
 use Doctorant\Entity\Db\Doctorant;
 use Doctorant\Form\MailConsentementForm;
 use Doctorant\Service\DoctorantServiceAwareTrait;
+use Laminas\Http\Response;
+use Laminas\Paginator\Paginator as LaminasPaginator;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use UnicaenAuth\Authentication\Adapter\Ldap as LdapAuthAdapter;
 
-class DoctorantController extends AbstractController
+/**
+ * @property \Doctorant\Service\Search\DoctorantSearchService $searchService
+ */
+class DoctorantController extends AbstractController implements SearchControllerInterface
 {
+    use SearchServiceAwareTrait;
+    use SearchControllerTrait;
+
     use DoctorantServiceAwareTrait;
 
     /** @var MailConfirmationService $mailConfirmationService */
@@ -49,6 +59,31 @@ class DoctorantController extends AbstractController
     public function setMailConsentementForm(MailConsentementForm $mailConsentementForm)
     {
         $this->mailConsentementForm = $mailConsentementForm;
+    }
+
+    public function indexAction(): Response|ViewModel
+    {
+        $result = $this->search();
+        if ($result instanceof Response) {
+            return $result;
+        }
+        /** @var LaminasPaginator $paginator */
+        $paginator = $result;
+
+        return new ViewModel([
+            'paginator' => $paginator,
+            'filters' => $this->filters(),
+        ]);
+    }
+
+    public function consulterAction(): ViewModel
+    {
+        /** @var \Doctorant\Entity\Db\Doctorant $doctorant */
+        $doctorant = $this->doctorantService->getRepository()->find($this->params('doctorant'));
+
+        return new ViewModel([
+            'doctorant' => $doctorant,
+        ]);
     }
 
     /**

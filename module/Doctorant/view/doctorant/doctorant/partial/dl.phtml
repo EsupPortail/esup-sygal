@@ -1,0 +1,34 @@
+<?php
+/**
+ * @var \Doctorant\Entity\Db\Doctorant $doctorant
+ * @var bool $verbose
+ */
+?>
+<dl class="row">
+    <dt class="col-md-5">INE</dt>
+    <dd class="col-md-5"><?php echo $doctorant->getIne() ?></dd>
+
+    <dt class="col-md-5">Code apprenant</dt>
+    <dd class="col-md-5"><?php echo $doctorant->getCodeApprenantInSource() ?></dd>
+
+    <?php if ($verbose): ?>
+        <dt class="col-md-5">Source</dt>
+        <dd class="col-md-5"><?php echo $doctorant->getSource() ?></dd>
+
+        <dt class="col-md-5">Source code</dt>
+        <dd class="col-md-5"><code><?php echo $doctorant->getSourceCode() ?></code></dd>
+    <?php endif ?>
+
+    <dt class="col-md-5">Id</dt>
+    <dd class="col-md-5"><?php echo $doctorant->getId() ?></dd>
+
+    <dt class="col-md-5">Dernière modification</dt>
+    <dd class="col-md-5">
+        <?php echo ($doctorant->getHistoModification() ?: $doctorant->getHistoCreation())->format('d/m/Y H:i:s') ?>
+    </dd>
+
+    <?php if ($doctorant->estHistorise()): ?>
+        <dt class="col-md-5 text-danger">Supprimé le</dt>
+        <dd class="col-md-5 text-danger"><?php echo $doctorant->getHistoDestruction()->format('d/m/Y H:i:s') ?></dd>
+    <?php endif ?>
+</dl>

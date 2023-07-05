@@ -4,7 +4,7 @@ namespace InscriptionAdministrative;
 
 use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
-use InscriptionAdministrative\Controller\IndexController;
+use InscriptionAdministrative\Controller\InscriptionAdministrativeController;
 use UnicaenAuth\Guard\PrivilegeController;
 
 return [
@@ -32,7 +32,7 @@ return [
                 'options' => [
                     'route' => '/inscription-administrative',
                     'defaults' => [
-                        'controller' => IndexController::class,
+                        'controller' => InscriptionAdministrativeController::class,
                         'action' => 'index',
                     ],
                 ],
@@ -52,10 +52,18 @@ return [
                             'inscription-administrative' => [
                                 'label' => 'Inscriptions administratives',
                                 'route' => 'inscription-administrative',
-                                'resource' => PrivilegeController::getResourceId(IndexController::class, 'index'),
+                                'resource' => PrivilegeController::getResourceId(InscriptionAdministrativeController::class, 'index'),
                                 'order' => 200,
                                 'pages' => [
+                                    'voir' => [
+                                        'label' => 'Détails',
+                                        'route' => 'inscription-administrative/voir',
+                                        'resource' => PrivilegeController::getResourceId(InscriptionAdministrativeController::class, 'voir'),
+                                        'order' => 200,
+                                        'pages' => [
 
+                                        ],
+                                    ],
                                 ],
                             ],
                         ],
@@ -69,9 +77,9 @@ return [
             PrivilegeController::class => [
                 [
                     /**
-                     * @see \InscriptionAdministrative\Controller\IndexController::indexAction()
+                     * @see \InscriptionAdministrative\Controller\InscriptionAdministrativeController::indexAction()
                      */
-                    'controller' => IndexController::class,
+                    'controller' => InscriptionAdministrativeController::class,
                     'action' => [
                         'index',
                     ],
