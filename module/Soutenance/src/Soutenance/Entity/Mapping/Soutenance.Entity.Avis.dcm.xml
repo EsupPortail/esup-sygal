@@ -28,12 +28,6 @@
             </join-columns>
         </many-to-one>
 
-        <many-to-one field="fichier" target-entity="Fichier\Entity\Db\Fichier">
-            <join-columns>
-                <join-column name="FICHIER_ID" referenced-column-name="ID"/>
-            </join-columns>
-        </many-to-one>
-
         <many-to-one field="fichierThese" target-entity="Depot\Entity\Db\FichierThese">
             <join-columns>
                 <join-column name="FICHIERTHESE_ID" referenced-column-name="ID"/>
