@@ -21,9 +21,8 @@ mkdir -p upload && \
 composer install --no-interaction --no-suggest --prefer-dist --optimize-autoloader
 
 # Création ou vidange des répertoires de cache
-mkdir -p data/cache && chmod -R 777 data/cache && rm -rf data/cache/*
-mkdir -p data/DoctrineModule/cache && chmod -R 777 data/DoctrineModule/cache && rm -rf data/DoctrineModule/cache/*
-mkdir -p data/DoctrineORMModule/Proxy && chmod -R 777 data/DoctrineORMModule/Proxy && rm -rf data/DoctrineORMModule/Proxy/*
+mkdir -p data/cache && chmod 777 data/cache && rm -rf data/cache/*
+mkdir -p data/DoctrineORMModule/Proxy && chmod 777 data/DoctrineORMModule/Proxy && rm -rf data/DoctrineORMModule/Proxy/*
 
 vendor/bin/laminas-development-mode enable
 
