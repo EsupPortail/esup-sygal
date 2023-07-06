@@ -19,7 +19,7 @@ class InscriptionAdministrativeResource extends \SygalApi\V1\Rest\InscriptionAdm
      */
     public function create($data)
     {
-        $this->logger->debug(print_r([__METHOD__, $data], true));
+        $this->logger->debug(json_encode($data, JSON_PRETTY_PRINT));
 
         try {
             $this->importFacade->import($data);

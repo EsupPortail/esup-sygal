@@ -1,5 +1,5 @@
 {
-  "id": "{{ id }}",
+  "id": "{{ inscription_codeStructureEtablissementDuChemin }}_{{ apprenant_code }}_{{ inscription_chemin }}_{{ inscription_periode_code }}",
   "instancePegase": "{{ instance_pegase }}",
   "apprenant": {
     "code": "{{ apprenant_code }}",

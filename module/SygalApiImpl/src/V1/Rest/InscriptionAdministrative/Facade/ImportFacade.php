@@ -266,7 +266,7 @@ class ImportFacade extends AbstractImportFacade
             'source_code',
             //'source_id', // pas le source_id !
             'doctorant_id',
-            'ecole_doctorale_id',
+            'ecole_doct_id',
         ]);
         $sourceId = $data['source_id'];
         $filter->setParams([PrefixEtabColumnValueFilter::PARAM_CODE_ETABLISSEMENT => $sourceId]);
