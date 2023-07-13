@@ -11,12 +11,15 @@ use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\Source\SourceServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use DateInterval;
+use Doctrine\ORM\Exception\ORMException;
+use Exception;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Fichier\Service\Storage\Adapter\Exception\StorageAdapterException;
 use Individu\Entity\Db\Individu;
 use Individu\Service\IndividuServiceAwareTrait;
+use JetBrains\PhpStorm\NoReturn;
 use Laminas\Http\Response;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\View\Model\ViewModel;
@@ -118,6 +121,13 @@ class PresoutenanceController extends AbstractController
         $validationBDD = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
         $validationPDC = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_PAGE_DE_COUVERTURE, $these);
 
+        /** Parametres ---------------------------------------------------------------------------------------------- */
+        try {
+            $deadline = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DELAI_RETOUR);
+        } catch (Exception $e) {
+            throw new RuntimeException("Une erreur est survenue lors de la récupération de la valeur d'un paramètre", 0 , $e);
+        }
+
         return new ViewModel([
             'these' => $these,
             'proposition' => $proposition,
@@ -132,7 +142,7 @@ class PresoutenanceController extends AbstractController
             'justificatifsOk' => $justificatifsOk,
             'justificatifs' => $justificatifs,
 
-            'deadline' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DELAI_RETOUR),
+            'deadline' => $deadline,
 
             'autorisation' => $autorisation,
             'pv' => $pv,
@@ -182,11 +192,11 @@ class PresoutenanceController extends AbstractController
         $membres = $proposition->getMembres();
         $membre = $this->getMembreService()->getRequestedMembre($this);
 
-        /** Ici on prépare la liste des acteurs correspondant aux différents rôles pour le Select du formulaire
+        /** Ici, on prépare la liste des acteurs correspondant aux différents rôles pour le Select du formulaire
          *  d'association. On part du principe :
          *  - qu'un Rapporteur du jury est Rapporteur et Membre du jury,
-         *  - qu'un Rapporteur absent  est Rapporteur,
-         *  - qu'un Membre du jury     est Membre du jury.
+         *  - qu'un Rapporteur absent est Rapporteur,
+         *  - qu'un Membre du jury est Membre du jury.
          */
         $acteurs = $this->getActeurService()->getRepository()->findActeurByThese($these);
         $acteurs = array_filter($acteurs, function (Acteur $a) { return $a->estNonHistorise();});
@@ -235,7 +245,7 @@ class PresoutenanceController extends AbstractController
             $acteur = $this->getActeurService()->getRepository()->find($acteurId);
             $individu = $acteur->getIndividu();
 
-            if (!$acteur) throw new RuntimeException("Aucun acteur à associer !");
+            if (! isset($acteur)) throw new RuntimeException("Aucun acteur à associer !");
 
             //mise à jour du membre de soutenance
             $membre->setActeur($acteur);
@@ -455,7 +465,7 @@ class PresoutenanceController extends AbstractController
     }
 
     /** Document pour la signature en présidence */
-    public function procesVerbalSoutenanceAction()
+    #[NoReturn] public function procesVerbalSoutenanceAction(): void
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findOneForThese($these);
@@ -473,7 +483,7 @@ class PresoutenanceController extends AbstractController
         exit;
     }
 
-    public function avisSoutenanceAction()
+    #[NoReturn] public function avisSoutenanceAction(): void
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findOneForThese($these);
@@ -491,7 +501,7 @@ class PresoutenanceController extends AbstractController
         exit;
     }
 
-    public function rapportSoutenanceAction()
+    #[NoReturn] public function rapportSoutenanceAction(): void
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findOneForThese($these);
@@ -509,7 +519,7 @@ class PresoutenanceController extends AbstractController
         exit;
     }
 
-    public function rapportTechniqueAction()
+    #[NoReturn] public function rapportTechniqueAction(): void
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findOneForThese($these);
@@ -589,7 +599,7 @@ class PresoutenanceController extends AbstractController
     }
 
     /** Document pour la signature en présidence */
-    public function convocationsAction()
+    #[NoReturn] public function convocationsAction(): void
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findOneForThese($these);
@@ -617,7 +627,7 @@ class PresoutenanceController extends AbstractController
         exit;
     }
 
-    public function convocationDoctorantAction()
+    #[NoReturn] public function convocationDoctorantAction(): void
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findOneForThese($these);
@@ -643,7 +653,7 @@ class PresoutenanceController extends AbstractController
         exit;
     }
 
-    public function convocationMembreAction()
+    #[NoReturn] public function convocationMembreAction(): void
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findOneForThese($these);
@@ -840,30 +850,34 @@ class PresoutenanceController extends AbstractController
         $proposition = $this->getPropositionService()->findOneForThese($these);
         $membres = $proposition->getMembres();
 
-        foreach ($membres as $membre) {
-            /** @var Acteur $acteur */
-            $source_code_acteur = 'SyGAL_Simulation_Rapporteur_' . $membre->getId();
-            $acteur = $this->getActeurService()->getRepository()->findOneBy(['sourceCode' => $source_code_acteur]);
-            if ($acteur !== null) {
-                $this->getActeurService()->getEntityManager()->remove($acteur);
-                $this->getActeurService()->getEntityManager()->flush($acteur);
-            }
+        try {
+            foreach ($membres as $membre) {
+                /** @var Acteur $acteur */
+                $source_code_acteur = 'SyGAL_Simulation_Rapporteur_' . $membre->getId();
+                $acteur = $this->getActeurService()->getRepository()->findOneBy(['sourceCode' => $source_code_acteur]);
+                if ($acteur !== null) {
+                    $this->getActeurService()->getEntityManager()->remove($acteur);
+                    $this->getActeurService()->getEntityManager()->flush($acteur);
+                }
 
-            /** @var Acteur $acteur */
-            $source_code_acteur = 'SyGAL_Simulation_Membre_' . $membre->getId();
-            $acteur = $this->getActeurService()->getRepository()->findOneBy(['sourceCode' => $source_code_acteur]);
-            if ($acteur !== null) {
-                $this->getActeurService()->getEntityManager()->remove($acteur);
-                $this->getActeurService()->getEntityManager()->flush($acteur);
-            }
+                /** @var Acteur $acteur */
+                $source_code_acteur = 'SyGAL_Simulation_Membre_' . $membre->getId();
+                $acteur = $this->getActeurService()->getRepository()->findOneBy(['sourceCode' => $source_code_acteur]);
+                if ($acteur !== null) {
+                    $this->getActeurService()->getEntityManager()->remove($acteur);
+                    $this->getActeurService()->getEntityManager()->flush($acteur);
+                }
 
-            /** @var Individu $source_code_individu */
-            $source_code_individu = 'SyGAL_Simulation_' . $membre->getId();
-            $individu = $this->getIndividuService()->getRepository()->findOneBy(['sourceCode' => $source_code_individu]);
-            if ($individu !== null) {
-                $this->getActeurService()->getEntityManager()->remove($individu);
-                $this->getActeurService()->getEntityManager()->flush($individu);
+                /** @var Individu $source_code_individu */
+                $source_code_individu = 'SyGAL_Simulation_' . $membre->getId();
+                $individu = $this->getIndividuService()->getRepository()->findOneBy(['sourceCode' => $source_code_individu]);
+                if ($individu !== null) {
+                    $this->getActeurService()->getEntityManager()->remove($individu);
+                    $this->getActeurService()->getEntityManager()->flush($individu);
+                }
             }
+        } catch (ORMException $e) {
+            throw new RuntimeException("Un problème est survenu en Base de donnée", 0 , $e);
         }
 
         return $this->redirect()->toRoute('soutenance/presoutenance', ['these' => $these->getId()], [], true);

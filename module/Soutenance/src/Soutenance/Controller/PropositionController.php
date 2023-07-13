@@ -7,6 +7,7 @@ use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
+use Exception;
 use Fichier\Entity\Db\NatureFichier;
 use Fichier\Service\Fichier\FichierStorageServiceAwareTrait;
 use Individu\Entity\Db\Individu;
@@ -133,31 +134,19 @@ class PropositionController extends AbstractController
         /** @var IndividuRole[] $ecoleResponsables */
         $ecoleResponsables = [];
         if ($these->getEcoleDoctorale() !== null) {
-            // todo : utiliser findIndividuRoleByStructure(..., null, $these->getEtablissement())
-            $ecoleResponsables = $this->getRoleService()->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure());
-            $ecoleResponsables = array_filter($ecoleResponsables, function (IndividuRole $ir) use ($these) {
-                return $ir->getIndividu()->getEtablissement() and $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId();
-            });
+            $ecoleResponsables = $this->getRoleService()->findIndividuRoleByStructure($these->getEcoleDoctorale()->getStructure(), null, $these->getEtablissement());
         }
         /** @var IndividuRole[] $uniteResponsables */
         $uniteResponsables = [];
         if ($these->getUniteRecherche() !== null) {
-            // todo : utiliser findIndividuRoleByStructure(..., null, $these->getEtablissement())
-            $uniteResponsables = $this->getRoleService()->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure());
-            $uniteResponsables = array_filter($uniteResponsables, function (IndividuRole $ir) use ($these) {
-                return $ir->getIndividu()->getEtablissement() and $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId();
-            });
+            $uniteResponsables = $this->getRoleService()->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure(), null, $these->getEtablissement());
         }
         /** @var IndividuRole[] $etablissementResponsables */
         $etablissementResponsables = [];
         if ($these->getEtablissement() !== null) {
-            // todo : utiliser findIndividuRoleByStructure(..., Role::CODE_BDD, $these->getEtablissement())
-            $etablissementResponsables = $this->roleService->findIndividuRoleByStructure($these->getEtablissement()->getStructure());
+            $etablissementResponsables = $this->roleService->findIndividuRoleByStructure($these->getEtablissement()->getStructure(), null, $these->getEtablissement());
             $etablissementResponsables = array_filter($etablissementResponsables, function (IndividuRole $ir) {
                 return $ir->getRole()->getCode() === Role::CODE_BDD;
-            });
-            $etablissementResponsables = array_filter($etablissementResponsables, function (IndividuRole $ir) use ($these) {
-                return $ir->getIndividu()->getEtablissement() and $ir->getIndividu()->getEtablissement()->getId() === $these->getEtablissement()->getId();
             });
         }
         $informationsOk = true;
@@ -201,6 +190,18 @@ class PropositionController extends AbstractController
         /** Récupération des éléments liés au bloc 'intégrité scientifique' */
         $attestationsIntegriteScientifique = $this->getJustificatifService()->getJustificatifsByPropositionAndNature($proposition, NatureFichier::CODE_FORMATION_INTEGRITE_SCIENTIFIQUE);
 
+        /** Paramètres ---------------------------------------------------------------------------------------------- */
+
+        try {
+            $FORMULAIRE_DELOCALISATION = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELOCALISATION);
+            $FORMULAIRE_DELEGUATION = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELEGATION_SIGNATURE);
+            $FORMULAIRE_DEMANDE_LABEL = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_LABEL_EUROPEEN);
+            $FORMULAIRE_DEMANDE_ANGLAIS = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_REDACTION_ANGLAIS);
+            $FORMULAIRE_DEMANDE_CONFIDENTIALITE = $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_CONFIDENTIALITE);
+        } catch (Exception $e) {
+            throw new RuntimeException("Une erreur est survenue lors de la récupération de paramètre.",0,$e);
+        }
+
         return new ViewModel([
             'these' => $these,
             'proposition' => $proposition,
@@ -224,11 +225,11 @@ class PropositionController extends AbstractController
             'informationsOk' => $informationsOk,
             'avis' => $this->getAvisService()->getAvisByThese($these),
 
-            'FORMULAIRE_DELOCALISATION' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELOCALISATION),
-            'FORMULAIRE_DELEGUATION' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_DELEGATION_SIGNATURE),
-            'FORMULAIRE_DEMANDE_LABEL' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_LABEL_EUROPEEN),
-            'FORMULAIRE_DEMANDE_ANGLAIS' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_REDACTION_ANGLAIS),
-            'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $this->getParametreService()->getValeurForParametre(SoutenanceParametres::CATEGORIE, SoutenanceParametres::DOC_CONFIDENTIALITE),
+            'FORMULAIRE_DELOCALISATION' => $FORMULAIRE_DELOCALISATION,
+            'FORMULAIRE_DELEGUATION' => $FORMULAIRE_DELEGUATION,
+            'FORMULAIRE_DEMANDE_LABEL' => $FORMULAIRE_DEMANDE_LABEL,
+            'FORMULAIRE_DEMANDE_ANGLAIS' => $FORMULAIRE_DEMANDE_ANGLAIS,
+            'FORMULAIRE_DEMANDE_CONFIDENTIALITE' => $FORMULAIRE_DEMANDE_CONFIDENTIALITE,
 
         ]);
     }
