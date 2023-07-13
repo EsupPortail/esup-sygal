@@ -4,6 +4,7 @@ Journal des modifications
 6.0.4
 -----
 - [FIX] Recherche de rapports d'Activité/CSI/Mi-parcours : les filtres Établissement/ED/UR géraient mal la subsitution de structures.
+- Changement de la page de couverture pour tenir compte de la co-accréditation
 
 6.0.3
 -----

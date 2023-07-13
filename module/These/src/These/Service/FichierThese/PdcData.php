@@ -9,8 +9,7 @@ use These\Entity\Db\Acteur;
 /** Les informations ici sont des chaines de caractères */
 class PdcData
 {
-    /** @var string */
-    private $titre;
+    private ?string $titre = null;
     /** @var string */
     private $specialite;
     /** @var string */

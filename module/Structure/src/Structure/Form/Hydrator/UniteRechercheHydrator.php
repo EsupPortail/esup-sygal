@@ -26,7 +26,7 @@ class UniteRechercheHydrator extends StructureHydrator
      */
     public function hydrate(array $data, $ur): UniteRecherche
     {
-        if ($data['id'] === "") $data['id'] = null;
+        if (!isset($data['id']) || $data['id'] === "") $data['id'] = null;
 
         /** @var UniteRecherche $object */
         $object = parent::hydrate($data, $ur);

@@ -35,7 +35,7 @@ class EtablissementHydrator extends StructureHydrator
      */
     public function hydrate(array $data, $etablissement): Etablissement
     {
-        if ($data['id'] === "") $data['id'] = null;
+        if (!isset($data['id']) || $data['id'] === "") $data['id'] = null;
 
         /** @var Etablissement $object */
         $object = parent::hydrate($data, $etablissement);

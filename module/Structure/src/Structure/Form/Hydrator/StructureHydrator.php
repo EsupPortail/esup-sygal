@@ -41,7 +41,7 @@ abstract class StructureHydrator extends DoctrineObject
         $object->getStructure()->setCode($data['code']);
         $object->getStructure()->setIdRef($data['id_ref']);
         $object->getStructure()->setIdHal($data['id_hal']);
-        $object->getStructure()->setCheminLogo($data['cheminLogo']);
+        $object->getStructure()->setCheminLogo($data['cheminLogo']??null);
         $object->getStructure()->setEstFermee(isset($data['estFerme']) and $data['estFerme'] === "1");
 
         return $object;
