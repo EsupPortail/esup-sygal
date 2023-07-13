@@ -76,19 +76,19 @@ class RapportActiviteSearchService extends SearchService
         $etablissementInscrFilter = $this->getEtablissementTheseSearchFilter()
             ->setQueryBuilderApplier(function (SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
                 $qb
-                    ->andWhere('etab.sourceCode = :sourceCodeEtab OR etab_structureSubstituante.sourceCode = :sourceCodeEtab')
+                    ->andWhere('etab.sourceCode = :sourceCodeEtab OR etab_substituant.sourceCode = :sourceCodeEtab')
                     ->setParameter('sourceCodeEtab', $filter->getValue());
             });
         $ecoleDoctoraleFilter = $this->getEcoleDoctoraleSearchFilter()
             ->setQueryBuilderApplier(function (SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
                 $qb
-                    ->andWhere('ed.sourceCode = :sourceCodeED OR ed_structureSubstituante.sourceCode = :sourceCodeED')
+                    ->andWhere('ed.sourceCode = :sourceCodeED OR ed_substituant.sourceCode = :sourceCodeED')
                     ->setParameter('sourceCodeED', $filter->getValue());
             });
         $uniteRechercheFilter = $this->getUniteRechercheSearchFilter()
             ->setQueryBuilderApplier(function (SelectSearchFilter $filter, DefaultQueryBuilder $qb) {
                 $qb
-                    ->andWhere('ur.sourceCode = :sourceCodeUR OR ur_structureSubstituante.sourceCode = :sourceCodeUR')
+                    ->andWhere('ur.sourceCode = :sourceCodeUR OR ur_substituant.sourceCode = :sourceCodeUR')
                     ->setParameter('sourceCodeUR', $filter->getValue());
             });
         $origineFinancementFilter = $this->getOrigineFinancementSearchFilter();
@@ -156,7 +156,10 @@ class RapportActiviteSearchService extends SearchService
             ->leftJoin('ur.structure', 'ur_structure')->addSelect('ur_structure')
             ->leftJoinStructureSubstituante('etab_structure', 'etab_structureSubstituante')
             ->leftJoinStructureSubstituante('ed_structure', 'ed_structureSubstituante')
-            ->leftJoinStructureSubstituante('ur_structure', 'ur_structureSubstituante');
+            ->leftJoinStructureSubstituante('ur_structure', 'ur_structureSubstituante')
+            ->leftJoin('etab_structureSubstituante.etablissement', 'etab_substituant')
+            ->leftJoin('ed_structureSubstituante.ecoleDoctorale', 'ed_substituant')
+            ->leftJoin('ur_structureSubstituante.uniteRecherche', 'ur_substituant');
 
         return $qb;
     }

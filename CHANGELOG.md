@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+6.0.4
+-----
+- [FIX] Recherche de rapports d'Activité/CSI/Mi-parcours : les filtres Établissement/ED/UR géraient mal la subsitution de structures.
+
 6.0.3
 -----
 - [FIX] Signature de méthode setObject() modifiée en PHP8 dans Doctrine\Laminas\Hydrator\Strategy\AbstractCollectionStrategy.

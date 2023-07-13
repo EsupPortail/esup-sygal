@@ -60,11 +60,11 @@ class RapportCsiControllerFactory
         $controller->setIndividuService($individuService);
         $controller->setForm($rapportForm);
         $controller->setValidationService($validationService);
+        $controller->setAnneeUnivService($anneeUnivService);
         $controller->setAnneesUnivs($theseAnneeUnivService);
         $controller->setTypeRapport($typeRapport);
         $controller->setTypeValidation($typeValidation);
         $controller->setMembreService($membreService);
-        $controller->setAnneeUnivService($anneeUnivService);
 
 //        $theseService->attach($controller->getEventManager());
 
