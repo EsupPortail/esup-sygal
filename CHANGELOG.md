@@ -5,6 +5,7 @@ Journal des modifications
 -----
 - [FIX] Recherche de rapports d'Activité/CSI/Mi-parcours : les filtres Établissement/ED/UR géraient mal la subsitution de structures.
 - Changement de la page de couverture pour tenir compte de la co-accréditation
+- Module Soutenance : Possibilité pour les structures de révoquer leur validation (avec modal de confirmation)
 
 6.0.3
 -----

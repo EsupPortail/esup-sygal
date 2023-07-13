@@ -5,6 +5,7 @@ namespace Soutenance\Controller;
 use Application\Controller\AbstractController;
 use Application\Entity\Db\Role;
 use Application\Entity\Db\Utilisateur;
+use Application\Entity\Db\Validation;
 use Application\Service\Role\RoleServiceAwareTrait;
 use Application\Service\UserContextServiceAwareTrait;
 use Exception;
@@ -486,7 +487,7 @@ class PropositionController extends AbstractController
 
     }
 
-    public function validerStructureAction()
+    public function validerStructureAction(): Response|ViewModel
     {
         $these = $this->requestedThese();
         $proposition = $this->getPropositionService()->findOneForThese($these);
@@ -547,6 +548,67 @@ class PropositionController extends AbstractController
 
         return $this->redirect()->toRoute('soutenance/proposition', ['these' => $these->getId()], [], true);
 
+    }
+
+    public function revoquerStructureAction(): ViewModel
+    {
+        $these = $this->requestedThese();
+        $proposition = $this->getPropositionService()->findOneForThese($these);
+
+        /**
+         * @var Role $role
+         * @var Individu $individu
+         */
+        $role = $this->userContextService->getSelectedIdentityRole();
+
+        /** NOTE: pas de break ici pour dévalider en cascade */
+        $validations = [];
+        switch ($role->getCode()) {
+            case Role::CODE_RESP_UR :
+                $validations = array_merge($validations, $this->getValidationService()->getRepository()->findValidationByCodeAndThese(\Application\Entity\Db\TypeValidation::CODE_VALIDATION_PROPOSITION_UR,$these));
+            case Role::CODE_RESP_ED :
+                $validations = array_merge($validations, $this->getValidationService()->getRepository()->findValidationByCodeAndThese(\Application\Entity\Db\TypeValidation::CODE_VALIDATION_PROPOSITION_ED,$these));
+            case Role::CODE_BDD :
+                $validations = array_merge($validations, $this->getValidationService()->getRepository()->findValidationByCodeAndThese(\Application\Entity\Db\TypeValidation::CODE_VALIDATION_PROPOSITION_BDD,$these));
+        }
+
+
+        $validationsListing = "<ul>";
+        if (!empty($validations)) {
+            /** @var Validation $v */
+            foreach ($validations as $v) {
+                $validationsListing .= "<li>" . $v->getTypeValidation()->getLibelle() . " faite par" . $v->getHistoCreateur()->getDisplayName(). " le". $v->getHistoCreation()->format('d/m/y à H:i')."</li>";
+            }
+        }
+        $validationsListing .= "</ul>";
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $data = $request->getPost();
+            if ($data["reponse"] === "oui") {
+                if (!empty($validations)) {
+                    foreach ($validations as $v) {
+                        $this->getValidationService()->historise($v);
+                    }
+                }
+                $etat = $this->getPropositionService()->findPropositionEtatByCode(Etat::EN_COURS);
+                $proposition->setEtat($etat);
+                $this->getPropositionService()->update($proposition);
+            }
+        }
+
+        $this->getHorodatageService()->addHorodatage($proposition, HorodatageService::TYPE_VALIDATION, "Révocation " . $role->getCode());
+
+        $vm = new ViewModel();
+        if (!empty($validations)) {
+            $vm->setTemplate('default/confirmation');
+            $vm->setVariables([
+                'title' => "Révocation de votre validation",
+                'text' => "Cette révocation annulera les validations suivantes : " . $validationsListing . "Êtes-vous sûr&middot;e de vouloir continuer ?",
+                'action' => $this->url()->fromRoute('soutenance/proposition/revoquer-structure', ["these" => $these->getId()], [], true),
+            ]);
+        }
+        return $vm;
     }
 
     public function refuserStructureAction(): ViewModel
