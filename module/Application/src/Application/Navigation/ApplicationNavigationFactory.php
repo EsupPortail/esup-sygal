@@ -54,8 +54,10 @@ class ApplicationNavigationFactory extends NavigationFactory
      */
     protected function preparePages(ContainerInterface $container, $pages): ?array
     {
-        $this->doctorant = $this->userContextService->getIdentityDoctorant();
-        $this->role = $this->userContextService->getSelectedIdentityRole();
+        $role = $this->userContextService->getSelectedIdentityRole();
+
+        $this->doctorant = ($role !== null && $role->isDoctorant()) ? $this->userContextService->getIdentityDoctorant() : null;
+        $this->role = $role;
         $this->individu = $this->userContextService->getIdentityIndividu();
 
         return parent::preparePages($container, $pages);

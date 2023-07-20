@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+6.0.5
+-----
+- [FIX] Correction de bugs en cas d'utilisateur ayant à la fois le rôle Doctorant et un autre rôle.
+
 6.0.4
 -----
 - [FIX] Recherche de rapports d'Activité/CSI/Mi-parcours : les filtres Établissement/ED/UR géraient mal la subsitution de structures.

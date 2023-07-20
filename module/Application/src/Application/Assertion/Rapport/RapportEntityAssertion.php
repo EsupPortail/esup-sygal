@@ -74,7 +74,11 @@ class RapportEntityAssertion implements EntityAssertionInterface
 
     private function assertAppartenanceThese()
     {
-        if ($doctorant = $this->userContextService->getIdentityDoctorant()) {
+        $role = $this->userContextService->getSelectedIdentityRole();
+
+        // rôle doctorant
+        if ($role->isDoctorant()) {
+            $doctorant = $this->userContextService->getIdentityDoctorant();
             $this->assertTrue(
                 $this->rapport->getThese()->getDoctorant()->getId() === $doctorant->getId(),
                 "La thèse n'appartient pas au doctorant " . $doctorant

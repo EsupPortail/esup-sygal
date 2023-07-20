@@ -54,8 +54,11 @@ class RapportActiviteOperationAbstractAssertion extends AbstractAssertion
      */
     protected function assertAppartenanceThese(These $these)
     {
+        $role = $this->userContextService->getSelectedIdentityRole();
+
         // rôle doctorant
-        if ($doctorant = $this->userContextService->getIdentityDoctorant()) {
+        if ($role->isDoctorant()) {
+            $doctorant = $this->userContextService->getIdentityDoctorant();
             $this->assertTrue(
                 $these->getDoctorant()->getId() === $doctorant->getId(),
                 "La thèse n'appartient pas au doctorant " . $doctorant
