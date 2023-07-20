@@ -3,6 +3,7 @@
  * @var Proposition $proposition
  * @var Validation[][] $validations
  * @var boolean $canStructureValider
+ * @var boolean $canStructureRevoquer
  * @var boolean $canPresidence
  */
 
@@ -116,6 +117,16 @@ $these = $proposition->getThese();
                             class="btn btn-danger action ajax-modal"
                             data-event="refus-proposition">
                             <span class="icon icon-delete"></span> Refuser la proposition de soutenance
+                        </a>
+                    </p>
+                <?php endif; ?>
+
+                <?php if ($canStructureRevoquer): ?>
+                    <p>
+                        <a <?php /** @see \Soutenance\Controller\PropositionController::revoquerStructureAction(); */ ?>
+                                href="<?php echo $this->url('soutenance/proposition/revoquer-structure', ['these' => $these->getId()], [], true); ?>"
+                                class="btn btn-warning action ajax-modal" data-event="modification">
+                            <span class="icon icon-unchecked"></span> Révoquer la validation
                         </a>
                     </p>
                 <?php endif; ?>

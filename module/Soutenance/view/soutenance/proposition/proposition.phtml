@@ -169,12 +169,16 @@ echo $this->partial('partial/validations-acteurs', [
 $canStructureValider = $isOk && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_UR) ||
     $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_ED) ||
     $this->isAllowed($these, PropositionPrivileges::PROPOSITION_VALIDER_BDD);
+
+$canStructureRevoquer = $isOk && $this->isAllowed($these, PropositionPrivileges::PROPOSITION_REVOQUER_STRUCTURE);
+
 $canPresidence = $this->isAllowed($these, PropositionPrivileges::PROPOSITION_PRESIDENCE);
 
 echo $this->partial('partial/validations-structures', [
     'proposition' => $proposition,
     'validations' => $validations,
     'canStructureValider' => $canStructureValider,
+    'canStructureRevoquer' => $canStructureRevoquer,
     'canPresidence' => $canPresidence,
 ]); ?>
 

@@ -3,6 +3,8 @@
  * @var \Individu\Entity\Db\Individu $individu
  * @var bool $verbose
  */
+
+if (!isset($verbose)) $verbose = false;
 ?>
 <dl class="row">
     <?php if ($individu->getCivilite()): ?>

@@ -60,6 +60,7 @@ return [
                             PropositionPrivileges::PROPOSITION_VALIDER_ED,
                             PropositionPrivileges::PROPOSITION_VALIDER_UR,
                             PropositionPrivileges::PROPOSITION_VALIDER_BDD,
+                            PropositionPrivileges::PROPOSITION_REVOQUER_STRUCTURE,
                             PropositionPrivileges::PROPOSITION_PRESIDENCE,
 
                             PropositionPrivileges::PROPOSITION_DECLARATION_HONNEUR_VALIDER,
@@ -135,6 +136,15 @@ return [
                         PropositionPrivileges::PROPOSITION_VALIDER_UR,
                         PropositionPrivileges::PROPOSITION_VALIDER_ED,
                         PropositionPrivileges::PROPOSITION_VALIDER_BDD,
+                    ],
+                ],
+                [
+                    'controller' => PropositionController::class,
+                    'action' => [
+                        'revoquer-structure',
+                    ],
+                    'privileges' => [
+                        PropositionPrivileges::PROPOSITION_REVOQUER_STRUCTURE,
                     ],
                 ],
                 [
@@ -378,8 +388,21 @@ return [
                                 'options' => [
                                     'route' => '/valider-structure',
                                     'defaults' => [
+                                        /** @see PropositionController::validerStructureAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'valider-structure',
+                                    ],
+                                ],
+                            ],
+                            'revoquer-structure' => [
+                                'type' => Segment::class,
+                                'may_terminate' => true,
+                                'options' => [
+                                    'route' => '/revoquer-structure',
+                                    'defaults' => [
+                                        /** @see PropositionController::revoquerStructureAction() */
+                                        'controller' => PropositionController::class,
+                                        'action' => 'revoquer-structure',
                                     ],
                                 ],
                             ],
@@ -389,6 +412,7 @@ return [
                                 'options' => [
                                     'route' => '/refuser-PropositionController',
                                     'defaults' => [
+                                        /** @see PropositionController::refuserStructureAction() */
                                         'controller' => PropositionController::class,
                                         'action' => 'refuser-structure',
                                     ],

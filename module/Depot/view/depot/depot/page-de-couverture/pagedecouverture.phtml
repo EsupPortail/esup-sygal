@@ -18,16 +18,49 @@ use Application\View\Renderer\PhpRenderer;
  */
 ?>
 
-<!-- SECTION DU LOGO DE LA COMUE -------------------------------------------------------------------------------------->
-<div style="text-align: center; margin-bottom: 30px;">
+<!-- HEADER NORMAND --------------------------------------------------------------------------------------------------->
+<!--
+    A GAUCHE  >>> LE LOGO DE LA COMUE
+    A DROITE  >>> LE LOGO DE L'ETABLISSEMENT D'INSCRIPTION
+-->
+
+<style>
+    .logo-header {
+        border: 2px hotpink solid;
+        max-height: 5cm;
+        max-width: 5cm;
+    }
+</style>
+
+<?php if ($informations->getLogoCOMUE() !== null): ?>
+    <table style="border:none;" class="logos">
+        <tr>
+            <td>
+                <?php if ($informations->getLogoCOMUE() !== null): ?>
+                    <img src="<?php echo $informations->getLogoCOMUE() ?>" alt="Logo de la COMUE" class="logo-header"/>
+                <?php else: ?>
+                    <span style='background-color:red;'> Logo de la COMUE. </span>
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php if ($informations->getLogoEtablissement() !== null): ?>
+                    <img src="<?php echo $informations->getLogoEtablissement() ?>" alt="Logo de l'établissement d'inscription" class="logo-header"/>
+                <?php else: ?>
+                    <span style='background-color:red;'> Logo de l'établissement non renseigné. </span>
+                <?php endif; ?>
+            </td>
+        </tr>
+    </table>
+<?php else : ?>
     <div class='logo-comue'>
-        <?php if ($informations->getLogoCOMUE() !== null): ?>
-            <img src="<?php echo $informations->getLogoCOMUE() ?>"/>
+        <?php if ($informations->getLogoEtablissement() !== null): ?>
+            <img src="<?php echo $informations->getLogoEtablissement() ?>" alt="Logo de l'établissement d'inscription"/>
         <?php else: ?>
-            <span style='background-color:red;'> COMUE ou logo de la COMUE non renseigné. </span>
+            <span style='background-color:red;'> Logo de l'établissement non renseigné. </span>
         <?php endif; ?>
     </div>
-</div>
+<?php endif; ?>
+
 
 <!-- ENTETE DE LA PAGE DE COUVERTURE ---------------------------------------------------------------------------------->
 <div class='bandeau-these'>
@@ -139,13 +172,6 @@ use Application\View\Renderer\PhpRenderer;
 <div class="logos">
 <table style="border:none;" class="logos">
     <tr>
-        <td>
-            <?php if ($informations->getLogoEtablissement()): ?>
-                <img class="logo_small" src="<?php echo $informations->getLogoEtablissement() ?>"/>
-            <?php else: ?>
-                <span style='background-color:red;'> Établissement d'inscription ou logo d'établissement non renseigné. </span>
-            <?php endif; ?>
-        </td>
         <?php if ($informations->isAssocie()): ?>
             <td>
                 <?php if ($informations->getLogoAssocie()): ?>

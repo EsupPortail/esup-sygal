@@ -2,6 +2,7 @@
 
 namespace Soutenance\Assertion;
 
+use Soutenance\Entity\Etat;
 use These\Entity\Db\Acteur;
 use Application\Entity\Db\Role;
 use These\Entity\Db\These;
@@ -208,6 +209,21 @@ class PropositionAssertion implements  AssertionInterface {
                         $validations_ECOLE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
                         $validations_BDD    = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
                         return !$validations_BDD && $validations_UNITE && $validations_ECOLE && $structure === $theseEtablissementStructure;
+                    default:
+                        return false;
+                }
+            case PropositionPrivileges::PROPOSITION_REVOQUER_STRUCTURE:
+                if ($proposition->getEtat()->getCode() !== Etat::EN_COURS && $proposition->getEtat()->getCode() !== Etat::ETABLISSEMENT) return false;
+                switch ($role) {
+                    case Role::CODE_BDD :
+                        $validations_BDD  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_BDD, $these);
+                        return (!empty($validations_BDD) && $structure === $theseEtablissementStructure);
+                    case Role::CODE_RESP_UR :
+                        $validations_UNITE  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_UR, $these);
+                        return (!empty($validations_UNITE) && $structure === $these->getUniteRecherche()->getStructure());
+                    case Role::CODE_RESP_ED :
+                        $validations_ED  = $this->getValidationService()->getRepository()->findValidationByCodeAndThese(TypeValidation::CODE_VALIDATION_PROPOSITION_ED, $these);
+                        return (!empty($validations_ED) && $structure === $these->getEcoleDoctorale()->getStructure());
                     default:
                         return false;
                 }
