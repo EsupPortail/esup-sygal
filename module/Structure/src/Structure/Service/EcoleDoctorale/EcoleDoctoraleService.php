@@ -5,7 +5,9 @@ namespace Structure\Service\EcoleDoctorale;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
 use Application\SourceCodeStringHelperAwareTrait;
+use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\ORMException;
+use Exception;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\Repository\EcoleDoctoraleRepository;
@@ -53,10 +55,14 @@ class EcoleDoctoraleService extends BaseService
         $this->flush($ecole);
     }
 
-    public function create(EcoleDoctorale $structureConcrete, Utilisateur $createur)
+    public function create(EcoleDoctorale $structureConcrete, Utilisateur $createur): EcoleDoctorale
     {
-        /** @var TypeStructure $typeStructure */
-        $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => 'etablissement']);
+        try {
+            /** @var TypeStructure $typeStructure */
+            $typeStructure = $this->entityManager->getRepository(TypeStructure::class)->findOneBy(['code' => TypeStructure::CODE_ECOLE_DOCTORALE]);
+        } catch (NotSupported $e) {
+            throw new RuntimeException("Erreur lors de l'obtention du repository Doctrine", null, $e);
+        }
 
         $sourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo(uniqid());
         $structureConcrete->setSourceCode($sourceCode);
@@ -67,16 +73,16 @@ class EcoleDoctoraleService extends BaseService
         $structure->setSourceCode($sourceCode);
 
         $this->entityManager->beginTransaction();
-
         try {
             $this->entityManager->persist($structure);
             $this->entityManager->persist($structureConcrete);
             $this->entityManager->flush($structure);
             $this->entityManager->flush($structureConcrete);
             $this->entityManager->commit();
-        } catch (ORMException $e) {
+        } catch (Exception $e) {
             $this->rollback();
-            throw new RuntimeException("Erreur lors de l'enregistrement de l'ED '$structure'", null, $e);
+            throw new RuntimeException(
+                "Erreur lors de l'enregistrement de la structure '$structure' (type : '$typeStructure')", null, $e);
         }
 
         return $structureConcrete;

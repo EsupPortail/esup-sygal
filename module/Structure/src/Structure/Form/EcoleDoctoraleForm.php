@@ -2,9 +2,11 @@
 
 namespace Structure\Form;
 
+use Laminas\Filter\ToNull;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Text;
 use Laminas\InputFilter\InputFilterProviderInterface;
+use Laminas\Validator\Uri;
 use Structure\Entity\Db\EcoleDoctorale;
 
 class EcoleDoctoraleForm extends StructureForm implements InputFilterProviderInterface
@@ -23,7 +25,7 @@ class EcoleDoctoraleForm extends StructureForm implements InputFilterProviderInt
         );
 
         $this->add((new Text('offre-these'))
-            ->setLabel("Lien vers l'offre de thèse :")
+            ->setLabel("Lien (URL) vers l'offre de thèse :")
         );
 
         $this->add((new Checkbox('estFerme'))
@@ -43,10 +45,21 @@ class EcoleDoctoraleForm extends StructureForm implements InputFilterProviderInt
             'theme' => [
                 'name' => 'theme',
                 'required' => false,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                    ['name' => ToNull::class],
+                ],
             ],
             'offre-these' => [
                 'name' => 'offre-these',
                 'required' => false,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                    ['name' => ToNull::class],
+                ],
+                'validators' => [
+                    ['name' => Uri::class, 'options' => ['allowRelative' => false]],
+                ],
             ],
             'estFerme' => [
                 'name' => 'estFerme',

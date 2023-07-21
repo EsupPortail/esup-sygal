@@ -3,6 +3,7 @@ Journal des modifications
 
 6.0.5
 -----
+- [FIX] Correction d'un bug empêchant la création d'établissement ; améliorations des validateurs des formulaires de structures.
 - [FIX] Correction de bugs en cas d'utilisateur ayant à la fois le rôle Doctorant et un autre rôle.
 
 6.0.4

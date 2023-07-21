@@ -14,11 +14,11 @@ class EtablissementHydrator extends StructureHydrator
     {
         $data = parent::extract($etablissement);
 
-        $data['domaine'] = $etablissement->getDomaine();
         $data['estMembre'] = $etablissement->estMembre();
         $data['estAssocie'] = $etablissement->estAssocie();
         $data['estInscription'] = $etablissement->estInscription();
         $data['estCed'] = $etablissement->estCed();
+
         $data['adresse'] = $etablissement->getStructure()->getAdresse();
         $data['telephone'] = $etablissement->getStructure()->getTelephone();
         $data['fax'] = $etablissement->getStructure()->getFax();
@@ -40,16 +40,11 @@ class EtablissementHydrator extends StructureHydrator
         /** @var Etablissement $object */
         $object = parent::hydrate($data, $etablissement);
 
-        $object->setDomaine($data['domaine']);
-        $object->getStructure()->setAdresse($data['adresse']);
-        $object->getStructure()->setTelephone($data['telephone']);
-        $object->getStructure()->setFax($data['fax']);
-        $object->getStructure()->setEmail($data['email']);
-        $object->getStructure()->setSiteWeb($data['siteWeb']);
-        $object->setEstMembre($data['estMembre']);
-        $object->setEstAssocie($data['estAssocie']);
-        $object->setEstInscription($data['estInscription']);
-        $object->setEstCed($data['estCed']);
+        $object->getStructure()->setAdresse($data['adresse'] ?: null);
+        $object->getStructure()->setTelephone($data['telephone'] ?: null);
+        $object->getStructure()->setFax($data['fax'] ?: null);
+        $object->getStructure()->setEmail($data['email'] ?: null);
+        $object->getStructure()->setSiteWeb($data['siteWeb'] ?: null);
 
         return $object;
     }

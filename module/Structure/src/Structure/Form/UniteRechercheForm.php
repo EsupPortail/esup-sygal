@@ -2,6 +2,7 @@
 
 namespace Structure\Form;
 
+use Laminas\Filter\ToNull;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Text;
 use Laminas\InputFilter\InputFilterProviderInterface;
@@ -39,6 +40,10 @@ class UniteRechercheForm extends StructureForm implements InputFilterProviderInt
             'RNSR' => [
                 'name' => 'RNSR',
                 'required' => false,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                    ['name' => ToNull::class],
+                ],
             ],
         ]);
     }

@@ -2,10 +2,12 @@
 
 namespace Structure\Form;
 
+use Laminas\Filter\ToNull;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Text;
 use Laminas\InputFilter\InputFilterProviderInterface;
 use Laminas\Validator\EmailAddress;
+use Laminas\Validator\Uri;
 use Structure\Entity\Db\Etablissement;
 
 class EtablissementForm extends StructureForm implements InputFilterProviderInterface
@@ -82,28 +84,48 @@ class EtablissementForm extends StructureForm implements InputFilterProviderInte
         return array_merge(parent::getInputFilterSpecification(), [
             'code' => [
                 'required' => true, // requis pour le calcul du nom de fichier logo
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                ],
             ],
             'domaine' => [
                 'name' => 'domaine',
                 'required' => false,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                    ['name' => ToNull::class],
+                ],
             ],
             'adresse' => [
                 'name' => 'adresse',
                 'required' => false,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                    ['name' => ToNull::class],
+                ],
             ],
             'telephone' => [
                 'name' => 'telephone',
                 'required' => false,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                    ['name' => ToNull::class],
+                ],
             ],
             'fax' => [
                 'name' => 'fax',
                 'required' => false,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                    ['name' => ToNull::class],
+                ],
             ],
             'email' => [
                 'name' => 'email',
                 'required' => false,
                 'filters' => [
                     ['name' => 'StringTrim'],
+                    ['name' => ToNull::class],
                 ],
                 'validators' => [
                     ['name' => EmailAddress::class],
@@ -113,6 +135,7 @@ class EtablissementForm extends StructureForm implements InputFilterProviderInte
                 'required' => false,
                 'filters' => [
                     ['name' => 'StringTrim'],
+                    ['name' => ToNull::class],
                 ],
                 'validators' => [
                     ['name' => EmailAddress::class],
@@ -122,6 +145,7 @@ class EtablissementForm extends StructureForm implements InputFilterProviderInte
                 'required' => false,
                 'filters' => [
                     ['name' => 'StringTrim'],
+                    ['name' => ToNull::class],
                 ],
                 'validators' => [
                     ['name' => EmailAddress::class],
@@ -131,6 +155,7 @@ class EtablissementForm extends StructureForm implements InputFilterProviderInte
                 'required' => false,
                 'filters' => [
                     ['name' => 'StringTrim'],
+                    ['name' => ToNull::class],
                 ],
                 'validators' => [
                     ['name' => EmailAddress::class],
@@ -139,6 +164,13 @@ class EtablissementForm extends StructureForm implements InputFilterProviderInte
             'siteWeb' => [
                 'name' => 'siteWeb',
                 'required' => false,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                    ['name' => ToNull::class],
+                ],
+                'validators' => [
+                    ['name' => Uri::class, 'options' => ['allowRelative' => false]],
+                ],
             ],
         ]);
     }
