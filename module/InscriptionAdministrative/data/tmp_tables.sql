@@ -16,12 +16,15 @@ insert into source (id, code, libelle, importable, synchro_delete_enabled, etabl
 select nextval('source_id_seq'), 'PEGASE_INSA', 'Instance Pégase INSA', true, false/*delete interdit*/, 5 union
 select nextval('source_id_seq'), 'PEGASE_UCN', 'Instance Pégase UCN', true, false/*delete interdit*/, 2;
 
-update source set synchro_delete_enabled = false where code in (
-                                                                'PEGASE_INSA',
-                                                                'PEGASE_UCN',
-                                                                'po-sxb',
-                                                                'test-sxb',
-                                                                'dev'
+update source
+set synchro_delete_enabled = false
+where code in (
+               'PEGASE_INSA',
+               'PEGASE_UCN',
+               'po-sxb',
+               'test-sxb',
+               'dev',
+               'rec'
     );
 
 alter table tmp_doctorant add code_apprenant_in_source varchar(64);

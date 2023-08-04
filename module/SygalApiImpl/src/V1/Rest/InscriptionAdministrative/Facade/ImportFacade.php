@@ -145,7 +145,8 @@ class ImportFacade extends AbstractImportFacade
                 'table' => 'tmp_individu',
                 'connection' => $this->destinationConnection,
                 'source_code_column' => 'source_code',
-                'id_sequence' => false,
+                'id_strategy' => null,
+                'id_sequence' => null,
             ]);
 
             $source->setData([$data]);
@@ -178,6 +179,8 @@ class ImportFacade extends AbstractImportFacade
                 'connection' => $this->destinationConnection,
                 'source_code_column' => 'source_code',
                 'where' => $where,
+                'id_strategy' => null,
+                'id_sequence' => null,
             ]);
 
             return Synchro::fromConfig([
@@ -218,7 +221,8 @@ class ImportFacade extends AbstractImportFacade
                 'table' => 'tmp_doctorant',
                 'connection' => $this->destinationConnection,
                 'source_code_column' => 'source_code',
-                'id_sequence' => false,
+                'id_strategy' => null,
+                'id_sequence' => null,
             ]);
             $source->setData([$data]);
             return Import::fromConfig([
@@ -249,6 +253,8 @@ class ImportFacade extends AbstractImportFacade
                 'connection' => $this->destinationConnection,
                 'source_code_column' => 'source_code',
                 'where' => $where,
+                'id_strategy' => null,
+                'id_sequence' => null,
             ]);
             return Synchro::fromConfig([
                 'name' => 'api_synchro_doctorant',
@@ -284,7 +290,8 @@ class ImportFacade extends AbstractImportFacade
                 'table' => 'tmp_inscription_administrative',
                 'connection' => $this->destinationConnection,
                 'source_code_column' => 'source_code',
-                'id_sequence' => false,
+                'id_strategy' => null,
+                'id_sequence' => null,
             ]);
             $source->setData([$data]);
             return Import::fromConfig([
@@ -315,6 +322,8 @@ class ImportFacade extends AbstractImportFacade
                 'connection' => $this->destinationConnection,
                 'source_code_column' => 'source_code',
                 'where' => $where,
+                'id_strategy' => null,
+                'id_sequence' => null,
             ]);
             return Synchro::fromConfig([
                 'name' => 'api_synchro_inscription',

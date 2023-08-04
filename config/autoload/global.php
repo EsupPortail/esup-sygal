@@ -215,7 +215,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_structure',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -243,7 +244,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_etablissement',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -271,7 +273,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_ecole_doct',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -299,7 +302,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_unite_rech',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -338,7 +342,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_individu',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -367,7 +372,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_doctorant',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -415,7 +421,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_these',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -444,7 +451,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_these_annee_univ',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -473,7 +481,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_role',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -510,7 +519,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_acteur',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -540,7 +550,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_origine_financement',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -576,7 +587,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_financement',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -610,7 +622,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_titre_acces',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
@@ -642,7 +655,8 @@ const CONFIG_IMPORTS = [
             'table' => 'tmp_variable',
             'connection' => 'default',
             'source_code_column' => 'source_code',
-            'id_sequence' => false,
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
 ];
@@ -654,8 +668,27 @@ const CONFIG_IMPORTS = [
  */
 const CONFIG_SYNCHROS = [
     [
-        'name' => 'structure-%s',
+        'name' => 'pre-structure-%s',
         'order' => 10,
+        'source' => [
+            'name' => 'SyGAL',
+            'code' => 'app',
+            'table' => 'src_pre_structure',
+            'connection' => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name' => 'Application',
+            'table' => 'pre_structure',
+            'connection' => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => null,
+            'id_sequence' => null,
+        ],
+    ],
+    [
+        'name' => 'structure-%s',
+        'order' => 11,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
@@ -668,11 +701,32 @@ const CONFIG_SYNCHROS = [
             'table' => 'STRUCTURE',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
+        ],
+    ],
+    [
+        'name' => 'pre-etablissement-%s',
+        'order' => 20,
+        'source' => [
+            'name' => 'SyGAL',
+            'code' => 'app',
+            'table' => 'src_pre_etablissement',
+            'connection' => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name' => 'Application',
+            'table' => 'pre_etablissement',
+            'connection' => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
         'name' => 'etablissement-%s',
-        'order' => 20,
+        'order' => 22,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
@@ -685,11 +739,32 @@ const CONFIG_SYNCHROS = [
             'table' => 'ETABLISSEMENT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => 'IDENTITY',
+            'id_sequence' => null,
+        ],
+    ],
+    [
+        'name' => 'pre-ecole-doctorale-%s',
+        'order' => 30,
+        'source' => [
+            'name' => 'SyGAL',
+            'code' => 'app',
+            'table' => 'src_pre_ecole_doct',
+            'connection' => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name' => 'Application',
+            'table' => 'pre_ecole_doct',
+            'connection' => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
         'name' => 'ecole-doctorale-%s',
-        'order' => 30,
+        'order' => 31,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
@@ -702,11 +777,32 @@ const CONFIG_SYNCHROS = [
             'table' => 'ECOLE_DOCT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => 'IDENTITY',
+            'id_sequence' => null,
+        ],
+    ],
+    [
+        'name' => 'pre-unite-recherche-%s',
+        'order' => 40,
+        'source' => [
+            'name' => 'SyGAL',
+            'code' => 'app',
+            'table' => 'src_pre_unite_rech',
+            'connection' => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name' => 'Application',
+            'table' => 'pre_unite_rech',
+            'connection' => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
         'name' => 'unite-recherche-%s',
-        'order' => 40,
+        'order' => 41,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
@@ -719,11 +815,32 @@ const CONFIG_SYNCHROS = [
             'table' => 'UNITE_RECH',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => 'IDENTITY',
+            'id_sequence' => null,
+        ],
+    ],
+    [
+        'name' => 'pre-individu-%s',
+        'order' => 50,
+        'source' => [
+            'name' => 'SyGAL',
+            'code' => 'app',
+            'table' => 'src_pre_individu',
+            'connection' => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name' => 'Application',
+            'table' => 'pre_individu',
+            'connection' => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
         'name' => 'individu-%s',
-        'order' => 50,
+        'order' => 51,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
@@ -736,11 +853,32 @@ const CONFIG_SYNCHROS = [
             'table' => 'INDIVIDU',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => 'IDENTITY',
+            'id_sequence' => null,
+        ],
+    ],
+    [
+        'name' => 'pre-doctorant-%s',
+        'order' => 60,
+        'source' => [
+            'name' => 'SyGAL',
+            'code' => 'app',
+            'table' => 'src_pre_doctorant',
+            'connection' => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+        ],
+        'destination' => [
+            'name' => 'Application',
+            'table' => 'pre_doctorant',
+            'connection' => 'default',
+            'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => null,
+            'id_sequence' => null,
         ],
     ],
     [
         'name' => 'doctorant-%s',
-        'order' => 60,
+        'order' => 61,
         'source' => [
             'name' => 'SyGAL',
             'code' => 'app',
@@ -753,6 +891,8 @@ const CONFIG_SYNCHROS = [
             'table' => 'DOCTORANT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => 'IDENTITY',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -770,6 +910,8 @@ const CONFIG_SYNCHROS = [
             'table' => 'THESE',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -787,6 +929,8 @@ const CONFIG_SYNCHROS = [
             'table' => 'THESE_ANNEE_UNIV',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -804,6 +948,8 @@ const CONFIG_SYNCHROS = [
             'table' => 'ROLE',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -821,6 +967,8 @@ const CONFIG_SYNCHROS = [
             'table' => 'ACTEUR',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -838,6 +986,8 @@ const CONFIG_SYNCHROS = [
             'table' => 'ORIGINE_FINANCEMENT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -855,6 +1005,8 @@ const CONFIG_SYNCHROS = [
             'table' => 'FINANCEMENT',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -872,6 +1024,8 @@ const CONFIG_SYNCHROS = [
             'table' => 'TITRE_ACCES',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => 'SEQUENCE',
+            'id_sequence' => null,
         ],
     ],
     [
@@ -889,6 +1043,8 @@ const CONFIG_SYNCHROS = [
             'table' => 'VARIABLE',
             'connection' => 'default',
             'source_code_column' => 'SOURCE_CODE',
+            'id_strategy' => 'IDENTITY', // i.e. inserts avec les mêmes ids que dans la source
+            'id_sequence' => null,
         ],
     ],
 ];
@@ -946,7 +1102,7 @@ function generateNameForEtab(string $nameTemplate, string $codeEtablissement): s
 
 /**
  * Génère la clause à utiliser dans un WHERE pour cibler un établissement précis.
- * @param string $codeEtablissement Code établissement, ex : 'UCN'
+ * @param string $codeEtablissement Code établissement maison unique, ex : 'UCN', 'URN', etc.
  * @return string Ex : "d.source_id = (... like 'UCN::%')"
  */
 function generateWhereForEtab(string $codeEtablissement): string
@@ -956,7 +1112,7 @@ d.source_id in (
     select source.id from source 
     join etablissement on source.etablissement_id = etablissement.id
     join structure on etablissement.structure_id = structure.id
-    where structure.code = '$codeEtablissement'
+    where structure.source_code = '$codeEtablissement'
 )
 EOS;
 }

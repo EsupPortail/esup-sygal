@@ -66,10 +66,10 @@ from tmp_these tmp
          join doctorant d on d.source_code = tmp.doctorant_id
          left join ecole_doct ed on ed.source_code = tmp.ecole_doct_id
          left join unite_rech ur on ur.source_code = tmp.unite_rech_id
-         left join structure_substit ss_ed on ss_ed.from_structure_id = ed.structure_id
-         left join ecole_doct ed_substit on ed_substit.structure_id = ss_ed.to_structure_id
-         left join structure_substit ss_ur on ss_ur.from_structure_id = ur.structure_id
-         left join unite_rech ur_substit on ur_substit.structure_id = ss_ur.to_structure_id
+         left join structure_substit ss_ed on ss_ed.from_id = ed.structure_id
+         left join ecole_doct ed_substit on ed_substit.structure_id = ss_ed.to_id
+         left join structure_substit ss_ur on ss_ur.from_id = ur.structure_id
+         left join unite_rech ur_substit on ur_substit.structure_id = ss_ur.to_id
 EOS;
 
     private function srcTheseViewUpdateSQL($sourceCode) {

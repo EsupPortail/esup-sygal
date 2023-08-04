@@ -11,7 +11,9 @@ use Application\Service\UserContextServiceAwareTrait;
 use Application\Service\Utilisateur\UtilisateurServiceAwareTrait;
 use Doctorant\Controller\Plugin\UrlDoctorant;
 use Doctorant\Service\DoctorantServiceAwareTrait;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Individu\Entity\Db\Individu;
 use Individu\Form\IndividuForm;
 use Individu\Service\IndividuServiceAwareTrait;
@@ -76,6 +78,9 @@ class IndividuController extends AbstractActionController implements SearchContr
     public function voirAction(): ViewModel
     {
         $individu = $this->individuService->getRequestedIndividu($this);
+        if ($individu === null) {
+            throw new \InvalidArgumentException("Individu introuvable.");
+        }
 
         return new ViewModel([
             'individu' => $individu,
@@ -258,5 +263,37 @@ class IndividuController extends AbstractActionController implements SearchContr
             return new JsonModel($result);
         }
         exit;
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function substitutionAction(): array
+    {
+        $result = $this->individuService->getEntityManager()->getConnection()->executeQuery(<<<EOT
+select distinct
+    ti.id as to_id, 
+    ti.nom_patronymique as to_nom_patronymique, 
+    ti.prenom1 as to_prenom1, 
+    date(ti.date_naissance) as to_date_naissance,
+    s.npd,
+    string_agg(s.from_id::varchar, ', ') as from_ids
+from individu2_substit s
+--join pre_individu2 fi on fi.id = s.from_id -------> todo : jointure vers pre_individu ?
+join pre_individu2 ti on ti.id = s.to_id -----------> todo : devrait être à terme 'join individu'
+where s.histo_destruction is null
+group by 
+    ti.id, 
+    ti.nom_patronymique, 
+    ti.prenom1, 
+    ti.date_naissance,
+    s.npd
+order by ti.nom_patronymique, ti.prenom1
+EOT
+        );
+
+        return [
+            'result' => $result,
+        ];
     }
 }

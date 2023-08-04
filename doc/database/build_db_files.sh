@@ -48,6 +48,7 @@ INPUT_DIR=$(realpath "$INPUT_DIR")
 function injectEtabParamsInScript() {
   FILE=$1
   sed -i -e "s|{ETAB_CODE}|${ETAB_CODE}|g" $FILE
+  sed -i -e "s|{ETAB_UAI}|${ETAB_UAI}|g" $FILE
   sed -i -e "s|{ETAB_SIGLE}|${ETAB_SIGLE}|g" $FILE
   sed -i -e "s|{ETAB_LIBELLE}|${ETAB_LIBELLE}|g" $FILE
   sed -i -e "s|{ETAB_DOMAINE}|${ETAB_DOMAINE}|g" $FILE

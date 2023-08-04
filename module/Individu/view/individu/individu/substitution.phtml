@@ -1,0 +1,58 @@
+<?php
+
+namespace Individu;
+
+use Application\View\Renderer\PhpRenderer;
+use Individu\Provider\Privilege\IndividuPrivileges;
+use UnicaenAuth\Provider\Privilege\Privileges;
+
+/**
+ * @var PhpRenderer $this
+ * @var \Doctrine\DBAL\Result $result
+ *
+ * @see \Individu\Controller\IndividuController::substitutionAction()
+ */
+
+$canAjouter = $this->isAllowed(Privileges::getResourceId(IndividuPrivileges::INDIVIDU_AJOUTER));
+?>
+
+<?php $this->headTitle($this->translate("Substitutions d'individus")) ?>
+
+<h1 class="page-header">
+    <span class="fas fa-object-substract"></span>
+    <?php echo $this->translate("Substitutions d'individus"); ?>
+</h1>
+
+<?php echo $this->messenger()->addMessagesFromFlashMessengerWithNoNamespace(); ?>
+
+<?php if ($count = $result->rowCount()): ?>
+    <p><?php echo $count ?> substitutions trouvées.</p>
+
+    <table class="table table-bordered table-extra-condensed">
+        <tr>
+            <th>Id</th>
+            <th>Nom patronymique</th>
+            <th>Prénom 1</th>
+            <th>Date de naissance</th>
+            <th>NPD</th>
+            <th>Substitués</th>
+        </tr>
+        <?php while ($row = $result->fetchAssociative()): ?>
+            <tr>
+                <td>
+                    <a href="<?php echo $this->url('individu/voir', ['individu' => $row['to_id']]) ?>"
+                       title="Accéder à la fiche détaillée de cet individu">
+                        <?php echo $row['to_id'] ?>
+                    </a>
+                </td>
+                <td><?php echo $row['to_nom_patronymique'] ?></td>
+                <td><?php echo $row['to_prenom1'] ?></td>
+                <td><?php echo $row['to_date_naissance'] ?></td>
+                <td><?php echo $row['npd'] ?></td>
+                <td><?php echo $row['from_ids'] ?></td>
+            </tr>
+        <?php endwhile ?>
+    </table>
+<?php else: ?>
+    <p>Aucune.</p>
+<?php endif ?>

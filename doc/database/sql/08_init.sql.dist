@@ -3,7 +3,8 @@
 --
 -- Attention, ce sript doit être adapté à l'établissement d'installation :
 --
---      '{ETAB_CODE}' : code unique identifiant l'établissement, ex: 'UNILIM'
+--      '{ETAB_CODE}' : code maison unique identifiant l'établissement, ex: 'UNILIM'
+--      '{ETAB_UAI}' : code UAI (RNE) de l'établissement, ex: '0141408E'
 --      '{ETAB_SIGLE}' : sigle ou libellé court de l'établissement, ex: 'Unilim'
 --      '{ETAB_LIBELLE}' : libellé complet de l'établissement, ex: 'Université de Limoges'
 --      '{ETAB_DOMAINE}' : domaine de l'établissement, ex: 'unilim.fr'
@@ -18,7 +19,7 @@ insert into structure (id, source_code, code, sigle, libelle, type_structure_id,
 select
     nextval('structure_id_seq'),
     '{ETAB_CODE}',
-    '{ETAB_CODE}',
+    '{ETAB_UAI}',
     '{ETAB_SIGLE}',
     '{ETAB_LIBELLE}',
     1,

@@ -24,7 +24,7 @@ use Application\View\Renderer\PhpRenderer;
  */
 
 
-if ($type === null && $cible !== null) $type = $cible->getTypeStructure()->getCode();
+if (empty($type) && $cible !== null) $type = $cible->getTypeStructure()->getCode();
 $canEdit = $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_MODIFICATION_TOUTES_STRUCTURES))
 or $this->isAllowed(SubstitutionPrivileges::getResourceId(SubstitutionPrivileges::SUBSTITUTION_MODIFICATION_SA_STRUCTURE));
 ?>
@@ -45,7 +45,7 @@ echo $messenger->addMessagesFromFlashMessengerWithNoNamespace()();
 <form action="<?php echo ($cible->getId()) ? $this->url('substitution-modifier', ['cible' => $cible->getId()], [], true) : $this->url('substitution-creer', ['type' => $type], [], true); ?>"
       method="POST">
     <input type="hidden" name="type" id="type" value="<?php echo $type; ?>">
-    <input type="hidden" name="identifiant" id="identifiant" value="<?php echo $identifiant; ?>">
+    <input type="hidden" name="identifiant" id="identifiant" value="<?php echo $identifiant ?? null; ?>">
 
     <div class="row">
         <div class="col-md-6">

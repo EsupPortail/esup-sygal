@@ -36,10 +36,10 @@
         <many-to-many field="structuresSubstituees" target-entity="Structure\Entity\Db\Structure">
             <join-table name="STRUCTURE_SUBSTIT">
                 <join-columns>
-                    <join-column name="TO_STRUCTURE_ID" referenced-column-name="ID" />
+                    <join-column name="TO_ID" referenced-column-name="ID" />
                 </join-columns>
                 <inverse-join-columns>
-                    <join-column name="FROM_STRUCTURE_ID" referenced-column-name="ID" />
+                    <join-column name="FROM_ID" referenced-column-name="ID" />
                 </inverse-join-columns>
             </join-table>
         </many-to-many>
@@ -47,10 +47,10 @@
         <many-to-many field="structureSubstituante" target-entity="Structure\Entity\Db\Structure">
             <join-table name="STRUCTURE_SUBSTIT">
                 <join-columns>
-                    <join-column name="FROM_STRUCTURE_ID" referenced-column-name="ID" />
+                    <join-column name="FROM_ID" referenced-column-name="ID" />
                 </join-columns>
                 <inverse-join-columns>
-                    <join-column name="TO_STRUCTURE_ID" referenced-column-name="ID" />
+                    <join-column name="TO_ID" referenced-column-name="ID" />
                 </inverse-join-columns>
             </join-table>
         </many-to-many>

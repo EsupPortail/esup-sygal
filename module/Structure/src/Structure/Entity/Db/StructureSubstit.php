@@ -13,25 +13,16 @@ class StructureSubstit implements HistoriqueAwareInterface
 {
     use HistoriqueAwareTrait;
 
-    /**
-     * @var integer
-     */
     private int $id;
-
-    /**
-     * @var Structure
-     */
     private Structure $fromStructure;
-
-    /**
-     * @var Structure
-     */
     private Structure $toStructure;
+    private string $npd;
+    private bool $isAuto = true;
 
     /**
      * StructureSubstit factory.
      *
-     * @param \Structure\Entity\Db\StructureConcreteInterface[]\Structure\Entity\Db\StructureInterface[] $structuresSources
+     * @param \Structure\Entity\Db\StructureConcreteInterface[]|\Structure\Entity\Db\StructureInterface[] $structuresSources
      * @param Structure   $structureCible
      * @return self[]
      */
@@ -96,6 +87,28 @@ class StructureSubstit implements HistoriqueAwareInterface
     public function getToStructure(): Structure
     {
         return $this->toStructure;
+    }
+
+    public function getNpd(): string
+    {
+        return $this->npd;
+    }
+
+    public function setNpd(string $npd): self
+    {
+        $this->npd = $npd;
+        return $this;
+    }
+
+    public function isAuto(): bool
+    {
+        return $this->isAuto;
+    }
+
+    public function setIsAuto(bool $isAuto): self
+    {
+        $this->isAuto = $isAuto;
+        return $this;
     }
 }
 

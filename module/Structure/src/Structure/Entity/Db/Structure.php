@@ -56,10 +56,7 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
      */
     protected $sourceCode;
 
-    /**
-     * @var string|null
-     */
-    protected ?string $code = null;
+    protected string $code;
 
     /**
      * @var TypeStructure
@@ -199,11 +196,8 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
 
     /**
      * Set code
-     *
-     * @param string $code
-     * @return self
      */
-    public function setCode($code)
+    public function setCode(string $code): self
     {
         $this->code = $code;
 
@@ -212,10 +206,8 @@ class Structure implements StructureInterface, HistoriqueAwareInterface, SourceA
 
     /**
      * Get Code
-     *
-     * @return string|null
      */
-    public function getCode(): ?string
+    public function getCode(): string
     {
         return $this->code;
     }

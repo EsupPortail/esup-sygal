@@ -21,6 +21,8 @@ return [
                     'table' => 'inscription_administrative',
                     'connection' => 'default',
                     'source_code_column' => 'source_code',
+                    'id_strategy' => 'SEQUENCE',
+                    'id_sequence' => null,
                 ],
             ],
 
