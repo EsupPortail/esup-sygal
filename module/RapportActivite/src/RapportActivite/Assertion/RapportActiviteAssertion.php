@@ -284,6 +284,9 @@ class RapportActiviteAssertion extends AbstractAssertion
     private function assertAppartenanceThese(These $these)
     {
         $role = $this->userContextService->getSelectedIdentityRole();
+        if (!$role) {
+            return;
+        }
 
         if ($role->isDoctorant()) {
             $doctorant = $this->userContextService->getIdentityDoctorant();
