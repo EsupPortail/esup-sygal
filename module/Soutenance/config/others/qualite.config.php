@@ -53,6 +53,26 @@ return array(
         ],
     ],
 
+    'navigation'      => [
+        'default' => [
+            'home' => [
+                'pages' => [
+                    'admin' => [
+                        'pages' => [
+                            'qualite' => [
+                                'label'    => 'Qualités',
+                                'route'    => 'qualite',
+                                'resource' => PrivilegeController::getResourceId(QualiteController::class, 'index'),
+                                'icon'     => 'fas fa-user-astronaut',
+                                'order'    => 600,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
     'router' => [
         'routes' => [
             'qualite' => [

@@ -6,6 +6,7 @@ Journal des modifications
 - [FIX] Correction d'un bug empêchant la création d'établissement ; améliorations des validateurs des formulaires de structures.
 - [FIX] Correction de bugs en cas d'utilisateur ayant à la fois le rôle Doctorant et un autre rôle.
 - Complétion des qualités du jury sur la page de couverture avec le dossier de soutenance si manquante dans la donnée source
+- Remise en place du menu de gestion des qualités
 
 6.0.4
 -----
