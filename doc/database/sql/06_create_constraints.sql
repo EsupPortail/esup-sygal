@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 9.6.11
--- Dumped by pg_dump version 14.1 (Ubuntu 14.1-2.pgdg20.04+1)
+-- Dumped by pg_dump version 15.4 (Ubuntu 15.4-1.pgdg20.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -17,6 +17,14 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 SET default_tablespace = '';
+
+--
+-- Name: structure structure_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.structure
+    ADD CONSTRAINT structure_pkey PRIMARY KEY (id);
+
 
 --
 -- Name: acteur acteur_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
@@ -51,6 +59,14 @@ ALTER TABLE ONLY public.categorie_privilege
 
 
 --
+-- Name: csi_membre csi_membre_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.csi_membre
+    ADD CONSTRAINT csi_membre_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: diffusion diffusion_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -59,11 +75,19 @@ ALTER TABLE ONLY public.diffusion
 
 
 --
--- Name: doctorant_compl doctorant_compl_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+-- Name: z_doctorant_compl doctorant_compl_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
-ALTER TABLE ONLY public.doctorant_compl
+ALTER TABLE ONLY public.z_doctorant_compl
     ADD CONSTRAINT doctorant_compl_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: doctorant_mission_enseignement doctorant_mission_enseignement_pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.doctorant_mission_enseignement
+    ADD CONSTRAINT doctorant_mission_enseignement_pk PRIMARY KEY (id);
 
 
 --
@@ -136,6 +160,118 @@ ALTER TABLE ONLY public.fichier_these
 
 ALTER TABLE ONLY public.financement
     ADD CONSTRAINT financement_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: formation_enquete_categorie formation_enquete_categorie_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_enquete_categorie
+    ADD CONSTRAINT formation_enquete_categorie_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: formation_enquete_question formation_enquete_question_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_enquete_question
+    ADD CONSTRAINT formation_enquete_question_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: formation_enquete_reponse formation_enquete_reponse_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_enquete_reponse
+    ADD CONSTRAINT formation_enquete_reponse_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: formation_etat formation_etat_pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_etat
+    ADD CONSTRAINT formation_etat_pk PRIMARY KEY (code);
+
+
+--
+-- Name: formation_formateur formation_formateur_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_formateur
+    ADD CONSTRAINT formation_formateur_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: formation_formation formation_formation_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_formation
+    ADD CONSTRAINT formation_formation_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: formation_inscription formation_inscription_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_inscription
+    ADD CONSTRAINT formation_inscription_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: formation_module formation_module_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_module
+    ADD CONSTRAINT formation_module_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: formation_presence formation_presence_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_presence
+    ADD CONSTRAINT formation_presence_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: formation_seance formation_seance_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_seance
+    ADD CONSTRAINT formation_seance_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: formation_session_etat_heurodatage formation_session_etat_heurodatage_pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session_etat_heurodatage
+    ADD CONSTRAINT formation_session_etat_heurodatage_pk PRIMARY KEY (id);
+
+
+--
+-- Name: formation_session formation_session_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session
+    ADD CONSTRAINT formation_session_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: formation_session_structure_valide formation_session_structure_valide_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session_structure_valide
+    ADD CONSTRAINT formation_session_structure_valide_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: horodatage_horodatage horodatage_horodatage_pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.horodatage_horodatage
+    ADD CONSTRAINT horodatage_horodatage_pk PRIMARY KEY (id);
 
 
 --
@@ -219,6 +355,14 @@ ALTER TABLE ONLY public.indicateur
 
 
 --
+-- Name: individu_compl individu_compl_pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.individu_compl
+    ADD CONSTRAINT individu_compl_pk PRIMARY KEY (id);
+
+
+--
 -- Name: individu individu_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -240,14 +384,6 @@ ALTER TABLE ONLY public.individu_rech
 
 ALTER TABLE ONLY public.individu_role
     ADD CONSTRAINT individu_role_pkey PRIMARY KEY (id);
-
-
---
--- Name: information_fichier_sav information_fichier_sav_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
---
-
-ALTER TABLE ONLY public.information_fichier_sav
-    ADD CONSTRAINT information_fichier_sav_pkey PRIMARY KEY (id);
 
 
 --
@@ -347,6 +483,38 @@ ALTER TABLE ONLY public.parametre
 
 
 --
+-- Name: pays pays_code_iso_alpha2_key; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.pays
+    ADD CONSTRAINT pays_code_iso_alpha2_key UNIQUE (code_iso_alpha2);
+
+
+--
+-- Name: pays pays_code_iso_alpha3_key; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.pays
+    ADD CONSTRAINT pays_code_iso_alpha3_key UNIQUE (code_iso_alpha3);
+
+
+--
+-- Name: pays pays_code_iso_key; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.pays
+    ADD CONSTRAINT pays_code_iso_key UNIQUE (code_iso);
+
+
+--
+-- Name: pays pays_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.pays
+    ADD CONSTRAINT pays_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: privilege privilege_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -376,6 +544,38 @@ ALTER TABLE ONLY public.profil_privilege
 
 ALTER TABLE ONLY public.profil_to_role
     ADD CONSTRAINT profil_to_role_pkey PRIMARY KEY (profil_id, role_id);
+
+
+--
+-- Name: rapport_activite_avis rapport_activite_avis_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_activite_avis
+    ADD CONSTRAINT rapport_activite_avis_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rapport_activite rapport_activite_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_activite
+    ADD CONSTRAINT rapport_activite_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rapport_activite_validation rapport_activite_validation_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_activite_validation
+    ADD CONSTRAINT rapport_activite_validation_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rapport_avis rapport_avis_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_avis
+    ADD CONSTRAINT rapport_avis_pkey PRIMARY KEY (id);
 
 
 --
@@ -435,14 +635,6 @@ ALTER TABLE ONLY public.source
 
 
 --
--- Name: soutenance_configuration soutenance_configuration_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
---
-
-ALTER TABLE ONLY public.soutenance_configuration
-    ADD CONSTRAINT soutenance_configuration_pkey PRIMARY KEY (id);
-
-
---
 -- Name: soutenance_etat soutenance_etat_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -451,11 +643,11 @@ ALTER TABLE ONLY public.soutenance_etat
 
 
 --
--- Name: soutenance_evenement soutenance_evenement_pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+-- Name: soutenance_horodatage soutenance_horodatage_pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
-ALTER TABLE ONLY public.soutenance_evenement
-    ADD CONSTRAINT soutenance_evenement_pk PRIMARY KEY (id);
+ALTER TABLE ONLY public.soutenance_horodatage
+    ADD CONSTRAINT soutenance_horodatage_pk PRIMARY KEY (proposition_id, horodatage_id);
 
 
 --
@@ -507,19 +699,19 @@ ALTER TABLE ONLY public.soutenance_qualite_sup
 
 
 --
+-- Name: step_star_log stepstar_log_pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.step_star_log
+    ADD CONSTRAINT stepstar_log_pk PRIMARY KEY (id);
+
+
+--
 -- Name: structure_document structure_document_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.structure_document
     ADD CONSTRAINT structure_document_pkey PRIMARY KEY (id);
-
-
---
--- Name: structure structure_pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
---
-
-ALTER TABLE ONLY public.structure
-    ADD CONSTRAINT structure_pkey PRIMARY KEY (id);
 
 
 --
@@ -592,6 +784,110 @@ ALTER TABLE ONLY public.type_structure
 
 ALTER TABLE ONLY public.type_validation
     ADD CONSTRAINT type_validation_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: unicaen_alerte_alerte unicaen_alerte_alerte__pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_alerte_alerte
+    ADD CONSTRAINT unicaen_alerte_alerte__pk PRIMARY KEY (id);
+
+
+--
+-- Name: unicaen_alerte_alerte_planning unicaen_alerte_alerte_planning__pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_alerte_alerte_planning
+    ADD CONSTRAINT unicaen_alerte_alerte_planning__pk PRIMARY KEY (id);
+
+
+--
+-- Name: unicaen_avis unicaen_avis__pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_avis
+    ADD CONSTRAINT unicaen_avis__pkey PRIMARY KEY (id);
+
+
+--
+-- Name: unicaen_avis_complem unicaen_avis_complem__pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_avis_complem
+    ADD CONSTRAINT unicaen_avis_complem__pk PRIMARY KEY (id);
+
+
+--
+-- Name: unicaen_avis_type unicaen_avis_type__pkey; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_avis_type
+    ADD CONSTRAINT unicaen_avis_type__pkey PRIMARY KEY (id);
+
+
+--
+-- Name: unicaen_avis_type_valeur unicaen_avis_type_valeur__pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_avis_type_valeur
+    ADD CONSTRAINT unicaen_avis_type_valeur__pk PRIMARY KEY (id);
+
+
+--
+-- Name: unicaen_avis_type_valeur_complem unicaen_avis_type_valeur_complem__pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_avis_type_valeur_complem
+    ADD CONSTRAINT unicaen_avis_type_valeur_complem__pk PRIMARY KEY (id);
+
+
+--
+-- Name: unicaen_avis_valeur unicaen_avis_valeur__pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_avis_valeur
+    ADD CONSTRAINT unicaen_avis_valeur__pk PRIMARY KEY (id);
+
+
+--
+-- Name: unicaen_renderer_macro unicaen_document_macro_pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_renderer_macro
+    ADD CONSTRAINT unicaen_document_macro_pk PRIMARY KEY (id);
+
+
+--
+-- Name: unicaen_renderer_rendu unicaen_document_rendu_pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_renderer_rendu
+    ADD CONSTRAINT unicaen_document_rendu_pk PRIMARY KEY (id);
+
+
+--
+-- Name: unicaen_renderer_template unicaen_document_template_pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_renderer_template
+    ADD CONSTRAINT unicaen_document_template_pk PRIMARY KEY (id);
+
+
+--
+-- Name: unicaen_parametre_categorie unicaen_parametre_categorie_pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_parametre_categorie
+    ADD CONSTRAINT unicaen_parametre_categorie_pk PRIMARY KEY (id);
+
+
+--
+-- Name: unicaen_parametre_parametre unicaen_parametre_parametre_pk; Type: CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_parametre_parametre
+    ADD CONSTRAINT unicaen_parametre_parametre_pk PRIMARY KEY (id);
 
 
 --
@@ -810,13 +1106,6 @@ CREATE UNIQUE INDEX categorie_privilege_unique ON public.categorie_privilege USI
 
 
 --
--- Name: configuration_code_uindex; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE UNIQUE INDEX configuration_code_uindex ON public.soutenance_configuration USING btree (code);
-
-
---
 -- Name: diffusion_hc_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
@@ -848,42 +1137,42 @@ CREATE INDEX diffusion_these_idx ON public.diffusion USING btree (these_id);
 -- Name: doctorant_compl_doctorant_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE INDEX doctorant_compl_doctorant_idx ON public.doctorant_compl USING btree (doctorant_id);
+CREATE INDEX doctorant_compl_doctorant_idx ON public.z_doctorant_compl USING btree (doctorant_id);
 
 
 --
 -- Name: doctorant_compl_hc_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE INDEX doctorant_compl_hc_idx ON public.doctorant_compl USING btree (histo_createur_id);
+CREATE INDEX doctorant_compl_hc_idx ON public.z_doctorant_compl USING btree (histo_createur_id);
 
 
 --
 -- Name: doctorant_compl_hd_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE INDEX doctorant_compl_hd_idx ON public.doctorant_compl USING btree (histo_destructeur_id);
+CREATE INDEX doctorant_compl_hd_idx ON public.z_doctorant_compl USING btree (histo_destructeur_id);
 
 
 --
 -- Name: doctorant_compl_hm_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE INDEX doctorant_compl_hm_idx ON public.doctorant_compl USING btree (histo_modificateur_id);
+CREATE INDEX doctorant_compl_hm_idx ON public.z_doctorant_compl USING btree (histo_modificateur_id);
 
 
 --
 -- Name: doctorant_compl_un_1; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE UNIQUE INDEX doctorant_compl_un_1 ON public.doctorant_compl USING btree (persopass, histo_destruction) WHERE (histo_destruction IS NOT NULL);
+CREATE UNIQUE INDEX doctorant_compl_un_1 ON public.z_doctorant_compl USING btree (persopass, histo_destruction) WHERE (histo_destruction IS NOT NULL);
 
 
 --
 -- Name: doctorant_compl_un_2; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE UNIQUE INDEX doctorant_compl_un_2 ON public.doctorant_compl USING btree (persopass) WHERE (histo_destruction IS NULL);
+CREATE UNIQUE INDEX doctorant_compl_un_2 ON public.z_doctorant_compl USING btree (persopass) WHERE (histo_destruction IS NULL);
 
 
 --
@@ -1062,6 +1351,83 @@ CREATE UNIQUE INDEX financement_source_code_un ON public.financement USING btree
 
 
 --
+-- Name: formation_enquete_categorie_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX formation_enquete_categorie_id_uindex ON public.formation_enquete_categorie USING btree (id);
+
+
+--
+-- Name: formation_enquete_question_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX formation_enquete_question_id_uindex ON public.formation_enquete_question USING btree (id);
+
+
+--
+-- Name: formation_enquete_reponse_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX formation_enquete_reponse_id_uindex ON public.formation_enquete_reponse USING btree (id);
+
+
+--
+-- Name: formation_formateur_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX formation_formateur_id_uindex ON public.formation_formateur USING btree (id);
+
+
+--
+-- Name: formation_formation_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX formation_formation_id_uindex ON public.formation_formation USING btree (id);
+
+
+--
+-- Name: formation_inscription_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX formation_inscription_id_uindex ON public.formation_inscription USING btree (id);
+
+
+--
+-- Name: formation_module_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX formation_module_id_uindex ON public.formation_module USING btree (id);
+
+
+--
+-- Name: formation_presence_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX formation_presence_id_uindex ON public.formation_presence USING btree (id);
+
+
+--
+-- Name: formation_seance_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX formation_seance_id_uindex ON public.formation_seance USING btree (id);
+
+
+--
+-- Name: formation_session_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX formation_session_id_uindex ON public.formation_session USING btree (id);
+
+
+--
+-- Name: formation_session_structure_valide_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX formation_session_structure_valide_id_uindex ON public.formation_session_structure_valide USING btree (id);
+
+
+--
 -- Name: import_notif_un; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
@@ -1104,6 +1470,13 @@ CREATE UNIQUE INDEX import_observ_un ON public.import_observ USING btree (table_
 
 
 --
+-- Name: individu_compl_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX individu_compl_id_uindex ON public.individu_compl USING btree (id);
+
+
+--
 -- Name: individu_hcfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
@@ -1125,6 +1498,13 @@ CREATE INDEX individu_hmfk_idx ON public.individu USING btree (histo_modificateu
 
 
 --
+-- Name: individu_role_individu_id_role_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX individu_role_individu_id_role_id_uindex ON public.individu_role USING btree (individu_id, role_id);
+
+
+--
 -- Name: individu_role_individu_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
@@ -1136,13 +1516,6 @@ CREATE INDEX individu_role_individu_idx ON public.individu_role USING btree (ind
 --
 
 CREATE INDEX individu_role_role_idx ON public.individu_role USING btree (role_id);
-
-
---
--- Name: individu_role_unique; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE UNIQUE INDEX individu_role_unique ON public.individu_role USING btree (individu_id, role_id);
 
 
 --
@@ -1171,13 +1544,6 @@ CREATE UNIQUE INDEX individu_source_code_uniq_2 ON public.individu USING btree (
 --
 
 CREATE INDEX individu_src_id_index ON public.individu USING btree (source_id);
-
-
---
--- Name: information_filename_uindex; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE UNIQUE INDEX information_filename_uindex ON public.information_fichier_sav USING btree (filename);
 
 
 --
@@ -1241,6 +1607,174 @@ CREATE UNIQUE INDEX privilege_unique ON public.privilege USING btree (categorie_
 --
 
 CREATE UNIQUE INDEX profil_role_id_uindex ON public.profil USING btree (role_id);
+
+
+--
+-- Name: rapport_activite_avis_avis_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_activite_avis_avis_idx ON public.rapport_activite_avis USING btree (avis_id);
+
+
+--
+-- Name: rapport_activite_avis_hcfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_activite_avis_hcfk_idx ON public.rapport_activite_avis USING btree (histo_createur_id);
+
+
+--
+-- Name: rapport_activite_avis_hdfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_activite_avis_hdfk_idx ON public.rapport_activite_avis USING btree (histo_destructeur_id);
+
+
+--
+-- Name: rapport_activite_avis_hmfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_activite_avis_hmfk_idx ON public.rapport_activite_avis USING btree (histo_modificateur_id);
+
+
+--
+-- Name: rapport_activite_avis_rapport_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_activite_avis_rapport_idx ON public.rapport_activite_avis USING btree (rapport_id);
+
+
+--
+-- Name: rapport_activite_fichier_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_activite_fichier_idx ON public.rapport_activite USING btree (fichier_id);
+
+
+--
+-- Name: rapport_activite_hcfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_activite_hcfk_idx ON public.rapport_activite USING btree (histo_createur_id);
+
+
+--
+-- Name: rapport_activite_hdfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_activite_hdfk_idx ON public.rapport_activite USING btree (histo_destructeur_id);
+
+
+--
+-- Name: rapport_activite_hmfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_activite_hmfk_idx ON public.rapport_activite USING btree (histo_modificateur_id);
+
+
+--
+-- Name: rapport_activite_these_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_activite_these_idx ON public.rapport_activite USING btree (these_id);
+
+
+--
+-- Name: rapport_activite_uniq_un1; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX rapport_activite_uniq_un1 ON public.rapport_activite USING btree (these_id, annee_univ, est_fin_contrat, histo_destruction) WHERE (histo_destruction IS NOT NULL);
+
+
+--
+-- Name: rapport_activite_uniq_un2; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX rapport_activite_uniq_un2 ON public.rapport_activite USING btree (these_id, annee_univ, est_fin_contrat) WHERE (histo_destruction IS NULL);
+
+
+--
+-- Name: rapport_activite_validation_hcfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_activite_validation_hcfk_idx ON public.rapport_activite_validation USING btree (histo_createur_id);
+
+
+--
+-- Name: rapport_activite_validation_hdfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_activite_validation_hdfk_idx ON public.rapport_activite_validation USING btree (histo_destructeur_id);
+
+
+--
+-- Name: rapport_activite_validation_hmfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_activite_validation_hmfk_idx ON public.rapport_activite_validation USING btree (histo_modificateur_id);
+
+
+--
+-- Name: rapport_activite_validation_indiv_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_activite_validation_indiv_idx ON public.rapport_activite_validation USING btree (individu_id);
+
+
+--
+-- Name: rapport_activite_validation_rapport_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_activite_validation_rapport_idx ON public.rapport_activite_validation USING btree (rapport_id);
+
+
+--
+-- Name: rapport_activite_validation_type_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_activite_validation_type_idx ON public.rapport_activite_validation USING btree (type_validation_id);
+
+
+--
+-- Name: rapport_activite_validation_un_1; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX rapport_activite_validation_un_1 ON public.rapport_activite_validation USING btree (type_validation_id, rapport_id, individu_id, histo_destruction) WHERE (histo_destruction IS NOT NULL);
+
+
+--
+-- Name: rapport_activite_validation_un_2; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX rapport_activite_validation_un_2 ON public.rapport_activite_validation USING btree (type_validation_id, rapport_id, individu_id) WHERE (histo_destruction IS NULL);
+
+
+--
+-- Name: rapport_avis_hcfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_avis_hcfk_idx ON public.rapport_avis USING btree (histo_createur_id);
+
+
+--
+-- Name: rapport_avis_hdfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_avis_hdfk_idx ON public.rapport_avis USING btree (histo_destructeur_id);
+
+
+--
+-- Name: rapport_avis_hmfk_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_avis_hmfk_idx ON public.rapport_avis USING btree (histo_modificateur_id);
+
+
+--
+-- Name: rapport_avis_rapport_idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX rapport_avis_rapport_idx ON public.rapport_avis USING btree (rapport_id);
 
 
 --
@@ -1370,13 +1904,6 @@ CREATE UNIQUE INDEX source_code_unique ON public.etablissement USING btree (sour
 
 
 --
--- Name: soutenance_evenement_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE UNIQUE INDEX soutenance_evenement_id_uindex ON public.soutenance_evenement USING btree (id);
-
-
---
 -- Name: str_substit_str_to_idx; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
@@ -1496,122 +2023,136 @@ CREATE INDEX tmp_acteur_source_id_index ON public.tmp_acteur USING btree (source
 
 
 --
--- Name: tmp_acteur_uniq; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_acteur_unique_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE UNIQUE INDEX tmp_acteur_uniq ON public.tmp_acteur USING btree (id, etablissement_id);
-
-
---
--- Name: tmp_doctorant_source_code_idx; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE INDEX tmp_doctorant_source_code_idx ON public.tmp_doctorant USING btree (source_code);
+CREATE UNIQUE INDEX tmp_acteur_unique_index ON public.tmp_acteur USING btree (source_id, source_code);
 
 
 --
--- Name: tmp_doctorant_source_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_doctorant_source_code_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE INDEX tmp_doctorant_source_id_idx ON public.tmp_doctorant USING btree (source_id);
-
-
---
--- Name: tmp_doctorant_uniq; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE UNIQUE INDEX tmp_doctorant_uniq ON public.tmp_doctorant USING btree (id, etablissement_id);
+CREATE INDEX tmp_doctorant_source_code_index ON public.tmp_doctorant USING btree (source_code);
 
 
 --
--- Name: tmp_ecole_doct_source_code_idx; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_doctorant_source_id_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE INDEX tmp_ecole_doct_source_code_idx ON public.tmp_ecole_doct USING btree (source_code);
-
-
---
--- Name: tmp_ecole_doct_source_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE INDEX tmp_ecole_doct_source_id_idx ON public.tmp_ecole_doct USING btree (source_id);
+CREATE INDEX tmp_doctorant_source_id_index ON public.tmp_doctorant USING btree (source_id);
 
 
 --
--- Name: tmp_ecole_doct_struct_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_doctorant_unique_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE INDEX tmp_ecole_doct_struct_id_idx ON public.tmp_ecole_doct USING btree (structure_id);
-
-
---
--- Name: tmp_ecole_doct_uniq; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE UNIQUE INDEX tmp_ecole_doct_uniq ON public.tmp_ecole_doct USING btree (id, structure_id);
+CREATE UNIQUE INDEX tmp_doctorant_unique_index ON public.tmp_doctorant USING btree (source_id, source_code);
 
 
 --
--- Name: tmp_etab_source_code_idx; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_ecole_doct_source_code_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE INDEX tmp_etab_source_code_idx ON public.tmp_etablissement USING btree (source_code);
-
-
---
--- Name: tmp_etab_source_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE INDEX tmp_etab_source_id_idx ON public.tmp_etablissement USING btree (source_id);
+CREATE INDEX tmp_ecole_doct_source_code_index ON public.tmp_ecole_doct USING btree (source_code);
 
 
 --
--- Name: tmp_etab_struct_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_ecole_doct_source_id_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE INDEX tmp_etab_struct_id_idx ON public.tmp_etablissement USING btree (structure_id);
-
-
---
--- Name: tmp_etab_uniq; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE UNIQUE INDEX tmp_etab_uniq ON public.tmp_etablissement USING btree (id, structure_id);
+CREATE INDEX tmp_ecole_doct_source_id_index ON public.tmp_ecole_doct USING btree (source_id);
 
 
 --
--- Name: tmp_financement_uniq; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_ecole_doct_unique_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE UNIQUE INDEX tmp_financement_uniq ON public.tmp_financement USING btree (id, etablissement_id);
-
-
---
--- Name: tmp_individu_source_code_idx; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE INDEX tmp_individu_source_code_idx ON public.tmp_individu USING btree (source_code);
+CREATE UNIQUE INDEX tmp_ecole_doct_unique_index ON public.tmp_ecole_doct USING btree (source_id, source_code);
 
 
 --
--- Name: tmp_individu_source_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_etablissement_source_code_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE INDEX tmp_individu_source_id_idx ON public.tmp_individu USING btree (source_id);
-
-
---
--- Name: tmp_individu_uniq; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE UNIQUE INDEX tmp_individu_uniq ON public.tmp_individu USING btree (id, etablissement_id);
+CREATE INDEX tmp_etablissement_source_code_index ON public.tmp_etablissement USING btree (source_code);
 
 
 --
--- Name: tmp_origine_financement_uniq; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_etablissement_source_id_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE UNIQUE INDEX tmp_origine_financement_uniq ON public.tmp_origine_financement USING btree (id, etablissement_id);
+CREATE INDEX tmp_etablissement_source_id_index ON public.tmp_etablissement USING btree (source_id);
+
+
+--
+-- Name: tmp_etablissement_unique_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX tmp_etablissement_unique_index ON public.tmp_etablissement USING btree (source_id, source_code);
+
+
+--
+-- Name: tmp_financement_source_code_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX tmp_financement_source_code_index ON public.tmp_financement USING btree (source_code);
+
+
+--
+-- Name: tmp_financement_source_id_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX tmp_financement_source_id_index ON public.tmp_financement USING btree (source_id);
+
+
+--
+-- Name: tmp_financement_unique_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX tmp_financement_unique_index ON public.tmp_financement USING btree (source_id, source_code);
+
+
+--
+-- Name: tmp_individu_source_code_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX tmp_individu_source_code_index ON public.tmp_individu USING btree (source_code);
+
+
+--
+-- Name: tmp_individu_source_id_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX tmp_individu_source_id_index ON public.tmp_individu USING btree (source_id);
+
+
+--
+-- Name: tmp_individu_unique_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX tmp_individu_unique_index ON public.tmp_individu USING btree (source_id, source_code);
+
+
+--
+-- Name: tmp_origine_financement_source_code_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX tmp_origine_financement_source_code_index ON public.tmp_origine_financement USING btree (source_code);
+
+
+--
+-- Name: tmp_origine_financement_source_id_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX tmp_origine_financement_source_id_index ON public.tmp_origine_financement USING btree (source_id);
+
+
+--
+-- Name: tmp_origine_financement_unique_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX tmp_origine_financement_unique_index ON public.tmp_origine_financement USING btree (source_id, source_code);
 
 
 --
@@ -1629,52 +2170,52 @@ CREATE INDEX tmp_role_source_id_index ON public.tmp_role USING btree (source_id)
 
 
 --
--- Name: tmp_role_uniq; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_role_unique_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE UNIQUE INDEX tmp_role_uniq ON public.tmp_role USING btree (id, etablissement_id);
-
-
---
--- Name: tmp_structure_source_code_idx; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE INDEX tmp_structure_source_code_idx ON public.tmp_structure USING btree (source_code);
+CREATE UNIQUE INDEX tmp_role_unique_index ON public.tmp_role USING btree (source_id, source_code);
 
 
 --
--- Name: tmp_structure_source_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_structure_source_code_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE INDEX tmp_structure_source_id_idx ON public.tmp_structure USING btree (source_id);
-
-
---
--- Name: tmp_structure_type_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE INDEX tmp_structure_type_id_idx ON public.tmp_structure USING btree (type_structure_id);
+CREATE INDEX tmp_structure_source_code_index ON public.tmp_structure USING btree (source_code);
 
 
 --
--- Name: tmp_these_annee_u_src_cod_idx; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_structure_source_id_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE INDEX tmp_these_annee_u_src_cod_idx ON public.tmp_these_annee_univ USING btree (source_code);
-
-
---
--- Name: tmp_these_annee_u_src_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE INDEX tmp_these_annee_u_src_id_idx ON public.tmp_these_annee_univ USING btree (source_id);
+CREATE INDEX tmp_structure_source_id_index ON public.tmp_structure USING btree (source_id);
 
 
 --
--- Name: tmp_these_annee_u_uniq; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_structure_unique_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE UNIQUE INDEX tmp_these_annee_u_uniq ON public.tmp_these_annee_univ USING btree (id, etablissement_id);
+CREATE UNIQUE INDEX tmp_structure_unique_index ON public.tmp_structure USING btree (source_id, source_code);
+
+
+--
+-- Name: tmp_these_annee_univ_source_code_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX tmp_these_annee_univ_source_code_index ON public.tmp_these_annee_univ USING btree (source_code);
+
+
+--
+-- Name: tmp_these_annee_univ_source_id_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX tmp_these_annee_univ_source_id_index ON public.tmp_these_annee_univ USING btree (source_id);
+
+
+--
+-- Name: tmp_these_annee_univ_unique_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX tmp_these_annee_univ_unique_index ON public.tmp_these_annee_univ USING btree (source_id, source_code);
 
 
 --
@@ -1692,59 +2233,52 @@ CREATE INDEX tmp_these_source_id_index ON public.tmp_these USING btree (source_i
 
 
 --
--- Name: tmp_these_uniq; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_these_unique_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE UNIQUE INDEX tmp_these_uniq ON public.tmp_these USING btree (id, etablissement_id);
-
-
---
--- Name: tmp_titre_acces_source_cod_idx; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE INDEX tmp_titre_acces_source_cod_idx ON public.tmp_titre_acces USING btree (source_code);
+CREATE UNIQUE INDEX tmp_these_unique_index ON public.tmp_these USING btree (source_id, source_code);
 
 
 --
--- Name: tmp_titre_acces_source_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_titre_acces_source_code_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE INDEX tmp_titre_acces_source_id_idx ON public.tmp_titre_acces USING btree (source_id);
-
-
---
--- Name: tmp_titre_acces_uniq; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE UNIQUE INDEX tmp_titre_acces_uniq ON public.tmp_titre_acces USING btree (id, etablissement_id);
+CREATE INDEX tmp_titre_acces_source_code_index ON public.tmp_titre_acces USING btree (source_code);
 
 
 --
--- Name: tmp_unite_rech_source_code_idx; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_titre_acces_source_id_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE INDEX tmp_unite_rech_source_code_idx ON public.tmp_unite_rech USING btree (source_code);
-
-
---
--- Name: tmp_unite_rech_source_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
---
-
-CREATE INDEX tmp_unite_rech_source_id_idx ON public.tmp_unite_rech USING btree (source_id);
+CREATE INDEX tmp_titre_acces_source_id_index ON public.tmp_titre_acces USING btree (source_id);
 
 
 --
--- Name: tmp_unite_rech_struct_id_idx; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_titre_acces_unique_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE INDEX tmp_unite_rech_struct_id_idx ON public.tmp_unite_rech USING btree (structure_id);
+CREATE UNIQUE INDEX tmp_titre_acces_unique_index ON public.tmp_titre_acces USING btree (source_id, source_code);
 
 
 --
--- Name: tmp_unite_rech_uniq; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_unite_rech_source_code_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE UNIQUE INDEX tmp_unite_rech_uniq ON public.tmp_unite_rech USING btree (id, structure_id);
+CREATE INDEX tmp_unite_rech_source_code_index ON public.tmp_unite_rech USING btree (source_code);
+
+
+--
+-- Name: tmp_unite_rech_source_id_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX tmp_unite_rech_source_id_index ON public.tmp_unite_rech USING btree (source_id);
+
+
+--
+-- Name: tmp_unite_rech_unique_index; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX tmp_unite_rech_unique_index ON public.tmp_unite_rech USING btree (source_id, source_code);
 
 
 --
@@ -1762,10 +2296,10 @@ CREATE INDEX tmp_variable_source_id_index ON public.tmp_variable USING btree (so
 
 
 --
--- Name: tmp_variable_uniq; Type: INDEX; Schema: public; Owner: :dbuser
+-- Name: tmp_variable_unique_index; Type: INDEX; Schema: public; Owner: :dbuser
 --
 
-CREATE UNIQUE INDEX tmp_variable_uniq ON public.tmp_variable USING btree (id, etablissement_id);
+CREATE UNIQUE INDEX tmp_variable_unique_index ON public.tmp_variable USING btree (source_id, source_code);
 
 
 --
@@ -1787,6 +2321,202 @@ CREATE UNIQUE INDEX type_structure_un ON public.type_structure USING btree (code
 --
 
 CREATE UNIQUE INDEX type_validation_un ON public.type_validation USING btree (code);
+
+
+--
+-- Name: unicaen_alerte_alerte__idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX unicaen_alerte_alerte__idx ON public.unicaen_alerte_alerte USING btree (id);
+
+
+--
+-- Name: unicaen_alerte_alerte__un; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX unicaen_alerte_alerte__un ON public.unicaen_alerte_alerte USING btree (code);
+
+
+--
+-- Name: unicaen_alerte_alerte_planning__alerte__idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX unicaen_alerte_alerte_planning__alerte__idx ON public.unicaen_alerte_alerte_planning USING btree (alerte_id);
+
+
+--
+-- Name: unicaen_alerte_alerte_planning__idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX unicaen_alerte_alerte_planning__idx ON public.unicaen_alerte_alerte_planning USING btree (id);
+
+
+--
+-- Name: unicaen_avis__idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX unicaen_avis__idx ON public.unicaen_avis USING btree (id);
+
+
+--
+-- Name: unicaen_avis__unicaen_avis_type__idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX unicaen_avis__unicaen_avis_type__idx ON public.unicaen_avis USING btree (avis_type_id);
+
+
+--
+-- Name: unicaen_avis__unicaen_avis_valeur__idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX unicaen_avis__unicaen_avis_valeur__idx ON public.unicaen_avis USING btree (avis_valeur_id);
+
+
+--
+-- Name: unicaen_avis_complem__idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX unicaen_avis_complem__idx ON public.unicaen_avis_complem USING btree (id);
+
+
+--
+-- Name: unicaen_avis_complem__unicaen_avis_type_valeur_complem__idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX unicaen_avis_complem__unicaen_avis_type_valeur_complem__idx ON public.unicaen_avis_complem USING btree (avis_type_complem_id);
+
+
+--
+-- Name: unicaen_avis_type__idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX unicaen_avis_type__idx ON public.unicaen_avis_type USING btree (id);
+
+
+--
+-- Name: unicaen_avis_type__un; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX unicaen_avis_type__un ON public.unicaen_avis_type USING btree (code);
+
+
+--
+-- Name: unicaen_avis_type_valeur__idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX unicaen_avis_type_valeur__idx ON public.unicaen_avis_type_valeur USING btree (id);
+
+
+--
+-- Name: unicaen_avis_type_valeur__unicaen_avis_type__idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX unicaen_avis_type_valeur__unicaen_avis_type__idx ON public.unicaen_avis_type_valeur USING btree (avis_type_id);
+
+
+--
+-- Name: unicaen_avis_type_valeur__unicaen_avis_valeur__idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX unicaen_avis_type_valeur__unicaen_avis_valeur__idx ON public.unicaen_avis_type_valeur USING btree (avis_valeur_id);
+
+
+--
+-- Name: unicaen_avis_type_valeur_complem__idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX unicaen_avis_type_valeur_complem__idx ON public.unicaen_avis_type_valeur_complem USING btree (id);
+
+
+--
+-- Name: unicaen_avis_type_valeur_complem__un; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX unicaen_avis_type_valeur_complem__un ON public.unicaen_avis_type_valeur_complem USING btree (code);
+
+
+--
+-- Name: unicaen_avis_type_valeur_complem__unicaen_avis_type_valeur__idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX unicaen_avis_type_valeur_complem__unicaen_avis_type_valeur__idx ON public.unicaen_avis_type_valeur USING btree (id);
+
+
+--
+-- Name: unicaen_avis_valeur__idx; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE INDEX unicaen_avis_valeur__idx ON public.unicaen_avis_valeur USING btree (id);
+
+
+--
+-- Name: unicaen_avis_valeur__un; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX unicaen_avis_valeur__un ON public.unicaen_avis_valeur USING btree (code);
+
+
+--
+-- Name: unicaen_document_macro_code_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX unicaen_document_macro_code_uindex ON public.unicaen_renderer_macro USING btree (code);
+
+
+--
+-- Name: unicaen_document_macro_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX unicaen_document_macro_id_uindex ON public.unicaen_renderer_macro USING btree (id);
+
+
+--
+-- Name: unicaen_document_rendu_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX unicaen_document_rendu_id_uindex ON public.unicaen_renderer_template USING btree (id);
+
+
+--
+-- Name: unicaen_document_template_code_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX unicaen_document_template_code_uindex ON public.unicaen_renderer_template USING btree (code);
+
+
+--
+-- Name: unicaen_document_template_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX unicaen_document_template_id_uindex ON public.unicaen_renderer_template USING btree (id);
+
+
+--
+-- Name: unicaen_parametre_categorie_code_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX unicaen_parametre_categorie_code_uindex ON public.unicaen_parametre_categorie USING btree (code);
+
+
+--
+-- Name: unicaen_parametre_categorie_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX unicaen_parametre_categorie_id_uindex ON public.unicaen_parametre_categorie USING btree (id);
+
+
+--
+-- Name: unicaen_parametre_parametre_code_categorie_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX unicaen_parametre_parametre_code_categorie_id_uindex ON public.unicaen_parametre_parametre USING btree (code, categorie_id);
+
+
+--
+-- Name: unicaen_parametre_parametre_id_uindex; Type: INDEX; Schema: public; Owner: :dbuser
+--
+
+CREATE UNIQUE INDEX unicaen_parametre_parametre_id_uindex ON public.unicaen_parametre_parametre USING btree (id);
 
 
 --
@@ -2057,6 +2787,14 @@ ALTER TABLE ONLY public.acteur
 
 
 --
+-- Name: acteur acteur_unite_rech_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.acteur
+    ADD CONSTRAINT acteur_unite_rech_id_fk FOREIGN KEY (acteur_uniterech_id) REFERENCES public.unite_rech(id) ON DELETE SET NULL;
+
+
+--
 -- Name: attestation attestation_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -2094,14 +2832,6 @@ ALTER TABLE ONLY public.attestation
 
 ALTER TABLE ONLY public.soutenance_avis
     ADD CONSTRAINT avis_destructeur_id FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
-
-
---
--- Name: soutenance_avis avis_fichier_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
---
-
-ALTER TABLE ONLY public.soutenance_avis
-    ADD CONSTRAINT avis_fichier_id_fk FOREIGN KEY (fichier_id) REFERENCES public.fichier(id);
 
 
 --
@@ -2161,10 +2891,10 @@ ALTER TABLE ONLY public.diffusion
 
 
 --
--- Name: doctorant_compl doctorant_compl_doctorant_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+-- Name: z_doctorant_compl doctorant_compl_doctorant_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
-ALTER TABLE ONLY public.doctorant_compl
+ALTER TABLE ONLY public.z_doctorant_compl
     ADD CONSTRAINT doctorant_compl_doctorant_fk FOREIGN KEY (doctorant_id) REFERENCES public.doctorant(id);
 
 
@@ -2206,6 +2936,38 @@ ALTER TABLE ONLY public.doctorant
 
 ALTER TABLE ONLY public.doctorant
     ADD CONSTRAINT doctorant_indiv_fk FOREIGN KEY (individu_id) REFERENCES public.individu(id);
+
+
+--
+-- Name: doctorant_mission_enseignement doctorant_mission_enseignement_doctorant_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.doctorant_mission_enseignement
+    ADD CONSTRAINT doctorant_mission_enseignement_doctorant_id_fk FOREIGN KEY (doctorant_id) REFERENCES public.doctorant(id) ON DELETE CASCADE;
+
+
+--
+-- Name: doctorant_mission_enseignement doctorant_mission_enseignement_utilisateur_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.doctorant_mission_enseignement
+    ADD CONSTRAINT doctorant_mission_enseignement_utilisateur_id_fk FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: doctorant_mission_enseignement doctorant_mission_enseignement_utilisateur_id_fk2; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.doctorant_mission_enseignement
+    ADD CONSTRAINT doctorant_mission_enseignement_utilisateur_id_fk2 FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: doctorant_mission_enseignement doctorant_mission_enseignement_utilisateur_id_fk3; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.doctorant_mission_enseignement
+    ADD CONSTRAINT doctorant_mission_enseignement_utilisateur_id_fk3 FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
 
 
 --
@@ -2393,11 +3155,483 @@ ALTER TABLE ONLY public.financement
 
 
 --
+-- Name: formation_presence foramtion_presence_seance_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_presence
+    ADD CONSTRAINT foramtion_presence_seance_id_fk FOREIGN KEY (seance_id) REFERENCES public.formation_seance(id) ON DELETE CASCADE;
+
+
+--
+-- Name: formation_enquete_categorie formation_enquete_categorie_utilisateur_id_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_enquete_categorie
+    ADD CONSTRAINT formation_enquete_categorie_utilisateur_id_fk_1 FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_enquete_categorie formation_enquete_categorie_utilisateur_id_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_enquete_categorie
+    ADD CONSTRAINT formation_enquete_categorie_utilisateur_id_fk_2 FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_enquete_categorie formation_enquete_categorie_utilisateur_id_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_enquete_categorie
+    ADD CONSTRAINT formation_enquete_categorie_utilisateur_id_fk_3 FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_enquete_question formation_enquete_question_formation_enquete_categorie_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_enquete_question
+    ADD CONSTRAINT formation_enquete_question_formation_enquete_categorie_id_fk FOREIGN KEY (categorie_id) REFERENCES public.formation_enquete_categorie(id);
+
+
+--
+-- Name: formation_enquete_question formation_enquete_question_utilisateur_id_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_enquete_question
+    ADD CONSTRAINT formation_enquete_question_utilisateur_id_fk_1 FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_enquete_question formation_enquete_question_utilisateur_id_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_enquete_question
+    ADD CONSTRAINT formation_enquete_question_utilisateur_id_fk_2 FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_enquete_question formation_enquete_question_utilisateur_id_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_enquete_question
+    ADD CONSTRAINT formation_enquete_question_utilisateur_id_fk_3 FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_enquete_reponse formation_enquete_reponse_inscription_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_enquete_reponse
+    ADD CONSTRAINT formation_enquete_reponse_inscription_id_fk FOREIGN KEY (inscription_id) REFERENCES public.formation_inscription(id) ON DELETE CASCADE;
+
+
+--
+-- Name: formation_enquete_reponse formation_enquete_reponse_question_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_enquete_reponse
+    ADD CONSTRAINT formation_enquete_reponse_question_id_fk FOREIGN KEY (question_id) REFERENCES public.formation_enquete_question(id) ON DELETE CASCADE;
+
+
+--
+-- Name: formation_enquete_reponse formation_enquete_reponse_utilisateur_id_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_enquete_reponse
+    ADD CONSTRAINT formation_enquete_reponse_utilisateur_id_fk_1 FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_enquete_reponse formation_enquete_reponse_utilisateur_id_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_enquete_reponse
+    ADD CONSTRAINT formation_enquete_reponse_utilisateur_id_fk_2 FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_enquete_reponse formation_enquete_reponse_utilisateur_id_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_enquete_reponse
+    ADD CONSTRAINT formation_enquete_reponse_utilisateur_id_fk_3 FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_formateur formation_formateur_individu_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_formateur
+    ADD CONSTRAINT formation_formateur_individu_id_fk FOREIGN KEY (individu_id) REFERENCES public.individu(id) ON DELETE CASCADE;
+
+
+--
+-- Name: formation_formateur formation_formateur_session_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_formateur
+    ADD CONSTRAINT formation_formateur_session_id_fk FOREIGN KEY (session_id) REFERENCES public.formation_session(id) ON DELETE CASCADE;
+
+
+--
+-- Name: formation_formateur formation_formateur_utilisateur_id_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_formateur
+    ADD CONSTRAINT formation_formateur_utilisateur_id_fk_1 FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_formateur formation_formateur_utilisateur_id_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_formateur
+    ADD CONSTRAINT formation_formateur_utilisateur_id_fk_2 FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_formateur formation_formateur_utilisateur_id_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_formateur
+    ADD CONSTRAINT formation_formateur_utilisateur_id_fk_3 FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_formation formation_formation_etablissement_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_formation
+    ADD CONSTRAINT formation_formation_etablissement_id_fk FOREIGN KEY (site_id) REFERENCES public.etablissement(id) ON DELETE SET NULL;
+
+
+--
+-- Name: formation_formation formation_formation_individu_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_formation
+    ADD CONSTRAINT formation_formation_individu_id_fk FOREIGN KEY (responsable_id) REFERENCES public.individu(id) ON DELETE SET NULL;
+
+
+--
+-- Name: formation_formation formation_formation_module_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_formation
+    ADD CONSTRAINT formation_formation_module_id_fk FOREIGN KEY (module_id) REFERENCES public.formation_module(id) ON DELETE SET NULL;
+
+
+--
+-- Name: formation_formation formation_formation_structure_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_formation
+    ADD CONSTRAINT formation_formation_structure_id_fk FOREIGN KEY (type_structure_id) REFERENCES public.structure(id) ON DELETE SET NULL;
+
+
+--
+-- Name: formation_formation formation_formation_utilisateur_id_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_formation
+    ADD CONSTRAINT formation_formation_utilisateur_id_fk_1 FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_formation formation_formation_utilisateur_id_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_formation
+    ADD CONSTRAINT formation_formation_utilisateur_id_fk_2 FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_formation formation_formation_utilisateur_id_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_formation
+    ADD CONSTRAINT formation_formation_utilisateur_id_fk_3 FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_inscription formation_inscription_doctorant_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_inscription
+    ADD CONSTRAINT formation_inscription_doctorant_id_fk FOREIGN KEY (doctorant_id) REFERENCES public.doctorant(id) ON DELETE CASCADE;
+
+
+--
+-- Name: formation_inscription formation_inscription_session_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_inscription
+    ADD CONSTRAINT formation_inscription_session_fk FOREIGN KEY (session_id) REFERENCES public.formation_session(id) ON DELETE CASCADE;
+
+
+--
+-- Name: formation_inscription formation_inscription_utilisateur_id_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_inscription
+    ADD CONSTRAINT formation_inscription_utilisateur_id_fk_1 FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_inscription formation_inscription_utilisateur_id_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_inscription
+    ADD CONSTRAINT formation_inscription_utilisateur_id_fk_2 FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_inscription formation_inscription_utilisateur_id_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_inscription
+    ADD CONSTRAINT formation_inscription_utilisateur_id_fk_3 FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_module formation_module_utilisateur_id_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_module
+    ADD CONSTRAINT formation_module_utilisateur_id_fk_1 FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_module formation_module_utilisateur_id_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_module
+    ADD CONSTRAINT formation_module_utilisateur_id_fk_2 FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_module formation_module_utilisateur_id_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_module
+    ADD CONSTRAINT formation_module_utilisateur_id_fk_3 FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_presence formation_presence_inscription_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_presence
+    ADD CONSTRAINT formation_presence_inscription_id_fk FOREIGN KEY (inscription_id) REFERENCES public.formation_inscription(id) ON DELETE CASCADE;
+
+
+--
+-- Name: formation_presence formation_presence_utilisateur_id_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_presence
+    ADD CONSTRAINT formation_presence_utilisateur_id_fk_1 FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_presence formation_presence_utilisateur_id_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_presence
+    ADD CONSTRAINT formation_presence_utilisateur_id_fk_2 FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_presence formation_presence_utilisateur_id_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_presence
+    ADD CONSTRAINT formation_presence_utilisateur_id_fk_3 FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_seance formation_seance_session_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_seance
+    ADD CONSTRAINT formation_seance_session_fk FOREIGN KEY (session_id) REFERENCES public.formation_session(id) ON DELETE CASCADE;
+
+
+--
+-- Name: formation_seance formation_seance_utilisateur_id_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_seance
+    ADD CONSTRAINT formation_seance_utilisateur_id_fk_1 FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_seance formation_seance_utilisateur_id_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_seance
+    ADD CONSTRAINT formation_seance_utilisateur_id_fk_2 FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_seance formation_seance_utilisateur_id_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_seance
+    ADD CONSTRAINT formation_seance_utilisateur_id_fk_3 FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_session_etat_heurodatage formation_session_etat_heurodatage_etat; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session_etat_heurodatage
+    ADD CONSTRAINT formation_session_etat_heurodatage_etat FOREIGN KEY (etat_id) REFERENCES public.formation_etat(code) ON DELETE CASCADE;
+
+
+--
+-- Name: formation_session_etat_heurodatage formation_session_etat_heurodatage_session; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session_etat_heurodatage
+    ADD CONSTRAINT formation_session_etat_heurodatage_session FOREIGN KEY (session_id) REFERENCES public.formation_session(id) ON DELETE CASCADE;
+
+
+--
+-- Name: formation_session_etat_heurodatage formation_session_etat_heurodatage_user; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session_etat_heurodatage
+    ADD CONSTRAINT formation_session_etat_heurodatage_user FOREIGN KEY (utilisateur_id) REFERENCES public.utilisateur(id) ON DELETE CASCADE;
+
+
+--
+-- Name: formation_session formation_session_formation_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session
+    ADD CONSTRAINT formation_session_formation_id_fk FOREIGN KEY (formation_id) REFERENCES public.formation_formation(id) ON DELETE CASCADE;
+
+
+--
+-- Name: formation_session formation_session_responsable_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session
+    ADD CONSTRAINT formation_session_responsable_id_fk FOREIGN KEY (responsable_id) REFERENCES public.individu(id) ON DELETE SET NULL;
+
+
+--
+-- Name: formation_session formation_session_site_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session
+    ADD CONSTRAINT formation_session_site_id_fk FOREIGN KEY (site_id) REFERENCES public.etablissement(id) ON DELETE SET NULL;
+
+
+--
+-- Name: formation_session_structure_valide formation_session_structure_valide_session_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session_structure_valide
+    ADD CONSTRAINT formation_session_structure_valide_session_id_fk FOREIGN KEY (session_id) REFERENCES public.formation_session(id) ON DELETE CASCADE;
+
+
+--
+-- Name: formation_session_structure_valide formation_session_structure_valide_structure_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session_structure_valide
+    ADD CONSTRAINT formation_session_structure_valide_structure_id_fk FOREIGN KEY (structure_id) REFERENCES public.structure(id) ON DELETE CASCADE;
+
+
+--
+-- Name: formation_session_structure_valide formation_session_structure_valide_utilisateur_id_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session_structure_valide
+    ADD CONSTRAINT formation_session_structure_valide_utilisateur_id_fk_1 FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_session_structure_valide formation_session_structure_valide_utilisateur_id_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session_structure_valide
+    ADD CONSTRAINT formation_session_structure_valide_utilisateur_id_fk_2 FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_session_structure_valide formation_session_structure_valide_utilisateur_id_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session_structure_valide
+    ADD CONSTRAINT formation_session_structure_valide_utilisateur_id_fk_3 FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_session formation_session_type_structure_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session
+    ADD CONSTRAINT formation_session_type_structure_id_fk FOREIGN KEY (type_structure_id) REFERENCES public.structure(id) ON DELETE SET NULL;
+
+
+--
+-- Name: formation_session formation_session_utilisateur_id_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session
+    ADD CONSTRAINT formation_session_utilisateur_id_fk_1 FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_session formation_session_utilisateur_id_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session
+    ADD CONSTRAINT formation_session_utilisateur_id_fk_2 FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: formation_session formation_session_utilisateur_id_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session
+    ADD CONSTRAINT formation_session_utilisateur_id_fk_3 FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: horodatage_horodatage horodatage_horodatage_utilisateur_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.horodatage_horodatage
+    ADD CONSTRAINT horodatage_horodatage_utilisateur_id_fk FOREIGN KEY (user_id) REFERENCES public.utilisateur(id);
+
+
+--
 -- Name: import_observ_result import_observ_result_ioe_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.import_observ_result
     ADD CONSTRAINT import_observ_result_ioe_fk FOREIGN KEY (import_observ_id) REFERENCES public.import_observ(id) ON DELETE CASCADE;
+
+
+--
+-- Name: individu_compl individu_compl_etablissement_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.individu_compl
+    ADD CONSTRAINT individu_compl_etablissement_id_fk FOREIGN KEY (etablissement_id) REFERENCES public.etablissement(id) ON DELETE SET NULL;
+
+
+--
+-- Name: individu_compl individu_compl_unite_rech_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.individu_compl
+    ADD CONSTRAINT individu_compl_unite_rech_id_fk FOREIGN KEY (unite_id) REFERENCES public.unite_rech(id) ON DELETE SET NULL;
 
 
 --
@@ -2422,6 +3656,14 @@ ALTER TABLE ONLY public.individu
 
 ALTER TABLE ONLY public.individu
     ADD CONSTRAINT individu_hm_fk FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id) ON DELETE CASCADE;
+
+
+--
+-- Name: individu individu_pays_id_nationalite_fkey; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.individu
+    ADD CONSTRAINT individu_pays_id_nationalite_fkey FOREIGN KEY (pays_id_nationalite) REFERENCES public.pays(id);
 
 
 --
@@ -2593,6 +3835,14 @@ ALTER TABLE ONLY public.soutenance_membre
 
 
 --
+-- Name: csi_membre membre_createur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.csi_membre
+    ADD CONSTRAINT membre_createur_fk FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
 -- Name: soutenance_membre membre_destructeur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -2601,10 +3851,26 @@ ALTER TABLE ONLY public.soutenance_membre
 
 
 --
+-- Name: csi_membre membre_destructeur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.csi_membre
+    ADD CONSTRAINT membre_destructeur_fk FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
 -- Name: soutenance_membre membre_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.soutenance_membre
+    ADD CONSTRAINT membre_modificateur_fk FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: csi_membre membre_modificateur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.csi_membre
     ADD CONSTRAINT membre_modificateur_fk FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
 
 
@@ -2622,6 +3888,22 @@ ALTER TABLE ONLY public.soutenance_membre
 
 ALTER TABLE ONLY public.soutenance_membre
     ADD CONSTRAINT membre_qualite_fk FOREIGN KEY (qualite) REFERENCES public.soutenance_qualite(id) ON DELETE SET NULL;
+
+
+--
+-- Name: csi_membre membre_qualite_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.csi_membre
+    ADD CONSTRAINT membre_qualite_fk FOREIGN KEY (qualite) REFERENCES public.soutenance_qualite(id) ON DELETE SET NULL;
+
+
+--
+-- Name: csi_membre membre_these_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.csi_membre
+    ADD CONSTRAINT membre_these_fk FOREIGN KEY (these_id) REFERENCES public.these(id) ON DELETE CASCADE;
 
 
 --
@@ -2681,6 +3963,38 @@ ALTER TABLE ONLY public.origine_financement
 
 
 --
+-- Name: pays pays_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.pays
+    ADD CONSTRAINT pays_hcfk FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: pays pays_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.pays
+    ADD CONSTRAINT pays_hdfk FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: pays pays_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.pays
+    ADD CONSTRAINT pays_hmfk FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: pays pays_source_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.pays
+    ADD CONSTRAINT pays_source_fk FOREIGN KEY (source_id) REFERENCES public.source(id);
+
+
+--
 -- Name: profil_privilege profil_privilege_profil_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -2737,10 +4051,114 @@ ALTER TABLE ONLY public.soutenance_proposition
 
 
 --
+-- Name: rapport_activite_avis rapport_activite_avis__unicaen_avis__fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_activite_avis
+    ADD CONSTRAINT rapport_activite_avis__unicaen_avis__fk FOREIGN KEY (avis_id) REFERENCES public.unicaen_avis(id);
+
+
+--
+-- Name: rapport_activite_avis rapport_activite_avis_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_activite_avis
+    ADD CONSTRAINT rapport_activite_avis_hc_fk FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id) ON DELETE CASCADE;
+
+
+--
+-- Name: rapport_activite_avis rapport_activite_avis_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_activite_avis
+    ADD CONSTRAINT rapport_activite_avis_hd_fk FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id) ON DELETE CASCADE;
+
+
+--
+-- Name: rapport_activite_avis rapport_activite_avis_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_activite_avis
+    ADD CONSTRAINT rapport_activite_avis_hm_fk FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id) ON DELETE CASCADE;
+
+
+--
+-- Name: rapport_activite_avis rapport_activite_avis_rapport_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_activite_avis
+    ADD CONSTRAINT rapport_activite_avis_rapport_fk FOREIGN KEY (rapport_id) REFERENCES public.rapport_activite(id);
+
+
+--
+-- Name: rapport_activite rapport_activite_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_activite
+    ADD CONSTRAINT rapport_activite_hc_fk FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id) ON DELETE CASCADE;
+
+
+--
+-- Name: rapport_activite rapport_activite_hd_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_activite
+    ADD CONSTRAINT rapport_activite_hd_fk FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id) ON DELETE CASCADE;
+
+
+--
+-- Name: rapport_activite rapport_activite_hm_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_activite
+    ADD CONSTRAINT rapport_activite_hm_fk FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id) ON DELETE CASCADE;
+
+
+--
+-- Name: rapport_activite rapport_activite_these_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_activite
+    ADD CONSTRAINT rapport_activite_these_fk FOREIGN KEY (these_id) REFERENCES public.these(id) ON DELETE CASCADE;
+
+
+--
+-- Name: rapport_activite_validation rapport_activite_validation_indiv_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_activite_validation
+    ADD CONSTRAINT rapport_activite_validation_indiv_id_fk FOREIGN KEY (individu_id) REFERENCES public.individu(id);
+
+
+--
+-- Name: rapport_activite_validation rapport_activite_validation_rapport_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_activite_validation
+    ADD CONSTRAINT rapport_activite_validation_rapport_fk FOREIGN KEY (rapport_id) REFERENCES public.rapport_activite(id);
+
+
+--
+-- Name: rapport_activite_validation rapport_activite_validation_type_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_activite_validation
+    ADD CONSTRAINT rapport_activite_validation_type_fk FOREIGN KEY (type_validation_id) REFERENCES public.type_validation(id);
+
+
+--
 -- Name: rapport rapport_annuel_fichier_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
 ALTER TABLE ONLY public.rapport
+    ADD CONSTRAINT rapport_annuel_fichier_fk FOREIGN KEY (fichier_id) REFERENCES public.fichier(id) ON DELETE CASCADE;
+
+
+--
+-- Name: rapport_activite rapport_annuel_fichier_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_activite
     ADD CONSTRAINT rapport_annuel_fichier_fk FOREIGN KEY (fichier_id) REFERENCES public.fichier(id) ON DELETE CASCADE;
 
 
@@ -2782,6 +4200,22 @@ ALTER TABLE ONLY public.rapport
 
 ALTER TABLE ONLY public.rapport
     ADD CONSTRAINT rapport_annuel_type_id_fk FOREIGN KEY (type_rapport_id) REFERENCES public.type_rapport(id);
+
+
+--
+-- Name: rapport_avis rapport_avis__unicaen_avis__fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_avis
+    ADD CONSTRAINT rapport_avis__unicaen_avis__fk FOREIGN KEY (avis_id) REFERENCES public.unicaen_avis(id);
+
+
+--
+-- Name: rapport_avis rapport_avis_rapport_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.rapport_avis
+    ADD CONSTRAINT rapport_avis_rapport_fk FOREIGN KEY (rapport_id) REFERENCES public.rapport(id);
 
 
 --
@@ -2993,6 +4427,14 @@ ALTER TABLE ONLY public.structure_document
 
 
 --
+-- Name: formation_session session_etat_code_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session
+    ADD CONSTRAINT session_etat_code_fk FOREIGN KEY (etat_code) REFERENCES public.formation_etat(code) ON DELETE SET NULL;
+
+
+--
 -- Name: soutenance_intervention sintervention_these_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -3041,6 +4483,22 @@ ALTER TABLE ONLY public.soutenance_membre
 
 
 --
+-- Name: csi_membre soutemembre_acteur_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.csi_membre
+    ADD CONSTRAINT soutemembre_acteur_fk FOREIGN KEY (acteur_id) REFERENCES public.acteur(id) ON DELETE CASCADE;
+
+
+--
+-- Name: soutenance_avis soutenance_avis_fichier_these_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.soutenance_avis
+    ADD CONSTRAINT soutenance_avis_fichier_these_id_fk FOREIGN KEY (fichierthese_id) REFERENCES public.fichier_these(id);
+
+
+--
 -- Name: soutenance_proposition soutenance_etat_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -3049,11 +4507,19 @@ ALTER TABLE ONLY public.soutenance_proposition
 
 
 --
--- Name: soutenance_evenement soutenance_evenement_soutenance_proposition_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+-- Name: soutenance_horodatage soutenance_horodatage_horodatage_horodatage_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
-ALTER TABLE ONLY public.soutenance_evenement
-    ADD CONSTRAINT soutenance_evenement_soutenance_proposition_id_fk FOREIGN KEY (proposition_id) REFERENCES public.soutenance_proposition(id) ON DELETE CASCADE;
+ALTER TABLE ONLY public.soutenance_horodatage
+    ADD CONSTRAINT soutenance_horodatage_horodatage_horodatage_id_fk FOREIGN KEY (horodatage_id) REFERENCES public.horodatage_horodatage(id) ON DELETE CASCADE;
+
+
+--
+-- Name: soutenance_horodatage soutenance_horodatage_soutenance_proposition_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.soutenance_horodatage
+    ADD CONSTRAINT soutenance_horodatage_soutenance_proposition_id_fk FOREIGN KEY (proposition_id) REFERENCES public.soutenance_proposition(id) ON DELETE CASCADE;
 
 
 --
@@ -3110,6 +4576,14 @@ ALTER TABLE ONLY public.soutenance_qualite
 
 ALTER TABLE ONLY public.soutenance_qualite
     ADD CONSTRAINT squalite_utilisateur_id_fk_3 FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: step_star_log stepstar_log_these_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.step_star_log
+    ADD CONSTRAINT stepstar_log_these_id_fk FOREIGN KEY (these_id) REFERENCES public.these(id) ON DELETE CASCADE;
 
 
 --
@@ -3201,26 +4675,34 @@ ALTER TABLE ONLY public.privilege
 
 
 --
--- Name: doctorant_compl thesard_compl_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+-- Name: individu_compl table_name_individu_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
-ALTER TABLE ONLY public.doctorant_compl
+ALTER TABLE ONLY public.individu_compl
+    ADD CONSTRAINT table_name_individu_id_fk FOREIGN KEY (individu_id) REFERENCES public.individu(id) ON DELETE CASCADE;
+
+
+--
+-- Name: z_doctorant_compl thesard_compl_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.z_doctorant_compl
     ADD CONSTRAINT thesard_compl_hcfk FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
 
 
 --
--- Name: doctorant_compl thesard_compl_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+-- Name: z_doctorant_compl thesard_compl_hdfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
-ALTER TABLE ONLY public.doctorant_compl
+ALTER TABLE ONLY public.z_doctorant_compl
     ADD CONSTRAINT thesard_compl_hdfk FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
 
 
 --
--- Name: doctorant_compl thesard_compl_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+-- Name: z_doctorant_compl thesard_compl_hmfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
-ALTER TABLE ONLY public.doctorant_compl
+ALTER TABLE ONLY public.z_doctorant_compl
     ADD CONSTRAINT thesard_compl_hmfk FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
 
 
@@ -3329,6 +4811,14 @@ ALTER TABLE ONLY public.these
 
 
 --
+-- Name: individu_compl tilisateur_id_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.individu_compl
+    ADD CONSTRAINT tilisateur_id_fk_3 FOREIGN KEY (histo_destructeur_id) REFERENCES public.utilisateur(id);
+
+
+--
 -- Name: titre_acces titre_acces_hc_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -3369,6 +4859,94 @@ ALTER TABLE ONLY public.titre_acces
 
 
 --
+-- Name: unicaen_alerte_alerte_planning unicaen_alerte_alerte_planning__unicaen_alerte__fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_alerte_alerte_planning
+    ADD CONSTRAINT unicaen_alerte_alerte_planning__unicaen_alerte__fk FOREIGN KEY (alerte_id) REFERENCES public.unicaen_alerte_alerte(id);
+
+
+--
+-- Name: unicaen_avis unicaen_avis__unicaen_avis_type__fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_avis
+    ADD CONSTRAINT unicaen_avis__unicaen_avis_type__fk FOREIGN KEY (avis_type_id) REFERENCES public.unicaen_avis_type(id);
+
+
+--
+-- Name: unicaen_avis unicaen_avis__unicaen_avis_valeur__fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_avis
+    ADD CONSTRAINT unicaen_avis__unicaen_avis_valeur__fk FOREIGN KEY (avis_valeur_id) REFERENCES public.unicaen_avis_valeur(id);
+
+
+--
+-- Name: unicaen_avis_complem unicaen_avis_complem__unicaen_avis__fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_avis_complem
+    ADD CONSTRAINT unicaen_avis_complem__unicaen_avis__fk FOREIGN KEY (avis_id) REFERENCES public.unicaen_avis(id);
+
+
+--
+-- Name: unicaen_avis_complem unicaen_avis_complem__unicaen_avis_type_valeur_complem__fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_avis_complem
+    ADD CONSTRAINT unicaen_avis_complem__unicaen_avis_type_valeur_complem__fk FOREIGN KEY (avis_type_complem_id) REFERENCES public.unicaen_avis_type_valeur_complem(id);
+
+
+--
+-- Name: unicaen_avis_type_valeur unicaen_avis_type_valeur__unicaen_avis_type__fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_avis_type_valeur
+    ADD CONSTRAINT unicaen_avis_type_valeur__unicaen_avis_type__fk FOREIGN KEY (avis_type_id) REFERENCES public.unicaen_avis_type(id);
+
+
+--
+-- Name: unicaen_avis_type_valeur unicaen_avis_type_valeur__unicaen_avis_valeur__fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_avis_type_valeur
+    ADD CONSTRAINT unicaen_avis_type_valeur__unicaen_avis_valeur__fk FOREIGN KEY (avis_valeur_id) REFERENCES public.unicaen_avis_valeur(id);
+
+
+--
+-- Name: unicaen_avis_type_valeur_complem unicaen_avis_type_valeur_complem__parent__fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_avis_type_valeur_complem
+    ADD CONSTRAINT unicaen_avis_type_valeur_complem__parent__fk FOREIGN KEY (parent_id) REFERENCES public.unicaen_avis_type_valeur_complem(id);
+
+
+--
+-- Name: unicaen_avis_type_valeur_complem unicaen_avis_type_valeur_complem__unicaen_avis_type_valeur__fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_avis_type_valeur_complem
+    ADD CONSTRAINT unicaen_avis_type_valeur_complem__unicaen_avis_type_valeur__fk FOREIGN KEY (avis_type_valeur_id) REFERENCES public.unicaen_avis_type_valeur(id);
+
+
+--
+-- Name: unicaen_renderer_rendu unicaen_document_rendu_template_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_renderer_rendu
+    ADD CONSTRAINT unicaen_document_rendu_template_id_fk FOREIGN KEY (template_id) REFERENCES public.unicaen_renderer_template(id) ON DELETE SET NULL;
+
+
+--
+-- Name: unicaen_parametre_parametre unicaen_parametre_parametre_unicaen_parametre_categorie_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_parametre_parametre
+    ADD CONSTRAINT unicaen_parametre_parametre_unicaen_parametre_categorie_id_fk FOREIGN KEY (categorie_id) REFERENCES public.unicaen_parametre_categorie(id);
+
+
+--
 -- Name: unite_rech unite_rech_compl_hcfk; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
 --
 
@@ -3406,6 +4984,22 @@ ALTER TABLE ONLY public.unite_rech
 
 ALTER TABLE ONLY public.unite_rech
     ADD CONSTRAINT unite_rech_struct_fk FOREIGN KEY (structure_id) REFERENCES public.structure(id) ON DELETE CASCADE;
+
+
+--
+-- Name: individu_compl utilisateur_id_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.individu_compl
+    ADD CONSTRAINT utilisateur_id_fk_1 FOREIGN KEY (histo_createur_id) REFERENCES public.utilisateur(id);
+
+
+--
+-- Name: individu_compl utilisateur_id_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.individu_compl
+    ADD CONSTRAINT utilisateur_id_fk_2 FOREIGN KEY (histo_modificateur_id) REFERENCES public.utilisateur(id);
 
 
 --
