@@ -174,10 +174,6 @@ class SoutenanceNotificationFactory extends NotificationFactory
     {
         $emails = $this->emailTheseService->fetchEmailAspectsDoctorat($these);
 
-        if (empty($emails)) {
-            throw new RuntimeException("Aucune adresse mail trouvée pour la maison du doctorat de la thèse {$these->getId()}");
-        }
-
         $vars = ['these' => $these, 'doctorant' => $these->getDoctorant(), 'etablissement' => $these->getEtablissement()];
         $url = $this->getUrlService()->setVariables($vars);
         $vars['Url'] = $url;
