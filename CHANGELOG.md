@@ -8,6 +8,7 @@ Journal des modifications
 - [FIX] Correction du plantage survenant dans RapportActiviteAssertion (interrogée par la navigation) lorsque l'utilisateur n'est pas authentifié.
 - [FIX] Destinataires de la notification de demande de validation d'une proposition de soutenance : adresse mail "aspects doctorat"
   de l'établissement d'inscription, plutôt que la liste des individus ayant le rôle BDD obsolète.
+- Onglet 'Rôles et membres' d'une ED/UR : renommage de 'Site' en 'Établissement d'inscription' (clarification).
 - Complétion des qualités du jury sur la page de couverture avec le dossier de soutenance si manquante dans la donnée source
 - Remise en place du menu de gestion des qualités
 - Mise à jour de la doc et des scripts d'install de la base de données.
