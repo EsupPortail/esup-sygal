@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 9.6.11
--- Dumped by pg_dump version 14.1 (Ubuntu 14.1-2.pgdg20.04+1)
+-- Dumped by pg_dump version 15.4 (Ubuntu 15.4-1.pgdg20.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -15,6 +15,15 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
+
+--
+-- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+ALTER SCHEMA public OWNER TO postgres;
 
 --
 -- Name: unaccent; Type: EXTENSION; Schema: -; Owner: -
@@ -29,6 +38,18 @@ CREATE EXTENSION IF NOT EXISTS unaccent WITH SCHEMA public;
 
 COMMENT ON EXTENSION unaccent IS 'text search dictionary that removes accents';
 
+
+--
+-- Name: avis_enum; Type: TYPE; Schema: public; Owner: :dbuser
+--
+
+CREATE TYPE public.avis_enum AS ENUM (
+    'Favorable',
+    'Défavorable'
+);
+
+
+ALTER TYPE public.avis_enum OWNER TO :dbuser;
 
 --
 -- Name: comprise_entre(timestamp without time zone, timestamp without time zone, timestamp without time zone, numeric); Type: FUNCTION; Schema: public; Owner: :dbuser
@@ -98,6 +119,93 @@ $$;
 ALTER FUNCTION public.individu_haystack(nom_usuel text, nom_patronymique text, prenom1 text, email text, source_code text) OWNER TO :dbuser;
 
 --
+-- Name: privilege__grant_privilege_to_profile(character varying, character varying, character varying); Type: FUNCTION; Schema: public; Owner: :dbuser
+--
+
+CREATE FUNCTION public.privilege__grant_privilege_to_profile(categorycode character varying, privilegecode character varying, profileroleid character varying) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  -- insertion dans 'profil_privilege' (si pas déjà fait)
+  insert into profil_privilege (privilege_id, profil_id)
+  select p.id as privilege_id, profil.id as profil_id
+  from profil
+         join categorie_privilege cp on cp.code = categoryCode
+         join privilege p on p.categorie_id = cp.id and p.code = privilegeCode
+  where profil.role_id = profileroleid
+    and not exists(
+          select * from profil_privilege where privilege_id = p.id and profil_id = profil.id
+    );
+
+  perform privilege__update_role_privilege();
+END;
+$$;
+
+
+ALTER FUNCTION public.privilege__grant_privilege_to_profile(categorycode character varying, privilegecode character varying, profileroleid character varying) OWNER TO :dbuser;
+
+--
+-- Name: privilege__revoke_privilege_to_profile(character varying, character varying, character varying); Type: FUNCTION; Schema: public; Owner: :dbuser
+--
+
+CREATE FUNCTION public.privilege__revoke_privilege_to_profile(categorycode character varying, privilegecode character varying, profileroleid character varying) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  delete
+  from profil_privilege pp1
+  where exists(
+                select *
+                from profil_privilege pp
+                       join profil on pp.profil_id = profil.id and role_id = profileRoleId
+                       join privilege p on pp.privilege_id = p.id
+                       join categorie_privilege cp on p.categorie_id = cp.id
+                where p.code = privilegeCode
+                  and cp.code = categoryCode
+                  and pp.profil_id = pp1.profil_id
+                  and pp.privilege_id = pp1.privilege_id
+          );
+
+  perform privilege__update_role_privilege();
+END;
+$$;
+
+
+ALTER FUNCTION public.privilege__revoke_privilege_to_profile(categorycode character varying, privilegecode character varying, profileroleid character varying) OWNER TO :dbuser;
+
+--
+-- Name: privilege__update_role_privilege(); Type: FUNCTION; Schema: public; Owner: :dbuser
+--
+
+CREATE FUNCTION public.privilege__update_role_privilege() RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  -- création des 'role_privilege' manquants d'après le contenu de 'profil_to_role' et de 'profil_privilege'
+  insert into role_privilege (role_id, privilege_id)
+  select p2r.role_id, pp.privilege_id
+  from profil_to_role p2r
+         join profil pr on pr.id = p2r.profil_id
+         join profil_privilege pp on pp.profil_id = pr.id
+  where not exists(
+          select * from role_privilege where role_id = p2r.role_id and privilege_id = pp.privilege_id
+    );
+
+  -- suppression des 'role_privilege' en trop d'après le contenu de 'profil_to_role' et de 'profil_privilege'
+  delete from role_privilege rp
+  where not exists (
+          select *
+          from profil_to_role p2r
+                 join profil_privilege pp on pp.profil_id = p2r.profil_id
+          where rp.role_id = p2r.role_id and rp.privilege_id = pp.privilege_id
+    );
+END;
+$$;
+
+
+ALTER FUNCTION public.privilege__update_role_privilege() OWNER TO :dbuser;
+
+--
 -- Name: str_reduce(text); Type: FUNCTION; Schema: public; Owner: :dbuser
 --
 
@@ -113,6 +221,37 @@ $$;
 
 
 ALTER FUNCTION public.str_reduce(str text) OWNER TO :dbuser;
+
+--
+-- Name: transfert_these(bigint, bigint); Type: FUNCTION; Schema: public; Owner: :dbuser
+--
+
+CREATE FUNCTION public.transfert_these(fromtheseid bigint, totheseid bigint) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    -- select 'update '||rpad(table_name, 35)||' set '||column_name||' = toTheseId where '||column_name||' = fromTheseId ;' from information_schema.columns
+-- where column_name ilike '%these_id%' and
+--         table_name not ilike 'v\_%' and
+--         table_name not ilike 'src_%' and
+--         table_name not ilike 'tmp_%';
+
+    update soutenance_proposition   set histo_destruction = now(), histo_destructeur_id = 1 where these_id = toTheseId ;
+
+    update attestation              set these_id = toTheseId where these_id = fromTheseId ;
+    update diffusion                set these_id = toTheseId where these_id = fromTheseId ;
+    update fichier_these            set these_id = toTheseId where these_id = fromTheseId ;
+    update metadonnee_these         set these_id = toTheseId where these_id = fromTheseId ;
+    update rapport                  set these_id = toTheseId where these_id = fromTheseId ;
+    update rdv_bu                   set these_id = toTheseId where these_id = fromTheseId ;
+    update soutenance_intervention  set these_id = toTheseId where these_id = fromTheseId ;
+    update soutenance_proposition   set these_id = toTheseId where these_id = fromTheseId ;
+    update validation                          set these_id = toTheseId where these_id = fromTheseId ;
+END;
+$$;
+
+
+ALTER FUNCTION public.transfert_these(fromtheseid bigint, totheseid bigint) OWNER TO :dbuser;
 
 --
 -- Name: trigger_fct_individu_rech_update(); Type: FUNCTION; Schema: public; Owner: :dbuser
@@ -168,7 +307,8 @@ CREATE TABLE public.acteur (
     histo_modification timestamp without time zone,
     histo_destructeur_id bigint,
     histo_destruction timestamp without time zone,
-    acteur_etablissement_id bigint
+    acteur_etablissement_id bigint,
+    acteur_uniterech_id bigint
 );
 
 
@@ -292,6 +432,62 @@ CREATE SEQUENCE public.categorie_privilege_id_seq
 ALTER TABLE public.categorie_privilege_id_seq OWNER TO :dbuser;
 
 --
+-- Name: categorie_privilege_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.categorie_privilege_id_seq OWNED BY public.categorie_privilege.id;
+
+
+--
+-- Name: csi_membre; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.csi_membre (
+    id integer NOT NULL,
+    these_id bigint NOT NULL,
+    genre character varying(1) NOT NULL,
+    qualite bigint NOT NULL,
+    etablissement character varying(128) NOT NULL,
+    role_id character varying(64) NOT NULL,
+    exterieur character varying(3),
+    email character varying(256),
+    acteur_id bigint,
+    visio boolean DEFAULT false NOT NULL,
+    nom character varying(256),
+    prenom character varying(256),
+    histo_creation timestamp without time zone NOT NULL,
+    histo_createur_id bigint NOT NULL,
+    histo_modification timestamp without time zone NOT NULL,
+    histo_modificateur_id bigint NOT NULL,
+    histo_destruction timestamp without time zone,
+    histo_destructeur_id bigint
+);
+
+
+ALTER TABLE public.csi_membre OWNER TO :dbuser;
+
+--
+-- Name: csi_membre_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.csi_membre_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.csi_membre_id_seq OWNER TO :dbuser;
+
+--
+-- Name: csi_membre_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.csi_membre_id_seq OWNED BY public.csi_membre.id;
+
+
+--
 -- Name: diffusion; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
@@ -386,7 +582,8 @@ CREATE TABLE public.doctorant (
     histo_modification timestamp without time zone,
     histo_destructeur_id bigint,
     histo_destruction timestamp without time zone,
-    ine character varying(64)
+    ine character varying(64),
+    source_code_sav character varying(64)
 );
 
 
@@ -398,26 +595,6 @@ ALTER TABLE public.doctorant OWNER TO :dbuser;
 
 COMMENT ON TABLE public.doctorant IS 'Doctorant par établissement.';
 
-
---
--- Name: doctorant_compl; Type: TABLE; Schema: public; Owner: :dbuser
---
-
-CREATE TABLE public.doctorant_compl (
-    id bigint NOT NULL,
-    doctorant_id bigint NOT NULL,
-    persopass character varying(50),
-    email_pro character varying(100),
-    histo_creation timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
-    histo_createur_id bigint NOT NULL,
-    histo_modification timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
-    histo_modificateur_id bigint NOT NULL,
-    histo_destruction timestamp without time zone,
-    histo_destructeur_id bigint
-);
-
-
-ALTER TABLE public.doctorant_compl OWNER TO :dbuser;
 
 --
 -- Name: doctorant_compl_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
@@ -446,6 +623,46 @@ CREATE SEQUENCE public.doctorant_id_seq
 
 
 ALTER TABLE public.doctorant_id_seq OWNER TO :dbuser;
+
+--
+-- Name: doctorant_mission_enseignement; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.doctorant_mission_enseignement (
+    id integer NOT NULL,
+    doctorant_id integer NOT NULL,
+    annee_univ integer NOT NULL,
+    histo_creation timestamp without time zone DEFAULT now() NOT NULL,
+    histo_createur_id integer DEFAULT 1 NOT NULL,
+    histo_modification timestamp without time zone,
+    histo_modificateur_id integer,
+    histo_destruction timestamp without time zone,
+    histo_destructeur_id integer
+);
+
+
+ALTER TABLE public.doctorant_mission_enseignement OWNER TO :dbuser;
+
+--
+-- Name: doctorant_mission_enseignement_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.doctorant_mission_enseignement_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.doctorant_mission_enseignement_id_seq OWNER TO :dbuser;
+
+--
+-- Name: doctorant_mission_enseignement_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.doctorant_mission_enseignement_id_seq OWNED BY public.doctorant_mission_enseignement.id;
+
 
 --
 -- Name: domaine_scientifique; Type: TABLE; Schema: public; Owner: :dbuser
@@ -529,8 +746,11 @@ CREATE TABLE public.etablissement (
     est_associe boolean DEFAULT false NOT NULL,
     est_comue boolean DEFAULT false NOT NULL,
     est_etab_inscription boolean DEFAULT false NOT NULL,
-    code character varying(64),
-    signature_convocation_id bigint
+    signature_convocation_id bigint,
+    email_assistance character varying(64),
+    email_bibliotheque character varying(64),
+    email_doctorat character varying(64),
+    est_ced boolean DEFAULT false NOT NULL
 );
 
 
@@ -541,6 +761,13 @@ ALTER TABLE public.etablissement OWNER TO :dbuser;
 --
 
 COMMENT ON COLUMN public.etablissement.domaine IS 'Domaine DNS de l''établissement tel que présent dans l''EPPN Shibboleth, ex: unicaen.fr.';
+
+
+--
+-- Name: COLUMN etablissement.est_ced; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.etablissement.est_ced IS 'Indique si cet établissement est un Collège des écoles doctorales';
 
 
 --
@@ -685,6 +912,13 @@ CREATE SEQUENCE public.fichier_these_id_seq
 ALTER TABLE public.fichier_these_id_seq OWNER TO :dbuser;
 
 --
+-- Name: fichier_these_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.fichier_these_id_seq OWNED BY public.fichier_these.id;
+
+
+--
 -- Name: financement; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
@@ -727,16 +961,567 @@ CREATE SEQUENCE public.financement_id_seq
 ALTER TABLE public.financement_id_seq OWNER TO :dbuser;
 
 --
--- Name: harp_to_octo; Type: TABLE; Schema: public; Owner: :dbuser
+-- Name: formation_enquete_categorie; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
-CREATE TABLE public.harp_to_octo (
-    octopus_id character varying(64),
-    num_dos_har_per character varying(64)
+CREATE TABLE public.formation_enquete_categorie (
+    id integer NOT NULL,
+    libelle character varying(1024) NOT NULL,
+    description text,
+    ordre integer NOT NULL,
+    histo_createur_id integer NOT NULL,
+    histo_creation timestamp without time zone NOT NULL,
+    histo_modificateur_id integer,
+    histo_modification timestamp without time zone,
+    histo_destructeur_id integer,
+    histo_destruction timestamp without time zone
 );
 
 
-ALTER TABLE public.harp_to_octo OWNER TO :dbuser;
+ALTER TABLE public.formation_enquete_categorie OWNER TO :dbuser;
+
+--
+-- Name: formation_enquete_categorie_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.formation_enquete_categorie_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.formation_enquete_categorie_id_seq OWNER TO :dbuser;
+
+--
+-- Name: formation_enquete_categorie_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.formation_enquete_categorie_id_seq OWNED BY public.formation_enquete_categorie.id;
+
+
+--
+-- Name: formation_enquete_question; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.formation_enquete_question (
+    id integer NOT NULL,
+    libelle character varying(1024) NOT NULL,
+    description text,
+    ordre integer NOT NULL,
+    histo_createur_id integer NOT NULL,
+    histo_creation timestamp without time zone NOT NULL,
+    histo_modificateur_id integer,
+    histo_modification timestamp without time zone,
+    histo_destructeur_id integer,
+    histo_destruction timestamp without time zone,
+    categorie_id integer
+);
+
+
+ALTER TABLE public.formation_enquete_question OWNER TO :dbuser;
+
+--
+-- Name: formation_enquete_question_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.formation_enquete_question_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.formation_enquete_question_id_seq OWNER TO :dbuser;
+
+--
+-- Name: formation_enquete_question_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.formation_enquete_question_id_seq OWNED BY public.formation_enquete_question.id;
+
+
+--
+-- Name: formation_enquete_reponse; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.formation_enquete_reponse (
+    id integer NOT NULL,
+    inscription_id integer NOT NULL,
+    question_id integer NOT NULL,
+    niveau integer NOT NULL,
+    description text,
+    histo_createur_id integer NOT NULL,
+    histo_creation timestamp without time zone NOT NULL,
+    histo_modificateur_id integer,
+    histo_modification timestamp without time zone,
+    histo_destructeur_id integer,
+    histo_destruction timestamp without time zone
+);
+
+
+ALTER TABLE public.formation_enquete_reponse OWNER TO :dbuser;
+
+--
+-- Name: formation_enquete_reponse_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.formation_enquete_reponse_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.formation_enquete_reponse_id_seq OWNER TO :dbuser;
+
+--
+-- Name: formation_enquete_reponse_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.formation_enquete_reponse_id_seq OWNED BY public.formation_enquete_reponse.id;
+
+
+--
+-- Name: formation_etat; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.formation_etat (
+    code character varying(1) NOT NULL,
+    libelle character varying(1024),
+    description text,
+    icone character varying(1024),
+    couleur character varying(1024),
+    ordre bigint
+);
+
+
+ALTER TABLE public.formation_etat OWNER TO :dbuser;
+
+--
+-- Name: formation_formateur; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.formation_formateur (
+    id integer NOT NULL,
+    individu_id integer NOT NULL,
+    session_id integer NOT NULL,
+    description text,
+    histo_createur_id integer NOT NULL,
+    histo_creation timestamp without time zone NOT NULL,
+    histo_modificateur_id integer,
+    histo_modification timestamp without time zone,
+    histo_destructeur_id integer,
+    histo_destruction timestamp without time zone
+);
+
+
+ALTER TABLE public.formation_formateur OWNER TO :dbuser;
+
+--
+-- Name: formation_formateur_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.formation_formateur_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.formation_formateur_id_seq OWNER TO :dbuser;
+
+--
+-- Name: formation_formateur_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.formation_formateur_id_seq OWNED BY public.formation_formateur.id;
+
+
+--
+-- Name: formation_formation; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.formation_formation (
+    id integer NOT NULL,
+    module_id integer,
+    libelle character varying(1024) NOT NULL,
+    description text,
+    lien character varying(1024),
+    site_id integer,
+    responsable_id integer,
+    modalite character varying(1),
+    type character varying(1),
+    type_structure_id integer,
+    taille_liste_principale integer,
+    taille_liste_complementaire integer,
+    histo_createur_id integer NOT NULL,
+    histo_creation timestamp without time zone NOT NULL,
+    histo_modificateur_id integer,
+    histo_modification timestamp without time zone,
+    histo_destructeur_id integer,
+    histo_destruction timestamp without time zone
+);
+
+
+ALTER TABLE public.formation_formation OWNER TO :dbuser;
+
+--
+-- Name: formation_formation_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.formation_formation_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.formation_formation_id_seq OWNER TO :dbuser;
+
+--
+-- Name: formation_formation_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.formation_formation_id_seq OWNED BY public.formation_formation.id;
+
+
+--
+-- Name: formation_inscription; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.formation_inscription (
+    id integer NOT NULL,
+    session_id integer NOT NULL,
+    doctorant_id integer NOT NULL,
+    liste character varying(1),
+    description text,
+    validation_enquete timestamp without time zone,
+    histo_createur_id integer NOT NULL,
+    histo_creation timestamp without time zone NOT NULL,
+    histo_modificateur_id integer,
+    histo_modification timestamp without time zone,
+    histo_destructeur_id integer,
+    histo_destruction timestamp without time zone
+);
+
+
+ALTER TABLE public.formation_inscription OWNER TO :dbuser;
+
+--
+-- Name: formation_inscription_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.formation_inscription_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.formation_inscription_id_seq OWNER TO :dbuser;
+
+--
+-- Name: formation_inscription_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.formation_inscription_id_seq OWNED BY public.formation_inscription.id;
+
+
+--
+-- Name: formation_module; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.formation_module (
+    id integer NOT NULL,
+    libelle text NOT NULL,
+    description text,
+    lien text,
+    histo_creation timestamp without time zone NOT NULL,
+    histo_createur_id integer NOT NULL,
+    histo_modification timestamp without time zone,
+    histo_modificateur_id integer,
+    histo_destruction timestamp without time zone,
+    histo_destructeur_id integer
+);
+
+
+ALTER TABLE public.formation_module OWNER TO :dbuser;
+
+--
+-- Name: formation_module_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.formation_module_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.formation_module_id_seq OWNER TO :dbuser;
+
+--
+-- Name: formation_module_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.formation_module_id_seq OWNED BY public.formation_module.id;
+
+
+--
+-- Name: formation_presence; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.formation_presence (
+    id integer NOT NULL,
+    inscription_id integer NOT NULL,
+    seance_id integer NOT NULL,
+    temoin character varying(1),
+    description text,
+    histo_createur_id integer NOT NULL,
+    histo_creation timestamp without time zone NOT NULL,
+    histo_modificateur_id integer,
+    histo_modification timestamp without time zone,
+    histo_destructeur_id integer,
+    histo_destruction timestamp without time zone
+);
+
+
+ALTER TABLE public.formation_presence OWNER TO :dbuser;
+
+--
+-- Name: formation_presence_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.formation_presence_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.formation_presence_id_seq OWNER TO :dbuser;
+
+--
+-- Name: formation_presence_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.formation_presence_id_seq OWNED BY public.formation_presence.id;
+
+
+--
+-- Name: formation_seance; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.formation_seance (
+    id integer NOT NULL,
+    session_id integer NOT NULL,
+    debut timestamp without time zone NOT NULL,
+    fin timestamp without time zone NOT NULL,
+    lieu character varying(1024),
+    description text,
+    histo_createur_id integer NOT NULL,
+    histo_creation timestamp without time zone NOT NULL,
+    histo_modificateur_id integer,
+    histo_modification timestamp without time zone,
+    histo_destructeur_id integer,
+    histo_destruction timestamp without time zone
+);
+
+
+ALTER TABLE public.formation_seance OWNER TO :dbuser;
+
+--
+-- Name: formation_seance_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.formation_seance_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.formation_seance_id_seq OWNER TO :dbuser;
+
+--
+-- Name: formation_seance_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.formation_seance_id_seq OWNED BY public.formation_seance.id;
+
+
+--
+-- Name: formation_session; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.formation_session (
+    id integer NOT NULL,
+    session_index integer,
+    formation_id integer NOT NULL,
+    description text,
+    taille_liste_principale integer,
+    taille_liste_complementaire integer,
+    site_id integer,
+    responsable_id integer,
+    modalite character varying(1),
+    type character varying(1),
+    type_structure_id integer,
+    etat_code character varying(1),
+    histo_createur_id integer NOT NULL,
+    histo_creation timestamp without time zone NOT NULL,
+    histo_modificateur_id integer,
+    histo_modification timestamp without time zone,
+    histo_destructeur_id integer,
+    histo_destruction timestamp without time zone,
+    date_fermeture_inscription timestamp without time zone
+);
+
+
+ALTER TABLE public.formation_session OWNER TO :dbuser;
+
+--
+-- Name: formation_session_etat_heurodatage; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.formation_session_etat_heurodatage (
+    id integer NOT NULL,
+    session_id integer NOT NULL,
+    etat_id character varying(1) NOT NULL,
+    heurodatage timestamp without time zone NOT NULL,
+    utilisateur_id integer NOT NULL
+);
+
+
+ALTER TABLE public.formation_session_etat_heurodatage OWNER TO :dbuser;
+
+--
+-- Name: formation_session_etat_heurodatage_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.formation_session_etat_heurodatage_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.formation_session_etat_heurodatage_id_seq OWNER TO :dbuser;
+
+--
+-- Name: formation_session_etat_heurodatage_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.formation_session_etat_heurodatage_id_seq OWNED BY public.formation_session_etat_heurodatage.id;
+
+
+--
+-- Name: formation_session_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.formation_session_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.formation_session_id_seq OWNER TO :dbuser;
+
+--
+-- Name: formation_session_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.formation_session_id_seq OWNED BY public.formation_session.id;
+
+
+--
+-- Name: formation_session_structure_valide; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.formation_session_structure_valide (
+    id integer NOT NULL,
+    session_id integer NOT NULL,
+    structure_id integer NOT NULL,
+    lieu character varying(1024),
+    histo_createur_id integer NOT NULL,
+    histo_creation timestamp without time zone NOT NULL,
+    histo_modificateur_id integer,
+    histo_modification timestamp without time zone,
+    histo_destructeur_id integer,
+    histo_destruction timestamp without time zone
+);
+
+
+ALTER TABLE public.formation_session_structure_valide OWNER TO :dbuser;
+
+--
+-- Name: formation_session_structure_valide_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.formation_session_structure_valide_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.formation_session_structure_valide_id_seq OWNER TO :dbuser;
+
+--
+-- Name: formation_session_structure_valide_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.formation_session_structure_valide_id_seq OWNED BY public.formation_session_structure_valide.id;
+
+
+--
+-- Name: horodatage_horodatage; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.horodatage_horodatage (
+    id integer NOT NULL,
+    date timestamp without time zone NOT NULL,
+    user_id integer NOT NULL,
+    type character varying(1024) NOT NULL,
+    complement character varying(1024)
+);
+
+
+ALTER TABLE public.horodatage_horodatage OWNER TO :dbuser;
+
+--
+-- Name: horodatage_horodatage_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.horodatage_horodatage_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.horodatage_horodatage_id_seq OWNER TO :dbuser;
+
+--
+-- Name: horodatage_horodatage_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.horodatage_horodatage_id_seq OWNED BY public.horodatage_horodatage.id;
+
 
 --
 -- Name: import_log; Type: TABLE; Schema: public; Owner: :dbuser
@@ -750,7 +1535,8 @@ CREATE TABLE public.import_log (
     started_on timestamp without time zone NOT NULL,
     ended_on timestamp without time zone NOT NULL,
     import_hash character varying(64),
-    id bigint NOT NULL
+    id bigint NOT NULL,
+    has_problems boolean DEFAULT false NOT NULL
 );
 
 
@@ -984,11 +1770,55 @@ CREATE TABLE public.individu (
     histo_destruction timestamp without time zone,
     supann_id character varying(30),
     etablissement_id bigint,
-    octo_updated boolean DEFAULT false
+    pays_id_nationalite bigint,
+    id_ref character varying(32),
+    source_code_sav character varying(64)
 );
 
 
 ALTER TABLE public.individu OWNER TO :dbuser;
+
+--
+-- Name: individu_compl; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.individu_compl (
+    id integer NOT NULL,
+    individu_id integer NOT NULL,
+    email character varying(1024),
+    etablissement_id integer,
+    unite_id integer,
+    histo_creation timestamp without time zone DEFAULT ('now'::text)::date NOT NULL,
+    histo_createur_id integer NOT NULL,
+    histo_modification timestamp without time zone,
+    histo_modificateur_id integer,
+    histo_destruction timestamp without time zone,
+    histo_destructeur_id integer
+);
+
+
+ALTER TABLE public.individu_compl OWNER TO :dbuser;
+
+--
+-- Name: individu_compl_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.individu_compl_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.individu_compl_id_seq OWNER TO :dbuser;
+
+--
+-- Name: individu_compl_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.individu_compl_id_seq OWNED BY public.individu_compl.id;
+
 
 --
 -- Name: individu_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
@@ -1155,11 +1985,19 @@ CREATE TABLE public.mail_confirmation (
     individu_id bigint NOT NULL,
     email character varying(256) NOT NULL,
     etat character varying(1),
-    code character varying(19)
+    code character varying(64),
+    refus_liste_diff boolean DEFAULT false NOT NULL
 );
 
 
 ALTER TABLE public.mail_confirmation OWNER TO :dbuser;
+
+--
+-- Name: COLUMN mail_confirmation.refus_liste_diff; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.mail_confirmation.refus_liste_diff IS 'Refus de recevoir les messages des listes de diffusion sur cette adresse';
+
 
 --
 -- Name: mail_confirmation_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
@@ -1229,7 +2067,7 @@ CREATE TABLE public.these (
     date_soutenance timestamp without time zone,
     etat_these character varying(20),
     lib_disc character varying(200),
-    lib_etab_cotut character varying(60),
+    lib_etab_cotut character varying(100),
     lib_pays_cotut character varying(40),
     lib_unit_rech character varying(200),
     resultat smallint,
@@ -1248,7 +2086,9 @@ CREATE TABLE public.these (
     date_abandon timestamp without time zone,
     date_transfert timestamp without time zone,
     correc_effectuee character varying(30) DEFAULT 'null'::character varying,
-    correc_date_butoir_avec_sursis date
+    correc_date_butoir_avec_sursis date,
+    code_sise_disc character varying(64),
+    source_code_sav character varying(64)
 );
 
 
@@ -1353,7 +2193,8 @@ CREATE TABLE public.structure (
     fax character varying(64),
     email character varying(64),
     site_web character varying(512),
-    id_ref character varying(1024)
+    id_ref character varying(1024),
+    id_hal character varying(128)
 );
 
 
@@ -1625,6 +2466,53 @@ CREATE TABLE public.parametre (
 ALTER TABLE public.parametre OWNER TO :dbuser;
 
 --
+-- Name: pays; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.pays (
+    id bigint NOT NULL,
+    code_iso character varying(3) NOT NULL,
+    code_iso_alpha3 character varying(3) NOT NULL,
+    code_iso_alpha2 character varying(2) NOT NULL,
+    libelle character varying(128) NOT NULL,
+    libelle_iso character varying(128) NOT NULL,
+    libelle_nationalite character varying(64),
+    code_pays_apogee character varying(3),
+    histo_creation timestamp without time zone DEFAULT now() NOT NULL,
+    histo_createur_id bigint NOT NULL,
+    histo_modification timestamp without time zone,
+    histo_modificateur_id bigint,
+    histo_destruction timestamp without time zone,
+    histo_destructeur_id bigint,
+    source_id bigint NOT NULL,
+    source_code character varying(64)
+);
+
+
+ALTER TABLE public.pays OWNER TO :dbuser;
+
+--
+-- Name: TABLE pays; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON TABLE public.pays IS 'Liste des pays selon la norme internationale de codification des pays ISO 3166-1';
+
+
+--
+-- Name: pays_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.pays_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.pays_id_seq OWNER TO :dbuser;
+
+--
 -- Name: privilege; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
@@ -1652,6 +2540,13 @@ CREATE SEQUENCE public.privilege_id_seq
 
 
 ALTER TABLE public.privilege_id_seq OWNER TO :dbuser;
+
+--
+-- Name: privilege_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.privilege_id_seq OWNED BY public.privilege.id;
+
 
 --
 -- Name: profil; Type: TABLE; Schema: public; Owner: :dbuser
@@ -1728,6 +2623,157 @@ CREATE TABLE public.rapport (
 
 
 ALTER TABLE public.rapport OWNER TO :dbuser;
+
+--
+-- Name: rapport_activite; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.rapport_activite (
+    id bigint NOT NULL,
+    these_id bigint NOT NULL,
+    fichier_id bigint,
+    annee_univ bigint NOT NULL,
+    est_fin_contrat boolean NOT NULL,
+    par_directeur_these boolean DEFAULT false NOT NULL,
+    par_directeur_these_motif text,
+    description_projet_recherche text,
+    principaux_resultats_obtenus text,
+    productions_scientifiques text,
+    formations_specifiques text,
+    formations_transversales text,
+    actions_diffusion_culture_scientifique text,
+    autres_activites text,
+    calendrier_previonnel_finalisation text,
+    preparation_apres_these text,
+    perspectives_apres_these text,
+    commentaires text,
+    histo_createur_id bigint NOT NULL,
+    histo_modificateur_id bigint,
+    histo_destructeur_id bigint,
+    histo_creation timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
+    histo_modification timestamp without time zone,
+    histo_destruction timestamp without time zone,
+    z_old_rapport_id bigint
+);
+
+
+ALTER TABLE public.rapport_activite OWNER TO :dbuser;
+
+--
+-- Name: rapport_activite_avis; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.rapport_activite_avis (
+    id bigint NOT NULL,
+    rapport_id bigint NOT NULL,
+    avis_id bigint,
+    histo_createur_id bigint NOT NULL,
+    histo_modificateur_id bigint,
+    histo_destructeur_id bigint,
+    histo_creation timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
+    histo_modification timestamp without time zone,
+    histo_destruction timestamp without time zone
+);
+
+
+ALTER TABLE public.rapport_activite_avis OWNER TO :dbuser;
+
+--
+-- Name: rapport_activite_avis_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.rapport_activite_avis_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.rapport_activite_avis_id_seq OWNER TO :dbuser;
+
+--
+-- Name: rapport_activite_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.rapport_activite_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.rapport_activite_id_seq OWNER TO :dbuser;
+
+--
+-- Name: rapport_activite_validation; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.rapport_activite_validation (
+    id bigint NOT NULL,
+    type_validation_id bigint NOT NULL,
+    rapport_id bigint NOT NULL,
+    individu_id bigint,
+    histo_creation timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
+    histo_createur_id bigint DEFAULT 1 NOT NULL,
+    histo_modification timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
+    histo_modificateur_id bigint DEFAULT 1 NOT NULL,
+    histo_destruction timestamp without time zone,
+    histo_destructeur_id bigint
+);
+
+
+ALTER TABLE public.rapport_activite_validation OWNER TO :dbuser;
+
+--
+-- Name: rapport_activite_validation_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.rapport_activite_validation_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.rapport_activite_validation_id_seq OWNER TO :dbuser;
+
+--
+-- Name: rapport_avis; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.rapport_avis (
+    id bigint NOT NULL,
+    rapport_id bigint NOT NULL,
+    avis public.avis_enum,
+    commentaires text,
+    histo_creation timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
+    histo_createur_id bigint DEFAULT 1 NOT NULL,
+    histo_modification timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
+    histo_modificateur_id bigint DEFAULT 1 NOT NULL,
+    histo_destruction timestamp without time zone,
+    histo_destructeur_id bigint,
+    avis_id bigint
+);
+
+
+ALTER TABLE public.rapport_avis OWNER TO :dbuser;
+
+--
+-- Name: rapport_avis_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.rapport_avis_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.rapport_avis_id_seq OWNER TO :dbuser;
 
 --
 -- Name: rapport_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
@@ -1896,13 +2942,13 @@ CREATE TABLE public.soutenance_avis (
     avis character varying(64),
     motif character varying(1024),
     validation_id bigint,
-    fichier_id bigint,
     histo_creation timestamp without time zone NOT NULL,
     histo_createur_id bigint NOT NULL,
     histo_modification timestamp without time zone NOT NULL,
     histo_modificateur_id bigint NOT NULL,
     histo_destruction timestamp without time zone,
-    histo_destructeur_id bigint
+    histo_destructeur_id bigint,
+    fichierthese_id integer
 );
 
 
@@ -1923,20 +2969,6 @@ CREATE SEQUENCE public.soutenance_avis_id_seq
 ALTER TABLE public.soutenance_avis_id_seq OWNER TO :dbuser;
 
 --
--- Name: soutenance_configuration; Type: TABLE; Schema: public; Owner: :dbuser
---
-
-CREATE TABLE public.soutenance_configuration (
-    id bigint NOT NULL,
-    code character varying(64) NOT NULL,
-    libelle character varying(256),
-    valeur character varying(128)
-);
-
-
-ALTER TABLE public.soutenance_configuration OWNER TO :dbuser;
-
---
 -- Name: soutenance_etat; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
@@ -1944,12 +2976,13 @@ CREATE TABLE public.soutenance_etat (
     id bigint NOT NULL,
     code character varying(63) NOT NULL,
     libelle character varying(255) NOT NULL,
-    histo_creation timestamp without time zone NOT NULL,
-    histo_createur_id bigint NOT NULL,
-    histo_modification timestamp without time zone NOT NULL,
-    histo_modificateur_id bigint NOT NULL,
+    histo_creation timestamp without time zone DEFAULT now() NOT NULL,
+    histo_createur_id bigint DEFAULT 1 NOT NULL,
+    histo_modification timestamp without time zone DEFAULT now() NOT NULL,
+    histo_modificateur_id bigint DEFAULT 1 NOT NULL,
     histo_destruction timestamp without time zone,
-    histo_destructeur_id bigint
+    histo_destructeur_id bigint,
+    ordre integer
 );
 
 
@@ -1970,39 +3003,16 @@ CREATE SEQUENCE public.soutenance_etat_id_seq
 ALTER TABLE public.soutenance_etat_id_seq OWNER TO :dbuser;
 
 --
--- Name: soutenance_evenement; Type: TABLE; Schema: public; Owner: :dbuser
+-- Name: soutenance_horodatage; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
-CREATE TABLE public.soutenance_evenement (
-    id integer NOT NULL,
+CREATE TABLE public.soutenance_horodatage (
     proposition_id integer NOT NULL,
-    type_id integer NOT NULL,
-    date_event timestamp without time zone NOT NULL
+    horodatage_id integer NOT NULL
 );
 
 
-ALTER TABLE public.soutenance_evenement OWNER TO :dbuser;
-
---
--- Name: soutenance_evenement_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
---
-
-CREATE SEQUENCE public.soutenance_evenement_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.soutenance_evenement_id_seq OWNER TO :dbuser;
-
---
--- Name: soutenance_evenement_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
---
-
-ALTER SEQUENCE public.soutenance_evenement_id_seq OWNED BY public.soutenance_evenement.id;
-
+ALTER TABLE public.soutenance_horodatage OWNER TO :dbuser;
 
 --
 -- Name: soutenance_intervention; Type: TABLE; Schema: public; Owner: :dbuser
@@ -2017,7 +3027,8 @@ CREATE TABLE public.soutenance_intervention (
     histo_modification timestamp without time zone,
     histo_modificateur_id bigint,
     histo_destruction timestamp without time zone,
-    histo_destructeur_id bigint
+    histo_destructeur_id bigint,
+    complement text
 );
 
 
@@ -2234,10 +3245,9 @@ ALTER TABLE public.soutenance_qualite_sup_id_seq OWNER TO :dbuser;
 --
 
 CREATE TABLE public.tmp_acteur (
-    insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
-    id character varying(64),
-    etablissement_id character varying(64) NOT NULL,
-    source_id character varying(64) NOT NULL,
+    id bigint NOT NULL,
+    insert_date timestamp(0) without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    source_id bigint NOT NULL,
     source_code character varying(64) NOT NULL,
     individu_id character varying(64) NOT NULL,
     these_id character varying(64) NOT NULL,
@@ -2249,7 +3259,13 @@ CREATE TABLE public.tmp_acteur (
     tem_hab_rch_per character varying(1),
     tem_rap_recu character varying(1),
     acteur_etablissement_id character varying(64),
-    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone
+    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    histo_creation timestamp(0) without time zone DEFAULT ('now'::text)::timestamp(0) without time zone NOT NULL,
+    histo_modification timestamp(0) without time zone,
+    histo_destruction timestamp(0) without time zone,
+    histo_createur_id bigint NOT NULL,
+    histo_modificateur_id bigint,
+    histo_destructeur_id bigint
 );
 
 
@@ -2266,17 +3282,15 @@ CREATE VIEW public.src_acteur AS
     i.id AS individu_id,
     t.id AS these_id,
     r.id AS role_id,
-    COALESCE(etab_substit.id, eact.id) AS acteur_etablissement_id,
+    eact.id AS acteur_etablissement_id,
     tmp.lib_cps AS qualite,
     tmp.lib_roj_compl AS lib_role_compl
-   FROM (((((((public.tmp_acteur tmp
-     JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)))
+   FROM (((((public.tmp_acteur tmp
+     JOIN public.source src ON ((src.id = tmp.source_id)))
      JOIN public.individu i ON (((i.source_code)::text = (tmp.individu_id)::text)))
      JOIN public.these t ON (((t.source_code)::text = (tmp.these_id)::text)))
      JOIN public.role r ON ((((r.source_code)::text = (tmp.role_id)::text) AND ((r.code)::text = 'P'::text))))
      LEFT JOIN public.etablissement eact ON (((eact.source_code)::text = (tmp.acteur_etablissement_id)::text)))
-     LEFT JOIN public.structure_substit ss_ed ON ((ss_ed.from_structure_id = eact.structure_id)))
-     LEFT JOIN public.etablissement etab_substit ON ((etab_substit.structure_id = ss_ed.to_structure_id)))
 UNION ALL
  SELECT NULL::text AS id,
     ((tmp.source_code)::text || 'P'::text) AS source_code,
@@ -2284,18 +3298,16 @@ UNION ALL
     i.id AS individu_id,
     t.id AS these_id,
     r_pj.id AS role_id,
-    COALESCE(etab_substit.id, eact.id) AS acteur_etablissement_id,
+    eact.id AS acteur_etablissement_id,
     tmp.lib_cps AS qualite,
     NULL::character varying AS lib_role_compl
-   FROM ((((((((public.tmp_acteur tmp
-     JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)))
+   FROM ((((((public.tmp_acteur tmp
+     JOIN public.source src ON ((src.id = tmp.source_id)))
      JOIN public.individu i ON (((i.source_code)::text = (tmp.individu_id)::text)))
      JOIN public.these t ON (((t.source_code)::text = (tmp.these_id)::text)))
      JOIN public.role r ON ((((r.source_code)::text = (tmp.role_id)::text) AND ((r.code)::text = 'M'::text))))
      JOIN public.role r_pj ON ((((r_pj.code)::text = 'P'::text) AND (r_pj.structure_id = r.structure_id))))
      LEFT JOIN public.etablissement eact ON (((eact.source_code)::text = (tmp.acteur_etablissement_id)::text)))
-     LEFT JOIN public.structure_substit ss_ed ON ((ss_ed.from_structure_id = eact.structure_id)))
-     LEFT JOIN public.etablissement etab_substit ON ((etab_substit.structure_id = ss_ed.to_structure_id)))
   WHERE ((tmp.lib_roj_compl)::text = 'Président du jury'::text)
 UNION ALL
  SELECT NULL::text AS id,
@@ -2304,17 +3316,15 @@ UNION ALL
     i.id AS individu_id,
     t.id AS these_id,
     r.id AS role_id,
-    COALESCE(etab_substit.id, eact.id) AS acteur_etablissement_id,
+    eact.id AS acteur_etablissement_id,
     tmp.lib_cps AS qualite,
     NULL::character varying AS lib_role_compl
-   FROM (((((((public.tmp_acteur tmp
-     JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)))
+   FROM (((((public.tmp_acteur tmp
+     JOIN public.source src ON ((src.id = tmp.source_id)))
      JOIN public.individu i ON (((i.source_code)::text = (tmp.individu_id)::text)))
      JOIN public.these t ON (((t.source_code)::text = (tmp.these_id)::text)))
      JOIN public.role r ON ((((r.source_code)::text = (tmp.role_id)::text) AND ((r.code)::text <> 'P'::text))))
-     LEFT JOIN public.etablissement eact ON (((eact.source_code)::text = (tmp.acteur_etablissement_id)::text)))
-     LEFT JOIN public.structure_substit ss_ed ON ((ss_ed.from_structure_id = eact.structure_id)))
-     LEFT JOIN public.etablissement etab_substit ON ((etab_substit.structure_id = ss_ed.to_structure_id)));
+     LEFT JOIN public.etablissement eact ON (((eact.source_code)::text = (tmp.acteur_etablissement_id)::text)));
 
 
 ALTER TABLE public.src_acteur OWNER TO :dbuser;
@@ -2324,14 +3334,19 @@ ALTER TABLE public.src_acteur OWNER TO :dbuser;
 --
 
 CREATE TABLE public.tmp_doctorant (
-    insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
-    id character varying(64),
-    etablissement_id character varying(64) NOT NULL,
-    source_id character varying(64) NOT NULL,
+    id bigint NOT NULL,
+    insert_date timestamp(0) without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    source_id bigint NOT NULL,
     source_code character varying(64) NOT NULL,
     individu_id character varying(64) NOT NULL,
     ine character varying(64),
-    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone
+    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    histo_creation timestamp(0) without time zone DEFAULT ('now'::text)::timestamp(0) without time zone NOT NULL,
+    histo_modification timestamp(0) without time zone,
+    histo_destruction timestamp(0) without time zone,
+    histo_createur_id bigint NOT NULL,
+    histo_modificateur_id bigint,
+    histo_destructeur_id bigint
 );
 
 
@@ -2342,16 +3357,15 @@ ALTER TABLE public.tmp_doctorant OWNER TO :dbuser;
 --
 
 CREATE VIEW public.src_doctorant AS
- SELECT NULL::unknown AS id,
+ SELECT NULL::text AS id,
     tmp.source_code,
     tmp.ine,
     src.id AS source_id,
     i.id AS individu_id,
     e.id AS etablissement_id
-   FROM ((((public.tmp_doctorant tmp
-     JOIN public.structure s ON (((s.source_code)::text = (tmp.etablissement_id)::text)))
-     JOIN public.etablissement e ON ((e.structure_id = s.id)))
-     JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)))
+   FROM (((public.tmp_doctorant tmp
+     JOIN public.source src ON ((src.id = tmp.source_id)))
+     JOIN public.etablissement e ON ((e.id = src.etablissement_id)))
      JOIN public.individu i ON (((i.source_code)::text = (tmp.individu_id)::text)));
 
 
@@ -2362,13 +3376,18 @@ ALTER TABLE public.src_doctorant OWNER TO :dbuser;
 --
 
 CREATE TABLE public.tmp_ecole_doct (
-    insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
-    id character varying(64),
-    etablissement_id character varying(64) NOT NULL,
-    structure_id character varying(64) NOT NULL,
-    source_id character varying(64) NOT NULL,
+    id bigint NOT NULL,
+    insert_date timestamp(0) without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    source_id bigint NOT NULL,
     source_code character varying(64) NOT NULL,
-    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone
+    structure_id character varying(64) NOT NULL,
+    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    histo_creation timestamp(0) without time zone DEFAULT ('now'::text)::timestamp(0) without time zone NOT NULL,
+    histo_modification timestamp(0) without time zone,
+    histo_destruction timestamp(0) without time zone,
+    histo_createur_id bigint NOT NULL,
+    histo_modificateur_id bigint,
+    histo_destructeur_id bigint
 );
 
 
@@ -2379,13 +3398,13 @@ ALTER TABLE public.tmp_ecole_doct OWNER TO :dbuser;
 --
 
 CREATE VIEW public.src_ecole_doct AS
- SELECT NULL::unknown AS id,
+ SELECT NULL::text AS id,
     tmp.source_code,
     src.id AS source_id,
     s.id AS structure_id
    FROM ((public.tmp_ecole_doct tmp
      JOIN public.structure s ON (((s.source_code)::text = (tmp.structure_id)::text)))
-     JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)));
+     JOIN public.source src ON ((src.id = tmp.source_id)));
 
 
 ALTER TABLE public.src_ecole_doct OWNER TO :dbuser;
@@ -2395,13 +3414,18 @@ ALTER TABLE public.src_ecole_doct OWNER TO :dbuser;
 --
 
 CREATE TABLE public.tmp_etablissement (
-    insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
-    id character varying(64),
-    etablissement_id character varying(64) NOT NULL,
-    structure_id character varying(64) NOT NULL,
-    source_id character varying(64) NOT NULL,
+    id bigint NOT NULL,
+    insert_date timestamp(0) without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    source_id bigint NOT NULL,
     source_code character varying(64) NOT NULL,
-    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone
+    structure_id character varying(64) NOT NULL,
+    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    histo_creation timestamp(0) without time zone DEFAULT ('now'::text)::timestamp(0) without time zone NOT NULL,
+    histo_modification timestamp(0) without time zone,
+    histo_destruction timestamp(0) without time zone,
+    histo_createur_id bigint NOT NULL,
+    histo_modificateur_id bigint,
+    histo_destructeur_id bigint
 );
 
 
@@ -2412,14 +3436,13 @@ ALTER TABLE public.tmp_etablissement OWNER TO :dbuser;
 --
 
 CREATE VIEW public.src_etablissement AS
- SELECT NULL::unknown AS id,
+ SELECT NULL::text AS id,
     tmp.source_code,
     src.id AS source_id,
-    tmp.id AS code,
     s.id AS structure_id
    FROM ((public.tmp_etablissement tmp
-     JOIN public.structure s ON (((s.source_code)::text = (tmp.structure_id)::text)))
-     JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)));
+     JOIN public.source src ON ((src.id = tmp.source_id)))
+     JOIN public.structure s ON (((s.source_code)::text = (tmp.structure_id)::text)));
 
 
 ALTER TABLE public.src_etablissement OWNER TO :dbuser;
@@ -2429,10 +3452,9 @@ ALTER TABLE public.src_etablissement OWNER TO :dbuser;
 --
 
 CREATE TABLE public.tmp_financement (
-    insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
-    id character varying(64),
-    etablissement_id character varying(64) NOT NULL,
-    source_id character varying(64) NOT NULL,
+    id bigint NOT NULL,
+    insert_date timestamp(0) without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    source_id bigint NOT NULL,
     source_code character varying(64) NOT NULL,
     these_id character varying(50) NOT NULL,
     annee character varying(50) NOT NULL,
@@ -2443,7 +3465,13 @@ CREATE TABLE public.tmp_financement (
     date_fin_financement timestamp without time zone,
     source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
     code_type_financement character varying(8),
-    libelle_type_financement character varying(100)
+    libelle_type_financement character varying(100),
+    histo_creation timestamp(0) without time zone DEFAULT ('now'::text)::timestamp(0) without time zone NOT NULL,
+    histo_modification timestamp(0) without time zone,
+    histo_destruction timestamp(0) without time zone,
+    histo_createur_id bigint NOT NULL,
+    histo_modificateur_id bigint,
+    histo_destructeur_id bigint
 );
 
 
@@ -2454,7 +3482,7 @@ ALTER TABLE public.tmp_financement OWNER TO :dbuser;
 --
 
 CREATE VIEW public.src_financement AS
- SELECT NULL::unknown AS id,
+ SELECT NULL::text AS id,
     tmp.source_code,
     src.id AS source_id,
     t.id AS these_id,
@@ -2467,7 +3495,7 @@ CREATE VIEW public.src_financement AS
     tmp.code_type_financement,
     tmp.libelle_type_financement
    FROM (((public.tmp_financement tmp
-     JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)))
+     JOIN public.source src ON ((src.id = tmp.source_id)))
      JOIN public.these t ON (((t.source_code)::text = (tmp.these_id)::text)))
      JOIN public.origine_financement ofi ON (((ofi.source_code)::text = (tmp.origine_financement_id)::text)));
 
@@ -2479,10 +3507,9 @@ ALTER TABLE public.src_financement OWNER TO :dbuser;
 --
 
 CREATE TABLE public.tmp_individu (
-    insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
-    id character varying(64),
-    etablissement_id character varying(64) NOT NULL,
-    source_id character varying(64) NOT NULL,
+    id bigint NOT NULL,
+    insert_date timestamp(0) without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    source_id bigint NOT NULL,
     source_code character varying(64) NOT NULL,
     type character varying(32),
     civ character varying(5),
@@ -2496,7 +3523,14 @@ CREATE TABLE public.tmp_individu (
     lib_nat character varying(128),
     supann_id character varying(30),
     source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
-    codepaysnationalite character varying(60)
+    histo_creation timestamp(0) without time zone DEFAULT ('now'::text)::timestamp(0) without time zone NOT NULL,
+    histo_modification timestamp(0) without time zone,
+    histo_createur_id bigint NOT NULL,
+    histo_destructeur_id bigint,
+    histo_modificateur_id bigint,
+    histo_destruction timestamp(0) without time zone,
+    codepaysnationalite character varying(64),
+    cod_pay_nat character varying(3)
 );
 
 
@@ -2507,7 +3541,7 @@ ALTER TABLE public.tmp_individu OWNER TO :dbuser;
 --
 
 CREATE VIEW public.src_individu AS
- SELECT NULL::unknown AS id,
+ SELECT NULL::text AS id,
     tmp.source_code,
     src.id AS source_id,
     tmp.type,
@@ -2520,9 +3554,11 @@ CREATE VIEW public.src_individu AS
     tmp.lib_pr3_ind AS prenom3,
     tmp.email,
     tmp.dat_nai_per AS date_naissance,
-    tmp.lib_nat AS nationalite
-   FROM (public.tmp_individu tmp
-     JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)));
+    tmp.lib_nat AS nationalite,
+    p.id AS pays_id_nationalite
+   FROM ((public.tmp_individu tmp
+     JOIN public.source src ON ((src.id = tmp.source_id)))
+     LEFT JOIN public.pays p ON (((p.code_pays_apogee)::text = (tmp.cod_pay_nat)::text)));
 
 
 ALTER TABLE public.src_individu OWNER TO :dbuser;
@@ -2532,15 +3568,20 @@ ALTER TABLE public.src_individu OWNER TO :dbuser;
 --
 
 CREATE TABLE public.tmp_origine_financement (
-    insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
-    id character varying(64),
-    etablissement_id character varying(64) NOT NULL,
-    source_id character varying(64) NOT NULL,
+    id bigint NOT NULL,
+    insert_date timestamp(0) without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    source_id bigint NOT NULL,
     source_code character varying(64) NOT NULL,
     cod_ofi character varying(50) NOT NULL,
     lic_ofi character varying(50) NOT NULL,
+    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
     lib_ofi character varying(200) NOT NULL,
-    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone
+    histo_creation timestamp(0) without time zone DEFAULT ('now'::text)::timestamp(0) without time zone NOT NULL,
+    histo_modification timestamp(0) without time zone,
+    histo_destruction timestamp(0) without time zone,
+    histo_createur_id bigint NOT NULL,
+    histo_destructeur_id bigint,
+    histo_modificateur_id bigint
 );
 
 
@@ -2551,14 +3592,14 @@ ALTER TABLE public.tmp_origine_financement OWNER TO :dbuser;
 --
 
 CREATE VIEW public.src_origine_financement AS
- SELECT NULL::unknown AS id,
+ SELECT NULL::text AS id,
     tmp.source_code,
     src.id AS source_id,
     tmp.cod_ofi AS code,
     tmp.lic_ofi AS libelle_court,
     tmp.lib_ofi AS libelle_long
    FROM (public.tmp_origine_financement tmp
-     JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)));
+     JOIN public.source src ON ((src.id = tmp.source_id)));
 
 
 ALTER TABLE public.src_origine_financement OWNER TO :dbuser;
@@ -2568,14 +3609,19 @@ ALTER TABLE public.src_origine_financement OWNER TO :dbuser;
 --
 
 CREATE TABLE public.tmp_role (
-    insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
-    id character varying(64),
-    etablissement_id character varying(64) NOT NULL,
-    source_id character varying(64) NOT NULL,
+    id bigint NOT NULL,
+    insert_date timestamp(0) without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    source_id bigint NOT NULL,
     source_code character varying(64) NOT NULL,
-    lib_roj character varying(200),
+    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
     lic_roj character varying(50),
-    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone
+    lib_roj character varying(200),
+    histo_creation timestamp(0) without time zone DEFAULT ('now'::text)::timestamp(0) without time zone NOT NULL,
+    histo_destruction timestamp(0) without time zone,
+    histo_createur_id bigint NOT NULL,
+    histo_destructeur_id bigint,
+    histo_modificateur_id bigint,
+    histo_modification timestamp(0) without time zone
 );
 
 
@@ -2586,19 +3632,19 @@ ALTER TABLE public.tmp_role OWNER TO :dbuser;
 --
 
 CREATE VIEW public.src_role AS
- SELECT NULL::unknown AS id,
+ SELECT NULL::text AS id,
     tmp.source_code,
     src.id AS source_id,
     tmp.lib_roj AS libelle,
-    tmp.id AS code,
+    ltrim(substr((tmp.source_code)::text, strpos((tmp.source_code)::text, '::'::text)), ':'::text) AS code,
     (((tmp.lib_roj)::text || ' '::text) || (s.code)::text) AS role_id,
     true AS these_dep,
     s.id AS structure_id,
     NULL::bigint AS type_structure_dependant_id
    FROM (((public.tmp_role tmp
-     JOIN public.structure s ON (((s.source_code)::text = (tmp.etablissement_id)::text)))
-     JOIN public.etablissement e ON ((e.structure_id = s.id)))
-     JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)));
+     JOIN public.source src ON ((src.id = tmp.source_id)))
+     JOIN public.etablissement e ON ((e.id = src.etablissement_id)))
+     JOIN public.structure s ON ((s.id = e.structure_id)));
 
 
 ALTER TABLE public.src_role OWNER TO :dbuser;
@@ -2608,18 +3654,23 @@ ALTER TABLE public.src_role OWNER TO :dbuser;
 --
 
 CREATE TABLE public.tmp_structure (
-    insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
-    id character varying(64),
-    etablissement_id character varying(64) NOT NULL,
-    source_id character varying(64) NOT NULL,
+    id bigint NOT NULL,
+    insert_date timestamp(0) without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    source_id bigint NOT NULL,
     source_code character varying(64) NOT NULL,
     type_structure_id character varying(64) NOT NULL,
-    sigle character varying(64),
-    libelle character varying(200) NOT NULL,
     code_pays character varying(64),
     libelle_pays character varying(200),
     code character varying(64),
-    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone
+    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    libelle character varying(200) NOT NULL,
+    sigle character varying(64),
+    histo_creation timestamp(0) without time zone DEFAULT ('now'::text)::timestamp(0) without time zone NOT NULL,
+    histo_createur_id bigint NOT NULL,
+    histo_modification timestamp(0) without time zone,
+    histo_modificateur_id bigint,
+    histo_destruction timestamp(0) without time zone,
+    histo_destructeur_id bigint
 );
 
 
@@ -2643,16 +3694,16 @@ ALTER TABLE public.type_structure OWNER TO :dbuser;
 --
 
 CREATE VIEW public.src_structure AS
- SELECT NULL::unknown AS id,
+ SELECT NULL::text AS id,
     tmp.source_code,
-    tmp.id AS code,
+    ltrim(substr((tmp.source_code)::text, strpos((tmp.source_code)::text, '::'::text)), ':'::text) AS code,
     src.id AS source_id,
     ts.id AS type_structure_id,
     tmp.sigle,
     tmp.libelle
    FROM ((public.tmp_structure tmp
      JOIN public.type_structure ts ON (((ts.code)::text = (tmp.type_structure_id)::text)))
-     JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)));
+     JOIN public.source src ON ((src.id = tmp.source_id)));
 
 
 ALTER TABLE public.src_structure OWNER TO :dbuser;
@@ -2662,54 +3713,84 @@ ALTER TABLE public.src_structure OWNER TO :dbuser;
 --
 
 CREATE TABLE public.tmp_these (
-    insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
-    id character varying(64),
-    etablissement_id character varying(64) NOT NULL,
-    source_id character varying(64) NOT NULL,
+    id bigint NOT NULL,
+    insert_date timestamp(0) without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    source_id bigint NOT NULL,
     source_code character varying(64) NOT NULL,
-    doctorant_id character varying(64) NOT NULL,
-    ecole_doct_id character varying(64),
-    unite_rech_id character varying(64),
-    correction_possible character varying(30),
+    dat_abandon timestamp without time zone,
     dat_aut_sou_ths timestamp without time zone,
-    dat_fin_cfd_ths timestamp without time zone,
-    dat_deb_ths timestamp without time zone,
-    dat_prev_sou timestamp without time zone,
+    unite_rech_id character varying(64),
     dat_sou_ths timestamp without time zone,
-    eta_ths character varying(20),
     lib_int1_dis character varying(200),
-    lib_etab_cotut character varying(60),
+    lib_etab_cotut character varying(100),
     lib_pays_cotut character varying(40),
     cod_neg_tre character varying(1),
-    tem_sou_aut_ths character varying(1),
     tem_avenant_cotut character varying(1),
     lib_ths character varying(2048),
-    annee_univ_1ere_insc bigint,
-    dat_abandon timestamp without time zone,
     dat_transfert_dep timestamp without time zone,
     source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
     correction_effectuee character varying(30) DEFAULT 'null'::character varying,
-    codesisediscipline character varying(40)
+    dat_fin_cfd_ths timestamp without time zone,
+    dat_deb_ths timestamp without time zone,
+    correction_possible character varying(30),
+    doctorant_id character varying(64) NOT NULL,
+    ecole_doct_id character varying(64),
+    dat_prev_sou timestamp without time zone,
+    annee_univ_1ere_insc bigint,
+    tem_sou_aut_ths character varying(1),
+    eta_ths character varying(20),
+    histo_creation timestamp(0) without time zone DEFAULT ('now'::text)::timestamp(0) without time zone NOT NULL,
+    histo_createur_id bigint NOT NULL,
+    histo_modification timestamp(0) without time zone,
+    histo_modificateur_id bigint,
+    histo_destructeur_id bigint,
+    histo_destruction timestamp(0) without time zone,
+    codesisediscipline character varying(64),
+    code_sise_disc character varying(64)
 );
 
 
 ALTER TABLE public.tmp_these OWNER TO :dbuser;
 
 --
+-- Name: version_fichier; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.version_fichier (
+    id bigint NOT NULL,
+    code character varying(16) NOT NULL,
+    libelle character varying(128) NOT NULL
+);
+
+
+ALTER TABLE public.version_fichier OWNER TO :dbuser;
+
+--
 -- Name: src_these; Type: VIEW; Schema: public; Owner: :dbuser
 --
 
 CREATE VIEW public.src_these AS
- SELECT NULL::unknown AS id,
+ WITH version_corrigee_deposee AS (
+         SELECT t.source_code,
+            f.id AS fichier_id
+           FROM ((((public.fichier_these ft
+             JOIN public.these t ON ((ft.these_id = t.id)))
+             JOIN public.fichier f ON (((ft.fichier_id = f.id) AND (f.histo_destruction IS NULL))))
+             JOIN public.nature_fichier nf ON (((f.nature_id = nf.id) AND ((nf.code)::text = 'THESE_PDF'::text))))
+             JOIN public.version_fichier vf ON (((f.version_fichier_id = vf.id) AND ((vf.code)::text = 'VOC'::text))))
+          WHERE ((ft.est_annexe = false) AND (ft.est_expurge = false) AND (ft.retraitement IS NULL))
+        )
+ SELECT NULL::text AS id,
     tmp.source_code,
     src.id AS source_id,
     e.id AS etablissement_id,
     d.id AS doctorant_id,
-    COALESCE(ed_substit.id, ed.id) AS ecole_doct_id,
-    COALESCE(ur_substit.id, ur.id) AS unite_rech_id,
+    ed.id AS ecole_doct_id,
+    ur.id AS unite_rech_id,
     tmp.lib_ths AS titre,
     tmp.eta_ths AS etat_these,
     (tmp.cod_neg_tre)::numeric AS resultat,
+    tmp.code_sise_disc,
     tmp.lib_int1_dis AS lib_disc,
     tmp.dat_deb_ths AS date_prem_insc,
     tmp.dat_prev_sou AS date_prev_soutenance,
@@ -2718,23 +3799,23 @@ CREATE VIEW public.src_these AS
     tmp.lib_etab_cotut,
     tmp.lib_pays_cotut,
     tmp.correction_possible AS correc_autorisee,
-    tmp.correction_effectuee AS correc_effectuee,
+    (
+        CASE
+            WHEN (vcd.source_code IS NOT NULL) THEN 'O'::character varying
+            ELSE tmp.correction_effectuee
+        END)::character varying(30) AS correc_effectuee,
     tmp.tem_sou_aut_ths AS soutenance_autoris,
     tmp.dat_aut_sou_ths AS date_autoris_soutenance,
     tmp.tem_avenant_cotut,
     tmp.dat_abandon AS date_abandon,
     tmp.dat_transfert_dep AS date_transfert
-   FROM ((((((((((public.tmp_these tmp
-     JOIN public.structure s ON (((s.source_code)::text = (tmp.etablissement_id)::text)))
-     JOIN public.etablissement e ON ((e.structure_id = s.id)))
-     JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)))
+   FROM ((((((public.tmp_these tmp
+     JOIN public.source src ON ((src.id = tmp.source_id)))
+     JOIN public.etablissement e ON ((e.id = src.etablissement_id)))
      JOIN public.doctorant d ON (((d.source_code)::text = (tmp.doctorant_id)::text)))
      LEFT JOIN public.ecole_doct ed ON (((ed.source_code)::text = (tmp.ecole_doct_id)::text)))
      LEFT JOIN public.unite_rech ur ON (((ur.source_code)::text = (tmp.unite_rech_id)::text)))
-     LEFT JOIN public.structure_substit ss_ed ON ((ss_ed.from_structure_id = ed.structure_id)))
-     LEFT JOIN public.ecole_doct ed_substit ON ((ed_substit.structure_id = ss_ed.to_structure_id)))
-     LEFT JOIN public.structure_substit ss_ur ON ((ss_ur.from_structure_id = ur.structure_id)))
-     LEFT JOIN public.unite_rech ur_substit ON ((ur_substit.structure_id = ss_ur.to_structure_id)));
+     LEFT JOIN version_corrigee_deposee vcd ON (((vcd.source_code)::text = (tmp.source_code)::text)));
 
 
 ALTER TABLE public.src_these OWNER TO :dbuser;
@@ -2744,14 +3825,19 @@ ALTER TABLE public.src_these OWNER TO :dbuser;
 --
 
 CREATE TABLE public.tmp_these_annee_univ (
-    insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
-    id character varying(64),
-    etablissement_id character varying(64) NOT NULL,
-    source_id character varying(64) NOT NULL,
+    id bigint NOT NULL,
+    insert_date timestamp(0) without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    source_id bigint NOT NULL,
     source_code character varying(64) NOT NULL,
-    these_id character varying(50) NOT NULL,
+    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
     annee_univ bigint,
-    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone
+    these_id character varying(50) NOT NULL,
+    histo_creation timestamp(0) without time zone DEFAULT ('now'::text)::timestamp(0) without time zone NOT NULL,
+    histo_modification timestamp(0) without time zone,
+    histo_destruction timestamp(0) without time zone,
+    histo_createur_id bigint NOT NULL,
+    histo_destructeur_id bigint,
+    histo_modificateur_id bigint
 );
 
 
@@ -2762,15 +3848,15 @@ ALTER TABLE public.tmp_these_annee_univ OWNER TO :dbuser;
 --
 
 CREATE VIEW public.src_these_annee_univ AS
- SELECT NULL::unknown AS id,
+ SELECT NULL::text AS id,
     tmp.source_code,
     src.id AS source_id,
     t.id AS these_id,
     tmp.annee_univ
    FROM ((((public.tmp_these_annee_univ tmp
-     JOIN public.structure s ON (((s.source_code)::text = (tmp.etablissement_id)::text)))
-     JOIN public.etablissement e ON ((e.structure_id = s.id)))
-     JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)))
+     JOIN public.source src ON ((src.id = tmp.source_id)))
+     JOIN public.etablissement e ON ((e.structure_id = src.etablissement_id)))
+     JOIN public.structure s ON ((s.id = e.structure_id)))
      JOIN public.these t ON (((t.source_code)::text = (tmp.these_id)::text)));
 
 
@@ -2781,10 +3867,9 @@ ALTER TABLE public.src_these_annee_univ OWNER TO :dbuser;
 --
 
 CREATE TABLE public.tmp_titre_acces (
-    insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
-    id character varying(64),
-    etablissement_id character varying(64) NOT NULL,
-    source_id character varying(64) NOT NULL,
+    id bigint NOT NULL,
+    insert_date timestamp(0) without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    source_id bigint NOT NULL,
     source_code character varying(64) NOT NULL,
     these_id character varying(50) NOT NULL,
     titre_acces_interne_externe character varying(1),
@@ -2793,7 +3878,13 @@ CREATE TABLE public.tmp_titre_acces (
     libelle_etb_titre_acces character varying(200),
     code_dept_titre_acces character varying(20),
     code_pays_titre_acces character varying(20),
-    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone
+    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    histo_creation timestamp(0) without time zone DEFAULT ('now'::text)::timestamp(0) without time zone NOT NULL,
+    histo_destruction timestamp(0) without time zone,
+    histo_createur_id bigint NOT NULL,
+    histo_modificateur_id bigint,
+    histo_destructeur_id bigint,
+    histo_modification timestamp(0) without time zone
 );
 
 
@@ -2804,7 +3895,7 @@ ALTER TABLE public.tmp_titre_acces OWNER TO :dbuser;
 --
 
 CREATE VIEW public.src_titre_acces AS
- SELECT NULL::unknown AS id,
+ SELECT NULL::text AS id,
     tmp.source_code,
     src.id AS source_id,
     t.id AS these_id,
@@ -2815,9 +3906,9 @@ CREATE VIEW public.src_titre_acces AS
     tmp.code_dept_titre_acces,
     tmp.code_pays_titre_acces
    FROM ((((public.tmp_titre_acces tmp
-     JOIN public.structure s ON (((s.source_code)::text = (tmp.etablissement_id)::text)))
-     JOIN public.etablissement e ON ((e.structure_id = s.id)))
-     JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)))
+     JOIN public.source src ON ((src.id = tmp.source_id)))
+     JOIN public.etablissement e ON ((e.structure_id = src.etablissement_id)))
+     JOIN public.structure s ON ((s.id = e.structure_id)))
      JOIN public.these t ON (((t.source_code)::text = (tmp.these_id)::text)));
 
 
@@ -2828,13 +3919,18 @@ ALTER TABLE public.src_titre_acces OWNER TO :dbuser;
 --
 
 CREATE TABLE public.tmp_unite_rech (
-    insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
-    id character varying(64),
-    etablissement_id character varying(64) NOT NULL,
-    structure_id character varying(64) NOT NULL,
-    source_id character varying(64) NOT NULL,
+    id bigint NOT NULL,
+    insert_date timestamp(0) without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    source_id bigint NOT NULL,
     source_code character varying(64) NOT NULL,
-    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone
+    structure_id character varying(64) NOT NULL,
+    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    histo_creation timestamp(0) without time zone DEFAULT ('now'::text)::timestamp(0) without time zone NOT NULL,
+    histo_modification timestamp(0) without time zone,
+    histo_destruction timestamp(0) without time zone,
+    histo_createur_id bigint NOT NULL,
+    histo_modificateur_id bigint,
+    histo_destructeur_id bigint
 );
 
 
@@ -2845,13 +3941,13 @@ ALTER TABLE public.tmp_unite_rech OWNER TO :dbuser;
 --
 
 CREATE VIEW public.src_unite_rech AS
- SELECT NULL::unknown AS id,
+ SELECT NULL::text AS id,
     tmp.source_code,
     src.id AS source_id,
     s.id AS structure_id
    FROM ((public.tmp_unite_rech tmp
      JOIN public.structure s ON (((s.source_code)::text = (tmp.structure_id)::text)))
-     JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)));
+     JOIN public.source src ON ((src.id = tmp.source_id)));
 
 
 ALTER TABLE public.src_unite_rech OWNER TO :dbuser;
@@ -2861,17 +3957,22 @@ ALTER TABLE public.src_unite_rech OWNER TO :dbuser;
 --
 
 CREATE TABLE public.tmp_variable (
-    insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
-    id character varying(64),
-    etablissement_id character varying(64) NOT NULL,
-    source_id character varying(64) NOT NULL,
+    id bigint NOT NULL,
+    insert_date timestamp(0) without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    source_id bigint NOT NULL,
     source_code character varying(64) NOT NULL,
     cod_vap character varying(50),
     lib_vap character varying(300),
     par_vap character varying(200),
     date_deb_validite timestamp without time zone NOT NULL,
     date_fin_validite timestamp without time zone NOT NULL,
-    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone
+    source_insert_date timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    histo_creation timestamp(0) without time zone DEFAULT ('now'::text)::timestamp(0) without time zone NOT NULL,
+    histo_modification timestamp(0) without time zone,
+    histo_destruction timestamp(0) without time zone,
+    histo_createur_id bigint NOT NULL,
+    histo_modificateur_id bigint,
+    histo_destructeur_id bigint
 );
 
 
@@ -2882,7 +3983,7 @@ ALTER TABLE public.tmp_variable OWNER TO :dbuser;
 --
 
 CREATE VIEW public.src_variable AS
- SELECT NULL::unknown AS id,
+ SELECT NULL::text AS id,
     tmp.source_code,
     src.id AS source_id,
     e.id AS etablissement_id,
@@ -2892,12 +3993,69 @@ CREATE VIEW public.src_variable AS
     tmp.date_deb_validite,
     tmp.date_fin_validite
    FROM (((public.tmp_variable tmp
-     JOIN public.structure s ON (((s.source_code)::text = (tmp.etablissement_id)::text)))
-     JOIN public.etablissement e ON ((e.structure_id = s.id)))
-     JOIN public.source src ON (((src.code)::text = (tmp.source_id)::text)));
+     JOIN public.source src ON ((src.id = tmp.source_id)))
+     JOIN public.etablissement e ON ((e.structure_id = src.etablissement_id)))
+     JOIN public.structure s ON ((s.id = e.structure_id)));
 
 
 ALTER TABLE public.src_variable OWNER TO :dbuser;
+
+--
+-- Name: step_star_log; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.step_star_log (
+    id bigint NOT NULL,
+    these_id bigint,
+    started_on timestamp without time zone NOT NULL,
+    ended_on timestamp without time zone NOT NULL,
+    success boolean NOT NULL,
+    operation character varying(64) NOT NULL,
+    log text NOT NULL,
+    command character varying(256) NOT NULL,
+    tef_file_content_hash character varying(64),
+    tef_file_content text,
+    has_problems boolean DEFAULT false NOT NULL,
+    tag character varying(32)
+);
+
+
+ALTER TABLE public.step_star_log OWNER TO :dbuser;
+
+--
+-- Name: step_star_log_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.step_star_log_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.step_star_log_id_seq OWNER TO :dbuser;
+
+--
+-- Name: step_star_log_id_seq1; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.step_star_log_id_seq1
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.step_star_log_id_seq1 OWNER TO :dbuser;
+
+--
+-- Name: step_star_log_id_seq1; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.step_star_log_id_seq1 OWNED BY public.step_star_log.id;
+
 
 --
 -- Name: structure_document; Type: TABLE; Schema: public; Owner: :dbuser
@@ -3091,6 +4249,300 @@ CREATE SEQUENCE public.titre_acces_id_seq
 ALTER TABLE public.titre_acces_id_seq OWNER TO :dbuser;
 
 --
+-- Name: tmp_acteur_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.tmp_acteur_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tmp_acteur_id_seq OWNER TO :dbuser;
+
+--
+-- Name: tmp_acteur_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.tmp_acteur_id_seq OWNED BY public.tmp_acteur.id;
+
+
+--
+-- Name: tmp_doctorant_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.tmp_doctorant_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tmp_doctorant_id_seq OWNER TO :dbuser;
+
+--
+-- Name: tmp_doctorant_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.tmp_doctorant_id_seq OWNED BY public.tmp_doctorant.id;
+
+
+--
+-- Name: tmp_ecole_doct_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.tmp_ecole_doct_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tmp_ecole_doct_id_seq OWNER TO :dbuser;
+
+--
+-- Name: tmp_ecole_doct_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.tmp_ecole_doct_id_seq OWNED BY public.tmp_ecole_doct.id;
+
+
+--
+-- Name: tmp_etablissement_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.tmp_etablissement_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tmp_etablissement_id_seq OWNER TO :dbuser;
+
+--
+-- Name: tmp_etablissement_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.tmp_etablissement_id_seq OWNED BY public.tmp_etablissement.id;
+
+
+--
+-- Name: tmp_financement_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.tmp_financement_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tmp_financement_id_seq OWNER TO :dbuser;
+
+--
+-- Name: tmp_financement_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.tmp_financement_id_seq OWNED BY public.tmp_financement.id;
+
+
+--
+-- Name: tmp_individu_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.tmp_individu_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tmp_individu_id_seq OWNER TO :dbuser;
+
+--
+-- Name: tmp_individu_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.tmp_individu_id_seq OWNED BY public.tmp_individu.id;
+
+
+--
+-- Name: tmp_origine_financement_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.tmp_origine_financement_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tmp_origine_financement_id_seq OWNER TO :dbuser;
+
+--
+-- Name: tmp_origine_financement_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.tmp_origine_financement_id_seq OWNED BY public.tmp_origine_financement.id;
+
+
+--
+-- Name: tmp_role_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.tmp_role_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tmp_role_id_seq OWNER TO :dbuser;
+
+--
+-- Name: tmp_role_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.tmp_role_id_seq OWNED BY public.tmp_role.id;
+
+
+--
+-- Name: tmp_structure_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.tmp_structure_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tmp_structure_id_seq OWNER TO :dbuser;
+
+--
+-- Name: tmp_structure_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.tmp_structure_id_seq OWNED BY public.tmp_structure.id;
+
+
+--
+-- Name: tmp_these_annee_univ_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.tmp_these_annee_univ_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tmp_these_annee_univ_id_seq OWNER TO :dbuser;
+
+--
+-- Name: tmp_these_annee_univ_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.tmp_these_annee_univ_id_seq OWNED BY public.tmp_these_annee_univ.id;
+
+
+--
+-- Name: tmp_these_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.tmp_these_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tmp_these_id_seq OWNER TO :dbuser;
+
+--
+-- Name: tmp_these_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.tmp_these_id_seq OWNED BY public.tmp_these.id;
+
+
+--
+-- Name: tmp_titre_acces_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.tmp_titre_acces_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tmp_titre_acces_id_seq OWNER TO :dbuser;
+
+--
+-- Name: tmp_titre_acces_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.tmp_titre_acces_id_seq OWNED BY public.tmp_titre_acces.id;
+
+
+--
+-- Name: tmp_unite_rech_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.tmp_unite_rech_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tmp_unite_rech_id_seq OWNER TO :dbuser;
+
+--
+-- Name: tmp_unite_rech_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.tmp_unite_rech_id_seq OWNED BY public.tmp_unite_rech.id;
+
+
+--
+-- Name: tmp_variable_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.tmp_variable_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tmp_variable_id_seq OWNER TO :dbuser;
+
+--
+-- Name: tmp_variable_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.tmp_variable_id_seq OWNED BY public.tmp_variable.id;
+
+
+--
 -- Name: type_rapport; Type: TABLE; Schema: public; Owner: :dbuser
 --
 
@@ -3117,6 +4569,756 @@ CREATE SEQUENCE public.type_validation_id_seq
 
 
 ALTER TABLE public.type_validation_id_seq OWNER TO :dbuser;
+
+--
+-- Name: unicaen_alerte_alerte_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.unicaen_alerte_alerte_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.unicaen_alerte_alerte_id_seq OWNER TO :dbuser;
+
+--
+-- Name: unicaen_alerte_alerte; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.unicaen_alerte_alerte (
+    id bigint DEFAULT nextval('public.unicaen_alerte_alerte_id_seq'::regclass) NOT NULL,
+    code character varying(64) NOT NULL,
+    title text NOT NULL,
+    text text NOT NULL,
+    severity character varying(64),
+    duration smallint DEFAULT 0 NOT NULL,
+    dismissible boolean DEFAULT true
+);
+
+
+ALTER TABLE public.unicaen_alerte_alerte OWNER TO :dbuser;
+
+--
+-- Name: TABLE unicaen_alerte_alerte; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON TABLE public.unicaen_alerte_alerte IS 'Messages d''alerte';
+
+
+--
+-- Name: COLUMN unicaen_alerte_alerte.code; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_alerte_alerte.code IS 'Code littéral unique de cette alerte';
+
+
+--
+-- Name: COLUMN unicaen_alerte_alerte.title; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_alerte_alerte.title IS 'Titre/intitulé de cette alerte';
+
+
+--
+-- Name: COLUMN unicaen_alerte_alerte.text; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_alerte_alerte.text IS 'Texte de cette alerte';
+
+
+--
+-- Name: COLUMN unicaen_alerte_alerte.severity; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_alerte_alerte.severity IS 'Sévérité (classe CSS) associée à cette alerte : success, info, warning, danger';
+
+
+--
+-- Name: COLUMN unicaen_alerte_alerte.duration; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_alerte_alerte.duration IS 'Durée d''affichage de cette alerte en millisecondes (0 = infini)';
+
+
+--
+-- Name: COLUMN unicaen_alerte_alerte.dismissible; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_alerte_alerte.dismissible IS 'Indique si cette alerte peut être fermée par l''utilisateur';
+
+
+--
+-- Name: unicaen_alerte_alerte_planning_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.unicaen_alerte_alerte_planning_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.unicaen_alerte_alerte_planning_id_seq OWNER TO :dbuser;
+
+--
+-- Name: unicaen_alerte_alerte_planning; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.unicaen_alerte_alerte_planning (
+    id bigint DEFAULT nextval('public.unicaen_alerte_alerte_planning_id_seq'::regclass) NOT NULL,
+    alerte_id bigint NOT NULL,
+    start_date timestamp without time zone DEFAULT now() NOT NULL,
+    end_date timestamp without time zone NOT NULL,
+    severity character varying(64)
+);
+
+
+ALTER TABLE public.unicaen_alerte_alerte_planning OWNER TO :dbuser;
+
+--
+-- Name: TABLE unicaen_alerte_alerte_planning; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON TABLE public.unicaen_alerte_alerte_planning IS 'Plannings d''affichage des alertes';
+
+
+--
+-- Name: COLUMN unicaen_alerte_alerte_planning.alerte_id; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_alerte_alerte_planning.alerte_id IS 'Identifiant de l''alerte concernée';
+
+
+--
+-- Name: COLUMN unicaen_alerte_alerte_planning.start_date; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_alerte_alerte_planning.start_date IS 'Date et heure de début de la période d''affichage de l''alerte';
+
+
+--
+-- Name: COLUMN unicaen_alerte_alerte_planning.end_date; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_alerte_alerte_planning.end_date IS 'Date et heure de fin de la période d''affichage de l''alerte';
+
+
+--
+-- Name: COLUMN unicaen_alerte_alerte_planning.severity; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_alerte_alerte_planning.severity IS 'Sévérité remplaçant celle de l''alerte sur cette période';
+
+
+--
+-- Name: unicaen_avis_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.unicaen_avis_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.unicaen_avis_id_seq OWNER TO :dbuser;
+
+--
+-- Name: unicaen_avis; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.unicaen_avis (
+    id bigint DEFAULT nextval('public.unicaen_avis_id_seq'::regclass) NOT NULL,
+    avis_type_id bigint NOT NULL,
+    avis_valeur_id bigint NOT NULL
+);
+
+
+ALTER TABLE public.unicaen_avis OWNER TO :dbuser;
+
+--
+-- Name: TABLE unicaen_avis; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON TABLE public.unicaen_avis IS 'Avis';
+
+
+--
+-- Name: COLUMN unicaen_avis.avis_type_id; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis.avis_type_id IS 'Identifiant du type de cet avis';
+
+
+--
+-- Name: COLUMN unicaen_avis.avis_valeur_id; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis.avis_valeur_id IS 'Identifiant de la valeur de cet vis';
+
+
+--
+-- Name: unicaen_avis_complem_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.unicaen_avis_complem_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.unicaen_avis_complem_id_seq OWNER TO :dbuser;
+
+--
+-- Name: unicaen_avis_complem; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.unicaen_avis_complem (
+    id bigint DEFAULT nextval('public.unicaen_avis_complem_id_seq'::regclass) NOT NULL,
+    avis_id bigint NOT NULL,
+    avis_type_complem_id bigint NOT NULL,
+    valeur text
+);
+
+
+ALTER TABLE public.unicaen_avis_complem OWNER TO :dbuser;
+
+--
+-- Name: TABLE unicaen_avis_complem; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON TABLE public.unicaen_avis_complem IS 'Compléments apportés aux avis';
+
+
+--
+-- Name: COLUMN unicaen_avis_complem.avis_id; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_complem.avis_id IS 'Identifiant de l''avis concerné';
+
+
+--
+-- Name: COLUMN unicaen_avis_complem.avis_type_complem_id; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_complem.avis_type_complem_id IS 'Identifiant du complement attendu';
+
+
+--
+-- Name: COLUMN unicaen_avis_complem.valeur; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_complem.valeur IS 'Valeur du complement apportée';
+
+
+--
+-- Name: unicaen_avis_type_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.unicaen_avis_type_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.unicaen_avis_type_id_seq OWNER TO :dbuser;
+
+--
+-- Name: unicaen_avis_type; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.unicaen_avis_type (
+    id bigint DEFAULT nextval('public.unicaen_avis_type_id_seq'::regclass) NOT NULL,
+    code character varying(64) NOT NULL,
+    libelle character varying(128) NOT NULL,
+    description character varying(128),
+    ordre smallint DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE public.unicaen_avis_type OWNER TO :dbuser;
+
+--
+-- Name: TABLE unicaen_avis_type; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON TABLE public.unicaen_avis_type IS 'Types d''avis existants';
+
+
+--
+-- Name: COLUMN unicaen_avis_type.code; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_type.code IS 'Code littéral unique de ce type d''avis';
+
+
+--
+-- Name: COLUMN unicaen_avis_type.libelle; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_type.libelle IS 'Libellé de ce type d''avis';
+
+
+--
+-- Name: COLUMN unicaen_avis_type.description; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_type.description IS 'Description éventuelle de ce type d''avis';
+
+
+--
+-- Name: COLUMN unicaen_avis_type.ordre; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_type.ordre IS 'Entier permettant d''ordonner les types d''avis';
+
+
+--
+-- Name: unicaen_avis_type_valeur_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.unicaen_avis_type_valeur_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.unicaen_avis_type_valeur_id_seq OWNER TO :dbuser;
+
+--
+-- Name: unicaen_avis_type_valeur; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.unicaen_avis_type_valeur (
+    id bigint DEFAULT nextval('public.unicaen_avis_type_valeur_id_seq'::regclass) NOT NULL,
+    avis_type_id bigint NOT NULL,
+    avis_valeur_id bigint NOT NULL
+);
+
+
+ALTER TABLE public.unicaen_avis_type_valeur OWNER TO :dbuser;
+
+--
+-- Name: TABLE unicaen_avis_type_valeur; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON TABLE public.unicaen_avis_type_valeur IS 'Valeurs d''avis autorisées par type d''avis';
+
+
+--
+-- Name: COLUMN unicaen_avis_type_valeur.avis_type_id; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_type_valeur.avis_type_id IS 'Identifiant du type d''avis concerné';
+
+
+--
+-- Name: COLUMN unicaen_avis_type_valeur.avis_valeur_id; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_type_valeur.avis_valeur_id IS 'Identifiant de la valeur d''avis autorisée';
+
+
+--
+-- Name: unicaen_avis_type_valeur_complem_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.unicaen_avis_type_valeur_complem_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.unicaen_avis_type_valeur_complem_id_seq OWNER TO :dbuser;
+
+--
+-- Name: unicaen_avis_type_valeur_complem; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.unicaen_avis_type_valeur_complem (
+    id bigint DEFAULT nextval('public.unicaen_avis_type_valeur_complem_id_seq'::regclass) NOT NULL,
+    avis_type_valeur_id bigint NOT NULL,
+    parent_id bigint,
+    code character varying(128) NOT NULL,
+    libelle character varying(128) NOT NULL,
+    type character varying(64) NOT NULL,
+    ordre integer NOT NULL,
+    obligatoire boolean DEFAULT false NOT NULL,
+    obligatoire_un_au_moins boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE public.unicaen_avis_type_valeur_complem OWNER TO :dbuser;
+
+--
+-- Name: TABLE unicaen_avis_type_valeur_complem; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON TABLE public.unicaen_avis_type_valeur_complem IS 'Compléments possibles selon le type d''avis et la valeur de l''avis';
+
+
+--
+-- Name: COLUMN unicaen_avis_type_valeur_complem.avis_type_valeur_id; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_type_valeur_complem.avis_type_valeur_id IS 'Identifiant du type+valeur d''avis permettant ce complément';
+
+
+--
+-- Name: COLUMN unicaen_avis_type_valeur_complem.parent_id; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_type_valeur_complem.parent_id IS 'Identifiant du complément parent éventuel de type checkbox uniquement (pour affichage et required conditionnel)';
+
+
+--
+-- Name: COLUMN unicaen_avis_type_valeur_complem.libelle; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_type_valeur_complem.libelle IS 'Libellé du complément';
+
+
+--
+-- Name: COLUMN unicaen_avis_type_valeur_complem.type; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_type_valeur_complem.type IS 'Type de valeur attendue pour ce complément (textarea, checkbox, checkbox+textarea, select, etc.)';
+
+
+--
+-- Name: COLUMN unicaen_avis_type_valeur_complem.obligatoire; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_type_valeur_complem.obligatoire IS 'Témoin indiquant si une valeur est requise pour ce complément';
+
+
+--
+-- Name: COLUMN unicaen_avis_type_valeur_complem.obligatoire_un_au_moins; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_type_valeur_complem.obligatoire_un_au_moins IS 'Témoin indiquant si une valeur est requise pour l''un au moins des compléments ayant ce même témoin à `true`';
+
+
+--
+-- Name: unicaen_avis_type_valeur_complem_ordre_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.unicaen_avis_type_valeur_complem_ordre_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.unicaen_avis_type_valeur_complem_ordre_seq OWNER TO :dbuser;
+
+--
+-- Name: unicaen_avis_type_valeur_complem_ordre_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.unicaen_avis_type_valeur_complem_ordre_seq OWNED BY public.unicaen_avis_type_valeur_complem.ordre;
+
+
+--
+-- Name: unicaen_avis_valeur_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.unicaen_avis_valeur_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.unicaen_avis_valeur_id_seq OWNER TO :dbuser;
+
+--
+-- Name: unicaen_avis_valeur; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.unicaen_avis_valeur (
+    id bigint DEFAULT nextval('public.unicaen_avis_valeur_id_seq'::regclass) NOT NULL,
+    code character varying(64) NOT NULL,
+    valeur character varying(128) NOT NULL,
+    valeur_bool boolean,
+    tags character varying(64),
+    ordre integer NOT NULL,
+    description character varying(128)
+);
+
+
+ALTER TABLE public.unicaen_avis_valeur OWNER TO :dbuser;
+
+--
+-- Name: TABLE unicaen_avis_valeur; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON TABLE public.unicaen_avis_valeur IS 'Valeurs d''avis possibles';
+
+
+--
+-- Name: COLUMN unicaen_avis_valeur.code; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_valeur.code IS 'Code littéral unique de ce complément';
+
+
+--
+-- Name: COLUMN unicaen_avis_valeur.valeur; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_valeur.valeur IS 'Valeur (ex : Favorable, Défavorable, etc.)';
+
+
+--
+-- Name: COLUMN unicaen_avis_valeur.valeur_bool; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_valeur.valeur_bool IS 'Éventuelle valeur booléenne équivalente';
+
+
+--
+-- Name: COLUMN unicaen_avis_valeur.tags; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_valeur.tags IS 'Éventuels tags associés à cette valeur (ex : classe CSS "success")';
+
+
+--
+-- Name: COLUMN unicaen_avis_valeur.ordre; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_valeur.ordre IS 'Entier permettant d''ordonner les valeurs';
+
+
+--
+-- Name: COLUMN unicaen_avis_valeur.description; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON COLUMN public.unicaen_avis_valeur.description IS 'Description éventuelle de cette valeur';
+
+
+--
+-- Name: unicaen_avis_valeur_ordre_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.unicaen_avis_valeur_ordre_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.unicaen_avis_valeur_ordre_seq OWNER TO :dbuser;
+
+--
+-- Name: unicaen_avis_valeur_ordre_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.unicaen_avis_valeur_ordre_seq OWNED BY public.unicaen_avis_valeur.ordre;
+
+
+--
+-- Name: unicaen_parametre_categorie; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.unicaen_parametre_categorie (
+    id integer NOT NULL,
+    code character varying(1024) NOT NULL,
+    libelle character varying(1024) NOT NULL,
+    description text,
+    ordre integer DEFAULT 9999
+);
+
+
+ALTER TABLE public.unicaen_parametre_categorie OWNER TO :dbuser;
+
+--
+-- Name: unicaen_parametre_categorie_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.unicaen_parametre_categorie_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.unicaen_parametre_categorie_id_seq OWNER TO :dbuser;
+
+--
+-- Name: unicaen_parametre_categorie_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.unicaen_parametre_categorie_id_seq OWNED BY public.unicaen_parametre_categorie.id;
+
+
+--
+-- Name: unicaen_parametre_parametre; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.unicaen_parametre_parametre (
+    id integer NOT NULL,
+    categorie_id integer NOT NULL,
+    code character varying(1024) NOT NULL,
+    libelle character varying(1024) NOT NULL,
+    description text,
+    valeurs_possibles text,
+    valeur text,
+    ordre integer DEFAULT 9999
+);
+
+
+ALTER TABLE public.unicaen_parametre_parametre OWNER TO :dbuser;
+
+--
+-- Name: unicaen_parametre_parametre_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.unicaen_parametre_parametre_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.unicaen_parametre_parametre_id_seq OWNER TO :dbuser;
+
+--
+-- Name: unicaen_parametre_parametre_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.unicaen_parametre_parametre_id_seq OWNED BY public.unicaen_parametre_parametre.id;
+
+
+--
+-- Name: unicaen_renderer_macro; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.unicaen_renderer_macro (
+    id integer NOT NULL,
+    code character varying(256) NOT NULL,
+    description text,
+    variable_name character varying(256) NOT NULL,
+    methode_name character varying(256) NOT NULL
+);
+
+
+ALTER TABLE public.unicaen_renderer_macro OWNER TO :dbuser;
+
+--
+-- Name: unicaen_renderer_macro_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.unicaen_renderer_macro_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.unicaen_renderer_macro_id_seq OWNER TO :dbuser;
+
+--
+-- Name: unicaen_renderer_macro_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.unicaen_renderer_macro_id_seq OWNED BY public.unicaen_renderer_macro.id;
+
+
+--
+-- Name: unicaen_renderer_rendu; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.unicaen_renderer_rendu (
+    id integer NOT NULL,
+    template_id integer,
+    date_generation timestamp without time zone NOT NULL,
+    sujet text NOT NULL,
+    corps text NOT NULL
+);
+
+
+ALTER TABLE public.unicaen_renderer_rendu OWNER TO :dbuser;
+
+--
+-- Name: unicaen_renderer_rendu_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.unicaen_renderer_rendu_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.unicaen_renderer_rendu_id_seq OWNER TO :dbuser;
+
+--
+-- Name: unicaen_renderer_rendu_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.unicaen_renderer_rendu_id_seq OWNED BY public.unicaen_renderer_rendu.id;
+
+
+--
+-- Name: unicaen_renderer_template; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.unicaen_renderer_template (
+    id integer NOT NULL,
+    code character varying(256) NOT NULL,
+    description text,
+    document_type character varying(256) NOT NULL,
+    document_sujet text NOT NULL,
+    document_corps text NOT NULL,
+    document_css text,
+    namespace character varying(256)
+);
+
+
+ALTER TABLE public.unicaen_renderer_template OWNER TO :dbuser;
+
+--
+-- Name: unicaen_renderer_template_id_seq; Type: SEQUENCE; Schema: public; Owner: :dbuser
+--
+
+CREATE SEQUENCE public.unicaen_renderer_template_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.unicaen_renderer_template_id_seq OWNER TO :dbuser;
+
+--
+-- Name: unicaen_renderer_template_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: :dbuser
+--
+
+ALTER SEQUENCE public.unicaen_renderer_template_id_seq OWNED BY public.unicaen_renderer_template.id;
+
 
 --
 -- Name: unite_domaine_linker; Type: TABLE; Schema: public; Owner: :dbuser
@@ -3255,7 +5457,9 @@ CREATE TABLE public.utilisateur (
     last_role_id bigint,
     individu_id bigint,
     password_reset_token character varying(256),
-    created_at timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone
+    created_at timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone,
+    nom character varying(128),
+    prenom character varying(128)
 );
 
 
@@ -3298,6 +5502,10 @@ CREATE VIEW public.v_diff_acteur AS
                     ELSE NULL::text
                 END AS operation,
                 CASE
+                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_source_id,
+                CASE
                     WHEN ((d.individu_id <> s.individu_id) OR ((d.individu_id IS NULL) AND (s.individu_id IS NOT NULL)) OR ((d.individu_id IS NOT NULL) AND (s.individu_id IS NULL))) THEN 1
                     ELSE 0
                 END AS u_individu_id,
@@ -3321,12 +5529,14 @@ CREATE VIEW public.v_diff_acteur AS
                     WHEN (((d.lib_role_compl)::text <> (s.lib_role_compl)::text) OR ((d.lib_role_compl IS NULL) AND (s.lib_role_compl IS NOT NULL)) OR ((d.lib_role_compl IS NOT NULL) AND (s.lib_role_compl IS NULL))) THEN 1
                     ELSE 0
                 END AS u_lib_role_compl,
+            s.source_id AS s_source_id,
             s.individu_id AS s_individu_id,
             s.these_id AS s_these_id,
             s.role_id AS s_role_id,
             s.acteur_etablissement_id AS s_acteur_etablissement_id,
             s.qualite AS s_qualite,
             s.lib_role_compl AS s_lib_role_compl,
+            d.source_id AS d_source_id,
             d.individu_id AS d_individu_id,
             d.these_id AS d_these_id,
             d.role_id AS d_role_id,
@@ -3340,18 +5550,21 @@ CREATE VIEW public.v_diff_acteur AS
  SELECT diff.source_code,
     diff.source_id,
     diff.operation,
+    diff.u_source_id,
     diff.u_individu_id,
     diff.u_these_id,
     diff.u_role_id,
     diff.u_acteur_etablissement_id,
     diff.u_qualite,
     diff.u_lib_role_compl,
+    diff.s_source_id,
     diff.s_individu_id,
     diff.s_these_id,
     diff.s_role_id,
     diff.s_acteur_etablissement_id,
     diff.s_qualite,
     diff.s_lib_role_compl,
+    diff.d_source_id,
     diff.d_individu_id,
     diff.d_these_id,
     diff.d_role_id,
@@ -3359,7 +5572,7 @@ CREATE VIEW public.v_diff_acteur AS
     diff.d_qualite,
     diff.d_lib_role_compl
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((((diff.u_individu_id + diff.u_these_id) + diff.u_role_id) + diff.u_acteur_etablissement_id) + diff.u_qualite) + diff.u_lib_role_compl))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((diff.u_source_id + diff.u_individu_id) + diff.u_these_id) + diff.u_role_id) + diff.u_acteur_etablissement_id) + diff.u_qualite) + diff.u_lib_role_compl))));
 
 
 ALTER TABLE public.v_diff_acteur OWNER TO :dbuser;
@@ -3384,6 +5597,10 @@ CREATE VIEW public.v_diff_doctorant AS
                     ELSE 0
                 END AS u_ine,
                 CASE
+                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_source_id,
+                CASE
                     WHEN ((d.individu_id <> s.individu_id) OR ((d.individu_id IS NULL) AND (s.individu_id IS NOT NULL)) OR ((d.individu_id IS NOT NULL) AND (s.individu_id IS NULL))) THEN 1
                     ELSE 0
                 END AS u_individu_id,
@@ -3392,9 +5609,11 @@ CREATE VIEW public.v_diff_doctorant AS
                     ELSE 0
                 END AS u_etablissement_id,
             s.ine AS s_ine,
+            s.source_id AS s_source_id,
             s.individu_id AS s_individu_id,
             s.etablissement_id AS s_etablissement_id,
             d.ine AS d_ine,
+            d.source_id AS d_source_id,
             d.individu_id AS d_individu_id,
             d.etablissement_id AS d_etablissement_id
            FROM ((public.doctorant d
@@ -3405,16 +5624,19 @@ CREATE VIEW public.v_diff_doctorant AS
     diff.source_id,
     diff.operation,
     diff.u_ine,
+    diff.u_source_id,
     diff.u_individu_id,
     diff.u_etablissement_id,
     diff.s_ine,
+    diff.s_source_id,
     diff.s_individu_id,
     diff.s_etablissement_id,
     diff.d_ine,
+    diff.d_source_id,
     diff.d_individu_id,
     diff.d_etablissement_id
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((diff.u_ine + diff.u_individu_id) + diff.u_etablissement_id))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((diff.u_ine + diff.u_source_id) + diff.u_individu_id) + diff.u_etablissement_id))));
 
 
 ALTER TABLE public.v_diff_doctorant OWNER TO :dbuser;
@@ -3435,10 +5657,16 @@ CREATE VIEW public.v_diff_ecole_doct AS
                     ELSE NULL::text
                 END AS operation,
                 CASE
+                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_source_id,
+                CASE
                     WHEN ((d.structure_id <> s.structure_id) OR ((d.structure_id IS NULL) AND (s.structure_id IS NOT NULL)) OR ((d.structure_id IS NOT NULL) AND (s.structure_id IS NULL))) THEN 1
                     ELSE 0
                 END AS u_structure_id,
+            s.source_id AS s_source_id,
             s.structure_id AS s_structure_id,
+            d.source_id AS d_source_id,
             d.structure_id AS d_structure_id
            FROM ((public.ecole_doct d
              JOIN public.source src ON (((src.id = d.source_id) AND (src.importable = true))))
@@ -3447,11 +5675,14 @@ CREATE VIEW public.v_diff_ecole_doct AS
  SELECT diff.source_code,
     diff.source_id,
     diff.operation,
+    diff.u_source_id,
     diff.u_structure_id,
+    diff.s_source_id,
     diff.s_structure_id,
+    diff.d_source_id,
     diff.d_structure_id
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < diff.u_structure_id)));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (diff.u_source_id + diff.u_structure_id))));
 
 
 ALTER TABLE public.v_diff_ecole_doct OWNER TO :dbuser;
@@ -3472,16 +5703,16 @@ CREATE VIEW public.v_diff_etablissement AS
                     ELSE NULL::text
                 END AS operation,
                 CASE
-                    WHEN (((d.code)::text <> (s.code)::text) OR ((d.code IS NULL) AND (s.code IS NOT NULL)) OR ((d.code IS NOT NULL) AND (s.code IS NULL))) THEN 1
+                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
                     ELSE 0
-                END AS u_code,
+                END AS u_source_id,
                 CASE
                     WHEN ((d.structure_id <> s.structure_id) OR ((d.structure_id IS NULL) AND (s.structure_id IS NOT NULL)) OR ((d.structure_id IS NOT NULL) AND (s.structure_id IS NULL))) THEN 1
                     ELSE 0
                 END AS u_structure_id,
-            s.code AS s_code,
+            s.source_id AS s_source_id,
             s.structure_id AS s_structure_id,
-            d.code AS d_code,
+            d.source_id AS d_source_id,
             d.structure_id AS d_structure_id
            FROM ((public.etablissement d
              JOIN public.source src ON (((src.id = d.source_id) AND (src.importable = true))))
@@ -3490,14 +5721,14 @@ CREATE VIEW public.v_diff_etablissement AS
  SELECT diff.source_code,
     diff.source_id,
     diff.operation,
-    diff.u_code,
+    diff.u_source_id,
     diff.u_structure_id,
-    diff.s_code,
+    diff.s_source_id,
     diff.s_structure_id,
-    diff.d_code,
+    diff.d_source_id,
     diff.d_structure_id
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (diff.u_code + diff.u_structure_id))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (diff.u_source_id + diff.u_structure_id))));
 
 
 ALTER TABLE public.v_diff_etablissement OWNER TO :dbuser;
@@ -3517,6 +5748,10 @@ CREATE VIEW public.v_diff_financement AS
                     WHEN ((s.source_code IS NULL) AND (d.source_code IS NOT NULL) AND ((d.histo_destruction IS NULL) OR (d.histo_destruction > ('now'::text)::timestamp(0) without time zone))) THEN 'delete'::text
                     ELSE NULL::text
                 END AS operation,
+                CASE
+                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_source_id,
                 CASE
                     WHEN ((d.these_id <> s.these_id) OR ((d.these_id IS NULL) AND (s.these_id IS NOT NULL)) OR ((d.these_id IS NOT NULL) AND (s.these_id IS NULL))) THEN 1
                     ELSE 0
@@ -3553,6 +5788,7 @@ CREATE VIEW public.v_diff_financement AS
                     WHEN (((d.libelle_type_financement)::text <> (s.libelle_type_financement)::text) OR ((d.libelle_type_financement IS NULL) AND (s.libelle_type_financement IS NOT NULL)) OR ((d.libelle_type_financement IS NOT NULL) AND (s.libelle_type_financement IS NULL))) THEN 1
                     ELSE 0
                 END AS u_libelle_type_financement,
+            s.source_id AS s_source_id,
             s.these_id AS s_these_id,
             s.annee AS s_annee,
             s.origine_financement_id AS s_origine_financement_id,
@@ -3562,6 +5798,7 @@ CREATE VIEW public.v_diff_financement AS
             s.date_fin AS s_date_fin,
             s.code_type_financement AS s_code_type_financement,
             s.libelle_type_financement AS s_libelle_type_financement,
+            d.source_id AS d_source_id,
             d.these_id AS d_these_id,
             d.annee AS d_annee,
             d.origine_financement_id AS d_origine_financement_id,
@@ -3578,6 +5815,7 @@ CREATE VIEW public.v_diff_financement AS
  SELECT diff.source_code,
     diff.source_id,
     diff.operation,
+    diff.u_source_id,
     diff.u_these_id,
     diff.u_annee,
     diff.u_origine_financement_id,
@@ -3587,6 +5825,7 @@ CREATE VIEW public.v_diff_financement AS
     diff.u_date_fin,
     diff.u_code_type_financement,
     diff.u_libelle_type_financement,
+    diff.s_source_id,
     diff.s_these_id,
     diff.s_annee,
     diff.s_origine_financement_id,
@@ -3596,6 +5835,7 @@ CREATE VIEW public.v_diff_financement AS
     diff.s_date_fin,
     diff.s_code_type_financement,
     diff.s_libelle_type_financement,
+    diff.d_source_id,
     diff.d_these_id,
     diff.d_annee,
     diff.d_origine_financement_id,
@@ -3606,7 +5846,7 @@ CREATE VIEW public.v_diff_financement AS
     diff.d_code_type_financement,
     diff.d_libelle_type_financement
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((((diff.u_these_id + diff.u_annee) + diff.u_origine_financement_id) + diff.u_complement_financement) + diff.u_quotite_financement) + diff.u_date_debut) + diff.u_date_fin) + diff.u_code_type_financement) + diff.u_libelle_type_financement))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((((((((diff.u_source_id + diff.u_these_id) + diff.u_annee) + diff.u_origine_financement_id) + diff.u_complement_financement) + diff.u_quotite_financement) + diff.u_date_debut) + diff.u_date_fin) + diff.u_code_type_financement) + diff.u_libelle_type_financement))));
 
 
 ALTER TABLE public.v_diff_financement OWNER TO :dbuser;
@@ -3626,6 +5866,10 @@ CREATE VIEW public.v_diff_individu AS
                     WHEN ((s.source_code IS NULL) AND (d.source_code IS NOT NULL) AND ((d.histo_destruction IS NULL) OR (d.histo_destruction > ('now'::text)::timestamp(0) without time zone))) THEN 'delete'::text
                     ELSE NULL::text
                 END AS operation,
+                CASE
+                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_source_id,
                 CASE
                     WHEN (((d.type)::text <> (s.type)::text) OR ((d.type IS NULL) AND (s.type IS NOT NULL)) OR ((d.type IS NOT NULL) AND (s.type IS NULL))) THEN 1
                     ELSE 0
@@ -3670,6 +5914,11 @@ CREATE VIEW public.v_diff_individu AS
                     WHEN (((d.nationalite)::text <> (s.nationalite)::text) OR ((d.nationalite IS NULL) AND (s.nationalite IS NOT NULL)) OR ((d.nationalite IS NOT NULL) AND (s.nationalite IS NULL))) THEN 1
                     ELSE 0
                 END AS u_nationalite,
+                CASE
+                    WHEN ((d.pays_id_nationalite <> s.pays_id_nationalite) OR ((d.pays_id_nationalite IS NULL) AND (s.pays_id_nationalite IS NOT NULL)) OR ((d.pays_id_nationalite IS NOT NULL) AND (s.pays_id_nationalite IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_pays_id_nationalite,
+            s.source_id AS s_source_id,
             s.type AS s_type,
             s.supann_id AS s_supann_id,
             s.civilite AS s_civilite,
@@ -3681,6 +5930,8 @@ CREATE VIEW public.v_diff_individu AS
             s.email AS s_email,
             s.date_naissance AS s_date_naissance,
             s.nationalite AS s_nationalite,
+            s.pays_id_nationalite AS s_pays_id_nationalite,
+            d.source_id AS d_source_id,
             d.type AS d_type,
             d.supann_id AS d_supann_id,
             d.civilite AS d_civilite,
@@ -3691,7 +5942,8 @@ CREATE VIEW public.v_diff_individu AS
             d.prenom3 AS d_prenom3,
             d.email AS d_email,
             d.date_naissance AS d_date_naissance,
-            d.nationalite AS d_nationalite
+            d.nationalite AS d_nationalite,
+            d.pays_id_nationalite AS d_pays_id_nationalite
            FROM ((public.individu d
              JOIN public.source src ON (((src.id = d.source_id) AND (src.importable = true))))
              FULL JOIN public.src_individu s ON (((s.source_id = d.source_id) AND ((s.source_code)::text = (d.source_code)::text))))
@@ -3699,6 +5951,7 @@ CREATE VIEW public.v_diff_individu AS
  SELECT diff.source_code,
     diff.source_id,
     diff.operation,
+    diff.u_source_id,
     diff.u_type,
     diff.u_supann_id,
     diff.u_civilite,
@@ -3710,6 +5963,8 @@ CREATE VIEW public.v_diff_individu AS
     diff.u_email,
     diff.u_date_naissance,
     diff.u_nationalite,
+    diff.u_pays_id_nationalite,
+    diff.s_source_id,
     diff.s_type,
     diff.s_supann_id,
     diff.s_civilite,
@@ -3721,6 +5976,8 @@ CREATE VIEW public.v_diff_individu AS
     diff.s_email,
     diff.s_date_naissance,
     diff.s_nationalite,
+    diff.s_pays_id_nationalite,
+    diff.d_source_id,
     diff.d_type,
     diff.d_supann_id,
     diff.d_civilite,
@@ -3731,9 +5988,10 @@ CREATE VIEW public.v_diff_individu AS
     diff.d_prenom3,
     diff.d_email,
     diff.d_date_naissance,
-    diff.d_nationalite
+    diff.d_nationalite,
+    diff.d_pays_id_nationalite
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((((((diff.u_type + diff.u_supann_id) + diff.u_civilite) + diff.u_nom_usuel) + diff.u_nom_patronymique) + diff.u_prenom1) + diff.u_prenom2) + diff.u_prenom3) + diff.u_email) + diff.u_date_naissance) + diff.u_nationalite))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((((((((diff.u_source_id + diff.u_type) + diff.u_supann_id) + diff.u_civilite) + diff.u_nom_usuel) + diff.u_nom_patronymique) + diff.u_prenom1) + diff.u_prenom2) + diff.u_prenom3) + diff.u_email) + diff.u_date_naissance) + diff.u_nationalite) + diff.u_pays_id_nationalite))));
 
 
 ALTER TABLE public.v_diff_individu OWNER TO :dbuser;
@@ -3754,6 +6012,10 @@ CREATE VIEW public.v_diff_origine_financement AS
                     ELSE NULL::text
                 END AS operation,
                 CASE
+                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_source_id,
+                CASE
                     WHEN (((d.code)::text <> (s.code)::text) OR ((d.code IS NULL) AND (s.code IS NOT NULL)) OR ((d.code IS NOT NULL) AND (s.code IS NULL))) THEN 1
                     ELSE 0
                 END AS u_code,
@@ -3765,9 +6027,11 @@ CREATE VIEW public.v_diff_origine_financement AS
                     WHEN (((d.libelle_long)::text <> (s.libelle_long)::text) OR ((d.libelle_long IS NULL) AND (s.libelle_long IS NOT NULL)) OR ((d.libelle_long IS NOT NULL) AND (s.libelle_long IS NULL))) THEN 1
                     ELSE 0
                 END AS u_libelle_long,
+            s.source_id AS s_source_id,
             s.code AS s_code,
             s.libelle_court AS s_libelle_court,
             s.libelle_long AS s_libelle_long,
+            d.source_id AS d_source_id,
             d.code AS d_code,
             d.libelle_court AS d_libelle_court,
             d.libelle_long AS d_libelle_long
@@ -3778,17 +6042,20 @@ CREATE VIEW public.v_diff_origine_financement AS
  SELECT diff.source_code,
     diff.source_id,
     diff.operation,
+    diff.u_source_id,
     diff.u_code,
     diff.u_libelle_court,
     diff.u_libelle_long,
+    diff.s_source_id,
     diff.s_code,
     diff.s_libelle_court,
     diff.s_libelle_long,
+    diff.d_source_id,
     diff.d_code,
     diff.d_libelle_court,
     diff.d_libelle_long
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((diff.u_code + diff.u_libelle_court) + diff.u_libelle_long))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((diff.u_source_id + diff.u_code) + diff.u_libelle_court) + diff.u_libelle_long))));
 
 
 ALTER TABLE public.v_diff_origine_financement OWNER TO :dbuser;
@@ -3809,11 +6076,15 @@ CREATE VIEW public.v_diff_role AS
                     ELSE NULL::text
                 END AS operation,
                 CASE
+                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_source_id,
+                CASE
                     WHEN (((d.libelle)::text <> (s.libelle)::text) OR ((d.libelle IS NULL) AND (s.libelle IS NOT NULL)) OR ((d.libelle IS NOT NULL) AND (s.libelle IS NULL))) THEN 1
                     ELSE 0
                 END AS u_libelle,
                 CASE
-                    WHEN (((d.code)::text <> (s.code)::text) OR ((d.code IS NULL) AND (s.code IS NOT NULL)) OR ((d.code IS NOT NULL) AND (s.code IS NULL))) THEN 1
+                    WHEN (((d.code)::text <> s.code) OR ((d.code IS NULL) AND (s.code IS NOT NULL)) OR ((d.code IS NOT NULL) AND (s.code IS NULL))) THEN 1
                     ELSE 0
                 END AS u_code,
                 CASE
@@ -3832,12 +6103,14 @@ CREATE VIEW public.v_diff_role AS
                     WHEN ((d.type_structure_dependant_id <> s.type_structure_dependant_id) OR ((d.type_structure_dependant_id IS NULL) AND (s.type_structure_dependant_id IS NOT NULL)) OR ((d.type_structure_dependant_id IS NOT NULL) AND (s.type_structure_dependant_id IS NULL))) THEN 1
                     ELSE 0
                 END AS u_type_structure_dependant_id,
+            s.source_id AS s_source_id,
             s.libelle AS s_libelle,
             s.code AS s_code,
             s.role_id AS s_role_id,
             s.these_dep AS s_these_dep,
             s.structure_id AS s_structure_id,
             s.type_structure_dependant_id AS s_type_structure_dependant_id,
+            d.source_id AS d_source_id,
             d.libelle AS d_libelle,
             d.code AS d_code,
             d.role_id AS d_role_id,
@@ -3851,18 +6124,21 @@ CREATE VIEW public.v_diff_role AS
  SELECT diff.source_code,
     diff.source_id,
     diff.operation,
+    diff.u_source_id,
     diff.u_libelle,
     diff.u_code,
     diff.u_role_id,
     diff.u_these_dep,
     diff.u_structure_id,
     diff.u_type_structure_dependant_id,
+    diff.s_source_id,
     diff.s_libelle,
     diff.s_code,
     diff.s_role_id,
     diff.s_these_dep,
     diff.s_structure_id,
     diff.s_type_structure_dependant_id,
+    diff.d_source_id,
     diff.d_libelle,
     diff.d_code,
     diff.d_role_id,
@@ -3870,7 +6146,7 @@ CREATE VIEW public.v_diff_role AS
     diff.d_structure_id,
     diff.d_type_structure_dependant_id
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((((diff.u_libelle + diff.u_code) + diff.u_role_id) + diff.u_these_dep) + diff.u_structure_id) + diff.u_type_structure_dependant_id))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((diff.u_source_id + diff.u_libelle) + diff.u_code) + diff.u_role_id) + diff.u_these_dep) + diff.u_structure_id) + diff.u_type_structure_dependant_id))));
 
 
 ALTER TABLE public.v_diff_role OWNER TO :dbuser;
@@ -3891,9 +6167,13 @@ CREATE VIEW public.v_diff_structure AS
                     ELSE NULL::text
                 END AS operation,
                 CASE
-                    WHEN (((d.code)::text <> (s.code)::text) OR ((d.code IS NULL) AND (s.code IS NOT NULL)) OR ((d.code IS NOT NULL) AND (s.code IS NULL))) THEN 1
+                    WHEN (((d.code)::text <> s.code) OR ((d.code IS NULL) AND (s.code IS NOT NULL)) OR ((d.code IS NOT NULL) AND (s.code IS NULL))) THEN 1
                     ELSE 0
                 END AS u_code,
+                CASE
+                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_source_id,
                 CASE
                     WHEN ((d.type_structure_id <> s.type_structure_id) OR ((d.type_structure_id IS NULL) AND (s.type_structure_id IS NOT NULL)) OR ((d.type_structure_id IS NOT NULL) AND (s.type_structure_id IS NULL))) THEN 1
                     ELSE 0
@@ -3907,10 +6187,12 @@ CREATE VIEW public.v_diff_structure AS
                     ELSE 0
                 END AS u_libelle,
             s.code AS s_code,
+            s.source_id AS s_source_id,
             s.type_structure_id AS s_type_structure_id,
             s.sigle AS s_sigle,
             s.libelle AS s_libelle,
             d.code AS d_code,
+            d.source_id AS d_source_id,
             d.type_structure_id AS d_type_structure_id,
             d.sigle AS d_sigle,
             d.libelle AS d_libelle
@@ -3922,19 +6204,22 @@ CREATE VIEW public.v_diff_structure AS
     diff.source_id,
     diff.operation,
     diff.u_code,
+    diff.u_source_id,
     diff.u_type_structure_id,
     diff.u_sigle,
     diff.u_libelle,
     diff.s_code,
+    diff.s_source_id,
     diff.s_type_structure_id,
     diff.s_sigle,
     diff.s_libelle,
     diff.d_code,
+    diff.d_source_id,
     diff.d_type_structure_id,
     diff.d_sigle,
     diff.d_libelle
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((diff.u_code + diff.u_type_structure_id) + diff.u_sigle) + diff.u_libelle))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((diff.u_code + diff.u_source_id) + diff.u_type_structure_id) + diff.u_sigle) + diff.u_libelle))));
 
 
 ALTER TABLE public.v_diff_structure OWNER TO :dbuser;
@@ -3954,6 +6239,10 @@ CREATE VIEW public.v_diff_these AS
                     WHEN ((s.source_code IS NULL) AND (d.source_code IS NOT NULL) AND ((d.histo_destruction IS NULL) OR (d.histo_destruction > ('now'::text)::timestamp(0) without time zone))) THEN 'delete'::text
                     ELSE NULL::text
                 END AS operation,
+                CASE
+                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_source_id,
                 CASE
                     WHEN ((d.etablissement_id <> s.etablissement_id) OR ((d.etablissement_id IS NULL) AND (s.etablissement_id IS NOT NULL)) OR ((d.etablissement_id IS NOT NULL) AND (s.etablissement_id IS NULL))) THEN 1
                     ELSE 0
@@ -3982,6 +6271,10 @@ CREATE VIEW public.v_diff_these AS
                     WHEN (((d.resultat)::numeric <> s.resultat) OR ((d.resultat IS NULL) AND (s.resultat IS NOT NULL)) OR ((d.resultat IS NOT NULL) AND (s.resultat IS NULL))) THEN 1
                     ELSE 0
                 END AS u_resultat,
+                CASE
+                    WHEN (((d.code_sise_disc)::text <> (s.code_sise_disc)::text) OR ((d.code_sise_disc IS NULL) AND (s.code_sise_disc IS NOT NULL)) OR ((d.code_sise_disc IS NOT NULL) AND (s.code_sise_disc IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_code_sise_disc,
                 CASE
                     WHEN (((d.lib_disc)::text <> (s.lib_disc)::text) OR ((d.lib_disc IS NULL) AND (s.lib_disc IS NOT NULL)) OR ((d.lib_disc IS NOT NULL) AND (s.lib_disc IS NULL))) THEN 1
                     ELSE 0
@@ -4038,6 +6331,7 @@ CREATE VIEW public.v_diff_these AS
                     WHEN ((d.date_transfert <> s.date_transfert) OR ((d.date_transfert IS NULL) AND (s.date_transfert IS NOT NULL)) OR ((d.date_transfert IS NOT NULL) AND (s.date_transfert IS NULL))) THEN 1
                     ELSE 0
                 END AS u_date_transfert,
+            s.source_id AS s_source_id,
             s.etablissement_id AS s_etablissement_id,
             s.doctorant_id AS s_doctorant_id,
             s.ecole_doct_id AS s_ecole_doct_id,
@@ -4045,6 +6339,7 @@ CREATE VIEW public.v_diff_these AS
             s.titre AS s_titre,
             s.etat_these AS s_etat_these,
             s.resultat AS s_resultat,
+            s.code_sise_disc AS s_code_sise_disc,
             s.lib_disc AS s_lib_disc,
             s.date_prem_insc AS s_date_prem_insc,
             s.date_prev_soutenance AS s_date_prev_soutenance,
@@ -4059,6 +6354,7 @@ CREATE VIEW public.v_diff_these AS
             s.tem_avenant_cotut AS s_tem_avenant_cotut,
             s.date_abandon AS s_date_abandon,
             s.date_transfert AS s_date_transfert,
+            d.source_id AS d_source_id,
             d.etablissement_id AS d_etablissement_id,
             d.doctorant_id AS d_doctorant_id,
             d.ecole_doct_id AS d_ecole_doct_id,
@@ -4066,6 +6362,7 @@ CREATE VIEW public.v_diff_these AS
             d.titre AS d_titre,
             d.etat_these AS d_etat_these,
             d.resultat AS d_resultat,
+            d.code_sise_disc AS d_code_sise_disc,
             d.lib_disc AS d_lib_disc,
             d.date_prem_insc AS d_date_prem_insc,
             d.date_prev_soutenance AS d_date_prev_soutenance,
@@ -4087,6 +6384,7 @@ CREATE VIEW public.v_diff_these AS
  SELECT diff.source_code,
     diff.source_id,
     diff.operation,
+    diff.u_source_id,
     diff.u_etablissement_id,
     diff.u_doctorant_id,
     diff.u_ecole_doct_id,
@@ -4094,6 +6392,7 @@ CREATE VIEW public.v_diff_these AS
     diff.u_titre,
     diff.u_etat_these,
     diff.u_resultat,
+    diff.u_code_sise_disc,
     diff.u_lib_disc,
     diff.u_date_prem_insc,
     diff.u_date_prev_soutenance,
@@ -4108,6 +6407,7 @@ CREATE VIEW public.v_diff_these AS
     diff.u_tem_avenant_cotut,
     diff.u_date_abandon,
     diff.u_date_transfert,
+    diff.s_source_id,
     diff.s_etablissement_id,
     diff.s_doctorant_id,
     diff.s_ecole_doct_id,
@@ -4115,6 +6415,7 @@ CREATE VIEW public.v_diff_these AS
     diff.s_titre,
     diff.s_etat_these,
     diff.s_resultat,
+    diff.s_code_sise_disc,
     diff.s_lib_disc,
     diff.s_date_prem_insc,
     diff.s_date_prev_soutenance,
@@ -4129,6 +6430,7 @@ CREATE VIEW public.v_diff_these AS
     diff.s_tem_avenant_cotut,
     diff.s_date_abandon,
     diff.s_date_transfert,
+    diff.d_source_id,
     diff.d_etablissement_id,
     diff.d_doctorant_id,
     diff.d_ecole_doct_id,
@@ -4136,6 +6438,7 @@ CREATE VIEW public.v_diff_these AS
     diff.d_titre,
     diff.d_etat_these,
     diff.d_resultat,
+    diff.d_code_sise_disc,
     diff.d_lib_disc,
     diff.d_date_prem_insc,
     diff.d_date_prev_soutenance,
@@ -4151,7 +6454,7 @@ CREATE VIEW public.v_diff_these AS
     diff.d_date_abandon,
     diff.d_date_transfert
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((((((((((((((((diff.u_etablissement_id + diff.u_doctorant_id) + diff.u_ecole_doct_id) + diff.u_unite_rech_id) + diff.u_titre) + diff.u_etat_these) + diff.u_resultat) + diff.u_lib_disc) + diff.u_date_prem_insc) + diff.u_date_prev_soutenance) + diff.u_date_soutenance) + diff.u_date_fin_confid) + diff.u_lib_etab_cotut) + diff.u_lib_pays_cotut) + diff.u_correc_autorisee) + diff.u_correc_effectuee) + diff.u_soutenance_autoris) + diff.u_date_autoris_soutenance) + diff.u_tem_avenant_cotut) + diff.u_date_abandon) + diff.u_date_transfert))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((((((((((((((((((diff.u_source_id + diff.u_etablissement_id) + diff.u_doctorant_id) + diff.u_ecole_doct_id) + diff.u_unite_rech_id) + diff.u_titre) + diff.u_etat_these) + diff.u_resultat) + diff.u_code_sise_disc) + diff.u_lib_disc) + diff.u_date_prem_insc) + diff.u_date_prev_soutenance) + diff.u_date_soutenance) + diff.u_date_fin_confid) + diff.u_lib_etab_cotut) + diff.u_lib_pays_cotut) + diff.u_correc_autorisee) + diff.u_correc_effectuee) + diff.u_soutenance_autoris) + diff.u_date_autoris_soutenance) + diff.u_tem_avenant_cotut) + diff.u_date_abandon) + diff.u_date_transfert))));
 
 
 ALTER TABLE public.v_diff_these OWNER TO :dbuser;
@@ -4172,6 +6475,10 @@ CREATE VIEW public.v_diff_these_annee_univ AS
                     ELSE NULL::text
                 END AS operation,
                 CASE
+                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_source_id,
+                CASE
                     WHEN ((d.these_id <> s.these_id) OR ((d.these_id IS NULL) AND (s.these_id IS NOT NULL)) OR ((d.these_id IS NOT NULL) AND (s.these_id IS NULL))) THEN 1
                     ELSE 0
                 END AS u_these_id,
@@ -4179,8 +6486,10 @@ CREATE VIEW public.v_diff_these_annee_univ AS
                     WHEN ((d.annee_univ <> s.annee_univ) OR ((d.annee_univ IS NULL) AND (s.annee_univ IS NOT NULL)) OR ((d.annee_univ IS NOT NULL) AND (s.annee_univ IS NULL))) THEN 1
                     ELSE 0
                 END AS u_annee_univ,
+            s.source_id AS s_source_id,
             s.these_id AS s_these_id,
             s.annee_univ AS s_annee_univ,
+            d.source_id AS d_source_id,
             d.these_id AS d_these_id,
             d.annee_univ AS d_annee_univ
            FROM ((public.these_annee_univ d
@@ -4190,14 +6499,17 @@ CREATE VIEW public.v_diff_these_annee_univ AS
  SELECT diff.source_code,
     diff.source_id,
     diff.operation,
+    diff.u_source_id,
     diff.u_these_id,
     diff.u_annee_univ,
+    diff.s_source_id,
     diff.s_these_id,
     diff.s_annee_univ,
+    diff.d_source_id,
     diff.d_these_id,
     diff.d_annee_univ
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (diff.u_these_id + diff.u_annee_univ))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((diff.u_source_id + diff.u_these_id) + diff.u_annee_univ))));
 
 
 ALTER TABLE public.v_diff_these_annee_univ OWNER TO :dbuser;
@@ -4217,6 +6529,10 @@ CREATE VIEW public.v_diff_titre_acces AS
                     WHEN ((s.source_code IS NULL) AND (d.source_code IS NOT NULL) AND ((d.histo_destruction IS NULL) OR (d.histo_destruction > ('now'::text)::timestamp(0) without time zone))) THEN 'delete'::text
                     ELSE NULL::text
                 END AS operation,
+                CASE
+                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_source_id,
                 CASE
                     WHEN ((d.these_id <> s.these_id) OR ((d.these_id IS NULL) AND (s.these_id IS NOT NULL)) OR ((d.these_id IS NOT NULL) AND (s.these_id IS NULL))) THEN 1
                     ELSE 0
@@ -4245,6 +6561,7 @@ CREATE VIEW public.v_diff_titre_acces AS
                     WHEN (((d.code_pays_titre_acces)::text <> (s.code_pays_titre_acces)::text) OR ((d.code_pays_titre_acces IS NULL) AND (s.code_pays_titre_acces IS NOT NULL)) OR ((d.code_pays_titre_acces IS NOT NULL) AND (s.code_pays_titre_acces IS NULL))) THEN 1
                     ELSE 0
                 END AS u_code_pays_titre_acces,
+            s.source_id AS s_source_id,
             s.these_id AS s_these_id,
             s.titre_acces_interne_externe AS s_titre_acces_interne_externe,
             s.libelle_titre_acces AS s_libelle_titre_acces,
@@ -4252,6 +6569,7 @@ CREATE VIEW public.v_diff_titre_acces AS
             s.libelle_etb_titre_acces AS s_libelle_etb_titre_acces,
             s.code_dept_titre_acces AS s_code_dept_titre_acces,
             s.code_pays_titre_acces AS s_code_pays_titre_acces,
+            d.source_id AS d_source_id,
             d.these_id AS d_these_id,
             d.titre_acces_interne_externe AS d_titre_acces_interne_externe,
             d.libelle_titre_acces AS d_libelle_titre_acces,
@@ -4266,6 +6584,7 @@ CREATE VIEW public.v_diff_titre_acces AS
  SELECT diff.source_code,
     diff.source_id,
     diff.operation,
+    diff.u_source_id,
     diff.u_these_id,
     diff.u_titre_acces_interne_externe,
     diff.u_libelle_titre_acces,
@@ -4273,6 +6592,7 @@ CREATE VIEW public.v_diff_titre_acces AS
     diff.u_libelle_etb_titre_acces,
     diff.u_code_dept_titre_acces,
     diff.u_code_pays_titre_acces,
+    diff.s_source_id,
     diff.s_these_id,
     diff.s_titre_acces_interne_externe,
     diff.s_libelle_titre_acces,
@@ -4280,6 +6600,7 @@ CREATE VIEW public.v_diff_titre_acces AS
     diff.s_libelle_etb_titre_acces,
     diff.s_code_dept_titre_acces,
     diff.s_code_pays_titre_acces,
+    diff.d_source_id,
     diff.d_these_id,
     diff.d_titre_acces_interne_externe,
     diff.d_libelle_titre_acces,
@@ -4288,7 +6609,7 @@ CREATE VIEW public.v_diff_titre_acces AS
     diff.d_code_dept_titre_acces,
     diff.d_code_pays_titre_acces
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((diff.u_these_id + diff.u_titre_acces_interne_externe) + diff.u_libelle_titre_acces) + diff.u_type_etb_titre_acces) + diff.u_libelle_etb_titre_acces) + diff.u_code_dept_titre_acces) + diff.u_code_pays_titre_acces))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((((((diff.u_source_id + diff.u_these_id) + diff.u_titre_acces_interne_externe) + diff.u_libelle_titre_acces) + diff.u_type_etb_titre_acces) + diff.u_libelle_etb_titre_acces) + diff.u_code_dept_titre_acces) + diff.u_code_pays_titre_acces))));
 
 
 ALTER TABLE public.v_diff_titre_acces OWNER TO :dbuser;
@@ -4309,10 +6630,16 @@ CREATE VIEW public.v_diff_unite_rech AS
                     ELSE NULL::text
                 END AS operation,
                 CASE
+                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_source_id,
+                CASE
                     WHEN ((d.structure_id <> s.structure_id) OR ((d.structure_id IS NULL) AND (s.structure_id IS NOT NULL)) OR ((d.structure_id IS NOT NULL) AND (s.structure_id IS NULL))) THEN 1
                     ELSE 0
                 END AS u_structure_id,
+            s.source_id AS s_source_id,
             s.structure_id AS s_structure_id,
+            d.source_id AS d_source_id,
             d.structure_id AS d_structure_id
            FROM ((public.unite_rech d
              JOIN public.source src ON (((src.id = d.source_id) AND (src.importable = true))))
@@ -4321,11 +6648,14 @@ CREATE VIEW public.v_diff_unite_rech AS
  SELECT diff.source_code,
     diff.source_id,
     diff.operation,
+    diff.u_source_id,
     diff.u_structure_id,
+    diff.s_source_id,
     diff.s_structure_id,
+    diff.d_source_id,
     diff.d_structure_id
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < diff.u_structure_id)));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (diff.u_source_id + diff.u_structure_id))));
 
 
 ALTER TABLE public.v_diff_unite_rech OWNER TO :dbuser;
@@ -4378,6 +6708,10 @@ CREATE VIEW public.v_diff_variable AS
                     ELSE NULL::text
                 END AS operation,
                 CASE
+                    WHEN ((d.source_id <> s.source_id) OR ((d.source_id IS NULL) AND (s.source_id IS NOT NULL)) OR ((d.source_id IS NOT NULL) AND (s.source_id IS NULL))) THEN 1
+                    ELSE 0
+                END AS u_source_id,
+                CASE
                     WHEN ((d.etablissement_id <> s.etablissement_id) OR ((d.etablissement_id IS NULL) AND (s.etablissement_id IS NOT NULL)) OR ((d.etablissement_id IS NOT NULL) AND (s.etablissement_id IS NULL))) THEN 1
                     ELSE 0
                 END AS u_etablissement_id,
@@ -4401,12 +6735,14 @@ CREATE VIEW public.v_diff_variable AS
                     WHEN ((d.date_fin_validite <> s.date_fin_validite) OR ((d.date_fin_validite IS NULL) AND (s.date_fin_validite IS NOT NULL)) OR ((d.date_fin_validite IS NOT NULL) AND (s.date_fin_validite IS NULL))) THEN 1
                     ELSE 0
                 END AS u_date_fin_validite,
+            s.source_id AS s_source_id,
             s.etablissement_id AS s_etablissement_id,
             s.code AS s_code,
             s.description AS s_description,
             s.valeur AS s_valeur,
             s.date_deb_validite AS s_date_deb_validite,
             s.date_fin_validite AS s_date_fin_validite,
+            d.source_id AS d_source_id,
             d.etablissement_id AS d_etablissement_id,
             d.code AS d_code,
             d.description AS d_description,
@@ -4420,18 +6756,21 @@ CREATE VIEW public.v_diff_variable AS
  SELECT diff.source_code,
     diff.source_id,
     diff.operation,
+    diff.u_source_id,
     diff.u_etablissement_id,
     diff.u_code,
     diff.u_description,
     diff.u_valeur,
     diff.u_date_deb_validite,
     diff.u_date_fin_validite,
+    diff.s_source_id,
     diff.s_etablissement_id,
     diff.s_code,
     diff.s_description,
     diff.s_valeur,
     diff.s_date_deb_validite,
     diff.s_date_fin_validite,
+    diff.d_source_id,
     diff.d_etablissement_id,
     diff.d_code,
     diff.d_description,
@@ -4439,10 +6778,54 @@ CREATE VIEW public.v_diff_variable AS
     diff.d_date_deb_validite,
     diff.d_date_fin_validite
    FROM diff
-  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < (((((diff.u_etablissement_id + diff.u_code) + diff.u_description) + diff.u_valeur) + diff.u_date_deb_validite) + diff.u_date_fin_validite))));
+  WHERE ((diff.operation IS NOT NULL) AND ((diff.operation = 'undelete'::text) OR (0 < ((((((diff.u_source_id + diff.u_etablissement_id) + diff.u_code) + diff.u_description) + diff.u_valeur) + diff.u_date_deb_validite) + diff.u_date_fin_validite))));
 
 
 ALTER TABLE public.v_diff_variable OWNER TO :dbuser;
+
+--
+-- Name: v_individu_insa_double; Type: VIEW; Schema: public; Owner: :dbuser
+--
+
+CREATE VIEW public.v_individu_insa_double AS
+ WITH comptes(supann_id, nb) AS (
+         SELECT individu.supann_id,
+            count(*) AS count
+           FROM public.individu
+          WHERE ((individu.source_id = 2) AND ((individu.type)::text = 'doctorant'::text))
+          GROUP BY individu.supann_id
+         HAVING (count(*) > 1)
+        )
+ SELECT comptes.nb,
+    i.id,
+    i.type,
+    i.civilite,
+    i.nom_usuel,
+    i.nom_patronymique,
+    i.prenom1,
+    i.prenom2,
+    i.prenom3,
+    i.email,
+    i.date_naissance,
+    i.nationalite,
+    i.source_code,
+    i.source_id,
+    i.histo_createur_id,
+    i.histo_creation,
+    i.histo_modificateur_id,
+    i.histo_modification,
+    i.histo_destructeur_id,
+    i.histo_destruction,
+    i.supann_id,
+    i.etablissement_id,
+    i.pays_id_nationalite,
+    i.id_ref
+   FROM comptes,
+    public.individu i
+  WHERE (((i.supann_id)::text = (comptes.supann_id)::text) AND (i.source_id = 2));
+
+
+ALTER TABLE public.v_individu_insa_double OWNER TO :dbuser;
 
 --
 -- Name: validite_fichier; Type: TABLE; Schema: public; Owner: :dbuser
@@ -4464,19 +6847,6 @@ CREATE TABLE public.validite_fichier (
 
 
 ALTER TABLE public.validite_fichier OWNER TO :dbuser;
-
---
--- Name: version_fichier; Type: TABLE; Schema: public; Owner: :dbuser
---
-
-CREATE TABLE public.version_fichier (
-    id bigint NOT NULL,
-    code character varying(16) NOT NULL,
-    libelle character varying(128) NOT NULL
-);
-
-
-ALTER TABLE public.version_fichier OWNER TO :dbuser;
 
 --
 -- Name: v_situ_archivab_va; Type: VIEW; Schema: public; Owner: :dbuser
@@ -4902,6 +7272,7 @@ CREATE VIEW public.v_these_annee_univ_first AS
  WITH firsts(source_code) AS (
          SELECT DISTINCT first_value(these_annee_univ.source_code) OVER (PARTITION BY these_annee_univ.these_id ORDER BY these_annee_univ.annee_univ) AS first_value
            FROM public.these_annee_univ
+          WHERE (these_annee_univ.histo_destruction IS NULL)
         )
  SELECT au.id,
     au.source_code,
@@ -4919,719 +7290,6 @@ CREATE VIEW public.v_these_annee_univ_first AS
 
 
 ALTER TABLE public.v_these_annee_univ_first OWNER TO :dbuser;
-
---
--- Name: v_tmp_anomalie; Type: VIEW; Schema: public; Owner: :dbuser
---
-
-CREATE VIEW public.v_tmp_anomalie AS
- WITH ds(etablissement_id, table_name, source_code, table_column, column_value, description) AS (
-         SELECT tmp.etablissement_id,
-            'TMP_ACTEUR'::text,
-            tmp.source_code,
-            'ETABLISSEMENT_ID'::text,
-            tmp.etablissement_id,
-            ('Aucun enregistrement existant dans ETABLISSEMENT avec CODE = '::text || (tmp.etablissement_id)::text)
-           FROM public.tmp_acteur tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.sigle,
-                    t.libelle,
-                    t.chemin_logo,
-                    t.type_structure_id,
-                    t.histo_creation,
-                    t.histo_createur_id,
-                    t.histo_modification,
-                    t.histo_modificateur_id,
-                    t.histo_destruction,
-                    t.histo_destructeur_id,
-                    t.source_id,
-                    t.source_code,
-                    t.code,
-                    t.est_ferme,
-                    t.adresse,
-                    t.telephone,
-                    t.fax,
-                    t.email,
-                    t.site_web,
-                    t.id_ref
-                   FROM public.structure t
-                  WHERE ((t.code)::text = (tmp.etablissement_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_ACTEUR'::text,
-            tmp.source_code,
-            'SOURCE_ID'::text,
-            tmp.source_id,
-            ('Aucun enregistrement existant dans SOURCE avec CODE = '::text || (tmp.source_id)::text)
-           FROM public.tmp_acteur tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.code,
-                    t.libelle,
-                    t.importable,
-                    t.etablissement_id
-                   FROM public.source t
-                  WHERE ((t.code)::text = (tmp.source_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_ACTEUR'::text,
-            tmp.source_code,
-            'INDIVIDU_ID'::text,
-            tmp.individu_id,
-            ('Aucun enregistrement existant dans TMP_INDIVIDU avec SOURCE_CODE = '::text || (tmp.individu_id)::text)
-           FROM public.tmp_acteur tmp
-          WHERE (NOT (EXISTS ( SELECT t.insert_date,
-                    t.id,
-                    t.etablissement_id,
-                    t.source_id,
-                    t.source_code,
-                    t.type,
-                    t.civ,
-                    t.lib_nom_usu_ind,
-                    t.lib_nom_pat_ind,
-                    t.lib_pr1_ind,
-                    t.lib_pr2_ind,
-                    t.lib_pr3_ind,
-                    t.email,
-                    t.dat_nai_per,
-                    t.lib_nat,
-                    t.supann_id,
-                    t.source_insert_date
-                   FROM public.tmp_individu t
-                  WHERE ((t.source_code)::text = (tmp.individu_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_ACTEUR'::text,
-            tmp.source_code,
-            'THESE_ID'::text,
-            tmp.these_id,
-            ('Aucun enregistrement existant dans TMP_THESE avec SOURCE_CODE = '::text || (tmp.these_id)::text)
-           FROM public.tmp_acteur tmp
-          WHERE (NOT (EXISTS ( SELECT t.insert_date,
-                    t.id,
-                    t.etablissement_id,
-                    t.source_id,
-                    t.source_code,
-                    t.doctorant_id,
-                    t.ecole_doct_id,
-                    t.unite_rech_id,
-                    t.correction_possible,
-                    t.dat_aut_sou_ths,
-                    t.dat_fin_cfd_ths,
-                    t.dat_deb_ths,
-                    t.dat_prev_sou,
-                    t.dat_sou_ths,
-                    t.eta_ths,
-                    t.lib_int1_dis,
-                    t.lib_etab_cotut,
-                    t.lib_pays_cotut,
-                    t.cod_neg_tre,
-                    t.tem_sou_aut_ths,
-                    t.tem_avenant_cotut,
-                    t.lib_ths,
-                    t.annee_univ_1ere_insc,
-                    t.dat_abandon,
-                    t.dat_transfert_dep,
-                    t.source_insert_date,
-                    t.correction_effectuee
-                   FROM public.tmp_these t
-                  WHERE ((t.source_code)::text = (tmp.these_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_ACTEUR'::text,
-            tmp.source_code,
-            'ROLE_ID'::text,
-            tmp.role_id,
-            ('Aucun enregistrement existant dans TMP_ROLE avec SOURCE_CODE = '::text || (tmp.role_id)::text)
-           FROM public.tmp_acteur tmp
-          WHERE (NOT (EXISTS ( SELECT t.insert_date,
-                    t.id,
-                    t.etablissement_id,
-                    t.source_id,
-                    t.source_code,
-                    t.lib_roj,
-                    t.lic_roj,
-                    t.source_insert_date
-                   FROM public.tmp_role t
-                  WHERE ((t.source_code)::text = (tmp.role_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_DOCTORANT'::text,
-            tmp.source_code,
-            'ETABLISSEMENT_ID'::text,
-            tmp.etablissement_id,
-            ('Aucun enregistrement existant dans ETABLISSEMENT avec CODE = '::text || (tmp.etablissement_id)::text)
-           FROM public.tmp_doctorant tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.sigle,
-                    t.libelle,
-                    t.chemin_logo,
-                    t.type_structure_id,
-                    t.histo_creation,
-                    t.histo_createur_id,
-                    t.histo_modification,
-                    t.histo_modificateur_id,
-                    t.histo_destruction,
-                    t.histo_destructeur_id,
-                    t.source_id,
-                    t.source_code,
-                    t.code,
-                    t.est_ferme,
-                    t.adresse,
-                    t.telephone,
-                    t.fax,
-                    t.email,
-                    t.site_web,
-                    t.id_ref
-                   FROM public.structure t
-                  WHERE ((t.code)::text = (tmp.etablissement_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_DOCTORANT'::text,
-            tmp.source_code,
-            'SOURCE_ID'::text,
-            tmp.source_id,
-            ('Aucun enregistrement existant dans SOURCE avec CODE = '::text || (tmp.source_id)::text)
-           FROM public.tmp_doctorant tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.code,
-                    t.libelle,
-                    t.importable,
-                    t.etablissement_id
-                   FROM public.source t
-                  WHERE ((t.code)::text = (tmp.source_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_DOCTORANT'::text,
-            tmp.source_code,
-            'INDIVIDU_ID'::text,
-            tmp.individu_id,
-            ('Aucun enregistrement existant dans TMP_INDIVIDU avec SOURCE_CODE = '::text || (tmp.individu_id)::text)
-           FROM public.tmp_doctorant tmp
-          WHERE (NOT (EXISTS ( SELECT t.insert_date,
-                    t.id,
-                    t.etablissement_id,
-                    t.source_id,
-                    t.source_code,
-                    t.type,
-                    t.civ,
-                    t.lib_nom_usu_ind,
-                    t.lib_nom_pat_ind,
-                    t.lib_pr1_ind,
-                    t.lib_pr2_ind,
-                    t.lib_pr3_ind,
-                    t.email,
-                    t.dat_nai_per,
-                    t.lib_nat,
-                    t.supann_id,
-                    t.source_insert_date
-                   FROM public.tmp_individu t
-                  WHERE ((t.source_code)::text = (tmp.individu_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_ECOLE_DOCT'::text,
-            tmp.source_code,
-            'ETABLISSEMENT_ID'::text,
-            tmp.etablissement_id,
-            ('Aucun enregistrement existant dans ETABLISSEMENT avec CODE = '::text || (tmp.etablissement_id)::text)
-           FROM public.tmp_ecole_doct tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.sigle,
-                    t.libelle,
-                    t.chemin_logo,
-                    t.type_structure_id,
-                    t.histo_creation,
-                    t.histo_createur_id,
-                    t.histo_modification,
-                    t.histo_modificateur_id,
-                    t.histo_destruction,
-                    t.histo_destructeur_id,
-                    t.source_id,
-                    t.source_code,
-                    t.code,
-                    t.est_ferme,
-                    t.adresse,
-                    t.telephone,
-                    t.fax,
-                    t.email,
-                    t.site_web,
-                    t.id_ref
-                   FROM public.structure t
-                  WHERE ((t.code)::text = (tmp.etablissement_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_ECOLE_DOCT'::text,
-            tmp.source_code,
-            'SOURCE_ID'::text,
-            tmp.source_id,
-            ('Aucun enregistrement existant dans SOURCE avec CODE = '::text || (tmp.source_id)::text)
-           FROM public.tmp_ecole_doct tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.code,
-                    t.libelle,
-                    t.importable,
-                    t.etablissement_id
-                   FROM public.source t
-                  WHERE ((t.code)::text = (tmp.source_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_ECOLE_DOCT'::text,
-            tmp.source_code,
-            'STRUCTURE_ID'::text,
-            tmp.structure_id,
-            ('Aucun enregistrement existant dans TMP_STRUCTURE avec SOURCE_CODE = '::text || (tmp.structure_id)::text)
-           FROM public.tmp_ecole_doct tmp
-          WHERE (NOT (EXISTS ( SELECT t.insert_date,
-                    t.id,
-                    t.etablissement_id,
-                    t.source_id,
-                    t.source_code,
-                    t.type_structure_id,
-                    t.sigle,
-                    t.libelle,
-                    t.code_pays,
-                    t.libelle_pays,
-                    t.code,
-                    t.source_insert_date
-                   FROM public.tmp_structure t
-                  WHERE ((t.source_code)::text = (tmp.structure_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_ETABLISSEMENT'::text,
-            tmp.source_code,
-            'ETABLISSEMENT_ID'::text,
-            tmp.etablissement_id,
-            ('Aucun enregistrement existant dans ETABLISSEMENT avec CODE = '::text || (tmp.etablissement_id)::text)
-           FROM public.tmp_structure tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.sigle,
-                    t.libelle,
-                    t.chemin_logo,
-                    t.type_structure_id,
-                    t.histo_creation,
-                    t.histo_createur_id,
-                    t.histo_modification,
-                    t.histo_modificateur_id,
-                    t.histo_destruction,
-                    t.histo_destructeur_id,
-                    t.source_id,
-                    t.source_code,
-                    t.code,
-                    t.est_ferme,
-                    t.adresse,
-                    t.telephone,
-                    t.fax,
-                    t.email,
-                    t.site_web,
-                    t.id_ref
-                   FROM public.structure t
-                  WHERE ((t.code)::text = (tmp.etablissement_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_ETABLISSEMENT'::text,
-            tmp.source_code,
-            'SOURCE_ID'::text,
-            tmp.source_id,
-            ('Aucun enregistrement existant dans SOURCE avec CODE = '::text || (tmp.source_id)::text)
-           FROM public.tmp_etablissement tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.code,
-                    t.libelle,
-                    t.importable,
-                    t.etablissement_id
-                   FROM public.source t
-                  WHERE ((t.code)::text = (tmp.source_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_ETABLISSEMENT'::text,
-            tmp.source_code,
-            'STRUCTURE_ID'::text,
-            tmp.structure_id,
-            ('Aucun enregistrement existant dans TMP_STRUCTURE avec SOURCE_CODE = '::text || (tmp.structure_id)::text)
-           FROM public.tmp_etablissement tmp
-          WHERE (NOT (EXISTS ( SELECT t.insert_date,
-                    t.id,
-                    t.etablissement_id,
-                    t.structure_id,
-                    t.source_id,
-                    t.source_code,
-                    t.source_insert_date
-                   FROM public.tmp_etablissement t
-                  WHERE ((t.source_code)::text = (tmp.structure_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_INDIVIDU'::text,
-            tmp.source_code,
-            'ETABLISSEMENT_ID'::text,
-            tmp.etablissement_id,
-            ('Aucun enregistrement existant dans ETABLISSEMENT avec CODE = '::text || (tmp.etablissement_id)::text)
-           FROM public.tmp_individu tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.sigle,
-                    t.libelle,
-                    t.chemin_logo,
-                    t.type_structure_id,
-                    t.histo_creation,
-                    t.histo_createur_id,
-                    t.histo_modification,
-                    t.histo_modificateur_id,
-                    t.histo_destruction,
-                    t.histo_destructeur_id,
-                    t.source_id,
-                    t.source_code,
-                    t.code,
-                    t.est_ferme,
-                    t.adresse,
-                    t.telephone,
-                    t.fax,
-                    t.email,
-                    t.site_web,
-                    t.id_ref
-                   FROM public.structure t
-                  WHERE ((t.code)::text = (tmp.etablissement_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_INDIVIDU'::text,
-            tmp.source_code,
-            'SOURCE_ID'::text,
-            tmp.source_id,
-            ('Aucun enregistrement existant dans SOURCE avec CODE = '::text || (tmp.source_id)::text)
-           FROM public.tmp_individu tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.code,
-                    t.libelle,
-                    t.importable,
-                    t.etablissement_id
-                   FROM public.source t
-                  WHERE ((t.code)::text = (tmp.source_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_ROLE'::text,
-            tmp.source_code,
-            'ETABLISSEMENT_ID'::text,
-            tmp.etablissement_id,
-            ('Aucun enregistrement existant dans ETABLISSEMENT avec CODE = '::text || (tmp.etablissement_id)::text)
-           FROM public.tmp_role tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.sigle,
-                    t.libelle,
-                    t.chemin_logo,
-                    t.type_structure_id,
-                    t.histo_creation,
-                    t.histo_createur_id,
-                    t.histo_modification,
-                    t.histo_modificateur_id,
-                    t.histo_destruction,
-                    t.histo_destructeur_id,
-                    t.source_id,
-                    t.source_code,
-                    t.code,
-                    t.est_ferme,
-                    t.adresse,
-                    t.telephone,
-                    t.fax,
-                    t.email,
-                    t.site_web,
-                    t.id_ref
-                   FROM public.structure t
-                  WHERE ((t.code)::text = (tmp.etablissement_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_ROLE'::text,
-            tmp.source_code,
-            'SOURCE_ID'::text,
-            tmp.source_id,
-            ('Aucun enregistrement existant dans SOURCE avec CODE = '::text || (tmp.source_id)::text)
-           FROM public.tmp_role tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.code,
-                    t.libelle,
-                    t.importable,
-                    t.etablissement_id
-                   FROM public.source t
-                  WHERE ((t.code)::text = (tmp.source_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_STRUCTURE'::text,
-            tmp.source_code,
-            'ETABLISSEMENT_ID'::text,
-            tmp.etablissement_id,
-            ('Aucun enregistrement existant dans ETABLISSEMENT avec CODE = '::text || (tmp.etablissement_id)::text)
-           FROM public.tmp_structure tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.sigle,
-                    t.libelle,
-                    t.chemin_logo,
-                    t.type_structure_id,
-                    t.histo_creation,
-                    t.histo_createur_id,
-                    t.histo_modification,
-                    t.histo_modificateur_id,
-                    t.histo_destruction,
-                    t.histo_destructeur_id,
-                    t.source_id,
-                    t.source_code,
-                    t.code,
-                    t.est_ferme,
-                    t.adresse,
-                    t.telephone,
-                    t.fax,
-                    t.email,
-                    t.site_web,
-                    t.id_ref
-                   FROM public.structure t
-                  WHERE ((t.code)::text = (tmp.etablissement_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_STRUCTURE'::text,
-            tmp.source_code,
-            'SOURCE_ID'::text,
-            tmp.source_id,
-            ('Aucun enregistrement existant dans SOURCE avec CODE = '::text || (tmp.source_id)::text)
-           FROM public.tmp_structure tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.code,
-                    t.libelle,
-                    t.importable,
-                    t.etablissement_id
-                   FROM public.source t
-                  WHERE ((t.code)::text = (tmp.source_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_STRUCTURE'::text,
-            tmp.source_code,
-            'TYPE_STRUCTURE_ID'::text,
-            tmp.type_structure_id,
-            ('Aucun enregistrement existant dans TYPE_STRUCTURE avec CODE = '::text || (tmp.type_structure_id)::text)
-           FROM public.tmp_structure tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.code,
-                    t.libelle
-                   FROM public.type_structure t
-                  WHERE ((t.code)::text = (tmp.type_structure_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_THESE'::text,
-            tmp.source_code,
-            'ETABLISSEMENT_ID'::text,
-            tmp.etablissement_id,
-            ('Aucun enregistrement existant dans ETABLISSEMENT avec CODE = '::text || (tmp.etablissement_id)::text)
-           FROM public.tmp_these tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.sigle,
-                    t.libelle,
-                    t.chemin_logo,
-                    t.type_structure_id,
-                    t.histo_creation,
-                    t.histo_createur_id,
-                    t.histo_modification,
-                    t.histo_modificateur_id,
-                    t.histo_destruction,
-                    t.histo_destructeur_id,
-                    t.source_id,
-                    t.source_code,
-                    t.code,
-                    t.est_ferme,
-                    t.adresse,
-                    t.telephone,
-                    t.fax,
-                    t.email,
-                    t.site_web,
-                    t.id_ref
-                   FROM public.structure t
-                  WHERE ((t.code)::text = (tmp.etablissement_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_THESE'::text,
-            tmp.source_code,
-            'SOURCE_ID'::text,
-            tmp.source_id,
-            ('Aucun enregistrement existant dans SOURCE avec CODE = '::text || (tmp.source_id)::text)
-           FROM public.tmp_these tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.code,
-                    t.libelle,
-                    t.importable,
-                    t.etablissement_id
-                   FROM public.source t
-                  WHERE ((t.code)::text = (tmp.source_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_THESE'::text,
-            tmp.source_code,
-            'DOCTORANT_ID'::text,
-            tmp.doctorant_id,
-            ('Aucun enregistrement existant dans TMP_DOCTORANT avec SOURCE_CODE = '::text || (tmp.doctorant_id)::text)
-           FROM public.tmp_these tmp
-          WHERE (NOT (EXISTS ( SELECT t.insert_date,
-                    t.id,
-                    t.etablissement_id,
-                    t.source_id,
-                    t.source_code,
-                    t.individu_id,
-                    t.ine,
-                    t.source_insert_date
-                   FROM public.tmp_doctorant t
-                  WHERE ((t.source_code)::text = (tmp.doctorant_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_THESE'::text,
-            tmp.source_code,
-            'ECOLE_DOCT_ID'::text,
-            tmp.ecole_doct_id,
-            ('Aucun enregistrement existant dans TMP_ECOLE_DOCT avec SOURCE_CODE = '::text || (tmp.ecole_doct_id)::text)
-           FROM public.tmp_these tmp
-          WHERE (NOT (EXISTS ( SELECT t.insert_date,
-                    t.id,
-                    t.etablissement_id,
-                    t.structure_id,
-                    t.source_id,
-                    t.source_code,
-                    t.source_insert_date
-                   FROM public.tmp_ecole_doct t
-                  WHERE ((t.source_code)::text = (tmp.ecole_doct_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_THESE'::text,
-            tmp.source_code,
-            'UNITE_RECH_ID'::text,
-            tmp.unite_rech_id,
-            ('Aucun enregistrement existant dans TMP_UNITE_RECH avec SOURCE_CODE = '::text || (tmp.unite_rech_id)::text)
-           FROM public.tmp_these tmp
-          WHERE (NOT (EXISTS ( SELECT t.insert_date,
-                    t.id,
-                    t.etablissement_id,
-                    t.structure_id,
-                    t.source_id,
-                    t.source_code,
-                    t.source_insert_date
-                   FROM public.tmp_unite_rech t
-                  WHERE ((t.source_code)::text = (tmp.unite_rech_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_UNITE_RECH'::text,
-            tmp.source_code,
-            'ETABLISSEMENT_ID'::text,
-            tmp.etablissement_id,
-            ('Aucun enregistrement existant dans ETABLISSEMENT avec CODE = '::text || (tmp.etablissement_id)::text)
-           FROM public.tmp_unite_rech tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.sigle,
-                    t.libelle,
-                    t.chemin_logo,
-                    t.type_structure_id,
-                    t.histo_creation,
-                    t.histo_createur_id,
-                    t.histo_modification,
-                    t.histo_modificateur_id,
-                    t.histo_destruction,
-                    t.histo_destructeur_id,
-                    t.source_id,
-                    t.source_code,
-                    t.code,
-                    t.est_ferme,
-                    t.adresse,
-                    t.telephone,
-                    t.fax,
-                    t.email,
-                    t.site_web,
-                    t.id_ref
-                   FROM public.structure t
-                  WHERE ((t.code)::text = (tmp.etablissement_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_UNITE_RECH'::text,
-            tmp.source_code,
-            'SOURCE_ID'::text,
-            tmp.source_id,
-            ('Aucun enregistrement existant dans SOURCE avec CODE = '::text || (tmp.source_id)::text)
-           FROM public.tmp_unite_rech tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.code,
-                    t.libelle,
-                    t.importable,
-                    t.etablissement_id
-                   FROM public.source t
-                  WHERE ((t.code)::text = (tmp.source_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_UNITE_RECH'::text,
-            tmp.source_code,
-            'STRUCTURE_ID'::text,
-            tmp.structure_id,
-            ('Aucun enregistrement existant dans TMP_STRUCTURE avec SOURCE_CODE = '::text || (tmp.structure_id)::text)
-           FROM public.tmp_unite_rech tmp
-          WHERE (NOT (EXISTS ( SELECT t.insert_date,
-                    t.id,
-                    t.etablissement_id,
-                    t.source_id,
-                    t.source_code,
-                    t.type_structure_id,
-                    t.sigle,
-                    t.libelle,
-                    t.code_pays,
-                    t.libelle_pays,
-                    t.code,
-                    t.source_insert_date
-                   FROM public.tmp_structure t
-                  WHERE ((t.source_code)::text = (tmp.structure_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_VARIABLE'::text,
-            tmp.source_code,
-            'ETABLISSEMENT_ID'::text,
-            tmp.etablissement_id,
-            ('Aucun enregistrement existant dans ETABLISSEMENT avec CODE = '::text || (tmp.etablissement_id)::text)
-           FROM public.tmp_variable tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.sigle,
-                    t.libelle,
-                    t.chemin_logo,
-                    t.type_structure_id,
-                    t.histo_creation,
-                    t.histo_createur_id,
-                    t.histo_modification,
-                    t.histo_modificateur_id,
-                    t.histo_destruction,
-                    t.histo_destructeur_id,
-                    t.source_id,
-                    t.source_code,
-                    t.code,
-                    t.est_ferme,
-                    t.adresse,
-                    t.telephone,
-                    t.fax,
-                    t.email,
-                    t.site_web,
-                    t.id_ref
-                   FROM public.structure t
-                  WHERE ((t.code)::text = (tmp.etablissement_id)::text))))
-        UNION ALL
-         SELECT tmp.etablissement_id,
-            'TMP_VARIABLE'::text,
-            tmp.source_code,
-            'SOURCE_ID'::text,
-            tmp.source_id,
-            ('Aucun enregistrement existant dans SOURCE avec CODE = '::text || (tmp.source_id)::text)
-           FROM public.tmp_variable tmp
-          WHERE (NOT (EXISTS ( SELECT t.id,
-                    t.code,
-                    t.libelle,
-                    t.importable,
-                    t.etablissement_id
-                   FROM public.source t
-                  WHERE ((t.code)::text = (tmp.source_id)::text))))
-        )
- SELECT row_number() OVER (ORDER BY 1::integer, 2::integer, 3::integer, 4::integer, 5::integer, 6::integer) AS id,
-    ds.etablissement_id,
-    ds.table_name,
-    ds.source_code,
-    ds.table_column,
-    ds.column_value,
-    ds.description
-   FROM ds;
-
-
-ALTER TABLE public.v_tmp_anomalie OWNER TO :dbuser;
 
 --
 -- Name: wf_etape; Type: TABLE; Schema: public; Owner: :dbuser
@@ -5669,7 +7327,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
             e.ordre
            FROM (public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'VALIDATION_PAGE_DE_COUVERTURE'::text)))
-          WHERE ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[]))
+          WHERE ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text]))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5677,7 +7335,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
             e.ordre
            FROM (public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'DEPOT_VERSION_ORIGINALE'::text)))
-          WHERE ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[]))
+          WHERE ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text]))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5685,7 +7343,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
             e.ordre
            FROM (public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'AUTORISATION_DIFFUSION_THESE'::text)))
-          WHERE ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[]))
+          WHERE ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text]))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5693,7 +7351,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
             e.ordre
            FROM (public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'ATTESTATIONS'::text)))
-          WHERE ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[]))
+          WHERE ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text]))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5701,7 +7359,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
             e.ordre
            FROM (public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'SIGNALEMENT_THESE'::text)))
-          WHERE ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[]))
+          WHERE ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text]))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5709,7 +7367,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
             e.ordre
            FROM (public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'ARCHIVABILITE_VERSION_ORIGINALE'::text)))
-          WHERE ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[]))
+          WHERE ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text]))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5718,7 +7376,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
            FROM ((public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'DEPOT_VERSION_ARCHIVAGE'::text)))
              JOIN public.v_situ_archivab_vo situ ON (((situ.these_id = t.id) AND (situ.est_valide = false))))
-          WHERE ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[]))
+          WHERE ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text]))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5727,7 +7385,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
            FROM ((public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'ARCHIVABILITE_VERSION_ARCHIVAGE'::text)))
              JOIN public.v_situ_archivab_vo situ ON (((situ.these_id = t.id) AND (situ.est_valide = false))))
-          WHERE ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[]))
+          WHERE ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text]))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5736,7 +7394,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
            FROM ((public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'VERIFICATION_VERSION_ARCHIVAGE'::text)))
              JOIN public.v_situ_archivab_va situ ON (((situ.these_id = t.id) AND (situ.est_valide = true))))
-          WHERE ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[]))
+          WHERE ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text]))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5744,7 +7402,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
             e.ordre
            FROM (public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'RDV_BU_SAISIE_DOCTORANT'::text)))
-          WHERE ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[]))
+          WHERE ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text]))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5752,7 +7410,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
             e.ordre
            FROM (public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'RDV_BU_SAISIE_BU'::text)))
-          WHERE ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[]))
+          WHERE ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text]))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5760,7 +7418,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
             e.ordre
            FROM (public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'RDV_BU_VALIDATION_BU'::text)))
-          WHERE ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[]))
+          WHERE ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text]))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5768,7 +7426,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
             e.ordre
            FROM (public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'DEPOT_VERSION_ORIGINALE_CORRIGEE'::text)))
-          WHERE (((t.correc_autorisee IS NOT NULL) OR (t.correc_autorisee_forcee IS NOT NULL) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[])))
+          WHERE (((t.correc_autorisee IS NOT NULL) OR ((t.correc_autorisee_forcee IS NOT NULL) AND ((t.correc_autorisee_forcee)::text <> 'aucune'::text)) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text])))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5776,7 +7434,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
             e.ordre
            FROM (public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'AUTORISATION_DIFFUSION_THESE_VERSION_CORRIGEE'::text)))
-          WHERE (((t.correc_autorisee IS NOT NULL) OR (t.correc_autorisee_forcee IS NOT NULL) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[])))
+          WHERE (((t.correc_autorisee IS NOT NULL) OR ((t.correc_autorisee_forcee IS NOT NULL) AND ((t.correc_autorisee_forcee)::text <> 'aucune'::text)) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text])))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5784,7 +7442,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
             e.ordre
            FROM (public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'ATTESTATIONS_VERSION_CORRIGEE'::text)))
-          WHERE (((t.correc_autorisee IS NOT NULL) OR (t.correc_autorisee_forcee IS NOT NULL) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[])))
+          WHERE (((t.correc_autorisee IS NOT NULL) OR ((t.correc_autorisee_forcee IS NOT NULL) AND ((t.correc_autorisee_forcee)::text <> 'aucune'::text)) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text])))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5792,7 +7450,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
             e.ordre
            FROM (public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'ARCHIVABILITE_VERSION_ORIGINALE_CORRIGEE'::text)))
-          WHERE (((t.correc_autorisee IS NOT NULL) OR (t.correc_autorisee_forcee IS NOT NULL) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[])))
+          WHERE (((t.correc_autorisee IS NOT NULL) OR ((t.correc_autorisee_forcee IS NOT NULL) AND ((t.correc_autorisee_forcee)::text <> 'aucune'::text)) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text])))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5801,7 +7459,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
            FROM ((public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'DEPOT_VERSION_ARCHIVAGE_CORRIGEE'::text)))
              JOIN public.v_situ_archivab_voc situ ON (((situ.these_id = t.id) AND (situ.est_valide = false))))
-          WHERE (((t.correc_autorisee IS NOT NULL) OR (t.correc_autorisee_forcee IS NOT NULL) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[])))
+          WHERE (((t.correc_autorisee IS NOT NULL) OR ((t.correc_autorisee_forcee IS NOT NULL) AND ((t.correc_autorisee_forcee)::text <> 'aucune'::text)) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text])))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5810,7 +7468,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
            FROM ((public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'ARCHIVABILITE_VERSION_ARCHIVAGE_CORRIGEE'::text)))
              JOIN public.v_situ_archivab_voc situ ON (((situ.these_id = t.id) AND (situ.est_valide = false))))
-          WHERE (((t.correc_autorisee IS NOT NULL) OR (t.correc_autorisee_forcee IS NOT NULL) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[])))
+          WHERE (((t.correc_autorisee IS NOT NULL) OR ((t.correc_autorisee_forcee IS NOT NULL) AND ((t.correc_autorisee_forcee)::text <> 'aucune'::text)) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text])))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5819,7 +7477,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
            FROM ((public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'VERIFICATION_VERSION_ARCHIVAGE_CORRIGEE'::text)))
              JOIN public.v_situ_archivab_vac situ ON (((situ.these_id = t.id) AND (situ.est_valide = true))))
-          WHERE (((t.correc_autorisee IS NOT NULL) OR (t.correc_autorisee_forcee IS NOT NULL) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[])))
+          WHERE (((t.correc_autorisee IS NOT NULL) OR ((t.correc_autorisee_forcee IS NOT NULL) AND ((t.correc_autorisee_forcee)::text <> 'aucune'::text)) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text])))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5827,7 +7485,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
             e.ordre
            FROM (public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'DEPOT_VERSION_CORRIGEE_VALIDATION_DOCTORANT'::text)))
-          WHERE (((t.correc_autorisee IS NOT NULL) OR (t.correc_autorisee_forcee IS NOT NULL) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[])))
+          WHERE (((t.correc_autorisee IS NOT NULL) OR ((t.correc_autorisee_forcee IS NOT NULL) AND ((t.correc_autorisee_forcee)::text <> 'aucune'::text)) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text])))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5835,7 +7493,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
             e.ordre
            FROM (public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'DEPOT_VERSION_CORRIGEE_VALIDATION_DIRECTEUR'::text)))
-          WHERE (((t.correc_autorisee IS NOT NULL) OR (t.correc_autorisee_forcee IS NOT NULL) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[])))
+          WHERE (((t.correc_autorisee IS NOT NULL) OR ((t.correc_autorisee_forcee IS NOT NULL) AND ((t.correc_autorisee_forcee)::text <> 'aucune'::text)) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text])))
         UNION ALL
          SELECT t.id AS these_id,
             e.id AS etape_id,
@@ -5843,26 +7501,7 @@ CREATE VIEW public.v_wf_etape_pertin AS
             e.ordre
            FROM (public.these t
              JOIN public.wf_etape e ON (((e.code)::text = 'REMISE_EXEMPLAIRE_PAPIER_THESE_CORRIGEE'::text)))
-          WHERE (((t.correc_autorisee IS NOT NULL) OR (t.correc_autorisee_forcee IS NOT NULL) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY ((ARRAY['E'::character varying, 'S'::character varying])::text[])) AND (EXISTS ( SELECT d.id,
-                    d.these_id,
-                    d.droit_auteur_ok,
-                    d.autoris_mel,
-                    d.autoris_embargo_duree,
-                    d.autoris_motif,
-                    d.histo_creation,
-                    d.histo_createur_id,
-                    d.histo_modification,
-                    d.histo_modificateur_id,
-                    d.histo_destruction,
-                    d.histo_destructeur_id,
-                    d.certif_charte_diff,
-                    d.confident,
-                    d.confident_date_fin,
-                    d.orcid,
-                    d.nnt,
-                    d.hal_id,
-                    d.version_corrigee,
-                    d.creation_auto
+          WHERE (((t.correc_autorisee IS NOT NULL) OR ((t.correc_autorisee_forcee IS NOT NULL) AND ((t.correc_autorisee_forcee)::text <> 'aucune'::text)) OR ((t.correc_effectuee)::text = 'O'::text)) AND ((t.etat_these)::text = ANY (ARRAY[('E'::character varying)::text, ('S'::character varying)::text])) AND (EXISTS ( SELECT d.id
                    FROM public.diffusion d
                   WHERE ((d.these_id = t.id) AND (d.version_corrigee = true) AND (d.autoris_mel = ANY (ARRAY[0, 1]))))))) alias38;
 
@@ -6320,6 +7959,152 @@ CREATE SEQUENCE public.wf_etape_id_seq
 ALTER TABLE public.wf_etape_id_seq OWNER TO :dbuser;
 
 --
+-- Name: z_doctorant_compl; Type: TABLE; Schema: public; Owner: :dbuser
+--
+
+CREATE TABLE public.z_doctorant_compl (
+    id bigint NOT NULL,
+    doctorant_id bigint NOT NULL,
+    persopass character varying(50),
+    email_pro character varying(100),
+    histo_creation timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
+    histo_createur_id bigint NOT NULL,
+    histo_modification timestamp without time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
+    histo_modificateur_id bigint NOT NULL,
+    histo_destruction timestamp without time zone,
+    histo_destructeur_id bigint
+);
+
+
+ALTER TABLE public.z_doctorant_compl OWNER TO :dbuser;
+
+--
+-- Name: TABLE z_doctorant_compl; Type: COMMENT; Schema: public; Owner: :dbuser
+--
+
+COMMENT ON TABLE public.z_doctorant_compl IS 'Table obsolète conservée un temps';
+
+
+--
+-- Name: categorie_privilege id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.categorie_privilege ALTER COLUMN id SET DEFAULT nextval('public.categorie_privilege_id_seq'::regclass);
+
+
+--
+-- Name: csi_membre id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.csi_membre ALTER COLUMN id SET DEFAULT nextval('public.csi_membre_id_seq'::regclass);
+
+
+--
+-- Name: doctorant_mission_enseignement id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.doctorant_mission_enseignement ALTER COLUMN id SET DEFAULT nextval('public.doctorant_mission_enseignement_id_seq'::regclass);
+
+
+--
+-- Name: fichier_these id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.fichier_these ALTER COLUMN id SET DEFAULT nextval('public.fichier_these_id_seq'::regclass);
+
+
+--
+-- Name: formation_enquete_categorie id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_enquete_categorie ALTER COLUMN id SET DEFAULT nextval('public.formation_enquete_categorie_id_seq'::regclass);
+
+
+--
+-- Name: formation_enquete_question id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_enquete_question ALTER COLUMN id SET DEFAULT nextval('public.formation_enquete_question_id_seq'::regclass);
+
+
+--
+-- Name: formation_enquete_reponse id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_enquete_reponse ALTER COLUMN id SET DEFAULT nextval('public.formation_enquete_reponse_id_seq'::regclass);
+
+
+--
+-- Name: formation_formateur id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_formateur ALTER COLUMN id SET DEFAULT nextval('public.formation_formateur_id_seq'::regclass);
+
+
+--
+-- Name: formation_formation id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_formation ALTER COLUMN id SET DEFAULT nextval('public.formation_formation_id_seq'::regclass);
+
+
+--
+-- Name: formation_inscription id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_inscription ALTER COLUMN id SET DEFAULT nextval('public.formation_inscription_id_seq'::regclass);
+
+
+--
+-- Name: formation_module id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_module ALTER COLUMN id SET DEFAULT nextval('public.formation_module_id_seq'::regclass);
+
+
+--
+-- Name: formation_presence id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_presence ALTER COLUMN id SET DEFAULT nextval('public.formation_presence_id_seq'::regclass);
+
+
+--
+-- Name: formation_seance id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_seance ALTER COLUMN id SET DEFAULT nextval('public.formation_seance_id_seq'::regclass);
+
+
+--
+-- Name: formation_session id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session ALTER COLUMN id SET DEFAULT nextval('public.formation_session_id_seq'::regclass);
+
+
+--
+-- Name: formation_session_etat_heurodatage id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session_etat_heurodatage ALTER COLUMN id SET DEFAULT nextval('public.formation_session_etat_heurodatage_id_seq'::regclass);
+
+
+--
+-- Name: formation_session_structure_valide id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.formation_session_structure_valide ALTER COLUMN id SET DEFAULT nextval('public.formation_session_structure_valide_id_seq'::regclass);
+
+
+--
+-- Name: horodatage_horodatage id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.horodatage_horodatage ALTER COLUMN id SET DEFAULT nextval('public.horodatage_horodatage_id_seq'::regclass);
+
+
+--
 -- Name: import_log id; Type: DEFAULT; Schema: public; Owner: :dbuser
 --
 
@@ -6327,10 +8112,179 @@ ALTER TABLE ONLY public.import_log ALTER COLUMN id SET DEFAULT nextval('public.i
 
 
 --
--- Name: soutenance_evenement id; Type: DEFAULT; Schema: public; Owner: :dbuser
+-- Name: individu_compl id; Type: DEFAULT; Schema: public; Owner: :dbuser
 --
 
-ALTER TABLE ONLY public.soutenance_evenement ALTER COLUMN id SET DEFAULT nextval('public.soutenance_evenement_id_seq'::regclass);
+ALTER TABLE ONLY public.individu_compl ALTER COLUMN id SET DEFAULT nextval('public.individu_compl_id_seq'::regclass);
+
+
+--
+-- Name: privilege id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.privilege ALTER COLUMN id SET DEFAULT nextval('public.privilege_id_seq'::regclass);
+
+
+--
+-- Name: step_star_log id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.step_star_log ALTER COLUMN id SET DEFAULT nextval('public.step_star_log_id_seq1'::regclass);
+
+
+--
+-- Name: tmp_acteur id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.tmp_acteur ALTER COLUMN id SET DEFAULT nextval('public.tmp_acteur_id_seq'::regclass);
+
+
+--
+-- Name: tmp_doctorant id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.tmp_doctorant ALTER COLUMN id SET DEFAULT nextval('public.tmp_doctorant_id_seq'::regclass);
+
+
+--
+-- Name: tmp_ecole_doct id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.tmp_ecole_doct ALTER COLUMN id SET DEFAULT nextval('public.tmp_ecole_doct_id_seq'::regclass);
+
+
+--
+-- Name: tmp_etablissement id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.tmp_etablissement ALTER COLUMN id SET DEFAULT nextval('public.tmp_etablissement_id_seq'::regclass);
+
+
+--
+-- Name: tmp_financement id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.tmp_financement ALTER COLUMN id SET DEFAULT nextval('public.tmp_financement_id_seq'::regclass);
+
+
+--
+-- Name: tmp_individu id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.tmp_individu ALTER COLUMN id SET DEFAULT nextval('public.tmp_individu_id_seq'::regclass);
+
+
+--
+-- Name: tmp_origine_financement id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.tmp_origine_financement ALTER COLUMN id SET DEFAULT nextval('public.tmp_origine_financement_id_seq'::regclass);
+
+
+--
+-- Name: tmp_role id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.tmp_role ALTER COLUMN id SET DEFAULT nextval('public.tmp_role_id_seq'::regclass);
+
+
+--
+-- Name: tmp_structure id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.tmp_structure ALTER COLUMN id SET DEFAULT nextval('public.tmp_structure_id_seq'::regclass);
+
+
+--
+-- Name: tmp_these id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.tmp_these ALTER COLUMN id SET DEFAULT nextval('public.tmp_these_id_seq'::regclass);
+
+
+--
+-- Name: tmp_these_annee_univ id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.tmp_these_annee_univ ALTER COLUMN id SET DEFAULT nextval('public.tmp_these_annee_univ_id_seq'::regclass);
+
+
+--
+-- Name: tmp_titre_acces id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.tmp_titre_acces ALTER COLUMN id SET DEFAULT nextval('public.tmp_titre_acces_id_seq'::regclass);
+
+
+--
+-- Name: tmp_unite_rech id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.tmp_unite_rech ALTER COLUMN id SET DEFAULT nextval('public.tmp_unite_rech_id_seq'::regclass);
+
+
+--
+-- Name: tmp_variable id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.tmp_variable ALTER COLUMN id SET DEFAULT nextval('public.tmp_variable_id_seq'::regclass);
+
+
+--
+-- Name: unicaen_avis_type_valeur_complem ordre; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_avis_type_valeur_complem ALTER COLUMN ordre SET DEFAULT nextval('public.unicaen_avis_type_valeur_complem_ordre_seq'::regclass);
+
+
+--
+-- Name: unicaen_avis_valeur ordre; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_avis_valeur ALTER COLUMN ordre SET DEFAULT nextval('public.unicaen_avis_valeur_ordre_seq'::regclass);
+
+
+--
+-- Name: unicaen_parametre_categorie id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_parametre_categorie ALTER COLUMN id SET DEFAULT nextval('public.unicaen_parametre_categorie_id_seq'::regclass);
+
+
+--
+-- Name: unicaen_parametre_parametre id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_parametre_parametre ALTER COLUMN id SET DEFAULT nextval('public.unicaen_parametre_parametre_id_seq'::regclass);
+
+
+--
+-- Name: unicaen_renderer_macro id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_renderer_macro ALTER COLUMN id SET DEFAULT nextval('public.unicaen_renderer_macro_id_seq'::regclass);
+
+
+--
+-- Name: unicaen_renderer_rendu id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_renderer_rendu ALTER COLUMN id SET DEFAULT nextval('public.unicaen_renderer_rendu_id_seq'::regclass);
+
+
+--
+-- Name: unicaen_renderer_template id; Type: DEFAULT; Schema: public; Owner: :dbuser
+--
+
+ALTER TABLE ONLY public.unicaen_renderer_template ALTER COLUMN id SET DEFAULT nextval('public.unicaen_renderer_template_id_seq'::regclass);
+
+
+--
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE USAGE ON SCHEMA public FROM PUBLIC;
+GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --

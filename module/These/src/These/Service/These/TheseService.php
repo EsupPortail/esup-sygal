@@ -180,7 +180,7 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
 
             $acteurData = new MembreData();
             $acteurData->setDenomination(mb_strtoupper($acteur->getIndividu()->getNomComplet(true, false, false, true)));
-            $acteurData->setQualite($acteur->getQualite());
+
 
             $estMembre = !empty(array_filter($jury, function (Acteur $a) use ($acteur) {return $a->getIndividu() === $acteur->getIndividu();}));
 
@@ -201,6 +201,19 @@ class TheseService extends BaseService //implements ListenerAggregateInterface
                     if ($acteur->getIndividu()->estUneFemme()) $acteurData->setRole($acteurData->getRole() . "<br/> Co-encadrante");
                     else $acteurData->setRole($acteurData->getRole() . "<br/> Co-encadrant");
                     break;
+                }
+            }
+
+            /** GESTION DES QUALITES **********************************************************************************/
+            if ($acteur->getQualite() && trim($acteur->getQualite()) !== '') {
+                $acteurData->setQualite($acteur->getQualite());
+            } else {
+                foreach ($acteursLies as $acteurLie) {
+                    $membre = $this->getMembreService()->getMembreByActeur($acteurLie);
+                    if ($membre) {
+                        $acteurData->setQualite($membre->getQualite()->getLibelle());
+                        break;
+                    }
                 }
             }
 

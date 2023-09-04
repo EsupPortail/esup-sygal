@@ -5,13 +5,15 @@ namespace Structure\Service\Etablissement;
 use Application\Entity\Db\Utilisateur;
 use Application\Service\BaseService;
 use Application\SourceCodeStringHelperAwareTrait;
+use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\ORMException;
+use Exception;
 use Fichier\Service\Fichier\FichierServiceAwareTrait;
 use Structure\Entity\Db\Etablissement;
 use Structure\Entity\Db\Repository\EtablissementRepository;
 use Structure\Entity\Db\Structure;
 use Structure\Entity\Db\TypeStructure;
+use Throwable;
 use UnicaenApp\Exception\RuntimeException;
 
 class EtablissementService extends BaseService
@@ -68,15 +70,14 @@ class EtablissementService extends BaseService
         return $etab;
     }
 
-    /**
-     * @param Etablissement $structureConcrete
-     * @param Utilisateur   $createur
-     * @return Etablissement
-     */
-    public function create(Etablissement $structureConcrete, Utilisateur $createur)
+    public function create(Etablissement $structureConcrete, Utilisateur $createur): Etablissement
     {
-        /** @var TypeStructure $typeStructure */
-        $typeStructure = $this->getEntityManager()->getRepository(TypeStructure::class)->findOneBy(['code' => 'etablissement']);
+        try {
+            /** @var TypeStructure $typeStructure */
+            $typeStructure = $this->entityManager->getRepository(TypeStructure::class)->findOneBy(['code' => TypeStructure::CODE_ETABLISSEMENT]);
+        } catch (NotSupported $e) {
+            throw new RuntimeException("Erreur lors de l'obtention du repository Doctrine", null, $e);
+        }
 
         $sourceCode = $this->sourceCodeStringHelper->addDefaultPrefixTo(uniqid());
         $structureConcrete->setSourceCode($sourceCode);
@@ -87,11 +88,16 @@ class EtablissementService extends BaseService
         $structure->setSourceCode($sourceCode);
 
         $this->entityManager->beginTransaction();
-
-        $this->persist($structureConcrete);
-        $this->flush($structureConcrete);
-
-        $this->entityManager->commit();
+        try {
+            $this->entityManager->persist($structure);
+            $this->entityManager->persist($structureConcrete);
+            $this->entityManager->flush();
+            $this->entityManager->commit();
+        } catch (Exception $e) {
+            $this->rollback();
+            throw new RuntimeException(
+                "Erreur lors de l'enregistrement de la structure '$structure' (type : '$typeStructure')", null, $e);
+        }
 
         return $structureConcrete;
     }
@@ -105,7 +111,11 @@ class EtablissementService extends BaseService
         $etablissement->historiser($destructeur);
         $etablissement->getStructure()->historiser($destructeur);
 
-        $this->flush($etablissement);
+        try {
+            $this->entityManager->flush();
+        } catch (Throwable $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de l'Etablissement", null, $e);
+        }
     }
 
     /**
@@ -116,7 +126,11 @@ class EtablissementService extends BaseService
         $etablissement->dehistoriser();
         $etablissement->getStructure()->dehistoriser();
 
-        $this->flush($etablissement);
+        try {
+            $this->entityManager->flush();
+        } catch (Throwable $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de l'Etablissement", null, $e);
+        }
     }
 
     /**
@@ -125,7 +139,11 @@ class EtablissementService extends BaseService
      */
     public function update(Etablissement $etablissement)
     {
-        $this->flush($etablissement);
+        try {
+            $this->entityManager->flush();
+        } catch (Throwable $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de l'Etablissement", null, $e);
+        }
 
         return $etablissement;
     }
@@ -134,7 +152,11 @@ class EtablissementService extends BaseService
     public function setLogo(Etablissement $etablissement, $cheminLogo)
     {
         $etablissement->getStructure()->setCheminLogo($cheminLogo);
-        $this->flush($etablissement);
+        try {
+            $this->entityManager->flush();
+        } catch (Throwable $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de l'Etablissement", null, $e);
+        }
 
         return $etablissement;
     }
@@ -142,7 +164,11 @@ class EtablissementService extends BaseService
     public function deleteLogo(Etablissement $etablissement)
     {
         $etablissement->getStructure()->setCheminLogo(null);
-        $this->flush($etablissement);
+        try {
+            $this->entityManager->flush();
+        } catch (Throwable $e) {
+            throw new RuntimeException("Erreur lors de l'enregistrement de l'Etablissement", null, $e);
+        }
 
         return $etablissement;
     }
@@ -172,24 +198,8 @@ class EtablissementService extends BaseService
         return $result;
     }
 
-    private function persist(Etablissement $etablissement)
+    private function flush(): void
     {
-        try {
-            $this->getEntityManager()->persist($etablissement);
-            $this->getEntityManager()->persist($etablissement->getStructure());
-        } catch(ORMException $e) {
-            throw new RuntimeException("Un problème est survenu lors de lors de l'enregistrement de l'Etablissement [".$etablissement->getId()."]",0,$e);
-        }
-    }
-
-    private function flush(Etablissement $etablissement)
-    {
-        try {
-            $this->getEntityManager()->flush($etablissement);
-            $this->getEntityManager()->flush($etablissement->getStructure());
-        } catch (ORMException $e) {
-            throw new RuntimeException("Erreur lors de l'enregistrement de l'Etablissement", null, $e);
-        }
     }
 
     /**

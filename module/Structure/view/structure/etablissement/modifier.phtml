@@ -10,7 +10,7 @@ use UnicaenIdref\Domain\Index1;
  * @var PhpRenderer        $this
  * @var string             $title
  * @var EtablissementForm  $form
- * @var string             $logoContent
+ * @var ?string            $logoContent
  *
  * @method string formControlGroup()
  *
@@ -127,7 +127,7 @@ $form->get('code')->setAttribute('readonly', !$editable);
             ?>
 
             <?php
-            $content = $logoContent;
+            $content = $logoContent ?? null;
             if ($content === null) {
                 $form->getObject()->getStructure()->setCheminLogo(null);
             }
@@ -135,11 +135,15 @@ $form->get('code')->setAttribute('readonly', !$editable);
             <table>
                 <tr>
                     <td>
+                        <?php if ($logoContent ?? null): ?>
                         <img
                                 id="logo"
                             style="max-width: 200px; max-height: 200px; border: 1px solid black; background-color: white;"
                             src="data:image/*;base64,<?php echo base64_encode($logoContent); ?>"
                         />
+                        <?php else: ?>
+                            <strong>Aucun logo défini.</strong>
+                        <?php endif; ?>
                     </td>
                     <td style="padding:20px;">
                         <?php

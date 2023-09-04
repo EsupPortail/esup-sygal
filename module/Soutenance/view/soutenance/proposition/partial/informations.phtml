@@ -8,7 +8,7 @@
  *
  * @var IndividuRole[] $ecoleResponsables
  * @var IndividuRole[] $uniteResponsables
- * @var IndividuRole[] $etablissementResponsables
+ * @var string[] $emailsAspectDoctorats
  *
  * @var Acteur[] $directeurs
  */
@@ -76,7 +76,8 @@ $etablissement = $these->getEtablissement();
                                 <?php echo $unite->getStructure()->getLibelle(); ?>
                                     <?php if (empty($uniteResponsables)) : ?>
                                         <div class="alert alert-danger">
-                                            <span class="icon icon-attention"></span> Aucun reponsable de site
+                                            <span class="icon icon-attention"></span>
+                                            Aucun responsable d'UR trouvé associé à l'établissement d'inscription (site)
                                         </div>
                                     <?php else : ?>
                                         <ul>
@@ -98,7 +99,8 @@ $etablissement = $these->getEtablissement();
                                 <?php echo $ecole->getStructure()->getLibelle(); ?>
                                 <?php if (empty($ecoleResponsables)) : ?>
                                     <div class="alert alert-danger">
-                                        <span class="icon icon-attention"></span> Aucun reponsable de site
+                                        <span class="icon icon-attention"></span>
+                                        Aucun responsable d'ED trouvé associé à l'établissement d'inscription (site)
                                     </div>
                                 <?php else : ?>
                                     <ul>
@@ -114,24 +116,22 @@ $etablissement = $these->getEtablissement();
                         </dd>
                         <dt> Établissement </dt>
                         <dd>
-                            <?php if (!$ecole) : ?>
-                                <strong class="text-danger">Aucun établissement !</strong>
+                            <?php echo $etablissement->getStructure()->getLibelle(); ?>
+                            <?php if (empty($emailsAspectDoctorats)) : ?>
+                                <div class="alert alert-danger">
+                                    <span class="icon icon-attention"></span>
+                                    Aucun destinataire trouvé, une adresse générique doit être renseignée sur la fiche
+                                    de l'établissement d'inscription '<?php echo $etablissement->getStructure()->getLibelle(); ?>'
+                                    pour l'aspect "Doctorat".
+                                </div>
                             <?php else : ?>
-                                <?php echo $etablissement->getStructure()->getLibelle(); ?>
-                                <?php if (empty($etablissementResponsables)) : ?>
-                                    <div class="alert alert-danger">
-                                        <span class="icon icon-attention"></span> Aucun reponsable de site
-                                    </div>
-                                <?php else : ?>
-                                    <ul>
-                                        <?php foreach ($etablissementResponsables as $etablissementResponsable) : ?>
-                                            <li>
-                                                <?php echo $etablissementResponsable->getIndividu()->getNomComplet(); ?>
-                                                (<?php echo ($etablissementResponsable->getIndividu()->getEmailPro())?:"<span class='text-danger'>Adresse électronique manquante</span>"; ?>)
-                                            </li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                <?php endif; ?>
+                                <ul>
+                                    <?php foreach ($emailsAspectDoctorats as $emailsAspectDoctorat) : ?>
+                                        <li>
+                                            <?php echo $emailsAspectDoctorat; ?>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
                             <?php endif; ?>
                         </dd>
                     </dl>

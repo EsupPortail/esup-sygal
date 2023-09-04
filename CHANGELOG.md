@@ -1,6 +1,18 @@
 Journal des modifications
 =========================
 
+6.0.5
+-----
+- [FIX] Correction d'un bug empêchant la création d'établissement ; améliorations des validateurs des formulaires de structures.
+- [FIX] Correction de bugs en cas d'utilisateur ayant à la fois le rôle Doctorant et un autre rôle.
+- [FIX] Correction du plantage survenant dans RapportActiviteAssertion (interrogée par la navigation) lorsque l'utilisateur n'est pas authentifié.
+- [FIX] Destinataires de la notification de demande de validation d'une proposition de soutenance : adresse mail "aspects doctorat"
+  de l'établissement d'inscription, plutôt que la liste des individus ayant le rôle BDD obsolète.
+- Onglet 'Rôles et membres' d'une ED/UR : renommage de 'Site' en 'Établissement d'inscription' (clarification).
+- Complétion des qualités du jury sur la page de couverture avec le dossier de soutenance si manquante dans la donnée source
+- Remise en place du menu de gestion des qualités
+- Mise à jour de la doc et des scripts d'install de la base de données.
+
 6.0.4
 -----
 - [FIX] Recherche de rapports d'Activité/CSI/Mi-parcours : les filtres Établissement/ED/UR géraient mal la subsitution de structures.

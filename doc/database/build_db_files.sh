@@ -51,10 +51,16 @@ function injectEtabParamsInScript() {
   sed -i -e "s|{ETAB_SIGLE}|${ETAB_SIGLE}|g" $FILE
   sed -i -e "s|{ETAB_LIBELLE}|${ETAB_LIBELLE}|g" $FILE
   sed -i -e "s|{ETAB_DOMAINE}|${ETAB_DOMAINE}|g" $FILE
+  sed -i -e "s|{EMAIL_ASSISTANCE}|${EMAIL_ASSISTANCE}|g" $FILE
+  sed -i -e "s|{EMAIL_BIBLIOTHEQUE}|${EMAIL_BIBLIOTHEQUE}|g" $FILE
+  sed -i -e "s|{EMAIL_DOCTORAT}|${EMAIL_DOCTORAT}|g" $FILE
   sed -i -e "s|{ETAB_COMUE}|${ETAB_COMUE}|g" $FILE
   sed -i -e "s|{ETAB_COMUE_SIGLE}|${ETAB_COMUE_SIGLE}|g" $FILE
   sed -i -e "s|{ETAB_COMUE_LIBELLE}|${ETAB_COMUE_LIBELLE}|g" $FILE
   sed -i -e "s|{ETAB_COMUE_DOMAINE}|${ETAB_COMUE_DOMAINE}|g" $FILE
+  sed -i -e "s|{ETAB_CED}|${ETAB_CED}|g" $FILE
+  sed -i -e "s|{ETAB_CED_SIGLE}|${ETAB_CED_SIGLE}|g" $FILE
+  sed -i -e "s|{ETAB_CED_LIBELLE}|${ETAB_CED_LIBELLE}|g" $FILE
   sed -i -e "s|{SOURCE_APOGEE}|${SOURCE_APOGEE}|g" $FILE
   sed -i -e "s|{SOURCE_PHYSALIS}|${SOURCE_PHYSALIS}|g" $FILE
 }

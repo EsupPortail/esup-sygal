@@ -142,14 +142,8 @@ class PropositionController extends AbstractController
         if ($these->getUniteRecherche() !== null) {
             $uniteResponsables = $this->getRoleService()->findIndividuRoleByStructure($these->getUniteRecherche()->getStructure(), null, $these->getEtablissement());
         }
-        /** @var IndividuRole[] $etablissementResponsables */
-        $etablissementResponsables = [];
-        if ($these->getEtablissement() !== null) {
-            $etablissementResponsables = $this->roleService->findIndividuRoleByStructure($these->getEtablissement()->getStructure(), null, $these->getEtablissement());
-            $etablissementResponsables = array_filter($etablissementResponsables, function (IndividuRole $ir) {
-                return $ir->getRole()->getCode() === Role::CODE_BDD;
-            });
-        }
+        $notif = $this->soutenanceNotificationFactory->createNotificationBureauDesDoctoratsProposition($these);
+        $emailsAspectDoctorats = $notif->getTo();
         $informationsOk = true;
         $directeurs = $this->getActeurService()->getRepository()->findEncadrementThese($these);
         foreach ($directeurs as $directeur) {
@@ -160,33 +154,19 @@ class PropositionController extends AbstractController
         }
         if (empty($uniteResponsables)) $informationsOk = false;
         foreach ($uniteResponsables as $uniteResponsable) {
-            if ($uniteResponsable->getIndividu()->getEmailPro() === null) {
+            if ($uniteResponsable->getIndividu()->getEmailPro() === null and $uniteResponsable->getIndividu()->getComplement() === null) {
                 $informationsOk = false;
                 break;
             }
         }
         if (empty($ecoleResponsables)) $informationsOk = false;
         foreach ($ecoleResponsables as $ecoleResponsable) {
-            if ($ecoleResponsable->getIndividu()->getEmailPro() === null) {
+            if ($ecoleResponsable->getIndividu()->getEmailPro() === null and $ecoleResponsable->getIndividu()->getComplement() === null) {
                 $informationsOk = false;
                 break;
             }
         }
-        if (empty($etablissementResponsables)) $informationsOk = false;
-        foreach ($etablissementResponsables as $etablissementResponsable) {
-            if ($etablissementResponsable->getIndividu()->getEmailPro() === null) {
-                $informationsOk = false;
-                break;
-            }
-        }
-        /** @var Individu $individu */
-        foreach (array_merge($ecoleResponsables, $uniteResponsables, $etablissementResponsables) as $ecoleResponsable) {
-            $individu = $ecoleResponsable->getIndividu();
-            if ($individu->getEmailPro() === null and $individu->getComplement() === null) {
-                $informationsOk = false;
-                break;
-            }
-        }
+        if (empty($emailsAspectDoctorats)) $informationsOk = false;
 
         /** Récupération des éléments liés au bloc 'intégrité scientifique' */
         $attestationsIntegriteScientifique = $this->getJustificatifService()->getJustificatifsByPropositionAndNature($proposition, NatureFichier::CODE_FORMATION_INTEGRITE_SCIENTIFIQUE);
@@ -222,7 +202,7 @@ class PropositionController extends AbstractController
 
             'ecoleResponsables' => $ecoleResponsables,
             'uniteResponsables' => $uniteResponsables,
-            'etablissementResponsables' => $etablissementResponsables,
+            'emailsAspectDoctorats' => $emailsAspectDoctorats,
             'informationsOk' => $informationsOk,
             'avis' => $this->getAvisService()->getAvisByThese($these),
 
@@ -518,6 +498,10 @@ class PropositionController extends AbstractController
                 $this->getValidationService()->validateValidationED($these, $individu);
                 try {
                     $notif = $this->soutenanceNotificationFactory->createNotificationBureauDesDoctoratsProposition($these);
+                    if (empty($notif->getTo())) {
+                        throw new RuntimeException(
+                            "Aucune adresse mail trouvée pour les aspects Doctorat de l'établissement d'inscription '{$these->getEtablissement()}'");
+                    }
                     $this->notifierService->trigger($notif);
                 } catch (\Notification\Exception\RuntimeException $e) {
                     // aucun destinataire , todo : cas à gérer !

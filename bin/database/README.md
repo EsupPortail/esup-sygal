@@ -34,7 +34,7 @@ Le script shell [`./build_db_install_files.sh`](build_db_install_files.sh) gén�
 
 Ce script `./build_db_install_files.sh` :
   - se base sur les fichers `.template.*` situés dans le répertoire [`src/`](src) ;
-  - charge le fichier de config [`./conf/build_db_install_files.conf`](confuild_db_install_files.conf)
+  - charge le fichier de config [`./conf/build_db_install_files.conf`](conf/build_db_install_files.conf)
     dans lequel sont spécifiés les paramètres de génération.
 
 Le script prend en argument :

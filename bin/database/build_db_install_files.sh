@@ -164,8 +164,37 @@ echo "> $OUTPUT_FILE"
 # data
 #
 OUTPUT_FILE=$OUTPUT_DIR/sql/04_$NAME_INSERT_DATA.sql
-PATTERN='categorie_privilege|domaine_scientifique|import_observ|information_langue|nature_fichier|notif|privilege|profil|profil_privilege|soutenance_configuration|soutenance_etat|soutenance_qualite|type_rapport|type_structure|type_validation|version_fichier|wf_etape'
-pg_dump --data-only --column-inserts --table="($PATTERN)" >$OUTPUT_FILE
+pg_dump --data-only --column-inserts \
+--table="categorie_privilege" \
+--table="domaine_scientifique" \
+--table="formation_enquete_categorie" \
+--table="formation_enquete_question" \
+--table="formation_etat" \
+--table="import_observ" \
+--table="information_langue" \
+--table="nature_fichier" \
+--table="notif" \
+--table="pays" \
+--table="privilege" \
+--table="profil" \
+--table="profil_privilege" \
+--table="soutenance_etat" \
+--table="soutenance_qualite" \
+--table="type_rapport" \
+--table="type_structure" \
+--table="type_validation" \
+--table="unicaen_alerte_alerte" \
+--table="unicaen_avis_type" \
+--table="unicaen_avis_type_valeur" \
+--table="unicaen_avis_type_valeur_complem" \
+--table="unicaen_avis_valeur" \
+--table="unicaen_parametre_categorie" \
+--table="unicaen_parametre_parametre" \
+--table="unicaen_renderer_macro" \
+--table="unicaen_renderer_template" \
+--table="version_fichier" \
+--table="wf_etape" \
+> $OUTPUT_FILE
 replacePgDatabaseAndUserInScript $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
 
@@ -181,7 +210,7 @@ echo "> $OUTPUT_FILE"
 # constraints
 #
 OUTPUT_FILE=$OUTPUT_DIR/sql/06_$NAME_CREATE_CONSTRAINTS.sql
-pg_dump --section=post-data --schema-only >$OUTPUT_FILE
+pg_dump --section=post-data --schema-only --exclude-table="mv_indicateur_*" >$OUTPUT_FILE
 replacePgDatabaseAndUserInScript $OUTPUT_FILE
 echo "> $OUTPUT_FILE"
 

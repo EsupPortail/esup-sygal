@@ -72,7 +72,7 @@ class IndexController extends AbstractController
         $vm = new ViewModel([
             'role' => $this->userContextService->getSelectedIdentityRole(),
             'roles' => $this->userContextService->getSelectableIdentityRoles(),
-            'estDoctorant' => (bool) $this->userContextService->getIdentityDoctorant(),
+            'estDoctorant' => (bool) $this->userContextService->getSelectedRoleDoctorant(),
             'informations' => $this->informationService->getInformations(true),
         ]);
 
@@ -221,9 +221,13 @@ EOS
      */
     protected function findEtablissementUtilisateur(UserWrapper $userWrapper): ?Etablissement
     {
-        $individu = $this->userContextService->getIdentityDoctorant();
-        if ($individu !== null) {
-            return $individu->getEtablissement();
+        $role = $this->userContextService->getSelectedIdentityRole();
+
+        if ($role !== null && $role->isDoctorant()) {
+            $doctorant = $this->userContextService->getIdentityDoctorant();
+            if ($doctorant !== null) {
+                return $doctorant->getEtablissement();
+            }
         }
 
         $role = $this->userContextService->getSelectedIdentityRole();

@@ -1,10 +1,10 @@
 Création d'une base de données pour ESUP-SyGAL
 ==============================================
 
-Les fichiers fournis permettant de créer une base de données pour ESUP-SyGAL sont :
+Les fichiers fournis permettant de créer une base de données neuve pour ESUP-SyGAL sont :
 
 - d'une part, le fichier de config et le script bash de construction :
-    - [`build_db_files.conf.dist`](build_db_files.conf.dist) (à adpater et à renommer en `.conf`)
+    - [`build_db_files.conf.dist`](build_db_files.conf.dist) (à adapter et à renommer en `.conf`)
     - [`build_db_files.sh`](build_db_files.sh)
     
 - d'autre part, les scripts SQL situés dans le répertoire [`sql/`](sql) :
@@ -129,7 +129,8 @@ Par précaution, effacez éventuellement les variables d'environnement exportée
 unset ON_ERROR_STOP PGHOST PGPORT PGDATABASE PGUSER PGPASSWORD # précaution
 ```
 
-## Si besoin
+
+## Uniquement en cas de besoin
 
 - Suppression de la base de données !!
 

@@ -2,6 +2,7 @@
 
 namespace Structure\Form;
 
+use Laminas\Filter\ToNull;
 use Laminas\Form\Element\File;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\Element\Text;
@@ -71,13 +72,25 @@ abstract class StructureForm extends Form implements InputFilterProviderInterfac
             'id_ref' => [
                 'name' => 'id_ref',
                 'required' => false,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                    ['name' => ToNull::class],
+                ],
             ],
             'id_hal' => [
                 'name' => 'id_hal',
                 'required' => false,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                    ['name' => ToNull::class],
+                ],
             ],
             'cheminLogo' => [
                 'required' => false,
+                'filters' => [
+                    ['name' => 'StringTrim'],
+                    ['name' => ToNull::class],
+                ],
 //                'validators' => [
 //                    [
 //                        'name' => Extension::class,
