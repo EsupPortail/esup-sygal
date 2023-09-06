@@ -7,7 +7,8 @@ use Laminas\Form\Form;
 use Laminas\InputFilter\Factory;
 use UnicaenApp\Form\Element\SearchAndSelect;
 
-class RechercherCoEncadrantForm extends Form {
+class RechercherCoEncadrantForm extends Form
+{
 
     private ?string $urlCoEncadrant = null;
     private ?string $urlEtablissement = null;
@@ -17,6 +18,7 @@ class RechercherCoEncadrantForm extends Form {
         $this->urlCoEncadrant = $urlCoEncadrant;
         $this->get('co-encadrant')->setAutocompleteSource($this->urlCoEncadrant);
     }
+
     public function setUrlEtablisssement(string $urlEtablissement): void
     {
         $this->urlEtablissement = $urlEtablissement;
@@ -64,8 +66,8 @@ class RechercherCoEncadrantForm extends Form {
         ]);
 
         $this->setInputFilter((new Factory())->createInputFilter([
-            'co-encadrant' => [ 'required' => true ],
-            'etablissement' => [ 'required' => false ],
+            'co-encadrant' => ['required' => true],
+            'etablissement' => ['required' => false],
         ]));
     }
 }

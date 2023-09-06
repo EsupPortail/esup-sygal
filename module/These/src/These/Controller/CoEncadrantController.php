@@ -13,7 +13,8 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
-use Laminas\View\Resolver\TemplatePathStack;
+use Mpdf\MpdfException;
+use RuntimeException;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\UniteRecherche;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -44,13 +45,8 @@ class CoEncadrantController extends AbstractActionController
     use RenduServiceAwareTrait;
 
 
-    /** @var PhpRenderer */
-    private $renderer;
-
-    /**
-     * @param PhpRenderer $renderer
-     */
-    public function setRenderer($renderer)
+    private ?PhpRenderer $renderer = null;
+    public function setRenderer(PhpRenderer $renderer): void
     {
         $this->renderer = $renderer;
     }
@@ -59,7 +55,8 @@ class CoEncadrantController extends AbstractActionController
     {
         $form = $this->getRechercherCoEncadrantForm();
         $form->setAttribute('action', $this->url()->fromRoute('co-encadrant', [], [], true));
-        //todo !doit remonter un acteur
+
+        /** @see CoEncadrantController::rechercherCoEncadrantAction() */
         $form->setUrlCoEncadrant($this->url()->fromRoute('co-encadrant/rechercher-co-encadrant', [], [], true));
         $form->get('bouton')->setLabel("Afficher l'historique de co-encadrement");
 
@@ -67,6 +64,7 @@ class CoEncadrantController extends AbstractActionController
         if ($request->isPost()) {
             $data = $request->getPost();
             if ($data['co-encadrant']['id'] !== "") {
+                /** @see CoEncadrantController::historiqueAction() */
                 $this->redirect()->toRoute('co-encadrant/historique', ['co-encadrant' => $data['co-encadrant']['id']]);
             }
         }
@@ -119,7 +117,7 @@ class CoEncadrantController extends AbstractActionController
             if (isset($data['co-encadrant']['id'])) {
                 /** @var Individu $individu */
                 $individu = $this->getIndividuService()->getRepository()->find($data['co-encadrant']['id']);
-                $etablissement = (isset($data['etablissement']['id']) && $data['etablissement']['id'] !== '')?$this->getEtablissementService()->getRepository()->find($data['etablissement']['id']):null;
+                $etablissement = (isset($data['etablissement']['id']) && $data['etablissement']['id'] !== '') ? $this->getEtablissementService()->getRepository()->find($data['etablissement']['id']) : null;
                 $this->getActeurService()->ajouterCoEncradrant($these, $individu, $etablissement);
             }
         }
@@ -179,13 +177,13 @@ class CoEncadrantController extends AbstractActionController
             'acteur' => $coencadrant,
         ];
 
-        $listing  = "<ul>";
+        $listing = "<ul>";
         foreach ($theses as $these) {
             //todo macro ou formateur ...
             $listing .= "<li>";
 
             $listing .= $these->getTitre();
-            $listing .= " (".$these->getAnneeUniv1ereInscription(). ")";
+            $listing .= " (" . $these->getAnneeUniv1ereInscription() . ")";
 
             $listing .= "<br>";
 
@@ -193,29 +191,39 @@ class CoEncadrantController extends AbstractActionController
             $listing .= " - ";
             $listing .= $these->getEtablissement()->getStructure()->getLibelle();
             $listing .= " - ";
-            $listing .= $these->getUniteRecherche()->getStructure()->getLibelle() . " (".$these->getUniteRecherche()->getStructure()->getSigle().")";
+            $listing .= $these->getUniteRecherche()->getStructure()->getLibelle() . " (" . $these->getUniteRecherche()->getStructure()->getSigle() . ")";
             $listing .= "</li>";
         }
         $listing .= "</ul>";
 
+        try {
+            $logoCOMUE = $this->etablissementService->fetchEtablissementComue() ? $this->fichierStorageService->getFileForLogoStructure($this->etablissementService->fetchEtablissementComue()->getStructure()) : null;
+            $logoETAB = $coencadrant->getEtablissement() ? $this->fichierStorageService->getFileForLogoStructure($coencadrant->getEtablissement()->getStructure()) : null;
+        } catch (StorageAdapterException $e) {
+            throw new RuntimeException("Un problème est survenu lors de la récupération de logo.", 0, $e);
+        }
         $logos = [
-            "COMUE" => $this->etablissementService->fetchEtablissementComue()?$this->fichierStorageService->getFileForLogoStructure($this->etablissementService->fetchEtablissementComue()->getStructure()):null,
-            "ETAB" => $coencadrant->getEtablissement()?$this->fichierStorageService->getFileForLogoStructure($coencadrant->getEtablissement()->getStructure()):null,
+            "COMUE" => $logoCOMUE,
+            "ETAB" => $logoETAB,
         ];
 
         $rendu = $this->getRenduService()->generateRenduByTemplateCode(PdfTemplates::COENCADREMENTS_JUSTIFICATIF, $vars);
-        $corps = str_replace("###LISTING_THESE###", $listing,$rendu->getCorps());
+        $corps = str_replace("###LISTING_THESE###", $listing, $rendu->getCorps());
         $filename = 'justificatif_coencadrement_' . $coencadrant->getIndividu()->getId() . ".pdf";
 
         $export = new PdfExporter();
 
-        $export->getMpdf()->SetMargins(0,0,60);
-        //todo passer un header exploitant les logo
+        try {
+            $export->getMpdf()->SetMargins(0, 0, 60);
+            //todo passer un header exploitant les logo
 //        $export->setHeaderScript('pdf/header.phtml', null, $logos);
-        $export->setHeaderScriptToNone();
-        $export->setFooterScriptToNone();
-        $export->addBodyHtml($corps);
-        return $export->export($filename);
+            $export->setHeaderScriptToNone();
+            $export->setFooterScriptToNone();
+            $export->addBodyHtml($corps);
+            return $export->export($filename);
+        } catch (MpdfException $e) {
+            throw new RuntimeException("Un problème est survenu lors de la génération du PDF", 0 , $e);
+        }
     }
 
     public function genererExportCsvAction(): CsvModel

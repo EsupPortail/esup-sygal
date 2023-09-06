@@ -51,6 +51,7 @@ return [
                 'options'       => [
                     'route'    => '/co-encadrant',
                     'defaults' => [
+                        /** @see CoEncadrantController::indexAction() */
                         'controller'    => CoEncadrantController::class,
                         'action'        => 'index',
                     ],
@@ -62,6 +63,7 @@ return [
                         'options'       => [
                             'route'    => '/historique[/:co-encadrant]',
                             'defaults' => [
+                                /** @see CoEncadrantController::historiqueAction() */
                                 'controller'    => CoEncadrantController::class,
                                 'action'        => 'historique',
                             ],
@@ -83,6 +85,7 @@ return [
                         'options'       => [
                             'route'    => '/generer-export-csv/:structure-type/:structure-id',
                             'defaults' => [
+                                /** @see CoEncadrantController::genererExportCsvAction() */
                                 'controller'    => CoEncadrantController::class,
                                 'action'        => 'generer-export-csv',
                             ],
@@ -93,6 +96,7 @@ return [
                         'options'       => [
                             'route'    => '/rechercher-co-encadrant',
                             'defaults' => [
+                                /** @see CoEncadrantController::rechercherCoEncadrantAction() */
                                 'controller'    => CoEncadrantController::class,
                                 'action'        => 'rechercher-co-encadrant',
                             ],
@@ -103,6 +107,7 @@ return [
                         'options'       => [
                             'route'    => '/ajouter-co-encadrant/:these',
                             'defaults' => [
+                                /** @see CoEncadrantController::ajouterCoEncadrantAction() */
                                 'controller'    => CoEncadrantController::class,
                                 'action'        => 'ajouter-co-encadrant',
                             ],
@@ -113,6 +118,7 @@ return [
                         'options'       => [
                             'route'    => '/retirer-co-encadrant/:these/:co-encadrant',
                             'defaults' => [
+                                /** @see CoEncadrantController::retirerCoEncadrantAction() */
                                 'controller'    => CoEncadrantController::class,
                                 'action'        => 'retirer-co-encadrant',
                             ],
