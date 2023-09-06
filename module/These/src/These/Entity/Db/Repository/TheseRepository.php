@@ -196,7 +196,7 @@ class TheseRepository extends DefaultEntityRepository
      * @param Individu $individu
      * @return These[]
      */
-    public function fetchThesesByCoEncadrant($individu)
+    public function fetchThesesByCoEncadrant(Individu $individu): array
     {
         $qb = $this->createQueryBuilder('t')
             ->join('t.acteurs', 'a')

@@ -72,6 +72,7 @@ return [
                         'options'       => [
                             'route'    => '/generer-justificatif-coencadrements/:co-encadrant',
                             'defaults' => [
+                                /** @see CoEncadrantController::genererJustificatifCoencadrementsAction() */
                                 'controller'    => CoEncadrantController::class,
                                 'action'        => 'generer-justificatif-coencadrements',
                             ],

@@ -13,6 +13,7 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
+use Laminas\View\Resolver\TemplatePathStack;
 use Structure\Entity\Db\EcoleDoctorale;
 use Structure\Entity\Db\UniteRecherche;
 use Structure\Service\EcoleDoctorale\EcoleDoctoraleServiceAwareTrait;
@@ -21,11 +22,13 @@ use Structure\Service\UniteRecherche\UniteRechercheServiceAwareTrait;
 use These\Entity\Db\Acteur;
 use These\Entity\Db\These;
 use These\Form\CoEncadrant\RechercherCoEncadrantFormAwareTrait;
+use These\Provider\Template\PdfTemplates;
 use These\Service\Acteur\ActeurServiceAwareTrait;
 use These\Service\CoEncadrant\CoEncadrantServiceAwareTrait;
-use These\Service\CoEncadrant\Exporter\JustificatifCoencadrements\JustificatifCoencadrementPdfExporter;
 use These\Service\These\TheseServiceAwareTrait;
 use UnicaenApp\View\Model\CsvModel;
+use UnicaenPdf\Exporter\PdfExporter as PdfExporter;
+use UnicaenRenderer\Service\Rendu\RenduServiceAwareTrait;
 
 class CoEncadrantController extends AbstractActionController
 {
@@ -38,6 +41,7 @@ class CoEncadrantController extends AbstractActionController
     use EcoleDoctoraleServiceAwareTrait;
     use EtablissementServiceAwareTrait;
     use UniteRechercheServiceAwareTrait;
+    use RenduServiceAwareTrait;
 
 
     /** @var PhpRenderer */
@@ -166,26 +170,52 @@ class CoEncadrantController extends AbstractActionController
         ]);
     }
 
-    public function genererJustificatifCoencadrementsAction(): void
+    public function genererJustificatifCoencadrementsAction(): ?string
     {
         $coencadrant = $this->getCoEncadrantService()->getRequestedCoEncadrant($this);
         $theses = $this->getTheseService()->getRepository()->fetchThesesByCoEncadrant($coencadrant->getIndividu());
 
-        $logos = [];
-        try {
-            $logos['etablissement'] = $this->fichierStorageService->getFileForLogoStructure($coencadrant->getEtablissement()->getStructure());
-        } catch (StorageAdapterException $e) {
-            $logos['etablissement'] = null;
-        }
+        $vars = [
+            'acteur' => $coencadrant,
+        ];
 
-        //exporter
-        $export = new JustificatifCoencadrementPdfExporter($this->renderer, 'A4');
-        $export->setVars([
-            'coencadrant' => $coencadrant,
-            'theses' => $theses,
-            'logos' => $logos,
-        ]);
-        $export->export('justificatif_coencadrement_' . $coencadrant->getIndividu()->getId() . ".pdf");
+        $listing  = "<ul>";
+        foreach ($theses as $these) {
+            //todo macro ou formateur ...
+            $listing .= "<li>";
+
+            $listing .= $these->getTitre();
+            $listing .= " (".$these->getAnneeUniv1ereInscription(). ")";
+
+            $listing .= "<br>";
+
+            $listing .= $these->getDoctorant()->getIndividu()->getPrenom1() . " " . $these->getDoctorant()->getIndividu()->getNomUsuel();
+            $listing .= " - ";
+            $listing .= $these->getEtablissement()->getStructure()->getLibelle();
+            $listing .= " - ";
+            $listing .= $these->getUniteRecherche()->getStructure()->getLibelle() . " (".$these->getUniteRecherche()->getStructure()->getSigle().")";
+            $listing .= "</li>";
+        }
+        $listing .= "</ul>";
+
+        $logos = [
+            "COMUE" => $this->etablissementService->fetchEtablissementComue()?$this->fichierStorageService->getFileForLogoStructure($this->etablissementService->fetchEtablissementComue()->getStructure()):null,
+            "ETAB" => $coencadrant->getEtablissement()?$this->fichierStorageService->getFileForLogoStructure($coencadrant->getEtablissement()->getStructure()):null,
+        ];
+
+        $rendu = $this->getRenduService()->generateRenduByTemplateCode(PdfTemplates::COENCADREMENTS_JUSTIFICATIF, $vars);
+        $corps = str_replace("###LISTING_THESE###", $listing,$rendu->getCorps());
+        $filename = 'justificatif_coencadrement_' . $coencadrant->getIndividu()->getId() . ".pdf";
+
+        $export = new PdfExporter();
+
+        $export->getMpdf()->SetMargins(0,0,60);
+        //todo passer un header exploitant les logo
+//        $export->setHeaderScript('pdf/header.phtml', null, $logos);
+        $export->setHeaderScriptToNone();
+        $export->setFooterScriptToNone();
+        $export->addBodyHtml($corps);
+        return $export->export($filename);
     }
 
     public function genererExportCsvAction(): CsvModel

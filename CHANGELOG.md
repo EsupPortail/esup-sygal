@@ -1,6 +1,10 @@
 Journal des modifications
 =========================
 
+6.0.6
+-----
+- Passage dans UnicaenRenderer du template des historiques de co-encadrements
+
 6.0.5
 -----
 - [FIX] Correction d'un bug empêchant la création d'établissement ; améliorations des validateurs des formulaires de structures.
