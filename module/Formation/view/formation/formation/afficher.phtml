@@ -115,16 +115,42 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
 
 <h2> Liste des sessions </h2>
 
-<?php if ($canAjouterSession) : ?>
-    <?php /** @see \Formation\Controller\SessionController::ajouterAction() */ ?>
-    <a href="<?php echo $this->url('formation/session/ajouter', ['formation' => $formation->getId()], [], true); ?>"
-       class="btn btn-primary action ajax-modal" data-event="modification"
-       title="Ajouter une session"
-       data-bs-toggle="tooltip" data-bs-html="true">
-        <span class="icon icon-ajouter"></span>
-        Ajouter une session
-    </a>
-<?php endif; ?>
+<div class="row">
+    <div class="col-md-12">
+
+        <?php if ($canAjouterSession) : ?>
+            <?php /** @see \Formation\Controller\SessionController::ajouterAction() */ ?>
+            <a href="<?php echo $this->url('formation/session/ajouter', ['formation' => $formation->getId()], [], true); ?>"
+               class="btn btn-primary action ajax-modal" data-event="modification"
+               title="Ajouter une session"
+               data-bs-toggle="tooltip" data-bs-html="true">
+                <span class="icon icon-ajouter"></span>
+                Ajouter une session
+            </a>
+        <?php endif; ?>
+
+        <?php
+            $mois = (new DateTime())->format('m');
+            $anneeCourante = (new DateTime())->format('Y');
+            if ($mois < 9) $anneeCourante--;
+            $anneeMin = null;
+            foreach ($sessions as $session) {
+                $anneeMin = ($anneeMin === null || $anneeMin > $session->getAnneeScolaire())?$session->getAnneeScolaire():$anneeMin;
+            }
+        ?>
+
+        <div class="float-end">
+        <label for="annee"> Filtre sur l'année :</label>
+        <select id="annee" name="annee">
+            <?php for($annee=$anneeMin; $annee<=$anneeCourante; $annee++) : ?>
+                <option value="<?php echo $annee; ?>" <?php if ($annee == $anneeCourante) echo " selected "; ?> ><?php echo $annee; ?>/<?php echo ($annee+1); ?></option>
+            <?php endfor; ?>
+        </select>
+        </div>
+
+
+    </div>
+</div>
 
 <div class="index-result">
     <?php if (empty($sessions)) : ?>
@@ -145,7 +171,7 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
     </thead>
     <tbody>
     <?php foreach ($sessions as $session) : ?>
-        <tr>
+        <tr class="<?php echo $session->getAnneeScolaire(); ?>">
             <td>
                 <span class=" <?php if ($session->estHistorise()) echo "historise text-danger"; ?> ">
                 <?php echo $session->getIndex(); ?>
@@ -226,11 +252,22 @@ $canSupprimerSession    = $this->isAllowed(SessionPrivileges::getResourceId(Sess
 
 
 <script>
+    function toggleAnnee() {
+        let anneeSelected = $('#annee option:selected').val();
+        // alert(anneeSelected);
+        $('tbody tr').hide();
+        $('tbody tr.' + anneeSelected).show();
+    }
+
     $(function() {
+        toggleAnnee();
         $("body").on("modification", function (event) {
             event.div.modal('hide');
             window.location.reload();
         });
+
+        $("select#annee").on("change", toggleAnnee);
+        $("select#annee").selectpicker();
     });
 </script>
 

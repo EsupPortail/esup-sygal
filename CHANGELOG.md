@@ -4,6 +4,7 @@ Journal des modifications
 6.0.6
 -----
 - Passage dans UnicaenRenderer du template des historiques de co-encadrements
+- Ajout d'un filtre sur l'année sur l'écran des formations pour masquer/afficher les sessions
 
 6.0.5
 -----
