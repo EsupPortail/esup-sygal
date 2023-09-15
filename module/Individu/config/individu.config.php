@@ -3,6 +3,8 @@
 namespace Individu;
 
 use BjyAuthorize\Provider\Resource\Config;
+use Individu\Assertion\IndividuAssertion;
+use Individu\Assertion\IndividuAssertionFactory;
 use Individu\Controller\IndividuController;
 use Individu\Controller\IndividuControllerFactory;
 use Individu\Form\IndividuForm;
@@ -46,27 +48,27 @@ return [
                 [
                     'controller' => IndividuController::class,
                     'action' => ['index', 'rechercher'],
-                    'privilege' => IndividuPrivileges::INDIVIDU_LISTER,
+                    'privileges' => IndividuPrivileges::INDIVIDU_LISTER,
                 ],
                 [
                     'controller' => IndividuController::class,
                     'action' => ['voir'],
-                    'privilege' => IndividuPrivileges::INDIVIDU_CONSULTER,
+                    'privileges' => IndividuPrivileges::INDIVIDU_CONSULTER,
                 ],
                 [
                     'controller' => IndividuController::class,
                     'action' => ['ajouter'],
-                    'privilege' => IndividuPrivileges::INDIVIDU_AJOUTER,
+                    'privileges' => IndividuPrivileges::INDIVIDU_AJOUTER,
                 ],
                 [
                     'controller' => IndividuController::class,
                     'action' => ['modifier'],
-                    'privilege' => IndividuPrivileges::INDIVIDU_MODIFIER,
+                    'privileges' => IndividuPrivileges::INDIVIDU_MODIFIER,
                 ],
                 [
                     'controller' => IndividuController::class,
                     'action' => ['supprimer', 'restaurer'],
-                    'privilege' => IndividuPrivileges::INDIVIDU_SUPPRIMER,
+                    'privileges' => IndividuPrivileges::INDIVIDU_SUPPRIMER,
                 ],
             ],
         ],
@@ -173,6 +175,7 @@ return [
         'factories' => [
             IndividuService::class => IndividuServiceFactory::class,
             IndividuSearchService::class => IndividuSearchServiceFactory::class,
+            IndividuAssertion::class => IndividuAssertionFactory::class,
         ],
         'aliases' => [
             'IndividuService' => IndividuService::class,
