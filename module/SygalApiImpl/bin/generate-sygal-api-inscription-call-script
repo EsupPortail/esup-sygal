@@ -70,7 +70,7 @@ curl \
 -H "Authorization: Basic $token" \
 -X POST \
 --data-binary "@%s" \
-https://$host:$port/$version/inscription-administrative \
+https://$host:$port/api/$version/inscription-administrative \
 -b XDEBUG_SESSION=PHPSTORM
 EOT;
 
