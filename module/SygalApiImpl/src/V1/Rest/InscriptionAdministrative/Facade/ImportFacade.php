@@ -179,7 +179,7 @@ class ImportFacade extends AbstractImportFacade
                 'connection' => $this->destinationConnection,
                 'source_code_column' => 'source_code',
                 'where' => $where,
-                'id_strategy' => null,
+                'id_strategy' => 'SEQUENCE',
                 'id_sequence' => null,
             ]);
 
@@ -253,7 +253,7 @@ class ImportFacade extends AbstractImportFacade
                 'connection' => $this->destinationConnection,
                 'source_code_column' => 'source_code',
                 'where' => $where,
-                'id_strategy' => null,
+                'id_strategy' => 'SEQUENCE',
                 'id_sequence' => null,
             ]);
             return Synchro::fromConfig([
@@ -322,7 +322,7 @@ class ImportFacade extends AbstractImportFacade
                 'connection' => $this->destinationConnection,
                 'source_code_column' => 'source_code',
                 'where' => $where,
-                'id_strategy' => null,
+                'id_strategy' => 'SEQUENCE',
                 'id_sequence' => null,
             ]);
             return Synchro::fromConfig([
